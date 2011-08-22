@@ -1,0 +1,933 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Licensed to the Apache Software Foundation (ASF) under one or more
+		contributor license agreements. See the NOTICE file distributed with
+		this work for additional information regarding copyright ownership.
+		The ASF licenses this file to You under the Apache License, Version
+		2.0 (the "License"); you may not use this file except in compliance
+		with the License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+		applicable law or agreed to in writing, software distributed under the
+		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">	
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>becpg</groupId>
+	<artifactId>becpg-core</artifactId>
+	<packaging>amp</packaging>
+	<name>beCPG repository</name>
+	<!--
+		An Alfresco version number must be of the form 1.2.3.4. Using
+		1.0-SNAPSHOT as the AMP version will create an exception. See
+		http://wiki.alfresco.com/wiki/Developing_an_Alfresco_Module: "The
+		version number must be made up of numeric values separated by dots.
+		For example '2.1.56' is a valid version number, '2.3.4a' is not. " In
+		order to be able to use Maven snapshots we cannot use the <version/>
+		below as the AMP module version. Instead we use the
+		buildnumber-maven-plugin. This requires a scm connection.
+	-->
+	<version>0.1.3</version>
+	<description>BeCPG repository</description>
+	<repositories>
+		<repository>
+			<id>alfresco-public-snapshots</id>
+	      	<url>http://maven.alfresco.com/nexus/content/groups/public-snapshots</url>
+	      	<snapshots>
+	        	<enabled>true</enabled>
+	        	<updatePolicy>daily</updatePolicy>
+	      	</snapshots>
+		</repository>
+		<repository>
+			<id>alfresco-public</id>
+      		<url>http://maven.alfresco.com/nexus/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>alfresco-ecm4</id>
+	      	<url>http://ecm4you.svn.sourceforge.net/svnroot/ecm4you/trunk/repos/</url>
+	      	<snapshots>
+	        	<enabled>true</enabled>
+	        	<updatePolicy>daily</updatePolicy>
+	      	</snapshots>
+		</repository>
+		<repository>
+			<id>ibiblio</id>
+	      	<url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
+	      	<snapshots>
+	        	<enabled>true</enabled>
+	        	<updatePolicy>daily</updatePolicy>
+	      	</snapshots>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>alfresco-public</id>
+      		<url>http://maven.alfresco.com/nexus/content/groups/public</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>alfresco-public-snapshots</id>
+			<url>http://maven.alfresco.com/nexus/content/groups/public-snapshots</url>
+			<snapshots>
+        		<enabled>true</enabled>
+        		<updatePolicy>daily</updatePolicy>
+      		</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+	<properties>
+		<!--
+			Default for which src/main/properties/<env>/application.properties is
+			loaded. NB: used only for the 'test' profile (e.g. '-P test' on the
+			mvn commandline) jetty run deployment, does not impact AMP behavior
+			which is typically environment independent
+		-->
+		<env>local</env>
+		<!-- Webapp used to test/develop locally the AMP -->
+		<webapp.name>becpg-core-webapp</webapp.name>
+		<!--
+			| | By default the src/test/properties/local/application.properties
+			uses the property "alfresco.data.location" to specify where |
+			alf_data gets created. | For local jetty:run deployment default
+			creation dir is under project root folder (as location is specified
+			relatively to run | dir). Please add alf_data_jetty in svn/cvs
+			ignores in order not to commit that. You can also specified a
+			different (out of the | sproject) folder | by editing the following
+			properties. | DB is also configurable here. Of course keep in sync
+			these two values otherwise you'll get integrity errors. | | Empty log
+			dir creates file alfresco.log in appserver default dir. You can also
+			specify a meaningful log directory for the server | (add a trailing
+			slash, e.g. '/var/log/alfresco/' ) | | Jetty embedded run logs by
+			default in target/alfresco.log
+		-->
+		<alfresco.data.location>./alf_data</alfresco.data.location>
+		<alfresco.db.name>alf_34d_demoFood_dev</alfresco.db.name>
+		<alfresco.db.username>alfresco</alfresco.db.username>
+		<alfresco.db.password>alfresco</alfresco.db.password>
+		<webapp.log.level>error</webapp.log.level>
+		<webapp.log.dir></webapp.log.dir>
+		<!--  End of testing webapp specific properties -->
+		<!--  Module specific build time properties -->
+		<module.log.level>info</module.log.level>
+		<alfresco.version>3.4</alfresco.version>
+		<alfresco.sdk.version>3.4</alfresco.sdk.version>
+		<!-- Tests -->
+		<alfresco.webapp.path>/opt/alfresco-3.4.d/tomcat/webapps/alfresco</alfresco.webapp.path>
+		<alfresco.sdk.path>/opt/alfresco-3.4.d/sdk/lib/server</alfresco.sdk.path>
+		<alfresco.birt.path>/opt/birt-runtime-2_6_1</alfresco.birt.path>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
+	</properties>
+	<!--
+		need to list these as a provided so that Maven doesn't download them
+		and include them in the AMP, they are provided by Alfresco
+	-->
+	<dependencies>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>alfresco-repository</artifactId>
+			<version>${alfresco.version}</version>
+			<scope>provided</scope>
+			<classifier>community</classifier>
+		</dependency>
+	 	<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>alfresco-core</artifactId>
+			<version>${alfresco.version}</version>
+			<scope>provided</scope>
+			<classifier>community</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>alfresco-web-client</artifactId>
+			<version>${alfresco.version}</version>
+			<scope>provided</scope>
+			<classifier>community</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>alfresco-remote-api</artifactId>
+			<version>${alfresco.version}</version>
+			<scope>provided</scope>
+			<classifier>community</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>alfresco-data-model</artifactId>
+			<version>${alfresco.version}</version>
+			<scope>provided</scope>
+			<classifier>community</classifier>
+		</dependency>		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>3.0.0.RELEASE</version>
+			<scope>provided</scope>
+		</dependency>		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>3.0.0.RELEASE</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- jbpm  -->
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>jbpm-jpdl</artifactId>
+			<version>3.3.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- birt runtime  -->
+		<dependency>
+			<groupId>birt-runtime</groupId>
+			<artifactId>coreapi</artifactId>
+			<version>2.6.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>birt-runtime</groupId>
+			<artifactId>engineapi</artifactId>
+			<version>2.6.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>birt-runtime</groupId>
+			<artifactId>modelapi</artifactId>
+			<version>2.6.1</version>
+			<scope>provided</scope>
+		</dependency>			
+		<dependency>
+			<groupId>birt-runtime</groupId>
+			<artifactId>scriptapi</artifactId>
+			<version>2.6.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>birt-runtime</groupId>
+			<artifactId>com.ibm.icu</artifactId>
+			<version>2.6.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>birt-runtime</groupId>
+			<artifactId>org.mozilla.javascript</artifactId>
+			<version>2.6.1</version>
+			<scope>provided</scope>
+		</dependency>		
+		<!--
+		   Temporary include the "spring-surf" artifact to get the AbstractBasicHttpAuthenticatorFactory.
+		   When updating to RC2 or the final 1.0.0 release it will have moved to "spring-webscripts".
+		-->
+		<!-- <dependency>
+		   <groupId>org.alfresco.sdk</groupId>
+		   <artifactId>spring-surf-1.0.0.CI-SNAPSHOT</artifactId>
+		   <version>3.4</version>
+		   <scope>provided</scope>
+		</dependency>-->
+		 <dependency>
+		   <groupId>org.springframework.extensions.surf</groupId>
+		   <artifactId>spring-surf</artifactId>
+		   <version>1.0.0-RC1</version>
+		   <scope>provided</scope>
+		</dependency>
+		<!-- Include the Spring WebScripts runtime -->
+		<dependency>
+		   <groupId>org.alfresco.sdk</groupId>
+		   <artifactId>spring-webscripts-1.0.0.CI-SNAPSHOT</artifactId>
+		   <version>3.4</version>
+		   <scope>provided</scope>
+		</dependency>				  
+		<dependency>
+		   <groupId>org.alfresco.sdk</groupId>
+		   <artifactId>spring-webscripts-1.0.0.CI-SNAPSHOT-tests</artifactId>
+		   <version>3.4</version>
+		   <scope>provided</scope>
+		</dependency>
+		<!-- Include the Spring WebScript API so we can browse and list our webscripts on the server -->
+		<dependency>
+		   <groupId>org.alfresco.sdk</groupId>
+		   <artifactId>spring-webscripts-api-1.0.0.CI-SNAPSHOT</artifactId>
+		   <version>3.4</version>
+		   <scope>provided</scope>
+		</dependency>		
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.9</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+                	<groupId>org.apache.lucene</groupId>
+                	<artifactId>lucene-analyzers</artifactId>
+                	<version>2.4.1</version>
+                	<scope>provided</scope>
+        </dependency>
+		<dependency>
+                	<groupId>javax.transaction</groupId>
+                	<artifactId>jta</artifactId>
+                	<version>1.1</version>
+                	<scope>provided</scope>
+        </dependency>
+        <dependency>
+                	<groupId>javax.portlet</groupId>
+                	<artifactId>portlet-api</artifactId>
+                	<version>2.0</version>
+                	<scope>provided</scope>
+        </dependency>
+        
+
+		<!-- test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.6</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>acegisecurity</groupId>
+			<artifactId>acegi-security</artifactId>
+			<version>0.8.2</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>ehcache</groupId>
+					<artifactId>ehcache</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-attributes-api</artifactId>
+					<groupId>commons-attributes</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-attributes-compiler</artifactId>
+					<groupId>commons-attributes</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>apacheds-main</artifactId>
+					<groupId>directory</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>casclient</artifactId>
+					<groupId>cas</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>standard</artifactId>
+					<groupId>taglibs</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>hsqldb</artifactId>
+					<groupId>hsqldb</groupId>
+				</exclusion>
+
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>jmock</groupId>
+			<artifactId>jmock</artifactId>
+			<version>1.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+	    <groupId>net.sf.proguard</groupId>
+	    <artifactId>proguard</artifactId>
+	    <version>4.4</version>
+	    <scope>runtime</scope>
+	    <optional>true</optional>
+	  </dependency>
+		
+		
+		<!-- Don't add here amp dependencies as it will break amp packaging -->
+	</dependencies>
+	<!--
+		The scm is required for the buildnumber-maven-plugin which is required
+		for AMP version numbering
+	-->
+	<scm>
+		<connection>scm:svn:http://domain.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://${maven.username}@domain.com/svn/trunk/</developerConnection>
+		<url>http://domain.com/svn/trunk/</url>
+	</scm>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-nosnapshot-plugin</artifactId>
+				<groupId>com.sourcesense.maven</groupId>
+				 <version>0.0.6</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>strip</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.0-beta-2</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<revisionOnScmFailure>1</revisionOnScmFailure>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>		
+			<!-- native2ascii -->
+			<plugin>  
+	            <groupId>org.codehaus.mojo</groupId>  
+	            <artifactId>native2ascii-maven-plugin</artifactId>  
+	            <version>1.0-alpha-1</version>
+	            <inherited>true</inherited>  
+	            <executions>  
+	                <execution>  
+	                    <phase>process-resources</phase>  
+	                    <goals>  
+	                        <goal>native2ascii</goal>  
+	                    </goals>  
+	                    <configuration>  
+	                        <encoding>8859_1</encoding>  
+	                        <dest>target/classes/alfresco/module/becpg-becpg-core</dest>
+	                    	<src>src/main/config</src>
+	                        <includes>
+								**/*.properties
+							</includes>  
+	                    </configuration>  
+	                </execution>  
+	            </executions>  
+	        </plugin>    
+	        <!-- proguard -->
+	        <plugin>
+			    <groupId>com.pyx4me</groupId>
+			    <artifactId>proguard-maven-plugin</artifactId>
+			    <version>2.0.4</version>
+			    <executions>
+			        <execution>
+			            <phase>prepare-package</phase>
+			            <goals>
+			                <goal>proguard</goal>
+			            </goals>
+			        </execution>
+			    </executions>
+			    <configuration>
+			    		<proguardVersion>4.4</proguardVersion>
+			        <obfuscate>true</obfuscate>			        
+                 <injar>classes</injar> 
+			        <options>
+			            <option>-dontoptimize</option>
+			            <!-- <option>-keepdirectories</option>-->
+			            <option>-renamesourcefileattribute SourceFile</option>
+			            <option>-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod</option>
+			            <option>-keep public class * { public protected *;}</option>
+			            <option>-keepclassmembernames class * {java.lang.Class class$(java.lang.String); java.lang.Class class$(java.lang.String, boolean);}</option>			            
+			            <option>-keepclassmembers enum * {public static **[] values(); public static ** valueOf(java.lang.String);}</option>
+			            <option>-keepclassmembers class * implements java.io.Serializable { static final long serialVersionUID; private static final java.io.ObjectStreamField[] serialPersistentFields; private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream); java.lang.Object writeReplace(); java.lang.Object readResolve();}</option>
+			            <option>-keep @org.springframework.beans.factory.annotation.Service class *</option>
+			            <option>-keep @org.springframework.stereotype.Controller class *</option>
+			            <option>-keepclassmembers class * { @org.springframework.beans.factory.annotation.Autowired *; }</option>
+			        </options>
+			        <libs>
+			            <lib>${java.home}/lib/rt.jar</lib>
+			            <lib>${java.home}/lib/jsse.jar</lib>
+			        </libs>
+			        <addMavenDescriptor>false</addMavenDescriptor>
+			    </configuration>
+			</plugin>     
+			<plugin>
+				<groupId>org.alfresco.maven.plugin</groupId>
+				<artifactId>maven-amp-plugin</artifactId>
+				<version>3.0.2</version>
+				<extensions>true</extensions>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+					<overlays>
+						<!--
+							This sample adds records management module in the finally built
+							AMP <overlay> <groupId>org.org.alfresco</groupId>
+							<artifactId>recordsmanagement</artifactId>
+							<version>2.1.0</version> <type>amp</type> </overlay>
+						-->
+						<!--
+							The current AMP is always last in order to overwrite other
+							modules' modules.properties <overlay></overlay>
+						-->
+					</overlays>					
+				</configuration>
+			</plugin>			
+			<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-surefire-plugin</artifactId>
+		        <configuration>
+		          <argLine>-Xmx512m -XX:MaxPermSize=128m</argLine>
+		          <additionalClasspathElements>
+		                <additionalClasspathElement>${alfresco.sdk.path}/alfresco</additionalClasspathElement>
+		                <additionalClasspathElement>${alfresco.sdk.path}/config.jar</additionalClasspathElement>
+		                
+						<additionalClasspathElement>${alfresco.sdk.path}/groovy-all-1.5.5.jar</additionalClasspathElement>
+						
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/abdera-client-0.4.0-incubating.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/abdera-core-0.4.0-incubating.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/abdera-extensions-json-0.4.0-incubating.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/abdera-i18n-0.4.0-incubating.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/abdera-parser-0.4.0-incubating.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/acegi-security-0.8.2_patched.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/activation.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/addressing-1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/alfresco-core-3.4.d.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/alfresco-data-model-3.4.d.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/alfresco-deployment-3.4.d.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/alfresco-dod5015-3.4.d.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/alfresco-jlan-embed-3.4.d.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/alfresco-mbeans-3.4.d.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/alfresco-remote-api-3.4.d.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/alfresco-repository-3.4.d.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/alfresco-wdr-deployment.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/alfresco-web-client-3.4.d.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/alfresco-web-framework-commons-3.4.d.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/ant-1.7.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/antlr-3.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/aopalliance.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/asm-3.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/avalon-framework-4.2.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/axiom-api-1.2.5.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/axiom-impl-1.2.5.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/axis-1.4.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/batik-all-1.6.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/bcel.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/bcmail-jdk15-1.45.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/bcprov-jdk15-1.45.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/bliki-3.0.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/bsf-2.4.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/bsh-1.3.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/cglib-2.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/chemistry-abdera-0.1-incubating-SNAPSHOT.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/chemistry-tck-atompub-0.1-incubating-SNAPSHOT.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/chiba-1.3.0-patched.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-beanutils-1.7.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-codec-1.3.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-collections-3.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-compress-1.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-dbcp-1.2.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-digester-1.6.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-discovery-0.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-el.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-fileupload-1.2.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-httpclient-3.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-io-1.4.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-jxpath-1.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-lang-2.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-logging-1.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-modeler.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-pool-1.4.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/commons-validator.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/cxf-2.2.2-patched.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/dom4j-1.6.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/drew-image-metadata-extractor-2.4.0-beta-1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/ehcache-core-2.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/facebook_070716.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/FastInfoset-1.2.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/fontbox-1.2.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/fop-0.94.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/freemarker-2.3.16-patched.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/gdata-client-1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/gdata-core-1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/gdata-docs-3.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/gdata-media-1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/geronimo-activation_1.1_spec-1.0.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/geronimo-annotation_1.0_spec-1.1.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/geronimo-jaxws_2.1_spec-1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/geronimo-stax-api_1.0_spec-1.0.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/geronimo-ws-metadata_2.0_spec-1.1.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/google-collect-1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/greenmail-1.3-patched.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/guessencoding-1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/hibernate-3.2.6-patched.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/hrtlib.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/htmlparser-1.6.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/ibatis-2.3.4.726-patched.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/icu4j_3_6_1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jakarta-oro-2.0.8.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jaxb-api-2.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jaxb-impl-2.1.7.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jaxb-xjc-2.1.7.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jaxen-1.1-beta-8.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jaxrpc.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jaxws-api-2.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jbpm-identity-3.3.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jbpm-jpdl-3.3.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jcr-1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jgroups-2.8.0-b2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jibx-bind.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jibx-run.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jid3lib-0.5.4.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/JMagick.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/joda-time-1.2.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jooconverter-2.1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/json.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jsr107cache-1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jstl-1.1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jta.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jtds-1.2.5.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jug-asl-2.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/junit-4.6.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jutf7-1.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/jut.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/log4j-1.2.15.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/lucene-analyzers-2.4.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/lucene-core-2.4.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/lucene-regex-2.4.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/lucene-snowball-2.4.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/mail.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/mockito-all-1.8.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/myfaces-api-1.1.5.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/myfaces-impl-1.1.5.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/neethi-2.0.4.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/netcdf-java-4.0.41.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/odmg-3.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/ooxml-schemas-1.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/opencmis-test-browser-0.1-SNAPSHOT.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/openoffice-juh-3.1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/openoffice-jurt-3.1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/openoffice-ridl-3.1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/openoffice-sandbox-2.0.3.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/openoffice-unoil-3.1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/opensaml-1.0.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/org.springframework.aop-3.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/org.springframework.asm-3.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/org.springframework.beans-3.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/org.springframework.context-3.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/org.springframework.context.support-3.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/org.springframework.core-3.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/org.springframework.expression-3.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/org.springframework.jdbc-3.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/org.springframework.orm-3.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/org.springframework.transaction-3.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/org.springframework.web-3.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/org.springframework.webmvc-3.0.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/output</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/pdfbox-1.2.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/PDFRenderer-2009-09-27.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/poi-3.7-beta3-20100915.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/poi-ooxml-3.7-beta3-20100915.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/poi-scratchpad-3.7-beta3-20100915.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/postgresql-8.4-701.jdbc3.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/quartz-1.8.3.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/resolver.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/rhino-js-1.6R7.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/saxpath.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/shale-test-1.0.4.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/slf4j-api-1.5.11.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/slf4j-log4j12-1.5.11.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/springmodules-jbpm31.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/spring-surf-1.0.0.CI-SNAPSHOT.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/spring-surf-api-1.0.0.CI-SNAPSHOT.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/spring-surf-core-1.0.0.CI-SNAPSHOT.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/spring-surf-core-configservice-1.0.0.CI-SNAPSHOT.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/spring-webscripts-1.0.0.CI-SNAPSHOT.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/spring-webscripts-api-1.0.0.CI-SNAPSHOT.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/standard.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/stax-api-1.0.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/stax-utils-20060502.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/stringtemplate-3.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/subetha-smtp.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/tagsoup-1.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/tika-core-0.8-SNAPSHOT.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/tika-parsers-0.8-SNAPSHOT.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/truezip.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/urlrewritefilter-3.1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/wsdl4j-1.6.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/wss4j-1.5.4-patched.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/wstx-asl-3.2.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/wstx-asl-3.2.4.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/xercesImpl-2.8.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/xml-apis.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/xmlbeans-2.3.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/xmlgraphics-commons-1.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/xml-resolver-1.2.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/xmlrpc.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/XmlSchema-1.4.5.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/xmlsec-1.4.1.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/xpp3-1.1.3_8.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.webapp.path}/WEB-INF/lib/xstream-1.2.2.jar</additionalClasspathElement>
+						
+						<!-- birt runtime -->
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/chartengineapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/chartexamplescoreapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/chartitemapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/com.ibm.icu_4.2.1.v20100412.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/commons-cli-1.0.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/coreapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/crosstabcoreapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/dataadapterapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/dataaggregationapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/dataextraction.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/dteapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/emitterconfig.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/engineapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/flute.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/js.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/modelapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/modelodaapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/odadesignapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/org.apache.commons.codec_1.3.0.v20100518-1140.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/org.eclipse.emf.common_2.6.0.v20100914-1218.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/org.eclipse.emf.ecore_2.6.1.v20100914-1218.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/org.eclipse.emf.ecore.xmi_2.5.0.v20100521-1846.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/org.w3c.css.sac_1.3.0.v200805290154.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/lib/scriptapi.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/plugins/org.mozilla.javascript_1.7.2.v201005080400.jar</additionalClasspathElement>						
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/plugins/org.eclipse.equinox.common_3.6.0.v20100503.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/plugins/org.eclipse.core.runtime_3.6.0.v20100505.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar</additionalClasspathElement>
+						<additionalClasspathElement>${alfresco.birt.path}/ReportEngine/plugins/org.eclipse.equinox.registry_3.5.0.v20100503.jar</additionalClasspathElement>						
+
+		          </additionalClasspathElements>
+		          <excludes>		            
+		          </excludes>
+		        </configuration>
+		     </plugin>
+		</plugins>
+		<!--
+			Copies and filters resources in build folder so maven-amp-plugin can
+			pick them up
+		-->
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>**README-*</exclude>
+				</excludes>
+			</resource>
+			<!--
+				Copies and filters AMP config in the proper package
+				'alfresco/module/becpg.becpg-core' so to enforce full module
+				naming single sourcing from POM properties
+			-->
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/config</directory>
+				<targetPath>alfresco/module/${groupId}-${artifactId}</targetPath>
+				<excludes>
+					<exclude>**README-*</exclude>
+					<exclude>**/*.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<filtering>true</filtering>
+				<directory>src/test/resources</directory>
+			</testResource>			
+			<testResource>
+				<filtering>true</filtering>
+				<directory>.</directory>
+				<includes>
+					<include>module.properties</include>
+				</includes>
+				<targetPath>alfresco/module/${groupId}-${artifactId}</targetPath>
+			</testResource>
+			<testResource>
+				<filtering>true</filtering>
+				<directory>src/test/config</directory>
+				<targetPath>alfresco/module/${groupId}-${artifactId}</targetPath>
+			</testResource>
+		</testResources>
+	</build>
+	<profiles>
+		<!--
+			Profile used to trigger war creation and integration within Jetty
+			embedded
+		-->
+		<profile>
+			<id>webapp</id>
+			<build>
+				<filters>
+					<filter>src/test/properties/${env}/application.properties</filter>
+				</filters>
+				<defaultGoal>jetty:run-exploded</defaultGoal>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>unpack-amps</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>unpack-dependencies</goal>
+								</goals>
+								<configuration>
+									<includeTypes>amp</includeTypes>
+									<outputDirectory>${build.directory}/${webapp.name}</outputDirectory>
+									<excludes>META*</excludes>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<!--
+								This is required to be re-defined explicitly at plugin level as
+								otherwise the 'amp' extension unArchiver won't be available to
+								the maven-dependency-plugin
+							-->
+							<dependency>
+								<groupId>org.alfresco.maven.plugin</groupId>
+								<artifactId>maven-amp-plugin</artifactId>
+								<version>3.0.2</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<executions>
+							<!-- Runs war packaging when 'integration-test' phase is called -->
+							<execution>
+								<id>it</id>
+								<phase>package</phase>
+								<goals>
+									<goal>exploded</goal>
+								</goals>
+								<configuration>
+									<archiveClasses>true</archiveClasses>
+								</configuration>
+							</execution>
+						</executions>
+						<configuration>
+							<primaryArtifact>false</primaryArtifact>
+							<!--
+								Don't remove the following line otherwise WAR and AMP builds
+								will be done in the same folder, with unexpected results
+							-->
+							<webappDirectory>${build.directory}/${webapp.name}</webappDirectory>
+							<archive>
+								<addMavenDescriptor>false</addMavenDescriptor>
+							</archive>
+							<warSourceExcludes>licenses/**</warSourceExcludes>
+							<webResources></webResources>
+							<webResources>
+								<resource>
+									<directory>${build.testOutputDirectory}</directory>
+									<targetPath>WEB-INF/classes</targetPath>
+									<filtering>true</filtering>
+									<includes>
+										<include>**</include>
+									</includes>
+								</resource>
+								<!-- Here we add default this AMP web/ resources-->
+								<resource>
+									<directory>src/main/webapp</directory>
+									<targetPath>WEB-INF/licenses</targetPath>
+									<includes>
+										<include>licenses/*.*</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
+								<resource>
+									<directory>src/main/override</directory>
+									<filtering>false</filtering>
+									<includes>
+										<include>**</include>
+									</includes>
+								</resource>
+							</webResources>
+						</configuration>
+						<dependencies>
+							<!--
+								This is required to be re-defined explicitly at plugin level as
+								otherwise the 'amp' extension unArchiver won't be available to
+								the maven-war-plugin
+							-->
+							<dependency>
+								<groupId>org.alfresco.maven.plugin</groupId>
+								<artifactId>maven-amp-plugin</artifactId>
+								<version>3.0.2</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>org.mortbay.jetty</groupId>
+						<artifactId>maven-jetty-plugin</artifactId>
+						<version>6.1.9</version>
+						<executions>
+							<!-- Runs jetty when 'integration-test' phase is called -->
+							<execution>
+								<id>it</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>run-exploded</goal>
+								</goals>
+								<configuration>
+									<contextPath>/${webapp.name}</contextPath>
+									<webApp>${pom.build.directory}/${webapp.name}</webApp>
+									<scanIntervalSeconds>10</scanIntervalSeconds>
+									<connectors>
+										<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+											<port>8080</port>
+											<maxIdleTime>60000</maxIdleTime>
+										</connector>
+									</connectors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+				        <groupId>org.apache.maven.plugins</groupId>
+				        <artifactId>maven-surefire-plugin</artifactId>
+				        <configuration>
+				          <excludes>
+				            <exclude>**/**.java</exclude>
+				          </excludes>
+				          <argLine>-Xmx512m</argLine>
+				        </configuration>
+	     			 </plugin>
+				</plugins>
+			
+				
+			</build>
+			<!--
+				Here you can add test dependencies you want to have included in the
+				the WAR (not in the AMP, built in the main profile) | | Typical use
+				case: add here additional AMPs that you want to test compatibility
+				of with the current module |
+			-->
+			<dependencies>
+				<!--
+					This is the alfresco version you're testing the AMP against. Don't
+					remove if you want jetty to be able to deploy a WAR :)
+				-->
+				<dependency>
+					<groupId>org.alfresco</groupId>
+					<artifactId>alfresco</artifactId>
+					<version>${alfresco.version}</version>
+					<type>war</type>
+					<classifier>community</classifier>
+				</dependency>
+			</dependencies>
+		</profile>
+
+	</profiles>
+</project>

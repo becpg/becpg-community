@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<data>
+	
+	<rawMaterialsByState>
+		<rawMaterial state="Archivé" size="1"/>
+		<rawMaterial state="Validé" size="15"/>
+		<rawMaterial state="En développement" size="30"/>
+	</rawMaterialsByState>
+	
+	<rawMaterialsRecentlyAdded>
+		<rawMaterial name="Lardon 5x5 surgelé" state="Validé" created="14/03/2011" creator="Utilisateur2 RD"/>
+		<rawMaterial name="Saumon 80x20x3" state="En développement" created="15/03/2011" creator="Utilisateur RD"/>
+		<rawMaterial name="Thon 80x20x3" state="En développement" created="15/03/2011" creator="Utilisateur RD"/>
+		<rawMaterial name="Dorade 80x20x3" state="En développement" created="15/03/2011" creator="Utilisateur RD"/>					
+		<rawMaterial name="Beurre doux pasteurisé 82%MG" state="En développement" created="18/03/2011" creator="Utilisateur2 RD"/>
+	</rawMaterialsRecentlyAdded>
+</data>

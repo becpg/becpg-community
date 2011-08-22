@@ -1,0 +1,200 @@
+/*
+ * 
+ */
+package fr.becpg.repo.web.scripts.report;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.alfresco.service.cmr.repository.ContentIOException;
+import org.alfresco.service.cmr.repository.MimetypeService;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.output.CountingOutputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.springframework.extensions.webscripts.AbstractWebScript;
+import org.springframework.extensions.webscripts.Status;
+import org.springframework.extensions.webscripts.WebScriptException;
+import org.springframework.extensions.webscripts.WebScriptRequest;
+import org.springframework.extensions.webscripts.WebScriptResponse;
+
+import fr.becpg.common.RepoConsts;
+import fr.becpg.repo.report.search.ExportSearchService;
+import fr.becpg.repo.search.AdvSearchService;
+
+/**
+ * Webscript that send the result of a search in a report
+ *
+ * @author querephi
+ */
+public class ExportSearchWebScript extends AbstractWebScript  {
+	
+	/** The Constant PARAM_QUERY. */
+	private static final String PARAM_QUERY = "query";
+	
+	/** The Constant PARAM_SORT. */
+	private static final String PARAM_SORT = "sort";
+	
+	/** The Constant PARAM_TERM. */
+	private static final String PARAM_TERM = "term";
+	
+	/** The Constant PARAM_TAG. */
+	private static final String PARAM_TAG = "tag";
+	
+	/** The Constant PARAM_CONTAINER. */
+	private static final String PARAM_CONTAINER = "container";
+	
+	/** The Constant PARAM_SITE. */
+	private static final String PARAM_SITE = "site";
+	
+	/** The Constant PARAM_REPOSITORY. */
+	private static final String PARAM_REPOSITORY = "repo";
+	
+	/** The Constant PARAM_REPORT_NAME. */
+	private static final String PARAM_REPORT_NAME = "reportname";
+	
+	/** The logger. */
+	private static Log logger = LogFactory.getLog(ExportSearchWebScript.class);
+	
+	/** The export search service. */
+	private ExportSearchService exportSearchService;
+	
+	/** The mimetype service. */
+	private MimetypeService mimetypeService;
+	
+	private AdvSearchService advSearchService;
+	
+	private NamespaceService namespaceService;
+	
+	/**
+	 * Sets the export search service.
+	 *
+	 * @param exportSearchService the new export search service
+	 */
+	public void setExportSearchService(ExportSearchService exportSearchService) {
+		this.exportSearchService = exportSearchService;
+	}
+	
+	/**
+	 * Sets the mimetype service.
+	 *
+	 * @param mimetypeService the new mimetype service
+	 */
+	public void setMimetypeService(MimetypeService mimetypeService) {
+		this.mimetypeService = mimetypeService;
+	}
+	
+	public void setAdvSearchService(AdvSearchService advSearchService) {
+		this.advSearchService = advSearchService;
+	}
+	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+
+	/**
+	 * Export search in a report.
+	 *
+	 * @param req the req
+	 * @param res the res
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	@Override
+	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException{
+		
+		logger.debug("ExportSearchWebScript executeImpl()");
+		
+		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
+		String reportName = templateArgs.get(PARAM_REPORT_NAME);
+		String query = req.getParameter(PARAM_QUERY);
+		String sort = req.getParameter(PARAM_SORT);
+		String term = req.getParameter(PARAM_TERM);
+		String tag = req.getParameter(PARAM_TAG);
+		String siteId = req.getParameter(PARAM_SITE);
+		String containerId = req.getParameter(PARAM_CONTAINER);
+		String repo = req.getParameter(PARAM_REPOSITORY);
+		boolean isRepo = false;
+		if(repo != null && repo.equals("true")){
+			isRepo = true;
+		}
+		
+		if(reportName == null || reportName.isEmpty())
+    		throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'reportName' argument cannot be null or empty");
+		if(query == null || query.isEmpty())
+    		throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'query' argument cannot be null or empty");					
+		
+		// get the content and stream directly to the response output stream
+        // assuming the repository is capable of streaming in chunks, this should allow large files
+        // to be streamed directly to the browser response stream.
+        try
+        {      
+        	Map<String, String> criteriaMap = new HashMap<String, String>();
+    		JSONObject jsonObject = null;
+    		
+    		jsonObject = new JSONObject(query);    		
+    		Iterator iterator =jsonObject.keys();
+    		
+    		while(iterator.hasNext()){
+    			
+    			String key = (String)iterator.next();
+    			String value = jsonObject.getString(key);
+    			criteriaMap.put(key, value);
+    			
+    			logger.debug("json key: " + key);
+    			logger.debug("json value: " + value);
+    		}
+    		
+        	QName datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
+        	
+        	List<NodeRef> resultNodeRefs = advSearchService.queryAdvSearch(datatype, 
+														        			term, 
+																			tag, 
+																			criteriaMap, 
+																			sort, 
+																			isRepo, 
+																			siteId, 
+																			containerId);
+
+        	
+        	exportSearchService.getReport(reportName, resultNodeRefs, res.getOutputStream());    		        	
+        	
+    		// set mimetype for the content and the character encoding + length for the stream
+            res.setContentType(mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_XLS));
+            //res.setContentEncoding(reader.getEncoding());
+            //res.setHeader("Content-Length", Long.toString(reader.getSize()));
+            CountingOutputStream c = new CountingOutputStream(res.getOutputStream());
+            res.setHeader("Content-Length", Long.toString(c.getByteCount()));
+            
+    		
+        }
+        catch (SocketException e1){
+        	
+            // the client cut the connection - our mission was accomplished apart from a little error message
+            if (logger.isInfoEnabled())
+                logger.info("Client aborted stream read:\n\tcontent",  e1);
+            
+        }
+        catch (ContentIOException e2){
+        	
+            if (logger.isInfoEnabled())
+                logger.info("Client aborted stream read:\n\tcontent", e2);
+            
+        } catch (JSONException e3) {
+			
+        	if (logger.isInfoEnabled())
+                logger.info("Failed to parse the JSON query", e3);
+        	
+		}
+		
+	}	
+
+}

@@ -1,0 +1,57 @@
+"PATH";"/System/Nuts";;;;;
+"TYPE";"bcpg:nut";;;;;
+"COLUMNS";"cm:name";"bcpg:nutUnit";"bcpg:nutType";"bcpg:nutGroup";;
+"VALUES";"Energie (kJoules)";"kJ";"Valeur énergétique";"Groupe 1";;
+"VALUES";"Energie (kCalories)";"kcal";"Valeur énergétique";"Groupe 1";;
+"VALUES";"Protéines";"g";"Nutriment";"Groupe 1";;
+"VALUES";"Protéines brutes (N x 6.25)";"g";"Nutriment";"Autre";;
+"VALUES";"Glucides";"g";"Nutriment";"Groupe 1";;
+"VALUES";"Sucres";"g";"Nutriment";"Groupe 2";;
+"VALUES";"Amidon";"g";"Nutriment";"Autre";;
+"VALUES";"Polyols totaux";"g";"Nutriment";"Autre";;
+"VALUES";"Fibres alimentaires";"g";"Nutriment";"Groupe 2";;
+"VALUES";"Lipides";"g";"Nutriment";"Groupe 1";;
+"VALUES";"AG saturés";"g";"Nutriment";"Groupe 2";;
+"VALUES";"AG monoinsaturés";"g";"Nutriment";"Autre";;
+"VALUES";"AG polyinsaturés";"g";"Nutriment";"Autre";;
+"VALUES";"Cholestérol";"mg";"Nutriment";"Autre";;
+"VALUES";"Alcool (éthanol)";"g";"Nutriment";"Autre";;
+"VALUES";"Acides organiques";"g";"Nutriment";"Autre";;
+"VALUES";"Sodium";"mg";"Minéraux";"Groupe 2";;
+"VALUES";"Magnésium";"mg";"Minéraux";"Autre";;
+"VALUES";"Phosphore";"mg";"Minéraux";"Autre";;
+"VALUES";"Potassium";"mg";"Minéraux";"Autre";;
+"VALUES";"Calcium";"mg";"Minéraux";"Autre";;
+"VALUES";"Manganèse";"mg";"Minéraux";"Autre";;
+"VALUES";"Fer total";"mg";"Minéraux";"Autre";;
+"VALUES";"Cuivre";"mg";"Minéraux";"Autre";;
+"VALUES";"Zinc";"mg";"Minéraux";"Autre";;
+"VALUES";"Sélénium";"µg";"Minéraux";"Autre";;
+"VALUES";"Iode";"µg";"Minéraux";"Autre";;
+"VALUES";"Rétinol";"µg";"Vitamine";"Autre";;
+"VALUES";"Bêta-carotène";"µg";"Vitamine";"Autre";;
+"VALUES";"Vitamine D";"µg";"Vitamine";"Autre";;
+"VALUES";"Activité vitaminique E (en équivalents alpha-tocophérol)";"mg";"Vitamine";"Autre";;
+"VALUES";"Vitamine C";"mg";"Vitamine";"Autre";;
+"VALUES";"Vitamine B1 ou Thiamine";"mg";"Vitamine";"Autre";;
+"VALUES";"Vitamine B2 ou Riboflavine";"mg";"Vitamine";"Autre";;
+"VALUES";"Vitamine B3 ou PP ou Niacine";"mg";"Vitamine";"Autre";;
+"VALUES";"Vitamine B5 ou Acide pantothénique";"mg";"Vitamine";"Autre";;
+"VALUES";"Vitamine B6 ou Pyridoxine";"mg";"Vitamine";"Autre";;
+"VALUES";"Vitamine B9 ou Folates totaux";"µg";"Vitamine";"Autre";;
+"VALUES";"Vitamine B12 ou Cobalamines";"µg";"Vitamine";"Autre";;
+"VALUES";"Omega 3";"g";"Nutriment";"Autre";;
+"VALUES";"Omega 6";"g";"Nutriment";"Autre";;
+"VALUES";"Rapport Omega 6 - Omega 3";"-";"Nutriment";"Autre";;
+;;;;;;
+"PATH";"/System/Ings";;;;;
+"TYPE";"bcpg:ing";;;;;
+"COLUMNS";"cm:name";"bcpg:ingMLName";"bcpg:ingMLName_fr";"bcpg:ingMLName_en";"bcpg:ingType";"bcpg:ingCEECode"
+"VALUES";"Abricot";"Abricot default";"Abricot french";"Abricot english";"Ingrédient";
+"VALUES";"Acerola";"Acerola default";"Acerola french";"Acerola english";"Ingrédient";
+;;;;;;
+"PATH";"/System/Ings";;;;;
+"TYPE";"bcpg:ing";;;;;
+"COLUMNS";"cm:name";"bcpg:ingType";"bcpg:ingCEECode";"bcpg:ingMLName";"bcpg:ingMLName_fr";"bcpg:ingMLName_en"
+"VALUES";"Abricot1";"Ingrédient";;"Abricot1 default";"Abricot1 french";"Abricot1 english"
+"VALUES";"Acerola1";"Ingrédient";;"Acerola1 default";"Acerola1 french";"Acerola1 english"

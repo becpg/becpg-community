@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="npdwf:newProductDevelopmentWF" width="1021" height="599">
+  <node name="start" x="506" y="-44" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="marketing-brief" x="508" y="14" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="start-feasibility-analysis" x="507" y="71" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="feasibility-analysis" x="507" y="138" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="end-feasibility-analysis" x="447" y="208" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="validate-analysis" x="509" y="263" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-47" y="-10"/>
+      <bendpoint w1="-144" h1="0" w2="-140" h2="133"/>
+      <bendpoint w1="-144" h1="-127" w2="-143" h2="2"/>
+    </edge>
+  </node>
+  <node name="work-on-prototype" x="510" y="330" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="validate-prototype" x="510" y="392" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-47" y="-10"/>
+      <bendpoint w1="-142" h1="-1" w2="-142" h2="61"/>
+      <bendpoint w1="-142" h1="-61" w2="-142" h2="1"/>
+    </edge>
+  </node>
+  <node name="start-production" x="509" y="456" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="end" x="509" y="517" width="132" height="36"/>
+</root-container>

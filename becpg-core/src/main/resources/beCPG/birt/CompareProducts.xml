@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<productsComparison>
+	<comparisonRows product1="Quiche lorraine 200g v1.2" product2="Quiche lorraine 200g v1.1" product3="" product4="">
+		<comparisonRow productList="1. Propriétés" characteristic="" property="Description" value1="Description modifiée" value2="" value3="" value4="" />
+		<comparisonRow productList="1. Propriétés" characteristic="" property="Autre propriété" value1="valeur 1" value2="valeur 2" value3="" value4="" />
+		<comparisonRow productList="2. Nutriments" characteristic="kJoules" property="Valeur" value1="800" value2="850" value3="" value4="" />
+		<comparisonRow productList="2. Nutriments" characteristic="Glucides" property="Valeur" value1="27" value2="30" value3="" value4="" />
+		<comparisonRow productList="3. Composition" characteristic="Crème [Garniture]" property="Quantité" value1="13" value2="12" value3="" value4="" />
+		<comparisonRow productList="3. Composition" characteristic="Lardon 8x8 [Garniture]" property="Quantité" value1="" value2="12" value3="" value4="" />
+		<comparisonRow productList="4. Allergènes" characteristic="Céréales contenant du gluten et produits à base de céréales contenant du gluten" property="Présence int." value1="Faux" value3="" value4="" />
+		<comparisonRow productList="4. Allergènes" characteristic="xxx" property="Présence int. (MP)" value1="" value2="Farine fournier" value3="" value4="" />
+		<comparisonRow productList="4. Allergènes" characteristic="Céréales contenant du gluten et produits à base de céréales contenant du gluten" property="Présence int. (MP)" value1="" value2="Farine fournier" value3="" value4="" />
+	</comparisonRows>
+	<structComparisonRows>
+		<structComparisonRow comparison="product1 - product2" productList="1. Composition" depthLevel="1" item1="Garniture" properties1="Quantité : 12 / Unité : Kg" item2="Garniture" properties2="Quantité : 13 / Unité : g / Quantité : 13 / Unité : g / Quantité : 13 / Unité : g" operator="Modified"/>
+		<structComparisonRow comparison="product1 - product2" productList="1. Composition" depthLevel="2" item1="sel" properties1="Quantité : 13 " item2="sel" properties2="Quantité : 11 " operator="Modified"/>				
+		<structComparisonRow comparison="product1 - product2" productList="1. Composition" depthLevel="2" item1="crème" item2="crème allégée" operator="Replaced"/>
+		<structComparisonRow comparison="product1 - product2" productList="1. Composition" depthLevel="1" item1="pâte" item2="pâte" operator="Equal"/>
+		<structComparisonRow comparison="product1 - product2" productList="1. Composition" depthLevel="1" item1="farine" item2="farine 2" operator="Replaced"/>
+		<structComparisonRow comparison="product1 - product2" productList="1. Composition" depthLevel="1" item1="" item2="levure" operator="Added"/>
+		<structComparisonRow comparison="product2 - product3" productList="1. Composition" depthLevel="1" item1="Garniture" item2="Garniture" operator="Modified"/>
+		<structComparisonRow comparison="product2 - product3" productList="1. Composition" depthLevel="2" item1="sel" item2="sel" operator="Modified"/>				
+		<structComparisonRow comparison="product2 - product3" productList="1. Composition" depthLevel="2" item1="crème" item2="crème allégée" operator="Replaced"/>
+		<structComparisonRow comparison="product2 - product3" productList="1. Composition" depthLevel="1" item1="pâte" item2="pâte" operator="Modified"/>
+		<structComparisonRow comparison="product2 - product3" productList="1. Composition" depthLevel="1" item1="farine" item2="farine 2" operator="Replaced"/>
+		<structComparisonRow comparison="product2 - product3" productList="1. Composition" depthLevel="1" item1="" item2="levure" operator="Added"/>
+		<structComparisonRow comparison="product2 - product3" productList="1. Composition" depthLevel="1" item1="manioc" item2="" operator="Removed"/>
+	</structComparisonRows>
+</productsComparison>

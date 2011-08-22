@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE permissions>
+<!-- PUBLIC '-//ALFRECSO//DTD PERMISSIONS//EN' 'permissionSchema.dtd' -->
+
+<permissions>
+    
+    <!-- Namespaces used in type references -->
+    
+    <namespaces>
+        <namespace uri="http://www.alfresco.org/model/system/1.0" prefix="sys"/>
+        <namespace uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+		  <namespace uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+    </namespaces>
+    
+    <permissionSet expose="select" type="bcpg:product">
+        
+        
+        <permissionGroup name="CheckoutProduct" expose="false" allowFullControl="false"/>
+        <permissionGroup name="CancelCheckoutProduct" expose="false" allowFullControl="false"/>
+        <permissionGroup name="CheckinProduct" expose="false" allowFullControl="false"/>
+        
+        <permission name="_CheckoutProduct" expose="false">
+            <grantedToGroup permissionGroup="CheckoutProduct"/>
+        </permission>
+
+        <permission name="_CancelCheckoutProduct" expose="false">
+            <grantedToGroup permissionGroup="CancelCheckoutProduct"/>
+        </permission>
+
+        <permission name="_CheckinProduct" expose="false">
+            <grantedToGroup permissionGroup="CheckinProduct"/>
+        </permission>
+        
+    </permissionSet>
+    
+</permissions>

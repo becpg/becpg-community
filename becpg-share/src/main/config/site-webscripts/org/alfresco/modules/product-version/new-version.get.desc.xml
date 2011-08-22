@@ -1,0 +1,5 @@
+<webscript>
+   <shortname>New product version</shortname>
+   <description>Create a new version of a product</description>
+   <url>/modules/product-version/new-version</url>
+</webscript>

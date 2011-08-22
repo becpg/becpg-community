@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<product name="Assortiment 8 sushis" productCode="1023"
+	store-identifier="SpacesStore" productType="Produit fini"
+	productQty="0.200" productUnit="kg" productState="En développement"
+	productEAN="8001456682" modified="02/12/2010">
+
+	<attributes>
+		<attribute set="Set1" name="Nom" value="Assortiment 8 sushis" />
+		<attribute set="Set1" name="Famille" value="Menus"  />
+		<attribute set="Set2" name="Sous-famille" value="Sushis"  />
+		<attribute set="Set2" name="Clients" value="Client1, Client2"  />
+		<attribute set="aSet2" name="integer" value="12"/>
+		<attribute set="aSet2" name="decimal" value="12.36"/>
+	</attributes>
+
+	<dataLists>
+
+		<compoList>
+			<product compoListQtyPerc="30" compoListQty="3"
+				compoListProduct="Sushi saumon" />
+		</compoList>
+
+		<allergenList>
+			<allergen allergenListAllergen="Arachide" allergenType="Allergène majeur"
+				allergenListInVoluntary="false" allergenListVoluntary="true"
+				allergenListInVolSources=""
+				allergenListVolSources="Blé, Farine, lalalalalaal, lalalalalaal, lalalalalaala, lalalalaal, ffffffff, tttttttttt, ggggggggg" />
+			<allergen allergenListAllergen="Blé" allergenType="Allergène majeur"
+				allergenListInVoluntary="false" allergenListVoluntary="true"
+				allergenListInVolSources="" allergenListVolSources="Blé, Farine, lalalalalaal, lalalalalaal, lalalalalaala, lalalalaal, ffffffff, tttttttttt, ggggggggg" />
+			<allergen allergenListAllergen="Poisson" allergenType="Allergène mineur"
+				allergenListInVoluntary="false" allergenListVoluntary="false"
+				allergenListInVolSources="" allergenListVolSources="" />
+			<allergen allergenListAllergen="Soja" allergenType="Allergène mineur"
+				allergenListInVoluntary="false" allergenListVoluntary="false"
+				allergenListInVolSources="" allergenListVolSources="" />
+		</allergenList>
+
+		<costList>
+			<cost costListValue="12.212222" costListUnit="€/Kg" costListCost="Coût PMP" />
+			<cost costListValue="12.2" costListUnit="€/Kg" costListCost="Coût MP" />
+		</costList>
+
+		<ingLabelingList>
+			<ingLabeling illGrp_fr="Sushi"
+				illValue_fr="Riz 80% (Riz 100%), Saumon 20% (Poisson 90%, Agent de saveur 10%)"
+				illGrp_en="English sushis"
+				illValue_en="Rice 80% (Rice 100%), Salmon 20% (Fish 90%, Taste agent 10%)" />
+			<ingLabeling illGrp_fr="Soupe" illValue_fr="Légumes 100%"
+				illGrp_en="Soup" illValue_en="Legums 100%" />
+				
+			<ingLabeling illGrp_fr="-" illValue_fr="Légumes 100%"
+				illGrp_en="Soup" illValue_en="Legums 100%" />
+
+		</ingLabelingList>
+
+		<ingList>
+			<ing ingListQtyPerc="12.455662" ingListGeoOrigin="Asie"
+				ingListBioOrigin="Végétale" ingListIsGMO="false" ingListIng="Riz"
+				ingListCEECode="" />
+			<ing ingListQtyPerc="19.2" ingListGeoOrigin="France"
+				ingListBioOrigin="Animale" ingListIsGMO="false" ingListIng="Saumon"
+				ingListCEECode="" />
+			<ing ingListQtyPerc="9.2" ingListGeoOrigin="" ingListBioOrigin=""
+				ingListIsGMO="false" ingListIng="Arômes naturels" ingListCEECode="E440" />
+			<ing ingListQtyPerc="28.2" ingListGeoOrigin="" ingListBioOrigin=""
+				ingListIsGMO="false" ingListIng="Sucre" ingListCEECode="" />
+			<ing ingListQtyPerc="" ingListGeoOrigin="" ingListBioOrigin=""
+				ingListIsGMO="false" ingListIng="Protéine de lait" ingListCEECode="" />
+		</ingList>
+
+		<nutList>
+			<nut nutListValue="5.6495" nutListUnit="g/100g" nutListGroup="Groupe 1"
+				nutListNut="Protides" groupLevel="1" />
+			<nut nutListValue="" nutListUnit="g/100g" nutListGroup="Groupe 1"
+				nutListNut="Lipides" groupLevel="1" />
+			<nut nutListValue="1.3" nutListUnit="g/100g" nutListGroup="Groupe 1"
+				nutListNut="Glucides" groupLevel="1" />
+			<nut nutListValue="2.8" nutListUnit="KJ/Kg" nutListGroup="Groupe 2"
+				nutListNut="Protéines" groupLevel="2" />
+			<nut nutListValue="4.2" nutListUnit="KJ/Kg" nutListGroup="Groupe 2"
+				nutListNut="Protéines brutes" groupLevel="2" />
+			<nut nutListValue="2.24" nutListUnit="KJ/Kg" nutListGroup="Groupe 2"
+				nutListNut="Sodium" groupLevel="2" />
+			<nut nutListValue="7.0" nutListUnit="KJ/Kg" nutListGroup="Groupe 2"
+				nutListNut="Sucres" groupLevel="2" />
+			<nut nutListValue="1.1" nutListUnit="KJ/Kg" nutListGroup="Groupe 2"
+				nutListNut="Fibres alimentaires" groupLevel="2" />
+			<nut nutListValue="8.4" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Amidon" groupLevel="3" />
+			<nut nutListValue="9.8" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Polyols totaux" groupLevel="3" />
+			<nut nutListValue="1.4" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="AG saturés" groupLevel="3" />
+			<nut nutListValue="1.5" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="AG monoinsaturés" groupLevel="3" />
+			<nut nutListValue="1.7" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="AG polyinsaturés" groupLevel="3" />
+			<nut nutListValue="1.8" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Cholestérol" groupLevel="3" />
+			<nut nutListValue="2.0" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Alcool (éthanol)" groupLevel="3" />
+			<nut nutListValue="2.1" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Acides organiques" groupLevel="3" />
+			<nut nutListValue="2.4" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Magnésium" groupLevel="3" />
+			<nut nutListValue="2.5" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Phosphore" groupLevel="3" />
+			<nut nutListValue="2.7" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Potassium" groupLevel="3" />
+			<nut nutListValue="2.8" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Calcium" groupLevel="3" />
+			<nut nutListValue="2.9" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Manganèse" groupLevel="3" />
+			<nut nutListValue="3.1" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Fer total" groupLevel="3" />
+			<nut nutListValue="3.2" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Cuivre" groupLevel="3" />
+			<nut nutListValue="3.4" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Zinc" groupLevel="3" />
+			<nut nutListValue="3.5" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Sélénium" groupLevel="3" />
+			<nut nutListValue="3.6" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Iode" groupLevel="3" />
+			<nut nutListValue="3.8" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Rétinol" groupLevel="3" />
+			<nut nutListValue="3.9" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Bêta-carotène" groupLevel="3" />
+			<nut nutListValue="4.1" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Vitamine D" groupLevel="3" />
+			<nut nutListValue="4.2" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Activité vitaminique E (en équivalents alpha-tocophérol)"
+				groupLevel="3" />
+			<nut nutListValue="4.3" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Vitamine C" groupLevel="3" />
+			<nut nutListValue="4.5" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Vitamine B1 ou Thiamine" groupLevel="3" />
+			<nut nutListValue="4.6" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Vitamine B2 ou Riboflavine" groupLevel="3" />
+			<nut nutListValue="4.8" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Vitamine B3 ou PP ou Niacine" groupLevel="3" />
+			<nut nutListValue="4.9" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Vitamine B5 ou Acide pantothénique" groupLevel="3" />
+			<nut nutListValue="5.0" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Vitamine B6 ou Pyridoxine" groupLevel="3" />
+			<nut nutListValue="5.2" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Vitamine B9 ou Folates totaux" groupLevel="3" />
+			<nut nutListValue="5.3" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Vitamine B12 ou Cobalamines" groupLevel="3" />
+			<nut nutListValue="5.5" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Omega 3" groupLevel="3" />
+			<nut nutListValue="5.6" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Omega 6" groupLevel="3" />
+			<nut nutListValue="5.7" nutListUnit="KJ/Kg" nutListGroup="Autre"
+				nutListNut="Rapport Omega 6 - Omega 3" groupLevel="3" />
+			<nut nutListValue="0.0" nutListUnit="KJ/100g" nutListGroup="Autre"
+				nutListNut="Energie (kJoules)" groupLevel="3" />
+			<nut nutListValue="1.4" nutListUnit="KCal/100g" nutListGroup="Autre"
+				nutListNut="Energie (kCalories)" groupLevel="3" />
+		</nutList>
+
+		<organoList>
+			<organo organoListValue="Ferme" organoListOrgano="Texture" />
+			<organo organoListValue="Salée" organoListOrgano="Odeur" />
+		</organoList>
+
+		<microbioList>
+			<microBio mblMicroBio="Salmonelle" mblValue="7" mblUnit="UFC/50g"
+				mblMaxi="9" />
+			<microBio mblMicroBio="Champi" mblValue="0.8" mblUnit="UFC/10g"
+				mblMaxi="1" />
+			<microBio mblMicroBio="Arachide" mblValue="7" mblUnit="UFC/g"
+				mblMaxi="9" />
+			<microBio mblMicroBio="Salmonelle" mblValue="1" mblUnit="UFC/10g"
+				mblMaxi="1.9" />
+		</microbioList>
+
+		<physicoChemList>
+			<physicoChem pclPhysicoChem="Poids" pclValue="4" pclUnit="kg"
+				pclMaxi="5" pclMini="3" />
+			<physicoChem pclPhysicoChem="Taux de matière grasse"
+				pclValue="10" pclUnit="%" pclMaxi="12" pclMini="" />
+			<physicoChem pclPhysicoChem="Test" pclValue="4" pclUnit="kg"
+				pclMaxi="5" pclMini="3" />
+			<physicoChem pclPhysicoChem="Longuer" pclValue="0.3"
+				pclUnit="m" pclMaxi="0.34" pclMini="0.29" />
+		</physicoChemList>
+
+
+
+
+	</dataLists>
+</product>

@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>Export search</shortname>
+	<description>Export search service </description>	
+	<url>/becpg/report/exportsearch/{reportname}/{id}?term={term?}&amp;tag={tag?}&amp;site={site?}&amp;container={container?}&amp;sort={sort?}&amp;query={query?}&amp;repo={repo?}</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readwrite" buffersize="0">required</transaction>
+</webscript>

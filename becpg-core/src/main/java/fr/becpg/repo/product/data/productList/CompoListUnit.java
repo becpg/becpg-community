@@ -1,0 +1,35 @@
+/*
+ * 
+ */
+package fr.becpg.repo.product.data.productList;
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Enum CompoListUnit.
+ *
+ * @author querephi
+ */
+public enum CompoListUnit {
+	
+	/** The Unknown. */
+	Unknown,
+	
+	/** The kg. */
+	kg,
+	
+	/** The g. */
+	g,
+	
+	/** The L. */
+	L,
+	
+	/** The m l. */
+	mL,
+	
+	/** The P. */
+	P,
+	
+	/** The m. */
+	m;
+	
+}

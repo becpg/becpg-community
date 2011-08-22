@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.1" name="bcpgwf:productValidationWF">
+
+    <swimlane name="initiator" />
+
+    <start-state name="start">
+        <task name="bcpgwf:initiateProductValidationTask" swimlane="initiator" />
+        <transition name="" to="review" />
+    </start-state>
+
+    <swimlane name="reviewer">
+        <assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
+            <pooledactors>#{people.getGroup('GROUP_ProductReviewer')}</pooledactors>
+        </assignment>    
+    </swimlane>
+
+    <task-node name="review">
+        <task name="bcpgwf:doProductValidationTask" swimlane="reviewer">
+            <event type="task-create">
+                <script>
+                   if (bpm_workflowDueDate != void) taskInstance.dueDate = bpm_workflowDueDate;
+                   if (bpm_workflowPriority != void) taskInstance.priority = bpm_workflowPriority;
+                </script>
+            </event>
+            <event type="task-end">
+               <action class="org.alfresco.repo.workflow.jbpm.AlfrescoJavaScript">
+                  <script>
+                     <variable name="bpm_assignee" access="write"/>
+                     <expression>
+                        if (taskInstance.actorId != null)
+                           people.getPerson(taskInstance.actorId);
+                        else
+                           person;
+                     </expression>
+                  </script>
+               </action>
+            </event>
+        </task>
+        <transition name="approve" to="approved" >
+        	<action class="fr.becpg.repo.workflow.jbpm.productvalidation.ApproveActionHandler">
+			  <runas>admin</runas>
+			</action>
+        </transition>
+        <transition name="reject" to="rejected" />
+    </task-node>
+
+    <task-node name="rejected">
+        <task name="bcpgwf:rejectProductTask" swimlane="initiator" />
+        <transition name="" to="end" />
+    </task-node>
+
+    <task-node name="approved">
+        <task name="bcpgwf:approveProductTask" swimlane="initiator" />
+        <transition name="" to="end" />
+    </task-node>
+
+    <end-state name="end" />
+
+</process-definition>

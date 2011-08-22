@@ -1,0 +1,21 @@
+get ticket:
+curl -v "http://localhost:8080/alfresco/service/api/login?u=admin&pw=admin"
+
+curl -v -X POST "http://localhost:8080/alfresco/service/slingshot/datalists/data/node/workspace/SpacesStore/b7eb3aae-c278-4b2c-b967-a4e1c1363e35?alf_ticket=TICKET_aa3fc043cab4ee647867d73917583d360150a228" -H "Content-Type: application/json" -d @/home/querephi/Documents/beCPG/dev/workspace/tools/data.json
+
+
+curl -v -X POST "http://localhost:8080/share/proxy/alfresco/becpg/product/wused/node/workspace/SpacesStore/2bbf57cb-0617-4a9e-99ce-3fc0cab8ce04?alf_ticket=TICKET_221522c14cdb3bae1a5080a63234f7ff8bb4f629" -H "Content-Type: application/json" -d @/home/querephi/Documents/beCPG/dev/workspace/tools/data.json
+
+checkout:
+curl -v -X POST "http://localhost:8080/alfresco/service/becpg/product/checkout/node/workspace/SpacesStore/60bba6ae-384a-4918-8888-640bf20f5c7d?alf_ticket=TICKET_2e0be8ef6ce76373258277e6bc91b545501bb201" -H "Content-Type: application/json" -d @/home/querephi/Documents/beCPG/dev/workspace/tools/data.json
+
+checkin:
+curl -v -X POST "http://localhost:8080/alfresco/service/becpg/product/checkin/node/workspace/SpacesStore/daa0c5e2-5341-41ca-bc78-e93de189c795?alf_ticket=TICKET_bb6118b31d77536a9955278451d6a712783c4d56" -H "Content-Type: application/json" -d @/home/querephi/Documents/beCPG/dev/workspace/tools/data.json
+
+form-checkin:
+curl -v -X POST "http://localhost:8080/alfresco/service/becpg/product/form-checkin?alf_ticket=TICKET_dcb380c9c5ed082741734c00b9bf9a0c7ff6cea1" -H "Content-Type: application/json" -d @/home/querephi/Documents/beCPG/dev/workspace/tools/data.json
+
+
+
+
+

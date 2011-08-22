@@ -1,0 +1,22 @@
+<toolbar>
+   <createContent>
+      <content mimetype="text/plain" icon="plain-text" label="menu.create-content.text" itemid="cm:content" />
+      <content icon="xml" label="menu.create-content.rawMaterial"  formid="create" itemid="bcpg:rawMaterial" />
+      <content icon="xml" label="menu.create-content.localSemiFinishedProduct" formid="create" itemid="bcpg:localSemiFinishedProduct" />
+      <content icon="xml" label="menu.create-content.semiFinishedProduct" formid="create" itemid="bcpg:semiFinishedProduct" />
+      <content icon="xml" label="menu.create-content.finishedProduct" formid="create" itemid="bcpg:finishedProduct" />
+      <content icon="xml" label="menu.create-content.condSalesUnit" formid="create" itemid="bcpg:condSalesUnit" />
+      <content icon="xml" label="menu.create-content.packagingMaterial" formid="create" itemid="bcpg:packagingMaterial" />
+      <content icon="xml" label="menu.create-content.packagingKit" formid="create" itemid="bcpg:packagingKit" />
+      <content icon="xml" label="menu.create-content.supplier" formid="create" itemid="bcpg:supplier" />
+      <content icon="xml" label="menu.create-content.client" formid="create" itemid="bcpg:client" />
+   </createContent>
+   <actionSets>
+      <actionSet id="default">
+         <action type="action-link" id="onActionCopyTo" label="menu.selected-items.copy" />
+         <action type="action-link" id="onActionMoveTo" permission="delete" label="menu.selected-items.move" />
+         <action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
+         <action type="action-link" id="onActionAssignWorkflow" asset="document" label="menu.selected-items.assign-workflow" />
+      </actionSet>
+   </actionSets>
+</toolbar>

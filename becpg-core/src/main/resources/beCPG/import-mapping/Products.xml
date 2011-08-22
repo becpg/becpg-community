@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings>
+	<settings>
+		<!-- <setting id="dateFormat" value="dd/MM/yyyy"/> -->
+		<!-- <setting id="decimalPattern" value="#0.00"/>-->
+	</settings>	
+	
+	<!-- PRODUCT -->
+	<mapping name="bcpg:rawMaterial">		
+		<nodeColumnKeys> 
+			<nodeColumnKey attribute="bcpg:productCode"/>
+		</nodeColumnKeys>
+		<columns>
+
+			<column id="productCode" attribute="bcpg:productCode" type="Attribute"/>
+			
+			<!-- characteristic properties -->
+			<column id="coutMP" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+				charactNodeRef="" charactName="Coût MP" type="Characteristic" />
+			<column id="coutMPPrev" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+				charactNodeRef="" charactName="Coût prév MP" type="Characteristic" />
+			<column id="coutEmb" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+				charactNodeRef="" charactName="Coût emb" type="Characteristic" />
+			<column id="nutProteines" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Protéines" type="Characteristic" />
+			<column id="nutLipides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Lipides" type="Characteristic" />
+			<column id="nutGlucides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Glucides" type="Characteristic" />
+				
+			<!-- files -->
+			<column id="img1Path" attribute="cm:content" path="Images/produit.jpg" type="File"/>
+			<column id="img1Title" attribute="cm:title" path="Images/produit.jpg" type="File"/>
+				
+		</columns>
+	</mapping>	
+	
+	<mapping name="bcpg:productTemplate">		
+		<nodeColumnKeys> 
+		</nodeColumnKeys>
+		<columns>
+
+			<!-- characteristic properties -->
+			<column id="coutMP" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+				charactNodeRef="" charactName="Coût MP" type="Characteristic" />
+			<column id="coutMPPrev" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+				charactNodeRef="" charactName="Coût prév MP" type="Characteristic" />
+			<column id="coutEmb" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+				charactNodeRef="" charactName="Coût emb" type="Characteristic" />
+			<column id="nutProteines" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Protéines" type="Characteristic" />
+			<column id="nutLipides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Lipides" type="Characteristic" />
+			<column id="nutGlucides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Glucides" type="Characteristic" />
+				
+		</columns>
+	</mapping>		
+	
+	<!-- INGREDIENTS LIST -->
+	<mapping name="bcpg:ingList">
+		<nodeColumnKeys> 
+			<nodeColumnKey attribute="bcpg:productCode"/>
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:ingListIng"/>
+		</dataListColumnKeys>
+		<columns>
+			<column id="ingListQtyPerc" attribute="bcpg:ingListQtyPerc" type="Attribute"/>
+			<column id="ingListIsGMO" attribute="bcpg:ingListIsGMO" type="Attribute"/>
+			<column id="ingListIng" attribute="bcpg:ingListIng" type="Attribute"/>			
+			<column id="bcpg:ingListGeoOrigin" attribute="bcpg:ingListGeoOrigin" type="Attribute"/>
+			<column id="bcpg:ingListBioOrigin" attribute="bcpg:ingListBioOrigin" type="Attribute"/>
+		</columns>
+	</mapping>
+	
+	<!-- COMPOSITION LIST -->
+	<mapping name="bcpg:compoList">
+		<nodeColumnKeys> 
+			<nodeColumnKey attribute="bcpg:productCode"/>
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:compoListProduct"/>
+		</dataListColumnKeys>
+		<columns>
+			<column id="productCode" attribute="bcpg:productCode" type="Attribute"/>
+			<column id="level" attribute="bcpg:depthLevel" type="Attribute"/>
+			<column id="compoListProduct" attribute="bcpg:compoListProduct" type="Attribute"/>			
+			<column id="compoListQty" attribute="bcpg:compoListQty" type="Attribute"/>
+			<column id="compoListUnit" attribute="bcpg:compoListUnit" type="Attribute"/>			
+		</columns>
+	</mapping> 
+</mappings>

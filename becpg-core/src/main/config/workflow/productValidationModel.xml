@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<model name="bcpgwf:productValidationModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm" />
+	</imports>
+
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/workflow/1.0" prefix="bcpgwf" />
+	</namespaces>
+
+	<types>
+	
+		<!--																	-->
+		<!--		Product validation workflow		-->
+		<!--																	-->
+			
+		<type name="bcpgwf:initiateProductValidationTask">
+			<parent>bpm:startTask</parent>
+		</type>
+
+		<type name="bcpgwf:doProductValidationTask">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>edit_package_item_actions</default>
+				</property>
+			</overrides>
+		</type>
+
+		<type name="bcpgwf:approveProductTask">
+			<parent>bpm:workflowTask</parent>
+			<mandatory-aspects>
+				<aspect>bpm:assignee</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="bcpgwf:rejectProductTask">
+			<parent>bpm:workflowTask</parent>
+			<mandatory-aspects>
+				<aspect>bpm:assignee</aspect>
+			</mandatory-aspects>
+		</type>
+		
+	</types>
+
+</model>

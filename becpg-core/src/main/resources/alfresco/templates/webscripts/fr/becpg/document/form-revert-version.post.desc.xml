@@ -1,0 +1,8 @@
+<webscript>
+  <shortname>form-revert-version</shortname>
+  <description>Document Form Action - revert version</description>
+  <url>/becpg/product/form-revert-version</url>
+  <format default="json">argument</format>
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+</webscript>

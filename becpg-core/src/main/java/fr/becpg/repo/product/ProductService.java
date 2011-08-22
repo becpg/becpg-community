@@ -1,0 +1,79 @@
+/*
+ * 
+ */
+package fr.becpg.repo.product;
+
+import java.util.List;
+
+import org.alfresco.service.cmr.repository.NodeRef;
+
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Interface ProductService.
+ *
+ * @author querephi
+ */
+public interface ProductService {
+		   	       
+    /**
+     * Formulate.
+     *
+     * @param productNodeRef the product node ref
+     */
+    public void formulate(NodeRef productNodeRef);
+    
+    /**
+	 * Check if the system should generate the report for this product
+	 * @param productNodeRef
+	 * @return
+	 */
+	public boolean IsReportable(NodeRef productNodeRef);
+	
+    /**
+     * Sets the product report visitor.
+     *
+     * @param productReportVisitor the new product report visitor
+     */
+    public void setProductReportVisitor(NodeVisitor productReportVisitor);    	
+    
+    /**
+     * Generate report.
+     *
+     * @param productNodeRef the product node ref
+     */
+    public void generateReport(NodeRef productNodeRef);
+    
+    /**
+     * Copy product lists.
+     *
+     * @param sourceNodeRef the source node ref
+     * @param productNodeRef the product node ref
+     * @param override the override
+     */
+    public void copyProductLists(NodeRef sourceNodeRef, NodeRef productNodeRef, boolean override);
+    
+    /**
+     * Classify product.
+     *
+     * @param containerNodeRef the container node ref
+     * @param productNodeRef the product node ref
+     */
+    public void classifyProduct(NodeRef containerNodeRef, NodeRef productNodeRef);
+    
+    /**
+     * Initialize product folder.
+     *
+     * @param productNodeRef the product node ref
+     */
+    public void initializeProductFolder(NodeRef productNodeRef);
+    
+    /**
+     * Gets the w used product.
+     *
+     * @param productNodeRef the product node ref
+     * @return the w used product
+     */
+    public List<CompoListDataItem> getWUsedProduct(NodeRef productNodeRef);    
+}

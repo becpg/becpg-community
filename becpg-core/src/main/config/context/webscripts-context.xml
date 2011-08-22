@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+
+<beans>
+   
+   	<!-- Admin -->
+   	<bean id="webscript.fr.becpg.admin.adminModule.get" class="fr.becpg.repo.web.scripts.admin.AdminModuleWebScript" parent="webscript">
+      	<property name="initRepoVisitor" ref="initRepoVisitor" />
+     		<property name="repository" ref="repositoryHelper" />
+      	<property name="siteService" ref="siteService" />
+      	<property name="initSiteVisitor" ref="initSiteVisitor" />
+      	<property name="initDemoVisitor" ref="initDemoVisitor"/>     
+   	</bean>
+   	<bean id="webscript.fr.becpg.admin.reloadModels.get" class="fr.becpg.repo.web.scripts.admin.ReloadModelsWebScript" parent="webscript">
+      	<property name="dictionaryDAO" ref="dictionaryDAO" />
+   	</bean>
+   
+   	<!-- ListValue -->
+   	<bean id="webscript.fr.becpg.autoComplete.get" class="fr.becpg.repo.web.scripts.listvalue.AutoCompleteWebScript" parent="webscript">
+      	<property name="listValueService" ref="listValueService" />
+      	<property name="nodeService" ref="nodeService" />
+      	<property name="namespaceService" ref="namespaceService"/>
+   	</bean>
+   
+   	<!-- Product lists -->
+   	<bean id="webscript.fr.becpg.product.productLists.get" class="fr.becpg.repo.web.scripts.product.ProductListsWebScript" parent="webscript">      	     
+      	<property name="fileFolderService" ref="fileFolderService" />
+      	<property name="nodeService" ref="nodeService" />      	
+      	<property name="productService" ref="productService"/>
+      	<property name="productDictionaryService" ref="productDictionaryService"/>
+  		</bean>
+  	 
+   	<!-- Product formulate -->
+  		<bean id="webscript.fr.becpg.product.productFormulation.get" class="fr.becpg.repo.web.scripts.product.FormulateWebScript" parent="webscript">
+   		<property name="productService" ref="productService" />
+   	</bean>
+   	
+   	<!-- Product report -->
+   	<bean id="webscript.fr.becpg.product.productReport.get" class="fr.becpg.repo.web.scripts.product.ReportWebScript" parent="webscript">
+      	<property name="productService" ref="productService" />
+   	</bean>
+         
+   	<!-- Product where used -->
+  		<bean id="webscript.fr.becpg.product.productWUsed.post" class="fr.becpg.repo.web.scripts.product.ProductWUsedWebScript" parent="webscript">
+   		<property name="productService" ref="productService" />
+   	</bean>
+   	
+   	<!-- Product checkout -->
+  		<bean id="webscript.fr.becpg.product.checkout.post" class="fr.becpg.repo.web.scripts.product.CheckOutWebScript" parent="webscript">   		
+   		<property name="productCheckOutCheckInService" ref="productCheckOutCheckInService" />
+   	</bean>
+   	
+   	<!-- Product checkin -->
+  		<bean id="webscript.fr.becpg.product.checkin.post" class="fr.becpg.repo.web.scripts.product.CheckInWebScript" parent="webscript">   		
+   		<property name="productCheckOutCheckInService" ref="productCheckOutCheckInService" />
+   	</bean>
+   	
+   	<!-- Product cancel-checkout -->
+  		<bean id="webscript.fr.becpg.product.cancel-checkout.post" class="fr.becpg.repo.web.scripts.product.CancelCheckOutWebScript" parent="webscript">   		
+   		<property name="productCheckOutCheckInService" ref="productCheckOutCheckInService" />
+   	</bean>
+   	
+   	<!-- Product new version form -->
+  		<bean id="webscript.fr.becpg.product.form-checkin.post" class="fr.becpg.repo.web.scripts.product.FormCheckInWebScript" parent="webscript">   		
+   		<property name="productCheckOutCheckInService" ref="productCheckOutCheckInService" />
+   	</bean>
+      	
+   	<!-- Document web scripts : override share webscript -->
+  		<bean id="webscript.fr.becpg.document.form-revert-version.post" class="fr.becpg.repo.web.scripts.document.FormRevertVersionWebScript" parent="webscript">   		
+   		<property name="productVersionService" ref="productVersionService" />
+   		<property name="productCheckOutCheckInService" ref="productCheckOutCheckInService" />
+   	</bean>
+   	<bean id="webscript.fr.becpg.document.version-history.get" class="fr.becpg.repo.web.scripts.document.VersionHistoryWebScript" parent="webscript">   		
+   		<property name="productVersionService" ref="productVersionService" />
+   		<property name="nodeService" ref="nodeService" />
+   		<property name="versionService" ref="versionService" />
+   		<property name="personService" ref="personService" />
+   	</bean>
+   	
+   	<!-- Compare products -->
+  		<bean id="webscript.fr.becpg.product.compareProductReport.get" class="fr.becpg.repo.web.scripts.product.CompareProductReportWebScript" parent="webscript">
+   		<property name="compareProductReportService" ref="compareProductReportService" />
+   		<property name="mimetypeService" ref="mimetypeService" />
+   	</bean>
+   	
+   	<!-- Export search -->
+  		<bean id="webscript.fr.becpg.report.exportSearch.get" class="fr.becpg.repo.web.scripts.report.ExportSearchWebScript" parent="webscript">
+   		<property name="exportSearchService" ref="exportSearchService" />
+   		<property name="mimetypeService" ref="mimetypeService" />
+   		<property name="advSearchService" ref="advSearchService" />
+   		<property name="namespaceService" ref="namespaceService" />
+   	</bean>
+  		<bean id="webscript.fr.becpg.report.exportSearchTpls.get" class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript" parent="webscript">
+   		<property name="exportSearchService" ref="exportSearchService" />
+   	</bean>
+   	
+   	<!-- Debug -->
+   	<bean id="webscript.fr.becpg.debug.restoreArchivedNode.get" class="fr.becpg.repo.web.scripts.debug.RestoreArchivedNodeWebScript" parent="webscript">
+      	<property name="nodeService" ref="nodeService" />      	
+			<property name="searchService" ref="searchService" />
+			<property name="fileFolderService" ref="fileFolderService" />
+			<property name="transactionService" ref="transactionService" />
+			<property name="repositoryHelper" ref="repositoryHelper" />
+			<property name="dictionaryDAO" ref="dictionaryDAO" />
+			<property name="repoService" ref="repoService" />
+   	</bean>
+</beans>

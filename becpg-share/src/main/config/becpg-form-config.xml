@@ -1,0 +1,2693 @@
+<alfresco-config>
+	<config>
+		<forms>
+			<dependencies>
+				<css src="/yui/autocomplete/assets/skins/sam/autocomplete.css" />
+
+				<js src="/js/beCPG.js" />
+				<js src="/modules/simple-bulk-dialog.js" />
+				<js src="/components/autocomplete/autocomplete-picker.js" />
+				<js src="/yui/datasource/datasource-min.js" />
+				<js src="/yui/autocomplete/autocomplete-min.js" />
+				<js src="/yui/autocomplete/becpg-autocomplete-debug.js" />
+
+			</dependencies>
+		</forms>
+	</config>
+
+	<!--___________________________________________________ PRODUITS __________________________________________________ -->
+	<config evaluator="node-type" condition="bcpg:productTemplate">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:productType" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:productType">
+						<control
+							template="/fr/becpg/components/form/controls/product/productType.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="bcpg:productMicrobioCriteria">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:code" force="true" />
+					<show id="bcpg:pmcRegulation" />
+					<show id="bcpg:pmcConcernedProducts" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:pmcRegulation">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:pmcConcernedProducts">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:product type (creating nodes nodes) -->
+	<config evaluator="model-type" condition="bcpg:product">
+		<forms>
+
+			<form id="search">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" />
+
+					<!-- bcpg:productAspect -->
+					<show id="bcpg:legalName" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:productCode" />
+
+					<!-- bcpg:eanAspect -->
+					<show id="bcpg:eanCode" force="true" />
+
+					<!-- bcpg:supplierAspect -->
+					<show id="bcpg:suppliers" force="true" />
+
+					<!-- modified -->
+					<show id="cm:modified" />
+					<show id="cm:modifier" />
+
+					<!-- ing information -->
+					<show id="bcpg:ingListIng" force="true" />
+					<show id="bcpg:ingListGeoOrigin" force="true" />
+					<show id="bcpg:ingListBioOrigin" force="true" />
+
+				</field-visibility>
+				<appearance>
+					<set id="product-criteria" appearance="bordered-panel" label="Critères sur le produit" />
+					<set id="ings-criteria" appearance="bordered-panel"
+						label="Critères sur les ingrédients" />
+
+					<field id="cm:name" set="product-criteria" />
+					<field id="cm:description" set="product-criteria" />
+
+					<!-- bcpg:productAspect -->
+					<field id="bcpg:legalName" set="product-criteria" />
+					<field id="bcpg:productHierarchy1" set="product-criteria">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/FinishedProduct_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="product-criteria">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/FinishedProduct_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" set="product-criteria">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl">
+							<control-param name="searchMode">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productCode" set="product-criteria" />
+
+					<!-- bcpg:eanAspect -->
+					<field id="bcpg:eanCode" force="true" set="product-criteria" />
+
+					<!-- bcpg:supplierAspect -->
+					<field id="bcpg:suppliers" force="true" set="product-criteria">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+
+					<!-- modified -->
+					<field id="cm:modifier" set="product-criteria">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="cm:modified" set="product-criteria">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
+
+					<!-- ing information -->
+					<field id="bcpg:ingListIng" set="ings-criteria">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListGeoOrigin" set="ings-criteria">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListBioOrigin" set="ings-criteria">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+
+				</appearance>
+			</form>
+
+		</forms>
+	</config>
+
+	<!-- bcpg:condSalesUnit type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:condSalesUnit">
+		<forms>
+			<form>
+				<field-visibility>
+				
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />					
+					<show id="bcpg:productCode" />
+					<show id="bcpg:eanCode" />
+					<show id="bcpg:clients" />
+					<show id="bcpg:productReportTpls" />
+					<show id="bcpg:productState" />
+					
+					<!-- formulation -->
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productDensity" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="formulation" appearance="bordered-panel" label="Formulation"
+						template="/fr/becpg/components/form/3-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label="Audit"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/CondSalesUnit_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/CondSalesUnit_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />
+					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:clients" force="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:productReportTpls" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/productreport/reports/CondSalesUnit
+							</control-param>
+						</control>
+					</field>
+					
+					<!-- formulation -->
+					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productUnit" set="formulation" />
+					<field id="bcpg:productDensity" set="formulation" />
+
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+
+					<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:condSalesUnit type (creating nodes) -->
+	<config evaluator="model-type" condition="bcpg:condSalesUnit">
+		<forms>
+
+			<form id="create">
+				<field-visibility>
+					
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productCode" />
+					<show id="bcpg:eanCode" />
+					<show id="bcpg:clients" />
+					<show id="bcpg:productReportTpls" />
+					
+					<!-- formulation -->
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productDensity" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="formulation" appearance="bordered-panel" label="Formulation"
+						template="/fr/becpg/components/form/3-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/CondSalesUnit_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/CondSalesUnit_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />
+					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:clients" force="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:productReportTpls" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/productreport/reports/CondSalesUnit
+							</control-param>
+						</control>
+					</field>
+					
+					<!-- formulation -->
+					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productUnit" set="formulation" />
+					<field id="bcpg:productDensity" set="formulation" />
+
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+		</forms>
+	</config>
+
+	<!-- bcpg:finishedProduct type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:finishedProduct">
+		<forms>
+			<form>
+				<field-visibility>
+					
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />					
+					<show id="bcpg:productCode" />
+					<show id="bcpg:eanCode" />
+					<show id="bcpg:clients" />
+					<show id="bcpg:productReportTpls" />
+					<show id="bcpg:productState" />					
+
+					<!-- formulation -->
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productDensity" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
+
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="formulation" appearance="bordered-panel" label="Formulation"
+						template="/fr/becpg/components/form/3-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label="Audit"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/FinishedProduct_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/FinishedProduct_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />
+					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:clients" force="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:productReportTpls" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/productreport/reports/FinishedProduct
+							</control-param>
+						</control>
+					</field>
+					
+					<!-- formulation -->
+					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productUnit" set="formulation" />
+					<field id="bcpg:productDensity" set="formulation" />
+
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+
+					<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:finishedProduct type (creating nodes nodes) -->
+	<config evaluator="model-type" condition="bcpg:finishedProduct">
+		<forms>
+
+			<form id="create">
+				<field-visibility>
+				
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />					
+					<show id="bcpg:productCode" />
+					<show id="bcpg:eanCode" />
+					<show id="bcpg:clients" />
+					<show id="bcpg:productReportTpls" />
+					<show id="bcpg:productState" />
+					
+					<!-- formulation -->
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productDensity" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="formulation" appearance="bordered-panel" label="Formulation"
+						template="/fr/becpg/components/form/3-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label="Audit"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/FinishedProduct_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/FinishedProduct_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />
+					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:clients" force="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:productReportTpls" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/productreport/reports/FinishedProduct
+							</control-param>
+						</control>
+					</field>
+					
+					<!-- formulation -->
+					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productUnit" set="formulation" />
+					<field id="bcpg:productDensity" set="formulation" />
+
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+					
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:localSemiFinishedProduct type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:localSemiFinishedProduct">
+		<forms>
+			<form>
+				<field-visibility>
+				
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:productCode" />
+					
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label="Audit"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />
+					
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+
+					<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:localSemiFinishedProduct type (creating nodes nodes) -->
+	<config evaluator="model-type" condition="bcpg:localSemiFinishedProduct">
+		<forms>
+
+			<form id="create">
+				<field-visibility>
+					
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />					
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />
+					
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+					
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:packagingKit type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:packagingKit">
+		<forms>
+			<form>
+				<field-visibility>
+					
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:productCode" />
+					<show id="bcpg:productReportTpls" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label="Audit"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/PackagingKit_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/PackagingKit_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>
+					<field id="bcpg:productUnit" set="mainInfo"/>
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />					
+					<field id="bcpg:productReportTpls" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/productreport/reports/PackagingKit
+							</control-param>
+						</control>
+					</field>
+
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+
+					<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:packagingKit type (creating nodes nodes) -->
+	<config evaluator="model-type" condition="bcpg:packagingKit">
+		<forms>
+
+			<form id="create">
+				<field-visibility>
+				
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:productUnit" />					
+					<show id="bcpg:productReportTpls" />
+					
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label="Audit"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/PackagingKit_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/PackagingKit_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />					
+					<field id="bcpg:productReportTpls" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/productreport/reports/PackagingKit
+							</control-param>
+						</control>
+					</field>
+
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+
+	<!-- bcpg:packagingMaterial type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:packagingMaterial">
+		<forms>
+			<form>
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:productCode" />
+					<show id="bcpg:eanCode" />
+					<show id="bcpg:suppliers" />
+					<show id="bcpg:productReportTpls" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label="Audit"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/PackagingMaterial_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/PackagingMaterial_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>
+					<field id="bcpg:productUnit" set="mainInfo"/>
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />
+					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:suppliers" force="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:productReportTpls" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/productreport/reports/PackagingMaterial
+							</control-param>
+						</control>
+					</field>					
+
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+
+					<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:packagingMaterial type (creating nodes nodes) -->
+	<config evaluator="model-type" condition="bcpg:packagingMaterial">
+		<forms>
+
+			<form id="create">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:productCode" />
+					<show id="bcpg:eanCode" />
+					<show id="bcpg:suppliers" />
+					<show id="bcpg:productReportTpls" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/PackagingMaterial_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/PackagingMaterial_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />
+					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:suppliers" force="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:productReportTpls" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/productreport/reports/PackagingMaterial
+							</control-param>
+						</control>
+					</field>					
+
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+					
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:rawMaterial type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:rawMaterial">
+		<forms>
+			<form>
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:productCode" />
+					<show id="bcpg:eanCode" />
+					<show id="bcpg:suppliers" />
+					<show id="bcpg:productReportTpls" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label="Audit"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments"  set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/RawMaterial_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/RawMaterial_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>					
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />
+					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>	
+					<field id="bcpg:productUnit" set="mainInfo"/>
+					<field id="bcpg:suppliers" force="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:productReportTpls" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/productreport/reports/RawMaterial
+							</control-param>
+						</control>
+					</field>									
+
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+
+					<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:rawMaterial type (creating nodes nodes) -->
+	<config evaluator="model-type" condition="bcpg:rawMaterial">
+		<forms>
+
+			<form id="create">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:productCode" />
+					<show id="bcpg:eanCode" />
+					<show id="bcpg:suppliers" />
+					<show id="bcpg:productReportTpls" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments"  set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/RawMaterial_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/RawMaterial_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>					
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />
+					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>	
+					<field id="bcpg:productUnit" set="mainInfo"/>
+					<field id="bcpg:suppliers" force="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:productReportTpls" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/productreport/reports/RawMaterial
+							</control-param>
+						</control>
+					</field>							
+					
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+
+	<!-- bcpg:semiFinishedProduct type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:semiFinishedProduct">
+		<forms>
+			<form>
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:productCode" />
+					<show id="bcpg:productReportTpls" />
+
+					<!-- formulation -->
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productDensity" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="formulation" appearance="bordered-panel" label="Formulation"
+						template="/fr/becpg/components/form/3-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label="Audit"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/SemiFinishedProduct_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/SemiFinishedProduct_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />					
+					<field id="bcpg:productReportTpls" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/productreport/reports/SemiFinishedProduct
+							</control-param>
+						</control>
+					</field>
+
+					<!-- formulation -->
+					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productUnit" set="formulation" />
+					<field id="bcpg:productDensity" set="formulation" />
+
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+
+					<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:semiFinishedProduct type (creating nodes nodes) -->
+	<config evaluator="model-type" condition="bcpg:semiFinishedProduct">
+		<forms>
+
+			<form id="create">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:productCode" />
+					<show id="bcpg:productReportTpls" />
+
+					<!-- formulation -->
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productDensity" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="formulation" appearance="bordered-panel" label="Formulation"
+						template="/fr/becpg/components/form/3-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel" label="Catégories"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+
+					
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy1" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/SemiFinishedProduct_Hierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/SemiFinishedProduct_Hierarchy2
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl" />
+					</field>
+					<field id="bcpg:productCode" read-only="true" set="mainInfo" />					
+					<field id="bcpg:productReportTpls" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/productreport/reports/SemiFinishedProduct
+							</control-param>
+						</control>
+					</field>
+
+					<!-- formulation -->
+					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productUnit" set="formulation" />
+					<field id="bcpg:productDensity" set="formulation" />
+
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+					
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:entityFolder type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:entityFolder">
+		<forms>
+			<!-- Default form configuration for the cm:folder type -->
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:title">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="cm:taggable">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Document Library pop-up Edit Metadata form -->
+			<form id="doclib-simple-metadata">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+				</field-visibility>
+				<edit-form template="../documentlibrary/forms/doclib-simple-metadata.ftl" />
+				<appearance>
+					<field id="cm:title">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="cm:taggable">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- ___________________________________________________ CARACTERISTIQUES 
+		__________________________________________________ -->
+
+	<!-- bcpg:allergen type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:allergen">
+		<forms>
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:allergenType" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:allergenType" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:cost type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:cost">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:costCurrency" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:costCurrency" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:ing type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:ing">
+		<forms>
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:ingMLName" />
+					<show id="bcpg:ingCEECode" />
+					<show id="bcpg:ingType" />
+				</field-visibility>
+
+				<appearance>
+
+					<field id="cm:name" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:ingCEECode" />
+					<field id="bcpg:ingType" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:microBio type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:microBio">
+		<forms>
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:microBioUnit" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:microBioUnit" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:nut type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:nut">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:nutGroup" />
+					<show id="bcpg:nutType" />
+					<show id="bcpg:nutUnit" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nutGroup" />
+					<field id="bcpg:nutType" />
+					<field id="bcpg:nutUnit" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:organo type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:organo">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:physicoChem type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:physicoChem">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:physicoChemUnit" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:physicoChemUnit" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:geoOrigin type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:geoOrigin">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:geoOriginISOCode" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:bioOrigin type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:bioOrigin">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:bioOriginType" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- ______________________________________________ SUPPLIER_________________________________________ -->
+	<!-- bcpg:supplier type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:supplier">
+		<forms>
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="bcpg:code" />
+					<show id="bcpg:supplierTel" />
+					<show id="bcpg:supplierEmail" />
+					<!-- bcpg:location type -->
+					<show id="bcpg:locationAddress1" />
+					<show id="bcpg:locationAddress2" />
+					<show id="bcpg:locationAddress3" />
+					<show id="bcpg:locationZip" />
+					<show id="bcpg:locationCountry" />
+				</field-visibility>
+				<appearance>
+					<appearance>
+						<field id="cm:description">
+							<control>
+								<control-param name="activateLinks">true</control-param>
+							</control>
+						</field>
+					</appearance>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:supplier type (creating nodes) -->
+	<config evaluator="model-type" condition="bcpg:supplier">
+		<forms>
+			<form id="create">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="bcpg:supplierTel" />
+					<show id="bcpg:supplierEmail" />
+					<!-- bcpg:location type -->
+					<show id="bcpg:locationAddress1" />
+					<show id="bcpg:locationAddress2" />
+					<show id="bcpg:locationAddress3" />
+					<show id="bcpg:locationZip" />
+					<show id="bcpg:locationState" />
+					<show id="bcpg:locationCountry" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- ______________________________________________ CLIENT_________________________________________ -->
+	<!-- bcpg:client type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:client">
+		<forms>
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="bcpg:code" />
+					<show id="bcpg:clientTel" />
+					<show id="bcpg:clientEmail" />
+					<!-- bcpg:location type -->
+					<show id="bcpg:locationAddress1" />
+					<show id="bcpg:locationAddress2" />
+					<show id="bcpg:locationAddress3" />
+					<show id="bcpg:locationZip" />
+					<show id="bcpg:locationState" />
+					<show id="bcpg:locationCountry" />
+				</field-visibility>
+				<appearance>
+					<appearance>
+						<field id="cm:description">
+							<control>
+								<control-param name="activateLinks">true</control-param>
+							</control>
+						</field>
+					</appearance>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:client type (creating nodes) -->
+	<config evaluator="model-type" condition="bcpg:client">
+		<forms>
+			<form id="create">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="bcpg:clientTel" />
+					<show id="bcpg:clientEmail" />
+					<!-- bcpg:location type -->
+					<show id="bcpg:locationAddress1" />
+					<show id="bcpg:locationAddress2" />
+					<show id="bcpg:locationAddress3" />
+					<show id="bcpg:locationZip" />
+					<show id="bcpg:locationState" />
+					<show id="bcpg:locationCountry" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- ________________________________________________________________ COMPO 
+		________________________________________________________________ -->
+	<!-- bcpg:compoList type -->
+	<config evaluator="model-type" condition="bcpg:compoList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:compoListProduct" />
+					<show id="bcpg:compoListQty" />
+					<show id="bcpg:compoListQtySubFormula" />
+					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListLossPerc" />
+					<show id="bcpg:compoListDeclGrp" />
+					<show id="bcpg:compoListDeclType" />
+					<!-- <show id="bcpg:compoListPlants"/> -->
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:compoListProduct">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:compoListProduct" />
+					<show id="bcpg:compoListQty" />
+					<show id="bcpg:compoListQtySubFormula" />
+					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListLossPerc" />
+					<show id="bcpg:compoListDeclGrp" />
+					<show id="bcpg:compoListDeclType" />
+					<!-- <show id="bcpg:compoListPlants"/> -->
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:compoList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:compoList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:compoListProduct" />
+					<show id="bcpg:compoListQty" />
+					<show id="bcpg:compoListQtySubFormula" />
+					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListLossPerc" />
+					<show id="bcpg:compoListDeclGrp" />
+					<show id="bcpg:compoListDeclType" />
+					<!-- <show id="bcpg:compoListPlants"/> -->
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:compoListProduct">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- ________________________________________________________________ LISTES 
+		DE CARACT. ________________________________________________________________ -->
+	<!-- bcpg:allergenList type (creating nodes) -->
+	<config evaluator="model-type" condition="bcpg:allergenList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:allergenListAllergen" />
+					<show id="bcpg:allergenListVoluntary" />
+					<show id="bcpg:allergenListInVoluntary" />
+					<show id="bcpg:allergenListVolSources" />
+					<show id="bcpg:allergenListInVolSources" />
+					<!-- <show id="bcpg:allergenListPlants"/> -->
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:allergenListAllergen">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:allergenListVoluntary" />
+					<field id="bcpg:allergenListInVoluntary" />
+					<field id="bcpg:allergenListVolSources" />
+					<field id="bcpg:allergenListInVolSources" />
+					<!-- <field id="bcpg:allergenListPlants"/> -->
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:allergenListAllergen" />
+					<show id="bcpg:allergenListVoluntary" />
+					<show id="bcpg:allergenListInVoluntary" />
+					<show id="bcpg:allergenListVolSources" />
+					<show id="bcpg:allergenListInVolSources" />
+					<!-- <show id="bcpg:allergenListPlants"/> -->
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:allergenList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:allergenList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:allergenListAllergen" />
+					<show id="bcpg:allergenListVoluntary" />
+					<show id="bcpg:allergenListInVoluntary" />
+					<show id="bcpg:allergenListVolSources" />
+					<show id="bcpg:allergenListInVolSources" />
+					<!-- <show id="bcpg:allergenListPlants"/> -->
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:allergenListAllergen">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:allergenListVoluntary" />
+					<field id="bcpg:allergenListInVoluntary" />
+					<field id="bcpg:allergenListVolSources" />
+					<field id="bcpg:allergenListInVolSources" />
+					<!-- <field id="bcpg:allergenListPlants"/> -->
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:costList type -->
+	<config evaluator="model-type" condition="bcpg:costList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:costListCost" />
+					<show id="bcpg:costListValue" />
+					<show id="bcpg:costListUnit" />
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:costListCost">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:costListCost" />
+					<show id="bcpg:costListValue" />
+					<show id="bcpg:costListUnit" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:costList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:costList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:costListCost" />
+					<show id="bcpg:costListValue" />
+					<show id="bcpg:costListUnit" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:costListCost">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:ingLabelingList type -->
+	<config evaluator="model-type" condition="bcpg:ingLabelingList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:illGrp" />
+					<show id="bcpg:illValue" />
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:illGrp" />
+					<show id="bcpg:illValue" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:ingLabelingList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:ingLabelingList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:illGrp" />
+					<show id="bcpg:illValue" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:ingList type -->
+	<config evaluator="model-type" condition="bcpg:ingList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:ingListIng" />
+					<show id="bcpg:ingListQtyPerc" />
+					<show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" />
+					<show id="bcpg:ingListGeoOrigin" />
+					<show id="bcpg:ingListBioOrigin" />
+					<show id="bcpg:ingListSubIng" />
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:ingListIng">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListGeoOrigin">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListBioOrigin">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListSubIng">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:ingListIng" />
+					<show id="bcpg:ingListQtyPerc" />
+					<show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" />
+					<show id="bcpg:ingListGeoOrigin" />
+					<show id="bcpg:ingListBioOrigin" />
+					<show id="bcpg:ingListSubIng" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:ingList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:ingList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:ingListIng" />
+					<show id="bcpg:ingListQtyPerc" />
+					<show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" />
+					<show id="bcpg:ingListGeoOrigin" />
+					<show id="bcpg:ingListBioOrigin" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:ingListIng">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListGeoOrigin">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListBioOrigin">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:microbioList type -->
+	<config evaluator="model-type" condition="bcpg:microbioList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:mblMicrobio" />
+					<show id="bcpg:mblValue" />
+					<show id="bcpg:mblUnit" />
+					<show id="bcpg:mblMaxi" />
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:mblMicrobio">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:mblMicrobio" />
+					<show id="bcpg:mblValue" />
+					<show id="bcpg:mblUnit" />
+					<show id="bcpg:mblMaxi" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:microbioList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:microbioList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:mblMicrobio" />
+					<show id="bcpg:mblValue" />
+					<show id="bcpg:mblUnit" />
+					<show id="bcpg:mblMaxi" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:mblMicrobio">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:nutList type -->
+	<config evaluator="model-type" condition="bcpg:nutList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:nutListNut" />
+					<show id="bcpg:nutListValue" />
+					<show id="bcpg:nutListUnit" />
+					<show id="bcpg:nutListGroup" />
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:nutListNut">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:nutListNut" />
+					<show id="bcpg:nutListValue" />
+					<show id="bcpg:nutListUnit" />
+					<show id="bcpg:nutListGroup" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:nutList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:nutList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:nutListNut" />
+					<show id="bcpg:nutListValue" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:nutListNut">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:organoList type -->
+	<config evaluator="model-type" condition="bcpg:organoList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:organoListOrgano" />
+					<show id="bcpg:organoListValue" />
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:organoListOrgano">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:organoListOrgano" />
+					<show id="bcpg:organoListValue" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:organoList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:organoList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:organoListOrgano" />
+					<show id="bcpg:organoListValue" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:organoListOrgano">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- bcpg:physicoChemList type -->
+	<config evaluator="model-type" condition="bcpg:physicoChemList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:pclPhysicoChem" />
+					<show id="bcpg:pclValue" />
+					<show id="bcpg:pclUnit" />
+					<show id="bcpg:pclMini" />
+					<show id="bcpg:pclMaxi" />
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:pclPhysicoChem">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:pclPhysicoChem" />
+					<show id="bcpg:pclValue" />
+					<show id="bcpg:pclUnit" />
+					<show id="bcpg:pclMini" />
+					<show id="bcpg:pclMaxi" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:physicoChemList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:physicoChemList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:pclPhysicoChem" />
+					<show id="bcpg:pclValue" />
+					<show id="bcpg:pclUnit" />
+					<show id="bcpg:pclMini" />
+					<show id="bcpg:pclMaxi" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:pclPhysicoChem">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- ________________________________________________________________ AUTOCOMP 
+		________________________________________________________________ -->
+	<!-- bcpg:LinkedValue type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:linkedValue">
+		<forms>
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:lkvPrevValue" />
+					<show id="bcpg:lkvValue" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:ListValue type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:listValue">
+		<forms>
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:lvValue" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:productReportTemplate type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:productReportTemplate">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:productType" />
+					<show id="bcpg:prtIsSystem" />
+					<show id="bcpg:prtIsDefault" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:productType">
+						<control
+							template="/fr/becpg/components/form/controls/product/productType.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- ________________________________________________________________ ASPECTS 
+		________________________________________________________________ -->
+
+
+	<config evaluator="aspect" condition="bcpg:transformationAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productDensity" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="aspect" condition="bcpg:productTypeAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:productType" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="aspect" condition="bcpg:supplierAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:suppliers" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:suppliers">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="aspect" condition="bcpg:permissionsTpl">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:consumerGroups" />
+					<show id="bcpg:editorGroups" />
+					<show id="bcpg:contributorGroups" />
+					<show id="bcpg:collaboratorGroups" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+</alfresco-config>

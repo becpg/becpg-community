@@ -1,0 +1,51 @@
+
+/* Data Types */
+
+.datagrid span.condSalesUnit
+{
+   background: url(../images/products/condSalesUnit-16.png) no-repeat;
+   padding-left: 20px;
+}
+
+.datagrid span.finishedProduct
+{
+   background: url(../images/products/finishedProduct-16.png) no-repeat;
+   padding-left: 20px;
+}
+
+.datagrid span.localSemiFinishedProduct
+{
+   background: url(../images/products/localSemiFinishedProduct-16.png) no-repeat;
+   padding-left: 20px;
+}
+
+.datagrid span.packagingKit
+{
+   background: url(../images/products/packagingKit-16.png) no-repeat;
+   padding-left: 20px;
+}
+
+.datagrid span.packagingMaterial
+{
+   background: url(../images/products/packagingMaterial-16.png) no-repeat;
+   padding-left: 20px;
+}
+
+.datagrid span.rawMaterial
+{
+   background: url(../images/products/rawMaterial-16.png) no-repeat;
+   padding-left: 20px;
+}
+
+.datagrid span.semiFinishedProduct
+{
+   background: url(../images/products/semiFinishedProduct.png) no-repeat;
+   padding-left: 20px;
+}
+
+/* Allergens */
+
+.datagrid .presentAllergen
+{
+   color: red;
+}

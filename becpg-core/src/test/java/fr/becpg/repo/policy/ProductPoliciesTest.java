@@ -1,0 +1,138 @@
+/*
+ * 
+ */
+package fr.becpg.repo.policy;
+
+import java.util.Collection;
+
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.security.authentication.AuthenticationComponent;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ApplicationContextHelper;
+import org.alfresco.util.BaseAlfrescoTestCase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.product.ProductDAO;
+import fr.becpg.repo.product.ProductDictionaryService;
+import fr.becpg.repo.product.data.RawMaterialData;
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ProductPoliciesTest.
+ *
+ * @author querephi
+ */
+public class ProductPoliciesTest  extends BaseAlfrescoTestCase  {
+	
+	/** The PAT h_ testfolder. */
+	private static String PATH_TESTFOLDER = "TestFolder";       
+	
+	/** The logger. */
+	private static Log logger = LogFactory.getLog(ProductPoliciesTest.class);
+	
+	/** The app ctx. */
+	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
+	
+	/** The node service. */
+	private NodeService nodeService;
+	
+	/** The file folder service. */
+	private FileFolderService fileFolderService;
+	
+	/** The authentication component. */
+	private AuthenticationComponent authenticationComponent;
+	
+	/** The product dictionary service. */
+	private ProductDictionaryService productDictionaryService;	
+	
+	/** The product dao. */
+	private ProductDAO productDAO;
+	
+	/** The repository helper. */
+	private Repository repositoryHelper;    
+	
+	/* (non-Javadoc)
+	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {		
+		super.setUp();	
+		
+    	logger.debug("ProductServiceTest:setUp");
+    
+    	nodeService = (NodeService)appCtx.getBean("nodeService");
+    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");  
+    	productDAO = (ProductDAO)appCtx.getBean("productDAO");
+    	productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
+        authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
+        repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");       
+    }
+    
+	/* (non-Javadoc)
+	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
+	 */
+	@Override
+    public void tearDown() throws Exception
+    {
+		try
+        {
+            authenticationComponent.clearCurrentSecurityContext();
+        }
+        catch (Throwable e)
+        {
+            e.printStackTrace();
+            // Don't let this mask any previous exceptions
+        }
+        super.tearDown();
+
+    }	
+	
+   /**
+    * Test product code.
+    */
+   public void testProductCode(){
+	   
+	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			@Override
+			public NodeRef execute() throws Throwable {
+			
+				/*-- Create test folder --*/
+				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+				if(folderNodeRef != null)
+				{
+					fileFolderService.delete(folderNodeRef);    		
+				}			
+				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+				
+				
+				RawMaterialData rawMaterial1 = new RawMaterialData();
+				rawMaterial1.setName("Raw material 1");
+				 Collection<QName> dataLists = productDictionaryService.getDataLists();
+				NodeRef rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, dataLists);
+				assertNotNull("Check product creaed", rawMaterial1NodeRef);				
+				long productCode1 = (Long)nodeService.getProperty(rawMaterial1NodeRef, BeCPGModel.PROP_PRODUCT_CODE);
+				
+				RawMaterialData rawMaterial2 = new RawMaterialData();
+				rawMaterial2.setName("Raw material 2");
+				NodeRef rawMaterial2NodeRef = productDAO.create(folderNodeRef, rawMaterial2, dataLists);
+				long productCode2 = (Long)nodeService.getProperty(rawMaterial2NodeRef, BeCPGModel.PROP_PRODUCT_CODE);
+				
+				assertNotNull("Check product code 1", productCode1);
+				assertNotNull("Check product code 2", productCode2);
+				assertEquals("Compare product codes", productCode1 + 1, productCode2);
+				
+				return null;
+				
+			}},false,true);
+	   
+   }   
+ 	
+}

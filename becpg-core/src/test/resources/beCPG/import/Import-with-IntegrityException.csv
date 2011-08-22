@@ -1,0 +1,4 @@
+"PATH";"/System/Costs";
+"TYPE";"bcpg:cost";
+"COLUMNS";"cm:name";"bcpg:costCurrency"
+"VALUES";"Coût MP";"XXX"

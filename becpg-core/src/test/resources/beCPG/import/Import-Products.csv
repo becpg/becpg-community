@@ -1,0 +1,47 @@
+"PATH";"/System/Costs";;;;;;;;;;;;;;;;;;;;;;;
+"TYPE";"bcpg:cost";;;;;;;;;;;;;;;;;;;;;;;
+"COLUMNS";"cm:name";"bcpg:costCurrency";;;;;;;;;;;;;;;;;;;;;;
+"VALUES";"Coût MP";"€";;;;;;;;;;;;;;;;;;;;;;
+"VALUES";"Coût prév MP";"€";;;;;;;;;;;;;;;;;;;;;;
+"VALUES";"Coût Emb";"€";;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+"PATH";"/System/Nuts";;;;;;;;;;;;;;;;;;;;;;;
+"TYPE";"bcpg:nut";;;;;;;;;;;;;;;;;;;;;;;
+"COLUMNS";"cm:name";"bcpg:nutUnit";"bcpg:nutType";"bcpg:nutGroup";;;;;;;;;;;;;;;;;;;;
+"VALUES";"Energie (kJoules)";"kJ";"Valeur énergétique";"Groupe 1";;;;;;;;;;;;;;;;;;;;
+"VALUES";"Energie (kCalories)";"kcal";"Valeur énergétique";"Groupe 1";;;;;;;;;;;;;;;;;;;;
+"VALUES";"Protéines";"g";"Nutriment";"Groupe 1";;;;;;;;;;;;;;;;;;;;
+"VALUES";"Protéines brutes (N x 6.25)";"g";"Nutriment";"Autre";;;;;;;;;;;;;;;;;;;;
+"VALUES";"Glucides";"g";"Nutriment";"Groupe 1";;;;;;;;;;;;;;;;;;;;
+"VALUES";"Lipides";"g";"Nutriment";"Groupe 1";;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+"PATH";"/Temp/Suppliers";;;;;;;;;;;;;;;;;;;;;;;
+"TYPE";"bcpg:supplier";;;;;;;;;;;;;;;;;;;;;;;
+"COLUMNS";"bcpg:code";"cm:name";;;;;;;;;;;;;;;;;;;;;;
+"VALUES";12;"Fournisseur fruits de mer";;;;;;;;;;;;;;;;;;;;;;
+"VALUES";13;"Fournisseur2";;;;;;;;;;;;;;;;;;;;;;
+"VALUES";14;"Fournisseur3";;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+"PATH";"/Temp/Products";;;;;;;;;;;;;;;;;;;;;;;
+"TYPE";"bcpg:rawMaterial";;;;;;;;;;;;;;;;;;;;;;;
+"MAPPING";"Products";;;;;;;;;;;;;;;;;;;;;;;
+"COLUMNS";"bcpg:productCode";"cm:name";"cm:description";"bcpg:legalName";"bcpg:productHierarchy1";"bcpg:productHierarchy2";"bcpg:productState";"bcpg:productQty";"bcpg:productUnit";"bcpg:productDensity";"bcpg:eanCode";"cm:created";"cm:creator";"cm:modified";"cm:modifier";"bcpg:suppliers";"coutMP";"coutMPPrev";"coutEmb";"nutProteines";"nutLipides";"nutGlucides";"img1Path";"img1Title"
+"VALUES";;"Saumon surgelé 80x20x4";;"saumon sugelé";"Sea food";"Fish";"ToValidate";;;;;"07/06/2011";"admin";;"admin";12,13;1;2;3,1;2,5;3,6;5,6;"/home/querephi/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg";"saumon"
+"VALUES";;"Saumon surgelé 80x20x4";;"saumon sugelé";"Sea food";"Fish";"ToValidate";;;;;"07/06/2011";"admin";;"admin";12,13;1;2;3,1;2,5;3,6;5,6;"/home/querephi/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg";"saumon"
+"VALUES";1019;"Saumon 80x20x3";;"saumon";"Sea food";"Fish";"ToValidate";;;;;"07/06/2011";"utilisateur.r&d";;"utilisateur.r&d";"12, 14";0;8,5;0;30;12,7;0;"/home/querephi/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg";"sushi saumon"
+"VALUES";1016;"dorade 80x20x3";;"dorade";"Sea food";"Fish";"ToValidate";;;;;"08/06/2011";"utilisateur.r&d";;"utilisateur.r&d";12;0;5,3;0;19;0,35;0,8;"/home/querephi/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi dorade/produit.jpg";"suhis dorade"
+"#";"name has an invalid character ' ', so test the trim is done";;;;;;;;;;;;;;;;;;;;;;;
+"VALUES";1020;"Thon 80x20x8 ";;"thon";"Sea food";"Fish";"ToValidate";;;;;"08/06/2011";"utilisateur.r&d";;"admin";13,14;0;9,5;0;24,3;1;0,9;"/home/querephi/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi thon/produit.jpg";
+;;;;;;;;;;;;;;;;;;;;;;;;
+"PATH";"/Temp/Products";;;;;;;;;;;;;;;;;;;;;;;
+"TYPE";"bcpg:productTemplate";;;;;;;;;;;;;;;;;;;;;;;
+"MAPPING";"Products";;;;;;;;;;;;;;;;;;;;;;;
+"COLUMNS";"cm:name";"coutMP";"coutMPPrev";"coutEmb";"nutProteines";"nutLipides";"nutGlucides";;;;;;;;;;;;;;;;;
+"VALUES";"productTpl";1;2;3,1;2,5;3,6;5,6;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+"#";"we simulate the creation in a site";;;;;;;;;;;;;;;;;;;;;;;
+"PATH";"/st:sites/folder";;;;;;;;;;;;;;;;;;;;;;;
+"TYPE";"bcpg:rawMaterial";;;;;;;;;;;;;;;;;;;;;;;
+"MAPPING";"Products";;;;;;;;;;;;;;;;;;;;;;;
+"COLUMNS";"bcpg:productCode";"cm:name";"cm:description";"bcpg:legalName";"bcpg:productHierarchy1";"bcpg:productHierarchy2";"bcpg:productState";"bcpg:productQty";"bcpg:productUnit";"bcpg:productDensity";"bcpg:eanCode";"cm:created";"cm:creator";"cm:modified";"cm:modifier";"bcpg:suppliers";"coutMP";"coutMPPrev";"coutEmb";"nutProteines";"nutLipides";"nutGlucides";"img1Path";"img1Title"
+"VALUES";;"Saumon surgelé 80x20x4";;"saumon sugelé";"Sea food";"Fish";"ToValidate";;;;;"07/06/2011";"admin";;"admin";12,13;1;2;3,1;2,5;3,6;5,6;"/home/querephi/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg";"saumon"

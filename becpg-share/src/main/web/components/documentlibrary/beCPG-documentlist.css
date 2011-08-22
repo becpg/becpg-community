@@ -1,0 +1,20 @@
+.doclist .onActionViewDataLists a
+{
+   background-image: url(images/view-datalists-16.png);
+}
+
+.doclist .onActionCheckOutProduct a
+{
+   background-image: url(images/edit-16.png);
+}
+
+.doclist .onActionCheckInProduct a
+{
+   background-image: url(images/upload-new-version-16.png);
+}
+
+.doclist .onActionCancelCheckOutProduct a
+{
+   background-image: url(images/cancel-editing-16.png);
+}
+

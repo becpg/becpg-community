@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export>
+	<settings>  
+		<setting id="dateFormat" value="yyyy-MM-dd HH:mm:ss"/> 
+		<setting id="datetimeFormat" value="yyyy-MM-dd HH:mm:ss"/> 
+		<!-- <setting id="decimalPattern" value="#0.00"/>-->
+	</settings>
+	<query>
+		<columns>
+			<!-- Node properties -->
+			<column id="name" attribute="cm:name" type="Attribute" />
+			<column id="description" attribute="cm:description" type="Attribute" />
+			<column id="legalName" attribute="bcpg:legalName" type="Attribute" />
+			<column id="productHierarchy1" attribute="bcpg:productHierarchy1" type="Attribute" />
+			<column id="productHierarchy2" attribute="bcpg:productHierarchy2" type="Attribute" />
+			<column id="productState" attribute="bcpg:productState" type="Attribute" />
+			<column id="productQty" attribute="bcpg:productQty" type="Attribute" />
+			<column id="productUnit" attribute="bcpg:productUnit" type="Attribute" />
+			<column id="productDensity" attribute="bcpg:productDensity" type="Attribute" />
+			<column id="eanCode" attribute="bcpg:eanCode" type="Attribute" />
+			<column id="code" attribute="bcpg:productCode" type="Attribute" />
+			<column id="created" attribute="cm:created" type="Attribute" />
+			<column id="creator" attribute="cm:creator" type="Attribute" />
+			<column id="modified" attribute="cm:modified" type="Attribute" />
+			<column id="modifier" attribute="cm:modifier" type="Attribute" />
+			<column id="suppliers" attribute="bcpg:suppliers" type="Attribute" />
+
+			<!-- characteristic properties -->
+			<column id="coutMP" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+				charactNodeRef="" charactName="Coût emb" type="Characteristic" />
+			<column id="coutMPPrev" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+				charactNodeRef="" charactName="Coût prév MP" type="Characteristic" />
+			<column id="coutEmb" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+				charactNodeRef="" charactName="Coût Emb" type="Characteristic" />
+			<column id="nutProteines" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Protéines" type="Characteristic" />
+			<column id="nutLipides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Lipides" type="Characteristic" />
+			<column id="nutGlucides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Glucides" type="Characteristic" />
+				
+				<!-- files -->
+			<column id="thumbnail" attribute="cm:content" path="Images/produit.jpg" type="File"/>
+		</columns>
+	</query>
+	<nodes>
+		<node id="1" name="Assortiment de 10 sushis (4S + 4T + 2D)" description="descr" legalName="Assortiments de 10 sushis (3 saumons + 3 thons + 2 dorades)"
+			productHierarchy1="hierarchy1.1" productHierarchy2="hierarchy1.2" 	productState="ToValidate" productQty="qty" productUnit="unit"
+			productDensity="dens" eanCode="1112222" code="22223333" created="2009-10-07 12:25:12" 	creator="admin" modified="2010-10-07 12:25:12" modifier="modifier" 
+			suppliers="Four1, Four2"
+			coutMP="12.2" 	coutMPPrev="12.8" coutEmb="129"
+			nutProteines="12.3" nutLipides="12.3" nutGlucides="12.3" />
+			
+		<node id="1" name="Assortiment de 8 sushis (4S + 4T)" description="descr" legalName="Assortiments de 8 sushis (3 saumons + 3 thons)"
+			productHierarchy1="hierarchy2.1" productHierarchy2="hierarchy2.2" 	productState="ToValidate" productQty="qty" productUnit="unit"
+			productDensity="dens" eanCode="1112222" code="22223333" created="2011-08-07 12:25:12" 	creator="admin" modified="2011-08-07 12:25:12" modifier="modifier" 
+			suppliers="Four1, Four2"
+			coutMP="12.2" 	coutMPPrev="12.8" coutEmb="129"
+			nutProteines="12.3" nutLipides="12.3" nutGlucides="12.3" />
+	</nodes>
+</export>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<model name="npdwf:npdModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm" />
+	</imports>
+
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/npd-workflow/1.0" prefix="npdwf" />
+	</namespaces>
+
+	<types>	
+		
+		<!--																						-->
+		<!--		New product development workflow		-->
+		<!--																						-->
+		
+		<type name="npdwf:initiate-npd">
+			<parent>bpm:startTask</parent>
+		</type>
+			
+		<type name="npdwf:marketing-brief">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+		</type>
+		
+		<type name="npdwf:feasibility-analysis">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+		</type>
+		
+		<type name="npdwf:validate-analysis">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+		</type>
+		
+		<type name="npdwf:work-on-prototype">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+		</type>
+		
+		<type name="npdwf:validate-prototype">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+		</type>
+		
+		<type name="npdwf:start-production">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+		</type>
+		
+
+	</types>
+
+</model>

@@ -1,0 +1,11 @@
+<webscript>
+	<shortname>AutoComplete</shortname>
+	<description>suggest for autocomplete</description>
+	<url>/becpg/autocomplete/{sourcetype}/values/{path}</url>
+	<url>/becpg/autocomplete/{sourcetype}/associations/{className}</url>
+	<url>/becpg/autocomplete/{sourcetype}/reports/{productType}</url>
+	<url>/becpg/autocomplete/{sourcetype}</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readwrite" buffersize="0">required</transaction>
+</webscript>
