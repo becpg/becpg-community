@@ -6,6 +6,7 @@
 		<property name="models">
 			<list>
 				<value>alfresco/module/${groupId}-${artifactId}/model/becpgModel.xml</value>
+				<value>alfresco/module/${groupId}-${artifactId}/model/ncModel.xml</value>
 			</list>
 		</property>
 		
@@ -13,6 +14,7 @@
             <list>
                 <value>alfresco/module/${groupId}-${artifactId}/model/dataTypeAnalyzers</value>
                 <value>alfresco/module/${groupId}-${artifactId}/model/becpgModel</value>
+                <value>alfresco/module/${groupId}-${artifactId}/model/ncModel</value>
             </list>
         </property>
 	</bean>

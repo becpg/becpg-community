@@ -20,13 +20,12 @@
 
 <beans>
 	    
-	<import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/action-context.xml" />
-  	<import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/model-context.xml" />
+   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/action-context.xml" />
+   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/model-context.xml" />
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/service-context.xml" />
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/webscripts-context.xml" />
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/workflow-context.xml" />
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/bootstrap-context.xml" />
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/script-services-context.xml" />   
-          	
-    
+  
 </beans>

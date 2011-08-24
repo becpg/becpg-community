@@ -10,6 +10,7 @@
       <content icon="xml" label="menu.create-content.packagingKit" formid="create" itemid="bcpg:packagingKit" />
       <content icon="xml" label="menu.create-content.supplier" formid="create" itemid="bcpg:supplier" />
       <content icon="xml" label="menu.create-content.client" formid="create" itemid="bcpg:client" />
+  	  <content icon="xml" label="menu.create-content.nc" formid="create" itemid="nc:nc" />
    </createContent>
    <actionSets>
       <actionSet id="default">

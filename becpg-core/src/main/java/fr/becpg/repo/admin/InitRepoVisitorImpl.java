@@ -32,7 +32,6 @@ import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.core.io.ClassPathResource;
@@ -40,6 +39,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.NcModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -219,6 +219,11 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		NodeRef productsNodeRef = visitFolder(companyHome, RepoConsts.PATH_PRODUCTS, locale);
 		productDictionaryService.initializeRepoHierarchy(productsNodeRef);
 		
+		
+		//Quality		
+		NodeRef qualityNodeRef = visitFolder(companyHome, RepoConsts.PATH_QUALITY, locale);
+		visitFolder(qualityNodeRef, RepoConsts.PATH_NC, locale);
+		
 		//ProductTemplates
 		NodeRef productTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES, locale);			
 		visitProductTpls(productTplsNodeRef);
@@ -379,7 +384,11 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		}
 		else if(folderName == RepoConsts.PATH_EXCHANGE){			
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_SYSTEM_MGR, PermissionService.WRITE, true);
-		}		
+		}	
+		
+		else if(folderName == RepoConsts.PATH_QUALITY){
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_QUALITY_MGR, PermissionService.WRITE, true);
+		}
 	}
 	
 	/**

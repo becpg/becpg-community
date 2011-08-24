@@ -2636,6 +2636,101 @@
 			</form>
 		</forms>
 	</config>
+	
+	<!-- ______________________________________________ Non conformity_________________________________________ -->
+	<!-- nc:nc type (creating nodes nodes) -->
+	<config evaluator="model-type" condition="nc:nc">
+		<forms>
+
+			<form id="create">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="nc:ncType" />
+					<show id="cm:description" />
+					<show id="nc:ncCreationStep" />
+					<show id="nc:ncDateCreation" />
+					<show id="nc:ncQuantityNc" />
+					<show id="nc:ncQuantityNcUnit" />
+					<show id="nc:ncService" />
+					<show id="nc:ncCode" />
+					<show id="nc:ncSeverity" />
+					<show id="nc:ncDetectionStep" />
+					<show id="nc:ncDateDetection" />
+					<show id="nc:ncCost" />
+					<show id="nc:ncCostUnit" />
+					<show id="nc:ncCause" />
+					<show id="nc:ncComments" />
+					<!-- identification -->
+					<show id="nc:ncBatchNumber" />
+					<show id="nc:ncOrderNb" />
+					<show id="nc:ncBatchComments" />
+					<!-- Product -->
+					<show id="nc:ncProductFamilly" />
+					<show id="nc:ncProduct" />
+					<!-- Action corrective -->
+					<show id="nc:acType" />
+					<show id="nc:acPreviDate" />
+					<show id="nc:acRealisationDate" />
+					<show id="nc:acVerificationDate" />
+					<show id="nc:acComments" />
+					<show id="nc:acSpeaker" />
+					<show id="nc:acDescription" />
+					<show id="nc:acEfficiency" />
+					<show id="nc:acChecker" />
+				</field-visibility>
+				<appearance>
+					<!-- TODO i18n label-id -->
+					<set id="nc-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="title" label="Info non conformité" />
+              		<field id="cm:name" set="nc-info" />
+              		<field id="nc:ncCode" set="nc-info" />
+              		
+					<field id="nc:ncType" set="nc-info" />
+					<field id="nc:ncSeverity" set="nc-info" />
+					
+					<field id="nc:ncCreationStep" set="nc-info" />
+					<field id="nc:ncDetectionStep" set="nc-info" />
+					
+					<field id="nc:ncDateCreation" set="nc-info" />
+					<field id="nc:ncDateDetection" set="nc-info" />
+					
+					<field id="nc:ncQuantityNc" set="nc-info" />
+					<field id="nc:ncQuantityNcUnit" set="nc-info" />
+					
+					<field id="nc:ncCost" set="nc-info" />
+					<field id="nc:ncCostUnit" set="nc-info" />
+					
+					<field id="cm:description"  set="nc-info" />
+					<field id="nc:ncCause" set="nc-info" />
+					
+					
+					<field id="nc:ncService" set="nc-info" />
+					<field id="nc:ncComments" set="nc-info" />
+
+					<set id="product-info" appearance="bordered-panel" label="Information produit" />
+					<field id="nc:ncProductFamilly" set="product-info" />
+					<field id="nc:ncProduct"  set="product-info"/>
+					<set id="ac-info" appearance="bordered-panel" label="Action corrective" />
+					<field id="nc:acType" set="ac-info" />
+					<field id="nc:acPreviDate" set="ac-info"/>
+					<field id="nc:acRealisationDate" set="ac-info"/>
+					<field id="nc:acVerificationDate" set="ac-info"/>
+					<field id="nc:acComments" set="ac-info"/>
+					<field id="nc:acSpeaker" set="ac-info"/>
+					<field id="nc:acDescription" set="ac-info" />
+					<field id="nc:acEfficiency" set="ac-info"/>
+					<field id="nc:acChecker" set="ac-info"/>
+					<set id="batch-info" appearance="bordered-panel" label="Identification du lot" />
+					<field id="nc:ncBatchNumber" set="batch-info" />
+					<field id="nc:ncOrderNb"  set="batch-info"/>
+					<field id="nc:ncBatchComments"  set="batch-info"/>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	
 
 	<!-- ________________________________________________________________ ASPECTS 
 		________________________________________________________________ -->

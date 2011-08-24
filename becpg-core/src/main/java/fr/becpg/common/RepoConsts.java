@@ -52,6 +52,8 @@ public class RepoConsts {
 	public static final String PATH_BIO_ORIGINS = "BioOrigins";	
 	public static final String PATH_PRODUCT_TEMPLATES = "ProductTemplates";
 	public static final String PATH_PRODUCTS = "Products";
+	public static final String PATH_QUALITY = "Quality";
+	public static final String PATH_NC = "Nc";
 	public static final String PATH_EXCHANGE = "Exchange";
 	public static final String PATH_IMPORT = "Import";
 	public static final String PATH_IMPORT_TO_TREAT	= "ImportToTreat";

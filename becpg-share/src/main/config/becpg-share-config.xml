@@ -85,6 +85,8 @@
 				<subtype name="bcpg:organo" />	
 				<subtype name="bcpg:physicoChem" />	
 				
+			    <subtype name="nc:nc" />	
+				
 				<subtype name="bcpg:supplier" />
 				<subtype name="bcpg:client" />		
 				
