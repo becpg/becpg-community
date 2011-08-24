@@ -11,6 +11,12 @@
 	language governing permissions and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>becpg-parent</artifactId>
+		<groupId>fr.becpg</groupId>
+		<version>0.1.3</version>
+		<relativePath>../</relativePath>
+	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>becpg</groupId>
 	<artifactId>becpg-share</artifactId>
@@ -24,85 +30,11 @@
 		AMP module version. Instead we use the buildnumber-maven-plugin. This requires 
 		a scm connection. -->
 	<version>0.1.3</version>
-	<description>beCPG repository share</description>
-	<repositories>
-		<repository>
-			<id>alfresco-public-snapshots</id>
-			<url>http://maven.alfresco.com/nexus/content/groups/public-snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</repository> 
-		<repository>
-			<id>alfresco-public</id>
-			<url>http://maven.alfresco.com/nexus/content/groups/public</url>
-		</repository>
-		<repository>
-			<id>alfresco-ecm4</id>
-			<url>http://ecm4you.svn.sourceforge.net/svnroot/ecm4you/trunk/repos/</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>ibiblio</id>
-			<url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>alfresco-public</id>
-			<url>http://maven.alfresco.com/nexus/content/groups/public</url>
-		</pluginRepository> 
-		<pluginRepository>
-			<id>alfresco-public-snapshots</id>
-			<url>http://maven.alfresco.com/nexus/content/groups/public-snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</pluginRepository>	
-	</pluginRepositories>
+	<description>beCPG Share ui</description>
+	
 	<properties>
-		<!-- Default for which src/main/properties/<env>/application.properties 
-			is loaded. NB: used only for the 'test' profile (e.g. '-P test' on the mvn 
-			commandline) jetty run deployment, does not impact AMP behavior which is 
-			typically environment independent -->
-		<env>local</env>
 		<!-- Webapp used to test/develop locally the AMP -->
 		<webapp.name>becpg-share-webapp</webapp.name>
-		<!-- | | By default the src/test/properties/local/application.properties 
-			uses the property "alfresco.data.location" to specify where | alf_data gets 
-			created. | For local jetty:run deployment default creation dir is under project 
-			root folder (as location is specified relatively to run | dir). Please add 
-			alf_data_jetty in svn/cvs ignores in order not to commit that. You can also 
-			specified a different (out of the | sproject) folder | by editing the following 
-			properties. | DB is also configurable here. Of course keep in sync these 
-			two values otherwise you'll get integrity errors. | | Empty log dir creates 
-			file alfresco.log in appserver default dir. You can also specify a meaningful 
-			log directory for the server | (add a trailing slash, e.g. '/var/log/alfresco/' 
-			) | | Jetty embedded run logs by default in target/alfresco.log -->
-		<alfresco.data.location>/opt/alfresco/alf_data/alf_data_34b_demoFood_dev</alfresco.data.location>
-		<alfresco.db.name>alf_34b_demoFood_dev</alfresco.db.name>
-		<alfresco.db.username>alfresco</alfresco.db.username>
-		<alfresco.db.password>alfresco</alfresco.db.password>
-		<webapp.log.level>error</webapp.log.level>
-		<webapp.log.dir></webapp.log.dir>
-		<!-- End of testing webapp specific properties -->
-		<!-- Module specific build time properties -->
-		<module.log.level>info</module.log.level>
-		<alfresco.version>3.4</alfresco.version>
-		<alfresco.sdk.version>3.4</alfresco.sdk.version>
-		<!-- Tests -->
-		<alfresco.webapp.path>/usr/share/tomcat6/webapps/alfresco</alfresco.webapp.path>
-		<alfresco.sdk.path>../../setup/Alfresco/Alfresco-3.4.b/sdk/lib/server</alfresco.sdk.path>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<!-- need to list these as a provided so that Maven doesn't download them 
 		and include them in the AMP, they are provided by Alfresco -->
@@ -111,11 +43,7 @@
 	</dependencies>
 	<!-- The scm is required for the buildnumber-maven-plugin which is required 
 		for AMP version numbering -->
-	<scm>
-		<connection>scm:svn:http://domain.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://${maven.username}@domain.com/svn/trunk/</developerConnection>
-		<url>http://domain.com/svn/trunk/</url>
-	</scm>
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -406,7 +334,7 @@
 						<includes>
 							<include>module.properties</include>
 						</includes>
-						<targetPath>alfresco/module/becpg.becpg-share</targetPath>
+						<targetPath>alfresco/module/${pom.groupId}-${pom.artifactId}</targetPath>
 					</testResource>
 				</testResources>
 			</build>

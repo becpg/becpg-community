@@ -1,7 +1,9 @@
+#!/bin/sh
+. ./common.sh
 
 echo "install alfresco jar"
 
-cd /opt/alfresco-3.4.d/sdk/lib/server/
+cd $ALF_SDK/lib/server/
 
 mvn install:install-file -Dfile=alfresco-repository-3.4.d.jar	-DgroupId=org.alfresco.sdk -DartifactId=alfresco-repository -Dversion=3.4 -Dpackaging=jar -Dclassifier=community -DgeneratePom=true
 mvn install:install-file -Dfile=alfresco-core-3.4.d.jar 	-DgroupId=org.alfresco.sdk -DartifactId=alfresco-core -Dversion=3.4 -Dpackaging=jar -Dclassifier=community -DgeneratePom=true
@@ -23,7 +25,7 @@ mvn install:install-file -Dfile=dependencies/jbpm/jbpm-jpdl-3.3.1.jar -DgroupId=
 
 echo "birt runtime"
 
-cd /opt/birt-runtime-2_6_1/
+cd $BIRT_HOME
 mvn install:install-file -Dfile=ReportEngine/lib/coreapi.jar -DgroupId=birt-runtime -DartifactId=coreapi -Dversion=2.6.1 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=ReportEngine/lib/engineapi.jar -DgroupId=birt-runtime -DartifactId=engineapi -Dversion=2.6.1 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=ReportEngine/lib/modelapi.jar -DgroupId=birt-runtime -DartifactId=modelapi -Dversion=2.6.1 -Dpackaging=jar -DgeneratePom=true
