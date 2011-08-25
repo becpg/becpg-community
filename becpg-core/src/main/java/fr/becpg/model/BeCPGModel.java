@@ -36,6 +36,10 @@ public interface BeCPGModel {
 	static final QName TYPE_PRODUCTTEMPLATE = QName.createQName(BECPG_URI,
 			"productTemplate");
 	
+	// productSpecification
+	static final QName TYPE_PRODUCT_SPECIFICATION = QName.createQName(BECPG_URI,
+	"productSpecification");
+	
 	// productMicrobioCriteria
 	/** The Constant TYPE_PRODUCT_MICROBIO_CRITERIA. */
 	static final QName TYPE_PRODUCT_MICROBIO_CRITERIA = QName.createQName(BECPG_URI,
@@ -81,15 +85,7 @@ public interface BeCPGModel {
 	
 	/** The Constant PROP_PRODUCT_UNIT. */
 	static final QName PROP_PRODUCT_UNIT = QName.createQName(BECPG_URI,
-	"productUnit");
-	
-	/** The Constant PROP_PRODUCT_QTY. */
-	static final QName PROP_PRODUCT_QTY = QName.createQName(BECPG_URI,
-			"productQty");	
-	
-	/** The Constant PROP_PRODUCT_DENSITY. */
-	static final QName PROP_PRODUCT_DENSITY = QName.createQName(BECPG_URI,
-			"productDensity");
+	"productUnit");	
 	
 	/** The Constant PROP_PRODUCT_REPORT_MODIFIED. */
 	static final QName PROP_PRODUCT_REPORT_MODIFIED = QName.createQName(BECPG_URI,
@@ -179,6 +175,9 @@ public interface BeCPGModel {
 	static final QName PROP_COMPOLIST_QTY_SUB_FORMULA = QName.createQName(BECPG_URI,
 	"compoListQtySubFormula");
 	
+	static final QName PROP_COMPOLIST_QTY_AFTER_PROCESS = QName.createQName(BECPG_URI,
+	"compoListQtyAfterProcess");
+	
 	/** The Constant PROP_COMPOLIST_UNIT. */
 	static final QName PROP_COMPOLIST_UNIT = QName.createQName(BECPG_URI,
 	"compoListUnit");
@@ -197,6 +196,22 @@ public interface BeCPGModel {
 	/** The Constant ASSOC_COMPOLIST_FATHER. */
 	static final QName ASSOC_COMPOLIST_FATHER = QName.createQName(BECPG_URI,
 			"compoListFather");
+	
+	// packagingList
+	static final QName TYPE_PACKAGINGLIST = QName.createQName(BECPG_URI,
+			"packagingList");
+	
+	static final QName ASSOC_PACKAGINGLIST_PRODUCT = QName.createQName(BECPG_URI,
+			"packagingListProduct");
+		
+	static final QName PROP_PACKAGINGLIST_QTY = QName.createQName(BECPG_URI,
+			"packagingListQty");
+		
+	static final QName PROP_PACKAGINGLIST_UNIT = QName.createQName(BECPG_URI,
+			"packagingListUnit");
+	
+	static final QName PROP_PACKAGINGLIST_PKG_LEVEL = QName.createQName(
+			BECPG_URI, "packagingListPkgLevel");	
 
 	// costList
 	/** The Constant TYPE_COSTLIST. */
@@ -332,7 +347,37 @@ public interface BeCPGModel {
 	/** The Constant ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM. */
 	static final QName ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM = QName.createQName(
 			BECPG_URI, "pclPhysicoChem");
-
+	
+	// forbiddenIngList
+	static final QName TYPE_FORBIDDENINGLIST = QName.createQName(BECPG_URI,
+			"forbiddenIngList");
+	static final QName PROP_FIL_REQ_TYPE = QName.createQName(BECPG_URI,
+			"filReqType");
+	static final QName PROP_FIL_REQ_MESSAGE = QName.createQName(BECPG_URI,
+			"filReqMessage");
+	static final QName PROP_FIL_QTY_PERC_MAXI = QName.createQName(BECPG_URI,
+			"filQtyPercMaxi");
+	static final QName PROP_FIL_IS_GMO = QName.createQName(BECPG_URI,
+			"filIsGMO");
+	static final QName PROP_FIL_IS_IONIZED = QName.createQName(BECPG_URI,
+			"filIsIonized");
+	static final QName ASSOC_FIL_INGS = QName.createQName(BECPG_URI,
+			"filIngs");
+	static final QName ASSOC_FIL_GEO_ORIGINS = QName.createQName(BECPG_URI,
+			"filGeoOrigins");
+	static final QName ASSOC_FIL_BIO_ORIGINS = QName.createQName(BECPG_URI,
+			"filBioOrigins");		
+	
+	// reqCtrlList
+	static final QName TYPE_REQCTRLLIST = QName.createQName(BECPG_URI,
+			"reqCtrlList");
+	static final QName PROP_RCL_REQ_TYPE = QName.createQName(BECPG_URI,
+			"rclReqType");
+	static final QName PROP_RCL_REQ_MESSAGE = QName.createQName(BECPG_URI,
+			"rclReqMessage");	
+	static final QName ASSOC_RCL_SOURCES = QName.createQName(BECPG_URI,
+			"rclSources");
+	
 	// allergen
 	/** The Constant TYPE_ALLERGEN. */
 	static final QName TYPE_ALLERGEN = QName.createQName(BECPG_URI, "allergen");
@@ -493,6 +538,12 @@ public interface BeCPGModel {
 	
 	/** The Constant ASPECT_TRANSFORMATION. */
 	static final QName ASPECT_TRANSFORMATION = QName.createQName(BECPG_URI,	"transformationAspect");
+	static final QName PROP_PRODUCT_QTY = QName.createQName(BECPG_URI,
+			"productQty");		
+	static final QName PROP_PRODUCT_DENSITY = QName.createQName(BECPG_URI,
+			"productDensity");	
+	static final QName ASSOC_PRODUCT_SPECIFICATION = QName.createQName(BECPG_URI,
+			"productSpecification");
 	
 	// ean aspect
 	/** The Constant ASPECT_EAN. */

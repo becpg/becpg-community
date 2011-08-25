@@ -40,6 +40,8 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.report.ProductReportService;
 
 // TODO: Auto-generated Javadoc
@@ -261,11 +263,12 @@ public class ProductServiceImpl implements ProductService {
 
 		//Load product 
     	Collection<QName> dataLists = new ArrayList<QName>();				
-		dataLists.add(BeCPGModel.TYPE_COMPOLIST);	
-    	ProductData productData = productDAO.find(productNodeRef, dataLists);    
+		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+		dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+    	ProductData productData = productDAO.find(productNodeRef, dataLists);     	    
     	
-    	// do the formulation if the product has a composition list defined
-    	if(productData.getCompoList() != null){
+    	// do the formulation if the product has a composition, or packaging list defined
+    	if(productData.getCompoList() != null || productData.getPackagingList() != null){
     		
     		//Call visitors   
     		productData = compositionCalculatingVisitor.visit(productData);
@@ -279,6 +282,7 @@ public class ProductServiceImpl implements ProductService {
 	    	dataLists.add(BeCPGModel.TYPE_COSTLIST);
 	    	dataLists.add(BeCPGModel.TYPE_INGLIST);
 	    	dataLists.add(BeCPGModel.TYPE_INGLABELINGLIST);
+	    	dataLists.add(BeCPGModel.TYPE_REQCTRLLIST);
 	    	productDAO.update(productNodeRef, productData, dataLists);
     	}    	    	    
     }        
@@ -592,7 +596,7 @@ public class ProductServiceImpl implements ProductService {
 	 * @see fr.becpg.repo.product.ProductService#getWUsedProduct(org.alfresco.service.cmr.repository.NodeRef)
 	 */
 	@Override
-	public List<CompoListDataItem> getWUsedProduct(NodeRef productNodeRef) {
+	public List<CompoListDataItem> getWUsedCompoList(NodeRef productNodeRef) {
 		
 		logger.debug("getWUsedProduct");
 		
@@ -624,9 +628,7 @@ public class ProductServiceImpl implements ProductService {
 							int level = (Integer)properties.get(BeCPGModel.PROP_DEPTH_LEVEL);
 							CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 							
-							logger.debug("CompoListUnit : " + (String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT) + " - "+ compoListUnit);
-							
-							CompoListDataItem compoListDataItem = new CompoListDataItem(nodeRef, wUsedLevel, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), compoListUnit, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), null);
+							CompoListDataItem compoListDataItem = new CompoListDataItem(nodeRef, wUsedLevel, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), null);
 							wUsedList.add(compoListDataItem);
 				    		
 				    		//load recipe fathers
@@ -644,8 +646,10 @@ public class ProductServiceImpl implements ProductService {
 									
 									properties = nodeService.getProperties(fatherNodeRef);
 									compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
-									compoListDataItem = new CompoListDataItem(nodeRef, wUsedLevel, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), compoListUnit, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), null);
+									compoListDataItem = new CompoListDataItem(fatherNodeRef, wUsedLevel, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), null);
 									wUsedList.add(compoListDataItem);
+									
+									nodeRef = fatherNodeRef;
 								}
 							}
 						
@@ -659,5 +663,53 @@ public class ProductServiceImpl implements ProductService {
 		logger.debug("wUsedList size" + wUsedList.size());
 		
 		return wUsedList;
-	}		
+	}
+	
+	@Override
+	public List<PackagingListDataItem> getWUsedPackagingList(NodeRef productNodeRef) {
+		
+		logger.debug("getWUsedProduct");
+		
+		List<PackagingListDataItem> wUsedList = new ArrayList<PackagingListDataItem>();
+		List<AssociationRef> associationRefs = nodeService.getSourceAssocs(productNodeRef, BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);
+
+		logger.debug("associationRefs size" + associationRefs.size());
+		
+		for(AssociationRef associationRef : associationRefs){
+						
+			NodeRef nodeRef = associationRef.getSourceRef();									
+			
+			//we display nodes that are in workspace
+			if(nodeRef != null && nodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)){
+				NodeRef compoListNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
+
+				if(compoListNodeRef != null){
+					NodeRef dataListsNodeRef = nodeService.getPrimaryParent(compoListNodeRef).getParentRef();
+					
+					if(dataListsNodeRef != null){
+						NodeRef rootNodeRef = nodeService.getPrimaryParent(dataListsNodeRef).getParentRef();
+						logger.debug("rootNodeRef: " + rootNodeRef);
+						
+						//we don't display history version
+						if(!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+							
+							Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);			
+							PackagingListUnit packagingListUnit = PackagingListUnit.valueOf((String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_UNIT));							
+							
+							PackagingListDataItem packagingListDataItem = new PackagingListDataItem(nodeRef, 									
+										(Float)properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY), 
+										packagingListUnit, 
+										(String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), rootNodeRef);
+							
+							wUsedList.add(packagingListDataItem);
+						}
+					}
+				}
+			}
+		}
+		
+		logger.debug("wUsedList size" + wUsedList.size());
+		
+		return wUsedList;
+	}
 }

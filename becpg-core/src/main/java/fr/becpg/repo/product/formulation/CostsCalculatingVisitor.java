@@ -28,6 +28,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.sort.CostListDataItemDecorator;
 import fr.becpg.repo.product.data.productList.sort.CostListSortComparator;
 
@@ -105,17 +106,29 @@ public class CostsCalculatingVisitor implements ProductVisitor {
  */
 @Override
 	public ProductData visit(ProductData formulatedProduct){
-		logger.debug("Costs calculating visitor");
+		logger.debug("Costs compoList calculating visitor");
 		
-		// no compo => no formulation
-		if(formulatedProduct.getCompoList() == null){			
-			logger.debug("no compo => no formulation");
-			return formulatedProduct;
+		Map<NodeRef, CostListDataItem> costMap = new HashMap<NodeRef, CostListDataItem>(); 
+			
+		/*
+		 * Calculate the costs of the compoList
+		 */
+		
+		if(formulatedProduct.getCompoList() != null){						
+		
+			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList());		
+			costMap = visitCompoListChildren(formulatedProduct, composite);
 		}
 		
-		Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList());		
-		Map<NodeRef, CostListDataItem> costMap = visitChildren(formulatedProduct, composite);
-				
+		/*
+		 * Calculate the costs of the packaging
+		 */
+		if(formulatedProduct.getPackagingList() != null){
+			for(PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList()){
+				visitPackagingLeaf(formulatedProduct, packagingListDataItem, costMap);
+			}
+		}		
+		
 		List<CostListDataItem> costList = new ArrayList<CostListDataItem>(costMap.values());
 		
 		//Take in account net weight
@@ -144,7 +157,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	 * @param compoList
 	 * @param costMap
 	 */
-	private Map<NodeRef, CostListDataItem> visitChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite){
+	private Map<NodeRef, CostListDataItem> visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite){
 	
 		Map<NodeRef, CostListDataItem> costMap = new HashMap<NodeRef, CostListDataItem>();
 		
@@ -154,7 +167,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				
 				// calculate children costs
 				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
-				Map<NodeRef, CostListDataItem> childrenCostMap =  visitChildren(formulatedProduct, c);
+				Map<NodeRef, CostListDataItem> childrenCostMap =  visitCompoListChildren(formulatedProduct, c);
 				
 				// take in account the loss perc
 				Float lossPerc = c.getData().getLossPerc() != null ? c.getData().getLossPerc() : 0;
@@ -187,7 +200,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				}				
 			}
 			else{
-				visitPart(formulatedProduct, component.getData(), costMap);
+				visitCompoListLeaf(formulatedProduct, component.getData(), costMap);
 			}			
 		}	
 		
@@ -195,13 +208,13 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	}
 
 	/**
-	 * Visit part.
+	 * Visit a leaf (SF/RM) of the compoList
 	 *
 	 * @param formulatedProduct the formulated product
 	 * @param compoListDataItem the compo list data item
 	 * @param costMap the cost map
 	 */
-	private void visitPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, Map<NodeRef, CostListDataItem> costMap){
+	private void visitCompoListLeaf(ProductData formulatedProduct, CompoListDataItem compoListDataItem, Map<NodeRef, CostListDataItem> costMap){
 		
 		Collection<QName> dataLists = new ArrayList<QName>();		
 		dataLists.add(BeCPGModel.TYPE_COSTLIST);
@@ -223,9 +236,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				
 				String unit = calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(costNodeRef, BeCPGModel.PROP_COSTCURRENCY));			
 				newCostListDataItem.setUnit(unit);
-				costMap.put(costNodeRef, newCostListDataItem);
-				
-				logger.debug("cost added..., unit :" + unit + " - productUnit: " + formulatedProduct.getUnit());
+				costMap.put(costNodeRef, newCostListDataItem);				
 			}					
 			
 			//Calculate value
@@ -237,6 +248,57 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			if(qty != null && value != null){
 				
 				Float valueToAdd = qty * value * (1 + lossPerc / 100);
+				if(newValue != null){
+					newValue += valueToAdd;
+				}
+				else{
+					newValue = valueToAdd;
+				}
+			}			
+			newCostListDataItem.setValue(newValue);
+		}
+	}
+	
+	/**
+	 * Visit a packaging item
+	 *
+	 * @param formulatedProduct the formulated product
+	 * @param packagingListDataItem the packaging list data item
+	 * @param costMap the cost map
+	 */
+	private void visitPackagingLeaf(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem, Map<NodeRef, CostListDataItem> costMap){
+		
+		Collection<QName> dataLists = new ArrayList<QName>();		
+		dataLists.add(BeCPGModel.TYPE_COSTLIST);
+		ProductData productData = productDAO.find(packagingListDataItem.getProduct(), dataLists);
+		
+		if(productData.getCostList() == null){
+			return;
+		}
+		
+		for(CostListDataItem costListDataItem : productData.getCostList()){			
+			
+			//Look for cost
+			NodeRef costNodeRef = costListDataItem.getCost();
+			CostListDataItem newCostListDataItem = costMap.get(costNodeRef);
+			
+			if(newCostListDataItem == null){
+				newCostListDataItem =new CostListDataItem();
+				newCostListDataItem.setCost(costNodeRef);
+				
+				String unit = calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(costNodeRef, BeCPGModel.PROP_COSTCURRENCY));			
+				newCostListDataItem.setUnit(unit);
+				costMap.put(costNodeRef, newCostListDataItem);
+			}					
+			
+			//Calculate value
+			Float newValue = newCostListDataItem.getValue();
+			Float qty = FormulationHelper.getQty(packagingListDataItem);
+			Float value = costListDataItem.getValue();
+			
+			if(qty != null && value != null){
+				
+				Float valueToAdd = qty * value;
 				if(newValue != null){
 					newValue += valueToAdd;
 				}

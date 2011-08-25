@@ -309,6 +309,44 @@
 				</list>
 			</parameter>
 		</constraint>-->
+		<constraint name="bcpg:packagingListUnit" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>P</value>
+					<value>PP</value>
+					<value>m</value>
+					<value>m2</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:packagingLevel" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Primaire</value>
+					<value>Secondaire</value>
+					<value>Tertiaire</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:reqTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Interdit</value>
+					<value>Toléré</value>
+					<value>Info</value>
+				</list>
+			</parameter>
+		</constraint>	
+		<constraint name="bcpg:nullableBoolean" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Vrai</value>
+					<value>Faux</value>
+				</list>
+			</parameter>
+		</constraint>		
 	</constraints>
 
 	<types>
@@ -317,6 +355,13 @@
 			<parent>cm:content</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:productTypeAspect</aspect>
+				<aspect>bcpg:productListsAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="bcpg:productSpecification">
+			<parent>cm:content</parent>
+			<mandatory-aspects>
 				<aspect>bcpg:productListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
@@ -567,6 +612,10 @@
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 				</property>
+				<property name="bcpg:compoListQtyAfterProcess">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
 				<property name="bcpg:compoListUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
@@ -604,7 +653,7 @@
 				<association name="bcpg:compoListFather">
 					<source>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</source>
 					<target>
 						<class>bcpg:compoList</class>
@@ -628,6 +677,43 @@
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
 			</mandatory-aspects>
+		</type>
+		
+		<!-- _______________________________________ PACKAGING ________________________________________________ -->
+		<type name="bcpg:packagingList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:packagingListQty">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>				
+				<property name="bcpg:packagingListUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:packagingListUnit" />
+					</constraints>
+				</property>				
+				<property name="bcpg:packagingListPkgLevel">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:packagingLevel" />
+					</constraints>
+				</property>				
+			</properties>
+			<associations>				
+				<association name="bcpg:packagingListProduct">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 		</type>
 
 		<!-- ________________________________________________________________ LISTES 
@@ -754,7 +840,7 @@
 				<property name="bcpg:ingListIsIonized">
 					<type>d:boolean</type>
 					<default>false</default>
-				</property>
+				</property>				
 			</properties>
 			<associations>
 				<association name="bcpg:ingListIng">
@@ -933,6 +1019,108 @@
 				</association>
 			</associations>
 		</type>
+		
+		<!-- List used to specify what is forbidden -->
+		<type name="bcpg:forbiddenIngList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:filReqType">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:reqTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:filReqMessage">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:filQtyPercMaxi">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:filIsGMO">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:nullableBoolean" />
+					</constraints>
+				</property>
+				<property name="bcpg:filIsIonized">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:nullableBoolean" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:filIngs">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:ing</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:filGeoOrigins">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:filBioOrigins">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:bioOrigin</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>				
+			</associations>
+		</type>
+		
+		<!-- List used to display the result of the requirement controls -->
+		<type name="bcpg:reqCtrlList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:rclReqType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:reqTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:rclReqMessage">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:rclSources">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>					
+			</associations>
+		</type>
 		<!-- ________________________________________________________________ AUTO 
 			COMP ________________________________________________________________ -->
 
@@ -991,8 +1179,7 @@
 		</type>
 				
 	</types>
-	<!-- ________________________________________________________________ ASPECTS 
-		________________________________________________________________ -->
+	<!-- __________________________________________ ASPECTS _________________________________________ -->
 
 	<aspects>
 		<aspect name="bcpg:productAspect">
@@ -1066,6 +1253,19 @@
 					<default>1</default>
 				</property>
 			</properties>
+			<associations>
+				<association name="bcpg:productSpecification">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:productSpecification</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 
 		<aspect name="bcpg:eanAspect">

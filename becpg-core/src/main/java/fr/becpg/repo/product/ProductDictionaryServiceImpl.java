@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
@@ -366,5 +367,32 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 	public String getFolderName(SystemProductType systemProductType) {
 		
 		return TranslateHelper.getTranslatedPath(systemProductType.toString());
+	}
+
+	@Override
+	public QName getWUsedList(NodeRef childNodeRef) {
+		
+		QName wusedList = null;
+		QName type = nodeService.getType(childNodeRef);
+		SystemProductType systemProductType = SystemProductType.valueOf(type);
+		
+		if(systemProductType.equals(SystemProductType.RawMaterial) ||
+				systemProductType.equals(SystemProductType.SemiFinishedProduct) ||
+				systemProductType.equals(SystemProductType.LocalSemiFinishedProduct) ||
+				systemProductType.equals(SystemProductType.FinishedProduct) ||
+				systemProductType.equals(SystemProductType.CondSalesUnit)){
+			
+			wusedList = BeCPGModel.TYPE_COMPOLIST;
+		}
+		else if(systemProductType.equals(SystemProductType.PackagingMaterial) ||
+				systemProductType.equals(SystemProductType.PackagingKit)){
+			
+			wusedList = BeCPGModel.TYPE_PACKAGINGLIST;
+		}
+		else{
+			logger.error("Unknown SystemProductType: " + systemProductType);
+		}
+		
+		return wusedList;
 	}
 }

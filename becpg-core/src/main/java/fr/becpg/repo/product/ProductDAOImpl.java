@@ -24,14 +24,19 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.htmlparser.tags.LinkTag;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.SystemProductType;
+import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
+import fr.becpg.repo.data.hierarchicalList.Composite;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.CondSalesUnitData;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
@@ -44,12 +49,17 @@ import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
+import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.NullableBoolean;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -294,6 +304,15 @@ public class ProductDAOImpl implements ProductDAO{
 	    		else if (dataList.equals(BeCPGModel.TYPE_PHYSICOCHEMLIST)) {
 	    			productData.setPhysicoChemList(loadPhysicoChemList(listsContainerNodeRef));
 	    		}
+	    		else if (dataList.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
+	    			productData.setPackagingList(loadPackagingList(listsContainerNodeRef));
+	    		}
+	    		else if (dataList.equals(BeCPGModel.TYPE_FORBIDDENINGLIST)) {
+	    			productData.setForbiddenIngList(loadForbiddenIngList(listsContainerNodeRef));
+	    		}
+	    		else if (dataList.equals(BeCPGModel.TYPE_REQCTRLLIST)) {
+	    			productData.setReqCtrlList(loadReqCtrlList(listsContainerNodeRef));
+	    		}
 	    		else{
 	    			// specific TODO
 	    			logger.error(String.format("DataList '%s' is not loaded since it is not implemented.", dataList));
@@ -383,7 +402,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		NodeRef part = (compoAssocRefs.get(0)).getTargetRef();		    		
 		    		CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 		    		
-		    		CompoListDataItem compoListDataItem = new CompoListDataItem(nodeRef, (Integer)properties.get(BeCPGModel.PROP_DEPTH_LEVEL), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), compoListUnit, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), part);
+		    		CompoListDataItem compoListDataItem = new CompoListDataItem(nodeRef, (Integer)properties.get(BeCPGModel.PROP_DEPTH_LEVEL), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), part);
 		    		compoList.add(compoListDataItem);
 		    	}
     		}    		
@@ -666,6 +685,151 @@ public class ProductDAOImpl implements ProductDAO{
     }
     
     /**
+     * Load packaging list.
+     *
+     * @param listContainerNodeRef the list container node ref
+     * @return the list
+     */
+    private List<PackagingListDataItem> loadPackagingList(NodeRef listContainerNodeRef)
+    {
+    	List<PackagingListDataItem> packagingList = null;
+    	
+    	if(listContainerNodeRef != null)
+    	{    		
+    		NodeRef costListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);
+    		
+    		if(costListNodeRef != null)
+    		{
+    			packagingList = new ArrayList<PackagingListDataItem>();
+				List<FileInfo> nodes = fileFolderService.listFiles(costListNodeRef);
+	    		
+	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
+		    	{	    			
+	    			FileInfo node = nodes.get(z_idx);
+	    			NodeRef nodeRef = node.getNodeRef();	    					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+		    	
+		    		List<AssociationRef> productAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);
+		    		NodeRef productNodeRef = (productAssocRefs.get(0)).getTargetRef();
+		    		PackagingListUnit packagingListUnit = PackagingListUnit.valueOf((String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_UNIT));
+		    		
+		    		PackagingListDataItem packagingListDataItem = new PackagingListDataItem(nodeRef, (Float)properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY), packagingListUnit, (String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), productNodeRef);
+		    		packagingList.add(packagingListDataItem);
+		    	}
+    		}    		
+    	}
+    	
+    	return packagingList;
+    }  
+    
+    /**
+     * Load forbiddenIng list.
+     *
+     * @param listContainerNodeRef the list container node ref
+     * @return the list
+     */
+    private List<ForbiddenIngListDataItem> loadForbiddenIngList(NodeRef listContainerNodeRef)
+    {
+    	List<ForbiddenIngListDataItem> forbiddenIngList = null;
+    	
+    	if(listContainerNodeRef != null)
+    	{    		
+    		NodeRef forbiddenIngListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);
+    		
+    		if(forbiddenIngListNodeRef != null)
+    		{
+    			forbiddenIngList = new ArrayList<ForbiddenIngListDataItem>();
+				List<FileInfo> nodes = fileFolderService.listFiles(forbiddenIngListNodeRef);
+	    		
+	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
+		    	{	    			
+	    			FileInfo node = nodes.get(z_idx);
+	    			NodeRef nodeRef = node.getNodeRef();	    					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+		    		NullableBoolean isGMO = NullableBoolean.valueOf((String)properties.get(BeCPGModel.PROP_FIL_IS_GMO), true);
+		    		NullableBoolean isIonized = NullableBoolean.valueOf((String)properties.get(BeCPGModel.PROP_FIL_IS_IONIZED), true);
+		    	
+		    		List<AssociationRef> ingAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_FIL_INGS);
+		    		List<NodeRef> ings = new ArrayList<NodeRef>(ingAssocRefs.size());
+		    		for(AssociationRef assocRef : ingAssocRefs){
+		    			ings.add(assocRef.getTargetRef());
+		    		}
+		    		
+		    		List<AssociationRef> geoOriginAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_FIL_GEO_ORIGINS);
+		    		List<NodeRef> geoOrigins = new ArrayList<NodeRef>(geoOriginAssocRefs.size());
+		    		for(AssociationRef assocRef : geoOriginAssocRefs){
+		    			geoOrigins.add(assocRef.getTargetRef());
+		    		}
+		    		
+		    		List<AssociationRef> bioOriginAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_FIL_BIO_ORIGINS);
+		    		List<NodeRef> bioOrigins = new ArrayList<NodeRef>(bioOriginAssocRefs.size());
+		    		for(AssociationRef assocRef : bioOriginAssocRefs){
+		    			bioOrigins.add(assocRef.getTargetRef());
+		    		}
+		    				    		
+		    		ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(nodeRef, 
+		    				(String)properties.get(BeCPGModel.PROP_FIL_REQ_TYPE), 
+		    				(String)properties.get(BeCPGModel.PROP_FIL_REQ_MESSAGE), 
+		    				(Float)properties.get(BeCPGModel.PROP_FIL_QTY_PERC_MAXI), 		    				
+		    				isGMO, 
+		    				isIonized, 
+		    				ings, 
+		    				geoOrigins, 
+		    				bioOrigins);
+		    		
+		    		forbiddenIngList.add(forbiddenIngListDataItem);
+		    	}
+    		}    		
+    	}
+    	
+    	return forbiddenIngList;
+    }
+    
+    /**
+     * Load reqCtrl list.
+     *
+     * @param listContainerNodeRef the list container node ref
+     * @return the list
+     */
+    private List<ReqCtrlListDataItem> loadReqCtrlList(NodeRef listContainerNodeRef)
+    {
+    	List<ReqCtrlListDataItem> reqCtrlList = null;
+    	
+    	if(listContainerNodeRef != null)
+    	{    		
+    		NodeRef reqCtrlListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
+    		
+    		if(reqCtrlListNodeRef != null)
+    		{
+    			reqCtrlList = new ArrayList<ReqCtrlListDataItem>();
+				List<FileInfo> nodes = fileFolderService.listFiles(reqCtrlListNodeRef);
+	    		
+	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
+		    	{	    			
+	    			FileInfo node = nodes.get(z_idx);
+	    			NodeRef nodeRef = node.getNodeRef();	    					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+		    	
+		    		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_RCL_SOURCES);
+		    		List<NodeRef> sources = new ArrayList<NodeRef>(sourceAssocRefs.size());
+		    		for(AssociationRef assocRef : sourceAssocRefs){
+		    			sources.add(assocRef.getTargetRef());
+		    		}		    		
+		    				    		
+		    		ReqCtrlListDataItem reqCtrlListDataItem = new ReqCtrlListDataItem(nodeRef, 
+		    				(String)properties.get(BeCPGModel.PROP_RCL_REQ_TYPE), 
+		    				(String)properties.get(BeCPGModel.PROP_RCL_REQ_MESSAGE), 		    				
+		    				sources);
+		    		
+		    		reqCtrlList.add(reqCtrlListDataItem);
+		    	}
+    		}    		
+    	}
+    	
+    	return reqCtrlList;
+    }
+    
+    /**
      * **************************************************************************************************
      * Private methods for creation														*
      * **************************************************************************************************.
@@ -744,8 +908,16 @@ public class ProductDAOImpl implements ProductDAO{
 	    			createMicrobioList(containerNodeRef, productData.getMicrobioList());
 	    		}
 	    		else if (dataList.equals(BeCPGModel.TYPE_PHYSICOCHEMLIST)) {
-	    			// TODO
-	    			logger.error(String.format("DataList '%s' is not created since it is not implemented.", dataList));
+	    			createPhysicoChemList(containerNodeRef, productData.getPhysicoChemList());
+	    		}
+	    		else if (dataList.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
+	    			createPackagingList(containerNodeRef, productData.getPackagingList());
+	    		}
+	    		else if (dataList.equals(BeCPGModel.TYPE_FORBIDDENINGLIST)) {
+	    			createForbiddenIngList(containerNodeRef, productData.getForbiddenIngList());
+	    		}
+	    		else if (dataList.equals(BeCPGModel.TYPE_REQCTRLLIST)) {
+	    			createReqCtrlList(containerNodeRef, productData.getReqCtrlList());
 	    		}
 	    		else{
 	    			// specific TODO
@@ -922,62 +1094,131 @@ public class ProductDAOImpl implements ProductDAO{
 	    		}
 	    		
 	    		//update or create nodes	    		    			    		
-	    		CompoListDataItem prevCompoListDataItem = null;
-	    		for(CompoListDataItem compoListDataItem : compoList)
-	    		{    				    			
-	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		    		properties.put(BeCPGModel.PROP_DEPTH_LEVEL, compoListDataItem.getDepthLevel());
-		    		properties.put(BeCPGModel.PROP_COMPOLIST_QTY, compoListDataItem.getQty());
-		    		properties.put(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA, compoListDataItem.getQtySubFormula());
-		    		properties.put(BeCPGModel.PROP_COMPOLIST_UNIT, compoListDataItem.getCompoListUnit() == CompoListUnit.Unknown ?  "" : compoListDataItem.getCompoListUnit().toString());
-		    		properties.put(BeCPGModel.PROP_COMPOLIST_LOSS_PERC, compoListDataItem.getLossPerc());
-		    		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_GRP, compoListDataItem.getDeclGrp());
-		    		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_TYPE, compoListDataItem.getDeclType());		    		
-	
-		    		if(filesToUpdate.contains(compoListDataItem.getNodeRef())){
-		    			//update
-		    			nodeService.setProperties(compoListDataItem.getNodeRef(), properties);		    			
-		    		}
-		    		else{
-		    			//create
-		    			ChildAssociationRef childAssocRef = nodeService.createNode(compoListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, compoListDataItem.getProduct().getId()), BeCPGModel.TYPE_COMPOLIST, properties);
-		    			compoListDataItem.setNodeRef(childAssocRef.getChildRef());			    		
-		    		}			    			    	
-		    		
-		    		//Update product
-		    		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-		    		if(compoAssocRefs.size() > 0){
-			    		NodeRef part = (compoAssocRefs.get(0)).getTargetRef();
-			    		if(part != compoListDataItem.getProduct()){
-				    		nodeService.removeAssociation(compoListDataItem.getNodeRef(), part, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);				    		
-			    		}
-		    		}
-		    		nodeService.createAssociation(compoListDataItem.getNodeRef(), compoListDataItem.getProduct(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-		    		
-		    		//store father if level > 1
-		    		if(compoListDataItem.getDepthLevel() > 1){
-		    			
-		    			boolean createFather = true;
-		    			compoAssocRefs = nodeService.getTargetAssocs(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_FATHER);
-		    			if(compoAssocRefs.size() > 0){
-				    		NodeRef fatherNodeRef = (compoAssocRefs.get(0)).getTargetRef();
-				    		
-				    		if(fatherNodeRef != null && fatherNodeRef == prevCompoListDataItem.getNodeRef()){
-				    			createFather = false;
-				    		}
-				    		else{
-				    			nodeService.removeAssociation(compoListDataItem.getNodeRef(), fatherNodeRef, BeCPGModel.ASSOC_COMPOLIST_FATHER);
-				    		}
-		    			}
-		    			if(createFather && prevCompoListDataItem != null)
-		    				nodeService.createAssociation(compoListDataItem.getNodeRef(), prevCompoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_FATHER);		    				    						    	
-		    		}
-		    		
-		    		prevCompoListDataItem = compoListDataItem;
-	    		}	    		 
+//	    		CompoListDataItem prevCompoListDataItem = null;
+//	    		for(CompoListDataItem compoListDataItem : compoList)
+//	    		{    				    			
+//	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+//		    		properties.put(BeCPGModel.PROP_DEPTH_LEVEL, compoListDataItem.getDepthLevel());
+//		    		properties.put(BeCPGModel.PROP_COMPOLIST_QTY, compoListDataItem.getQty());
+//		    		properties.put(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA, compoListDataItem.getQtySubFormula());
+//		    		properties.put(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS, compoListDataItem.getQtyAfterProcess());
+//		    		properties.put(BeCPGModel.PROP_COMPOLIST_UNIT, compoListDataItem.getCompoListUnit() == CompoListUnit.Unknown ?  "" : compoListDataItem.getCompoListUnit().toString());
+//		    		properties.put(BeCPGModel.PROP_COMPOLIST_LOSS_PERC, compoListDataItem.getLossPerc());
+//		    		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_GRP, compoListDataItem.getDeclGrp());
+//		    		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_TYPE, compoListDataItem.getDeclType());		    		
+//	
+//		    		if(filesToUpdate.contains(compoListDataItem.getNodeRef())){
+//		    			//update
+//		    			nodeService.setProperties(compoListDataItem.getNodeRef(), properties);		    			
+//		    		}
+//		    		else{
+//		    			//create
+//		    			ChildAssociationRef childAssocRef = nodeService.createNode(compoListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, compoListDataItem.getProduct().getId()), BeCPGModel.TYPE_COMPOLIST, properties);
+//		    			compoListDataItem.setNodeRef(childAssocRef.getChildRef());			    		
+//		    		}			    			    	
+//		    		
+//		    		//Update product
+//		    		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+//		    		if(compoAssocRefs.size() > 0){
+//			    		NodeRef part = (compoAssocRefs.get(0)).getTargetRef();
+//			    		if(part != compoListDataItem.getProduct()){
+//				    		nodeService.removeAssociation(compoListDataItem.getNodeRef(), part, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);				    		
+//			    		}
+//		    		}
+//		    		nodeService.createAssociation(compoListDataItem.getNodeRef(), compoListDataItem.getProduct(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+//		    		
+//		    		//store father if level > 1
+//		    		if(compoListDataItem.getDepthLevel() > 1){
+//		    			
+//		    			boolean createFather = true;
+//		    			compoAssocRefs = nodeService.getTargetAssocs(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_FATHER);
+//		    			if(compoAssocRefs.size() > 0){
+//				    		NodeRef fatherNodeRef = (compoAssocRefs.get(0)).getTargetRef();
+//				    		
+//				    		if(fatherNodeRef != null && fatherNodeRef == prevCompoListDataItem.getNodeRef()){
+//				    			createFather = false;
+//				    		}
+//				    		else{
+//				    			nodeService.removeAssociation(compoListDataItem.getNodeRef(), fatherNodeRef, BeCPGModel.ASSOC_COMPOLIST_FATHER);
+//				    		}
+//		    			}
+//		    			if(createFather && prevCompoListDataItem != null)
+//		    				nodeService.createAssociation(compoListDataItem.getNodeRef(), prevCompoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_FATHER);		    				    						    	
+//		    		}
+//		    		
+//		    		
+//		    		prevCompoListDataItem = compoListDataItem;
+//	    		}	    
+	    		
+	    		Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(compoList);
+	    		createCompositeCompoListItem(compoListNodeRef, composite, filesToUpdate);
 			}
 		}
 	}    
+	
+	private void createCompositeCompoListItem(NodeRef compoListNodeRef, Composite<CompoListDataItem> composite, List<NodeRef> filesToUpdate){
+		
+		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){
+			
+			CompoListDataItem compoListDataItem = component.getData();
+			
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+    		properties.put(BeCPGModel.PROP_DEPTH_LEVEL, compoListDataItem.getDepthLevel());
+    		properties.put(BeCPGModel.PROP_COMPOLIST_QTY, compoListDataItem.getQty());
+    		properties.put(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA, compoListDataItem.getQtySubFormula());
+    		properties.put(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS, compoListDataItem.getQtyAfterProcess());
+    		properties.put(BeCPGModel.PROP_COMPOLIST_UNIT, compoListDataItem.getCompoListUnit() == CompoListUnit.Unknown ?  "" : compoListDataItem.getCompoListUnit().toString());
+    		properties.put(BeCPGModel.PROP_COMPOLIST_LOSS_PERC, compoListDataItem.getLossPerc());
+    		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_GRP, compoListDataItem.getDeclGrp());
+    		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_TYPE, compoListDataItem.getDeclType());		    		
+
+    		if(filesToUpdate.contains(compoListDataItem.getNodeRef())){
+    			//update
+    			nodeService.setProperties(compoListDataItem.getNodeRef(), properties);		    			
+    		}
+    		else{
+    			//create
+    			ChildAssociationRef childAssocRef = nodeService.createNode(compoListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, compoListDataItem.getProduct().getId()), BeCPGModel.TYPE_COMPOLIST, properties);
+    			compoListDataItem.setNodeRef(childAssocRef.getChildRef());			    		
+    		}			    			    	
+    		
+    		//Update product
+    		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+    		if(compoAssocRefs.size() > 0){
+	    		NodeRef part = (compoAssocRefs.get(0)).getTargetRef();
+	    		if(part != compoListDataItem.getProduct()){
+		    		nodeService.removeAssociation(compoListDataItem.getNodeRef(), part, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);				    		
+	    		}
+    		}
+    		nodeService.createAssociation(compoListDataItem.getNodeRef(), compoListDataItem.getProduct(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+    		
+    		//store father if level > 1
+    		if(compoListDataItem.getDepthLevel() > 1){
+    			
+    			CompoListDataItem compositeCompoListDataItem = composite.getData();
+    			boolean createFather = true;
+    			compoAssocRefs = nodeService.getTargetAssocs(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_FATHER);
+    			if(compoAssocRefs.size() > 0){
+		    		NodeRef fatherNodeRef = (compoAssocRefs.get(0)).getTargetRef();
+		    		
+		    		if(fatherNodeRef != null && fatherNodeRef == compositeCompoListDataItem.getNodeRef()){
+		    			createFather = false;
+		    		}
+		    		else{
+		    			nodeService.removeAssociation(compoListDataItem.getNodeRef(), fatherNodeRef, BeCPGModel.ASSOC_COMPOLIST_FATHER);
+		    		}
+    			}
+    			if(createFather)
+    				nodeService.createAssociation(compoListDataItem.getNodeRef(), compositeCompoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_FATHER);		    				    						    	
+    		}
+    		
+    		if(component instanceof Composite){
+    			
+    			createCompositeCompoListItem(compoListNodeRef, (Composite<CompoListDataItem>)component, filesToUpdate);
+    		}
+    		
+		}
+	}
 	
 	/**
 	 * Create/Update costs.
@@ -1050,11 +1291,10 @@ public class ProductDAOImpl implements ProductDAO{
 	    		}
 			}
 		}
-	}    
+	}   
 	
-	//TODO : create/Update
 	/**
-	 * Creates the ing list.
+	 * Create/Update ings.
 	 *
 	 * @param listContainerNodeRef the list container node ref
 	 * @param ingList the ing list
@@ -1064,45 +1304,112 @@ public class ProductDAOImpl implements ProductDAO{
 	{
 		
 		if(listContainerNodeRef != null)
-		{    		
+		{  
 			NodeRef ingListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_INGLIST);
 			
-			//delete list
-			if(ingListNodeRef != null)
-			{
-				fileFolderService.delete(ingListNodeRef);
+			if(ingList == null){
+				//delete existing list
+				if(ingListNodeRef != null)
+					nodeService.deleteNode(ingListNodeRef);
 			}
+			else{    			
+	    		//ing list, create if needed	    		
+	    		if(ingListNodeRef == null)
+	    		{		    						
+		    		ingListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_INGLIST);
+	    		}
 			
-			if(ingList != null){
-					    		
-	    		ingListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_INGLIST);
+	    		List<FileInfo> files = fileFolderService.listFiles(ingListNodeRef);
 	    		
+	    		//create temp list
+	    		List<NodeRef> ingListToTreat = new ArrayList<NodeRef>();
+	    		for(IngListDataItem ingListDataItem : ingList){
+	    			ingListToTreat.add(ingListDataItem.getIng());
+	    		}
+	    		
+	    		//remove deleted nodes
+	    		Map<NodeRef, NodeRef> filesToUpdate = new HashMap<NodeRef, NodeRef>();
+	    		for(FileInfo file : files){
+	    			
+	    			List<AssociationRef> ingAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.ASSOC_INGLIST_ING);
+		    		NodeRef ingNodeRef = (ingAssocRefs.get(0)).getTargetRef();
+		    		
+	    			if(!ingListToTreat.contains(ingNodeRef)){
+	    				//delete
+	    				nodeService.deleteNode(file.getNodeRef());
+	    			}
+	    			else{
+	    				filesToUpdate.put(ingNodeRef, file.getNodeRef());
+	    			}
+	    		}
+	    		
+	    		//update or create nodes	    		    			    		
 	    		for(IngListDataItem ingListDataItem : ingList)
 	    		{    			
-	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>(); 
-		    		properties.put(BeCPGModel.PROP_INGLIST_QTY_PERC, ingListDataItem.getQtyPerc());
+	    			NodeRef linkNodeRef = ingListDataItem.getIng();	  
+	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+	    			properties.put(BeCPGModel.PROP_INGLIST_QTY_PERC, ingListDataItem.getQtyPerc());
 		    		properties.put(BeCPGModel.PROP_INGLIST_IS_GMO, ingListDataItem.isGMO());
 		    		properties.put(BeCPGModel.PROP_INGLIST_IS_IONIZED, ingListDataItem.isIonized());
-		    		//properties.put(BeCPGModel.PROP_INGLIST_ING, ingListDataItem.getIng()); 			// not a property but an association	    			    	
-	
-		    		ChildAssociationRef childAssocRef = nodeService.createNode(ingListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, ingListDataItem.getIng().getId()), BeCPGModel.TYPE_INGLIST, properties);	    	
-		    		nodeService.createAssociation(childAssocRef.getChildRef(), ingListDataItem.getIng(), BeCPGModel.ASSOC_INGLIST_ING);
 		    		
-		    		if(ingListDataItem.getGeoOrigin() != null){
-			    		for(NodeRef nodeRef : ingListDataItem.getGeoOrigin()){
-			    			nodeService.createAssociation(childAssocRef.getChildRef(), nodeRef, BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
-			    		}
+		    		// Ing
+		    		if(filesToUpdate.containsKey(linkNodeRef)){
+		    			//update
+		    			linkNodeRef = filesToUpdate.get(linkNodeRef);
+		    			nodeService.setProperties(linkNodeRef, properties);		    			
+		    		}
+		    		else{
+		    			//create
+		    			ChildAssociationRef childAssocRef = nodeService.createNode(ingListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, ingListDataItem.getIng().getId()), BeCPGModel.TYPE_INGLIST, properties);
+		    			linkNodeRef = childAssocRef.getChildRef();
+			    		nodeService.createAssociation(linkNodeRef, ingListDataItem.getIng(), BeCPGModel.ASSOC_INGLIST_ING);
 		    		}
 		    		
-		    		if(ingListDataItem.getBioOrigin() != null){
-			    		for(NodeRef nodeRef : ingListDataItem.getBioOrigin()){
-			    			nodeService.createAssociation(childAssocRef.getChildRef(), nodeRef, BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
+		    		// GeoOrigins
+		    		List<AssociationRef> geoOriginsAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
+		    		
+		    		if(ingListDataItem.getGeoOrigin() != null){
+		    			//remove from db
+			    		for(AssociationRef assocRef : geoOriginsAssocRefs){
+			    			if(!ingListDataItem.getGeoOrigin().contains(assocRef.getTargetRef()))
+			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
+			    			else
+			    				ingListDataItem.getGeoOrigin().remove(assocRef.getTargetRef());//already in db
 			    		}
+			    		//add nodes that are not in db
+			    		for(NodeRef nodeRef : ingListDataItem.getGeoOrigin()){
+			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
+			    		}
+		    		}
+		    		else{
+		    			for(AssociationRef assocRef : geoOriginsAssocRefs)
+		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
+		    		}
+		    		
+		    		// BioOrigins
+		    		List<AssociationRef> bioOriginsAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
+		    		
+		    		if(ingListDataItem.getBioOrigin() != null){
+		    			//remove from db
+			    		for(AssociationRef assocRef : bioOriginsAssocRefs){
+			    			if(!ingListDataItem.getBioOrigin().contains(assocRef.getTargetRef()))
+			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
+			    			else
+			    				ingListDataItem.getBioOrigin().remove(assocRef.getTargetRef());//already in db
+			    		}
+			    		//add nodes that are not in db
+			    		for(NodeRef nodeRef : ingListDataItem.getBioOrigin()){
+			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
+			    		}
+		    		}
+		    		else{
+		    			for(AssociationRef assocRef : bioOriginsAssocRefs)
+		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
 		    		}
 	    		}
 			}
 		}
-	}
+	}   
 	
 	/**
 	 * Create/Update nuts.
@@ -1392,6 +1699,391 @@ public class ProductDAOImpl implements ProductDAO{
 			}    		
 		}
 	}
+	
+	/**
+	 * Create/Update physicoChems.
+	 *
+	 * @param listContainerNodeRef the list container node ref
+	 * @param physicoChemList the physicoChem list
+	 * @throws InvalidTypeException the invalid type exception
+	 */
+	private void createPhysicoChemList(NodeRef listContainerNodeRef, List<PhysicoChemListDataItem> physicoChemList) throws InvalidTypeException
+	{
+		
+		if(listContainerNodeRef != null)
+		{  
+			NodeRef physicoChemListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_PHYSICOCHEMLIST);
+			
+			if(physicoChemList == null){
+				//delete existing list
+				if(physicoChemListNodeRef != null)
+					nodeService.deleteNode(physicoChemListNodeRef);
+			}
+			else{    			
+	    		//physicoChem list, create if needed	    		
+	    		if(physicoChemListNodeRef == null)
+	    		{		    						
+		    		physicoChemListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_PHYSICOCHEMLIST);
+	    		}
+			
+	    		List<FileInfo> files = fileFolderService.listFiles(physicoChemListNodeRef);
+	    		
+	    		//create temp list
+	    		List<NodeRef> physicoChemListToTreat = new ArrayList<NodeRef>();
+	    		for(PhysicoChemListDataItem physicoChemListDataItem : physicoChemList){
+	    			physicoChemListToTreat.add(physicoChemListDataItem.getPhysicoChem());
+	    		}
+	    		
+	    		//remove deleted nodes
+	    		Map<NodeRef, NodeRef> filesToUpdate = new HashMap<NodeRef, NodeRef>();
+	    		for(FileInfo file : files){
+	    			
+	    			List<AssociationRef> physicoChemAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM);
+		    		NodeRef physicoChemNodeRef = (physicoChemAssocRefs.get(0)).getTargetRef();
+		    		
+	    			if(!physicoChemListToTreat.contains(physicoChemNodeRef)){
+	    				//delete
+	    				nodeService.deleteNode(file.getNodeRef());
+	    			}
+	    			else{
+	    				filesToUpdate.put(physicoChemNodeRef, file.getNodeRef());
+	    			}
+	    		}
+	    		
+	    		//update or create nodes	    		    			    		
+	    		for(PhysicoChemListDataItem physicoChemListDataItem : physicoChemList)
+	    		{    			
+	    			NodeRef physicoChemNodeRef = physicoChemListDataItem.getPhysicoChem();	  
+	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		    		properties.put(BeCPGModel.PROP_PHYSICOCHEMLIST_VALUE, physicoChemListDataItem.getValue());
+		    		properties.put(BeCPGModel.PROP_PHYSICOCHEMLIST_MINI, physicoChemListDataItem.getMini());
+		    		properties.put(BeCPGModel.PROP_PHYSICOCHEMLIST_MAXI, physicoChemListDataItem.getMaxi());
+		    		properties.put(BeCPGModel.PROP_PHYSICOCHEMLIST_UNIT, physicoChemListDataItem.getUnit());
+	
+		    		if(filesToUpdate.containsKey(physicoChemNodeRef)){
+		    			//update
+		    			nodeService.setProperties(filesToUpdate.get(physicoChemNodeRef), properties);		    			
+		    		}
+		    		else{
+		    			//create
+		    			ChildAssociationRef childAssocRef = nodeService.createNode(physicoChemListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, physicoChemListDataItem.getPhysicoChem().getId()), BeCPGModel.TYPE_PHYSICOCHEMLIST, properties);	    	
+			    		nodeService.createAssociation(childAssocRef.getChildRef(), physicoChemListDataItem.getPhysicoChem(), BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM);
+		    		}			    			    	
+	    		}
+			}
+		}
+	}    
+	
+	/**
+	 * Create/Update packaging.
+	 *
+	 * @param listContainerNodeRef the list container node ref
+	 * @param packagingList the packaging list
+	 * @throws InvalidTypeException the invalid type exception
+	 */
+	private void createPackagingList(NodeRef listContainerNodeRef, List<PackagingListDataItem> packagingList) throws InvalidTypeException
+	{
+
+		if(listContainerNodeRef != null)
+		{    	
+			NodeRef packagingListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);
+			
+			if(packagingList == null){
+				//delete existing list
+				if(packagingListNodeRef != null)
+					nodeService.deleteNode(packagingListNodeRef);
+			}
+			else{
+				
+				//packaging list, create if needed    			
+	    		if(packagingListNodeRef == null)
+	    		{					
+					packagingListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);					
+	    		}    				    			    		    		
+	
+	    		List<FileInfo> files = fileFolderService.listFiles(packagingListNodeRef);
+	    		
+	    		//create temp list
+	    		List<NodeRef> packagingListToTreat = new ArrayList<NodeRef>();
+	    		for(PackagingListDataItem packagingListDataItem : packagingList){
+	    			packagingListToTreat.add(packagingListDataItem.getNodeRef());
+	    		}
+	    		
+	    		//remove deleted nodes
+	    		List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
+	    		for(FileInfo file : files){	    			
+		    		
+	    			if(!packagingListToTreat.contains(file.getNodeRef())){
+	    				//delete
+	    				nodeService.deleteNode(file.getNodeRef());
+	    			}
+	    			else{
+	    				filesToUpdate.add(file.getNodeRef());
+	    			}
+	    		}
+	    		
+	    		//update or create nodes	    		    			    		
+	    		for(PackagingListDataItem packagingListDataItem : packagingList)
+	    		{    				    			
+	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		    		properties.put(BeCPGModel.PROP_PACKAGINGLIST_QTY, packagingListDataItem.getQty());
+		    		properties.put(BeCPGModel.PROP_PACKAGINGLIST_UNIT, packagingListDataItem.getPackagingListUnit() == PackagingListUnit.Unknown ? "" : packagingListDataItem.getPackagingListUnit().toString());
+		    		properties.put(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL, packagingListDataItem.getPkgLevel());
+		    		
+		    		if(filesToUpdate.contains(packagingListDataItem.getNodeRef())){
+		    			//update
+		    			nodeService.setProperties(packagingListDataItem.getNodeRef(), properties);		    			
+		    		}
+		    		else{
+		    			//create
+		    			ChildAssociationRef childAssocRef = nodeService.createNode(packagingListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, packagingListDataItem.getProduct().getId()), BeCPGModel.TYPE_PACKAGINGLIST, properties);
+		    			packagingListDataItem.setNodeRef(childAssocRef.getChildRef());			    		
+		    		}			    			    	
+		    		
+		    		//Update product
+		    		List<AssociationRef> packagingAssocRefs = nodeService.getTargetAssocs(packagingListDataItem.getNodeRef(), BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);
+		    		if(packagingAssocRefs.size() > 0){
+			    		NodeRef part = (packagingAssocRefs.get(0)).getTargetRef();
+			    		if(part != packagingListDataItem.getProduct()){
+				    		nodeService.removeAssociation(packagingListDataItem.getNodeRef(), part, BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);				    		
+			    		}
+		    		}
+		    		nodeService.createAssociation(packagingListDataItem.getNodeRef(), packagingListDataItem.getProduct(), BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);		    				    		
+	    		}	    		 
+			}
+		}
+	}   
+	
+	/**
+	 * Create/Update forbiddenIng.
+	 *
+	 * @param listContainerNodeRef the list container node ref
+	 * @param forbiddenIngList the forbiddenIng list
+	 * @throws InvalidTypeException the invalid type exception
+	 */
+	private void createForbiddenIngList(NodeRef listContainerNodeRef, List<ForbiddenIngListDataItem> forbiddenIngList) throws InvalidTypeException
+	{
+
+		if(listContainerNodeRef != null)
+		{    	
+			NodeRef forbiddenIngListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);
+			
+			if(forbiddenIngList == null){
+				//delete existing list
+				if(forbiddenIngListNodeRef != null)
+					nodeService.deleteNode(forbiddenIngListNodeRef);
+			}
+			else{
+				
+				//forbiddenIng list, create if needed    			
+	    		if(forbiddenIngListNodeRef == null)
+	    		{					
+					forbiddenIngListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);					
+	    		}    				    			    		    		
+	
+	    		List<FileInfo> files = fileFolderService.listFiles(forbiddenIngListNodeRef);
+	    		
+	    		//create temp list
+	    		List<NodeRef> forbiddenIngListToTreat = new ArrayList<NodeRef>();
+	    		for(ForbiddenIngListDataItem forbiddenIngListDataItem : forbiddenIngList){
+	    			forbiddenIngListToTreat.add(forbiddenIngListDataItem.getNodeRef());
+	    		}
+	    		
+	    		//remove deleted nodes
+	    		List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
+	    		for(FileInfo file : files){	    			
+		    		
+	    			if(!forbiddenIngListToTreat.contains(file.getNodeRef())){
+	    				//delete
+	    				nodeService.deleteNode(file.getNodeRef());
+	    			}
+	    			else{
+	    				filesToUpdate.add(file.getNodeRef());
+	    			}
+	    		}
+	    		
+	    		//update or create nodes	    		    			    		
+	    		NodeRef linkNodeRef = null;
+	    		for(ForbiddenIngListDataItem forbiddenIngListDataItem : forbiddenIngList)
+	    		{    				    			
+	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		    		properties.put(BeCPGModel.PROP_FIL_REQ_TYPE, forbiddenIngListDataItem.getReqType());
+		    		properties.put(BeCPGModel.PROP_FIL_REQ_MESSAGE, forbiddenIngListDataItem.getReqMessage());
+		    		properties.put(BeCPGModel.PROP_FIL_QTY_PERC_MAXI, forbiddenIngListDataItem.getQtyPercMaxi());
+		    		properties.put(BeCPGModel.PROP_FIL_IS_GMO, TranslateHelper.getTranslatedNullableBoolean(forbiddenIngListDataItem.isGMO()));
+		    		properties.put(BeCPGModel.PROP_FIL_IS_IONIZED, TranslateHelper.getTranslatedNullableBoolean(forbiddenIngListDataItem.isIonized()));
+		    		
+		    		if(filesToUpdate.contains(forbiddenIngListDataItem.getNodeRef())){
+		    			//update
+		    			linkNodeRef = forbiddenIngListDataItem.getNodeRef();
+		    			nodeService.setProperties(linkNodeRef, properties);		    			
+		    		}
+		    		else{
+		    			//create
+		    			ChildAssociationRef childAssocRef = nodeService.createNode(forbiddenIngListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), BeCPGModel.TYPE_FORBIDDENINGLIST, properties);
+		    			linkNodeRef = childAssocRef.getChildRef();
+		    			forbiddenIngListDataItem.setNodeRef(childAssocRef.getChildRef());			    		
+		    		}			    			    	
+		    		
+		    		// ings
+		    		List<AssociationRef> ingsAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.ASSOC_FIL_INGS);
+		    		
+		    		if(forbiddenIngListDataItem.getIngs() != null){
+		    			//remove from db
+			    		for(AssociationRef assocRef : ingsAssocRefs){
+			    			if(!forbiddenIngListDataItem.getIngs().contains(assocRef.getTargetRef()))
+			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_FIL_INGS);
+			    			else
+			    				forbiddenIngListDataItem.getIngs().remove(assocRef.getTargetRef());//already in db
+			    		}
+			    		//add nodes that are not in db
+			    		for(NodeRef nodeRef : forbiddenIngListDataItem.getIngs()){
+			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.ASSOC_FIL_INGS);
+			    		}
+		    		}
+		    		else{
+		    			for(AssociationRef assocRef : ingsAssocRefs)
+		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_FIL_INGS);
+		    		}
+		    		
+		    		// GeoOrigins
+		    		List<AssociationRef> geoOriginsAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.ASSOC_FIL_GEO_ORIGINS);
+		    		
+		    		if(forbiddenIngListDataItem.getGeoOrigins() != null){
+		    			//remove from db
+			    		for(AssociationRef assocRef : geoOriginsAssocRefs){
+			    			if(!forbiddenIngListDataItem.getGeoOrigins().contains(assocRef.getTargetRef()))
+			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_FIL_GEO_ORIGINS);
+			    			else
+			    				forbiddenIngListDataItem.getGeoOrigins().remove(assocRef.getTargetRef());//already in db
+			    		}
+			    		//add nodes that are not in db
+			    		for(NodeRef nodeRef : forbiddenIngListDataItem.getGeoOrigins()){
+			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.ASSOC_FIL_GEO_ORIGINS);
+			    		}
+		    		}
+		    		else{
+		    			for(AssociationRef assocRef : geoOriginsAssocRefs)
+		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_FIL_GEO_ORIGINS);
+		    		}
+		    		
+		    		// BioOrigins
+		    		List<AssociationRef> bioOriginsAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.ASSOC_FIL_BIO_ORIGINS);
+		    		
+		    		if(forbiddenIngListDataItem.getBioOrigins() != null){
+		    			//remove from db
+			    		for(AssociationRef assocRef : bioOriginsAssocRefs){
+			    			if(!forbiddenIngListDataItem.getBioOrigins().contains(assocRef.getTargetRef()))
+			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_FIL_BIO_ORIGINS);
+			    			else
+			    				forbiddenIngListDataItem.getBioOrigins().remove(assocRef.getTargetRef());//already in db
+			    		}
+			    		//add nodes that are not in db
+			    		for(NodeRef nodeRef : forbiddenIngListDataItem.getBioOrigins()){
+			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.ASSOC_FIL_BIO_ORIGINS);
+			    		}
+		    		}
+		    		else{
+		    			for(AssociationRef assocRef : bioOriginsAssocRefs)
+		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_FIL_BIO_ORIGINS);
+		    		}		    				    		
+	    		}	    		 
+			}
+		}
+	}  
+	
+	/**
+	 * Create/Update reqCtrl.
+	 *
+	 * @param listContainerNodeRef the list container node ref
+	 * @param reqCtrlList the reqCtrl list
+	 * @throws InvalidTypeException the invalid type exception
+	 */
+	private void createReqCtrlList(NodeRef listContainerNodeRef, List<ReqCtrlListDataItem> reqCtrlList) throws InvalidTypeException
+	{
+
+		if(listContainerNodeRef != null)
+		{    	
+			NodeRef reqCtrlListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
+			
+			if(reqCtrlList == null){
+				//delete existing list
+				if(reqCtrlListNodeRef != null)
+					nodeService.deleteNode(reqCtrlListNodeRef);
+			}
+			else{
+				
+				//reqCtrl list, create if needed    			
+	    		if(reqCtrlListNodeRef == null)
+	    		{					
+					reqCtrlListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);					
+	    		}    				    			    		    		
+	
+	    		List<FileInfo> files = fileFolderService.listFiles(reqCtrlListNodeRef);
+	    		
+	    		//create temp list
+	    		List<NodeRef> reqCtrlListToTreat = new ArrayList<NodeRef>();
+	    		for(ReqCtrlListDataItem reqCtrlListDataItem : reqCtrlList){
+	    			reqCtrlListToTreat.add(reqCtrlListDataItem.getNodeRef());
+	    		}
+	    		
+	    		//remove deleted nodes
+	    		List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
+	    		for(FileInfo file : files){	    			
+		    		
+	    			if(!reqCtrlListToTreat.contains(file.getNodeRef())){
+	    				//delete
+	    				nodeService.deleteNode(file.getNodeRef());
+	    			}
+	    			else{
+	    				filesToUpdate.add(file.getNodeRef());
+	    			}
+	    		}
+	    		
+	    		//update or create nodes	    		    			    		
+	    		NodeRef linkNodeRef = null;
+	    		for(ReqCtrlListDataItem reqCtrlListDataItem : reqCtrlList)
+	    		{    				    			
+	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		    		properties.put(BeCPGModel.PROP_RCL_REQ_TYPE, reqCtrlListDataItem.getReqType());
+		    		properties.put(BeCPGModel.PROP_RCL_REQ_MESSAGE, reqCtrlListDataItem.getReqMessage());
+		    		
+		    		if(filesToUpdate.contains(reqCtrlListDataItem.getNodeRef())){
+		    			//update
+		    			linkNodeRef = reqCtrlListDataItem.getNodeRef();
+		    			nodeService.setProperties(linkNodeRef, properties);		    			
+		    		}
+		    		else{
+		    			//create
+		    			ChildAssociationRef childAssocRef = nodeService.createNode(reqCtrlListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), BeCPGModel.TYPE_REQCTRLLIST, properties);
+		    			linkNodeRef = childAssocRef.getChildRef();
+		    			reqCtrlListDataItem.setNodeRef(childAssocRef.getChildRef());			    		
+		    		}			    			    	
+		    		
+		    		// sources
+		    		List<AssociationRef> ingsAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.ASSOC_RCL_SOURCES);
+		    		
+		    		if(reqCtrlListDataItem.getSources() != null){
+		    			//remove from db
+			    		for(AssociationRef assocRef : ingsAssocRefs){
+			    			if(!reqCtrlListDataItem.getSources().contains(assocRef.getTargetRef()))
+			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_RCL_SOURCES);
+			    			else
+			    				reqCtrlListDataItem.getSources().remove(assocRef.getTargetRef());//already in db
+			    		}
+			    		//add nodes that are not in db
+			    		for(NodeRef nodeRef : reqCtrlListDataItem.getSources()){
+			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.ASSOC_RCL_SOURCES);
+			    		}
+		    		}
+		    		else{
+		    			for(AssociationRef assocRef : ingsAssocRefs)
+		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_RCL_SOURCES);
+		    		}		    			    				    	
+	    		}	    		 
+			}
+		}
+	}  
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.product.ProductDAO#getListContainer(org.alfresco.service.cmr.repository.NodeRef)

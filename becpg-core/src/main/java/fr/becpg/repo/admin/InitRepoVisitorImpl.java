@@ -512,9 +512,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 						}
 					}
 				}
-				else if(systemProductType.equals(SystemProductType.SemiFinishedProduct) ||
-						systemProductType.equals(SystemProductType.FinishedProduct) ||
-						systemProductType.equals(SystemProductType.CondSalesUnit)){
+				else if(systemProductType.equals(SystemProductType.SemiFinishedProduct)){
 					
 					Set<QName> dataLists = new LinkedHashSet<QName>();
 					dataLists.add(BeCPGModel.TYPE_COMPOLIST);
@@ -538,10 +536,36 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 						}
 					}
 				}
+				else if(systemProductType.equals(SystemProductType.FinishedProduct) ||
+						systemProductType.equals(SystemProductType.CondSalesUnit)){
+					
+					Set<QName> dataLists = new LinkedHashSet<QName>();
+					dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+					dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+					dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
+					dataLists.add(BeCPGModel.TYPE_COSTLIST);				
+					dataLists.add(BeCPGModel.TYPE_NUTLIST);
+					dataLists.add(BeCPGModel.TYPE_INGLIST);
+					dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
+					dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+					
+					NodeRef listContainerNodeRef = productDAO.getListContainer(productTplNodeRef);
+					if(listContainerNodeRef == null){
+						listContainerNodeRef = productDAO.createListContainer(productTplNodeRef);
+					}
+					
+					for(QName dataList : dataLists){
+						
+						NodeRef listNodeRef = productDAO.getList(listContainerNodeRef, dataList);
+						if(listNodeRef == null){
+							productDAO.createList(listContainerNodeRef, dataList);
+						}
+					}
+				}
 				else if(systemProductType.equals(SystemProductType.PackagingKit)){
 					
 					Set<QName> dataLists = new LinkedHashSet<QName>();
-					dataLists.add(BeCPGModel.TYPE_COMPOLIST);					
+					dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);					
 					dataLists.add(BeCPGModel.TYPE_COSTLIST);				
 					dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 					

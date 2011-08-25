@@ -412,11 +412,11 @@ private void initObjects(){
 					fp1.setAllergenList(allergenList);
 						
 					List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 1f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 3f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 1f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
 					fp1.setCompoList(compoList);
 					
 					fp1NodeRef = productDAO.create(folderNodeRef, fp1, dataLists);
@@ -455,12 +455,12 @@ private void initObjects(){
 					fp2.setAllergenList(allergenList);
 					
 					compoList = new ArrayList<CompoListDataItem>();
-					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 3f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
+					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
 					fp2.setCompoList(compoList);
 					
 					fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);

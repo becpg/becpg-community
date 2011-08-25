@@ -55,10 +55,13 @@ import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.report.ProductReportService;
 import fr.becpg.repo.product.report.ProductReportTplService;
 import fr.becpg.test.RepoBaseTestCase;
@@ -599,9 +602,9 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
    }
  
  	/**
-	  * Test get w used product.
+	  * Test get WUsed of the compoList
 	  */
-	 public void testGetWUsedProduct(){
+	 public void testGetWUsedCompoList(){
  		
  		logger.debug("testGetWUsedProduct");
  	   
@@ -622,48 +625,130 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
  				RawMaterialData rawMaterial = new RawMaterialData();
  				rawMaterial.setName("Raw material");
  				NodeRef rawMaterialNodeRef = productDAO.create(testFolder, rawMaterial, null);
- 				LocalSemiFinishedProduct lSF = new LocalSemiFinishedProduct();
- 				lSF.setName("Local semi finished");
- 				NodeRef lSFNodeRef = productDAO.create(testFolder, lSF, null);
+ 				LocalSemiFinishedProduct lSF1 = new LocalSemiFinishedProduct();
+ 				lSF1.setName("Local semi finished 1");
+ 				NodeRef lSF1NodeRef = productDAO.create(testFolder, lSF1, null);
+ 				
+ 				LocalSemiFinishedProduct lSF2 = new LocalSemiFinishedProduct();
+ 				lSF2.setName("Local semi finished 2");
+ 				NodeRef lSF2NodeRef = productDAO.create(testFolder, lSF2, null);
  				 				 			
  				/*-- Create finished product --*/
  				logger.debug("/*-- Create finished product --*/");
  				FinishedProductData finishedProduct = new FinishedProductData();
  				finishedProduct.setName("Finished Product");
  				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>(); 				
- 				compoList.add(new CompoListDataItem(null, 1, 1f, 4f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, lSFNodeRef));
- 				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.OMIT_FR, rawMaterialNodeRef));
+ 				compoList.add(new CompoListDataItem(null, 1, 1f, 1f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, lSF1NodeRef));
+ 				compoList.add(new CompoListDataItem(null, 2, 1f, 4f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, lSF2NodeRef));
+ 				compoList.add(new CompoListDataItem(null, 3, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.OMIT_FR, rawMaterialNodeRef));
 				finishedProduct.setCompoList(compoList); 				
 				Collection<QName> dataLists = new ArrayList();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
  				NodeRef finishedProductNodeRef = productDAO.create(testFolder, finishedProduct, dataLists);
  				
- 				logger.debug("local semi finished: " + lSFNodeRef);
+ 				logger.debug("local semi finished 1: " + lSF1NodeRef);
+ 				logger.debug("local semi finished 2: " + lSF2NodeRef);
  				logger.debug("finishedProductNodeRef: " + finishedProductNodeRef);
- 				List<CompoListDataItem> wUsedProducts = productService.getWUsedProduct(rawMaterialNodeRef); 				
+ 				List<CompoListDataItem> wUsedProducts = productService.getWUsedCompoList(rawMaterialNodeRef); 				
  				
  				for(CompoListDataItem wUsedProduct : wUsedProducts){
  					logger.debug(String.format("wUsedProduct.getProduct(): %s - level: %d - qty: %e - unit: %s", wUsedProduct.getProduct(), wUsedProduct.getDepthLevel(), wUsedProduct.getQty(), wUsedProduct.getCompoListUnit()));
  				}
  				
- 				assertEquals("MP should have 2 where Useds", 2, wUsedProducts.size());
+ 				assertEquals("MP should have 2 where Useds", 3, wUsedProducts.size());
  				CompoListDataItem wUsed0 = wUsedProducts.get(0);
  				CompoListDataItem wUsed1 = wUsedProducts.get(1);
- 				assertEquals("check lSF", lSFNodeRef, wUsed0.getProduct());
- 				assertEquals("check lSF level", new Integer(1), wUsed0.getDepthLevel());
- 				assertEquals("check lSF qty", 3f, wUsed0.getQty());
- 				assertEquals("check lSF qty perc", 0f, wUsed0.getQtySubFormula());
- 				assertEquals("check lSF unit", CompoListUnit.kg, wUsed0.getCompoListUnit());
- 				assertEquals("check lSF declaration", DeclarationType.OMIT_FR, wUsed0.getDeclType());
+ 				CompoListDataItem wUsed2 = wUsedProducts.get(2);
  				
- 				assertEquals("check lPF", finishedProductNodeRef, wUsed1.getProduct());
- 				assertEquals("check PF level", new Integer(2), wUsed1.getDepthLevel());
- 				assertEquals("check PF qty", 1f, wUsed1.getQty());
- 				assertEquals("check PF qty perc", 4f, wUsed1.getQtySubFormula());
- 				assertEquals("check PF unit", CompoListUnit.P, wUsed1.getCompoListUnit());
- 				assertEquals("check PF declaration", DeclarationType.DECLARE_FR, wUsed1.getDeclType());
+ 				assertEquals("check lSF2", lSF2NodeRef, wUsed0.getProduct());
+ 				assertEquals("check lSF2 level", new Integer(1), wUsed0.getDepthLevel());
+ 				assertEquals("check lSF2 qty", 3f, wUsed0.getQty());
+ 				assertEquals("check lSF2 qty perc", 0f, wUsed0.getQtySubFormula());
+ 				assertEquals("check lSF2 unit", CompoListUnit.kg, wUsed0.getCompoListUnit());
+ 				assertEquals("check lSF2 declaration", DeclarationType.OMIT_FR, wUsed0.getDeclType());
+ 				
+ 				assertEquals("check lSF1", lSF1NodeRef, wUsed1.getProduct());
+ 				assertEquals("check lSF1 level", new Integer(2), wUsed1.getDepthLevel());
+ 				assertEquals("check lSF1 qty", 1f, wUsed1.getQty());
+ 				assertEquals("check lSF1 qty perc", 4f, wUsed1.getQtySubFormula());
+ 				assertEquals("check lSF1 unit", CompoListUnit.P, wUsed1.getCompoListUnit());
+ 				assertEquals("check lSF1 declaration", DeclarationType.DECLARE_FR, wUsed1.getDeclType());
+ 				
+ 				assertEquals("check PF", finishedProductNodeRef, wUsed2.getProduct());
+ 				assertEquals("check PF level", new Integer(3), wUsed2.getDepthLevel());
+ 				assertEquals("check PF qty", 1f, wUsed2.getQty());
+ 				assertEquals("check PF qty perc", 1f, wUsed2.getQtySubFormula());
+ 				assertEquals("check PF unit", CompoListUnit.P, wUsed2.getCompoListUnit());
+ 				assertEquals("check PF declaration", DeclarationType.DECLARE_FR, wUsed2.getDeclType());
  				
  				logger.debug("end");
+ 				
+ 				return null;
+
+ 			}},false,true);
+ 	}  	
+	 
+	 /**
+	  * Test get WUsed of the packagingList
+	  */
+	 public void testGetWUsedPackgingList(){
+ 		
+ 		logger.debug("testGetWUsedProduct");
+ 	   
+ 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+ 			public NodeRef execute() throws Throwable {					   
+ 		
+ 				/*-- create folders : Test--*/
+ 				logger.debug("/*-- create folders --*/");
+ 				testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);    	
+ 		    	if(testFolder != null){
+ 		    		fileFolderService.delete(testFolder);    		
+ 		    	}
+ 		    	testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+ 		    	    	
+ 		    	
+ 				/*-- Create raw material --*/
+ 				logger.debug("/*-- Create pkg material --*/");
+ 				PackagingMaterialData packagingMaterial = new PackagingMaterialData();
+ 				packagingMaterial.setName("Packaging material");
+ 				NodeRef packagingMaterialNodeRef = productDAO.create(testFolder, packagingMaterial, null);
+ 				 				 			
+ 				/*-- Create finished product --*/
+ 				logger.debug("/*-- Create finished product --*/");
+ 				Collection<QName> dataLists = new ArrayList<QName>();
+				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+				
+ 				FinishedProductData finishedProduct1 = new FinishedProductData();
+ 				finishedProduct1.setName("Finished Product 1");
+ 				List<PackagingListDataItem> packagingList1 = new ArrayList<PackagingListDataItem>();
+ 				packagingList1.add(new PackagingListDataItem(null, 1f, PackagingListUnit.P, "Primaire", packagingMaterialNodeRef)); 				
+				finishedProduct1.setPackagingList(packagingList1); 								
+ 				NodeRef finishedProductNodeRef1 = productDAO.create(testFolder, finishedProduct1, dataLists);
+ 				
+ 				FinishedProductData finishedProduct2 = new FinishedProductData();
+ 				finishedProduct2.setName("Finished Product");
+ 				List<PackagingListDataItem> packagingList2 = new ArrayList<PackagingListDataItem>();
+ 				packagingList2.add(new PackagingListDataItem(null, 8f, PackagingListUnit.PP, "Secondaire", packagingMaterialNodeRef)); 				
+				finishedProduct2.setPackagingList(packagingList2); 								
+ 				NodeRef finishedProductNodeRef2 = productDAO.create(testFolder, finishedProduct2, dataLists);
+ 				 				
+ 				List<PackagingListDataItem> wUsedProducts = productService.getWUsedPackagingList(packagingMaterialNodeRef); 				 				
+ 				
+ 				assertEquals("MP should have 2 where Useds", 2, wUsedProducts.size());
+ 				
+ 				for(PackagingListDataItem packagingListDataItem : wUsedProducts){
+ 					
+ 					if(packagingListDataItem.getProduct().equals(finishedProductNodeRef1)){
+ 						assertEquals("check qty", 1f, packagingListDataItem.getQty());
+ 						assertEquals("check qty", PackagingListUnit.P, packagingListDataItem.getPackagingListUnit());
+ 						assertEquals("check qty", "Primaire", packagingListDataItem.getPkgLevel());
+ 					}
+ 					else if(packagingListDataItem.getProduct().equals(finishedProductNodeRef2)){
+ 						assertEquals("check qty", 8f, packagingListDataItem.getQty());
+ 						assertEquals("check qty", PackagingListUnit.PP, packagingListDataItem.getPackagingListUnit());
+ 						assertEquals("check qty", "Secondaire", packagingListDataItem.getPkgLevel());
+ 					}
+ 				}
  				
  				return null;
 

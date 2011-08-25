@@ -8,6 +8,7 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -70,10 +71,18 @@ public interface ProductService {
     public void initializeProductFolder(NodeRef productNodeRef);
     
     /**
-     * Gets the w used product.
+     * Gets the WUsed product of the compoList
      *
      * @param productNodeRef the product node ref
-     * @return the w used product
+     * @return the WUsed product
      */
-    public List<CompoListDataItem> getWUsedProduct(NodeRef productNodeRef);    
+    public List<CompoListDataItem> getWUsedCompoList(NodeRef productNodeRef);
+    
+    /**
+     * Gets the WUsed product of the packagingList
+     *
+     * @param productNodeRef the product node ref
+     * @return the WUsed product
+     */
+    public List<PackagingListDataItem> getWUsedPackagingList(NodeRef productNodeRef);
 }

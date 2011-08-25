@@ -12,10 +12,13 @@ import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 
 public class CompositionCalculatingVisitor implements ProductVisitor {
 
+	public static final float DEFAULT_DENSITY = 1f;
+	
 	private static Log logger = LogFactory.getLog(CompositionCalculatingVisitor.class);
 	
 	private NodeService nodeService;
@@ -35,36 +38,46 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 			return formulatedProduct;
 		}
 		
+		//Take in account net weight
+		Float netWeight;
+		if(formulatedProduct.getUnit() == ProductUnit.P){
+			netWeight = formulatedProduct.getDensity();
+		}
+		else{
+			Float qty = formulatedProduct.getQty();
+			Float density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
+			netWeight = qty * density;
+		}
+		
 		Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList());		
-		visitChildren(null, null, composite);
+		visitChildren(netWeight, netWeight, composite);
 		
 		return formulatedProduct;
 	}
 	
-	private void visitChildren(Float parentQty, Float parentQtySubFormula, Composite<CompoListDataItem> composite){				
+	private void visitChildren(Float parentQty, Float qtyAfterProcess, Composite<CompoListDataItem> composite){				
 		
 		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){					
+			
+			// qty and sub formula qty are defined and not equal to 0
+			if(parentQty != null && qtyAfterProcess != null && !qtyAfterProcess.equals(0f)){
+				
+				Float qtySubFormula = component.getData().getQtySubFormula();
+				if(qtySubFormula != null){
+					
+					Float qty = qtySubFormula * parentQty / qtyAfterProcess;
+					component.getData().setQty(qty);
+				}
+			}	
 			
 			if(component instanceof Composite){
 				
 				// calculate children
 				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
-				visitChildren(c.getData().getQty(), c.getData().getQtySubFormula(), c);							
-			}
-			else{
-			
-				// qty and sub formula qty are defined and not equal to 0
-				if(parentQty != null && parentQtySubFormula != null && !parentQtySubFormula.equals(0f)){
-					
-					Float qtySubFormula = component.getData().getQtySubFormula();
-					if(qtySubFormula != null){
-						
-						Float qty = qtySubFormula * parentQty / parentQtySubFormula;
-						component.getData().setQty(qty);
-					}
-				}
+				Float afterProcess = c.getData().getQtyAfterProcess() != null ? c.getData().getQtyAfterProcess() : c.getData().getQtySubFormula();
+				visitChildren(c.getData().getQty(), afterProcess, c);							
 			}			
-		}		
+		}
 	}
 
 }

@@ -43,6 +43,7 @@
    	<!-- Product where used -->
   		<bean id="webscript.fr.becpg.product.productWUsed.post" class="fr.becpg.repo.web.scripts.product.ProductWUsedWebScript" parent="webscript">
    		<property name="productService" ref="productService" />
+   		<property name="productDictionaryService" ref="productDictionaryService"/>
    	</bean>
    	
    	<!-- Product checkout -->

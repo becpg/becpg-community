@@ -5,6 +5,8 @@ package fr.becpg.repo.product.formulation;
 
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListUnit;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -27,6 +29,23 @@ public class FormulationHelper {
 		
 		if(compoListUnit == CompoListUnit.g || compoListUnit == CompoListUnit.mL){
 			qty = qty / 1000;
+		}
+		
+		return qty;
+	}
+
+	/**
+	 * Gets the qty of a packaging item
+	 * @param packagingListDataItem
+	 * @return
+	 */
+	public static float getQty(PackagingListDataItem packagingListDataItem){
+		
+		float qty = packagingListDataItem.getQty();		
+		PackagingListUnit packagingListUnit = packagingListDataItem.getPackagingListUnit();
+		
+		if(packagingListUnit == PackagingListUnit.PP){
+			qty = 1 / qty;
 		}
 		
 		return qty;

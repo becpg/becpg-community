@@ -24,8 +24,7 @@ import fr.becpg.repo.product.data.ProductData;
 
 public class PropertyServiceImpl implements PropertyService {
 
-	private static final String MESSAGE_TRUE = "data.boolean.true";
-	private static final String MESSAGE_FALSE = "data.boolean.false";
+	
 	
 	private static Log logger = LogFactory.getLog(PropertyServiceImpl.class);
 	
@@ -67,12 +66,14 @@ public class PropertyServiceImpl implements PropertyService {
 			
 			Boolean b = (Boolean)v;			
 			
-			if(propertyFormats.isUseDefaultLocale()){
-				value = b ? I18NUtil.getMessage(MESSAGE_TRUE, Locale.getDefault()) : I18NUtil.getMessage(MESSAGE_FALSE, Locale.getDefault());
-			}
-			else{
-				value = b ? I18NUtil.getMessage(MESSAGE_TRUE) : I18NUtil.getMessage(MESSAGE_FALSE);
-			}
+//			if(propertyFormats.isUseDefaultLocale()){
+//				value = b ? I18NUtil.getMessage(MESSAGE_TRUE, Locale.getDefault()) : I18NUtil.getMessage(MESSAGE_FALSE, Locale.getDefault());
+//			}
+//			else{
+//				value = b ? I18NUtil.getMessage(MESSAGE_TRUE) : I18NUtil.getMessage(MESSAGE_FALSE);
+//			}
+			
+			value = TranslateHelper.getTranslatedBoolean(b, propertyFormats.isUseDefaultLocale());
 			
 		}
 		else if(dataType.equals(DataTypeDefinition.TEXT.toString())){

@@ -20,12 +20,15 @@ import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -98,6 +101,12 @@ public class ProductData implements ProductElement {
 	
 	/** The physico chem list. */
 	private List<PhysicoChemListDataItem> physicoChemList;
+	
+	private List<PackagingListDataItem> packagingList;
+	
+	private List<ForbiddenIngListDataItem> forbiddenIngList;
+	
+	private List<ReqCtrlListDataItem> reqCtrlList;
 
 	/**
 	 * Gets the node ref.
@@ -477,6 +486,30 @@ public class ProductData implements ProductElement {
 		this.physicoChemList = physicoChemList;
 	}
 	
+	public List<PackagingListDataItem> getPackagingList() {
+		return packagingList;
+	}
+
+	public void setPackagingList(List<PackagingListDataItem> packagingList) {
+		this.packagingList = packagingList;
+	}
+	
+	public List<ForbiddenIngListDataItem> getForbiddenIngList() {
+		return forbiddenIngList;
+	}
+
+	public void setForbiddenIngList(List<ForbiddenIngListDataItem> forbiddenIngList) {
+		this.forbiddenIngList = forbiddenIngList;
+	}
+
+	public List<ReqCtrlListDataItem> getReqCtrlList() {
+		return reqCtrlList;
+	}
+
+	public void setReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
+		this.reqCtrlList = reqCtrlList;
+	}
+
 	/**
 	 * Instantiates a new product data.
 	 */

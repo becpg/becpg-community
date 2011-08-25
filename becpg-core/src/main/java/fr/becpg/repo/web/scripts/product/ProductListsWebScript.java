@@ -139,7 +139,9 @@ public class ProductListsWebScript extends DeclarativeWebScript  {
 		boolean hasWritePermission = false;
 		boolean showWUsedItems = false;
 		
-		if(type.equals(BeCPGModel.TYPE_PRODUCTTEMPLATE) || type.equals(BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA)){
+		if(type.equals(BeCPGModel.TYPE_PRODUCTTEMPLATE) || 
+				type.equals(BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA) ||
+				type.equals(BeCPGModel.TYPE_PRODUCT_SPECIFICATION)){
 			//Template product, micriobio criteria
 			containerDataLists = nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_PRODUCTLISTS, RepoConsts.CONTAINER_DATALISTS);			
 			if(containerDataLists == null){

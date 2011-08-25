@@ -19,7 +19,7 @@ var Evaluator =
          nodeType = "filelink";
       }
       //beCPG
-      else if (node.hasAspect("bcpg:productAspect") || node.typeShort == "bcpg:productTemplate")
+      else if (node.hasAspect("bcpg:productListsAspect"))
       {
          nodeType = "product";
       }

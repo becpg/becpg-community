@@ -181,7 +181,7 @@ public class IngListDataItem implements Comparable<IngListDataItem>{
 	 * @param isIonized the is ionized
 	 * @param ing the ing
 	 */
-	public IngListDataItem(NodeRef nodeRef,	Float qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized,NodeRef ing)
+	public IngListDataItem(NodeRef nodeRef,	Float qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, NodeRef ing)
 	{
 		setNodeRef(nodeRef);
 		setQtyPerc(qtyPerc);

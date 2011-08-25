@@ -7,11 +7,15 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.NullableBoolean;
 
 public class TranslateHelper {
 
-	public static final String PATH_MSG_PFX= "path.";
-	public static final String PRODUCT_STATE_MSG_PFX = "state.product.";
+	private static final String PATH_MSG_PFX= "path.";
+	private static final String PRODUCT_STATE_MSG_PFX = "state.product.";
+	
+	private static final String MESSAGE_TRUE = "data.boolean.true";
+	private static final String MESSAGE_FALSE = "data.boolean.false";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(TranslateHelper.class);
@@ -41,4 +45,34 @@ public class TranslateHelper {
 		
 		return translation;
 	}
+	
+	public static String getTranslatedBoolean(Boolean b, boolean useDefaultLocale) {
+		
+		String translation;
+		
+		if(useDefaultLocale){
+			translation = b ? I18NUtil.getMessage(MESSAGE_TRUE, Locale.getDefault()) : I18NUtil.getMessage(MESSAGE_FALSE, Locale.getDefault());
+		}
+		else{
+			translation = b ? I18NUtil.getMessage(MESSAGE_TRUE) : I18NUtil.getMessage(MESSAGE_FALSE);
+		}
+		
+		return translation;
+	}
+	
+	public static String getTranslatedNullableBoolean(NullableBoolean b) {
+		
+		String translation = "";
+		
+		if(NullableBoolean.True.equals(b)){
+			translation = I18NUtil.getMessage(MESSAGE_TRUE, Locale.getDefault());
+		}
+		else if(NullableBoolean.False.equals(b)){
+			translation = I18NUtil.getMessage(MESSAGE_FALSE, Locale.getDefault());
+		}
+		
+		return translation;
+	}
+	
+	
 }

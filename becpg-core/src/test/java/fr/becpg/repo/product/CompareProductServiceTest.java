@@ -379,12 +379,12 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 				fp1.setAllergenList(allergenList);
 					
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				//compoList.add(new CompoListDataItem(null, 2, 3f, 0f, CompoListUnit.kg, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				//compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				fp1.setCompoList(compoList);
 				
 				NodeRef fp1NodeRef = productDAO.create(folderNodeRef, fp1, dataLists);
@@ -424,12 +424,12 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 				fp2.setAllergenList(allergenList);
 				
 				compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 				
 				NodeRef fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);
@@ -545,12 +545,12 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 					fp1.setName("FP 1");											
 						
 					List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 1f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 3f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-					//compoList.add(new CompoListDataItem(null, 2, 3f, 0f, CompoListUnit.kg, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 1f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+					//compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 					fp1.setCompoList(compoList);
 					
 					NodeRef fp1NodeRef = productDAO.create(folderNodeRef, fp1, dataLists);
@@ -561,12 +561,12 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 					fp2.setName("FP 2");			
 								
 					compoList = new ArrayList<CompoListDataItem>();
-					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 3f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
+					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
 					fp2.setCompoList(compoList);
 					
 					NodeRef fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);
@@ -604,7 +604,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 					assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Modified, "Raw material 1", "Raw material 1", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=1.0}", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2.0}"));
 					assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 1, StructCompareOperator.Equal, "Local semi finished 2", "Local semi finished 2", "{}", "{}"));
 					assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Modified, "Raw material 3", "Raw material 3", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3.0, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2.0, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=P}"));
-					assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Added, "", "Raw material 4", "{}", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3.0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclGrp=, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 4, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0.0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0.0, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=2, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}"));
+					assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Added, "", "Raw material 4", "{}", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3.0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclGrp=, {http://www.bcpg.fr/model/becpg/1.0}compoListQtyAfterProcess=0.0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 4, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0.0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0.0, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=2, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}"));
 
 					
 					return null;

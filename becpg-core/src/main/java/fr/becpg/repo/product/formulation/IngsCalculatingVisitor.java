@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -27,8 +28,11 @@ import fr.becpg.repo.product.data.ing.CompositeIng;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
+import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.NullableBoolean;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -125,10 +129,19 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			return formulatedProduct;
 		}
 		
+		// Load product specification
+    	ProductData productSpecicationData = null;
+    	List<AssociationRef> productSpecificationAssocRefs = nodeService.getTargetAssocs(formulatedProduct.getNodeRef(), BeCPGModel.ASSOC_PRODUCT_SPECIFICATION);
+    	if(productSpecificationAssocRefs != null && productSpecificationAssocRefs.size() > 0 && 
+    			productSpecificationAssocRefs.get(0).getTargetRef() != null){
+    		
+    		Collection<QName> dataLists = new ArrayList<QName>();				
+    		dataLists.add(BeCPGModel.TYPE_FORBIDDENINGLIST);
+        	productSpecicationData = productDAO.find(productSpecificationAssocRefs.get(0).getTargetRef(), dataLists); 
+    	}
+		
 		//IngList
-		List<IngListDataItem> ingList = calculateIL(formulatedProduct);
-		formulatedProduct.setIngList(ingList);
-		logger.debug("ingList.size: " + ingList.size());
+		calculateIL(formulatedProduct, productSpecicationData);
 		
 		//IngLabelling
 		logger.debug("Calculate Ingredient Labeling");
@@ -155,15 +168,16 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 * @param productData the product data
 	 * @return the list
 	 */
-	private List<IngListDataItem> calculateIL(ProductData productData){
+	private void calculateIL(ProductData formulatedProduct, ProductData productSpecicationData){
 	
-		List<CompoListDataItem> compoList = productData.getCompoList();
+		List<CompoListDataItem> compoList = formulatedProduct.getCompoList();
 		Map<NodeRef, IngListDataItem> ingMap = new HashMap<NodeRef, IngListDataItem>();
+		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<NodeRef, ReqCtrlListDataItem>();
 		Map<NodeRef, Float> totalQtyIngMap = new HashMap<NodeRef, Float>();
 		
 		if(compoList != null){
 			for(CompoListDataItem compoItem : compoList){
-				calculateILOfPart(compoItem, ingMap, totalQtyIngMap);
+				visitILOfPart(productSpecicationData, compoItem, ingMap, totalQtyIngMap, reqCtrlMap);
 			}
 		}		
 				
@@ -180,9 +194,12 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		
 		//sort collection
 		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>(ingMap.values());				
-		Collections.sort(ingList);
+		Collections.sort(ingList);		
+		formulatedProduct.setIngList(ingList);
 		
-		return ingList;
+		List<ReqCtrlListDataItem> reqCtrlList = reqCtrlMap.values().isEmpty() ? null : new ArrayList<ReqCtrlListDataItem>(reqCtrlMap.values());
+		
+		formulatedProduct.setReqCtrlList(reqCtrlList);
 	}
 	
 	/**
@@ -192,18 +209,34 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 * @param ingMap the ing map
 	 * @param totalQtyIngMap the total qty ing map
 	 */
-	private void calculateILOfPart(CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Float> totalQtyIngMap){
-		
-		//OMIT is not taken in account
-		if(DeclarationType.parse(compoListDataItem.getDeclType()) == DeclarationType.OMIT){
-			return;
-		}
+	private void visitILOfPart(ProductData productSpecicationData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Float> totalQtyIngMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){				
 			
 		Collection<QName> dataLists = new ArrayList<QName>();		
 		dataLists.add(BeCPGModel.TYPE_INGLIST);
 		ProductData productData = productDAO.find(compoListDataItem.getProduct(), dataLists);		
 		
 		if(productData.getIngList() == null){
+			return;
+		}
+		
+		// calculate ingList of formulated product
+		calculateILOfPart(productData, compoListDataItem, ingMap, totalQtyIngMap);
+		
+		// check product respect specification
+		checkILOfPart(productData, productSpecicationData, reqCtrlMap);
+	}
+	
+	/**
+	 * Add the ingredients of the part in the ingredient list.
+	 *
+	 * @param compoListDataItem the compo list data item
+	 * @param ingMap the ing map
+	 * @param totalQtyIngMap the total qty ing map
+	 */
+	private void calculateILOfPart(ProductData productData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Float> totalQtyIngMap){
+		
+		//OMIT is not taken in account
+		if(DeclarationType.parse(compoListDataItem.getDeclType()) == DeclarationType.OMIT){
 			return;
 		}
 		
@@ -268,6 +301,89 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			}
 		}
 	}
+	
+	/**
+	 * check the ingredients of the part according to the specification
+	 *
+	 * @param compoListDataItem the compo list data item
+	 * @param ingMap the ing map
+	 * @param totalQtyIngMap the total qty ing map
+	 */
+	private void checkILOfPart(ProductData productData, ProductData productSpecicationData, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){
+		
+		if(productSpecicationData != null && productSpecicationData.getForbiddenIngList() != null){
+		
+			for(IngListDataItem ingListDataItem : productData.getIngList()){										
+				
+				for(ForbiddenIngListDataItem fil : productSpecicationData.getForbiddenIngList()){					
+					
+					// GMO
+					if(fil.isGMO() != null && !fil.isGMO().equals(NullableBoolean.Null)){
+						Boolean b = fil.isGMO().equals(NullableBoolean.True) ? Boolean.TRUE : Boolean.FALSE;
+						if(!b.equals(ingListDataItem.isGMO())){
+							continue; // check next rule
+						}
+					}
+					
+					// Ionized
+					if(fil.isIonized() != null && !fil.isIonized().equals(NullableBoolean.Null)){
+						Boolean b = fil.isIonized().equals(NullableBoolean.True) ? Boolean.TRUE : Boolean.FALSE;
+						if(!b.equals(ingListDataItem.isIonized())){
+							continue; // check next rule
+						}
+					}
+					
+					// Ings
+					if(fil.getIngs().size() > 0){
+						if(!fil.getIngs().contains(ingListDataItem.getIng())){
+							continue; // check next rule
+						}
+					}
+					
+					// GeoOrigins
+					if(fil.getGeoOrigins().size() > 0){
+						boolean hasGeoOrigin = false;
+						for(NodeRef n : ingListDataItem.getGeoOrigin()){						
+							if(fil.getGeoOrigins().contains(n)){
+								hasGeoOrigin = true;
+							}
+						}
+						
+						if(!hasGeoOrigin){
+							continue; // check next rule
+						}
+					}
+					
+					// BioOrigins
+					if(fil.getBioOrigins().size() > 0){
+						boolean hasBioOrigin = false;
+						for(NodeRef n : ingListDataItem.getBioOrigin()){						
+							if(fil.getBioOrigins().contains(n)){
+								hasBioOrigin = true;
+							}
+						}
+						
+						if(!hasBioOrigin){
+							continue; // check next rule
+						}
+					}
+					
+					// req not respected
+					ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
+					if(reqCtrl == null){
+						reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), new ArrayList<NodeRef>());
+						reqCtrlMap.put(fil.getNodeRef(), reqCtrl);						
+					}
+					
+					if(!reqCtrl.getSources().contains(productData.getNodeRef())){
+						reqCtrl.getSources().add(productData.getNodeRef());
+					}					
+				}
+			}
+		}		
+	}
+	
+	
 	
 	/**
 	 * Calculate the ingredient labeling of a product.

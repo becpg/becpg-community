@@ -72,4 +72,6 @@ public interface ProductDictionaryService {
 	 * @param containerNodeRef the container node ref
 	 */
 	public void initializeRepoHierarchy(NodeRef containerNodeRef);
+	
+	public QName getWUsedList(NodeRef childNodeRef);
 }

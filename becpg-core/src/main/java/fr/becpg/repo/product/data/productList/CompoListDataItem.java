@@ -27,7 +27,9 @@ public class CompoListDataItem{
 	/** The qty. */
 	private Float qty = 0f;
 		
-	private Float qtySubFormula = 0f;
+	private Float qtySubFormula = null;
+	
+	private Float qtyAfterProcess = null;
 	
 	/** The compo list unit. */
 	private CompoListUnit compoListUnit = CompoListUnit.Unknown;
@@ -103,6 +105,14 @@ public class CompoListDataItem{
 
 	public void setQtySubFormula(Float qtySubFormula) {
 		this.qtySubFormula = qtySubFormula;
+	}
+		
+	public Float getQtyAfterProcess() {
+		return qtyAfterProcess;
+	}
+
+	public void setQtyAfterProcess(Float qtyAfterProcess) {
+		this.qtyAfterProcess = qtyAfterProcess;
 	}
 
 	/**
@@ -204,12 +214,13 @@ public class CompoListDataItem{
 	 * @param declType
 	 * @param product
 	 */
-	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Float qty, Float qtySubFormula, CompoListUnit compoListUnit, Float lossPerc, String declGrp, String declType, NodeRef product){
+	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Float qty, Float qtySubFormula, Float qtyAfterProcess, CompoListUnit compoListUnit, Float lossPerc, String declGrp, String declType, NodeRef product){
 		
 		setNodeRef(nodeRef);
 		setDepthLevel(depthLevel);
 		setQty(qty);
 		setQtySubFormula(qtySubFormula);
+		setQtyAfterProcess(qtyAfterProcess);
 		setCompoListUnit(compoListUnit);
 		setLossPerc(lossPerc);
 		setDeclGrp(declGrp);

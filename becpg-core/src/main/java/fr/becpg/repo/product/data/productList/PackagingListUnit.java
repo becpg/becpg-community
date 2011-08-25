@@ -9,30 +9,20 @@ package fr.becpg.repo.product.data.productList;
  *
  * @author querephi
  */
-public enum CompoListUnit {
+public enum PackagingListUnit {
 	
 	/** The Unknown. */
-	Unknown,
-	
-	/** The kg. */
-	kg,
-	
-	/** The g. */
-	g,
-	
-	/** The L. */
-	L,
-	
-	/** The m l. */
-	mL,
+	Unknown,	
 	
 	/** The P. */
 	P,
+	
+	PP,
 	
 	/** The m. */
 	m,
 	
 	/** m2 **/
-	m2;	
+	m2;
 	
 }
