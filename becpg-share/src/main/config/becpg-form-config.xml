@@ -21,6 +21,8 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description"/>
 					<show id="bcpg:productType" />
 				</field-visibility>
 				<appearance>
@@ -39,7 +41,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
-					<show id="cm:description" force="true" />
+					<show id="cm:description"/>
 					<show id="bcpg:code" force="true" />
 					<show id="bcpg:pmcRegulation" />
 					<show id="bcpg:pmcConcernedProducts" />
@@ -60,6 +62,20 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="node-type" condition="bcpg:productSpecification">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description"/>
+				</field-visibility>
+				<appearance>					
 				</appearance>
 			</form>
 		</forms>
@@ -191,6 +207,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:productSpecification" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -262,6 +279,11 @@
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:productSpecification" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -313,6 +335,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:productSpecification" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -376,6 +399,11 @@
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:productSpecification" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -422,6 +450,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:productSpecification" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -494,6 +523,11 @@
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:productSpecification" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -546,6 +580,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:productSpecification" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -611,6 +646,11 @@
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:productSpecification" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -1454,6 +1494,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:productSpecification" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1520,6 +1561,11 @@
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:productSpecification" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -1570,6 +1616,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:productSpecification" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1629,6 +1676,11 @@
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:productSpecification" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -2074,8 +2126,8 @@
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
-					<show id="bcpg:compoListQty" />
 					<show id="bcpg:compoListQtySubFormula" />
+					<show id="bcpg:compoListQtyAfterProcess" />
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclGrp" />
@@ -2098,9 +2150,10 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
-					<show id="bcpg:compoListProduct" />
-					<show id="bcpg:compoListQty" />
+					<show id="bcpg:compoListProduct" />					
 					<show id="bcpg:compoListQtySubFormula" />
+					<show id="bcpg:compoListQtyAfterProcess" />
+					<show id="bcpg:compoListQty" />
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclGrp" />
@@ -2118,8 +2171,8 @@
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
-					<show id="bcpg:compoListQty" />
 					<show id="bcpg:compoListQtySubFormula" />
+					<show id="bcpg:compoListQtyAfterProcess" />
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclGrp" />
@@ -2129,6 +2182,66 @@
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
 					<field id="bcpg:compoListProduct">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- _________________________________________________ PACKAGING  _____________________________________________ -->
+	<!-- bcpg:packagingList type -->
+	<config evaluator="model-type" condition="bcpg:packagingList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:packagingListProduct" />
+					<show id="bcpg:packagingListQty" />					
+					<show id="bcpg:packagingListUnit" />					
+					<show id="bcpg:packagingListPkgLevel" />
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:packagingListProduct">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:packagingListProduct" />
+					<show id="bcpg:packagingListQty" />					
+					<show id="bcpg:packagingListUnit" />					
+					<show id="bcpg:packagingListPkgLevel" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:compoList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:compoList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:packagingListProduct" />
+					<show id="bcpg:packagingListQty" />					
+					<show id="bcpg:packagingListUnit" />					
+					<show id="bcpg:packagingListPkgLevel" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:packagingListProduct">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product
@@ -2585,6 +2698,141 @@
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- bcpg:forbiddenIngList type -->
+	<config evaluator="model-type" condition="bcpg:forbiddenIngList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:filReqType" />
+					<show id="bcpg:filReqMessage" />
+					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filIsGMO" />
+					<show id="bcpg:filIsIonized" />
+					<show id="bcpg:filIngs" />
+					<show id="bcpg:filGeoOrigins" />
+					<show id="bcpg:filBioOrigins" />
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>					
+					<field id="bcpg:filReqMessage">
+                  <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+               </field>
+					<field id="bcpg:filIngs">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:filGeoOrigins">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:filBioOrigins">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:filReqType" />
+					<show id="bcpg:filReqMessage" />
+					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filIsGMO" />
+					<show id="bcpg:filIsIonized" />
+					<show id="bcpg:filIngs" />
+					<show id="bcpg:filGeoOrigins" />
+					<show id="bcpg:filBioOrigins" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:forbiddenIngList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:forbiddenIngList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:filReqType" />
+					<show id="bcpg:filReqMessage" />
+					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filIsGMO" />
+					<show id="bcpg:filIsIonized" />
+					<show id="bcpg:filIngs" />
+					<show id="bcpg:filGeoOrigins" />
+					<show id="bcpg:filBioOrigins" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>					
+					<field id="bcpg:filReqMessage">
+                  <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+               </field>
+					<field id="bcpg:filIngs">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:filGeoOrigins">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:filBioOrigins">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- bcpg:reqCtrlList type -->
+	<config evaluator="model-type" condition="bcpg:reqCtrlList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:rclReqType" />
+					<show id="bcpg:rclReqMessage" />
+					<show id="bcpg:rclSources" />					
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>							
+					<field id="bcpg:rclReqMessage">
+                  <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+               </field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:rclReqType" />
+					<show id="bcpg:rclReqMessage" />
+					<show id="bcpg:rclSources" />	
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:reqCtrlList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:reqCtrlList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:rclReqType" />
+					<show id="bcpg:rclReqMessage" />
+					<show id="bcpg:rclSources" />	
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>	
+					<field id="bcpg:rclReqMessage">
+                  <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+               </field>				
 				</appearance>
 			</form>
 		</forms>

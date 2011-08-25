@@ -320,8 +320,11 @@
       getCellFormatter: function DataGrid_getCellFormatter()
       {
          var scope = this;
-			var booleanValueTrue = this.msg("data.boolean.true");
-			var booleanValueFalse = this.msg("data.boolean.false");
+         var booleanValueTrue = this.msg("data.boolean.true");
+         var booleanValueFalse = this.msg("data.boolean.false");
+         var reqTypeForbidden = this.msg("data.reqType.Forbidden");
+         var reqTypeTolerated = this.msg("data.reqType.Tolerated");
+         var reqTypeInfo = this.msg("data.reqType.Info");
          
          /**
           * Data Type custom formatter
@@ -389,7 +392,12 @@
                            case "bcpg:product":
                         	   if(datalistColumn.name == "bcpg:compoListProduct")
 								{
-									html += '<span class="' + data.metadata + '"><a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a></span>';                        	   
+                        		   var padding = 10 + oRecord.getData("itemData")["prop_bcpg_depthLevel"].value * 10;
+                        		   html += '<span class="' + data.metadata + '" style="padding-left:' + padding + 'px;"><a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a></span>';                        	   
+								}
+                        	   	else if(datalistColumn.name == "bcpg:packagingListProduct")
+								{
+                        		   html += '<span class="' + data.metadata + '"><a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a></span>';                        	   
 								}
 								else
 								{
@@ -408,7 +416,30 @@
 								}
 								break;    
                            default:
-                              html += $html(data.displayValue);
+                        	   if(datalistColumn.name == "bcpg:rclReqType" || datalistColumn.name == "bcpg:filReqType")
+                    		   {
+                        		   if(data.displayValue == reqTypeForbidden)
+                        		   {
+                        			   html += '<span class="reqTypeForbidden">' + $html(data.displayValue) + '</span>';
+                        		   }
+                        		   else if(data.displayValue == reqTypeTolerated)
+                        		   {
+                        			   html += '<span class="reqTypeTolerated">' + $html(data.displayValue) + '</span>';
+                        		   }
+                        		   else if(data.displayValue == reqTypeInfo)
+                        		   {
+                        			   html += '<span class="reqTypeInfo">' + $html(data.displayValue) + '</span>';
+                        		   }                        		   
+                        		   else
+                    			   {
+                        			   html += $html(data.displayValue);
+                    			   }
+                    		   }
+                        	   else
+                        	   {
+                        		   html += $html(data.displayValue);
+                        	   }
+                              
                               break;
                         }
 

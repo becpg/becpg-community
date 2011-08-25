@@ -76,6 +76,7 @@
          <type name="cm:content">
 				<subtype name="bcpg:productTemplate" />							
 				<subtype name="bcpg:productMicrobioCriteria"/>
+				<subtype name="bcpg:productSpecification" />
 				
 				<subtype name="bcpg:allergen" />
 				<subtype name="bcpg:cost" />

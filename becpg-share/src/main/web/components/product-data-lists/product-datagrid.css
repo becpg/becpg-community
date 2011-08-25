@@ -49,3 +49,20 @@
 {
    color: red;
 }
+
+/* reqType */
+.datagrid .reqTypeForbidden
+{
+   background: url(../images/productLists/stop-16.png) no-repeat;
+   padding-left: 20px;
+}
+.datagrid .reqTypeTolerated
+{
+   background: url(../images/productLists/warning-16.png) no-repeat;
+   padding-left: 20px;
+}
+.datagrid .reqTypeInfo
+{
+   background: url(../images/productLists/info-16.png) no-repeat;
+   padding-left: 20px;
+}
