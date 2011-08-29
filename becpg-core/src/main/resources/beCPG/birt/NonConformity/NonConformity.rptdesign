@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 3.7.0.v20110602 Build &lt;3.7.0.v20110607-1526></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.6.2.r262_v20110209 Build &lt;2.6.2.v20110214-1523></property>
     <property name="units">in</property>
     <property name="iconFile">/templates/sidebyside_chart_listing.gif</property>
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.sidebysidechartlisting</property>
@@ -18,175 +18,242 @@
                 <structure>
                     <property name="columnName">id</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">id</text-property>
+                    <property name="analysisColumn">id</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncCode</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncCode</text-property>
+                    <property name="analysisColumn">ncCode</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncType</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncType</text-property>
+                    <property name="analysisColumn">ncType</property>
                 </structure>
                 <structure>
                     <property name="columnName">name</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">name</text-property>
+                    <property name="analysisColumn">name</property>
                 </structure>
                 <structure>
                     <property name="columnName">description</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">description</text-property>
+                    <property name="analysisColumn">description</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncCreationStep</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncCreationStep</text-property>
+                    <property name="analysisColumn">ncCreationStep</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncDateCreation</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncDateCreation</text-property>
+                    <property name="analysisColumn">ncDateCreation</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncQuantityNc</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncQuantityNc</text-property>
+                    <property name="analysisColumn">ncQuantityNc</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncQuantityNcUnit</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncQuantityNcUnit</text-property>
+                    <property name="analysisColumn">ncQuantityNcUnit</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncDetectionStep</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncDetectionStep</text-property>
+                    <property name="analysisColumn">ncDetectionStep</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncDateDetection</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncDateDetection</text-property>
+                    <property name="analysisColumn">ncDateDetection</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncCost</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncCost</text-property>
+                    <property name="analysisColumn">ncCost</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncCostUnit</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncCostUnit</text-property>
+                    <property name="analysisColumn">ncCostUnit</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncService</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncService</text-property>
+                    <property name="analysisColumn">ncService</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncComments</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncComments</text-property>
+                    <property name="analysisColumn">ncComments</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncCause</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncCause</text-property>
+                    <property name="analysisColumn">ncCause</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncBatchNumber</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncBatchNumber</text-property>
+                    <property name="analysisColumn">ncBatchNumber</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncOrderNb</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncOrderNb</text-property>
+                    <property name="analysisColumn">ncOrderNb</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncBatchComments</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncBatchComments</text-property>
+                    <property name="analysisColumn">ncBatchComments</property>
                 </structure>
                 <structure>
                     <property name="columnName">clients</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">clients</text-property>
+                    <property name="analysisColumn">clients</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncProductFamilly</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncProductFamilly</text-property>
+                    <property name="analysisColumn">ncProductFamilly</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncProduct</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncProduct</text-property>
+                    <property name="analysisColumn">ncProduct</property>
                 </structure>
                 <structure>
                     <property name="columnName">acType</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">acType</text-property>
+                    <property name="analysisColumn">acType</property>
                 </structure>
                 <structure>
                     <property name="columnName">acPreviDate</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">acPreviDate</text-property>
+                    <property name="analysisColumn">acPreviDate</property>
                 </structure>
                 <structure>
                     <property name="columnName">acRealisationDate</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">acRealisationDate</text-property>
+                    <property name="analysisColumn">acRealisationDate</property>
                 </structure>
                 <structure>
                     <property name="columnName">acVerificationDate</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">acVerificationDate</text-property>
+                    <property name="analysisColumn">acVerificationDate</property>
                 </structure>
                 <structure>
                     <property name="columnName">acDescription</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">acDescription</text-property>
+                    <property name="analysisColumn">acDescription</property>
                 </structure>
                 <structure>
                     <property name="columnName">acEfficiency</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">acEfficiency</text-property>
+                    <property name="analysisColumn">acEfficiency</property>
                 </structure>
                 <structure>
                     <property name="columnName">acSpeaker</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">acSpeaker</text-property>
+                    <property name="analysisColumn">acSpeaker</property>
                 </structure>
                 <structure>
                     <property name="columnName">acChecker</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">acChecker</text-property>
+                    <property name="analysisColumn">acChecker</property>
                 </structure>
                 <structure>
                     <property name="columnName">acComments</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">acComments</text-property>
+                    <property name="analysisColumn">acComments</property>
                 </structure>
                 <structure>
                     <property name="columnName">creator</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">creator</text-property>
+                    <property name="analysisColumn">creator</property>
                 </structure>
                 <structure>
                     <property name="columnName">modified</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">modified</text-property>
+                    <property name="analysisColumn">modified</property>
                 </structure>
                 <structure>
                     <property name="columnName">suppliers</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">suppliers</text-property>
+                    <property name="analysisColumn">suppliers</property>
                 </structure>
             </list-property>
-            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -368,241 +435,207 @@
                     <property name="name">id</property>
                     <property name="nativeName">id</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
                     <property name="name">ncCode</property>
                     <property name="nativeName">ncCode</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">3</property>
                     <property name="name">ncType</property>
                     <property name="nativeName">ncType</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
                     <property name="name">name</property>
                     <property name="nativeName">name</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
                     <property name="name">description</property>
                     <property name="nativeName">description</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">6</property>
                     <property name="name">ncCreationStep</property>
                     <property name="nativeName">ncCreationStep</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">7</property>
                     <property name="name">ncDateCreation</property>
                     <property name="nativeName">ncDateCreation</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
                     <property name="name">ncQuantityNc</property>
                     <property name="nativeName">ncQuantityNc</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">9</property>
                     <property name="name">ncQuantityNcUnit</property>
                     <property name="nativeName">ncQuantityNcUnit</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">10</property>
                     <property name="name">ncDetectionStep</property>
                     <property name="nativeName">ncDetectionStep</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">11</property>
                     <property name="name">ncDateDetection</property>
                     <property name="nativeName">ncDateDetection</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">12</property>
                     <property name="name">ncCost</property>
                     <property name="nativeName">ncCost</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">13</property>
                     <property name="name">ncCostUnit</property>
                     <property name="nativeName">ncCostUnit</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">14</property>
                     <property name="name">ncService</property>
                     <property name="nativeName">ncService</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">15</property>
                     <property name="name">ncComments</property>
                     <property name="nativeName">ncComments</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">16</property>
                     <property name="name">ncCause</property>
                     <property name="nativeName">ncCause</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">17</property>
                     <property name="name">ncBatchNumber</property>
                     <property name="nativeName">ncBatchNumber</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">18</property>
                     <property name="name">ncOrderNb</property>
                     <property name="nativeName">ncOrderNb</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">19</property>
                     <property name="name">ncBatchComments</property>
                     <property name="nativeName">ncBatchComments</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">20</property>
                     <property name="name">clients</property>
                     <property name="nativeName">clients</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">21</property>
                     <property name="name">ncProductFamilly</property>
                     <property name="nativeName">ncProductFamilly</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">22</property>
                     <property name="name">ncProduct</property>
                     <property name="nativeName">ncProduct</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">23</property>
                     <property name="name">acType</property>
                     <property name="nativeName">acType</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">24</property>
                     <property name="name">acPreviDate</property>
                     <property name="nativeName">acPreviDate</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">25</property>
                     <property name="name">acRealisationDate</property>
                     <property name="nativeName">acRealisationDate</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">26</property>
                     <property name="name">acVerificationDate</property>
                     <property name="nativeName">acVerificationDate</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">27</property>
                     <property name="name">acDescription</property>
                     <property name="nativeName">acDescription</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">28</property>
                     <property name="name">acEfficiency</property>
                     <property name="nativeName">acEfficiency</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">29</property>
                     <property name="name">acSpeaker</property>
                     <property name="nativeName">acSpeaker</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">30</property>
                     <property name="name">acChecker</property>
                     <property name="nativeName">acChecker</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">31</property>
                     <property name="name">acComments</property>
                     <property name="nativeName">acComments</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">32</property>
                     <property name="name">creator</property>
                     <property name="nativeName">creator</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">33</property>
                     <property name="name">modified</property>
                     <property name="nativeName">modified</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">34</property>
                     <property name="name">suppliers</property>
                     <property name="nativeName">suppliers</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[//nodes]#:#{id;STRING;node/@id},{ncCode;STRING;node/@ncCode},{ncType;STRING;node/@ncType},{name;STRING;node/@name},{description;STRING;node/@description},{ncCreationStep;STRING;node/@ncCreationStep},{ncDateCreation;STRING;node/@ncDateCreation},{ncQuantityNc;STRING;node/@ncQuantityNc},{ncQuantityNcUnit;STRING;node/@ncQuantityNcUnit},{ncDetectionStep;STRING;node/@ncDetectionStep},{ncDateDetection;STRING;node/@ncDateDetection},{ncCost;STRING;node/@ncCost},{ncCostUnit;STRING;node/@ncCostUnit},{ncService;STRING;node/@ncService},{ncComments;STRING;node/@ncComments},{ncCause;STRING;node/@ncCause},{ncBatchNumber;STRING;node/@ncBatchNumber},{ncOrderNb;STRING;node/@ncOrderNb},{ncBatchComments;STRING;node/@ncBatchComments},{clients;STRING;node/@clients},{ncProductFamilly;STRING;node/@ncProductFamilly},{ncProduct;STRING;node/@ncProduct},{acType;STRING;node/@acType},{acPreviDate;STRING;node/@acPreviDate},{acRealisationDate;STRING;node/@acRealisationDate},{acVerificationDate;STRING;node/@acVerificationDate},{acDescription;STRING;node/@acDescription},{acEfficiency;STRING;node/@acEfficiency},{acSpeaker;STRING;node/@acSpeaker},{acChecker;STRING;node/@acChecker},{acComments;STRING;node/@acComments},{creator;STRING;node/@creator},{modified;STRING;node/@modified},{suppliers;STRING;node/@suppliers}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/export/nodes/node]#:#{id;STRING;/@id},{ncCode;STRING;/@ncCode},{ncType;STRING;/@ncType},{name;STRING;/@name},{description;STRING;/@description},{ncCreationStep;STRING;/@ncCreationStep},{ncDateCreation;STRING;/@ncDateCreation},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncDetectionStep;STRING;/@ncDetectionStep},{ncDateDetection;STRING;/@ncDateDetection},{ncCost;STRING;/@ncCost},{ncCostUnit;STRING;/@ncCostUnit},{ncService;STRING;/@ncService},{ncComments;STRING;/@ncComments},{ncCause;STRING;/@ncCause},{ncBatchNumber;STRING;/@ncBatchNumber},{ncOrderNb;STRING;/@ncOrderNb},{ncBatchComments;STRING;/@ncBatchComments},{clients;STRING;/@clients},{ncProductFamilly;STRING;/@ncProductFamilly},{ncProduct;STRING;/@ncProduct},{acType;STRING;/@acType},{acPreviDate;STRING;/@acPreviDate},{acRealisationDate;STRING;/@acRealisationDate},{acVerificationDate;STRING;/@acVerificationDate},{acDescription;STRING;/@acDescription},{acEfficiency;STRING;/@acEfficiency},{acSpeaker;STRING;/@acSpeaker},{acChecker;STRING;/@acChecker},{acComments;STRING;/@acComments},{creator;STRING;/@creator},{modified;STRING;/@modified},{suppliers;STRING;/@suppliers}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1215,20 +1248,20 @@
     </page-setup>
     <body>
         <grid id="4">
-            <property name="height">3.8541666666666665in</property>
+            <property name="height">3.6875in</property>
             <property name="width">7.989583333333333in</property>
             <column id="5">
-                <property name="width">3.8645833333333335in</property>
+                <property name="width">4.15625in</property>
             </column>
             <column id="92">
-                <property name="width">4.125in</property>
+                <property name="width">3.8333333333333335in</property>
             </column>
             <row id="6">
-                <property name="height">0.7916666666666666in</property>
+                <property name="height">0.625in</property>
                 <cell id="7">
                     <image id="89">
-                        <property name="height">0.6770833333333334in</property>
-                        <property name="width">1.90625in</property>
+                        <property name="height">0.5625in</property>
+                        <property name="width">1.7395833333333333in</property>
                         <property name="source">embed</property>
                         <property name="imageName">app-logo-becpg.png</property>
                     </image>
@@ -1993,7 +2026,7 @@
             <AggregateExpression>DistinctCount</AggregateExpression>
           </Grouping>
         </DataDefinition>
-        <SeriesIdentifier>Nombre de non conformités</SeriesIdentifier>
+        <SeriesIdentifier>Nb de non conformités</SeriesIdentifier>
         <DataPoint>
           <Components>
             <Type>Orthogonal_Value</Type>
@@ -2104,8 +2137,8 @@
                         <property name="outputFormat">SVG</property>
                         <property name="inheritColumns">true</property>
                         <property name="dataSet">Data Set</property>
-                        <property name="height">2.8020833333333335in</property>
-                        <property name="width">3.71875in</property>
+                        <property name="height">3.0208333333333335in</property>
+                        <property name="width">4.083333333333333in</property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">id</property>
@@ -3028,7 +3061,7 @@
             <AggregateExpression>DistinctCount</AggregateExpression>
           </Grouping>
         </DataDefinition>
-        <SeriesIdentifier>Nombre de non conformités</SeriesIdentifier>
+        <SeriesIdentifier>Nb de non conformités</SeriesIdentifier>
         <DataPoint>
           <Components>
             <Type>Orthogonal_Value</Type>
@@ -3139,8 +3172,8 @@
                         <property name="outputFormat">SVG</property>
                         <property name="inheritColumns">true</property>
                         <property name="dataSet">Data Set</property>
-                        <property name="height">2.7916666666666665in</property>
-                        <property name="width">4in</property>
+                        <property name="height">3.0208333333333335in</property>
+                        <property name="width">3.7708333333333335in</property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">id</property>
@@ -3944,7 +3977,7 @@
               <AggregateExpression>DistinctCount</AggregateExpression>
             </Grouping>
           </DataDefinition>
-          <SeriesIdentifier></SeriesIdentifier>
+          <SeriesIdentifier>Nb d'anomalies</SeriesIdentifier>
           <DataPoint>
             <Components>
               <Type>Orthogonal_Value</Type>
@@ -4615,7 +4648,7 @@
             <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:data="http://www.birt.eclipse.org/ChartModelData" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
   <Version>2.5.1</Version>
   <Type>Bar Chart</Type>
-  <SubType>Percent Stacked</SubType>
+  <SubType>Side-by-side</SubType>
   <Block>
     <Children xsi:type="layout:TitleBlock">
       <Bounds>
@@ -5246,7 +5279,7 @@
             <Separator>, </Separator>
           </DataPoint>
           <LabelPosition>Inside</LabelPosition>
-          <Stacked>true</Stacked>
+          <Stacked>false</Stacked>
           <Riser>Rectangle</Riser>
         </Series>
       </SeriesDefinitions>
@@ -5348,7 +5381,7 @@
         </Value>
       </Origin>
       <PrimaryAxis>true</PrimaryAxis>
-      <Percent>true</Percent>
+      <Percent>false</Percent>
     </AssociatedAxes>
     <SeriesDefinitions>
       <Query>
@@ -5711,7 +5744,7 @@
             <property name="outputFormat">SVG</property>
             <property name="inheritColumns">true</property>
             <property name="dataSet">Data Set</property>
-            <property name="height">3.6666666666666665in</property>
+            <property name="height">3.8125in</property>
             <property name="width">7.979166666666667in</property>
             <list-property name="boundDataColumns">
                 <structure>

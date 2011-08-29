@@ -60,6 +60,19 @@
 		</columns>
 	</query>
 	<nodes>
+		<node id="0" ncCode="11" ncType="Physico-chimie"
+			name="Test NC" description="NC de test"
+			ncCreationStep="Transport" ncDateCreation="2010-10-07 12:25:12" 
+			ncQuantityNc="10" ncQuantityNcUnit="kg"
+			ncDetectionStep="Livraison" ncDateDetection="2010-10-07 12:25:12" 
+			ncCost="1000" ncCostUnit="€"
+			ncService="Service Livraison" ncComments="No comments" ncCause="chute" ncBatchNumber="20454212" 
+			ncOrderNb="" ncBatchComments="" clients="Client1" ncProductFamilly="Pizzas"
+			ncProduct="Prod 1" acType="Déclassement" acPreviDate="2010-10-07 12:25:12" acRealisationDate="2010-10-07 12:25:12"
+			acVerificationDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Non satisfaisante" acSpeaker="Matthieu"
+			acChecker="Matthieu" acComments="" creator="admin" modified="2010-10-07 12:25:12"
+			suppliers="Four1" />
+	
 		<node id="1" ncCode="12" ncType="Physico-chimie"
 			name="Test NC" description="NC de test"
 			ncCreationStep="Transport" ncDateCreation="2010-10-07 12:25:12" 
@@ -67,26 +80,26 @@
 			ncDetectionStep="Livraison" ncDateDetection="2010-10-07 12:25:12" 
 			ncCost="1000" ncCostUnit="€"
 			ncService="Service Livraison" ncComments="No comments" ncCause="chute" ncBatchNumber="20454212" 
-			ncOrderNb="" ncBatchComments="" clients="" ncProductFamilly="Pizzas"
+			ncOrderNb="" ncBatchComments="" clients="Client1" ncProductFamilly="Pizzas"
 			ncProduct="Prod 1" acType="Déclassement" acPreviDate="2010-10-07 12:25:12" acRealisationDate="2010-10-07 12:25:12"
 			acVerificationDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Non satisfaisante" acSpeaker="Matthieu"
 			acChecker="Matthieu" acComments="" creator="admin" modified="2010-10-07 12:25:12"
-			suppliers="Four1, Four2" />
+			suppliers="Four1" />
 			
-	     <node id="2" ncCode="13" ncType="Physico-chimie"
+	     <node id="2" ncCode="13" ncType="Corps étranger environnement"
 			name="Test NC 2" description="NC de test"
 			ncCreationStep="Transport" ncDateCreation="2010-10-07 12:25:12" 
 			ncQuantityNc="10" ncQuantityNcUnit="kg"
 			ncDetectionStep="Livraison" ncDateDetection="2010-10-10 12:25:12" 
 			ncCost="1000" ncCostUnit="€"
 			ncService="Service Livraison" ncComments="No comments" ncCause="chute" ncBatchNumber="20454212" 
-			ncOrderNb="" ncBatchComments="" clients="Client1, Client2" ncProductFamilly="Pizzas"
+			ncOrderNb="" ncBatchComments="" clients="Client1" ncProductFamilly="Pizzas"
 			ncProduct="Prod 2" acType="Déclassement" acPreviDate="2010-10-07 12:25:12" acRealisationDate="2010-10-07 12:25:12"
 			acVerificationDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Non satisfaisante" acSpeaker="Matthieu"
 			acChecker="Matthieu" acComments="" creator="admin" modified="2010-10-07 12:25:12"
-			suppliers="" />
+			suppliers="Four1" />
 			
-			 <node id="3" ncCode="14" ncType="Physico-chimie"
+			 <node id="3" ncCode="14" ncType="Corps étranger ligne"
 			name="Test NC 2" description="NC de test"
 			ncCreationStep="Transport" ncDateCreation="2010-10-07 12:25:12" 
 			ncQuantityNc="10" ncQuantityNcUnit="kg"
@@ -97,7 +110,7 @@
 			ncProduct="Prod 2" acType="Déclassement" acPreviDate="2010-10-07 12:25:12" acRealisationDate="2010-10-07 12:25:12"
 			acVerificationDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Non satisfaisante" acSpeaker="Matthieu"
 			acChecker="Matthieu" acComments="" creator="admin" modified="2010-10-07 12:25:12"
-			suppliers="" />
+			suppliers="Four 2" />
 			
 			 <node id="4" ncCode="15" ncType="Physico-chimie"
 			name="Test NC 2" description="NC de test"
@@ -125,7 +138,7 @@
 			acChecker="Matthieu" acComments="" creator="admin" modified="2010-10-07 12:25:12"
 			suppliers="" />
 			
-			 <node id="6" ncCode="12" ncType="Physico-chimie"
+			 <node id="6" ncCode="12" ncType="DLUO"
 			name="Test NC 2" description="NC de test"
 			ncCreationStep="Transport" ncDateCreation="2010-10-07 12:25:12" 
 			ncQuantityNc="10" ncQuantityNcUnit="kg"
