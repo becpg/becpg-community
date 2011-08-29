@@ -39,7 +39,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.NcModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.helper.TranslateHelper;

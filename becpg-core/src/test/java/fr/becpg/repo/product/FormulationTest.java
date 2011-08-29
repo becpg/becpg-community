@@ -395,8 +395,8 @@ public class FormulationTest extends RepoBaseTestCase {
 			rawMaterial1.setCostList(costList);
 			//nutList
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1f, "g/100g", "Groupe 1", nut1));
-			nutList.add(new NutListDataItem(null, 2f, "g/100g", "Groupe 1", nut2));
+			nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f, 0f, "Groupe 1", nut1));
+			nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f, 0f, "Groupe 1", nut2));
 			rawMaterial1.setNutList(nutList);
 			//allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
@@ -430,8 +430,8 @@ public class FormulationTest extends RepoBaseTestCase {
 			rawMaterial2.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1f, "g/100g", "Groupe 1", nut1));
-			nutList.add(new NutListDataItem(null, 2f, "g/100g", "Groupe 1", nut2));
+			nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut1));
+			nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f,  0f, "Groupe 1", nut2));
 			rawMaterial2.setNutList(nutList);
 			//allergenList
 			allergenList = new ArrayList<AllergenListDataItem>();
@@ -466,8 +466,8 @@ public class FormulationTest extends RepoBaseTestCase {
 			rawMaterial3.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1f, "g/100g", "Groupe 1", nut1));
-			nutList.add(new NutListDataItem(null, 2f, "g/100g", "Groupe 1", nut2));
+			nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut1));
+			nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f,  0f, "Groupe 1", nut2));
 			rawMaterial3.setNutList(nutList);
 			//allergenList
 			allergenList = new ArrayList<AllergenListDataItem>();
@@ -513,8 +513,8 @@ public class FormulationTest extends RepoBaseTestCase {
 			rawMaterial5.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1f, "g/100g", "Groupe 1", nut1));
-			nutList.add(new NutListDataItem(null, 3f, "g/100g", "Groupe 1", nut2));
+			nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut1));
+			nutList.add(new NutListDataItem(null, 3f, "g/100g", 0f,  0f, "Groupe 1", nut2));
 			rawMaterial5.setNutList(nutList);					
 			rawMaterial5.setIngList(ingList);		
 			rawMaterial5NodeRef = productDAO.create(folderNodeRef, rawMaterial5, dataLists);
@@ -1263,16 +1263,16 @@ public class FormulationTest extends RepoBaseTestCase {
 					NodeRef nut10 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 					
 					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-					nutList.add(new NutListDataItem(null, 1f, "g/100g", "Autre", nut10));
-					nutList.add(new NutListDataItem(null, 1f, "g/100g", "Groupe 1", nut3));
-					nutList.add(new NutListDataItem(null, 1f, "g/100g", "Groupe 1", nut5));
-					nutList.add(new NutListDataItem(null, 1f, "g/100g", "Groupe 1", nut14));
-					nutList.add(new NutListDataItem(null, 1f, "g/100g", "Autre", nut9));
-					nutList.add(new NutListDataItem(null, 1f, "g/100g", "Groupe 1", nut1));
-					nutList.add(new NutListDataItem(null, 2f, "g/100g", "Groupe 2", nut26));
-					nutList.add(new NutListDataItem(null, 2f, "g/100g", "Groupe 2", nut2));
-					nutList.add(new NutListDataItem(null, 2f, "g/100g", "Groupe 2", nut17));
-					nutList.add(new NutListDataItem(null, 1f, "g/100g", "Autre", nut8));
+					nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Autre", nut10));
+					nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut3));
+					nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut5));
+					nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut14));
+					nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Autre", nut9));
+					nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut1));
+					nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f,  0f, "Groupe 2", nut26));
+					nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f,  0f, "Groupe 2", nut2));
+					nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f,  0f, "Groupe 2", nut17));
+					nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Autre", nut8));
 					
 					
 					List<NutListDataItemDecorator> nutListDecorated = new ArrayList<NutListDataItemDecorator>();

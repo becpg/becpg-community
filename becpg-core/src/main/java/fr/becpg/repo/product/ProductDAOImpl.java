@@ -488,7 +488,14 @@ public class ProductDAOImpl implements ProductDAO{
 		    			bioOrigins.add(assocRef.getTargetRef());
 		    		}
 		    				    		
-		    		IngListDataItem ingListDataItem = new IngListDataItem(nodeRef, (Float)properties.get(BeCPGModel.PROP_INGLIST_QTY_PERC), geoOrigins, bioOrigins, (Boolean)properties.get(BeCPGModel.PROP_INGLIST_IS_GMO), (Boolean)properties.get(BeCPGModel.PROP_INGLIST_IS_IONIZED), ingNodeRef);
+		    		IngListDataItem ingListDataItem = new IngListDataItem(nodeRef, 
+		    								(Float)properties.get(BeCPGModel.PROP_INGLIST_QTY_PERC), 
+		    								geoOrigins, 
+		    								bioOrigins, 
+		    								(Boolean)properties.get(BeCPGModel.PROP_INGLIST_IS_GMO), 
+		    								(Boolean)properties.get(BeCPGModel.PROP_INGLIST_IS_IONIZED), 
+		    								ingNodeRef);
+		    		
 		    		ingList.add(ingListDataItem);
 		    	}
     		}    		
@@ -524,7 +531,14 @@ public class ProductDAOImpl implements ProductDAO{
 		    	
 		    		List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
 		    		NodeRef nutNodeRef = (nutAssocRefs.get(0)).getTargetRef();
-		    		NutListDataItem nutListDataItem = new NutListDataItem(nodeRef, (Float)properties.get(BeCPGModel.PROP_NUTLIST_VALUE), (String)properties.get(BeCPGModel.PROP_NUTLIST_UNIT), (String)nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_NUTGROUP), nutNodeRef);
+		    		NutListDataItem nutListDataItem = new NutListDataItem(nodeRef, 
+		    									(Float)properties.get(BeCPGModel.PROP_NUTLIST_VALUE),
+		    									(String)properties.get(BeCPGModel.PROP_NUTLIST_UNIT),
+		    									(Float)properties.get(BeCPGModel.PROP_NUTLIST_MINI),
+		    									(Float)properties.get(BeCPGModel.PROP_NUTLIST_MAXI),
+		    									(String)nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_NUTGROUP), 
+		    									nutNodeRef);
+		    		
 		    		nutList.add(nutListDataItem);
 		    	}
     		}    		
@@ -1469,6 +1483,8 @@ public class ProductDAOImpl implements ProductDAO{
 	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		    		properties.put(BeCPGModel.PROP_NUTLIST_VALUE, nutListDataItem.getValue());
 		    		properties.put(BeCPGModel.PROP_NUTLIST_UNIT, nutListDataItem.getUnit());
+		    		properties.put(BeCPGModel.PROP_NUTLIST_MINI, nutListDataItem.getMini());
+		    		properties.put(BeCPGModel.PROP_NUTLIST_MAXI, nutListDataItem.getMaxi());
 		    		properties.put(BeCPGModel.PROP_NUTLIST_GROUP, nutListDataItem.getGroup());
 			    		
 		    		if(filesToUpdate.containsKey(nutNodeRef)){

@@ -22,6 +22,10 @@ public class NutListDataItem{
 	/** The unit. */
 	private String unit;
 	
+	private Float mini;
+	
+	private Float maxi;
+	
 	/** The group. */
 	private String group;
 	
@@ -82,6 +86,22 @@ public class NutListDataItem{
 		this.unit = unit;
 	}
 	
+	public Float getMini() {
+		return mini;
+	}
+
+	public void setMini(Float mini) {
+		this.mini = mini;
+	}
+
+	public Float getMaxi() {
+		return maxi;
+	}
+
+	public void setMaxi(Float maxi) {
+		this.maxi = maxi;
+	}
+
 	/**
 	 * Gets the group.
 	 *
@@ -134,11 +154,13 @@ public class NutListDataItem{
 	 * @param group the group
 	 * @param nut the nut
 	 */
-	public NutListDataItem(NodeRef nodeRef,	Float value, String unit, String group, NodeRef nut)
+	public NutListDataItem(NodeRef nodeRef,	Float value, String unit, Float mini, Float maxi, String group, NodeRef nut)
 	{
 		setNodeRef(nodeRef);
 		setValue(value);
 		setUnit(unit);
+		setMini(mini);
+		setMaxi(maxi);
 		setGroup(group);
 		setNut(nut);
 	}

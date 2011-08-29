@@ -364,7 +364,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();		    		
 		for(int j=0 ; j<nuts.size() ; j++)
 		{		    			
-			NutListDataItem nutListItemData = new NutListDataItem(null, 2f, "kJ/100g", "Groupe 1", nuts.get(j));
+			NutListDataItem nutListItemData = new NutListDataItem(null, 2f, "kJ/100g", 0f, 0f, "Groupe 1", nuts.get(j));
 			nutList.add(nutListItemData);
 		}		
 		rawMaterial.setNutList(nutList);

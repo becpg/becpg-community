@@ -141,8 +141,8 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 					rawMaterialData.setCostList(costList);
 					
 					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-					nutList.add(new NutListDataItem(null, 12.4f, "", "Groupe 1", nut1));
-					nutList.add(new NutListDataItem(null, 12.5f, "", "Groupe 1", nut2));
+					nutList.add(new NutListDataItem(null, 12.4f, "", 0f, 0f, "Groupe 1", nut1));
+					nutList.add(new NutListDataItem(null, 12.5f, "", 0f, 0f, "Groupe 1", nut2));
 					rawMaterialData.setNutList(nutList);
 					
 					Set<QName> dataLists = new HashSet<QName>();

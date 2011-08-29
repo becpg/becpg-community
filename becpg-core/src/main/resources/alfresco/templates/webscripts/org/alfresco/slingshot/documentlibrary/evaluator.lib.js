@@ -23,6 +23,11 @@ var Evaluator =
       {
          nodeType = "product";
       }
+      //beCPG
+      else if (node.hasAspect("bcpg:dataListsAspect"))
+      {
+         nodeType = "docWithDataLists";
+      }
       else
       {
          nodeType = "document";
@@ -357,6 +362,18 @@ var Evaluator =
                actionSet = "transferredProduct";
             }
         	break;
+        	
+        	/**
+             * SPECIFIC TO: DOCWITHDATALISTS
+             */
+            case "docWithDataLists":
+            	
+            	actionSet = "docWithDataLists";
+
+                /* Document Folder common evaluator */
+                Evaluator.documentAndFolder(node, permissions, status, actionLabels);
+                    			
+            	break;
       }
       
       if (node !== null)

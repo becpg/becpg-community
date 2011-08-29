@@ -436,8 +436,14 @@
 		</type>
 		<!-- ________________________________________________________________ CARACTERISTIQUES 
 			________________________________________________________________ -->
-		<type name="bcpg:allergen">
+		
+		
+		<type name="bcpg:charact">
 			<parent>cm:content</parent>
+		</type>
+		
+		<type name="bcpg:allergen">
+			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="bcpg:allergenType">
 					<type>d:text</type>
@@ -450,7 +456,7 @@
 		</type>
 
 		<type name="bcpg:cost">
-			<parent>cm:content</parent>
+			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="bcpg:costCurrency">
 					<type>d:text</type>
@@ -463,7 +469,7 @@
 		</type>
 
 		<type name="bcpg:ing">
-			<parent>cm:content</parent>
+			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="bcpg:ingMLName">
 					<type>d:mltext</type>
@@ -482,7 +488,7 @@
 		</type>
 
 		<type name="bcpg:microbio">
-			<parent>cm:content</parent>
+			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="bcpg:microbioUnit">
 					<type>d:text</type>
@@ -495,7 +501,7 @@
 		</type>
 
 		<type name="bcpg:nut">
-			<parent>cm:content</parent>
+			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="bcpg:nutGroup">
 					<type>d:text</type>
@@ -522,11 +528,11 @@
 		</type>
 
 		<type name="bcpg:organo">
-			<parent>cm:content</parent>
+			<parent>bcpg:charact</parent>
 		</type>
 
 		<type name="bcpg:physicoChem">
-			<parent>cm:content</parent>
+			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="bcpg:physicoChemUnit">
 					<type>d:text</type>
@@ -539,7 +545,7 @@
 		</type>
 		
 		<type name="bcpg:geoOrigin">
-			<parent>cm:content</parent>
+			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="bcpg:geoOriginISOCode">					
 					<type>d:text</type>
@@ -549,7 +555,7 @@
 		</type>
 		
 		<type name="bcpg:bioOrigin">
-			<parent>cm:content</parent>
+			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="bcpg:bioOriginType">
 					<type>d:text</type>
@@ -936,6 +942,14 @@
 					<constraints>
 						<constraint ref="bcpg:nutListUnit" />
 					</constraints>
+				</property>
+				<property name="bcpg:nutListMini">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:nutListMaxi">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:nutListGroup">
 					<type>d:text</type>
@@ -1358,6 +1372,23 @@
 		<aspect name="bcpg:productListsAspect">
 			<associations>
 				<child-association name="bcpg:productLists">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:folder</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+				</child-association>
+			</associations>
+		</aspect>
+		
+		<aspect name="bcpg:dataListsAspect">
+			<associations>
+				<child-association name="bcpg:dataLists">
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>

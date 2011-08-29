@@ -145,7 +145,7 @@ var Evaluator =
          //objData.metadata = obj.type.replace('{http://www.bcpg.fr/model/becpg/1.0}', '');
          objData.metadata = obj.type.split("}")[1];
 	  }
-	  else if(type == "bcpg:ing" || type == "bcpg:nut" || type == "bcpg:allergen" || type == "bcpg:organo" || type == "bcpg:listValue" || type == "bcpg:cost" || type == "bcpg:physicoChem"  || type == "bcpg:microbio" || type == "bcpg:bioOrigin" || type == "bcpg:geoOrigin") // don't forget to modify the file product-datagrid.js otherwise, we cannont navigate to the object
+	  else if(type == "bcpg:ing" || type == "bcpg:nut" || type == "bcpg:allergen" || type == "bcpg:organo" || type == "bcpg:listValue" || type == "bcpg:cost" || type == "bcpg:physicoChem"  || type == "bcpg:microbio" || type == "bcpg:bioOrigin" || type == "bcpg:geoOrigin" || type == "bcpg:charact" || type == "qa:controlPoint" || type == "qa:controlStep"  || type == "qa:controlMethod") // don't forget to modify the file product-datagrid.js otherwise, we cannont navigate to the object
 	  {
 		 obj = Evaluator.getContentObject(value);
          if (obj == null)
@@ -153,6 +153,16 @@ var Evaluator =
             return false;
          }
          objData.displayValue = obj.properties["cm:name"];
+         objData.metadata = "document";
+	  }
+	  else if(type== "cm:authorityContainer")
+	  {
+		 obj = Evaluator.getContentObject(value);
+         if (obj == null)
+         {
+            return false;
+         }
+         objData.displayValue = obj.properties["cm:authorityDisplayName"];
          objData.metadata = "document";
 	  }
       return true;

@@ -51,7 +51,7 @@ function runAction(p_params)
             result.type = fileNode.isContainer ? "folder" : "document";
             // copy the node (deep copy for containers)
 				//beCPG : if node has aspect bcpg:productList
-            if (fileNode.isContainer || fileNode.hasAspect("bcpg:productListsAspect"))
+            if (fileNode.isContainer || fileNode.hasAspect("bcpg:productListsAspect") || fileNode.hasAspect("bcpg:dataListsAspect"))
             {
                result.nodeRef = fileNode.copy(destNode, true).nodeRef.toString();
             }

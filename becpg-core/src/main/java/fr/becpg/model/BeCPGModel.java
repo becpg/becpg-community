@@ -5,7 +5,6 @@ package fr.becpg.model;
 
 import org.alfresco.service.namespace.QName;
 
-// TODO: Auto-generated Javadoc
 /**
  * beCPG model definition.
  *
@@ -124,11 +123,14 @@ public interface BeCPGModel {
 	static final QName TYPE_PACKAGINGMATERIAL = QName.createQName(BECPG_URI,
 			"packagingMaterial");
 
-	// TODO : use aspect
 	/** The Constant ASSOC_PRODUCTLISTS. */
 	static final QName ASSOC_PRODUCTLISTS = QName.createQName(BECPG_URI,
 			"productLists");
 
+	/** The Constant ASSOC_DATALISTS. */
+	static final QName ASSOC_DATALISTS = QName.createQName(BECPG_URI,
+			"dataLists");
+	
 	// productList
 	/** The Constant TYPE_PRODUCTLIST_ITEM. */
 	static final QName TYPE_PRODUCTLIST_ITEM = QName.createQName(BECPG_URI,
@@ -272,7 +274,10 @@ public interface BeCPGModel {
 	/** The Constant PROP_NUTLIST_UNIT. */
 	static final QName PROP_NUTLIST_UNIT = QName.createQName(BECPG_URI,
 			"nutListUnit");
-	
+	static final QName PROP_NUTLIST_MINI = QName.createQName(BECPG_URI,
+	"nutListMini");
+	static final QName PROP_NUTLIST_MAXI = QName.createQName(BECPG_URI,
+	"nutListMaxi");
 	/** The Constant PROP_NUTLIST_GROUP. */
 	static final QName PROP_NUTLIST_GROUP = QName.createQName(BECPG_URI,
 			"nutListGroup");

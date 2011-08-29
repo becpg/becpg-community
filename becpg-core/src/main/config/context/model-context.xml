@@ -2,20 +2,21 @@
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
 <beans>
 	<!-- Registration of new models -->
-	<bean id="bcpg.dictionaryBootstrap" parent="dictionaryModelBootstrap" depends-on="resourceBundles">
+	<bean id="bcpg.dictionaryBootstrap" parent="dictionaryModelBootstrap"
+		depends-on="resourceBundles">
 		<property name="models">
 			<list>
 				<value>alfresco/module/${groupId}-${artifactId}/model/becpgModel.xml</value>
-				<value>alfresco/module/${groupId}-${artifactId}/model/ncModel.xml</value>
+				<value>alfresco/module/${groupId}-${artifactId}/model/qualityModel.xml</value>
 			</list>
 		</property>
-		
+
 		<property name="labels">
-            <list>
-                <value>alfresco/module/${groupId}-${artifactId}/model/dataTypeAnalyzers</value>
-                <value>alfresco/module/${groupId}-${artifactId}/model/becpgModel</value>
-                <value>alfresco/module/${groupId}-${artifactId}/model/ncModel</value>
-            </list>
-        </property>
+			<list>
+				<value>alfresco/module/${groupId}-${artifactId}/model/dataTypeAnalyzers</value>
+				<value>alfresco/module/${groupId}-${artifactId}/model/becpgModel</value>
+				<value>alfresco/module/${groupId}-${artifactId}/model/qualityModel</value>
+			</list>
+		</property>
 	</bean>
 </beans>

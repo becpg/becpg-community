@@ -171,7 +171,7 @@ public class ProductListsWebScriptTest extends BaseWebScriptTest{
 					costList.add(new CostListDataItem(null, 2f, "€/kg", cost2));
 					rawMaterialTpl.setCostList(costList);
 					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-					nutList.add(new NutListDataItem(null, 1f, "kJ/100g", "Groupe 1", nut1));
+					nutList.add(new NutListDataItem(null, 1f, "kJ/100g", 0f,  0f, "Groupe 1", nut1));
 					rawMaterialTpl.setNutList(nutList);		
 					
 					NodeRef rawMaterialTplNodeRef = productDAO.create(productTemplateFolder, rawMaterialTpl, dataLists);

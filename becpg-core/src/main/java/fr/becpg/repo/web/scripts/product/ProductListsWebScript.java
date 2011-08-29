@@ -24,6 +24,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.QualityModel;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.ProductService;
 
@@ -139,10 +140,12 @@ public class ProductListsWebScript extends DeclarativeWebScript  {
 		boolean hasWritePermission = false;
 		boolean showWUsedItems = false;
 		
+		// TODO : renommer le webscript car ce n'est pas utilisé que par les produits
 		if(type.equals(BeCPGModel.TYPE_PRODUCTTEMPLATE) || 
 				type.equals(BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA) ||
 				type.equals(BeCPGModel.TYPE_PRODUCT_SPECIFICATION)){
-			//Template product, micriobio criteria
+			
+			//Template product, micriobio criteria, product specification
 			containerDataLists = nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_PRODUCTLISTS, RepoConsts.CONTAINER_DATALISTS);			
 			if(containerDataLists == null){
 			    //create an empty container
@@ -150,6 +153,23 @@ public class ProductListsWebScript extends DeclarativeWebScript  {
 				properties.put(ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);
 				properties.put(ContentModel.PROP_TITLE, RepoConsts.CONTAINER_DATALISTS);
 				containerDataLists = nodeService.createNode(nodeRef, BeCPGModel.ASSOC_PRODUCTLISTS, BeCPGModel.ASSOC_PRODUCTLISTS, ContentModel.TYPE_FOLDER, properties).getChildRef();
+			}
+			hasWritePermission = true;
+			
+		}
+		else if(type.equals(QualityModel.TYPE_CONTROL_PLAN) ||
+				type.equals(QualityModel.TYPE_QUALITY_CONTROL) ||
+				type.equals(QualityModel.TYPE_CONTROL_POINT) ||
+				type.equals(QualityModel.TYPE_WORK_ITEM_ANALYSIS)){
+			
+			// Control plan, Quality control, Control point
+			containerDataLists = nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_DATALISTS, RepoConsts.CONTAINER_DATALISTS);			
+			if(containerDataLists == null){
+			    //create an empty container
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);
+				properties.put(ContentModel.PROP_TITLE, RepoConsts.CONTAINER_DATALISTS);
+				containerDataLists = nodeService.createNode(nodeRef, BeCPGModel.ASSOC_DATALISTS, BeCPGModel.ASSOC_DATALISTS, ContentModel.TYPE_FOLDER, properties).getChildRef();
 			}
 			hasWritePermission = true;
 		}		

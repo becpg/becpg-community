@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="qa:qamodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<!-- Optional meta-data about the model -->
+	<description>Quality Model</description>
+	<author>Laborie Matthieu</author>
+	<version>1.0</version>
+	<!-- Imports are required to allow references to definitions in other models -->
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.alfresco.org/model/datalist/1.0"
+			prefix="dl" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</imports>
+	<!-- Introduction of new namespaces defined by this model -->
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/quality/1.0" prefix="qa" />
+	</namespaces>
+	
+	<constraints>
+		<constraint name="qa:acType" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Correction</value>
+					<value>Déclassement</value>
+					<value>Destruction</value>
+					<value>Blocage produit</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="qa:acEfficiency" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Satisfaisante</value>
+					<value>Partielle</value>
+					<value>Non satisfaisante</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="qa:ncType" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Poids</value>
+					<value>Corps étranger environnement</value>
+					<value>Corps étranger ligne</value>
+					<value>DLC</value>
+					<value>DLUO</value>
+				</list>
+			</parameter>
+		</constraint>		
+		<constraint name="qa:ncSeverity" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Faible</value>
+					<value>Élevé</value>
+					<value>Critique</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="qa:ncQuantityNcUnit" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>kg</value>
+					<value>L</value>
+					<value>P</value>
+					<value>m</value>
+					<value>m2</value>
+				</list>
+			</parameter>
+		</constraint>		
+		<constraint name="qa:freqUnits" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>heure</value>
+					<value>/heure</value>
+					<value>/4heures</value>
+					<value>/8heures</value>
+					<value>/jour</value>
+					<value>/semaine</value>
+					<value>/mois</value>
+					<value>/an</value>
+					<value>/lot</value>
+				</list>
+			</parameter>
+		</constraint>		
+		<constraint name="qa:controlTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Allergène</value>
+					<value>Microbiologie</value>
+					<value>Nutritionnelle</value>
+					<value>Physico-chimie</value>					
+					<value>Sensorielle</value>					
+				</list>
+			</parameter>
+		</constraint>		
+		<constraint name="qa:states" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Conforme</value>
+					<value>Non conforme</value>
+				</list>
+			</parameter>
+		</constraint>		
+	</constraints>
+
+	<types>
+	
+		<!-- Non conformité -->
+
+		<type name="qa:nc">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="qa:ncType">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>						
+						<constraint ref="qa:controlTypes" />
+						<constraint ref="qa:ncType" />
+					</constraints>
+				</property>				
+				<property name="qa:ncCreated">
+					<type>d:datetime</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="qa:ncQuantityNc">
+					<type>d:float</type>
+					<mandatory>true</mandatory>
+					
+				</property>
+				<property name="qa:ncQuantityNcUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="qa:ncQuantityNcUnit" />
+					</constraints>
+				</property>
+				<property name="qa:ncService">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="qa:ncSeverity">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="qa:ncSeverity" />
+					</constraints>
+				</property>				
+				<property name="qa:ncDetected">
+					<type>d:datetime</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="qa:ncCost">
+					<type>d:float</type>
+					<mandatory>true</mandatory>
+				</property>				
+				<property name="qa:ncCause">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>				
+			</properties>
+			<associations>				
+				<association name="qa:ncCreationStep">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>qa:controlStep</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="qa:ncDetectionStep">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>qa:controlStep</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>cm:titled</aspect>
+				<aspect>bcpg:codeAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<!-- Control Plan -->				
+		<type name="qa:controlPlan">
+			<parent>cm:content</parent>
+			<properties>
+							
+			</properties>						
+			<mandatory-aspects>
+				<aspect>cm:titled</aspect>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:dataListsAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<!-- Quality control -->		
+		<type name="qa:qualityControl">
+			<parent>cm:content</parent>
+			<properties>				
+				<property name="qa:qcSamplesCounter">
+					<type>d:int</type>
+					<mandatory>false</mandatory>					
+				</property>		
+				<property name="qa:qcState">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="qa:states" />
+					</constraints>										
+				</property>
+			</properties>
+			<associations>
+				<association name="qa:qcControlPlans">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>qa:controlPlan</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>			
+			<mandatory-aspects>
+				<aspect>cm:titled</aspect>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:dataListsAspect</aspect>				
+			</mandatory-aspects>
+		</type>
+		
+		<!-- control point -->
+		<type name="qa:controlPoint">
+			<parent>cm:content</parent>
+			<properties>	
+				<property name="qa:cpIsExtLabo">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>	
+				</property>
+				<property name="qa:cpReleaseInfo">
+					<type>d:text</type>
+					<mandatory>false</mandatory>								
+				</property>
+				<property name="qa:cpSendResults">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>								
+				</property>
+				<property name="qa:cpStoreResults">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>								
+				</property>										
+			</properties>			
+			<mandatory-aspects>
+				<aspect>cm:titled</aspect>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:dataListsAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<!-- Control step -->
+		<type name="qa:controlStep">
+			<parent>cm:content</parent>					
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<!-- Control method -->
+		<type name="qa:controlMethod">
+			<parent>cm:content</parent>					
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<!-- Work item analysis -->
+		<type name="qa:workItemAnalysis">
+			<parent>cm:content</parent>				
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:dataListsAspect</aspect>
+			</mandatory-aspects>
+		</type>	
+		
+		<!-- Sampling definition list -->
+		<type name="qa:samplingDefList">
+			<parent>dl:dataListItem</parent>
+			<properties>			
+				<property name="qa:sdlQty">
+					<type>d:int</type>
+					<mandatory>true</mandatory>					
+				</property>
+				<property name="qa:sdlFreq">
+					<type>d:int</type>
+					<mandatory>true</mandatory>					
+				</property>
+				<property name="qa:sdlFreqUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>	
+					<constraints>
+						<constraint ref="qa:freqUnits" />
+					</constraints>				
+				</property>					
+			</properties>
+			<associations>
+				<association name="qa:sdlControlPoint">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>qa:controlPoint</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="qa:sdlControlStep">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>qa:controlStep</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>				
+				<association name="qa:sdlSamplingGroup">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:authorityContainer</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="qa:sdlControlingGroup">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:authorityContainer</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="qa:sdlFixingGroup">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:authorityContainer</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>				
+			</associations>
+		</type>	
+		
+		<!-- Sampling list -->
+		<type name="qa:samplingList">
+			<parent>dl:dataListItem</parent>
+			<properties>				
+				<property name="qa:slDateTime">
+					<type>d:datetime</type>
+					<mandatory>true</mandatory>					
+				</property>
+				<property name="qa:slSampleId">
+					<type>d:text</type>
+					<mandatory>true</mandatory>					
+				</property>
+				<property name="qa:slSampleState">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="qa:states" />
+					</constraints>				
+				</property>													
+			</properties>
+			<associations>
+				<association name="qa:slControlPoint">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>qa:controlPoint</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="qa:slControlStep">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>qa:controlStep</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>						
+			</associations>
+		</type>
+		
+		<!-- Control Def List -->		
+		<type name="qa:controlDefList">
+			<parent>dl:dataListItem</parent>
+			<mandatory-aspects>
+				<aspect>qa:controlListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<!-- Control List -->		
+		<type name="qa:controlList">
+			<parent>dl:dataListItem</parent>
+			<properties>	
+				<property name="qa:clSampleId">
+					<type>d:text</type>
+					<mandatory>true</mandatory>								
+				</property>
+				<property name="qa:clValue">
+					<type>d:float</type>
+					<mandatory>false</mandatory>								
+				</property>		
+				<property name="qa:clTarget">
+					<type>d:float</type>
+					<mandatory>false</mandatory>								
+				</property>	
+				<property name="qa:clUnit">
+					<type>d:text</type>
+					<mandatory>false</mandatory>								
+				</property>
+				<property name="qa:clState">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="qa:states" />
+					</constraints>										
+				</property>		
+			</properties>
+			<associations>				
+			</associations>
+			<mandatory-aspects>
+				<aspect>qa:controlListAspect</aspect>
+			</mandatory-aspects>
+		</type>				
+	</types>
+	
+	<aspects>
+	
+		<aspect name="qa:batchAspect">
+			<properties>
+				<property name="qa:batchId">
+					<type>d:text</type>
+				</property>
+				<property name="qa:orderId">
+					<type>d:text</type>
+				</property>
+				<property name="qa:batchStart">
+					<type>d:datetime</type>
+				</property>
+				<property name="qa:batchDuration">
+					<type>d:int</type>
+					<mandatory>false</mandatory>					
+				</property>
+				<property name="qa:batchComments">
+					<type>d:text</type>
+				</property>
+				<property name="qa:productHierarchy1">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:productHierarchy1" />
+					</constraints>
+				</property>
+				<property name="qa:productHierarchy2">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:productHierarchy2" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<association name="qa:product">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+
+		<!-- Action corrective -->
+		<aspect name="qa:ncAcAspect">
+			<properties>
+				<property name="qa:acType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="qa:acType" />
+					</constraints>
+				</property>
+				<property name="qa:acExpectedDate">
+					<type>d:datetime</type>
+				</property>
+				<property name="qa:acEffectiveDate">
+					<type>d:datetime</type>
+				</property>
+				<property name="qa:acCheckDate">
+					<type>d:datetime</type>
+				</property>
+				<property name="qa:acDescription">
+					<type>d:text</type>
+				</property>
+				<property name="qa:acAssignedTo">
+					<type>d:text</type>
+				</property>
+				<property name="qa:acEfficiency">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="qa:acEfficiency" />
+					</constraints>
+				</property>
+				<property name="qa:acChecker">
+					<type>d:text</type>
+				</property>
+				<property name="qa:acComments">
+					<type>d:text</type>
+				</property>
+			</properties>
+		</aspect>	
+	
+		<!-- Control List Aspect -->		
+		<aspect name="qa:controlListAspect">
+			<properties>
+				<property name="qa:clType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>	
+					<constraints>
+						<constraint ref="qa:controlTypes" />
+					</constraints>				
+				</property>												
+				<property name="qa:clMini">
+					<type>d:float</type>
+					<mandatory>false</mandatory>								
+				</property>
+				<property name="qa:clMaxi">
+					<type>d:float</type>
+					<mandatory>false</mandatory>								
+				</property>				
+				<property name="qa:clRequired">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>									
+				</property>				
+			</properties>
+			<associations>								
+				<association name="qa:clMethod">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>qa:controlMethod</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="qa:clCharacts">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>			
+		</aspect>
+	</aspects>
+</model>
