@@ -130,7 +130,7 @@
       </actionSet>
 
       <actionSet id="productWorkingCopyOwner">
-      	<action type="simple-link" id="onActionViewDataLists" permission="" href="{dataListsUrl}" label="actions.document.viewDataLists" />
+      	<action type="simple-link" id="onActionViewDataLists" permission="" href="{dataListsUrl}" label="actions.document.viewProductLists" />
          <action type="simple-link" id="onActionDetails" permission="edit" href="{editMetadataUrl}" label="actions.document.edit-metadata" />
          <action type="simple-link" id="onActionDownload" href="{downloadUrl}" label="actions.document.download" />
          <action type="simple-link" id="onActionViewOriginal" permission="view-original" href="{originalUrl}" label="actions.document.view-original" />
@@ -145,6 +145,17 @@
          <action type="simple-link" id="onActionViewSourceRepository" permission="view-source-repository,~portlet" href="{sourceRepositoryUrl}" label="actions.document.view-source-repository" />
       </actionSet>
       
+      <!-- Doc with datalists actions -->
+		
+		<actionSet id="docWithDataLists">
+         <action type="simple-link" id="onActionDetails" permission="edit" href="{editMetadataUrl}" label="actions.document.edit-metadata" />
+         <action type="action-link" id="onActionCopyTo" label="actions.document.copy-to" />
+         <action type="action-link" id="onActionMoveTo" permission="delete" label="actions.document.move-to" />
+         <action type="action-link" id="onActionDelete" permission="delete" label="actions.document.delete" />
+         <action type="action-link" id="onActionAssignWorkflow" label="actions.document.assign-workflow" />
+         <action type="simple-link" id="onActionDownload" href="{downloadUrl}" label="actions.document.download" />            
+         <action type="action-link" id="onActionManageAspects" permission="edit" label="actions.document.manage-aspects" />
+      </actionSet> 
       
    </actionSets>
 </documentList>

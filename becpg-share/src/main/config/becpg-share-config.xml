@@ -55,6 +55,9 @@
             <aspect name="cm:generalclassifiable" />
             <aspect name="cm:taggable" />
             <aspect name="bcpg:permissionsTpl" />
+            <aspect name="bcpg:clientsAspect" />
+            <aspect name="bcpg:suppliersAspect" />
+            <aspect name="qa:batchAspect" />
          </visible>
          
          <!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -62,6 +65,10 @@
             <aspect name="cm:generalclassifiable" />
             <aspect name="cm:taggable" />
             <aspect name="bcpg:permissionsTpl" />
+            <aspect name="bcpg:clientsAspect" />
+            <aspect name="bcpg:suppliersAspect" />
+            <aspect name="qa:batchAspect" />
+            <aspect name="qa:productAspect" />
          </addable>
 
          <!-- Aspects that a user can remove. Same as "visible" if left empty -->
@@ -69,6 +76,10 @@
          	<aspect name="cm:generalclassifiable" />
             <aspect name="cm:taggable" />
             <aspect name="bcpg:permissionsTpl" />
+            <aspect name="bcpg:clientsAspect" />
+            <aspect name="bcpg:suppliersAspect" />
+            <aspect name="qa:batchAspect" />
+            <aspect name="qa:productAspect" />
          </removeable>
       </aspects>
       
@@ -86,8 +97,14 @@
 				<subtype name="bcpg:organo" />	
 				<subtype name="bcpg:physicoChem" />	
 				
-			    <subtype name="nc:nc" />	
-				
+			  	<subtype name="qa:nc" />
+			   <subtype name="qa:controlPlan" />
+			   <subtype name="qa:qualityControl" />
+			   <subtype name="qa:controlPoint" />
+			   <subtype name="qa:controlStep" />
+			   <subtype name="qa:controlMethod" />
+			   <subtype name="qa:workItemAnalysis" />
+			    				
 				<subtype name="bcpg:supplier" />
 				<subtype name="bcpg:client" />		
 				

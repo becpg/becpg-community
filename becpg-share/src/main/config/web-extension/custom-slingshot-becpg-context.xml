@@ -22,6 +22,7 @@
             <value>classpath:alfresco/becpg-share-config.xml</value>
             <value>classpath:alfresco/becpg-workflow-form-config.xml</value>
             <value>classpath:alfresco/becpg-npd-workflow-form-config.xml</value>
+            <value>classpath:alfresco/becpg-quality-form-config.xml</value>
          </list>
       </property>
    </bean>

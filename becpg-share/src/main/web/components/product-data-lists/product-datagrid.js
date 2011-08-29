@@ -414,7 +414,10 @@
 								{
 									html += $html(data.displayValue == true ? booleanValueTrue : booleanValueFalse );											
 								}
-								break;    
+								break;  
+                           case "cm:authoritycontainer":
+                               html += '<span class="userGroup">' + $html(data.displayValue) + '</span>';
+                               break;                               
                            default:
                         	   if(datalistColumn.name == "bcpg:rclReqType" || datalistColumn.name == "bcpg:filReqType")
                     		   {
@@ -435,6 +438,10 @@
                         			   html += $html(data.displayValue);
                     			   }
                     		   }
+                        	   else if(datalistColumn.name == "qa:slSample")
+                        	   {
+                        		   html += '<span class="sample">' + $html(data.displayValue) + '</span>';
+                        	   }
                         	   else
                         	   {
                         		   html += $html(data.displayValue);

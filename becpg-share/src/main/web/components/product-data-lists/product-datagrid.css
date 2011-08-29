@@ -66,3 +66,24 @@
    background: url(../images/productLists/info-16.png) no-repeat;
    padding-left: 20px;
 }
+
+/* quality */
+.datagrid .sample
+{
+   background: url(../images/quality/sample-16.png) no-repeat;
+   padding-left: 20px;
+}
+.datagrid .control
+{
+   background: url(../images/quality/control-16.png) no-repeat;
+   padding-left: 20px;
+}
+
+/* group */
+.datagrid .userGroup
+{
+   background: url(../images/filetypes/generic-group-16.png) no-repeat;
+   padding-left: 20px;
+}
+
+
