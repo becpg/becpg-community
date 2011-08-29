@@ -13,7 +13,7 @@ public class QualityControlData {
 	NodeRef nodeRef;
 	String name;
 	List<NodeRef>controlPlans = new ArrayList<NodeRef>();
-	int samplesCounter;
+	Integer samplesCounter;
 	String state;
 	
 	// batchAspect	
@@ -51,11 +51,11 @@ public class QualityControlData {
 		this.controlPlans = controlPlans;
 	}
 	
-	public int getSamplesCounter() {
+	public Integer getSamplesCounter() {
 		return samplesCounter;
 	}
 
-	public void setSamplesCounter(int samplesCounter) {
+	public void setSamplesCounter(Integer samplesCounter) {
 		this.samplesCounter = samplesCounter;
 	}
 

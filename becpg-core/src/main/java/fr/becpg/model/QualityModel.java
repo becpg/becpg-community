@@ -64,6 +64,10 @@ public interface QualityModel {
 	static final QName TYPE_CONTROL_METHOD = QName.createQName(QUALITY_URI,
 	"controlMethod");
 	
+	/** qualityListItem */
+	static final QName TYPE_QUALITYLIST_ITEM = QName.createQName(QUALITY_URI,
+	"qualityListItem");
+	
 	/** controlDefList **/
 	static final QName TYPE_CONTROLDEF_LIST = QName.createQName(QUALITY_URI,
 	"controlDefList");

@@ -216,10 +216,10 @@ public class WorkItemAnalysisDAOImpl implements WorkItemAnalysisDAO {
 		    		}		
 		    		
 		    		// method
-		    		associationService.update(controlNodeRef, QualityModel.ASSOC_SL_CONTROL_POINT, controlListDataItem.getMethod());
+		    		associationService.update(controlNodeRef, QualityModel.ASSOC_CL_METHOD, controlListDataItem.getMethod());
 		    				    		
 		    		// characts
-		    		associationService.update(controlNodeRef, QualityModel.ASSOC_SL_CONTROL_STEP, controlListDataItem.getCharacts());		    		
+		    		associationService.update(controlNodeRef, QualityModel.ASSOC_CL_CHARACTS, controlListDataItem.getCharacts());		    		
 	    		}
 			}
 		}

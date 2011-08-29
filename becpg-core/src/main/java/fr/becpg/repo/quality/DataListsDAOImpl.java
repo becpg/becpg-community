@@ -13,6 +13,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.QualityModel;
 
 /**
  * 
@@ -21,11 +22,11 @@ import fr.becpg.model.DataListModel;
  */
 public class DataListsDAOImpl implements DataListsDAO{
 
-	/** The Constant RESOURCE_TITLE. */
-	private static final String RESOURCE_TITLE = "bcpg_bcpgmodel.type.bcpg_%s.title";
+	/** The Constant RESOURCE_TITLE. */	
+	private static final String RESOURCE_TITLE = "qa_qamodel.type.qa_%s.title";
 	
 	/** The Constant RESOURCE_DESCRIPTION. */
-	private static final String RESOURCE_DESCRIPTION = "bcpg_bcpgmodel.type.bcpg_%s.description";
+	private static final String RESOURCE_DESCRIPTION = "qa_qamodel.type.qa_%s.description";
 	
 	
 	private NodeService nodeService;
@@ -71,7 +72,7 @@ public class DataListsDAOImpl implements DataListsDAO{
 		properties.put(ContentModel.PROP_NAME, listQName.getLocalName());
 		properties.put(ContentModel.PROP_TITLE, I18NUtil.getMessage(String.format(RESOURCE_TITLE, listQName.getLocalName())));
 		properties.put(ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage(String.format(RESOURCE_DESCRIPTION, listQName.getLocalName())));
-		properties.put(DataListModel.PROP_DATALISTITEMTYPE, BeCPGModel.BECPG_PREFIX + ":" + listQName.getLocalName());
+		properties.put(DataListModel.PROP_DATALISTITEMTYPE, QualityModel.QUALITY_PREFIX + ":" + listQName.getLocalName());
 		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, listQName, DataListModel.TYPE_DATALIST, properties).getChildRef();
 	}
 

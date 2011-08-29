@@ -118,7 +118,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 				
 		createSamples(qualityControlData, controlPlanNodeRef, productData);
 		
-		logger.debug("save qualityControl");
+		logger.debug("save qualityControl, name: " + qualityControlData.getName());
 		qualityControlDAO.update(qcNodeRef, qualityControlData);
 		
 	}
@@ -138,68 +138,73 @@ public class QualityControlServiceImpl implements QualityControlService {
 		logger.debug("load control plan");
 		ControlPlanData controlPlanData = controlPlanDAO.find(controlPlanNodeRef);
 		
-		for(SamplingDefListDataItem sdl : controlPlanData.getSamplingDefList()){
-			
-			logger.debug("create sample");
-			
-			//TODO : take in account freq and english language for lot !!!
-			String freq = sdl.getFreqUnit();
-			int samplesToTake = 1;
-			int freqInHour = 0;
-			Date sampleDateTime = batchStart;
-			
-			// per batch
-			if(freq.equals("/lot")){
-				
-			}
-			else if(freq.equals("/4heures")){
-				
-				freqInHour = 4;
-				samplesToTake = batchDuration / freqInHour;					
-			}
-			else if(freq.equals("/8heures")){
-				
-				freqInHour = 8;
-				samplesToTake = sdl.getQty() * batchDuration / freqInHour;					
-			}
-			
-			// create samples to take 
-			for(int z_idx=0 ; z_idx<samplesToTake ; z_idx++){
-				
-				// several samples must be taken
-				for(int z_idx2=0 ; z_idx2<sdl.getQty() ; z_idx2++){
-				
-					samplesCounter++;
-					String sampleId = batchId + BATCH_SEPARATOR + samplesCounter;
-					
-					samplingList.add(new SamplingListDataItem(null, 
-									sampleDateTime, 
-									sampleId, 
-									null, 
-									sdl.getControlPoint(), 
-									sdl.getControlStep()));													
-										
-					// create work items
-					WorkItemAnalysisData wiaData = wiaMap.get(sdl.getControlingGroup());
-					
-					if(wiaData == null){
-						wiaData = new WorkItemAnalysisData();
-						wiaMap.put(sdl.getControlingGroup(), wiaData);
-					}
-					
-					prepareWorkItemAnalysis(sdl, sampleId, wiaData, productData);
-				}			
-				
-				// next time
-				sampleDateTime = new Date(sampleDateTime.getTime() + freqInHour * HOUR);
-			}				
-		}
+		logger.debug("control plan loaded, controlPlanData.getSamplingDefList(): " + controlPlanData.getSamplingDefList());
 		
-		qualityControlData.setSamplesCounter(samplesCounter);
-		qualityControlData.setSamplingList(samplingList);
+		if(controlPlanData.getSamplingDefList() != null){
 		
-		// create work items
-		createWorkItemAnalysis(qualityControlData.getNodeRef(), wiaMap);
+			for(SamplingDefListDataItem sdl : controlPlanData.getSamplingDefList()){
+				
+				logger.debug("create sample");
+				
+				//TODO : take in account freq and english language for lot !!!
+				String freq = sdl.getFreqUnit();
+				int samplesToTake = 1;
+				int freqInHour = 0;
+				Date sampleDateTime = batchStart;
+				
+				// per batch
+				if(freq.equals("/lot")){
+					
+				}
+				else if(freq.equals("/4heures")){
+					
+					freqInHour = 4;
+					samplesToTake = batchDuration / freqInHour;					
+				}
+				else if(freq.equals("/8heures")){
+					
+					freqInHour = 8;
+					samplesToTake = sdl.getQty() * batchDuration / freqInHour;					
+				}
+				
+				// create samples to take 
+				for(int z_idx=0 ; z_idx<samplesToTake ; z_idx++){
+					
+					// several samples must be taken
+					for(int z_idx2=0 ; z_idx2<sdl.getQty() ; z_idx2++){
+					
+						samplesCounter++;
+						String sampleId = batchId + BATCH_SEPARATOR + samplesCounter;
+						
+						samplingList.add(new SamplingListDataItem(null, 
+										sampleDateTime, 
+										sampleId, 
+										null, 
+										sdl.getControlPoint(), 
+										sdl.getControlStep()));													
+											
+						// create work items
+						WorkItemAnalysisData wiaData = wiaMap.get(sdl.getControlingGroup());
+						
+						if(wiaData == null){
+							wiaData = new WorkItemAnalysisData();
+							wiaMap.put(sdl.getControlingGroup(), wiaData);
+						}
+						
+						prepareWorkItemAnalysis(sdl, sampleId, wiaData, productData);
+					}			
+					
+					// calculate next time
+					sampleDateTime = new Date(sampleDateTime.getTime() + freqInHour * HOUR);
+				}				
+			}
+			
+			qualityControlData.setSamplesCounter(samplesCounter);
+			qualityControlData.setSamplingList(samplingList);
+			
+			// create work items
+			createWorkItemAnalysis(qualityControlData.getNodeRef(), wiaMap);
+		}		
 	}
 
 	private void prepareWorkItemAnalysis(SamplingDefListDataItem sdl, String sampleId, WorkItemAnalysisData wiaData, ProductData productData){
@@ -207,57 +212,62 @@ public class QualityControlServiceImpl implements QualityControlService {
 		// get control point and create control list
 		ControlPointData controlPointData = controlPointDAO.find(sdl.getControlPoint());
 		
-		for(ControlDefListDataItem cdl : controlPointData.getControlDefList()){
+		logger.debug("prepareWorkItemAnalysis, controlPointData.getControlDefList(): " + controlPointData.getControlDefList());
+		
+		if(controlPointData.getControlDefList() != null){
 			
-			for(NodeRef n : cdl.getCharacts()){
-			
-				Float target = null;
-				Float mini = null;
-				Float maxi = null;
-				String unit = null;
+			for(ControlDefListDataItem cdl : controlPointData.getControlDefList()){
 				
-				// TODO : générique			
-				if(cdl.getType().equals("Microbiologie")){
+				for(NodeRef n : cdl.getCharacts()){
 				
-					if(productData.getMicrobioList() != null){
+					Float target = null;
+					Float mini = null;
+					Float maxi = null;
+					String unit = null;
 					
-						for(MicrobioListDataItem mbl : productData.getMicrobioList()){
-							if(n.equals(mbl.getMicrobio())){
-								
-								target = mbl.getValue();
-								unit = mbl.getUnit();
-								maxi = mbl.getMaxi();
-								break;
+					// TODO : générique			
+					if(cdl.getType().equals("Microbiologie")){
+					
+						if(productData.getMicrobioList() != null){
+						
+							for(MicrobioListDataItem mbl : productData.getMicrobioList()){
+								if(n.equals(mbl.getMicrobio())){
+									
+									target = mbl.getValue();
+									unit = mbl.getUnit();
+									maxi = mbl.getMaxi();
+									break;
+								}
 							}
 						}
+						
+					}
+					else if(cdl.getType().equals("Nutritionnelle")){
+						
+						if(productData.getNutList() != null){
+							
+							for(NutListDataItem nl : productData.getNutList()){
+								if(n.equals(nl.getNut())){
+									
+									target = nl.getValue();
+									unit = nl.getUnit();
+									maxi = nl.getMini();
+									maxi = nl.getMaxi();
+									break;
+								}
+							}
+						}					
 					}
 					
-				}
-				else if(cdl.getType().equals("Nutritionnelle")){
+					List<NodeRef> subList = new ArrayList<NodeRef>();
+					subList.add(n);
 					
-					if(productData.getNutList() != null){
-						
-						for(NutListDataItem nl : productData.getNutList()){
-							if(n.equals(nl.getNut())){
-								
-								target = nl.getValue();
-								unit = nl.getUnit();
-								maxi = nl.getMini();
-								maxi = nl.getMaxi();
-								break;
-							}
-						}
-					}					
-				}
-				
-				List<NodeRef> subList = new ArrayList<NodeRef>();
-				subList.add(n);
-				
-				wiaData.getControlList().add(new ControlListDataItem(null, cdl.getType(), mini, maxi, cdl.getRequired(), 
-													sampleId, null, target, unit, null, cdl.getMethod(), subList));
-				
-			}		
-		}
+					wiaData.getControlList().add(new ControlListDataItem(null, cdl.getType(), mini, maxi, cdl.getRequired(), 
+														sampleId, null, target, unit, null, cdl.getMethod(), subList));
+					
+				}		
+			}
+		}		
 	}
 	
 	private void createWorkItemAnalysis(NodeRef qualityControlNodeRef, Map<NodeRef, WorkItemAnalysisData> wiaMap){
@@ -273,10 +283,12 @@ public class QualityControlServiceImpl implements QualityControlService {
 			String name = "Analyses";
 			
 			if(authorityNodeRef != null){
-				name += " - " + nodeService.getProperty(authorityNodeRef, ContentModel.PROP_NAME);
+				name += " - " + nodeService.getProperty(authorityNodeRef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME);
 			}
 			
 			wiaData.setName(name);
+			
+			// TODO manage update ? or create another work item Analyses - RD - 1 puis 2, etc...
 			
 			workItemAnalysisDAO.create(workItemsNodeRef, wiaData);
 		}

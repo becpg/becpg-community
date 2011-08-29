@@ -104,10 +104,13 @@ public class QualityControlDAOImpl implements QualityControlDAO {
 		QualityControlData qcData = new QualityControlData();
 		
 		qcData.setNodeRef(qcNodeRef);
+		qcData.setName((String)nodeService.getProperty(qcNodeRef, ContentModel.PROP_NAME));
 		qcData.setSamplesCounter((Integer)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_SAMPLES_COUNTER));
 		qcData.setState((String)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_STATE));
 		qcData.setBatchStart((Date)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_BATCH_START));
 		qcData.setBatchDuration((Integer)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_BATCH_DURATION));
+		qcData.setBatchId((String)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_BATCH_ID));
+		qcData.setOrderId((String)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_ORDER_ID));
 		
 		// control plans
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(qcNodeRef, QualityModel.ASSOC_QC_CONTROL_PLANS);
@@ -115,9 +118,7 @@ public class QualityControlDAOImpl implements QualityControlDAO {
 			qcData.getControlPlans().add(assocRef.getTargetRef());
 		}
 		
-		// batch Aspect
-		qcData.setBatchId((String)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_BATCH_ID));
-		qcData.setOrderId((String)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_ORDER_ID));
+		// product
 		assocRefs = nodeService.getTargetAssocs(qcNodeRef, QualityModel.ASSOC_QC_PRODUCT);
 		if(!assocRefs.isEmpty()){
 			qcData.setProduct(assocRefs.get(0).getTargetRef());

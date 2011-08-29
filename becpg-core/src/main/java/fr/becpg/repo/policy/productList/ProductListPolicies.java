@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.QualityModel;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -107,12 +108,17 @@ public class ProductListPolicies implements NodeServicePolicies.OnUpdateProperti
 			
 			if(afterDLType != null && !afterDLType.isEmpty() && !afterDLType.equals(beforeDLType)){
 				
+				// TODO : renommer et chg package car doit fonctionner pour les datalists de la qualité
+				
 				QName dataListTypeQName = QName.createQName(afterDLType, namespaceService);
-				if(dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_PRODUCTLIST_ITEM)){
+				if(dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_PRODUCTLIST_ITEM) ||
+						dictionaryService.isSubClass(dataListTypeQName, QualityModel.TYPE_QUALITYLIST_ITEM)){
 					
 					String dataListName = (String)nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
 					if(!dataListTypeQName.getLocalName().equals(dataListName)){
 					
+						logger.debug("###change dl name..." + dataListTypeQName.getLocalName());
+						
 						nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME, dataListTypeQName.getLocalName());
 					}				
 				}

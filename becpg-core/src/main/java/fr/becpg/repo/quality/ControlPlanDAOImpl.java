@@ -16,6 +16,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.helper.AssociationService;
@@ -24,6 +26,8 @@ import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
 
 public class ControlPlanDAOImpl implements ControlPlanDAO {
 
+	private static Log logger = LogFactory.getLog(ControlPlanDAOImpl.class);
+	
 	private NodeService nodeService;
 	private FileFolderService fileFolderService;
 	private DataListsDAO dataListDAO;
@@ -103,16 +107,22 @@ public class ControlPlanDAOImpl implements ControlPlanDAO {
 	private List<SamplingDefListDataItem> loadSamplingDefList(NodeRef listContainerNodeRef){
 		
 		List<SamplingDefListDataItem> samplingDefList = null;
+		
+		logger.debug("loadSamplingDefList");
     	
     	if(listContainerNodeRef != null)
     	{    		
+    		logger.debug("loadSamplingDefList, container exists");
+    		
     		NodeRef samplingDefListNodeRef = dataListDAO.getList(listContainerNodeRef, QualityModel.TYPE_SAMPLINGDEF_LIST);
     		
     		if(samplingDefListNodeRef != null)
-    		{
+    		{    			
     			samplingDefList = new ArrayList<SamplingDefListDataItem>();
 				List<FileInfo> nodes = fileFolderService.listFiles(samplingDefListNodeRef);
-	    		
+	    	
+				logger.debug("loadSamplingDefList, list exists, size: " + nodes.size());
+				
 	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
 		    	{	    			
 	    			FileInfo node = nodes.get(z_idx);

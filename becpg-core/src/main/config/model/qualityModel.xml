@@ -206,6 +206,9 @@
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:dataListsAspect</aspect>
+				<aspect>qa:batchAspect</aspect>
+				<aspect>bcpg:clientsAspect</aspect>
+				<aspect>bcpg:suppliersAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		
@@ -298,9 +301,14 @@
 			</mandatory-aspects>
 		</type>	
 		
+		<!-- qa:qualityListItem -->
+		<type name="qa:qualityListItem">
+			<parent>dl:dataListItem</parent>
+		</type>
+		
 		<!-- Sampling definition list -->
 		<type name="qa:samplingDefList">
-			<parent>dl:dataListItem</parent>
+			<parent>qa:qualityListItem</parent>
 			<properties>			
 				<property name="qa:sdlQty">
 					<type>d:int</type>
@@ -379,7 +387,7 @@
 		
 		<!-- Sampling list -->
 		<type name="qa:samplingList">
-			<parent>dl:dataListItem</parent>
+			<parent>qa:qualityListItem</parent>
 			<properties>				
 				<property name="qa:slDateTime">
 					<type>d:datetime</type>
@@ -424,7 +432,7 @@
 		
 		<!-- Control Def List -->		
 		<type name="qa:controlDefList">
-			<parent>dl:dataListItem</parent>
+			<parent>qa:qualityListItem</parent>
 			<mandatory-aspects>
 				<aspect>qa:controlListAspect</aspect>
 			</mandatory-aspects>
@@ -432,7 +440,7 @@
 		
 		<!-- Control List -->		
 		<type name="qa:controlList">
-			<parent>dl:dataListItem</parent>
+			<parent>qa:qualityListItem</parent>
 			<properties>	
 				<property name="qa:clSampleId">
 					<type>d:text</type>

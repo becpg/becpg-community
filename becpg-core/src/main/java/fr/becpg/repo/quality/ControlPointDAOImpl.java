@@ -16,6 +16,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.helper.AssociationService;
@@ -24,6 +26,8 @@ import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 
 public class ControlPointDAOImpl implements ControlPointDAO {
 
+	private static Log logger = LogFactory.getLog(ControlPointDAOImpl.class);
+	
 	private NodeService nodeService;
 	private FileFolderService fileFolderService;
 	private DataListsDAO dataListDAO;
@@ -105,8 +109,11 @@ public class ControlPointDAOImpl implements ControlPointDAO {
 		
 		List<ControlDefListDataItem> controlDefList = null;
     	
+		logger.debug("loadControlDefList");
+		
     	if(listContainerNodeRef != null)
     	{    		
+    		logger.debug("loadControlDefList, list container exists");
     		NodeRef controlDefListNodeRef = dataListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROLDEF_LIST);
     		
     		if(controlDefListNodeRef != null)
@@ -114,6 +121,8 @@ public class ControlPointDAOImpl implements ControlPointDAO {
     			controlDefList = new ArrayList<ControlDefListDataItem>();
 				List<FileInfo> nodes = fileFolderService.listFiles(controlDefListNodeRef);
 	    		
+				logger.debug("loadControlDefList, list exists, size: " + nodes.size());
+				
 	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
 		    	{	    			
 	    			FileInfo node = nodes.get(z_idx);
@@ -200,7 +209,10 @@ public class ControlPointDAOImpl implements ControlPointDAO {
 		    		}
 		    		else{
 		    			//create
-		    			ChildAssociationRef childAssocRef = nodeService.createNode(controlDefListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), QualityModel.TYPE_CONTROLDEF_LIST, properties);
+		    			ChildAssociationRef childAssocRef = nodeService.createNode(controlDefListNodeRef, 
+				    									ContentModel.ASSOC_CONTAINS, 
+				    									QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), 
+				    									QualityModel.TYPE_CONTROLDEF_LIST, properties);
 		    			controlDefNodeRef = childAssocRef.getChildRef();
 		    		}		
 		    		
