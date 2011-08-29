@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export>
+	<settings>
+		<setting id="dateFormat" value="yyyy-MM-dd HH:mm:ss" />
+		<setting id="datetimeFormat" value="yyyy-MM-dd HH:mm:ss" />
+		<!-- <setting id="decimalPattern" value="#0.00"/> -->
+	</settings>
+	<query>
+		<columns>
+
+			<!-- mainInfo -->
+			<column id="name" attribute="cm:name" type="Attribute" />
+			<column id="ncCode" attribute="qa:ncCode" type="Attribute" />
+			<column id="ncType" attribute="qa:ncType" type="Attribute" />
+			<column id="ncSeverity" attribute="qa:ncSeverity" type="Attribute" />
+			<column id="ncCreationStep" attribute="qa:ncCreationStep"
+				type="Attribute" />
+			<column id="ncDateCreation" attribute="qa:ncDateCreation"
+				type="Attribute" />
+			<column id="ncQuantityNc" attribute="qa:ncQuantityNc" type="Attribute" />
+			<column id="ncQuantityNcUnit" attribute="qa:ncQuantityNcUnit"
+				type="Attribute" />
+			<column id="ncDetectionStep" attribute="qa:ncDetectionStep"
+				type="Attribute" />
+			<column id="ncDateDetection" attribute="qa:ncDateDetection"
+				type="Attribute" />
+			<column id="ncCost" attribute="qa:ncCost" type="Attribute" />
+			<column id="ncCostUnit" attribute="qa:ncCostUnit" type="Attribute" />
+			<column id="description" attribute="cm:description" type="Attribute" />
+			<column id="ncCause" attribute="qa:ncCause" type="Attribute" />
+			<column id="ncService" attribute="qa:ncService" type="Attribute" />
+			<column id="ncComments" attribute="qa:ncComments" type="Attribute" />
+			<!-- identification -->
+			<column id="ncBatchNumber" attribute="qa:ncBatchNumber" type="Attribute" />
+			<column id="ncOrderNb" attribute="qa:ncOrderNb" type="Attribute" />
+			<column id="ncBatchComments" attribute="qa:ncBatchComments"
+				type="Attribute" />
+			<!-- Clients -->
+			<column id="clients" attribute="bcpg:clients" type="Attribute" />
+			<!-- Suppliers -->
+			<column id="suppliers" attribute="bcpg:suppliers" type="Attribute" />
+
+			<!-- Product -->
+			<column id="ncProductFamilly" attribute="qa:ncProductFamilly"
+				type="Attribute" />
+			<column id="ncProduct" attribute="qa:ncProduct" type="Attribute" />
+			<!-- Action corrective -->
+			<column id="acType" attribute="qa:acType" type="Attribute" />
+			<column id="acPreviDate" attribute="qa:acPreviDate" type="Attribute" />
+			<column id="acRealisationDate" attribute="qa:acRealisationDate"
+				type="Attribute" />
+			<column id="acVerificationDate" attribute="qa:acVerificationDate"
+				type="Attribute" />
+			<column id="acComments" attribute="qa:acComments" type="Attribute" />
+			<column id="acSpeaker" attribute="qa:acSpeaker" type="Attribute" />
+			<column id="acDescription" attribute="qa:acDescription" type="Attribute" />
+			<column id="acEfficiency" attribute="qa:acEfficiency" type="Attribute" />
+			<column id="acChecker" attribute="qa:acChecker" type="Attribute" />
+
+		</columns>
+	</query>
+	<nodes>
+		<node id="1" ncCode="12" ncType="Physico-chimie"
+			name="Test NC" description="NC de test"
+			ncCreationStep="Transport" ncDateCreation="2010-10-07 12:25:12" 
+			ncQuantityNc="10" ncQuantityNcUnit="kg"
+			ncDetectionStep="Livraison" ncDateDetection="2010-10-07 12:25:12" 
+			ncCost="1000" ncCostUnit="€"
+			ncService="Service Livraison" ncComments="No comments" ncCause="chute" ncBatchNumber="20454212" 
+			ncOrderNb="" ncBatchComments="" clients="" ncProductFamilly="Pizzas"
+			ncProduct="Prod 1" acType="Déclassement" acPreviDate="2010-10-07 12:25:12" acRealisationDate="2010-10-07 12:25:12"
+			acVerificationDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Non satisfaisante" acSpeaker="Matthieu"
+			acChecker="Matthieu" acComments="" creator="admin" modified="2010-10-07 12:25:12"
+			suppliers="Four1, Four2" />
+			
+	     <node id="2" ncCode="13" ncType="Physico-chimie"
+			name="Test NC 2" description="NC de test"
+			ncCreationStep="Transport" ncDateCreation="2010-10-07 12:25:12" 
+			ncQuantityNc="10" ncQuantityNcUnit="kg"
+			ncDetectionStep="Livraison" ncDateDetection="2010-10-10 12:25:12" 
+			ncCost="1000" ncCostUnit="€"
+			ncService="Service Livraison" ncComments="No comments" ncCause="chute" ncBatchNumber="20454212" 
+			ncOrderNb="" ncBatchComments="" clients="Client1, Client2" ncProductFamilly="Pizzas"
+			ncProduct="Prod 2" acType="Déclassement" acPreviDate="2010-10-07 12:25:12" acRealisationDate="2010-10-07 12:25:12"
+			acVerificationDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Non satisfaisante" acSpeaker="Matthieu"
+			acChecker="Matthieu" acComments="" creator="admin" modified="2010-10-07 12:25:12"
+			suppliers="" />
+			
+			 <node id="3" ncCode="14" ncType="Physico-chimie"
+			name="Test NC 2" description="NC de test"
+			ncCreationStep="Transport" ncDateCreation="2010-10-07 12:25:12" 
+			ncQuantityNc="10" ncQuantityNcUnit="kg"
+			ncDetectionStep="Livraison" ncDateDetection="2010-10-15 12:25:12" 
+			ncCost="1000" ncCostUnit="€"
+			ncService="Service Livraison" ncComments="No comments" ncCause="chute" ncBatchNumber="20454212" 
+			ncOrderNb="" ncBatchComments="" clients="Client1, Client2" ncProductFamilly="Pizzas"
+			ncProduct="Prod 2" acType="Déclassement" acPreviDate="2010-10-07 12:25:12" acRealisationDate="2010-10-07 12:25:12"
+			acVerificationDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Non satisfaisante" acSpeaker="Matthieu"
+			acChecker="Matthieu" acComments="" creator="admin" modified="2010-10-07 12:25:12"
+			suppliers="" />
+			
+			 <node id="4" ncCode="15" ncType="Physico-chimie"
+			name="Test NC 2" description="NC de test"
+			ncCreationStep="Transport" ncDateCreation="2010-10-07 12:25:12" 
+			ncQuantityNc="10" ncQuantityNcUnit="kg"
+			ncDetectionStep="Livraison" ncDateDetection="2010-10-20 12:25:12" 
+			ncCost="1000" ncCostUnit="€"
+			ncService="Service Livraison" ncComments="No comments" ncCause="chute" ncBatchNumber="20454212" 
+			ncOrderNb="" ncBatchComments="" clients="Client1, Client2" ncProductFamilly="Pizzas"
+			ncProduct="Prod 2" acType="Déclassement" acPreviDate="2010-10-07 12:25:12" acRealisationDate="2010-10-07 12:25:12"
+			acVerificationDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Non satisfaisante" acSpeaker="Matthieu"
+			acChecker="Matthieu" acComments="" creator="admin" modified="2010-10-07 12:25:12"
+			suppliers="" />
+			
+			 <node id="5" ncCode="16" ncType="Physico-chimie"
+			name="Test NC 2" description="NC de test"
+			ncCreationStep="Transport" ncDateCreation="2010-10-07 12:25:12" 
+			ncQuantityNc="10" ncQuantityNcUnit="kg"
+			ncDetectionStep="Livraison" ncDateDetection="2010-10-30 12:25:12" 
+			ncCost="1000" ncCostUnit="€"
+			ncService="Service Livraison" ncComments="No comments" ncCause="chute" ncBatchNumber="20454212" 
+			ncOrderNb="" ncBatchComments="" clients="Client1, Client2" ncProductFamilly="Pizzas"
+			ncProduct="Prod 2" acType="Déclassement" acPreviDate="2010-10-07 12:25:12" acRealisationDate="2010-10-07 12:25:12"
+			acVerificationDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Non satisfaisante" acSpeaker="Matthieu"
+			acChecker="Matthieu" acComments="" creator="admin" modified="2010-10-07 12:25:12"
+			suppliers="" />
+			
+			 <node id="6" ncCode="12" ncType="Physico-chimie"
+			name="Test NC 2" description="NC de test"
+			ncCreationStep="Transport" ncDateCreation="2010-10-07 12:25:12" 
+			ncQuantityNc="10" ncQuantityNcUnit="kg"
+			ncDetectionStep="Livraison" ncDateDetection="2010-11-07 12:25:12" 
+			ncCost="1000" ncCostUnit="€"
+			ncService="Service Livraison" ncComments="No comments" ncCause="chute" ncBatchNumber="20454212" 
+			ncOrderNb="" ncBatchComments="" clients="Client1, Client2" ncProductFamilly="Pizzas"
+			ncProduct="Prod 2" acType="Déclassement" acPreviDate="2010-10-07 12:25:12" acRealisationDate="2010-10-07 12:25:12"
+			acVerificationDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Non satisfaisante" acSpeaker="Matthieu"
+			acChecker="Matthieu" acComments="" creator="admin" modified="2010-10-07 12:25:12"
+			suppliers="" />
+
+	</nodes>
+</export>
