@@ -54,7 +54,7 @@
 					<set id="mainInfo" template="/fr/becpg/components/form/2-column-set.ftl"
 						appearance="bordered-panel" label="Info non conformité" />					
 					<field id="cm:name" set="mainInfo" />
-					<field id="bcpg:code" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="qa:ncType" set="mainInfo" />
 					<field id="qa:ncSeverity" set="mainInfo" />
 					<field id="qa:ncCreationStep" set="mainInfo" />
@@ -301,9 +301,9 @@
 					<field id="cm:name" set="mainInfo" />
 					<field id="cm:titled" set="mainInfo" />
 					<field id="cm:description" set="mainInfo" />
-					<field id="bcpg:code" set="mainInfo" />
-					<field id="qa:qcControlPlans" set="mainInfo"/>
-					<field id="qa:qcState" set="mainInfo"/>
+					<field id="bcpg:code" read-only="true" set="mainInfo" />					
+					<field id="qa:qcState" read-only="true" set="mainInfo"/>
+					<field id="qa:qcSamplesCounter" read-only="true" set="mainInfo"/>					
 					<field id="qa:qcControlPlans" set="mainInfo"/>
 
 					<set id="product-info" appearance="bordered-panel" label="Informations produit" />
@@ -584,6 +584,20 @@
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>					
+					<set id="reqInfo" appearance="bordered-panel" label="Exigences" />					
+					<field id="qa:clSampleId" set="reqInfo" />
+					<field id="qa:clType" set="reqInfo" />
+					<field id="qa:clMethod" set="reqInfo" />
+					<field id="qa:clTarget" set="reqInfo" />
+					<field id="qa:clUnit" set="reqInfo" />					
+					<field id="qa:clMini" set="reqInfo" />
+					<field id="qa:clMaxi" set="reqInfo" />
+					<field id="qa:clCharacts" set="reqInfo" />						
+					<field id="qa:clRequired" set="reqInfo" />
+					
+					<set id="fillInfo" appearance="bordered-panel" label="A renseigner" />
+					<field id="qa:clValue" set="fillInfo" />
+					<field id="qa:clState" set="fillInfo" />
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
@@ -621,16 +635,25 @@
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
-					<field id="qa:clType" read-only="true" />
-					<field id="qa:clMethod" read-only="true" />
-					<field id="qa:clTarget" read-only="true" />
-					<field id="qa:clUnit" read-only="true" />
-					<field id="qa:clValue" />
-					<field id="qa:clState" />
-					<field id="qa:clMini" read-only="true" />
-					<field id="qa:clMaxi" read-only="true" />
-					<field id="qa:clCharacts" read-only="true" />						
-					<field id="qa:clRequired" read-only="true" />
+					<set id="reqInfo" appearance="bordered-panel" label="Exigences" />					
+					<field id="qa:clSampleId" read-only="true" set="reqInfo" />
+					<field id="qa:clType" read-only="true" set="reqInfo" />
+					<field id="qa:clMethod" read-only="true" set="reqInfo" >
+						<control template="/org/alfresco/components/form/controls/association.ftl"/>
+					</field>
+					<field id="qa:clTarget" read-only="true" set="reqInfo" />
+					<field id="qa:clUnit" read-only="true" set="reqInfo" />					
+					<field id="qa:clMini" read-only="true" set="reqInfo" />
+					<field id="qa:clMaxi" read-only="true" set="reqInfo" />
+					<field id="qa:clCharacts" read-only="true" set="reqInfo" >
+						<control template="/org/alfresco/components/form/controls/association.ftl"/>
+					</field>						
+					<field id="qa:clRequired" read-only="true" set="reqInfo" />
+					
+					<set id="fillInfo" appearance="bordered-panel" label="A renseigner" />
+					<field id="qa:clValue" set="fillInfo" />
+					<field id="qa:clState" set="fillInfo" />
+					
 				</appearance>
 			</form>
 		</forms>

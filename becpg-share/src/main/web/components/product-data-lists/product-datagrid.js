@@ -438,9 +438,9 @@
                         			   html += $html(data.displayValue);
                     			   }
                     		   }
-                        	   else if(datalistColumn.name == "qa:slSample")
-                        	   {
-                        		   html += '<span class="sample">' + $html(data.displayValue) + '</span>';
+                        	   else if(datalistColumn.name == "qa:sdlControlPoint" || datalistColumn.name == "qa:slControlPoint")
+                        	   {                        		   
+                        		   html += '<span class="sample"><a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a></span>';
                         	   }
                         	   else
                         	   {
