@@ -442,6 +442,10 @@
                         	   {                        		   
                         		   html += '<span class="sample"><a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a></span>';
                         	   }
+                        	   else if(datalistColumn.name == "qa:clCharacts")
+                        	   {                        		   
+                        		   html += '<span class="control">' + $html(data.displayValue) + '</span>';
+                        	   }
                         	   else
                         	   {
                         		   html += $html(data.displayValue);

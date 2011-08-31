@@ -208,6 +208,7 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
+					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -223,7 +224,7 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="formulation" appearance="bordered-panel" label="Formulation"
+					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel" label="Catégories"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
@@ -281,8 +282,15 @@
 					<field id="bcpg:productDensity" set="formulation" />
 					<field id="bcpg:productSpecification" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-						</control>
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
+					</field>
+					<field id="bcpg:productMicrobioCriteria" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
 					</field>
 
 					<!-- categories -->
@@ -336,6 +344,7 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
+					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -345,7 +354,7 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="formulation" appearance="bordered-panel" label="Formulation"
+					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel" label="Catégories"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
@@ -401,8 +410,15 @@
 					<field id="bcpg:productDensity" set="formulation" />
 					<field id="bcpg:productSpecification" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-						</control>
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
+					</field>
+					<field id="bcpg:productMicrobioCriteria" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
 					</field>
 
 					<!-- categories -->
@@ -451,6 +467,7 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
+					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -467,7 +484,7 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="formulation" appearance="bordered-panel" label="Formulation"
+					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel" label="Catégories"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
@@ -525,8 +542,15 @@
 					<field id="bcpg:productDensity" set="formulation" />
 					<field id="bcpg:productSpecification" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-						</control>
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
+					</field>
+					<field id="bcpg:productMicrobioCriteria" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
 					</field>
 
 					<!-- categories -->
@@ -581,6 +605,7 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
+					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -590,7 +615,7 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="formulation" appearance="bordered-panel" label="Formulation"
+					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel" label="Catégories"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
@@ -648,8 +673,15 @@
 					<field id="bcpg:productDensity" set="formulation" />
 					<field id="bcpg:productSpecification" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-						</control>
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
+					</field>
+					<field id="bcpg:productMicrobioCriteria" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
 					</field>
 
 					<!-- categories -->
@@ -1510,7 +1542,7 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="formulation" appearance="bordered-panel" label="Formulation"
+					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel" label="Catégories"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
@@ -1563,9 +1595,10 @@
 					<field id="bcpg:productDensity" set="formulation" />
 					<field id="bcpg:productSpecification" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-						</control>
-					</field>
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
+					</field>					
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -1626,7 +1659,7 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="formulation" appearance="bordered-panel" label="Formulation"
+					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel" label="Catégories"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
@@ -1678,9 +1711,10 @@
 					<field id="bcpg:productDensity" set="formulation" />
 					<field id="bcpg:productSpecification" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-						</control>
-					</field>
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
+					</field>					
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">

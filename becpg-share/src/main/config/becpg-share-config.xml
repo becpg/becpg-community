@@ -45,6 +45,7 @@
                   descriptionId = I18N message id of description text to display
             -->
             <form labelId="search.form.label.bcpg_product" descriptionId="search.form.desc.bcpg_product">bcpg:product</form>
+            <form labelId="search.form.label.qa_nc" descriptionId="search.form.desc.qa_nc">qa:nc</form>
          </forms>
       </advanced-search>
    </config>
@@ -58,6 +59,7 @@
             <aspect name="bcpg:clientsAspect" />
             <aspect name="bcpg:suppliersAspect" />
             <aspect name="qa:batchAspect" />
+            <aspect name="bcpg:reportFormatAspect" />            
          </visible>
          
          <!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -68,7 +70,7 @@
             <aspect name="bcpg:clientsAspect" />
             <aspect name="bcpg:suppliersAspect" />
             <aspect name="qa:batchAspect" />
-            <aspect name="qa:productAspect" />
+            <aspect name="bcpg:reportFormatAspect" />
          </addable>
 
          <!-- Aspects that a user can remove. Same as "visible" if left empty -->
@@ -79,7 +81,7 @@
             <aspect name="bcpg:clientsAspect" />
             <aspect name="bcpg:suppliersAspect" />
             <aspect name="qa:batchAspect" />
-            <aspect name="qa:productAspect" />
+            <aspect name="bcpg:reportFormatAspect" />
          </removeable>
       </aspects>
       
