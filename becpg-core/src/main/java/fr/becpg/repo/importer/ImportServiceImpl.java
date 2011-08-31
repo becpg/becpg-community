@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -30,7 +28,6 @@ import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.LimitBy;
@@ -142,9 +139,7 @@ public class ImportServiceImpl implements ImportService {
 	private ImportVisitor importProductListItemVisitor;
 	
 	/** The dictionary service. */
-	private DictionaryService dictionaryService;
-	
-	private MimetypeService mimetypeService;
+	private DictionaryService dictionaryService;	
 					
 	/**
 	 * Sets the search service.
@@ -235,10 +230,6 @@ public class ImportServiceImpl implements ImportService {
 		this.dictionaryService = dictionaryService;
 	}
 	
-	public void setMimetypeService(MimetypeService mimetypeService) {
-		this.mimetypeService = mimetypeService;
-	}
-
 	/**
 	 * Import a text file
 	 * @throws ParseException 
@@ -253,13 +244,6 @@ public class ImportServiceImpl implements ImportService {
 		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 		InputStream is = reader.getContentInputStream();
 		logger.debug("reader.getEncoding() : " + reader.getEncoding());
-		
-		// TEST
-		ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-        Charset charset = charsetFinder.getCharset(is, reader.getMimetype());
-        String encoding = charset.name();
-        logger.debug("###encoding: " + encoding);        
-		
 		CSVReader csvReader = new CSVReader(new InputStreamReader(is, reader.getEncoding()), SEPARATOR);
 
 		// context
