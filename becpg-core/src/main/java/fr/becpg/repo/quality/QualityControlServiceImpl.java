@@ -110,8 +110,9 @@ public class QualityControlServiceImpl implements QualityControlService {
 				productLists.clear();
 				productLists.add(BeCPGModel.TYPE_MICROBIOLIST);
 				NodeRef productMicrobioCriteriaNodeRef = (controlPointAssocRefs.get(0)).getTargetRef();
-				productMicrobioCriteriaData = productDAO.find(productMicrobioCriteriaNodeRef, productLists);
 				
+				logger.debug("### load microbio criteria: " + productMicrobioCriteriaNodeRef);
+				productMicrobioCriteriaData = productDAO.find(productMicrobioCriteriaNodeRef, productLists);				
 				productData.setMicrobioList(productMicrobioCriteriaData.getMicrobioList());
 			}			
 		}		
@@ -159,12 +160,12 @@ public class QualityControlServiceImpl implements QualityControlService {
 				else if(freq.equals("/4heures")){
 					
 					freqInHour = 4;
-					samplesToTake = batchDuration / freqInHour;					
+					samplesToTake = batchDuration / freqInHour + 1;					
 				}
 				else if(freq.equals("/8heures")){
 					
 					freqInHour = 8;
-					samplesToTake = sdl.getQty() * batchDuration / freqInHour;					
+					samplesToTake = batchDuration / freqInHour + 1;					
 				}
 				
 				// create samples to take 
@@ -228,7 +229,10 @@ public class QualityControlServiceImpl implements QualityControlService {
 					// TODO : générique			
 					if(cdl.getType().equals("Microbiologie")){
 					
+						logger.debug("### productData.getMicrobioList(): " + productData.getMicrobioList() );
 						if(productData.getMicrobioList() != null){
+							
+							logger.debug("### productData.getMicrobioList().size(): " + productData.getMicrobioList().size() );
 						
 							for(MicrobioListDataItem mbl : productData.getMicrobioList()){
 								if(n.equals(mbl.getMicrobio())){
@@ -239,8 +243,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 									break;
 								}
 							}
-						}
-						
+						}						
 					}
 					else if(cdl.getType().equals("Nutritionnelle")){
 						
@@ -251,7 +254,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 									
 									target = nl.getValue();
 									unit = nl.getUnit();
-									maxi = nl.getMini();
+									mini = nl.getMini();
 									maxi = nl.getMaxi();
 									break;
 								}

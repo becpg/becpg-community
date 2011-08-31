@@ -346,7 +346,16 @@
 					<value>Faux</value>
 				</list>
 			</parameter>
-		</constraint>		
+		</constraint>
+		<constraint name="bcpg:reportFormats" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>PDF</value>
+					<value>XLS</value>
+					<value>DOC</value>
+				</list>
+			</parameter>
+		</constraint>			
 	</constraints>
 
 	<types>
@@ -1563,6 +1572,20 @@
 				</association>
 
 			</associations>
+		</aspect>
+		
+		<aspect name="bcpg:reportFormatAspect">
+			<properties>
+				<property name="bcpg:reportFormat">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<multiple>false</multiple>
+					<default>PDF</default>
+					<constraints>
+						<constraint ref="bcpg:reportFormats" />
+					</constraints>
+				</property>
+			</properties>
 		</aspect>
 
 	</aspects>

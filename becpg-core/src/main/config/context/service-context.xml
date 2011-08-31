@@ -105,6 +105,7 @@
 		<property name="importProductListAspectVisitor" ref="importProductListAspectVisitor" />
 		<property name="importProductListItemVisitor" ref="importProductListItemVisitor" />				
 		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="mimetypeService" ref="mimetypeService"/>
 	</bean>
 	<bean id="importNodeVisitor" class="fr.becpg.repo.importer.ImportNodeVisitor">		
 		<property name="dictionaryService" ref="dictionaryService" />

@@ -265,6 +265,7 @@ public class ProductServiceImpl implements ProductService {
     	Collection<QName> dataLists = new ArrayList<QName>();				
 		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
 		dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+		dataLists.add(BeCPGModel.TYPE_NUTLIST); // TODO keep min/max
     	ProductData productData = productDAO.find(productNodeRef, dataLists);     	    
     	
     	// do the formulation if the product has a composition, or packaging list defined
@@ -624,36 +625,45 @@ public class ProductServiceImpl implements ProductService {
 						if(!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
 							
 							Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
-							int wUsedLevel = 1;
+							//int wUsedLevel = 1;
 							int level = (Integer)properties.get(BeCPGModel.PROP_DEPTH_LEVEL);
 							CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 							
-							CompoListDataItem compoListDataItem = new CompoListDataItem(nodeRef, wUsedLevel, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), null);
+							CompoListDataItem compoListDataItem = new CompoListDataItem(nodeRef, level, 
+														(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), 
+														(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
+														(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), 
+														compoListUnit, 
+														(Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), 
+														(String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), 
+														(String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), 
+														rootNodeRef);
+							
 							wUsedList.add(compoListDataItem);
 				    		
-				    		//load recipe fathers
-							while(level > wUsedLevel){
-							
-								wUsedLevel++;								
-								List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_COMPOLIST_FATHER);				
-								
-								if(compoAssocRefs.size() > 0){
-									
-									NodeRef fatherNodeRef = (compoAssocRefs.get(0)).getTargetRef();				
-									compoAssocRefs = nodeService.getTargetAssocs(fatherNodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-						    		NodeRef part = (compoAssocRefs.get(0)).getTargetRef();
-									compoListDataItem.setProduct(part);
-									
-									properties = nodeService.getProperties(fatherNodeRef);
-									compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
-									compoListDataItem = new CompoListDataItem(fatherNodeRef, wUsedLevel, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), null);
-									wUsedList.add(compoListDataItem);
-									
-									nodeRef = fatherNodeRef;
-								}
-							}
-						
-							compoListDataItem.setProduct(rootNodeRef);
+//				    		//load recipe fathers
+//							while(level > wUsedLevel){
+//							
+//								wUsedLevel++;								
+//								List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_COMPOLIST_FATHER);				
+//								
+//								if(compoAssocRefs.size() > 0){
+//									
+//									NodeRef fatherNodeRef = (compoAssocRefs.get(0)).getTargetRef();				
+//									compoAssocRefs = nodeService.getTargetAssocs(fatherNodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+//						    		NodeRef part = (compoAssocRefs.get(0)).getTargetRef();
+//									compoListDataItem.setProduct(part);
+//									
+//									properties = nodeService.getProperties(fatherNodeRef);
+//									compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
+//									compoListDataItem = new CompoListDataItem(fatherNodeRef, wUsedLevel, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), null);
+//									wUsedList.add(compoListDataItem);
+//									
+//									nodeRef = fatherNodeRef;
+//								}
+//							}
+//						
+//							compoListDataItem.setProduct(rootNodeRef);
 						}
 					}
 				}

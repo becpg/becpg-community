@@ -210,8 +210,8 @@ public class QualityControlTest extends RepoBaseTestCase {
 		QualityControlData qualityControlData = qualityControlDAO.find(qualityControlNodeRef);
 		assertNotNull("Check QC exists", qualityControlData);
 		assertNotNull("Check Sample list", qualityControlData.getSamplingList());
-		assertEquals("4 samples", 4, qualityControlData.getSamplingList().size());
-		assertEquals("4 samples", 4, qualityControlData.getSamplesCounter());
+		assertEquals("6 samples", 6, qualityControlData.getSamplingList().size());
+		assertSame("6 samples", 6, qualityControlData.getSamplesCounter());
 		int checks=0;
 						
 		for(SamplingListDataItem sl : qualityControlData.getSamplingList()){

@@ -105,12 +105,21 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 @Override
 	public ProductData visit(ProductData formulatedProduct){
 		logger.debug("Nuts calculating visitor");
-		Map<NodeRef, NutListDataItem> nutMap = new HashMap<NodeRef, NutListDataItem>();
 		
 		// no compo => no formulation
 		if(formulatedProduct.getCompoList() == null){			
 			logger.debug("no compo => no formulation");
 			return formulatedProduct;
+		}
+		
+		// init nutMap with dbValues
+		Map<NodeRef, NutListDataItem> nutMap = new HashMap<NodeRef, NutListDataItem>();
+		if(formulatedProduct.getNutList() != null){			
+			for(NutListDataItem nl : formulatedProduct.getNutList()){
+				// reset value
+				nl.setValue(0f);
+				nutMap.put(nl.getNut(), nl);
+			}
 		}
 		
 		for(CompoListDataItem compoItem : formulatedProduct.getCompoList()){			

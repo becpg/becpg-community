@@ -624,4 +624,11 @@ public interface BeCPGModel {
 	
 	/** The Constant PROP_CODE. */
 	static final QName PROP_CODE = QName.createQName(BECPG_URI, "code");
+	
+	// format aspect
+	/** The Constant ASPECT_CODE. */
+	static final QName ASPECT_REPORT_FORMAT = QName.createQName(BECPG_URI,	"reportFormatAspect");
+	
+	/** The Constant PROP_CODE. */
+	static final QName PROP_REPORT_FORMAT = QName.createQName(BECPG_URI, "reportFormat");
 }

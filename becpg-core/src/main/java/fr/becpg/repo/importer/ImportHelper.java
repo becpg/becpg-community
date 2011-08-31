@@ -5,6 +5,7 @@ package fr.becpg.repo.importer;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -117,8 +118,8 @@ public class ImportHelper{
 					if(values.get(pos).isEmpty()){
 						value = null;
 					}
-					else{						
-						value = importContext.getPropertyFormats().getDateFormat().parse(values.get(pos));							
+					else{												
+						value = importContext.getPropertyFormats().getDateFormat().parse(values.get(pos));																		
 					}										
 				}
 				// int, long

@@ -130,6 +130,10 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	/** The Constant VALUE_NULL. */
 	public static final String VALUE_NULL = "";
 	
+	public static final String FORMAT_PDF = "PDF";
+	public static final String FORMAT_XLS = "XLS";
+	public static final String FORMAT_DOC = "DOC";
+	
 	/** The Constant KEY_IMAGE_NODE_IMG. */
 	public static final String KEY_IMAGE_NODE_IMG = "node%s-%s";
 	
@@ -341,8 +345,30 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			logger.debug("Create task to run and render the report");
 			IRunAndRenderTask task = reportEngine.createRunAndRenderTask(design);
 			
-			EXCELRenderOption options = new EXCELRenderOption(); 
-			options.setOutputFormat("xls");
+			IRenderOption options = null;
+			
+			// report format
+			String reportFormat = (String)nodeService.getProperty(templateNodeRef, BeCPGModel.PROP_REPORT_FORMAT);
+			if(reportFormat == null){
+				reportFormat = FORMAT_XLS;	 // default format XLS			 
+			}
+			
+			if(reportFormat.equals(FORMAT_PDF)){
+			
+				options = new RenderOption();
+				options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
+			}			
+			else if(reportFormat.equals(FORMAT_DOC)){
+				
+				options = new RenderOption();
+				options.setOutputFormat(FORMAT_DOC);
+			}
+			else{
+				// default format excel
+				options = new EXCELRenderOption();
+				options.setOutputFormat(FORMAT_XLS);
+			}
+								
 			options.setOutputStream(outputStream);				  
 			task.setRenderOption(options);								
 			
@@ -351,6 +377,8 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			Document document = DocumentHelper.createDocument();
 			Element exportElt = document.addElement(TAG_EXPORT);
 			task = loadReportData(exportSearchCtx, exportElt, task, searchResults);
+			
+			//logger.trace("Xml data: " + exportElt.asXML());
 			
 			// xml data
 			logger.debug("add Xml data");
@@ -369,22 +397,22 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 //			writer.write(exportElt.getDocument().asXML());
 //			writer.flush();
 //			
-//			FileOutputStream fos = new FileOutputStream(new File("/tmp/exportSearch_written.xls"));
+//			FileOutputStream fos = new FileOutputStream(new File("/tmp/exportSearch_written.pdf"));
 //			IRunAndRenderTask task2 = reportEngine.createRunAndRenderTask(design);
-//			EXCELRenderOption options2 = new EXCELRenderOption();
+//			IRenderOption options2 = new RenderOption();
 //			options2.setOutputStream(fos);							
-//			options2.setOutputFormat("xls");
+//			options2.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
 //			task2.setRenderOption(options2);
 //			
 //			// Prepare data source
 //			logger.debug("Prepare data source");												
 //			Document document2 = DocumentHelper.createDocument();
 //			Element exportElt2 = document2.addElement(TAG_EXPORT);
-//			task = loadReportData(exportSearchCtx, exportElt2, task2, searchResults);
+//			task2 = loadReportData(exportSearchCtx, exportElt2, task2, searchResults);
 //			
 //			
 //			ByteArrayInputStream bais2 = new ByteArrayInputStream( exportElt.asXML().getBytes());
-//			task.getAppContext().put(KEY_XML_INPUTSTREAM, bais2);
+//			task2.getAppContext().put(KEY_XML_INPUTSTREAM, bais2);
 //			
 //			task2.run();
 //			task2.close();

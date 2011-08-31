@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.QualityModel;
 import fr.becpg.repo.product.ProductService;
 
 /**
@@ -65,6 +66,7 @@ public class EntityFolderPolicy implements NodeServicePolicies.OnCreateNodePolic
 		logger.debug("Init EntityFolderPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_SUPPLIER, new JavaBehaviour(this, "onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_CLIENT, new JavaBehaviour(this, "onCreateNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, QualityModel.TYPE_QUALITY_CONTROL, new JavaBehaviour(this, "onCreateNode"));
 	}
 
 	/**

@@ -44,6 +44,12 @@
 		<constraint name="qa:ncType" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
+					<value>Allergène</value>
+					<value>Microbiologie</value>
+					<value>Nutritionnelle</value>
+					<value>Physico-chimie</value>					
+					<value>Sensorielle</value>
 					<value>Poids</value>
 					<value>Corps étranger environnement</value>
 					<value>Corps étranger ligne</value>
@@ -55,6 +61,7 @@
 		<constraint name="qa:ncSeverity" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>Faible</value>
 					<value>Élevé</value>
 					<value>Critique</value>
@@ -122,7 +129,6 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<constraints>						
-						<constraint ref="qa:controlTypes" />
 						<constraint ref="qa:ncType" />
 					</constraints>
 				</property>				
@@ -244,7 +250,8 @@
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:dataListsAspect</aspect>				
+				<aspect>bcpg:dataListsAspect</aspect>
+				<aspect>qa:batchAspect</aspect>					
 			</mandatory-aspects>
 		</type>
 		

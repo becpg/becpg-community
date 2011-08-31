@@ -106,7 +106,7 @@
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">/home/querephi/Documents/beCPG/dev/workspace/becpg-core/src/main/resources/beCPG/birt/ProductReport.xml</property>
+            <property name="FILELIST">/home/querephi/Documents/beCPG/dev/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
