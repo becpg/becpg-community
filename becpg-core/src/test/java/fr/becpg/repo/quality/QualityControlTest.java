@@ -27,10 +27,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.QualityModel;
+import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.quality.data.ControlPlanData;
 import fr.becpg.repo.quality.data.ControlPointData;
 import fr.becpg.repo.quality.data.QualityControlData;
+import fr.becpg.repo.quality.data.WorkItemAnalysisData;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
@@ -56,10 +58,10 @@ public class QualityControlTest extends RepoBaseTestCase {
 	/** The product dao. */
 	private ProductDAO productDAO;
 	
-	private ControlPointDAO controlPointDAO;
-	private ControlPlanDAO controlPlanDAO;
-	private QualityControlDAO qualityControlDAO;
-	private WorkItemAnalysisDAO workItemAnalysisDAO;
+	private BeCPGDao<ControlPointData> controlPointDAO;
+	private BeCPGDao<ControlPlanData> controlPlanDAO;
+	private BeCPGDao<QualityControlData>  qualityControlDAO;
+	private BeCPGDao<WorkItemAnalysisData> workItemAnalysisDAO;
 	private AuthorityService authorityService;
 	private QualityControlService qualityControlService;
 	
@@ -85,10 +87,10 @@ public class QualityControlTest extends RepoBaseTestCase {
     	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");  
     	productDAO = (ProductDAO)appCtx.getBean("productDAO");
     	repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-    	controlPointDAO = (ControlPointDAO)appCtx.getBean("controlPointDAO");
-    	controlPlanDAO = (ControlPlanDAO)appCtx.getBean("controlPlanDAO");
-    	qualityControlDAO = (QualityControlDAO)appCtx.getBean("qualityControlDAO");
-    	workItemAnalysisDAO = (WorkItemAnalysisDAO)appCtx.getBean("workItemAnalysisDAO");
+    	controlPointDAO =(BeCPGDao<ControlPointData>) appCtx.getBean("controlPointDAO");
+    	controlPlanDAO = (BeCPGDao<ControlPlanData>) appCtx.getBean("controlPlanDAO");
+    	qualityControlDAO = (BeCPGDao<QualityControlData>) appCtx.getBean("qualityControlDAO");
+    	workItemAnalysisDAO = (BeCPGDao<WorkItemAnalysisData>) appCtx.getBean("workItemAnalysisDAO");
     	authorityService = (AuthorityService)appCtx.getBean("authorityService");
     	qualityControlService = (QualityControlService)appCtx.getBean("qualityControlService");
     }

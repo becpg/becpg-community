@@ -36,19 +36,19 @@
             <type name="association:cm:authorityContainer" template="/org/alfresco/components/form/controls/authority.ftl" />
             <type name="association:packageItems" template="/org/alfresco/components/form/controls/workflow/packageitems.ftl" />
 				<!--beCPG -->            
-				<type name="association:bcpg:product" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+			<type name="association:bcpg:product" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
 					<control-param name="ds">becpg/autocomplete/product</control-param>
-				</type>
-				<type name="association:bcpg:charact" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
-				<type name="association:bcpg:client" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-				<type name="association:bcpg:supplier" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
-				<type name="association:bcpg:productSpecification" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-				<type name="association:bcpg:productMicrobioCriteria" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
-				<type name="association:qa:controlPoint" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-				<type name="association:qa:controlStep" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-				<type name="association:qa:controlMethod" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-				<type name="association:qa:controlPlan" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
-            
+			</type>
+			<type name="association:bcpg:charact" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
+			<type name="association:bcpg:client" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+			<type name="association:bcpg:supplier" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
+			<type name="association:bcpg:productSpecification" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+			<type name="association:bcpg:productMicrobioCriteria" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
+			<type name="association:qa:controlPoint" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+			<type name="association:qa:controlStep" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+			<type name="association:qa:controlMethod" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+			<type name="association:qa:controlPlan" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
+          
             <type name="transitions" template="/org/alfresco/components/form/controls/workflow/transitions.ftl" />
             <type name="taskOwner" template="/org/alfresco/components/form/controls/workflow/taskowner.ftl" />
             <!-- Data types that should always be rendered read-only -->

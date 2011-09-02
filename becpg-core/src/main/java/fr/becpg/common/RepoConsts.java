@@ -52,8 +52,6 @@ public class RepoConsts {
 	public static final String PATH_BIO_ORIGINS = "BioOrigins";	
 	public static final String PATH_PRODUCT_TEMPLATES = "ProductTemplates";
 	public static final String PATH_PRODUCTS = "Products";
-	public static final String PATH_QUALITY = "Quality";
-	public static final String PATH_NC = "Nc";
 	public static final String PATH_EXCHANGE = "Exchange";
 	public static final String PATH_IMPORT = "Import";
 	public static final String PATH_IMPORT_TO_TREAT	= "ImportToTreat";
@@ -61,6 +59,15 @@ public class RepoConsts {
 	public static final String PATH_IMPORT_FAILED = "ImportFailed";	
 	public static final String PATH_PRODUCT_MICROBIO_CRITERIA = "ProductMicrobioCriteria";	
 	public static final String PATH_MAPPING = "Mapping";
+	//Quality
+	public static final String PATH_QUALITY = "Quality";
+	public static final String PATH_NC = "Nc";
+	public static final String PATH_QUALITY_CONTROL_POINTS = "QualityControlPoints";
+	public static final String PATH_QUALITY_SPEC = "QualitySpec";	
+	//Security
+	public static final String PATH_SECURITY = "Security";
+	
+	
 	//Hierarchy
 	public static final String PATH_PRODUCT_HIERARCHY = "ProductHierarchy";
 	public static final String PATH_HIERARCHY_SFX_HIERARCHY1 = "Hierarchy1";
@@ -128,5 +135,8 @@ public class RepoConsts {
 	public static final String PERMISSION_CONSUMER = "Consumer";
 	public static final String PERMISSION_EDITOR = "Editor";
 	public static final String PERMISSION_CONTRIBUTOR = "Contributor";
-	public static final String PERMISSION_COLLABORATOR = "Collaborator";	
+	public static final String PERMISSION_COLLABORATOR = "Collaborator";
+
+
+	
 }

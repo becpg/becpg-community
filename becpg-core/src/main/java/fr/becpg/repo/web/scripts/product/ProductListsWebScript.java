@@ -157,10 +157,16 @@ public class ProductListsWebScript extends DeclarativeWebScript  {
 			hasWritePermission = true;
 			
 		}
-		else if(type.equals(QualityModel.TYPE_CONTROL_PLAN) ||
-				type.equals(QualityModel.TYPE_QUALITY_CONTROL) ||
-				type.equals(QualityModel.TYPE_CONTROL_POINT) ||
-				type.equals(QualityModel.TYPE_WORK_ITEM_ANALYSIS)){
+		else if(nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_PRODUCTLISTS)){
+			//Product
+			NodeRef templateNodeRef = productDictionaryService.getProductTemplate(nodeRef);
+			productService.copyProductLists(templateNodeRef, nodeRef, false);
+			containerDataLists = nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_PRODUCTLISTS, RepoConsts.CONTAINER_DATALISTS);
+			hasWritePermission = false;		
+			showWUsedItems = true;
+		}
+		
+		else {
 			
 			// Control plan, Quality control, Control point
 			containerDataLists = nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_DATALISTS, RepoConsts.CONTAINER_DATALISTS);			
@@ -173,14 +179,7 @@ public class ProductListsWebScript extends DeclarativeWebScript  {
 			}
 			hasWritePermission = true;
 		}		
-		else{
-			//Product
-			NodeRef templateNodeRef = productDictionaryService.getProductTemplate(nodeRef);
-			productService.copyProductLists(templateNodeRef, nodeRef, false);
-			containerDataLists = nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_PRODUCTLISTS, RepoConsts.CONTAINER_DATALISTS);
-			hasWritePermission = false;		
-			showWUsedItems = true;
-		}
+		
 		
 		logger.debug("productListsNodeRef : " + containerDataLists);
 		

@@ -1,4 +1,4 @@
-package fr.becpg.repo.quality;
+package fr.becpg.repo.quality.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,15 +18,17 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
 
 import fr.becpg.model.QualityModel;
+import fr.becpg.repo.BeCPGDao;
+import fr.becpg.repo.BecpgDataListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.quality.data.WorkItemAnalysisData;
 import fr.becpg.repo.quality.data.dataList.ControlListDataItem;
 
-public class WorkItemAnalysisDAOImpl implements WorkItemAnalysisDAO {
+public class WorkItemAnalysisDAOImpl implements BeCPGDao<WorkItemAnalysisData> {
 
 	private NodeService nodeService;
 	private FileFolderService fileFolderService;
-	private DataListsDAO dataListDAO;
+	private BecpgDataListDAO dataListDAO;
 	private AssociationService associationService;
 	
 	public void setNodeService(NodeService nodeService) {
@@ -37,7 +39,7 @@ public class WorkItemAnalysisDAOImpl implements WorkItemAnalysisDAO {
 		this.fileFolderService = fileFolderService;
 	}
 
-	public void setDataListDAO(DataListsDAO dataListDAO) {
+	public void setDataListDAO(BecpgDataListDAO dataListDAO) {
 		this.dataListDAO = dataListDAO;
 	}
 

@@ -6,12 +6,12 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.BeCPGDataObject;
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
 
-public class QualityControlData {
+public class QualityControlData extends BeCPGDataObject {
 
-	NodeRef nodeRef;
-	String name;
+	
 	List<NodeRef>controlPlans = new ArrayList<NodeRef>();
 	Integer samplesCounter;
 	String state;
@@ -27,21 +27,6 @@ public class QualityControlData {
 	
 	List<SamplingListDataItem> samplingList = new ArrayList<SamplingListDataItem>();
 
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
-
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public List<NodeRef> getControlPlans() {
 		return controlPlans;

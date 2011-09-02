@@ -1,7 +1,6 @@
-package fr.becpg.repo.quality;
+package fr.becpg.repo.quality.impl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,26 +9,21 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.action.executer.ContentMetadataExtracter;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.birt.core.data.DateUtil;
 
-import com.ibm.icu.util.GregorianCalendar;
-
-import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.quality.QualityControlService;
 import fr.becpg.repo.quality.data.ControlPlanData;
 import fr.becpg.repo.quality.data.ControlPointData;
 import fr.becpg.repo.quality.data.QualityControlData;
@@ -47,32 +41,43 @@ public class QualityControlServiceImpl implements QualityControlService {
 	private static final long HOUR = 3600*1000; // in milli-seconds.
 	
 	private NodeService nodeService;
-	private QualityControlDAO qualityControlDAO;
-	private ControlPlanDAO controlPlanDAO;
-	private ControlPointDAO controlPointDAO;
-	private WorkItemAnalysisDAO workItemAnalysisDAO;
+	private BeCPGDao<QualityControlData> qualityControlDAO;
+	private BeCPGDao<ControlPlanData> controlPlanDAO;
+	private BeCPGDao<ControlPointData> controlPointDAO;
+	private BeCPGDao<WorkItemAnalysisData> workItemAnalysisDAO;
 	private ProductDAO productDAO;
 	private RepoService repoService;
 		
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-
-	public void setQualityControlDAO(QualityControlDAO qualityControlDAO) {
+	
+	
+	
+	public void setQualityControlDAO(BeCPGDao<QualityControlData> qualityControlDAO) {
 		this.qualityControlDAO = qualityControlDAO;
 	}
 
-	public void setControlPlanDAO(ControlPlanDAO controlPlanDAO) {
+
+
+	public void setControlPlanDAO(BeCPGDao<ControlPlanData> controlPlanDAO) {
 		this.controlPlanDAO = controlPlanDAO;
 	}
 
-	public void setControlPointDAO(ControlPointDAO controlPointDAO) {
+
+
+	public void setControlPointDAO(BeCPGDao<ControlPointData> controlPointDAO) {
 		this.controlPointDAO = controlPointDAO;
 	}
 
-	public void setWorkItemAnalysisDAO(WorkItemAnalysisDAO workItemAnalysisDAO) {
+
+
+	public void setWorkItemAnalysisDAO(
+			BeCPGDao<WorkItemAnalysisData> workItemAnalysisDAO) {
 		this.workItemAnalysisDAO = workItemAnalysisDAO;
 	}
+
+
 
 	public void setProductDAO(ProductDAO productDAO) {
 		this.productDAO = productDAO;

@@ -39,6 +39,8 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.QualityModel;
+import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -222,6 +224,14 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		//Quality		
 		NodeRef qualityNodeRef = visitFolder(companyHome, RepoConsts.PATH_QUALITY, locale);
 		visitFolder(qualityNodeRef, RepoConsts.PATH_NC, locale);
+		NodeRef qualitySpecNodeRef =  visitFolder(qualityNodeRef, RepoConsts.PATH_QUALITY_SPEC, locale);
+		visitFolder(qualitySpecNodeRef, RepoConsts.PATH_QUALITY_CONTROL_POINTS, locale);
+		//TODO complete quality folders
+		
+		
+		//Security
+		visitFolder(systemNodeRef, RepoConsts.PATH_SECURITY, locale);
+		
 		
 		//ProductTemplates
 		NodeRef productTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES, locale);			
@@ -268,6 +278,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		else if(folderName == RepoConsts.PATH_NUTS){
 			specialiseType = BeCPGModel.TYPE_NUT;			
 		}
+		else if(folderName == RepoConsts.PATH_QUALITY_CONTROL_POINTS){
+			specialiseType = QualityModel.TYPE_CONTROL_POINT;			
+		}
 		else if(folderName == RepoConsts.PATH_INGS){
 			specialiseType = BeCPGModel.TYPE_ING;
 		}
@@ -309,6 +322,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		}
 		else if(folderName == RepoConsts.PATH_PRODUCT_REPORTTEMPLATES){
 			specialiseType = BeCPGModel.TYPE_PRODUCT_REPORTTEMPLATE;
+		}
+		else if(folderName == RepoConsts.PATH_SECURITY){
+			specialiseType = SecurityModel.TYPE_ACL_GROUP;
 		}
 		else if(folderName == RepoConsts.PATH_IMPORT_TO_TREAT){
 						

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="sec:secmodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<!-- Optional meta-data about the model -->
+	<description>Security Model</description>
+	<author>Laborie Matthieu</author>
+	<version>1.0</version>
+	<!-- Imports are required to allow references to definitions in other models -->
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.alfresco.org/model/datalist/1.0"
+			prefix="dl" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</imports>
+	<!-- Introduction of new namespaces defined by this model -->
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/security/1.0"
+			prefix="sec" />
+	</namespaces>
+
+	<constraints>
+		<constraint name="sec:aclPermission" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Lecture seule</value>
+					<value>Lecture et écriture</value>
+					<value>Masqué</value>
+				</list>
+			</parameter>
+		</constraint>
+
+	</constraints>
+
+	<types>
+
+		<!-- ACL Object -->
+		<type name="sec:aclGroup">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="sec:typeName">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:dataListsAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<!-- ACL stores the individual permissions assigned to each recipient -->
+
+		<type name="sec:aclEntry">
+			<parent>dl:dataListItem</parent>
+			<properties>
+				<property name="sec:aclPermission">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="sec:aclPermission" />
+					</constraints>
+				</property>
+				<property name="sec:propName">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="sec:groupsAssignee">
+					<source>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>cm:authorityContainer</class>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</type>
+
+
+
+	</types>
+	
+
+</model>

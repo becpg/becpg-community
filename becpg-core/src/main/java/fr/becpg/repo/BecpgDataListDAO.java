@@ -1,22 +1,14 @@
-package fr.becpg.repo.quality;
-
-import java.util.List;
-import java.util.Set;
+package fr.becpg.repo;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
-import fr.becpg.repo.quality.data.dataList.ControlListDataItem;
-import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
-import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
-
 /**
- * DAO class used to manage quality data lists 
+ * DAO interface to manage dataList
  * @author querephi
  *
  */
-public interface DataListsDAO {		
+public interface BecpgDataListDAO {		
 	
 	/**
 	 * Get the data list container.

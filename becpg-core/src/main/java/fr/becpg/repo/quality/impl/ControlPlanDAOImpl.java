@@ -1,4 +1,4 @@
-package fr.becpg.repo.quality;
+package fr.becpg.repo.quality.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,17 +20,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.QualityModel;
+import fr.becpg.repo.BeCPGDao;
+import fr.becpg.repo.BecpgDataListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.quality.data.ControlPlanData;
 import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
 
-public class ControlPlanDAOImpl implements ControlPlanDAO {
+public class ControlPlanDAOImpl implements BeCPGDao<ControlPlanData> {
 
 	private static Log logger = LogFactory.getLog(ControlPlanDAOImpl.class);
 	
 	private NodeService nodeService;
 	private FileFolderService fileFolderService;
-	private DataListsDAO dataListDAO;
+	private BecpgDataListDAO dataListDAO;
 	private AssociationService associationService;
 	
 	public void setNodeService(NodeService nodeService) {
@@ -41,7 +43,7 @@ public class ControlPlanDAOImpl implements ControlPlanDAO {
 		this.fileFolderService = fileFolderService;
 	}
 
-	public void setDataListDAO(DataListsDAO dataListDAO) {
+	public void setDataListDAO(BecpgDataListDAO dataListDAO) {
 		this.dataListDAO = dataListDAO;
 	}
 	

@@ -337,7 +337,7 @@
 	            </executions>  
 	        </plugin>    
 	        <!-- proguard -->
-	        <plugin>
+	      <!--   <plugin>
 			    <groupId>com.pyx4me</groupId>
 			    <artifactId>proguard-maven-plugin</artifactId>
 			    <version>2.0.4</version>
@@ -355,7 +355,7 @@
                  <injar>classes</injar> 
 			        <options>
 			            <option>-dontoptimize</option>
-			            <!-- <option>-keepdirectories</option>-->
+			            <option>-keepdirectories</option>
 			            <option>-renamesourcefileattribute SourceFile</option>
 			            <option>-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod</option>
 			            <option>-keep public class * { public protected *;}</option>
@@ -372,7 +372,7 @@
 			        </libs>
 			        <addMavenDescriptor>false</addMavenDescriptor>
 			    </configuration>
-			</plugin>     
+			</plugin>      -->
 			<plugin>
 				<groupId>org.alfresco.maven.plugin</groupId>
 				<artifactId>maven-amp-plugin</artifactId>

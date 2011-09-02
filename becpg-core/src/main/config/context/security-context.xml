@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
+
+<beans>
+    
+      <bean id="aclGroupDao" class="fr.becpg.repo.security.impl.ACLGroupDAOImpl">
+    	<property name="nodeService" ref="nodeService"/>
+    	<property name="fileFolderService" ref="fileFolderService"/>
+    	<property name="dataListDAO" ref="dataListDAO"/>
+    	<property name="associationService" ref="associationService"/>
+    </bean>
+    <bean id="securityService" class="fr.becpg.repo.security.impl.SecurityServiceImpl">
+    	<property name="aclGroupDao" ref="aclGroupDao"/>
+    </bean>   
+    
+    
+      <!-- Form Processor Filters to process permission on property level -->
+    <bean id="beCPGNodeFormFilter" parent="baseFormFilter"
+          class="fr.becpg.repo.security.filter.PropertyPermissionNodeFormFilter">       
+       <property name="filterRegistry" ref="nodeFilterRegistry" />
+       <property name="nodeService" ref="nodeService"/>
+        <property name="securityService" ref="securityService"/>            
+    </bean>    
+    <bean id="beCPGTypeFormFilter" parent="baseFormFilter"
+          class="fr.becpg.repo.security.filter.PropertyPermissionTypeFormFilter">
+       <property name="filterRegistry" ref="typeFilterRegistry" />
+       <property name="securityService" ref="securityService"/>
+    </bean>
+    
+   
+</beans>

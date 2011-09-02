@@ -1,0 +1,28 @@
+<alfresco-config>
+
+	<!-- sec:aclGroup type  -->
+	<config evaluator="node-type" condition="sec:aclGroup">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="sec:typeName" />
+				</field-visibility>
+			</form>
+			
+		</forms>
+	</config>
+	
+	<!-- sec:aclEntry type -->
+	<config evaluator="node-type" condition="sec:aclEntry">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="sec:aclPermission" />
+					<show id="sec:propName" />
+					<show id="sec:groupsAssignee" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+</alfresco-config>

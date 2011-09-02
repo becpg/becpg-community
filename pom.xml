@@ -83,7 +83,7 @@
 		<!-- Tests -->
 		<alfresco.webapp.path>/opt/alfresco-3.4.d/tomcat/webapps/alfresco</alfresco.webapp.path>
 		<alfresco.sdk.path>/opt/alfresco-3.4.d/sdk/lib/server</alfresco.sdk.path>
-		<alfresco.birt.path>/opt/birt-runtime-2_6_1</alfresco.birt.path>
+		<alfresco.birt.path>/opt/birt-runtime-dev-2_6_1</alfresco.birt.path>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<!-- The scm is required for the buildnumber-maven-plugin which is required 
@@ -102,7 +102,7 @@
 			<id>dev-tours</id>
 			<properties>
 				<alfresco.data.location>./alf_data</alfresco.data.location>
-				<alfresco.db.name>becpg</alfresco.db.name>
+				<alfresco.db.name>becpg_test</alfresco.db.name>
 				<alfresco.db.username>becpg</alfresco.db.username>
 				<alfresco.db.password>becpg</alfresco.db.password>
 				<webapp.log.level>error</webapp.log.level>
