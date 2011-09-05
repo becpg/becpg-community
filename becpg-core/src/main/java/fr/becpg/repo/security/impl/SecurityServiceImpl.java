@@ -91,7 +91,7 @@ public class SecurityServiceImpl implements SecurityService {
 							//Continue we can get better;
 						} else if (permissionModel.isReadOnly() && ret == SecurityService.WRITE_ACCESS){
 							ret =  SecurityService.NONE_ACCESS;
-							//Continue we can get better;
+							
 						}
 						
 						if(permissionModel.isWrite() && !isInGroup(permissionModel)){
@@ -166,15 +166,17 @@ public class SecurityServiceImpl implements SecurityService {
 			for (NodeRef aclGroupNodeRef : aclGroups) {
 				ACLGroupData aclGrp = aclGroupDao.find(aclGroupNodeRef);
 				List<ACLEntryDataItem> aclEntries = aclGrp.getAcls();
-				for (ACLEntryDataItem aclEntry : aclEntries) {
-					String key = computeAclKey(aclGrp.getTypeName(),
-							aclEntry.getPropName());
-					List<PermissionModel> perms = new ArrayList<ACLEntryDataItem.PermissionModel>();
-					perms.add(aclEntry.getPermissionModel());
-					if (acls.containsKey(key)) {
-						perms.addAll(acls.get(key));
+				if(aclEntries!=null){
+					for (ACLEntryDataItem aclEntry : aclEntries) {
+						String key = computeAclKey(aclGrp.getTypeName(),
+								aclEntry.getPropName());
+						List<PermissionModel> perms = new ArrayList<ACLEntryDataItem.PermissionModel>();
+						perms.add(aclEntry.getPermissionModel());
+						if (acls.containsKey(key)) {
+							perms.addAll(acls.get(key));
+						}
+						acls.put(key, perms);
 					}
-					acls.put(key, perms);
 				}
 
 			}
