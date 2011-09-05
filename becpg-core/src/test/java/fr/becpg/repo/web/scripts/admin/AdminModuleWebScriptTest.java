@@ -51,7 +51,7 @@ public class AdminModuleWebScriptTest extends BaseWebScriptTest{
 		
 		//Init-repo
 		logger.debug("test init repo webscript ");
-		String url = "/becpg/admin/repository/init-repo/FRENCH";
+		String url = "/becpg/admin/repository/init-repo";
 		Response response = sendRequest(new GetRequest(url), 200, "admin");
 						
 	}	

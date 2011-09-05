@@ -19,7 +19,6 @@ public interface InitVisitor {
 	 * Visit container.
 	 *
 	 * @param nodeRef the node ref
-	 * @param locale the locale
 	 */
-	public void visitContainer(NodeRef nodeRef, Locale locale);
+	public void visitContainer(NodeRef nodeRef);
 }

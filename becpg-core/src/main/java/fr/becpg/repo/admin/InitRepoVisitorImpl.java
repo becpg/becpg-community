@@ -167,94 +167,94 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	 * @param locale : locale of the system
 	 */
 	@Override
-	public void visitContainer(NodeRef companyHome, Locale locale){
+	public void visitContainer(NodeRef companyHome){
 	
 		logger.debug("visit");
 		
 		//create groups
 		logger.debug("Visit system groups");
-		createSystemGroups(locale);
+		createSystemGroups();
 		
 		//System
 		logger.debug("Visit folders");
-		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM, locale); 
+		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM); 
 				
 		//Lists of characteristics
-		visitFolder(systemNodeRef, RepoConsts.PATH_LISTS, locale);
-		visitFolder(systemNodeRef, RepoConsts.PATH_LINKED_LISTS, locale);
-		visitFolder(systemNodeRef, RepoConsts.PATH_NUTS, locale);				
-		visitFolder(systemNodeRef, RepoConsts.PATH_INGS, locale);		
-		visitFolder(systemNodeRef, RepoConsts.PATH_ORGANOS, locale);	
-		visitFolder(systemNodeRef, RepoConsts.PATH_ALLERGENS, locale);		
-		visitFolder(systemNodeRef, RepoConsts.PATH_COSTS, locale);
-		visitFolder(systemNodeRef, RepoConsts.PATH_PHYSICO_CHEM, locale);
-		visitFolder(systemNodeRef, RepoConsts.PATH_MICROBIOS, locale);
-		visitFolder(systemNodeRef, RepoConsts.PATH_GEO_ORIGINS, locale);
-		visitFolder(systemNodeRef, RepoConsts.PATH_BIO_ORIGINS, locale);
+		visitFolder(systemNodeRef, RepoConsts.PATH_LISTS);
+		visitFolder(systemNodeRef, RepoConsts.PATH_LINKED_LISTS);
+		visitFolder(systemNodeRef, RepoConsts.PATH_NUTS);				
+		visitFolder(systemNodeRef, RepoConsts.PATH_INGS);		
+		visitFolder(systemNodeRef, RepoConsts.PATH_ORGANOS);	
+		visitFolder(systemNodeRef, RepoConsts.PATH_ALLERGENS);		
+		visitFolder(systemNodeRef, RepoConsts.PATH_COSTS);
+		visitFolder(systemNodeRef, RepoConsts.PATH_PHYSICO_CHEM);
+		visitFolder(systemNodeRef, RepoConsts.PATH_MICROBIOS);
+		visitFolder(systemNodeRef, RepoConsts.PATH_GEO_ORIGINS);
+		visitFolder(systemNodeRef, RepoConsts.PATH_BIO_ORIGINS);
 				
 		//Hierarchy
-		NodeRef hierarchyNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY1, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGMATERIAL_HIERARCHY1, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_SEMIFINISHEDPRODUCT_HIERARCHY1, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY1, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY1, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY1, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY1, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGMATERIAL_HIERARCHY2, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_SEMIFINISHEDPRODUCT_HIERARCHY2, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY2, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY2, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY2, locale);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY2, locale);				
+		NodeRef hierarchyNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY1);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGMATERIAL_HIERARCHY1);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_SEMIFINISHEDPRODUCT_HIERARCHY1);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY1);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY1);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY1);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY1);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGMATERIAL_HIERARCHY2);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_SEMIFINISHEDPRODUCT_HIERARCHY2);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY2);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY2);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY2);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY2);				
 		
 		//Exchange
-		NodeRef exchangeNodeRef = visitFolder(companyHome, RepoConsts.PATH_EXCHANGE, locale);
-		NodeRef importNodeRef = visitFolder(exchangeNodeRef, RepoConsts.PATH_IMPORT, locale);
-		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_TO_TREAT, locale);
-		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_SUCCEEDED, locale);
-		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_FAILED, locale);			
+		NodeRef exchangeNodeRef = visitFolder(companyHome, RepoConsts.PATH_EXCHANGE);
+		NodeRef importNodeRef = visitFolder(exchangeNodeRef, RepoConsts.PATH_IMPORT);
+		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_TO_TREAT);
+		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_SUCCEEDED);
+		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_FAILED);			
 		
 		//Products		
-		NodeRef productsNodeRef = visitFolder(companyHome, RepoConsts.PATH_PRODUCTS, locale);
+		NodeRef productsNodeRef = visitFolder(companyHome, RepoConsts.PATH_PRODUCTS);
 		productDictionaryService.initializeRepoHierarchy(productsNodeRef);
 		
 		
 		//Quality		
-		NodeRef qualityNodeRef = visitFolder(companyHome, RepoConsts.PATH_QUALITY, locale);
-		visitFolder(qualityNodeRef, RepoConsts.PATH_NC, locale);
-		NodeRef qualitySpecNodeRef =  visitFolder(qualityNodeRef, RepoConsts.PATH_QUALITY_SPEC, locale);
-		visitFolder(qualitySpecNodeRef, RepoConsts.PATH_QUALITY_CONTROL_POINTS, locale);
+		NodeRef qualityNodeRef = visitFolder(companyHome, RepoConsts.PATH_QUALITY);
+		visitFolder(qualityNodeRef, RepoConsts.PATH_NC);
+		NodeRef qualitySpecNodeRef =  visitFolder(qualityNodeRef, RepoConsts.PATH_QUALITY_SPEC);
+		visitFolder(qualitySpecNodeRef, RepoConsts.PATH_QUALITY_CONTROL_POINTS);
 		//TODO complete quality folders
 		
 		
 		//Security
-		visitFolder(systemNodeRef, RepoConsts.PATH_SECURITY, locale);
+		visitFolder(systemNodeRef, RepoConsts.PATH_SECURITY);
 		
 		
 		//ProductTemplates
-		NodeRef productTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES, locale);			
+		NodeRef productTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES);			
 		visitProductTpls(productTplsNodeRef);
 		
 		//ProductMicrobioCriteria		
-		visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA, locale);
+		visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA);
 		
 		//Companies
-		NodeRef companiesNodeRef = visitFolder(companyHome, RepoConsts.PATH_COMPANIES, locale);
-		visitFolder(companiesNodeRef, RepoConsts.PATH_SUPPLIERS, locale);
-		visitFolder(companiesNodeRef, RepoConsts.PATH_CLIENTS, locale);
+		NodeRef companiesNodeRef = visitFolder(companyHome, RepoConsts.PATH_COMPANIES);
+		visitFolder(companiesNodeRef, RepoConsts.PATH_SUPPLIERS);
+		visitFolder(companiesNodeRef, RepoConsts.PATH_CLIENTS);
 		
 		//Reports				
-		visitReports(systemNodeRef, locale);
+		visitReports(systemNodeRef);
 		
 		//AutoNum
-		visitFolder(systemNodeRef, RepoConsts.PATH_AUTO_NUM, locale);
+		visitFolder(systemNodeRef, RepoConsts.PATH_AUTO_NUM);
 		
 		//System exchange
-		NodeRef systemExchangeNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_EXCHANGE, locale);
-		NodeRef systemImportNodeRef = visitFolder(systemExchangeNodeRef, RepoConsts.PATH_IMPORT, locale);
-		visitFolder(systemImportNodeRef, RepoConsts.PATH_MAPPING, locale);		
+		NodeRef systemExchangeNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_EXCHANGE);
+		NodeRef systemImportNodeRef = visitFolder(systemExchangeNodeRef, RepoConsts.PATH_IMPORT);
+		visitFolder(systemImportNodeRef, RepoConsts.PATH_MAPPING);		
 		
 	}	
 	
@@ -622,13 +622,13 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	 * Create the reports templates
 	 * @param productReportTplsNodeRef
 	 */
-	private void visitReports(NodeRef systemNodeRef, Locale locale){
+	private void visitReports(NodeRef systemNodeRef){
 		
 		// reports folder
-		NodeRef reportsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_REPORTS, locale);
+		NodeRef reportsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_REPORTS);
 		
 		// product report templates
-		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES, locale);
+		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
 		
 		for(SystemProductType systemProductType : SystemProductType.values()){
 
@@ -656,7 +656,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 		// export search report
 		try{
-			NodeRef exportSearchNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH, locale);		
+			NodeRef exportSearchNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH);		
 			String exportTplTitle = TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS);
 			addExportSearchReportTplInFolder(exportSearchNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS, EXPORT_PRODUCTS_REPORT_RPTFILE_PATH, EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, exportTplTitle);
 		}
@@ -782,7 +782,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	 *
 	 * @param locale the locale
 	 */
-	private void createSystemGroups(Locale locale){
+	private void createSystemGroups(){
 		//http://forums.alfresco.com/en/viewtopic.php?t=14004
 		
 
@@ -795,7 +795,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		for(String group : groups){
 			
 			logger.debug("group: " + group);
-			String groupName = I18NUtil.getMessage(String.format("%s.%s",  LOCALIZATION_PFX_GROUP, group).toLowerCase(), locale);			
+			String groupName = I18NUtil.getMessage(String.format("%s.%s",  LOCALIZATION_PFX_GROUP, group).toLowerCase());			
 			
 			if(!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)){
 				logger.debug("create group: " + groupName);				

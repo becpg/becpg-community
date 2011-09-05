@@ -34,9 +34,9 @@ public class InitSiteVisitorImpl extends AbstractInitVisitorImpl implements Init
 	 * @see fr.becpg.repo.admin.InitVisitor#visitContainer(org.alfresco.service.cmr.repository.NodeRef, java.util.Locale)
 	 */
 	@Override
-	public void visitContainer(NodeRef docLibNodeRef, Locale locale) {
+	public void visitContainer(NodeRef docLibNodeRef) {
 		
-		visitFolder(docLibNodeRef, RepoConsts.PATH_DOCUMENTS, locale);
-		visitFolder(docLibNodeRef, RepoConsts.PATH_PRODUCTS, locale);		
+		visitFolder(docLibNodeRef, RepoConsts.PATH_DOCUMENTS);
+		visitFolder(docLibNodeRef, RepoConsts.PATH_PRODUCTS);		
 	}
 }

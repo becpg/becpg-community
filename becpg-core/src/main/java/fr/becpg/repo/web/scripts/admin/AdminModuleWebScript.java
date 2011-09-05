@@ -36,9 +36,6 @@ public class AdminModuleWebScript  extends AbstractWebScript
 	/** The Constant PARAM_ACTION. */
 	private static final String PARAM_ACTION = "action";
 	
-	/** The Constant PARAM_LOCALE. */
-	private static final String PARAM_LOCALE = "locale";
-	
 	/** The Constant PARAM_SITE. */
 	private static final String PARAM_SITE = "site";
 		
@@ -118,14 +115,11 @@ public class AdminModuleWebScript  extends AbstractWebScript
     	Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
     	
     	String action = templateArgs.get(PARAM_ACTION);
-    	String locale = templateArgs.get(PARAM_LOCALE);
     	String site = templateArgs.get(PARAM_SITE);
     	
     	//Check arg    	    
     	if(action == null || action.isEmpty())
     		throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'action' argument cannot be null or empty");
-    	if(locale == null || locale.isEmpty())
-    		throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'locale' argument cannot be null or empty");
     	
     	//site
     	if(site != null && !site.isEmpty()){
@@ -136,7 +130,7 @@ public class AdminModuleWebScript  extends AbstractWebScript
     			    		    	
         		if(action.equals(ACTION_INIT_REPO)){
         			logger.debug(String.format("init repository in the site ''%s", site));
-        			initSiteVisitor.visitContainer(docLibNodeRef, new Locale(locale));
+        			initSiteVisitor.visitContainer(docLibNodeRef);
         		}    		
         		else{
         			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);
@@ -149,11 +143,11 @@ public class AdminModuleWebScript  extends AbstractWebScript
     		
     		if(action.equals(ACTION_INIT_REPO)){
     			logger.debug("init repository");
-    			initRepoVisitor.visitContainer(repository.getCompanyHome(), new Locale(locale));
+    			initRepoVisitor.visitContainer(repository.getCompanyHome());
     		} 
     		else if(action.equals(ACTION_INIT_DEMO)){
     			logger.debug("init demo");
-    			initDemoVisitor.visitContainer(repository.getCompanyHome(), new Locale(locale));
+    			initDemoVisitor.visitContainer(repository.getCompanyHome());
     		} 
     		else{
     			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);

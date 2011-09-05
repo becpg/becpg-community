@@ -197,7 +197,7 @@ public class InitSiteVisitorImplTest extends BaseAlfrescoTestCase {
 		clearRepo();
 		
 		// Init repo
-		initRepoVisitor.visitContainer(repository.getCompanyHome(), Locale.getDefault());
+		initRepoVisitor.visitContainer(repository.getCompanyHome());
 		
 		//check init repo
 		NodeRef systemNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
@@ -277,7 +277,7 @@ public class InitSiteVisitorImplTest extends BaseAlfrescoTestCase {
 			docLibNodeRef = siteService.createContainer(siteInfo.getShortName(), RepoConsts.CONTAINER_DOCUMENT_LIBRARY, null, null);
 		}
 		assertNotNull("documentLibraryNodeRef", docLibNodeRef);
-		initSiteVisitor.visitContainer(docLibNodeRef, Locale.getDefault());
+		initSiteVisitor.visitContainer(docLibNodeRef);
 		
 		//check site
 		String productsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS);

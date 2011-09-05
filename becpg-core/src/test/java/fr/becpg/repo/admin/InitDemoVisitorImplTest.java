@@ -139,13 +139,12 @@ public class InitDemoVisitorImplTest extends BaseAlfrescoTestCase {
 	 * Inits the repo and demo.
 	 */
 	private void initRepoAndDemo(){
-		Locale locale = Locale.FRENCH;		
 		
 		logger.debug("visit repo");
-		initRepoVisitor.visitContainer(repository.getCompanyHome(), locale);
+		initRepoVisitor.visitContainer(repository.getCompanyHome());
 		
 		logger.debug("visit demo");
-		initDemoVisitor.visitContainer(repository.getCompanyHome(), locale);
+		initDemoVisitor.visitContainer(repository.getCompanyHome());
 		
 		/*-- Check sites--*/
 		logger.debug("/*-- Check sites--*/");
@@ -160,14 +159,14 @@ public class InitDemoVisitorImplTest extends BaseAlfrescoTestCase {
 		
 		/*-- Check persons--*/
 		logger.debug("/*-- Check persons--*/");
-		String user = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_USER, locale);
-		String mgr = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_MGR, locale);
+		String user = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_USER);
+		String mgr = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_MGR);
 		
-		String groupSystem = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_GROUP_SYSTEM, locale);
-		String groupRD = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_GROUP_RD, locale);
-		String groupQuality = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_GROUP_QUALITY, locale);
-		String groupPurchasing = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_GROUP_PURCHASING, locale);
-		String groupProductReviewer = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_GROUP_PRODUCTREVIEWER, locale);
+		String groupSystem = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_GROUP_SYSTEM);
+		String groupRD = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_GROUP_RD);
+		String groupQuality = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_GROUP_QUALITY);
+		String groupPurchasing = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_GROUP_PURCHASING);
+		String groupProductReviewer = I18NUtil.getMessage(InitDemoVisitorImpl.LOCALIZATION_DEMO_GROUP_PRODUCTREVIEWER);
 		
 		assertNotNull("Person should exist", personService.getPerson(mgr + groupSystem));
 		assertNotNull("Person should exist", personService.getPerson(mgr + groupRD));

@@ -108,7 +108,7 @@ public abstract class AbstractInitVisitorImpl {
 	 * @param locale the locale
 	 * @return the node ref
 	 */
-	protected NodeRef visitFolder(NodeRef parentNodeRef, String folderPath, Locale locale) {
+	protected NodeRef visitFolder(NodeRef parentNodeRef, String folderPath) {
 		
 		//get translated message			
 		String folderName = TranslateHelper.getTranslatedPath(folderPath);		

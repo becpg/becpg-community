@@ -109,12 +109,12 @@ public class InitDemoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	 * @see fr.becpg.repo.admin.InitVisitor#visitContainer(org.alfresco.service.cmr.repository.NodeRef, java.util.Locale)
 	 */
 	@Override
-	public void visitContainer(NodeRef nodeRef, Locale locale) {
+	public void visitContainer(NodeRef nodeRef) {
 		
-		createSites(locale);
+		createSites();
 		//deleteSites();
 		
-		createUsers(locale);
+		createUsers();
 	}
 	
 /**
@@ -137,15 +137,15 @@ private void deleteSites(){
 	 *
 	 * @param locale the locale
 	 */
-	private void createSites(Locale locale){
+	private void createSites(){
 		
 		String [] sites = {SITE_RD, SITE_QUALITY, SITE_PURCHASING};
 		
 		for(String site : sites){			
 			
 			if(siteService.getSite(site) == null){
-				String siteTitle = I18NUtil.getMessage(String.format("%s.%s",  LOCALIZATION_PFX_SITE_TITLE, site).toLowerCase(), locale);
-				String siteDescription = I18NUtil.getMessage(String.format("%s.%s",  LOCALIZATION_PFX_SITE_DESCRIPTION, site).toLowerCase(), locale);
+				String siteTitle = I18NUtil.getMessage(String.format("%s.%s",  LOCALIZATION_PFX_SITE_TITLE, site));
+				String siteDescription = I18NUtil.getMessage(String.format("%s.%s",  LOCALIZATION_PFX_SITE_DESCRIPTION, site));
 				SiteInfo siteInfo = siteService.createSite("myPreset", site, siteTitle, siteDescription, SiteVisibility.PRIVATE);
 			}			
 		}			
@@ -164,18 +164,17 @@ private void deleteSites(){
 	/**
 	 * Creates the users.
 	 *
-	 * @param locale the locale
 	 */
-	private void createUsers(Locale locale){
+	private void createUsers(){
 		
-		String user = I18NUtil.getMessage(LOCALIZATION_DEMO_USER, locale);
-		String mgr = I18NUtil.getMessage(LOCALIZATION_DEMO_MGR, locale);
+		String user = I18NUtil.getMessage(LOCALIZATION_DEMO_USER);
+		String mgr = I18NUtil.getMessage(LOCALIZATION_DEMO_MGR);
 		
-		String groupSystem = I18NUtil.getMessage(LOCALIZATION_DEMO_GROUP_SYSTEM, locale);
-		String groupRD = I18NUtil.getMessage(LOCALIZATION_DEMO_GROUP_RD, locale);
-		String groupQuality = I18NUtil.getMessage(LOCALIZATION_DEMO_GROUP_QUALITY, locale);
-		String groupPurchasing = I18NUtil.getMessage(LOCALIZATION_DEMO_GROUP_PURCHASING, locale);
-		String groupProductReviewer = I18NUtil.getMessage(LOCALIZATION_DEMO_GROUP_PRODUCTREVIEWER, locale);
+		String groupSystem = I18NUtil.getMessage(LOCALIZATION_DEMO_GROUP_SYSTEM);
+		String groupRD = I18NUtil.getMessage(LOCALIZATION_DEMO_GROUP_RD);
+		String groupQuality = I18NUtil.getMessage(LOCALIZATION_DEMO_GROUP_QUALITY);
+		String groupPurchasing = I18NUtil.getMessage(LOCALIZATION_DEMO_GROUP_PURCHASING);
+		String groupProductReviewer = I18NUtil.getMessage(LOCALIZATION_DEMO_GROUP_PRODUCTREVIEWER);
 				
 		//SystemMgr		
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
