@@ -19,7 +19,7 @@ import org.alfresco.util.GUID;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.BeCPGDao;
-import fr.becpg.repo.BecpgDataListDAO;
+import fr.becpg.repo.dataList.DataListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.quality.data.WorkItemAnalysisData;
 import fr.becpg.repo.quality.data.dataList.ControlListDataItem;
@@ -28,7 +28,7 @@ public class WorkItemAnalysisDAOImpl implements BeCPGDao<WorkItemAnalysisData> {
 
 	private NodeService nodeService;
 	private FileFolderService fileFolderService;
-	private BecpgDataListDAO dataListDAO;
+	private DataListDAO dataListDAO;
 	private AssociationService associationService;
 	
 	public void setNodeService(NodeService nodeService) {
@@ -39,7 +39,7 @@ public class WorkItemAnalysisDAOImpl implements BeCPGDao<WorkItemAnalysisData> {
 		this.fileFolderService = fileFolderService;
 	}
 
-	public void setDataListDAO(BecpgDataListDAO dataListDAO) {
+	public void setDataListDAO(DataListDAO dataListDAO) {
 		this.dataListDAO = dataListDAO;
 	}
 

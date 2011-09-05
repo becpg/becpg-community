@@ -13,7 +13,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-// TODO: Remove this class if unecessary (Matthieu)
 /**
  * The Class PropertyPermissionNodeFormFilter.
  *
@@ -42,7 +41,6 @@ public class PropertyPermissionNodeFormFilter extends AbstractPropertyPermission
 	@Override
 	public void afterGenerate(NodeRef item, List<String> fields,
 			List<String> forcedFields, Form form, Map<String, Object> context) {
-		
 		logger.debug("afterGenerate");					
 		filterFormFields(nodeService.getType(item), form);		
 	}

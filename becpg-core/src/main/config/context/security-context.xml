@@ -8,9 +8,13 @@
     	<property name="fileFolderService" ref="fileFolderService"/>
     	<property name="dataListDAO" ref="dataListDAO"/>
     	<property name="associationService" ref="associationService"/>
+    	<property name="authorityDAO" ref="authorityDAO"/>
     </bean>
-    <bean id="securityService" class="fr.becpg.repo.security.impl.SecurityServiceImpl">
+    <bean id="securityService" class="fr.becpg.repo.security.impl.SecurityServiceImpl" init-method="init">
     	<property name="aclGroupDao" ref="aclGroupDao"/>
+    	<property name="authorityService" ref="authorityService"/>
+    	<property name="beCPGSearchService" ref="beCPGSearchService"/>
+    	<property name="namespacePrefixResolver" ref="namespaceService" />
     </bean>   
     
     

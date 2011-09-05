@@ -1,52 +1,197 @@
 package fr.becpg.repo.security.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StopWatch;
 
+import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.BeCPGDao;
+import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.data.ACLGroupData;
+import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
+import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
 
+/**
+ * Security Service : is in charge to compute acls by node Type. And provide
+ * permission on properties
+ * 
+ * @author "Matthieu Laborie <laborima@gmail.com>"
+ */
 public class SecurityServiceImpl implements SecurityService {
 
-	private Map<String,NodeRef> acls = new HashMap<String, NodeRef>(); 
-	
-	
+	/*
+	 * ACL keys / Group List
+	 */
+	private Map<String, List<ACLEntryDataItem.PermissionModel>> acls = new HashMap<String, List<ACLEntryDataItem.PermissionModel>>();
+
+	private static Log logger = LogFactory.getLog(SecurityServiceImpl.class);
+
 	private BeCPGDao<ACLGroupData> aclGroupDao;
+
+	private AuthorityService authorityService;
+
+	private BeCPGSearchService beCPGSearchService;
+	
+	private NamespacePrefixResolver namespacePrefixResolver;
+
+	public void setNamespacePrefixResolver(
+			NamespacePrefixResolver namespacePrefixResolver) {
+		this.namespacePrefixResolver = namespacePrefixResolver;
+	}
 
 	public void setAclGroupDao(BeCPGDao<ACLGroupData> aclGroupDao) {
 		this.aclGroupDao = aclGroupDao;
 	}
 
+	public void setAuthorityService(AuthorityService authorityService) {
+		this.authorityService = authorityService;
+	}
+
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
+	}
+
 	@Override
-	public int computeAccessMode(QName nodeType, String name) {
-		String key = computeAclKey(nodeType,name);
-		if(acls.containsKey(key)){
-			NodeRef aclEntry =  acls.get(key);
+	/**
+	 * Compute access mode for the given field name on a specific type
+	 * @param nodeType
+	 * @param name
+	 * @return Access Mode status
+	 */
+	public int computeAccessMode(QName nodeType, String propName) {
+		StopWatch stopWatch = null;
+		if(logger.isDebugEnabled()){
+			stopWatch = new StopWatch();
+			stopWatch.start();
+		}
+		try {
 			
-			//TODO check permission
+			String key = computeAclKey(nodeType,propName);
+			if(acls.containsKey(key)){
+				
+				List<ACLEntryDataItem.PermissionModel> perms = acls.get(key);
+				int ret = SecurityService.WRITE_ACCESS;
+				if(!isAdmin()){
+					
+					//Rule to override if one of the rule says that is has a better right
+					for (PermissionModel  permissionModel : perms) {
+			
+						if(permissionModel.isReadOnly() && isInGroup(permissionModel)){
+							ret = SecurityService.READ_ACCESS;
+							//Continue we can get better;
+						} else if (permissionModel.isReadOnly() && ret == SecurityService.WRITE_ACCESS){
+							ret =  SecurityService.NONE_ACCESS;
+							//Continue we can get better;
+						}
+						
+						if(permissionModel.isWrite() && !isInGroup(permissionModel)){
+							ret = SecurityService.READ_ACCESS;
+							//Continue we can get better;
+						} else if( permissionModel.isWrite() ){
+							return SecurityService.WRITE_ACCESS; 
+							//return we cannot get better
+						}
+					}
+				}
+
+				return ret;
+			}
+			
+			return SecurityService.WRITE_ACCESS;
+		} finally {
+			if(logger.isDebugEnabled()){
+				stopWatch.stop();
+				logger.debug("Compute Access Mode takes : "+stopWatch.getTotalTimeSeconds()+"s");
+		}
 			
 		}
-		
-		return SecurityService.WRITE_ACCESS;
 	}
 
-	private String computeAclKey(QName nodeType, String name) {
-		return 	nodeType.getLocalName()+"_"+name;
-	}
-	
-	public void init(){
-		computeAcl();
+	private boolean isAdmin() {
+		return 	authorityService.hasAdminAuthority();
 	}
 
-	public void computeAcl() {
-		// TODO Auto-generated method stub
-		
+	/**
+	 * Check if current user is in corresponding group
+	 */
+	private boolean isInGroup(PermissionModel permissionModel) {
+
+		for (String currAuth : authorityService.getAuthorities()) {
+			for (String checkedAuth : permissionModel.getGroups()) {
+				if (currAuth != null && currAuth.equals(checkedAuth)) {
+					return true;
+				}
+			}
+
+		}
+
+		return false;
 	}
-	
-	
-	
+
+	private String computeAclKey(QName nodeType, String propName) {
+		return computeAclKey(nodeType.toPrefixString(namespacePrefixResolver), propName);
+	}
+
+	private String computeAclKey(String typeName, String propName) {
+		
+		logger.debug("Compute key :"+ typeName + "_" + propName);
+		return typeName + "_" + propName;
+	}
+
+	public void init() {
+		logger.info("Init SecurityService");
+		computeAcls();
+	}
+
+	public void computeAcls() {
+		acls.clear();
+		StopWatch stopWatch = null;
+		if (logger.isDebugEnabled()) {
+			stopWatch = new StopWatch();
+			stopWatch.start();
+		}
+
+		List<NodeRef> aclGroups = findAllAclGroups();
+		if (aclGroups != null) {
+			for (NodeRef aclGroupNodeRef : aclGroups) {
+				ACLGroupData aclGrp = aclGroupDao.find(aclGroupNodeRef);
+				List<ACLEntryDataItem> aclEntries = aclGrp.getAcls();
+				for (ACLEntryDataItem aclEntry : aclEntries) {
+					String key = computeAclKey(aclGrp.getTypeName(),
+							aclEntry.getPropName());
+					List<PermissionModel> perms = new ArrayList<ACLEntryDataItem.PermissionModel>();
+					perms.add(aclEntry.getPermissionModel());
+					if (acls.containsKey(key)) {
+						perms.addAll(acls.get(key));
+					}
+					acls.put(key, perms);
+				}
+
+			}
+		}
+
+		if (logger.isDebugEnabled()) {
+			stopWatch.stop();
+			logger.debug("Compute ACLs takes : "
+					+ stopWatch.getTotalTimeSeconds() + "s");
+		}
+
+	}
+
+	private List<NodeRef> findAllAclGroups() {
+		String runnedQuery = "+TYPE:\""
+				+ SecurityModel.TYPE_ACL_GROUP.toString() + "\"";
+		return beCPGSearchService.unProtLuceneSearch(runnedQuery);
+	}
+
 }

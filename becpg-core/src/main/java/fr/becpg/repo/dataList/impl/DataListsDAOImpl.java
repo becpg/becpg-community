@@ -1,4 +1,4 @@
-package fr.becpg.repo.quality.impl;
+package fr.becpg.repo.dataList.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -14,14 +14,15 @@ import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.QualityModel;
-import fr.becpg.repo.BecpgDataListDAO;
+import fr.becpg.repo.dataList.DataListDAO;
 
 /**
  * 
  * @author querephi
+ * TODO: Move to m
  *
  */
-public class DataListsDAOImpl implements BecpgDataListDAO{
+public class DataListsDAOImpl implements DataListDAO{
 
 	/** The Constant RESOURCE_TITLE. */	
 	private static final String RESOURCE_TITLE = "qa_qamodel.type.qa_%s.title";

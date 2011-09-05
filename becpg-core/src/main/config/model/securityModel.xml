@@ -28,7 +28,6 @@
 				<list>
 					<value>Lecture seule</value>
 					<value>Lecture et écriture</value>
-					<value>Masqué</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -72,7 +71,7 @@
 				<association name="sec:groupsAssignee">
 					<source>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</source>
 					<target>
 						<class>cm:authorityContainer</class>

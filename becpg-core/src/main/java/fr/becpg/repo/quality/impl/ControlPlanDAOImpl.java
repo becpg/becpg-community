@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.BeCPGDao;
-import fr.becpg.repo.BecpgDataListDAO;
+import fr.becpg.repo.dataList.DataListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.quality.data.ControlPlanData;
 import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
@@ -32,7 +32,7 @@ public class ControlPlanDAOImpl implements BeCPGDao<ControlPlanData> {
 	
 	private NodeService nodeService;
 	private FileFolderService fileFolderService;
-	private BecpgDataListDAO dataListDAO;
+	private DataListDAO dataListDAO;
 	private AssociationService associationService;
 	
 	public void setNodeService(NodeService nodeService) {
@@ -43,7 +43,7 @@ public class ControlPlanDAOImpl implements BeCPGDao<ControlPlanData> {
 		this.fileFolderService = fileFolderService;
 	}
 
-	public void setDataListDAO(BecpgDataListDAO dataListDAO) {
+	public void setDataListDAO(DataListDAO dataListDAO) {
 		this.dataListDAO = dataListDAO;
 	}
 	

@@ -1,4 +1,4 @@
-package fr.becpg.repo;
+package fr.becpg.repo.dataList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -8,7 +8,7 @@ import org.alfresco.service.namespace.QName;
  * @author querephi
  *
  */
-public interface BecpgDataListDAO {		
+public interface DataListDAO {		
 	
 	/**
 	 * Get the data list container.

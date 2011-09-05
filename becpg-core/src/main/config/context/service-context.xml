@@ -319,6 +319,13 @@
 		<property name="propertyService" ref="propertyService"/>		
 	</bean>
 	
+	
+	<bean id="beCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
+		<property name="searchService" ref="SearchService" />
+		<property name="unProtSearchService" ref="searchService" />	
+	</bean>
+	
+	
 	<!-- Policies -->
 	<bean id="autoNumService" class="fr.becpg.repo.policy.AutoNumServiceImpl">
 		<property name="searchService" ref="searchService" />
@@ -372,48 +379,10 @@
 		<property name="nodeService" ref="nodeService" />		
 	</bean>
 	
+	<!-- DataList -->
 	
-    
-    <!-- Quality -->
-    <bean id="dataListDAO" class="fr.becpg.repo.quality.impl.DataListsDAOImpl">
+    <bean id="dataListDAO" class="fr.becpg.repo.dataList.impl.DataListsDAOImpl">
     	<property name="nodeService" ref="nodeService"/>    	
     </bean>
-    <bean id="controlPlanDAO" class="fr.becpg.repo.quality.impl.ControlPlanDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="dataListDAO" ref="dataListDAO"/>
-    	<property name="associationService" ref="associationService"/>
-    </bean>			
-    <bean id="controlPointDAO" class="fr.becpg.repo.quality.impl.ControlPointDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="dataListDAO" ref="dataListDAO"/>
-    	<property name="associationService" ref="associationService"/>
-    </bean>
-    <bean id="qualityControlDAO" class="fr.becpg.repo.quality.impl.QualityControlDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="dataListDAO" ref="dataListDAO"/>
-    	<property name="associationService" ref="associationService"/>
-    </bean>
-    <bean id="workItemAnalysisDAO" class="fr.becpg.repo.quality.impl.WorkItemAnalysisDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="dataListDAO" ref="dataListDAO"/>
-    	<property name="associationService" ref="associationService"/>
-    </bean>
-    <bean id="qualityControlService" class="fr.becpg.repo.quality.impl.QualityControlServiceImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="controlPlanDAO" ref="controlPlanDAO"/>
-    	<property name="controlPointDAO" ref="controlPointDAO"/>
-    	<property name="qualityControlDAO" ref="qualityControlDAO"/>
-    	<property name="workItemAnalysisDAO" ref="workItemAnalysisDAO"/>
-    	<property name="productDAO" ref="productDAO"/>
-    	<property name="repoService" ref="repoService"/>
-    </bean>    
-    <bean id="qualityControlPolicies" class="fr.becpg.repo.quality.policy.QualityControlPolicies" init-method="init">
-		<property name="policyComponent" ref="policyComponent" />
-		<property name="qualityControlService" ref="qualityControlService" />		
-	</bean>
-   
+    
 </beans>

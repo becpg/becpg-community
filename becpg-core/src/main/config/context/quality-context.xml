@@ -4,9 +4,7 @@
 <beans>
     
     <!-- Quality -->
-    <bean id="dataListDAO" class="fr.becpg.repo.quality.impl.DataListsDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>    	
-    </bean>
+
     <bean id="controlPlanDAO" class="fr.becpg.repo.quality.impl.ControlPlanDAOImpl">
     	<property name="nodeService" ref="nodeService"/>
     	<property name="fileFolderService" ref="fileFolderService"/>

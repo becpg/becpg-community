@@ -22,6 +22,9 @@
 					<show id="sec:propName" />
 					<show id="sec:groupsAssignee" />
 				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>					
+				</appearance>
 			</form>
 		</forms>
 	</config>
