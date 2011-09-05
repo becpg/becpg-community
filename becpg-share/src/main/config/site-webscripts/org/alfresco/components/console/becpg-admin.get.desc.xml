@@ -1,0 +1,6 @@
+<webscript>
+  <shortname>beCPG admin console</shortname>
+  <description>beCPG console for the administration</description>
+  <url>/components/console/becpg-admin</url>
+  <family>admin-console</family>
+</webscript>

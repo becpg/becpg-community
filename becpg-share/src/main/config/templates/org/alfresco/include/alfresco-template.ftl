@@ -56,8 +56,8 @@
 </#if>
 
 <!-- Shortcut Icons -->
-   <link rel="shortcut icon" href="${url.context}/res/favicon.ico" type="image/vnd.microsoft.icon" /> 
-   <link rel="icon" href="${url.context}/res/favicon.ico" type="image/vnd.microsoft.icon" />
+   <link rel="shortcut icon" href="${url.context}/res/becpg.ico" type="image/vnd.microsoft.icon" /> 
+   <link rel="icon" href="${url.context}/res/becpg.ico" type="image/vnd.microsoft.icon" />
 
 <!-- Site-wide YUI Assets -->
    <@link rel="stylesheet" type="text/css" href="${url.context}/res/yui/reset-fonts-grids/reset-fonts-grids.css" />

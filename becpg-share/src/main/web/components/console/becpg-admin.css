@@ -1,0 +1,21 @@
+.becpg-admin-console
+{
+   margin: 16px 10px 10px;
+}
+.becpg-admin-console .title
+{
+   font-size: 123.1%;
+   font-weight: bold;
+   padding-bottom: 0.5em;
+}
+
+.becpg-admin-console .section
+{
+	border: 1px solid gray;
+   margin: 16px 16px 10px 10px;
+}
+
+.becpg-admin-console .section .action
+{
+   margin: 16px 16px 10px 10px;
+}

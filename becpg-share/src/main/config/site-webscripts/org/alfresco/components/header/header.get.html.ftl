@@ -60,7 +60,7 @@
 <div class="header">
    <span class="header-left">
       <span class="logo">
-         <a href="#" onclick="${jsid}.showAboutShare(); return false;"><img src="${url.context}/res/themes/${theme}/images/${logo}" alt="Alfresco Share" /></a>
+         <a href="#" onclick="${jsid}.showAboutShare(); return false;"><img src="${url.context}/res/themes/${theme}/images/${logo}" alt="beCPG Share" /></a>
       </span>
       <span class="logo-spacer">&nbsp;</span>
    </span>
