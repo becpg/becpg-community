@@ -2,34 +2,38 @@
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
 
 <beans>
-    
-      <bean id="aclGroupDao" class="fr.becpg.repo.security.impl.ACLGroupDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="dataListDAO" ref="dataListDAO"/>
-    	<property name="associationService" ref="associationService"/>
-    	<property name="authorityDAO" ref="authorityDAO"/>
-    </bean>
-    <bean id="securityService" class="fr.becpg.repo.security.impl.SecurityServiceImpl" init-method="init">
-    	<property name="aclGroupDao" ref="aclGroupDao"/>
-    	<property name="authorityService" ref="authorityService"/>
-    	<property name="beCPGSearchService" ref="beCPGSearchService"/>
-    	<property name="namespacePrefixResolver" ref="namespaceService" />
-    </bean>   
-    
-    
-      <!-- Form Processor Filters to process permission on property level -->
-    <bean id="beCPGNodeFormFilter" parent="baseFormFilter"
-          class="fr.becpg.repo.security.filter.PropertyPermissionNodeFormFilter">       
-       <property name="filterRegistry" ref="nodeFilterRegistry" />
-       <property name="nodeService" ref="nodeService"/>
-        <property name="securityService" ref="securityService"/>            
-    </bean>    
-    <bean id="beCPGTypeFormFilter" parent="baseFormFilter"
-          class="fr.becpg.repo.security.filter.PropertyPermissionTypeFormFilter">
-       <property name="filterRegistry" ref="typeFilterRegistry" />
-       <property name="securityService" ref="securityService"/>
-    </bean>
-    
-   
+
+	<bean id="aclGroupDao" class="fr.becpg.repo.security.impl.ACLGroupDAOImpl">
+		<property name="nodeService" ref="nodeService" />
+		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="dataListDAO" ref="dataListDAO" />
+		<property name="associationService" ref="associationService" />
+		<property name="authorityDAO" ref="authorityDAO" />
+	</bean>
+	<bean id="securityService" class="fr.becpg.repo.security.impl.SecurityServiceImpl"
+		init-method="init">
+		<property name="aclGroupDao" ref="aclGroupDao" />
+		<property name="authorityService" ref="authorityService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="namespacePrefixResolver" ref="namespaceService" />
+	</bean>
+
+
+	<!-- Form Processor Filters to process permission on property level -->
+	<bean id="beCPGNodeFormFilter" parent="baseFormFilter"
+		class="fr.becpg.repo.security.filter.PropertyPermissionNodeFormFilter">
+		<property name="filterRegistry" ref="nodeFilterRegistry" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="securityService" ref="securityService" />
+		<property name="namespacePrefixResolver" ref="namespaceService" />
+	</bean>
+	<bean id="beCPGTypeFormFilter" parent="baseFormFilter"
+		class="fr.becpg.repo.security.filter.PropertyPermissionTypeFormFilter">
+		<property name="filterRegistry" ref="typeFilterRegistry" />
+		<property name="securityService" ref="securityService" />
+		<property name="namespacePrefixResolver" ref="namespaceService" />
+	</bean>
+
+
 </beans>

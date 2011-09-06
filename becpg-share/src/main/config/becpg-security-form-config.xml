@@ -6,12 +6,86 @@
 			<form >
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="sec:typeName" />
+					<show id="sec:nodeType" />
 				</field-visibility>
+				<appearance>
+					<field id="sec:nodeType">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">
+							 {http://www.bcpg.fr/model/becpg/1.0}productTemplate|{type.bcpg_productTemplate},
+							 {http://www.bcpg.fr/model/becpg/1.0}productMicrobioCriteria|{type.bcpg_productMicrobioCriteria},
+						     {http://www.bcpg.fr/model/becpg/1.0}productSpecification|{type.bcpg_productSpecification},
+							 {http://www.bcpg.fr/model/becpg/1.0}allergen|{type.bcpg_allergen},
+							 {http://www.bcpg.fr/model/becpg/1.0}cost|{type.bcpg_cost},
+							 {http://www.bcpg.fr/model/becpg/1.0}ing|{type.bcpg_ing},	
+							 {http://www.bcpg.fr/model/becpg/1.0}microBio|{type.bcpg_microBio},
+							 {http://www.bcpg.fr/model/becpg/1.0}nut|{type.bcpg_nut},
+							 {http://www.bcpg.fr/model/becpg/1.0}organo|{type.bcpg_organo},
+							 {http://www.bcpg.fr/model/becpg/1.0}physicoChem|{type.bcpg_organo},
+							 {http://www.bcpg.fr/model/quality/1.0}nc|{type.qa_nc},
+							 {http://www.bcpg.fr/model/quality/1.0}controlPlan|{type.qa_controlPlan},
+						     {http://www.bcpg.fr/model/quality/1.0}qualityControl|{type.qa_qualityControl},
+						     {http://www.bcpg.fr/model/quality/1.0}controlPoint|{type.qa_controlPoint},
+						     {http://www.bcpg.fr/model/quality/1.0}controlStep|{type.qa_controlStep},
+						     {http://www.bcpg.fr/model/quality/1.0}controlMethod|{type.qa_controlMethod},
+						     {http://www.bcpg.fr/model/quality/1.0}workItemAnalysis|{type.qa_workItemAnalysis},
+						     {http://www.bcpg.fr/model/becpg/1.0}supplier|{type.bcpg_supplier},
+							 {http://www.bcpg.fr/model/becpg/1.0}client|{type.bcpg_client},
+							 {http://www.bcpg.fr/model/becpg/1.0}linkedValue|{type.bcpg_linkedValue},
+							 {http://www.bcpg.fr/model/becpg/1.0}listValue|{type.bcpg_listValue}
+							</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 			
 		</forms>
 	</config>
+	
+	<config evaluator="model-type" condition="sec:aclGroup">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="sec:nodeType" />
+				</field-visibility>
+				<appearance>
+					<field id="sec:nodeType">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">
+							 {http://www.bcpg.fr/model/becpg/1.0}productTemplate|{type.bcpg_productTemplate},
+							 {http://www.bcpg.fr/model/becpg/1.0}productMicrobioCriteria|{type.bcpg_productMicrobioCriteria},
+						     {http://www.bcpg.fr/model/becpg/1.0}productSpecification|{type.bcpg_productSpecification},
+							 {http://www.bcpg.fr/model/becpg/1.0}allergen|{type.bcpg_allergen},
+							 {http://www.bcpg.fr/model/becpg/1.0}cost|{type.bcpg_cost},
+							 {http://www.bcpg.fr/model/becpg/1.0}ing|{type.bcpg_ing},	
+							 {http://www.bcpg.fr/model/becpg/1.0}microBio|{type.bcpg_microBio},
+							 {http://www.bcpg.fr/model/becpg/1.0}nut|{type.bcpg_nut},
+							 {http://www.bcpg.fr/model/becpg/1.0}organo|{type.bcpg_organo},
+							 {http://www.bcpg.fr/model/becpg/1.0}physicoChem|{type.bcpg_organo},
+							 {http://www.bcpg.fr/model/quality/1.0}nc|{type.qa_nc},
+							 {http://www.bcpg.fr/model/quality/1.0}controlPlan|{type.qa_controlPlan},
+						     {http://www.bcpg.fr/model/quality/1.0}qualityControl|{type.qa_qualityControl},
+						     {http://www.bcpg.fr/model/quality/1.0}controlPoint|{type.qa_controlPoint},
+						     {http://www.bcpg.fr/model/quality/1.0}controlStep|{type.qa_controlStep},
+						     {http://www.bcpg.fr/model/quality/1.0}controlMethod|{type.qa_controlMethod},
+						     {http://www.bcpg.fr/model/quality/1.0}workItemAnalysis|{type.qa_workItemAnalysis},
+						     {http://www.bcpg.fr/model/becpg/1.0}supplier|{type.bcpg_supplier},
+							 {http://www.bcpg.fr/model/becpg/1.0}client|{type.bcpg_client},
+							 {http://www.bcpg.fr/model/becpg/1.0}linkedValue|{type.bcpg_linkedValue},
+							 {http://www.bcpg.fr/model/becpg/1.0}listValue|{type.bcpg_listValue}
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			
+		</forms>
+	</config>
+	
+	
 	
 	<!-- sec:aclEntry type -->
 	<config evaluator="node-type" condition="sec:aclEntry">
@@ -23,9 +97,55 @@
 					<show id="sec:groupsAssignee" />
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
-				<appearance>					
+				<appearance>
+					<field id="sec:aclPermission">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">
+							 read|Lecture seule,
+							 write|Lecture et écriture
+							</control-param>
+						</control>
+					</field>
 				</appearance>
+			</form>
+			
+		</forms>
+	</config>
+	
+	
+	<!-- sec:aclEntry type -->
+	<config evaluator="model-type" condition="sec:aclEntry">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="sec:aclPermission" />
+					<show id="sec:propName" />
+					<show id="sec:groupsAssignee" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="sec:aclPermission">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">
+							 read|Lecture seule,
+							 write|Lecture et écriture
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			
+			
+			<form id="datagrid">
+				<field-visibility>
+					<show id="sec:aclPermission" />
+					<show id="sec:propName" />
+					<show id="sec:groupsAssignee" />
+				</field-visibility>
 			</form>
 		</forms>
 	</config>
+	
 </alfresco-config>

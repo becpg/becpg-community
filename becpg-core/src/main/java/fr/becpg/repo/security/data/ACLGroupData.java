@@ -3,12 +3,14 @@ package fr.becpg.repo.security.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.service.namespace.QName;
+
 import fr.becpg.repo.BeCPGDataObject;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 
 public class ACLGroupData extends BeCPGDataObject {
 
-	private String typeName;
+	private QName nodeType;
 	
 	List<ACLEntryDataItem> acls = new ArrayList<ACLEntryDataItem>();
 
@@ -20,13 +22,15 @@ public class ACLGroupData extends BeCPGDataObject {
 		this.acls = acls;
 	}
 
-	public String getTypeName() {
-		return typeName;
+	public QName getNodeType() {
+		return nodeType;
 	}
 
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
+	public void setNodeType(QName nodeType) {
+		this.nodeType = nodeType;
 	}
+
+	
 
 	
 	

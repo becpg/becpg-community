@@ -1,5 +1,9 @@
 package fr.becpg.repo.security;
 
+import java.util.List;
+import java.util.Map;
+
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 /**
@@ -28,5 +32,12 @@ public interface SecurityService {
 	 * Compute ACLS in memory
 	 */
 	public void computeAcls();
+
+	/**
+	 * Extract props list based on form context
+	 * @param item
+	 * @return
+	 */
+	public List<String> extractProps(NodeRef item);
 
 }

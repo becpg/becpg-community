@@ -29,8 +29,8 @@ public interface SecurityModel {
 			"aclGroup");
 	
 		
-	public static final QName PROP_ACL_GROUP_TYPE_NAME = QName.createQName(SECURITY_URI,
-			"typeName");
+	public static final QName PROP_ACL_GROUP_NODE_TYPE = QName.createQName(SECURITY_URI,
+			"nodeType");
 
 
    public static final QName ASSOC_GROUPS_ASSIGNEE = QName.createQName(SECURITY_URI,

@@ -19,8 +19,8 @@ public class ACLEntryDataItem extends BeCPGDataItem {
 	
 	public class PermissionModel {
 		
-		public static final String READ_ONLY = "Lecture seule";
-	    public static final String READ_WRITE = "Lecture et écriture";
+		public static final String READ_ONLY = "read";
+	    public static final String READ_WRITE = "write";
 		
 		
 		

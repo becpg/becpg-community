@@ -43,6 +43,13 @@ public class PropertyPermissionNodeFormFilter extends AbstractPropertyPermission
 			List<String> forcedFields, Form form, Map<String, Object> context) {
 		logger.debug("afterGenerate");					
 		filterFormFields(nodeService.getType(item), form);		
+
+//		TODO
+//		if(SecurityModel.TYPE_ACL_ENTRY.equals(nodeService.getType(item))){
+//			logger.debug("Acl entry : compute require props");
+//			computeCustomPropsField(form,item);
+//		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -59,7 +66,9 @@ public class PropertyPermissionNodeFormFilter extends AbstractPropertyPermission
 	@Override
 	public void beforeGenerate(NodeRef item, List<String> fields,
 			List<String> forcedFields, Form form, Map<String, Object> context) {			
-		// TODO Auto-generated method stub		
+
+	
+		
 	}
 
 	/* (non-Javadoc)

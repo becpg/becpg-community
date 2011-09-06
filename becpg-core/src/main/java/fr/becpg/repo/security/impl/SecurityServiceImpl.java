@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.namespace.NamespacePrefixResolver;
@@ -13,6 +16,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
+import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
+
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -42,11 +48,19 @@ public class SecurityServiceImpl implements SecurityService {
 
 	private BeCPGSearchService beCPGSearchService;
 	
+	
+	private DictionaryService dictionaryService;
+	
 	private NamespacePrefixResolver namespacePrefixResolver;
+	
 
 	public void setNamespacePrefixResolver(
 			NamespacePrefixResolver namespacePrefixResolver) {
 		this.namespacePrefixResolver = namespacePrefixResolver;
+	}
+
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
 	}
 
 	public void setAclGroupDao(BeCPGDao<ACLGroupData> aclGroupDao) {
@@ -61,6 +75,28 @@ public class SecurityServiceImpl implements SecurityService {
 		this.beCPGSearchService = beCPGSearchService;
 	}
 
+	@Override
+	/**
+	 * Extract corresponding properties for given ACL_GROUP nodeRef
+	 */
+	public List<String> extractProps(NodeRef aclGrpNodeRef) {
+		logger.debug("extractProps for type : TODO");
+		List<String> ret = new ArrayList<String>();
+		
+		ACLGroupData aclGroup = aclGroupDao.find(aclGrpNodeRef);
+		
+		TypeDefinition typeDefinition = dictionaryService.getType(aclGroup.getNodeType());
+		
+		for(Map.Entry<QName,PropertyDefinition> properties : typeDefinition.getProperties().entrySet()){
+			ret.add(properties.getKey().toPrefixString(namespacePrefixResolver)+"|"+properties.getValue().getTitle());
+		}
+		
+		
+		return ret;
+	}
+
+	
+	
 	@Override
 	/**
 	 * Compute access mode for the given field name on a specific type
@@ -139,14 +175,9 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private String computeAclKey(QName nodeType, String propName) {
-		return computeAclKey(nodeType.toPrefixString(namespacePrefixResolver), propName);
+		return nodeType.toString() + "_" + propName;
 	}
 
-	private String computeAclKey(String typeName, String propName) {
-		
-		logger.debug("Compute key :"+ typeName + "_" + propName);
-		return typeName + "_" + propName;
-	}
 
 	public void init() {
 		logger.info("Init SecurityService");
@@ -168,7 +199,7 @@ public class SecurityServiceImpl implements SecurityService {
 				List<ACLEntryDataItem> aclEntries = aclGrp.getAcls();
 				if(aclEntries!=null){
 					for (ACLEntryDataItem aclEntry : aclEntries) {
-						String key = computeAclKey(aclGrp.getTypeName(),
+						String key = computeAclKey(aclGrp.getNodeType(),
 								aclEntry.getPropName());
 						List<PermissionModel> perms = new ArrayList<ACLEntryDataItem.PermissionModel>();
 						perms.add(aclEntry.getPermissionModel());
@@ -195,5 +226,6 @@ public class SecurityServiceImpl implements SecurityService {
 				+ SecurityModel.TYPE_ACL_GROUP.toString() + "\"";
 		return beCPGSearchService.unProtLuceneSearch(runnedQuery);
 	}
+
 
 }

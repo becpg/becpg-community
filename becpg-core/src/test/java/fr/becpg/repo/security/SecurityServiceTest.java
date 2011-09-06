@@ -178,7 +178,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		
 		ACLGroupData aclGroupData = new ACLGroupData();
 		aclGroupData.setName("Test ACL");
-		aclGroupData.setTypeName("sec:aclEntry");
+		aclGroupData.setNodeType(SecurityModel.TYPE_ACL_ENTRY);
 
 		List<String> groups = new ArrayList<String>();
 		groups.add(grp3);
