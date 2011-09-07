@@ -2,3 +2,6 @@
 /alf_data$
 /bin$
 common.sh
+
+syntax: regexp
+^becpg-core/alf_data$
