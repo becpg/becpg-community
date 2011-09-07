@@ -1,0 +1,156 @@
+package fr.becpg.repo.search;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import org.alfresco.repo.search.MLAnalysisMode;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.search.LimitBy;
+import org.alfresco.service.cmr.search.PermissionEvaluationMode;
+import org.alfresco.service.cmr.search.ResultSet;
+import org.alfresco.service.cmr.search.SearchParameters;
+import org.alfresco.service.cmr.search.SearchService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StopWatch;
+
+import fr.becpg.common.RepoConsts;
+
+/**
+ * BeCPG Search Service
+ * @author "Matthieu Laborie <laborima@gmail.com>"
+ *
+ */
+public class BeCPGSearchServiceImpl implements BeCPGSearchService{
+
+	private SearchService searchService;
+	private SearchService unProtSearchService;
+
+	public void setSearchService(SearchService searchService) {
+		this.searchService = searchService;
+	}
+
+	public void setUnProtSearchService(SearchService unProtSearchService) {
+		this.unProtSearchService = unProtSearchService;
+	}
+
+	private static Log logger = LogFactory.getLog(BeCPGSearchServiceImpl.class);
+
+	/**
+	 * @param runnedQuery
+	 * @param searchLimit
+	 * @return
+	 */
+	@Override
+	public List<NodeRef> luceneSearch(String runnedQuery, int searchLimit) {
+		logger.debug("Run query: " + runnedQuery + " limit to "
+				+ searchLimit + " results ");
+		SearchParameters sp = new SearchParameters();
+		sp.addStore(RepoConsts.SPACES_STORE);
+		sp.setLanguage(SearchService.LANGUAGE_LUCENE);
+		sp.setQuery(runnedQuery);
+		sp.setLimit(searchLimit);
+		sp.setLimitBy(LimitBy.FINAL_SIZE);
+		sp.setPermissionEvaluation(PermissionEvaluationMode.EAGER);
+		sp.excludeDataInTheCurrentTransaction(false);
+		sp.addSort(SearchParameters.SORT_IN_DOCUMENT_ORDER_DESCENDING);
+		ResultSet result = searchService.query(sp);
+		try {
+			if (result != null) {
+				return new LinkedList<NodeRef>(result.getNodeRefs());
+			}
+		} finally {
+			if (result != null) {
+				result.close();
+			}
+		}
+		return new LinkedList<NodeRef>();
+	}
+
+	/**
+	 * @param runnedQuery
+	 * @param searchLimit
+	 * @return
+	 */
+	@Override
+	public List<NodeRef> unProtLuceneSearch(String runnedQuery) {
+		return unProtLuceneSearch(runnedQuery, null);
+	}
+
+	@Override
+	public List<NodeRef> unProtLuceneSearch(String runnedQuery, String[] sort) {
+
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+		SearchParameters sp = new SearchParameters();
+		sp.addStore(RepoConsts.SPACES_STORE);
+		sp.setLanguage(SearchService.LANGUAGE_LUCENE);
+		sp.setQuery(runnedQuery);
+		sp.setLimitBy(LimitBy.UNLIMITED);
+		sp.setMlAnalaysisMode(MLAnalysisMode.ALL_ONLY);
+		sp.excludeDataInTheCurrentTransaction(false);
+		if (sort != null) {
+			for (String sortParam : sort) {
+				sp.addSort(sortParam, true);
+			}
+		} else {
+			sp.addSort(SearchParameters.SORT_IN_DOCUMENT_ORDER_DESCENDING);
+		}
+		ResultSet result = unProtSearchService.query(sp);
+		try {
+			if (result != null) {
+				return new LinkedList<NodeRef>(result.getNodeRefs());
+			}
+		} finally {
+			if (result != null) {
+				result.close();
+			}
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug(runnedQuery + " executed in  "
+						+ watch.getTotalTimeSeconds() + " seconds");
+			}
+		}
+		return new LinkedList<NodeRef>();
+	}
+
+	/**
+	 * @param runnedQuery
+	 * @param searchLimit
+	 * @return
+	 */
+	@Override
+	public List<NodeRef> luceneSearchAll(String runnedQuery, String[] sort) {
+		logger.debug("Run query: " + runnedQuery);
+		SearchParameters sp = new SearchParameters();
+		sp.addStore(RepoConsts.SPACES_STORE);
+		sp.setLanguage(SearchService.LANGUAGE_LUCENE);
+		sp.setQuery(runnedQuery);
+		sp.setLimitBy(LimitBy.FINAL_SIZE);
+		sp.setLimit(2000);
+		sp.setMlAnalaysisMode(MLAnalysisMode.ALL_ONLY);
+		sp.setPermissionEvaluation(PermissionEvaluationMode.EAGER);
+		sp.excludeDataInTheCurrentTransaction(false);
+		if (sort != null) {
+			for (String sortParam : sort) {
+				sp.addSort(sortParam, true);
+			}
+		}
+
+		ResultSet result = searchService.query(sp);
+		try {
+			if (result != null) {
+				return new LinkedList<NodeRef>(result.getNodeRefs());
+			}
+		} finally {
+			if (result != null) {
+				result.close();
+			}
+		}
+		return new LinkedList<NodeRef>();
+	}
+
+}

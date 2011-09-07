@@ -4,8 +4,13 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 public abstract class BeCPGDataItem {
 
-	NodeRef nodeRef;
+	protected NodeRef nodeRef;
+	
 		
+	public BeCPGDataItem() {
+		super();
+	}
+
 	public NodeRef getNodeRef() {
 		return nodeRef;
 	}
@@ -14,5 +19,9 @@ public abstract class BeCPGDataItem {
 		this.nodeRef = nodeRef;
 	}
 
-
+	public BeCPGDataItem(NodeRef nodeRef) {
+		super();
+		this.nodeRef = nodeRef;
+	}
+	
 }

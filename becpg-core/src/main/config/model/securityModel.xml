@@ -26,9 +26,8 @@
 		<constraint name="sec:aclPermission" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value>Lecture seule</value>
-					<value>Lecture et écriture</value>
-					<value>Masqué</value>
+					<value>read</value>
+					<value>write</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -41,8 +40,8 @@
 		<type name="sec:aclGroup">
 			<parent>cm:content</parent>
 			<properties>
-				<property name="sec:typeName">
-					<type>d:text</type>
+				<property name="sec:nodeType">
+					<type>d:qname</type>
 					<mandatory>true</mandatory>
 				</property>
 			</properties>
@@ -72,7 +71,7 @@
 				<association name="sec:groupsAssignee">
 					<source>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</source>
 					<target>
 						<class>cm:authorityContainer</class>
