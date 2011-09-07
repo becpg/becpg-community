@@ -20,7 +20,7 @@ function main()
          for (var i = 0; i < versions.length; i++)
          {
             versions[i].downloadURL = "/api/node/content/" + versions[i].nodeRef.replace(":/", "") + "/" + versions[i].name + "?a=true";
-            versions[i].compareURL = "/becpg/product/compare/" + versions[i].name + "?product1=" + versions[i].nodeRef + "&product2=" + nodeRef;
+            versions[i].compareURL = "/becpg/entity/compare/" + versions[i].name + "?entity1=" + versions[i].nodeRef + "&entity2=" + nodeRef;
             if (versions[i].nodeRef == nodeRef)
             {
                versionGroup = "currentVersion";

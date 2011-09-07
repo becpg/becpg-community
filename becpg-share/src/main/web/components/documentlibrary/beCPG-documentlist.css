@@ -3,17 +3,17 @@
    background-image: url(images/view-datalists-16.png);
 }
 
-.doclist .onActionCheckOutProduct a
+.doclist .onActionCheckOutEntity a
 {
    background-image: url(images/edit-16.png);
 }
 
-.doclist .onActionCheckInProduct a
+.doclist .onActionCheckInEntity a
 {
    background-image: url(images/upload-new-version-16.png);
 }
 
-.doclist .onActionCancelCheckOutProduct a
+.doclist .onActionCancelCheckOutEntity a
 {
    background-image: url(images/cancel-editing-16.png);
 }

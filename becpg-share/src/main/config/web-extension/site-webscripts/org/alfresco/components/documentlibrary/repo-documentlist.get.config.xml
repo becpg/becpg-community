@@ -100,62 +100,50 @@
          <action type="simple-link" id="onActionExplorerView" permission="repository,~portlet" href="{explorerViewUrl}" label="actions.folder.explorer-view" />
       </actionSet>
       
-		<!-- Product actions -->
+		<!-- Entity actions -->
 		
-		<actionSet id="product">
+		<actionSet id="entity">
          <action type="simple-link" id="onActionDetails" permission="edit" href="{editMetadataUrl}" label="actions.document.edit-metadata" />
          <action type="action-link" id="onActionCopyTo" label="actions.document.copy-to" />
          <action type="action-link" id="onActionMoveTo" permission="delete" label="actions.document.move-to" />
          <action type="action-link" id="onActionDelete" permission="delete" label="actions.document.delete" />
          <action type="action-link" id="onActionAssignWorkflow" label="actions.document.assign-workflow" />
          <action type="simple-link" id="onActionDownload" href="{downloadUrl}" label="actions.document.download" />         
-         <action type="action-link" id="onActionCheckOutProduct" permission="edit" label="actions.document.checkout-product" />         
+         <action type="action-link" id="onActionCheckOutEntity" permission="edit" label="actions.document.checkout-entity" />         
          <action type="action-link" id="onActionManageAspects" permission="edit" label="actions.document.manage-aspects" />
       </actionSet>      
       
-      <actionSet id="productLocked">
+      <actionSet id="entityLocked">
          <action type="simple-link" id="onActionDownload" href="{downloadUrl}" label="actions.document.download" />
          <action type="simple-link" id="onActionView" href="{viewUrl}" label="actions.document.view" />
          <action type="simple-link" id="onActionViewWorkingCopy" permission="view-working-copy" href="{workingCopyUrl}" label="actions.document.view-working-copy" />
          <action type="simple-link" id="onActionViewOriginal" permission="view-original" href="{originalUrl}" label="actions.document.view-original" />
          <action type="action-link" id="onActionAssignWorkflow" label="actions.document.assign-workflow" />
-         <action type="action-link" id="onActionCancelCheckOutProduct" permission="cancel-checkout" label="actions.document.cancel-checkout-product" />
+         <action type="action-link" id="onActionCancelCheckOutEntity" permission="cancel-checkout" label="actions.document.cancel-checkout-entity" />
       </actionSet>
 
-      <actionSet id="productLockOwner">
+      <actionSet id="entityLockOwner">
          <action type="simple-link" id="onActionDownload" href="{downloadUrl}" label="actions.document.download" />
          <action type="simple-link" id="onActionView" href="{viewUrl}" label="actions.document.view" />
          <action type="simple-link" id="onActionViewWorkingCopy" permission="view-working-copy" href="{workingCopyUrl}" label="actions.document.view-working-copy" />
          <action type="action-link" id="onActionAssignWorkflow" label="actions.document.assign-workflow" />
       </actionSet>
 
-      <actionSet id="productWorkingCopyOwner">
+      <actionSet id="entityWorkingCopyOwner">
          <action type="simple-link" id="onActionDetails" permission="edit" href="{editMetadataUrl}" label="actions.document.edit-metadata" />
          <action type="simple-link" id="onActionDownload" href="{downloadUrl}" label="actions.document.download" />
          <action type="simple-link" id="onActionViewOriginal" permission="view-original" href="{originalUrl}" label="actions.document.view-original" />
          <action type="action-link" id="onActionAssignWorkflow" label="actions.document.assign-workflow" />
-         <action type="action-link" id="onActionCheckInProduct" permission="edit" label="actions.document.checkin-product" />
-         <action type="action-link" id="onActionCancelCheckOutProduct" permission="edit" label="actions.document.cancel-checkout-product" />
+         <action type="action-link" id="onActionCheckInEntity" permission="edit" label="actions.document.checkin-entity" />
+         <action type="action-link" id="onActionCancelCheckOutEntity" permission="edit" label="actions.document.cancel-checkout-entity" />
       </actionSet>
       
-      <actionSet id="transferredProduct">
-      	<action type="simple-link" id="onActionViewDataLists" permission="" href="{dataListsUrl}" label="actions.document.viewProductLists" />
+      <actionSet id="transferredEntity">
+      	<action type="simple-link" id="onActionViewDataLists" permission="" href="{dataListsUrl}" label="actions.document.viewEntityLists" />
          <action type="simple-link" id="onActionDownload" href="{downloadUrl}" label="actions.document.download" />
          <action type="simple-link" id="onActionView" href="{viewUrl}" label="actions.document.view" />
          <action type="simple-link" id="onActionViewSourceRepository" permission="view-source-repository,~portlet" href="{sourceRepositoryUrl}" label="actions.document.view-source-repository" />
       </actionSet>
-      
-      <!-- Doc with datalists actions -->
-		
-		<actionSet id="docWithDataLists">
-         <action type="simple-link" id="onActionDetails" permission="edit" href="{editMetadataUrl}" label="actions.document.edit-metadata" />
-         <action type="action-link" id="onActionCopyTo" label="actions.document.copy-to" />
-         <action type="action-link" id="onActionMoveTo" permission="delete" label="actions.document.move-to" />
-         <action type="action-link" id="onActionDelete" permission="delete" label="actions.document.delete" />
-         <action type="action-link" id="onActionAssignWorkflow" label="actions.document.assign-workflow" />
-         <action type="simple-link" id="onActionDownload" href="{downloadUrl}" label="actions.document.download" />                  
-         <action type="action-link" id="onActionManageAspects" permission="edit" label="actions.document.manage-aspects" />
-      </actionSet>  
       
    </actionSets>
 </documentList>

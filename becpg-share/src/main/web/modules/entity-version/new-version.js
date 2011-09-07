@@ -1,35 +1,35 @@
 /**
 
 /**
- * NewProductVersion component.
+ * NewEntityVersion component.
  *
  * Popups a YUI panel and lets the user choose version and comment for the new version.
  *
  * @namespace Alfresco.module
- * @class Alfresco.module.NewProductVersion
+ * @class Alfresco.module.NewEntityVersion
  */
 (function()
 {
    /**
-    * NewProductVersion constructor.
+    * NewEntityVersion constructor.
     *
-    * NewProductVersion is considered a singleton so constructor should be treated as private,
-    * please use Alfresco.module.getNewProductVersionInstance() instead.
+    * NewEntityVersion is considered a singleton so constructor should be treated as private,
+    * please use Alfresco.module.getNewEntityVersionInstance() instead.
     *
     * @param {string} htmlId The HTML id of the parent element
-    * @return {Alfresco.module.NewProductVersion} The new NewProductVersion instance
+    * @return {Alfresco.module.NewEntityVersion} The new NewEntityVersion instance
     * @constructor
     * @private
     */
-   Alfresco.module.NewProductVersion = function(containerId)
+   Alfresco.module.NewEntityVersion = function(containerId)
    {
-      this.name = "Alfresco.module.NewProductVersion";
+      this.name = "Alfresco.module.NewEntityVersion";
       this.id = containerId;
 
       var instance = Alfresco.util.ComponentManager.get(this.id);
       if (instance !== null)
       {
-         throw new Error("An instance of Alfresco.module.NewProductVersion already exists.");
+         throw new Error("An instance of Alfresco.module.NewEntityVersion already exists.");
       }
 
       /* Register this component */
@@ -41,7 +41,7 @@
       return this;
    };
 
-   Alfresco.module.NewProductVersion.prototype =
+   Alfresco.module.NewEntityVersion.prototype =
    {
 
       /**
@@ -56,7 +56,7 @@
          nodeRef: null,
          filename: null,
          version: null,
-         onNewProductVersionComplete: null
+         onNewEntityVersionComplete: null
       },
 
       /**
@@ -123,7 +123,7 @@
             // If it hasn't load the gui (template) from the server
             Alfresco.util.Ajax.request(
             {
-               url: Alfresco.constants.URL_SERVICECONTEXT + "modules/product-version/new-version?htmlid=" + this.id,
+               url: Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-version/new-version?htmlid=" + this.id,
                successCallback:
                {
                   fn: this.onTemplateLoaded,
@@ -173,7 +173,7 @@
          this.widgets.cancelButton = Alfresco.util.createYUIButton(this, "cancel-button", this.onCancelButtonClick);
 
          // Configure the forms runtime
-         var form = new Alfresco.forms.Form(this.id + "-NewProductVersion-form");
+         var form = new Alfresco.forms.Form(this.id + "-NewEntityVersion-form");
          this.widgets.form = form;
 
          // The ok button is the submit button, and it should be enabled when the form is ready
@@ -247,10 +247,10 @@
             successful: [{nodeRef: response.json.results[0].nodeRef, version: this.showConfig.version}]
          };
 
-         var callback = this.showConfig.onNewProductVersionComplete;
+         var callback = this.showConfig.onNewEntityVersionComplete;
          if (callback && typeof callback.fn == "function")
          {
-            // Call the onNewProductVersionComplete callback in the correct scope
+            // Call the onNewEntityVersionComplete callback in the correct scope
             callback.fn.call((typeof callback.scope == "object" ? callback.scope : this), objComplete, callback.obj);
          }
       },
@@ -355,8 +355,8 @@
    };
 })();
 
-Alfresco.module.getNewProductVersionInstance = function()
+Alfresco.module.getNewEntityVersionInstance = function()
 {
-   var instanceId = "alfresco-NewProductVersion-instance";
-   return Alfresco.util.ComponentManager.get(instanceId) || new Alfresco.module.NewProductVersion(instanceId);
+   var instanceId = "alfresco-NewEntityVersion-instance";
+   return Alfresco.util.ComponentManager.get(instanceId) || new Alfresco.module.NewEntityVersion(instanceId);
 }

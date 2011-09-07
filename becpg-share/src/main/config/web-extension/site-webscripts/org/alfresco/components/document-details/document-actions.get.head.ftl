@@ -7,5 +7,5 @@
 <@script type="text/javascript" src="${page.url.context}/res/components/document-details/beCPG-document-actions.js"></@script>
 
 <!-- version -->
-<@link rel="stylesheet" type="text/css" href="${page.url.context}/res/modules/product-version/new-version.css" />
-<@script type="text/javascript" src="${page.url.context}/res/modules/product-version/new-version.js"></@script>
+<@link rel="stylesheet" type="text/css" href="${page.url.context}/res/modules/entity-version/new-version.css" />
+<@script type="text/javascript" src="${page.url.context}/res/modules/entity-version/new-version.js"></@script>

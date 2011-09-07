@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<page>
+   <id>entity-data-lists</id>
+   <page-type>entity-data-lists</page-type>
+   <title>Product data Lists</title>
+   <title-id>page.entity-data-lists.title</title-id>
+   <description>Product data Lists</description>
+   <description-id>page.entity-data-lists.description</description-id>
+   <template-instance>entity-data-lists</template-instance>
+   <authentication>user</authentication>
+</page>

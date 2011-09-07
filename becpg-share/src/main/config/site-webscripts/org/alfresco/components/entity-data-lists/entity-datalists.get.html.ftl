@@ -1,8 +1,8 @@
 <#assign id = args.htmlid>
 <script type="text/javascript">//<![CDATA[
-   new beCPG.component.ProductDataLists("${id}").setOptions(
+   new beCPG.component.EntityDataLists("${id}").setOptions(
    {
-      productNodeRef: "${page.url.args.nodeRef!""}",
+      entityNodeRef: "${page.url.args.nodeRef!""}",
       listId: "${(page.url.args.list!"")?js_string}",
       listTypes: [<#list listTypes as type>
       {

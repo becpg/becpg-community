@@ -7,13 +7,13 @@
 (function()
 {
 	/**
-     * Check out product
+     * Check out entity
      *
      * @override
-     * @method onActionCheckOutProduct
-     * @param asset {object} Object literal representing product to be actioned
+     * @method onActionCheckOutEntity
+     * @param asset {object} Object literal representing entity to be actioned
      */
-	Alfresco.DocumentActions.prototype.onActionCheckOutProduct = function DocumentActions_onActionCheckOutProduct(asset)
+	Alfresco.DocumentActions.prototype.onActionCheckOutEntity = function DocumentActions_onActionCheckOutEntity(asset)
 	{
 		var displayName = asset.displayName,
 	       nodeRef = new Alfresco.util.NodeRef(asset.nodeRef);				
@@ -21,7 +21,7 @@
 	    Alfresco.util.Ajax.request(
 	    {
 	       method: Alfresco.util.Ajax.POST,
-	       url: Alfresco.constants.PROXY_URI + "becpg/product/checkout/node/" + nodeRef.uri.replace(":/", ""),
+	       url: Alfresco.constants.PROXY_URI + "becpg/entity/checkout/node/" + nodeRef.uri.replace(":/", ""),
 	       successCallback:
 	       {
 	          fn: function DocumentActions_oACOP_success(response)
@@ -37,7 +37,7 @@
 	          {
 	             Alfresco.util.PopupManager.displayMessage(
 	             {
-	                text: this.msg("message.checkout-product.failure", displayName)
+	                text: this.msg("message.checkout-entity.failure", displayName)
 	             });	        	  
 	          },
 	          scope: this
@@ -48,13 +48,13 @@
 	
 	
 	/**
-     * Cancel check out product
+     * Cancel check out entity
      *
      * @override
-     * @method onActionCancelCheckOutProduct
-     * @param asset {object} Object literal representing product to be actioned
+     * @method onActionCancelCheckOutEntity
+     * @param asset {object} Object literal representing entity to be actioned
      */
-	Alfresco.DocumentActions.prototype.onActionCancelCheckOutProduct = function DocumentActions_onActionCancelCheckOutProduct(asset)
+	Alfresco.DocumentActions.prototype.onActionCancelCheckOutEntity = function DocumentActions_onActionCancelCheckOutEntity(asset)
     {
        var displayName = asset.displayName,
           nodeRef = new Alfresco.util.NodeRef(asset.nodeRef);
@@ -62,7 +62,7 @@
        Alfresco.util.Ajax.request(
 	    {
 	       method: Alfresco.util.Ajax.POST,
-	       url: Alfresco.constants.PROXY_URI + "becpg/product/cancel-checkout/node/" + nodeRef.uri.replace(":/", ""),
+	       url: Alfresco.constants.PROXY_URI + "becpg/entity/cancel-checkout/node/" + nodeRef.uri.replace(":/", ""),
 	       successCallback:
 	       {
 	          fn: function DocumentActions_oACCOP_success(response)
@@ -78,7 +78,7 @@
 	          {
 	             Alfresco.util.PopupManager.displayMessage(
 	             {
-	                text: this.msg("message.cancel-checkout-product.failure", displayName)
+	                text: this.msg("message.cancel-checkout-entity.failure", displayName)
 	             });	        	  
 	          },
 	          scope: this
@@ -87,13 +87,13 @@
     };
     
     /**
-     * Check in product
+     * Check in entity
      *
      * @override
-     * @method onActionCheckInProduct
-     * @param asset {object} Object literal representing product to be actioned
+     * @method onActionCheckInEntity
+     * @param asset {object} Object literal representing entity to be actioned
      */
-	Alfresco.DocumentActions.prototype.onActionCheckInProduct = function DocumentActions_onActionCheckInProduct(asset)
+	Alfresco.DocumentActions.prototype.onActionCheckInEntity = function DocumentActions_onActionCheckInEntity(asset)
     {
        var displayName = asset.displayName,
           nodeRef = new Alfresco.util.NodeRef(asset.nodeRef),
@@ -104,19 +104,19 @@
           version = asset.custom.workingCopyVersion;
        }
 
-       if (!this.newProductVersion)
+       if (!this.newEntityVersion)
        {
-          this.newProductVersion = Alfresco.module.getNewProductVersionInstance();
+          this.newEntityVersion = Alfresco.module.getNewEntityVersionInstance();
        }
 		
-		this.newProductVersion.show(
+		this.newEntityVersion.show(
        {
           filename: displayName,
           nodeRef: nodeRef,        
           version: version,
-          onNewProductVersionComplete:
+          onNewEntityVersionComplete:
           {
-             fn: Alfresco.DocumentActions.prototype.onProductCheckedIn,
+             fn: Alfresco.DocumentActions.prototype.onEntityCheckedIn,
              scope: this
           }
        });	
@@ -125,10 +125,10 @@
     /**
      * Called from the new version component after a the new version has been created.
      *
-     * @method onProductCheckedIn
+     * @method onEntityCheckedIn
      * @param complete {object} Object literal containing details of successful and failed uploads
      */
-    Alfresco.DocumentActions.prototype.onProductCheckedIn = function DocumentActions_onProductCheckedIn(complete)
+    Alfresco.DocumentActions.prototype.onEntityCheckedIn = function DocumentActions_onEntityCheckedIn(complete)
     {
     	//TODO : faut-il faire une activity spéciale ?
        // Call the normal callback to post the activity data

@@ -122,7 +122,7 @@
 				</executions>
 				<configuration>				
 					<excludes>
-						<exclude>**/product-data-lists.js</exclude>
+						<exclude>**/entity-data-lists.js</exclude>
 						<exclude>**/*.get.js</exclude>
 						<exclude>**/*.lib.js</exclude>
 					</excludes>

@@ -1,12 +1,12 @@
 
 
 /**
- * Product Data Lists: ProductDataLists component.
+ * Entity Data Lists: EntityDataLists component.
  * 
- * Displays a list of productdatalists
+ * Displays a list of entitydatalists
  * 
  * @namespace beCPG
- * @class beCPG.component.ProductDataLists
+ * @class beCPG.component.EntityDataLists
  */
 (function()
 {
@@ -25,21 +25,21 @@
       $combine = Alfresco.util.combinePaths;
 
    /**
-    * ProductDataLists constructor.
+    * EntityDataLists constructor.
     * 
     * @param htmlId {String} The HTML id of the parent element
-    * @return {beCPG.component.ProductDataLists} The new ProductDataLists instance
+    * @return {beCPG.component.EntityDataLists} The new EntityDataLists instance
     * @constructor
     */
-   beCPG.component.ProductDataLists = function(htmlId)
+   beCPG.component.EntityDataLists = function(htmlId)
    {
-		return beCPG.component.ProductDataLists.superclass.constructor.call(this, htmlId);
+		return beCPG.component.EntityDataLists.superclass.constructor.call(this, htmlId);
    }
    
    /**
     * Extend from Alfresco.component.DataLists
     */
-   YAHOO.extend(beCPG.component.ProductDataLists, Alfresco.component.DataLists,
+   YAHOO.extend(beCPG.component.EntityDataLists, Alfresco.component.DataLists,
    {
 	  /**
        * Object container for initialization options
@@ -49,15 +49,15 @@
        */
       options:
       {		  
-		 //### beCPG : replace containerId, siteId by productNodeRef 
+		 //### beCPG : replace containerId, siteId by entityNodeRef 
          /**
-           * Current productNodeRef.
+           * Current entityNodeRef.
            * 
-           * @property productNodeRef
+           * @property entityNodeRef
            * @type string
            * @default ""
            */
-          productNodeRef:"",
+          entityNodeRef:"",
           
           /**
            * ListId representing currently selected list
@@ -145,8 +145,8 @@
          {
 			//### beCPG : call beCPG service
             //url: $combine(Alfresco.constants.PROXY_URI, "slingshot/datalists/lists/site", this.options.siteId, this.options.containerId),
-            //url: $combine(Alfresco.constants.PROXY_URI, "becpg/productlists/node", this.options.containerId.replace(":/", "")),
-			url: $combine(Alfresco.constants.PROXY_URI, "becpg/productlists/node", this.options.productNodeRef.replace(":/", "")),
+            //url: $combine(Alfresco.constants.PROXY_URI, "becpg/entitylists/node", this.options.containerId.replace(":/", "")),
+			url: $combine(Alfresco.constants.PROXY_URI, "becpg/entitylists/node", this.options.entityNodeRef.replace(":/", "")),
             successCallback:
             {
                fn: fnSuccess,
@@ -280,9 +280,9 @@
                      elLink = document.createElement("a");
                      elLink.className = "filter-link";
                      elLink.title = list.description;
-					 //### beCPG : change url to product-data-lists and add the nodeRef reference
+					 //### beCPG : change url to entity-data-lists and add the nodeRef reference
                      //elLink.href = "data-lists?list=" + $html(list.name);
-					 elLink.href = "product-data-lists?list=" + $html(list.name) + "&nodeRef=" + $html(this.options.productNodeRef);
+					 elLink.href = "entity-data-lists?list=" + $html(list.name) + "&nodeRef=" + $html(this.options.entityNodeRef);
                      elText = document.createTextNode(list.title);
 
                      // Build the DOM structure with the new elements

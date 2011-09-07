@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <template-instance>
-   <template-type>org/alfresco/product-data-lists</template-type>
+   <template-type>org/alfresco/entity-data-lists</template-type>
    <properties>
-      <pageFamily>product-data-lists</pageFamily>
+      <pageFamily>entity-data-lists</pageFamily>
       <container>dataLists</container>
    </properties>
    <components>
@@ -42,18 +42,18 @@
       </component>
       <component>
          <region-id>toolbar</region-id>
-         <url>/components/product-data-lists/product-toolbar</url>
+         <url>/components/entity-data-lists/entity-toolbar</url>
       </component>
       <component>
          <region-id>datagrid</region-id>
-         <url>/components/product-data-lists/product-datagrid</url>
+         <url>/components/entity-data-lists/entity-datagrid</url>
          <properties>
             <pagination>true</pagination>
          </properties>
       </component>
       <component>
          <region-id>datalists</region-id>
-         <url>/components/product-data-lists/product-datalists</url>
+         <url>/components/entity-data-lists/entity-datalists</url>
       </component>
       <component>
          <region-id>filter</region-id>

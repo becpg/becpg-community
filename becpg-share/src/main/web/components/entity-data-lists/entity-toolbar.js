@@ -1,12 +1,12 @@
 
 
 /**
- * Product Data Lists: ProductDataListToolbar component.
+ * Entity Data Lists: EntityDataListToolbar component.
  * 
- * Displays a list of ProductDataListToolbar
+ * Displays a list of EntityDataListToolbar
  * 
  * @namespace beCPG
- * @class beCPG.component.ProductDataListToolbar
+ * @class beCPG.component.EntityDataListToolbar
  */
 (function()
 {
@@ -25,31 +25,31 @@
       $combine = Alfresco.util.combinePaths;
 
    /**
-    * ProductDataListToolbar constructor.
+    * EntityDataListToolbar constructor.
     * 
     * @param htmlId {String} The HTML id of the parent element
-    * @return {beCPG.component.ProductDataListToolbar} The new ProductDataListToolbar instance
+    * @return {beCPG.component.EntityDataListToolbar} The new EntityDataListToolbar instance
     * @constructor
     */
-   beCPG.component.ProductDataListToolbar = function(htmlId)
+   beCPG.component.EntityDataListToolbar = function(htmlId)
    {
-		return beCPG.component.ProductDataListToolbar.superclass.constructor.call(this, htmlId);
+		return beCPG.component.EntityDataListToolbar.superclass.constructor.call(this, htmlId);
    }
    
    /**
     * Extend from Alfresco.component.DataListToolbar
     */
-   YAHOO.extend(beCPG.component.ProductDataListToolbar, Alfresco.component.DataListToolbar);
+   YAHOO.extend(beCPG.component.EntityDataListToolbar, Alfresco.component.DataListToolbar);
 
    /**
     * Augment prototype with DataListActions module, ensuring overwrite is enabled
     */
-   YAHOO.lang.augmentProto(beCPG.component.ProductDataListToolbar,Alfresco.service.DataListActions, true);
+   YAHOO.lang.augmentProto(beCPG.component.EntityDataListToolbar,Alfresco.service.DataListActions, true);
 
    /**
     * Augment prototype with main class implementation, ensuring overwrite is enabled
     */
-   YAHOO.lang.augmentObject(beCPG.component.ProductDataListToolbar.prototype,
+   YAHOO.lang.augmentObject(beCPG.component.EntityDataListToolbar.prototype,
    {
 	  /**
        * Object container for initialization options
@@ -69,13 +69,13 @@
         	siteId: "",
 		 
 		 	/**
-           * Current productNodeRef.
+           * Current entityNodeRef.
            * 
-           * @property productNodeRef
+           * @property entityNodeRef
            * @type string
            * @default ""
            */
-         productNodeRef:"",
+         entityNodeRef:"",
 			
 			/**
            * bulk action
@@ -92,7 +92,7 @@
        *
        * @method onReady
        */
-      onReady: function ProductDataListToolbar_onReady()
+      onReady: function EntityDataListToolbar_onReady()
       {
          this.widgets.newRowButton = Alfresco.util.createYUIButton(this, "newRowButton", this.onNewRow,
          {
@@ -244,7 +244,7 @@
        * @param e {object} DomEvent
        * @param p_obj {object} Object passed back from addListener method
        */
-      onFormulate: function ProductDataListToolbar_onFormulate(e, p_obj)
+      onFormulate: function EntityDataListToolbar_onFormulate(e, p_obj)
       {
     	  Alfresco.util.PopupManager.displayMessage(
          {
@@ -254,10 +254,10 @@
     	  Alfresco.util.Ajax.request(
          {
             method: Alfresco.util.Ajax.GET,
-            url: Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + this.options.productNodeRef.replace(":/", ""),
+            url: Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + this.options.entityNodeRef.replace(":/", ""),
             successCallback:
             {
-               fn: function ProductDataListToolbar_onFormulate_success(response)
+               fn: function EntityDataListToolbar_onFormulate_success(response)
                {
                   Alfresco.util.PopupManager.displayMessage(
                   {
@@ -269,7 +269,7 @@
             },
             failureCallback:
             {
-               fn: function ProductDataListToolbar_onFormulate_failure(response)
+               fn: function EntityDataListToolbar_onFormulate_failure(response)
                {
                   Alfresco.util.PopupManager.displayMessage(
                   {
@@ -288,7 +288,7 @@
        * @param e {object} DomEvent
        * @param p_obj {object} Object passed back from addListener method
        */
-      onFinish: function ProductDataListToolbar_onFinish(e, p_obj)
+      onFinish: function EntityDataListToolbar_onFinish(e, p_obj)
       {
     	  Alfresco.util.PopupManager.displayMessage(
          {
@@ -298,10 +298,10 @@
          Alfresco.util.Ajax.request(
          {
             method: Alfresco.util.Ajax.GET,
-            url: Alfresco.constants.PROXY_URI + "becpg/product/generate-report/node/" + this.options.productNodeRef.replace(":/", ""),				
+            url: Alfresco.constants.PROXY_URI + "becpg/product/generate-report/node/" + this.options.entityNodeRef.replace(":/", ""),				
             successCallback:
             {
-               fn: function ProductDataListToolbar_onFinish_success(response)
+               fn: function EntityDataListToolbar_onFinish_success(response)
                {
                   Alfresco.util.PopupManager.displayMessage(
                   {
@@ -310,11 +310,11 @@
 
                   if(this.options.siteId != "")
                   {
-                	 	window.location = Alfresco.constants.URL_PAGECONTEXT + "site/" + this.options.siteId + "/document-details?nodeRef=" + this.options.productNodeRef;
+                	 	window.location = Alfresco.constants.URL_PAGECONTEXT + "site/" + this.options.siteId + "/document-details?nodeRef=" + this.options.entityNodeRef;
                   }
                   else
             	  	{
-                		window.location = Alfresco.constants.URL_PAGECONTEXT + "document-details?nodeRef=" + this.options.productNodeRef;
+                		window.location = Alfresco.constants.URL_PAGECONTEXT + "document-details?nodeRef=" + this.options.entityNodeRef;
             	  	}
                   
                },               
@@ -322,7 +322,7 @@
             },
             failureCallback:
             {
-               fn: function ProductDataListToolbar_onFinish_failure(response)
+               fn: function EntityDataListToolbar_onFinish_failure(response)
                {
                   Alfresco.util.PopupManager.displayMessage(
                   {

@@ -1,9 +1,9 @@
 
 /**
- * Product Data Lists: ProductDataGrid component.
+ * Entity Data Lists: EntityDataGrid component.
  * 
  * @namespace beCPG
- * @class beCPG.component.ProductDataGrid
+ * @class beCPG.component.EntityDataGrid
  */
 (function()
 {
@@ -25,15 +25,15 @@
       $userProfile = Alfresco.util.userProfileLink;
 
    /**
-    * Product DataGrid constructor.
+    * Entity DataGrid constructor.
     * 
     * @param htmlId {String} The HTML id of the parent element
-    * @return {beCPG.component.ProductDataGrid} The new ProductDataGrid instance
+    * @return {beCPG.component.EntityDataGrid} The new EntityDataGrid instance
     * @constructor
     */
-   beCPG.component.ProductDataGrid = function(htmlId)
+   beCPG.component.EntityDataGrid = function(htmlId)
    {
-		return beCPG.component.ProductDataGrid.superclass.constructor.call(this, htmlId);
+		return beCPG.component.EntityDataGrid.superclass.constructor.call(this, htmlId);
 		
 		// Initialise prototype properties
 		this.bulkAction = false;
@@ -42,17 +42,17 @@
    /**
     * Extend from Alfresco.component.DataGrid
     */
-   YAHOO.extend(beCPG.component.ProductDataGrid, Alfresco.component.DataGrid);
+   YAHOO.extend(beCPG.component.EntityDataGrid, Alfresco.component.DataGrid);
 
    /**
     * Augment prototype with DataListActions module, ensuring overwrite is enabled
     */
-   YAHOO.lang.augmentProto(beCPG.component.ProductDataGrid,Alfresco.service.DataListActions, true);
+   YAHOO.lang.augmentProto(beCPG.component.EntityDataGrid,Alfresco.service.DataListActions, true);
 
    /**
     * Augment prototype with main class implementation, ensuring overwrite is enabled
     */
-   YAHOO.lang.augmentObject(beCPG.component.ProductDataGrid.prototype,
+   YAHOO.lang.augmentObject(beCPG.component.EntityDataGrid.prototype,
    {
 		/**
        * Object container for initialization options
@@ -141,13 +141,13 @@
          splitActionsAt: 3,
 
 			/**
-           * Current productNodeRef.
+           * Current entityNodeRef.
            * 
-           * @property productNodeRef
+           * @property entityNodeRef
            * @type string
            * @default ""
            */
-          productNodeRef:""
+          entityNodeRef:""
       },
 	 
 		/**
@@ -480,7 +480,7 @@
          }
          
          Alfresco.util.populateHTML(
-            [ this.id + "-title", $html(this.datalistMeta.productName + " - " + this.datalistMeta.title) ],
+            [ this.id + "-title", $html(this.datalistMeta.entityName + " - " + this.datalistMeta.title) ],
             [ this.id + "-description", $links($html(this.datalistMeta.description, true)) ]
          );
       },
@@ -536,41 +536,41 @@
          }
          
          // DataSource definition
-			//beCPG - PQU : manage WUsed 
-			if(this.datalistMeta.name == "WUsed")
-			{
-				this.widgets.dataSource = new YAHOO.util.DataSource(Alfresco.constants.PROXY_URI + "becpg/product/wused/node/" + this.options.productNodeRef.replace(":/", ""),
-		      {
-		         connMethodPost: true,
-		         responseType: YAHOO.util.DataSource.TYPE_JSON,
-		         responseSchema:
-		         {
-		            resultsList: "items",
-		            metaFields:
-		            {
-		               paginationRecordOffset: "startIndex",
-		               totalRecords: "totalRecords"
-		            }
-		         }
-		      });
-			}
-			else
-			{
-		      this.widgets.dataSource = new YAHOO.util.DataSource(Alfresco.constants.PROXY_URI + "slingshot/datalists/data/node/" + listNodeRef.uri,
-		      {
-		         connMethodPost: true,
-		         responseType: YAHOO.util.DataSource.TYPE_JSON,
-		         responseSchema:
-		         {
-		            resultsList: "items",
-		            metaFields:
-		            {
-		               paginationRecordOffset: "startIndex",
-		               totalRecords: "totalRecords"
-		            }
-		         }
-		      });
-			}
+         //beCPG - PQU : manage WUsed 
+		if(this.datalistMeta.name == "WUsed")
+		{
+			this.widgets.dataSource = new YAHOO.util.DataSource(Alfresco.constants.PROXY_URI + "becpg/entity/wused/node/" + this.options.entityNodeRef.replace(":/", ""),
+	      {
+	         connMethodPost: true,
+	         responseType: YAHOO.util.DataSource.TYPE_JSON,
+	         responseSchema:
+	         {
+	            resultsList: "items",
+	            metaFields:
+	            {
+	               paginationRecordOffset: "startIndex",
+	               totalRecords: "totalRecords"
+	            }
+	         }
+	      });
+		}
+		else
+		{
+	      this.widgets.dataSource = new YAHOO.util.DataSource(Alfresco.constants.PROXY_URI + "slingshot/datalists/data/node/" + listNodeRef.uri,
+	      {
+	         connMethodPost: true,
+	         responseType: YAHOO.util.DataSource.TYPE_JSON,
+	         responseSchema:
+	         {
+	            resultsList: "items",
+	            metaFields:
+	            {
+	               paginationRecordOffset: "startIndex",
+	               totalRecords: "totalRecords"
+	            }
+	         }
+	      });
+		}
 
          this.widgets.dataSource.connMgr.setDefaultPostHeader(Alfresco.util.Ajax.JSON);
 

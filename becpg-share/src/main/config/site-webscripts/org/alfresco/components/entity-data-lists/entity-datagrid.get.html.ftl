@@ -4,12 +4,12 @@
 <![endif]-->
 <input id="yui-history-field" type="hidden" />
 <script type="text/javascript">//<![CDATA[
-   new beCPG.component.ProductDataGrid('${id}').setOptions(
+   new beCPG.component.EntityDataGrid('${id}').setOptions(
    {
       siteId: "${page.url.templateArgs.site!""}",
       containerId: "${template.properties.container!"dataLists"}",
       usePagination: ${(args.pagination!false)?string},
-	  productNodeRef: "${page.url.args.nodeRef!""}"
+	  entityNodeRef: "${page.url.args.nodeRef!""}"
    }).setMessages(${messages});
 //]]></script>
 <div id="${id}-body" class="datagrid">

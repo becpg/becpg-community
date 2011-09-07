@@ -1,9 +1,9 @@
 <#assign id = args.htmlid>
 <script type="text/javascript">//<![CDATA[
-   new beCPG.component.ProductDataListToolbar("${id}").setOptions(
+   new beCPG.component.EntityDataListToolbar("${id}").setOptions(
    {
       siteId: "${page.url.templateArgs.site!""}",
-	  productNodeRef: "${page.url.args.nodeRef!""}"
+	  entityNodeRef: "${page.url.args.nodeRef!""}"
    }).setMessages(${messages});
 //]]></script>
 <div id="${args.htmlid}-body" class="datalist-toolbar toolbar">

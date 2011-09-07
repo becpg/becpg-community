@@ -4,8 +4,8 @@
       <span id="${el}-header-span"></span>
    </div>
    <div class="bd">
-      <form id="${el}-NewProductVersion-form" method="POST"
-            action="${url.context}/proxy/alfresco/becpg/product/form-checkin">
+      <form id="${el}-NewEntityVersion-form" method="POST"
+            action="${url.context}/proxy/alfresco/becpg/entity/form-checkin">
          <input type="hidden" id="${el}-nodeRef-hidden" name="nodeRef" value=""/>
          <input type="hidden" id="${el}-version-hidden" name="version" value=""/>
 
@@ -48,5 +48,5 @@
 </div>
 
 <script type="text/javascript">//<![CDATA[
-Alfresco.util.addMessages(${messages}, "Alfresco.module.NewProductVersion");
+Alfresco.util.addMessages(${messages}, "Alfresco.module.NewEntityVersion");
 //]]></script>

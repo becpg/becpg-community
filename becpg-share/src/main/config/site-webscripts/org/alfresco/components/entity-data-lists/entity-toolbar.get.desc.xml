@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>entitydataliststoolbar</shortname>
+  <description>Entity Data-lists: Toolbar</description>
+  <url>/components/entity-data-lists/entity-toolbar</url>
+</webscript>

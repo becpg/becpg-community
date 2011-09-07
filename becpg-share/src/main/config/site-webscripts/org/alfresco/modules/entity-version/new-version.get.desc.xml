@@ -1,0 +1,5 @@
+<webscript>
+   <shortname>New entity version</shortname>
+   <description>Create a new version of a entity</description>
+   <url>/modules/entity-version/new-version</url>
+</webscript>

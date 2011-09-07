@@ -5,7 +5,7 @@
    </div>
    <div class="bd">
       <form id="${el}-revertVersion-form" method="POST"
-            action="${url.context}/proxy/alfresco/becpg/product/form-revert-version">
+            action="${url.context}/proxy/alfresco/becpg/entity/form-revert-version">
          <input type="hidden" id="${el}-nodeRef-hidden" name="nodeRef" value=""/>
          <input type="hidden" id="${el}-version-hidden" name="version" value=""/>
 
