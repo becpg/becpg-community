@@ -19,15 +19,10 @@ var Evaluator =
          nodeType = "filelink";
       }
       //beCPG
-      else if (node.hasAspect("bcpg:productListsAspect"))
+      else if (node.hasAspect("bcpg:entityListsAspect"))
       {
-         nodeType = "product";
-      }
-      //beCPG
-      else if (node.hasAspect("bcpg:dataListsAspect"))
-      {
-         nodeType = "docWithDataLists";
-      }
+         nodeType = "entity";
+      }      
       else
       {
          nodeType = "document";
@@ -280,11 +275,11 @@ var Evaluator =
             break;
             
         /**
-         * SPECIFIC TO: PRODUCTS
+         * SPECIFIC TO: ENTITIES
          */
-        case "product":
+        case "entity":
         	
-        	actionSet = "product";
+        	actionSet = "entity";
 
             /* Document Folder common evaluator */
             Evaluator.documentAndFolder(node, permissions, status, actionLabels);
@@ -298,12 +293,12 @@ var Evaluator =
                if (lockOwnerUser == person.properties.userName)
                {
                   wcStatus = "editing";
-                  actionSet = "productWorkingCopyOwner";
+                  actionSet = "entityWorkingCopyOwner";
                }
                else
                {
                   wcStatus = "locked " + lockedBy.displayName + "|" + lockedBy.userName;
-                  actionSet = "productLocked";
+                  actionSet = "entityLocked";
                }
                var wcNode = node.properties["source"];
                custom["isWorkingCopy"] = true;
@@ -322,12 +317,12 @@ var Evaluator =
                if (lockOwnerUser == person.properties.userName)
                {
                   lockStatus = "lock-owner";
-                  actionSet = "productLockOwner";
+                  actionSet = "entityLockOwner";
                }
                else
                {
                   lockStatus = "locked " + lockedBy.displayName + "|" + lockedBy.userName;
-                  actionSet = "productLocked";
+                  actionSet = "entityLocked";
                }
                var srcNodes = search.query(
                {
@@ -359,21 +354,9 @@ var Evaluator =
             {
                status["transferred-node"] = true;
                permissions["view-source-repository"] = true;
-               actionSet = "transferredProduct";
+               actionSet = "transferredEntity";
             }
-        	break;
-        	
-        	/**
-             * SPECIFIC TO: DOCWITHDATALISTS
-             */
-            case "docWithDataLists":
-            	
-            	actionSet = "docWithDataLists";
-
-                /* Document Folder common evaluator */
-                Evaluator.documentAndFolder(node, permissions, status, actionLabels);
-                    			
-            	break;
+        	break;        	
       }
       
       if (node !== null)

@@ -19,7 +19,7 @@ import org.alfresco.util.GUID;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.BeCPGDao;
-import fr.becpg.repo.BecpgDataListDAO;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.quality.data.WorkItemAnalysisData;
 import fr.becpg.repo.quality.data.dataList.ControlListDataItem;
@@ -28,7 +28,7 @@ public class WorkItemAnalysisDAOImpl implements BeCPGDao<WorkItemAnalysisData> {
 
 	private NodeService nodeService;
 	private FileFolderService fileFolderService;
-	private BecpgDataListDAO dataListDAO;
+	private EntityListDAO entityListDAO;
 	private AssociationService associationService;
 	
 	public void setNodeService(NodeService nodeService) {
@@ -39,8 +39,8 @@ public class WorkItemAnalysisDAOImpl implements BeCPGDao<WorkItemAnalysisData> {
 		this.fileFolderService = fileFolderService;
 	}
 
-	public void setDataListDAO(BecpgDataListDAO dataListDAO) {
-		this.dataListDAO = dataListDAO;
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
 
 	public void setAssociationService(AssociationService associationService) {
@@ -59,9 +59,9 @@ public class WorkItemAnalysisDAOImpl implements BeCPGDao<WorkItemAnalysisData> {
 								QualityModel.TYPE_WORK_ITEM_ANALYSIS, properties).getChildRef();
 				
 		// control list
-		NodeRef listContainerNodeRef = dataListDAO.getListContainer(cpNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(cpNodeRef);
 		if(listContainerNodeRef == null){
-			listContainerNodeRef = dataListDAO.createListContainer(cpNodeRef);			
+			listContainerNodeRef = entityListDAO.createListContainer(cpNodeRef);			
 		}
 		createControlList(listContainerNodeRef, wiaData.getControlList());
 		
@@ -74,9 +74,9 @@ public class WorkItemAnalysisDAOImpl implements BeCPGDao<WorkItemAnalysisData> {
 		nodeService.setProperty(wiaNodeRef, ContentModel.PROP_NAME, wiaData.getName());
 		
 		// control list
-		NodeRef listContainerNodeRef = dataListDAO.getListContainer(wiaNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(wiaNodeRef);
 		if(listContainerNodeRef == null){
-			listContainerNodeRef = dataListDAO.createListContainer(wiaNodeRef);			
+			listContainerNodeRef = entityListDAO.createListContainer(wiaNodeRef);			
 		}
 		createControlList(listContainerNodeRef, wiaData.getControlList());
 	}
@@ -88,7 +88,7 @@ public class WorkItemAnalysisDAOImpl implements BeCPGDao<WorkItemAnalysisData> {
 		wiaData.setName((String)nodeService.getProperty(wiaNodeRef, ContentModel.PROP_NAME));
 		wiaData.setNodeRef(wiaNodeRef);
 		
-		NodeRef listContainerNodeRef = dataListDAO.getListContainer(wiaNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(wiaNodeRef);
 		if(listContainerNodeRef != null){
 			wiaData.setControlList(loadControlList(listContainerNodeRef));
 		}
@@ -108,7 +108,7 @@ public class WorkItemAnalysisDAOImpl implements BeCPGDao<WorkItemAnalysisData> {
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef controlDefListNodeRef = dataListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROL_LIST);
+    		NodeRef controlDefListNodeRef = entityListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROL_LIST);
     		
     		if(controlDefListNodeRef != null)
     		{
@@ -153,7 +153,7 @@ public class WorkItemAnalysisDAOImpl implements BeCPGDao<WorkItemAnalysisData> {
 		
 		if(listContainerNodeRef != null)
 		{  
-			NodeRef controlListNodeRef = dataListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROL_LIST);
+			NodeRef controlListNodeRef = entityListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROL_LIST);
 			
 			if(controlList == null){
 				//delete existing list
@@ -164,7 +164,7 @@ public class WorkItemAnalysisDAOImpl implements BeCPGDao<WorkItemAnalysisData> {
 	    		//control list, create if needed	    		
 	    		if(controlListNodeRef == null)
 	    		{		    						
-		    		controlListNodeRef = dataListDAO.createList(listContainerNodeRef, QualityModel.TYPE_CONTROL_LIST);
+		    		controlListNodeRef = entityListDAO.createList(listContainerNodeRef, QualityModel.TYPE_CONTROL_LIST);
 	    		}
 			
 	    		List<FileInfo> files = fileFolderService.listFiles(controlListNodeRef);

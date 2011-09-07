@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.BeCPGDao;
-import fr.becpg.repo.BecpgDataListDAO;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.quality.data.ControlPointData;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
@@ -32,7 +32,7 @@ public class ControlPointDAOImpl implements BeCPGDao<ControlPointData> {
 	
 	private NodeService nodeService;
 	private FileFolderService fileFolderService;
-	private BecpgDataListDAO dataListDAO;
+	private EntityListDAO entityListDAO;
 	private AssociationService associationService;
 		
 	public void setNodeService(NodeService nodeService) {
@@ -43,8 +43,8 @@ public class ControlPointDAOImpl implements BeCPGDao<ControlPointData> {
 		this.fileFolderService = fileFolderService;
 	}
 
-	public void setDataListDAO(BecpgDataListDAO dataListDAO) {
-		this.dataListDAO = dataListDAO;
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
 	
 	public void setAssociationService(AssociationService associationService) {
@@ -62,9 +62,9 @@ public class ControlPointDAOImpl implements BeCPGDao<ControlPointData> {
 								QualityModel.TYPE_CONTROL_POINT, properties).getChildRef();
 				
 		// control def list
-		NodeRef listContainerNodeRef = dataListDAO.getListContainer(cpNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(cpNodeRef);
 		if(listContainerNodeRef == null){
-			listContainerNodeRef = dataListDAO.createListContainer(cpNodeRef);			
+			listContainerNodeRef = entityListDAO.createListContainer(cpNodeRef);			
 		}
 		createControlDefList(listContainerNodeRef, cpData.getControlDefList());
 		
@@ -77,9 +77,9 @@ public class ControlPointDAOImpl implements BeCPGDao<ControlPointData> {
 		nodeService.setProperty(cpData.getNodeRef(), ContentModel.PROP_NAME, cpData.getName());
 		
 		// control def list
-		NodeRef listContainerNodeRef = dataListDAO.getListContainer(cpNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(cpNodeRef);
 		if(listContainerNodeRef == null){
-			listContainerNodeRef = dataListDAO.createListContainer(cpNodeRef);			
+			listContainerNodeRef = entityListDAO.createListContainer(cpNodeRef);			
 		}
 		createControlDefList(listContainerNodeRef, cpData.getControlDefList());
 		
@@ -92,7 +92,7 @@ public class ControlPointDAOImpl implements BeCPGDao<ControlPointData> {
 		cpData.setNodeRef(cpNodeRef);
 		
 		
-		NodeRef listContainerNodeRef = dataListDAO.getListContainer(cpNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(cpNodeRef);
 		if(listContainerNodeRef != null){
 			cpData.setControlDefList(loadControlDefList(listContainerNodeRef));
 		}
@@ -116,7 +116,7 @@ public class ControlPointDAOImpl implements BeCPGDao<ControlPointData> {
     	if(listContainerNodeRef != null)
     	{    		
     		logger.debug("loadControlDefList, list container exists");
-    		NodeRef controlDefListNodeRef = dataListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROLDEF_LIST);
+    		NodeRef controlDefListNodeRef = entityListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROLDEF_LIST);
     		
     		if(controlDefListNodeRef != null)
     		{
@@ -160,7 +160,7 @@ public class ControlPointDAOImpl implements BeCPGDao<ControlPointData> {
 		
 		if(listContainerNodeRef != null)
 		{  
-			NodeRef controlDefListNodeRef = dataListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROLDEF_LIST);
+			NodeRef controlDefListNodeRef = entityListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROLDEF_LIST);
 			
 			if(controlDefList == null){
 				//delete existing list
@@ -171,7 +171,7 @@ public class ControlPointDAOImpl implements BeCPGDao<ControlPointData> {
 	    		//controlDef list, create if needed	    		
 	    		if(controlDefListNodeRef == null)
 	    		{		    						
-		    		controlDefListNodeRef = dataListDAO.createList(listContainerNodeRef, QualityModel.TYPE_CONTROLDEF_LIST);
+		    		controlDefListNodeRef = entityListDAO.createList(listContainerNodeRef, QualityModel.TYPE_CONTROLDEF_LIST);
 	    		}
 			
 	    		List<FileInfo> files = fileFolderService.listFiles(controlDefListNodeRef);

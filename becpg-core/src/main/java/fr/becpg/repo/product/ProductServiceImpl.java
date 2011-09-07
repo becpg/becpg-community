@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.helper.RepoService;
@@ -43,6 +44,7 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.report.ProductReportService;
+import fr.becpg.repo.report.entity.EntityReportService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -69,9 +71,6 @@ public class ProductServiceImpl implements ProductService {
 	
 	/** The product dao. */
 	private ProductDAO productDAO;
-	
-	/** The copy service. */
-	private CopyService copyService;
 	
 	/** The product dictionary service. */
 	private ProductDictionaryService productDictionaryService;
@@ -105,11 +104,10 @@ public class ProductServiceImpl implements ProductService {
 	/** The policy behaviour filter. */
 	private BehaviourFilter policyBehaviourFilter;
 	
-	/** The product report service. */
-	private ProductReportService productReportService;
-	
 	private LockService lockService;
-								
+					
+	private EntityReportService entityReportService;
+	
 	/**
 	 * Sets the node service.
 	 *
@@ -135,15 +133,6 @@ public class ProductServiceImpl implements ProductService {
 	 */
 	public void setProductDAO(ProductDAO productDAO){
 		this.productDAO = productDAO;
-	}
-	
-	/**
-	 * Sets the copy service.
-	 *
-	 * @param copyService the new copy service
-	 */
-	public void setCopyService(CopyService copyService) {
-		this.copyService = copyService;
 	}
 	
 	/**
@@ -238,19 +227,14 @@ public class ProductServiceImpl implements ProductService {
 	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-	
-	/**
-	 * Sets the product report service.
-	 *
-	 * @param productReportService the new product report service
-	 */
-	public void setProductReportService(ProductReportService productReportService) {
-		this.productReportService = productReportService;
-	}
+	}	
 	
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
+	}
+	
+	public void setEntityReportService(EntityReportService entityReportService) {
+		this.entityReportService = entityReportService;
 	}
 
 	/**
@@ -316,7 +300,7 @@ public class ProductServiceImpl implements ProductService {
     	
     	
     	// is report out of date ?
-    	if(!productReportService.isReportUpToDate(productNodeRef) && lockService.getLockStatus(productNodeRef) == LockStatus.NO_LOCK){
+    	if(!entityReportService.isReportUpToDate(productNodeRef) && lockService.getLockStatus(productNodeRef) == LockStatus.NO_LOCK){
     	
     		try{
         		// Ensure that the policy doesn't refire for this node
@@ -329,8 +313,8 @@ public class ProductServiceImpl implements ProductService {
 	            // generate reports
 	            productReportVisitor.visitNode(productNodeRef);			
 	            
-	            // set productReportModified property to now
-	            nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_REPORT_MODIFIED, new Date());
+	            // set reportNodeGenerated property to now
+	            nodeService.setProperty(productNodeRef, ReportModel.PROP_REPORT_NODE_GENERATED, new Date());
 	            
 	        }
 	        finally{
@@ -339,69 +323,6 @@ public class ProductServiceImpl implements ProductService {
 	        }	         
     	}    	
     }    
-    
-    /**
-     * Copy the product datalists from a source product.
-     *
-     * @param sourceNodeRef the source node ref
-     * @param productNodeRef the product node ref
-     * @param override : override existing datalists
-     */
-    @Override
-	public void copyProductLists(NodeRef sourceNodeRef, NodeRef productNodeRef, boolean override) {
-		
-    	//do not initialize product version
-    	if(nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
-    		return;
-    	}
-    	
-    	NodeRef containerDataLists = nodeService.getChildByName(productNodeRef, BeCPGModel.ASSOC_PRODUCTLISTS, RepoConsts.CONTAINER_DATALISTS);
-		
-		if(containerDataLists == null){
-		    /*-- create an empty container --*/
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);
-			properties.put(ContentModel.PROP_TITLE, RepoConsts.CONTAINER_DATALISTS);
-			containerDataLists = nodeService.createNode(productNodeRef, BeCPGModel.ASSOC_PRODUCTLISTS, BeCPGModel.ASSOC_PRODUCTLISTS, ContentModel.TYPE_FOLDER, properties).getChildRef();
-		}
-        
-        if(sourceNodeRef != null){
-        	
-        	/*-- copy source datalists--*/
-        	logger.debug("/*-- copy source datalists--*/");
-        	NodeRef sourceListsNodeRef = nodeService.getChildByName(sourceNodeRef, BeCPGModel.ASSOC_PRODUCTLISTS, RepoConsts.CONTAINER_DATALISTS);
-        		        	
-        	if(sourceListsNodeRef != null){
-        			        		    	        			
-				List<FileInfo> sourceDataLists = fileFolderService.listFolders(sourceListsNodeRef);	        				        			
-				for(FileInfo sourceDataList : sourceDataLists){
-					
-					// TODO : a supprimer car il y a maintenant une datalistPolicy (ATTENTION à la démo car ca va tout casser ! car les templates ont toujours des GUID dans le name)
-					String dataListType = (String)nodeService.getProperty(sourceDataList.getNodeRef(), DataListModel.PROP_DATALISTITEMTYPE);
-					String dataListName = dataListType.split(RepoConsts.MODEL_PREFIX_SEPARATOR)[1];
-					logger.debug("check missing list: " + dataListName + " - containerDL: " + containerDataLists);	        				
-					
-					NodeRef existingListNodeRef = nodeService.getChildByName(containerDataLists, ContentModel.ASSOC_CONTAINS, dataListName);
-					boolean copy = true;
-					if(existingListNodeRef != null){
-						if(override){
-							logger.debug("delete existing list");
-							nodeService.deleteNode(existingListNodeRef);
-						}
-						else{
-							copy = false;
-						}
-					}
-					
-					if(copy){	        						        										
-						logger.debug("copy list");
-						NodeRef newDLNodeRef = copyService.copy (sourceDataList.getNodeRef(), containerDataLists, ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST, true);						
-						nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, dataListName);
-					}
-				}
-        	}
-        }    	
-	}
     
     /**
      * Move the product in a folder according to the hierarchy.

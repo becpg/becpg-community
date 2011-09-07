@@ -49,18 +49,19 @@ import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.RenderOption;
 
 import fr.becpg.common.RepoConsts;
-import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.config.mapping.FileMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.PropertyService;
 import fr.becpg.repo.listvalue.ListValueService;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.report.ProductReportServiceImpl;
+import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.entity.impl.EntityReportServiceImpl;
+import fr.becpg.repo.report.template.ReportFormat;
+import fr.becpg.repo.report.template.ReportTplService;
 
 /**
  * Class used to render the result of a search in a report
@@ -130,10 +131,6 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	/** The Constant VALUE_NULL. */
 	public static final String VALUE_NULL = "";
 	
-	public static final String FORMAT_PDF = "PDF";
-	public static final String FORMAT_XLS = "XLS";
-	public static final String FORMAT_DOC = "DOC";
-	
 	/** The Constant KEY_IMAGE_NODE_IMG. */
 	public static final String KEY_IMAGE_NODE_IMG = "node%s-%s";
 	
@@ -160,7 +157,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	private DictionaryService dictionaryService;
 	
 	/** The product dao. */
-	private ProductDAO productDAO;
+	private EntityListDAO entityListDAO;
 	
 	/** The list value service. */
 	private ListValueService listValueService;
@@ -168,10 +165,11 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	/** The product dictionary service. */
 	private ProductDictionaryService productDictionaryService;
 	
-	/** The product report service. */
-	private ProductReportServiceImpl productReportService; // devrait être un autre namespace et être renommé car non spécifique au produit				
+	private EntityReportService entityReportService;				
 	
 	private PropertyService propertyService;
+	
+	private ReportTplService reportTplService;
 	
 	public void setSearchService(SearchService searchService) {
 		this.searchService = searchService;
@@ -221,16 +219,11 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
-	
-	/**
-	 * Sets the product dao.
-	 *
-	 * @param productDAO the new product dao
-	 */
-	public void setProductDAO(ProductDAO productDAO) {
-		this.productDAO = productDAO;
+		
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
-	
+
 	/**
 	 * Sets the list value service.
 	 *
@@ -248,19 +241,18 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	public void setProductDictionaryService(
 			ProductDictionaryService productDictionaryService) {
 		this.productDictionaryService = productDictionaryService;
+	}	
+	
+	public void setEntityReportService(EntityReportService entityReportService) {
+		this.entityReportService = entityReportService;
 	}
-	
-	/**
-	 * Sets the product report service.
-	 *
-	 * @param productReportService the new product report service
-	 */
-	public void setProductReportService(ProductReportServiceImpl productReportService) {
-		this.productReportService = productReportService;
-	}		
-	
+
 	public void setPropertyService(PropertyService propertyService) {
 		this.propertyService = propertyService;
+	}
+
+	public void setReportTplService(ReportTplService reportTplService) {
+		this.reportTplService = reportTplService;
 	}
 
 	/* (non-Javadoc)
@@ -348,25 +340,22 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			IRenderOption options = null;
 			
 			// report format
-			String reportFormat = (String)nodeService.getProperty(templateNodeRef, BeCPGModel.PROP_REPORT_FORMAT);
-			if(reportFormat == null){
-				reportFormat = FORMAT_XLS;	 // default format XLS			 
-			}
-			
-			if(reportFormat.equals(FORMAT_PDF)){
+			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);
+						
+			if(reportFormat.equals(ReportFormat.PDF)){
 			
 				options = new RenderOption();
 				options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
 			}			
-			else if(reportFormat.equals(FORMAT_DOC)){
+			else if(reportFormat.equals(ReportFormat.DOC)){
 				
 				options = new RenderOption();
-				options.setOutputFormat(FORMAT_DOC);
+				options.setOutputFormat(ReportFormat.DOC.toString());
 			}
 			else{
 				// default format excel
 				options = new EXCELRenderOption();
-				options.setOutputFormat(FORMAT_XLS);
+				options.setOutputFormat(ReportFormat.XLS.toString());
 			}
 								
 			options.setOutputStream(outputStream);				  
@@ -498,7 +487,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 				// file content
 				if(fileMapping.getAttribute().equals(ContentModel.PROP_CONTENT)){
 					
-					byte[] imageBytes = productReportService.getImage(tempNodeRef);
+					byte[] imageBytes = entityReportService.getImage(tempNodeRef);
 					if (imageBytes != null){
 											
 						task.getAppContext().put(String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId()), imageBytes);				
@@ -564,12 +553,12 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		exportNode(exportSearchCtx, nodeElt, task, productNodeRef);
 		
 		// export charact		
-		NodeRef listContainerNodeRef = productDAO.getListContainer(productNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
 		
 		for(CharacteristicMapping characteristicMapping : exportSearchCtx.getCharacteristicsColumns()){
     		
-    		NodeRef listNodeRef = productDAO.getList(listContainerNodeRef, characteristicMapping.getDataListQName());
-    		NodeRef linkNodeRef = productDAO.getLink(listNodeRef, characteristicMapping.getCharactQName(), characteristicMapping.getCharactNodeRef());
+    		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, characteristicMapping.getDataListQName());
+    		NodeRef linkNodeRef = entityListDAO.getLink(listNodeRef, characteristicMapping.getCharactQName(), characteristicMapping.getCharactNodeRef());
     		
     		if(linkNodeRef != null){
     			

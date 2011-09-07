@@ -20,7 +20,7 @@ import org.alfresco.util.GUID;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.BeCPGDao;
-import fr.becpg.repo.BecpgDataListDAO;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.quality.data.QualityControlData;
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
@@ -29,7 +29,7 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
 
 	private NodeService nodeService;
 	private FileFolderService fileFolderService;
-	private BecpgDataListDAO dataListDAO;
+	private EntityListDAO entityListDAO;
 	private AssociationService associationService;
 			
 	public void setNodeService(NodeService nodeService) {
@@ -40,8 +40,8 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
 		this.fileFolderService = fileFolderService;
 	}
 
-	public void setDataListDAO(BecpgDataListDAO dataListDAO) {
-		this.dataListDAO = dataListDAO;
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
 
 	public void setAssociationService(AssociationService associationService) {
@@ -69,9 +69,9 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
 		associationService.update(qcNodeRef, QualityModel.ASSOC_QC_CONTROL_PLANS, qcData.getControlPlans());
 		
 		// sampling list
-		NodeRef listContainerNodeRef = dataListDAO.getListContainer(qcNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(qcNodeRef);
 		if(listContainerNodeRef == null){
-			listContainerNodeRef = dataListDAO.createListContainer(qcNodeRef);			
+			listContainerNodeRef = entityListDAO.createListContainer(qcNodeRef);			
 		}
 		createSamplingList(listContainerNodeRef, qcData.getSamplingList());
 		
@@ -93,9 +93,9 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
 		associationService.update(qcNodeRef, QualityModel.ASSOC_QC_CONTROL_PLANS, qcData.getControlPlans());
 		
 		// sampling list
-		NodeRef listContainerNodeRef = dataListDAO.getListContainer(qcNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(qcNodeRef);
 		if(listContainerNodeRef == null){
-			listContainerNodeRef = dataListDAO.createListContainer(qcNodeRef);			
+			listContainerNodeRef = entityListDAO.createListContainer(qcNodeRef);			
 		}
 		createSamplingList(listContainerNodeRef, qcData.getSamplingList());
 	}
@@ -127,7 +127,7 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
 		}		
 		
 		// sampling list
-		NodeRef listContainerNodeRef = dataListDAO.getListContainer(qcNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(qcNodeRef);
 		if(listContainerNodeRef != null){
 			qcData.setSamplingList(loadSamplingList(listContainerNodeRef));
 		}
@@ -148,7 +148,7 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef samplingListNodeRef = dataListDAO.getList(listContainerNodeRef, QualityModel.TYPE_SAMPLING_LIST);
+    		NodeRef samplingListNodeRef = entityListDAO.getList(listContainerNodeRef, QualityModel.TYPE_SAMPLING_LIST);
     		
     		if(samplingListNodeRef != null)
     		{
@@ -185,7 +185,7 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
 		
 		if(listContainerNodeRef != null)
 		{  
-			NodeRef samplingListNodeRef = dataListDAO.getList(listContainerNodeRef, QualityModel.TYPE_SAMPLING_LIST);
+			NodeRef samplingListNodeRef = entityListDAO.getList(listContainerNodeRef, QualityModel.TYPE_SAMPLING_LIST);
 			
 			if(samplingList == null){
 				//delete existing list
@@ -196,7 +196,7 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
 	    		//sampling list, create if needed	    		
 	    		if(samplingListNodeRef == null)
 	    		{		    						
-		    		samplingListNodeRef = dataListDAO.createList(listContainerNodeRef, QualityModel.TYPE_SAMPLING_LIST);
+		    		samplingListNodeRef = entityListDAO.createList(listContainerNodeRef, QualityModel.TYPE_SAMPLING_LIST);
 	    		}
 			
 	    		List<FileInfo> files = fileFolderService.listFiles(samplingListNodeRef);

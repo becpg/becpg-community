@@ -33,7 +33,7 @@ import fr.becpg.repo.product.data.ProductData;
  *
  * @author querephi
  */
-public class ImportProductVisitor extends ImportProductListAspectVisitor implements ImportVisitor{					
+public class ImportProductVisitor extends ImportEntityListAspectVisitor implements ImportVisitor{					
 	
 	// we don't know where is the node ? product may be in the Products folder or in the sites or somewhere else !
 	//private static final String PATH_QUERY_PRODUCT_BY_KEYS = " +PATH:\"/app:company_home/cm:Products/*/cm:%s/*/*/*\" ";	
@@ -90,7 +90,7 @@ public class ImportProductVisitor extends ImportProductListAspectVisitor impleme
 	@Override
 	protected NodeRef findNode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException{
 				
-		NodeRef nodeRef = findNodeByKeyOrCode(importContext, type, BeCPGModel.PROP_PRODUCT_CODE, properties);		
+		NodeRef nodeRef = findNodeByKeyOrCode(importContext, type, BeCPGModel.PROP_CODE, properties);		
 		
 		// look in the product hierarchy of the repository if we don't import in a site
 		if(nodeRef == null && !importContext.isSiteDocLib()){
@@ -165,7 +165,7 @@ public class ImportProductVisitor extends ImportProductListAspectVisitor impleme
 			}	
 			else{
 				nodeColumnKeys = new ArrayList<QName>();
-				nodeColumnKeys.add(BeCPGModel.PROP_PRODUCT_CODE);
+				nodeColumnKeys.add(BeCPGModel.PROP_CODE);
 			}
 			
 			for(QName qName : nodeColumnKeys){

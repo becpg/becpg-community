@@ -26,8 +26,8 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.product.version.ProductVersionService;
-import fr.becpg.repo.product.version.VersionData;
+import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.entity.version.VersionData;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -53,8 +53,8 @@ public class VersionHistoryWebScript extends DeclarativeWebScript  {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(VersionHistoryWebScript.class);		
 	
-	/** The product version service. */
-	private ProductVersionService productVersionService;
+	/** The entity version service. */
+	private EntityVersionService entityVersionService;
 	
 	/** The node service. */
 	private NodeService nodeService;
@@ -66,12 +66,12 @@ public class VersionHistoryWebScript extends DeclarativeWebScript  {
 	private PersonService personService;
 	
 	/**
-	 * Sets the product version service.
+	 * Sets the entity version service.
 	 *
-	 * @param productVersionService the new product version service
+	 * @param entityVersionService the new entity version service
 	 */
-	public void setProductVersionService(ProductVersionService productVersionService) {
-		this.productVersionService = productVersionService;
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
 	}	
 	
 	/**
@@ -102,7 +102,7 @@ public class VersionHistoryWebScript extends DeclarativeWebScript  {
 	}
 	
 	/**
-	 * Get product version history.
+	 * Get entity version history.
 	 *
 	 * @param req the req
 	 * @param status the status
@@ -121,10 +121,10 @@ public class VersionHistoryWebScript extends DeclarativeWebScript  {
 		NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);		
 		List<VersionData> sortedVersionHistory = null;
 		
-		// product
+		// entity
 		if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_PRODUCT)){			
 			
-			List<VersionData> versionHistory = productVersionService.getVersionHistoryWithProperties(nodeRef);
+			List<VersionData> versionHistory = entityVersionService.getVersionHistoryWithProperties(nodeRef);
 			int cnt = versionHistory.size();
 			sortedVersionHistory = new ArrayList<VersionData>(cnt);
 			

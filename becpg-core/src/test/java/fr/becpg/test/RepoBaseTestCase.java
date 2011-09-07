@@ -165,33 +165,35 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		
 		NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 		
+		NodeRef charactsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_CHARACTS));
+		
 		//allergens
-		NodeRef allergenFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS));
+		NodeRef allergenFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS));
 		if(allergenFolder != null){
 			nodeService.deleteNode(allergenFolder);
 		}		
 		
 		//costs
-		NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
+		NodeRef costFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
 		if(costFolder != null){
 			nodeService.deleteNode(costFolder);
 		}
 		
 		
 		//ings
-		NodeRef ingFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_INGS));
+		NodeRef ingFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_INGS));
 		if(ingFolder != null){
 			nodeService.deleteNode(ingFolder);
 		}
 		
 		//nuts
-		NodeRef nutFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_NUTS));
+		NodeRef nutFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_NUTS));
 		if(nutFolder != null){
 			nodeService.deleteNode(nutFolder);
 		}
 		
 		//organos
-		NodeRef organoFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ORGANOS));
+		NodeRef organoFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ORGANOS));
 		if(organoFolder != null){
 			nodeService.deleteNode(organoFolder);
 		}
@@ -202,15 +204,13 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	 */
 	protected void initCharacteristics(){
 		
-		NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-		if(systemFolder == null){
-			systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-		}		
+		NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+		NodeRef charactsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_CHARACTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_CHARACTS));
 		
 		//allergens
-		NodeRef allergenFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS));
+		NodeRef allergenFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS));
 		if(allergenFolder == null){
-			allergenFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_ALLERGENS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS));
+			allergenFolder = repoService.createFolderByPath(charactsFolder, RepoConsts.PATH_ALLERGENS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS));
 		}		
 		List<FileInfo> allergensFileInfo = fileFolderService.listFiles(allergenFolder);		
 		if(allergensFileInfo.size() == 0){
@@ -230,9 +230,9 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		}				
 		
 		//costs
-		NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
+		NodeRef costFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
 		if(costFolder == null){
-			costFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_COSTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
+			costFolder = repoService.createFolderByPath(charactsFolder, RepoConsts.PATH_COSTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
 		}
 		List<FileInfo> costsFileInfo = fileFolderService.listFiles(costFolder);
 		if(costsFileInfo.size() == 0){
@@ -254,9 +254,9 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		}
 		
 		//ings
-		NodeRef ingFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_INGS));
+		NodeRef ingFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_INGS));
 		if(ingFolder == null){
-			ingFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_INGS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_INGS));
+			ingFolder = repoService.createFolderByPath(charactsFolder, RepoConsts.PATH_INGS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_INGS));
 		}
 		List<FileInfo> ingsFileInfo = fileFolderService.listFiles(ingFolder);
 		if(ingsFileInfo.size() == 0){
@@ -275,9 +275,9 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		}
 		
 		//nuts
-		NodeRef nutFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_NUTS));
+		NodeRef nutFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_NUTS));
 		if(nutFolder == null){
-			nutFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_NUTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_NUTS));
+			nutFolder = repoService.createFolderByPath(charactsFolder, RepoConsts.PATH_NUTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_NUTS));
 		}
 		List<FileInfo> nutsFileInfo = fileFolderService.listFiles(nutFolder);
 		if(nutsFileInfo.size() == 0){
@@ -297,9 +297,9 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		}
 		
 		//organos
-		NodeRef organoFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ORGANOS));
+		NodeRef organoFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ORGANOS));
 		if(organoFolder == null){
-			organoFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_ORGANOS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ORGANOS));
+			organoFolder = repoService.createFolderByPath(charactsFolder, RepoConsts.PATH_ORGANOS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ORGANOS));
 		}
 		List<FileInfo> organosFileInfo = fileFolderService.listFiles(organoFolder);
 		if(organosFileInfo.size() == 0){

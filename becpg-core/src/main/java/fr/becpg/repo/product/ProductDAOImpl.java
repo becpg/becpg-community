@@ -36,6 +36,7 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.CondSalesUnitData;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -69,12 +70,6 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
  */
 public class ProductDAOImpl implements ProductDAO{
 	
-	/** The Constant RESOURCE_TITLE. */
-	private static final String RESOURCE_TITLE = "bcpg_bcpgmodel.type.bcpg_%s.title";
-	
-	/** The Constant RESOURCE_DESCRIPTION. */
-	private static final String RESOURCE_DESCRIPTION = "bcpg_bcpgmodel.type.bcpg_%s.description";
-	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductDAOImpl.class);
 	
@@ -87,9 +82,7 @@ public class ProductDAOImpl implements ProductDAO{
 	/** The ml node service. */
 	private NodeService mlNodeService;
 	
-	private DictionaryService dictionaryService;
-		
-	private NamespaceService namespaceService;
+	private EntityListDAO entityListDAO;
 	
 	/**
 	 * Sets the node service.
@@ -118,12 +111,8 @@ public class ProductDAOImpl implements ProductDAO{
 		this.mlNodeService = mlNodeService;
 	}
 
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}	
-
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
 
 	/**
@@ -271,7 +260,7 @@ public class ProductDAOImpl implements ProductDAO{
 		productData.setProperties(properties);
 		
 		//load datalists
-		NodeRef listsContainerNodeRef = getListContainer(productNodeRef);
+		NodeRef listsContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
     	productData.setListsContainer(listsContainerNodeRef);
     	
     	if(dataLists != null){
@@ -336,7 +325,7 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef allergenListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
+    		NodeRef allergenListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
     		
     		if(allergenListNodeRef != null)
     		{
@@ -385,7 +374,7 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef compoListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+    		NodeRef compoListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
     		
     		if(compoListNodeRef != null)
     		{
@@ -423,7 +412,7 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef costListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
+    		NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
     		
     		if(costListNodeRef != null)
     		{
@@ -460,7 +449,7 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef ingListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_INGLIST);
+    		NodeRef ingListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_INGLIST);
     		
     		if(ingListNodeRef != null)
     		{
@@ -516,7 +505,7 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef nutListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_NUTLIST);
+    		NodeRef nutListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_NUTLIST);
     		
     		if(nutListNodeRef != null)
     		{
@@ -559,7 +548,7 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef organoListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_ORGANOLIST);
+    		NodeRef organoListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ORGANOLIST);
     		
     		if(organoListNodeRef != null)
     		{
@@ -595,7 +584,7 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef ingLabelingListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
+    		NodeRef ingLabelingListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
     		
     		if(ingLabelingListNodeRef != null)
     		{
@@ -638,7 +627,7 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef microbioListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_MICROBIOLIST);    		
+    		NodeRef microbioListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_MICROBIOLIST);    		
     		
     		if(microbioListNodeRef != null)
     		{
@@ -674,7 +663,7 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef physicoChemListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_PHYSICOCHEMLIST);
+    		NodeRef physicoChemListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_PHYSICOCHEMLIST);
     		
     		if(physicoChemListNodeRef != null)
     		{
@@ -710,7 +699,7 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef costListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);
+    		NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);
     		
     		if(costListNodeRef != null)
     		{
@@ -748,7 +737,7 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef forbiddenIngListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);
+    		NodeRef forbiddenIngListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);
     		
     		if(forbiddenIngListNodeRef != null)
     		{
@@ -811,7 +800,7 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef reqCtrlListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
+    		NodeRef reqCtrlListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
     		
     		if(reqCtrlListNodeRef != null)
     		{
@@ -887,9 +876,9 @@ public class ProductDAOImpl implements ProductDAO{
     	logger.debug("createDataLists of product " + productNodeRef);    	    
 		 			
 		//Container
-		NodeRef containerNodeRef = getListContainer(productNodeRef);
+		NodeRef containerNodeRef = entityListDAO.getListContainer(productNodeRef);
 		if(containerNodeRef == null){
-			containerNodeRef = createListContainer(productNodeRef);
+			containerNodeRef = entityListDAO.createListContainer(productNodeRef);
 		}		
 		productData.setListsContainer(containerNodeRef);
 		
@@ -952,7 +941,7 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		if(listContainerNodeRef != null)
 		{ 
-			NodeRef allergenListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
+			NodeRef allergenListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
 			
 			if(allergenList == null){
 				//delete existing list
@@ -964,7 +953,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    		//allergen list, create if needed
 	    		if(allergenListNodeRef == null)
 	    		{									
-		    		allergenListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
+		    		allergenListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
 	    		}
 	    		
 	    		List<FileInfo> files = fileFolderService.listFiles(allergenListNodeRef);
@@ -1071,7 +1060,7 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		if(listContainerNodeRef != null)
 		{    	
-			NodeRef compoListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+			NodeRef compoListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
 			
 			if(compoList == null){
 				//delete existing list
@@ -1083,7 +1072,7 @@ public class ProductDAOImpl implements ProductDAO{
 				//compo list, create if needed    			
 	    		if(compoListNodeRef == null)
 	    		{					
-					compoListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);					
+					compoListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);					
 	    		}    				    			    		    		
 	
 	    		List<FileInfo> files = fileFolderService.listFiles(compoListNodeRef);
@@ -1246,7 +1235,7 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		if(listContainerNodeRef != null)
 		{  
-			NodeRef costListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
+			NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
 			
 			if(costList == null){
 				//delete existing list
@@ -1257,7 +1246,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    		//cost list, create if needed	    		
 	    		if(costListNodeRef == null)
 	    		{		    						
-		    		costListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
+		    		costListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
 	    		}
 			
 	    		List<FileInfo> files = fileFolderService.listFiles(costListNodeRef);
@@ -1319,7 +1308,7 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		if(listContainerNodeRef != null)
 		{  
-			NodeRef ingListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_INGLIST);
+			NodeRef ingListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_INGLIST);
 			
 			if(ingList == null){
 				//delete existing list
@@ -1330,7 +1319,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    		//ing list, create if needed	    		
 	    		if(ingListNodeRef == null)
 	    		{		    						
-		    		ingListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_INGLIST);
+		    		ingListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_INGLIST);
 	    		}
 			
 	    		List<FileInfo> files = fileFolderService.listFiles(ingListNodeRef);
@@ -1437,7 +1426,7 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		if(listContainerNodeRef != null)
 		{    	
-			NodeRef nutListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_NUTLIST);
+			NodeRef nutListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_NUTLIST);
 			
 			if(nutList == null){
 				//delete existing list
@@ -1449,7 +1438,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    		//nut list, create if needed
 	    		if(nutListNodeRef == null)
 	    		{					
-		    		nutListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_NUTLIST);
+		    		nutListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_NUTLIST);
 	    		}
 	    		
 	    		List<FileInfo> files = fileFolderService.listFiles(nutListNodeRef);
@@ -1513,7 +1502,7 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		if(listContainerNodeRef != null)
 		{    		    		
-			NodeRef organoListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_ORGANOLIST);
+			NodeRef organoListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ORGANOLIST);
 			    		
 			if(organoList == null){
 				//delete existing list
@@ -1524,7 +1513,7 @@ public class ProductDAOImpl implements ProductDAO{
 				//organo list, create if needed
 	    		if(organoListNodeRef == null)
 	    		{
-		    		organoListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_ORGANOLIST);
+		    		organoListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ORGANOLIST);
 	    		}
 	    		
 	    		List<FileInfo> files = fileFolderService.listFiles(organoListNodeRef);
@@ -1584,7 +1573,7 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		if(listContainerNodeRef != null)
 		{  
-			NodeRef illNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
+			NodeRef illNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
 			
 			if(ingLabelingList == null){
 				//delete existing list
@@ -1595,7 +1584,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    		//ingLabeling list, create if needed    		
 	    		if(illNodeRef == null)
 	    		{
-		    		illNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
+		    		illNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
 	    		}
 	    		
 	    		List<FileInfo> files = fileFolderService.listFiles(illNodeRef);
@@ -1654,7 +1643,7 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		if(listContainerNodeRef != null)
 		{    	
-			NodeRef microbioListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_MICROBIOLIST);
+			NodeRef microbioListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_MICROBIOLIST);
 			
 			if(microbioList == null){
 				//delete existing list
@@ -1666,7 +1655,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    		//microbio list, create if needed
 	    		if(microbioListNodeRef == null)
 	    		{					
-	    			microbioListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_MICROBIOLIST);
+	    			microbioListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_MICROBIOLIST);
 	    		}
 	    		
 	    		List<FileInfo> files = fileFolderService.listFiles(microbioListNodeRef);
@@ -1728,7 +1717,7 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		if(listContainerNodeRef != null)
 		{  
-			NodeRef physicoChemListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_PHYSICOCHEMLIST);
+			NodeRef physicoChemListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_PHYSICOCHEMLIST);
 			
 			if(physicoChemList == null){
 				//delete existing list
@@ -1739,7 +1728,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    		//physicoChem list, create if needed	    		
 	    		if(physicoChemListNodeRef == null)
 	    		{		    						
-		    		physicoChemListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_PHYSICOCHEMLIST);
+		    		physicoChemListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_PHYSICOCHEMLIST);
 	    		}
 			
 	    		List<FileInfo> files = fileFolderService.listFiles(physicoChemListNodeRef);
@@ -1802,7 +1791,7 @@ public class ProductDAOImpl implements ProductDAO{
 
 		if(listContainerNodeRef != null)
 		{    	
-			NodeRef packagingListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);
+			NodeRef packagingListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);
 			
 			if(packagingList == null){
 				//delete existing list
@@ -1814,7 +1803,7 @@ public class ProductDAOImpl implements ProductDAO{
 				//packaging list, create if needed    			
 	    		if(packagingListNodeRef == null)
 	    		{					
-					packagingListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);					
+					packagingListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);					
 	    		}    				    			    		    		
 	
 	    		List<FileInfo> files = fileFolderService.listFiles(packagingListNodeRef);
@@ -1882,7 +1871,7 @@ public class ProductDAOImpl implements ProductDAO{
 
 		if(listContainerNodeRef != null)
 		{    	
-			NodeRef forbiddenIngListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);
+			NodeRef forbiddenIngListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);
 			
 			if(forbiddenIngList == null){
 				//delete existing list
@@ -1894,7 +1883,7 @@ public class ProductDAOImpl implements ProductDAO{
 				//forbiddenIng list, create if needed    			
 	    		if(forbiddenIngListNodeRef == null)
 	    		{					
-					forbiddenIngListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);					
+					forbiddenIngListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);					
 	    		}    				    			    		    		
 	
 	    		List<FileInfo> files = fileFolderService.listFiles(forbiddenIngListNodeRef);
@@ -2020,7 +2009,7 @@ public class ProductDAOImpl implements ProductDAO{
 
 		if(listContainerNodeRef != null)
 		{    	
-			NodeRef reqCtrlListNodeRef = getList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
+			NodeRef reqCtrlListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
 			
 			if(reqCtrlList == null){
 				//delete existing list
@@ -2032,7 +2021,7 @@ public class ProductDAOImpl implements ProductDAO{
 				//reqCtrl list, create if needed    			
 	    		if(reqCtrlListNodeRef == null)
 	    		{					
-					reqCtrlListNodeRef = createList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);					
+					reqCtrlListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);					
 	    		}    				    			    		    		
 	
 	    		List<FileInfo> files = fileFolderService.listFiles(reqCtrlListNodeRef);
@@ -2099,132 +2088,5 @@ public class ProductDAOImpl implements ProductDAO{
 	    		}	    		 
 			}
 		}
-	}  
-	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.product.ProductDAO#getListContainer(org.alfresco.service.cmr.repository.NodeRef)
-	 */
-	@Override
-	public NodeRef getListContainer(NodeRef productNodeRef) {
-		// TODO Refactor the code to use this method in other classes
-				
-		return nodeService.getChildByName(productNodeRef, BeCPGModel.ASSOC_PRODUCTLISTS, RepoConsts.CONTAINER_DATALISTS);
-	}
-	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.product.ProductDAO#getList(org.alfresco.service.cmr.repository.NodeRef, org.alfresco.service.namespace.QName)
-	 */
-	@Override
-	public NodeRef getList(NodeRef listContainerNodeRef, QName productListQName) {
-		// TODO Refactor the code to use this method
-		
-		if(productListQName== null){
-			return null;
-		}
-			
-		NodeRef listNodeRef = null;		
-		if(listContainerNodeRef != null){
-			listNodeRef = nodeService.getChildByName(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, productListQName.getLocalName());		
-		}
-		return listNodeRef;
-	}
-	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.product.ProductDAO#getLink(org.alfresco.service.cmr.repository.NodeRef, org.alfresco.service.namespace.QName, org.alfresco.service.cmr.repository.NodeRef)
-	 */
-	@Override
-	public NodeRef getLink(NodeRef listContainerNodeRef, QName propertyQName, NodeRef nodeRef) {
-		// TODO Refactor the code to use this method
-		
-		if(listContainerNodeRef != null && propertyQName != null && nodeRef != null){
-			
-			List<FileInfo> fileInfos = fileFolderService.listFiles(listContainerNodeRef);
-    		
-    		for(FileInfo fileInfo : fileInfos){
-    			
-    			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(fileInfo.getNodeRef(), propertyQName);
-    			if(assocRefs.size() > 0 && nodeRef.equals(assocRefs.get(0).getTargetRef())){
-    				return fileInfo.getNodeRef();
-    			}
-	    		
-	    	}
-		}
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.product.ProductDAO#createListContainer(org.alfresco.service.cmr.repository.NodeRef)
-	 */
-	@Override
-	public NodeRef createListContainer(NodeRef productNodeRef) {
-		
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);
-		properties.put(ContentModel.PROP_TITLE, RepoConsts.CONTAINER_DATALISTS);
-		return nodeService.createNode(productNodeRef, BeCPGModel.ASSOC_PRODUCTLISTS, BeCPGModel.ASSOC_PRODUCTLISTS, ContentModel.TYPE_FOLDER, properties).getChildRef();
-	}
-	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.product.ProductDAO#createList(org.alfresco.service.cmr.repository.NodeRef, org.alfresco.service.namespace.QName)
-	 */
-	@Override
-	public NodeRef createList(NodeRef listContainerNodeRef, QName productListQName) {
-		
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, productListQName.getLocalName());
-		properties.put(ContentModel.PROP_TITLE, I18NUtil.getMessage(String.format(RESOURCE_TITLE, productListQName.getLocalName())));
-		properties.put(ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage(String.format(RESOURCE_DESCRIPTION, productListQName.getLocalName())));
-		properties.put(DataListModel.PROP_DATALISTITEMTYPE, BeCPGModel.BECPG_PREFIX + ":" + productListQName.getLocalName());
-		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, productListQName, DataListModel.TYPE_DATALIST, properties).getChildRef();
-	}
-
-	@Override
-	public Set<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef) {
-		
-		Set<NodeRef> existingLists = new HashSet<NodeRef>();
-		
-		if(listContainerNodeRef != null){
-			List<FileInfo> nodes = fileFolderService.listFolders(listContainerNodeRef);
-			
-			for(FileInfo node : nodes){
-				
-				NodeRef listNodeRef = node.getNodeRef();
-				String dataListType = (String)nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-				
-				if(dataListType != null && !dataListType.isEmpty()){
-					
-					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
-					
-					if(dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_PRODUCTLIST_ITEM)){
-						existingLists.add(listNodeRef);
-					}
-				}
-				
-			}								
-		}
-		return existingLists;
-	}
-
-	@Override
-	public Set<QName> getExistingListsQName(NodeRef listContainerNodeRef) {
-		
-		Set<QName> existingLists = new HashSet<QName>();
-		
-		if(listContainerNodeRef != null){
-			List<FileInfo> nodes = fileFolderService.listFolders(listContainerNodeRef);
-			
-			for(FileInfo node : nodes){
-				
-				NodeRef listNodeRef = node.getNodeRef();
-				String dataListType = (String)nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-				
-				if(dataListType != null && !dataListType.isEmpty()){
-					
-					existingLists.add(QName.createQName(dataListType, namespaceService));					
-				}
-			}								
-		}
-		return existingLists;				
-	}
-
+	}  	
 }

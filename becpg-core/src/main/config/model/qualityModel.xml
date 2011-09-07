@@ -20,7 +20,7 @@
 	<namespaces>
 		<namespace uri="http://www.bcpg.fr/model/quality/1.0" prefix="qa" />
 	</namespaces>
-	
+	lis
 	<constraints>
 		<constraint name="qa:acType" type="LIST">
 			<parameter name="allowedValues">
@@ -211,10 +211,7 @@
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:dataListsAspect</aspect>
-				<aspect>qa:batchAspect</aspect>
-				<aspect>bcpg:clientsAspect</aspect>
-				<aspect>bcpg:suppliersAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>				
 			</mandatory-aspects>
 		</type>
 		
@@ -250,7 +247,7 @@
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:dataListsAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 				<aspect>qa:batchAspect</aspect>					
 			</mandatory-aspects>
 		</type>
@@ -279,7 +276,7 @@
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:dataListsAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		
@@ -304,13 +301,13 @@
 			<parent>cm:content</parent>				
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:dataListsAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>	
 		
 		<!-- qa:qualityListItem -->
 		<type name="qa:qualityListItem">
-			<parent>dl:dataListItem</parent>
+			<parent>bcpg:entityListItem</parent>
 		</type>
 		
 		<!-- Sampling definition list -->

@@ -1,8 +1,0 @@
-<webscript>
-  <shortname>form-checkin</shortname>
-  <description>Product Form Action - Check-in product</description>
-  <url>/becpg/product/form-checkin</url>
-  <format default="json">argument</format>
-  <authentication>user</authentication>
-  <transaction>required</transaction>
-</webscript>

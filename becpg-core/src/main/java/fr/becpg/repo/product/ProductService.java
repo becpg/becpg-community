@@ -45,16 +45,7 @@ public interface ProductService {
      * @param productNodeRef the product node ref
      */
     public void generateReport(NodeRef productNodeRef);
-    
-    /**
-     * Copy product lists.
-     *
-     * @param sourceNodeRef the source node ref
-     * @param productNodeRef the product node ref
-     * @param override the override
-     */
-    public void copyProductLists(NodeRef sourceNodeRef, NodeRef productNodeRef, boolean override);
-    
+        
     /**
      * Classify product.
      *

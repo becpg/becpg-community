@@ -320,7 +320,7 @@ private void initObjects(){
    		
     	//create birt file
     	String birtDir = "/src/main/resources/beCPG/birt/";
-		String [] birtFiles = {"CompareProducts.rptdesign"};			
+		String [] birtFiles = {"CompareEntities.rptdesign"};			
 		
 		for(String birtFile : birtFiles){			
 			
@@ -471,7 +471,7 @@ private void initObjects(){
 			
 			try{
 			
-				String url = String.format("/becpg/product/compare/Produit?product1=%s&product2=%s", fp1NodeRef, fp2NodeRef);;
+				String url = String.format("/becpg/entity/compare/Produit?entity1=%s&entity2=%s", fp1NodeRef, fp2NodeRef);;
 				Response response = sendRequest(new GetRequest(url), 200, "admin");
 				
 				//logger.debug("response: " + response.getContentAsString());

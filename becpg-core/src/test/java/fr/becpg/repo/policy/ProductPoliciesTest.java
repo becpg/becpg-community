@@ -118,12 +118,12 @@ public class ProductPoliciesTest  extends BaseAlfrescoTestCase  {
 				 Collection<QName> dataLists = productDictionaryService.getDataLists();
 				NodeRef rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, dataLists);
 				assertNotNull("Check product creaed", rawMaterial1NodeRef);				
-				long productCode1 = (Long)nodeService.getProperty(rawMaterial1NodeRef, BeCPGModel.PROP_PRODUCT_CODE);
+				long productCode1 = (Long)nodeService.getProperty(rawMaterial1NodeRef, BeCPGModel.PROP_CODE);
 				
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
 				NodeRef rawMaterial2NodeRef = productDAO.create(folderNodeRef, rawMaterial2, dataLists);
-				long productCode2 = (Long)nodeService.getProperty(rawMaterial2NodeRef, BeCPGModel.PROP_PRODUCT_CODE);
+				long productCode2 = (Long)nodeService.getProperty(rawMaterial2NodeRef, BeCPGModel.PROP_CODE);
 				
 				assertNotNull("Check product code 1", productCode1);
 				assertNotNull("Check product code 2", productCode2);

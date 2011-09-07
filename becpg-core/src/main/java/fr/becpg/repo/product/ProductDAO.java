@@ -52,53 +52,5 @@ public interface ProductDAO {
 	 *
 	 * @param productNodeRef the product node ref
 	 */
-	public void delete(NodeRef productNodeRef);
-	
-	/**
-	 * Get the product list container.
-	 *
-	 * @param productNodeRef the product node ref
-	 * @return the list container
-	 */
-	public NodeRef getListContainer(NodeRef productNodeRef);
-	
-	/**
-	 * Get the product list NodeRef.
-	 *
-	 * @param listContainerNodeRef the list container node ref
-	 * @param productListQName : type of the product list
-	 * @return the list
-	 */
-	public NodeRef getList(NodeRef listContainerNodeRef, QName productListQName);
-	
-	public Set<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef);
-	
-	public Set<QName> getExistingListsQName(NodeRef listContainerNodeRef);
-	
-	/**
-	 * Get the link node of a product list that has the nodeRef stored in the propertyQName.
-	 *
-	 * @param listNodeRef the list node ref
-	 * @param propertyQName the property q name
-	 * @param nodeRef the node ref
-	 * @return the link
-	 */
-	public NodeRef getLink(NodeRef listNodeRef, QName propertyQName, NodeRef nodeRef);
-	
-	/**
-	 * Create the product list container.
-	 *
-	 * @param productNodeRef the product node ref
-	 * @return the node ref
-	 */
-	public NodeRef createListContainer(NodeRef productNodeRef);
-	
-	/**
-	 * Create the product list NodeRef.
-	 *
-	 * @param listContainerNodeRef the list container node ref
-	 * @param productListQName : type of the product list
-	 * @return the node ref
-	 */
-	public NodeRef createList(NodeRef listContainerNodeRef, QName productListQName);
+	public void delete(NodeRef productNodeRef);		
 }

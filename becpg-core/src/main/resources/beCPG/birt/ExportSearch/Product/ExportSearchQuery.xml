@@ -18,7 +18,7 @@
 			<column id="productUnit" attribute="bcpg:productUnit" type="Attribute" />
 			<column id="productDensity" attribute="bcpg:productDensity" type="Attribute" />
 			<column id="eanCode" attribute="bcpg:eanCode" type="Attribute" />
-			<column id="code" attribute="bcpg:productCode" type="Attribute" />
+			<column id="code" attribute="bcpg:code" type="Attribute" />
 			<column id="created" attribute="cm:created" type="Attribute" />
 			<column id="creator" attribute="cm:creator" type="Attribute" />
 			<column id="modified" attribute="cm:modified" type="Attribute" />

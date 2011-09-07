@@ -15,8 +15,8 @@ public enum ImportType {
 	Node, 
 	/** The product with characteristics (costs, nuts, etc...) */
 	Product,  
-	/** The product datalists as compoList, ingList (not characteristics) */
-	ProductListItem,
-	/** The product aspect (product template or product microbio criteria), it doesn't inherite from product type */
-	ProductListAspect
+	/** The entity datalists as compoList, ingList (not characteristics) */
+	EntityListItem,
+	/** The entity list aspect (product template or product microbio criteria), it doesn't inherite from product type */
+	EntityListAspect
 }

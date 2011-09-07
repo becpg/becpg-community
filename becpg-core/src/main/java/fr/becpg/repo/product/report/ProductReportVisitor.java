@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.eclipse.birt.report.model.parser.ReportState;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -23,6 +24,9 @@ import fr.becpg.repo.product.NodeVisitor;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.report.entity.EntityExtractor;
+import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.template.ReportTplService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -60,9 +64,9 @@ public class ProductReportVisitor implements NodeVisitor {
 	/** The product report service. */
 	private ProductReportService productReportService;
 	
-	private ProductReportTplService productReportTplService;
+	private ReportTplService reportTplService;	
 	
-	private NodeService nodeService;
+	private EntityReportService entityReportService;
 			
 	/**
 	 * Sets the product dictionary service.
@@ -91,13 +95,13 @@ public class ProductReportVisitor implements NodeVisitor {
 		this.productReportService = productReportService;
 	}		
 	
-	public void setProductReportTplService(
-			ProductReportTplService productReportTplService) {
-		this.productReportTplService = productReportTplService;
+	public void setReportTplService(
+			ReportTplService reportTplService) {
+		this.reportTplService = reportTplService;
 	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
+	
+	public void setEntityReportService(EntityReportService entityReportService) {
+		this.entityReportService = entityReportService;
 	}
 
 	/* (non-Javadoc)
@@ -108,19 +112,19 @@ public class ProductReportVisitor implements NodeVisitor {
 	
 		logger.debug("Start visitProduct");		
 		
-		List<NodeRef> tplsNodeRef = productReportTplService.getReportTplsToGenerate(productNodeRef);					
-		tplsNodeRef = productReportTplService.cleanDefaultTpls(tplsNodeRef);		
+		List<NodeRef> tplsNodeRef = entityReportService.getReportTplsToGenerate(productNodeRef);					
+		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);		
 		
 		if(!tplsNodeRef.isEmpty()){
 			
 			logger.debug("templateNodeRef " + tplsNodeRef);						
 			
 			// extract data
-			ProductExtractor productExtractor = new ProductExtractorImpl(productNodeRef);
+			EntityExtractor productExtractor = new ProductExtractorImpl(productNodeRef);
 			productExtractor.extract();
 			logger.trace("product loaded, xml data: " + productExtractor.getXmlData().getDocument().asXML());
 			
-			productReportService.generateReports(productNodeRef, tplsNodeRef, productExtractor.getXmlData(), productExtractor.getImages());						
+			entityReportService.generateReports(productNodeRef, tplsNodeRef, productExtractor.getXmlData(), productExtractor.getImages());						
     	}			
 	}	
 	
@@ -129,7 +133,7 @@ public class ProductReportVisitor implements NodeVisitor {
 	 *
 	 * @author querephi
 	 */
-	private class ProductExtractorImpl implements ProductExtractor {
+	private class ProductExtractorImpl implements EntityExtractor {
 		
 		/** The product node ref. */
 		private NodeRef productNodeRef;
@@ -189,7 +193,7 @@ public class ProductReportVisitor implements NodeVisitor {
 			Element attributesElt = productElt.addElement(TAG_ATTRIBUTES);	
 			
 			// add attributes at <product/> tag
-			Map<ClassAttributeDefinition, String> attributes = productReportService.loadNodeAttributes(productNodeRef);
+			Map<ClassAttributeDefinition, String> attributes = entityReportService.loadNodeAttributes(productNodeRef);
 			
 			for (Map.Entry<ClassAttributeDefinition, String> attrKV : attributes.entrySet()){
 				
@@ -197,7 +201,7 @@ public class ProductReportVisitor implements NodeVisitor {
 			}
 			
 			// add attributes at <product><attributes/></product> and group them by set
-			Map<String, List<String>> fieldsBySets = productReportService.getFieldsBySets(productNodeRef, REPORT_FORM_CONFIG_PATH);
+			Map<String, List<String>> fieldsBySets = entityReportService.getFieldsBySets(productNodeRef, REPORT_FORM_CONFIG_PATH);
 			
 			// set
 			for(Map.Entry<String, List<String>> kv : fieldsBySets.entrySet()){											
@@ -240,11 +244,11 @@ public class ProductReportVisitor implements NodeVisitor {
 			 *	get the product image 
 			 */
 			String productImageFileName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_IMAGE).toLowerCase();
-			NodeRef imgNodeRef = productReportService.getProductImage(productNodeRef, productImageFileName);
+			NodeRef imgNodeRef = entityReportService.getImage(productNodeRef, productImageFileName);
 			byte[] imageBytes = null;
 			
 			if(imgNodeRef != null){
-				imageBytes = productReportService.getImage(imgNodeRef);
+				imageBytes = entityReportService.getImage(imgNodeRef);
 				images.put(KEY_PRODUCT_IMAGE, imageBytes);
 			}								
 		}				

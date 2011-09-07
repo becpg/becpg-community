@@ -16,7 +16,7 @@ public class RepoConsts {
 	public static final String PATH_QUERY_SUGGEST_VALUE = " +PATH:\"/app:company_home/%s/*\" +@cm\\:name:(%s) ";
 	public static final String PATH_QUERY_SUGGEST_LKV_VALUE = " +PATH:\"/app:company_home/%s/*\" +@bcpg\\:lkvPrevValue:\"%s\"  +@bcpg\\:lkvValue:(%s) ";
 	public static final String PATH_QUERY_SUGGEST_PRODUCT_BY_NAME = " +PATH:\"/app:company_home//*\" +TYPE:\"bcpg:product\" +@cm\\:name:(%s) -@cm\\:productState:%s -@cm\\:productState:%s ";
-	public static final String PATH_QUERY_SUGGEST_PRODUCT_BY_CODE = " +PATH:\"/app:company_home//*\" +TYPE:\"bcpg:product\" +@bcpg\\:productCode:%s -@cm\\:productState:%s -@cm\\:productState:%s ";
+	public static final String PATH_QUERY_SUGGEST_PRODUCT_BY_CODE = " +PATH:\"/app:company_home//*\" +TYPE:\"bcpg:product\" +@bcpg\\:code:%s -@cm\\:productState:%s -@cm\\:productState:%s ";
 	public static final String PATH_QUERY_SUGGEST_TARGET_BY_NAME = "  +PATH:\"/app:company_home//*\" +TYPE:\"%s\"  +@cm\\:name:(%s)";
 	public static final String PATH_QUERY_SUGGEST_TARGET_BY_CODE = "  +PATH:\"/app:company_home//*\" +TYPE:\"%s\"  +@bcpg\\:code:%s";
 	public static final String PATH_QUERY_PRODUCT_TEMPLATES = "  +PATH:\"/app:company_home/cm:System/cm:ProductTemplates/*/*\" +TYPE:\"bcpg:productTemplate\"";
@@ -24,21 +24,22 @@ public class RepoConsts {
 	public static final String PATH_QUERY_LIST_CONSTRAINTS = "PATH:\"/app:company_home/%s/*\" +TYPE:\"%s\"";
 	public static final String PATH_QUERY_IMPORT_FAILED_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportFailed\"";
 	public static final String PATH_QUERY_IMPORT_SUCCEEDED_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportSucceeded\"";
-	public static final String PATH_QUERY_PRODUCT_REPORTTEMPLATES = "  +PATH:\"/app:company_home/cm:System/cm:Reports/cm:ProductReportTemplates/*\"  +TYPE:\"bcpg:productReportTemplate\" +@bcpg\\:prtIsSystem:%s";
+	public static final String PATH_QUERY_REPORTTEMPLATES = "  +PATH:\"/app:company_home/cm:System/cm:Reports//*\"  +TYPE:\"rep:reportTpl\" +@rep\\:reportTplType:%s +@rep\\:reportTplClassName:\"%s\" +@rep\\:reportTplIsSystem:%s";
 	public static final String PATH_QUERY_LIST_PRODUCTSTATES = "PATH:\"/app:company_home/System/States/Product/*\" +TYPE:\"bcpg:listState\"";
 	public static final String PATH_QUERY_LIST_PRODUCTTYPES = "PATH:\"/app:company_home/System/ProductTypes/*\" +TYPE:\"bcpg:listProductType\"";
 	public static final String PATH_QUERY_PRODUCTS = "PATH:\"/app:company_home/st:sites/cm:%s/cm:documentLibrary/%s\"";
-	public static final String PATH_QUERY_REPORT_COMPARE_PRODUCTS = "PATH:\"/app:company_home/cm:System/cm:Reports/cm:CompareProducts/*\" +@cm\\:name:\"CompareProducts*rptdesign\"";
+	public static final String PATH_QUERY_REPORT_COMPARE_ENTITIES = "PATH:\"/app:company_home/cm:System/cm:Reports/cm:CompareProducts/*\" +@cm\\:name:\"CompareProducts*rptdesign\"";
 	public static final String PATH_QUERY_REPORTS_EXPORT_SEARCH = " +PATH:\"/app:company_home/cm:System/cm:Reports/cm:ExportSearch/*\"";
 	public static final String PATH_QUERY_REPORT_EXPORT_SEARCH = " +PATH:\"/app:company_home/cm:System/cm:Reports/cm:ExportSearch/cm:%s\"";	
 	public static final String PATH_QUERY_CHARACT_BY_TYPE_AND_NAME = " +PATH:\"/app:company_home/cm:System//*\" +TYPE:\"%s\" +@cm\\:name:\"%s\"";	
-	public static final String PATH_QUERY_AUTONUM = "PATH:\"/app:company_home/cm:System/cm:AutoNum/*\" +TYPE:\"bcpg:autoNum\" +@bcpg\\:autoNumClassName:%s +@bcpg\\:autoNumPropertyName:%s";
+	public static final String PATH_QUERY_AUTONUM = "PATH:\"/app:company_home/cm:System/cm:AutoNum/*\" +TYPE:\"bcpg:autoNum\" +@bcpg\\:autoNumClassName:\"%s\" +@bcpg\\:autoNumPropertyName:\"%s\"";
 	public static final String PATH_QUERY_IMPORT_MAPPING = " +PATH:\"/app:company_home/cm:System/cm:Exchange/cm:Import/cm:Mapping/*\" +@cm\\:name:\"%s*xml\"";
 	public static final String PATH_QUERY_NODE_BY_CODE = " +PATH:\"/app:company_home//*\" +TYPE:\"%s\" +@bcpg\\:code:%s ";// TODO : refactoriser avec SUGGEST_SUPPLIER_BY_CODE	
 	
 	/*-- Path --*/	
 	public static final String PATH_SEPARATOR 	= "/";
 	public static final String PATH_SYSTEM = "System";
+	public static final String PATH_CHARACTS = "Characts";
 	public static final String PATH_LISTS = "Lists";
 	public static final String PATH_LINKED_LISTS 	= "LinkedLists";
 	public static final String PATH_NUTS = "Nuts";

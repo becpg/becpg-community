@@ -32,8 +32,8 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.product.version.ProductVersionService;
-import fr.becpg.repo.product.version.VersionData;
+import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.entity.version.VersionData;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -80,33 +80,33 @@ public class FormRevertVersionWebScript extends DeclarativeWebScript {
 	/** The content service. */
 	private ContentService contentService;
 	
-	/** The product version service. */
-	private ProductVersionService productVersionService;	
+	/** The entity version service. */
+	private EntityVersionService entityVersionService;	
 	
-	/** The product check out check in service. */
-	private CheckOutCheckInService productCheckOutCheckInService;
+	/** The entity check out check in service. */
+	private CheckOutCheckInService entityCheckOutCheckInService;
 	
 	/**
-	 * Sets the product version service.
+	 * Sets the entity version service.
 	 *
-	 * @param productVersionService the new product version service
+	 * @param entityVersionService the new entity version service
 	 */
-	public void setProductVersionService(ProductVersionService productVersionService) {
-		this.productVersionService = productVersionService;
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
 	}	
 
 	/**
-	 * Sets the product check out check in service.
+	 * Sets the entity check out check in service.
 	 *
-	 * @param productCheckOutCheckInService the new product check out check in service
+	 * @param entityCheckOutCheckInService the new entity check out check in service
 	 */
-	public void setProductCheckOutCheckInService(
-			CheckOutCheckInService productCheckOutCheckInService) {
-		this.productCheckOutCheckInService = productCheckOutCheckInService;
+	public void setEntityCheckOutCheckInService(
+			CheckOutCheckInService entityCheckOutCheckInService) {
+		this.entityCheckOutCheckInService = entityCheckOutCheckInService;
 	}
 	
 	/**
-	 * Form checkin a product.
+	 * Form checkin a entity.
 	 *
 	 * @param req the req
 	 * @param status the status
@@ -114,9 +114,7 @@ public class FormRevertVersionWebScript extends DeclarativeWebScript {
 	 * @return the map
 	 */
 	@Override
-	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){				
-		
-		logger.debug("FormCheckInWebScript executeImpl()");
+	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){		
 		
 		NodeRef nodeRef = null;
 		String version = "";
@@ -128,15 +126,9 @@ public class FormRevertVersionWebScript extends DeclarativeWebScript {
 			nodeRef = new NodeRef((String)json.get(PARAM_NODEREF));
 			version = (String)json.get(PARAM_VERSION);
 			description = (String)json.get(PARAM_DESCRIPTION);
-			majorVersion = ((String)json.get(PARAM_MAJOR_VERSION)).equals(VALUE_TRUE) ? true : false;
-			
-			logger.debug("nodeRef: " + nodeRef);
-			logger.debug("version: " + version);
-			logger.debug("description: " + description);
-			logger.debug("majorVersion: " + majorVersion);
+			majorVersion = ((String)json.get(PARAM_MAJOR_VERSION)).equals(VALUE_TRUE) ? true : false;			
 		}
 		catch(JSONException e){
-			logger.error("Failed to parse form fields", e);
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Failed to parse form fields ", e);
 		}
 		
@@ -144,11 +136,11 @@ public class FormRevertVersionWebScript extends DeclarativeWebScript {
 		VersionNumber versionNumber = new VersionNumber(version);
 		if(majorVersion){
 			int majorNb = versionNumber.getPart(0) + 1;
-			versionNumber = new VersionNumber(majorNb + ProductVersionService.VERSION_DELIMITER + versionNumber.getPart(1));			
+			versionNumber = new VersionNumber(majorNb + EntityVersionService.VERSION_DELIMITER + versionNumber.getPart(1));			
 		}
 		else{
 			int minorNb = versionNumber.getPart(1) + 1;
-			versionNumber = new VersionNumber(versionNumber.getPart(0) + ProductVersionService.VERSION_DELIMITER + minorNb);
+			versionNumber = new VersionNumber(versionNumber.getPart(0) + EntityVersionService.VERSION_DELIMITER + minorNb);
 		}
 			
 		Map<String, Serializable> properties = new HashMap<String, Serializable>();
@@ -161,10 +153,10 @@ public class FormRevertVersionWebScript extends DeclarativeWebScript {
 			throw new WebScriptException(Status.STATUS_NOT_FOUND, "error.nodeLocked");
 		}
 		
-		// product
-		if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_PRODUCT_TYPE)){
+		// entity
+		if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS)){
 			
-			List<VersionData> versionHistory = productVersionService.getVersionHistoryWithProperties(nodeRef);
+			List<VersionData> versionHistory = entityVersionService.getVersionHistoryWithProperties(nodeRef);
 			VersionData v = null;
 			
 			for(VersionData versionData : versionHistory){				
@@ -187,7 +179,7 @@ public class FormRevertVersionWebScript extends DeclarativeWebScript {
 				}
 				
 				// It's not a working copy, do a check out to get the actual working copy
-				nodeRef = productCheckOutCheckInService.checkout(nodeRef);
+				nodeRef = entityCheckOutCheckInService.checkout(nodeRef);
 			}
 
 			// Update the working copy content
@@ -198,7 +190,7 @@ public class FormRevertVersionWebScript extends DeclarativeWebScript {
 			writer.setEncoding(reader.getEncoding());
 			
 			// check it in again, with supplied version history note
-			nodeRef = productCheckOutCheckInService.checkin(nodeRef, properties);
+			nodeRef = entityCheckOutCheckInService.checkin(nodeRef, properties);
 			
 		}
 		else{ // document

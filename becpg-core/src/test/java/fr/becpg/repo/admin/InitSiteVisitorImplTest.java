@@ -201,8 +201,10 @@ public class InitSiteVisitorImplTest extends BaseAlfrescoTestCase {
 		
 		//check init repo
 		NodeRef systemNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-		assertNotNull("System folder not found", systemNodeRef);
-		NodeRef linkedListsNodeRef = nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_LINKED_LISTS));
+		assertNotNull("System folder not found", systemNodeRef);		
+		NodeRef charactsNodeRef = nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_CHARACTS));
+		assertNotNull("Characts folder not found", charactsNodeRef);
+		NodeRef linkedListsNodeRef = nodeService.getChildByName(charactsNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_LINKED_LISTS));
 		assertNotNull("Linked lists folder not found", linkedListsNodeRef);
 		NodeRef productHierarchyNodeRef = nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_HIERARCHY));
 		assertNotNull("Product hierarchy folder not found", productHierarchyNodeRef);

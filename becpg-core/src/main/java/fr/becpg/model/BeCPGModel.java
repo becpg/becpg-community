@@ -51,12 +51,8 @@ public interface BeCPGModel {
 	static final QName ASPECT_PRODUCT_MICROBIO_CRITERIA = QName.createQName(BECPG_URI,
 	"productMicrobioCriteriaAspect");
 	
-	static final QName ASPECT_PRODUCTLISTS = QName.createQName(
-			BECPG_URI, "productListsAspect");
-	
-	/** The Constant ASSOC_PRODUCTTEMPLATE_PRODUCTLISTS. */
-	static final QName ASSOC_PRODUCTTEMPLATE_PRODUCTLISTS = QName.createQName(
-			BECPG_URI, "productLists");
+	static final QName ASPECT_ENTITYLISTS = QName.createQName(
+			BECPG_URI, "entityListsAspect");
 
 	// product
 	/** The Constant TYPE_PRODUCT. */
@@ -74,10 +70,6 @@ public interface BeCPGModel {
 	static final QName PROP_PRODUCT_HIERARCHY2 = QName.createQName(BECPG_URI,
 			"productHierarchy2");
 	
-	/** The Constant PROP_PRODUCT_CODE. */
-	static final QName PROP_PRODUCT_CODE = QName.createQName(BECPG_URI,
-	"productCode");
-	
 	/** The Constant PROP_PRODUCT_STATE. */
 	static final QName PROP_PRODUCT_STATE = QName.createQName(BECPG_URI,
 			"productState");
@@ -86,14 +78,6 @@ public interface BeCPGModel {
 	static final QName PROP_PRODUCT_UNIT = QName.createQName(BECPG_URI,
 	"productUnit");	
 	
-	/** The Constant PROP_PRODUCT_REPORT_MODIFIED. */
-	static final QName PROP_PRODUCT_REPORT_MODIFIED = QName.createQName(BECPG_URI,
-			"productReportModified");
-	
-	/** The Constant ASSOC_PRODUCT_REPORT_TEMPLATES. */
-	static final QName ASSOC_PRODUCT_REPORT_TEMPLATES = QName.createQName(BECPG_URI,
-			"productReportTpls");
-
 	// condSalesUnit
 	/** The Constant TYPE_CONDSALESUNIT. */
 	static final QName TYPE_CONDSALESUNIT = QName.createQName(BECPG_URI,
@@ -123,16 +107,13 @@ public interface BeCPGModel {
 	static final QName TYPE_PACKAGINGMATERIAL = QName.createQName(BECPG_URI,
 			"packagingMaterial");
 
-	/** The Constant ASSOC_PRODUCTLISTS. */
-	static final QName ASSOC_PRODUCTLISTS = QName.createQName(BECPG_URI,
-			"productLists");
-
-	/** The Constant ASSOC_DATALISTS. */
-	static final QName ASSOC_DATALISTS = QName.createQName(BECPG_URI,
-			"dataLists");
+	/** The Constant ASSOC_ENTITYLISTS. */
+	static final QName ASSOC_ENTITYLISTS = QName.createQName(BECPG_URI,
+			"entityLists");
 	
-	// productList
-	/** The Constant TYPE_PRODUCTLIST_ITEM. */
+	static final QName TYPE_ENTITYLIST_ITEM = QName.createQName(BECPG_URI,
+	"entityListItem");
+	
 	static final QName TYPE_PRODUCTLIST_ITEM = QName.createQName(BECPG_URI,
 	"productListItem");
 	
@@ -469,23 +450,6 @@ public interface BeCPGModel {
 	static final QName TYPE_LIST_VALUE = QName.createQName(BECPG_URI,
 			"listValue");
 
-	// productReportTemplate
-	/** The Constant TYPE_PRODUCT_REPORTTEMPLATE. */
-	static final QName TYPE_PRODUCT_REPORTTEMPLATE = QName.createQName(
-			BECPG_URI, "productReportTemplate");
-	
-	/** The Constant PROP_PRODUCT_REPORTTEMPLATE_TYPE. */
-	static final QName PROP_PRODUCT_REPORTTEMPLATE_TYPE = QName.createQName(
-			BECPG_URI, "productType");
-	
-	/** The Constant PROP_PRODUCT_REPORTTEMPLATE_IS_SYSTEM. */
-	static final QName PROP_PRODUCT_REPORTTEMPLATE_IS_SYSTEM = QName.createQName(
-			BECPG_URI, "prtIsSystem");
-	
-	/** The Constant PROP_PRODUCT_REPORTTEMPLATE_IS_DEFAULT. */
-	static final QName PROP_PRODUCT_REPORTTEMPLATE_IS_DEFAULT = QName.createQName(
-			BECPG_URI, "prtIsDefault");
-
 	// entityFolder
 	/** The Constant TYPE_ENTITY_FOLDER. */
 	static final QName TYPE_ENTITY_FOLDER = QName.createQName(BECPG_URI,
@@ -623,12 +587,5 @@ public interface BeCPGModel {
 	static final QName ASPECT_CODE = QName.createQName(BECPG_URI,	"codeAspect");
 	
 	/** The Constant PROP_CODE. */
-	static final QName PROP_CODE = QName.createQName(BECPG_URI, "code");
-	
-	// format aspect
-	/** The Constant ASPECT_CODE. */
-	static final QName ASPECT_REPORT_FORMAT = QName.createQName(BECPG_URI,	"reportFormatAspect");
-	
-	/** The Constant PROP_CODE. */
-	static final QName PROP_REPORT_FORMAT = QName.createQName(BECPG_URI, "reportFormat");
+	static final QName PROP_CODE = QName.createQName(BECPG_URI, "code");		
 }

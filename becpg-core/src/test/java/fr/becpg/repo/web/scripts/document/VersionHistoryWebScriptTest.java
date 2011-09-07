@@ -19,9 +19,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.version.ProductVersionService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -62,7 +62,7 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
     private TransactionService transactionService;
     
     /** The product version service. */
-    private ProductVersionService productVersionService;
+    private EntityVersionService entityVersionService;
     
 	/** The temp folder. */
 	private NodeRef tempFolder = null;
@@ -86,7 +86,7 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
 		authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
 		productDAO = (ProductDAO)appCtx.getBean("productDAO");
 		transactionService = (TransactionService)appCtx.getBean("transactionService");
-		productVersionService = (ProductVersionService)appCtx.getBean("productVersionService");
+		entityVersionService = (EntityVersionService)appCtx.getBean("entityVersionService");
 		repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
 		
 	    // Authenticate as user
@@ -137,8 +137,8 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
 	 				rawMaterial.setName("Raw material");
 	 				rawMaterialNodeRef = productDAO.create(tempFolder, rawMaterial, null);	 					
 	 				
-	 				productVersionService.createVersion(rawMaterialNodeRef, null);						
-					productVersionService.createVersion(rawMaterialNodeRef, null);
+	 				entityVersionService.createVersion(rawMaterialNodeRef, null);						
+					entityVersionService.createVersion(rawMaterialNodeRef, null);
 					
 	 				
 					return null;

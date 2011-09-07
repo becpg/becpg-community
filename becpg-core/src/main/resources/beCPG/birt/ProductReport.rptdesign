@@ -114,8 +114,8 @@
             <property name="nullsOrdering">nulls lowest</property>
             <list-property name="columnHints">
                 <structure>
-                    <property name="columnName">productCode</property>
-                    <text-property name="heading">productCode</text-property>
+                    <property name="columnName">code</property>
+                    <text-property name="heading">code</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productCurrency</property>
@@ -158,7 +158,7 @@
                 <list-property name="resultSet">
                     <structure>
                         <property name="position">1</property>
-                        <property name="name">productCode</property>
+                        <property name="name">code</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
@@ -212,8 +212,8 @@
             <list-property name="resultSet">
                 <structure>
                     <property name="position">1</property>
-                    <property name="name">productCode</property>
-                    <property name="nativeName">productCode</property>
+                    <property name="name">code</property>
+                    <property name="nativeName">code</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -271,7 +271,7 @@
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/product]#:#{productCode;STRING;/@productCode},{productCurrency;STRING;/@productCurrency},{productPrice;STRING;/@productPrice},{productUnit;STRING;/@productUnit},{productType;STRING;/@productType},{name;STRING;/@name},{productState;STRING;/@productState},{modified;STRING;/@modified},{productQty;STRING;/@productQty},{productEAN;STRING;/@productEAN}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/product]#:#{code;STRING;/@code},{productCurrency;STRING;/@productCurrency},{productPrice;STRING;/@productPrice},{productUnit;STRING;/@productUnit},{productType;STRING;/@productType},{name;STRING;/@name},{productState;STRING;/@productState},{modified;STRING;/@modified},{productQty;STRING;/@productQty},{productEAN;STRING;/@productEAN}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2020,13 +2020,13 @@
                                             <property name="dataSet">Product</property>
                                             <list-property name="boundDataColumns">
                                                 <structure>
-                                                    <property name="name">productCode</property>
-                                                    <text-property name="displayName">productCode</text-property>
-                                                    <expression name="expression" type="javascript">dataSetRow["productCode"]</expression>
+                                                    <property name="name">code</property>
+                                                    <text-property name="displayName">code</text-property>
+                                                    <expression name="expression" type="javascript">dataSetRow["code"]</expression>
                                                     <property name="dataType">string</property>
                                                 </structure>
                                             </list-property>
-                                            <property name="resultSetColumn">productCode</property>
+                                            <property name="resultSetColumn">code</property>
                                         </data>
                                     </cell>
                                 </row>

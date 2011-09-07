@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.ProductData;
@@ -77,6 +78,7 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 	/** The repository helper. */
 	private Repository repositoryHelper;   
 	
+	private EntityListDAO entityListDAO;
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
@@ -94,7 +96,8 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
     	productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
         authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
         mlNodeServiceImpl = (NodeService) appCtx.getBean("mlAwareNodeService");
-        repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");        
+        repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");  
+        entityListDAO = (EntityListDAO)appCtx.getBean("entityListDAO");
         
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override
@@ -243,9 +246,9 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 					}
 				}
 				
-				NodeRef listContainerNodeRef = productDAO.getListContainer(rawMaterialNodeRef);
-				NodeRef listNodeRef = productDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
-				NodeRef nodeRef = productDAO.getLink(listNodeRef, BeCPGModel.ASSOC_COSTLIST_COST, costNodeRef);
+				NodeRef listContainerNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
+				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
+				NodeRef nodeRef = entityListDAO.getLink(listNodeRef, BeCPGModel.ASSOC_COSTLIST_COST, costNodeRef);
 				
 				assertEquals("Cost list data item should be the same", costListDataItemNodeRef, nodeRef);
 				

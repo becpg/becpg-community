@@ -888,7 +888,7 @@ public class AbstractImportVisitor  implements ImportVisitor {
 				// is it a product
 				if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)){
 					// +@cm\\:localName:%s
-					queryPath.append(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_PRODUCT_CODE, value, LuceneHelper.Operator.AND));
+					queryPath.append(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, value, LuceneHelper.Operator.AND));
 					doQuery = true;
 				}
 				// code

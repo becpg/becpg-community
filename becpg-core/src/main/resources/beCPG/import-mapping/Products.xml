@@ -8,11 +8,11 @@
 	<!-- PRODUCT -->
 	<mapping name="bcpg:rawMaterial">		
 		<nodeColumnKeys> 
-			<nodeColumnKey attribute="bcpg:productCode"/>
+			<nodeColumnKey attribute="bcpg:code"/>
 		</nodeColumnKeys>
 		<columns>
 
-			<column id="productCode" attribute="bcpg:productCode" type="Attribute"/>
+			<column id="code" attribute="bcpg:code" type="Attribute"/>
 			
 			<!-- characteristic properties -->
 			<column id="coutMP" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
@@ -60,7 +60,7 @@
 	<!-- INGREDIENTS LIST -->
 	<mapping name="bcpg:ingList">
 		<nodeColumnKeys> 
-			<nodeColumnKey attribute="bcpg:productCode"/>
+			<nodeColumnKey attribute="bcpg:code"/>
 		</nodeColumnKeys>
 		<dataListColumnKeys>
 			<dataListColumnKey attribute="bcpg:ingListIng"/>
@@ -77,13 +77,13 @@
 	<!-- COMPOSITION LIST -->
 	<mapping name="bcpg:compoList">
 		<nodeColumnKeys> 
-			<nodeColumnKey attribute="bcpg:productCode"/>
+			<nodeColumnKey attribute="bcpg:code"/>
 		</nodeColumnKeys>
 		<dataListColumnKeys>
 			<dataListColumnKey attribute="bcpg:compoListProduct"/>
 		</dataListColumnKeys>
 		<columns>
-			<column id="productCode" attribute="bcpg:productCode" type="Attribute"/>
+			<column id="code" attribute="bcpg:code" type="Attribute"/>
 			<column id="level" attribute="bcpg:depthLevel" type="Attribute"/>
 			<column id="compoListProduct" attribute="bcpg:compoListProduct" type="Attribute"/>			
 			<column id="compoListQty" attribute="bcpg:compoListQty" type="Attribute"/>

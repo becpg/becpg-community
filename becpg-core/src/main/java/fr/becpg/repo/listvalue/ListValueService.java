@@ -81,5 +81,5 @@ public interface ListValueService {
 	 * @param query the query
 	 * @return the map
 	 */
-	public Map<String, String> suggestProductReportTemplates(SystemProductType systemProductType, String query);
+	public Map<String, String> suggestProductReportTemplates(QName nodeType, String query);
 }

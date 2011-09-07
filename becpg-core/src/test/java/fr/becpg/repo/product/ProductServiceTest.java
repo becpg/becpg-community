@@ -63,7 +63,8 @@ import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.report.ProductReportService;
-import fr.becpg.repo.product.report.ProductReportTplService;
+import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -127,7 +128,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 	
 	private ProductReportService productReportService;
 	
-	private ProductReportTplService productReportTplService;
+	private ReportTplService reportTplService;
 	
 	private DictionaryDAO dictionaryDAO;
 	
@@ -157,7 +158,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
         repoService = (RepoService)appCtx.getBean("repoService");
         contentService = (ContentService)appCtx.getBean("contentService");
         productReportService = (ProductReportService)appCtx.getBean("productReportService");
-        productReportTplService = (ProductReportTplService)appCtx.getBean("productReportTplService");
+        reportTplService = (ReportTplService)appCtx.getBean("reportTplService");
         dictionaryDAO = (DictionaryDAO)appCtx.getBean("dictionaryDAO");
         
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
@@ -285,7 +286,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 			   	}
 			   	productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));		   			   		   
 		   	
-			   	productReportTplService.createTpl(productReportTplFolder, "report MP", "beCPG/birt/ProductReport.rptdesign", SystemProductType.RawMaterial, true, true);			
+			   	reportTplService.createTpl(productReportTplFolder, "report MP", "beCPG/birt/ProductReport.rptdesign", ReportType.Document, BeCPGModel.TYPE_RAWMATERIAL, true, true);			
 				
 				/*-- Create test folder --*/
 				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			

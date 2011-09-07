@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.BeCPGDao;
-import fr.becpg.repo.BecpgDataListDAO;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.quality.data.ControlPointData;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
@@ -36,7 +36,7 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 	
 	private NodeService nodeService;
 	private FileFolderService fileFolderService;
-	private BecpgDataListDAO dataListDAO;
+	private EntityListDAO entityListDAO;
 	private AssociationService associationService;
 		
 
@@ -48,8 +48,8 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 		this.fileFolderService = fileFolderService;
 	}
 
-	public void setDataListDAO(BecpgDataListDAO dataListDAO) {
-		this.dataListDAO = dataListDAO;
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
 	
 	public void setAssociationService(AssociationService associationService) {
@@ -67,9 +67,9 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 								SecurityModel.TYPE_ACL_GROUP, properties).getChildRef();
 				
 		// acl entry list
-		NodeRef listContainerNodeRef = dataListDAO.getListContainer(cpNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(cpNodeRef);
 		if(listContainerNodeRef == null){
-			listContainerNodeRef = dataListDAO.createListContainer(cpNodeRef);			
+			listContainerNodeRef = entityListDAO.createListContainer(cpNodeRef);			
 		}
 		createControlDefList(listContainerNodeRef, cpData.getAcls());
 		
@@ -81,9 +81,9 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 	nodeService.setProperty(cpData.getNodeRef(), ContentModel.PROP_NAME, cpData.getName());
 		
 		// control def list
-		NodeRef listContainerNodeRef = dataListDAO.getListContainer(cpNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(cpNodeRef);
 		if(listContainerNodeRef == null){
-			listContainerNodeRef = dataListDAO.createListContainer(cpNodeRef);			
+			listContainerNodeRef = entityListDAO.createListContainer(cpNodeRef);			
 		}
 		createControlDefList(listContainerNodeRef, cpData.getAcls());
 		
@@ -94,7 +94,7 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 		ACLGroupData cpData = new ACLGroupData();
 		cpData.setNodeRef(cpNodeRef);
 		
-		NodeRef listContainerNodeRef = dataListDAO.getListContainer(cpNodeRef);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(cpNodeRef);
 		if(listContainerNodeRef != null){
 			cpData.setAcls(loadControlDefList(listContainerNodeRef));
 		}
@@ -120,7 +120,7 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 //    	if(listContainerNodeRef != null)
 //    	{    		
 //    		logger.debug("loadAclsList, list container exists");
-//    		NodeRef aclsListNodeRef = dataListDAO.getList(listContainerNodeRef, SecurityModel.TYPE_ACL_LIST);
+//    		NodeRef aclsListNodeRef = entityListDAO.getList(listContainerNodeRef, SecurityModel.TYPE_ACL_LIST);
 //    		
 //    		if(aclsListNodeRef != null)
 //    		{
@@ -165,7 +165,7 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 //		
 //		if(listContainerNodeRef != null)
 //		{  
-//			NodeRef controlDefListNodeRef = dataListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROLDEF_LIST);
+//			NodeRef controlDefListNodeRef = entityListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROLDEF_LIST);
 //			
 //			if(controlDefList == null){
 //				//delete existing list
@@ -176,7 +176,7 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 //	    		//controlDef list, create if needed	    		
 //	    		if(controlDefListNodeRef == null)
 //	    		{		    						
-//		    		controlDefListNodeRef = dataListDAO.createList(listContainerNodeRef, QualityModel.TYPE_CONTROLDEF_LIST);
+//		    		controlDefListNodeRef = entityListDAO.createList(listContainerNodeRef, QualityModel.TYPE_CONTROLDEF_LIST);
 //	    		}
 //			
 //	    		List<FileInfo> files = fileFolderService.listFiles(controlDefListNodeRef);

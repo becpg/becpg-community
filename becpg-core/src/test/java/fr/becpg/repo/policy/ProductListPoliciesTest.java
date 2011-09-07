@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.RawMaterialData;
 
@@ -60,6 +61,8 @@ public class ProductListPoliciesTest  extends BaseAlfrescoTestCase  {
 	/** The repository helper. */
 	private Repository repositoryHelper;    
 	
+	private EntityListDAO entityListDAO;
+	
 	/* (non-Javadoc)
 	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
 	 */
@@ -74,6 +77,7 @@ public class ProductListPoliciesTest  extends BaseAlfrescoTestCase  {
     	productDAO = (ProductDAO)appCtx.getBean("productDAO");
         authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
         repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
+        entityListDAO = (EntityListDAO)appCtx.getBean("entityListDAO");
                         
     }
     
@@ -117,18 +121,18 @@ public class ProductListPoliciesTest  extends BaseAlfrescoTestCase  {
 					rawMaterialData.setName("RM");
 					NodeRef rawMaterialNodeRef = productDAO.create(folderNodeRef, rawMaterialData, null);											
 					
-		    		NodeRef containerListNodeRef = productDAO.getListContainer(rawMaterialNodeRef);
+		    		NodeRef containerListNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
 		    		
 		    		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		    		properties.put(ContentModel.PROP_NAME, GUID.generate());
 		    		properties.put(DataListModel.PROP_DATALISTITEMTYPE, BeCPGModel.BECPG_PREFIX + ":" + BeCPGModel.TYPE_COSTLIST.getLocalName());
 		    		NodeRef costListCreatedNodeRef = nodeService.createNode(containerListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), DataListModel.TYPE_DATALIST, properties).getChildRef();
 		    		
-					NodeRef costListNodeRef = productDAO.getList(productDAO.getListContainer(rawMaterialNodeRef), BeCPGModel.TYPE_COSTLIST);
+					NodeRef costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef), BeCPGModel.TYPE_COSTLIST);
 					assertNotNull("cost list should exist", costListNodeRef);
 					assertEquals("cost list should be the same", costListCreatedNodeRef, costListNodeRef);
 					
-					costListNodeRef = productDAO.getList(productDAO.getListContainer(rawMaterialNodeRef), BeCPGModel.TYPE_COSTLIST);
+					costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef), BeCPGModel.TYPE_COSTLIST);
 					assertNotNull("cost list should exist", costListNodeRef);
 					assertEquals("cost list should be the same", costListCreatedNodeRef, costListNodeRef);
 					

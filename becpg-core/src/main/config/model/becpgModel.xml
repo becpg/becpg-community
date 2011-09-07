@@ -14,6 +14,8 @@
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.alfresco.org/model/datalist/1.0"
 			prefix="dl" />
+		<import uri="http://www.bcpg.fr/model/report/1.0"
+			prefix="rep" />
 	</imports>
 	<!-- Introduction of new namespaces defined by this model -->
 	<namespaces>
@@ -346,16 +348,7 @@
 					<value>Faux</value>
 				</list>
 			</parameter>
-		</constraint>
-		<constraint name="bcpg:reportFormats" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value>PDF</value>
-					<value>XLS</value>
-					<value>DOC</value>
-				</list>
-			</parameter>
-		</constraint>			
+		</constraint>					
 	</constraints>
 
 	<types>
@@ -364,14 +357,14 @@
 			<parent>cm:content</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:productTypeAspect</aspect>
-				<aspect>bcpg:productListsAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		
 		<type name="bcpg:productSpecification">
 			<parent>cm:content</parent>
 			<mandatory-aspects>
-				<aspect>bcpg:productListsAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		
@@ -387,15 +380,16 @@
 			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:productListsAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:product">
 			<parent>cm:content</parent>
 			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:productAspect</aspect>
-				<aspect>bcpg:productListsAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:condSalesUnit">
@@ -734,8 +728,12 @@
 		<!-- ________________________________________________________________ LISTES 
 			DE CARACT. ________________________________________________________________ -->
 
-		<type name="bcpg:productListItem">
+		<type name="bcpg:entityListItem">
 			<parent>dl:dataListItem</parent>
+		</type>
+		
+		<type name="bcpg:productListItem">
+			<parent>bcpg:entityListItem</parent>
 		</type>
 
 		<type name="bcpg:allergenList">
@@ -1169,31 +1167,14 @@
 			</properties>
 		</type>
 
-		<type name="bcpg:productReportTemplate">
-			<parent>cm:folder</parent>
-			<properties>
-				<property name="bcpg:prtIsSystem">
-					<type>d:boolean</type>
-					<default>true</default>
-				</property>
-				<property name="bcpg:prtIsDefault">
-					<type>d:boolean</type>
-					<default>true</default>
-				</property>
-			</properties>
-			<mandatory-aspects>
-				<aspect>bcpg:productTypeAspect</aspect>
-			</mandatory-aspects>
-		</type>
-
 		<type name="bcpg:autoNum">
 			<parent>cm:content</parent>
 			<properties>
 				<property name="bcpg:autoNumClassName">
-					<type>d:text</type>
+					<type>d:qname</type>
 				</property>
 				<property name="bcpg:autoNumPropertyName">
-					<type>d:text</type>
+					<type>d:qname</type>
 				</property>
 				<property name="bcpg:autoNumValue">
 					<type>d:long</type>
@@ -1227,9 +1208,6 @@
 						<constraint ref="bcpg:productHierarchy2" />
 					</constraints>
 				</property>
-				<property name="bcpg:productCode">
-					<type>d:long</type>
-				</property>
 				<property name="bcpg:productState">
 					<type>d:text</type>
 					<default>ToValidate</default>
@@ -1245,23 +1223,7 @@
 						<constraint ref="bcpg:productUnit" />
 					</constraints>
 				</property>
-				<property name="bcpg:productReportModified">
-					<type>d:datetime</type>					
-				</property>
-			</properties>
-			<associations>
-				<association name="bcpg:productReportTpls">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:productReportTemplate</class>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</target>
-				</association>
-			</associations>
+			</properties>			
 		</aspect>
 
 		<aspect name="bcpg:transformationAspect">
@@ -1377,27 +1339,10 @@
 				</property>
 			</properties>
 		</aspect>
-
-		<aspect name="bcpg:productListsAspect">
-			<associations>
-				<child-association name="bcpg:productLists">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>cm:folder</class>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</target>
-					<duplicate>false</duplicate>
-				</child-association>
-			</associations>
-		</aspect>
 		
-		<aspect name="bcpg:dataListsAspect">
+		<aspect name="bcpg:entityListsAspect">
 			<associations>
-				<child-association name="bcpg:dataLists">
+				<child-association name="bcpg:entityLists">
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>
@@ -1572,20 +1517,6 @@
 				</association>
 
 			</associations>
-		</aspect>
-		
-		<aspect name="bcpg:reportFormatAspect">
-			<properties>
-				<property name="bcpg:reportFormat">
-					<type>d:text</type>
-					<mandatory>true</mandatory>
-					<multiple>false</multiple>
-					<default>PDF</default>
-					<constraints>
-						<constraint ref="bcpg:reportFormats" />
-					</constraints>
-				</property>
-			</properties>
 		</aspect>
 
 	</aspects>

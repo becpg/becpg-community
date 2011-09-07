@@ -22,12 +22,12 @@
       	<property name="namespaceService" ref="namespaceService"/>
    	</bean>
    
-   	<!-- Product lists -->
-   	<bean id="webscript.fr.becpg.product.productLists.get" class="fr.becpg.repo.web.scripts.product.ProductListsWebScript" parent="webscript">      	     
+   	<!-- Entity lists -->
+   	<bean id="webscript.fr.becpg.entity.entityLists.get" class="fr.becpg.repo.web.scripts.entity.EntityListsWebScript" parent="webscript">      	     
       	<property name="fileFolderService" ref="fileFolderService" />
       	<property name="nodeService" ref="nodeService" />      	
-      	<property name="productService" ref="productService"/>
       	<property name="productDictionaryService" ref="productDictionaryService"/>
+      	<property name="entityListDAO" ref="entityListDAO" />
   		</bean>
   	 
    	<!-- Product formulate -->
@@ -40,47 +40,47 @@
       	<property name="productService" ref="productService" />
    	</bean>
          
-   	<!-- Product where used -->
-  		<bean id="webscript.fr.becpg.product.productWUsed.post" class="fr.becpg.repo.web.scripts.product.ProductWUsedWebScript" parent="webscript">
+   	<!-- Entity where used -->
+  		<bean id="webscript.fr.becpg.entity.entityWUsed.post" class="fr.becpg.repo.web.scripts.entity.EntityWUsedWebScript" parent="webscript">
    		<property name="productService" ref="productService" />
    		<property name="productDictionaryService" ref="productDictionaryService"/>
    	</bean>
    	
-   	<!-- Product checkout -->
-  		<bean id="webscript.fr.becpg.product.checkout.post" class="fr.becpg.repo.web.scripts.product.CheckOutWebScript" parent="webscript">   		
-   		<property name="productCheckOutCheckInService" ref="productCheckOutCheckInService" />
+   	<!-- Entity checkout -->
+  		<bean id="webscript.fr.becpg.entity.checkout.post" class="fr.becpg.repo.web.scripts.entity.CheckOutWebScript" parent="webscript">   		
+   		<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService" />
    	</bean>
    	
-   	<!-- Product checkin -->
-  		<bean id="webscript.fr.becpg.product.checkin.post" class="fr.becpg.repo.web.scripts.product.CheckInWebScript" parent="webscript">   		
-   		<property name="productCheckOutCheckInService" ref="productCheckOutCheckInService" />
+   	<!-- Entity checkin -->
+  		<bean id="webscript.fr.becpg.entity.checkin.post" class="fr.becpg.repo.web.scripts.entity.CheckInWebScript" parent="webscript">   		
+   		<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService" />
    	</bean>
    	
-   	<!-- Product cancel-checkout -->
-  		<bean id="webscript.fr.becpg.product.cancel-checkout.post" class="fr.becpg.repo.web.scripts.product.CancelCheckOutWebScript" parent="webscript">   		
-   		<property name="productCheckOutCheckInService" ref="productCheckOutCheckInService" />
+   	<!-- Entity cancel-checkout -->
+  		<bean id="webscript.fr.becpg.entity.cancel-checkout.post" class="fr.becpg.repo.web.scripts.entity.CancelCheckOutWebScript" parent="webscript">   		
+   		<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService" />
    	</bean>
    	
-   	<!-- Product new version form -->
-  		<bean id="webscript.fr.becpg.product.form-checkin.post" class="fr.becpg.repo.web.scripts.product.FormCheckInWebScript" parent="webscript">   		
-   		<property name="productCheckOutCheckInService" ref="productCheckOutCheckInService" />
+   	<!-- Entity new version form -->
+  		<bean id="webscript.fr.becpg.entity.form-checkin.post" class="fr.becpg.repo.web.scripts.entity.FormCheckInWebScript" parent="webscript">   		
+   		<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService" />
    	</bean>
       	
    	<!-- Document web scripts : override share webscript -->
   		<bean id="webscript.fr.becpg.document.form-revert-version.post" class="fr.becpg.repo.web.scripts.document.FormRevertVersionWebScript" parent="webscript">   		
-   		<property name="productVersionService" ref="productVersionService" />
-   		<property name="productCheckOutCheckInService" ref="productCheckOutCheckInService" />
+   		<property name="entityVersionService" ref="entityVersionService" />
+   		<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService" />
    	</bean>
    	<bean id="webscript.fr.becpg.document.version-history.get" class="fr.becpg.repo.web.scripts.document.VersionHistoryWebScript" parent="webscript">   		
-   		<property name="productVersionService" ref="productVersionService" />
+   		<property name="entityVersionService" ref="entityVersionService" />
    		<property name="nodeService" ref="nodeService" />
    		<property name="versionService" ref="versionService" />
    		<property name="personService" ref="personService" />
    	</bean>
    	
-   	<!-- Compare products -->
-  		<bean id="webscript.fr.becpg.product.compareProductReport.get" class="fr.becpg.repo.web.scripts.product.CompareProductReportWebScript" parent="webscript">
-   		<property name="compareProductReportService" ref="compareProductReportService" />
+   	<!-- Compare entities -->
+  		<bean id="webscript.fr.becpg.entity.compareEntityReport.get" class="fr.becpg.repo.web.scripts.entity.CompareEntityReportWebScript" parent="webscript">
+   		<property name="compareEntityReportService" ref="compareEntityReportService" />
    		<property name="mimetypeService" ref="mimetypeService" />
    	</bean>
    	
@@ -104,5 +104,16 @@
 			<property name="repositoryHelper" ref="repositoryHelper" />
 			<property name="dictionaryDAO" ref="dictionaryDAO" />
 			<property name="repoService" ref="repoService" />
+   	</bean>
+   	
+   	<!-- Migration -->
+   	<bean id="webscript.fr.becpg.migration.migrateRepository.get" class="fr.becpg.repo.web.scripts.migration.MigrateRepositoryWebScript" parent="webscript">
+      	<property name="nodeService" ref="nodeService" />      	
+			<property name="searchService" ref="searchService" />
+			<property name="fileFolderService" ref="fileFolderService" />
+			<property name="repositoryHelper" ref="repositoryHelper" />
+			<property name="repoService" ref="repoService" />
+			<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+			<property name="dictionaryService" ref="dictionaryService" />
    	</bean>
 </beans>

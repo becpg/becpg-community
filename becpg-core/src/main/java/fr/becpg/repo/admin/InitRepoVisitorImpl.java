@@ -17,12 +17,16 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.evaluator.CompareMimeTypeEvaluator;
 import org.alfresco.repo.action.evaluator.ComparePropertyValueEvaluator;
+import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
 import org.alfresco.repo.action.evaluator.compare.ComparePropertyValueOperation;
+import org.alfresco.repo.action.executer.SpecialiseTypeActionExecuter;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
@@ -40,13 +44,17 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.product.report.ProductReportTplService;
+import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.template.ReportType;
 
 /**
  * Initialize the folders of the repository (create folder, rules, WF and system contents).
@@ -96,7 +104,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	
 	private static final String LOCALIZATION_PFX_GROUP	= "becpg.group";
 	private static final String PRODUCT_REPORT_PATH = "beCPG/birt/ProductReport.rptdesign";
-	private static final String COMPARE_PRODUCTS_REPORT_PATH = "beCPG/birt/CompareProducts.rptdesign";
+	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/CompareEntities.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/ExportSearch/Product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/ExportSearch/Product/ExportSearchQuery.xml";
 	
@@ -109,13 +117,15 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	/** The permission service. */
 	private PermissionService permissionService;
 	
-	private ProductDAO productDAO;	
+	private EntityListDAO entityListDAO;	
 
-	private ProductReportTplService productReportTplService;
+	private ReportTplService reportTplService;
 	
 	private ContentService contentService;
 	
 	private MimetypeService mimetypeService;
+	
+	private DictionaryService dictionaryService;
 	
 	/**
 	 * Sets the product dictionary service.
@@ -144,20 +154,24 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		this.permissionService = permissionService;
 	}		
 	
-	public void setProductDAO(ProductDAO productDAO) {
-		this.productDAO = productDAO;
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
 
-	public void setProductReportTplService(ProductReportTplService productReportTplService) {
-		this.productReportTplService = productReportTplService;
-	}		
-	
+	public void setReportTplService(ReportTplService reportTplService) {
+		this.reportTplService = reportTplService;
+	}
+
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
+	}
+	
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
 	}
 
 	/**
@@ -179,18 +193,19 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		logger.debug("Visit folders");
 		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM); 
 				
-		//Lists of characteristics
-		visitFolder(systemNodeRef, RepoConsts.PATH_LISTS);
-		visitFolder(systemNodeRef, RepoConsts.PATH_LINKED_LISTS);
-		visitFolder(systemNodeRef, RepoConsts.PATH_NUTS);				
-		visitFolder(systemNodeRef, RepoConsts.PATH_INGS);		
-		visitFolder(systemNodeRef, RepoConsts.PATH_ORGANOS);	
-		visitFolder(systemNodeRef, RepoConsts.PATH_ALLERGENS);		
-		visitFolder(systemNodeRef, RepoConsts.PATH_COSTS);
-		visitFolder(systemNodeRef, RepoConsts.PATH_PHYSICO_CHEM);
-		visitFolder(systemNodeRef, RepoConsts.PATH_MICROBIOS);
-		visitFolder(systemNodeRef, RepoConsts.PATH_GEO_ORIGINS);
-		visitFolder(systemNodeRef, RepoConsts.PATH_BIO_ORIGINS);
+		//Lists of characteristics		
+		NodeRef charactsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_CHARACTS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_LISTS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_LINKED_LISTS);		
+		visitFolder(charactsNodeRef, RepoConsts.PATH_NUTS);				
+		visitFolder(charactsNodeRef, RepoConsts.PATH_INGS);		
+		visitFolder(charactsNodeRef, RepoConsts.PATH_ORGANOS);	
+		visitFolder(charactsNodeRef, RepoConsts.PATH_ALLERGENS);		
+		visitFolder(charactsNodeRef, RepoConsts.PATH_COSTS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_PHYSICO_CHEM);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_MICROBIOS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_GEO_ORIGINS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_BIO_ORIGINS);
 				
 		//Hierarchy
 		NodeRef hierarchyNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
@@ -307,10 +322,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		}		
 		else if(folderName == RepoConsts.PATH_PRODUCT_TEMPLATES){
 			specialiseType = BeCPGModel.TYPE_PRODUCTTEMPLATE;
-		}
-		else if(folderName == RepoConsts.PATH_PRODUCT_REPORTTEMPLATES){
-			specialiseType = BeCPGModel.TYPE_PRODUCT_REPORTTEMPLATE;
-		}
+		}		
 		else if(folderName == RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA){
 			specialiseType = BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA;
 		}		
@@ -320,8 +332,39 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		else if(folderName.endsWith(RepoConsts.PATH_HIERARCHY_SFX_HIERARCHY2)){
 			specialiseType = BeCPGModel.TYPE_LINKED_VALUE;
 		}
-		else if(folderName == RepoConsts.PATH_PRODUCT_REPORTTEMPLATES){
-			specialiseType = BeCPGModel.TYPE_PRODUCT_REPORTTEMPLATE;
+		else if(folderName == RepoConsts.PATH_REPORTS){
+			
+			// Action : apply type
+		    Map<String,Serializable> params = new HashMap<String, Serializable>();
+	  	  	params.put(SpecialiseTypeActionExecuter.PARAM_TYPE_NAME, ReportModel.TYPE_REPORT_TPL);
+		    CompositeAction compositeAction = actionService.createCompositeAction();
+		    Action myAction= actionService.createAction(SpecialiseTypeActionExecuter.NAME, params);
+		    compositeAction.addAction(myAction);
+		    	   
+		    // Conditions for the Rule : type must be different
+		    ActionCondition actionCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+		    actionCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, ReportModel.TYPE_REPORT_TPL);
+		    actionCondition.setInvertCondition(true);
+		    compositeAction.addActionCondition(actionCondition);
+		    
+		    // compare-name == *.rptdesign	        	        
+	        ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
+	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION, ComparePropertyValueOperation.ENDS.toString());
+	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, ReportTplService.PARAM_VALUE_DESIGN_EXTENSION);
+	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
+	        conditionOnName.setInvertCondition(false);
+	        compositeAction.addActionCondition(conditionOnName);
+		   	    
+		    // Create Rule
+			Rule rule = new Rule();
+		    rule.setTitle("Specialise type");
+		    rule.setDescription("Every item created will have this type");
+		    rule.applyToChildren(applyToChildren);
+		    rule.setExecuteAsynchronously(false);
+		    rule.setRuleDisabled(false);
+		    rule.setRuleType(RuleType.INBOUND);
+		    rule.setAction(compositeAction);	    	       	    
+		    ruleService.saveRule(nodeRef, rule);
 		}
 		else if(folderName == RepoConsts.PATH_SECURITY){
 			specialiseType = SecurityModel.TYPE_ACL_GROUP;
@@ -496,16 +539,16 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 					dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 					dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 					
-					NodeRef listContainerNodeRef = productDAO.getListContainer(productTplNodeRef);
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productTplNodeRef);
 					if(listContainerNodeRef == null){
-						listContainerNodeRef = productDAO.createListContainer(productTplNodeRef);
+						listContainerNodeRef = entityListDAO.createListContainer(productTplNodeRef);
 					}
 					
 					for(QName dataList : dataLists){
 						
-						NodeRef listNodeRef = productDAO.getList(listContainerNodeRef, dataList);
+						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataList);
 						if(listNodeRef == null){
-							productDAO.createList(listContainerNodeRef, dataList);
+							entityListDAO.createList(listContainerNodeRef, dataList);
 						}
 					}
 				}
@@ -514,16 +557,16 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 					dataLists.add(BeCPGModel.TYPE_COSTLIST);				
 					dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 					
-					NodeRef listContainerNodeRef = productDAO.getListContainer(productTplNodeRef);
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productTplNodeRef);
 					if(listContainerNodeRef == null){
-						listContainerNodeRef = productDAO.createListContainer(productTplNodeRef);
+						listContainerNodeRef = entityListDAO.createListContainer(productTplNodeRef);
 					}
 					
 					for(QName dataList : dataLists){
 						
-						NodeRef listNodeRef = productDAO.getList(listContainerNodeRef, dataList);
+						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataList);
 						if(listNodeRef == null){
-							productDAO.createList(listContainerNodeRef, dataList);
+							entityListDAO.createList(listContainerNodeRef, dataList);
 						}
 					}
 				}
@@ -538,16 +581,16 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 					dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 					dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 					
-					NodeRef listContainerNodeRef = productDAO.getListContainer(productTplNodeRef);
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productTplNodeRef);
 					if(listContainerNodeRef == null){
-						listContainerNodeRef = productDAO.createListContainer(productTplNodeRef);
+						listContainerNodeRef = entityListDAO.createListContainer(productTplNodeRef);
 					}
 					
 					for(QName dataList : dataLists){
 						
-						NodeRef listNodeRef = productDAO.getList(listContainerNodeRef, dataList);
+						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataList);
 						if(listNodeRef == null){
-							productDAO.createList(listContainerNodeRef, dataList);
+							entityListDAO.createList(listContainerNodeRef, dataList);
 						}
 					}
 				}
@@ -564,16 +607,16 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 					dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 					dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 					
-					NodeRef listContainerNodeRef = productDAO.getListContainer(productTplNodeRef);
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productTplNodeRef);
 					if(listContainerNodeRef == null){
-						listContainerNodeRef = productDAO.createListContainer(productTplNodeRef);
+						listContainerNodeRef = entityListDAO.createListContainer(productTplNodeRef);
 					}
 					
 					for(QName dataList : dataLists){
 						
-						NodeRef listNodeRef = productDAO.getList(listContainerNodeRef, dataList);
+						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataList);
 						if(listNodeRef == null){
-							productDAO.createList(listContainerNodeRef, dataList);
+							entityListDAO.createList(listContainerNodeRef, dataList);
 						}
 					}
 				}
@@ -584,16 +627,16 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 					dataLists.add(BeCPGModel.TYPE_COSTLIST);				
 					dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 					
-					NodeRef listContainerNodeRef = productDAO.getListContainer(productTplNodeRef);
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productTplNodeRef);
 					if(listContainerNodeRef == null){
-						listContainerNodeRef = productDAO.createListContainer(productTplNodeRef);
+						listContainerNodeRef = entityListDAO.createListContainer(productTplNodeRef);
 					}
 					
 					for(QName dataList : dataLists){
 						
-						NodeRef listNodeRef = productDAO.getList(listContainerNodeRef, dataList);
+						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataList);
 						if(listNodeRef == null){
-							productDAO.createList(listContainerNodeRef, dataList);
+							entityListDAO.createList(listContainerNodeRef, dataList);
 						}
 					}
 				}
@@ -629,26 +672,25 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		// product report templates
 		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
+		QName [] productTypes = {BeCPGModel.TYPE_RAWMATERIAL, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT,
+				BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_PACKAGINGMATERIAL, BeCPGModel.TYPE_PACKAGINGKIT, BeCPGModel.TYPE_CONDSALESUNIT};
 		
-		for(SystemProductType systemProductType : SystemProductType.values()){
-
-			if(systemProductType.equals(SystemProductType.Unknown)){
-				continue;
-			}						
+		for(QName productType : productTypes){
 			
 			try{
-				String productTplName = TranslateHelper.getTranslatedPath(systemProductType.toString());
-				productReportTplService.createTpl(productReportTplsNodeRef, productTplName, PRODUCT_REPORT_PATH, systemProductType, true, true);
+				
+				ClassDefinition classDef = dictionaryService.getClass(productType);
+				reportTplService.createTpl(productReportTplsNodeRef, classDef.getTitle(), PRODUCT_REPORT_PATH, ReportType.Document, productType, true, true);
 			}
 			catch(Exception e){
-				logger.error("Failed to create product report tpl. SystemProductType: " + systemProductType, e);
+				logger.error("Failed to create product report tpl. SystemProductType: " + productType, e);
 			}
 												
 		}
 		
 		// compare report
 		try{
-			addReportTplInFolder(reportsNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS), COMPARE_PRODUCTS_REPORT_PATH, "");
+			addReportTplInFolder(reportsNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS), COMPARE_ENTITIES_REPORT_PATH, "");
 		}
 		catch(IOException e){
 			logger.error("Failed to create compare product report tpl.", e);

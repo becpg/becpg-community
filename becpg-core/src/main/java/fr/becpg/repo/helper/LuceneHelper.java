@@ -21,7 +21,7 @@ public class LuceneHelper {
 	public static String getCondEqualValue(QName property, String value, Operator operator){
 		
 		return String.format(PATH_QUERY_COND_PROP_EQUAL_VALUE, operator != null ? operator:"",  Repository.escapeQName(property), value);
-	}
+	}	
 	
 	public enum Operator{
 		AND,

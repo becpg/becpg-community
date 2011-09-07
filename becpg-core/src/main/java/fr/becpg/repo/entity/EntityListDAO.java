@@ -1,0 +1,68 @@
+package fr.becpg.repo.entity;
+
+import java.util.Set;
+
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
+
+import fr.becpg.repo.BeCPGDao;
+
+public interface EntityListDAO {
+
+	/**
+	 * Get the data list container.
+	 *
+	 * @param nodeRef
+	 * @return the list container
+	 */
+	public NodeRef getListContainer(NodeRef nodeRef);
+	
+	/**
+	 * Get the data list NodeRef.
+	 *
+	 * @param listContainerNodeRef the list container node ref
+	 * @param dataListQName : type of the data list
+	 * @return the list
+	 */
+	public NodeRef getList(NodeRef listContainerNodeRef, QName dataListQName);	
+		
+	/**
+	 * Create the data list container.
+	 *
+	 * @param dataNodeRef the data node ref
+	 * @return the node ref
+	 */
+	public NodeRef createListContainer(NodeRef dataNodeRef);
+	
+	/**
+	 * Create the data list NodeRef.
+	 *
+	 * @param listContainerNodeRef the list container node ref
+	 * @param dataListQName : type of the data list
+	 * @return the node ref
+	 */
+	public NodeRef createList(NodeRef listContainerNodeRef, QName dataListQName);
+	
+	/**
+	 * Get the link node of a data list that has the nodeRef stored in the propertyQName.
+	 *
+	 * @param listNodeRef the list node ref
+	 * @param propertyQName the property q name
+	 * @param nodeRef the node ref
+	 * @return the link
+	 */
+	public NodeRef getLink(NodeRef listNodeRef, QName propertyQName, NodeRef nodeRef);
+	
+	public Set<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef);
+	
+	public Set<QName> getExistingListsQName(NodeRef listContainerNodeRef);
+	
+	/**
+     * Copy data lists.
+     *
+     * @param sourceNodeRef the source node ref
+     * @param targetNodeRef the target node ref
+     * @param override the override
+     */
+    public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override);
+}

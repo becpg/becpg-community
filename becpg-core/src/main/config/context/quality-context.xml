@@ -4,31 +4,28 @@
 <beans>
     
     <!-- Quality -->
-    <bean id="dataListDAO" class="fr.becpg.repo.quality.impl.DataListsDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>    	
-    </bean>
     <bean id="controlPlanDAO" class="fr.becpg.repo.quality.impl.ControlPlanDAOImpl">
     	<property name="nodeService" ref="nodeService"/>
     	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="dataListDAO" ref="dataListDAO"/>
+    	<property name="entityListDAO" ref="entityListDAO"/>
     	<property name="associationService" ref="associationService"/>
     </bean>			
     <bean id="controlPointDAO" class="fr.becpg.repo.quality.impl.ControlPointDAOImpl">
     	<property name="nodeService" ref="nodeService"/>
     	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="dataListDAO" ref="dataListDAO"/>
+    	<property name="entityListDAO" ref="entityListDAO"/>
     	<property name="associationService" ref="associationService"/>
     </bean>
     <bean id="qualityControlDAO" class="fr.becpg.repo.quality.impl.QualityControlDAOImpl">
     	<property name="nodeService" ref="nodeService"/>
     	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="dataListDAO" ref="dataListDAO"/>
+    	<property name="entityListDAO" ref="entityListDAO"/>
     	<property name="associationService" ref="associationService"/>
     </bean>
     <bean id="workItemAnalysisDAO" class="fr.becpg.repo.quality.impl.WorkItemAnalysisDAOImpl">
     	<property name="nodeService" ref="nodeService"/>
     	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="dataListDAO" ref="dataListDAO"/>
+    	<property name="entityListDAO" ref="entityListDAO"/>
     	<property name="associationService" ref="associationService"/>
     </bean>
     <bean id="qualityControlService" class="fr.becpg.repo.quality.impl.QualityControlServiceImpl">

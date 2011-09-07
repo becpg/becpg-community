@@ -28,7 +28,8 @@ import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.product.report.ProductReportTplService;
+import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.template.ReportType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -66,7 +67,7 @@ public class ListValueServiceImpl implements ListValueService {
 	private NodeService nodeService;
 	
 	/** The product report service. */
-	private ProductReportTplService productReportTplService;
+	private ReportTplService reportTplService;
 				
 	/**
 	 * Sets the search service.
@@ -85,16 +86,11 @@ public class ListValueServiceImpl implements ListValueService {
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}	
-	
-	/**
-	 * Sets the product report service.
-	 *
-	 * @param productReportTplService the new product report service
-	 */
-	public void setProductReportTplService(ProductReportTplService productReportTplService) {
-		this.productReportTplService = productReportTplService;
+			
+	public void setReportTplService(ReportTplService reportTplService) {
+		this.reportTplService = reportTplService;
 	}
-		
+
 	/**
 	 * Get allowed values according to path, type and property (Look in every site).
 	 *
@@ -233,7 +229,7 @@ public class ListValueServiceImpl implements ListValueService {
 		
 		SearchParameters sp = new SearchParameters();
 		//sp.addLocale(repoConfig.getSystemLocale());
-		sp.addLocale(Locale.FRENCH);
+		//sp.addLocale(Locale.FRENCH);
         sp.addStore(RepoConsts.SPACES_STORE);
         sp.setLanguage(SearchService.LANGUAGE_LUCENE);
         sp.setQuery(queryPath);	        
@@ -294,7 +290,7 @@ public class ListValueServiceImpl implements ListValueService {
 		
 		SearchParameters sp = new SearchParameters();
 		//sp.addLocale(repoConfig.getSystemLocale());
-		sp.addLocale(Locale.FRENCH);
+		//sp.addLocale(Locale.FRENCH);
         sp.addStore(RepoConsts.SPACES_STORE);
         sp.setLanguage(SearchService.LANGUAGE_LUCENE);
         sp.setQuery(queryPath);	             
@@ -367,7 +363,7 @@ public class ListValueServiceImpl implements ListValueService {
 		
 		SearchParameters sp = new SearchParameters();
 		//sp.addLocale(repoConfig.getSystemLocale());
-		sp.addLocale(Locale.FRENCH);
+		//sp.addLocale(Locale.FRENCH);
         sp.addStore(RepoConsts.SPACES_STORE);
         sp.setLanguage(SearchService.LANGUAGE_LUCENE);
         sp.setQuery(queryPath);	        
@@ -471,12 +467,12 @@ public class ListValueServiceImpl implements ListValueService {
 	 * @return the map
 	 */
 	@Override
-	public Map<String, String> suggestProductReportTemplates(SystemProductType systemProductType, String query) {
+	public Map<String, String> suggestProductReportTemplates(QName nodeType, String query) {
 		
 		Map<String, String> suggestions = new HashMap<String, String>();
 		
 		query = prepareQuery(query);
-		List<NodeRef> tplsNodeRef = productReportTplService.getUserReportTemplates(systemProductType, query);
+		List<NodeRef> tplsNodeRef = reportTplService.suggestUserReportTemplates(ReportType.Document, nodeType, query);
 		
 		for(NodeRef tplNodeRef : tplsNodeRef){
 			String name = (String)nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME);

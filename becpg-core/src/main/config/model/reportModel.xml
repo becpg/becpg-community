@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="rep:repmodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<!-- Optional meta-data about the model -->
+	<description>Report Model</description>
+	<author>QUERE</author>
+	<version>1.0</version>
+	<!-- Imports are required to allow references to definitions in other models -->
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		
+	</imports>
+	
+	<!-- Introduction of new namespaces defined by this model -->
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
+	</namespaces>
+	
+	<constraints>
+		<constraint name="rep:reportTplTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Document</value>
+					<value>ExportSearch</value>					
+				</list>
+			</parameter>
+		</constraint>		
+		<constraint name="rep:reportTplFormats" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>PDF</value>
+					<value>XLS</value>
+					<value>DOC</value>
+				</list>
+			</parameter>
+		</constraint>					
+	</constraints>
+
+	<types>
+		
+		<!-- type used for rptdesign files -->
+		<type name="rep:reportTpl">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="rep:reportTplType">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<multiple>true</multiple>
+					<constraints>
+						<constraint ref="rep:reportTplTypes" />
+					</constraints>
+				</property>
+				<property name="rep:reportTplClassName">
+					<type>d:qname</type>					
+				</property>
+				<property name="rep:reportTplIsSystem">
+					<type>d:boolean</type>
+					<default>true</default>
+				</property>
+				<property name="rep:reportTplIsDefault">
+					<type>d:boolean</type>
+					<default>true</default>
+				</property>
+				<property name="rep:reportTplFormat">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<multiple>false</multiple>
+					<default>PDF</default>
+					<constraints>
+						<constraint ref="rep:reportTplFormats" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
+	</types>
+	
+	<aspects>
+		
+		<!-- applied to a node when a report is generated -->
+		<aspect name="rep:reportNodeAspect">
+			<properties>
+				<property name="rep:reportNodeGenerated">
+					<type>d:datetime</type>					
+				</property>
+			</properties>
+		</aspect>
+		
+		<!-- applied to a node when a user can select reports to generate -->
+		<aspect name="rep:reportTplsAspect">
+			<associations>
+				<association name="rep:reportTpls">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>rep:reportTpl</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		
+	</aspects>
+</model>

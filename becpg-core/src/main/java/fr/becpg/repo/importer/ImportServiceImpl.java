@@ -134,9 +134,9 @@ public class ImportServiceImpl implements ImportService {
 	/** The import product visitor. */
 	private ImportVisitor importProductVisitor;
 	
-	private ImportVisitor importProductListAspectVisitor;
+	private ImportVisitor importEntityListAspectVisitor;
 	
-	private ImportVisitor importProductListItemVisitor;
+	private ImportVisitor importEntityListItemVisitor;
 	
 	/** The dictionary service. */
 	private DictionaryService dictionaryService;	
@@ -213,12 +213,12 @@ public class ImportServiceImpl implements ImportService {
 		this.importProductVisitor = importProductVisitor;
 	}
 	
-	public void setImportProductListItemVisitor(ImportVisitor importProductListItemVisitor) {
-		this.importProductListItemVisitor = importProductListItemVisitor;
+	public void setImportEntityListItemVisitor(ImportVisitor importEntityListItemVisitor) {
+		this.importEntityListItemVisitor = importEntityListItemVisitor;
 	}
 
-	public void setImportProductListAspectVisitor(ImportVisitor importProductListAspectVisitor) {
-		this.importProductListAspectVisitor = importProductListAspectVisitor;
+	public void setImportEntityListAspectVisitor(ImportVisitor importEntityListAspectVisitor) {
+		this.importEntityListAspectVisitor = importEntityListAspectVisitor;
 	}
 	
 	/**
@@ -387,22 +387,22 @@ public class ImportServiceImpl implements ImportService {
 				if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)){
 					importContext.setImportType(ImportType.Product);
 				}
-				else if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCTLIST_ITEM)){
-					importContext.setImportType(ImportType.ProductListItem);
+				else if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)){
+					importContext.setImportType(ImportType.EntityListItem);
 				}
 				else{
 					
-					// look for productListsAspect
-					boolean productListsAspect = false;
+					// look for entityListsAspect
+					boolean entityListsAspect = false;
 					for(AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()){
-						if(aspectDef.getName().equals(BeCPGModel.ASPECT_PRODUCTLISTS)){						
-							productListsAspect = true;
+						if(aspectDef.getName().equals(BeCPGModel.ASPECT_ENTITYLISTS)){						
+							entityListsAspect = true;
 							break;
 						}
 					}
 					
-					if(productListsAspect){
-						importContext.setImportType(ImportType.ProductListAspect);
+					if(entityListsAspect){
+						importContext.setImportType(ImportType.EntityListAspect);
 					}					
 					else{
 						importContext.setImportType(ImportType.Node);
@@ -549,11 +549,11 @@ public class ImportServiceImpl implements ImportService {
 			   		 if(ImportType.Product.equals(importContext.getImportType())){
 			   			 importProductVisitor.importNode(importContext, values);        			
 			   		 }
-			   		 else if(ImportType.ProductListAspect.equals(importContext.getImportType())){
-			   			 importProductListAspectVisitor.importNode(importContext, values);
+			   		 else if(ImportType.EntityListAspect.equals(importContext.getImportType())){
+			   			 importEntityListAspectVisitor.importNode(importContext, values);
 			   		 }
-			   		 else if(ImportType.ProductListItem.equals(importContext.getImportType())){
-			   			 importProductListItemVisitor.importNode(importContext, values);
+			   		 else if(ImportType.EntityListItem.equals(importContext.getImportType())){
+			   			 importEntityListItemVisitor.importNode(importContext, values);
 			   		 }
 			   		 else{
 			   			 importNodeVisitor.importNode(importContext, values);

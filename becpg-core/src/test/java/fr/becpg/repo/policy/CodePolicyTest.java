@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.policy.AutoNumService;
+import fr.becpg.repo.entity.AutoNumService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -111,7 +111,7 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 				
 				// delete autonum value
-				autoNumService.deleteAutoNumValue(BeCPGModel.TYPE_SUPPLIER.getLocalName(), BeCPGModel.PROP_CODE.getLocalName());
+				autoNumService.deleteAutoNumValue(BeCPGModel.TYPE_SUPPLIER, BeCPGModel.PROP_CODE);
 				
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				String name = "Supplier 1";

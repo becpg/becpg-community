@@ -145,8 +145,8 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		}
 		else if(sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)){			
 			
-			SystemProductType systemProductType = SystemProductType.valueOf(productType);			
-			suggestions = listValueService.suggestProductReportTemplates(systemProductType, query);
+			QName productTypeQName = QName.createQName(productType, namespaceService);
+			suggestions = listValueService.suggestProductReportTemplates(productTypeQName, query);
 		}
 		else{
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'sourcetype'. sourcetype = " + sourceType);

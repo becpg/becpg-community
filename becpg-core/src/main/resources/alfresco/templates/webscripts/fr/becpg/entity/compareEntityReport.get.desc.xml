@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>Compare entity</shortname>
+	<description>Compare entity service </description>	
+	<url>/becpg/entity/compare/{id}</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readwrite" buffersize="0">required</transaction>
+</webscript>

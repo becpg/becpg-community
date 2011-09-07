@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>Migrate the repository</shortname>
+	<description>Migrate the repository</description>	
+	<url>/becpg/migrate/{action}</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readwrite" buffersize="0">required</transaction>
+</webscript>

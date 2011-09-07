@@ -47,14 +47,14 @@
 				</property>
 			</properties>
 			<mandatory-aspects>
-				<aspect>bcpg:dataListsAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
 		<!-- ACL stores the individual permissions assigned to each recipient -->
 
 		<type name="sec:aclEntry">
-			<parent>dl:dataListItem</parent>
+			<parent>bcpg:entityListItem</parent>
 			<properties>
 				<property name="sec:aclPermission">
 					<type>d:text</type>

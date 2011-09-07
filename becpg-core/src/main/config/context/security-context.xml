@@ -6,7 +6,7 @@
       <bean id="aclGroupDao" class="fr.becpg.repo.security.impl.ACLGroupDAOImpl">
     	<property name="nodeService" ref="nodeService"/>
     	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="dataListDAO" ref="dataListDAO"/>
+    	<property name="entityListDAO" ref="entityListDAO"/>
     	<property name="associationService" ref="associationService"/>
     </bean>
     <bean id="securityService" class="fr.becpg.repo.security.impl.SecurityServiceImpl">
