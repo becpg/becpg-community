@@ -3,13 +3,13 @@
  */
 
 /* beCPG : Get the export search templates */
-function getExportSearchTpls()
+function getExportSearchTpls(datatype)
 {
    var reportTpls = [];
 
    try
    {            
-	   var uri = "/becpg/report/exportsearch/templates";
+	   var uri = "/becpg/report/exportsearch/templates/" + datatype;
 		var connector = remote.connect("alfresco");
 		var result = connector.get(uri);
       if (result.status.code == status.STATUS_OK && result != "{}")
@@ -91,8 +91,20 @@ function main()
    // Advanced search forms based json query
    model.searchQuery = (page.url.args["q"] != null) ? page.url.args["q"] : "";
 
+	// datatype
+	var datatype;
+	if (model.searchQuery !== null && model.searchQuery.length !== 0)
+	{
+     var formJson = jsonUtils.toObject(model.searchQuery);
+           
+     if(formJson.length !== 0)
+     {
+   	  datatype = formJson.datatype;
+     }
+	}	
+
 	// Export Search Tpls
-	model.exportSearchTpls = getExportSearchTpls();
+	model.exportSearchTpls = getExportSearchTpls(datatype);
 }
 
 main();

@@ -335,7 +335,8 @@
             {
                me.exportSearch(
                {
-                  reportTpl: menuItem.value
+                  reportTpl: menuItem.value,
+                  reportFileName: menuItem.srcElement.attributes["fileName"].value      
                });
             }
          });
@@ -888,7 +889,7 @@
          }
          
          // call webscript
-         var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + args.reportTpl + "/" + args.reportTpl + ".xls";			
+         var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + args.reportTpl.replace("://", "/") + "/" + args.reportFileName;
          
          // add search data webscript arguments
          url += "?term=" + encodeURIComponent(searchTerm);

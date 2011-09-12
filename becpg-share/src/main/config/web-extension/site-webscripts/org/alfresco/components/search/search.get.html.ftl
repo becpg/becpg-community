@@ -60,7 +60,7 @@
          <select id="${el}-export-menu" >
             <option value="-"></option>
             <#list exportSearchTpls as exportSearchTpl>
-            <option value="${exportSearchTpl.name!""}">${exportSearchTpl.title}</option>
+            <option value="${exportSearchTpl.nodeRef}" fileName="${exportSearchTpl.name}.${exportSearchTpl.format?lower_case}">${exportSearchTpl.title}</option>
             </#list>
          </select>
       </div>

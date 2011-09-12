@@ -1312,6 +1312,7 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="rep:reportTpls" />
+					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1376,7 +1377,13 @@
 							<control-param name="ds">becpg/autocomplete/productreport/reports/RawMaterial
 							</control-param>
 						</control>
-					</field>									
+					</field>					
+					<field id="bcpg:productMicrobioCriteria" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
+					</field>				
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -1425,6 +1432,7 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="rep:reportTpls" />
+					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1481,6 +1489,12 @@
 							<control-param name="ds">becpg/autocomplete/productreport/reports/RawMaterial
 							</control-param>
 						</control>
+					</field>				
+					<field id="bcpg:productMicrobioCriteria" set="mainInfo">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
 					</field>							
 					
 					<!-- categories -->
@@ -1520,13 +1534,14 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
-					<show id="rep:reportTpls" />
+					<show id="rep:reportTpls" />					
 
 					<!-- formulation -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
+					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1598,7 +1613,13 @@
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
 							<control-param name="style">width:200px</control-param>
 						</control>	
-					</field>					
+					</field>				
+					<field id="bcpg:productMicrobioCriteria" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
+					</field>		
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -1643,13 +1664,14 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
-					<show id="rep:reportTpls" />
+					<show id="rep:reportTpls" />					
 
 					<!-- formulation -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
+					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1714,7 +1736,13 @@
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
 							<control-param name="style">width:200px</control-param>
 						</control>	
-					</field>					
+					</field>			
+					<field id="bcpg:productMicrobioCriteria" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
+					</field>				
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -1747,7 +1775,11 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
-
+					
+					<!-- entityTplAspect -->
+					<show id="bcpg:entityTplClassName" />
+					<show id="bcpg:entityTplEnabled" />
+					
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
@@ -1785,6 +1817,10 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					
+					<!-- entityTplAspect -->
+					<show id="bcpg:entityTplClassName" />
+					<show id="bcpg:entityTplEnabled" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1817,6 +1853,54 @@
 					</field>
 				</appearance>
 			</form>
+		</forms>
+	</config>
+	
+	<!-- bcpg:entityFolder type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:entity">
+		<forms>
+			<!-- Default form configuration for the cm:folder type -->
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					
+					<!-- entityTplAspect -->
+					<show id="bcpg:entityTplClassName" />
+					<show id="bcpg:entityTplEnabled" />
+					
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:title">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="cm:taggable">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			
 		</forms>
 	</config>
 
@@ -2263,7 +2347,7 @@
 		</forms>
 	</config>
 	<!-- bcpg:compoList type (existing nodes) -->
-	<config evaluator="node-type" condition="bcpg:compoList">
+	<config evaluator="node-type" condition="bcpg:packagingList">
 		<forms>
 			<!-- Data List pop-up edit form -->
 			<form>
