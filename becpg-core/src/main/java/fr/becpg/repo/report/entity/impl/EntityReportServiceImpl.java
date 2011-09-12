@@ -69,16 +69,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 
 	/** The Constant VALUE_NULL. */
 	private static final String VALUE_NULL = "";
-	
-	/** The Constant QUERY_PRODUCTLIST_ITEMS_OUT_OF_DATE. */
-	private static final String QUERY_PRODUCTLIST_ITEMS_OUT_OF_DATE = "(%s) AND +@cm\\:modified:[%s TO MAX]";
-	
-	/** The Constant QUERY_OPERATOR_OR. */
-	private static final String QUERY_OPERATOR_OR = " OR ";
-	
-	/** The Constant QUERY_PARENT. */
-	private static final String QUERY_PARENT = " PARENT:\"%s\"";
-	
+		
 	private static final String KEY_XML_INPUTSTREAM = "org.eclipse.datatools.enablement.oda.xml.inputStream";
 	
 	private static final String PARAM_VALUE_HIDE_CHAPTER_SUFFIX = "HideChapter";
@@ -343,7 +334,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 	@Override
 	public boolean isReportUpToDate(NodeRef nodeRef) {
 					
-		Date reportModified = (Date)nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_NODE_GENERATED);
+		Date reportModified = (Date)nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 		
 		// report not generated
 		if(reportModified == null){
@@ -357,65 +348,6 @@ public class EntityReportServiceImpl implements EntityReportService{
 		if(modified.after(reportModified)){			
 			logger.debug("node has been modified");
 			return false;
-		}
-		
-		// check data lists
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
-		
-		if(listContainerNodeRef != null){
-			
-			String queryParentsSearch = "";
-			
-			for(FileInfo fileInfo : fileFolderService.listFolders(listContainerNodeRef)){
-				
-				NodeRef listNodeRef = fileInfo.getNodeRef();
-				
-				// check list folder modified date
-				Date dataListModified = (Date)nodeService.getProperty(listNodeRef, ContentModel.PROP_MODIFIED);
-				logger.debug("list modified: " + ISO8601DateFormat.format(dataListModified) + " - reportModified: " + ISO8601DateFormat.format(reportModified));
-				if(dataListModified.after(reportModified)){
-					logger.debug("list folder has been modified");
-					return false;
-				}
-				
-				if(!queryParentsSearch.isEmpty()){
-					queryParentsSearch += QUERY_OPERATOR_OR;
-				}
-				queryParentsSearch += String.format(QUERY_PARENT, listNodeRef);						
-			}		
-			
-			// check list children modified date
-			if(!queryParentsSearch.isEmpty()){
-				
-				String querySearch = String.format(QUERY_PRODUCTLIST_ITEMS_OUT_OF_DATE, queryParentsSearch, ISO8601DateFormat.format(reportModified));
-				
-				SearchParameters sp = new SearchParameters();
-		        sp.addStore(RepoConsts.SPACES_STORE);
-		        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-		        sp.setQuery(querySearch);	        
-		        sp.setLimitBy(LimitBy.FINAL_SIZE);
-		        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);        
-		        sp.setMaxItems(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		        
-		        ResultSet resultSet = null;
-		        
-		        try{
-		        	
-		        	logger.debug("queryPath: " + querySearch);	        		
-			        resultSet = searchService.query(sp);		        
-			        logger.debug("resultSet.length() : " + resultSet.length());
-			        
-			        if (resultSet.length() > 0){
-			        			        	
-			        	logger.debug("list children has been modified");	        	
-			        	return false;
-			        }		        		        
-		        }
-		        finally{
-		        	if(resultSet != null)
-		        		resultSet.close();
-		        }			
-			}
 		}		
 		
 		return true;
@@ -492,7 +424,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 		
 		// calculate the visible datalists
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
-		Set<QName> existingLists = entityListDAO.getExistingListsQName(listContainerNodeRef);		
+		List<QName> existingLists = entityListDAO.getExistingListsQName(listContainerNodeRef);		
 		
 		// generate reports
 		for(NodeRef tplNodeRef : tplsNodeRef){        			
@@ -526,7 +458,6 @@ public class EntityReportServiceImpl implements EntityReportService{
 					task.setRenderOption(options);
 					
 					// xml data
-					logger.trace("add Xml data: " + nodeElt.asXML());
 					ByteArrayInputStream bais = new ByteArrayInputStream( nodeElt.asXML().getBytes());
 					task.getAppContext().put(KEY_XML_INPUTSTREAM, bais);
 					
@@ -564,7 +495,10 @@ public class EntityReportServiceImpl implements EntityReportService{
 			catch(Exception e){
 				logger.error("Failed to execute report: ",  e);
 			}						
-		}        			
+		}
+		
+		// set reportNodeGenerated property to now
+        nodeService.setProperty(nodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, new Date());
 	}
 	
 	

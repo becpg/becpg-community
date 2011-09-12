@@ -5,6 +5,7 @@ package fr.becpg.repo.web.scripts.report;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
@@ -43,6 +44,7 @@ import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
@@ -55,6 +57,9 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.report.search.ExportSearchService;
+import fr.becpg.repo.report.template.ReportFormat;
+import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.template.ReportType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -70,8 +75,8 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 	/** The app ctx. */
 	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
 	
-	/** The REPOR t_ name. */
-	private static String REPORT_NAME = "ExportProducts";
+	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/ExportSearch/Product/ExportSearch.rptdesign";
+	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/ExportSearch/Product/ExportSearchQuery.xml";
 	
 	/** The PAT h_ testfolder. */
 	private static String PATH_TESTFOLDER = "TestFolder";
@@ -90,9 +95,6 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 	
 	/** The file folder service. */
 	private FileFolderService fileFolderService;
-	
-	/** The search service. */
-	private SearchService searchService;
 
     /** The authentication component. */
     private AuthenticationComponent authenticationComponent;
@@ -109,14 +111,15 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
     /** The repository. */
     private Repository repository;
     
+    private ReportTplService reportTplService;
+    
     /** The content service. */
     private ContentService contentService;
     
     /** The mimetype service. */
     private MimetypeService mimetypeService;
     
-    /** The export search service. */
-    private ExportSearchService exportSearchService;
+    private RepoService repoService;
     	
 	/** The folder node ref. */
 	private NodeRef folderNodeRef;
@@ -169,8 +172,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 		super.setUp();
 				
 		nodeService = (NodeService)appCtx.getBean("NodeService");
-		fileFolderService = (FileFolderService)appCtx.getBean("FileFolderService");
-		searchService = (SearchService)appCtx.getBean("SearchService");		
+		fileFolderService = (FileFolderService)appCtx.getBean("FileFolderService");		
 		authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
 		productDAO = (ProductDAO)appCtx.getBean("productDAO");
 		productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
@@ -178,7 +180,8 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 		repository = (Repository)appCtx.getBean("repositoryHelper");
 		contentService = (ContentService)appCtx.getBean("contentService");
 		mimetypeService = (MimetypeService)appCtx.getBean("mimetypeService");
-		exportSearchService = (ExportSearchService)appCtx.getBean("exportSearchService");
+		reportTplService = (ReportTplService)appCtx.getBean("reportTplService");
+		repoService = (RepoService)appCtx.getBean("repoService");
 		
 	    // Authenticate as user
 	    this.authenticationComponent.setCurrentUser(USER_ADMIN);
@@ -328,88 +331,37 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 
 	/**
 	 * Inits the tests.
+	 * @throws IOException 
 	 */
-	private void initTests(){
+	private void initTests() throws IOException{
 		
 		logger.debug("look for report template");
 	   	
 		// system folder
-		NodeRef systemFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));    	   		
+		NodeRef systemFolder = repoService.createFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 	   	assertNotNull("Check system folder", systemFolder);
 	   	
 	   	// reports folder
-	   	NodeRef reportsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));    	
+	   	NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));    	
 	   	assertNotNull("Check reports folder", reportsFolder);
 	   	
-	   	// export search report folder
-	   	NodeRef exportSearchReportFolder = nodeService.getChildByName(reportsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH));    	
-		if(exportSearchReportFolder != null){
-	   		nodeService.deleteNode(exportSearchReportFolder);
-	   	}	  
+	   	// export search report
+		NodeRef exportSearchNodeRef = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_REPORTS_EXPORT_SEARCH, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH));
+		NodeRef exportSearchProductsNodeRef = repoService.createFolderByPath(exportSearchNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS));
 		
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-    	properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH));	    		    	    	
-    	exportSearchReportFolder = nodeService.createNode(reportsFolder, ContentModel.ASSOC_CONTAINS, 
-    											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, RepoConsts.PATH_REPORTS_EXPORT_SEARCH), 
-    											ContentModel.TYPE_FOLDER, properties).getChildRef();
-    	    		
-	   	assertNotNull("Check export search folder", exportSearchReportFolder);
-	   	
-	   	// export product search	   		   
-	   	exportProductReportTpl = fileFolderService.create(exportSearchReportFolder, REPORT_NAME, ContentModel.TYPE_FOLDER).getNodeRef();	   	
-    	assertNotNull("Check export product search folder", exportProductReportTpl);
-   		
-	   	//create report template folder
-	   	logger.debug("create report");	   	
-   		
-    	//create birt file
-    	String birtDir = "/src/main/resources/beCPG/birt/ExportSearch/Product/";
-		String [] birtFiles = {"ExportSearch.rptdesign", "ExportSearchQuery.xml"};			
+		exportProductReportTpl = reportTplService.createTplRptDesign(exportSearchProductsNodeRef, 
+											TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS), 
+											EXPORT_PRODUCTS_REPORT_RPTFILE_PATH, 
+											ReportType.ExportSearch, 	
+											ReportFormat.XLS,
+											BeCPGModel.TYPE_PRODUCT, 
+											false, 
+											true, 
+											true);
 		
-		for(String birtFile : birtFiles){			
-			
-			logger.debug("create birt file " + birtFile);
-			
-			properties.clear();
-			properties.put(ContentModel.PROP_NAME, birtFile);
-	    	NodeRef fileNodeRef = nodeService.createNode(exportProductReportTpl, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
-	    	
-	    	ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
-	    	logger.debug("Load birt file " + System.getProperty("user.dir" )  + birtDir + birtFile);
-	    	FileInputStream in = null;
-	    	
-	    	try{
-	    		in = new FileInputStream(System.getProperty("user.dir" )  + birtDir + birtFile);	    		
-	    	}
-	    	catch(FileNotFoundException e){
-	    		logger.error("Failed to get user.dir", e);
-	    	}
-	    	
-	    	assertNotNull("check input stream", in);
-	    	
-	    	String mimetype = mimetypeService.guessMimetype(birtFile);	    	
-	    	String encoding = "UTF-8";
-	    	
-	    	if(!birtFile.endsWith(".xml")){
-				ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-		        Charset charset = charsetFinder.getCharset(in, mimetype);
-		        encoding = charset.name();		        		        
-	    	}	    		        	     
-	    	
-	    	writer.setMimetype(mimetype);
-	    	writer.setEncoding(encoding);
-	    	
-	    	logger.debug("mimetype : " + mimetype);
-	    	logger.debug("encoding : " + encoding);
-	    	
-	    	writer.putContent(in);
-	    	
-	    	//check
-	    	ContentReader reader = contentService.getReader(fileNodeRef, ContentModel.PROP_CONTENT);
-			InputStream inputStream = reader.getContentInputStream();
-	    	
-	    	logger.debug("file writen.");		    	
-		}			   
+		reportTplService.createTplRessource(exportSearchProductsNodeRef, 												
+											EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, 												
+											false);						   		  
 	}
 	
 	/**
@@ -560,7 +512,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 		// search on date range
 		try{
 						
-			String url = "/becpg/report/exportsearch/" + REPORT_NAME + "/Excel.xls?repo=true&term=&query={\"prop_cm_name\"%3A\"\"%2C\"prop_bcpg_legalName\"%3A\"\"%2C\"prop_bcpg_productHierarchy1\"%3A\"\"%2C\"prop_bcpg_productHierarchy2\"%3A\"\"%2C\"prop_bcpg_productState\"%3A\"\"%2C\"prop_bcpg_productCode\"%3A\"\"%2C\"prop_bcpg_eanCode\"%3A\"\"%2C\"assoc_bcpg_supplierAssoc\"%3A\"\"%2C\"assoc_bcpg_supplierAssoc_added\"%3A\"\"%2C\"assoc_bcpg_supplierAssoc_removed\"%3A\"\"%2C\"prop_cm_modified-date-range\"%3A\"2011-04-17T00%3A00%3A00%2B02%3A00|2011-05-23T00%3A00%3A00%2B02%3A00\"%2C\"prop_cm_modifier\"%3A\"\"%2C\"assoc_bcpg_ingListIng\"%3A\"\"%2C\"assoc_bcpg_ingListIng_added\"%3A\"\"%2C\"assoc_bcpg_ingListIng_removed\"%3A\"\"%2C\"assoc_bcpg_ingListGeoOrigin\"%3A\"\"%2C\"assoc_bcpg_ingListGeoOrigin_added\"%3A\"\"%2C\"assoc_bcpg_ingListGeoOrigin_removed\"%3A\"\"%2C\"assoc_bcpg_ingListBioOrigin\"%3A\"\"%2C\"assoc_bcpg_ingListBioOrigin_added\"%3A\"\"%2C\"assoc_bcpg_ingListBioOrigin_removed\"%3A\"\"%2C\"datatype\"%3A\"bcpg%3Aproduct\"}";
+			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/") + "/Excel.xls?repo=true&term=&query={\"prop_cm_name\"%3A\"\"%2C\"prop_bcpg_legalName\"%3A\"\"%2C\"prop_bcpg_productHierarchy1\"%3A\"\"%2C\"prop_bcpg_productHierarchy2\"%3A\"\"%2C\"prop_bcpg_productState\"%3A\"\"%2C\"prop_bcpg_productCode\"%3A\"\"%2C\"prop_bcpg_eanCode\"%3A\"\"%2C\"assoc_bcpg_supplierAssoc\"%3A\"\"%2C\"assoc_bcpg_supplierAssoc_added\"%3A\"\"%2C\"assoc_bcpg_supplierAssoc_removed\"%3A\"\"%2C\"prop_cm_modified-date-range\"%3A\"2011-04-17T00%3A00%3A00%2B02%3A00|2011-05-23T00%3A00%3A00%2B02%3A00\"%2C\"prop_cm_modifier\"%3A\"\"%2C\"assoc_bcpg_ingListIng\"%3A\"\"%2C\"assoc_bcpg_ingListIng_added\"%3A\"\"%2C\"assoc_bcpg_ingListIng_removed\"%3A\"\"%2C\"assoc_bcpg_ingListGeoOrigin\"%3A\"\"%2C\"assoc_bcpg_ingListGeoOrigin_added\"%3A\"\"%2C\"assoc_bcpg_ingListGeoOrigin_removed\"%3A\"\"%2C\"assoc_bcpg_ingListBioOrigin\"%3A\"\"%2C\"assoc_bcpg_ingListBioOrigin_added\"%3A\"\"%2C\"assoc_bcpg_ingListBioOrigin_removed\"%3A\"\"%2C\"datatype\"%3A\"bcpg%3Aproduct\"}";
 							
 			Response response = sendRequest(new GetRequest(url), 200, "admin");
 			
@@ -573,7 +525,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 		// search on cm:name
 		try{
 			
-			String url = "/becpg/report/exportsearch/" + REPORT_NAME + "/Excel.xls?repo=true&term=&query={\"prop_cm_name\"%3A\"FP\"%2C\"prop_cm_title\"%3A\"\"%2C\"prop_cm_description\"%3A\"\"%2C\"prop_mimetype\"%3A\"\"%2C\"prop_cm_modified-date-range\"%3A\"\"%2C\"prop_cm_modifier\"%3A\"\"%2C\"datatype\"%3A\"cm%3Acontent\"}";				
+			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/") + "/Excel.xls?repo=true&term=&query={\"prop_cm_name\"%3A\"FP\"%2C\"prop_cm_title\"%3A\"\"%2C\"prop_cm_description\"%3A\"\"%2C\"prop_mimetype\"%3A\"\"%2C\"prop_cm_modified-date-range\"%3A\"\"%2C\"prop_cm_modifier\"%3A\"\"%2C\"datatype\"%3A\"cm%3Acontent\"}";				
 							
 			Response response = sendRequest(new GetRequest(url), 200, "admin");
 			
@@ -594,10 +546,11 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				@Override
 				public NodeRef execute() throws Throwable {
 										
-				//Create comparison product report
+				//Create product report
 				initTests();
 							
-				List<NodeRef> reportTpls = exportSearchService.getReportTpls();
+				//List<NodeRef> reportTpls = exportSearchService.getReportTpls();
+				List<NodeRef> reportTpls = reportTplService.suggestUserReportTemplates(ReportType.ExportSearch, BeCPGModel.TYPE_PRODUCT, "*");
 				
 				for(NodeRef n : reportTpls){
 					logger.debug("report name: " + nodeService.getProperty(n, ContentModel.PROP_NAME));
@@ -612,7 +565,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 		
 		try{
 		
-			String url = "/becpg/report/exportsearch/templates";
+			String url = "/becpg/report/exportsearch/templates/bcpg:product";
 			
 			Response response = sendRequest(new GetRequest(url), 200, "admin");
 			

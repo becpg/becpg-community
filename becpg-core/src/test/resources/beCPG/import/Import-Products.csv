@@ -34,10 +34,10 @@
 "VALUES";1020;"Thon 80x20x8 ";;"thon";"Sea food";"Fish";"ToValidate";;;;;"08/06/2011";"utilisateur.r&d";;"admin";13,14;0;9,5;0;24,3;1;0,9;"/home/querephi/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi thon/produit.jpg";
 ;;;;;;;;;;;;;;;;;;;;;;;;
 "PATH";"/Temp/Products";;;;;;;;;;;;;;;;;;;;;;;
-"TYPE";"bcpg:productTemplate";;;;;;;;;;;;;;;;;;;;;;;
+"TYPE";"bcpg:entity";;;;;;;;;;;;;;;;;;;;;;;
 "MAPPING";"Products";;;;;;;;;;;;;;;;;;;;;;;
-"COLUMNS";"cm:name";"coutMP";"coutMPPrev";"coutEmb";"nutProteines";"nutLipides";"nutGlucides";;;;;;;;;;;;;;;;;
-"VALUES";"productTpl";1;2;3,1;2,5;3,6;5,6;;;;;;;;;;;;;;;;;
+"COLUMNS";"cm:name";"bcpg:entityTplClassName";"bcpg:entityTplEnabled";"coutMP";"coutMPPrev";"coutEmb";"nutProteines";"nutLipides";"nutGlucides";;;;;;;;;;;;;;;
+"VALUES";"productTpl";"bcpg:rawMaterial";"true";1;2;3,1;2,5;3,6;5,6;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
 "#";"we simulate the creation in a site";;;;;;;;;;;;;;;;;;;;;;;
 "PATH";"/st:sites/folder";;;;;;;;;;;;;;;;;;;;;;;

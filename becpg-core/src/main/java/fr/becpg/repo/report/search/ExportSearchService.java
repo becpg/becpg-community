@@ -7,6 +7,9 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
+
+import fr.becpg.repo.report.template.ReportFormat;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -17,19 +20,13 @@ import org.alfresco.service.cmr.repository.NodeRef;
 public interface ExportSearchService {
 
 	/**
-	 * Gets the report tpls.
-	 *
-	 * @return the report tpls
-	 */
-	public List<NodeRef> getReportTpls();
-	
-	/**
 	 * Gets the report.
 	 *
 	 * @param reportName the report name
 	 * @param searchResults the search result
-	 * @param outputStream the output stream
+	 * @param outputStream the output stream to update (out value, updated)
+	 * @param ReportFormat the format of the report
 	 * @return the report
 	 */
-	public void getReport(String reportName, List<NodeRef> searchResults, OutputStream outputStream);	
+	public void getReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream);	
 }

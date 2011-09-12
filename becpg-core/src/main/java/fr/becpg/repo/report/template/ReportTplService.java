@@ -19,6 +19,24 @@ public interface ReportTplService {
 	public List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType);
 	
 	/**
+	 * Gets the system report template.
+	 * @param reportType
+	 * @param nodeType
+	 * @param tplName
+	 * @return
+	 */
+	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName);
+	
+	/**
+	 * Get the user template by name
+	 * @param reportType
+	 * @param nodeType
+	 * @param tplName
+	 * @return
+	 */
+	public NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName);
+	
+	/**
 	 * Gets the user report templates.
 	 *
 	 * @param nodeType the node type
@@ -28,17 +46,29 @@ public interface ReportTplService {
 	public List<NodeRef> suggestUserReportTemplates(ReportType reportType, QName nodeType, String tplName);
 	
 	/**
-	 * Create a report template
+	 * Create the rptdesign node for the report
 	 * @param parentNodeRef
 	 * @param tplName
 	 * @param tplFilePath
+	 * @param reportType
+	 * @param reportFormat
 	 * @param nodeType
 	 * @param isSystemTpl
 	 * @param isDefaultTpl
+	 * @param overrideTpl
 	 * @return
 	 * @throws IOException
 	 */
-	public NodeRef createTpl(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, QName nodeType, boolean isSystemTpl, boolean isDefaultTpl) throws IOException;
+	public NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, ReportFormat reportFormat, QName nodeType, boolean isSystemTpl, boolean isDefaultTpl, boolean overrideTpl) throws IOException;
+	
+	/**
+	 * Create a ressource for the report
+	 * @param parentNodeRef
+	 * @param xmlFilePath
+	 * @param overrideRessource
+	 * @throws IOException
+	 */
+	public void createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException;
 	
 	/**
 	 * Check the default reports (return one default tpl)

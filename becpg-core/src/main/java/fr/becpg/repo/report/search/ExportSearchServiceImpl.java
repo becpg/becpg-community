@@ -62,6 +62,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.entity.impl.EntityReportServiceImpl;
 import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.template.ReportType;
 
 /**
  * Class used to render the result of a search in a report
@@ -76,9 +77,6 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	
 	/** The Constant QUERY_XPATH_DECIMAL_PATTERN. */
 	protected static final String QUERY_XPATH_DECIMAL_PATTERN = "settings/setting[@id='decimalPattern']/@value";
-	
-	/** The Constant FILE_RPTDESIGN. */
-	private static final String FILE_RPTDESIGN = "ExportSearch.rptdesign";
 	
 	/** The Constant FILE_QUERY. */
 	private static final String FILE_QUERY = "ExportSearchQuery.xml";
@@ -254,42 +252,12 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
 	}
-
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.report.ExportSearchService#getReportTpls()
-	 */
-	@Override
-	public List<NodeRef> getReportTpls() {      	    				
-		
-		SearchParameters sp = new SearchParameters();
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(RepoConsts.PATH_QUERY_REPORTS_EXPORT_SEARCH);	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_RESULTS_NO_LIMIT);
-        
-        ResultSet resultSet =null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-			
-	        logger.debug("getReportTpls - resultSet.length() : " + resultSet.length());	        
-	        
-			return resultSet.getNodeRefs();
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
-	}
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.report.ExportSearchService#getReport(java.lang.String, java.lang.String, java.io.OutputStream)
 	 */
 	@Override
-	public void getReport(String reportName, List<NodeRef> searchResults, OutputStream outputStream) {
-		
-		NodeRef templateNodeRef = getReportTemplate(reportName);
+	public void getReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream) {
 		
 		if(templateNodeRef != null){
 						
@@ -302,18 +270,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 				logger.error("Failed to get the export search context. FileName: " + FILE_QUERY, e);
 			}
 			
-			if(exportSearchCtx != null){
-				
-				NodeRef reportNodeRef = nodeService.getChildByName(templateNodeRef, ContentModel.ASSOC_CONTAINS, FILE_RPTDESIGN);
-				
-				if(reportNodeRef != null){													
-					
-					renderReport(reportNodeRef, exportSearchCtx, searchResults, outputStream);				
-				}
-				else{
-					logger.error("Failed to get reportNodeRef, file name: " + FILE_RPTDESIGN);
-				}		
-			}								
+			renderReport(templateNodeRef, exportSearchCtx, searchResults, reportFormat, outputStream);						
 		}
 	}
 	
@@ -325,7 +282,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	 * @param searchQuery the search query
 	 * @param outputStream the output stream
 	 */
-	private void renderReport(NodeRef templateNodeRef, ExportSearchContext exportSearchCtx, List<NodeRef> searchResults, OutputStream outputStream){		
+	private void renderReport(NodeRef templateNodeRef, ExportSearchContext exportSearchCtx, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream){		
 		
 		try{
 			
@@ -338,9 +295,6 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			IRunAndRenderTask task = reportEngine.createRunAndRenderTask(design);
 			
 			IRenderOption options = null;
-			
-			// report format
-			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);
 						
 			if(reportFormat.equals(ReportFormat.PDF)){
 			
@@ -571,49 +525,6 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	}
 	
 	
-	
-	/**
-	 * Get the report template by name.
-	 *
-	 * @param reportName the report name
-	 * @return the report template
-	 */
-	private NodeRef getReportTemplate(String reportName) {
-    	
-    	NodeRef templateNodeRef = null;  
-    	    	
-    	String queryPath = String.format(RepoConsts.PATH_QUERY_REPORT_EXPORT_SEARCH, ISO9075.encode(reportName));
-					
-		logger.debug(queryPath);
-		
-		SearchParameters sp = new SearchParameters();
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(queryPath.toString());	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-        
-        ResultSet resultSet =null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-			
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        if (resultSet.length() != 0){
-	        	templateNodeRef = resultSet.getNodeRef(0); 
-	        }
-	        else{
-	        	logger.error("Failed to load export search template, no template found. Path: " + queryPath);
-	        }
-	        
-			return templateNodeRef;
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
-	}
-	
 	/**
 	 * Load the query file.
 	 *
@@ -628,7 +539,9 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		Element queryElt = null;
 		ExportSearchContext exportSearchCtx = new ExportSearchContext();
 		
-		NodeRef queryNodeRef = nodeService.getChildByName(templateNodeRef, ContentModel.ASSOC_CONTAINS, FILE_QUERY);		
+		NodeRef folderNodeRef = nodeService.getPrimaryParent(templateNodeRef).getParentRef();		
+		NodeRef queryNodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, FILE_QUERY);
+		
 		if(queryNodeRef == null){
 			logger.error(String.format("The query file '%s' is not found", FILE_QUERY));
 			return exportSearchCtx;

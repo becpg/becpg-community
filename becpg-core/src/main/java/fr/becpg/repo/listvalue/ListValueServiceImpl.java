@@ -39,9 +39,6 @@ import fr.becpg.repo.report.template.ReportType;
  */
 public class ListValueServiceImpl implements ListValueService {
 	
-	/** The Constant MAX_SUGGESTIONS. */
-	private static final int MAX_SUGGESTIONS = 10;
-	
 	/** The Constant MAX_RESULT_ITEM. */
 	private static final int MAX_RESULT_ITEM = 1;
 	
@@ -91,52 +88,7 @@ public class ListValueServiceImpl implements ListValueService {
 		this.reportTplService = reportTplService;
 	}
 
-	/**
-	 * Get allowed values according to path, type and property (Look in every site).
-	 *
-	 * @param path the path
-	 * @param constraintType the constraint type
-	 * @param constraintProp the constraint prop
-	 * @return the allowed values
-	 */	
-	@Override
-	public List<String> getAllowedValues(String path, QName constraintType, QName constraintProp) {
-		
-		List<String> allowedValues = new ArrayList<String>();						
-		
-		path = encodePath(path);    			
-		
-		String queryPath = String.format(RepoConsts.PATH_QUERY_LIST_CONSTRAINTS, path, constraintType);
-		//logger.debug("queryPath : " + queryPath);
-		ResultSet resultSet = null;
-		
-		try{
-			resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_LUCENE, queryPath);
-	        
-			//logger.debug("resultSet.length() : " + resultSet.length());
-			
-	        if (resultSet.length() != 0)
-	        {
-	            for (ResultSetRow row : resultSet)
-	            {
-	                NodeRef nodeRef = row.getNodeRef();
-	                String value = (String)nodeService.getProperty(nodeRef, constraintProp);
-	                if(!allowedValues.contains(value)){
-	                	allowedValues.add(value);
-	                }
-	            }                   	
-	        }   
-	        
-//	        logger.debug("allowedValues.size() : " + allowedValues.size());
-//	        logger.debug("allowed values: " + allowedValues.toString());
-	        		
-			return allowedValues;
-		}
-		finally{
-			if(resultSet != null)
-				resultSet.close();
-		}
-	}
+	
 
 	/**
 	 * Suggest target class according to query
@@ -158,11 +110,11 @@ public class ListValueServiceImpl implements ListValueService {
     	
     	//Is code or name search, test if query is an interger ?
 		if(Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query)){
-			queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_TARGET_BY_CODE, type, query);
+			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_CODE, type, query);
 		}
 		else{
 			query = prepareQuery(query);
-			queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_TARGET_BY_NAME, type, query);
+			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_NAME, type, query);
 		}
     	
 		logger.debug("repository : " + queryPath);
@@ -173,8 +125,8 @@ public class ListValueServiceImpl implements ListValueService {
         sp.setLanguage(SearchService.LANGUAGE_LUCENE);
         sp.setQuery(queryPath);	        
         sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(MAX_SUGGESTIONS);        
-        sp.setMaxItems(MAX_SUGGESTIONS);
+        sp.setLimit(RepoConsts.MAX_SUGGESTIONS);        
+        sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
         
         ResultSet resultSet = null;
         
@@ -234,8 +186,8 @@ public class ListValueServiceImpl implements ListValueService {
         sp.setLanguage(SearchService.LANGUAGE_LUCENE);
         sp.setQuery(queryPath);	        
         sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(MAX_SUGGESTIONS);
-        sp.setMaxItems(MAX_SUGGESTIONS);
+        sp.setLimit(RepoConsts.MAX_SUGGESTIONS);
+        sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
         
         ResultSet resultSet = null;
         
@@ -295,8 +247,8 @@ public class ListValueServiceImpl implements ListValueService {
         sp.setLanguage(SearchService.LANGUAGE_LUCENE);
         sp.setQuery(queryPath);	             
         sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(MAX_SUGGESTIONS);
-        sp.setMaxItems(MAX_SUGGESTIONS);
+        sp.setLimit(RepoConsts.MAX_SUGGESTIONS);
+        sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
         
         sp.addSort("@" + ContentModel.PROP_NAME, true);
         sp.setMlAnalaysisMode(MLAnalysisMode.ALL_ONLY);
@@ -352,11 +304,11 @@ public class ListValueServiceImpl implements ListValueService {
     	
 		//Is code or name search, test if query is an interger ?
 		if(Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query)){
-			queryPath += String.format(RepoConsts.PATH_QUERY_SUGGEST_PRODUCT_BY_CODE, query, SystemState.Archived, SystemState.Refused);
+			queryPath += String.format(RepoConsts.QUERY_SUGGEST_PRODUCT_BY_CODE, query, SystemState.Archived, SystemState.Refused);
 		}
 		else{
 			query = prepareQuery(query);
-			queryPath += String.format(RepoConsts.PATH_QUERY_SUGGEST_PRODUCT_BY_NAME, query, SystemState.Archived, SystemState.Refused);
+			queryPath += String.format(RepoConsts.QUERY_SUGGEST_PRODUCT_BY_NAME, query, SystemState.Archived, SystemState.Refused);
 		}
 			
 		logger.debug("queryPath : " + queryPath);
@@ -368,8 +320,8 @@ public class ListValueServiceImpl implements ListValueService {
         sp.setLanguage(SearchService.LANGUAGE_LUCENE);
         sp.setQuery(queryPath);	        
         sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(MAX_SUGGESTIONS);
-        sp.setMaxItems(MAX_SUGGESTIONS);
+        sp.setLimit(RepoConsts.MAX_SUGGESTIONS);
+        sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
         
         ResultSet resultSet = null;
         
@@ -409,7 +361,7 @@ public class ListValueServiceImpl implements ListValueService {
 		
 		NodeRef charactNodeRef = null;  
     	
-    	String queryPath = String.format(RepoConsts.PATH_QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
+    	String queryPath = String.format(RepoConsts.QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
 					
 		logger.debug(queryPath);
 		

@@ -222,7 +222,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		SearchParameters sp = new SearchParameters();
         sp.addStore(RepoConsts.SPACES_STORE);
         sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(String.format(RepoConsts.PATH_QUERY_AUTONUM, className, propertyName));	                
+        sp.setQuery(String.format(RepoConsts.QUERY_AUTONUM, className, propertyName));	                
         
         ResultSet resultSet =null;
         

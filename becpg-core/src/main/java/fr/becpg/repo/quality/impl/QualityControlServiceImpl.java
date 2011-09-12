@@ -116,7 +116,6 @@ public class QualityControlServiceImpl implements QualityControlService {
 				productLists.add(BeCPGModel.TYPE_MICROBIOLIST);
 				NodeRef productMicrobioCriteriaNodeRef = (controlPointAssocRefs.get(0)).getTargetRef();
 				
-				logger.debug("### load microbio criteria: " + productMicrobioCriteriaNodeRef);
 				productMicrobioCriteriaData = productDAO.find(productMicrobioCriteriaNodeRef, productLists);				
 				productData.setMicrobioList(productMicrobioCriteriaData.getMicrobioList());
 			}			
@@ -234,10 +233,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 					// TODO : générique			
 					if(cdl.getType().equals("Microbiologie")){
 					
-						logger.debug("### productData.getMicrobioList(): " + productData.getMicrobioList() );
-						if(productData.getMicrobioList() != null){
-							
-							logger.debug("### productData.getMicrobioList().size(): " + productData.getMicrobioList().size() );
+						if(productData.getMicrobioList() != null){							
 						
 							for(MicrobioListDataItem mbl : productData.getMicrobioList()){
 								if(n.equals(mbl.getMicrobio())){

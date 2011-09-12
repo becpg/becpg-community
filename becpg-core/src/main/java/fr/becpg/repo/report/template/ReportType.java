@@ -4,7 +4,7 @@ public enum ReportType {
 
 	System, //default
 	Document,
-	Search;
+	ExportSearch;
 			
 	public static ReportType parse(String r){
 		

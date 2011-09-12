@@ -35,7 +35,7 @@
 		</columns>
 	</mapping>	
 	
-	<mapping name="bcpg:productTemplate">		
+	<mapping name="bcpg:entity">		
 		<nodeColumnKeys> 
 		</nodeColumnKeys>
 		<columns>

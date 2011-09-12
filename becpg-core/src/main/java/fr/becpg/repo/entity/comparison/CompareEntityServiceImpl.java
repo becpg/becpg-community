@@ -187,13 +187,13 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		
 		//load datalists
 		List<String> comparedDataLists = new ArrayList<String>();
-		Set<NodeRef> dataLists1 = new HashSet<NodeRef>();    	
+		List<NodeRef> dataLists1 = new ArrayList<NodeRef>();    	
 		NodeRef listsContainer1NodeRef = entityListDAO.getListContainer(entity1NodeRef);
 		if(listsContainer1NodeRef != null){
 			dataLists1 = entityListDAO.getExistingListsNodeRef(listsContainer1NodeRef);
 		}
 		
-		Set<NodeRef> dataLists2 = new HashSet<NodeRef>();		
+		List<NodeRef> dataLists2 = new ArrayList<NodeRef>();		
 		NodeRef listsContainer2NodeRef = entityListDAO.getListContainer(entity2NodeRef);
 		if(listsContainer2NodeRef != null){
 			dataLists2 = entityListDAO.getExistingListsNodeRef(listsContainer2NodeRef);

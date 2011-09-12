@@ -1,4 +1,4 @@
-package fr.becpg.repo.importer;
+package fr.becpg.repo.importer.impl;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -20,13 +20,20 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.importer.ClassMapping;
+import fr.becpg.repo.importer.ImportContext;
+import fr.becpg.repo.importer.ImportVisitor;
+import fr.becpg.repo.importer.ImporterException;
 
 public class ImportEntityListItemVisitor extends AbstractImportVisitor implements ImportVisitor{
 
+	protected static final String MSG_ERROR_FIND_ENTITY = "import_service.error.err_find_entity";
+	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
 	
@@ -89,7 +96,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		NodeRef entityNodeRef = findNodeByKeyOrCode(importContext, entityType, entityCode, entityProperties);		
 		
 		if(entityNodeRef == null){
-			throw new ImporterException("Failed to find entity, impossible to import the entity data list. Values:" + values);
+			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_FIND_ENTITY, values));
 		}
 		
 		/*

@@ -6,6 +6,7 @@ package fr.becpg.repo.entity.policy;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.ResultSet;
@@ -42,6 +43,8 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 	/** The search service. */
 	private SearchService searchService;
 			
+	private DictionaryService dictionaryService;
+	
 	/**
 	 * Sets the policy component.
 	 *
@@ -77,7 +80,11 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 	public void setSearchService(SearchService searchService) {
 		this.searchService = searchService;
 	}
-	
+		
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+
 	/**
 	 * Inits the.
 	 */
@@ -98,12 +105,18 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 		boolean generateCode = true;
 		QName typeQName = nodeService.getType(nodeRef);
 		
+		// products
+		if(dictionaryService.isSubClass(typeQName, BeCPGModel.TYPE_PRODUCT)){
+			typeQName = BeCPGModel.TYPE_PRODUCT;
+		}		
+		
 		if(code != null){
+			
 									
 			SearchParameters sp = new SearchParameters();
 	        sp.addStore(RepoConsts.SPACES_STORE);
 	        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-	        sp.setQuery(String.format(RepoConsts.PATH_QUERY_NODE_BY_CODE, typeQName, code));	                
+	        sp.setQuery(String.format(RepoConsts.QUERY_NODE_BY_CODE, typeQName, code));	                
 	        
 	        ResultSet resultSet =null;
 	        

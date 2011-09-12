@@ -1,12 +1,13 @@
 /*
  * 
  */
-package fr.becpg.repo.importer;
+package fr.becpg.repo.importer.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-// TODO: Auto-generated Javadoc
+import fr.becpg.repo.importer.ImportVisitor;
+
 /**
  * Class used to import a node with its attributes and files.
  *

@@ -217,7 +217,7 @@
 		
 		<!-- Quality control -->		
 		<type name="qa:qualityControl">
-			<parent>cm:content</parent>
+			<parent>bcpg:entity</parent>
 			<properties>				
 				<property name="qa:qcSamplesCounter">
 					<type>d:int</type>

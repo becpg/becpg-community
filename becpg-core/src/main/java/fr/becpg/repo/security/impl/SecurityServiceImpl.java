@@ -16,9 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
-import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
-
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.search.BeCPGSearchService;

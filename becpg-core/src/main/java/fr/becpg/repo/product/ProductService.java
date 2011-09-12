@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.NodeVisitor;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 
@@ -52,14 +53,7 @@ public interface ProductService {
      * @param containerNodeRef the container node ref
      * @param productNodeRef the product node ref
      */
-    public void classifyProduct(NodeRef containerNodeRef, NodeRef productNodeRef);
-    
-    /**
-     * Initialize product folder.
-     *
-     * @param productNodeRef the product node ref
-     */
-    public void initializeProductFolder(NodeRef productNodeRef);
+    public void classifyProduct(NodeRef containerNodeRef, NodeRef productNodeRef);    
     
     /**
      * Gets the WUsed product of the compoList

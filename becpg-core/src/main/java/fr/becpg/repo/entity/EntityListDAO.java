@@ -1,5 +1,6 @@
 package fr.becpg.repo.entity;
 
+import java.util.List;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -53,9 +54,9 @@ public interface EntityListDAO {
 	 */
 	public NodeRef getLink(NodeRef listNodeRef, QName propertyQName, NodeRef nodeRef);
 	
-	public Set<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef);
+	public List<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef);
 	
-	public Set<QName> getExistingListsQName(NodeRef listContainerNodeRef);
+	public List<QName> getExistingListsQName(NodeRef listContainerNodeRef);
 	
 	/**
      * Copy data lists.

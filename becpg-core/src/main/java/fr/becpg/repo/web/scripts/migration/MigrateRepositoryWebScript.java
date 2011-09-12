@@ -31,6 +31,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.RepoService;
 
 /**
@@ -45,7 +46,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	private static Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
 				
 	private static final String PARAM_ACTION = "action";
-	private static final String VALUE_ACTION_MIGRATE_PRODUCTCODE = "migrateProductCode";
+	private static final String PARAM_PAGINATION = "pagination";
+	private static final String VALUE_ACTION_MIGRATE_PROPERTIES = "migrateProperties";
 	private static final String VALUE_ACTION_MIGRATE_AUTONUM = "migrateAutoNum";
 	private static final String VALUE_ACTION_MIGRATE_ENTITYLISTS = "migrateEntityLists";
 	
@@ -115,35 +117,46 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	logger.debug("start restore archived node webscript");
     	Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();	    	
     	String action = templateArgs.get(PARAM_ACTION);
+    	String pagination = templateArgs.get(PARAM_PAGINATION);
+    	Integer iPagination = (pagination != null && !pagination.isEmpty()) ? Integer.parseInt(pagination) : null;
 		
     	if(action == null){
     		logger.error("action cannot be null");
     	}
-    	else if(action.equals(VALUE_ACTION_MIGRATE_PRODUCTCODE)){
+    	else if(action.equals(VALUE_ACTION_MIGRATE_PROPERTIES)){
+    		
+    		// remove old aspect
+    		QName reportNodeAspectQName = QName.createQName(ReportModel.REPORT_URI, "reportNodeAspect");
+    		removeAspect(iPagination, " +ASPECT:\"rep:reportNodeAspect\" ", reportNodeAspectQName);
     		
     		// migration productCode
     		QName productCodeQName = QName.createQName(BeCPGModel.BECPG_URI, "productCode");
-    		migrateProperty(" +@bcpg\\:productCode:* ", productCodeQName, BeCPGModel.PROP_CODE);    		
+    		migrateProperty(iPagination, " +@bcpg\\:productCode:* ", productCodeQName, BeCPGModel.PROP_CODE);
+    		
+    		// migration productReportModified
+    		QName productReportModifiedQName = QName.createQName(BeCPGModel.BECPG_URI, "productReportModified");
+    		migrateProperty(iPagination, " +@bcpg\\:productReportModified:* ", productReportModifiedQName, ReportModel.PROP_REPORT_ENTITY_GENERATED);
+    		
     	} 
     	else if(action.equals(VALUE_ACTION_MIGRATE_AUTONUM)){
     		
     		// migrate autoNum
-    		migrateAutoNum();
+    		migrateAutoNum(iPagination);
     	}
     	else if(action.equals(VALUE_ACTION_MIGRATE_ENTITYLISTS)){
     		
     		// migrate dataLists
-    		migrateDataLists();
+    		migrateDataLists(iPagination);
     		
     		// migrate productLists
-    		migrateProductLists();
+    		migrateProductLists(iPagination);
     		
     	} 
     }
 	
-	private void migrateProperty(String query, QName oldProperty, QName newProperty){
+	private void migrateProperty(Integer iPagination, String query, QName oldProperty, QName newProperty){
 
-		logger.info("migrateProductCode");
+		logger.info("migrateProperty");
 		
 		List<NodeRef> items = new ArrayList<NodeRef>();
     	ResultSet resultSet = null;
@@ -172,14 +185,14 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	policyBehaviourFilter.disableAllBehaviours();
     	        	
     	try{
-    		
-    		for(int cnt=0 ; cnt < items.size() ; cnt++){
+    		int maxCnt = iPagination != null && iPagination < items.size() ? iPagination : items.size();
+    		for(int cnt=0 ; cnt < maxCnt ; cnt++){
         		
         		final NodeRef nodeRef = items.get(cnt);        		
         		Serializable value = nodeService.getProperty(nodeRef, oldProperty);
         		
         		if(value != null){
-        			logger.info("change property: " + oldProperty + " - value: " + value);
+        			logger.info("node: " + nodeRef + " - change property: " + oldProperty + " - value: " + value);
         			nodeService.setProperty(nodeRef, newProperty, value);
         			nodeService.removeProperty(nodeRef, oldProperty);
         		}        		   	
@@ -190,9 +203,9 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	}    		      
 	}	
 	
-	private void migrateAutoNum(){
+	private void migrateAutoNum(Integer iPagination){
 
-		logger.info("migrateAutoNum");
+		logger.info("migrateProperty");
 		
 		List<NodeRef> items = new ArrayList<NodeRef>();
     	ResultSet resultSet = null;
@@ -221,8 +234,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	policyBehaviourFilter.disableAllBehaviours();
     	        	
     	try{
-    		
-    		for(int cnt=0 ; cnt < items.size() ; cnt++){
+    		int maxCnt = iPagination != null && iPagination < items.size() ? iPagination : items.size();
+    		for(int cnt=0 ; cnt < maxCnt ; cnt++){
         		
         		final NodeRef nodeRef = items.get(cnt);        		
         		String name = (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
@@ -283,7 +296,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	}    		      
 	}
 	
-	private void migrateProductLists(){
+	private void migrateProductLists(Integer iPagination){
 
 		logger.info("migrateProductLists");
 		
@@ -316,8 +329,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	policyBehaviourFilter.disableAllBehaviours();
     	        	
     	try{
-    		
-    		for(int cnt=0 ; cnt < items.size() ; cnt++){
+    		int maxCnt = iPagination != null && iPagination < items.size() ? iPagination : items.size();
+    		for(int cnt=0 ; cnt < maxCnt ; cnt++){
         		
         		final NodeRef nodeRef = items.get(cnt);
         		
@@ -345,7 +358,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	}    		      
 	}	
 	
-	private void migrateDataLists(){
+	private void migrateDataLists(Integer iPagination){
 
 		logger.info("migrateDataLists");
 		
@@ -378,9 +391,9 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	
     	policyBehaviourFilter.disableAllBehaviours();
     	        	
-    	try{
-    		
-    		for(int cnt=0 ; cnt < items.size() ; cnt++){
+    	try{    		
+    		int maxCnt = iPagination != null && iPagination < items.size() ? iPagination : items.size();
+    		for(int cnt=0 ; cnt < maxCnt ; cnt++){
         		
         		final NodeRef nodeRef = items.get(cnt);
         		
@@ -409,6 +422,53 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
         		// remove dataListsAspect
         		if(nodeService.hasAspect(nodeRef, dataListsAspectQName)){
         			nodeService.removeAspect(nodeRef, dataListsAspectQName);
+        		}
+        	}
+    	}
+    	finally{
+    		policyBehaviourFilter.enableAllBehaviours();
+    	}    		      
+	}	
+	
+	private void removeAspect(Integer iPagination, String query, QName aspect){
+
+		logger.info("removeAspect");
+		
+		List<NodeRef> items = new ArrayList<NodeRef>();
+    	ResultSet resultSet = null;
+    	
+    	SearchParameters sp = new SearchParameters();
+        sp.addStore(RepoConsts.SPACES_STORE);
+        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
+        sp.setQuery(query);	                         
+        
+    	try{
+    		resultSet = searchService.query(sp);
+    		if(resultSet.length() > 0){
+    			items = resultSet.getNodeRefs();        			
+    		}
+    	}	       
+    	catch(Exception e){
+    		logger.error("Failed to get items", e);
+    	}
+    	finally{
+    		if(resultSet != null)
+    			resultSet.close();
+    	}        
+    	
+    	logger.info("items to migrate: " + items.size());    	
+    	
+    	policyBehaviourFilter.disableAllBehaviours();
+    	        	
+    	try{
+    		int maxCnt = iPagination != null && iPagination < items.size() ? iPagination : items.size();
+    		for(int cnt=0 ; cnt < maxCnt ; cnt++){
+        		
+        		final NodeRef nodeRef = items.get(cnt);        		        		  
+        		
+        		// remove aspect
+        		if(nodeService.hasAspect(nodeRef, aspect)){
+        			nodeService.removeAspect(nodeRef, aspect);
         		}
         	}
     	}

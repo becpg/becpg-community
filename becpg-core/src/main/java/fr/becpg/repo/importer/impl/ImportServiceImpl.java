@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2010-2011 beCPG. All rights reserved.
  */
-package fr.becpg.repo.importer;
+package fr.becpg.repo.importer.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +26,7 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -45,12 +46,15 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import com.sun.source.tree.AssertTree;
-
 import fr.becpg.common.RepoConsts;
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.importer.ImportContext;
+import fr.becpg.repo.importer.ImportService;
+import fr.becpg.repo.importer.ImportType;
+import fr.becpg.repo.importer.ImportVisitor;
+import fr.becpg.repo.importer.ImporterException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -95,7 +99,8 @@ public class ImportServiceImpl implements ImportService {
 	private static final String MSG_ERROR_MAPPING_NOT_FOUND = "import_service.error.err_mapping_not_found";
 	private static final String MSG_ERROR_READING_MAPPING = "import_service.error.err_reading_mapping";
 	private static final String MSG_ERROR_UNDEFINED_LINE = "import_service.error.err_undefined_line";
-		
+	private static final String MSG_ERROR_UNKNOWN_TYPE = "import_service.error.err_unknown_type";
+	
 	/** The Constant SEPARATOR. */
 	private static final char SEPARATOR = ';';	
 	
@@ -393,13 +398,20 @@ public class ImportServiceImpl implements ImportService {
 				else{
 					
 					// look for entityListsAspect
-					boolean entityListsAspect = false;
-					for(AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()){
-						if(aspectDef.getName().equals(BeCPGModel.ASPECT_ENTITYLISTS)){						
-							entityListsAspect = true;
-							break;
+					boolean entityListsAspect = false;					
+					TypeDefinition typeDef = dictionaryService.getType(type);
+					if(typeDef == null){
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNKNOWN_TYPE, type));
+					}
+					else{
+						for(AspectDefinition aspectDef : typeDef.getDefaultAspects()){
+							if(aspectDef.getName().equals(BeCPGModel.ASPECT_ENTITYLISTS)){						
+								entityListsAspect = true;
+								break;
+							}
 						}
 					}
+					
 					
 					if(entityListsAspect){
 						importContext.setImportType(ImportType.EntityListAspect);

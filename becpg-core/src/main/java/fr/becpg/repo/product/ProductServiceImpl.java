@@ -36,6 +36,7 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.NodeVisitor;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
@@ -105,8 +106,6 @@ public class ProductServiceImpl implements ProductService {
 	private BehaviourFilter policyBehaviourFilter;
 	
 	private LockService lockService;
-					
-	private EntityReportService entityReportService;
 	
 	/**
 	 * Sets the node service.
@@ -232,10 +231,6 @@ public class ProductServiceImpl implements ProductService {
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}
-	
-	public void setEntityReportService(EntityReportService entityReportService) {
-		this.entityReportService = entityReportService;
-	}
 
 	/**
 	 * Formulate the product.
@@ -297,10 +292,8 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public void generateReport(NodeRef productNodeRef){    
-    	
-    	
-    	// is report out of date ?
-    	if(!entityReportService.isReportUpToDate(productNodeRef) && lockService.getLockStatus(productNodeRef) == LockStatus.NO_LOCK){
+    	    	
+    	if(lockService.getLockStatus(productNodeRef) == LockStatus.NO_LOCK){
     	
     		try{
         		// Ensure that the policy doesn't refire for this node
@@ -311,11 +304,7 @@ public class ProductServiceImpl implements ProductService {
 	            policyBehaviourFilter.disableBehaviour(productNodeRef, ContentModel.ASPECT_AUDITABLE);
 	            
 	            // generate reports
-	            productReportVisitor.visitNode(productNodeRef);			
-	            
-	            // set reportNodeGenerated property to now
-	            nodeService.setProperty(productNodeRef, ReportModel.PROP_REPORT_NODE_GENERATED, new Date());
-	            
+	            productReportVisitor.visitNode(productNodeRef);				            
 	        }
 	        finally{
 	        	policyBehaviourFilter.enableBehaviour(productNodeRef, ContentModel.ASPECT_AUDITABLE);
@@ -421,98 +410,7 @@ public class ProductServiceImpl implements ProductService {
 		}
     }
     
-    /**
-     * get the product folder of the template and copy it for the product.
-     *
-     * @param productNodeRef the product node ref
-     */
-	@Override
-	public void initializeProductFolder(NodeRef productNodeRef) {
-		
-		logger.debug("initializeProductFolder");		
-		NodeRef parentProductNodeRef = nodeService.getPrimaryParent(productNodeRef).getParentRef();
-		QName parentProductType = nodeService.getType(parentProductNodeRef);
-		NodeRef productTplNodeRef = productDictionaryService.getProductTemplate(productNodeRef);
-		
-		if(productTplNodeRef != null){			
-		
-			logger.debug("productTplNodeRef found");
-			NodeRef parentProductTplNodeRef = nodeService.getPrimaryParent(productTplNodeRef).getParentRef();
-			QName parentProductTplType = nodeService.getType(parentProductTplNodeRef);
-			
-			// Actual product parent is not a product folder and parent tpl product is a product folder
-			if(!parentProductType.equals(BeCPGModel.TYPE_ENTITY_FOLDER) && parentProductTplType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)){
-			
-				logger.debug("copy product folder of template");				
-				//NodeRef productFolderNodeRef = copyService.copyAndRename(parentProductTplNodeRef, parentProductNodeRef, ContentModel.ASSOC_CONTAINS, BeCPGModel.TYPE_PRODUCT_FOLDER, true);
-
-				FileInfo fileInfo = null;
-				try{
-				fileInfo = fileFolderService.copy(parentProductTplNodeRef, parentProductNodeRef, GUID.generate());
-				}
-				catch(FileNotFoundException e){
-					logger.error("initializeProductFolder : Failed to copy template folder", e);
-				}
-				
-				if(fileInfo != null){
-					NodeRef productFolderNodeRef = fileInfo.getNodeRef();
-					
-					//change type and set iniherit parents permissions
-					nodeService.setType(productFolderNodeRef, BeCPGModel.TYPE_ENTITY_FOLDER);
-					permissionService.deletePermissions(productFolderNodeRef);
-					permissionService.setInheritParentPermissions(productFolderNodeRef, true);
-					
-					//remove productTpl
-					NodeRef nodeRef = nodeService.getChildByName(productFolderNodeRef, ContentModel.ASSOC_CONTAINS, (String)nodeService.getProperty(productTplNodeRef, ContentModel.PROP_NAME));
-					nodeService.deleteNode(nodeRef);								
-					
-					//move product in productfolder and rename productfolder
-					nodeService.moveNode(productNodeRef, productFolderNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(productNodeRef));
-					nodeService.setProperty(productFolderNodeRef, ContentModel.PROP_NAME, nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
-					
-					// initialize permissions according to template
-					for(FileInfo folder : fileFolderService.listFolders(parentProductTplNodeRef)){
-						
-						logger.debug("init permissions, folder: " + folder.getName());
-						NodeRef folderTplNodeRef = folder.getNodeRef();
-						NodeRef folderNodeRef = nodeService.getChildByName(productFolderNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName());
-						
-						if(folderNodeRef != null){
-							
-							if(nodeService.hasAspect(folderTplNodeRef, BeCPGModel.ASPECT_PERMISSIONS_TPL)){
-								
-								QName [] permissionGroupAssociations = {BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS};
-								String [] permissionNames = {RepoConsts.PERMISSION_CONSUMER, RepoConsts.PERMISSION_EDITOR, RepoConsts.PERMISSION_CONTRIBUTOR, RepoConsts.PERMISSION_COLLABORATOR};
-
-								for(int cnt=0 ; cnt < permissionGroupAssociations.length ; cnt++){
-									
-									QName permissionGroupAssociation = permissionGroupAssociations[cnt];
-									String permissionName = permissionNames[cnt];
-									List<AssociationRef> groups = nodeService.getTargetAssocs(folderTplNodeRef, permissionGroupAssociation);
-									
-									if(groups.size() > 0){
-										for(AssociationRef assocRef : groups){
-											NodeRef groupNodeRef = assocRef.getTargetRef();
-											String authorityName = (String)nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);
-											logger.debug("add permission, folder: " + folder.getName() + " authority: " + authorityName + " perm: " + permissionName);
-											permissionService.setPermission(folderNodeRef, authorityName, permissionName, true);
-											
-											// remove 	association
-											nodeService.removeAssociation(folderNodeRef, groupNodeRef, permissionGroupAssociation);
-										}
-									}									
-								}
-								
-								//TODO
-								// remove aspect when every association has been removed
-								//nodeService.removeAspect(folderNodeRef, BeCPGModel.ASPECT_PERMISSIONS_TPL);	
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+    
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.product.ProductService#getWUsedProduct(org.alfresco.service.cmr.repository.NodeRef)

@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
@@ -49,10 +51,13 @@ import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 
@@ -107,6 +112,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/CompareEntities.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/ExportSearch/Product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/ExportSearch/Product/ExportSearchQuery.xml";
+	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/NonConformity/NonConformitySynthesis.rptdesign";
+	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/NonConformity/NonConformitySynthesis.xml";
 	
 	/** The product dictionary service. */
 	private ProductDictionaryService productDictionaryService;	
@@ -126,6 +133,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	private MimetypeService mimetypeService;
 	
 	private DictionaryService dictionaryService;
+	
+	private EntityTplService entityTplService;
 	
 	/**
 	 * Sets the product dictionary service.
@@ -172,6 +181,10 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
+	}
+
+	public void setEntityTplService(EntityTplService entityTplService) {
+		this.entityTplService = entityTplService;
 	}
 
 	/**
@@ -234,26 +247,30 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		//Products		
 		NodeRef productsNodeRef = visitFolder(companyHome, RepoConsts.PATH_PRODUCTS);
 		productDictionaryService.initializeRepoHierarchy(productsNodeRef);
-		
+
 		
 		//Quality		
 		NodeRef qualityNodeRef = visitFolder(companyHome, RepoConsts.PATH_QUALITY);
+		//Regulations
+		NodeRef regulationsNodeRef = visitFolder(qualityNodeRef, RepoConsts.PATH_REGULATIONS);
+		visitFolder(regulationsNodeRef, RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA);
+		//Specifications
+		NodeRef qualSpecNodeRef = visitFolder(qualityNodeRef, RepoConsts.PATH_QUALITY_SPECIFICATIONS);
+		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_PLANS);
+		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_POINTS);
+		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_METHODS);
+		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_STEPS);
+		//NC
 		visitFolder(qualityNodeRef, RepoConsts.PATH_NC);
-		NodeRef qualitySpecNodeRef =  visitFolder(qualityNodeRef, RepoConsts.PATH_QUALITY_SPEC);
-		visitFolder(qualitySpecNodeRef, RepoConsts.PATH_QUALITY_CONTROL_POINTS);
-		//TODO complete quality folders
+		//QualityControls
+		visitFolder(qualityNodeRef, RepoConsts.PATH_QUALITY_CONTROLS);		
 		
 		
 		//Security
 		visitFolder(systemNodeRef, RepoConsts.PATH_SECURITY);
 		
-		
-		//ProductTemplates
-		NodeRef productTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES);			
-		visitProductTpls(productTplsNodeRef);
-		
-		//ProductMicrobioCriteria		
-		visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA);
+		//EntityTemplates				
+		visitFolderAndEntityTpls(systemNodeRef);		
 		
 		//Companies
 		NodeRef companiesNodeRef = visitFolder(companyHome, RepoConsts.PATH_COMPANIES);
@@ -292,10 +309,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		}	
 		else if(folderName == RepoConsts.PATH_NUTS){
 			specialiseType = BeCPGModel.TYPE_NUT;			
-		}
-		else if(folderName == RepoConsts.PATH_QUALITY_CONTROL_POINTS){
-			specialiseType = QualityModel.TYPE_CONTROL_POINT;			
-		}
+		}		
 		else if(folderName == RepoConsts.PATH_INGS){
 			specialiseType = BeCPGModel.TYPE_ING;
 		}
@@ -320,11 +334,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		else if(folderName == RepoConsts.PATH_BIO_ORIGINS){
 			specialiseType = BeCPGModel.TYPE_BIO_ORIGIN;
 		}		
-		else if(folderName == RepoConsts.PATH_PRODUCT_TEMPLATES){
-			specialiseType = BeCPGModel.TYPE_PRODUCTTEMPLATE;
-		}		
-		else if(folderName == RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA){
-			specialiseType = BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA;
+		else if(folderName == RepoConsts.PATH_ENTITY_TEMPLATES){
+			specialiseType = BeCPGModel.TYPE_ENTITY;
 		}		
 		else if(folderName.endsWith(RepoConsts.PATH_HIERARCHY_SFX_HIERARCHY1)){
 			specialiseType = BeCPGModel.TYPE_LIST_VALUE;
@@ -410,6 +421,28 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			specialiseType = BeCPGModel.TYPE_CLIENT;
 			applyToChildren = true;
 		}
+		// quality
+		else if(folderName == RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA){
+			specialiseType = BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA;
+		}	
+		else if(folderName == RepoConsts.PATH_CONTROL_PLANS){
+			specialiseType = QualityModel.TYPE_CONTROL_PLAN;			
+		}
+		else if(folderName == RepoConsts.PATH_CONTROL_POINTS){
+			specialiseType = QualityModel.TYPE_CONTROL_POINT;			
+		}
+		else if(folderName == RepoConsts.PATH_CONTROL_STEPS){
+			specialiseType = QualityModel.TYPE_CONTROL_STEP;			
+		}
+		else if(folderName == RepoConsts.PATH_CONTROL_METHODS){
+			specialiseType = QualityModel.TYPE_CONTROL_METHOD;			
+		}
+		else if(folderName == RepoConsts.PATH_QUALITY_CONTROLS){
+			specialiseType = QualityModel.TYPE_QUALITY_CONTROL;			
+		}
+		else if(folderName == RepoConsts.PATH_NC){
+			specialiseType = QualityModel.TYPE_NC;			
+		}
 		else{
 			return;
 		}
@@ -450,216 +483,161 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	}
 	
 	/**
-	 * Create the product templates
+	 * Create the folder and entity templates
 	 * @param productTplsNodeRef
 	 */
-	private void visitProductTpls(NodeRef productTplsNodeRef){
+	private void visitFolderAndEntityTpls(NodeRef systemNodeRef){
 		
-		/*
-		 * Create product tpls that have a product folder
-		 */
-		Set<SystemProductType> systemProductTypes = new HashSet<SystemProductType>();
-		systemProductTypes.add(SystemProductType.RawMaterial);
-		systemProductTypes.add(SystemProductType.SemiFinishedProduct);
-		systemProductTypes.add(SystemProductType.FinishedProduct);
-		systemProductTypes.add(SystemProductType.PackagingMaterial);
-		systemProductTypes.add(SystemProductType.PackagingMaterial);
-		systemProductTypes.add(SystemProductType.CondSalesUnit);
+		NodeRef folderTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_FOLDER_TEMPLATES);
+		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 		
-		for(SystemProductType systemProductType : systemProductTypes){
-
-			String productTplName = TranslateHelper.getTranslatedPath(systemProductType.toString());
+		// create product tpls
+		visitProductTpls(folderTplsNodeRef, entityTplsNodeRef);
+		
+		Set<String> subFolders = new HashSet<String>();
+		subFolders.add(RepoConsts.PATH_DOCUMENTS);
+		
+		// visit supplier
+		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, subFolders); 
+		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, null);		
+		
+		// visit client
+		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, subFolders);
+		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, null);					
+		
+		// visit quality
+		visitQuality(folderTplsNodeRef, entityTplsNodeRef);				
+	}
+	
+	/**
+	 * Create product tpls
+	 * @param entityTplsNodeRef
+	 */
+	private void visitProductTpls(NodeRef folderTplsNodeRef, NodeRef entityTplsNodeRef){
+		
+		NodeRef productFolderTplsNodeRef = visitFolder(folderTplsNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES);
+		NodeRef productTplsNodeRef = visitFolder(entityTplsNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES);
+		
+		Set<QName> productTypes = new HashSet<QName>();
+		productTypes.add(BeCPGModel.TYPE_RAWMATERIAL);
+		productTypes.add(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT);
+		productTypes.add(BeCPGModel.TYPE_FINISHEDPRODUCT);
+		productTypes.add(BeCPGModel.TYPE_PACKAGINGMATERIAL);
+		productTypes.add(BeCPGModel.TYPE_PACKAGINGKIT);
+		productTypes.add(BeCPGModel.TYPE_CONDSALESUNIT);
+		
+		Set<String> subFolders = new HashSet<String>();
+		subFolders.add(RepoConsts.PATH_IMAGES);
+		subFolders.add(RepoConsts.PATH_DOCUMENTS);
+		subFolders.add(RepoConsts.PATH_BRIEF);
+		
+		for(QName productType : productTypes){
+						
+			// datalists
+			Set<QName> dataLists = new LinkedHashSet<QName>();
 			
-			// ProductFolder
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, productTplName);
-						
-			NodeRef productTplFolderNodeRef = nodeService.getChildByName(productTplsNodeRef, ContentModel.ASSOC_CONTAINS, productTplName);
-			if(productTplFolderNodeRef == null){				
-				productTplFolderNodeRef = nodeService.createNode(productTplsNodeRef, 
-																ContentModel.ASSOC_CONTAINS, 
-																QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, systemProductType.toString()), 
-																BeCPGModel.TYPE_ENTITY_FOLDER, properties).getChildRef();
+			if(productType.equals(BeCPGModel.TYPE_RAWMATERIAL)){
 				
-				// productTpl
-				properties.clear();
-				properties.put(ContentModel.PROP_NAME, productTplName);
-				properties.put(BeCPGModel.PROP_PRODUCT_TYPE, systemProductType);
+				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
+				dataLists.add(BeCPGModel.TYPE_COSTLIST);				
+				dataLists.add(BeCPGModel.TYPE_NUTLIST);
+				dataLists.add(BeCPGModel.TYPE_INGLIST);
+				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
+				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 				
-				NodeRef productTplNodeRef = nodeService.getChildByName(productTplFolderNodeRef, ContentModel.ASSOC_CONTAINS, productTplName);
-				if(productTplNodeRef == null){
-					productTplNodeRef = nodeService.createNode(productTplFolderNodeRef, 
-																ContentModel.ASSOC_CONTAINS, 
-																QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, systemProductType.toString()), 
-																BeCPGModel.TYPE_PRODUCTTEMPLATE, properties).getChildRef();
-				}
+			}
+			else if(productType.equals(BeCPGModel.TYPE_PACKAGINGMATERIAL)){
 				
-				// Images
-				properties.clear();
-				properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
-				NodeRef imagesFolderNodeRef = nodeService.getChildByName(productTplFolderNodeRef, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));
-				if(imagesFolderNodeRef == null){			
-					nodeService.createNode(productTplFolderNodeRef, 
-											ContentModel.ASSOC_CONTAINS, 
-											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, RepoConsts.PATH_IMAGES), 
-											BeCPGModel.TYPE_ENTITY_FOLDER, properties).getChildRef();
-				}			
+				dataLists.add(BeCPGModel.TYPE_COSTLIST);				
+				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 				
-				// Documents
-				properties.clear();
-				properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS));
-				NodeRef documentsFolderNodeRef = nodeService.getChildByName(productTplFolderNodeRef, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));
-				if(documentsFolderNodeRef == null){			
-					nodeService.createNode(productTplFolderNodeRef, 
-											ContentModel.ASSOC_CONTAINS, 
-											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, RepoConsts.PATH_DOCUMENTS), 
-											BeCPGModel.TYPE_ENTITY_FOLDER, 
-											properties).getChildRef();
-				}
-					
-				// Brief
-				properties.clear();
-				properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(RepoConsts.PATH_BRIEF));
-				NodeRef briefFolderNodeRef = nodeService.getChildByName(productTplFolderNodeRef, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));
-				if(briefFolderNodeRef == null){			
-					nodeService.createNode(productTplFolderNodeRef, 
-											ContentModel.ASSOC_CONTAINS, 
-											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, RepoConsts.PATH_BRIEF), 
-											BeCPGModel.TYPE_ENTITY_FOLDER, 
-											properties).getChildRef();
-				}			
+			}
+			else if(productType.equals(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT)){
 				
-				// datalists
-				if(systemProductType.equals(SystemProductType.RawMaterial)){
-					Set<QName> dataLists = new LinkedHashSet<QName>();
-					dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-					dataLists.add(BeCPGModel.TYPE_COSTLIST);				
-					dataLists.add(BeCPGModel.TYPE_NUTLIST);
-					dataLists.add(BeCPGModel.TYPE_INGLIST);
-					dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
-					dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-					
-					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productTplNodeRef);
-					if(listContainerNodeRef == null){
-						listContainerNodeRef = entityListDAO.createListContainer(productTplNodeRef);
-					}
-					
-					for(QName dataList : dataLists){
-						
-						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataList);
-						if(listNodeRef == null){
-							entityListDAO.createList(listContainerNodeRef, dataList);
-						}
-					}
-				}
-				else if(systemProductType.equals(SystemProductType.PackagingMaterial)){
-					Set<QName> dataLists = new LinkedHashSet<QName>();
-					dataLists.add(BeCPGModel.TYPE_COSTLIST);				
-					dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-					
-					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productTplNodeRef);
-					if(listContainerNodeRef == null){
-						listContainerNodeRef = entityListDAO.createListContainer(productTplNodeRef);
-					}
-					
-					for(QName dataList : dataLists){
-						
-						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataList);
-						if(listNodeRef == null){
-							entityListDAO.createList(listContainerNodeRef, dataList);
-						}
-					}
-				}
-				else if(systemProductType.equals(SystemProductType.SemiFinishedProduct)){
-					
-					Set<QName> dataLists = new LinkedHashSet<QName>();
-					dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-					dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-					dataLists.add(BeCPGModel.TYPE_COSTLIST);				
-					dataLists.add(BeCPGModel.TYPE_NUTLIST);
-					dataLists.add(BeCPGModel.TYPE_INGLIST);
-					dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
-					dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-					
-					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productTplNodeRef);
-					if(listContainerNodeRef == null){
-						listContainerNodeRef = entityListDAO.createListContainer(productTplNodeRef);
-					}
-					
-					for(QName dataList : dataLists){
-						
-						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataList);
-						if(listNodeRef == null){
-							entityListDAO.createList(listContainerNodeRef, dataList);
-						}
-					}
-				}
-				else if(systemProductType.equals(SystemProductType.FinishedProduct) ||
-						systemProductType.equals(SystemProductType.CondSalesUnit)){
-					
-					Set<QName> dataLists = new LinkedHashSet<QName>();
-					dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-					dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
-					dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-					dataLists.add(BeCPGModel.TYPE_COSTLIST);				
-					dataLists.add(BeCPGModel.TYPE_NUTLIST);
-					dataLists.add(BeCPGModel.TYPE_INGLIST);
-					dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
-					dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-					
-					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productTplNodeRef);
-					if(listContainerNodeRef == null){
-						listContainerNodeRef = entityListDAO.createListContainer(productTplNodeRef);
-					}
-					
-					for(QName dataList : dataLists){
-						
-						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataList);
-						if(listNodeRef == null){
-							entityListDAO.createList(listContainerNodeRef, dataList);
-						}
-					}
-				}
-				else if(systemProductType.equals(SystemProductType.PackagingKit)){
-					
-					Set<QName> dataLists = new LinkedHashSet<QName>();
-					dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);					
-					dataLists.add(BeCPGModel.TYPE_COSTLIST);				
-					dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-					
-					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productTplNodeRef);
-					if(listContainerNodeRef == null){
-						listContainerNodeRef = entityListDAO.createListContainer(productTplNodeRef);
-					}
-					
-					for(QName dataList : dataLists){
-						
-						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataList);
-						if(listNodeRef == null){
-							entityListDAO.createList(listContainerNodeRef, dataList);
-						}
-					}
-				}
-			}												
+				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
+				dataLists.add(BeCPGModel.TYPE_COSTLIST);				
+				dataLists.add(BeCPGModel.TYPE_NUTLIST);
+				dataLists.add(BeCPGModel.TYPE_INGLIST);
+				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
+				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				
+			}
+			else if(productType.equals(BeCPGModel.TYPE_FINISHEDPRODUCT) ||
+					productType.equals(BeCPGModel.TYPE_CONDSALESUNIT)){
+				
+				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
+				dataLists.add(BeCPGModel.TYPE_COSTLIST);				
+				dataLists.add(BeCPGModel.TYPE_NUTLIST);
+				dataLists.add(BeCPGModel.TYPE_INGLIST);
+				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
+				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				
+			}
+			else if(productType.equals(BeCPGModel.TYPE_PACKAGINGKIT)){
+									
+				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);					
+				dataLists.add(BeCPGModel.TYPE_COSTLIST);				
+				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				
+			}
+			
+			entityTplService.createFolderTpl(productFolderTplsNodeRef, productType, true, subFolders);
+			entityTplService.createEntityTpl(productTplsNodeRef, productType, true, dataLists);
 		}
 		
-		
-		/*
-		 * Create product tpls that don't have a product folder
-		 */
-		
-		SystemProductType systemProductType = SystemProductType.LocalSemiFinishedProduct;
-		String productTplName = TranslateHelper.getTranslatedPath(systemProductType.toString());
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, productTplName);
-		properties.put(BeCPGModel.PROP_PRODUCT_TYPE, systemProductType);
-		
-		NodeRef productTplNodeRef = nodeService.getChildByName(productTplsNodeRef, ContentModel.ASSOC_CONTAINS, productTplName);
-		if(productTplNodeRef == null){
-			productTplNodeRef = nodeService.createNode(productTplsNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_PRODUCTTEMPLATE, properties).getChildRef();
-		}		
-		
+		// create product tpls that don't have a product folder
+		entityTplService.createFolderTpl(productFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, false, subFolders);
+		entityTplService.createEntityTpl(productFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, true, null);		
 	}
+	
+	private void visitQuality(NodeRef folderTplsNodeRef, NodeRef entityTplsNodeRef){
+		
+		NodeRef qualityFolderTplsNodeRef = visitFolder(folderTplsNodeRef, RepoConsts.PATH_QUALITY_TEMPLATES);
+		NodeRef qualityTplsNodeRef = visitFolder(entityTplsNodeRef, RepoConsts.PATH_QUALITY_TEMPLATES);
+		
+		// visit productMicrobioCriteria
+		Set<QName> dataLists = new LinkedHashSet<QName>();
+		dataLists.add(BeCPGModel.TYPE_MICROBIOLIST);
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, false, null);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, true, dataLists);
+		
+		// visit productSpecification
+		dataLists.clear();
+		dataLists.add(BeCPGModel.TYPE_FORBIDDENINGLIST);
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, false, null);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, true, dataLists);
+		
+		// visit controlPlan
+		Set<String> subFolders = new HashSet<String>();
+		subFolders.add(RepoConsts.PATH_DOCUMENTS);		
+		dataLists.clear();
+		dataLists.add(QualityModel.TYPE_SAMPLINGDEF_LIST);		
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, true, subFolders);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, true, dataLists);
+		
+		// visit qualityControl
+		dataLists.clear();
+		dataLists.add(QualityModel.TYPE_SAMPLING_LIST);
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, true, null);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, true, dataLists);
+		
+		// visit controlPoint
+		dataLists.clear();
+		dataLists.add(QualityModel.TYPE_CONTROLDEF_LIST);
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, true, null);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, true, dataLists);
+		
+		// visit workItemAnalysis
+		dataLists.clear();
+		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, false, null);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, true, dataLists);
+	}
+	
+	
 	
 	/**
 	 * Create the reports templates
@@ -680,7 +658,16 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			try{
 				
 				ClassDefinition classDef = dictionaryService.getClass(productType);
-				reportTplService.createTpl(productReportTplsNodeRef, classDef.getTitle(), PRODUCT_REPORT_PATH, ReportType.Document, productType, true, true);
+				NodeRef compareProductFolderNodeRef = repoService.createFolderByPath(productReportTplsNodeRef, classDef.getTitle(), classDef.getTitle());				
+				reportTplService.createTplRptDesign(compareProductFolderNodeRef, 
+													classDef.getTitle(), 
+													PRODUCT_REPORT_PATH, 
+													ReportType.Document, 
+													ReportFormat.PDF,
+													productType, 
+													true, 
+													true,
+													false);
 			}
 			catch(Exception e){
 				logger.error("Failed to create product report tpl. SystemProductType: " + productType, e);
@@ -690,134 +677,69 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		// compare report
 		try{
-			addReportTplInFolder(reportsNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS), COMPARE_ENTITIES_REPORT_PATH, "");
+			NodeRef compareProductFolderNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS);
+			reportTplService.createTplRptDesign(compareProductFolderNodeRef, 
+												TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS), 
+												COMPARE_ENTITIES_REPORT_PATH, 
+												ReportType.System, 	
+												ReportFormat.PDF,
+												null, 
+												true, 
+												true, 
+												false);
 		}
 		catch(IOException e){
 			logger.error("Failed to create compare product report tpl.", e);
 		}
 
-		// export search report
-		try{
-			NodeRef exportSearchNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH);		
-			String exportTplTitle = TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS);
-			addExportSearchReportTplInFolder(exportSearchNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS, EXPORT_PRODUCTS_REPORT_RPTFILE_PATH, EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, exportTplTitle);
+		/*
+		 * Export Search reports
+		 */
+		NodeRef exportSearchNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH);
+		
+		// export search products
+		try{						
+			NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef, 
+												TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS), 
+												EXPORT_PRODUCTS_REPORT_RPTFILE_PATH, 
+												ReportType.ExportSearch, 
+												ReportFormat.XLS,
+												BeCPGModel.TYPE_PRODUCT, 
+												false, 
+												true, 
+												false);
+			
+			reportTplService.createTplRessource(exportSearchProductsNodeRef, 												
+												EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, 												
+												false);			
 		}
 		catch(IOException e){
 			logger.error("Failed to create export search report tpl.", e);
 		}		
-	}
-	
-	/**
-	 * Add a report template folder
-	 * @param parentNodeRef
-	 * @param tplName
-	 * @param tplFilePath
-	 */
-	private void addReportTplInFolder(NodeRef parentNodeRef, String folderName, String tplFilePath, String tplTitle) throws IOException{
 		
-		ClassPathResource resource = new ClassPathResource(tplFilePath);
-		
-		if(resource.exists()){
+		// export search NC
+		try{
+			NodeRef exportNCSynthesisNodeRef = visitFolder(exportSearchNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES);
 			
-			//create report template folder
-		   	logger.debug("create report template folder");
-	   		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, folderName);
+			reportTplService.createTplRptDesign(exportNCSynthesisNodeRef, 
+												TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES), 
+												EXPORT_NC_REPORT_RPTFILE_PATH, 
+												ReportType.ExportSearch, 
+												ReportFormat.PDF,
+												QualityModel.TYPE_NC, 
+												false, 
+												true, 
+												false);
 			
-			NodeRef productReportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  (String)properties.get(ContentModel.PROP_NAME));    	
-	    	if(productReportTplNodeRef == null){
-	    		productReportTplNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_FOLDER, properties).getChildRef();
-	    		
-	    		properties = new HashMap<QName, Serializable>();
-	    		properties.put(ContentModel.PROP_NAME, resource.getFilename());
-	    		properties.put(ContentModel.PROP_TITLE, tplTitle);
-	        	NodeRef fileNodeRef = nodeService.createNode(productReportTplNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
-	        	
-	        	ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
-	        	
-	        	String mimetype = mimetypeService.guessMimetype(tplFilePath);
-	    		ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-	            Charset charset = charsetFinder.getCharset(resource.getInputStream(), mimetype);
-	            String encoding = charset.name();
-
-	        	writer.setMimetype(mimetype);
-	        	writer.setEncoding(encoding);
-	        	writer.putContent(resource.getInputStream());
-	    	}
+			reportTplService.createTplRessource(exportNCSynthesisNodeRef, 												
+												EXPORT_NC_REPORT_XMLFILE_PATH, 												
+												false);			
 		}
-		else{
-			logger.error("Resource not found. Path: " + tplFilePath);
-		}	   	    
-	}
-	
-	/**
-	 * Add a report template to export a search (rptdesign and xml files)
-	 * @param parentNodeRef
-	 * @param tplName
-	 * @param tplFilePath
-	 */
-	private void addExportSearchReportTplInFolder(NodeRef parentNodeRef, String tplName, String rptdesignFilePath, String xmlFilePath, String tplTitle) throws IOException{
-				
-	   	//create report template folder
-	   	logger.debug("create report template folder");
-   		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, tplName);
-		properties.put(ContentModel.PROP_TITLE, tplTitle);
-		
-		NodeRef productReportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  (String)properties.get(ContentModel.PROP_NAME));    	
-    	if(productReportTplNodeRef == null){
-    		productReportTplNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_FOLDER, properties).getChildRef();
-    		
-    		// *.rptdesign file
-    		ClassPathResource resource = new ClassPathResource(rptdesignFilePath);
-    		if(resource.exists()){
-    			properties = new HashMap<QName, Serializable>();
-        		properties.put(ContentModel.PROP_NAME, resource.getFilename());
-        		properties.put(ContentModel.PROP_TITLE, tplTitle);
-            	NodeRef fileNodeRef = nodeService.createNode(productReportTplNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
-            	
-            	ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
-            	
-            	String mimetype = mimetypeService.guessMimetype(rptdesignFilePath);
-        		ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-                Charset charset = charsetFinder.getCharset(resource.getInputStream(), mimetype);
-                String encoding = charset.name();
-
-            	writer.setMimetype(mimetype);
-            	writer.setEncoding(encoding);
-            	writer.putContent(resource.getInputStream());
-    		}
-    		else{
-    			logger.error("Resource not found. Path: " + rptdesignFilePath);
-    		}
-        	
-        	// *.xml file
-        	resource = new ClassPathResource(xmlFilePath);
-        	if(resource.exists()){
-        	
-        		properties = new HashMap<QName, Serializable>();
-        		properties.put(ContentModel.PROP_NAME, resource.getFilename());
-        		properties.put(ContentModel.PROP_TITLE, tplTitle);
-        		NodeRef fileNodeRef = nodeService.createNode(productReportTplNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
-            	
-        		ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
-            	
-        		String mimetype = mimetypeService.guessMimetype(xmlFilePath);
-        		ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-        		BufferedInputStream bis = new BufferedInputStream(resource.getInputStream());
-        		Charset charset = charsetFinder.getCharset(bis, mimetype);
-        		String encoding = charset.name();
-
-            	writer.setMimetype(mimetype);
-            	writer.setEncoding(encoding);
-            	writer.putContent(resource.getInputStream());
-        	}
-        	else{
-        		logger.error("Resource not found. Path: " + xmlFilePath);
-        	}
-        	
-    	}    	
-	}
+		catch(IOException e){
+			logger.error("Failed to create export search report tpl.", e);
+		}		
+	}	
 	
 	/**
 	 * Create system groups.

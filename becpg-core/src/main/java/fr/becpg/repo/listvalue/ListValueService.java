@@ -20,16 +20,6 @@ import fr.becpg.model.SystemProductType;
 public interface ListValueService {
 
 	/**
-	 * Gets the allowed values.
-	 *
-	 * @param path the path
-	 * @param constraintType the constraint type
-	 * @param constraintProp the constraint prop
-	 * @return the allowed values
-	 */
-	public List<String> getAllowedValues(String path, QName constraintType, QName constraintProp);
-	
-	/**
 	 * Suggest target assoc.
 	 *
 	 * @param type the type

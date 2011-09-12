@@ -7,15 +7,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryException;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.search.ResultSet;
+import org.alfresco.service.cmr.search.ResultSetRow;
+import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
+import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.common.RepoConsts;
 import fr.becpg.repo.listvalue.ListValueService;
 
 // TODO: Auto-generated Javadoc
@@ -34,12 +41,6 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(DynListConstraint.class);
-	//TODO : est-ce la bonne mani�re de faire ?
-	/** The list value service. */
-	private static ListValueService listValueService = null;
-	
-	/** The transaction service. */
-	private static TransactionService transactionService = null;
 	
 	/** The service registry. */
 	private static ServiceRegistry serviceRegistry;
@@ -53,23 +54,6 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	/** The constraint prop. */
 	private String constraintProp = null;
 	
-	/**
-	 * Sets the list value service.
-	 *
-	 * @param listValueService the new list value service
-	 */
-	public void setListValueService(ListValueService listValueService) {
-		DynListConstraint.listValueService = listValueService;
-	}
-	
-	/**
-	 * Sets the transaction service.
-	 *
-	 * @param transactionService the new transaction service
-	 */
-	public void setTransactionService(TransactionService transactionService) {
-		DynListConstraint.transactionService = transactionService;
-	}
     /**
      * Set the paths where are stored allowed values by the constraint.
      *  
@@ -133,7 +117,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	@Override
 	public List<String> getAllowedValues()
 	{				
-		List<String> allowedValues = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<List<String>>(){
+		List<String> allowedValues = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<List<String>>(){
  			@Override
 			public List<String> execute() throws Throwable {
  				
@@ -143,7 +127,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
  					
  					//logger.debug("getAllowedValues, path: " + path); 		
 	 				NamespaceService namespaceService = serviceRegistry.getNamespaceService();
-	 				List<String> values = listValueService.getAllowedValues(path, QName.createQName(constraintType, namespaceService), QName.createQName(constraintProp, namespaceService));		 				
+	 				List<String> values = getAllowedValues(path, QName.createQName(constraintType, namespaceService), QName.createQName(constraintProp, namespaceService));		 				
 	 				allowedValues.addAll(values);
  				} 				
  				
@@ -152,12 +136,83 @@ public class DynListConstraint extends ListOfValuesConstraint {
  			}},false,true);
 													
 		if(allowedValues.size() == 0){
-			//throw new DictionaryException(ERR_NO_VALUES);
 			allowedValues.add(UNDIFINED_CONSTRAINT_VALUE);
 		}						
 		
 		super.setAllowedValues(allowedValues);
 		return allowedValues;
 	}
+	
+	/**
+	 * Get allowed values according to path, type and property (Look in every site).
+	 *
+	 * @param path the path
+	 * @param constraintType the constraint type
+	 * @param constraintProp the constraint prop
+	 * @return the allowed values
+	 */	
+	private List<String> getAllowedValues(final String path, final QName constraintType, final QName constraintProp) {
 		
+		return AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<List<String>>()
+		        {
+		            @Override
+					public List<String> doWork() throws Exception
+		            {
+		            	List<String> allowedValues = new ArrayList<String>();
+		            	String encodedPath = encodePath(path);    			
+		        		
+		        		String queryPath = String.format(RepoConsts.PATH_QUERY_LIST_CONSTRAINTS, encodedPath, constraintType);
+		        		//logger.debug("queryPath : " + queryPath);
+		        		ResultSet resultSet = null;
+		        		
+		        		try{
+		        			resultSet = serviceRegistry.getSearchService().query(RepoConsts.SPACES_STORE, 
+		        						SearchService.LANGUAGE_LUCENE, queryPath);
+		        	        
+		        			//logger.debug("resultSet.length() : " + resultSet.length());
+		        			
+		        	        if (resultSet.length() != 0)
+		        	        {
+		        	            for (ResultSetRow row : resultSet)
+		        	            {
+		        	                NodeRef nodeRef = row.getNodeRef();
+		        	                String value = (String)serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
+		        	                if(!allowedValues.contains(value)){
+		        	                	allowedValues.add(value);
+		        	                }
+		        	            }                   	
+		        	        }   
+		        	        
+//		        	        logger.debug("allowedValues.size() : " + allowedValues.size());
+//		        	        logger.debug("allowed values: " + allowedValues.toString());
+		        	        		
+		        			return allowedValues;
+		        		}
+		        		finally{
+		        			if(resultSet != null)
+		        				resultSet.close();
+		        		}
+		            }
+		        }, AuthenticationUtil.getSystemUserName());		
+	}
+	
+	/**
+     * Encode path.
+     *
+     * @param path the path
+     * @return the string
+     */
+    private String encodePath(String path){
+    	
+    	StringBuilder pathBuffer = new StringBuilder(64);
+    	String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);
+    	
+    	for(String folder : arrPath){
+    		pathBuffer.append("/cm:");
+    		pathBuffer.append(ISO9075.encode(folder));    		 
+    	}
+    	
+    	//remove 1st character '/'
+    	return pathBuffer.substring(1);
+    }
 }

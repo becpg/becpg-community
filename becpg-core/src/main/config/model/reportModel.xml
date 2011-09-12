@@ -24,7 +24,7 @@
 		<constraint name="rep:reportTplTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value></value>
+					<value>System</value>
 					<value>Document</value>
 					<value>ExportSearch</value>					
 				</list>
@@ -50,7 +50,7 @@
 				<property name="rep:reportTplType">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<multiple>true</multiple>
+					<multiple>false</multiple>
 					<constraints>
 						<constraint ref="rep:reportTplTypes" />
 					</constraints>
@@ -82,9 +82,9 @@
 	<aspects>
 		
 		<!-- applied to a node when a report is generated -->
-		<aspect name="rep:reportNodeAspect">
+		<aspect name="rep:reportEntityAspect">
 			<properties>
-				<property name="rep:reportNodeGenerated">
+				<property name="rep:reportEntityGenerated">
 					<type>d:datetime</type>					
 				</property>
 			</properties>

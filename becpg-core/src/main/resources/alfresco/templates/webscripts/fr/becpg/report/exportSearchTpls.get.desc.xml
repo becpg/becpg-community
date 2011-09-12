@@ -1,7 +1,7 @@
 <webscript>
 	<shortname>Export search</shortname>
 	<description>Export search service - retrieve the report templates</description>
-	<url>/becpg/report/exportsearch/templates</url>
+	<url>/becpg/report/exportsearch/templates/{datatype}</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
 	<transaction allow="readwrite" buffersize="0">required</transaction>

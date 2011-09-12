@@ -1,7 +1,7 @@
 /*
  * 
  */
-package fr.becpg.repo.importer;
+package fr.becpg.repo.importer.impl;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -27,6 +27,9 @@ import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.importer.ImportContext;
+import fr.becpg.repo.importer.ImportVisitor;
+import fr.becpg.repo.importer.ImporterException;
 
 // TODO: Auto-generated Javadoc
 /**

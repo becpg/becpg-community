@@ -26,8 +26,8 @@
    	<bean id="webscript.fr.becpg.entity.entityLists.get" class="fr.becpg.repo.web.scripts.entity.EntityListsWebScript" parent="webscript">      	     
       	<property name="fileFolderService" ref="fileFolderService" />
       	<property name="nodeService" ref="nodeService" />      	
-      	<property name="productDictionaryService" ref="productDictionaryService"/>
       	<property name="entityListDAO" ref="entityListDAO" />
+      	<property name="entityTplService" ref="entityTplService" />
   		</bean>
   	 
    	<!-- Product formulate -->
@@ -35,9 +35,10 @@
    		<property name="productService" ref="productService" />
    	</bean>
    	
-   	<!-- Product report -->
-   	<bean id="webscript.fr.becpg.product.productReport.get" class="fr.becpg.repo.web.scripts.product.ReportWebScript" parent="webscript">
-      	<property name="productService" ref="productService" />
+   	<!-- Entity report -->
+   	<bean id="webscript.fr.becpg.entity.entityReport.get" class="fr.becpg.repo.web.scripts.entity.ReportWebScript" parent="webscript">      	
+			<property name="nodeService" ref="nodeService" />
+			<property name="entityService" ref="entityService" />
    	</bean>
          
    	<!-- Entity where used -->
@@ -90,9 +91,11 @@
    		<property name="mimetypeService" ref="mimetypeService" />
    		<property name="advSearchService" ref="advSearchService" />
    		<property name="namespaceService" ref="namespaceService" />
+   		<property name="reportTplService" ref="reportTplService" />
    	</bean>
   		<bean id="webscript.fr.becpg.report.exportSearchTpls.get" class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript" parent="webscript">
-   		<property name="exportSearchService" ref="exportSearchService" />
+   		<property name="namespaceService" ref="namespaceService" />
+   		<property name="reportTplService" ref="reportTplService" />
    	</bean>
    	
    	<!-- Debug -->

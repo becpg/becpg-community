@@ -5,8 +5,8 @@
    <#list reportTpls as reportTpl>
     {
 	   "name": "${reportTpl.name}",
-	   "title": "${reportTpl.properties.title!reportTpl.name}",
-	   "description": "${reportTpl.properties.description!""}",
+	   "title": "${reportTpl.properties.title!""}",
+	   "format": "${reportTpl.properties["rep:reportTplFormat"]!""}",
 	   "nodeRef": "${reportTpl.nodeRef}"
 	}<#if reportTpl_has_next>,</#if>
    </#list>

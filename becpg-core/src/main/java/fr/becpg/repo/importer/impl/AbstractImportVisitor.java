@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2010-2011 beCPG. All rights reserved.
  */
-package fr.becpg.repo.importer;
+package fr.becpg.repo.importer.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,6 +54,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.importer.ClassMapping;
+import fr.becpg.repo.importer.ImportContext;
+import fr.becpg.repo.importer.ImportVisitor;
+import fr.becpg.repo.importer.ImporterException;
 import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.ProductData;
@@ -66,9 +70,8 @@ import fr.becpg.repo.product.data.ProductData;
  */
 public class AbstractImportVisitor  implements ImportVisitor {
 
-	/** The Constant PATH_QUERY_NODE_BY_KEYS. */
 	// we don't know where is the node ? product may be in the Products folder or in the sites or somewhere else !
-	protected static final String PATH_QUERY_NODE_BY_KEYS = " +PATH:\"/app:company_home//*\" +TYPE:\"%s\"";	
+	protected static final String QUERY_NODE_BY_TYPE = " +TYPE:\"%s\"";	
 	
 	/** The Constant QUERY_XPATH_MAPPING. */
 	protected static final String QUERY_XPATH_MAPPING = "mapping";
@@ -744,7 +747,7 @@ public class AbstractImportVisitor  implements ImportVisitor {
 		NodeRef nodeRef = null;		
 				
 		ClassMapping classMapping = importContext.getClassMappings().get(type);	
-		String queryPath = String.format(PATH_QUERY_NODE_BY_KEYS, type);
+		String queryPath = String.format(QUERY_NODE_BY_TYPE, type);
 		boolean doQuery = false;		
 		
 		// nodeColumnKeys
@@ -858,7 +861,7 @@ public class AbstractImportVisitor  implements ImportVisitor {
 		
 		NodeRef nodeRef = null;
 		StringBuilder queryPath = new StringBuilder(128);
-		queryPath.append(String.format(PATH_QUERY_NODE_BY_KEYS, type));
+		queryPath.append(String.format(QUERY_NODE_BY_TYPE, type));
 		ClassMapping classMapping = importContext.getClassMappings().get(type);
 		boolean doQuery = false;
 		boolean searchByName = false;

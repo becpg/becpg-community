@@ -57,7 +57,8 @@
 		<property name="reportTplService" ref="reportTplService"/>		
 		<property name="contentService" ref="contentService" />
 		<property name="mimetypeService" ref="mimetypeService"/>
-		<property name="dictionaryService" ref="dictionaryService"/>		
+		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="entityTplService" ref="entityTplService"/>		
 	</bean>
 	<bean id="initSiteVisitor" class="fr.becpg.repo.admin.InitSiteVisitorImpl">
 		<property name="fileFolderService" ref="fileFolderService" />
@@ -75,9 +76,7 @@
 
 	<!-- dynListConstraint -->
 	<bean id="dynListConstraint" class="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-		<property name="listValueService" ref="listValueService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
-		<property name="transactionService" ref="transactionService" />
 	</bean>
 
 	<!-- Helper -->
@@ -94,7 +93,7 @@
 	</bean>	
 
 	<!-- Importer -->
-	<bean id="importService" class="fr.becpg.repo.importer.ImportServiceImpl">
+	<bean id="importService" class="fr.becpg.repo.importer.impl.ImportServiceImpl">
 		<property name="searchService" ref="searchService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="contentService" ref="contentService" />
@@ -107,7 +106,7 @@
 		<property name="importEntityListItemVisitor" ref="importEntityListItemVisitor" />				
 		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
-	<bean id="importNodeVisitor" class="fr.becpg.repo.importer.ImportNodeVisitor">		
+	<bean id="importNodeVisitor" class="fr.becpg.repo.importer.impl.ImportNodeVisitor">		
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="nodeService" ref="nodeService" />
@@ -118,7 +117,7 @@
 		<property name="mimetypeService" ref="mimetypeService"/>
 		<property name="namespaceService" ref="namespaceService"/>
 	</bean>	
-	<bean id="importProductVisitor" class="fr.becpg.repo.importer.ImportProductVisitor">
+	<bean id="importProductVisitor" class="fr.becpg.repo.importer.impl.ImportProductVisitor">
 		<property name="nodeService" ref="nodeService" />		
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="entityListDAO" ref="entityListDAO" />
@@ -132,7 +131,7 @@
 		<property name="productService" ref="productService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
 	</bean>
-	<bean id="importEntityListAspectVisitor" class="fr.becpg.repo.importer.ImportEntityListAspectVisitor">
+	<bean id="importEntityListAspectVisitor" class="fr.becpg.repo.importer.impl.ImportEntityListAspectVisitor">
 		<property name="nodeService" ref="nodeService" />		
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="entityListDAO" ref="entityListDAO" />
@@ -144,7 +143,7 @@
 		<property name="mimetypeService" ref="mimetypeService"/>		
 		<property name="namespaceService" ref="namespaceService"/>
 	</bean>
-	<bean id="importEntityListItemVisitor" class="fr.becpg.repo.importer.ImportEntityListItemVisitor">
+	<bean id="importEntityListItemVisitor" class="fr.becpg.repo.importer.impl.ImportEntityListItemVisitor">
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="nodeService" ref="nodeService" />
@@ -196,7 +195,7 @@
 		<property name="compareEntityService" ref="compareEntityService" />
 		<property name="contentService" ref="contentService" />
 		<property name="reportEngine" ref="reportEngine" />
-		<property name="searchService" ref="searchService" />
+		<property name="reportTplService" ref="reportTplService" />
 		<property name="nodeService" ref="nodeService" />		
 		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>	
@@ -216,6 +215,20 @@
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="copyService" ref="copyService" />
 	</bean>
+	<bean id="entityTplService" class="fr.becpg.repo.entity.impl.EntityTplServiceImpl">
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="searchService" ref="searchService" />
+		<property name="dictionaryService" ref="dictionaryService" />		
+	</bean>
+	<bean id="entityService" class="fr.becpg.repo.entity.impl.EntityServiceImpl">
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="searchService" ref="searchService" />
+		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="entityTplService" ref="entityTplService"/>
+	</bean>
 	<!-- Entity Policies-->
 	<bean id="autoNumService" class="fr.becpg.repo.entity.impl.AutoNumServiceImpl">
 		<property name="searchService" ref="searchService" />
@@ -228,10 +241,11 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="searchService" ref="searchService" />
+		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 	<bean id="entityFolderPolicy" class="fr.becpg.repo.entity.policy.EntityFolderPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
-		<property name="nodeService" ref="nodeService" />		
+		<property name="entityService" ref="entityService" />		
 	</bean>
 	<bean id="initEntityListPolicy" class="fr.becpg.repo.entity.policy.InitEntityListPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
@@ -318,7 +332,6 @@
 		<property name="ownableService" ref="ownableService"/>
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />		
 		<property name="lockService" ref="lockService" />
-		<property name="entityReportService" ref="entityReportService" />
 	</bean>
 	
 	<!-- Product report -->
@@ -360,11 +373,6 @@
 	</bean>
 	
 	<!-- Product Policies -->	
-	<bean id="initProductPolicy" class="fr.becpg.repo.product.policy.InitProductPolicy" init-method="init">
-		<property name="policyComponent" ref="policyComponent" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="productService" ref="productService" />
-	</bean>	
 	<bean id="generateProductReportPolicy" class="fr.becpg.repo.product.policy.GenerateProductReportPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="transactionService" ref="transactionService"/>
@@ -390,5 +398,9 @@
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="namespaceService" ref="namespaceService" />			
 	</bean>		
+	<bean id="beCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
+		<property name="searchService" ref="SearchService" />
+		<property name="unProtSearchService" ref="searchService" />	
+	</bean>
 		   
 </beans>

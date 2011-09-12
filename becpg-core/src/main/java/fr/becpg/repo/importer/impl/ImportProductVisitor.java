@@ -1,7 +1,7 @@
 /*
  * 
  */
-package fr.becpg.repo.importer;
+package fr.becpg.repo.importer.impl;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -20,9 +20,14 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
+import fr.becpg.repo.importer.ClassMapping;
+import fr.becpg.repo.importer.ImportContext;
+import fr.becpg.repo.importer.ImportVisitor;
+import fr.becpg.repo.importer.ImporterException;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
@@ -35,11 +40,14 @@ import fr.becpg.repo.product.data.ProductData;
  */
 public class ImportProductVisitor extends ImportEntityListAspectVisitor implements ImportVisitor{					
 	
-	// we don't know where is the node ? product may be in the Products folder or in the sites or somewhere else !
-	//private static final String PATH_QUERY_PRODUCT_BY_KEYS = " +PATH:\"/app:company_home/cm:Products/*/cm:%s/*/*/*\" ";	
-	
 	/** The PAT h_ produc t_ folder. */
 	private static String PATH_PRODUCT_FOLDER = "./cm:Products/cm:%s/cm:%s/cm:%s/cm:%s";
+	
+	protected static final String MSG_ERROR_PRODUCTHIERARCHY1_EMPTY = "import_service.error.err_producthierarchy1_empty";
+	protected static final String MSG_ERROR_PRODUCTHIERARCHY2_EMPTY = "import_service.error.err_producthierarchy2_empty";
+	protected static final String MSG_ERROR_UNKNOWN_PRODUCTTYPE = "import_service.error.err_unknown_producttype";
+	protected static final String MSG_ERROR_PRODUCTSTATE_EMPTY = "import_service.error.err_productstate_empty";
+	protected static final String MSG_ERROR_OVERRIDE_EXISTING_ONE = "import_service.error.err_override_existing_one";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ImportProductVisitor.class);
@@ -128,19 +136,19 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 
 						}
 						else{
-							throw new ImporterException("Cannot import a product with the property 'productHierarchy2' empty. Properties: " + properties);
+							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
 						}
 					}
 					else{
-						throw new ImporterException("Cannot import a product with the property 'productHierarchy1' empty. Properties: " + properties);
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
 					}
 				}
 				else{
-					throw new ImporterException("Cannot import a product, unknown type. Type: " + nodeService.getType(nodeRef));
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNKNOWN_PRODUCTTYPE, nodeService.getType(nodeRef)));
 				}
 			}
 			else{
-				throw new ImporterException("Cannot import a product with the property 'productState' empty. Properties: " + properties);
+				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTSTATE_EMPTY, properties));
 			}			
 		}
 		
@@ -174,9 +182,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 				Serializable dbvalue = nodeService.getProperty(nodeRef, qName);
 				if(value != null && dbvalue != null && !value.equals(dbvalue)){
 					
-					throw new ImporterException("Cannot import the product since it will override an existing one. " +
-											"It has the same properties (state, hierarchy and name) but code(s) are differents." +
-											"Code in import file: " + value + " - Code in DB: " + dbvalue);
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_OVERRIDE_EXISTING_ONE, value, dbvalue));
 				}
 			}
 		}

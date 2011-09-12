@@ -6,8 +6,10 @@ package fr.becpg.repo.web.scripts.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -26,6 +28,8 @@ import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.ProductService;
 
@@ -71,10 +75,9 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 	/** The file folder service. */
 	private FileFolderService fileFolderService;		
 	
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
-		
 	private EntityListDAO entityListDAO;
+	
+	private EntityTplService entityTplService;
 	/**
 	 * Sets the node service.
 	 *
@@ -92,25 +95,19 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}	
-		
-	/**
-	 * Sets the product dictionary service.
-	 *
-	 * @param productDictionaryService the new product dictionary service
-	 */
-	public void setProductDictionaryService(
-			ProductDictionaryService productDictionaryService) {
-		this.productDictionaryService = productDictionaryService;
-	}
 	
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
+	}
+	
+	public void setEntityTplService(EntityTplService entityTplService) {
+		this.entityTplService = entityTplService;
 	}
 
 	/**
 	 * Suggest values according to query
 	 * 
-	 * url : /becpg/productlists/node/{store_type}/{store_id}/{id}.
+	 * url : /becpg/entitylists/node/{store_type}/{store_id}/{id}.
 	 *
 	 * @param req the req
 	 * @param status the status
@@ -129,47 +126,50 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 			
 		List<NodeRef> listsNodeRef = new ArrayList<NodeRef>();
 		NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);		
-		NodeRef containerDataLists = null;
-		QName type = nodeService.getType(nodeRef);
+		NodeRef listContainerNodeRef = null;
+		QName nodeType = nodeService.getType(nodeRef);
 		boolean hasWritePermission = false;
 		boolean showWUsedItems = false;
 		
-		// TODO : renommer le webscript car ce n'est pas utilisé que par les produits
-		if(nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_PRODUCT)){
-			//Product
-			NodeRef templateNodeRef = productDictionaryService.getProductTemplate(nodeRef);
-			entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
-			containerDataLists = nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
-			hasWritePermission = false;		
-			showWUsedItems = true;
-		}		
-		else {
+		logger.debug("nodeType: " + nodeType);
+				
+		// entityTpl
+		if(nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_ENTITY_TPL)){
 			
-			// Template product, micriobio criteria, product specification
-			// Control plan, Quality control, Control point
-			containerDataLists = entityListDAO.getListContainer(nodeRef);			
-			if(containerDataLists == null){			    
-				containerDataLists = entityListDAO.createListContainer(nodeRef);
+			logger.debug("entityTpl");
+			
+			listContainerNodeRef = entityListDAO.getListContainer(nodeRef);			
+			if(listContainerNodeRef == null){			   				
+				listContainerNodeRef = entityListDAO.createListContainer(nodeRef);
 			}
 			hasWritePermission = true;
-		}		
-		
-		
-		logger.debug("productListsNodeRef : " + containerDataLists);
-		
-		if(containerDataLists != null){						
-			List<FileInfo> productListsFileInfo = fileFolderService.listFolders(containerDataLists);
+		}
+		// entity
+		else {
 			
-			for(FileInfo fileInfo : productListsFileInfo){
-				listsNodeRef.add(fileInfo.getNodeRef());
-			}					
+			NodeRef templateNodeRef = entityTplService.getEntityTpl(nodeType);
+			
+			if(templateNodeRef != null){
+				entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
+				listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
+			}			
+			
+			// product
+			if(nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_PRODUCT)){
+				showWUsedItems = true;
+			}			
+		}	
+		
+		if(listContainerNodeRef != null){
+			
+			listsNodeRef = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);			
 		}
 		
-		logger.debug("productListsFileInfo.size() : " + listsNodeRef.size() + " - object type : " + type.toString() + " - hasWritePermission : " + hasWritePermission);
+		logger.trace("productListsNodeRef.size() : " + listsNodeRef.size() + " - object type : " + nodeType.toString() + " - hasWritePermission : " + hasWritePermission);
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
-		model.put(MODEL_KEY_NAME_CONTAINER, containerDataLists);
+		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
 		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
 		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission);
 		model.put(MODEL_SHOW_WUSED_ITEMS, showWUsedItems);

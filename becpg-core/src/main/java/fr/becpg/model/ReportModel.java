@@ -24,15 +24,15 @@ public class ReportModel {
 	public static final QName PROP_REPORT_TPL_FORMAT = QName.createQName(REPORT_URI,
 	"reportTplFormat");
 		
-	// reportNode
-	public static final QName ASPECT_REPORT_NODE = QName.createQName(REPORT_URI,
-			"reportNodeAspect");
-	public static final QName PROP_REPORT_NODE_GENERATED = QName.createQName(REPORT_URI,
-			"reportNodeGenerated");
+	// reportEntity
+	public static final QName ASPECT_REPORT_ENTITY = QName.createQName(REPORT_URI,
+			"reportEntityAspect");
+	public static final QName PROP_REPORT_ENTITY_GENERATED = QName.createQName(REPORT_URI,
+			"reportEntityGenerated");
 	
 	// reportTpls
 	public static final QName ASPECT_REPORT_TEMPLATES = QName.createQName(REPORT_URI,
-			"productMicrobioCriteriaAspect");
+			"reportTplsAspect");
 	public static final QName ASSOC_REPORT_TEMPLATES = QName.createQName(REPORT_URI,
 			"reportTpls");
 	

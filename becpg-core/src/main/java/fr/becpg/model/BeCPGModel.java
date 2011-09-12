@@ -29,11 +29,6 @@ public interface BeCPGModel {
 	//
 	/** The Constant MODEL. */
 	static final QName MODEL = QName.createQName(BECPG_URI, "bcpgmodel");
-
-	// productTemplate
-	/** The Constant TYPE_PRODUCTTEMPLATE. */
-	static final QName TYPE_PRODUCTTEMPLATE = QName.createQName(BECPG_URI,
-			"productTemplate");
 	
 	// productSpecification
 	static final QName TYPE_PRODUCT_SPECIFICATION = QName.createQName(BECPG_URI,
@@ -450,10 +445,13 @@ public interface BeCPGModel {
 	static final QName TYPE_LIST_VALUE = QName.createQName(BECPG_URI,
 			"listValue");
 
-	// entityFolder
-	/** The Constant TYPE_ENTITY_FOLDER. */
+	/** entityFolder */
 	static final QName TYPE_ENTITY_FOLDER = QName.createQName(BECPG_URI,
 			"entityFolder");
+	
+	/** entity */
+	static final QName TYPE_ENTITY = QName.createQName(BECPG_URI,
+	"entity");
 
 	// autoNum
 	/** The Constant TYPE_AUTO_NUM. */
@@ -472,14 +470,13 @@ public interface BeCPGModel {
 	static final QName PROP_AUTO_NUM_VALUE = QName.createQName(
 			BECPG_URI, "autoNumValue");
 	
-	// productType aspect
-	/** The Constant ASPECT_PRODUCT_TYPE. */
-	static final QName ASPECT_PRODUCT_TYPE = QName.createQName(BECPG_URI,
-			"productTypeAspect");
-	
-	/** The Constant PROP_PRODUCT_TYPE. */
-	static final QName PROP_PRODUCT_TYPE = QName.createQName(BECPG_URI,
-			"productType");
+	// entityTpl aspect
+	static final QName ASPECT_ENTITY_TPL = QName.createQName(BECPG_URI,
+	"entityTplAspect");	
+	static final QName PROP_ENTITY_TPL_CLASS_NAME = QName.createQName(BECPG_URI,
+	"entityTplClassName");
+	static final QName PROP_ENTITY_TPL_ENABLED = QName.createQName(BECPG_URI,
+	"entityTplEnabled");
 	
 	// supplier
 	/** The Constant ASPECT_SUPPLIERS. */

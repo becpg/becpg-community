@@ -152,30 +152,6 @@ public class ListValueServiceTest extends BaseAlfrescoTestCase {
 
 	}
 	
-	
-	/**
-	 * Test get allowed values.
-	 */
-	public void testGetAllowedValues(){
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
- 			@Override
-			public NodeRef execute() throws Throwable {
- 				
- 				logger.debug("Start testGetAllowedValues");
- 				
- 				List<String> allowedValues = listValueService.getAllowedValues("System/Lists/Currencies", BeCPGModel.TYPE_LIST_VALUE, ContentModel.PROP_NAME); 				
- 				logger.debug("allowedValues.size() : " + allowedValues.size());
- 				
- 				for(String value : allowedValues){
- 					logger.debug(value);
- 				}
-
- 				return null;
-
- 			}},false,true);				
-	}
-	
 	/**
 	 * Test suggest supplier.
 	 */

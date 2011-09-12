@@ -39,6 +39,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.test.RepoBaseTestCase;
@@ -143,7 +144,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {												
 				
 				policyBehaviourFilter.disableBehaviour(sfNodeRef, ContentModel.ASPECT_AUDITABLE);
-				nodeService.setProperty(sfNodeRef, ReportModel.PROP_REPORT_NODE_GENERATED, new Date());
+				nodeService.setProperty(sfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, new Date());
 				policyBehaviourFilter.enableBehaviour(sfNodeRef, ContentModel.ASPECT_AUDITABLE);
 				return null;
 				
@@ -156,13 +157,42 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 	 *
 	 * @throws InterruptedException the interrupted exception
 	 */
-	public void xtestIsReportUpToDate() throws InterruptedException{
-		   
+	public void testIsReportUpToDate() throws InterruptedException{		   		
+	   	
+		logger.debug("testIsReportUpToDate()");
+		
+		// Add report tpl
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			@Override
+			public NodeRef execute() throws Throwable {
+							   	
+				
+				/*-- Add report tpl --*/
+				NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+			   	NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
+			   	NodeRef productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));		   			   		   
+		   		
+			   	reportTplService.createTplRptDesign(productReportTplFolder, 
+			   										"report SF", 
+			   										"beCPG/birt/ProductReport.rptdesign", 
+		   											ReportType.Document, 
+		   											ReportFormat.PDF,
+		   											BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, 
+		   											true, 
+		   											true,
+		   											true);	
+			   	
+				return null;
+				
+			}},false,true);
+		
+		assertEquals("check system templates", 1, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT).size());
+		
 		// create product
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			@Override
 			public NodeRef execute() throws Throwable {
-			
+							   	
 				/*-- Create test folder --*/
 				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
 				if(folderNodeRef != null)
@@ -184,9 +214,11 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
 				sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);				
 				
+				assertEquals("check system templates", 1, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT).size());
+				
 				return null;
 				
-			}},false,true);	   		
+			}},false,true);	   				
 		
 		// load SF and test it
 		Collection<QName> dataLists = productDictionaryService.getDataLists();
@@ -254,71 +286,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				
 			}},false,true);
 		
-		assertEquals("check if report is up to date", true, entityReportService.isReportUpToDate(sfNodeRef));													
-		
-		// setProperty of allergen and change smth => should be out of date
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			@Override
-			public NodeRef execute() throws Throwable {												
-				
-				NodeRef nodeRef = sfData.getAllergenList().get(0).getNodeRef();
-				logger.debug("allergen prev value " + nodeService.getProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY));
-				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, false);	
-								
-				return null;
-				
-			}},false,true);						
-		
-		assertEquals("check if report is up to date", false, entityReportService.isReportUpToDate(sfNodeRef));
-		
-		// reset
-		resetReportModified();
-		Thread.sleep(1000);
-		
-		// add an allergen		
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			@Override
-			public NodeRef execute() throws Throwable {												
-				
-				NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);
-				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
-				NodeRef allergen = allergens.get(5);
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-    			properties.put(BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY, true);
-	    		properties.put(BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, false);
-	    		ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, allergen.getId()), BeCPGModel.TYPE_ALLERGENLIST, properties);	
-				NodeRef linkNodeRef = childAssocRef.getChildRef();
-    			nodeService.createAssociation(linkNodeRef, allergen, BeCPGModel.PROP_ALLERGENLIST_ALLERGEN);
-    			
-    			logger.debug("listNodeRef: " + listNodeRef);
-    			logger.debug("added allergen modified: " + nodeService.getProperty(linkNodeRef, ContentModel.PROP_MODIFIED));
-    			logger.debug("added allergen created: " + nodeService.getProperty(linkNodeRef, ContentModel.PROP_CREATED));
-    			
-				return null;
-				
-			}},false,true);	
-		
-		assertEquals("check if report is up to date", false, entityReportService.isReportUpToDate(sfNodeRef));
-		
-		// reset
-		resetReportModified();
-		Thread.sleep(1000);		
-		
-		// remove an allergen
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			@Override
-			public NodeRef execute() throws Throwable {												
-				
-				NodeRef nodeRef = sfData.getAllergenList().get(1).getNodeRef();
-				nodeService.deleteNode(nodeRef);	
-								
-				return null;
-				
-			}},false,true);	
-		
-		assertEquals("check if report is up to date", false, entityReportService.isReportUpToDate(sfNodeRef));
-		
-	   
+		assertEquals("check if report is up to date", true, entityReportService.isReportUpToDate(sfNodeRef));															   
 	}
 	
 	/**
@@ -359,33 +327,64 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);				
 				
 				QName typeQName = nodeService.getType(sfNodeRef);
-				assertEquals("check system templates", 0, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
-				
+				assertEquals("check system templates", 0, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());						   			   		  
+		   		
 				// add a system template
-				reportTplService.createTpl(productReportTplFolder, "report MP", "beCPG/birt/ProductReport.rptdesign", ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, true);
+				reportTplService.createTplRptDesign(productReportTplFolder, 
+													"report MP", 
+													"beCPG/birt/ProductReport.rptdesign", 
+													ReportType.Document,
+													ReportFormat.PDF,
+													BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, 
+													true, 
+													true,
+													true);
+				
 				assertEquals("check system templates", 1, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 				
 				// add a system template
-				reportTplService.createTpl(productReportTplFolder, "report MP 2", "beCPG/birt/ProductReport.rptdesign", ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, false);
+				reportTplService.createTplRptDesign(productReportTplFolder, 
+													"report MP 2", 
+													"beCPG/birt/ProductReport.rptdesign", 
+													ReportType.Document, 
+													ReportFormat.PDF,
+													BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, 
+													true, 
+													false,
+													true);
 				assertEquals("check system templates", 2, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());				
 				
 				assertEquals("check user templates", 0, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user").size());
 
 				// add a user template
-				reportTplService.createTpl(productReportTplFolder, "user tpl", "beCPG/birt/ProductReport.rptdesign", ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, false, true);
+				reportTplService.createTplRptDesign(productReportTplFolder, 
+													"user tpl", 
+													"beCPG/birt/ProductReport.rptdesign", 
+													ReportType.Document, 
+													ReportFormat.PDF,
+													BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, 
+													false, 
+													true,
+													true);				
 
-				reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user");
-				reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user*");
-				reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user tpl");
-				reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "(user)");
-				
 				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user").size());
 				
 				// add a user template
-				reportTplService.createTpl(productReportTplFolder, "user tpl 2", "beCPG/birt/ProductReport.rptdesign", ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, false, false);
+				NodeRef userTpl2NodeRef = reportTplService.createTplRptDesign(productReportTplFolder, 
+													"user tpl 2", 
+													"beCPG/birt/ProductReport.rptdesign", 
+													ReportType.Document,
+													ReportFormat.PDF,
+													BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, 
+													false, 
+													false,
+													true);	
+				
 				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "u*").size());
 				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user*").size());								
-				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user tpl 2").size());
+				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user tpl 2").size());
+				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "\"user tpl 2\"").size());
+				assertEquals("check user templates", userTpl2NodeRef, reportTplService.getUserReportTemplate(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user tpl 2"));
 				
 				return null;
 				

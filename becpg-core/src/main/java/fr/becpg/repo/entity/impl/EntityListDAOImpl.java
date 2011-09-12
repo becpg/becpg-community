@@ -1,6 +1,7 @@
 package fr.becpg.repo.entity.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -99,6 +100,8 @@ public class EntityListDAOImpl implements EntityListDAO{
 	@Override
 	public NodeRef createList(NodeRef listContainerNodeRef, QName listQName) {
 		
+		logger.debug("createList: " + listQName);
+		
 		ClassDefinition classDef = dictionaryService.getClass(listQName);
 		
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -106,17 +109,20 @@ public class EntityListDAOImpl implements EntityListDAO{
 		properties.put(ContentModel.PROP_TITLE, classDef.getTitle());
 		properties.put(ContentModel.PROP_DESCRIPTION, classDef.getDescription());
 		properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
-		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, listQName, DataListModel.TYPE_DATALIST, properties).getChildRef();
+		return nodeService.createNode(listContainerNodeRef, 
+									ContentModel.ASSOC_CONTAINS, listQName, 
+									DataListModel.TYPE_DATALIST, 
+									properties).getChildRef();
 	}
 	
 	@Override
-	public Set<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef) {
+	public List<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef) {
 		
-		Set<NodeRef> existingLists = new HashSet<NodeRef>();
+		List<NodeRef> existingLists = new ArrayList<NodeRef>();
 		
 		if(listContainerNodeRef != null){
 			List<FileInfo> nodes = fileFolderService.listFolders(listContainerNodeRef);
-			
+		
 			for(FileInfo node : nodes){
 				
 				NodeRef listNodeRef = node.getNodeRef();
@@ -127,6 +133,7 @@ public class EntityListDAOImpl implements EntityListDAO{
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
 					
 					if(dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)){
+						
 						existingLists.add(listNodeRef);
 					}
 				}
@@ -137,9 +144,9 @@ public class EntityListDAOImpl implements EntityListDAO{
 	}
 
 	@Override
-	public Set<QName> getExistingListsQName(NodeRef listContainerNodeRef) {
+	public List<QName> getExistingListsQName(NodeRef listContainerNodeRef) {
 		
-		Set<QName> existingLists = new HashSet<QName>();
+		List<QName> existingLists = new ArrayList<QName>();
 		
 		if(listContainerNodeRef != null){
 			List<FileInfo> nodes = fileFolderService.listFolders(listContainerNodeRef);
@@ -160,7 +167,6 @@ public class EntityListDAOImpl implements EntityListDAO{
 
 	@Override
 	public NodeRef getLink(NodeRef listContainerNodeRef, QName propertyQName, NodeRef nodeRef) {
-		// TODO Refactor the code to use this method
 		
 		if(listContainerNodeRef != null && propertyQName != null && nodeRef != null){
 			
@@ -186,33 +192,29 @@ public class EntityListDAOImpl implements EntityListDAO{
     		return;
     	}
     	
-    	NodeRef containerDataLists = nodeService.getChildByName(targetNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
-		
-		if(containerDataLists == null){
-		    /*-- create an empty container --*/
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);
-			properties.put(ContentModel.PROP_TITLE, RepoConsts.CONTAINER_DATALISTS);
-			containerDataLists = nodeService.createNode(targetNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.TYPE_FOLDER, properties).getChildRef();
-		}
-        
         if(sourceNodeRef != null){
         	
         	/*-- copy source datalists--*/
-        	logger.debug("/*-- copy source datalists--*/");
-        	NodeRef sourceListsNodeRef = nodeService.getChildByName(sourceNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
+        	logger.debug("/*-- copy source datalists--*/");        	
+        	NodeRef sourceListContainerNodeRef = getListContainer(sourceNodeRef);
+        	NodeRef targetListContainerNodeRef = getListContainer(targetNodeRef);
         		        	
-        	if(sourceListsNodeRef != null){
+        	if(sourceListContainerNodeRef != null){
         			        		    	        			
-				List<FileInfo> sourceDataLists = fileFolderService.listFolders(sourceListsNodeRef);	        				        			
-				for(FileInfo sourceDataList : sourceDataLists){
+				List<NodeRef> sourceListsNodeRef = getExistingListsNodeRef(sourceListContainerNodeRef);
+				for(NodeRef sourceListNodeRef : sourceListsNodeRef){
 					
-					// TODO : a supprimer car il y a maintenant une datalistPolicy (ATTENTION à la démo car ca va tout casser ! car les templates ont toujours des GUID dans le name)
-					String dataListType = (String)nodeService.getProperty(sourceDataList.getNodeRef(), DataListModel.PROP_DATALISTITEMTYPE);
-					String dataListName = dataListType.split(RepoConsts.MODEL_PREFIX_SEPARATOR)[1];
-					logger.debug("check missing list: " + dataListName + " - containerDL: " + containerDataLists);	        				
+					// create container if needed
+					if(targetListContainerNodeRef == null){
+						
+						targetListContainerNodeRef = createListContainer(targetNodeRef);						
+					}
 					
-					NodeRef existingListNodeRef = nodeService.getChildByName(containerDataLists, ContentModel.ASSOC_CONTAINS, dataListName);
+					String dataListType = (String)nodeService.getProperty(sourceListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+					QName listQName = QName.createQName(dataListType, namespaceService);					
+					logger.debug("check missing list: " + listQName + " - containerDL: " + targetListContainerNodeRef);	        				
+					
+					NodeRef existingListNodeRef = getList(targetListContainerNodeRef, listQName);
 					boolean copy = true;
 					if(existingListNodeRef != null){
 						if(override){
@@ -225,9 +227,12 @@ public class EntityListDAOImpl implements EntityListDAO{
 					}
 					
 					if(copy){	        						        										
-						logger.debug("copy list");
-						NodeRef newDLNodeRef = copyService.copy (sourceDataList.getNodeRef(), containerDataLists, ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST, true);						
-						nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, dataListName);
+						NodeRef newDLNodeRef = copyService.copy (sourceListNodeRef, 
+																targetListContainerNodeRef, 
+																ContentModel.ASSOC_CONTAINS, 
+																DataListModel.TYPE_DATALIST, 
+																true);						
+						nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, listQName.getLocalName());
 					}
 				}
         	}

@@ -23,19 +23,6 @@
 	</namespaces>
 
 	<constraints>
-		<constraint name="bcpg:systemProductType" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value>RawMaterial</value>
-					<value>SemiFinishedProduct</value>
-					<value>LocalSemiFinishedProduct</value>
-					<value>FinishedProduct</value>
-					<value>CondSalesUnit</value>
-					<value>PackagingKit</value>
-					<value>PackagingMaterial</value>
-				</list>
-			</parameter>
-		</constraint>
 		<constraint name="bcpg:systemState" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -353,23 +340,15 @@
 
 	<types>
 		<!-- _________________________________________________ PRODUCTS________________________________________________ -->
-		<type name="bcpg:productTemplate">
-			<parent>cm:content</parent>
-			<mandatory-aspects>
-				<aspect>bcpg:productTypeAspect</aspect>
-				<aspect>bcpg:entityListsAspect</aspect>
-			</mandatory-aspects>
-		</type>
 		
 		<type name="bcpg:productSpecification">
-			<parent>cm:content</parent>
-			<mandatory-aspects>
-				<aspect>bcpg:entityListsAspect</aspect>
+			<parent>bcpg:entity</parent>
+			<mandatory-aspects>				
 			</mandatory-aspects>
 		</type>
 		
 		<type name="bcpg:productMicrobioCriteria">
-			<parent>cm:content</parent>
+			<parent>bcpg:entity</parent>
 			<properties>
 				<property name="bcpg:pmcRegulation">
 					<type>d:text</type>					
@@ -379,17 +358,16 @@
 				</property>
 			</properties>
 			<mandatory-aspects>
-				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:entityListsAspect</aspect>
+				<aspect>bcpg:codeAspect</aspect>				
 			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:product">
-			<parent>cm:content</parent>
+			<parent>bcpg:entity</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:productAspect</aspect>
-				<aspect>bcpg:entityListsAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>								
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:condSalesUnit">
@@ -398,6 +376,7 @@
 				<aspect>bcpg:eanAspect</aspect>
 				<aspect>bcpg:transformationAspect</aspect>
 				<aspect>bcpg:clientsAspect</aspect>
+				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:finishedProduct">
@@ -405,14 +384,15 @@
 			<mandatory-aspects>
 				<aspect>bcpg:eanAspect</aspect>
 				<aspect>bcpg:transformationAspect</aspect>
-				<aspect>bcpg:clientsAspect</aspect>
-				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>
+				<aspect>bcpg:clientsAspect</aspect>		
+				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>		
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:semiFinishedProduct">
 			<parent>bcpg:product</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:transformationAspect</aspect>
+				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:localSemiFinishedProduct">
@@ -423,6 +403,7 @@
 			<mandatory-aspects>
 				<aspect>bcpg:eanAspect</aspect>
 				<aspect>bcpg:suppliersAspect</aspect>
+				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:packagingKit">
@@ -567,7 +548,7 @@
 		</type>
 		<!-- ______________________________________ FOURNISSEUR ______________________________________ -->
 		<type name="bcpg:supplier">
-			<parent>cm:content</parent>
+			<parent>bcpg:entity</parent>
 			<properties>
 				<property name="bcpg:supplierTel">
 					<type>d:text</type>
@@ -583,7 +564,7 @@
 		</type>
 		<!-- ______________________________________ CLIENT ______________________________________ -->
 		<type name="bcpg:client">
-			<parent>cm:content</parent>
+			<parent>bcpg:entity</parent>
 			<properties>
 				<property name="bcpg:clientTel">
 					<type>d:text</type>
@@ -1166,6 +1147,10 @@
 			<properties>
 			</properties>
 		</type>
+		
+		<type name="bcpg:entity">
+			<parent>cm:content</parent>
+		</type>
 
 		<type name="bcpg:autoNum">
 			<parent>cm:content</parent>
@@ -1327,16 +1312,16 @@
 			</properties>
 		</aspect>
 
-		<aspect name="bcpg:productTypeAspect">
+		<!-- Aspect used to store the entity type of the template (entityFolderTpl, entityTpl, etc...) -->
+		<aspect name="bcpg:entityTplAspect">
 			<properties>
-				<property name="bcpg:productType">
-					<type>d:text</type>
-					<mandatory>true</mandatory>
-					<multiple>true</multiple>
-					<constraints>
-						<constraint ref="bcpg:systemProductType" />
-					</constraints>
+				<property name="bcpg:entityTplClassName">
+					<type>d:qname</type>					
 				</property>
+				<property name="bcpg:entityTplEnabled">
+					<type>d:boolean</type>
+					<default>true</default>					
+				</property>				
 			</properties>
 		</aspect>
 		

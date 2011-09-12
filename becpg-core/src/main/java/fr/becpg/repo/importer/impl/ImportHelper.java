@@ -1,7 +1,7 @@
 /*
  * 
  */
-package fr.becpg.repo.importer;
+package fr.becpg.repo.importer.impl;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.common.RepoConsts;
+import fr.becpg.repo.importer.ImportContext;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -56,10 +57,10 @@ public class ImportHelper{
 				
 				PropertyDefinition propertyDef = (PropertyDefinition)attribute;
 				QName qName = propertyDef.getName();
-				String dataType =propertyDef.getDataType().toString();				
+				QName dataType =propertyDef.getDataType().getName();				
 				
 				// MLText
-				if(dataType.equals(DataTypeDefinition.MLTEXT.toString())){
+				if(dataType.isMatch(DataTypeDefinition.MLTEXT)){
 					
 					MLText mlText = new MLText();					
 					
@@ -95,7 +96,7 @@ public class ImportHelper{
 					value = mlText;
 				}
 				// Text
-				else if(dataType.equals(DataTypeDefinition.TEXT.toString())){					
+				else if(dataType.isMatch(DataTypeDefinition.TEXT)){					
 					
 					if (propertyDef.isMultiValued())
                 	{
@@ -113,7 +114,7 @@ public class ImportHelper{
 						value = cleanName((String)value);
 				}
 				// Date
-				else if(dataType.equals(DataTypeDefinition.DATE.toString()) || dataType.equals(DataTypeDefinition.DATETIME.toString())){
+				else if(dataType.isMatch(DataTypeDefinition.DATE) || dataType.isMatch(DataTypeDefinition.DATETIME)){
 					
 					if(values.get(pos).isEmpty()){
 						value = null;
@@ -123,7 +124,7 @@ public class ImportHelper{
 					}										
 				}
 				// int, long
-				else if(dataType.equals(DataTypeDefinition.INT.toString()) || dataType.equals(DataTypeDefinition.LONG.toString())){
+				else if(dataType.isMatch(DataTypeDefinition.INT) || dataType.isMatch(DataTypeDefinition.LONG)){
 										
 					if(values.get(pos).isEmpty()){
 						value = null;
@@ -133,7 +134,7 @@ public class ImportHelper{
 					}	
 				}
 				// double
-				else if(dataType.equals(DataTypeDefinition.DOUBLE.toString())){
+				else if(dataType.isMatch(DataTypeDefinition.DOUBLE)){
 										
 					if(values.get(pos).isEmpty()){
 						value = null;
@@ -144,7 +145,7 @@ public class ImportHelper{
 					}	
 				}
 				// float
-				else if(dataType.equals(DataTypeDefinition.FLOAT.toString())){
+				else if(dataType.isMatch(DataTypeDefinition.FLOAT)){
 					
 					if(values.get(pos).isEmpty()){
 						value = null;
@@ -153,7 +154,7 @@ public class ImportHelper{
 						Number n = importContext.getPropertyFormats().getDecimalFormat().parse(values.get(pos));
 						value = n.floatValue();
 					}	
-				}
+				}				
 				else{
 					value = values.get(pos);
 				}

@@ -227,7 +227,6 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
         ruleService.disableRules();
         try
         {
-        	logger.debug("###copyName : " + copyName);
             // Update the working copy name        
             this.nodeService.setProperty(workingCopy, ContentModel.PROP_NAME, copyName);
             

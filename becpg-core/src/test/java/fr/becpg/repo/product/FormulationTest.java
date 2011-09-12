@@ -2021,8 +2021,6 @@ public class FormulationTest extends RepoBaseTestCase {
 				int checks = 0;
 				for(ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()){
 					
-					logger.debug("###ReqMsg: " + reqCtrlList.getReqMessage());
-					
 					if(reqCtrlList.getReqMessage().equals("OGM interdit")){
 						
 						assertEquals("Interdit", reqCtrlList.getReqType());

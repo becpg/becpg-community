@@ -355,8 +355,6 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 			}
 		}
 
-		logger.debug("### checkCompareRow return false " + productList + " - "
-				+ characteristic + " - " + property + " - " + values);
 		return false;
 	}
 
@@ -427,9 +425,6 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 			}
 		}
 
-		logger.debug("### checkStructCompareRow return false " + productList
-				+ " - " + depthLevel + " - " + operator + " - " + product1
-				+ " - " + product2 + " - " + properties1 + " - " + properties2);
 		return false;
 	}
 

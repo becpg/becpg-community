@@ -5,6 +5,7 @@ package fr.becpg.repo.web.scripts.product;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
@@ -42,6 +43,7 @@ import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
@@ -53,6 +55,9 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.report.template.ReportFormat;
+import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.template.ReportType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -62,6 +67,8 @@ import fr.becpg.repo.product.data.productList.DeclarationType;
  */
 public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
 
+	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/CompareEntities.rptdesign";
+	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CompareProductReportWebScriptTest.class);
 	
@@ -102,13 +109,17 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
     private TransactionService transactionService;
     
     /** The repository. */
-    private Repository repository;
+    private Repository repositoryHelper;
     
     /** The content service. */
     private ContentService contentService;
     
     /** The mimetype service. */
     private MimetypeService mimetypeService;
+    
+    private RepoService repoService;
+    
+    private ReportTplService reportTplService;
     
 	/** The folder node ref. */
 	private NodeRef folderNodeRef;
@@ -162,9 +173,11 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
 		productDAO = (ProductDAO)appCtx.getBean("productDAO");
 		productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
 		transactionService = (TransactionService)appCtx.getBean("transactionService");
-		repository = (Repository)appCtx.getBean("repositoryHelper");
+		repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
 		contentService = (ContentService)appCtx.getBean("contentService");
-		mimetypeService = (MimetypeService)appCtx.getBean("mimetypeService");				
+		mimetypeService = (MimetypeService)appCtx.getBean("mimetypeService");
+		repoService = (RepoService)appCtx.getBean("repoService");
+		reportTplService = (ReportTplService)appCtx.getBean("reportTplService");
 		
 	    // Authenticate as user
 	    this.authenticationComponent.setCurrentUser(USER_ADMIN);
@@ -190,16 +203,16 @@ private void initObjects(){
 			public NodeRef execute() throws Throwable {
 				
 				/*-- Create test folder --*/
-				folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
 				if(folderNodeRef != null)
 				{
 					fileFolderService.delete(folderNodeRef);    		
 				}			
-				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 													
 		
 				//costs
-				NodeRef systemFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 				NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
 				if(costFolder == null){
 					costFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS), ContentModel.TYPE_FOLDER).getNodeRef();
@@ -295,71 +308,25 @@ private void initObjects(){
 
 	/**
 	 * Inits the tests.
+	 * @throws IOException 
 	 */
-	private void initTests(){
+	private void initTests() throws IOException{
 		
-		logger.debug("look for report template");
-	   	NodeRef systemFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));    	   		
-	   	assertNotNull("Check system folder", systemFolder);
+		NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+	   	NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
+	   	NodeRef compareReportFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS));
 	   	
-	   	NodeRef reportsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));    	
-	   	assertNotNull("Check reports folder", reportsFolder);
-	   	
-	   	NodeRef productComparisonReportsFolder = nodeService.getChildByName(reportsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS));
-	   	if(productComparisonReportsFolder != null){
-	   		nodeService.deleteNode(productComparisonReportsFolder);
-	   	}
-	   	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS));
-    	productComparisonReportsFolder = nodeService.createNode(reportsFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_FOLDER, properties).getChildRef();
-	   	
-    	assertNotNull("Check product comparison folder", productComparisonReportsFolder);
-   		
-	   	//create report template folder
-	   	logger.debug("create report");	   	
-   		
-    	//create birt file
-    	String birtDir = "/src/main/resources/beCPG/birt/";
-		String [] birtFiles = {"CompareEntities.rptdesign"};			
-		
-		for(String birtFile : birtFiles){			
-			
-			logger.debug("create birt file " + birtFile);
-			
-			properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, birtFile);
-	    	NodeRef fileNodeRef = nodeService.createNode(productComparisonReportsFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
-	    	
-	    	ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
-	    	logger.debug("Load birt file " + System.getProperty("user.dir" )  + birtDir + birtFile);
-	    	FileInputStream in = null;
-	    	
-	    	try{
-	    		in = new FileInputStream(System.getProperty("user.dir" )  + birtDir + birtFile);	    		
-	    	}
-	    	catch(FileNotFoundException e){
-	    		logger.error("Failed to get user.dir", e);
-	    	}
-	    	
-	    	assertNotNull("check input stream", in);
-	    	
-	    	String mimetype = mimetypeService.guessMimetype(birtFile);
-			ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-	        Charset charset = charsetFinder.getCharset(in, mimetype);
-	        String encoding = charset.name();
-
-	        logger.debug("mimetype : " + mimetype);
-	        logger.debug("encoding : " + encoding);
-	    	writer.setMimetype(mimetype);
-	    	writer.setEncoding(encoding);
-	    	writer.putContent(in);
-	    	
-	    	//check
-	    	ContentReader reader = contentService.getReader(fileNodeRef, ContentModel.PROP_CONTENT);
-			InputStream inputStream = reader.getContentInputStream();
-	    	
-	    	logger.debug("file writen.");		    	
-		}			   
+	   	// compare report
+		reportTplService.createTplRptDesign(compareReportFolder, 
+											TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS), 
+											COMPARE_ENTITIES_REPORT_PATH, 
+											ReportType.System, 	
+											ReportFormat.PDF,
+											null, 
+											true, 
+											true, 
+											false);
+	
 	}
 		
 		/**

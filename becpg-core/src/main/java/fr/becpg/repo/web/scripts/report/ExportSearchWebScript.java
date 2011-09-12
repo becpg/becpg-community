@@ -29,6 +29,8 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.repo.report.search.ExportSearchService;
+import fr.becpg.repo.report.template.ReportFormat;
+import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.search.AdvSearchService;
 
 /**
@@ -58,9 +60,15 @@ public class ExportSearchWebScript extends AbstractWebScript  {
 	
 	/** The Constant PARAM_REPOSITORY. */
 	private static final String PARAM_REPOSITORY = "repo";
+
+	/** The Constant PARAM_STORE_TYPE. */
+	private static final String PARAM_STORE_TYPE = "store_type";
 	
-	/** The Constant PARAM_REPORT_NAME. */
-	private static final String PARAM_REPORT_NAME = "reportname";
+	/** The Constant PARAM_STORE_ID. */
+	private static final String PARAM_STORE_ID = "store_id";
+	
+	/** The Constant PARAM_ID. */
+	private static final String PARAM_ID = "id";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ExportSearchWebScript.class);
@@ -74,6 +82,8 @@ public class ExportSearchWebScript extends AbstractWebScript  {
 	private AdvSearchService advSearchService;
 	
 	private NamespaceService namespaceService;
+	
+	private ReportTplService reportTplService;
 	
 	/**
 	 * Sets the export search service.
@@ -100,6 +110,10 @@ public class ExportSearchWebScript extends AbstractWebScript  {
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
+	
+	public void setReportTplService(ReportTplService reportTplService) {
+		this.reportTplService = reportTplService;
+	}
 
 	/**
 	 * Export search in a report.
@@ -113,8 +127,12 @@ public class ExportSearchWebScript extends AbstractWebScript  {
 		
 		logger.debug("ExportSearchWebScript executeImpl()");
 		
-		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
-		String reportName = templateArgs.get(PARAM_REPORT_NAME);
+		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();		
+		String storeType = templateArgs.get(PARAM_STORE_TYPE);
+		String storeId = templateArgs.get(PARAM_STORE_ID);
+		String nodeId = templateArgs.get(PARAM_ID);
+    	
+		NodeRef templateNodeRef = new NodeRef(storeType, storeId, nodeId);		
 		String query = req.getParameter(PARAM_QUERY);
 		String sort = req.getParameter(PARAM_SORT);
 		String term = req.getParameter(PARAM_TERM);
@@ -127,8 +145,6 @@ public class ExportSearchWebScript extends AbstractWebScript  {
 			isRepo = true;
 		}
 		
-		if(reportName == null || reportName.isEmpty())
-    		throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'reportName' argument cannot be null or empty");
 		if(query == null || query.isEmpty())
     		throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'query' argument cannot be null or empty");					
 		
@@ -138,19 +154,15 @@ public class ExportSearchWebScript extends AbstractWebScript  {
         try
         {      
         	Map<String, String> criteriaMap = new HashMap<String, String>();
-    		JSONObject jsonObject = null;
     		
-    		jsonObject = new JSONObject(query);    		
+    		JSONObject jsonObject = new JSONObject(query);    		
     		Iterator iterator =jsonObject.keys();
     		
     		while(iterator.hasNext()){
     			
     			String key = (String)iterator.next();
     			String value = jsonObject.getString(key);
-    			criteriaMap.put(key, value);
-    			
-    			logger.debug("json key: " + key);
-    			logger.debug("json value: " + value);
+    			criteriaMap.put(key, value);    			
     		}
     		
         	QName datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
@@ -164,11 +176,13 @@ public class ExportSearchWebScript extends AbstractWebScript  {
 																			siteId, 
 																			containerId);
 
+        	// report format
+			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);
         	
-        	exportSearchService.getReport(reportName, resultNodeRefs, res.getOutputStream());    		        	
+        	exportSearchService.getReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, res.getOutputStream());    		        	
         	
     		// set mimetype for the content and the character encoding + length for the stream
-            res.setContentType(mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_XLS));
+            res.setContentType(mimetypeService.guessMimetype(reportFormat.toString()));
             //res.setContentEncoding(reader.getEncoding());
             //res.setHeader("Content-Length", Long.toString(reader.getSize()));
             CountingOutputStream c = new CountingOutputStream(res.getOutputStream());

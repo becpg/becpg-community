@@ -27,14 +27,6 @@ public interface ProductDictionaryService {
 	public Collection<QName> getDataLists();
 	
 	/**
-	 * Gets the product template.
-	 *
-	 * @param productNodeRef the product node ref
-	 * @return the product template
-	 */
-	public NodeRef getProductTemplate(NodeRef productNodeRef);	
-	
-	/**
 	 * Gets the display name.
 	 *
 	 * @param systemState the system state

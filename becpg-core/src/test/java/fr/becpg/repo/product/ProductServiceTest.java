@@ -49,6 +49,8 @@ import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
@@ -63,6 +65,7 @@ import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.report.ProductReportService;
+import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.test.RepoBaseTestCase;
@@ -132,6 +135,10 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 	
 	private DictionaryDAO dictionaryDAO;
 	
+	private EntityService entityService;
+	
+	private EntityTplService entityTplService;
+	
 	/** The test folder. */
 	private NodeRef testFolder;
 	
@@ -160,6 +167,8 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
         productReportService = (ProductReportService)appCtx.getBean("productReportService");
         reportTplService = (ReportTplService)appCtx.getBean("reportTplService");
         dictionaryDAO = (DictionaryDAO)appCtx.getBean("dictionaryDAO");
+        entityService = (EntityService)appCtx.getBean("entityService");
+        entityTplService = (EntityTplService)appCtx.getBean("entityTplService");
         
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			public NodeRef execute() throws Throwable {
@@ -278,15 +287,18 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 				
 				/*-- Add report template --*/
 				NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-			   	NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
+			   	NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));			   	
+			   	NodeRef productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 			   	
-			   	NodeRef productReportTplFolder = nodeService.getChildByName(reportsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
-			   	if(productReportTplFolder != null){
-			   		nodeService.deleteNode(productReportTplFolder);
-			   	}
-			   	productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));		   			   		   
-		   	
-			   	reportTplService.createTpl(productReportTplFolder, "report MP", "beCPG/birt/ProductReport.rptdesign", ReportType.Document, BeCPGModel.TYPE_RAWMATERIAL, true, true);			
+			   	reportTplService.createTplRptDesign(productReportTplFolder, 
+		   											"report MP", 
+		   											"beCPG/birt/ProductReport.rptdesign", 
+		   											ReportType.Document,
+		   											ReportFormat.PDF,
+		   											BeCPGModel.TYPE_RAWMATERIAL, 
+		   											true, 
+		   											true,
+		   											true);			
 				
 				/*-- Create test folder --*/
 				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
@@ -330,7 +342,11 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 			    Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			    properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, "Product Tpl");			
-		    	nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_PRODUCTTEMPLATE, properties).getChildRef();
+		    	nodeService.createNode(folderNodeRef, 
+		    							ContentModel.ASSOC_CONTAINS, 
+		    							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), 
+		    							BeCPGModel.TYPE_ENTITY, 
+		    							properties).getChildRef();
 			   
 		    	productService.generateReport(rawMaterialNodeRef);
 		    	
@@ -360,33 +376,44 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 		    	}
 		    	testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();		    	
 		    	
-		    	NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));    	
-		    	if(systemFolder == null){
-		    		systemFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));    		
+		    	NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+		    	
+		    	// clear folderTpls
+		    	NodeRef folderTplsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_FOLDER_TEMPLATES));    	
+		    	if(folderTplsFolder != null){
+		    		nodeService.deleteNode(folderTplsFolder);    		
 		    	}
-		    	NodeRef productTplsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_TEMPLATES));    	
-		    	if(productTplsFolder != null){
-		    		nodeService.deleteNode(productTplsFolder);    		
+		    	folderTplsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_FOLDER_TEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_FOLDER_TEMPLATES));
+		    	
+		    	// clear entityTpls
+		    	NodeRef entityTplsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ENTITY_TEMPLATES));    	
+		    	if(entityTplsFolder != null){
+		    		nodeService.deleteNode(entityTplsFolder);    		
 		    	}
-		    	productTplsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_PRODUCT_TEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_TEMPLATES));    	
+		    	entityTplsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_ENTITY_TEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ENTITY_TEMPLATES));
 		   		
 				/*-- Create raw material Tpl --*/				
-				logger.debug("/*-- Create raw material Tpl --*/");
-		   		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(ContentModel.PROP_NAME, "Raw material Tpl");
-				properties.put(BeCPGModel.PROP_PRODUCT_TYPE, SystemProductType.RawMaterial);				
-				nodeService.createNode(productTplsFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_PRODUCTTEMPLATE, properties).getChildRef();		    				
+		    	logger.debug("/*-- Create raw material Tpl --*/");
+		    	entityTplService.createEntityTpl(entityTplsFolder, 
+		    									BeCPGModel.TYPE_RAWMATERIAL, 
+		    									true, 
+		    									null);
 				
 				/*-- Create finished product Tpl with product folder and product image --*/				
 				logger.debug("/*-- Create finished product Tpl --*/");
-				NodeRef productTplFolder = fileFolderService.create(productTplsFolder, "Finished product Tpl folder", BeCPGModel.TYPE_ENTITY_FOLDER).getNodeRef();
-				NodeRef imagesFolder = fileFolderService.create(productTplFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();				
+				
+				NodeRef folderTplFolder = entityTplService.createFolderTpl(folderTplsFolder, 
+												BeCPGModel.TYPE_FINISHEDPRODUCT, 
+												true, 
+												null);
+				
+				entityTplService.createEntityTpl(entityTplsFolder, 
+												BeCPGModel.TYPE_FINISHEDPRODUCT, 
+												true, 
+												null);
+				
+				NodeRef imagesFolder = fileFolderService.create(folderTplFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();				
 				addProductImage(imagesFolder);
-				logger.debug("ProductType: " + SystemProductType.FinishedProduct);
-		   		properties = new HashMap<QName, Serializable>();
-				properties.put(ContentModel.PROP_NAME, "Finished product Tpl");
-				properties.put(BeCPGModel.PROP_PRODUCT_TYPE, SystemProductType.FinishedProduct);
-				nodeService.createNode(productTplFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_PRODUCTTEMPLATE, properties).getChildRef();
 				
 				//add permissions on image folder Tpl
 				Set<String> zones = new HashSet<String>();
@@ -568,7 +595,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 				assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
 				
 				/*-- Create raw material 2 --*/
-				logger.debug("/*-- Create raw material --*/");
+//				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material");
 				rawMaterial2.setHierarchy1(HIERARCHY1_VALUE1);

@@ -38,6 +38,9 @@ import org.eclipse.birt.report.engine.api.RenderOption;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.template.ReportType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -144,10 +147,9 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 	private ContentService contentService;
 	
 	/** The report engine. */
-	private IReportEngine reportEngine;	
+	private IReportEngine reportEngine;		
 	
-	/** The search service. */
-	private SearchService searchService;
+	private ReportTplService reportTplService;
 	
 	/** The node service. */
 	private NodeService nodeService;
@@ -182,15 +184,10 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 		this.reportEngine = reportEngine;
 	}
 	
-	/**
-	 * Sets the search service.
-	 *
-	 * @param searchService the new search service
-	 */
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
+	public void setReportTplService(ReportTplService reportTplService) {
+		this.reportTplService = reportTplService;
 	}
-	
+
 	/**
 	 * Sets the node service.
 	 *
@@ -216,7 +213,10 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 	public OutputStream getComparisonReport(NodeRef entity1, List<NodeRef> entities, OutputStream outputStream){				
 		
 		// look for template
-		NodeRef templateNodeRef = getComparisonTemplate();		
+		NodeRef templateNodeRef = reportTplService.getSystemReportTemplate(ReportType.System, 
+											null, 
+											TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS));
+		
 		if(templateNodeRef != null){
 			
 			// do comparison
@@ -464,41 +464,5 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 		}
 		
 		return title;
-	}
-	
-	/**
-	 * Get the comparison template.
-	 *
-	 * @return the comparison template
-	 */	
-	private NodeRef getComparisonTemplate() {
-		
-		NodeRef templateNodeRef = null;
-		
-		SearchParameters sp = new SearchParameters();
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(RepoConsts.PATH_QUERY_REPORT_COMPARE_ENTITIES);	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-        
-        ResultSet resultSet =null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-			
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        if (resultSet.length() != 0){
-	        	templateNodeRef = resultSet.getNodeRef(0); 
-	        }	        
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
-		
-		return templateNodeRef;
-	}
-
-	
+	}	
 }

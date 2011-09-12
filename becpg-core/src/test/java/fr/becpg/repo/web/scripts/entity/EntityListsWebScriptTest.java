@@ -38,16 +38,15 @@ import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class ProductListsWebScriptTest.
+ * The Class EntityListsWebScriptTest.
  *
  * @author querephi
  */
-public class ProductListsWebScriptTest extends BaseWebScriptTest{
+public class EntityListsWebScriptTest extends BaseWebScriptTest{
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ProductListsWebScriptTest.class);
+	private static Log logger = LogFactory.getLog(EntityListsWebScriptTest.class);
 	
 	/** The app ctx. */
 	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();

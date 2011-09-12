@@ -1,8 +1,0 @@
-<webscript>
-	<shortname>Product report</shortname>
-	<description>Product report service - generate a report for the product</description>	
-	<url>/becpg/product/generate-report/node/{store_type}/{store_id}/{id}</url>
-	<format default="json">argument</format>
-	<authentication>user</authentication>
-	<transaction allow="readwrite" buffersize="0">required</transaction>
-</webscript>

@@ -1,7 +1,7 @@
 /*
  * 
  */
-package fr.becpg.repo.product;
+package fr.becpg.repo;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 

@@ -250,7 +250,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	 */
 	private List<NodeRef> getSearchNodes(String searchQueryPath){
 		
-		List<NodeRef> searchResults = null;
+		List<NodeRef> searchResults = new ArrayList<NodeRef>();
 		
 		SearchParameters sp = new SearchParameters();
         sp.addStore(RepoConsts.SPACES_STORE);
@@ -262,20 +262,23 @@ public class AdvSearchServiceImpl implements AdvSearchService {
         
         logger.debug("getSearchNodes, query: " + searchQueryPath);
         
-        ResultSet resultSet = null;
-        
-        try{
+        if(searchQueryPath != null && !searchQueryPath.isEmpty()){
         	
-	        resultSet = searchService.query(sp);			
-	        searchResults = new ArrayList<NodeRef>(resultSet.getNodeRefs());	        	        	        	        	        	      
-        }
-        catch(Exception e){
-        	logger.debug("Failed to get search nodes", e);
-        }
-        finally{
-        	if(resultSet != null){
-        		resultSet.close();
-        	}
+        	ResultSet resultSet = null;
+            
+            try{
+            	
+    	        resultSet = searchService.query(sp);			
+    	        searchResults = new ArrayList<NodeRef>(resultSet.getNodeRefs());	        	        	        	        	        	      
+            }
+            catch(Exception e){
+            	logger.debug("Failed to get search nodes", e);
+            }
+            finally{
+            	if(resultSet != null){
+            		resultSet.close();
+            	}
+            }        	
         }
         
         logger.debug("searchResults : " + searchResults);        
@@ -336,8 +339,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 					}					
 				}		
 			}
-		}						
-	
+		}		
+		
 		return nodes;
 	}
 	
@@ -345,7 +348,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	 * Take in account criteria on ing list criteria
 	 * @return
 	 */
-	private List<NodeRef> getSearchNodesByIngListCriteria(List<NodeRef> nodes, Map<String, String> criteria){				
+	private List<NodeRef> getSearchNodesByIngListCriteria(List<NodeRef> nodes, Map<String, String> criteria){								
 		
 		List<NodeRef> ingListItems = null;
 		
@@ -462,7 +465,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 						}
 					}
 				}			
-			}
+			}			
 			
 			if(productNodeRefs != null){
 				nodes.retainAll(productNodeRefs);

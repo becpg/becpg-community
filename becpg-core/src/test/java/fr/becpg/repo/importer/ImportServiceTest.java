@@ -41,6 +41,7 @@ import org.springframework.context.ApplicationContext;
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.importer.ImportService;
@@ -114,6 +115,8 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	
 	private BehaviourFilter policyBehaviourFilter;
 	
+	private EntityTplService entityTplService;
+	
 	/* (non-Javadoc)
 	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
 	 */
@@ -134,6 +137,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
         contentService = (ContentService)appCtx.getBean("contentService");
         repoService = (RepoService)appCtx.getBean("repoService");
         policyBehaviourFilter = (BehaviourFilter)appCtx.getBean("policyBehaviourFilter");
+        entityTplService = (EntityTplService)appCtx.getBean("entityTplService");
         
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override
@@ -145,14 +149,14 @@ public class ImportServiceTest extends RepoBaseTestCase {
  					nodeService.deleteNode(systemFolder); 					 					
  				}
  				 				
- 				systemFolder = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM);
+ 				systemFolder = repoService.createFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
  				
- 				if(systemFolder == null){
- 					systemFolder = repoService.createFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));			
- 				}
+ 				// create folderTpl
+ 				NodeRef folderTplsNodeRef = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_FOLDER_TEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_FOLDER_TEMPLATES));
+ 				NodeRef productTplsNodeRef = repoService.createFolderByPath(folderTplsNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_TEMPLATES));
+ 				entityTplService.createFolderTpl(productTplsNodeRef, BeCPGModel.TYPE_RAWMATERIAL, true, null);
  				
- 				// remove ings
- 				
+ 				// remove ings 				
  				NodeRef ingsFolder = repoService.getFolderByPath(systemFolder, RepoConsts.PATH_INGS);
 					
 				if(ingsFolder != null){
@@ -366,7 +370,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  				{
  					logger.debug("delete temp folder");
  					fileFolderService.delete(tempNodeRef);    		
- 				}
+ 				} 				
  				
  				// remove products 				
  				NodeRef productsNodeRef = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_PRODUCTS);			
@@ -388,11 +392,11 @@ public class ImportServiceTest extends RepoBaseTestCase {
 				List<NodeRef> siteFoldernode = searchService.selectNodes(repository.getCompanyHome(), 
 						PATH_SITE_FOLDER, 
 						null, namespaceService, false);
-				logger.debug("###siteFoldernode: " + siteFoldernode);
+				
 				if(siteFoldernode != null && siteFoldernode.size() > 0){
 					logger.debug("delete site folder");
 					nodeService.deleteNode(siteFoldernode.get(0));
-				}
+				}				
  				
  				addMappingFile();
  				
@@ -619,7 +623,6 @@ public class ImportServiceTest extends RepoBaseTestCase {
 						null, namespaceService, false);
 		assertEquals("classif folder should exist", (int)1 , siteFoldernode.size());
 		NodeRef siteFolderNodeRef = siteFoldernode.get(0);
-		logger.debug("###products: " + fileFolderService.list(siteFolderNodeRef));
 		assertEquals("1 product should exist", (int)1 , fileFolderService.list(siteFolderNodeRef).size()); 				
 		
 		

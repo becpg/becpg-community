@@ -1,5 +1,6 @@
 package fr.becpg.repo.report.template.impl;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
@@ -10,6 +11,8 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
+import org.alfresco.repo.search.impl.lucene.LuceneFunction;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -25,6 +28,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jaxen.expr.AdditiveExpr;
 import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.common.RepoConsts;
@@ -34,10 +38,12 @@ import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 public class ReportTplServiceImpl implements ReportTplService{
 
-
+	private static final String QUERY_REPORTTEMPLATE = " +TYPE:\"rep:reportTpl\" +@rep\\:reportTplType:%s +@rep\\:reportTplIsSystem:%s";
+	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ReportTplServiceImpl.class);
 	
@@ -52,6 +58,8 @@ public class ReportTplServiceImpl implements ReportTplService{
 	
 	/** The mimetype service. */
 	private MimetypeService mimetypeService;
+	
+	//private Map<String, List<NodeRef>> systemTpls = new HashMap<String, List<NodeRef>>();
 			
 	/**
 	 * Sets the node service.
@@ -88,7 +96,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 	 */
 	public void setMimetypeService(MimetypeService mimetypeService){
 		this.mimetypeService = mimetypeService;
-	}			
+	}				
 
 	/**
 	 * Get the report templates of the product.
@@ -105,19 +113,18 @@ public class ReportTplServiceImpl implements ReportTplService{
 		
 		if(nodeType == null){
 			return tplsNodeRef;
-		}
+		}		
 		
-		StringBuilder queryPath = new StringBuilder(128);
-		queryPath.append(String.format(RepoConsts.PATH_QUERY_REPORTTEMPLATES, reportType, nodeType, true));			
+		String query = getQueryReportTpl(reportType, nodeType, true);			
 		
-		logger.debug(queryPath);
+		logger.debug(query);
 		
 		SearchParameters sp = new SearchParameters();
         sp.addStore(RepoConsts.SPACES_STORE);
         sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(queryPath.toString());	        
+        sp.setQuery(query);	        
         sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+        sp.setLimit(RepoConsts.MAX_RESULTS_NO_LIMIT);
         
         ResultSet resultSet =null;
         
@@ -134,6 +141,44 @@ public class ReportTplServiceImpl implements ReportTplService{
         }
         
         return tplsNodeRef;
+	}
+	
+	/**
+	 * Get the system report template
+	 */
+	@Override
+	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {    	  
+    	
+		NodeRef tplNodeRef = null;    	
+		
+		String query = getQueryReportTpl(reportType, nodeType, true);		
+		query += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
+		
+		logger.debug(query);
+		
+		SearchParameters sp = new SearchParameters();
+        sp.addStore(RepoConsts.SPACES_STORE);
+        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
+        sp.setQuery(query);	        
+        sp.setLimitBy(LimitBy.FINAL_SIZE);
+        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+        sp.setMaxItems(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+        
+        ResultSet resultSet =null;
+        
+        try{
+	        resultSet = searchService.query(sp);
+			
+	        logger.debug("resultSet.length() : " + resultSet.length());
+	        if(resultSet.length() > 0)
+	        	tplNodeRef = resultSet.getNodeRef(0);
+        }
+        finally{
+        	if(resultSet != null)
+        		resultSet.close();
+        }
+        
+        return tplNodeRef;
 	}
 	
 	/**
@@ -151,23 +196,22 @@ public class ReportTplServiceImpl implements ReportTplService{
 		List<NodeRef> tplsNodeRef = new ArrayList<NodeRef>();
 		
 		if(nodeType == null){
+			logger.warn("suggestUserReportTemplates: nodeType is null, exit.");
 			return null;
 		}		
     	
-    	StringBuilder queryPath = new StringBuilder(128);
-		queryPath.append(String.format(RepoConsts.PATH_QUERY_REPORTTEMPLATES, reportType, nodeType, false));
-					
-		// +@cm\\:localName:%s											
-		queryPath.append(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND));
+		String query = getQueryReportTpl(reportType, nodeType, false);					
+		query += LuceneHelper.getCondContainsValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
 		
-		logger.debug(queryPath);
+		logger.debug(query);
 		
 		SearchParameters sp = new SearchParameters();
         sp.addStore(RepoConsts.SPACES_STORE);
         sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(queryPath.toString());	        
+        sp.setQuery(query);	        
         sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+        sp.setLimit(RepoConsts.MAX_SUGGESTIONS);
+        sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
         
         ResultSet resultSet =null;
         
@@ -186,63 +230,166 @@ public class ReportTplServiceImpl implements ReportTplService{
         return tplsNodeRef;
 	}
 	
-	
+	/**
+	 * Get the report template of the product type by name
+	 *
+	 * @param nodeType the node type
+	 * @param tplName the tpl name
+	 * @return the user report templates
+	 * @param:productType
+	 * @param:tplName the name of the template or starting by
+	 */
+	@Override
+	public NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName) {
+		
+		NodeRef tplNodeRef = null;
+		
+		if(nodeType == null){
+			return null;
+		}		
+    	
+		String query = getQueryReportTpl(reportType, nodeType, false);
+		query += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
+		
+		logger.debug(query);
+		
+		SearchParameters sp = new SearchParameters();
+        sp.addStore(RepoConsts.SPACES_STORE);
+        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
+        sp.setQuery(query);	        
+        sp.setLimitBy(LimitBy.FINAL_SIZE);
+        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+        sp.setMaxItems(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+        
+        ResultSet resultSet =null;
+        
+        try{
+	        resultSet = searchService.query(sp);
+			
+	        logger.debug("resultSet.length() : " + resultSet.length());
+	        if(resultSet.length() > 0)
+	        	tplNodeRef = resultSet.getNodeRefs().get(0);
+        }
+        finally{
+        	if(resultSet != null)
+        		resultSet.close();
+        }
+        
+        return tplNodeRef;
+	}
 	
 	/**
-	 * Create a product report tpl
+	 * Create the rptdesign node for the report
 	 * @param parentNodeRef
 	 * @param tplName
 	 * @param tplFilePath
+	 * @param reportType
 	 * @param nodeType
 	 * @param isSystemTpl
 	 * @param isDefaultTpl
+	 * @param overrideTpl
 	 * @return
 	 * @throws IOException
 	 */
 	@Override
-	public NodeRef createTpl(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, QName nodeType, boolean isSystemTpl, boolean isDefaultTpl) throws IOException{						
+	public NodeRef createTplRptDesign(NodeRef parentNodeRef, 
+										String tplName, 
+										String tplFilePath, 
+										ReportType reportType, 
+										ReportFormat reportFormat,
+										QName nodeType, 
+										boolean isSystemTpl, 
+										boolean isDefaultTpl, 
+										boolean overrideTpl) throws IOException{
 		
-		NodeRef productReportTplNodeRef = null;
+		NodeRef reportTplNodeRef = null;
 		ClassPathResource resource = new ClassPathResource(tplFilePath);
 		
 		if(resource.exists()){
 			
-			//create report template folder
-		   	logger.debug("create report template folder");
-	   		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, tplName);
+			reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  tplName);
 			
-			productReportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  (String)properties.get(ContentModel.PROP_NAME));    	
-	    	if(productReportTplNodeRef == null){
-	    		productReportTplNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_FOLDER, properties).getChildRef();
-	    		
-	    		properties = new HashMap<QName, Serializable>();
-	    		properties.put(ContentModel.PROP_NAME, tplName);	    		
-	    		properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportType);
-	    		properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType);
-				properties.put(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, isSystemTpl);
-				properties.put(ReportModel.PROP_REPORT_TPL_IS_DEFAULT, isDefaultTpl);
-	        	NodeRef fileNodeRef = nodeService.createNode(productReportTplNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ReportModel.TYPE_REPORT_TPL, properties).getChildRef();
-	        	
-	        	ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
-	        	
-	        	String mimetype = mimetypeService.guessMimetype(tplFilePath);
-	    		ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-	            Charset charset = charsetFinder.getCharset(resource.getInputStream(), mimetype);
-	            String encoding = charset.name();
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, tplName);	    		
+			properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportType);
+			properties.put(ReportModel.PROP_REPORT_TPL_FORMAT, reportFormat);
+			properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType);
+			properties.put(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, isSystemTpl);
+			properties.put(ReportModel.PROP_REPORT_TPL_IS_DEFAULT, isDefaultTpl);				
+			
+			if(reportTplNodeRef != null){
+				
+				if(overrideTpl){
+					logger.debug("override report Tpl, name: " + tplName);
+					
+					nodeService.setProperties(reportTplNodeRef, properties);
+				}
+				else{
+					return reportTplNodeRef;
+				}
+			}
+			else{
+				logger.debug("Create report Tpl, name: " + tplName);
+				
+				reportTplNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
+						(String)properties.get(ContentModel.PROP_NAME)), 
+						ReportModel.TYPE_REPORT_TPL, properties).getChildRef();
+			}
+			
+	    	ContentWriter writer = contentService.getWriter(reportTplNodeRef, ContentModel.PROP_CONTENT, true);
+	    	
+	    	String mimetype = mimetypeService.guessMimetype(tplFilePath);
+			ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
+	        Charset charset = charsetFinder.getCharset(resource.getInputStream(), mimetype);
+	        String encoding = charset.name();
 
-	        	writer.setMimetype(mimetype);
-	        	writer.setEncoding(encoding);
-	        	writer.putContent(resource.getInputStream());
-	    	}    		 
-		}
-		else{
-			logger.error("Resource not found. Path: " + tplFilePath);
-		}
+	    	writer.setMimetype(mimetype);
+	    	writer.setEncoding(encoding);
+	    	writer.putContent(resource.getInputStream());	
+		}		
 		
-		return productReportTplNodeRef;
+		return reportTplNodeRef;
 	}
 
+	/**
+	 * Create a ressource for the report
+	 * @param parentNodeRef
+	 * @param xmlFilePath
+	 * @param overrideRessource
+	 * @throws IOException
+	 */
+	@Override
+	public void createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException{
+		
+		ClassPathResource resource = new ClassPathResource(xmlFilePath);
+    	if(resource.exists()){
+    	
+    		NodeRef xmlReportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  resource.getFilename());
+    		
+    		if(xmlReportTplNodeRef == null || overrideRessource){
+    		
+    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+        		properties.put(ContentModel.PROP_NAME, resource.getFilename());
+        		NodeRef fileNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
+            	
+        		ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
+            	
+        		String mimetype = mimetypeService.guessMimetype(xmlFilePath);
+        		ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
+        		BufferedInputStream bis = new BufferedInputStream(resource.getInputStream());
+        		Charset charset = charsetFinder.getCharset(bis, mimetype);
+        		String encoding = charset.name();
+
+            	writer.setMimetype(mimetype);
+            	writer.setEncoding(encoding);
+            	writer.putContent(resource.getInputStream());
+    		}	        		
+    	}
+    	else{
+    		logger.error("Resource not found. Path: " + xmlFilePath);
+    	}
+	}
 
 	@Override
 	public List<NodeRef> cleanDefaultTpls(List<NodeRef> tplsNodeRef) {
@@ -252,8 +399,8 @@ public class ReportTplServiceImpl implements ReportTplService{
 		
 		for(NodeRef tplNodeRef : tplsNodeRef){
 			
-			boolean isDefault = (Boolean)nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
-			boolean isSystem = (Boolean)nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
+			Boolean isDefault = (Boolean)nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
+			Boolean isSystem = (Boolean)nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
 			
 			if(isDefault){
 				
@@ -290,7 +437,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 		
 		String dbReportFormat = (String)nodeService.getProperty(tplNodeRef,  ReportModel.PROP_REPORT_TPL_FORMAT);
 		if(dbReportFormat == null){
-			if(ReportType.Search.equals(reportType)){
+			if(ReportType.ExportSearch.equals(reportType)){
 				reportFormat = ReportFormat.XLS;
 			}
 			else{
@@ -302,5 +449,20 @@ public class ReportTplServiceImpl implements ReportTplService{
 		}
 				
 		return reportFormat;
+	}	
+	
+	private String getQueryReportTpl(ReportType reportType, QName nodeType, boolean isSystem){
+		
+		String query = String.format(QUERY_REPORTTEMPLATE, reportType, isSystem);				
+		
+		// nodeType
+		if(nodeType == null){
+			query += LuceneHelper.getCondIsNullValue(ReportModel.PROP_REPORT_TPL_CLASS_NAME, LuceneHelper.Operator.AND);
+		}
+		else{
+			query += LuceneHelper.getCondEqualValue(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType.toString(), LuceneHelper.Operator.AND);
+		}
+		
+		return query;
 	}	
 }
