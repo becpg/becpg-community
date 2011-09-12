@@ -3,6 +3,7 @@ package fr.becpg.repo.security.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.BeCPGDataObject;
@@ -26,8 +27,8 @@ public class ACLGroupData extends BeCPGDataObject {
 		return nodeType;
 	}
 
-	public void setNodeType(QName nodeType) {
-		this.nodeType = nodeType;
+	public void setNodeType(String nodeType) {
+		this.nodeType = DefaultTypeConverter.INSTANCE.convert(QName.class, nodeType);
 	}
 
 	

@@ -8,7 +8,7 @@
 					<show id="cm:name" />
 					<show id="sec:nodeType" />
 				</field-visibility>
-	<!-- 	Can be used to provide custom types -->
+	<!-- 	Can be used to provide custom types 
 			<appearance>
 					<field id="sec:nodeType">
 						<control
@@ -38,7 +38,7 @@
 							</control-param>
 						</control>
 					</field>
-				</appearance>
+				</appearance>-->
 			</form>
 			
 		</forms>
@@ -51,7 +51,7 @@
 					<show id="cm:name" />
 					<show id="sec:nodeType" />
 				</field-visibility>
-			<!-- 	Can be used to provide custom types -->
+			<!-- 	Can be used to provide custom types 
 				<appearance>
 					<field id="sec:nodeType">
 						<control
@@ -81,7 +81,7 @@
 							</control-param>
 						</control>
 					</field>
-				</appearance> 
+				</appearance> -->
 			</form>
 			
 		</forms>

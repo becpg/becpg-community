@@ -3,17 +3,22 @@
  */
 package fr.becpg.repo.security.constraint;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintException;
+import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.repository.datatype.TypeConversionException;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.security.SecurityService;
 
 // TODO: Auto-generated Javadoc
@@ -24,6 +29,8 @@ import fr.becpg.repo.security.SecurityService;
  */
 public class DynPropsConstraint extends ListOfValuesConstraint {
 
+	public static String TYPE_NODE = "NODE_TYPE";
+	
 	/** The Constant UNDIFINED_CONSTRAINT_VALUE. */
 	public static final String UNDIFINED_CONSTRAINT_VALUE = "-";
 
@@ -32,15 +39,9 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(DynPropsConstraint.class);
 
-	@Override
-	public String getType() {
-		return "fr.becpg.repo.security.constraint.DynPropsConstraint";
-	}
+	/** The constraint type. */
+	private String constraintType = null;
 	
-	@Override
-	public String getShortName() {
-		return "DynPropsConstraint";
-	}
 	
 	/**
 	 * The Security Service
@@ -64,6 +65,13 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 		DynPropsConstraint.serviceRegistry = serviceRegistry;
 	}
 
+	
+	
+	
+	public void setConstraintType(String constraintType) {
+		this.constraintType = constraintType;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -73,7 +81,8 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 	 */
 	@Override
 	public void initialize() {
-		logger.debug("Init DynPropsConstraint");
+		checkPropertyNotNull("constraintType", constraintType);
+		logger.debug("Init DynPropsConstraint for constraintType :"+constraintType);
 	}
 
 	/*
@@ -93,7 +102,9 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 							new RetryingTransactionCallback<List<String>>() {
 								@Override
 								public List<String> execute() throws Throwable {
-
+									if(TYPE_NODE.equals(constraintType)){
+										return getAvailableEntityTypeNames();
+									}
 									return securityService.getAvailablePropNames();
 
 								}
@@ -121,10 +132,36 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 		// ensure that the value can be converted to a String
 		try {
 			DefaultTypeConverter.INSTANCE.convert(String.class, value);
+			if(TYPE_NODE.equals(constraintType)){
+				DefaultTypeConverter.INSTANCE.convert(QName.class, value);
+			}
+			
+			
 		} catch (TypeConversionException e) {
 			throw new ConstraintException(ERR_NON_STRING, value);
 		}
 
+		
 	}
+	
+	
+	private List<String> getAvailableEntityTypeNames() {
+
+		List<String> ret = new ArrayList<String>();
+		Collection<QName> types = serviceRegistry.getDictionaryService().getSubTypes(
+				BeCPGModel.TYPE_ENTITY, true);
+		if (types != null) {
+			for (QName type : types) {
+				TypeDefinition typeDef = serviceRegistry.getDictionaryService().getType(type);
+				if (typeDef != null) {
+					ret.add(type.toString() + "|" + typeDef.getTitle());
+				}
+			}
+		}
+
+		return ret;
+	}
+	
+	
 
 }

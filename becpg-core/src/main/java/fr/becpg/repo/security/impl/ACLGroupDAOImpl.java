@@ -69,7 +69,7 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, cpData.getName());
 		properties.put(SecurityModel.PROP_ACL_GROUP_NODE_TYPE,
-				cpData.getNodeType());
+				cpData.getNodeType().toString());
 
 		NodeRef cpNodeRef = nodeService.createNode(
 				parentNodeRef,
@@ -94,7 +94,7 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 		nodeService.setProperty(cpData.getNodeRef(), ContentModel.PROP_NAME,
 				cpData.getName());
 		nodeService.setProperty(cpData.getNodeRef(),
-				SecurityModel.PROP_ACL_GROUP_NODE_TYPE, cpData.getNodeType());
+				SecurityModel.PROP_ACL_GROUP_NODE_TYPE, cpData.getNodeType().toString());
 
 		// control def list
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(cpNodeRef);
@@ -111,7 +111,7 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 		cpData.setNodeRef(cpNodeRef);
 		cpData.setName((String) nodeService.getProperty(cpNodeRef,
 				ContentModel.PROP_NAME));
-		cpData.setNodeType((QName) nodeService.getProperty(cpNodeRef,
+		cpData.setNodeType((String) nodeService.getProperty(cpNodeRef,
 				SecurityModel.PROP_ACL_GROUP_NODE_TYPE));
 
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(cpNodeRef);

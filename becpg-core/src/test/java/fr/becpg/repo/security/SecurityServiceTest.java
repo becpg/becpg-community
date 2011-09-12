@@ -24,7 +24,7 @@ import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.BeCPGDao;
-import fr.becpg.repo.security.constraint.DynEntityTypeConstraint;
+import fr.becpg.repo.security.constraint.DynPropsConstraint;
 import fr.becpg.repo.security.data.ACLGroupData;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
@@ -73,7 +73,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	private PersonService personService;
 
-	private DynEntityTypeConstraint dynEntityTypeConstraint;
+	private DynPropsConstraint dynPropsConstraint;
 	
 	
 	/** The repository helper. */
@@ -107,7 +107,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 		personService = (PersonService) appCtx.getBean("PersonService");
 
-		dynEntityTypeConstraint = (DynEntityTypeConstraint) appCtx.getBean("dynEntityTypeConstraint");
+		dynPropsConstraint = (DynPropsConstraint) appCtx.getBean("dynPropsConstraint");
 		
 		authenticationComponent.setSystemUserAsCurrentUser();
 		
@@ -186,7 +186,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		
 		ACLGroupData aclGroupData = new ACLGroupData();
 		aclGroupData.setName("Test ACL");
-		aclGroupData.setNodeType(SecurityModel.TYPE_ACL_ENTRY);
+		aclGroupData.setNodeType(SecurityModel.TYPE_ACL_ENTRY.toString());
 
 		List<String> groups = new ArrayList<String>();
 		groups.add(grp3);
@@ -286,12 +286,12 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 	}
 	
 	public void testConstainst(){
-		
-		List<String> types =  dynEntityTypeConstraint.getAllowedValues();
+		dynPropsConstraint.setConstraintType(DynPropsConstraint.TYPE_NODE);
+		List<String> types =  dynPropsConstraint.getAllowedValues();
 		Assert.assertNotNull(types);
 		Assert.assertTrue(types.size()>0);
 		
-		for(String type : dynEntityTypeConstraint.getAllowedValues()){
+		for(String type : dynPropsConstraint.getAllowedValues()){
 			System.out.println("Type : "+type);
 		}
 		
