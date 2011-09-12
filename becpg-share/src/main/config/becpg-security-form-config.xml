@@ -8,7 +8,8 @@
 					<show id="cm:name" />
 					<show id="sec:nodeType" />
 				</field-visibility>
-				<appearance>
+	<!-- 	Can be used to provide custom types -->
+			<appearance>
 					<field id="sec:nodeType">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
@@ -50,6 +51,7 @@
 					<show id="cm:name" />
 					<show id="sec:nodeType" />
 				</field-visibility>
+			<!-- 	Can be used to provide custom types -->
 				<appearance>
 					<field id="sec:nodeType">
 						<control
@@ -79,7 +81,7 @@
 							</control-param>
 						</control>
 					</field>
-				</appearance>
+				</appearance> 
 			</form>
 			
 		</forms>

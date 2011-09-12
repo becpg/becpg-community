@@ -1,10 +1,14 @@
 package fr.becpg.repo.security.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
@@ -44,12 +48,10 @@ public class SecurityServiceImpl implements SecurityService {
 	private AuthorityService authorityService;
 
 	private BeCPGSearchService beCPGSearchService;
-	
-	
+
 	private DictionaryService dictionaryService;
-	
+
 	private NamespacePrefixResolver namespacePrefixResolver;
-	
 
 	public void setNamespacePrefixResolver(
 			NamespacePrefixResolver namespacePrefixResolver) {
@@ -74,28 +76,6 @@ public class SecurityServiceImpl implements SecurityService {
 
 	@Override
 	/**
-	 * Extract corresponding properties for given ACL_GROUP nodeRef
-	 */
-	public List<String> extractProps(NodeRef aclGrpNodeRef) {
-		logger.debug("extractProps for type : TODO");
-		List<String> ret = new ArrayList<String>();
-		
-		ACLGroupData aclGroup = aclGroupDao.find(aclGrpNodeRef);
-		
-		TypeDefinition typeDefinition = dictionaryService.getType(aclGroup.getNodeType());
-		
-		for(Map.Entry<QName,PropertyDefinition> properties : typeDefinition.getProperties().entrySet()){
-			ret.add(properties.getKey().toPrefixString(namespacePrefixResolver)+"|"+properties.getValue().getTitle());
-		}
-		
-		
-		return ret;
-	}
-
-	
-	
-	@Override
-	/**
 	 * Compute access mode for the given field name on a specific type
 	 * @param nodeType
 	 * @param name
@@ -103,55 +83,60 @@ public class SecurityServiceImpl implements SecurityService {
 	 */
 	public int computeAccessMode(QName nodeType, String propName) {
 		StopWatch stopWatch = null;
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			stopWatch = new StopWatch();
 			stopWatch.start();
 		}
 		try {
-			
-			String key = computeAclKey(nodeType,propName);
-			if(acls.containsKey(key)){
-				
+
+			String key = computeAclKey(nodeType, propName);
+			if (acls.containsKey(key)) {
+
 				List<ACLEntryDataItem.PermissionModel> perms = acls.get(key);
 				int ret = SecurityService.WRITE_ACCESS;
-				if(!isAdmin()){
-					
-					//Rule to override if one of the rule says that is has a better right
-					for (PermissionModel  permissionModel : perms) {
-			
-						if(permissionModel.isReadOnly() && isInGroup(permissionModel)){
+				if (!isAdmin()) {
+
+					// Rule to override if one of the rule says that is has a
+					// better right
+					for (PermissionModel permissionModel : perms) {
+
+						if (permissionModel.isReadOnly()
+								&& isInGroup(permissionModel)) {
 							ret = SecurityService.READ_ACCESS;
-							//Continue we can get better;
-						} else if (permissionModel.isReadOnly() && ret == SecurityService.WRITE_ACCESS){
-							ret =  SecurityService.NONE_ACCESS;
-							
+							// Continue we can get better;
+						} else if (permissionModel.isReadOnly()
+								&& ret == SecurityService.WRITE_ACCESS) {
+							ret = SecurityService.NONE_ACCESS;
+
 						}
-						
-						if(permissionModel.isWrite() && !isInGroup(permissionModel)){
+
+						if (permissionModel.isWrite()
+								&& !isInGroup(permissionModel)) {
 							ret = SecurityService.READ_ACCESS;
-							//Continue we can get better;
-						} else if( permissionModel.isWrite() ){
-							return SecurityService.WRITE_ACCESS; 
-							//return we cannot get better
+							// Continue we can get better;
+						} else if (permissionModel.isWrite()) {
+							return SecurityService.WRITE_ACCESS;
+							// return we cannot get better
 						}
 					}
 				}
 
 				return ret;
 			}
-			
+
 			return SecurityService.WRITE_ACCESS;
 		} finally {
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				stopWatch.stop();
-				logger.debug("Compute Access Mode takes : "+stopWatch.getTotalTimeSeconds()+"s");
-		}
-			
+				logger.debug("Compute Access Mode takes : "
+						+ stopWatch.getTotalTimeSeconds() + "s");
+			}
+
 		}
 	}
 
 	private boolean isAdmin() {
-		return 	authorityService.hasAdminAuthority();
+		return authorityService.hasAdminAuthority();
 	}
 
 	/**
@@ -175,7 +160,6 @@ public class SecurityServiceImpl implements SecurityService {
 		return nodeType.toString() + "_" + propName;
 	}
 
-
 	public void init() {
 		logger.info("Init SecurityService");
 		computeAcls();
@@ -194,7 +178,7 @@ public class SecurityServiceImpl implements SecurityService {
 			for (NodeRef aclGroupNodeRef : aclGroups) {
 				ACLGroupData aclGrp = aclGroupDao.find(aclGroupNodeRef);
 				List<ACLEntryDataItem> aclEntries = aclGrp.getAcls();
-				if(aclEntries!=null){
+				if (aclEntries != null) {
 					for (ACLEntryDataItem aclEntry : aclEntries) {
 						String key = computeAclKey(aclGrp.getNodeType(),
 								aclEntry.getPropName());
@@ -224,5 +208,73 @@ public class SecurityServiceImpl implements SecurityService {
 		return beCPGSearchService.unProtLuceneSearch(runnedQuery);
 	}
 
+	@Override
+	public List<String> getAvailablePropNames() {
+		List<String> ret = new ArrayList<String>();
+
+		List<NodeRef> aclGroups = findAllAclGroups();
+		if (aclGroups != null) {
+			for (NodeRef aclGroupNodeRef : aclGroups) {
+
+				ACLGroupData aclGroup = aclGroupDao.find(aclGroupNodeRef);
+
+				TypeDefinition typeDefinition = dictionaryService
+						.getType(aclGroup.getNodeType());
+
+				if (typeDefinition != null
+						&& typeDefinition.getProperties() != null) {
+					for (Map.Entry<QName, PropertyDefinition> properties : typeDefinition
+							.getProperties().entrySet()) {
+
+						appendPropName(typeDefinition,properties,ret);
+					}
+
+					List<AspectDefinition> aspects = typeDefinition
+							.getDefaultAspects();
+					if (aspects != null) {
+						for (AspectDefinition aspect : aspects) {
+							if (aspect != null
+									&& aspect.getProperties() != null) {
+								for (Map.Entry<QName, PropertyDefinition> properties : aspect
+										.getProperties().entrySet()) {
+									appendPropName(typeDefinition,properties,ret);
+								}
+							}
+
+						}
+
+					}
+
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	private void appendPropName(TypeDefinition typeDefinition, Entry<QName, PropertyDefinition> properties, List<String> ret) {
+		String key = properties.getKey()
+				.toPrefixString(namespacePrefixResolver);
+		String label = properties.getValue().getTitle();
+
+		ret.add(key + "|" + typeDefinition.getTitle() + " - " + label);
+
+		Collections.sort(ret, new Comparator<String>() {
+
+			@Override
+			public int compare(String o1, String o2) {
+
+				if (o1 != null && o2 != null) {
+					String[] split1 = o1.split("|");
+					String[] split2 = o2.split("|");
+					if (split1.length > 1 && split2.length > 1) {
+						return split1[1].compareTo(split2[1]);
+					}
+				}
+				return 0;
+			}
+		});
+
+	}
 
 }

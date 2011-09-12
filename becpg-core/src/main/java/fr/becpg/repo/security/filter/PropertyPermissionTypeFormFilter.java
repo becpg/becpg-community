@@ -3,19 +3,15 @@
  */
 package fr.becpg.repo.security.filter;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.repo.forms.FieldDefinition;
 import org.alfresco.repo.forms.Form;
 import org.alfresco.repo.forms.FormData;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import fr.becpg.model.SecurityModel;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -35,23 +31,9 @@ public class PropertyPermissionTypeFormFilter  extends AbstractPropertyPermissio
 	public void afterGenerate(TypeDefinition type, List<String> fields,
 			List<String> forcedFields, Form form, Map<String, Object> context) {
 
-		logger.debug("afterGenerate");
+		logger.debug("afterGenerate"+form.toString());
 		filterFormFields(type.getName(), form);			
-//TODO
-//		if(SecurityModel.TYPE_ACL_ENTRY.equals(type.getName())){
-//			logger.debug("Acl entry : compute require props");
-//			Iterator<FieldDefinition> it = form.getFieldDefinitions().iterator();
-//			while(it.hasNext()){
-//				FieldDefinition fieldDefinition = it.next();
-//				
-//				if(SecurityModel.PROP_ACL_PROPNAME.toPrefixString(namespacePrefixResolver).equals(fieldDefinition.getName())){
-//					it.remove();
-//					break;
-//				}
-//			}
-//		}
-//		
-		
+	
 	}
 
 	/* (non-Javadoc)

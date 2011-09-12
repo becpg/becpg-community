@@ -503,7 +503,10 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		// visit client
 		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, subFolders);
-		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, null);					
+		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, null);	
+		
+		// visit acls
+		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, null);
 		
 		// visit quality
 		visitQuality(folderTplsNodeRef, entityTplsNodeRef);				
@@ -582,7 +585,12 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);				
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 				
+			}else if(productType.equals(SecurityModel.TYPE_ACL_GROUP)){
+								
+				dataLists.add(SecurityModel.TYPE_ACL_ENTRY);	
+				
 			}
+							
 			
 			entityTplService.createFolderTpl(productFolderTplsNodeRef, productType, true, subFolders);
 			entityTplService.createEntityTpl(productTplsNodeRef, productType, true, dataLists);

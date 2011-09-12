@@ -66,7 +66,8 @@
          {
             // Buttons
             parent.widgets.reloadModelButton = Alfresco.util.createYUIButton(parent, "reload-model-button", parent.onReloadModelClick);
-            parent.widgets.initRepoButton = Alfresco.util.createYUIButton(parent, "init-repo-button", parent.onInitRepoClick);                 
+            parent.widgets.initRepoButton = Alfresco.util.createYUIButton(parent, "init-repo-button", parent.onInitRepoClick);      
+            parent.widgets.initAclButton = Alfresco.util.createYUIButton(parent, "init-acl-button", parent.onInitAclClick);      
          },
          
          onShow: function onShow()
@@ -243,6 +244,73 @@
             });
          }
          this.widgets.initRepoButton.set("disabled", false);
+      },
+     /**
+       * Initialize repository click event handler
+       *
+       * @method onInitRepoClick
+       * @param e {object} DomEvent
+       * @param args {array} Event parameters (depends on event type)
+       */
+      onInitAclClick: function ConsolebeCPGAdmin_onInitAclClick(e, args)
+      {
+         // Disable the button temporarily
+         this.widgets.initAclButton.set("disabled", true);                                  
+
+         Alfresco.util.Ajax.request(
+         {
+            url: Alfresco.constants.PROXY_URI + "/becpg/admin/security/acl/reload",
+            method: Alfresco.util.Ajax.GET,     
+				responseContentType: Alfresco.util.Ajax.JSON,       
+            successCallback:
+            {
+               fn: this.onInitAclSuccess,
+               scope: this
+            },
+            failureCallback:
+            {
+               fn: this.onInitAclFailure,
+               scope: this
+            }
+         });
+      },
+      
+      /**
+       * Init repo success handler
+       *
+       * @method onInitRepoSuccess
+       * @param response {object} Server response
+       */
+      onInitAclSuccess: function ConsolebeCPGAdmin_onInitAclSuccess(response)
+      {        
+         Alfresco.util.PopupManager.displayMessage({
+        	 text: this.msg("message.init-acl.success")
+         });
+         this.widgets.initAclButton.set("disabled", false);
+      },
+      
+      /**
+       * Init repo failure handler
+       *
+       * @method onInitRepoFailure
+       * @param response {object} Server response
+       */
+      onInitAclFailure: function ConsolebeCPGAdmin_onInitAclFailure(response)
+      {
+         if (response.json.message != null)
+         {
+            Alfresco.util.PopupManager.displayPrompt({
+               text: response.json.message
+            });
+         }
+         else
+         {
+            Alfresco.util.PopupManager.displayMessage({
+               text: this.msg("message.init-acl.failure")
+            });
+         }
+         this.widgets.initAclButton.set("disabled", false);
       }
    });
+   
 })();

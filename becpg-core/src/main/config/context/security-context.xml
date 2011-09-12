@@ -2,6 +2,7 @@
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
 
 <beans>
+    
 
 	<bean id="aclGroupDao" class="fr.becpg.repo.security.impl.ACLGroupDAOImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -33,6 +34,24 @@
 		<property name="securityService" ref="securityService" />
 		<property name="namespacePrefixResolver" ref="namespaceService" />
 	</bean>
-
-
+    
+    <!-- Webscripts -->
+    
+       	
+   	<bean id="webscript.fr.becpg.admin.reloadAcls.get" class="fr.becpg.repo.web.scripts.admin.ReloadAclsWebScript" parent="webscript">
+      	<property name="securityService" ref="securityService" />
+   	</bean>
+   	
+   	<!-- Constraints -->
+   	
+   
+	<bean id="dynPropsConstraint" class="fr.becpg.repo.security.constraint.DynPropsConstraint">
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="securityService" ref="securityService"/>
+	</bean>
+   
+   	<bean id="dynEntityTypeConstraint" class="fr.becpg.repo.security.constraint.DynEntityTypeConstraint">
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+	</bean>
+   
 </beans>

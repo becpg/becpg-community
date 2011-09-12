@@ -44,12 +44,6 @@ public class PropertyPermissionNodeFormFilter extends AbstractPropertyPermission
 		logger.debug("afterGenerate");					
 		filterFormFields(nodeService.getType(item), form);		
 
-//		TODO
-//		if(SecurityModel.TYPE_ACL_ENTRY.equals(nodeService.getType(item))){
-//			logger.debug("Acl entry : compute require props");
-//			computeCustomPropsField(form,item);
-//		}
-		
 	}
 
 	/* (non-Javadoc)

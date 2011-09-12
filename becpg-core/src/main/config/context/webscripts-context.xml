@@ -14,6 +14,7 @@
    	<bean id="webscript.fr.becpg.admin.reloadModels.get" class="fr.becpg.repo.web.scripts.admin.ReloadModelsWebScript" parent="webscript">
       	<property name="dictionaryDAO" ref="dictionaryDAO" />
    	</bean>
+
    
    	<!-- ListValue -->
    	<bean id="webscript.fr.becpg.autoComplete.get" class="fr.becpg.repo.web.scripts.listvalue.AutoCompleteWebScript" parent="webscript">
