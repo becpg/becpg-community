@@ -16,6 +16,7 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +28,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplService;
@@ -63,8 +65,8 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 	/** The Constant MODEL_HAS_WRITE_PERMISSION. */
 	private static final String MODEL_HAS_WRITE_PERMISSION = "hasWritePermission";
 	
-	/** The Constant MODEL_SHOW_WUSED_ITEMS. */
-	private static final String MODEL_SHOW_WUSED_ITEMS = "showWUsedItems";
+	/** The Constant MODEL_WUSED_LIST. */
+	private static final String MODEL_WUSED_LIST = "wUsedList";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityListsWebScript.class);
@@ -78,6 +80,11 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 	private EntityListDAO entityListDAO;
 	
 	private EntityTplService entityTplService;
+	
+	private EntityDictionaryService entityDictionaryService;
+	
+	private NamespaceService namespaceService;
+	
 	/**
 	 * Sets the node service.
 	 *
@@ -102,6 +109,15 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 	
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
+	}
+
+	public void setEntityDictionaryService(
+			EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
 	}
 
 	/**
@@ -129,7 +145,7 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 		NodeRef listContainerNodeRef = null;
 		QName nodeType = nodeService.getType(nodeRef);
 		boolean hasWritePermission = false;
-		boolean showWUsedItems = false;
+		String wUsedList = null;
 		
 		logger.debug("nodeType: " + nodeType);
 				
@@ -154,10 +170,13 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 				listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 			}			
 			
-			// product
-			if(nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_PRODUCT)){
-				showWUsedItems = true;
-			}			
+			// WUsed
+			QName wUsedListQName = entityDictionaryService.getWUsedList(nodeType);
+			
+			if(wUsedListQName != null){
+				wUsedList = wUsedListQName.toPrefixString(namespaceService);
+			}
+			 
 		}	
 		
 		if(listContainerNodeRef != null){
@@ -165,14 +184,14 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 			listsNodeRef = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);			
 		}
 		
-		logger.trace("productListsNodeRef.size() : " + listsNodeRef.size() + " - object type : " + nodeType.toString() + " - hasWritePermission : " + hasWritePermission);
+		logger.trace("productListsNodeRef.size() : " + listsNodeRef.size() + " - object type : " + nodeType.toString() + " - hasWritePermission : " + hasWritePermission + " - WUsedList: " + wUsedList);
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
 		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
 		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
 		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission);
-		model.put(MODEL_SHOW_WUSED_ITEMS, showWUsedItems);
+		model.put(MODEL_WUSED_LIST, wUsedList);
 		return model;
 	}
 }

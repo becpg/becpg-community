@@ -444,11 +444,11 @@ public class ProductServiceImpl implements ProductService {
 						if(!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
 							
 							Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
-							//int wUsedLevel = 1;
-							int level = (Integer)properties.get(BeCPGModel.PROP_DEPTH_LEVEL);
+							int wUsedLevel = 1;
+							//int level = (Integer)properties.get(BeCPGModel.PROP_DEPTH_LEVEL);
 							CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 							
-							CompoListDataItem compoListDataItem = new CompoListDataItem(nodeRef, level, 
+							CompoListDataItem compoListDataItem = new CompoListDataItem(nodeRef, wUsedLevel, 
 														(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), 
 														(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
 														(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), 
@@ -459,6 +459,10 @@ public class ProductServiceImpl implements ProductService {
 														rootNodeRef);
 							
 							wUsedList.add(compoListDataItem);
+							
+							/*
+							 * We don't display localSemiFinished, otherwise it's very difficult to understand the WUsed list
+							 */
 				    		
 //				    		//load recipe fathers
 //							while(level > wUsedLevel){

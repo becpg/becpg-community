@@ -77,7 +77,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private SearchService searchService;	
 	
 	/** The entitys history node ref. */
-	private NodeRef entitysHistoryNodeRef;
+	private NodeRef entitiesHistoryNodeRef;
 	
 	private BehaviourFilter policyBehaviourFilter;
 			
@@ -363,8 +363,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
             @Override
 			public int compare(NodeRef v1, NodeRef v2)
             {
-            	Date modifiedDateV1 = (Date)nodeService.getProperty(v1, ContentModel.PROP_MODIFIED);
-            	Date modifiedDateV2 = (Date)nodeService.getProperty(v2, ContentModel.PROP_MODIFIED);
+            	Date modifiedDateV1 = (Date)nodeService.getProperty(v1, BeCPGModel.PROP_FROZEN_MODIFIED);
+            	Date modifiedDateV2 = (Date)nodeService.getProperty(v2, BeCPGModel.PROP_FROZEN_MODIFIED);
                 int result = modifiedDateV1.compareTo(modifiedDateV2);
                 if (result == 0)
                 {
@@ -509,14 +509,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
      * @return the entitys history folder
      */
     private NodeRef getEntitysHistoryFolder(){
-    	if(entitysHistoryNodeRef == null){    		
+    	if(entitiesHistoryNodeRef == null){    		
     			        		    	
         	ResultSet resultSet = null;
         	
         	try{
         		resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_XPATH, ENTITIES_HISTORY_XPATH);
         		if(resultSet.length() > 0){
-        			entitysHistoryNodeRef = resultSet.getNodeRef(0);
+        			entitiesHistoryNodeRef = resultSet.getNodeRef(0);
         		}
         	}	       
         	catch(Exception e){
@@ -527,15 +527,15 @@ public class EntityVersionServiceImpl implements EntityVersionService {
         			resultSet.close();
         	}        	
     	}
-    	logger.debug("entitysHistoryNodeRef: " + entitysHistoryNodeRef);
-    	return entitysHistoryNodeRef;
+    	logger.debug("entitiesHistoryNodeRef: " + entitiesHistoryNodeRef);
+    	return entitiesHistoryNodeRef;
     }
     
     /**
      * Create the entitys history folder node where we store entity versions (create it if it doesn't exist).
      */
     private void createEntitysHistoryFolder(){
-    	if(entitysHistoryNodeRef == null){    		
+    	if(entitiesHistoryNodeRef == null){    		
     		    			
     		final NodeRef storeNodeRef = nodeService.getRootNode(RepoConsts.SPACES_STORE);
     		
@@ -547,14 +547,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
         			logger.debug("create folder 'EntitysHistory'");
         			HashMap<QName, Serializable> props = new HashMap<QName, Serializable>();
         	        props.put(ContentModel.PROP_NAME, ENTITIES_HISTORY_NAME);
-        	        entitysHistoryNodeRef = nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN, QNAME_ENTITIES_HISTORY, ContentModel.TYPE_FOLDER, props).getChildRef();
+        	        entitiesHistoryNodeRef = nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN, QNAME_ENTITIES_HISTORY, ContentModel.TYPE_FOLDER, props).getChildRef();
 	        		
 	                return null;
 	                
 	            }
 	        }, AuthenticationUtil.getSystemUserName());   
     	}
-    	logger.debug("entitysHistoryNodeRef: " + entitysHistoryNodeRef);
+    	logger.debug("entitiesHistoryNodeRef: " + entitiesHistoryNodeRef);
     }
 	        
 }

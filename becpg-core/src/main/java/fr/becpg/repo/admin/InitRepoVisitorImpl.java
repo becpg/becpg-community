@@ -113,7 +113,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/ExportSearch/Product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/ExportSearch/Product/ExportSearchQuery.xml";
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/NonConformity/NonConformitySynthesis.rptdesign";
-	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/NonConformity/NonConformitySynthesis.xml";
+	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/NonConformity/ExportSearchQuery.xml";
 	
 	/** The product dictionary service. */
 	private ProductDictionaryService productDictionaryService;	
@@ -609,13 +609,13 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		// visit productMicrobioCriteria
 		Set<QName> dataLists = new LinkedHashSet<QName>();
 		dataLists.add(BeCPGModel.TYPE_MICROBIOLIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, false, null);
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, false, null);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, true, dataLists);
 		
 		// visit productSpecification
 		dataLists.clear();
 		dataLists.add(BeCPGModel.TYPE_FORBIDDENINGLIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, false, null);
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, false, null);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, true, dataLists);
 		
 		// visit controlPlan
@@ -623,25 +623,25 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);		
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLINGDEF_LIST);		
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, true, subFolders);
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, true, subFolders);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, true, dataLists);
 		
 		// visit qualityControl
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLING_LIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, true, null);
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, true, null);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, true, dataLists);
 		
 		// visit controlPoint
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROLDEF_LIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, true, null);
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, true, null);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, true, dataLists);
 		
 		// visit workItemAnalysis
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, false, null);
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, false, null);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, true, dataLists);
 	}
 	

@@ -5,16 +5,19 @@ package fr.becpg.repo.web.scripts.migration;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.ResultSet;
@@ -50,6 +53,12 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	private static final String VALUE_ACTION_MIGRATE_PROPERTIES = "migrateProperties";
 	private static final String VALUE_ACTION_MIGRATE_AUTONUM = "migrateAutoNum";
 	private static final String VALUE_ACTION_MIGRATE_ENTITYLISTS = "migrateEntityLists";
+	private static final String VALUE_ACTION_MIGRATE_VERSIONHISTORY = "migrateVersionHistory";
+	
+	private static final String ENTITIES_HISTORY_XPATH = "/bcpg:entitiesHistory";
+	private static final String PRODUCTS_HISTORY_XPATH = "/bcpg:productsHistory";
+	private static final String ENTITIES_HISTORY_NAME = "entitiesHistory";
+    private static final QName QNAME_ENTITIES_HISTORY  = QName.createQName(BeCPGModel.BECPG_URI, ENTITIES_HISTORY_NAME);
 	
 	/** The node service. */
 	private NodeService nodeService;
@@ -114,7 +123,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException
     {
-    	logger.debug("start restore archived node webscript");
+    	logger.debug("start migration");
     	Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();	    	
     	String action = templateArgs.get(PARAM_ACTION);
     	String pagination = templateArgs.get(PARAM_PAGINATION);
@@ -152,6 +161,11 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     		migrateProductLists(iPagination);
     		
     	} 
+    	else if(action.equals(VALUE_ACTION_MIGRATE_VERSIONHISTORY)){
+    		
+    		// migrate version history
+    		migrateVersionHistory();
+    	}
     }
 	
 	private void migrateProperty(Integer iPagination, String query, QName oldProperty, QName newProperty){
@@ -475,5 +489,88 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	finally{
     		policyBehaviourFilter.enableAllBehaviours();
     	}    		      
-	}	
+	}
+	
+	private void migrateVersionHistory(){
+		
+		ResultSet resultSet = null;
+    	NodeRef entitiesHistoryNodeRef = null;
+    	NodeRef productsHistoryNodeRef = null;
+    	
+    	try{
+    		resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_XPATH, ENTITIES_HISTORY_XPATH);
+    		if(resultSet.length() > 0){
+    			entitiesHistoryNodeRef = resultSet.getNodeRef(0);
+    		}
+    	}	       
+    	catch(Exception e){
+    		logger.error("Failed to get entitysHistory", e);
+    	}
+    	finally{
+    		if(resultSet != null)
+    			resultSet.close();
+    	}  
+    	
+    	try{
+    		resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_XPATH, PRODUCTS_HISTORY_XPATH);
+    		if(resultSet.length() > 0){
+    			productsHistoryNodeRef = resultSet.getNodeRef(0);
+    		}
+    	}	       
+    	catch(Exception e){
+    		logger.error("Failed to get entitysHistory", e);
+    	}
+    	finally{
+    		if(resultSet != null)
+    			resultSet.close();
+    	}  
+    	
+    	if(productsHistoryNodeRef != null){
+    		
+    		// create entities history if needed
+    		if(entitiesHistoryNodeRef == null){    		
+    			
+        		final NodeRef storeNodeRef = nodeService.getRootNode(RepoConsts.SPACES_STORE);
+        		
+        		entitiesHistoryNodeRef = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>(){
+    	            @Override
+    				public NodeRef doWork() throws Exception
+    	            {                                	                
+            			//create folder
+            			logger.info("create folder 'EntitysHistory'");
+            			HashMap<QName, Serializable> props = new HashMap<QName, Serializable>();
+            	        props.put(ContentModel.PROP_NAME, ENTITIES_HISTORY_NAME);
+            	        NodeRef nodeRef = nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN, QNAME_ENTITIES_HISTORY, ContentModel.TYPE_FOLDER, props).getChildRef();
+    	        		
+    	                return nodeRef;
+    	                
+    	            }
+    	        }, AuthenticationUtil.getSystemUserName());   
+        	}
+    		
+    		List<FileInfo> versionHistoryFolders = fileFolderService.listFolders(productsHistoryNodeRef);
+    		
+    		for(FileInfo versionHistoryFolder : versionHistoryFolders){
+    			
+    			logger.info("migrate folder: " + versionHistoryFolder.getNodeRef() + " -name: " + versionHistoryFolder.getName());    			
+    			NodeRef vhNodeRef = nodeService.getChildByName(entitiesHistoryNodeRef, ContentModel.ASSOC_CONTAINS, versionHistoryFolder.getName());
+    			
+    			if(vhNodeRef == null){
+    				logger.info("move folder");
+    				nodeService.moveNode(versionHistoryFolder.getNodeRef(), entitiesHistoryNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER);
+    			}
+    			else{
+    				
+    				logger.info("move versions");    				
+    				List<FileInfo> versionFolders = fileFolderService.listFiles(versionHistoryFolder.getNodeRef());
+    				
+    				for(FileInfo versionFolder : versionFolders){
+    				
+    					logger.info("move version: " + versionFolder.getNodeRef());    					
+    					nodeService.moveNode(versionFolder.getNodeRef(), vhNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER);
+    				}
+    			}
+    		}
+    	}
+	}
 }

@@ -15,10 +15,10 @@ public class RepoConsts {
 	/*-- Path query --*/			
 	public static final String PATH_QUERY_SUGGEST_VALUE = " +PATH:\"/app:company_home/%s/*\" +@cm\\:name:(%s) ";
 	public static final String PATH_QUERY_SUGGEST_LKV_VALUE = " +PATH:\"/app:company_home/%s/*\" +@bcpg\\:lkvPrevValue:\"%s\"  +@bcpg\\:lkvValue:(%s) ";
-	public static final String QUERY_SUGGEST_PRODUCT_BY_NAME = " +TYPE:\"bcpg:product\" +@cm\\:name:(%s) -@cm\\:productState:%s -@cm\\:productState:%s ";
-	public static final String QUERY_SUGGEST_PRODUCT_BY_CODE = " +TYPE:\"bcpg:product\" +@bcpg\\:code:%s -@cm\\:productState:%s -@cm\\:productState:%s ";
-	public static final String QUERY_SUGGEST_TARGET_BY_NAME = " +TYPE:\"%s\"  +@cm\\:name:(%s)";
-	public static final String QUERY_SUGGEST_TARGET_BY_CODE = "  +TYPE:\"%s\"  +@bcpg\\:code:%s";
+	public static final String QUERY_SUGGEST_PRODUCT_BY_NAME = " +TYPE:\"bcpg:product\" +@cm\\:name:(%s) -@cm\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\"  ";
+	public static final String QUERY_SUGGEST_PRODUCT_BY_CODE = " +TYPE:\"bcpg:product\" +@bcpg\\:code:%s -@cm\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" ";
+	public static final String QUERY_SUGGEST_TARGET_BY_NAME = " +TYPE:\"%s\"  +@cm\\:name:(%s) AND -ASPECT:\"bcpg:compositeVersion\" ";
+	public static final String QUERY_SUGGEST_TARGET_BY_CODE = "  +TYPE:\"%s\"  +@bcpg\\:code:%s AND -ASPECT:\"bcpg:compositeVersion\" ";
 	public static final String PATH_QUERY_LIST_CONSTRAINTS = "PATH:\"/app:company_home/%s/*\" +TYPE:\"%s\"";
 	public static final String PATH_QUERY_IMPORT_FAILED_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportFailed\"";
 	public static final String PATH_QUERY_IMPORT_SUCCEEDED_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportSucceeded\"";	
@@ -26,7 +26,6 @@ public class RepoConsts {
 	public static final String QUERY_CHARACT_BY_TYPE_AND_NAME = " +TYPE:\"%s\" +@cm\\:name:\"%s\"";	
 	public static final String QUERY_AUTONUM = " +TYPE:\"bcpg:autoNum\" +@bcpg\\:autoNumClassName:\"%s\" +@bcpg\\:autoNumPropertyName:\"%s\"";
 	public static final String PATH_QUERY_IMPORT_MAPPING = " +PATH:\"/app:company_home/cm:System/cm:Exchange/cm:Import/cm:Mapping/*\" +@cm\\:name:\"%s*xml\"";
-	public static final String QUERY_NODE_BY_CODE = " +TYPE:\"%s\" +@bcpg\\:code:%s ";	
 	
 	/*-- Path --*/	
 	public static final String PATH_SEPARATOR 	= "/";

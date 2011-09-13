@@ -28,6 +28,8 @@ import fr.becpg.repo.entity.AutoNumService;
  */
 public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 			
+	private static final String QUERY_NODE_BY_CODE = " +TYPE:\"%s\" +@bcpg\\:code:%s ";
+	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CodePolicy.class);
 	
@@ -116,7 +118,7 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 			SearchParameters sp = new SearchParameters();
 	        sp.addStore(RepoConsts.SPACES_STORE);
 	        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-	        sp.setQuery(String.format(RepoConsts.QUERY_NODE_BY_CODE, typeQName, code));	                
+	        sp.setQuery(String.format(QUERY_NODE_BY_CODE, typeQName, code));	                
 	        
 	        ResultSet resultSet =null;
 	        

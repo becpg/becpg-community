@@ -73,9 +73,7 @@ public final class Search extends BaseScopableProcessorExtension{
 		
 		logger.debug("queryAdvSearch, criteriaMap: " + criteriaMap);
 		
-        List<NodeRef> nodes = advSearchService.queryAdvSearch(datatypeQName, term, tag, criteriaMap, sort, isRepo, siteId, containerId);
-        
-        logger.debug("queryAdvSearch, nodes" + nodes);
+        List<NodeRef> nodes = advSearchService.queryAdvSearch(datatypeQName, term, tag, criteriaMap, sort, isRepo, siteId, containerId);     
         
         if(!nodes.isEmpty()){
         	

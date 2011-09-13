@@ -29,6 +29,8 @@
       	<property name="nodeService" ref="nodeService" />      	
       	<property name="entityListDAO" ref="entityListDAO" />
       	<property name="entityTplService" ref="entityTplService" />
+      	<property name="entityDictionaryService" ref="entityDictionaryService" />   
+      	<property name="namespaceService" ref="namespaceService"/>   	
   		</bean>
   	 
    	<!-- Product formulate -->

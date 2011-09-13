@@ -22,7 +22,7 @@
 	   }
 	}<#if list_has_next>,</#if>
    </#list>      
-   <#if showWUsedItems>
+   <#if wUsedList??>
    		<#if lists?size != 0>
    	,
 		</#if>
@@ -32,7 +32,7 @@
 	   "title": "${message('entity-datalist-wused-title')}",
 	   "description": "${message('entity-datalist-wused-description')}",
 	   "nodeRef": "",
-	   "itemType": "bcpg:compoList",
+	   "itemType": "${wUsedList}",
 	   "permissions":
 	   {
 	      "edit": false,

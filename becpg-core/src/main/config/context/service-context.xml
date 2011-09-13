@@ -229,6 +229,8 @@
 		<property name="permissionService" ref="permissionService" />
 		<property name="entityTplService" ref="entityTplService"/>
 	</bean>
+	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">
+	</bean>
 	<!-- Entity Policies-->
 	<bean id="autoNumService" class="fr.becpg.repo.entity.impl.AutoNumServiceImpl">
 		<property name="searchService" ref="searchService" />

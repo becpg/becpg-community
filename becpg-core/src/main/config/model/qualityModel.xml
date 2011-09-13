@@ -529,7 +529,7 @@
 		</aspect>
 
 		<!-- Action corrective -->
-		<aspect name="qa:ncAcAspect">
+		<aspect name="qa:acAspect">
 			<properties>
 				<property name="qa:acType">
 					<type>d:text</type>

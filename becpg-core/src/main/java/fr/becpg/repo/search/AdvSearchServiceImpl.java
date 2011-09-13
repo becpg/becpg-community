@@ -281,7 +281,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
             }        	
         }
         
-        logger.debug("searchResults : " + searchResults);        
+        logger.debug("searchResults : " + searchResults.size());        
         
         return searchResults;
 	}
