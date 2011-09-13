@@ -1,4 +1,4 @@
-<#if field.control.params.ds?exists><#assign ds=field.control.params.ds><#else><#assign ds='becpg/autocomplete/targetassoc/associations/${field.dataType}'></#if>
+<#if field.control.params.ds?exists><#assign ds=field.control.params.ds><#else><#if field.dataType??><#assign ds='becpg/autocomplete/targetassoc/associations/${field.dataType}'></#if></#if>
 <#if field.control.params.style?exists><#assign style=field.control.params.style><#else><#assign style='width:30em;'></#if>
 <#if field.control.params.styleClass?exists><#assign styleClass=field.control.params.styleClass><#else><#assign styleClass='yui-ac-input'></#if>
 <#assign siteId=args.siteId!"">
@@ -60,6 +60,17 @@
 		         <input type="hidden" id="${controlId}-added" name="${field.name}_added" />
 		         <input type="hidden" id="${controlId}-removed" name="${field.name}_removed" />
 				</div>
+			<#else>
+
+				<input id="${fieldHtmlId}" type="text" name="-" tabindex="0"
+			             <#if field.description?exists>title="${field.description}"</#if>
+			             <#if field.control.params.maxLength?exists>maxlength="${field.control.params.maxLength}"</#if> 
+			             <#if field.control.params.size?exists>size="${field.control.params.size}"</#if> 
+			             <#if field.disabled>disabled="true"</#if> 
+			             class="${styleClass}"
+			             style="${style}; position:relative;"
+			             <#if field.value != "">value="-"</#if> >	
+			             
          </#if>
       </div>
    </#if>

@@ -58,8 +58,9 @@
             <aspect name="bcpg:permissionsTpl" />
             <aspect name="bcpg:clientsAspect" />
             <aspect name="bcpg:suppliersAspect" />
-            <aspect name="qa:batchAspect" />
-            <aspect name="bcpg:reportFormatAspect" />            
+            <aspect name="rep:reportTplsAspect" />            
+            <aspect name="qa:batchAspect" />        
+            <aspect name="qa:acAspect" />    
          </visible>
          
          <!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -69,8 +70,9 @@
             <aspect name="bcpg:permissionsTpl" />
             <aspect name="bcpg:clientsAspect" />
             <aspect name="bcpg:suppliersAspect" />
+            <aspect name="rep:reportTplsAspect" />
             <aspect name="qa:batchAspect" />
-            <aspect name="bcpg:reportFormatAspect" />
+            <aspect name="qa:acAspect" />
          </addable>
 
          <!-- Aspects that a user can remove. Same as "visible" if left empty -->
@@ -80,8 +82,9 @@
             <aspect name="bcpg:permissionsTpl" />
             <aspect name="bcpg:clientsAspect" />
             <aspect name="bcpg:suppliersAspect" />
+            <aspect name="rep:reportTplsAspect" />
             <aspect name="qa:batchAspect" />
-            <aspect name="bcpg:reportFormatAspect" />
+            <aspect name="qa:acAspect" />
          </removeable>
       </aspects>
       

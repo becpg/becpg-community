@@ -9,7 +9,8 @@
       siteId: "${page.url.templateArgs.site!""}",
       containerId: "${template.properties.container!"dataLists"}",
       usePagination: ${(args.pagination!false)?string},
-	  entityNodeRef: "${page.url.args.nodeRef!""}"
+	  	entityNodeRef: "${page.url.args.nodeRef!""}",
+	  	list: "${page.url.args.list!""}"
    }).setMessages(${messages});
 //]]></script>
 <div id="${id}-body" class="datagrid">

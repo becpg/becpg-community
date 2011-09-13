@@ -30,12 +30,12 @@
 					<!-- batch -->
 					<show id="qa:batchId" />
 					<show id="qa:orderId" />
-					<show id="bcpg:clients" />
-					<show id="bcpg:suppliers" />
+					<show id="bcpg:clients"  force="true"/>
+					<show id="bcpg:suppliers"  force="true"/>
 					<show id="qa:batchComments" />
 					
 					<!-- Product -->
-					<show id="qa:product" />
+					<show id="qa:product"  force="true"/>
 					<show id="qa:productHierarchy1" for-mode="view"/>
 					<show id="qa:productHierarchy2" for-mode="view"/>
 					

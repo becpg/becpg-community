@@ -197,11 +197,11 @@
 					<show id="bcpg:productComments" />
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />					
-					<show id="bcpg:code" />
+					<show id="bcpg:code" />					
+					<show id="bcpg:productState" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:clients" />
-					<show id="rep:reportTpls" />
-					<show id="bcpg:productState" />
+					<show id="rep:reportTpls" />					
 					
 					<!-- formulation -->
 					<show id="bcpg:productUnit" />
@@ -264,17 +264,8 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:clients" force="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/CondSalesUnit
-							</control-param>
-						</control>
-					</field>
+					<field id="bcpg:clients" force="true" set="mainInfo"/>
+					<field id="rep:reportTpls" set="mainInfo"/>
 					
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
@@ -392,17 +383,8 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:clients" force="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/CondSalesUnit
-							</control-param>
-						</control>
-					</field>
+					<field id="bcpg:clients" force="true" set="mainInfo"/>
+					<field id="rep:reportTpls" set="mainInfo"/>
 					
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
@@ -457,10 +439,10 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />					
 					<show id="bcpg:code" />
-					<show id="bcpg:eanCode" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:eanCode" />					
 					<show id="bcpg:clients" />
-					<show id="rep:reportTpls" />
-					<show id="bcpg:productState" />					
+					<show id="rep:reportTpls" />									
 
 					<!-- formulation -->
 					<show id="bcpg:productUnit" />
@@ -524,18 +506,9 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:clients" force="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/FinishedProduct
-							</control-param>
-						</control>
-					</field>
-					
+					<field id="bcpg:clients" force="true" set="mainInfo"/>						
+					<field id="rep:reportTpls" set="mainInfo"/>
+						
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
@@ -596,9 +569,9 @@
 					<show id="bcpg:productHierarchy2" />					
 					<show id="bcpg:code" />
 					<show id="bcpg:eanCode" />
+					<show id="bcpg:productState" />
 					<show id="bcpg:clients" />
 					<show id="rep:reportTpls" />
-					<show id="bcpg:productState" />
 					
 					<!-- formulation -->
 					<show id="bcpg:productUnit" />
@@ -655,18 +628,9 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:clients" force="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/FinishedProduct
-							</control-param>
-						</control>
-					</field>
-					
+					<field id="bcpg:clients" force="true" set="mainInfo"/>						
+					<field id="rep:reportTpls" set="mainInfo"/>
+						
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
@@ -953,14 +917,8 @@
 					</field>
 					<field id="bcpg:productUnit" set="mainInfo"/>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />					
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/PackagingKit
-							</control-param>
-						</control>
-					</field>
-
+					<field id="rep:reportTpls" set="mainInfo"/>
+						
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -1052,14 +1010,8 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />					
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/PackagingKit
-							</control-param>
-						</control>
-					</field>
-
+					<field id="rep:reportTpls" set="mainInfo"/>
+						
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -1155,18 +1107,9 @@
 					<field id="bcpg:productUnit" set="mainInfo"/>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:suppliers" force="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/PackagingMaterial
-							</control-param>
-						</control>
-					</field>					
-
+					<field id="bcpg:suppliers" force="true" set="mainInfo"/>
+					<field id="rep:reportTpls" set="mainInfo"/>
+						
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -1259,18 +1202,9 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:suppliers" force="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/PackagingMaterial
-							</control-param>
-						</control>
-					</field>					
-
+					<field id="bcpg:suppliers" force="true" set="mainInfo"/>						
+					<field id="rep:reportTpls" set="mainInfo"/>
+						
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -1367,17 +1301,9 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>	
 					<field id="bcpg:productUnit" set="mainInfo"/>
-					<field id="bcpg:suppliers" force="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/RawMaterial
-							</control-param>
-						</control>
-					</field>					
+					<field id="bcpg:suppliers" force="true" set="mainInfo"/>						
+					<field id="rep:reportTpls" set="mainInfo"/>
+											
 					<field id="bcpg:productMicrobioCriteria" set="mainInfo">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
@@ -1479,17 +1405,8 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>	
 					<field id="bcpg:productUnit" set="mainInfo"/>
-					<field id="bcpg:suppliers" force="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/RawMaterial
-							</control-param>
-						</control>
-					</field>				
+					<field id="bcpg:suppliers" force="true" set="mainInfo"/>						
+					<field id="rep:reportTpls" set="mainInfo"/>									
 					<field id="bcpg:productMicrobioCriteria" set="mainInfo">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
@@ -1596,14 +1513,8 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />					
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/SemiFinishedProduct
-							</control-param>
-						</control>
-					</field>
-
+					<field id="rep:reportTpls" set="mainInfo"/>
+						
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
@@ -1719,14 +1630,8 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />					
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/SemiFinishedProduct
-							</control-param>
-						</control>
-					</field>
-
+					<field id="rep:reportTpls" set="mainInfo"/>
+						
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
@@ -2279,6 +2184,17 @@
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 			</form>
+			<form id="datagridWUsed">
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:compoListProduct" />					
+					<show id="bcpg:compoListQty" />
+					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListLossPerc" />
+					<show id="bcpg:compoListDeclGrp" />
+					<show id="bcpg:compoListDeclType" />
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 	<!-- bcpg:compoList type (existing nodes) -->
@@ -2337,6 +2253,14 @@
 
 			<!-- Data Grid view -->
 			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:packagingListProduct" />
+					<show id="bcpg:packagingListQty" />					
+					<show id="bcpg:packagingListUnit" />					
+					<show id="bcpg:packagingListPkgLevel" />
+				</field-visibility>				
+			</form>
+			<form id="datagridWUsed">
 				<field-visibility>
 					<show id="bcpg:packagingListProduct" />
 					<show id="bcpg:packagingListQty" />					
@@ -3042,10 +2966,6 @@
 					<show id="bcpg:suppliers" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:suppliers">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
 				</appearance>
 			</form>
 		</forms>

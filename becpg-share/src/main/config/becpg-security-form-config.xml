@@ -14,16 +14,13 @@
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
 							 <control-param name="options">
-							 {http://www.bcpg.fr/model/becpg/1.0}productTemplate|{type.bcpg_productTemplate},
-							 {http://www.bcpg.fr/model/becpg/1.0}productMicrobioCriteria|{type.bcpg_productMicrobioCriteria},
-						     {http://www.bcpg.fr/model/becpg/1.0}productSpecification|{type.bcpg_productSpecification},
-							 {http://www.bcpg.fr/model/becpg/1.0}allergen|{type.bcpg_allergen},
-							 {http://www.bcpg.fr/model/becpg/1.0}cost|{type.bcpg_cost},
-							 {http://www.bcpg.fr/model/becpg/1.0}ing|{type.bcpg_ing},	
-							 {http://www.bcpg.fr/model/becpg/1.0}microBio|{type.bcpg_microBio},
-							 {http://www.bcpg.fr/model/becpg/1.0}nut|{type.bcpg_nut},
-							 {http://www.bcpg.fr/model/becpg/1.0}organo|{type.bcpg_organo},
-							 {http://www.bcpg.fr/model/becpg/1.0}physicoChem|{type.bcpg_organo},
+							 {http://www.bcpg.fr/model/becpg/1.0}rawMaterial|{type.bcpg_rawMaterial},
+							 {http://www.bcpg.fr/model/becpg/1.0}semiFinishedProduct|{type.bcpg_semiFinishedProduct},
+							 {http://www.bcpg.fr/model/becpg/1.0}localSemiFinishedProduct|{type.bcpg_localSemiFinishedProduct},
+							 {http://www.bcpg.fr/model/becpg/1.0}finishedProduct|{type.bcpg_finishedProduct},
+							 {http://www.bcpg.fr/model/becpg/1.0}condSalesUnit|{type.bcpg_condSalesUnit},
+							 {http://www.bcpg.fr/model/becpg/1.0}packagingMaterial|{type.bcpg_packagingMaterial},
+							 {http://www.bcpg.fr/model/becpg/1.0}packagingKit|{type.bcpg_packagingKit},							 							 
 							 {http://www.bcpg.fr/model/quality/1.0}nc|{type.qa_nc},
 							 {http://www.bcpg.fr/model/quality/1.0}controlPlan|{type.qa_controlPlan},
 						     {http://www.bcpg.fr/model/quality/1.0}qualityControl|{type.qa_qualityControl},
@@ -32,9 +29,7 @@
 						     {http://www.bcpg.fr/model/quality/1.0}controlMethod|{type.qa_controlMethod},
 						     {http://www.bcpg.fr/model/quality/1.0}workItemAnalysis|{type.qa_workItemAnalysis},
 						     {http://www.bcpg.fr/model/becpg/1.0}supplier|{type.bcpg_supplier},
-							 {http://www.bcpg.fr/model/becpg/1.0}client|{type.bcpg_client},
-							 {http://www.bcpg.fr/model/becpg/1.0}linkedValue|{type.bcpg_linkedValue},
-							 {http://www.bcpg.fr/model/becpg/1.0}listValue|{type.bcpg_listValue}
+							 {http://www.bcpg.fr/model/becpg/1.0}client|{type.bcpg_client}				 
 							</control-param>
 						</control>
 					</field>
@@ -57,16 +52,13 @@
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
 							 <control-param name="options">
-							 {http://www.bcpg.fr/model/becpg/1.0}productTemplate|{type.bcpg_productTemplate},
-							 {http://www.bcpg.fr/model/becpg/1.0}productMicrobioCriteria|{type.bcpg_productMicrobioCriteria},
-						     {http://www.bcpg.fr/model/becpg/1.0}productSpecification|{type.bcpg_productSpecification},
-							 {http://www.bcpg.fr/model/becpg/1.0}allergen|{type.bcpg_allergen},
-							 {http://www.bcpg.fr/model/becpg/1.0}cost|{type.bcpg_cost},
-							 {http://www.bcpg.fr/model/becpg/1.0}ing|{type.bcpg_ing},	
-							 {http://www.bcpg.fr/model/becpg/1.0}microBio|{type.bcpg_microBio},
-							 {http://www.bcpg.fr/model/becpg/1.0}nut|{type.bcpg_nut},
-							 {http://www.bcpg.fr/model/becpg/1.0}organo|{type.bcpg_organo},
-							 {http://www.bcpg.fr/model/becpg/1.0}physicoChem|{type.bcpg_organo},
+							 {http://www.bcpg.fr/model/becpg/1.0}rawMaterial|{type.bcpg_rawMaterial},
+							 {http://www.bcpg.fr/model/becpg/1.0}semiFinishedProduct|{type.bcpg_semiFinishedProduct},
+							 {http://www.bcpg.fr/model/becpg/1.0}localSemiFinishedProduct|{type.bcpg_localSemiFinishedProduct},
+							 {http://www.bcpg.fr/model/becpg/1.0}finishedProduct|{type.bcpg_finishedProduct},
+							 {http://www.bcpg.fr/model/becpg/1.0}condSalesUnit|{type.bcpg_condSalesUnit},
+							 {http://www.bcpg.fr/model/becpg/1.0}packagingMaterial|{type.bcpg_packagingMaterial},
+							 {http://www.bcpg.fr/model/becpg/1.0}packagingKit|{type.bcpg_packagingKit},							 							 
 							 {http://www.bcpg.fr/model/quality/1.0}nc|{type.qa_nc},
 							 {http://www.bcpg.fr/model/quality/1.0}controlPlan|{type.qa_controlPlan},
 						     {http://www.bcpg.fr/model/quality/1.0}qualityControl|{type.qa_qualityControl},
@@ -75,9 +67,7 @@
 						     {http://www.bcpg.fr/model/quality/1.0}controlMethod|{type.qa_controlMethod},
 						     {http://www.bcpg.fr/model/quality/1.0}workItemAnalysis|{type.qa_workItemAnalysis},
 						     {http://www.bcpg.fr/model/becpg/1.0}supplier|{type.bcpg_supplier},
-							 {http://www.bcpg.fr/model/becpg/1.0}client|{type.bcpg_client},
-							 {http://www.bcpg.fr/model/becpg/1.0}linkedValue|{type.bcpg_linkedValue},
-							 {http://www.bcpg.fr/model/becpg/1.0}listValue|{type.bcpg_listValue}
+							 {http://www.bcpg.fr/model/becpg/1.0}client|{type.bcpg_client}
 							</control-param>
 						</control>
 					</field>

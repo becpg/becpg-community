@@ -140,14 +140,23 @@
           */
          splitActionsAt: 3,
 
-			/**
+		/**
            * Current entityNodeRef.
            * 
            * @property entityNodeRef
            * @type string
            * @default ""
            */
-          entityNodeRef:""
+          entityNodeRef:"",
+          
+         /**
+           * Current list.
+           * 
+           * @property list
+           * @type string
+           * @default ""
+           */
+          list:""
       },
 	 
 		/**
@@ -483,6 +492,42 @@
             [ this.id + "-title", $html(this.datalistMeta.entityName + " - " + this.datalistMeta.title) ],
             [ this.id + "-description", $links($html(this.datalistMeta.description, true)) ]
          );
+      },
+      
+      /**
+       * Retrieves the Data List from the Repository
+       *
+       * @method populateDataGrid
+       */
+      populateDataGrid: function DataGrid_populateDataGrid()
+      {
+         if (!YAHOO.lang.isObject(this.datalistMeta))
+         {
+            return;
+         }
+         
+         this.renderDataListMeta();
+         
+         // Query the visible columns for this list's item type
+         Alfresco.util.Ajax.jsonGet(
+         {
+            url: $combine(Alfresco.constants.URL_SERVICECONTEXT, "components/data-lists/config/columns?itemType=" + encodeURIComponent(this.datalistMeta.itemType) + "&list=" + encodeURIComponent(this.options.list)),
+            successCallback:
+            {
+               fn: this.onDatalistColumns,
+               scope: this
+            },
+            failureCallback:
+            {
+               fn: this._onDataListFailure,
+               obj:
+               {
+                  title: this.msg("message.error.columns.title"),
+                  text: this.msg("message.error.columns.description")
+               },
+               scope: this
+            }
+         });
       },
 
      /**
