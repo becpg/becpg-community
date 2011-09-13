@@ -50,8 +50,5 @@
 		<property name="securityService" ref="securityService"/>
 	</bean>
    
-   	<bean id="dynEntityTypeConstraint" class="fr.becpg.repo.security.constraint.DynEntityTypeConstraint">
-		<property name="serviceRegistry" ref="ServiceRegistry" />
-	</bean>
    
 </beans>

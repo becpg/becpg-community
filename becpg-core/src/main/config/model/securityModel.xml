@@ -34,10 +34,16 @@
 
 		<constraint name="sec:propNameConstraint"
 			type="fr.becpg.repo.security.constraint.DynPropsConstraint">
+			<parameter name="constraintType">
+				<value>PROP_NAME</value>
+			</parameter>
 		</constraint>
 		
 	   <constraint name="sec:nodeTypeConstraint"
-			type="fr.becpg.repo.security.constraint.DynEntityTypeConstraint">
+			type="fr.becpg.repo.security.constraint.DynPropsConstraint">
+			<parameter name="constraintType">
+				<value>NODE_TYPE</value>
+			</parameter>
 		</constraint>
 
 
@@ -50,7 +56,7 @@
 			<parent>cm:content</parent>
 			<properties>
 				<property name="sec:nodeType">
-					<type>d:qname</type>
+					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<constraints>
 						<constraint ref="sec:nodeTypeConstraint" />
