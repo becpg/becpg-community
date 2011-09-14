@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.model.FileNotFoundException;
@@ -27,6 +26,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.helper.TranslateHelper;
 
 /**
  * Entity Service implementation
@@ -246,6 +246,41 @@ public class EntityServiceImpl implements EntityService {
 		}		
 	}
 	
+	
+
+	/**
+	 * Load an image in the folder Images.
+	 *
+	 * @param nodeRef the node ref
+	 * @param imgName the img name
+	 * @return the image
+	 */
+	@Override
+	public NodeRef getImage(NodeRef nodeRef, String imgName){		
+		
+		NodeRef parentNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
+				
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));		
+		if(imagesFolderNodeRef == null){
+			logger.debug("Folder 'Images' doesn't exist.");
+			return null;
+		}
+		
+		NodeRef imageNodeRef = null;		
+		List<FileInfo> files = fileFolderService.listFiles(imagesFolderNodeRef);				
+		for(FileInfo file : files){
+			if(file.getName().toLowerCase().startsWith(imgName.toLowerCase())){
+				imageNodeRef = file.getNodeRef();
+			}
+		}
+		
+		if(imageNodeRef == null){
+			logger.debug("image not found. imgName: " + imgName);
+			return null;
+		}			
+		
+		return imageNodeRef;
+	}
 	
 
 }

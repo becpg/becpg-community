@@ -112,6 +112,11 @@ public interface BeCPGModel {
 	static final QName TYPE_PRODUCTLIST_ITEM = QName.createQName(BECPG_URI,
 	"productListItem");
 	
+	/** The Constant TYPE_CHARACT. */
+	static final QName TYPE_CHARACT = QName.createQName(BECPG_URI,
+			"charact");
+	
+	
 	// allergenList
 	/** The Constant TYPE_ALLERGENLIST. */
 	static final QName TYPE_ALLERGENLIST = QName.createQName(BECPG_URI,

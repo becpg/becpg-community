@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -25,7 +24,6 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -33,9 +31,6 @@ import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -291,39 +286,6 @@ public class EntityReportServiceImpl implements EntityReportService{
 		return imageBytes;
 	}
 	
-	/**
-	 * Load an image in the folder Images.
-	 *
-	 * @param nodeRef the node ref
-	 * @param imgName the img name
-	 * @return the image
-	 */
-	@Override
-	public NodeRef getImage(NodeRef nodeRef, String imgName){		
-		
-		NodeRef parentNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
-				
-		NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));		
-		if(imagesFolderNodeRef == null){
-			logger.debug("Folder 'Images' doesn't exist.");
-			return null;
-		}
-		
-		NodeRef imageNodeRef = null;		
-		List<FileInfo> files = fileFolderService.listFiles(imagesFolderNodeRef);				
-		for(FileInfo file : files){
-			if(file.getName().toLowerCase().startsWith(imgName.toLowerCase())){
-				imageNodeRef = file.getNodeRef();
-			}
-		}
-		
-		if(imageNodeRef == null){
-			logger.debug("image not found. imgName: " + imgName);
-			return null;
-		}			
-		
-		return imageNodeRef;
-	}
 	
 	/**
 	 * Check if node has changed, so the report is out of date.
