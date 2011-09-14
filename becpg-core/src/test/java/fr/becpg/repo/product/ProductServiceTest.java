@@ -711,7 +711,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
  				
 
  				assertEquals("check PF", finishedProductNodeRef, wUsed0.getProduct());
- 				assertEquals("check PF level", new Integer(3), wUsed0.getDepthLevel());
+ 				assertEquals("check PF level", new Integer(1), wUsed0.getDepthLevel());
  				assertEquals("check PF qty", 3f, wUsed0.getQty());
  				assertEquals("check PF qty sub formula", 0f, wUsed0.getQtySubFormula());
  				assertEquals("check PF unit", CompoListUnit.kg, wUsed0.getCompoListUnit());
