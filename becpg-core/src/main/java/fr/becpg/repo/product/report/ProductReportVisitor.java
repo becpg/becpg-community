@@ -20,6 +20,7 @@ import org.eclipse.birt.report.model.parser.ReportState;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.repo.NodeVisitor;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
@@ -67,6 +68,8 @@ public class ProductReportVisitor implements NodeVisitor {
 	private ReportTplService reportTplService;	
 	
 	private EntityReportService entityReportService;
+	
+	private EntityService entityService;
 			
 	/**
 	 * Sets the product dictionary service.
@@ -86,6 +89,12 @@ public class ProductReportVisitor implements NodeVisitor {
 		this.productDAO = productDAO;
 	}	
 	
+	
+	
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
+	}
+
 	/**
 	 * Sets the product report service.
 	 *
@@ -244,7 +253,7 @@ public class ProductReportVisitor implements NodeVisitor {
 			 *	get the product image 
 			 */
 			String productImageFileName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_IMAGE).toLowerCase();
-			NodeRef imgNodeRef = entityReportService.getImage(productNodeRef, productImageFileName);
+			NodeRef imgNodeRef = entityService.getImage(productNodeRef, productImageFileName);
 			byte[] imageBytes = null;
 			
 			if(imgNodeRef != null){

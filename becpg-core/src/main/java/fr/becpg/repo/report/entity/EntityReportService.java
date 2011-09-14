@@ -25,15 +25,7 @@ public interface EntityReportService {
 	 */
 	public byte[] getImage(NodeRef nodeRef);
 	
-	/**
-	 * Gets the image defined in the image folder
-	 *
-	 * @param nodeRef the node ref
-	 * @param imgName the img name
-	 * @return the  image
-	 */
-	public NodeRef getImage(NodeRef nodeRef, String imgName);
-	
+
 	/**
 	 * Checks if is report up to date.
 	 *

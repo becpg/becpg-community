@@ -27,6 +27,9 @@ public class RepoConsts {
 	public static final String QUERY_AUTONUM = " +TYPE:\"bcpg:autoNum\" +@bcpg\\:autoNumClassName:\"%s\" +@bcpg\\:autoNumPropertyName:\"%s\"";
 	public static final String PATH_QUERY_IMPORT_MAPPING = " +PATH:\"/app:company_home/cm:System/cm:Exchange/cm:Import/cm:Mapping/*\" +@cm\\:name:\"%s*xml\"";
 	
+	public static final String PATH_QUERY_THUMBNAIL = " +PATH:\"/app:company_home/cm:System/cm:Icons/*\" +@cm\\:name:\"%s*\"";
+	
+	
 	/*-- Path --*/	
 	public static final String PATH_SEPARATOR 	= "/";
 	public static final String PATH_SYSTEM = "System";
@@ -68,6 +71,9 @@ public class RepoConsts {
 	//Security
 	public static final String PATH_SECURITY = "Security";
 	
+	//Icons
+	public static final String PATH_ICON = "Icons";
+	
 	//Hierarchy
 	public static final String PATH_PRODUCT_HIERARCHY = "ProductHierarchy";
 	public static final String PATH_HIERARCHY_SFX_HIERARCHY1 = "Hierarchy1";
@@ -91,6 +97,7 @@ public class RepoConsts {
 	public static final String PATH_DOCUMENTS = "Documents";
 	public static final String PATH_BRIEF = "Brief";
 	public static final String PATH_PRODUCT_IMAGE = "productimage";
+	public static final String PATH_LOGO_IMAGE = "logoimage";
 	public static final String PATH_COMPANIES = "Companies";
 	public static final String PATH_SUPPLIERS = "Suppliers";
 	public static final String PATH_CLIENTS	= "Clients";
@@ -140,6 +147,8 @@ public class RepoConsts {
 	public static final String PERMISSION_EDITOR = "Editor";
 	public static final String PERMISSION_CONTRIBUTOR = "Contributor";
 	public static final String PERMISSION_COLLABORATOR = "Collaborator";
+
+
 
 
 	

@@ -5,7 +5,6 @@ package fr.becpg.repo.admin;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -134,10 +133,15 @@ public abstract class AbstractInitVisitorImpl {
 	    }
 	    
 	    visitPermissions(folderNodeRef, folderName);
+	    visitFiles(folderNodeRef, folderPath);
 	    
 	    return folderNodeRef;
 	}
 	
+	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
+		
+	}
+
 	/**
 	 * Visit rules.
 	 *

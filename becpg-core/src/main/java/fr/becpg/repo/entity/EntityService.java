@@ -1,7 +1,6 @@
 package fr.becpg.repo.entity;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 
 /**
  * Entity service
@@ -22,5 +21,16 @@ public interface EntityService {
      * @param entityNodeRef the entity node ref
      */
     public void initializeEntityFolder(NodeRef entityNodeRef);
+    
+    
+	/**
+	 * Gets the image defined in the image folder of the entity
+	 *
+	 * @param nodeRef the node ref
+	 * @param imgName the img name
+	 * @return the  image
+	 */
+	public NodeRef getImage(NodeRef nodeRef, String imgName);
+	
     
 }

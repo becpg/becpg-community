@@ -346,6 +346,7 @@
 		<property name="productReportService" ref="productReportService" />
 		<property name="reportTplService" ref="reportTplService" />	
 		<property name="entityReportService" ref="entityReportService" />	
+		<property name="entityService" ref="entityService"/>
 	</bean>
 	
 	<!-- Formulation visitors -->
@@ -404,5 +405,16 @@
 		<property name="searchService" ref="SearchService" />
 		<property name="unProtSearchService" ref="searchService" />	
 	</bean>
-		   
+	
+		   	
+  <!-- Thumbnail service implementation bean -->
+    <bean id="thumbnailService" class="fr.becpg.repo.thumbnail.impl.BeCPGThumbnailServiceImpl">
+    	<property name="nodeService" ref="nodeService"/>
+        <property name="renditionService" ref="renditionService" />
+    	<property name="thumbnailRegistry" ref="thumbnailRegistry" />
+    	<property name="entityService" ref="entityService"/>
+    	<property name="dictionaryService" ref="dictionaryService"/>
+    	<property name="searchService" ref="searchService"/>
+    </bean>
+    
 </beans>

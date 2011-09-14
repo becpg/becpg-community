@@ -3,15 +3,12 @@
  */
 package fr.becpg.repo.admin;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,13 +19,11 @@ import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
 import org.alfresco.repo.action.evaluator.compare.ComparePropertyValueOperation;
 import org.alfresco.repo.action.executer.SpecialiseTypeActionExecuter;
 import org.alfresco.repo.content.MimetypeMap;
-import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
@@ -40,7 +35,8 @@ import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.RepoConsts;
@@ -48,15 +44,11 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
-import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
@@ -269,6 +261,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		//Security
 		visitFolder(systemNodeRef, RepoConsts.PATH_SECURITY);
 		
+		//Icons
+		visitFolder(systemNodeRef, RepoConsts.PATH_ICON);
+		
 		//EntityTemplates				
 		visitFolderAndEntityTpls(systemNodeRef);		
 		
@@ -289,6 +284,50 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(systemImportNodeRef, RepoConsts.PATH_MAPPING);		
 		
 	}	
+	
+	/**
+	 * Add resources to folder 
+	 */
+	@Override
+	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
+
+		if(folderName == RepoConsts.PATH_ICON){			
+			logger.debug("add files to "+folderName);
+	    	
+			try {
+				
+				PathMatchingResourcePatternResolver resolver  = new PathMatchingResourcePatternResolver();
+				
+				for(Resource res : resolver.getResources("classpath:beCPG/images/*.png")){
+				
+				String fileName = res.getFilename();
+				logger.debug("add file "+fileName);
+				
+		    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
+		    	properties.put(ContentModel.PROP_NAME, fileName);
+		    	
+		    	NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
+		    	if(nodeRef == null){
+		    		nodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
+			    	
+			    	ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+
+			    	InputStream in = res.getInputStream();			
+			    	writer.putContent(in);
+			    	writer.setMimetype(mimetypeService.guessMimetype(fileName));
+			    	in.close();
+			    	
+		    	}    	
+			 }
+			} catch (Exception e) {
+				logger.error(e,e);
+			}
+		    	
+		}
+		
+		
+	}
+	
 	
 	/**
 	 * Initialize the rules of the repository

@@ -78,7 +78,7 @@
 		<!-- Entity actions -->
 		
 		<actionSet id="entity">
- 			<action type="simple-link" id="onActionViewDataLists" permission="" href="{dataListsUrl}" label="actions.document.viewEntityLists" />
+ 		 <action type="simple-link" id="onActionViewDataLists" permission="" href="{dataListsUrl}" label="actions.document.viewEntityLists" />
          <action type="simple-link" id="onActionDetails" permission="edit" href="{editMetadataUrl}" label="actions.document.edit-metadata" />
          <action type="action-link" id="onActionCopyTo" label="actions.document.copy-to" />
          <action type="action-link" id="onActionMoveTo" permission="delete" label="actions.document.move-to" />
