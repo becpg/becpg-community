@@ -313,9 +313,11 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			    	ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
 
 			    	InputStream in = res.getInputStream();			
-			    	writer.putContent(in);
 			    	writer.setMimetype(mimetypeService.guessMimetype(fileName));
+			    	writer.putContent(in);
 			    	in.close();
+			    	
+			    	
 			    	
 		    	}    	
 			 }
