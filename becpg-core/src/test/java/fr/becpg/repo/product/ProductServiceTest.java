@@ -292,7 +292,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 			   	
 			   	reportTplService.createTplRptDesign(productReportTplFolder, 
 		   											"report MP", 
-		   											"beCPG/birt/ProductReport.rptdesign", 
+		   											"beCPG/birt/document/product/default/ProductReport.rptdesign", 
 		   											ReportType.Document,
 		   											ReportFormat.PDF,
 		   											BeCPGModel.TYPE_RAWMATERIAL, 

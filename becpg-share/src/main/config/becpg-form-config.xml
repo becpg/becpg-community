@@ -1893,7 +1893,6 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:description" force="true" />
-					<show id="bcpg:microBioUnit" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" />
@@ -1902,7 +1901,6 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:microBioUnit" />
 				</appearance>
 			</form>
 		</forms>

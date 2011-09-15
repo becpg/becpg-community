@@ -134,9 +134,9 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	}
     	else if(action.equals(VALUE_ACTION_MIGRATE_PROPERTIES)){
     		
-    		// remove old aspect
-    		QName reportNodeAspectQName = QName.createQName(ReportModel.REPORT_URI, "reportNodeAspect");
-    		removeAspect(iPagination, " +ASPECT:\"rep:reportNodeAspect\" ", reportNodeAspectQName);
+//    		// remove old aspect
+//    		QName reportNodeAspectQName = QName.createQName(ReportModel.REPORT_URI, "reportNodeAspect");
+//    		removeAspect(iPagination, " +ASPECT:\"rep:reportNodeAspect\" ", reportNodeAspectQName);
     		
     		// migration productCode
     		QName productCodeQName = QName.createQName(BeCPGModel.BECPG_URI, "productCode");

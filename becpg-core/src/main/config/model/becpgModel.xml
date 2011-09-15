@@ -230,11 +230,18 @@
 		<constraint name="bcpg:microbioUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value>UFC/cm²</value>
+					<value>UFC/25cm²</value>
 					<value>UFC/g</value>
 					<value>UFC/10g</value>
 					<value>UFC/25g</value>
 					<value>UFC/50g</value>
-					<value>g</value>
+					<value>UFG/g</value>
+					<value>UFG/L</value>
+					<value>/g</value>
+					<value>/10g</value>
+					<value>/25g</value>
+					<value>/100cm² n=50,c=2</value>
 					<value>-</value>
 				</list>
 			</parameter>
@@ -472,16 +479,7 @@
 		</type>
 
 		<type name="bcpg:microbio">
-			<parent>bcpg:charact</parent>
-			<properties>
-				<property name="bcpg:microbioUnit">
-					<type>d:text</type>
-					<mandatory>true</mandatory>
-					<constraints>
-						<constraint ref="bcpg:microbioUnit" />
-					</constraints>
-				</property>
-			</properties>
+			<parent>bcpg:charact</parent>			
 		</type>
 
 		<type name="bcpg:nut">

@@ -174,7 +174,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 		   		
 			   	reportTplService.createTplRptDesign(productReportTplFolder, 
 			   										"report SF", 
-			   										"beCPG/birt/ProductReport.rptdesign", 
+			   										"beCPG/birt/document/product/default/ProductReport.rptdesign", 
 		   											ReportType.Document, 
 		   											ReportFormat.PDF,
 		   											BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, 
@@ -332,7 +332,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				// add a system template
 				reportTplService.createTplRptDesign(productReportTplFolder, 
 													"report MP", 
-													"beCPG/birt/ProductReport.rptdesign", 
+													"beCPG/birt/document/product/default/ProductReport.rptdesign", 
 													ReportType.Document,
 													ReportFormat.PDF,
 													BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, 
@@ -345,7 +345,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				// add a system template
 				reportTplService.createTplRptDesign(productReportTplFolder, 
 													"report MP 2", 
-													"beCPG/birt/ProductReport.rptdesign", 
+													"beCPG/birt/document/product/default/ProductReport.rptdesign", 
 													ReportType.Document, 
 													ReportFormat.PDF,
 													BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, 
@@ -359,7 +359,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				// add a user template
 				reportTplService.createTplRptDesign(productReportTplFolder, 
 													"user tpl", 
-													"beCPG/birt/ProductReport.rptdesign", 
+													"beCPG/birt/document/product/default/ProductReport.rptdesign", 
 													ReportType.Document, 
 													ReportFormat.PDF,
 													BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, 
@@ -372,7 +372,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				// add a user template
 				NodeRef userTpl2NodeRef = reportTplService.createTplRptDesign(productReportTplFolder, 
 													"user tpl 2", 
-													"beCPG/birt/ProductReport.rptdesign", 
+													"beCPG/birt/document/product/default/ProductReport.rptdesign", 
 													ReportType.Document,
 													ReportFormat.PDF,
 													BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, 

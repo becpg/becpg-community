@@ -51,7 +51,7 @@ public class ProductReportVisitor implements NodeVisitor {
 	/** The Constant KEY_PRODUCT_IMAGE. */
 	private static final String KEY_PRODUCT_IMAGE = "productImage";
 	
-	private static final String REPORT_FORM_CONFIG_PATH = "beCPG/birt/becpg-report-form-config.xml";
+	private static final String REPORT_FORM_CONFIG_PATH = "beCPG/birt/document/becpg-report-form-config.xml";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductReportVisitor.class);

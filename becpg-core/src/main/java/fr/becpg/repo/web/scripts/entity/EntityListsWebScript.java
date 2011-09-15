@@ -146,13 +146,9 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 		QName nodeType = nodeService.getType(nodeRef);
 		boolean hasWritePermission = false;
 		String wUsedList = null;
-		
-		logger.debug("nodeType: " + nodeType);
-				
+			
 		// entityTpl
 		if(nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_ENTITY_TPL)){
-			
-			logger.debug("entityTpl");
 			
 			listContainerNodeRef = entityListDAO.getListContainer(nodeRef);			
 			if(listContainerNodeRef == null){			   				
@@ -183,8 +179,6 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 			
 			listsNodeRef = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);			
 		}
-		
-		logger.trace("productListsNodeRef.size() : " + listsNodeRef.size() + " - object type : " + nodeType.toString() + " - hasWritePermission : " + hasWritePermission + " - WUsedList: " + wUsedList);
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
