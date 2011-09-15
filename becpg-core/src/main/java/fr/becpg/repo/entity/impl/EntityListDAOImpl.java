@@ -100,8 +100,6 @@ public class EntityListDAOImpl implements EntityListDAO{
 	@Override
 	public NodeRef createList(NodeRef listContainerNodeRef, QName listQName) {
 		
-		logger.debug("createList: " + listQName);
-		
 		ClassDefinition classDef = dictionaryService.getClass(listQName);
 		
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -211,14 +209,12 @@ public class EntityListDAOImpl implements EntityListDAO{
 					}
 					
 					String dataListType = (String)nodeService.getProperty(sourceListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-					QName listQName = QName.createQName(dataListType, namespaceService);					
-					logger.debug("check missing list: " + listQName + " - containerDL: " + targetListContainerNodeRef);	        				
+					QName listQName = QName.createQName(dataListType, namespaceService);						        				
 					
 					NodeRef existingListNodeRef = getList(targetListContainerNodeRef, listQName);
 					boolean copy = true;
 					if(existingListNodeRef != null){
 						if(override){
-							logger.debug("delete existing list");
 							nodeService.deleteNode(existingListNodeRef);
 						}
 						else{

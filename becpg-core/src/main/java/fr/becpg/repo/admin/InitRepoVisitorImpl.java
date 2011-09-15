@@ -100,12 +100,12 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	public static final String GROUP_PRODUCT_REVIEWER = "ProductReviewer";
 	
 	private static final String LOCALIZATION_PFX_GROUP	= "becpg.group";
-	private static final String PRODUCT_REPORT_PATH = "beCPG/birt/ProductReport.rptdesign";
-	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/CompareEntities.rptdesign";
-	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/ExportSearch/Product/ExportSearch.rptdesign";
-	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/ExportSearch/Product/ExportSearchQuery.xml";
-	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/NonConformity/NonConformitySynthesis.rptdesign";
-	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/NonConformity/ExportSearchQuery.xml";
+	private static final String PRODUCT_REPORT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
+	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
+	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
+	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
+	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
+	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/nonconformity/ExportSearchQuery.xml";
 	
 	/** The product dictionary service. */
 	private ProductDictionaryService productDictionaryService;	

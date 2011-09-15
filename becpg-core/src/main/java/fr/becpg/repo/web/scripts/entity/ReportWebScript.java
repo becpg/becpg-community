@@ -16,6 +16,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.entity.EntityService;
 
 /**
@@ -66,7 +67,8 @@ public class ReportWebScript extends AbstractWebScript
 		
 		// update node to indicate it is modified (audit and that will fire policies)
 		if(entityService.hasDataListModified(nodeRef)){
-			nodeService.setProperty(nodeRef, ContentModel.PROP_MODIFIED, new Date());
+			//nodeService.setProperty(nodeRef, ContentModel.PROP_MODIFIED, new Date()); // doesn't work
+			nodeService.setProperty(nodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, null);
 		}
     }    	  
 }
