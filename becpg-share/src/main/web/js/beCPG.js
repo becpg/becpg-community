@@ -119,7 +119,7 @@ beCPG.util.getFileIcon.types =
    "trx:transferGroup": "server-group",
    "{http://www.alfresco.org/model/transfer/1.0}transferTarget": "server",
    "trx:transferTarget": "server",
-   "{http://www.bcpg.fr/model/security/1.0}aclGroup" : "acl",
+   "{http://www.bcpg.fr/model/security/1.0}aclGroup" : "aclGroup",
    "sec:aclGroup":"acl",
    "{http://www.bcpg.fr/model/becpg/1.0}cost":"cost",
    "bcpg:cost":"cost",
@@ -138,6 +138,20 @@ beCPG.util.getFileIcon.types =
    "{http://www.bcpg.fr/model/becpg/1.0}geoOrigin":"geoOrigin",
    "bcpg:geoOrigin":"geoOrigin",
    "{http://www.bcpg.fr/model/becpg/1.0}bioOrigin":"bioOrigin",
-   "bcpg:bioOrigin":"bioOrigin"
-
+   "bcpg:bioOrigin":"bioOrigin",
+   "{http://www.bcpg.fr/model/becpg/1.0}client":"client",
+   "bcpg:client":"client",
+   "{http://www.bcpg.fr/model/becpg/1.0}supplier":"supplier",
+   "bcpg:supplier":"supplier",
+   "{http://www.bcpg.fr/model/becpg/1.0}product":"product",
+   "bcpg:product":"product",
+   "{http://www.bcpg.fr/model/quality/1.0}controlPlan":"controlPlan",
+   "qa:controlPlan":"controlPlan",
+   "{http://www.bcpg.fr/model/quality/1.0}nc":"nc",
+   "qa:nc":"nc",
+   "{http://www.bcpg.fr/model/quality/1.0}controlPoint":"controlPoint",
+   "qa:controlPoint":"controlPoint",
+   "{http://www.bcpg.fr/model/quality/1.0}qualityControl":"qualityControl",
+   "qa:qualityControl":"qualityControl"
+		   
 };
