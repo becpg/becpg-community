@@ -1,6 +1,5 @@
 package fr.becpg.repo.jscript;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -9,10 +8,7 @@ import java.util.Map;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
-import org.alfresco.repo.jscript.ScriptNode.NodeValueConverter;
-import org.alfresco.repo.jscript.ValueConverter;
 import org.alfresco.service.ServiceRegistry;
-import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;

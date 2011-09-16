@@ -45,7 +45,7 @@ import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
-import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDictionaryService;
@@ -116,8 +116,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	/** The permission service. */
 	private PermissionService permissionService;
 	
-	private EntityListDAO entityListDAO;	
-
 	private ReportTplService reportTplService;
 	
 	private ContentService contentService;
@@ -155,10 +153,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		this.permissionService = permissionService;
 	}		
 	
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
 	}
@@ -234,7 +228,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		NodeRef importNodeRef = visitFolder(exchangeNodeRef, RepoConsts.PATH_IMPORT);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_TO_TREAT);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_SUCCEEDED);
-		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_FAILED);			
+		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_FAILED);	
+		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_USER);
 		
 		//Products		
 		NodeRef productsNodeRef = visitFolder(companyHome, RepoConsts.PATH_PRODUCTS);
@@ -454,6 +449,40 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	  	  	
 		    ruleService.saveRule(nodeRef, rule);
 		}
+		else if(folderName == RepoConsts.PATH_IMPORT_USER){
+			
+	        // action
+	        CompositeAction compositeAction = actionService.createCompositeAction();
+	        Action action = actionService.createAction(UserImporterActionExecuter.NAME, null);        	        
+	        compositeAction.addAction(action);
+	        
+	        // compare-mime-type == text/csv	        
+	        ActionCondition conditionOnMimeType = actionService.createActionCondition(CompareMimeTypeEvaluator.NAME);
+	        conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, MimetypeMap.MIMETYPE_TEXT_CSV);
+	        conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_CONTENT);
+	        conditionOnMimeType.setInvertCondition(false);
+	        compositeAction.addActionCondition(conditionOnMimeType);
+	        
+	        // compare-name == *.csv	        	        
+	        ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
+	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION, ComparePropertyValueOperation.ENDS.toString());
+	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, UserImporterActionExecuter.PARAM_VALUE_EXTENSION);
+	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
+	        conditionOnName.setInvertCondition(false);
+	        compositeAction.addActionCondition(conditionOnName);
+	        
+	        // rule
+	        Rule rule = new Rule();
+	        rule.setRuleType(RuleType.INBOUND);	        
+	        rule.setAction(compositeAction);	                	        				  	  
+	  	  	rule.applyToChildren(true);	  	
+	  	  	rule.setTitle("import user");
+	  	  	rule.setExecuteAsynchronously(true);
+	  	  	rule.setDescription("Every item created will be imported");
+	  	  	
+		    ruleService.saveRule(nodeRef, rule);
+		}
+		
 		else if(folderName == RepoConsts.PATH_SUPPLIERS){
 			specialiseType = BeCPGModel.TYPE_SUPPLIER;
 			applyToChildren = true;

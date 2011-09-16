@@ -3,10 +3,8 @@
  */
 package fr.becpg.repo.action.executer;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.importer.ImportService;
-import fr.becpg.repo.importer.ImporterException;
 
 // TODO: Auto-generated Javadoc
 /**
