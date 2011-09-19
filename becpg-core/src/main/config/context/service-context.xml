@@ -53,7 +53,6 @@
 		<property name="productDictionaryService" ref="productDictionaryService" />
 		<property name="authorityService" ref="authorityService" />
 		<property name="permissionService" ref="permissionService"/>			
-		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="reportTplService" ref="reportTplService"/>		
 		<property name="contentService" ref="contentService" />
 		<property name="mimetypeService" ref="mimetypeService"/>
@@ -156,7 +155,15 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="fileFolderService" ref="fileFolderService" />
 	</bean>
+	<bean id="userImporterService" class="fr.becpg.repo.importer.user.impl.UserImporterServiceImpl">
+		<property name="authenticationService" ref="authenticationService"/>
+		<property name="contentService" ref="contentService"/>
+		<property name="nodeService" ref="nodeService"/>
+		<property name="personService" ref="personService"/>
+		<property name="siteService" ref="siteService"/>
+		<property name="authorityService" ref="authorityService"/>
 	
+	</bean>
 	
 	<!-- EntityVersion -->
 	<bean id="entityVersionService" class="fr.becpg.repo.entity.version.EntityVersionServiceImpl">

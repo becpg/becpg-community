@@ -63,28 +63,28 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
 	
 	/** The node service. */
-	private NodeService nodeService;
+	protected NodeService nodeService;
 	
 	/** The mimetype service. */
-	private MimetypeService mimetypeService;
+	protected MimetypeService mimetypeService;
 	
 	/** The repository helper. */
-	private Repository repositoryHelper;    	
+	protected Repository repositoryHelper;    	
 	
 	/** The repo service. */
-	private RepoService repoService;
+	protected RepoService repoService;
 	
 	/** The content service. */
-	private ContentService contentService;
+	protected ContentService contentService;
 	
 	/** The file folder service. */
-	private FileFolderService fileFolderService;
+	protected FileFolderService fileFolderService;
 	
 	/** The product dao. */
-	private ProductDAO productDAO;
+	protected ProductDAO productDAO;
 	
 	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
+	protected ProductDictionaryService productDictionaryService;
 	
 	/** The allergens. */
 	protected List<NodeRef> allergens = new ArrayList<NodeRef>();

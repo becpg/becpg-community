@@ -257,23 +257,9 @@ public class SecurityServiceImpl implements SecurityService {
 				.toPrefixString(namespacePrefixResolver);
 		String label = properties.getValue().getTitle();
 
-		ret.add(key + "|" + typeDefinition.getTitle() + " - " + label);
-
-		Collections.sort(ret, new Comparator<String>() {
-
-			@Override
-			public int compare(String o1, String o2) {
-
-				if (o1 != null && o2 != null) {
-					String[] split1 = o1.split("|");
-					String[] split2 = o2.split("|");
-					if (split1.length > 1 && split2.length > 1) {
-						return split1[1].compareTo(split2[1]);
-					}
-				}
-				return 0;
-			}
-		});
+		if(!ret.contains(key + "|" + typeDefinition.getTitle() + " - " + label)){
+			ret.add(key + "|" + typeDefinition.getTitle() + " - " + label);
+		}
 
 	}
 

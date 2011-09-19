@@ -24,5 +24,9 @@ public class ImporterException extends Exception {
 		super(message);
 	}
 
+	public ImporterException(String message, Exception e) {
+		super(message,e);
+	}
+
 
 }

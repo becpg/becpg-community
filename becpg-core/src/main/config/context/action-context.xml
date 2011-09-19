@@ -7,6 +7,13 @@
       <property name="nodeService" ref="nodeService" />
       <property name="transactionService" ref="transactionService" />      
     </bean>  	
+    
+    <bean id="import-user" class="fr.becpg.repo.action.executer.UserImporterActionExecuter" parent="action-executer">
+     	<property name="userImporterService" ref="userImporterService"/>
+     	<property name="importService" ref="importService" />
+     	<property name="nodeService" ref="nodeService" />
+    </bean>  
+    
   	<bean id="classify-product" class="fr.becpg.repo.action.executer.ClassifyProductActionExecuter" parent="action-executer">
       <property name="productService" ref="productService" />      
     </bean>
