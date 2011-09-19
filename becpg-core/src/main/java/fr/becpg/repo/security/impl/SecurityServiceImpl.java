@@ -1,13 +1,12 @@
 package fr.becpg.repo.security.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -20,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -215,7 +215,7 @@ public class SecurityServiceImpl implements SecurityService {
 		List<NodeRef> aclGroups = findAllAclGroups();
 		if (aclGroups != null) {
 			for (NodeRef aclGroupNodeRef : aclGroups) {
-
+	
 				ACLGroupData aclGroup = aclGroupDao.find(aclGroupNodeRef);
 
 				TypeDefinition typeDefinition = dictionaryService
@@ -225,8 +225,9 @@ public class SecurityServiceImpl implements SecurityService {
 						&& typeDefinition.getProperties() != null) {
 					for (Map.Entry<QName, PropertyDefinition> properties : typeDefinition
 							.getProperties().entrySet()) {
-
-						appendPropName(typeDefinition,properties,ret);
+						if(isViewableProperty(properties.getKey())){
+							appendPropName(typeDefinition,properties,ret);
+						}
 					}
 
 					List<AspectDefinition> aspects = typeDefinition
@@ -237,7 +238,9 @@ public class SecurityServiceImpl implements SecurityService {
 									&& aspect.getProperties() != null) {
 								for (Map.Entry<QName, PropertyDefinition> properties : aspect
 										.getProperties().entrySet()) {
-									appendPropName(typeDefinition,properties,ret);
+									if(isViewableProperty(properties.getKey())){
+										appendPropName(typeDefinition,properties,ret);
+									}
 								}
 							}
 
@@ -263,4 +266,48 @@ public class SecurityServiceImpl implements SecurityService {
 
 	}
 
+	/**
+	 * Test if the property  should be show
+	 * @param qName the q name
+	 * @return true, if is viewable property
+	 */
+	private boolean isViewableProperty(QName qName){
+		
+		if(qName.equals(ContentModel.PROP_NODE_REF) || 
+				qName.equals(ContentModel.PROP_NODE_DBID) ||
+				qName.equals(ContentModel.PROP_NODE_UUID) ||
+				qName.equals(ContentModel.PROP_STORE_IDENTIFIER) ||
+				qName.equals(ContentModel.PROP_STORE_NAME) ||
+				qName.equals(ContentModel.PROP_STORE_PROTOCOL) ||
+				qName.equals(ContentModel.PROP_CONTENT) ||
+				qName.equals(ContentModel.PROP_AUTO_VERSION) ||
+				qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) ||				
+				qName.equals(ContentModel.PROP_COPY_REFERENCE) ||				
+				// do not compare frozen properties and version properties				
+				qName.equals(BeCPGModel.PROP_VERSION_DESCRIPTION) ||
+				qName.equals(BeCPGModel.PROP_VERSION_LABEL) ||
+				qName.equals(BeCPGModel.PROP_FROZEN_NODE_DBID) ||
+				qName.equals(BeCPGModel.PROP_FROZEN_NODE_REF) ||
+				qName.equals(BeCPGModel.PROP_FROZEN_ACCESSED) ||
+				qName.equals(BeCPGModel.PROP_FROZEN_CREATOR) ||
+				qName.equals(BeCPGModel.PROP_FROZEN_CREATED) ||
+				qName.equals(BeCPGModel.PROP_FROZEN_MODIFIER) ||
+				qName.equals(BeCPGModel.PROP_FROZEN_MODIFIED) ||
+				//system properties
+				qName.equals(BeCPGModel.ASSOC_COMPOLIST_FATHER)||
+				qName.equals(ContentModel.PROP_NAME) ||
+				qName.equals(ContentModel.PROP_CREATOR) ||
+				qName.equals(ContentModel.PROP_CREATED) ||
+				qName.equals(ContentModel.PROP_ACCESSED) ||
+				qName.equals(ContentModel.PROP_MODIFIER) ||
+				qName.equals(ContentModel.PROP_MODIFIED)){
+				
+				return false;
+		}
+		
+		return true;
+	}
+	
+	
+	
 }
