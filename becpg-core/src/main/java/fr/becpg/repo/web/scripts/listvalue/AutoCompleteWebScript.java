@@ -4,6 +4,7 @@
 package fr.becpg.repo.web.scripts.listvalue;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeService;
@@ -11,13 +12,13 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
-import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.listvalue.ListValueService;
 
 // TODO: Auto-generated Javadoc
@@ -73,9 +74,6 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	/** The list value service. */
 	private ListValueService listValueService;
 	
-	/** The node service. */
-	private NodeService nodeService;
-	
 	/** The namespace service. */
 	private NamespaceService namespaceService;
 		
@@ -88,14 +86,6 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		this.listValueService = listValueService;
 	}		
 	
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
 	
 	/**
 	 * Sets the namespace service.
@@ -128,20 +118,22 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		String parent = req.getParameter(PARAM_PARENT);
 		String productType = templateArgs.get(PARAM_PRODUCT_TYPE);
 		
+		Locale locale = I18NUtil.getLocale();
+		
 		logger.debug("exec webscript");
 		
 		if(sourceType.equals(SOURCE_TYPE_TARGET_ASSOC)){
 			QName type = QName.createQName(className, namespaceService);
-			suggestions = listValueService.suggestTargetAssoc(type, query);
+			suggestions = listValueService.suggestTargetAssoc(type, query, locale);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_PRODUCT)){
-			suggestions = listValueService.suggestProduct(query);
+			suggestions = listValueService.suggestProduct(query, locale);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_LINKED_VALUE)){
-			suggestions = listValueService.suggestLinkedValue(path, parent, query);
+			suggestions = listValueService.suggestLinkedValue(path, parent, query, locale);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_LIST_VALUE)){
-			suggestions = listValueService.suggestListValue(path, query);
+			suggestions = listValueService.suggestListValue(path, query, locale);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)){			
 			

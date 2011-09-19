@@ -3,7 +3,6 @@
  */
 package fr.becpg.repo.listvalue;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -11,14 +10,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.search.MLAnalysisMode;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.ResultSetRow;
-import org.alfresco.service.cmr.search.SearchParameters;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
@@ -26,10 +19,10 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -38,9 +31,6 @@ import fr.becpg.repo.report.template.ReportType;
  * @author Quere
  */
 public class ListValueServiceImpl implements ListValueService {
-	
-	/** The Constant MAX_RESULT_ITEM. */
-	private static final int MAX_RESULT_ITEM = 1;
 	
 	/** The Constant SUFFIX_ALL. */
 	private static final String SUFFIX_ALL = "*";
@@ -57,23 +47,17 @@ public class ListValueServiceImpl implements ListValueService {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ListValueServiceImpl.class);
 	
-	/** The search service. */
-	private SearchService searchService;
-	
+
 	/** The node service. */
 	private NodeService nodeService;
 	
 	/** The product report service. */
 	private ReportTplService reportTplService;
-				
-	/**
-	 * Sets the search service.
-	 *
-	 * @param searchService the new search service
-	 */
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
-	}	
+	
+	
+	private BeCPGSearchService beCPGSearchService;
+	
+	
 	
 	/**
 	 * Sets the node service.
@@ -89,6 +73,12 @@ public class ListValueServiceImpl implements ListValueService {
 	}
 
 	
+	
+	
+
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
+	}
 
 	/**
 	 * Suggest target class according to query
@@ -101,10 +91,9 @@ public class ListValueServiceImpl implements ListValueService {
 	 * @return the map
 	 */
     @Override
-	public Map<String, String> suggestTargetAssoc(QName type, String query){			
+	public Map<String, String> suggestTargetAssoc(QName type, String query, Locale locale){			
         
     	logger.debug("suggestTargetAssoc");
-    	Map<String, String> suggestions = new HashMap<String, String>();
     	
     	String queryPath = "";
     	
@@ -118,46 +107,15 @@ public class ListValueServiceImpl implements ListValueService {
 		}
     	
 		logger.debug("repository : " + queryPath);
-		
-		SearchParameters sp = new SearchParameters();
-		//sp.addLocale(repoConfig.getSystemLocale());
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(queryPath);	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_SUGGESTIONS);        
-        sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
+
+       List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, new String[]{"@" + ContentModel.PROP_NAME},locale);
         
-        ResultSet resultSet = null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-	        
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        
-	        if (resultSet.length() != 0)
-	        {
-	            suggestions = new HashMap<String, String>(resultSet.length());
-	            for (ResultSetRow row : resultSet)
-	            {
-	                NodeRef nodeRef = row.getNodeRef();
-	                String name = (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-	                suggestions.put(nodeRef.toString(), name);
-	            }                   	
-	        }
-	        else{
-	        	suggestions = new HashMap<String, String>();
-	        }
-	        
-	        return suggestions;
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
+        return extractSuggest(ret,ContentModel.PROP_NAME);
+       
 	}
     
-    /**
+
+	/**
      * Suggest linked value according to query
      * 
      * Query path :
@@ -169,54 +127,18 @@ public class ListValueServiceImpl implements ListValueService {
      * @return the map
      */
     @Override
-	public Map<String, String> suggestLinkedValue(String path, String parent, String query){			
+	public Map<String, String> suggestLinkedValue(String path, String parent, String query, Locale locale){			
         
     	logger.debug("suggestLinkedValue");  
-    	Map<String, String> suggestions = new HashMap<String, String>();
     	
     	path = encodePath(path);    	
     	query = prepareQuery(query);    	    	
     	String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, path, parent, query);    			
-		logger.debug("repository : " + queryPath);
-		
-		SearchParameters sp = new SearchParameters();
-		//sp.addLocale(repoConfig.getSystemLocale());
-		//sp.addLocale(Locale.FRENCH);
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(queryPath);	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_SUGGESTIONS);
-        sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
+	      
+         List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, new String[]{"@" + RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE},locale);
         
-        ResultSet resultSet = null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-	        
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        
-	        if (resultSet.length() != 0)
-	        {
-	            suggestions = new HashMap<String, String>(resultSet.length());
-	            for (ResultSetRow row : resultSet)
-	            {
-	                NodeRef nodeRef = row.getNodeRef();                
-	                String value = (String)nodeService.getProperty(nodeRef, BeCPGModel.PROP_LINKED_VALUE_VALUE);
-	                suggestions.put(value, value);
-	            }                   	
-	        }
-	        else{
-	        	suggestions = new HashMap<String, String>();
-	        }
-	        
-	        return suggestions;
-        }
-        finally{
-        	if(resultSet != null){
-        		resultSet.close();
-        	}
-        }
+        return extractSuggest(ret, BeCPGModel.PROP_LINKED_VALUE_VALUE);
+ 
 	}
     
     /**
@@ -230,58 +152,18 @@ public class ListValueServiceImpl implements ListValueService {
      * @return the map
      */
     @Override
-	public Map<String, String> suggestListValue(String path, String query){			
+	public Map<String, String> suggestListValue(String path, String query, Locale locale){			
         
     	logger.debug("suggestListValue");  
-    	Map<String, String> suggestions = new HashMap<String, String>();
     	
     	path = encodePath(path);    	
     	query = prepareQuery(query);
     	String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE, path, query);
-		logger.debug("repository : " + queryPath);
-		
-		SearchParameters sp = new SearchParameters();
-		//sp.addLocale(repoConfig.getSystemLocale());
-		//sp.addLocale(Locale.FRENCH);
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(queryPath);	             
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_SUGGESTIONS);
-        sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
-        
-        sp.addSort("@" + ContentModel.PROP_NAME, true);
-        sp.setMlAnalaysisMode(MLAnalysisMode.ALL_ONLY);
-        //sp.setBulkFetch(false);
-        sp.excludeDataInTheCurrentTransaction(false);        
-        
-        ResultSet resultSet = null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-	        
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        
-	        if (resultSet.length() != 0)
-	        {
-	            suggestions = new HashMap<String, String>(resultSet.length());
-	            for (ResultSetRow row : resultSet)
-	            {
-	                NodeRef nodeRef = row.getNodeRef();
-	                String name = (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-	                suggestions.put(name, name);
-	            }                   	
-	        }
-	        else{
-	        	suggestions = new HashMap<String, String>();
-	        }
-	        
-	        return suggestions;
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
+	
+        List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, new String[]{"@" + ContentModel.PROP_NAME},locale);
+       
+       return extractSuggest(ret, ContentModel.PROP_NAME);
+      
 	}
     
     /**
@@ -295,11 +177,9 @@ public class ListValueServiceImpl implements ListValueService {
      * @return the map
      */
     @Override
-	public Map<String, String> suggestProduct(String query){			
+	public Map<String, String> suggestProduct(String query, Locale locale){			
         
     	logger.debug("suggestProduct");  
-    	Map<String, String> suggestions = new HashMap<String, String>();
-    	   	
     	String queryPath = "";    	
     	
 		//Is code or name search, test if query is an interger ?
@@ -310,43 +190,11 @@ public class ListValueServiceImpl implements ListValueService {
 			query = prepareQuery(query);
 			queryPath += String.format(RepoConsts.QUERY_SUGGEST_PRODUCT_BY_NAME, query, SystemState.Archived, SystemState.Refused);
 		}
-			
-		logger.debug("queryPath : " + queryPath);
-		
-		SearchParameters sp = new SearchParameters();
-		//sp.addLocale(repoConfig.getSystemLocale());
-		//sp.addLocale(Locale.FRENCH);
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(queryPath);	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_SUGGESTIONS);
-        sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
-        
-        ResultSet resultSet = null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-	        
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        
-	        if (resultSet.length() != 0)
-	        {
-	            suggestions = new HashMap<String, String>(resultSet.length());
-	            for (ResultSetRow row : resultSet)
-	            {
-	                NodeRef nodeRef = row.getNodeRef();
-	                String name = (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-	                suggestions.put(nodeRef.toString(), name);
-	            }                   	
-	        }
-	        
-	        return suggestions;
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
+					
+		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, new String[]{"@" + ContentModel.PROP_NAME}, locale);
+	       
+	    return extractSuggest(ret, ContentModel.PROP_NAME);
+	  
 	}
     
     /**
@@ -359,36 +207,17 @@ public class ListValueServiceImpl implements ListValueService {
 	@Override
 	public NodeRef getItemByTypeAndName(QName type, String name){
 		
-		NodeRef charactNodeRef = null;  
-    	
     	String queryPath = String.format(RepoConsts.QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
 					
 		logger.debug(queryPath);
 		
-		SearchParameters sp = new SearchParameters();
-		//sp.addLocale(repoConfig.getSystemLocale());
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(queryPath.toString());	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(MAX_RESULT_ITEM);
-        
-        ResultSet resultSet =null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-			
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        if (resultSet.length() != 0){
-	        	charactNodeRef = resultSet.getNodeRef(0); 
-	        }
-	        
-			return charactNodeRef;
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
+		List<NodeRef> nodes = beCPGSearchService.unProtLuceneSearch(queryPath);
+		if(nodes.size()>0){
+			return nodes.get(0);
+		}
+		
+		return null;
+	
 	}
 	
     /**
@@ -447,6 +276,20 @@ public class ListValueServiceImpl implements ListValueService {
 		}
 		
 		return query;
+	}
+	
+
+    private Map<String, String> extractSuggest(List<NodeRef> nodeRefs, QName propName) {
+    	Map<String, String> suggestions = new HashMap<String, String>();
+    	if(nodeRefs!=null){
+    		for(NodeRef nodeRef : nodeRefs){
+    			
+   	                String name = (String)nodeService.getProperty(nodeRef, propName);
+   	                suggestions.put(nodeRef.toString(), name);
+   
+    		}
+    	}
+		return suggestions;
 	}
 
 }

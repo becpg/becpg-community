@@ -3,13 +3,11 @@
  */
 package fr.becpg.repo.listvalue;
 
-import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-
-import fr.becpg.model.SystemProductType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -26,7 +24,7 @@ public interface ListValueService {
 	 * @param query the query
 	 * @return the map
 	 */
-	public Map<String, String> suggestTargetAssoc(QName type, String query);
+	public Map<String, String> suggestTargetAssoc(QName type, String query, Locale locale);
 	
 	/**
 	 * Suggest linked value.
@@ -36,7 +34,7 @@ public interface ListValueService {
 	 * @param query the query
 	 * @return the map
 	 */
-	public Map<String, String> suggestLinkedValue(String path, String parent, String query);
+	public Map<String, String> suggestLinkedValue(String path, String parent, String query, Locale locale);
 	
 	/**
 	 * Suggest list value.
@@ -45,7 +43,7 @@ public interface ListValueService {
 	 * @param query the query
 	 * @return the map
 	 */
-	public Map<String, String> suggestListValue(String path, String query);
+	public Map<String, String> suggestListValue(String path, String query, Locale locale);
 	
 	/**
 	 * Suggest product.
@@ -53,7 +51,7 @@ public interface ListValueService {
 	 * @param query the query
 	 * @return the map
 	 */
-	public Map<String, String> suggestProduct(String query);
+	public Map<String, String> suggestProduct(String query, Locale locale);
 	
 	/**
 	 * Gets the item by type and name.

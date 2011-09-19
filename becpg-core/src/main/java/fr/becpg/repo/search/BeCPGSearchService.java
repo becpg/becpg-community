@@ -1,6 +1,7 @@
 package fr.becpg.repo.search;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -12,6 +13,6 @@ public interface BeCPGSearchService {
 
 	List<NodeRef> unProtLuceneSearch(String runnedQuery, String[] sort);
 
-	List<NodeRef> luceneSearchAll(String runnedQuery, String[] sort);
+	List<NodeRef> suggestSearch(String runnedQuery, String[] sort, Locale locale);
 
 }

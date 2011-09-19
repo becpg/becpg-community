@@ -2,6 +2,7 @@ package fr.becpg.repo.search;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import org.alfresco.repo.search.MLAnalysisMode;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -117,23 +118,27 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		return new LinkedList<NodeRef>();
 	}
 
-	/**
-	 * @param runnedQuery
-	 * @param searchLimit
-	 * @return
-	 */
 	@Override
-	public List<NodeRef> luceneSearchAll(String runnedQuery, String[] sort) {
-		logger.debug("Run query: " + runnedQuery);
+	public List<NodeRef> suggestSearch(String runnedQuery, String[] sort, Locale locale) {
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
 		SearchParameters sp = new SearchParameters();
 		sp.addStore(RepoConsts.SPACES_STORE);
 		sp.setLanguage(SearchService.LANGUAGE_LUCENE);
 		sp.setQuery(runnedQuery);
 		sp.setLimitBy(LimitBy.FINAL_SIZE);
-		sp.setLimit(2000);
+	    sp.setLimit(RepoConsts.MAX_SUGGESTIONS);        
+	    sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
 		sp.setMlAnalaysisMode(MLAnalysisMode.ALL_ONLY);
 		sp.setPermissionEvaluation(PermissionEvaluationMode.EAGER);
 		sp.excludeDataInTheCurrentTransaction(false);
+		if(locale!=null){
+			sp.addLocale(locale);
+		}
+		
 		if (sort != null) {
 			for (String sortParam : sort) {
 				sp.addSort(sortParam, true);
@@ -149,6 +154,12 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 			if (result != null) {
 				result.close();
 			}
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug(runnedQuery + " executed in  "
+						+ watch.getTotalTimeSeconds() + " seconds");
+			}
+			
 		}
 		return new LinkedList<NodeRef>();
 	}

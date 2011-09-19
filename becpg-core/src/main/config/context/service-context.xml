@@ -210,7 +210,7 @@
 	<!-- ListValue -->
 	<bean id="listValueService" class="fr.becpg.repo.listvalue.ListValueServiceImpl">
 		<property name="nodeService" ref="nodeService" />
-		<property name="searchService" ref="searchService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="reportTplService" ref="reportTplService" />
 	</bean>
 	
