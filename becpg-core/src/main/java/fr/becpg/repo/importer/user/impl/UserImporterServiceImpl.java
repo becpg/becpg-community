@@ -3,6 +3,7 @@ package fr.becpg.repo.importer.user.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.site.SiteModel;
+import org.alfresco.service.cmr.activities.ActivityPostService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -66,7 +68,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 	private SiteService siteService;
 
 	private AuthorityService authorityService;
-
+	
 
 	private MutableAuthenticationService authenticationService;
 
@@ -310,9 +312,21 @@ public class UserImporterServiceImpl implements UserImporterService {
 					            		logger.debug("Site "+siteName+" doesn't exist.");
 					            		
 					            		SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, siteName, sites[0], "", SiteVisibility.PUBLIC);
+					            		//ISSUE ALF-4771
+					            		try {
+					            			logger.debug("Due to issue ALF-4771 we should call Share webscript to enable site");
+						            		URL url = new URL("http://localhost:8080/share/service/modules/enable-site?url="+siteInfo.getShortName()+"&preset="+DEFAULT_PRESET+"");
+						            		InputStream in = url.openStream();
+						            		if(in!=null){
+						            			in.close();
+						            		}
+						            	
+					            		} catch (Exception e) {
+											logger.error("Unable to enable site",e);
+										}
 					            		
 					            		siteService.setMembership(siteInfo.getShortName(),  username ,role );
-					            		
+					            			
 					            	}
 					            	
 								}
