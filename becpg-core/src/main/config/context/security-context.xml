@@ -50,5 +50,13 @@
 		<property name="securityService" ref="securityService"/>
 	</bean>
    
+   <!-- policy -->
+   
+   <bean id="aclGroupPolicies" class="fr.becpg.repo.security.policy.AclGroupPolicies" init-method="init">
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="dictionaryDAO" ref="dictionaryDAO" />		
+		<property name="threadExecuter" ref="defaultAsyncThreadPool"/>	
+  </bean>
+   
    
 </beans>
