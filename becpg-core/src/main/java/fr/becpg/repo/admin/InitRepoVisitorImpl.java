@@ -484,12 +484,12 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		}
 		
 		else if(folderName == RepoConsts.PATH_SUPPLIERS){
-			specialiseType = BeCPGModel.TYPE_SUPPLIER;
-			applyToChildren = true;
+//			specialiseType = BeCPGModel.TYPE_SUPPLIER;
+//			applyToChildren = true;
 		}
 		else if(folderName == RepoConsts.PATH_CLIENTS){
-			specialiseType = BeCPGModel.TYPE_CLIENT;
-			applyToChildren = true;
+//			specialiseType = BeCPGModel.TYPE_CLIENT;
+//			applyToChildren = true;
 		}
 		// quality
 		else if(folderName == RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA){
@@ -576,7 +576,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, null);	
 		
 		// visit acls
-		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, null);
+		Set<QName> dataLists = new LinkedHashSet<QName>();
+		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
+		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists);
 		
 		// visit quality
 		visitQuality(folderTplsNodeRef, entityTplsNodeRef);				
