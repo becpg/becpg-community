@@ -275,7 +275,7 @@ public class ListValueServiceImpl implements ListValueService {
 			query += SUFFIX_ALL;
 		}
 		
-		return query;
+		return query.toLowerCase();
 	}
 	
 
