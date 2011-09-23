@@ -11,7 +11,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.site.SiteModel;
-import org.alfresco.service.cmr.activities.ActivityPostService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -23,6 +22,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.site.SiteVisibility;
+import org.alfresco.service.namespace.QName;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,8 +35,7 @@ import fr.becpg.repo.importer.user.UserImporterService;
  * 
  * @author matthieu
  *  Csv Format:
- * "lastname";"firstname";"email";"organisation";"username";"password";"memberships";"groups"
- 
+ *  cm:lastName";"cm:firstName";"cm:email";"cm:telephone";"cm:organization";"username";"password";"memberships";"groups";"notify"
  */
 public class UserImporterServiceImpl implements UserImporterService {
 	
@@ -44,15 +43,13 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	public static final String USERNAME = "username";
 	public static final String PASSWORD = "password";
-	public static final String LASTNAME = "lastname";
-	public static final String FIRSTNAME = "firstname";
-	public static final String ORGANIZATION = "organization";
-	public static final String EMAIL = "email";
+	public static final String NOTIFY = "notify";
 	public static final String MEMBERSHIPS = "memberships";
+	public static final String GROUPS = "groups";
+	
 	/** The Constant SEPARATOR. */
 	private static final char SEPARATOR = ';';
 
-	protected static final Object GROUPS = "groups";
 
 	protected static final String FIELD_SEPARATOR = "\\|";	
 	
@@ -228,6 +225,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 					                // create user
 					                authenticationService.createAuthentication(username,
 					                		splitted[headers.get(PASSWORD)].toCharArray());
+					          
 					         }
 							
 							if(!personService.personExists(username)){
@@ -235,16 +233,24 @@ public class UserImporterServiceImpl implements UserImporterService {
 							    PropertyMap personProps = new PropertyMap();
 							 
 							    personProps.put(ContentModel.PROP_USERNAME, username);
-					            personProps.put(ContentModel.PROP_FIRSTNAME, splitted[headers.get(FIRSTNAME)]);
-					            personProps.put(ContentModel.PROP_LASTNAME, splitted[headers.get(LASTNAME)]);
-					            personProps.put(ContentModel.PROP_EMAIL, splitted[headers.get(EMAIL)]);
-					            if(headers.containsKey(ORGANIZATION)){
-					            	personProps.put(ContentModel.PROP_ORGANIZATION, splitted[headers.get(ORGANIZATION)]);
+					           
+					            for(String key : headers.keySet()){
+					            	if(isPropQname(key) && 
+					            			!splitted[headers.get(key)].isEmpty()){
+					            		 personProps.put(QName.createQName(key),splitted[headers.get(key)]);
+					            	}
+					            	
 					            }
 					            
-					            personService.createPerson(personProps);
+					           NodeRef person = personService.createPerson(personProps);
 					            
-					       
+					            
+				                if(headers.containsKey(NOTIFY)
+				                		&& Boolean.parseBoolean(splitted[headers.get(NOTIFY)])){
+				                	
+				                	sendMail(person);
+				                }
+				                
 					
 					          if(headers.containsKey(GROUPS)){
 					            	String[] groups = splitted[headers.get(GROUPS)].split(FIELD_SEPARATOR);
@@ -288,7 +294,9 @@ public class UserImporterServiceImpl implements UserImporterService {
 					            
 							return null;
             
-		} }, AuthenticationUtil.getSystemUserName());
+		}
+
+						 }, AuthenticationUtil.getSystemUserName());
             
             
 	
@@ -336,6 +344,22 @@ public class UserImporterServiceImpl implements UserImporterService {
 
             }
 		
+	}
+	
+	
+	private void sendMail(NodeRef person) {
+		logger.debug("Notify user "+nodeService.getProperty(person,ContentModel.PROP_FIRSTNAME));
+		
+	}
+
+
+
+	private boolean isPropQname(String key) {
+		return !(GROUPS.equals(key)
+				|| MEMBERSHIPS.equals(key)
+				|| PASSWORD.equals(key)
+				|| USERNAME.equals(key)
+				|| NOTIFY.equals(key));
 	}
 
 
