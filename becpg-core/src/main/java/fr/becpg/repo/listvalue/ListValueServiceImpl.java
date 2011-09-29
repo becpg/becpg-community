@@ -3,6 +3,9 @@
  */
 package fr.becpg.repo.listvalue;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -10,12 +13,17 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.dictionary.DictionaryDAO;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.Token;
+import org.apache.lucene.analysis.TokenStream;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
@@ -28,7 +36,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
 /**
  * The Class ListValueServiceImpl.
  *
- * @author Quere
+ * @author Quere, Laborie
  */
 public class ListValueServiceImpl implements ListValueService {
 	
@@ -57,8 +65,16 @@ public class ListValueServiceImpl implements ListValueService {
 	
 	private BeCPGSearchService beCPGSearchService;
 	
+	private DictionaryDAO dictionaryDAO;
 	
 	
+	private Analyzer luceneAnaLyzer = null;
+	
+	
+	public void setDictionaryDAO(DictionaryDAO dictionaryDAO) {
+		this.dictionaryDAO = dictionaryDAO;
+	}
+
 	/**
 	 * Sets the node service.
 	 *
@@ -268,18 +284,81 @@ public class ListValueServiceImpl implements ListValueService {
 	 *
 	 * @param query the query
 	 * @return the string
+	 * @throws IOException 
 	 */
 	private String prepareQuery(String query){
 		
+		logger.debug("Query before prepare:"+query);
 		if(!(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE) || query.endsWith(SUFFIX_SIMPLE_QUOTE))){
-			query += SUFFIX_ALL;
+			//Query with wildcard are not getting analyzed by stemmers
+			// so do it manually
+			Analyzer analyzer  = getTextAnalyzer();
+		
+			if(logger.isDebugEnabled()){
+				logger.debug("Using analyzer : "+analyzer.getClass().getName());
+			}
+			TokenStream source = null;
+			Reader reader = null;
+			try {
+				
+				reader =  new StringReader(query);
+			
+				source = analyzer.tokenStream(null,reader);
+				
+					StringBuffer buff = new StringBuffer();
+					Token reusableToken = new Token(); 
+					while((reusableToken = source.next(reusableToken))!=null){
+						if(buff.length()>0){
+							buff.append(' ');
+						}
+						buff.append(reusableToken.term());
+					}
+				source.reset();
+				
+				
+				buff.append(SUFFIX_ALL);
+				query =  buff.toString();
+			} catch (Exception e) {
+				logger.error(e,e);
+			} finally {
+			
+					try {
+						if(source!=null){
+							source.close();
+						}
+					
+						
+					} catch (IOException e) {
+						//Nothing todo here
+						logger.error(e,e);
+					}
+	
+			
+			}
+			
 		}
 		
-		return query.toLowerCase();
+		logger.debug("Query after prepare:"+query);
+		
+		return query;
 	}
 	
 
-    private Map<String, String> extractSuggest(List<NodeRef> nodeRefs, QName propName) {
+    private Analyzer getTextAnalyzer()  {
+    	if(luceneAnaLyzer==null){
+    		DataTypeDefinition def  = dictionaryDAO.getDataType(DataTypeDefinition.TEXT);
+        	
+    		try {
+				return  (Analyzer) Class.forName(def.getAnalyserClassName()).newInstance();
+			} catch (Exception e) {
+				logger.error(e,e);
+				return  new fr.becpg.repo.search.lucene.analysis.FrenchSnowballAnalyserThatRemovesAccents();
+			}
+    	}
+    	return luceneAnaLyzer;
+	}
+
+	private Map<String, String> extractSuggest(List<NodeRef> nodeRefs, QName propName) {
     	Map<String, String> suggestions = new HashMap<String, String>();
     	if(nodeRefs!=null){
     		for(NodeRef nodeRef : nodeRefs){

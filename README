@@ -1,4 +1,27 @@
-beCPG Core project
-Test Philippe
-Test2 Philippe
+###########################
+# 
+# beCPG developers README
+# 
+###########################
 
+0 - Setup project
+------------------
+
+Copy common.sh.sample to common.sh
+and change properties
+
+
+1 - Install Maven artifacts
+-----------------------------
+
+To install becpg artifacts download https://becpg.fr/redmine/attachments/download/2/birt_3.7.1_lib.tar.gz
+and extract jars into "becpg-bootstrap/lib".
+ Then run maven-sdk-install-files.sh
+
+ 
+2 - Run project
+----------------
+
+Run Junit test :
+
+mvn clean test

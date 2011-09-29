@@ -48,6 +48,7 @@ import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -126,6 +127,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	
 	private EntityTplService entityTplService;
 	
+	private BeCPGMailService beCPGMailService;
+	
+	
 	/**
 	 * Sets the product dictionary service.
 	 *
@@ -171,6 +175,11 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
+	}
+	
+	
+	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
+		this.beCPGMailService = beCPGMailService;
 	}
 
 	/**
@@ -262,6 +271,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		//EntityTemplates				
 		visitFolderAndEntityTpls(systemNodeRef);		
 		
+		//MailTemplates
+		addFilesResources(beCPGMailService.getModelMailNodeRef(),"classpath:beCPG/mails/*.ftl");
+		
 		//Companies
 		NodeRef companiesNodeRef = visitFolder(companyHome, RepoConsts.PATH_COMPANIES);
 		visitFolder(companiesNodeRef, RepoConsts.PATH_SUPPLIERS);
@@ -280,6 +292,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 	}	
 	
+
 	/**
 	 * Add resources to folder 
 	 */
@@ -287,45 +300,50 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
 
 		if(folderName == RepoConsts.PATH_ICON){			
-			logger.debug("add files to "+folderName);
-	    	
-			try {
-				
-				PathMatchingResourcePatternResolver resolver  = new PathMatchingResourcePatternResolver();
-				
-				for(Resource res : resolver.getResources("classpath:beCPG/images/*.png")){
-				
-				String fileName = res.getFilename();
-				logger.debug("add file "+fileName);
-				
-		    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
-		    	properties.put(ContentModel.PROP_NAME, fileName);
-		    	
-		    	NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
-		    	if(nodeRef == null){
-		    		nodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
-			    	
-			    	ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
 
-			    	InputStream in = res.getInputStream();			
-			    	writer.setMimetype(mimetypeService.guessMimetype(fileName));
-			    	writer.putContent(in);
-			    	in.close();
-			    	
-			    	
-			    	
-		    	}    	
-			 }
-			} catch (Exception e) {
-				logger.error(e,e);
-			}
+			addFilesResources(folderNodeRef,"classpath:beCPG/images/*.png");
 		    	
-		}
+		} 
 		
 		
 	}
 	
 	
+	private void addFilesResources(NodeRef folderNodeRef,
+			String pattern) {
+		try {
+			
+			PathMatchingResourcePatternResolver resolver  = new PathMatchingResourcePatternResolver();
+			
+			for(Resource res : resolver.getResources(pattern)){
+			
+			String fileName = res.getFilename();
+			logger.debug("add file "+fileName);
+			
+	    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
+	    	properties.put(ContentModel.PROP_NAME, fileName);
+	    	
+	    	NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
+	    	if(nodeRef == null){
+	    		nodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
+		    	
+		    	ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+
+		    	InputStream in = res.getInputStream();			
+		    	writer.setMimetype(mimetypeService.guessMimetype(fileName));
+		    	writer.putContent(in);
+		    	in.close();
+		    	
+		    	
+		    	
+	    	}    	
+		 }
+		} catch (Exception e) {
+			logger.error(e,e);
+		}
+		
+	}
+
 	/**
 	 * Initialize the rules of the repository
 	 */	

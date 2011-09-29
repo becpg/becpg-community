@@ -29,21 +29,20 @@ public class BirtPlatformListener {
 	private static Log logger = LogFactory.getLog(BirtPlatformListener.class);
 	
 	/** The engine config. */
-	private EngineConfig engineConfig;
+	 private EngineConfig engineConfig;
   	
 	  /** The report engine. */
 	  private IReportEngine reportEngine;
   	
-  	/**
-	   * Sets the engine config.
-	   *
-	   * @param engineConfig the new engine config
-	   */
-	  public void setEngineConfig(EngineConfig engineConfig) {
-	    this.engineConfig = engineConfig;
-	  }
+	  
+	  
 
-	  /**
+	public BirtPlatformListener() {
+		super();
+		engineConfig = new EngineConfig();
+	}
+
+	/**
 	   * Must be called before using the BIRT APIs. After retrieving the configuration from
 	   * {@link XReportConfiguration} will start the BIRT {@link Platform}.
 	   */

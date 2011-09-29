@@ -23,13 +23,8 @@ echo "jbpm"
 
 mvn install:install-file -Dfile=dependencies/jbpm/jbpm-jpdl-3.3.1.jar -DgroupId=org.alfresco.sdk -DartifactId=jbpm-jpdl -Dversion=3.3.1 -Dpackaging=jar -DgeneratePom=true
 
-echo "birt runtime"
+echo "additional libs"
 
-cd $BIRT_HOME
-mvn install:install-file -Dfile=ReportEngine/lib/coreapi.jar -DgroupId=birt-runtime -DartifactId=coreapi -Dversion=2.6.1 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=ReportEngine/lib/engineapi.jar -DgroupId=birt-runtime -DartifactId=engineapi -Dversion=2.6.1 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=ReportEngine/lib/modelapi.jar -DgroupId=birt-runtime -DartifactId=modelapi -Dversion=2.6.1 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=ReportEngine/lib/scriptapi.jar -DgroupId=birt-runtime -DartifactId=scriptapi -Dversion=2.6.1 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=ReportEngine/lib/com.ibm.icu_4.2.1.v20100412.jar -DgroupId=birt-runtime -DartifactId=com.ibm.icu -Dversion=2.6.1 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=ReportEngine/plugins/org.mozilla.javascript_1.7.2.v201005080400.jar -DgroupId=birt-runtime -DartifactId=org.mozilla.javascript -Dversion=2.6.1 -Dpackaging=jar -DgeneratePom=true
+cd $BOOTSTRAP_HOME/lib
+sh mavenize.sh
 

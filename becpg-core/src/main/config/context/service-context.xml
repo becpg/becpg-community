@@ -30,19 +30,7 @@
       </property>      
    </bean>
 	
-	<!-- BIRT configuration -->
-	 <bean id="birtConfig" class="fr.becpg.repo.report.engine.BirtConfiguration">
-		<property name="birtRuntimeLocation" value="${beCPG.birt.home}/ReportEngine" />
-	</bean>	
-	<bean id="platformListener" class="fr.becpg.repo.report.engine.BirtPlatformListener"
-		init-method="start" destroy-method="shutdown">
-		<property name="engineConfig">
-			<bean factory-bean="birtConfig" factory-method="getEngineConfig" />
-		</property>
-	</bean>
-	<bean id="reportEngine" factory-bean="platformListener"
-		factory-method="getReportEngine"/>
- 
+	
 	<!-- Admin -->
 	<bean id="initRepoVisitor" class="fr.becpg.repo.admin.InitRepoVisitorImpl">
 		<property name="fileFolderService" ref="fileFolderService" />
@@ -57,7 +45,8 @@
 		<property name="contentService" ref="contentService" />
 		<property name="mimetypeService" ref="mimetypeService"/>
 		<property name="dictionaryService" ref="dictionaryService"/>
-		<property name="entityTplService" ref="entityTplService"/>		
+		<property name="entityTplService" ref="entityTplService"/>
+		<property name="beCPGMailService" ref="becpgMailService"/>		
 	</bean>
 	<bean id="initSiteVisitor" class="fr.becpg.repo.admin.InitSiteVisitorImpl">
 		<property name="fileFolderService" ref="fileFolderService" />
@@ -162,16 +151,28 @@
 		<property name="personService" ref="personService"/>
 		<property name="siteService" ref="siteService"/>
 		<property name="authorityService" ref="authorityService"/>
+	    <property name="beCPGMailService" ref="becpgMailService"/>
+	    <property name="namespacePrefixResolver" ref="namespaceService" />
+	</bean>
 	
+	<!-- Mail service -->
+	
+	<bean id="becpgMailService" class="fr.becpg.repo.mail.impl.BeCPGMailServiceImpl">
+		<property name="nodeService" ref="nodeService"/>
+    	<property name="mailService" ref="mailService"/>   
+    	<property name="templateService" ref="templateService"/>
+    	<property name="serviceRegistry" ref="ServiceRegistry"/>
+    	<property name="mailFrom" value="${mail.from.default}" />
+    	<property name="searchService" ref="searchService"/>
 	</bean>
 	
 	<!-- EntityVersion -->
 	<bean id="entityVersionService" class="fr.becpg.repo.entity.version.EntityVersionServiceImpl">
 		<property name="nodeService" ref="nodeService" />		
 		<property name="copyService" ref="copyService" />	
-   	<property name="personService" ref="personService" />
-   	<property name="searchService" ref="searchService" />
-   	<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+	   	<property name="personService" ref="personService" />
+	   	<property name="searchService" ref="searchService" />
+	   	<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	
 	<!-- EntityCheckOutCheckIn -->
@@ -197,21 +198,14 @@
 		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 	
-	<!-- CompareEntityReportService -->
-	<bean id="compareEntityReportService" class="fr.becpg.repo.entity.comparison.CompareEntityReportServiceImpl">
-		<property name="compareEntityService" ref="compareEntityService" />
-		<property name="contentService" ref="contentService" />
-		<property name="reportEngine" ref="reportEngine" />
-		<property name="reportTplService" ref="reportTplService" />
-		<property name="nodeService" ref="nodeService" />		
-		<property name="dictionaryService" ref="dictionaryService" />
-	</bean>	
+	
 	
 	<!-- ListValue -->
 	<bean id="listValueService" class="fr.becpg.repo.listvalue.ListValueServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="reportTplService" ref="reportTplService" />
+		<property name="dictionaryDAO" ref="dictionaryDAO"/>
 	</bean>
 	
 	<!-- Entity -->
@@ -269,43 +263,7 @@
 		<property name="authenticationService" ref="authenticationService" />
 	</bean>	
 	
-	<!-- Report -->
-	<bean id="reportTplService" class="fr.becpg.repo.report.template.impl.ReportTplServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="contentService" ref="contentService" />		
-		<property name="searchService" ref="searchService" />
-		<property name="mimetypeService" ref="mimetypeService"/>		
-	</bean>
-	<!-- Node report -->	
-	<bean id="entityReportService" class="fr.becpg.repo.report.entity.impl.EntityReportServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="contentService" ref="contentService" />		
-		<property name="fileFolderService" ref="fileFolderService"/>		
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="searchService" ref="searchService" />
-		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="reportEngine" ref="reportEngine" />
-		<property name="mimetypeService" ref="mimetypeService"/>
-		<property name="serviceRegistry" ref="ServiceRegistry" />
-		<property name="propertyService" ref="propertyService" />
-		<property name="reportTplService" ref="reportTplService" />		
-	</bean>
-	<!-- Search report -->	
-	<bean id="exportSearchService" class="fr.becpg.repo.report.search.ExportSearchServiceImpl">
-		<property name="searchService" ref="SearchService" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="contentService" ref="contentService" />
-		<property name="reportEngine" ref="reportEngine" />
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="listValueService" ref="listValueService" />
-		<property name="productDictionaryService" ref="productDictionaryService" />
-		<property name="entityReportService" ref="entityReportService" />
-		<property name="propertyService" ref="propertyService"/>		
-		<property name="reportTplService" ref="reportTplService" />
-	</bean>
-	
+
 	<!-- Product dictionary -->
 	<bean id="productDictionaryService" class="fr.becpg.repo.product.ProductDictionaryServiceImpl">
 		<property name="nodeService" ref="nodeService" />

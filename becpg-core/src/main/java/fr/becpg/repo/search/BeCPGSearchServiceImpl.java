@@ -10,9 +10,11 @@ import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.PermissionEvaluationMode;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchParameters;
+import org.alfresco.service.cmr.search.SearchParameters.Operator;
 import org.alfresco.service.cmr.search.SearchService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.expression.Operation;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.common.RepoConsts;
@@ -132,8 +134,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		sp.setLimitBy(LimitBy.FINAL_SIZE);
 	    sp.setLimit(RepoConsts.MAX_SUGGESTIONS);        
 	    sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
-		sp.setMlAnalaysisMode(MLAnalysisMode.ALL_ONLY);
-		sp.setPermissionEvaluation(PermissionEvaluationMode.EAGER);
+		sp.setDefaultOperator(Operator.AND);
 		sp.excludeDataInTheCurrentTransaction(false);
 		if(locale!=null){
 			sp.addLocale(locale);
@@ -151,14 +152,21 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 				return new LinkedList<NodeRef>(result.getNodeRefs());
 			}
 		} finally {
-			if (result != null) {
-				result.close();
-			}
 			if (logger.isDebugEnabled()) {
 				watch.stop();
 				logger.debug(runnedQuery + " executed in  "
 						+ watch.getTotalTimeSeconds() + " seconds");
+				if(result!=null){
+					logger.debug("Found "+result.length()+" results");
+				}
+				if(locale!=null){
+					logger.debug("Locale use for search: "+locale.toString());
+				}
 			}
+			if (result != null) {
+				result.close();
+			}
+			
 			
 		}
 		return new LinkedList<NodeRef>();

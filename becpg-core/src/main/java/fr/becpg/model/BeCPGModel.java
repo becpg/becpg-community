@@ -570,7 +570,7 @@ public interface BeCPGModel {
 	
 	// version aspect
 	/** The Constant ASPECT_PERMISSIONS_TPL. */
-	static final QName ASPECT_PERMISSIONS_TPL = QName.createQName(BECPG_URI,	"permissionsTpl");
+	static final QName ASPECT_PERMISSIONS_TPL = QName.createQName(BECPG_URI,"permissionsTpl");
 	
 	/** The Constant ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS. */
 	static final QName ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS = QName.createQName(BECPG_URI, "consumerGroups");
@@ -589,5 +589,11 @@ public interface BeCPGModel {
 	static final QName ASPECT_CODE = QName.createQName(BECPG_URI,	"codeAspect");
 	
 	/** The Constant PROP_CODE. */
-	static final QName PROP_CODE = QName.createQName(BECPG_URI, "code");		
+	static final QName PROP_CODE = QName.createQName(BECPG_URI, "code");
+
+	/**
+	 * Email import user template Name
+	 */
+	
+	public static final String EMAIL_NEW_USER_TEMPLATE = "importuser-email.ftl";		
 }

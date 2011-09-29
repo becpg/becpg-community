@@ -22,6 +22,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.site.SiteVisibility;
+import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
@@ -30,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.repo.importer.ImporterException;
 import fr.becpg.repo.importer.user.UserImporterService;
+import fr.becpg.repo.mail.BeCPGMailService;
 
 /**
  * 
@@ -66,10 +68,20 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	private AuthorityService authorityService;
 	
+	private BeCPGMailService beCPGMailService;
+	
 
 	private MutableAuthenticationService authenticationService;
 
 	private PersonService personService;
+	
+	private NamespacePrefixResolver namespacePrefixResolver;
+
+	public void setNamespacePrefixResolver(
+			NamespacePrefixResolver namespacePrefixResolver) {
+		this.namespacePrefixResolver = namespacePrefixResolver;
+	}
+
 	
 
 	public void setNodeService(NodeService nodeService) {
@@ -80,6 +92,11 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
+	}
+
+	
+	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
+		this.beCPGMailService = beCPGMailService;
 	}
 
 
@@ -214,6 +231,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 	private void processRow(final Map<String,Integer> headers, final String[] splitted) {
 		
 		final String username = splitted[headers.get(USERNAME)];
+		final String password = splitted[headers.get(PASSWORD)];
 		
 		 AuthenticationUtil.runAs(new RunAsWork<Object>()
 			        {
@@ -224,7 +242,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 					         {
 					                // create user
 					                authenticationService.createAuthentication(username,
-					                		splitted[headers.get(PASSWORD)].toCharArray());
+					                		password.toCharArray());
 					          
 					         }
 							
@@ -237,7 +255,11 @@ public class UserImporterServiceImpl implements UserImporterService {
 					            for(String key : headers.keySet()){
 					            	if(isPropQname(key) && 
 					            			!splitted[headers.get(key)].isEmpty()){
-					            		 personProps.put(QName.createQName(key),splitted[headers.get(key)]);
+					            		QName prop = QName.resolveToQName(namespacePrefixResolver, key);
+					            		String value = splitted[headers.get(key)];
+					            		
+					            		logger.debug("Adding : "+prop+" "+value);
+					            		 personProps.put(prop,value);
 					            	}
 					            	
 					            }
@@ -248,7 +270,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 				                if(headers.containsKey(NOTIFY)
 				                		&& Boolean.parseBoolean(splitted[headers.get(NOTIFY)])){
 				                	
-				                	sendMail(person);
+				                	sendMail(person,username,password);
 				                }
 				                
 					
@@ -347,9 +369,9 @@ public class UserImporterServiceImpl implements UserImporterService {
 	}
 	
 	
-	private void sendMail(NodeRef person) {
+	private void sendMail(NodeRef person, String username, String password) {
 		logger.debug("Notify user "+nodeService.getProperty(person,ContentModel.PROP_FIRSTNAME));
-		
+		beCPGMailService.sendMailNewUser(person,username,password);
 	}
 
 
