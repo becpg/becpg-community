@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.search.MLAnalysisMode;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.search.LimitBy;
@@ -131,6 +132,8 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 
 	@Override
 	public List<NodeRef> suggestSearch(String runnedQuery, String[] sort, Locale locale) {
+		
+		List<NodeRef> nodes = new LinkedList<NodeRef>();
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -158,7 +161,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		ResultSet result = searchService.query(sp);
 		try {
 			if (result != null) {
-				return new LinkedList<NodeRef>(result.getNodeRefs());
+				nodes = new LinkedList<NodeRef>(result.getNodeRefs());
 			}
 		} finally {
 			if (logger.isDebugEnabled()) {
@@ -178,7 +181,8 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 			
 			
 		}
-		return new LinkedList<NodeRef>();
+		
+		return nodes;
 	}
 
 }

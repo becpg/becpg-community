@@ -362,9 +362,8 @@ public class ListValueServiceImpl implements ListValueService {
     	if(nodeRefs!=null){
     		for(NodeRef nodeRef : nodeRefs){
     			
-   	                String name = (String)nodeService.getProperty(nodeRef, propName);
-   	                suggestions.put(nodeRef.toString(), name);
-   
+    			String name = (String)nodeService.getProperty(nodeRef, propName);
+                suggestions.put(nodeRef.toString(), name); 			
     		}
     	}
 		return suggestions;
