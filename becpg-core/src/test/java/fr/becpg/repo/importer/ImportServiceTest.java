@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.PolicyComponent;
@@ -117,6 +118,8 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	
 	private EntityTplService entityTplService;
 	
+	private DictionaryDAO dictionaryDAO;
+	
 	/* (non-Javadoc)
 	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
 	 */
@@ -138,13 +141,14 @@ public class ImportServiceTest extends RepoBaseTestCase {
         repoService = (RepoService)appCtx.getBean("repoService");
         policyBehaviourFilter = (BehaviourFilter)appCtx.getBean("policyBehaviourFilter");
         entityTplService = (EntityTplService)appCtx.getBean("entityTplService");
+        dictionaryDAO = (DictionaryDAO)appCtx.getBean("dictionaryDAO");
         
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override
 			public NodeRef execute() throws Throwable {
 
  				// should not exist...
- 				NodeRef systemFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_SYSTEM);
+ 				NodeRef systemFolder = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM);
  				if(systemFolder != null){
  					nodeService.deleteNode(systemFolder); 					 					
  				}
@@ -162,11 +166,8 @@ public class ImportServiceTest extends RepoBaseTestCase {
 				if(ingsFolder != null){
 					nodeService.deleteNode(ingsFolder);
 				}
-					
-				//repoService.createFolderByPath(systemFolder, RepoConsts.PATH_INGS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_INGS));
- 				
-				// remove temp folder
 				
+				// remove temp folder				
 				NodeRef tempNodeRef = repoService.getFolderByPath(repository.getCompanyHome(), PATH_TEMP);			
  				if(tempNodeRef != null)
  				{
@@ -174,9 +175,14 @@ public class ImportServiceTest extends RepoBaseTestCase {
  					fileFolderService.delete(tempNodeRef);    		
  				}
  				
+ 				// create hierarchy
+				initRepoAndHierarchyLists();
+ 				
  				return null;
 
- 			}},false,true);  
+ 			}},false,true);
+        
+        dictionaryDAO.reset();
     }
     
     
@@ -396,8 +402,8 @@ public class ImportServiceTest extends RepoBaseTestCase {
 				if(siteFoldernode != null && siteFoldernode.size() > 0){
 					logger.debug("delete site folder");
 					nodeService.deleteNode(siteFoldernode.get(0));
-				}				
- 				
+				}			
+				
  				addMappingFile();
  				
  				return null;

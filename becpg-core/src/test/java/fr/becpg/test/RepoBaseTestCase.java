@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -29,6 +30,7 @@ import org.springframework.context.ApplicationContext;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.admin.InitVisitor;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
@@ -49,6 +51,24 @@ import fr.becpg.repo.product.data.productList.OrganoListDataItem;
  */
 
 public class RepoBaseTestCase extends BaseAlfrescoTestCase {
+	
+	/** The Constant HIERARCHY1_SEA_FOOD. */
+	protected static final String HIERARCHY1_SEA_FOOD= "Sea food";
+	
+	/** The Constant HIERARCHY2_FISH. */
+	protected static final String HIERARCHY2_FISH = "Fish";
+	
+	/** The Constant HIERARCHY2_CRUSTACEAN. */
+	protected static final String HIERARCHY2_CRUSTACEAN = "Crustacean";
+	
+	/** The Constant HIERARCHY1_FROZEN. */
+	protected static final String HIERARCHY1_FROZEN = "Frozen";
+	
+	/** The Constant HIERARCHY2_PIZZA. */
+	protected static final String HIERARCHY2_PIZZA = "Pizza";
+	
+	/** The Constant HIERARCHY2_QUICHE. */
+	protected static final String HIERARCHY2_QUICHE = "Quiche";
 	
 	/** The BIR t_ template s_ folder. */
 	private static String BIRT_TEMPLATES_FOLDER = "/src/main/resources/beCPG/birt/";
@@ -86,6 +106,10 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	/** The product dictionary service. */
 	protected ProductDictionaryService productDictionaryService;
 	
+	private Repository repository;
+	
+	private InitVisitor initRepoVisitor;
+	
 	/** The allergens. */
 	protected List<NodeRef> allergens = new ArrayList<NodeRef>();
     
@@ -116,6 +140,8 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
     	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
     	productDAO = (ProductDAO)appCtx.getBean("productDAO");
         productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
+        repository = (Repository)appCtx.getBean("repositoryHelper");        
+        initRepoVisitor = (InitVisitor)appCtx.getBean("initRepoVisitor");
     }
     
     
@@ -386,5 +412,69 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 		return productDAO.create(parentNodeRef, rawMaterial, dataLists);
 					        	   
-   }   
+	}   
+	
+	/**
+	 * Init the hierarchy lists
+	 */
+	protected void initRepoAndHierarchyLists(){
+		
+		logger.debug("initHierarchyLists");
+		
+		initRepoVisitor.visitContainer(repository.getCompanyHome());
+		
+		//check init repo
+		NodeRef systemNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+		assertNotNull("System folder not found", systemNodeRef);		
+		NodeRef productHierarchyNodeRef = nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_HIERARCHY));
+		assertNotNull("Product hierarchy folder not found", productHierarchyNodeRef);
+		
+		NodeRef rawMaterialHierarchy1NodeRef = nodeService.getChildByName(productHierarchyNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY1));
+		assertNotNull("raw material hierarchy1 folder not found", rawMaterialHierarchy1NodeRef);
+		NodeRef rawMaterialHierarchy2NodeRef = nodeService.getChildByName(productHierarchyNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2));
+		assertNotNull("raw material hierarchy2 folder not found", rawMaterialHierarchy2NodeRef);
+		
+		NodeRef finishedProductHierarchy1NodeRef = nodeService.getChildByName(productHierarchyNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY1));
+		assertNotNull("Finished product hierarchy1 folder not found", finishedProductHierarchy1NodeRef);
+		NodeRef finishedProductHierarchy2NodeRef = nodeService.getChildByName(productHierarchyNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY2));
+		assertNotNull("Finished product hierarchy2 folder not found", finishedProductHierarchy2NodeRef);
+		
+		/*-- create hierarchy --*/
+		//RawMaterial - Sea food
+		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
+		properties.put(ContentModel.PROP_NAME, HIERARCHY1_SEA_FOOD);
+		nodeService.createNode(rawMaterialHierarchy1NodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+		//FinishedProduct - Frozen
+		properties.clear();		
+		properties.put(ContentModel.PROP_NAME, HIERARCHY1_FROZEN);
+		nodeService.createNode(finishedProductHierarchy1NodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+		//Sea food - Fish
+		properties.clear();
+		properties = new HashMap<QName, Serializable>();
+		properties.put(ContentModel.PROP_NAME, String.format("%s - %s", HIERARCHY1_SEA_FOOD, HIERARCHY2_FISH));
+		properties.put(BeCPGModel.PROP_LINKED_VALUE_PREV_VALUE, HIERARCHY1_SEA_FOOD);
+		properties.put(BeCPGModel.PROP_LINKED_VALUE_VALUE, HIERARCHY2_FISH);
+		nodeService.createNode(rawMaterialHierarchy2NodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties);
+		//Sea food - Crustacean
+		properties.clear();
+		properties = new HashMap<QName, Serializable>();
+		properties.put(ContentModel.PROP_NAME, String.format("%s - %s", HIERARCHY1_SEA_FOOD, HIERARCHY2_CRUSTACEAN));
+		properties.put(BeCPGModel.PROP_LINKED_VALUE_PREV_VALUE, HIERARCHY1_SEA_FOOD);
+		properties.put(BeCPGModel.PROP_LINKED_VALUE_VALUE, HIERARCHY2_CRUSTACEAN);
+		nodeService.createNode(rawMaterialHierarchy2NodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties);
+		//Frozen - Pizza
+		properties.clear();
+		properties = new HashMap<QName, Serializable>();
+		properties.put(ContentModel.PROP_NAME, String.format("%s - %s", HIERARCHY1_FROZEN, HIERARCHY2_PIZZA));
+		properties.put(BeCPGModel.PROP_LINKED_VALUE_PREV_VALUE, HIERARCHY1_FROZEN);
+		properties.put(BeCPGModel.PROP_LINKED_VALUE_VALUE, HIERARCHY2_PIZZA);
+		nodeService.createNode(finishedProductHierarchy2NodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties);
+		//Frozen - Quiche
+		properties.clear();
+		properties = new HashMap<QName, Serializable>();
+		properties.put(ContentModel.PROP_NAME, String.format("%s - %s", HIERARCHY1_FROZEN, HIERARCHY2_QUICHE));
+		properties.put(BeCPGModel.PROP_LINKED_VALUE_PREV_VALUE, HIERARCHY1_FROZEN);
+		properties.put(BeCPGModel.PROP_LINKED_VALUE_VALUE, HIERARCHY2_QUICHE);
+		nodeService.createNode(finishedProductHierarchy2NodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties);			
+	}
 }

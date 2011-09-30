@@ -122,7 +122,7 @@ public class VersionHistoryWebScript extends DeclarativeWebScript  {
 		List<VersionData> sortedVersionHistory = null;
 		
 		// entity
-		if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_PRODUCT)){			
+		if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS)){			
 			
 			List<VersionData> versionHistory = entityVersionService.getVersionHistoryWithProperties(nodeRef);
 			int cnt = versionHistory.size();

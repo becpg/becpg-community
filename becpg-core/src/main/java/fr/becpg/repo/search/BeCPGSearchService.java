@@ -11,7 +11,7 @@ public interface BeCPGSearchService {
 
 	List<NodeRef> unProtLuceneSearch(String runnedQuery);
 
-	List<NodeRef> unProtLuceneSearch(String runnedQuery, String[] sort);
+	List<NodeRef> unProtLuceneSearch(String runnedQuery, String[] sort, int searchLimit);
 
 	List<NodeRef> suggestSearch(String runnedQuery, String[] sort, Locale locale);
 

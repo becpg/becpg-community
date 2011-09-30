@@ -252,11 +252,9 @@
 				<list>
 					<value>System/ProductHierarchy/RawMaterial_Hierarchy1</value>
 					<value>System/ProductHierarchy/PackagingMaterial_Hierarchy1</value>
-					<value>System/ProductHierarchy/SemiFinishedProduct_Hierarchy1
-					</value>
+					<value>System/ProductHierarchy/SemiFinishedProduct_Hierarchy1</value>
 					<value>System/ProductHierarchy/FinishedProduct_Hierarchy1</value>
-					<value>System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy1
-					</value>
+					<value>System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy1</value>
 					<value>System/ProductHierarchy/PackagingKit_Hierarchy1</value>
 					<value>System/ProductHierarchy/CondSalesUnit_Hierarchy1</value>
 				</list>
@@ -274,11 +272,9 @@
 				<list>
 					<value>System/ProductHierarchy/RawMaterial_Hierarchy2</value>
 					<value>System/ProductHierarchy/PackagingMaterial_Hierarchy2</value>
-					<value>System/ProductHierarchy/SemiFinishedProduct_Hierarchy2
-					</value>
+					<value>System/ProductHierarchy/SemiFinishedProduct_Hierarchy2</value>
 					<value>System/ProductHierarchy/FinishedProduct_Hierarchy2</value>
-					<value>System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy2
-					</value>
+					<value>System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy2</value>
 					<value>System/ProductHierarchy/PackagingKit_Hierarchy2</value>
 					<value>System/ProductHierarchy/CondSalesUnit_Hierarchy2</value>
 				</list>
