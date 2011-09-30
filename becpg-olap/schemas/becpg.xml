@@ -2,14 +2,10 @@
   <Cube name="Analyses des co&#251;ts" cache="false" enabled="true">
     <Table name="Cost">
     </Table>
-    <Dimension type="StandardDimension" foreignKey="entityListId" highCardinality="false" name="Produit">
-      <Hierarchy hasAll="true" primaryKey="entityListId" primaryKeyTable="EntityList">
-        <Join  rightKey="id" leftKey="entityId">
-          <Table name="EntityList">
-          </Table>
-          <Table name="Product">
-          </Table>
-        </Join>
+    <Dimension type="StandardDimension" foreignKey="entityId" highCardinality="false" name="Produit">
+      <Hierarchy hasAll="true" primaryKey="id">
+        <Table name="Product" alias="">
+        </Table>
         <Level name="Famille" table="Product" column="productHierarchy1" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
         <Level name="Sous famille" table="Product" column="productHierarchy2" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
@@ -26,24 +22,23 @@
         </Level>
       </Hierarchy>
     </Dimension>
-    <Measure name="Co&#251;t" column="costListValue" aggregator="sum" visible="true">
+    <Measure name="Co&#251;t" column="costListValue" datatype="Numeric" formatString="#,###.00&#8364;" aggregator="sum" visible="true">
     </Measure>
-    <Measure name="Co&#251;t Moyen" column="costListValue" aggregator="avg">
+    <Measure name="Co&#251;t Moyen" column="costListValue" datatype="Numeric" formatString="#,###.00&#8364;" aggregator="avg">
     </Measure>
-    <NamedSet name="Top 10 Produits">
-      <Formula>
-        <![CDATA[TopCount([Produit].[Nom produit].Members, 10,[Measures].[Co&#251;t])]]>
-      </Formula>
-    </NamedSet>
   </Cube>
   <Cube name="Produits" cache="false" enabled="true">
     <Table name="Product">
     </Table>
-    <Dimension highCardinality="false" name="Familles">
+    <Dimension highCardinality="false" name="Designation">
       <Hierarchy hasAll="true">
         <Level name="Famille" column="productHierarchy1" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
         </Level>
         <Level name="Sous famille" column="productHierarchy2" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Nom produit" column="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Code produit" column="code" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
@@ -53,7 +48,7 @@
         </Level>
       </Hierarchy>
     </Dimension>
-    <Dimension type="StandardDimension" foreignKey="id" highCardinality="false" name="Clients">
+    <Dimension type="StandardDimension" foreignKey="id" highCardinality="false" name="Client">
       <Hierarchy hasAll="true" primaryKey="source_node_id">
         <View alias="ClientProduct">
           <SQL dialect="mysql">
@@ -69,18 +64,14 @@
 			 and node.store_id in (select id from alf_store where  identifier = 'SpacesStore' and protocol='workspace')]]>
           </SQL>
         </View>
-        <Level name="Nom client" column="string_value" uniqueMembers="false">
+        <Level name="Nom client" column="string_value" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
-     <Dimension type="StandardDimension" foreignKey="id" highCardinality="false" name="Nutriments">
-      <Hierarchy hasAll="true" primaryKey="entityId" primaryKeyTable="EntityList">
-        <Join  rightKey="entityListId" leftKey="entityListId">
-          <Table name="EntityList">
-          </Table>
-          <Table name="NutList">
-          </Table>
-        </Join>
+    <Dimension type="StandardDimension" foreignKey="id" highCardinality="false" name="Nutriment">
+      <Hierarchy hasAll="true" primaryKey="entityId">
+        <Table name="NutList" alias="">
+        </Table>
         <Level name="Nutriment" table="NutList" column="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
         <Level name="Type de nutriment" table="NutList" column="nutType" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
@@ -89,7 +80,39 @@
         </Level>
       </Hierarchy>
     </Dimension>
-    <Measure name="Nombre de produits" column="id" aggregator="distinct-count" visible="false">
+    <Dimension type="StandardDimension" foreignKey="id" highCardinality="false" name="Allerg&#232;ne">
+      <Hierarchy hasAll="true" primaryKey="entityId">
+        <Table name="AllergenList" alias="">
+        </Table>
+        <Level name="Allerg&#232;ne" table="AllergenList" column="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" foreignKey="id" highCardinality="false" name="Ingr&#233;dient">
+      <Hierarchy hasAll="true" primaryKey="entityId">
+        <Table name="IngList">
+        </Table>
+        <Level name="Ingr&#233;dient" table="IngList" column="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" foreignKey="id" highCardinality="false" name="Composition">
+      <Hierarchy hasAll="true" primaryKey="entityId">
+        <Table name="CompoList" alias="">
+        </Table>
+        <Level name="Mati&#232;re premi&#232;re" table="CompoList" column="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" foreignKey="id" highCardinality="false" name="Emballage">
+      <Hierarchy hasAll="true" primaryKey="entityId">
+        <Table name="PackagingList" alias="">
+        </Table>
+        <Level name="Emballage" table="PackagingList" column="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Measure name="Nombre de produits" column="id" datatype="Integer" aggregator="count" visible="true">
     </Measure>
   </Cube>
 </Schema>
