@@ -6,16 +6,13 @@ package fr.becpg.repo.importer.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,7 +34,6 @@ import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -248,8 +244,12 @@ public class ImportServiceImpl implements ImportService {
 		// open file and load content
 		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 		InputStream is = reader.getContentInputStream();
-		logger.debug("reader.getEncoding() : " + reader.getEncoding());
-		CSVReader csvReader = new CSVReader(new InputStreamReader(is, reader.getEncoding()), SEPARATOR);
+		Charset charset = ImportHelper.guestCharset(is);
+		if(logger.isDebugEnabled()){
+			logger.debug("reader.getEncoding() : " + reader.getEncoding());
+			logger.debug("finder.getEncoding() : " + charset );
+		}
+		CSVReader csvReader = new CSVReader(new InputStreamReader(is, charset), SEPARATOR);
 
 		// context
 		ImportContext importContext = new ImportContext(nodeRef, csvReader);

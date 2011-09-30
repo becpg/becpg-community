@@ -3,14 +3,17 @@
  */
 package fr.becpg.repo.importer.impl;
 
+import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import org.alfresco.encoding.CharactersetFinder;
+import org.alfresco.encoding.GuessEncodingCharsetFinder;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -184,4 +187,15 @@ public class ImportHelper{
 	public static String cleanValue(String value) {		
 		return value!=null? value.trim(): null;		
 	}
+	
+	
+	public static Charset guestCharset(InputStream is){
+		CharactersetFinder finder = new GuessEncodingCharsetFinder();
+		Charset charset = finder.detectCharset(is);
+		if(charset==null){
+			return Charset.forName("ISO-8859-15");
+		}
+		return charset;
+	}
+	
 }
