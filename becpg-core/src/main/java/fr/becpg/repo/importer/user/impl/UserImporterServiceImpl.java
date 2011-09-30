@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.repo.importer.ImporterException;
+import fr.becpg.repo.importer.impl.ImportHelper;
 import fr.becpg.repo.importer.user.UserImporterService;
 import fr.becpg.repo.mail.BeCPGMailService;
 
@@ -143,11 +145,14 @@ public class UserImporterServiceImpl implements UserImporterService {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Reading Import File");
 			}
+			Charset charset = ImportHelper.guestCharset(is);
+			if(logger.isDebugEnabled()){
+				logger.debug("reader.getEncoding() : " + reader.getEncoding());
+				logger.debug("finder.getEncoding() : " + charset );
+			}
 			
-			logger.debug("reader.getEncoding() : " + reader.getEncoding());
-
 			
-			proccessUpload(is, (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME),reader.getEncoding());
+			proccessUpload(is, (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME),charset);
 			
 		
 			
@@ -165,7 +170,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 
 
-	private void proccessUpload(InputStream input, String filename, String charset) throws IOException {
+	private void proccessUpload(InputStream input, String filename, Charset charset) throws IOException {
 	            if (filename != null && filename.length() > 0)
 	            {
 	                if (filename.endsWith(".csv"))
@@ -201,7 +206,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 		 logger.info("Not wet implemented");
 	}
 	
-	private void processCSVUpload(InputStream input, String charset) throws IOException {
+	private void processCSVUpload(InputStream input, Charset charset) throws IOException {
 		
 		CSVReader csvReader = new CSVReader(new InputStreamReader(input,charset), SEPARATOR);
 	
