@@ -1,0 +1,9 @@
+<classpath>
+  <classpathentry kind="src" path="src/test/resources" output="target/test-classes" excluding="**/*.java"/>
+  <classpathentry kind="src" path="src/main/resources" excluding="**README-*|**/*.java"/>
+  <classpathentry kind="src" path="src/main/config" excluding="**README-*|**/*.properties|**/*.java"/>
+  <classpathentry kind="src" path="src/main/web" excluding="**README-*|**/*.java"/>
+  <classpathentry kind="src" path="." output="target/becpg-share-0.1.3" including="file-mapping.properties" excluding="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+</classpath>
