@@ -350,6 +350,8 @@ public class ProductServiceImpl implements ProductService {
 		
 		if(destionationNodeRef != null){
 			
+			logger.debug("classify product in destination folder: " + destionationNodeRef);
+			
 			//Product has a product folder ? yes, we move the product folder - no, we move the product
 			NodeRef nodeRefToMove = productNodeRef;
 			NodeRef parentProductNodeRef = nodeService.getPrimaryParent(productNodeRef).getParentRef();
@@ -396,7 +398,7 @@ public class ProductServiceImpl implements ProductService {
 				}
 			}
 			
-			logger.debug(String.format("Classify product '%s' in folder '%s' ", name, nodeService.getPath(destionationNodeRef)));
+			logger.debug(String.format("Classify product '%s' in folder '%s' ", name, destionationNodeRef));
 
 			try{
 				nodeRefToMove = fileFolderService.move(nodeRefToMove, destionationNodeRef, name).getNodeRef();

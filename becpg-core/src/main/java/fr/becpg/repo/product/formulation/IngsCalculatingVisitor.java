@@ -428,7 +428,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 					}				
 					index = lastChild;
 				}
-				else if(declarationType == DeclarationType.DECLARE && !compoListDataItem.getDeclGrp().isEmpty()){
+				else if(declarationType == DeclarationType.DECLARE && compoListDataItem.getDeclGrp() != null && !compoListDataItem.getDeclGrp().isEmpty()){
 					int parentIndex = index;
 					//int lastChild = index + 1;
 					int lastChild = index;

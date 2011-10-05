@@ -20,7 +20,7 @@
 	<namespaces>
 		<namespace uri="http://www.bcpg.fr/model/quality/1.0" prefix="qa" />
 	</namespaces>
-	lis
+	
 	<constraints>
 		<constraint name="qa:acType" type="LIST">
 			<parameter name="allowedValues">

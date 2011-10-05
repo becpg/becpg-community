@@ -62,12 +62,14 @@ public class ImportEntityListAspectVisitor extends AbstractImportVisitor impleme
 		NodeRef productNodeRef = super.importNode(importContext, values);
 			
 		// create list container
+		logger.debug("Create lists container");
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);		
 		if(listContainerNodeRef == null){
 			listContainerNodeRef = entityListDAO.createListContainer(productNodeRef);
 		}
 		
 		// import characteristics
+		logger.debug("import characteristics");
 		for(int z_idx=0; z_idx<values.size() && z_idx < importContext.getColumns().size(); z_idx++){
 			 
 			 AbstractAttributeMapping attributeMapping = importContext.getColumns().get(z_idx);

@@ -77,9 +77,11 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 		
 		// classify if product is not imported in a site
 		if(!importContext.isSiteDocLib()){
+			logger.debug("classify product");
 			productService.classifyProduct(repositoryHelper.getCompanyHome(), productNodeRef);
 		}		
 		
+		logger.debug("product imported");
 		return productNodeRef;
 	}
 	
@@ -98,69 +100,90 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	@Override
 	protected NodeRef findNode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException{
 				
-		NodeRef nodeRef = findNodeByKeyOrCode(importContext, type, BeCPGModel.PROP_CODE, properties);		
+		NodeRef nodeRef = findNodeByKeyOrCode(importContext, type, BeCPGModel.PROP_CODE, properties);
 		
-		// look in the product hierarchy of the repository if we don't import in a site
-		if(nodeRef == null && !importContext.isSiteDocLib()){
+		// look by name
+		if(nodeRef == null){
 			
-			// state
-			String state = (String)properties.get(BeCPGModel.PROP_PRODUCT_STATE);		
-			if(state != null && !state.isEmpty()){
-				
-				// SystemProductType
-				SystemProductType systemProductType = SystemProductType.valueOf(type);
-				if(!systemProductType.equals(SystemProductType.Unknown)){
+			String name = (String)properties.get(ContentModel.PROP_NAME);
+			if(name != null && name != ""){
+			
+				// look in the product hierarchy of the repository if we don't import in a site
+				if(nodeRef == null && !importContext.isSiteDocLib()){
 					
-					// hierarchy 1
-					String hierarchy1 = (String)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1);					
-					if(hierarchy1 != null && !hierarchy1.isEmpty()){
-						
-						// hierarchy 2
-						String hierarchy2 = (String)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);					
-						if(hierarchy2 != null && !hierarchy2.isEmpty()){
-					
-							// look for path where product should be stored
-							String path = String.format(PATH_PRODUCT_FOLDER, 
-														state,
-														systemProductType,
-														ISO9075.encode(hierarchy1),
-														ISO9075.encode(hierarchy2));
+					// state
+					String state = (String)properties.get(BeCPGModel.PROP_PRODUCT_STATE);		
+					if(state != null){			
+						if(!state.isEmpty()){
 							
-							List<NodeRef> nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), 
-																			path, 
-																			null, namespaceService, false);
+							// SystemProductType
+							SystemProductType systemProductType = SystemProductType.valueOf(type);
+							if(!systemProductType.equals(SystemProductType.Unknown)){
+								
+								// hierarchy 1
+								String hierarchy1 = (String)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1);					
+								if(hierarchy1 != null){
+								
+									if(!hierarchy1.isEmpty()){
+										
+										// hierarchy 2
+										String hierarchy2 = (String)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);					
+										if(hierarchy2 != null){
+											if(!hierarchy2.isEmpty()){
+											
+												// look for path where product should be stored
+												String path = String.format(PATH_PRODUCT_FOLDER, 
+																			state,
+																			systemProductType,
+																			ISO9075.encode(hierarchy1),
+																			ISO9075.encode(hierarchy2));
 												
-							if(!nodes.isEmpty()){
-								nodeRef = nodeService.getChildByName(nodes.get(0), ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));																
+												List<NodeRef> nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), 
+																								path, 
+																								null, namespaceService, false);
+																	
+												if(!nodes.isEmpty()){
+													nodeRef = nodeService.getChildByName(nodes.get(0), ContentModel.ASSOC_CONTAINS, name);																
+												}
+											}
+											else{
+												throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
+											}
+										}															
+									}
+									else{
+										throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
+									}
+								}							
 							}
-
+							else{
+								throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNKNOWN_PRODUCTTYPE, nodeService.getType(nodeRef)));
+							}
 						}
 						else{
-							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
-						}
-					}
-					else{
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
-					}
+							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTSTATE_EMPTY, properties));
+						}	
+					}					
 				}
-				else{
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNKNOWN_PRODUCTTYPE, nodeService.getType(nodeRef)));
+				
+				// Check if product exists in Import folder		
+				if(nodeRef == null){			
+					nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);
+				}
+				
+				// productFolder => look for product
+				if(nodeRef != null && nodeService.getType(nodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)){
+					nodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, name);
 				}
 			}
 			else{
-				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTSTATE_EMPTY, properties));
-			}			
+				
+				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_OR_CREATE_NODEREF));				
+			}
 		}
 		
-		// Check if product exists in Import folder
-		if(nodeRef == null){			
-			nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));
-		}
 		
-		// productFolder => look for product
-		if(nodeRef != null && nodeService.getType(nodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)){
-			nodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));
-		}
+		
 		
 		// check key columns, we don't want to update the wrong product
 		if(nodeRef != null){																

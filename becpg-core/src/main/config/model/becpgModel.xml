@@ -1300,7 +1300,7 @@
 		<aspect name="bcpg:codeAspect">
 			<properties>
 				<property name="bcpg:code">
-					<type>d:long</type>
+					<type>d:text</type>
 					<mandatory>false</mandatory>
 				</property>
 			</properties>

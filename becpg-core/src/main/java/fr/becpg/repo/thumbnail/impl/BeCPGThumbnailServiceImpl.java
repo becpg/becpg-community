@@ -85,11 +85,11 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 							BeCPGModel.TYPE_PRODUCT)) {
 				imgName = TranslateHelper.getTranslatedPath(
 						RepoConsts.PATH_LOGO_IMAGE).toLowerCase();
-				boolean isContaintReport = false;
+				//boolean isContaintReport = false;
 				if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
 					imgName = TranslateHelper.getTranslatedPath(
 							RepoConsts.PATH_PRODUCT_IMAGE).toLowerCase();
-					isContaintReport = true;
+					//isContaintReport = true;
 				}
 
 				logger.debug("Look for product thumbnail: " + imgName);
@@ -98,9 +98,9 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 					return super.getThumbnailByName(img,
 							ContentModel.PROP_CONTENT, DOC_LIB_THUMBNAIL);
 				}
-				if (isContaintReport) {
-					return null;
-				}
+//				if (isContaintReport) {
+//					return null;
+//				}
 				
 			}
 			imgName = "generic-" + type.getLocalName() + "-thumb.png";

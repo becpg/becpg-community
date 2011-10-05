@@ -68,9 +68,10 @@
 		<columns>
 			<column id="ingListQtyPerc" attribute="bcpg:ingListQtyPerc" type="Attribute"/>
 			<column id="ingListIsGMO" attribute="bcpg:ingListIsGMO" type="Attribute"/>
+			<column id="ingListIsIonized" attribute="bcpg:ingListIsIonized" type="Attribute"/>
 			<column id="ingListIng" attribute="bcpg:ingListIng" type="Attribute"/>			
-			<column id="bcpg:ingListGeoOrigin" attribute="bcpg:ingListGeoOrigin" type="Attribute"/>
-			<column id="bcpg:ingListBioOrigin" attribute="bcpg:ingListBioOrigin" type="Attribute"/>
+			<column id="ingListGeoOrigin" attribute="bcpg:ingListGeoOrigin" type="Attribute"/>
+			<column id="ingListBioOrigin" attribute="bcpg:ingListBioOrigin" type="Attribute"/>
 		</columns>
 	</mapping>
 	
