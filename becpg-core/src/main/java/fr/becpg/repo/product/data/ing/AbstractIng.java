@@ -58,7 +58,10 @@ public abstract class AbstractIng implements Ing, Comparable<Ing> {
 	 */
 	@Override
 	public String getName(Locale locale) {
-		return mlName.getValue(locale);
+		if(mlName!=null){
+			return mlName.getValue(locale);
+		}
+		return getName();
 	}
 	
 	/**

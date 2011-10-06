@@ -106,7 +106,7 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 		VersionNumber versionNumber = new VersionNumber(version);
 		if(majorVersion){
 			int majorNb = versionNumber.getPart(0) + 1;
-			versionNumber = new VersionNumber(majorNb + EntityVersionService.VERSION_DELIMITER + versionNumber.getPart(1));			
+			versionNumber = new VersionNumber(majorNb + EntityVersionService.VERSION_DELIMITER + 0);			
 		}
 		else{
 			int minorNb = versionNumber.getPart(1) + 1;

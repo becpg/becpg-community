@@ -4,7 +4,6 @@
 package fr.becpg.repo.product.data;
 
 import java.io.Serializable;
-import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
@@ -29,6 +27,7 @@ import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.formulation.FormulateException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -606,7 +605,7 @@ public class ProductData implements ProductElement {
 	 * @see fr.becpg.repo.food.ProductElement#accept(fr.becpg.repo.product.ProductVisitor)
 	 */
 	@Override
-	public void accept(ProductVisitor productVisitor) {
+	public void accept(ProductVisitor productVisitor) throws FormulateException {
 		this.accept(productVisitor);
 	}	
 }

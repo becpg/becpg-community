@@ -103,7 +103,7 @@ public class NutsCalculatingVisitor implements ProductVisitor {
  * @see fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData)
  */
 @Override
-	public ProductData visit(ProductData formulatedProduct){
+	public ProductData visit(ProductData formulatedProduct) throws FormulateException{
 		logger.debug("Nuts calculating visitor");
 		
 		// no compo => no formulation
@@ -159,8 +159,9 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 	 * @param formulatedProduct the formulated product
 	 * @param compoListDataItem the compo list data item
 	 * @param nutMap the nut map
+	 * @throws FormulateException 
 	 */
-	private void visitPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem,  Map<NodeRef, NutListDataItem> nutMap){
+	private void visitPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem,  Map<NodeRef, NutListDataItem> nutMap) throws FormulateException{
 		
 		Collection<QName> dataLists = new ArrayList<QName>();		
 		dataLists.add(BeCPGModel.TYPE_NUTLIST);			

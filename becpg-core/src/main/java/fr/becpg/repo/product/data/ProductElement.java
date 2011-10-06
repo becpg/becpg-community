@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.data;
 
 import fr.becpg.repo.product.ProductVisitor;
+import fr.becpg.repo.product.formulation.FormulateException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -17,6 +18,7 @@ public interface ProductElement {
 	 * Accept.
 	 *
 	 * @param productVisitor the product visitor
+	 * @throws FormulateException 
 	 */
-	public void accept(ProductVisitor productVisitor);
+	public void accept(ProductVisitor productVisitor) throws FormulateException;
 }

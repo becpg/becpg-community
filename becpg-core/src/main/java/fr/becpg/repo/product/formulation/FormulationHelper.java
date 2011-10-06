@@ -21,8 +21,12 @@ public class FormulationHelper {
 	 *
 	 * @param compoListDataItem the compo list data item
 	 * @return the qty
+	 * @throws FormulateException 
 	 */
-	public static float getQty(CompoListDataItem compoListDataItem){
+	public static float getQty(CompoListDataItem compoListDataItem) throws FormulateException{
+		if(compoListDataItem.getQty() == null){
+			throw new FormulateException("message.formulate.failure.qty");
+		}
 		
 		float qty = compoListDataItem.getQty();		
 		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.cmis.ws.GetChildren;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -21,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
-import fr.becpg.repo.data.hierarchicalList.Leaf;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
@@ -105,7 +103,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
  * @see fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData)
  */
 @Override
-	public ProductData visit(ProductData formulatedProduct){
+	public ProductData visit(ProductData formulatedProduct) throws FormulateException{
 		logger.debug("Costs compoList calculating visitor");
 		
 		Map<NodeRef, CostListDataItem> costMap = new HashMap<NodeRef, CostListDataItem>(); 
@@ -156,8 +154,9 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	 * @param fatherPos : -1, root
 	 * @param compoList
 	 * @param costMap
+	 * @throws FormulateException 
 	 */
-	private Map<NodeRef, CostListDataItem> visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite){
+	private Map<NodeRef, CostListDataItem> visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite) throws FormulateException{
 	
 		Map<NodeRef, CostListDataItem> costMap = new HashMap<NodeRef, CostListDataItem>();
 		
@@ -213,8 +212,9 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	 * @param formulatedProduct the formulated product
 	 * @param compoListDataItem the compo list data item
 	 * @param costMap the cost map
+	 * @throws FormulateException 
 	 */
-	private void visitCompoListLeaf(ProductData formulatedProduct, CompoListDataItem compoListDataItem, Map<NodeRef, CostListDataItem> costMap){
+	private void visitCompoListLeaf(ProductData formulatedProduct, CompoListDataItem compoListDataItem, Map<NodeRef, CostListDataItem> costMap) throws FormulateException{
 		
 		Collection<QName> dataLists = new ArrayList<QName>();		
 		dataLists.add(BeCPGModel.TYPE_COSTLIST);

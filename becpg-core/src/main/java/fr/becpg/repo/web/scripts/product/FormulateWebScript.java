@@ -14,6 +14,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.product.ProductService;
+import fr.becpg.repo.product.formulation.FormulateException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -62,7 +63,11 @@ public class FormulateWebScript extends AbstractWebScript
 			String nodeId = templateArgs.get(PARAM_ID);
 	    	
 			NodeRef productNodeRef = new NodeRef(storeType, storeId, nodeId);
-			
-			productService.formulate(productNodeRef);
+			try {
+				productService.formulate(productNodeRef);
+			} catch (FormulateException e) {
+				logger.error(e,e);
+				throw new WebScriptException(e.getMessage());
+			}
 	    }
 }

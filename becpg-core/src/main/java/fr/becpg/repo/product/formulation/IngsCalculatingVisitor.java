@@ -120,7 +120,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
  * @see fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData)
  */
 @Override
-	public ProductData visit(ProductData formulatedProduct){
+	public ProductData visit(ProductData formulatedProduct) throws FormulateException{
 		logger.debug("Calculate ingredient list");
 		
 		// no compo => no formulation
@@ -167,8 +167,9 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 *
 	 * @param productData the product data
 	 * @return the list
+	 * @throws FormulateException 
 	 */
-	private void calculateIL(ProductData formulatedProduct, ProductData productSpecicationData){
+	private void calculateIL(ProductData formulatedProduct, ProductData productSpecicationData) throws FormulateException{
 	
 		List<CompoListDataItem> compoList = formulatedProduct.getCompoList();
 		Map<NodeRef, IngListDataItem> ingMap = new HashMap<NodeRef, IngListDataItem>();
@@ -208,8 +209,9 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 * @param compoListDataItem the compo list data item
 	 * @param ingMap the ing map
 	 * @param totalQtyIngMap the total qty ing map
+	 * @throws FormulateException 
 	 */
-	private void visitILOfPart(ProductData productSpecicationData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Float> totalQtyIngMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){				
+	private void visitILOfPart(ProductData productSpecicationData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Float> totalQtyIngMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException{				
 			
 		Collection<QName> dataLists = new ArrayList<QName>();		
 		dataLists.add(BeCPGModel.TYPE_INGLIST);
@@ -232,8 +234,9 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 * @param compoListDataItem the compo list data item
 	 * @param ingMap the ing map
 	 * @param totalQtyIngMap the total qty ing map
+	 * @throws FormulateException 
 	 */
-	private void calculateILOfPart(ProductData productData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Float> totalQtyIngMap){
+	private void calculateILOfPart(ProductData productData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Float> totalQtyIngMap) throws FormulateException{
 		
 		//OMIT is not taken in account
 		if(DeclarationType.parse(compoListDataItem.getDeclType()) == DeclarationType.OMIT){
@@ -390,8 +393,9 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 *
 	 * @param productData the product data
 	 * @return the list
+	 * @throws FormulateException 
 	 */
-	private List<CompositeIng> calculateILL(ProductData productData){
+	private List<CompositeIng> calculateILL(ProductData productData) throws FormulateException{
 		
 		List<CompoListDataItem> compoList = productData.getCompoList();
 		List<CompositeIng> compositeIngList = new ArrayList<CompositeIng>();
@@ -463,8 +467,9 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 * @param parentIndex the parent index
 	 * @param lastChild the last child
 	 * @return the composite ing
+	 * @throws FormulateException 
 	 */
-	private CompositeIng calculateILLOfCompositeIng(List<CompoListDataItem> compoList, int parentIndex, int lastChild){
+	private CompositeIng calculateILLOfCompositeIng(List<CompoListDataItem> compoList, int parentIndex, int lastChild) throws FormulateException{
 		
 		CompoListDataItem compoListDataItem =  compoList.get(parentIndex);
 		String ingName = null;
@@ -502,8 +507,9 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 * @param parentIng the parent ing
 	 * @param compoListDataItem the compo list data item
 	 * @return the composite ing
+	 * @throws FormulateException 
 	 */
-	private CompositeIng calculateILLOfCompositeIng(CompositeIng parentIng, CompoListDataItem compoListDataItem){
+	private CompositeIng calculateILLOfCompositeIng(CompositeIng parentIng, CompoListDataItem compoListDataItem) throws FormulateException{
 						
 		Collection<QName> dataLists = new ArrayList<QName>();		
 		dataLists.add(BeCPGModel.TYPE_INGLIST);			
