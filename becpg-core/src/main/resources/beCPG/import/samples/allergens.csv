@@ -1,0 +1,17 @@
+"PATH";"/System/Characts/Allergens";
+"TYPE";"bcpg:allergen";
+"COLUMNS";"cm:name";"bcpg:allergenType"
+"VALUES";"Céréales contenant du gluten et produits à base de ces céréales";"Allergène majeur"
+"VALUES";"Crustacés et produits à base de crustacés";"Allergène majeur"
+"VALUES";"Oeuf et produit à base d'oeuf";"Allergène majeur"
+"VALUES";"Arachides et produits à base de d'arachide";"Allergène majeur"
+"VALUES";"Soja et produits à base de soja";"Allergène majeur"
+"VALUES";"Lait et produit à base de (dont lactose)";"Allergène majeur"
+"VALUES";"Fruits à Coque* (noix noisettes)";"Allergène majeur"
+"VALUES";"Poisson et produit à base de poisson";"Allergène majeur"
+"VALUES";"Céleri et produits à base de céleri";"Allergène majeur"
+"VALUES";"Moutarde et produits à base de moutarde";"Allergène majeur"
+"VALUES";"Graines de sésame et produits à base de graines de sésame";"Allergène majeur"
+"VALUES";"Anhydride sulfureux et sulfites";"Allergène majeur"
+"VALUES";"Lupin  et produits à base de lupin";"Allergène majeur"
+"VALUES";"Mollusque  et produits à base de mollusque";"Allergène majeur"

@@ -18,7 +18,6 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -44,7 +43,6 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.importer.ImportService;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -316,7 +314,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
     	NodeRef productsMappingNodeRef = nodeService.createNode(mappingFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();    	    	
     	
     	ContentWriter writer = contentService.getWriter(productsMappingNodeRef, ContentModel.PROP_CONTENT, true);
-    	String mappingFilePath = System.getProperty("user.dir" )  + "/src/main/resources/beCPG/import-mapping/Products.xml";
+    	String mappingFilePath = System.getProperty("user.dir" )  + "/src/main/resources/beCPG/import/mapping/Products.xml";
     	
     	logger.debug("Load birt file " + mappingFilePath);
     	FileInputStream in = null;

@@ -288,7 +288,10 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		//System exchange
 		NodeRef systemExchangeNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_EXCHANGE);
 		NodeRef systemImportNodeRef = visitFolder(systemExchangeNodeRef, RepoConsts.PATH_IMPORT);
-		visitFolder(systemImportNodeRef, RepoConsts.PATH_MAPPING);		
+		visitFolder(systemImportNodeRef, RepoConsts.PATH_MAPPING);	
+
+		visitFolder(systemImportNodeRef, RepoConsts.PATH_IMPORT_SAMPLES);	
+		
 		
 	}	
 	
@@ -300,10 +303,12 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
 
 		if(folderName == RepoConsts.PATH_ICON){			
-
-			addFilesResources(folderNodeRef,"classpath:beCPG/images/*.png");
-		    	
-		} 
+			addFilesResources(folderNodeRef,"classpath:beCPG/images/*.png");	    	
+		} if(folderName == RepoConsts.PATH_MAPPING){
+			addFilesResources(folderNodeRef,"classpath:beCPG/import/mapping/*.xml");
+		} if(folderName == RepoConsts.PATH_IMPORT_SAMPLES){
+			addFilesResources(folderNodeRef,"classpath:beCPG/import/samples/*.csv");
+		}
 		
 		
 	}
@@ -331,6 +336,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 		    	InputStream in = res.getInputStream();			
 		    	writer.setMimetype(mimetypeService.guessMimetype(fileName));
+		    	if(fileName.endsWith(".csv")){
+		    		writer.setEncoding(BeCPGModel.ISO_CHARSET);
+		    	}
 		    	writer.putContent(in);
 		    	in.close();
 		    	

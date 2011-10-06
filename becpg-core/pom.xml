@@ -873,7 +873,15 @@
 				<directory>src/main/resources</directory>
 				<excludes>
 					<exclude>**README-*</exclude>
+					<exclude>**/*.csv</exclude>
 				</excludes>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.csv</include>
+				</includes>
 			</resource>
 			<!-- Copies and filters AMP config in the proper package 'alfresco/module/becpg.becpg-core' 
 				so to enforce full module naming single sourcing from POM properties -->
