@@ -19,6 +19,7 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
@@ -83,6 +84,8 @@ public class ProductData implements ProductElement {
 	
 	/** The cost list. */
 	private List<CostListDataItem> costList;
+	
+	private List<CostDetailsListDataItem> costDetailsList;
 	
 	/** The ing list. */
 	private List<IngListDataItem> ingList;
@@ -378,6 +381,14 @@ public class ProductData implements ProductElement {
 		this.costList = costList;
 	}
 	
+	public List<CostDetailsListDataItem> getCostDetailsList() {
+		return costDetailsList;
+	}
+
+	public void setCostDetailsList(List<CostDetailsListDataItem> costDetailsList) {
+		this.costDetailsList = costDetailsList;
+	}
+
 	/**
 	 * Gets the ing list.
 	 *
@@ -594,6 +605,7 @@ public class ProductData implements ProductElement {
 		setAllergenList(productData.getAllergenList());
 		setCompoList(productData.getCompoList());
 		setCostList(productData.getCostList());
+		setCostDetailsList(productData.getCostDetailsList());
 		setIngList(productData.getIngList());
 		setNutList(productData.getNutList());
 		setOrganoList(productData.getOrganoList());

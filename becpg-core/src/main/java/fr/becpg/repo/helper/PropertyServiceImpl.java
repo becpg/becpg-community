@@ -113,6 +113,15 @@ public class PropertyServiceImpl implements PropertyService {
 			
 			value = v.toString();
 		}
+		else if(dataType.equals(DataTypeDefinition.DOUBLE.toString())  || dataType.equals(DataTypeDefinition.FLOAT.toString())){
+		
+			if(propertyFormats.getDecimalFormat() != null){
+				value = propertyFormats.getDecimalFormat().format(v);
+			}
+			else{
+				value = v.toString();
+			}
+		}
 		else{
 			TypeConverter converter = new TypeConverter();			
 			value = converter.convert(propertyDef.getDataType(), v).toString();			

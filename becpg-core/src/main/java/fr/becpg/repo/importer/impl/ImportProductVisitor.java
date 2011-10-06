@@ -203,7 +203,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 				
 				Serializable value = properties.get(qName);
 				Serializable dbvalue = nodeService.getProperty(nodeRef, qName);
-				if(value != null && dbvalue != null && !value.equals(dbvalue)){
+				if(value != null && !((String)value).isEmpty() && dbvalue != null && !value.equals(dbvalue)){
 					
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_OVERRIDE_EXISTING_ONE, value, dbvalue));
 				}

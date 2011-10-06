@@ -489,10 +489,10 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		/*-- check associations --*/
 		List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(product1NodeRef, BeCPGModel.ASSOC_SUPPLIERS);
 		assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
-		Long supplier1Code = (Long)nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_CODE);
-		Long supplier2Code = (Long)nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_CODE);
-		assertEquals("check supplier name", Long.valueOf(12), supplier1Code);
-		assertEquals("check supplier name", Long.valueOf(13), supplier2Code);
+		String supplier1Code = (String)nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_CODE);
+		String supplier2Code = (String)nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_CODE);
+		assertEquals("check supplier name", "12", supplier1Code);
+		assertEquals("check supplier name", "13", supplier2Code);
 		// does space between association values work ?
 		
 		/*
@@ -507,10 +507,10 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		assertNotNull("product 2 should exist", product2NodeRef);
 		supplierAssocRefs = nodeService.getTargetAssocs(product2NodeRef, BeCPGModel.ASSOC_SUPPLIERS);
 		assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
-		supplier1Code = (Long)nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_CODE);
-		supplier2Code = (Long)nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_CODE);
-		assertEquals("check supplier name", Long.valueOf(12), supplier1Code);
-		assertEquals("check supplier name", Long.valueOf(14), supplier2Code);
+		supplier1Code = (String)nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_CODE);
+		supplier2Code = (String)nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_CODE);
+		assertEquals("check supplier name", "12", supplier1Code);
+		assertEquals("check supplier name", "14", supplier2Code);
 		
 		/*-- check productLists --*/
 		assertEquals("costs should exist", (int)3, productData.getCostList().size());

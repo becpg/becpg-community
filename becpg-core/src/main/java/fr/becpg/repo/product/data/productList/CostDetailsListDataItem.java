@@ -6,11 +6,11 @@ package fr.becpg.repo.product.data.productList;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 /**
- * The Class CostListDataItem.
+ * The Class CostDetailsListDataItem.
  *
  * @author querephi
  */
-public class CostListDataItem{
+public class CostDetailsListDataItem{
 	
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -21,8 +21,12 @@ public class CostListDataItem{
 	/** The unit. */
 	private String unit;	
 	
+	private Float percentage;
+	
 	/** The cost. */
 	private NodeRef cost;
+	
+	private NodeRef source;
 		
 	/**
 	 * Gets the node ref.
@@ -78,6 +82,14 @@ public class CostListDataItem{
 		this.unit = unit;
 	}
 	
+	public Float getPercentage() {
+		return percentage;
+	}
+
+	public void setPercentage(Float percentage) {
+		this.percentage = percentage;
+	}
+
 	/**
 	 * Gets the cost.
 	 *
@@ -96,10 +108,18 @@ public class CostListDataItem{
 		this.cost = cost;
 	}
 	
+	public NodeRef getSource() {
+		return source;
+	}
+
+	public void setSource(NodeRef source) {
+		this.source = source;
+	}
+
 	/**
 	 * Instantiates a new cost list data item.
 	 */
-	public CostListDataItem() {
+	public CostDetailsListDataItem() {
 		
 	}
 	
@@ -111,12 +131,14 @@ public class CostListDataItem{
 	 * @param unit the unit
 	 * @param cost the cost
 	 */
-	public CostListDataItem(NodeRef nodeRef, Float value, String unit, NodeRef cost){
+	public CostDetailsListDataItem(NodeRef nodeRef, Float value, String unit, Float percentage, NodeRef cost, NodeRef source){
 		
 		setNodeRef(nodeRef);		
 		setValue(value);
 		setUnit(unit);
+		setPercentage(percentage);
 		setCost(cost);
+		setSource(source);
 	}		
 }
 

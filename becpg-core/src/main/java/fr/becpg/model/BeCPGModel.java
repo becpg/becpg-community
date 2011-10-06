@@ -211,6 +211,29 @@ public interface BeCPGModel {
 	/** The Constant ASSOC_COSTLIST_COST. */
 	static final QName ASSOC_COSTLIST_COST = QName.createQName(BECPG_URI,
 			"costListCost");
+	
+	// costDetailsList
+	/** The Constant TYPE_COSTDETAILSLIST. */
+	static final QName TYPE_COSTDETAILSLIST = QName.createQName(BECPG_URI, "costDetailsList");
+	
+	/** The Constant PROP_COSTDETAILSLIST_VALUE. */
+	static final QName PROP_COSTDETAILSLIST_VALUE = QName.createQName(BECPG_URI,
+			"costDetailsListValue");
+	
+	/** The Constant PROP_COSTDETAILSLIST_UNIT. */
+	static final QName PROP_COSTDETAILSLIST_UNIT = QName.createQName(BECPG_URI,
+			"costDetailsListUnit");
+	
+	static final QName PROP_COSTDETAILSLIST_PERC = QName.createQName(BECPG_URI,
+			"costDetailsListPerc");
+	
+	/** The Constant ASSOC_COSTDETAILSLIST_COST. */
+	static final QName ASSOC_COSTDETAILSLIST_COST = QName.createQName(BECPG_URI,
+			"costDetailsListCost");
+	
+	/** The Constant ASSOC_COSTDETAILSLIST_SOURCE. */
+	static final QName ASSOC_COSTDETAILSLIST_SOURCE = QName.createQName(BECPG_URI,
+			"costDetailsListSource");
 
 	// ingList
 	/** The Constant TYPE_INGLIST. */

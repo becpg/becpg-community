@@ -260,6 +260,7 @@ public class ProductServiceImpl implements ProductService {
 	    	dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
 	    	dataLists.add(BeCPGModel.TYPE_NUTLIST);
 	    	dataLists.add(BeCPGModel.TYPE_COSTLIST);
+	    	dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
 	    	dataLists.add(BeCPGModel.TYPE_INGLIST);
 	    	dataLists.add(BeCPGModel.TYPE_INGLABELINGLIST);
 	    	dataLists.add(BeCPGModel.TYPE_REQCTRLLIST);

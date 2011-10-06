@@ -14,6 +14,8 @@ import fr.becpg.common.RepoConsts;
  */
 public class PropertyFormats {
 
+	private static final String FORMAT_DECIMAL_VALUE = "0.####";
+	
 	private boolean useDefaultLocale = true;
 	
 	private DateFormat dateFormat;
@@ -70,5 +72,7 @@ public class PropertyFormats {
 			dateFormat = new SimpleDateFormat(RepoConsts.FORMAT_DATE);
 			datetimeFormat = new SimpleDateFormat(RepoConsts.FORMAT_DATETIME);
 		}
+		
+		decimalFormat = new DecimalFormat(FORMAT_DECIMAL_VALUE);
 	}
 }
