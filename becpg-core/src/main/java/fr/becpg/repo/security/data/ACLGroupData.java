@@ -13,6 +13,8 @@ public class ACLGroupData extends BeCPGDataObject {
 
 	private QName nodeType;
 	
+	private List<QName> nodeAspects; 
+	
 	List<ACLEntryDataItem> acls = new ArrayList<ACLEntryDataItem>();
 
 	public List<ACLEntryDataItem> getAcls() {
@@ -29,6 +31,20 @@ public class ACLGroupData extends BeCPGDataObject {
 
 	public void setNodeType(String nodeType) {
 		this.nodeType = DefaultTypeConverter.INSTANCE.convert(QName.class, nodeType);
+	}
+
+	public List<QName> getNodeAspects() {
+		return nodeAspects;
+	}
+
+	public void setNodeAspects(List<String> nodeAspects) {
+		this.nodeAspects = new ArrayList<QName>();
+		if(nodeAspects!=null){
+			for(String tmp : nodeAspects){
+				this.nodeAspects .add(DefaultTypeConverter.INSTANCE.convert(QName.class, tmp));
+			}
+		}
+		
 	}
 
 	

@@ -244,7 +244,7 @@ public class ImportServiceImpl implements ImportService {
 		// open file and load content
 		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 		InputStream is = reader.getContentInputStream();
-		Charset charset = ImportHelper.guestCharset(is);
+		Charset charset = ImportHelper.guestCharset(is,reader.getEncoding());
 		if(logger.isDebugEnabled()){
 			logger.debug("reader.getEncoding() : " + reader.getEncoding());
 			logger.debug("finder.getEncoding() : " + charset );

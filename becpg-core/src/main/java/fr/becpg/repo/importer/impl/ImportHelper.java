@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.common.RepoConsts;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.importer.ImportContext;
 
 // TODO: Auto-generated Javadoc
@@ -189,11 +190,15 @@ public class ImportHelper{
 	}
 	
 	
-	public static Charset guestCharset(InputStream is){
+	public static Charset guestCharset(InputStream is, String readerCharset){
+		Charset defaultCharset = Charset.forName(BeCPGModel.ISO_CHARSET);
+		if(BeCPGModel.ISO_CHARSET.equals(readerCharset)){
+			return defaultCharset;
+		}
 		CharactersetFinder finder = new GuessEncodingCharsetFinder();
 		Charset charset = finder.detectCharset(is);
 		if(charset==null){
-			return Charset.forName("ISO-8859-15");
+			return defaultCharset;
 		}
 		return charset;
 	}

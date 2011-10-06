@@ -232,7 +232,17 @@ public class SecurityServiceImpl implements SecurityService {
 
 					List<AspectDefinition> aspects = typeDefinition
 							.getDefaultAspects();
-					if (aspects != null) {
+					
+					if(aspects== null){
+						aspects = new ArrayList<AspectDefinition>();
+					}
+					
+					for(QName  aspect: aclGroup.getNodeAspects()){
+						AspectDefinition aspectDefinition = dictionaryService.getAspect(aspect);
+						aspects.add(aspectDefinition);
+						
+					}
+					
 						for (AspectDefinition aspect : aspects) {
 							if (aspect != null
 									&& aspect.getProperties() != null) {
@@ -246,7 +256,6 @@ public class SecurityServiceImpl implements SecurityService {
 
 						}
 
-					}
 
 				}
 			}
@@ -260,7 +269,7 @@ public class SecurityServiceImpl implements SecurityService {
 				.toPrefixString(namespacePrefixResolver);
 		String label = properties.getValue().getTitle();
 
-		if(!ret.contains(key + "|" + typeDefinition.getTitle() + " - " + label)){
+		if(!ret.contains(key + "|" + typeDefinition.getTitle() + " - " + label) && label!=null){
 			ret.add(key + "|" + typeDefinition.getTitle() + " - " + label);
 		}
 

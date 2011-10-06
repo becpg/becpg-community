@@ -1,6 +1,7 @@
 package fr.becpg.repo.security;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -22,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.security.constraint.DynPropsConstraint;
@@ -38,10 +40,6 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	private static String PATH_TESTFOLDER = "SecTestFolder";
 	
-	
-	private static String GRP_ONE="GRP_1";
-	private static String GRP_TWO="GRP_2";
-	private static String GRP_THREE="GRP_3";
 	
 	private String grp1;
 	private String grp2;
@@ -187,7 +185,12 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		ACLGroupData aclGroupData = new ACLGroupData();
 		aclGroupData.setName("Test ACL");
 		aclGroupData.setNodeType(SecurityModel.TYPE_ACL_ENTRY.toString());
-
+		
+		
+		
+		aclGroupData.setNodeAspects(Arrays.asList(new String[]{BeCPGModel.ASPECT_CLIENTS.toString(),BeCPGModel.ASPECT_CODE.toString()}));
+		
+		
 		List<String> groups = new ArrayList<String>();
 		groups.add(grp3);
 		List<ACLEntryDataItem> acls = new ArrayList<ACLEntryDataItem>();
@@ -293,6 +296,17 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		
 		for(String type : dynPropsConstraint.getAllowedValues()){
 			System.out.println("Type : "+type);
+		}
+		
+		dynPropsConstraint.setConstraintType(DynPropsConstraint.ASPECT_NODE);
+		List<String> aspects =  dynPropsConstraint.getAllowedValues();
+		Assert.assertNotNull(aspects);
+		Assert.assertTrue(aspects.size()>0);
+		
+		
+		
+		for(String aspect : dynPropsConstraint.getAllowedValues()){
+			System.out.println("aspect : "+aspect);
 		}
 		
 	}

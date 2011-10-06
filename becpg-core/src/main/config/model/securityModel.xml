@@ -45,7 +45,13 @@
 				<value>NODE_TYPE</value>
 			</parameter>
 		</constraint>
-
+		
+		 <constraint name="sec:nodeAspectConstraint"
+			type="fr.becpg.repo.security.constraint.DynPropsConstraint">
+			<parameter name="constraintType">
+				<value>ASPECT_TYPE</value>
+			</parameter>
+		</constraint>
 
 	</constraints>
 
@@ -60,6 +66,13 @@
 					<mandatory>true</mandatory>
 					<constraints>
 						<constraint ref="sec:nodeTypeConstraint" />
+					</constraints>
+				</property>
+				<property name="sec:nodeAspects">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<constraints>
+						<constraint ref="sec:nodeAspectConstraint" />
 					</constraints>
 				</property>
 			</properties>

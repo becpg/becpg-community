@@ -113,6 +113,8 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 				ContentModel.PROP_NAME));
 		cpData.setNodeType((String) nodeService.getProperty(cpNodeRef,
 				SecurityModel.PROP_ACL_GROUP_NODE_TYPE));
+		cpData.setNodeAspects((List) nodeService.getProperty(cpNodeRef,
+				SecurityModel.PROP_ACL_GROUP_NODE_ASPECTS));
 
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(cpNodeRef);
 		if (listContainerNodeRef != null) {

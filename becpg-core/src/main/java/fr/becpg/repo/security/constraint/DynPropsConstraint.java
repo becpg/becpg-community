@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintException;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
@@ -31,6 +31,8 @@ import fr.becpg.repo.security.SecurityService;
 public class DynPropsConstraint extends ListOfValuesConstraint {
 
 	public static String TYPE_NODE = "NODE_TYPE";
+	
+	public static String ASPECT_NODE = "ASPECT_TYPE";
 	
 	/** The Constant UNDIFINED_CONSTRAINT_VALUE. */
 	public static final String UNDIFINED_CONSTRAINT_VALUE = "-";
@@ -105,6 +107,8 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 								public List<String> execute() throws Throwable {
 									if(TYPE_NODE.equals(constraintType)){
 										return getAvailableEntityTypeNames();
+									} else if(ASPECT_NODE.equals(constraintType)){
+										return getAvailableEntityAspectNames();
 									}
 									return securityService.getAvailablePropNames();
 
@@ -154,7 +158,7 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 		if (types != null) {
 			for (QName type : types) {
 				TypeDefinition typeDef = serviceRegistry.getDictionaryService().getType(type);
-				if (typeDef != null) {
+				if (typeDef != null  && typeDef.getTitle()!=null) {
 					ret.add(type.toString() + "|" + typeDef.getTitle());
 				}
 			}
@@ -163,7 +167,21 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 		return ret;
 	}
 	
+	private List<String> getAvailableEntityAspectNames() {
 
+		List<String> ret = new ArrayList<String>();
+		Collection<QName> aspects = serviceRegistry.getDictionaryService().getAllAspects();
+		if (aspects != null) {
+			for (QName aspect : aspects) {
+				AspectDefinition typeDef = serviceRegistry.getDictionaryService().getAspect(aspect);
+				if (typeDef != null && typeDef.getTitle()!=null) {
+					ret.add(aspect.toString() + "|" + typeDef.getTitle());
+				}
+			}
+		}
+
+		return ret;
+	}
 	
 	
 	
