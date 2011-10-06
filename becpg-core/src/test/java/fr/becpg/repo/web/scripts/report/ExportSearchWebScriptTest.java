@@ -1,6 +1,3 @@
-/*
- * 
- */
 package fr.becpg.repo.web.scripts.report;
 
 import java.io.FileInputStream;

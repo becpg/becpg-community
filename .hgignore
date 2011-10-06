@@ -5,3 +5,7 @@ common.sh
 
 syntax: regexp
 ^becpg-core/alf_data$
+syntax: regexp
+^becpg-olap/conf/becpg$
+syntax: regexp
+^becpg-olap/sql/crontab$

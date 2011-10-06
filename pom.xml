@@ -90,14 +90,11 @@
 		<!-- Module specific build time properties -->
 		<module.log.level>info</module.log.level>
 		<alfresco.version>3.4</alfresco.version>
-		<alfresco.sdk.version>3.4</alfresco.sdk.version>
-		<!-- Tests -->
-		<alfresco.webapp.path>/opt/alfresco-3.4.d/tomcat/webapps/alfresco</alfresco.webapp.path>
-		<alfresco.sdk.path>/opt/alfresco-3.4.d/sdk/lib/server</alfresco.sdk.path>
+		<alfresco.server>/opt/alfresco-3.4.d</alfresco.server>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<repositories>
+	 <repositories>
 		<repository>
 			<id>alfresco-public-snapshots</id>
 			<url>http://maven.alfresco.com/nexus/content/groups/public-snapshots</url>
@@ -110,34 +107,6 @@
 			<id>alfresco-public</id>
 			<url>http://maven.alfresco.com/nexus/content/groups/public</url>
 		</repository>
-		<repository>
-			<id>alfresco-ecm4</id>
-			<url>http://ecm4you.svn.sourceforge.net/svnroot/ecm4you/trunk/repos/</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>ibiblio</id>
-			<url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</repository>
-
-		<repository>
-			<id>com.springsource.repository.bundles.release</id>
-			<name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/release</url>
-		</repository>
-		<repository>
-			<id>com.springsource.repository.bundles.external</id>
-			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/external</url>
-		</repository>
-
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -153,19 +122,10 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-	<!-- <repositories> <repository> <id>repo-realease</id> <url>http://tools-peppol.vservers.linagora.com/artifactory/repo</url> 
-		<snapshots> <enabled>false</enabled> </snapshots> </repository> <repository> 
-		<id>repo-snapshots</id> <url>http://tools-peppol.vservers.linagora.com/artifactory/repo</url> 
-		<releases> <enabled>false</enabled> </releases> </repository> <repository> 
-		<id>libs-snapshots</id> <url>http://tools-peppol.vservers.linagora.com/artifactory/libs-snapshots</url> 
-		<releases> <enabled>false</enabled> </releases> <snapshots> <updatePolicy>daily</updatePolicy> 
-		</snapshots> </repository> </repositories> <pluginRepositories> <pluginRepository> 
-		<id>plugins-releases</id> <url>http://tools-peppol.vservers.linagora.com/artifactory/plugins-releases</url> 
-		<snapshots> <enabled>false</enabled> </snapshots> </pluginRepository> <pluginRepository> 
-		<id>plugins-snapshots</id> <url>http://tools-peppol.vservers.linagora.com/artifactory/plugins-snapshots</url> 
-		<releases> <enabled>false</enabled> </releases> </pluginRepository> </pluginRepositories> -->
 
 	<modules>
+		<module>becpg-bootstrap/alfresco-sdk</module>
+		<module>becpg-bootstrap/birt-sdk</module>
 		<module>becpg-core</module>
 		<module>becpg-share</module>
 	</modules>
@@ -177,16 +137,11 @@
 				<alfresco.db.name>becpg_test</alfresco.db.name>
 				<alfresco.db.username>becpg</alfresco.db.username>
 				<alfresco.db.password>becpg</alfresco.db.password>
+				<alfresco.server>/opt/becpg/alfresco-3.4.d</alfresco.server>
 				<webapp.log.level>error</webapp.log.level>
 				<webapp.log.dir></webapp.log.dir>
-				<!-- End of testing webapp specific properties -->
-				<!-- Module specific build time properties -->
 				<module.log.level>info</module.log.level>
 				<alfresco.version>3.4</alfresco.version>
-				<alfresco.sdk.version>3.4</alfresco.sdk.version>
-				<!-- Tests -->
-				<alfresco.webapp.path>/opt/becpg/alfresco-3.4.d/tomcat/webapps/alfresco</alfresco.webapp.path>
-				<alfresco.sdk.path>/opt/becpg/alfresco-community-sdk-3.4.d/lib/server</alfresco.sdk.path>
 			</properties>
 		</profile>
 

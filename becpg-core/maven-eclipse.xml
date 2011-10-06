@@ -2,7 +2,7 @@
   <target name="init"/>
   <target name="copy-resources" depends="init">
     <copy todir="target/classes/alfresco/module/becpg-becpg-core" filtering="true">
-      <fileset dir="src/main/config" includes="" excludes="**README-*|**/*.properties|**/*.java"/>
+      <fileset dir="src/main/config" excludes="**README-*|**/*.properties"/>
     </copy>
   </target>
 </project>
