@@ -1,6 +1,6 @@
 {
 	"username": "admin",
-  	"password": "admin",
+  	"password": "becpg",
     "saiku-webapp": "/saiku/",
     "saiku-ui-base" : "/saiku-ui/",
     "saiku-rest-mountpoint" : "rest/saiku/"

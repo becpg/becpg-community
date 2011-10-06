@@ -1,3 +1,4 @@
+<?xml version = "1.0" encoding="UTF-8"?>
 <Schema name="beCPG OLAP Schema">
   <Dimension type="TimeDimension" highCardinality="false" name="Time dimension">
     <Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date">
@@ -34,7 +35,7 @@
   <Cube name="Produits" cache="false" enabled="true">
     <Table name="becpg_product">
     </Table>
-    <Dimension type="TimeDimension" foreignKey="product_startEffectivity_id" highCardinality="false" name="DateDebut" caption="D&#233;but d&#39;effectivit&#233;">
+    <Dimension type="TimeDimension" foreignKey="product_startEffectivity_id" highCardinality="false" name="D&#233;but d&#39;effectivit&#233;" caption="D&#233;but d&#39;effectivit&#233;">
       <Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date">
         <Table name="becpg_dimdate" alias="olapDate">
         </Table>
@@ -66,8 +67,8 @@
         </Level>
       </Hierarchy>
     </Dimension>
-    <Dimension type="TimeDimension" foreignKey="product_endEffectivity_id" highCardinality="false" name="DateFin" caption="Fin d&#39;effectivit&#233;">
-      <Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" defaultMember="[DateFin.Date].[2030]" caption="Date">
+    <Dimension type="TimeDimension" foreignKey="product_endEffectivity_id" highCardinality="false" name="Fin d&#39;effectivit&#233;" caption="Fin d&#39;effectivit&#233;">
+      <Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" defaultMember="[Fin d&#39;effectivit&#233;.Date].[2030]" caption="Date">
         <Table name="becpg_dimdate" alias="olapDate">
         </Table>
         <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
@@ -102,7 +103,7 @@
       <Hierarchy name="Produit par famille" hasAll="true" allMemberCaption="Tous les produits">
         <Level name="Famille" column="product_productHierarchy1" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
         </Level>
-        <Level name="Sous famille" column="product_productHierarchy2" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        <Level name="Sous famille" column="product_productHierarchy2" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
       <Hierarchy name="Produit par nom" hasAll="true" allMemberCaption="Tous les produits">
@@ -116,7 +117,13 @@
     </Dimension>
     <Dimension highCardinality="false" name="&#201;tat">
       <Hierarchy hasAll="true" allMemberCaption="Tous les &#233;tats">
-        <Level name="&#201;tat" column="product_productState" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        <Level name="&#201;tat" column="product_productState" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" >
+        </Level>
+      </Hierarchy>
+    </Dimension>
+     <Dimension highCardinality="false" name="Type de produit">
+      <Hierarchy hasAll="true" allMemberCaption="Tous les types de produit" defaultMember="[Type de produit].[finishedProduct]">
+        <Level name="Type" column="product_type" type="String"  uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
@@ -125,6 +132,14 @@
         <Table name="becpg_client">
         </Table>
         <Level name="Nom client" column="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+      <Dimension type="StandardDimension" foreignKey="product_supplier_assoc_id" highCardinality="false" name="Fournisseur">
+      <Hierarchy hasAll="true" allMemberCaption="Tous les fournisseurs" primaryKey="assocId">
+        <Table name="becpg_supplier">
+        </Table>
+        <Level name="Nom fournisseur" column="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>

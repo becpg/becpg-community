@@ -47,7 +47,7 @@
 
    <appender name="SAIKUCONSOLE" class="org.apache.log4j.ConsoleAppender">
       <param name="Target" value="System.out"/>
-      <param name="Threshold" value="INFO"/>
+      <param name="Threshold" value="WARN"/>
 
       <layout class="org.apache.log4j.PatternLayout">
          <!-- The default pattern: Date Priority [Category] Message\n -->
@@ -68,7 +68,7 @@
    <!-- ======================= -->
 
    <root>
-      <priority value="DEBUG" />
+      <priority value="WARN" />
       <appender-ref ref="SAIKUCONSOLE"/>
       <appender-ref ref="SAIKUFILE"/>
    </root>
@@ -76,10 +76,12 @@
    
    <!--  optional logging info for the Mondrian OLAP Engine       -->
    
+   
    <!-- ========================================================= -->
    <!-- Special Log File specifically for Mondrian                -->
    <!-- ========================================================= -->
 
+   <!-- 
    <appender name="MONDRIAN" class="org.apache.log4j.RollingFileAppender">
      <param name="File" value="mondrian.log"/>
      <param name="Append" value="false"/>
@@ -96,11 +98,13 @@
       <appender-ref ref="MONDRIAN"/>
    </category> 
    
+   -->
 
    <!-- ========================================================= -->
    <!-- Special Log File specifically for Mondrian MDX Statements -->
    <!-- ========================================================= -->
 
+   <!-- 
    <appender name="MDXLOG" class="org.apache.log4j.RollingFileAppender">
      <param name="File" value="mondrian_mdx.log"/>
      <param name="Append" value="false"/>
@@ -115,7 +119,7 @@
       <priority value="DEBUG"/>
       <appender-ref ref="MDXLOG"/>
    </category>
-
+   -->
 
    <!-- ========================================================= -->
    <!-- Special Log File specifically for Mondrian SQL Statements -->
@@ -135,6 +139,6 @@
       <priority value="DEBUG"/>
       <appender-ref ref="SQLLOG"/>
    </category>
- 
+
    
 </log4j:configuration>

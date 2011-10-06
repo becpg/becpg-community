@@ -12,9 +12,11 @@ insert into becpg_product(product_fact_id,
  				product_productHierarchy1,
  				product_productHierarchy2,
  				product_productState,
+ 				product_type,
  				product_startEffectivity_id,
  				product_endEffectivity_id,
  				product_client_assoc_id,
+ 				product_supplier_assoc_id,
  				product_nut_assoc_id,
  				product_allergen_assoc_id,
  				product_ing_assoc_id,
@@ -23,10 +25,11 @@ insert into becpg_product(product_fact_id,
  				product_compo_assoc_id
  				)
 select node.id, code.long_value, name.string_value  , legalName.string_value, productHierarchy1.string_value,
- 		productHierarchy2.string_value, productState.string_value,
+ 		productHierarchy2.string_value, productState.string_value, node_qname.local_name,
  		year (startEffectivity.string_value) * 10000 + month (startEffectivity.string_value) * 100 + day (startEffectivity.string_value), 
  		year (endEffectivity.string_value) * 10000 + month (endEffectivity.string_value) * 100 + day (endEffectivity.string_value), 
  		client_assoc.id,
+ 		supplier_assoc.id,
  		nut_assoc.entityListId,
  		allergen_assoc.entityListId,
  		ing_assoc.entityListId,
@@ -50,10 +53,12 @@ select node.id, code.long_value, name.string_value  , legalName.string_value, pr
  left outer join becpg_entity_list compo_assoc on (compo_assoc.entityId = node.id and compo_assoc.entityType = 'bcpg:compoList')
  left outer join alf_node_assoc client_assoc on (client_assoc.source_node_id = node.id and client_assoc.type_qname_id 
  in (select client_assoc_qname.id from alf_qname client_assoc_qname where client_assoc_qname.local_name = 'clients'))
+ left outer join alf_node_assoc supplier_assoc on (supplier_assoc.source_node_id = node.id and supplier_assoc.type_qname_id 
+ in (select supplier_assoc.id from alf_qname supplier_assoc_qname where supplier_assoc_qname.local_name = 'suppliers'))
  inner join alf_qname node_qname on (node.type_qname_id= node_qname.id)
  inner join alf_store node_store on (node.store_id = node_store.id)
- where node_qname.local_name = 'finishedProduct' and node_store.identifier = 'SpacesStore' and node_store.protocol='workspace'
+ where node_store.identifier = 'SpacesStore' and node_store.protocol='workspace'
  order by code.long_value, name.string_value;
  
-update  becpg_product set product_startEffectivity_id=20010101 where  product_startEffectivity_id is null;
+update  becpg_product set product_startEffectivity_id=20010101 where  product_startEffectivity_id is null or product_startEffectivity_id=0;
 update  becpg_product set product_endEffectivity_id=20300101 where  product_endEffectivity_id is null;

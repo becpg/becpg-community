@@ -346,6 +346,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private void updateEffectivity(NodeRef entityNodeRef, NodeRef versionNodeRef) {
 		Date newEffectivity = new Date();
 		Date oldEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
+		if(oldEffectivity==null){
+			oldEffectivity = newEffectivity;
+		}
 		nodeService.setProperty(versionNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, oldEffectivity);
 		nodeService.setProperty(versionNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
 		nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, newEffectivity);

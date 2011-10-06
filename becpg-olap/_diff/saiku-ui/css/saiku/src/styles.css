@@ -114,9 +114,9 @@ html, body {
 
 /** Logo */
 #logo a {
-    background: transparent url("../../../images/src/app-logo-becpg.png") 1px 1px no-repeat;
+    background: transparent url("../../../images/src/app-logo.png") 1px 1px no-repeat;
     float: right;
-    width: 350px;
+    width: 250px;
     height: 60px;
     margin: -20px 10px 0 0;
     text-indent: -9999px;
@@ -708,9 +708,9 @@ html, body {
     padding: 10px 10px 20px 70px;
 }
 .dialog .dialog_inner .dialog_body_login {
-    background: transparent url('../../../images/src/dialog_login_red.png') 25px 15px no-repeat;
+    background: transparent url('../../../images/src/login_becpg.png') 2px 15px no-repeat;
     min-height: 40px;
-    padding: 10px 10px 20px 100px;
+    padding: 10px 10px 20px 105px;
 }
 .dialog .dialog_inner .dialog_body_waiting {
     background: transparent url('../../../images/src/waiting.gif') 10px 10px no-repeat;
