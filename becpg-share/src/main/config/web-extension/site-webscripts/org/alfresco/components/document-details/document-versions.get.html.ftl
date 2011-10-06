@@ -43,7 +43,9 @@ new Alfresco.DocumentVersions("${args.htmlid}").setOptions(
             </div>
             <div class="actions">
                <span><a href="${url.context}/proxy/alfresco${version.downloadURL}" class="download">${msg("link.download")}</a></span>
-               <span><a href="${url.context}/proxy/alfresco${version.compareURL}" class="compare">${msg("link.compare")}</a></span>               
+                <#if isEntity> 
+               		<span><a href="${url.context}/proxy/alfresco${version.compareURL}" class="compare">${msg("link.compare")}</a></span>     
+               </#if>          
                <#if version_index != 0>               	
                   <span class="hidden"><a id="${args.htmlid}-revert-a-${version_index}" class="revert" href="#">${msg("link.revert")}</a></span>
                </#if>

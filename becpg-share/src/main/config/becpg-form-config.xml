@@ -455,6 +455,9 @@
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
 
+					<!-- Effectivity 
+					<show id="bcpg:startEffectivity" for-mode="view" />
+					-->
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
 					<show id="cm:created" for-mode="view" />
@@ -542,7 +545,9 @@
 							<control-param name="compactMode">true</control-param>
 						</control>
 					</field>
-
+					<!-- Effectivity 
+					<field id="bcpg:startEffectivity" set="audit" />
+					-->
 					<!-- audit -->
 					<field id="cm:creator" set="audit" />
 					<field id="cm:created" set="audit" />

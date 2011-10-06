@@ -271,10 +271,18 @@
             {
                fn: function EntityDataListToolbar_onFormulate_failure(response)
                {
-                  Alfresco.util.PopupManager.displayMessage(
-                  {
-                     text: this.msg("message.formulate.failure")
-                  });
+            	   if (response.message != null)
+                   {
+                      Alfresco.util.PopupManager.displayPrompt({
+                         text: response.message
+                      });
+                   }
+                   else
+                   {
+                      Alfresco.util.PopupManager.displayMessage({
+                         text: this.msg("message.formulate.failure")
+                      });
+                   }
                },
                scope: this
             }

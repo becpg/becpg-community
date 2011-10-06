@@ -7,6 +7,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="sec:nodeType" />
+					<show id="sec:nodeAspects" />
 				</field-visibility>
 	<!-- 	Can be used to provide custom types 
 			<appearance>
@@ -45,6 +46,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="sec:nodeType" />
+					<show id="sec:nodeAspects" />
 				</field-visibility>
 			<!-- 	Can be used to provide custom types 
 				<appearance>

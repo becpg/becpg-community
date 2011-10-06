@@ -5,6 +5,8 @@ function main()
    {
       var nodeRef = args.nodeRef;      		
       
+      var isEntity = false;
+      
       // Call the repo to get the document versions
       var result = remote.call("/becpg/document/version-history/node/" + nodeRef.replace(":/", ""));
       
@@ -14,13 +16,19 @@ function main()
       if (result.status == 200)
       {
          versions = eval('(' + result + ')');
+         
    
          var foundCurrent = false;
          var versionGroup = "newerVersion";
          for (var i = 0; i < versions.length; i++)
          {
+	       if(!isEntity){
+	       		isEntity =  versions[i].isEntity;
+	       	}
             versions[i].downloadURL = "/api/node/content/" + versions[i].nodeRef.replace(":/", "") + "/" + versions[i].name + "?a=true";
-            versions[i].compareURL = "/becpg/entity/compare/" + versions[i].name + "?entity1=" + versions[i].nodeRef + "&entity2=" + nodeRef;
+            if(isEntity){
+            	versions[i].compareURL = "/becpg/entity/compare/" + versions[i].name + "?entity1=" + versions[i].nodeRef + "&entity2=" + nodeRef;
+            }
             if (versions[i].nodeRef == nodeRef)
             {
                versionGroup = "currentVersion";
@@ -35,6 +43,7 @@ function main()
       }
       
       // Prepare the model for the template
+      model.isEntity = isEntity;
       model.nodeRef = nodeRef;
       model.filename = versions.length > 0 ? versions[0].name : null;
       model.versions = versions;      
