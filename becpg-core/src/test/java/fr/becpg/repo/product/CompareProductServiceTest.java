@@ -338,7 +338,6 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 
 		for (CompareResultDataItem c : compareResult) {
 
-			logger.debug("###" + c.getProperty() + "-" +  c.getValues());
 			String tempProductList = c.getEntityList() == null ? "" : c
 					.getEntityList().toString();
 			String tempCharacteristic = c.getCharacteristic() == null ? ""

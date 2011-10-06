@@ -120,11 +120,8 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		 * Calculate the costs of the compoList
 		 */
 		
-		logger.debug("###costVisitor : " + formulatedProduct.getCompoList());
-		
 		if(formulatedProduct.getCompoList() != null){						
 		
-			logger.debug("###costVisitor : visitCompoListChildren");
 			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList());		
 			compositeCosts = visitCompoListChildren(formulatedProduct, composite);
 		}
@@ -169,9 +166,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			}
 			else{
 				c.setPercentage(0f);
-			}			
-			
-			logger.debug("###perc: " + c.getPercentage());
+			}						
 		}
 		
 		//sort
@@ -200,8 +195,6 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		
 		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){					
 			
-			logger.debug("###costVisitor: visitCompoListChildren - for");
-			
 			// take in account the loss perc
 			Float lossPerc = component.getData().getLossPerc() != null ? component.getData().getLossPerc() : 0;
 			
@@ -210,8 +203,6 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				// calculate children costs
 				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
 				CompositeCosts childrenCosts =  visitCompoListChildren(formulatedProduct, c);
-				
-				logger.debug("###costVisitor: visitCompoListChildren - childrenCosts.getCostMap().size()" + childrenCosts.getCostMap().size());				
 				
 				/*
 				 *  costs
@@ -277,9 +268,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				CompoListDataItem compoListDataItem = component.getData();
 				Float qty = FormulationHelper.getQty(compoListDataItem);
 				qty = qty * (1 + lossPerc / 100);
-				visitCostLeaf(compoListDataItem.getProduct(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());
-				
-				logger.debug("###visitCostLeaf compositeCosts.getCostMap().size() : " + compositeCosts.getCostMap().size());
+				visitCostLeaf(compoListDataItem.getProduct(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());				
 			}			
 		}	
 		
@@ -301,13 +290,9 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
 		ProductData leafProductData = productDAO.find(leafNodeRef, dataLists);
 		
-		logger.debug("###visitCostLeaf : nodeRef: " + leafNodeRef + " - costList: " + leafProductData.getCostList());
-		
 		if(leafProductData.getCostList() == null){
 			return;
 		}
-		
-		logger.debug("###visitCostLeaf 1");
 		
 		/*
 		 * Costs
@@ -428,9 +413,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				}			
 				newCostDetailsListDataItem.setValue(costDetailsValue);
 			}
-		}
-		
-		logger.debug("###visitCostLeaf costMap.size() : " + costMap.size());
+		}		
 	}
 	
 	/**
