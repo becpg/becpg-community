@@ -1,0 +1,11 @@
+<project default="copy-resources">
+  <target name="init"/>
+  <target name="copy-resources" depends="init">
+    <copy todir="target/classes/alfresco" filtering="false">
+      <fileset dir="src/main/config" includes="" excludes="**README-*|**/*.properties|**/*.java"/>
+    </copy>
+    <copy todir="target/classes/web" filtering="false">
+      <fileset dir="src/main/web" includes="" excludes="**README-*|**/*.java"/>
+    </copy>
+  </target>
+</project>

@@ -9,3 +9,5 @@ syntax: regexp
 ^becpg-olap/conf/becpg$
 syntax: regexp
 ^becpg-olap/sql/crontab$
+syntax: regexp
+^becpg-core/becpg_data$

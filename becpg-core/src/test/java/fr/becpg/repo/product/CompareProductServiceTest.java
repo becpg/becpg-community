@@ -655,7 +655,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"{http://www.bcpg.fr/model/becpg/1.0}costList",
 								"Cost 1",
 								"{http://www.bcpg.fr/model/becpg/1.0}costListValue",
-								"[12.2, 12.4]"));
+								"[12,2, 12,4]"));
 						assertTrue(checkCompareRow(
 								compareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}compoList",
@@ -667,7 +667,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"{http://www.bcpg.fr/model/becpg/1.0}compoList",
 								"Raw material 3",
 								"{http://www.bcpg.fr/model/becpg/1.0}compoListQty",
-								"[3.0, 2.0]"));
+								"[3, 2]"));
 						assertTrue(checkCompareRow(
 								compareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}allergenList",
@@ -691,7 +691,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"{http://www.bcpg.fr/model/becpg/1.0}costList",
 								"Cost 2",
 								"{http://www.bcpg.fr/model/becpg/1.0}costListValue",
-								"[12.2, 12.4]"));
+								"[12,2, 12,4]"));
 						assertTrue(checkCompareRow(
 								compareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}allergenList",
@@ -703,7 +703,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"{http://www.bcpg.fr/model/becpg/1.0}costList",
 								"Cost 7",
 								"{http://www.bcpg.fr/model/becpg/1.0}costListValue",
-								"[12.2, 12.4]"));
+								"[12,2, 12,4]"));
 						assertTrue(checkCompareRow(
 								compareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}allergenList",
@@ -749,7 +749,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"{http://www.bcpg.fr/model/becpg/1.0}compoList",
 								"Raw material 4",
 								"{http://www.bcpg.fr/model/becpg/1.0}compoListQty",
-								"[null, 3.0]"));
+								"[null, 3]"));
 						assertTrue(checkCompareRow(
 								compareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}allergenList",
@@ -761,7 +761,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"{http://www.bcpg.fr/model/becpg/1.0}costList",
 								"Cost 3",
 								"{http://www.bcpg.fr/model/becpg/1.0}costListValue",
-								"[12.2, 12.4]"));
+								"[12,2, 12,4]"));
 						assertTrue(checkCompareRow(
 								compareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}costList",
@@ -779,7 +779,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"{http://www.bcpg.fr/model/becpg/1.0}costList",
 								"Cost 4",
 								"{http://www.bcpg.fr/model/becpg/1.0}costListValue",
-								"[12.2, 12.4]"));
+								"[12,2, 12,4]"));
 						assertTrue(checkCompareRow(
 								compareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}allergenList",
@@ -839,7 +839,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"{http://www.bcpg.fr/model/becpg/1.0}costList",
 								"Cost 8",
 								"{http://www.bcpg.fr/model/becpg/1.0}costListValue",
-								"[12.2, 12.4]"));
+								"[12,2, 12,4]"));
 						assertTrue(checkCompareRow(
 								compareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}allergenList",
@@ -851,7 +851,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"{http://www.bcpg.fr/model/becpg/1.0}costList",
 								"Cost 9",
 								"{http://www.bcpg.fr/model/becpg/1.0}costListValue",
-								"[12.2, 12.4]"));
+								"[12,2, 12,4]"));
 						assertTrue(checkCompareRow(
 								compareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}costList",
@@ -869,7 +869,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"{http://www.bcpg.fr/model/becpg/1.0}costList",
 								"Cost 6",
 								"{http://www.bcpg.fr/model/becpg/1.0}costListValue",
-								"[12.2, 12.4]"));
+								"[12,2, 12,4]"));
 						assertTrue(checkCompareRow(
 								compareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}allergenList",
@@ -899,7 +899,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"{http://www.bcpg.fr/model/becpg/1.0}compoList",
 								"Raw material 1",
 								"{http://www.bcpg.fr/model/becpg/1.0}compoListQty",
-								"[1.0, 2.0]"));
+								"[1, 2]"));
 						assertTrue(checkCompareRow(
 								compareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}allergenList",
@@ -917,13 +917,13 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"{http://www.bcpg.fr/model/becpg/1.0}costList",
 								"Cost 5",
 								"{http://www.bcpg.fr/model/becpg/1.0}costListValue",
-								"[12.2, 12.4]"));
+								"[12,2, 12,4]"));
 						assertTrue(checkCompareRow(
 								compareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}costList",
 								"Cost 0",
 								"{http://www.bcpg.fr/model/becpg/1.0}costListValue",
-								"[12.2, 12.4]"));
+								"[12,2, 12,4]"));
 
 						return null;
 
@@ -1084,8 +1084,8 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								StructCompareOperator.Modified,
 								"Raw material 1",
 								"Raw material 1",
-								"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=1.0}",
-								"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2.0}"));
+								"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=1}",
+								"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2}"));
 						assertTrue(checkStructCompareRow(
 								structCompareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}compoList",
@@ -1099,8 +1099,8 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								StructCompareOperator.Modified,
 								"Raw material 3",
 								"Raw material 3",
-								"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3.0, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}",
-								"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2.0, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=P}"));
+								"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}",
+								"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=P}"));
 						assertTrue(checkStructCompareRow(
 								structCompareResult,
 								"{http://www.bcpg.fr/model/becpg/1.0}compoList",
@@ -1109,7 +1109,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 								"",
 								"Raw material 4",
 								"{}",
-								"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3.0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclGrp=, {http://www.bcpg.fr/model/becpg/1.0}compoListQtyAfterProcess=0.0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 4, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0.0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0.0, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=2, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}"));
+								"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclGrp=, {http://www.bcpg.fr/model/becpg/1.0}compoListQtyAfterProcess=0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 4, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=2, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}"));
 
 						return null;
 

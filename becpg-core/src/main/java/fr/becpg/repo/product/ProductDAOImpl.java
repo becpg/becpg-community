@@ -49,6 +49,7 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
+import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.NullableBoolean;
@@ -69,6 +70,8 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
  * @author querephi
  */
 public class ProductDAOImpl implements ProductDAO{
+	
+	public static final String KEY_COST_DETAILS = "%s-%s";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductDAOImpl.class);
@@ -275,6 +278,9 @@ public class ProductDAOImpl implements ProductDAO{
 	    		else if (dataList.equals(BeCPGModel.TYPE_COSTLIST)) {
 	    			productData.setCostList(loadCostList(listsContainerNodeRef));
 	    		}
+	    		else if (dataList.equals(BeCPGModel.TYPE_COSTDETAILSLIST)) {
+	    			productData.setCostDetailsList(loadCostDetailsList(listsContainerNodeRef));
+	    		}
 	    		else if (dataList.equals(BeCPGModel.TYPE_INGLIST)) {
 	    			productData.setIngList(loadIngList(listsContainerNodeRef));
 	    		}
@@ -435,7 +441,52 @@ public class ProductDAOImpl implements ProductDAO{
     	}
     	
     	return costList;
-    }    
+    }   
+    
+    /**
+     * Load cost details list.
+     *
+     * @param listContainerNodeRef the list container node ref
+     * @return the list
+     */
+    private List<CostDetailsListDataItem> loadCostDetailsList(NodeRef listContainerNodeRef)
+    {
+    	List<CostDetailsListDataItem> costDetailsList = null;
+    	
+    	if(listContainerNodeRef != null)
+    	{    		
+    		NodeRef costDetailsListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTDETAILSLIST);
+    		
+    		if(costDetailsListNodeRef != null)
+    		{
+    			costDetailsList = new ArrayList<CostDetailsListDataItem>();
+				List<FileInfo> nodes = fileFolderService.listFiles(costDetailsListNodeRef);
+	    		
+	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
+		    	{	    			
+	    			FileInfo node = nodes.get(z_idx);
+	    			NodeRef nodeRef = node.getNodeRef();	    					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+		    	
+		    		List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_COSTDETAILSLIST_COST);
+		    		NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
+		    		
+		    		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_COSTDETAILSLIST_SOURCE);
+		    		NodeRef sourceNodeRef = (sourceAssocRefs.get(0)).getTargetRef();
+		    		
+		    		CostDetailsListDataItem costDetailsListDataItem = new CostDetailsListDataItem(nodeRef, 
+		    											(Float)properties.get(BeCPGModel.PROP_COSTDETAILSLIST_VALUE), 
+		    											(String)properties.get(BeCPGModel.PROP_COSTDETAILSLIST_UNIT), 
+		    											(Float)properties.get(BeCPGModel.PROP_COSTDETAILSLIST_PERC),
+		    											costNodeRef, 
+		    											sourceNodeRef);
+		    		costDetailsList.add(costDetailsListDataItem);
+		    	}
+    		}    		
+    	}
+    	
+    	return costDetailsList;
+    }   
     
     /**
      * Load ing list.
@@ -895,6 +946,9 @@ public class ProductDAOImpl implements ProductDAO{
 	    		else if (dataList.equals(BeCPGModel.TYPE_COSTLIST)) {
 	    			createCostList(containerNodeRef, productData.getCostList());
 	    		}
+	    		else if (dataList.equals(BeCPGModel.TYPE_COSTDETAILSLIST)) {
+	    			createCostDetailsList(containerNodeRef, productData.getCostDetailsList());
+	    		}
 	    		else if (dataList.equals(BeCPGModel.TYPE_INGLIST)) {
 	    			createIngList(containerNodeRef, productData.getIngList());
 	    		}
@@ -1294,7 +1348,89 @@ public class ProductDAOImpl implements ProductDAO{
 	    		}
 			}
 		}
-	}   
+	}  
+	
+	/**
+	 * Create/Update costs details.
+	 *
+	 * @param listContainerNodeRef the list container node ref
+	 * @param costList the cost list
+	 * @throws InvalidTypeException the invalid type exception
+	 */
+	private void createCostDetailsList(NodeRef listContainerNodeRef, List<CostDetailsListDataItem> costDetailsList) throws InvalidTypeException
+	{
+		
+		if(listContainerNodeRef != null)
+		{  
+			NodeRef costDetailsListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTDETAILSLIST);
+			
+			if(costDetailsList == null){
+				//delete existing list
+				if(costDetailsListNodeRef != null)
+					nodeService.deleteNode(costDetailsListNodeRef);
+			}
+			else{    			
+	    		//costDetails list, create if needed	    		
+	    		if(costDetailsListNodeRef == null)
+	    		{		    						
+		    		costDetailsListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COSTDETAILSLIST);
+	    		}
+			
+	    		List<FileInfo> files = fileFolderService.listFiles(costDetailsListNodeRef);
+	    		
+	    		//create temp list
+	    		List<String> costDetailsListToTreat = new ArrayList<String>();
+	    		for(CostDetailsListDataItem costDetailsListDataItem : costDetailsList){
+	    			costDetailsListToTreat.add(getCostDetailsKey(costDetailsListDataItem.getCost(), costDetailsListDataItem.getSource()));
+	    		}
+	    		
+	    		//remove deleted nodes
+	    		Map<String, NodeRef> filesToUpdate = new HashMap<String, NodeRef>();
+	    		for(FileInfo file : files){
+	    			
+	    			List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.ASSOC_COSTDETAILSLIST_COST);
+		    		NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
+		    		
+		    		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.ASSOC_COSTDETAILSLIST_SOURCE);
+		    		NodeRef sourceNodeRef = (sourceAssocRefs.get(0)).getTargetRef();
+		    		
+		    		String key = getCostDetailsKey(costNodeRef, sourceNodeRef);
+		    		
+	    			if(!costDetailsListToTreat.contains(key)){
+	    				//delete
+	    				nodeService.deleteNode(file.getNodeRef());
+	    			}
+	    			else{
+	    				filesToUpdate.put(key, file.getNodeRef());
+	    			}
+	    		}
+	    		
+	    		//update or create nodes	    		    			    		
+	    		for(CostDetailsListDataItem costDetailsListDataItem : costDetailsList)
+	    		{    			
+	    			NodeRef costNodeRef = costDetailsListDataItem.getCost();
+	    			NodeRef sourceNodeRef = costDetailsListDataItem.getSource();
+	    			String key = getCostDetailsKey(costNodeRef, sourceNodeRef);
+	    			
+	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		    		properties.put(BeCPGModel.PROP_COSTDETAILSLIST_VALUE, costDetailsListDataItem.getValue());
+		    		properties.put(BeCPGModel.PROP_COSTDETAILSLIST_UNIT, costDetailsListDataItem.getUnit());
+		    		properties.put(BeCPGModel.PROP_COSTDETAILSLIST_PERC, costDetailsListDataItem.getPercentage());
+	
+		    		if(filesToUpdate.containsKey(key)){
+		    			//update
+		    			nodeService.setProperties(filesToUpdate.get(key), properties);		    			
+		    		}
+		    		else{
+		    			//create
+		    			ChildAssociationRef childAssocRef = nodeService.createNode(costDetailsListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, costDetailsListDataItem.getCost().getId()), BeCPGModel.TYPE_COSTDETAILSLIST, properties);	    	
+			    		nodeService.createAssociation(childAssocRef.getChildRef(), costDetailsListDataItem.getCost(), BeCPGModel.ASSOC_COSTDETAILSLIST_COST);
+			    		nodeService.createAssociation(childAssocRef.getChildRef(), costDetailsListDataItem.getSource(), BeCPGModel.ASSOC_COSTDETAILSLIST_SOURCE);
+		    		}			    			    	
+	    		}
+			}
+		}
+	}  
 	
 	/**
 	 * Create/Update ings.
@@ -2088,5 +2224,10 @@ public class ProductDAOImpl implements ProductDAO{
 	    		}	    		 
 			}
 		}
-	}  	
+	}  
+	
+	private String getCostDetailsKey(NodeRef cost, NodeRef source){
+		
+		return String.format(KEY_COST_DETAILS, cost, source);
+	}
 }

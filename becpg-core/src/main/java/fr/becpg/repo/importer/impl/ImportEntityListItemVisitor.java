@@ -125,10 +125,10 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			
 			for(QName qName : classMapping.getDataListColumnKeys()){
 				
-				int z_idx = -1, i = 0;				
-				for(AbstractAttributeMapping a : classMapping.getColumns()){
-					
-					if(qName.equals(a.getAttribute().getName())){
+				int z_idx = -1, i = 0;								
+				for(AbstractAttributeMapping a : importContext.getColumns()){
+
+					if(qName.isMatch(a.getAttribute().getName())){
 						z_idx = i;
 					}
 					i++;

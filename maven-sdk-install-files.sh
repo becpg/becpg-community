@@ -6,7 +6,10 @@ echo "Install alfresco libs"
 
 cd $ALF_SDK/lib/server/
 
+mvn install:install-file -Dfile=dependencies/spring-surf/spring-surf-1.0.0.CI-SNAPSHOT.jar -DgroupId=org.alfresco.sdk -DartifactId=spring-surf-1.0.0.CI-SNAPSHOT -Dversion=3.4 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=dependencies/spring-surf/spring-webscripts-1.0.0.CI-SNAPSHOT-tests.jar -DgroupId=org.alfresco.sdk -DartifactId=spring-webscripts-1.0.0.CI-SNAPSHOT-tests -Dversion=3.4 -Dpackaging=jar  -DgeneratePom=true
+mvn install:install-file -Dfile=dependencies/spring-surf/spring-webscripts-1.0.0.CI-SNAPSHOT.jar -DgroupId=org.alfresco.sdk -DartifactId=spring-webscripts-1.0.0.CI-SNAPSHOT -Dversion=3.4 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=dependencies/spring-surf/spring-webscripts-api-1.0.0.CI-SNAPSHOT.jar -DgroupId=org.alfresco.sdk -DartifactId=spring-webscripts-api-1.0.0.CI-SNAPSHOT -Dversion=3.4 -Dpackaging=jar -DgeneratePom=true
 
 
 cd $SERVER/webapps/alfresco/WEB-INF/lib/

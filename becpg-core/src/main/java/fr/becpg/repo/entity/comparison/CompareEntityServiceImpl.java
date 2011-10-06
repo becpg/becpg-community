@@ -4,10 +4,13 @@
 package fr.becpg.repo.entity.comparison;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,10 +42,7 @@ import fr.becpg.repo.helper.PropertyService;
  *
  * @author querephi
  */
-public class CompareEntityServiceImpl implements CompareEntityService {
-		
-	/** The Constant FORMAT_DECIMAL_VALUE. */
-	private static final String FORMAT_DECIMAL_VALUE = "0.####";			
+public class CompareEntityServiceImpl implements CompareEntityService {		
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);

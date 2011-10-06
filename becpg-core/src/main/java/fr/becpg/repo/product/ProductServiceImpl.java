@@ -241,31 +241,32 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void formulate(NodeRef productNodeRef) throws FormulateException {
     	try {
-			//Load product 
-	    	Collection<QName> dataLists = new ArrayList<QName>();				
-			dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-			dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
-			dataLists.add(BeCPGModel.TYPE_NUTLIST); // TODO keep min/max
-	    	ProductData productData = productDAO.find(productNodeRef, dataLists);     	    
-	    	
-	    	// do the formulation if the product has a composition, or packaging list defined
-	    	if(productData.getCompoList() != null || productData.getPackagingList() != null){
-	    		
-	    		//Call visitors   
-	    		productData = compositionCalculatingVisitor.visit(productData);
-		    	productData = allergensCalculatingVisitor.visit(productData);
-		    	productData = nutsCalculatingVisitor.visit(productData);
-		    	productData = costsCalculatingVisitor.visit(productData);
-		    	productData = ingsCalculatingVisitor.visit(productData);
-		    	    	
-		    	dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-		    	dataLists.add(BeCPGModel.TYPE_NUTLIST);
-		    	dataLists.add(BeCPGModel.TYPE_COSTLIST);
-		    	dataLists.add(BeCPGModel.TYPE_INGLIST);
-		    	dataLists.add(BeCPGModel.TYPE_INGLABELINGLIST);
-		    	dataLists.add(BeCPGModel.TYPE_REQCTRLLIST);
-		    	productDAO.update(productNodeRef, productData, dataLists);
-	    	}    
+    		//Load product 
+        	Collection<QName> dataLists = new ArrayList<QName>();				
+    		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+    		dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+    		dataLists.add(BeCPGModel.TYPE_NUTLIST); // TODO keep min/max
+        	ProductData productData = productDAO.find(productNodeRef, dataLists);     	    
+        	
+        	// do the formulation if the product has a composition, or packaging list defined
+        	if(productData.getCompoList() != null || productData.getPackagingList() != null){
+        		
+        		//Call visitors   
+        		productData = compositionCalculatingVisitor.visit(productData);
+    	    	productData = allergensCalculatingVisitor.visit(productData);
+    	    	productData = nutsCalculatingVisitor.visit(productData);
+    	    	productData = costsCalculatingVisitor.visit(productData);
+    	    	productData = ingsCalculatingVisitor.visit(productData);
+    	    	    	
+    	    	dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
+    	    	dataLists.add(BeCPGModel.TYPE_NUTLIST);
+    	    	dataLists.add(BeCPGModel.TYPE_COSTLIST);
+    	    	dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
+    	    	dataLists.add(BeCPGModel.TYPE_INGLIST);
+    	    	dataLists.add(BeCPGModel.TYPE_INGLABELINGLIST);
+    	    	dataLists.add(BeCPGModel.TYPE_REQCTRLLIST);
+    	    	productDAO.update(productNodeRef, productData, dataLists);
+        	}    	    	    
     	} catch (Exception e) {
 			if(e instanceof FormulateException){
 				throw (FormulateException)e;
@@ -358,6 +359,8 @@ public class ProductServiceImpl implements ProductService {
 		
 		if(destionationNodeRef != null){
 			
+			logger.debug("classify product in destination folder: " + destionationNodeRef);
+			
 			//Product has a product folder ? yes, we move the product folder - no, we move the product
 			NodeRef nodeRefToMove = productNodeRef;
 			NodeRef parentProductNodeRef = nodeService.getPrimaryParent(productNodeRef).getParentRef();
@@ -404,7 +407,7 @@ public class ProductServiceImpl implements ProductService {
 				}
 			}
 			
-			logger.debug(String.format("Classify product '%s' in folder '%s' ", name, nodeService.getPath(destionationNodeRef)));
+			logger.debug(String.format("Classify product '%s' in folder '%s' ", name, destionationNodeRef));
 
 			try{
 				nodeRefToMove = fileFolderService.move(nodeRefToMove, destionationNodeRef, name).getNodeRef();

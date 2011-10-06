@@ -24,6 +24,8 @@ import fr.becpg.common.RepoConsts;
  */
 public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 
+	private final int SIZE_UNLIMITED = -1;
+	
 	private SearchService searchService;
 	private SearchService unProtSearchService;
 
@@ -75,12 +77,12 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	 */
 	@Override
 	public List<NodeRef> unProtLuceneSearch(String runnedQuery) {
-		return unProtLuceneSearch(runnedQuery, null);
+		return unProtLuceneSearch(runnedQuery, null, SIZE_UNLIMITED);
 	}
 
 	@Override
-	public List<NodeRef> unProtLuceneSearch(String runnedQuery, String[] sort) {
-
+	public List<NodeRef> unProtLuceneSearch(String runnedQuery, String[] sort, int searchLimit) {
+		List<NodeRef> nodes = new LinkedList<NodeRef>();
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -90,19 +92,25 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		sp.addStore(RepoConsts.SPACES_STORE);
 		sp.setLanguage(SearchService.LANGUAGE_LUCENE);
 		sp.setQuery(runnedQuery);
-		sp.setLimitBy(LimitBy.UNLIMITED);
+		
+		if(searchLimit == SIZE_UNLIMITED){
+			sp.setLimitBy(LimitBy.UNLIMITED);
+		}
+		else{
+			sp.setLimit(searchLimit);
+			sp.setLimitBy(LimitBy.FINAL_SIZE);
+		}
+		
 		sp.excludeDataInTheCurrentTransaction(false);
 		if (sort != null) {
 			for (String sortParam : sort) {
 				sp.addSort(sortParam, true);
 			}
-		} else {
-			sp.addSort(SearchParameters.SORT_IN_DOCUMENT_ORDER_DESCENDING);
-		}
+		} 
 		ResultSet result = unProtSearchService.query(sp);
 		try {
 			if (result != null) {
-				return new LinkedList<NodeRef>(result.getNodeRefs());
+				nodes =  new LinkedList<NodeRef>(result.getNodeRefs());
 			}
 		} finally {
 			if (result != null) {
@@ -111,14 +119,17 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 			if (logger.isDebugEnabled()) {
 				watch.stop();
 				logger.debug(runnedQuery + " executed in  "
-						+ watch.getTotalTimeSeconds() + " seconds");
+						+ watch.getTotalTimeSeconds() + " seconds - size results "
+						+ nodes.size());
 			}
 		}
-		return new LinkedList<NodeRef>();
+		return nodes;
 	}
 
 	@Override
 	public List<NodeRef> suggestSearch(String runnedQuery, String[] sort, Locale locale) {
+		
+		List<NodeRef> nodes = new LinkedList<NodeRef>();
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -146,7 +157,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		ResultSet result = searchService.query(sp);
 		try {
 			if (result != null) {
-				return new LinkedList<NodeRef>(result.getNodeRefs());
+				nodes = new LinkedList<NodeRef>(result.getNodeRefs());
 			}
 		} finally {
 			if (logger.isDebugEnabled()) {
@@ -166,7 +177,8 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 			
 			
 		}
-		return new LinkedList<NodeRef>();
+		
+		return nodes;
 	}
 
 }

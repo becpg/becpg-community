@@ -28,7 +28,7 @@ import fr.becpg.repo.entity.AutoNumService;
  */
 public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 			
-	private static final String QUERY_NODE_BY_CODE = " +TYPE:\"%s\" +@bcpg\\:code:%s ";
+	private static final String QUERY_NODE_BY_CODE = " +TYPE:\"%s\" +@bcpg\\:code:\"%s\" ";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CodePolicy.class);
@@ -103,7 +103,7 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 								
 
 		// check code is already taken. If yes : this object is a copy of an existing node
-		Long code = (Long)nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
+		String code = (String)nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
 		boolean generateCode = true;
 		QName typeQName = nodeService.getType(nodeRef);
 		
@@ -112,7 +112,7 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 			typeQName = BeCPGModel.TYPE_PRODUCT;
 		}		
 		
-		if(code != null){
+		if(code != null && !code.isEmpty()){
 			
 									
 			SearchParameters sp = new SearchParameters();
@@ -138,12 +138,13 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 		// generate a new code
 		if(generateCode){
 					
-			code = autoNumService.getAutoNumValue(typeQName, BeCPGModel.PROP_CODE);
-			nodeService.setProperty(nodeRef, BeCPGModel.PROP_CODE, code);
+			Long c = autoNumService.getAutoNumValue(typeQName, BeCPGModel.PROP_CODE);
+			nodeService.setProperty(nodeRef, BeCPGModel.PROP_CODE, c.toString());
 		}
 		else{
 			// store autoNum in db
-			autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, code);
+			Long c = Long.parseLong(code);
+			autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, c);
 		}		
 	}	
 }

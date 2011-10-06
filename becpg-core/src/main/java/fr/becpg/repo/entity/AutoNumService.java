@@ -20,16 +20,16 @@ public interface AutoNumService {
 	 * @param propertyName the property name
 	 * @return the auto num value
 	 */
-	public long getAutoNumValue(QName className, QName propertyName);
+	public Long getAutoNumValue(QName className, QName propertyName);
 	
 	/**
 	 * Decrease auto num value.
 	 *
 	 * @param className the class name
 	 * @param propertyName the property name
-	 * @return the long
+	 * @return the Long
 	 */
-	public long decreaseAutoNumValue(QName className, QName propertyName);
+	public Long decreaseAutoNumValue(QName className, QName propertyName);
 	
 	/**
 	 * Creates the or update auto num value.
@@ -38,7 +38,7 @@ public interface AutoNumService {
 	 * @param propertyName the property name
 	 * @param value the value
 	 */
-	public void createOrUpdateAutoNumValue(QName className, QName propertyName, long value);
+	public void createOrUpdateAutoNumValue(QName className, QName propertyName, Long value);
 	
 	/**
 	 * Delete auto num value.

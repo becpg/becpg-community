@@ -37,7 +37,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 	private static final String NAME = "%s - %s";
 	
 	/** The Constant DEFAULT_AUTO_NUM. */
-	private static final long DEFAULT_AUTO_NUM = 1;
+	private static final Long DEFAULT_AUTO_NUM = 1l;
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AutoNumServiceImpl.class);
@@ -98,16 +98,16 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 * @return the auto num value
 	 */	
 	@Override
-	public long getAutoNumValue(QName className, QName propertyName) {
+	public Long getAutoNumValue(QName className, QName propertyName) {
 		
-		long autoNumValue = DEFAULT_AUTO_NUM;
+		Long autoNumValue = DEFAULT_AUTO_NUM;
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
 		
         // get value store in db
         if(autoNumNodeRef != null){
         	Long v = (Long)nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
         	if(v != null){
-        		autoNumValue = v.longValue();
+        		autoNumValue = v;
         		autoNumValue++;
         	}        	
         	
@@ -127,19 +127,19 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 *
 	 * @param className the class name
 	 * @param propertyName the property name
-	 * @return the long
+	 * @return the Long
 	 */
 	@Override
-	public long decreaseAutoNumValue(QName className, QName propertyName) {
+	public Long decreaseAutoNumValue(QName className, QName propertyName) {
 		
-		long autoNumValue = DEFAULT_AUTO_NUM;
+		Long autoNumValue = DEFAULT_AUTO_NUM;
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
 		
 		// get value store in db
         if(autoNumNodeRef != null){
         	Long v = (Long)nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
         	if(v != null){
-        		autoNumValue = v.longValue();
+        		autoNumValue = v;
         		autoNumValue--;
         	}        	
         	
@@ -159,7 +159,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 */
 	@Override
 	public void createOrUpdateAutoNumValue(QName className, QName propertyName,
-			long autoNumValue) {
+			Long autoNumValue) {
 		
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
 		
@@ -194,7 +194,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 * @param autoNumValue the auto num value
 	 * @return the node ref
 	 */
-	private NodeRef createAutoNum(QName className, QName propertyName, long autoNumValue) {
+	private NodeRef createAutoNum(QName className, QName propertyName, Long autoNumValue) {
 		
 		NodeRef systemNodeRef = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
     	NodeRef autoNumFolderNodeRef = repoService.createFolderByPath(systemNodeRef, RepoConsts.PATH_AUTO_NUM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_AUTO_NUM));

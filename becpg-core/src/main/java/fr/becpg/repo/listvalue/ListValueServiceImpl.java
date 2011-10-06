@@ -225,10 +225,9 @@ public class ListValueServiceImpl implements ListValueService {
 		
     	String queryPath = String.format(RepoConsts.QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
 					
-		logger.debug(queryPath);
+		List<NodeRef> nodes = beCPGSearchService.unProtLuceneSearch(queryPath, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 		
-		List<NodeRef> nodes = beCPGSearchService.unProtLuceneSearch(queryPath);
-		if(nodes.size()>0){
+		if(nodes.size()>0){			
 			return nodes.get(0);
 		}
 		
@@ -363,9 +362,8 @@ public class ListValueServiceImpl implements ListValueService {
     	if(nodeRefs!=null){
     		for(NodeRef nodeRef : nodeRefs){
     			
-   	                String name = (String)nodeService.getProperty(nodeRef, propName);
-   	                suggestions.put(nodeRef.toString(), name);
-   
+    			String name = (String)nodeService.getProperty(nodeRef, propName);
+                suggestions.put(nodeRef.toString(), name); 			
     		}
     	}
 		return suggestions;

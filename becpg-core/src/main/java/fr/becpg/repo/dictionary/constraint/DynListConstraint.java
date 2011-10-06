@@ -162,14 +162,14 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		            	String encodedPath = encodePath(path);    			
 		        		
 		        		String queryPath = String.format(RepoConsts.PATH_QUERY_LIST_CONSTRAINTS, encodedPath, constraintType);
-		        		//logger.debug("queryPath : " + queryPath);
+		        		logger.debug("queryPath : " + queryPath);
 		        		ResultSet resultSet = null;
 		        		
 		        		try{
 		        			resultSet = serviceRegistry.getSearchService().query(RepoConsts.SPACES_STORE, 
 		        						SearchService.LANGUAGE_LUCENE, queryPath);
 		        	        
-		        			//logger.debug("resultSet.length() : " + resultSet.length());
+		        			logger.debug("resultSet.length() : " + resultSet.length());
 		        			
 		        	        if (resultSet.length() != 0)
 		        	        {

@@ -5,7 +5,6 @@ package fr.becpg.repo.product.data.productList.sort;
 
 import java.util.Comparator;
 
-// TODO: Auto-generated Javadoc
 /**
  * Sort items by name.
  *

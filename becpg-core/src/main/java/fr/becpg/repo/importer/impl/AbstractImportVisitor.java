@@ -35,6 +35,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchParameters;
+import org.alfresco.service.cmr.search.SearchParameters.Operator;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -127,11 +128,13 @@ public class AbstractImportVisitor  implements ImportVisitor {
 	protected static final String MSG_ERROR_LOAD_FILE = "import_service.error.err_load_file";
 	protected static final String MSG_ERROR_FILE_NOT_FOUND = "import_service.error.err_file_not_found";
 	protected static final String MSG_ERROR_MAPPING_ATTR_FAILED = "import_service.error.err_mapping_attr_failed";
+	protected static final String MSG_ERROR_GET_OR_CREATE_NODEREF = "import_service.error.err_get_or_create_noderef";
 	protected static final String MSG_ERROR_GET_NODEREF_CHARACT = "import_service.error.err_get_noderef_charact";
 	protected static final String MSG_ERROR_UNDEFINED_CHARACT = "import_service.error.err_undefined_charact";
 	protected static final String MSG_ERROR_COLUMNS_DO_NOT_RESPECT_MAPPING = "import_service.error.err_columns_do_not_respect_mapping";
 	protected static final String MSG_ERROR_TARGET_ASSOC_NOT_FOUND = "import_service.error.err_target_assoc_not_found";
 	protected static final String MSG_ERROR_TARGET_ASSOC_SEVERAL = "import_service.error.err_target_assoc_several";
+	protected static final String MSG_ERROR_GET_ASSOC_TARGET = "import_service.error.err_get_assoc_target";	
 		
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AbstractImportVisitor.class);
@@ -255,32 +258,36 @@ public class AbstractImportVisitor  implements ImportVisitor {
 		// import properties		
 		Map<QName, Serializable> properties = getNodePropertiesToImport(importContext, values); 				 		
 		 
-		 NodeRef nodeRef = findNode(importContext, importContext.getType(), properties);		 
+		NodeRef nodeRef = findNode(importContext, importContext.getType(), properties);		 
 		 
-		 if(nodeRef == null){
+		if(nodeRef == null){
 			 
-			 logger.debug("create node. Properties: " + properties);
-			 nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), importContext.getType(), properties).getChildRef();			 
-		 }
-		 else if(importContext.isDoUpdate()){
+			logger.debug("create node. Type: " + importContext.getType() + " - Properties: " + properties);
+			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), importContext.getType(), properties).getChildRef();			 
+		}
+		else if(importContext.isDoUpdate()){
 			 
-			 logger.debug("update node. Properties: " + properties);
-			 nodeService.setType(nodeRef, importContext.getType());
+			logger.debug("update node. Properties: " + properties);
+			nodeService.setType(nodeRef, importContext.getType());
 			 
-			 for(Map.Entry<QName, Serializable> entry : properties.entrySet()){
-				 nodeService.setProperty(nodeRef, entry.getKey(), entry.getValue()); 
-			 }			 
-		 }
-		 else{
-			 logger.info("Update mode is not enabled so no update is done.");
-		 }
+			for(Map.Entry<QName, Serializable> entry : properties.entrySet()){
+				nodeService.setProperty(nodeRef, entry.getKey(), entry.getValue()); 
+			}			
+		}
+		else{
+			logger.info("Update mode is not enabled so no update is done.");
+		}
 		 
 		// import associations	
+		logger.debug("Import Assocs");
 	 	importAssociations(importContext, values, nodeRef);
 	 	
 	 	// import files
+	 	logger.debug("Import Files");
 	 	importFiles(importContext, values, nodeRef);
-		 
+	 	
+	 	logger.debug("Node Imported");
+	 	
 	 	return nodeRef;
 	}
 	
@@ -336,9 +343,14 @@ public class AbstractImportVisitor  implements ImportVisitor {
 					 AssociationDefinition assocDef = (AssociationDefinition)column; 					
 					 String value = values.get(z_idx);					
 					 
-					 List<NodeRef> targetRefs = findTargetNodesByValue(importContext, assocDef, value);
+					 List<NodeRef> targetRefs = findTargetNodesByValue(importContext, assocDef, value);		
 					 
-					// remove associations if needed
+					 // mandatory target not found
+					 if(assocDef.isTargetMandatory() && targetRefs.isEmpty()){						 
+						 throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
+					 }
+					 
+					 // remove associations if needed
 					 List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
 					 for(AssociationRef assocRef : assocRefs){
 						 NodeRef targetRef = assocRef.getTargetRef();
@@ -351,8 +363,9 @@ public class AbstractImportVisitor  implements ImportVisitor {
 					 }
 					 
 					 // add new associations, the rest
-					 for(NodeRef targetRef : targetRefs)
+					 for(NodeRef targetRef : targetRefs){
 						 nodeService.createAssociation(nodeRef, targetRef, assocDef.getName());
+					 }						 
 				 }					 
 			 } 
 		 }	
@@ -719,13 +732,20 @@ public class AbstractImportVisitor  implements ImportVisitor {
 		
 		if(nodeRef == null){			
 			
-			// look in import folder
-			nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));
+			String name = (String)properties.get(ContentModel.PROP_NAME);
+			if(name != null && name != ""){
 			
-			// entityFolder => look for node
-			if(nodeRef != null && nodeService.getType(nodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)){
-				nodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));
+				// look in import folder
+				nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);
+				
+				// entityFolder => look for node
+				if(nodeRef != null && nodeService.getType(nodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)){
+					nodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, name);
+				}
 			}
+			else{
+				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_OR_CREATE_NODEREF));
+			}			
 		}
 				
 		return nodeRef;	
@@ -748,7 +768,7 @@ public class AbstractImportVisitor  implements ImportVisitor {
 				
 		ClassMapping classMapping = importContext.getClassMappings().get(type);	
 		String queryPath = String.format(QUERY_NODE_BY_TYPE, type);
-		boolean doQuery = false;		
+		boolean doQuery = false;					
 		
 		// nodeColumnKeys
 		if(classMapping != null && classMapping.getNodeColumnKeys().size() > 0){					
@@ -816,8 +836,7 @@ public class AbstractImportVisitor  implements ImportVisitor {
 	 */
 	protected List<NodeRef> findTargetNodesByValue(ImportContext importContext, AssociationDefinition assocDef, String value) throws ImporterException{
 		
-		List<NodeRef> targetRefs = new ArrayList<NodeRef>();
-		 logger.debug("assoc, name: " + assocDef.getName() + "value: " + value);
+		List<NodeRef> targetRefs = new ArrayList<NodeRef>();		 
 		 
 		 if(!value.isEmpty()){						 						 						
 			 
@@ -841,6 +860,7 @@ public class AbstractImportVisitor  implements ImportVisitor {
 			 }						 						 												 
 		 }
 		 
+		 logger.debug("assoc, name: " + assocDef.getName() + " - value: " + value + "- targetRefs: " + targetRefs);
 		 return targetRefs;
 	}
 	
@@ -925,7 +945,8 @@ public class AbstractImportVisitor  implements ImportVisitor {
 				//sp.addLocale(repoConfig.getSystemLocale());
 		        sp.addStore(RepoConsts.SPACES_STORE);
 		        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-		        sp.setQuery(queryPath.toString());	        
+		        sp.setQuery(queryPath.toString());	   
+		        sp.setDefaultOperator(Operator.AND);
 		        sp.setLimitBy(LimitBy.FINAL_SIZE);
 		        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 		        
@@ -948,9 +969,10 @@ public class AbstractImportVisitor  implements ImportVisitor {
 			        else if(resultSet.length() == 1){
 			        	nodeRef = resultSet.getNodeRef(0); 
 			        }
-			        else{			        	
-			        	boolean found = false;
+			        else{			        				        	
 			        	if(searchByName){
+			        		boolean found = false;
+			        		
 			        		for(NodeRef n : resultSet.getNodeRefs()){
 			        			if(value.equals(nodeService.getProperty(n, ContentModel.PROP_NAME))){
 			        				
@@ -971,17 +993,19 @@ public class AbstractImportVisitor  implements ImportVisitor {
 			        				}
 			        			}
 			        		}
-			        	}
-			        	else{
 			        		
-			        		String typeTitle = type.toString();
-    			        	TypeDefinition typeDef = dictionaryService.getType(type);
-    			        	if(typeDef != null && typeDef.getTitle() != null && !typeDef.getTitle().isEmpty()){
-    			        		typeTitle = typeDef.getTitle();
-    			        	}
-			        		
-			        		throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_TARGET_ASSOC_SEVERAL, typeTitle, value));
-			        	}
+			        		// not found
+				        	if(!found){
+				        		
+				        		String typeTitle = type.toString();
+	    			        	TypeDefinition typeDef = dictionaryService.getType(type);
+	    			        	if(typeDef != null && typeDef.getTitle() != null && !typeDef.getTitle().isEmpty()){
+	    			        		typeTitle = typeDef.getTitle();
+	    			        	}
+				        		
+				        		throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));
+				        	}
+			        	}			        				        	
 			        }
 		        }
 		        finally{

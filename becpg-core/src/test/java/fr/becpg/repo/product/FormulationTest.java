@@ -44,6 +44,7 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
+import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
@@ -2066,6 +2067,227 @@ public class FormulationTest extends RepoBaseTestCase {
 					
 				assertEquals(4, checks);
 				
+				return null;
+
+			}},false,true);
+		   
+	   }
+	
+	/**
+	 * Test formulate product and check cost details
+	 *
+	 * @throws Exception the exception
+	 */
+	public void testCalculateCostDetails() throws Exception{
+		   
+	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			public NodeRef execute() throws Throwable {					   							
+					
+				Collection<QName> dataLists = productDictionaryService.getDataLists();
+				
+				/*
+				 * Prepare packaging 
+				 */
+				
+				/*-- Packaging material 1 --*/					
+				PackagingMaterialData packagingMaterial1 = new PackagingMaterialData();
+				packagingMaterial1.setName("Packaging material 1");
+				packagingMaterial1.setLegalName("Legal Packaging material 1");
+				//costList
+				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, 3f, "€/P", pkgCost1));
+				costList.add(new CostListDataItem(null, 2f, "€/P", pkgCost2));
+				packagingMaterial1.setCostList(costList);					
+				packagingMaterial1NodeRef = productDAO.create(folderNodeRef, packagingMaterial1, dataLists);
+				
+				/*-- Packaging material 2 --*/					
+				PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
+				packagingMaterial2.setName("Packaging material 2");
+				packagingMaterial2.setLegalName("Legal Packaging material 2");
+				//costList
+				costList.clear();
+				costList.add(new CostListDataItem(null, 1f, "€/m", pkgCost1));
+				costList.add(new CostListDataItem(null, 2f, "€/m", pkgCost2));
+				packagingMaterial2.setCostList(costList);					
+				packagingMaterial2NodeRef = productDAO.create(folderNodeRef, packagingMaterial2, dataLists);
+				
+				/*-- Packaging material 1 --*/					
+				PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
+				packagingMaterial3.setName("Packaging material 3");
+				packagingMaterial3.setLegalName("Legal Packaging material 3");
+				//costList
+				costList.clear();
+				costList.add(new CostListDataItem(null, 1f, "€/P", pkgCost1));
+				costList.add(new CostListDataItem(null, 2f, "€/P", pkgCost2));
+				packagingMaterial3.setCostList(costList);					
+				packagingMaterial3NodeRef = productDAO.create(folderNodeRef, packagingMaterial3, dataLists);
+				
+				FinishedProductData finishedProduct = new FinishedProductData();
+				finishedProduct.setName("Produit fini 1");
+				finishedProduct.setLegalName("Legal Produit fini 1");
+				finishedProduct.setUnit(ProductUnit.kg);
+				finishedProduct.setQty(2f);
+				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
+				packagingList.add(new PackagingListDataItem(null, 1f, PackagingListUnit.P, PACKAGING_PRIMAIRE, packagingMaterial1NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 3f, PackagingListUnit.m, PACKAGING_PRIMAIRE, packagingMaterial2NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 8f, PackagingListUnit.PP, PACKAGING_TERTIAIRE, packagingMaterial3NodeRef));
+				finishedProduct.setPackagingList(packagingList);		
+				
+				
+				/*
+				 * Composition
+				 */
+				
+				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 10f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1f, 0f, 0f, CompoListUnit.kg, 5f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 10f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 20f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				finishedProduct.setCompoList(compoList);
+				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+				
+				/*-- Formulate product --*/
+				logger.debug("/*-- Formulate product --*/");
+				productService.formulate(finishedProductNodeRef);
+				
+				/*-- Verify formulation --*/
+				logger.debug("/*-- Verify formulation --*/");
+				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+				
+				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
+				
+				//costs
+				int checks = 0;
+				DecimalFormat df = new DecimalFormat("0.####");
+				assertNotNull("CostDetailsList is null", formulatedProduct.getCostDetailsList());
+				for(CostDetailsListDataItem costDetailsListDataItem : formulatedProduct.getCostDetailsList()){
+					String trace = "cost: " + nodeService.getProperty(costDetailsListDataItem.getCost(), ContentModel.PROP_NAME) + "source: " + nodeService.getProperty(costDetailsListDataItem.getSource(), ContentModel.PROP_NAME) + " - value: " + costDetailsListDataItem.getValue() + " - unit: " + costDetailsListDataItem.getUnit();
+					logger.debug(trace);
+					
+					//cost1
+					if(costDetailsListDataItem.getCost().equals(cost1)){
+						
+						if(costDetailsListDataItem.getSource().equals(rawMaterial1NodeRef)){
+						
+							checks++;
+							assertEquals("cost.getValue() == 1.7325, actual values: " + trace, df.format(1.7325f), df.format(costDetailsListDataItem.getValue()));
+							assertEquals("cost.getPercentage() == 36.5314, actual values: " + trace, df.format(36.5314), df.format(costDetailsListDataItem.getPercentage()));
+							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
+						}
+						else if(costDetailsListDataItem.getSource().equals(rawMaterial2NodeRef)){
+							
+							checks++;
+							assertEquals("cost.getValue() == 1.21, actual values: " + trace, df.format(1.21f), df.format(costDetailsListDataItem.getValue()));
+							assertEquals("cost.getPercentage() == 25.5140, actual values: " + trace, df.format(25.5140), df.format(costDetailsListDataItem.getPercentage()));
+							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
+						}
+						else if(costDetailsListDataItem.getSource().equals(rawMaterial3NodeRef)){
+							
+							checks++;
+							assertEquals("cost.getValue() == 1.8, actual values: " + trace, df.format(1.8f), df.format(costDetailsListDataItem.getValue()));
+							assertEquals("cost.getPercentage() == 37.9547, actual values: " + trace, df.format(37.9547), df.format(costDetailsListDataItem.getPercentage()));
+							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
+						}	
+						else{
+							checks++;
+						}
+					}
+					
+					//cost2
+					else if(costDetailsListDataItem.getCost().equals(cost2)){
+						
+						if(costDetailsListDataItem.getSource().equals(rawMaterial1NodeRef)){
+						
+							checks++;
+							assertEquals("cost.getValue() == 1.155, actual values: " + trace, df.format(1.155f), df.format(costDetailsListDataItem.getValue()));
+							assertEquals("cost.getPercentage() == 16.0976, actual values: " + trace, df.format(16.0976), df.format(costDetailsListDataItem.getPercentage()));
+							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
+						}
+						else if(costDetailsListDataItem.getSource().equals(rawMaterial2NodeRef)){
+							
+							checks++;
+							assertEquals("cost.getValue() == 2.42, actual values: " + trace, df.format(2.42f), df.format(costDetailsListDataItem.getValue()));
+							assertEquals("cost.getPercentage() == 33.7282, actual values: " + trace, df.format(33.7282), df.format(costDetailsListDataItem.getPercentage()));
+							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
+						}
+						else if(costDetailsListDataItem.getSource().equals(rawMaterial3NodeRef)){
+							
+							checks++;
+							assertEquals("cost.getValue() == 3.6, actual values: " + trace, df.format(3.6f), df.format(costDetailsListDataItem.getValue()));
+							assertEquals("cost.getPercentage() == 50.1742, actual values: " + trace, df.format(50.1742), df.format(costDetailsListDataItem.getPercentage()));
+							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
+						}	
+						else{
+							checks++;
+						}
+					}
+					
+					//pkgCost1
+					else if(costDetailsListDataItem.getCost().equals(pkgCost1)){
+						
+						if(costDetailsListDataItem.getSource().equals(packagingMaterial1NodeRef)){
+							
+							checks++;
+							assertEquals("cost.getValue() == 1.5, actual values: " + trace, df.format(1.5f), df.format(costDetailsListDataItem.getValue()));
+							assertEquals("cost.getPercentage() == 48.9796, actual values: " + trace, df.format(48.9796), df.format(costDetailsListDataItem.getPercentage()));
+							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
+						}						
+						else if(costDetailsListDataItem.getSource().equals(packagingMaterial2NodeRef)){
+							
+							checks++;
+							assertEquals("cost.getValue() == 1.5, actual values: " + trace, df.format(1.5f), df.format(costDetailsListDataItem.getValue()));
+							assertEquals("cost.getPercentage() == 48.9796, actual values: " + trace, df.format(48.9796), df.format(costDetailsListDataItem.getPercentage()));
+							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
+						}						
+						else if(costDetailsListDataItem.getSource().equals(packagingMaterial3NodeRef)){
+							
+							checks++;
+							assertEquals("cost.getValue() == 0.0625, actual values: " + trace, df.format(0.0625f), df.format(costDetailsListDataItem.getValue()));
+							assertEquals("cost.getPercentage() == 2.0408, actual values: " + trace, df.format(2.0408), df.format(costDetailsListDataItem.getPercentage()));
+							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
+						}
+						else{
+							checks++;
+						}
+					}		
+					
+					//pkgCost2
+					else if(costDetailsListDataItem.getCost().equals(pkgCost2)){
+						
+						if(costDetailsListDataItem.getSource().equals(packagingMaterial1NodeRef)){
+							
+							checks++;
+							assertEquals("cost.getValue() == 1, actual values: " + trace, df.format(1f), df.format(costDetailsListDataItem.getValue()));
+							assertEquals("cost.getPercentage() == 24.2424, actual values: " + trace, df.format(24.2424), df.format(costDetailsListDataItem.getPercentage()));
+							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
+						}
+						else if(costDetailsListDataItem.getSource().equals(packagingMaterial2NodeRef)){
+							
+							checks++;
+							assertEquals("cost.getValue() == 3, actual values: " + trace, df.format(3f), df.format(costDetailsListDataItem.getValue()));
+							assertEquals("cost.getPercentage() == 72.7273, actual values: " + trace, df.format(72.7273), df.format(costDetailsListDataItem.getPercentage()));
+							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
+						}						
+						else if(costDetailsListDataItem.getSource().equals(packagingMaterial3NodeRef)){
+							
+							checks++;
+							assertEquals("cost.getValue() == 0.125, actual values: " + trace, df.format(0.125f), df.format(costDetailsListDataItem.getValue()));
+							assertEquals("cost.getPercentage() == 3.0303, actual values: " + trace, df.format(3.0303), df.format(costDetailsListDataItem.getPercentage()));
+							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
+						}
+						else{
+							checks++;
+						}
+					}
+					else{
+						checks++;
+					}
+				}
+				
+				assertEquals("Verify checks done", 12, checks);
+								
 				return null;
 
 			}},false,true);

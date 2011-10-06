@@ -118,14 +118,14 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 				properties.put(ContentModel.PROP_NAME, name);
 				NodeRef supplier1NodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();								
 				assertNotNull("Check supplier created", supplier1NodeRef);				
-				long code1 = (Long)nodeService.getProperty(supplier1NodeRef, BeCPGModel.PROP_CODE);
+				String code1 = (String)nodeService.getProperty(supplier1NodeRef, BeCPGModel.PROP_CODE);
 				
 				properties.clear();
 				name = "Supplier 2";
 				properties.put(ContentModel.PROP_NAME, name);
 				NodeRef supplier2NodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();								
 				assertNotNull("Check supplier created", supplier2NodeRef);				
-				long code2 = (Long)nodeService.getProperty(supplier2NodeRef, BeCPGModel.PROP_CODE);
+				String code2 = (String)nodeService.getProperty(supplier2NodeRef, BeCPGModel.PROP_CODE);
 				
 				// auto num defined not taken
 				properties.clear();
@@ -134,7 +134,7 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 				properties.put(BeCPGModel.PROP_CODE, 3);
 				NodeRef supplier3NodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();								
 				assertNotNull("Check supplier created", supplier3NodeRef);				
-				long code3 = (Long)nodeService.getProperty(supplier3NodeRef, BeCPGModel.PROP_CODE);
+				String code3 = (String)nodeService.getProperty(supplier3NodeRef, BeCPGModel.PROP_CODE);
 				
 				// auto num defined but already taken
 				properties.clear();
@@ -143,12 +143,12 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 				properties.put(BeCPGModel.PROP_CODE, 3);
 				NodeRef supplier4NodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();								
 				assertNotNull("Check supplier created", supplier4NodeRef);				
-				long code4 = (Long)nodeService.getProperty(supplier4NodeRef, BeCPGModel.PROP_CODE);				
+				String code4 = (String)nodeService.getProperty(supplier4NodeRef, BeCPGModel.PROP_CODE);				
 				
-				assertEquals("Check code 1", 1, code1);
-				assertEquals("Check code 2", 2, code2);
-				assertEquals("Check code 3", 3, code3);
-				assertEquals("Check code 4", 4, code4);
+				assertEquals("Check code 1", "1", code1);
+				assertEquals("Check code 2", "2", code2);
+				assertEquals("Check code 3", "3", code3);
+				assertEquals("Check code 4", "4", code4);
 								
 				return null;
 				

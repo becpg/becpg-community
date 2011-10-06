@@ -251,11 +251,9 @@
 				<list>
 					<value>System/ProductHierarchy/RawMaterial_Hierarchy1</value>
 					<value>System/ProductHierarchy/PackagingMaterial_Hierarchy1</value>
-					<value>System/ProductHierarchy/SemiFinishedProduct_Hierarchy1
-					</value>
+					<value>System/ProductHierarchy/SemiFinishedProduct_Hierarchy1</value>
 					<value>System/ProductHierarchy/FinishedProduct_Hierarchy1</value>
-					<value>System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy1
-					</value>
+					<value>System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy1</value>
 					<value>System/ProductHierarchy/PackagingKit_Hierarchy1</value>
 					<value>System/ProductHierarchy/CondSalesUnit_Hierarchy1</value>
 				</list>
@@ -273,11 +271,9 @@
 				<list>
 					<value>System/ProductHierarchy/RawMaterial_Hierarchy2</value>
 					<value>System/ProductHierarchy/PackagingMaterial_Hierarchy2</value>
-					<value>System/ProductHierarchy/SemiFinishedProduct_Hierarchy2
-					</value>
+					<value>System/ProductHierarchy/SemiFinishedProduct_Hierarchy2</value>
 					<value>System/ProductHierarchy/FinishedProduct_Hierarchy2</value>
-					<value>System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy2
-					</value>
+					<value>System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy2</value>
 					<value>System/ProductHierarchy/PackagingKit_Hierarchy2</value>
 					<value>System/ProductHierarchy/CondSalesUnit_Hierarchy2</value>
 				</list>
@@ -776,6 +772,51 @@
 					</source>
 					<target>
 						<class>bcpg:cost</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>
+		
+		<type name="bcpg:costDetailsList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:costDetailsListValue">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>				
+				<property name="bcpg:costDetailsListUnit">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:costListUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:costDetailsListPerc">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:costDetailsListCost">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:cost</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:costDetailsListSource">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:content</class>
 						<mandatory>true</mandatory>
 						<many>false</many>
 					</target>
@@ -1292,7 +1333,7 @@
 		<aspect name="bcpg:codeAspect">
 			<properties>
 				<property name="bcpg:code">
-					<type>d:long</type>
+					<type>d:text</type>
 					<mandatory>false</mandatory>
 				</property>
 			</properties>
