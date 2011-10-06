@@ -2413,6 +2413,73 @@
 			</form>
 		</forms>
 	</config>
+	
+	<!-- bcpg:costDetailsList type -->
+	<config evaluator="model-type" condition="bcpg:costDetailsList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:costDetailsListCost" />
+					<show id="bcpg:costDetailsListSource" />
+					<show id="bcpg:costDetailsListValue" />					
+					<show id="bcpg:costDetailsListUnit" />
+					<show id="bcpg:costDetailsListPerc" />
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:costDetailsListCost">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+				<appearance>
+					<field id="bcpg:costDetailsListSource">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:costDetailsListCost" />
+					<show id="bcpg:costDetailsListSource" />
+					<show id="bcpg:costDetailsListValue" />					
+					<show id="bcpg:costDetailsListUnit" />
+					<show id="bcpg:costDetailsListPerc" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:costDetailsList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:costDetailsList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:costDetailsListCost" />
+					<show id="bcpg:costDetailsListSource" />
+					<show id="bcpg:costDetailsListValue" />					
+					<show id="bcpg:costDetailsListUnit" />
+					<show id="bcpg:costDetailsListPerc" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="bcpg:costDetailsListCost">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+				<appearance>
+					<field id="bcpg:costDetailsListSource">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
 
 	<!-- bcpg:ingLabelingList type -->
 	<config evaluator="model-type" condition="bcpg:ingLabelingList">
