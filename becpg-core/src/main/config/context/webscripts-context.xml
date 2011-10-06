@@ -79,6 +79,7 @@
    		<property name="nodeService" ref="nodeService" />
    		<property name="versionService" ref="versionService" />
    		<property name="personService" ref="personService" />
+   		<property name="dictionaryService" ref="dictionaryService"/>
    	</bean>
    	
    	<!-- Compare entities -->

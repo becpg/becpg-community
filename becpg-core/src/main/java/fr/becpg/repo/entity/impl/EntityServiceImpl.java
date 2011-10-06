@@ -21,6 +21,8 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.ibm.icu.util.Calendar;
+
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -280,6 +282,15 @@ public class EntityServiceImpl implements EntityService {
 		}			
 		
 		return imageNodeRef;
+	}
+
+	@Override
+	public void initializeEntity(NodeRef entityNodeRef) {
+		logger.debug("initialyze entity");
+		if(entityNodeRef!=null && nodeService.exists(entityNodeRef)){
+			nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
+		}
+		
 	}
 	
 

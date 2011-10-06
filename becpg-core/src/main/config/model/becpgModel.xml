@@ -14,8 +14,7 @@
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.alfresco.org/model/datalist/1.0"
 			prefix="dl" />
-		<import uri="http://www.bcpg.fr/model/report/1.0"
-			prefix="rep" />
+		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
 	</imports>
 	<!-- Introduction of new namespaces defined by this model -->
 	<namespaces>
@@ -160,9 +159,9 @@
 			</parameter>
 		</constraint>
 		<!--<constraint name="bcpg:declGrp" type="fr.becpg.repo.dictionary.constraint.DynListConstraint"> 
-			<parameter name="path"><value>System/Lists/DeclarationGrp</value></parameter> <parameter 
-			name="constraintType"><value>bcpg:listValue</value></parameter> <parameter 
-			name="constraintProp"><value>cm:name</value></parameter> </constraint> -->
+			<parameter name="path"><value>System/Lists/DeclarationGrp</value></parameter> 
+			<parameter name="constraintType"><value>bcpg:listValue</value></parameter> 
+			<parameter name="constraintProp"><value>cm:name</value></parameter> </constraint> -->
 		<constraint name="bcpg:declGrp" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -294,17 +293,9 @@
 			<parameter name="path"> <list> <value>System/Plants</value> </list> </parameter> 
 			<parameter name="constraintType"> <value>bcpg:plant</value> </parameter> 
 			<parameter name="constraintProp"> <value>cm:name</value> </parameter> </constraint> -->
-		<!-- <constraint name="bcpg:plant" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value>Formulation</value>
-					<value>Site A</value>
-					<value>Site B</value>
-					<value>Site C</value>
-					<value></value>
-				</list>
-			</parameter>
-		</constraint>-->
+		<!-- <constraint name="bcpg:plant" type="LIST"> <parameter name="allowedValues"> 
+			<list> <value>Formulation</value> <value>Site A</value> <value>Site B</value> 
+			<value>Site C</value> <value></value> </list> </parameter> </constraint> -->
 		<constraint name="bcpg:packagingListUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -333,7 +324,7 @@
 					<value>Info</value>
 				</list>
 			</parameter>
-		</constraint>	
+		</constraint>
 		<constraint name="bcpg:nullableBoolean" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -342,30 +333,30 @@
 					<value>Faux</value>
 				</list>
 			</parameter>
-		</constraint>					
+		</constraint>
 	</constraints>
 
 	<types>
 		<!-- _________________________________________________ PRODUCTS________________________________________________ -->
-		
+
 		<type name="bcpg:productSpecification">
 			<parent>bcpg:entity</parent>
-			<mandatory-aspects>				
+			<mandatory-aspects>
 			</mandatory-aspects>
 		</type>
-		
+
 		<type name="bcpg:productMicrobioCriteria">
 			<parent>bcpg:entity</parent>
 			<properties>
 				<property name="bcpg:pmcRegulation">
-					<type>d:text</type>					
+					<type>d:text</type>
 				</property>
 				<property name="bcpg:pmcConcernedProducts">
-					<type>d:text</type>					
+					<type>d:text</type>
 				</property>
 			</properties>
 			<mandatory-aspects>
-				<aspect>bcpg:codeAspect</aspect>				
+				<aspect>bcpg:codeAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -374,7 +365,7 @@
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:productAspect</aspect>
-				<aspect>bcpg:entityListsAspect</aspect>								
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:condSalesUnit">
@@ -391,8 +382,8 @@
 			<mandatory-aspects>
 				<aspect>bcpg:eanAspect</aspect>
 				<aspect>bcpg:transformationAspect</aspect>
-				<aspect>bcpg:clientsAspect</aspect>		
-				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>		
+				<aspect>bcpg:clientsAspect</aspect>
+				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:semiFinishedProduct">
@@ -427,12 +418,12 @@
 		</type>
 		<!-- ________________________________________________________________ CARACTERISTIQUES 
 			________________________________________________________________ -->
-		
-		
+
+
 		<type name="bcpg:charact">
 			<parent>cm:content</parent>
 		</type>
-		
+
 		<type name="bcpg:allergen">
 			<parent>bcpg:charact</parent>
 			<properties>
@@ -479,7 +470,7 @@
 		</type>
 
 		<type name="bcpg:microbio">
-			<parent>bcpg:charact</parent>			
+			<parent>bcpg:charact</parent>
 		</type>
 
 		<type name="bcpg:nut">
@@ -525,17 +516,17 @@
 				</property>
 			</properties>
 		</type>
-		
+
 		<type name="bcpg:geoOrigin">
 			<parent>bcpg:charact</parent>
 			<properties>
-				<property name="bcpg:geoOriginISOCode">					
+				<property name="bcpg:geoOriginISOCode">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 				</property>
 			</properties>
 		</type>
-		
+
 		<type name="bcpg:bioOrigin">
 			<parent>bcpg:charact</parent>
 			<properties>
@@ -598,7 +589,7 @@
 				</property>
 				<property name="bcpg:compoListQtySubFormula">
 					<type>d:float</type>
-					<mandatory>false</mandatory>
+					<mandatory>true</mandatory>
 				</property>
 				<property name="bcpg:compoListQtyAfterProcess">
 					<type>d:float</type>
@@ -627,14 +618,9 @@
 						<constraint ref="bcpg:declarationTypes" />
 					</constraints>
 				</property>
-				<!-- <property name="bcpg:compoListPlants">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<multiple>true</multiple>
-					<constraints>
-						<constraint ref="bcpg:plant" />
-					</constraints>
-				</property>-->
+				<!-- <property name="bcpg:compoListPlants"> <type>d:text</type> <mandatory>false</mandatory> 
+					<multiple>true</multiple> <constraints> <constraint ref="bcpg:plant" /> </constraints> 
+					</property> -->
 			</properties>
 			<associations>
 				<!-- assoc used to store the direct father node (multi-leve recipe)l -->
@@ -666,7 +652,7 @@
 				<aspect>bcpg:depthLevelAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
+
 		<!-- _______________________________________ PACKAGING ________________________________________________ -->
 		<type name="bcpg:packagingList">
 			<parent>bcpg:productListItem</parent>
@@ -674,22 +660,22 @@
 				<property name="bcpg:packagingListQty">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
-				</property>				
+				</property>
 				<property name="bcpg:packagingListUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<constraints>
 						<constraint ref="bcpg:packagingListUnit" />
 					</constraints>
-				</property>				
+				</property>
 				<property name="bcpg:packagingListPkgLevel">
 					<type>d:text</type>
 					<constraints>
 						<constraint ref="bcpg:packagingLevel" />
 					</constraints>
-				</property>				
+				</property>
 			</properties>
-			<associations>				
+			<associations>
 				<association name="bcpg:packagingListProduct">
 					<source>
 						<mandatory>false</mandatory>
@@ -710,7 +696,7 @@
 		<type name="bcpg:entityListItem">
 			<parent>dl:dataListItem</parent>
 		</type>
-		
+
 		<type name="bcpg:productListItem">
 			<parent>bcpg:entityListItem</parent>
 		</type>
@@ -726,14 +712,9 @@
 					<type>d:boolean</type>
 					<default>false</default>
 				</property>
-				<!-- <property name="bcpg:allergenListPlants">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<multiple>true</multiple>
-					<constraints>
-						<constraint ref="bcpg:plant" />
-					</constraints>
-				</property> -->
+				<!-- <property name="bcpg:allergenListPlants"> <type>d:text</type> <mandatory>false</mandatory> 
+					<multiple>true</multiple> <constraints> <constraint ref="bcpg:plant" /> </constraints> 
+					</property> -->
 			</properties>
 			<associations>
 				<association name="bcpg:allergenListAllergen">
@@ -832,7 +813,7 @@
 				<property name="bcpg:ingListIsIonized">
 					<type>d:boolean</type>
 					<default>false</default>
-				</property>				
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:ingListIng">
@@ -1019,7 +1000,7 @@
 				</association>
 			</associations>
 		</type>
-		
+
 		<!-- List used to specify what is forbidden -->
 		<type name="bcpg:forbiddenIngList">
 			<parent>bcpg:productListItem</parent>
@@ -1087,10 +1068,10 @@
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
-				</association>				
+				</association>
 			</associations>
 		</type>
-		
+
 		<!-- List used to display the result of the requirement controls -->
 		<type name="bcpg:reqCtrlList">
 			<parent>bcpg:productListItem</parent>
@@ -1118,7 +1099,7 @@
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
-				</association>					
+				</association>
 			</associations>
 		</type>
 		<!-- ________________________________________________________________ AUTO 
@@ -1142,12 +1123,19 @@
 
 		<type name="bcpg:entityFolder">
 			<parent>cm:folder</parent>
-			<properties>
-			</properties>
 		</type>
-		
+
 		<type name="bcpg:entity">
 			<parent>cm:content</parent>
+			<properties>
+				<property name="bcpg:startEffectivity">
+					<type>d:datetime</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="bcpg:endEffectivity">
+					<type>d:datetime</type>
+				</property>
+			</properties>
 		</type>
 
 		<type name="bcpg:autoNum">
@@ -1164,7 +1152,7 @@
 				</property>
 			</properties>
 		</type>
-				
+
 	</types>
 	<!-- __________________________________________ ASPECTS _________________________________________ -->
 
@@ -1206,7 +1194,7 @@
 						<constraint ref="bcpg:productUnit" />
 					</constraints>
 				</property>
-			</properties>			
+			</properties>
 		</aspect>
 
 		<aspect name="bcpg:transformationAspect">
@@ -1214,7 +1202,7 @@
 				<property name="bcpg:productQty">
 					<type>d:float</type>
 					<mandatory>true</mandatory>
-				</property>				
+				</property>
 				<property name="bcpg:productDensity">
 					<type>d:float</type>
 					<mandatory>true</mandatory>
@@ -1259,7 +1247,7 @@
 				</association>
 			</associations>
 		</aspect>
-		
+
 		<aspect name="bcpg:clientsAspect">
 			<associations>
 				<association name="bcpg:clients">
@@ -1275,7 +1263,7 @@
 				</association>
 			</associations>
 		</aspect>
-		
+
 		<aspect name="bcpg:productMicrobioCriteriaAspect">
 			<associations>
 				<association name="bcpg:productMicrobioCriteria">
@@ -1290,7 +1278,7 @@
 					</target>
 				</association>
 			</associations>
-		</aspect>		
+		</aspect>
 
 		<aspect name="bcpg:depthLevelAspect">
 			<properties>
@@ -1310,19 +1298,20 @@
 			</properties>
 		</aspect>
 
-		<!-- Aspect used to store the entity type of the template (entityFolderTpl, entityTpl, etc...) -->
+		<!-- Aspect used to store the entity type of the template (entityFolderTpl, 
+			entityTpl, etc...) -->
 		<aspect name="bcpg:entityTplAspect">
 			<properties>
 				<property name="bcpg:entityTplClassName">
-					<type>d:qname</type>					
+					<type>d:qname</type>
 				</property>
 				<property name="bcpg:entityTplEnabled">
 					<type>d:boolean</type>
-					<default>true</default>					
-				</property>				
+					<default>true</default>
+				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:entityListsAspect">
 			<associations>
 				<child-association name="bcpg:entityLists">

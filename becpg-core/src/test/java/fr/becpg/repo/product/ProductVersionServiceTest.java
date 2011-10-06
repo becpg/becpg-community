@@ -16,7 +16,6 @@ import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionService;
@@ -29,8 +28,6 @@ import org.springframework.context.ApplicationContext;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.test.RepoBaseTestCase;
@@ -143,18 +140,18 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 								
 				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");
 				
-				NodeRef vRawMaterialNodeRefV1_0 = entityVersionService.createVersion(rawMaterialNodeRef, null);
+				NodeRef vRawMaterialNodeRefV1_1 = entityVersionService.createVersion(rawMaterialNodeRef, null);
 				
-				String versionLabel = (String)nodeService.getProperty(vRawMaterialNodeRefV1_0, BeCPGModel.PROP_VERSION_LABEL);
+				String versionLabel = (String)nodeService.getProperty(vRawMaterialNodeRefV1_1, BeCPGModel.PROP_VERSION_LABEL);
 				logger.debug("version: " + versionLabel);
-				assertEquals("1.0", versionLabel);
+				assertEquals("1.1", versionLabel);
 				
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
 				assertNotNull("Has list container", listContainerNodeRef);
 				
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
 				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);				
-				ProductData vRawMaterial = productDAO.find(vRawMaterialNodeRefV1_0, dataLists);
+				ProductData vRawMaterial = productDAO.find(vRawMaterialNodeRefV1_1, dataLists);
 				
 				assertEquals("Check costs size", rawMaterial.getCostList().size(), vRawMaterial.getCostList().size());
 				
@@ -168,10 +165,10 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 					assertNotSame("Check cost noderef", costListDataItem.getNodeRef(), vCostListDataItem.getNodeRef());
 				}
 				
-				NodeRef vRawMaterialNodeRefV1_1 = entityVersionService.createVersion(rawMaterialNodeRef, null);
-				String versionLabel1_1 = (String)nodeService.getProperty(vRawMaterialNodeRefV1_1, BeCPGModel.PROP_VERSION_LABEL);
-				logger.debug("version: " + versionLabel1_1);
-				assertEquals("1.1", versionLabel1_1);
+				NodeRef vRawMaterialNodeRefV1_2 = entityVersionService.createVersion(rawMaterialNodeRef, null);
+				String versionLabel1_2 = (String)nodeService.getProperty(vRawMaterialNodeRefV1_2, BeCPGModel.PROP_VERSION_LABEL);
+				logger.debug("version: " + versionLabel1_2);
+				assertEquals("1.2", versionLabel1_2);
 				
 				Map<String, Serializable> properties = new HashMap<String, Serializable>();
 				properties.put(ContentModel.PROP_VERSION_LABEL.toPrefixString(), "1.4");
@@ -287,7 +284,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
 				ProductData newRawMaterial = productDAO.find(newRawMaterialNodeRef, dataLists);
-				assertEquals("Check version", "1.0", newRawMaterial.getVersionLabel());
+				assertEquals("Check version", "1.1", newRawMaterial.getVersionLabel());
 				assertEquals("Check density", newDensity, newRawMaterial.getDensity());
 				
 				// Check productCode
@@ -381,17 +378,17 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				
 				String versionLabel = (String)nodeService.getProperty(vRawMaterialNodeRef, BeCPGModel.PROP_VERSION_LABEL);
 				logger.debug("version: " + versionLabel);
-				assertEquals("1.0", versionLabel);
+				assertEquals("1.1", versionLabel);
 							
-				NodeRef vRawMaterialNodeRefV1_1 = entityVersionService.createVersion(rawMaterialNodeRef, null);
-				String versionLabel1_1 = (String)nodeService.getProperty(vRawMaterialNodeRefV1_1, BeCPGModel.PROP_VERSION_LABEL);
-				logger.debug("version: " + versionLabel1_1);
-				assertEquals("1.1", versionLabel1_1);
+				NodeRef vRawMaterialNodeRefV1_2 = entityVersionService.createVersion(rawMaterialNodeRef, null);
+				String versionLabel1_2 = (String)nodeService.getProperty(vRawMaterialNodeRefV1_2, BeCPGModel.PROP_VERSION_LABEL);
+				logger.debug("version: " + versionLabel1_2);
+				assertEquals("1.2", versionLabel1_2);
 				
 				List<NodeRef> versionHistory = entityVersionService.getVersionHistory(rawMaterialNodeRef);
-				assertEquals("Should have 2 versions", 2, versionHistory.size());
-				assertEquals("Check 2st version", vRawMaterialNodeRef, versionHistory.get(0));
-				assertEquals("Check 3st version", vRawMaterialNodeRefV1_1, versionHistory.get(1));
+				assertEquals("Should have 2 versions", 3, versionHistory.size());
+				assertEquals("Check 2st version", vRawMaterialNodeRef, versionHistory.get(1));
+				assertEquals("Check 3st version", vRawMaterialNodeRefV1_2, versionHistory.get(2));
 				
 				return null;
 				

@@ -31,6 +31,14 @@ public interface EntityService {
 	 * @return the  image
 	 */
 	public NodeRef getImage(NodeRef nodeRef, String imgName);
+
+	
+	/**
+	 * Initialyze default param on 
+	 * 
+	 * @param entityNodeRef
+	 */
+	public void initializeEntity(NodeRef entityNodeRef);
 	
     
 }

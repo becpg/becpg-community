@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import org.alfresco.repo.search.MLAnalysisMode;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.PermissionEvaluationMode;
@@ -14,7 +13,6 @@ import org.alfresco.service.cmr.search.SearchParameters.Operator;
 import org.alfresco.service.cmr.search.SearchService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.expression.Operation;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.common.RepoConsts;
@@ -93,7 +91,6 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		sp.setLanguage(SearchService.LANGUAGE_LUCENE);
 		sp.setQuery(runnedQuery);
 		sp.setLimitBy(LimitBy.UNLIMITED);
-		sp.setMlAnalaysisMode(MLAnalysisMode.ALL_ONLY);
 		sp.excludeDataInTheCurrentTransaction(false);
 		if (sort != null) {
 			for (String sortParam : sort) {

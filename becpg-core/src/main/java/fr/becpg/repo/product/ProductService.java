@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.NodeVisitor;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.formulation.FormulateException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -24,7 +25,7 @@ public interface ProductService {
      *
      * @param productNodeRef the product node ref
      */
-    public void formulate(NodeRef productNodeRef);
+    public void formulate(NodeRef productNodeRef) throws FormulateException;
     
     /**
 	 * Check if the system should generate the report for this product

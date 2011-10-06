@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.version.Version2Model;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
@@ -50,6 +51,8 @@ public class VersionHistoryWebScript extends DeclarativeWebScript  {
 	/** The Constant MODEL_KEY_NAME_VERSIONS. */
 	private static final String MODEL_KEY_NAME_VERSIONS = "versions";
 	
+	private static final String MODEL_KEY_NAME_IS_ENTITY = "isEntity";
+	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(VersionHistoryWebScript.class);		
 	
@@ -64,6 +67,9 @@ public class VersionHistoryWebScript extends DeclarativeWebScript  {
 	
 	/** The person service. */
 	private PersonService personService;
+	
+
+	private DictionaryService dictionaryService;
 	
 	/**
 	 * Sets the entity version service.
@@ -101,6 +107,13 @@ public class VersionHistoryWebScript extends DeclarativeWebScript  {
 		this.personService = personService;
 	}
 	
+	
+	
+	
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+
 	/**
 	 * Get entity version history.
 	 *
@@ -121,8 +134,9 @@ public class VersionHistoryWebScript extends DeclarativeWebScript  {
 		NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);		
 		List<VersionData> sortedVersionHistory = null;
 		
+		Boolean isEntity = dictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY);
 		// entity
-		if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_PRODUCT)){			
+		if(isEntity){			
 			
 			List<VersionData> versionHistory = entityVersionService.getVersionHistoryWithProperties(nodeRef);
 			int cnt = versionHistory.size();
@@ -150,7 +164,7 @@ public class VersionHistoryWebScript extends DeclarativeWebScript  {
 																						version.getFrozenModifiedDate(),
 																						(String)personProperties.get(ContentModel.PROP_USERNAME),
 																						(String)personProperties.get(ContentModel.PROP_FIRSTNAME),
-																						(String)personProperties.get(ContentModel.PROP_LASTNAME));
+																						(String)personProperties.get(ContentModel.PROP_LASTNAME),null,null);
 																						
 					sortedVersionHistory.add(versionData);
 				}			
@@ -159,6 +173,7 @@ public class VersionHistoryWebScript extends DeclarativeWebScript  {
 				
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(MODEL_KEY_NAME_VERSIONS, sortedVersionHistory);
+		model.put(MODEL_KEY_NAME_IS_ENTITY, isEntity);
 		
 		return model;
 	}		

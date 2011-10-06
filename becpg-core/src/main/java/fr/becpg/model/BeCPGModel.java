@@ -595,5 +595,18 @@ public interface BeCPGModel {
 	 * Email import user template Name
 	 */
 	
-	public static final String EMAIL_NEW_USER_TEMPLATE = "importuser-email.ftl";		
+	public static final String EMAIL_NEW_USER_TEMPLATE = "importuser-email.ftl";
+
+	/**
+	 * ISO charset
+	 */
+	public static final String ISO_CHARSET = "ISO-8859-15";
+
+	
+	/**
+	 * Effectivity
+	 */
+	public static final QName PROP_START_EFFECTIVITY = QName.createQName(BECPG_URI, "startEffectivity");		
+	
+	public static final QName PROP_END_EFFECTIVITY = QName.createQName(BECPG_URI, "endEffectivity");	
 }

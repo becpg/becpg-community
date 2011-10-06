@@ -27,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityListDAO;
 
 // TODO: Auto-generated Javadoc
@@ -202,6 +201,7 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
             {
             	// disable policy to avoid the creation of a new code
         		policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_CODE);
+        		policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY);
         		NodeRef workingCopy = null;
         		
         		try{
@@ -215,6 +215,7 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
 	            }
 				finally{
 					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_CODE);
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITY);
 				}
                 
                 return workingCopy;

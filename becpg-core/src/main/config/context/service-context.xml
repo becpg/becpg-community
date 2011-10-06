@@ -246,7 +246,7 @@
 		<property name="searchService" ref="searchService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
-	<bean id="entityFolderPolicy" class="fr.becpg.repo.entity.policy.EntityFolderPolicy" init-method="init">
+	<bean id="entityPolicy" class="fr.becpg.repo.entity.policy.EntityPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="entityService" ref="entityService" />		
 	</bean>

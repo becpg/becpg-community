@@ -3,38 +3,26 @@
  */
 package fr.becpg.repo.entity.policy;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
-import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.QualityModel;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.product.ProductService;
 
 /**
  * The Class EntityFolderPolicy.
  *
  * @author querephi
  */
-public class EntityFolderPolicy implements NodeServicePolicies.OnCreateNodePolicy {	
+public class EntityPolicy implements NodeServicePolicies.OnCreateNodePolicy {	
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(EntityFolderPolicy.class);
+	private static Log logger = LogFactory.getLog(EntityPolicy.class);
 	
 	/** The policy component. */
 	private PolicyComponent policyComponent;		
@@ -58,7 +46,7 @@ public class EntityFolderPolicy implements NodeServicePolicies.OnCreateNodePolic
 	 * Inits the.
 	 */
 	public void init(){
-		logger.debug("Init EntityFolderPolicy...");
+		logger.debug("Init EntityPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "onCreateNode"));
 	}
 
@@ -70,7 +58,9 @@ public class EntityFolderPolicy implements NodeServicePolicies.OnCreateNodePolic
 		
 		NodeRef entityNodeRef = childAssocRef.getChildRef();
 		
+		entityService.initializeEntity(entityNodeRef);
 		entityService.initializeEntityFolder(entityNodeRef);
+	
 	}
 	
 }

@@ -145,7 +145,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Reading Import File");
 			}
-			Charset charset = ImportHelper.guestCharset(is);
+			Charset charset = ImportHelper.guestCharset(is,reader.getEncoding());
 			if(logger.isDebugEnabled()){
 				logger.debug("reader.getEncoding() : " + reader.getEncoding());
 				logger.debug("finder.getEncoding() : " + charset );

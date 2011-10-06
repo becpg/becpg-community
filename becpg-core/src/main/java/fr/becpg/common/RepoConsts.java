@@ -56,6 +56,7 @@ public class RepoConsts {
 	public static final String PATH_IMPORT_SUCCEEDED = "ImportSucceeded";
 	public static final String PATH_IMPORT_FAILED = "ImportFailed";		
 	public static final String PATH_IMPORT_USER = "ImportUser";
+	public static final String PATH_IMPORT_SAMPLES = "ImportSamples";
 	public static final String PATH_MAPPING = "Mapping";
 	//Quality
 	public static final String PATH_QUALITY = "Quality";
@@ -148,6 +149,7 @@ public class RepoConsts {
 	public static final String PERMISSION_EDITOR = "Editor";
 	public static final String PERMISSION_CONTRIBUTOR = "Contributor";
 	public static final String PERMISSION_COLLABORATOR = "Collaborator";
+	
 	
 
 
