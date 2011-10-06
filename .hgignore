@@ -5,3 +5,5 @@ common.sh
 
 syntax: regexp
 ^becpg-core/alf_data$
+syntax: regexp
+^becpg-core/becpg_data$
