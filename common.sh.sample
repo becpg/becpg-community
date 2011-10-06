@@ -1,6 +1,14 @@
 #!/bin/sh
 
 
+################
+# Environnement
+################
+
+export BECPG_ROOT=`pwd`
+export BOOTSTRAP_HOME=$BECPG_ROOT/becpg-bootstrap
+
+
 export ALF=/opt/alfresco-3.4.d
 export ALF_SDK=/opt/alfresco-3.4.d/sdk
 export AMPS=/opt/alfresco-3.4.d/amps
@@ -11,5 +19,19 @@ export BECPG_SHARE=becpg-share-0.1.3.amp
 export BECPG_JAR=becpg-core-0.1.3.jar
 export BECPG_CONFIG_JAR=becpg-config.jar
 export TARGET_FOLDER=target/becpg-core-0.1.3
-export BOOTSTRAP_HOME=`pwd`/becpg-bootstrap
+
 export MVN_PROFILE=
+
+
+#####################################
+# Paramètres de configuration OLAP
+#####################################
+
+export BECPG_OLAP_ROOT=$BECPG_ROOT/becpg-olap
+
+# Mysql
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_SCHEMA=becpg
+MYSQL_USER=becpg
+MYSQL_PWD=becpg
