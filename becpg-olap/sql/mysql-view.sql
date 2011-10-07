@@ -145,8 +145,8 @@ select node.id, name.string_value ,productHierarchy1.string_value,productHierarc
  from alf_node node
  left outer join alf_node_assoc assoc__ on assoc__.source_node_id = node.id
  left outer join becpg_alf_prop name on (assoc__.target_node_id = name.node_id and name.local_name = 'name')
- left outer join becpg_alf_prop productHierarchy1 on (assoc__.target_node_id = name.node_id and name.local_name = 'productHierarchy1')
- left outer join becpg_alf_prop productHierarchy2 on (assoc__.target_node_id = name.node_id and name.local_name = 'productHierarchy2')
+ left outer join becpg_alf_prop productHierarchy1 on (assoc__.target_node_id = productHierarchy1.node_id and productHierarchy1.local_name = 'productHierarchy1')
+ left outer join becpg_alf_prop productHierarchy2 on (assoc__.target_node_id = productHierarchy2.node_id and productHierarchy2.local_name = 'productHierarchy2')
  inner join alf_qname assoc_qname on (assoc_qname.id =  assoc__.type_qname_id)
  inner join alf_child_assoc entityListAssoc on (node.id = entityListAssoc.child_node_id)
  inner join alf_child_assoc entityAssoc  on (entityListAssoc.parent_node_id = entityAssoc.child_node_id)
@@ -167,8 +167,8 @@ select node.id, name.string_value ,productHierarchy1.string_value,productHierarc
  from alf_node node
  left outer join alf_node_assoc assoc__ on assoc__.source_node_id = node.id
  left outer join becpg_alf_prop name on (assoc__.target_node_id = name.node_id and name.local_name = 'name')
- left outer join becpg_alf_prop productHierarchy1 on (assoc__.target_node_id = name.node_id and name.local_name = 'productHierarchy1')
- left outer join becpg_alf_prop productHierarchy2 on (assoc__.target_node_id = name.node_id and name.local_name = 'productHierarchy2')
+ left outer join becpg_alf_prop productHierarchy1 on (assoc__.target_node_id = productHierarchy1.node_id and productHierarchy1.local_name = 'productHierarchy1')
+ left outer join becpg_alf_prop productHierarchy2 on (assoc__.target_node_id = productHierarchy2.node_id and productHierarchy2.local_name = 'productHierarchy2')
  inner join alf_qname assoc_qname on (assoc_qname.id =  assoc__.type_qname_id)
  inner join alf_child_assoc entityListAssoc on (node.id = entityListAssoc.child_node_id)
  inner join alf_child_assoc entityAssoc  on (entityListAssoc.parent_node_id = entityAssoc.child_node_id)

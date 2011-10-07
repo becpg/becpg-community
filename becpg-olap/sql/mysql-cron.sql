@@ -77,8 +77,8 @@ insert into becpg_cost(cost_fact_id,
  				cost_value,
  				cost_startEffectivity_id,
  				cost_endEffectivity_id,
- 				cost_source_id,
- 				cost_assoc_id
+ 				cost_assoc_id,
+ 				cost_source_id
  				)
  select node.id, name.string_value, costListValue.float_value,entity.product_startEffectivity_id, entity.product_endEffectivity_id ,  parentAssoc.parent_node_id, assoc_source.target_node_id
  from alf_node node
