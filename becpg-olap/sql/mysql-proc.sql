@@ -127,3 +127,22 @@ DROP TABLE IF EXISTS `becpg_product`;
   ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
   
+
+ DROP TABLE IF EXISTS `becpg_cost`;
+
+ CREATE TABLE `becpg_cost` (
+  `cost_fact_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `cost_startEffectivity_id` int(8) NOT NULL,
+  `cost_endEffectivity_id` int(8) DEFAULT NULL,
+  `cost_value` FLOAT NOT NULL,
+  `cost_name` TEXT NOT NULL,
+  `cost_source_id` BIGINT(20) ,
+  `cost_assoc_id` BIGINT(20) ,
+  PRIMARY KEY (`cost_fact_id`)
+  ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+ 
+  
+  
+
+  
+  

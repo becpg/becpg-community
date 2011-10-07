@@ -59,6 +59,45 @@ select node.id, code.long_value, name.string_value  , legalName.string_value, pr
  inner join alf_store node_store on (node.store_id = node_store.id)
  where node_store.identifier = 'SpacesStore' and node_store.protocol='workspace'
  order by code.long_value, name.string_value;
+
+ 
  
 update  becpg_product set product_startEffectivity_id=20010101 where  product_startEffectivity_id is null or product_startEffectivity_id=0;
 update  becpg_product set product_endEffectivity_id=20300101 where  product_endEffectivity_id is null;
+ 
+--
+-- Populate cost fact table;
+--
+ 
+delete from becpg_cost;
+
+
+insert into becpg_cost(cost_fact_id, 
+ 				cost_name,
+ 				cost_value,
+ 				cost_startEffectivity_id,
+ 				cost_endEffectivity_id,
+ 				cost_source_id,
+ 				cost_assoc_id
+ 				)
+ select node.id, name.string_value, costListValue.float_value,entity.product_startEffectivity_id, entity.product_endEffectivity_id ,  parentAssoc.parent_node_id, assoc_source.target_node_id
+ from alf_node node
+ inner join alf_node_assoc assoc__ on assoc__.source_node_id = node.id  and assoc__.type_qname_id in (select id from alf_qname  where local_name = 'costDetailsListCost') 
+ inner join becpg_alf_prop name on (assoc__.target_node_id = name.node_id and name.local_name = 'name')
+ inner join alf_node_assoc assoc_source on assoc_source.source_node_id = node.id and assoc_source.type_qname_id in (select id from alf_qname  where local_name = 'costDetailsListCost') 
+ inner join becpg_alf_prop costListValue on (node.id = costListValue.node_id and costListValue.local_name = 'costDetailsListValue')
+ inner join alf_qname node_qname on (node.type_qname_id= node_qname.id)
+ inner join alf_store node_store on (node.store_id = node_store.id)
+ inner join alf_child_assoc entityListAssoc on (node.id = entityListAssoc.child_node_id)
+ inner join alf_child_assoc entityAssoc  on (entityListAssoc.parent_node_id = entityAssoc.child_node_id)
+ inner join alf_child_assoc parentAssoc on (parentAssoc.child_node_id = entityAssoc.parent_node_id) 
+ inner join alf_qname qnameParentAssoc on (parentAssoc.type_qname_id = qnameParentAssoc.id)
+ inner join becpg_product entity on (entity.product_fact_id = parentAssoc.parent_node_id)
+  where node_qname.local_name = 'costDetailsList' and node_store.identifier = 'SpacesStore' and node_store.protocol='workspace'
+  	and qnameParentAssoc.local_name = 'entityLists';
+
+ 
+ 
+
+
+

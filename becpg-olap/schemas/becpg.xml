@@ -1,4 +1,3 @@
-<?xml version = "1.0" encoding="UTF-8"?>
 <Schema name="beCPG OLAP Schema">
   <Dimension type="TimeDimension" highCardinality="false" name="Time dimension">
     <Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date">
@@ -32,7 +31,133 @@
       </Level>
     </Hierarchy>
   </Dimension>
-  <Cube name="Produits" cache="false" enabled="true">
+  <Cube name="Analyse des co&#251;ts" description="Analyse des co&#251;ts" cache="true" enabled="true">
+    <Table name="becpg_cost">
+    </Table>
+    <Dimension type="TimeDimension" foreignKey="cost_startEffectivity_id" highCardinality="false" name="D&#233;but d&#39;effectivit&#233;" caption="D&#233;but d&#39;effectivit&#233;">
+      <Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date">
+        <Table name="becpg_dimdate" alias="olapDate">
+        </Table>
+        <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String" uniqueMembers="false" levelType="TimeQuarters" hideMemberIf="Never">
+        </Level>
+        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        </Level>
+        <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
+        </Level>
+        <Level name="Jour" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric" uniqueMembers="false" levelType="TimeDays" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Date par mois" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par mois">
+        <Table name="becpg_dimdate" alias="olapDate">
+        </Table>
+        <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Date par semaine" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par semaine">
+        <Table name="becpg_dimdate" alias="olapDate">
+        </Table>
+        <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="TimeDimension" foreignKey="cost_endEffectivity_id" highCardinality="false" name="Fin d&#39;effectivit&#233;" caption="Fin d&#39;effectivit&#233;">
+      <Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" defaultMember="[Fin d&#39;effectivit&#233;.Date].[2030]" caption="Date">
+        <Table name="becpg_dimdate" alias="olapDate">
+        </Table>
+        <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String" uniqueMembers="false" levelType="TimeQuarters" hideMemberIf="Never">
+        </Level>
+        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        </Level>
+        <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
+        </Level>
+        <Level name="Jour" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric" uniqueMembers="false" levelType="TimeDays" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Date par mois" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par mois">
+        <Table name="becpg_dimdate" alias="olapDate">
+        </Table>
+        <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Date par semaine" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par semaine">
+        <Table name="becpg_dimdate" alias="olapDate">
+        </Table>
+        <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension foreignKey="cost_assoc_id" highCardinality="false" name="Produits">
+      <Hierarchy name="Produit par famille" hasAll="true" allMemberCaption="Tous les produits">
+        <Table name="becpg_product">
+        </Table>
+        <Level name="Type" column="product_type" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Famille" column="product_productHierarchy1" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Sous famille" column="product_productHierarchy2" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Produit par nom" hasAll="true" allMemberCaption="Tous les produits">
+        <Table name="becpg_product">
+        </Table>
+        <Level name="Type" column="product_type" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Nom produit" column="product_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Code produit" column="product_code" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Nom legal" column="product_legalName" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension foreignKey="cost_source_id" highCardinality="false" name="Source">
+      <Hierarchy name="Source par famille" hasAll="true" allMemberCaption="Tous les produits">
+        <Table name="becpg_product">
+        </Table>
+        <Level name="Type" column="product_type" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Famille" column="product_productHierarchy1" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Sous famille" column="product_productHierarchy2" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Source par nom" hasAll="true" allMemberCaption="Tous les produits">
+        <Table name="becpg_product">
+        </Table>
+        <Level name="Type" column="product_type" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Nom source" column="product_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Code source" column="product_code" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Nom legal source" column="product_legalName" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" name="Type de c&#244;ut">
+      <Hierarchy hasAll="true" allMemberCaption="Tous les types">
+        <Level name="Type de c&#244;ut" column="cost_name" uniqueMembers="false">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Measure name="Total des c&#244;uts" column="cost_value" aggregator="sum" visible="true">
+    </Measure>
+    <Measure name="Moyenne des c&#244;uts" column="cost_value" aggregator="avg" visible="true">
+    </Measure>
+  </Cube>
+  <Cube name="Produits" cache="true" enabled="true">
     <Table name="becpg_product">
     </Table>
     <Dimension type="TimeDimension" foreignKey="product_startEffectivity_id" highCardinality="false" name="D&#233;but d&#39;effectivit&#233;" caption="D&#233;but d&#39;effectivit&#233;">
@@ -117,13 +242,13 @@
     </Dimension>
     <Dimension highCardinality="false" name="&#201;tat">
       <Hierarchy hasAll="true" allMemberCaption="Tous les &#233;tats">
-        <Level name="&#201;tat" column="product_productState" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" >
+        <Level name="&#201;tat" column="product_productState" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
-     <Dimension highCardinality="false" name="Type de produit">
+    <Dimension highCardinality="false" name="Type de produit">
       <Hierarchy hasAll="true" allMemberCaption="Tous les types de produit" defaultMember="[Type de produit].[finishedProduct]">
-        <Level name="Type" column="product_type" type="String"  uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        <Level name="Type" column="product_type" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
@@ -135,7 +260,7 @@
         </Level>
       </Hierarchy>
     </Dimension>
-      <Dimension type="StandardDimension" foreignKey="product_supplier_assoc_id" highCardinality="false" name="Fournisseur">
+    <Dimension type="StandardDimension" foreignKey="product_supplier_assoc_id" highCardinality="false" name="Fournisseur">
       <Hierarchy hasAll="true" allMemberCaption="Tous les fournisseurs" primaryKey="assocId">
         <Table name="becpg_supplier">
         </Table>
@@ -181,6 +306,10 @@
       <Hierarchy hasAll="true" allMemberCaption="Tous les composants" primaryKey="entityListId">
         <Table name="becpg_compo_list">
         </Table>
+        <Level name="Famille" column="productHierarchy1" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Sous famille" column="productHierarchy2" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
         <Level name="Composant" column="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
@@ -189,6 +318,10 @@
       <Hierarchy hasAll="true" allMemberCaption="Tous les emballages" primaryKey="entityListId">
         <Table name="becpg_packaging_list">
         </Table>
+        <Level name="Famille" column="productHierarchy1" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Sous famille" column="productHierarchy2" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
         <Level name="Emballage" column="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
