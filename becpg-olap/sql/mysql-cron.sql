@@ -84,7 +84,7 @@ insert into becpg_cost(cost_fact_id,
  from alf_node node
  inner join alf_node_assoc assoc__ on assoc__.source_node_id = node.id  and assoc__.type_qname_id in (select id from alf_qname  where local_name = 'costDetailsListCost') 
  inner join becpg_alf_prop name on (assoc__.target_node_id = name.node_id and name.local_name = 'name')
- inner join alf_node_assoc assoc_source on assoc_source.source_node_id = node.id and assoc_source.type_qname_id in (select id from alf_qname  where local_name = 'costDetailsListCost') 
+ inner join alf_node_assoc assoc_source on assoc_source.source_node_id = node.id and assoc_source.type_qname_id in (select id from alf_qname  where local_name = 'costDetailsListSource') 
  inner join becpg_alf_prop costListValue on (node.id = costListValue.node_id and costListValue.local_name = 'costDetailsListValue')
  inner join alf_qname node_qname on (node.type_qname_id= node_qname.id)
  inner join alf_store node_store on (node.store_id = node_store.id)
