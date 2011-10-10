@@ -252,16 +252,16 @@
         </Level>
       </Hierarchy>
     </Dimension>
-    <Dimension type="StandardDimension" foreignKey="product_client_assoc_id" highCardinality="false" name="Client">
-      <Hierarchy hasAll="true" allMemberCaption="Tous les clients" primaryKey="assocId">
+    <Dimension type="StandardDimension" foreignKey="product_fact_id" highCardinality="false" name="Client">
+      <Hierarchy hasAll="true" allMemberCaption="Tous les clients" primaryKey="entityId">
         <Table name="becpg_client">
         </Table>
         <Level name="Nom client" column="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
-    <Dimension type="StandardDimension" foreignKey="product_supplier_assoc_id" highCardinality="false" name="Fournisseur">
-      <Hierarchy hasAll="true" allMemberCaption="Tous les fournisseurs" primaryKey="assocId">
+    <Dimension type="StandardDimension" foreignKey="product_fact_id" highCardinality="false" name="Fournisseur">
+      <Hierarchy hasAll="true" allMemberCaption="Tous les fournisseurs" primaryKey="entityId">
         <Table name="becpg_supplier">
         </Table>
         <Level name="Nom fournisseur" column="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">

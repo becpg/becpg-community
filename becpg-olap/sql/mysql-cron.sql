@@ -15,8 +15,6 @@ insert into becpg_product(product_fact_id,
  				product_type,
  				product_startEffectivity_id,
  				product_endEffectivity_id,
- 				product_client_assoc_id,
- 				product_supplier_assoc_id,
  				product_nut_assoc_id,
  				product_allergen_assoc_id,
  				product_ing_assoc_id,
@@ -28,8 +26,6 @@ select node.id, code.long_value, name.string_value  , legalName.string_value, pr
  		productHierarchy2.string_value, productState.string_value, node_qname.local_name,
  		year (startEffectivity.string_value) * 10000 + month (startEffectivity.string_value) * 100 + day (startEffectivity.string_value), 
  		year (endEffectivity.string_value) * 10000 + month (endEffectivity.string_value) * 100 + day (endEffectivity.string_value), 
- 		client_assoc.id,
- 		supplier_assoc.id,
  		nut_assoc.entityListId,
  		allergen_assoc.entityListId,
  		ing_assoc.entityListId,
@@ -51,10 +47,6 @@ select node.id, code.long_value, name.string_value  , legalName.string_value, pr
  left outer join becpg_entity_list microbio_assoc on (microbio_assoc.entityId = node.id and microbio_assoc.entityType = 'bcpg:microbioList')
  left outer join becpg_entity_list packaging_assoc on (packaging_assoc.entityId = node.id and packaging_assoc.entityType = 'bcpg:packagingList')
  left outer join becpg_entity_list compo_assoc on (compo_assoc.entityId = node.id and compo_assoc.entityType = 'bcpg:compoList')
- left outer join alf_node_assoc client_assoc on (client_assoc.source_node_id = node.id and client_assoc.type_qname_id 
- in (select client_assoc_qname.id from alf_qname client_assoc_qname where client_assoc_qname.local_name = 'clients'))
- left outer join alf_node_assoc supplier_assoc on (supplier_assoc.source_node_id = node.id and supplier_assoc.type_qname_id 
- in (select supplier_assoc.id from alf_qname supplier_assoc_qname where supplier_assoc_qname.local_name = 'suppliers'))
  inner join alf_qname node_qname on (node.type_qname_id= node_qname.id)
  inner join alf_store node_store on (node.store_id = node_store.id)
  where node_store.identifier = 'SpacesStore' and node_store.protocol='workspace'

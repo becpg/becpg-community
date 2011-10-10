@@ -14,8 +14,8 @@ create or replace view becpg_alf_prop (node_id,string_value,long_value,float_val
 --
 -- bcpg:client
 --
- create or replace view becpg_client (id, code,name,assocId) as
- select node.id, code.long_value, name.string_value , client_assoc.id
+ create or replace view becpg_client (id, code,name,entityId) as
+ select node.id, code.long_value, name.string_value , client_assoc.source_node_id
  from alf_node node
  inner join becpg_alf_prop code on (node.id = code.node_id and code.local_name = 'code')
  inner join becpg_alf_prop name on (node.id = name.node_id and name.local_name = 'name')
@@ -28,8 +28,8 @@ create or replace view becpg_alf_prop (node_id,string_value,long_value,float_val
  --
  -- bcpg:supplier
  --
- create or replace view becpg_supplier (id, code,name,assocId) as
- select node.id, code.long_value, name.string_value , supplier_assoc.id
+ create or replace view becpg_supplier (id, code,name,entityId) as
+ select node.id, code.long_value, name.string_value , supplier_assoc.source_node_id
  from alf_node node
  inner join becpg_alf_prop code on (node.id = code.node_id and code.local_name = 'code')
  inner join becpg_alf_prop name on (node.id = name.node_id and name.local_name = 'name')
