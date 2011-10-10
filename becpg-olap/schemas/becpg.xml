@@ -160,6 +160,70 @@
   <Cube name="Produits" cache="true" enabled="true">
     <Table name="becpg_product">
     </Table>
+    <Dimension type="TimeDimension" foreignKey="product_createdDate_id" highCardinality="false" name="Date de cr&#233;ation" caption="Date de cr&#233;ation">
+      <Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date">
+        <Table name="becpg_dimdate" alias="olapDate">
+        </Table>
+        <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String" uniqueMembers="false" levelType="TimeQuarters" hideMemberIf="Never">
+        </Level>
+        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        </Level>
+        <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
+        </Level>
+        <Level name="Jour" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric" uniqueMembers="false" levelType="TimeDays" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Date par mois" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par mois">
+        <Table name="becpg_dimdate" alias="olapDate">
+        </Table>
+        <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Date par semaine" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par semaine">
+        <Table name="becpg_dimdate" alias="olapDate">
+        </Table>
+        <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="TimeDimension" foreignKey="product_modifiedDate_id" highCardinality="false" name="Date de modification" caption="Date de modification">
+      <Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date">
+        <Table name="becpg_dimdate" alias="olapDate">
+        </Table>
+        <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String" uniqueMembers="false" levelType="TimeQuarters" hideMemberIf="Never">
+        </Level>
+        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        </Level>
+        <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
+        </Level>
+        <Level name="Jour" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric" uniqueMembers="false" levelType="TimeDays" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Date par mois" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par mois">
+        <Table name="becpg_dimdate" alias="olapDate">
+        </Table>
+        <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Date par semaine" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par semaine">
+        <Table name="becpg_dimdate" alias="olapDate">
+        </Table>
+        <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
     <Dimension type="TimeDimension" foreignKey="product_startEffectivity_id" highCardinality="false" name="D&#233;but d&#39;effectivit&#233;" caption="D&#233;but d&#39;effectivit&#233;">
       <Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date">
         <Table name="becpg_dimdate" alias="olapDate">
@@ -243,6 +307,14 @@
     <Dimension highCardinality="false" name="&#201;tat">
       <Hierarchy hasAll="true" allMemberCaption="Tous les &#233;tats">
         <Level name="&#201;tat" column="product_productState" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension foreignKey="product_ing_assoc_id" highCardinality="false" name="Origine g&#233;ographique">
+      <Hierarchy hasAll="true" allMemberCaption="Tous les origines" primaryKey="entityListId">
+        <Table name="becpg_geoOrigin_list">
+        </Table>
+        <Level name="Pays" column="isoCode" nameColumn="name" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>

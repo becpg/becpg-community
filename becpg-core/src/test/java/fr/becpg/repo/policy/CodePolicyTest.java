@@ -145,10 +145,10 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 				assertNotNull("Check supplier created", supplier4NodeRef);				
 				String code4 = (String)nodeService.getProperty(supplier4NodeRef, BeCPGModel.PROP_CODE);				
 				
-				assertEquals("Check code 1", "1", code1);
-				assertEquals("Check code 2", "2", code2);
-				assertEquals("Check code 3", "3", code3);
-				assertEquals("Check code 4", "4", code4);
+				assertEquals("Check code 1", "1", code1.substring(code1.lastIndexOf("-")+1));
+				assertEquals("Check code 2", "2", code2.substring(code2.lastIndexOf("-")+1));
+				assertEquals("Check code 3", "3", code3.substring(code3.lastIndexOf("-")+1));
+				assertEquals("Check code 4", "4", code4.substring(code4.lastIndexOf("-")+1));
 								
 				return null;
 				

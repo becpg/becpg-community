@@ -124,10 +124,10 @@ public class ProductPoliciesTest  extends BaseAlfrescoTestCase  {
 				rawMaterial2.setName("Raw material 2");
 				NodeRef rawMaterial2NodeRef = productDAO.create(folderNodeRef, rawMaterial2, dataLists);
 				String productCode2 = (String)nodeService.getProperty(rawMaterial2NodeRef, BeCPGModel.PROP_CODE);
-				
+				System.out.println(productCode1.substring(productCode1.lastIndexOf("-"))+ " "+productCode1.lastIndexOf("-"));
 				assertNotNull("Check product code 1", productCode1);
 				assertNotNull("Check product code 2", productCode2);
-				assertEquals("Compare product codes", Long.parseLong(productCode1) + 1, Long.parseLong(productCode2));
+				assertEquals("Compare product codes", Long.parseLong( productCode1.substring(productCode1.lastIndexOf("-")+1)) + 1, Long.parseLong( productCode2.substring(productCode2.lastIndexOf("-")+1)));
 				
 				return null;
 				

@@ -116,6 +116,27 @@ select node.id, name.string_value , entityListAssoc.parent_node_id
   		and node_store.protocol='workspace'
   		and assoc_qname.local_name = 'ingListIng';
   		
+  		
+--
+-- bcpg:geoOrigin
+--
+
+ create or replace view becpg_geoOrigin_list (id, isoCode,name, entityListId) as
+select node.id, isoCode.string_value, name.string_value , entityListAssoc.parent_node_id
+ from alf_node node
+ left outer join alf_node_assoc assoc__ on assoc__.source_node_id = node.id
+ inner join becpg_alf_prop name on (assoc__.target_node_id = name.node_id and name.local_name = 'name')
+ left outer join becpg_alf_prop isoCode on (assoc__.target_node_id = isoCode.node_id and isoCode.local_name = 'geoOriginISOCode')
+ inner join alf_qname assoc_qname on (assoc_qname.id =  assoc__.type_qname_id)
+ inner join alf_child_assoc entityListAssoc on (node.id = entityListAssoc.child_node_id)
+ inner join alf_child_assoc entityAssoc  on (entityListAssoc.parent_node_id = entityAssoc.child_node_id)
+ inner join alf_qname node_qname on (node.type_qname_id= node_qname.id)
+ inner join alf_store node_store on (node.store_id = node_store.id)
+  where node_qname.local_name = 'ingList' 
+  		and node_store.identifier = 'SpacesStore' 
+  		and node_store.protocol='workspace'
+  		and assoc_qname.local_name = 'ingListGeoOrigin';
+  		
  
  --
  -- bcpg:microbioList

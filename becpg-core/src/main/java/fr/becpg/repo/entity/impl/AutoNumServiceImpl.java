@@ -194,7 +194,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		
 		Long autoNumValue = DEFAULT_AUTO_NUM;
 		if(autoNumCode.contains(PREFIX_SEP)){
-			autoNumCode = autoNumCode.substring(autoNumCode.lastIndexOf(PREFIX_SEP));
+			autoNumCode = autoNumCode.substring(autoNumCode.lastIndexOf(PREFIX_SEP)+1);
 		}
 		try {
 		autoNumValue = Long.parseLong(autoNumCode);
