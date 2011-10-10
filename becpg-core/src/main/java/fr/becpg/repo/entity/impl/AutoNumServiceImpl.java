@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.ResultSet;
@@ -18,6 +19,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
@@ -38,6 +40,13 @@ public class AutoNumServiceImpl implements AutoNumService {
 	
 	/** The Constant DEFAULT_AUTO_NUM. */
 	private static final Long DEFAULT_AUTO_NUM = 1l;
+
+	private static final String PREFIX_MSG_PFX = "autonum.prefix.";
+
+	private static final String PREFIX_SEP = "-";
+
+	private static final String DEFAULT_PREFIX = "";
+	
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AutoNumServiceImpl.class);
@@ -53,6 +62,11 @@ public class AutoNumServiceImpl implements AutoNumService {
 	
 	/** The repository helper. */
 	private Repository repositoryHelper;
+	
+	/**
+	 * Dictionnary Service
+	 */
+	private DictionaryService dictionaryService;
 	
 	/**
 	 * Sets the search service.
@@ -81,6 +95,16 @@ public class AutoNumServiceImpl implements AutoNumService {
 		this.repoService = repoService;
 	}
 	
+	
+	/**
+	 * Sets the dictionaryService service.
+	 * 
+	 * @param dictionaryService
+	 */
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+
 	/**
 	 * Sets the repository helper.
 	 *
@@ -98,28 +122,32 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 * @return the auto num value
 	 */	
 	@Override
-	public Long getAutoNumValue(QName className, QName propertyName) {
+	public String getAutoNumValue(QName className, QName propertyName) {
 		
 		Long autoNumValue = DEFAULT_AUTO_NUM;
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
+		String prefix = DEFAULT_PREFIX;
 		
         // get value store in db
         if(autoNumNodeRef != null){
         	Long v = (Long)nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
+        	prefix = (String) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_PREFIX);
         	if(v != null){
         		autoNumValue = v;
         		autoNumValue++;
         	}        	
+        	
         	
         	// update autonum node in db
         	nodeService.setProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE, autoNumValue);
         }
         else{
         	// create autonum node in db
-        	createAutoNum(className, propertyName, autoNumValue);
+        	prefix = getDefaultPrefix(className,propertyName);
+        	autoNumValue  = createAutoNum(className, propertyName, autoNumValue,prefix);
         }
         
-		return autoNumValue;
+		return  prefix+ PREFIX_SEP + autoNumValue;
 	}
 	
 	/**
@@ -130,14 +158,16 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 * @return the Long
 	 */
 	@Override
-	public Long decreaseAutoNumValue(QName className, QName propertyName) {
+	public String decreaseAutoNumValue(QName className, QName propertyName) {
 		
 		Long autoNumValue = DEFAULT_AUTO_NUM;
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
+		String prefix = DEFAULT_PREFIX;
 		
 		// get value store in db
         if(autoNumNodeRef != null){
         	Long v = (Long)nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
+        	prefix = (String) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_PREFIX);
         	if(v != null){
         		autoNumValue = v;
         		autoNumValue--;
@@ -147,7 +177,8 @@ public class AutoNumServiceImpl implements AutoNumService {
         	nodeService.setProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE, autoNumValue);
         }
         
-		return autoNumValue;
+        
+		return  prefix+ PREFIX_SEP + autoNumValue;
 	}
 	
 	/**
@@ -159,7 +190,17 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 */
 	@Override
 	public void createOrUpdateAutoNumValue(QName className, QName propertyName,
-			Long autoNumValue) {
+			String autoNumCode) {
+		
+		Long autoNumValue = DEFAULT_AUTO_NUM;
+		if(autoNumCode.contains(PREFIX_SEP)){
+			autoNumCode = autoNumCode.substring(autoNumCode.lastIndexOf(PREFIX_SEP));
+		}
+		try {
+		autoNumValue = Long.parseLong(autoNumCode);
+		} catch (NumberFormatException e) {
+			logger.warn("cannot parse autoNum : "+autoNumCode,e);
+		}
 		
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
 		
@@ -167,10 +208,17 @@ public class AutoNumServiceImpl implements AutoNumService {
         	nodeService.setProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE, autoNumValue);
         }
         else{
-        	createAutoNum(className, propertyName, autoNumValue);
+        	createAutoNum(className, propertyName, autoNumValue, getDefaultPrefix(className,propertyName) );
         }
 	}
 	
+	
+	
+	
+	private String getDefaultPrefix(QName className, QName propertyName) {
+		return I18NUtil.getMessage(PREFIX_MSG_PFX + className.getLocalName()+"."+ propertyName.getLocalName());
+	}
+
 	/**
 	 * Delete the AutoNum object in db.
 	 *
@@ -194,7 +242,21 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 * @param autoNumValue the auto num value
 	 * @return the node ref
 	 */
-	private NodeRef createAutoNum(QName className, QName propertyName, Long autoNumValue) {
+	private Long createAutoNum(QName className, QName propertyName, Long autoNumValue, String autoNumPrefix) {
+		
+		
+
+		// Fix already existing product
+		if(dictionaryService.isSubClass(className, BeCPGModel.TYPE_PRODUCT)){
+			NodeRef productAutoNumNodeRef =  getAutoNumNodeRef(BeCPGModel.TYPE_PRODUCT,propertyName);
+			if(productAutoNumNodeRef!=null){
+				Long v = (Long)nodeService.getProperty(productAutoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
+	        	if(v != null){
+	        		autoNumValue = v;
+	        		autoNumValue++;
+	        	}        	
+			}
+		}		
 		
 		NodeRef systemNodeRef = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
     	NodeRef autoNumFolderNodeRef = repoService.createFolderByPath(systemNodeRef, RepoConsts.PATH_AUTO_NUM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_AUTO_NUM));
@@ -205,7 +267,9 @@ public class AutoNumServiceImpl implements AutoNumService {
     	properties.put(BeCPGModel.PROP_AUTO_NUM_CLASS_NAME, className);
     	properties.put(BeCPGModel.PROP_AUTO_NUM_PROPERTY_NAME, propertyName);
     	properties.put(BeCPGModel.PROP_AUTO_NUM_VALUE, autoNumValue);
-    	return nodeService.createNode(autoNumFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), BeCPGModel.TYPE_AUTO_NUM, properties).getChildRef();    	    	
+    	properties.put(BeCPGModel.PROP_AUTO_NUM_PREFIX, autoNumPrefix);
+        nodeService.createNode(autoNumFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), BeCPGModel.TYPE_AUTO_NUM, properties).getChildRef();    	    	
+        return autoNumValue;
 	}
 	
 	/**

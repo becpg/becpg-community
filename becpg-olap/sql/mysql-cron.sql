@@ -15,6 +15,8 @@ insert into becpg_product(product_fact_id,
  				product_type,
  				product_startEffectivity_id,
  				product_endEffectivity_id,
+ 				product_createdDate_id,
+ 				product_modifiedDate_id,
  				product_nut_assoc_id,
  				product_allergen_assoc_id,
  				product_ing_assoc_id,
@@ -22,10 +24,12 @@ insert into becpg_product(product_fact_id,
  				product_packaging_assoc_id,
  				product_compo_assoc_id
  				)
-select node.id, code.long_value, name.string_value  , legalName.string_value, productHierarchy1.string_value,
+select node.id, code.string_value, name.string_value  , legalName.string_value, productHierarchy1.string_value,
  		productHierarchy2.string_value, productState.string_value, node_qname.local_name,
  		year (startEffectivity.string_value) * 10000 + month (startEffectivity.string_value) * 100 + day (startEffectivity.string_value), 
  		year (endEffectivity.string_value) * 10000 + month (endEffectivity.string_value) * 100 + day (endEffectivity.string_value), 
+ 		year (createdDate.string_value) * 10000 + month (createdDate.string_value) * 100 + day (createdDate.string_value), 
+ 		year (modifiedDate.string_value) * 10000 + month (modifiedDate.string_value) * 100 + day (modifiedDate.string_value), 
  		nut_assoc.entityListId,
  		allergen_assoc.entityListId,
  		ing_assoc.entityListId,
@@ -40,6 +44,8 @@ select node.id, code.long_value, name.string_value  , legalName.string_value, pr
  left outer join becpg_alf_prop legalName on (node.id = legalName.node_id and legalName.local_name = 'legalName')
  left outer join becpg_alf_prop startEffectivity on (node.id = startEffectivity.node_id  and startEffectivity.local_name = 'startEffectivity')
  left outer join becpg_alf_prop endEffectivity on (node.id = endEffectivity.node_id  and endEffectivity.local_name = 'endEffectivity')
+ left outer join becpg_alf_prop createdDate on (node.id = createdDate.node_id  and createdDate.local_name = 'created')
+ left outer join becpg_alf_prop modifiedDate on (node.id = endEffectivity.node_id  and modifiedDate.local_name = 'modified')
  left outer join becpg_alf_prop productState on (node.id = productState.node_id  and productState.local_name = 'productState')
  left outer join becpg_entity_list nut_assoc on (nut_assoc.entityId = node.id and nut_assoc.entityType = 'bcpg:nutList')
  left outer join becpg_entity_list allergen_assoc on (allergen_assoc.entityId = node.id and allergen_assoc.entityType = 'bcpg:allergenList')

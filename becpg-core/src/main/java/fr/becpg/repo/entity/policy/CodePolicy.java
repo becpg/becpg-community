@@ -6,7 +6,6 @@ package fr.becpg.repo.entity.policy;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.ResultSet;
@@ -45,7 +44,6 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 	/** The search service. */
 	private SearchService searchService;
 			
-	private DictionaryService dictionaryService;
 	
 	/**
 	 * Sets the policy component.
@@ -83,9 +81,6 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 		this.searchService = searchService;
 	}
 		
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
 
 	/**
 	 * Inits the.
@@ -107,10 +102,6 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 		boolean generateCode = true;
 		QName typeQName = nodeService.getType(nodeRef);
 		
-		// products
-		if(dictionaryService.isSubClass(typeQName, BeCPGModel.TYPE_PRODUCT)){
-			typeQName = BeCPGModel.TYPE_PRODUCT;
-		}		
 		
 		if(code != null && !code.isEmpty()){
 			
@@ -138,13 +129,12 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 		// generate a new code
 		if(generateCode){
 					
-			Long c = autoNumService.getAutoNumValue(typeQName, BeCPGModel.PROP_CODE);
-			nodeService.setProperty(nodeRef, BeCPGModel.PROP_CODE, c.toString());
+			String c = autoNumService.getAutoNumValue(typeQName, BeCPGModel.PROP_CODE);
+			nodeService.setProperty(nodeRef, BeCPGModel.PROP_CODE, c);
 		}
 		else{
 			// store autoNum in db
-			Long c = Long.parseLong(code);
-			autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, c);
+			autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, code);
 		}		
 	}	
 }

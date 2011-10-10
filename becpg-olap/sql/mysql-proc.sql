@@ -90,6 +90,8 @@ DROP TABLE IF EXISTS `becpg_product`;
   `product_fact_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `product_startEffectivity_id` int(8) NOT NULL,
   `product_endEffectivity_id` int(8) DEFAULT NULL,
+  `product_createdDate_id` int(8) NOT NULL,
+  `product_modifiedDate_id` int(8) DEFAULT NULL,
   `product_code` TEXT NOT NULL,
   `product_name` TEXT NOT NULL,
   `product_legalName` TEXT DEFAULT NULL,

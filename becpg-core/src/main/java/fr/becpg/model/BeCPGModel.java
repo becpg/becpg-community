@@ -498,6 +498,10 @@ public interface BeCPGModel {
 	static final QName PROP_AUTO_NUM_VALUE = QName.createQName(
 			BECPG_URI, "autoNumValue");
 	
+	/** The Constant PROP_AUTO_NUM_VALUE. */
+	public static final QName PROP_AUTO_NUM_PREFIX = QName.createQName(
+			BECPG_URI, "autoNumPrefix");
+	
 	// entityTpl aspect
 	static final QName ASPECT_ENTITY_TPL = QName.createQName(BECPG_URI,
 	"entityTplAspect");	
@@ -631,5 +635,6 @@ public interface BeCPGModel {
 	 */
 	public static final QName PROP_START_EFFECTIVITY = QName.createQName(BECPG_URI, "startEffectivity");		
 	
-	public static final QName PROP_END_EFFECTIVITY = QName.createQName(BECPG_URI, "endEffectivity");	
+	public static final QName PROP_END_EFFECTIVITY = QName.createQName(BECPG_URI, "endEffectivity");
+
 }

@@ -1191,6 +1191,9 @@
 				<property name="bcpg:autoNumValue">
 					<type>d:long</type>
 				</property>
+				<property name="bcpg:autoNumPrefix">
+					<type>d:text</type>
+				</property>
 			</properties>
 		</type>
 

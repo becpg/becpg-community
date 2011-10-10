@@ -238,13 +238,13 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="repoService" ref="repoService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
+		<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>
 	<bean id="codePolicy" class="fr.becpg.repo.entity.policy.CodePolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="searchService" ref="searchService" />
-		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 	<bean id="entityPolicy" class="fr.becpg.repo.entity.policy.EntityPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
