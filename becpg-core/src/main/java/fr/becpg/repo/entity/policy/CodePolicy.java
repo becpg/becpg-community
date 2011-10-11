@@ -134,7 +134,10 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 		}
 		else{
 			// store autoNum in db
-			autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, code);
+			
+			 autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, code);
+			//Add Prefix to code if none 
+			//FIX: nodeService.setProperty(nodeRef, BeCPGModel.PROP_CODE, c);
 		}		
 	}	
 }

@@ -206,6 +206,8 @@
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="reportTplService" ref="reportTplService" />
 		<property name="dictionaryDAO" ref="dictionaryDAO"/>
+		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="autoNumService" ref="autoNumService"/>
 	</bean>
 	
 	<!-- Entity -->

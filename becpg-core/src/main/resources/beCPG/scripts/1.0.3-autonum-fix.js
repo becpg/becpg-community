@@ -16,8 +16,10 @@ for(row in data){
 	var nodes = search.luceneSearch('+TYPE:"'+data[row].type+'"');
 	for(i in nodes){
 		var prop = nodes[i].properties["bcpg:code"];
-		if(prop.indexOf("-")<0){
-		 nodes[i].properties["bcpg:code"]  = data[row].prefix+"-"+prop;
+		if(prop.indexOf("-")>0){
+			 nodes[i].properties["bcpg:code"] = prop.replace(/-/g,"");
+		} else if(prop.indexOf( data[row].prefix)<0) {
+			 nodes[i].properties["bcpg:code"]  = data[row].prefix+prop;
 		}
 		nodes[i].save();
 	}

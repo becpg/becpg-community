@@ -37,8 +37,9 @@ public interface AutoNumService {
 	 * @param className the class name
 	 * @param propertyName the property name
 	 * @param code the value
+	 * @return the prefixed code value
 	 */
-	public void createOrUpdateAutoNumValue(QName className, QName propertyName, String code);
+	public String createOrUpdateAutoNumValue(QName className, QName propertyName, String code);
 	
 	/**
 	 * Delete auto num value.
@@ -47,4 +48,23 @@ public interface AutoNumService {
 	 * @param propertyName the property name
 	 */
 	public void deleteAutoNumValue(QName className, QName propertyName);
+	
+	
+	/**
+	 * Return the pattern string for the corresponding code
+	 * @param type
+	 * @param propertyName
+	 * @return
+	 */
+	public String getAutoNumMatchPattern(QName type, QName propertyName);
+	
+	
+	/**
+	 * Return the prefixed String for the given type
+	 * @param type
+	 * @param propertyName
+	 * @param autoNum
+	 * @return 
+	 */
+	public String getPrefixedCode(QName type, QName propertyName, Long autoNum);
 }

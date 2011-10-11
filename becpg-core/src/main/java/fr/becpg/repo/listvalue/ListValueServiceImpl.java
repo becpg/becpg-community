@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -28,6 +29,7 @@ import org.apache.lucene.analysis.TokenStream;
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -65,8 +67,11 @@ public class ListValueServiceImpl implements ListValueService {
 	
 	private BeCPGSearchService beCPGSearchService;
 	
+	private DictionaryService dictionaryService;
+	
 	private DictionaryDAO dictionaryDAO;
 	
+	private AutoNumService autoNumService;
 	
 	private Analyzer luceneAnaLyzer = null;
 	
@@ -74,6 +79,13 @@ public class ListValueServiceImpl implements ListValueService {
 	public void setDictionaryDAO(DictionaryDAO dictionaryDAO) {
 		this.dictionaryDAO = dictionaryDAO;
 	}
+
+	
+	
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+
 
 	/**
 	 * Sets the node service.
@@ -87,10 +99,11 @@ public class ListValueServiceImpl implements ListValueService {
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
 	}
+	
 
-	
-	
-	
+	public void setAutoNumService(AutoNumService autoNumService) {
+		this.autoNumService = autoNumService;
+	}
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
@@ -113,8 +126,9 @@ public class ListValueServiceImpl implements ListValueService {
     	
     	String queryPath = "";
     	
-    	//Is code or name search, test if query is an interger ?
-		if(Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query)){
+    	//Is code or name search
+    	if(isQueryCode(query,type)){
+			query = prepareQueryCode(query,type);
 			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_CODE, type, query);
 		}
 		else{
@@ -199,7 +213,8 @@ public class ListValueServiceImpl implements ListValueService {
     	String queryPath = "";    	
     	
 		//Is code or name search, test if query is an interger ?
-		if(Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query)){
+		if(isQueryCode(query, BeCPGModel.TYPE_PRODUCT)){
+			query = prepareQueryCode(query,BeCPGModel.TYPE_PRODUCT);
 			queryPath += String.format(RepoConsts.QUERY_SUGGEST_PRODUCT_BY_CODE, query, SystemState.Archived, SystemState.Refused);
 		}
 		else{
@@ -213,7 +228,32 @@ public class ListValueServiceImpl implements ListValueService {
 	  
 	}
     
-    /**
+    private String prepareQueryCode(String query, QName type) {
+    	if(Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD,query)){
+    		
+    		if(BeCPGModel.TYPE_PRODUCT.equals(type)){
+    			StringBuffer ret = new StringBuffer();
+    			for(QName subType : dictionaryService.getSubTypes(type, true)){
+    				if(ret.length()>0){
+    					ret.append(" OR ");
+    				}
+    				ret.append( autoNumService.getPrefixedCode(subType, BeCPGModel.PROP_CODE,Long.parseLong(query)));
+    			}
+    			return "("+ret.toString()+")";
+    		} else {
+    		
+    			return autoNumService.getPrefixedCode(type, BeCPGModel.PROP_CODE,Long.parseLong(query));
+    		}
+		}
+		return query;
+	}
+
+	private boolean isQueryCode(String query, QName type) {
+    	return Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD,query)
+    			|| Pattern.matches(autoNumService.getAutoNumMatchPattern(type, BeCPGModel.PROP_CODE),query);
+	}
+
+	/**
      * Get the nodeRef of the item by type and name.
      *
      * @param type the type
@@ -288,7 +328,7 @@ public class ListValueServiceImpl implements ListValueService {
 	private String prepareQuery(String query){
 		
 		logger.debug("Query before prepare:"+query);
-		if(!(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE) || query.endsWith(SUFFIX_SIMPLE_QUOTE))){
+		if(query!=null && !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE) || query.endsWith(SUFFIX_SIMPLE_QUOTE))){
 			//Query with wildcard are not getting analyzed by stemmers
 			// so do it manually
 			Analyzer analyzer  = getTextAnalyzer();

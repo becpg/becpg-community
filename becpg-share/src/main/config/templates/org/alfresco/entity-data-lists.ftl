@@ -54,7 +54,6 @@
       }
    })();
    //]]></script>
-   <@script type="text/javascript" src="${url.context}/res/js/alfresco-resizer.js"></@script>
    <script type="text/javascript">//<![CDATA[
       new Alfresco.widget.Resizer("DataLists");
    //]]></script>
