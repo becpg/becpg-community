@@ -6,6 +6,7 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,9 +24,9 @@ import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.NutGroup;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.product.data.productList.sort.NutListDataItemDecorator;
-import fr.becpg.repo.product.data.productList.sort.NutListSortComparator;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -211,31 +212,7 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 			newNutListDataItem.setValue(newValue);
 		}
 	}
-		
-	/**
-	 * S.
-	 *
-	 * @param nutList the nut list
-	 * @return the list
-	 */
-	private List<NutListDataItem> sort(List<NutListDataItem> nutList){
-		
-		List<NutListDataItemDecorator> nutListDecorated = new ArrayList<NutListDataItemDecorator>();
-		for(NutListDataItem nutListDataItem : nutList){
-			NutListDataItemDecorator d = new NutListDataItemDecorator();
-			d.setNutListDataItem(nutListDataItem);
-			d.setNutName((String)nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME));			
-			nutListDecorated.add(d);
-		}
-        Collections.sort(nutListDecorated, new NutListSortComparator());
-       
-        List<NutListDataItem> nutListSorted = new ArrayList<NutListDataItem>();
-        for(NutListDataItemDecorator n : nutListDecorated)
-        	nutListSorted.add(n.getNutListDataItem());
-                
-        return nutListSorted;
-	}
-	
+			
 	/**
 	 * Calculate the nutListUnit
 	 * @param productUnit
@@ -260,5 +237,53 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		else{
 			return UNIT_PER100G;
 		}		
+	}
+	
+	/**
+	 * Sort nuts by group and name.
+	 *
+	 * @param nutList the nut list
+	 * @return the list
+	 */
+	private List<NutListDataItem> sort(List<NutListDataItem> nutList){
+			
+		Collections.sort(nutList, new Comparator<NutListDataItem>(){
+        	
+            @Override
+			public int compare(NutListDataItem n1, NutListDataItem n2){
+            	
+            	final int BEFORE = -1;
+        	    final int EQUAL = 0;
+        	    final int AFTER = 1;	    
+        		int comparison = EQUAL;
+        				
+        		if(!n1.getGroup().equals(n2.getGroup())){
+        			
+        			NutGroup o1NutGroup = NutGroup.parse(n1.getGroup());
+        			NutGroup o2NutGroup = NutGroup.parse(n2.getGroup());
+        			
+        			if(o1NutGroup == NutGroup.Group1){
+        				comparison = BEFORE;
+        			}
+        			else if(o1NutGroup == NutGroup.Other){
+        				comparison = AFTER;
+        			}
+        			else if(o2NutGroup == NutGroup.Group1){
+        				comparison = AFTER;
+        			}
+        		}
+        		else{
+        			String nutName1 = (String)nodeService.getProperty(n1.getNut(), ContentModel.PROP_NAME);
+                	String nutName2 = (String)nodeService.getProperty(n2.getNut(), ContentModel.PROP_NAME);
+                	
+        			comparison = nutName1.compareTo(nutName2);
+        		}
+        				
+        		return comparison;                
+            }
+
+        });
+        
+        return nutList;
 	}
 }

@@ -262,6 +262,11 @@
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="authenticationService" ref="authenticationService" />
 	</bean>	
+	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.policy.SortableListPolicy" init-method="init">
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+	</bean>
 	
 
 	<!-- Product dictionary -->
@@ -277,9 +282,9 @@
 	<!-- Product DAO -->
 	<bean id="productDAO" class="fr.becpg.repo.product.ProductDAOImpl">
 		<property name="nodeService" ref="nodeService" />
-		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="mlNodeService" ref="mlAwareNodeService" />
 		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 
 	<!-- Product -->

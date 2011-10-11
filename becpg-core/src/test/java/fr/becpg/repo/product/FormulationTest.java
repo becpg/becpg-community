@@ -55,8 +55,6 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.data.productList.sort.NutListDataItemDecorator;
-import fr.becpg.repo.product.data.productList.sort.NutListSortComparator;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -1275,43 +1273,54 @@ public class FormulationTest extends RepoBaseTestCase {
 					nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f,  0f, "Groupe 2", nut17));
 					nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Autre", nut8));
 					
+					Collection<QName> dataLists = productDictionaryService.getDataLists();
 					
-					List<NutListDataItemDecorator> nutListDecorated = new ArrayList<NutListDataItemDecorator>();
-					for(NutListDataItem nutListDataItem : nutList){
-						NutListDataItemDecorator d = new NutListDataItemDecorator();
-						d.setNutListDataItem(nutListDataItem);
-						d.setNutName((String)nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME));			
-						nutListDecorated.add(d);
-					}
-			        Collections.sort(nutListDecorated, new NutListSortComparator());
-			       
-			        List<NutListDataItem> nutListSorted = new ArrayList<NutListDataItem>();
-			        for(NutListDataItemDecorator n : nutListDecorated)
-			        	nutListSorted.add(n.getNutListDataItem());
-			        
-			        for(NutListDataItem n : nutListSorted)
-			        	logger.debug((String)nodeService.getProperty(n.getNut(), ContentModel.PROP_NAME) + "- " + n.getGroup());
-			        
-			        String actualNut0 = (String)nodeService.getProperty(nutListSorted.get(0).getNut(), ContentModel.PROP_NAME);
-			        String actualNut1 = (String)nodeService.getProperty(nutListSorted.get(1).getNut(), ContentModel.PROP_NAME);
-			        String actualNut2 = (String)nodeService.getProperty(nutListSorted.get(2).getNut(), ContentModel.PROP_NAME);
-			        String actualNut3 = (String)nodeService.getProperty(nutListSorted.get(3).getNut(), ContentModel.PROP_NAME);
-			        String actualNut4 = (String)nodeService.getProperty(nutListSorted.get(4).getNut(), ContentModel.PROP_NAME);
-			        String actualNut5 = (String)nodeService.getProperty(nutListSorted.get(5).getNut(), ContentModel.PROP_NAME);
-			        String actualNut6 = (String)nodeService.getProperty(nutListSorted.get(6).getNut(), ContentModel.PROP_NAME);
-			        String actualNut7 = (String)nodeService.getProperty(nutListSorted.get(7).getNut(), ContentModel.PROP_NAME);
-			        String actualNut8 = (String)nodeService.getProperty(nutListSorted.get(8).getNut(), ContentModel.PROP_NAME);
-			        String actualNut9 = (String)nodeService.getProperty(nutListSorted.get(9).getNut(), ContentModel.PROP_NAME);
-			        assertEquals("nut 1 " + actualNut0, nut1, nutListSorted.get(0).getNut());
-			        assertEquals("nut 14 " + actualNut1, nut14, nutListSorted.get(1).getNut());
-			        assertEquals("nut 3 " + actualNut2, nut3, nutListSorted.get(2).getNut());
-			        assertEquals("nut 5 " + actualNut3, nut5, nutListSorted.get(3).getNut());
-			        assertEquals("nut 17 " + actualNut4, nut17, nutListSorted.get(4).getNut());
-			        assertEquals("nut 2 " + actualNut5, nut2, nutListSorted.get(5).getNut());
-			        assertEquals("nut 26 " + actualNut6, nut26, nutListSorted.get(6).getNut());
-			        assertEquals("nut 10 " + actualNut7, nut10, nutListSorted.get(7).getNut());
-			        assertEquals("nut 8 " + actualNut8, nut8, nutListSorted.get(8).getNut());
-			        assertEquals("nut 9 " + actualNut9, nut9, nutListSorted.get(9).getNut());
+					//SF1
+					SemiFinishedProductData SFProduct1 = new SemiFinishedProductData();
+					SFProduct1.setName("semi fini 1");
+					SFProduct1.setLegalName("Legal semi fini 1");
+					SFProduct1.setUnit(ProductUnit.kg);
+					SFProduct1.setQty(1f);
+					SFProduct1.setNutList(nutList);					
+					NodeRef SFProduct1NodeRef = productDAO.create(folderNodeRef, SFProduct1, dataLists);
+					
+					ProductData dbSF1 = productDAO.find(SFProduct1NodeRef, dataLists);					
+					
+					//SF2
+					SemiFinishedProductData SFProduct2 = new SemiFinishedProductData();
+					SFProduct2.setName("semi fini 2");
+					SFProduct2.setLegalName("Legal semi fini 2");
+					SFProduct2.setUnit(ProductUnit.kg);
+					SFProduct2.setQty(1f);
+					List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
+					compoList2.add(new CompoListDataItem(null, 1, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, SFProduct1NodeRef));			
+					SFProduct2.setCompoList(compoList2);
+					NodeRef SFProduct2NodeRef = productDAO.create(folderNodeRef, SFProduct2, dataLists);
+					
+					productService.formulate(SFProduct2NodeRef);
+									
+					ProductData formulatedSF2 = productDAO.find(SFProduct2NodeRef, dataLists);
+					
+			        String actualNut0 = (String)nodeService.getProperty(formulatedSF2.getNutList().get(0).getNut(), ContentModel.PROP_NAME);
+			        String actualNut1 = (String)nodeService.getProperty(formulatedSF2.getNutList().get(1).getNut(), ContentModel.PROP_NAME);
+			        String actualNut2 = (String)nodeService.getProperty(formulatedSF2.getNutList().get(2).getNut(), ContentModel.PROP_NAME);
+			        String actualNut3 = (String)nodeService.getProperty(formulatedSF2.getNutList().get(3).getNut(), ContentModel.PROP_NAME);
+			        String actualNut4 = (String)nodeService.getProperty(formulatedSF2.getNutList().get(4).getNut(), ContentModel.PROP_NAME);
+			        String actualNut5 = (String)nodeService.getProperty(formulatedSF2.getNutList().get(5).getNut(), ContentModel.PROP_NAME);
+			        String actualNut6 = (String)nodeService.getProperty(formulatedSF2.getNutList().get(6).getNut(), ContentModel.PROP_NAME);
+			        String actualNut7 = (String)nodeService.getProperty(formulatedSF2.getNutList().get(7).getNut(), ContentModel.PROP_NAME);
+			        String actualNut8 = (String)nodeService.getProperty(formulatedSF2.getNutList().get(8).getNut(), ContentModel.PROP_NAME);
+			        String actualNut9 = (String)nodeService.getProperty(formulatedSF2.getNutList().get(9).getNut(), ContentModel.PROP_NAME);
+			        assertEquals("nut 1 " + actualNut0, nut1, formulatedSF2.getNutList().get(0).getNut());
+			        assertEquals("nut 14 " + actualNut1, nut14, formulatedSF2.getNutList().get(1).getNut());
+			        assertEquals("nut 3 " + actualNut2, nut3, formulatedSF2.getNutList().get(2).getNut());
+			        assertEquals("nut 5 " + actualNut3, nut5, formulatedSF2.getNutList().get(3).getNut());
+			        assertEquals("nut 17 " + actualNut4, nut17, formulatedSF2.getNutList().get(4).getNut());
+			        assertEquals("nut 2 " + actualNut5, nut2, formulatedSF2.getNutList().get(5).getNut());
+			        assertEquals("nut 26 " + actualNut6, nut26, formulatedSF2.getNutList().get(6).getNut());
+			        assertEquals("nut 10 " + actualNut7, nut10, formulatedSF2.getNutList().get(7).getNut());
+			        assertEquals("nut 8 " + actualNut8, nut8, formulatedSF2.getNutList().get(8).getNut());
+			        assertEquals("nut 9 " + actualNut9, nut9, formulatedSF2.getNutList().get(9).getNut());
         
 			        return null;
 			

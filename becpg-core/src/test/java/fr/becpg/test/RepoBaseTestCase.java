@@ -191,38 +191,41 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		
 		NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 		
-		NodeRef charactsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_CHARACTS));
+		if(systemFolder != null){
 		
-		//allergens
-		NodeRef allergenFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS));
-		if(allergenFolder != null){
-			nodeService.deleteNode(allergenFolder);
+			NodeRef charactsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_CHARACTS));
+			
+			//allergens
+			NodeRef allergenFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS));
+			if(allergenFolder != null){
+				nodeService.deleteNode(allergenFolder);
+			}		
+			
+			//costs
+			NodeRef costFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
+			if(costFolder != null){
+				nodeService.deleteNode(costFolder);
+			}
+			
+			
+			//ings
+			NodeRef ingFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_INGS));
+			if(ingFolder != null){
+				nodeService.deleteNode(ingFolder);
+			}
+			
+			//nuts
+			NodeRef nutFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_NUTS));
+			if(nutFolder != null){
+				nodeService.deleteNode(nutFolder);
+			}
+			
+			//organos
+			NodeRef organoFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ORGANOS));
+			if(organoFolder != null){
+				nodeService.deleteNode(organoFolder);
+			}
 		}		
-		
-		//costs
-		NodeRef costFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
-		if(costFolder != null){
-			nodeService.deleteNode(costFolder);
-		}
-		
-		
-		//ings
-		NodeRef ingFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_INGS));
-		if(ingFolder != null){
-			nodeService.deleteNode(ingFolder);
-		}
-		
-		//nuts
-		NodeRef nutFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_NUTS));
-		if(nutFolder != null){
-			nodeService.deleteNode(nutFolder);
-		}
-		
-		//organos
-		NodeRef organoFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ORGANOS));
-		if(organoFolder != null){
-			nodeService.deleteNode(organoFolder);
-		}
 	}	
 
 	/**

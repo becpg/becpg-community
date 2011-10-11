@@ -557,6 +557,14 @@ public interface BeCPGModel {
 	/** The Constant PROP_DEPTH_LEVEL. */
 	static final QName PROP_DEPTH_LEVEL = QName.createQName(BECPG_URI, "depthLevel");
 	
+	// depthLevel aspect
+	static final QName ASPECT_SORTABLE_LIST = QName.createQName(BECPG_URI,	"sortableListAspect");
+	static final QName PROP_SORT = QName.createQName(BECPG_URI, "sort");
+	
+	// manual aspect
+	static final QName ASPECT_IS_MANUAL_LISTITEM = QName.createQName(BECPG_URI,	"isManualListItemAspect");
+	static final QName PROP_IS_MANUAL_LISTITEM = QName.createQName(BECPG_URI, "isManualListItem");
+	
 	// versionable aspect
 	/** The Constant ASPECT_COMPOSITE_VERSIONABLE. */
 	static final QName ASPECT_COMPOSITE_VERSIONABLE = QName.createQName(BECPG_URI,	"compositeVersionable");

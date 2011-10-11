@@ -33,8 +33,6 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.productList.sort.CostListDataItemDecorator;
-import fr.becpg.repo.product.data.productList.sort.CostListSortComparator;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -120,11 +118,8 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		 * Calculate the costs of the compoList
 		 */
 		
-		logger.debug("###costVisitor : " + formulatedProduct.getCompoList());
-		
 		if(formulatedProduct.getCompoList() != null){						
 		
-			logger.debug("###costVisitor : visitCompoListChildren");
 			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList());		
 			compositeCosts = visitCompoListChildren(formulatedProduct, composite);
 		}
@@ -169,20 +164,15 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			}
 			else{
 				c.setPercentage(0f);
-			}			
-			
-			logger.debug("###perc: " + c.getPercentage());
+			}					
 		}
 		
 		//sort
 		List<CostListDataItem> costListSorted = sortCost(costList);
 		List<CostDetailsListDataItem> costDetailsListSorted = sortCostDetails(costDetailsList);
 				
-		formulatedProduct.setCostList(costListSorted);			
-		logger.debug("costList.size: " + costList.size());
-		
+		formulatedProduct.setCostList(costListSorted);					
 		formulatedProduct.setCostDetailsList(costDetailsListSorted);			
-		logger.debug("costDetailsList.size: " + costDetailsListSorted.size());
 		
 		return formulatedProduct;
 	}
@@ -201,8 +191,6 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		
 		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){					
 			
-			logger.debug("###costVisitor: visitCompoListChildren - for");
-			
 			// take in account the loss perc
 			Float lossPerc = component.getData().getLossPerc() != null ? component.getData().getLossPerc() : 0;
 			
@@ -211,8 +199,6 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				// calculate children costs
 				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
 				CompositeCosts childrenCosts =  visitCompoListChildren(formulatedProduct, c);
-				
-				logger.debug("###costVisitor: visitCompoListChildren - childrenCosts.getCostMap().size()" + childrenCosts.getCostMap().size());				
 				
 				/*
 				 *  costs
@@ -278,9 +264,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				CompoListDataItem compoListDataItem = component.getData();
 				Float qty = FormulationHelper.getQty(compoListDataItem);
 				qty = qty * (1 + lossPerc / 100);
-				visitCostLeaf(compoListDataItem.getProduct(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());
-				
-				logger.debug("###visitCostLeaf compositeCosts.getCostMap().size() : " + compositeCosts.getCostMap().size());
+				visitCostLeaf(compoListDataItem.getProduct(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());				
 			}			
 		}	
 		
@@ -302,13 +286,9 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
 		ProductData leafProductData = productDAO.find(leafNodeRef, dataLists);
 		
-		logger.debug("###visitCostLeaf : nodeRef: " + leafNodeRef + " - costList: " + leafProductData.getCostList());
-		
 		if(leafProductData.getCostList() == null){
 			return;
 		}
-		
-		logger.debug("###visitCostLeaf 1");
 		
 		/*
 		 * Costs
@@ -429,9 +409,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				}			
 				newCostDetailsListDataItem.setValue(costDetailsValue);
 			}
-		}
-		
-		logger.debug("###visitCostLeaf costMap.size() : " + costMap.size());
+		}		
 	}
 	
 	/**
@@ -442,21 +420,21 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	 */
 	private List<CostListDataItem> sortCost(List<CostListDataItem> costList){
 			
-		// TODO: quelle méthode est la meilleure ? sortCost ou sortCostDetails ??? (perf)
-		List<CostListDataItemDecorator> costListDecorated = new ArrayList<CostListDataItemDecorator>();
-		for(CostListDataItem costListDataItem : costList){
-			CostListDataItemDecorator c = new CostListDataItemDecorator();
-			c.setCostListDataItem(costListDataItem);
-			c.setCostName(((String)nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME)));
-			costListDecorated.add(c);
-		}
-        Collections.sort(costListDecorated, new CostListSortComparator());
-       
-        List<CostListDataItem> costListSorted = new ArrayList<CostListDataItem>();
-        for(CostListDataItemDecorator c : costListDecorated)
-        	costListSorted.add(c.getCostListDataItem());
-                
-        return costListSorted;
+		Collections.sort(costList, new Comparator<CostListDataItem>(){
+        	
+            @Override
+			public int compare(CostListDataItem c1, CostListDataItem c2){
+            	
+            	String costName1 = (String)nodeService.getProperty(c1.getCost(), ContentModel.PROP_NAME);
+            	String costName2 = (String)nodeService.getProperty(c2.getCost(), ContentModel.PROP_NAME);
+            	
+            	// increase
+                return costName1.compareTo(costName2);                
+            }
+
+        });
+        
+        return costList;
 	}
 	
 	/**
@@ -466,24 +444,23 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	 */
 	private List<CostDetailsListDataItem> sortCostDetails(List<CostDetailsListDataItem> costDetailsList){
 				
-		// TODO: quelle méthode est la meilleure ? sortCost ou sortCostDetails ??? (perf)
-        Collections.sort(costDetailsList, new Comparator<CostDetailsListDataItem>()
-        {
+        Collections.sort(costDetailsList, new Comparator<CostDetailsListDataItem>(){
+        	
             @Override
-			public int compare(CostDetailsListDataItem c1, CostDetailsListDataItem c2)
-            {
+			public int compare(CostDetailsListDataItem c1, CostDetailsListDataItem c2){
+            	
             	String costName1 = (String)nodeService.getProperty(c1.getCost(), ContentModel.PROP_NAME);
             	String costName2 = (String)nodeService.getProperty(c2.getCost(), ContentModel.PROP_NAME);
             	
             	// increase
                 int result = costName1.compareTo(costName2);
-                if (result == 0)
-                {
+                if (result == 0){
+                	
                     Float value1 = c1.getValue();
                     Float value2 = c2.getValue();
                     
-                    if (value1 != null && value2 != null)
-                    {
+                    if (value1 != null && value2 != null){
+                    	
                     	// decrease
                         result = value2.compareTo(value1);
                     }                    
