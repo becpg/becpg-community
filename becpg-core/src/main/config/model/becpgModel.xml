@@ -22,6 +22,10 @@
 	</namespaces>
 
 	<constraints>
+		<constraint name="bcpg:autoNumPrefix" type="REGEX">
+	        <parameter name="expression"><value>[A-Z]*</value></parameter>
+	        <parameter name="requiresMatch"><value>true</value></parameter>
+	     </constraint>
 		<constraint name="bcpg:systemState" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -1193,6 +1197,9 @@
 				</property>
 				<property name="bcpg:autoNumPrefix">
 					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:autoNumPrefix"/>
+					</constraints>
 				</property>
 			</properties>
 		</type>

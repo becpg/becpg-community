@@ -6,6 +6,8 @@ package fr.becpg.repo.policy;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
@@ -119,7 +121,7 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 				NodeRef supplier1NodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();								
 				assertNotNull("Check supplier created", supplier1NodeRef);				
 				String code1 = (String)nodeService.getProperty(supplier1NodeRef, BeCPGModel.PROP_CODE);
-				
+			
 				properties.clear();
 				name = "Supplier 2";
 				properties.put(ContentModel.PROP_NAME, name);
@@ -131,7 +133,7 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 				properties.clear();
 				name = "Supplier 3";
 				properties.put(ContentModel.PROP_NAME, name);
-				properties.put(BeCPGModel.PROP_CODE, 3);
+				properties.put(BeCPGModel.PROP_CODE, "F3");
 				NodeRef supplier3NodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();								
 				assertNotNull("Check supplier created", supplier3NodeRef);				
 				String code3 = (String)nodeService.getProperty(supplier3NodeRef, BeCPGModel.PROP_CODE);
@@ -140,16 +142,31 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 				properties.clear();
 				name = "Supplier 4";
 				properties.put(ContentModel.PROP_NAME, name);
-				properties.put(BeCPGModel.PROP_CODE, 3);
+				properties.put(BeCPGModel.PROP_CODE, "F3");
 				NodeRef supplier4NodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();								
 				assertNotNull("Check supplier created", supplier4NodeRef);				
 				String code4 = (String)nodeService.getProperty(supplier4NodeRef, BeCPGModel.PROP_CODE);				
+				Pattern p = Pattern.compile(autoNumService.getAutoNumMatchPattern( BeCPGModel.TYPE_SUPPLIER,  BeCPGModel.PROP_CODE));
+				Matcher m1 = p.matcher(code1);
+				System.out.println(code1+" "+p.toString()+" "+m1.matches());
+				assertTrue(m1.matches());
+				assertEquals("Check code 1", "1", m1.group(2));
+				Matcher m2 = p.matcher(code2);
+				System.out.println(code2+" "+p.toString()+" "+m2.matches());
+				assertTrue(m2.matches());
+				assertEquals("Check code 2", "2", m2.group(2));
 				
-				assertEquals("Check code 1", "1", code1.substring(code1.lastIndexOf("-")+1));
-				assertEquals("Check code 2", "2", code2.substring(code2.lastIndexOf("-")+1));
-				assertEquals("Check code 3", "3", code3.substring(code3.lastIndexOf("-")+1));
-				assertEquals("Check code 4", "4", code4.substring(code4.lastIndexOf("-")+1));
-								
+				Matcher m3 = p.matcher(code3);
+				System.out.println(code3+" "+p.toString()+" "+m3.matches());
+				assertTrue(m3.matches());
+				assertEquals("Check code 3", "3", m3.group(2));
+				
+				Matcher m4 = p.matcher(code4);
+				System.out.println(code4+" "+p.toString()+" "+m4.matches());
+				assertTrue(m4.matches());
+				assertEquals("Check code 4", "4", m4.group(2));
+			
+				
 				return null;
 				
 			}},false,true);

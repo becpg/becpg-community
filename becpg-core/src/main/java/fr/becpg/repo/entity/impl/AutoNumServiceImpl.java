@@ -43,9 +43,9 @@ public class AutoNumServiceImpl implements AutoNumService {
 
 	private static final String PREFIX_MSG_PFX = "autonum.prefix.";
 
-	private static final String PREFIX_SEP = "-";
-
 	private static final String DEFAULT_PREFIX = "";
+
+	private static final String DEFAULT_PATTERN = "(^[A-Z]+)(\\d+$)";
 	
 	
 	/** The logger. */
@@ -147,7 +147,7 @@ public class AutoNumServiceImpl implements AutoNumService {
         	autoNumValue  = createAutoNum(className, propertyName, autoNumValue,prefix);
         }
         
-		return  prefix+ PREFIX_SEP + autoNumValue;
+		return  prefix + autoNumValue;
 	}
 	
 	/**
@@ -178,7 +178,7 @@ public class AutoNumServiceImpl implements AutoNumService {
         }
         
         
-		return  prefix+ PREFIX_SEP + autoNumValue;
+		return  formatCode(prefix, autoNumValue);
 	}
 	
 	/**
@@ -189,15 +189,19 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 * @param autoNumValue the auto num value
 	 */
 	@Override
-	public void createOrUpdateAutoNumValue(QName className, QName propertyName,
+	public String createOrUpdateAutoNumValue(QName className, QName propertyName,
 			String autoNumCode) {
 		
 		Long autoNumValue = DEFAULT_AUTO_NUM;
-		if(autoNumCode.contains(PREFIX_SEP)){
-			autoNumCode = autoNumCode.substring(autoNumCode.lastIndexOf(PREFIX_SEP)+1);
+		
+		String prefix = getDefaultPrefix(className,propertyName);
+		java.util.regex.Matcher ma = java.util.regex.Pattern.compile(DEFAULT_PATTERN).matcher(autoNumCode);
+		if(ma.matches()){
+			prefix = ma.group(0);
+			autoNumCode = ma.group(2); 
 		}
 		try {
-		autoNumValue = Long.parseLong(autoNumCode);
+		 autoNumValue = Long.parseLong(autoNumCode);
 		} catch (NumberFormatException e) {
 			logger.warn("cannot parse autoNum : "+autoNumCode,e);
 		}
@@ -208,8 +212,9 @@ public class AutoNumServiceImpl implements AutoNumService {
         	nodeService.setProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE, autoNumValue);
         }
         else{
-        	createAutoNum(className, propertyName, autoNumValue, getDefaultPrefix(className,propertyName) );
+        	createAutoNum(className, propertyName, autoNumValue, prefix );
         }
+        return formatCode(prefix, autoNumValue);
 	}
 	
 	
@@ -304,5 +309,52 @@ public class AutoNumServiceImpl implements AutoNumService {
         }
         
         return autoNumNodeRef;
+	}
+
+	@Override
+	public String getAutoNumMatchPattern(QName type, QName propertyName) {
+		String prefix = DEFAULT_PREFIX;
+		if(BeCPGModel.TYPE_PRODUCT.equals(type)){
+			for(QName subType : dictionaryService.getSubTypes(type, true)){
+				if(prefix.length()!=0){
+					prefix+="|";
+				}
+				prefix+= getAutoNumPrefix(subType,propertyName);
+			}
+				
+		} else {
+			prefix = getAutoNumPrefix(type,propertyName);
+		}
+		return getMatchPattern(prefix);
+	}
+	
+	
+	
+
+	private String getMatchPattern(String prefix) {
+		return "(^"+prefix+")"+"(\\d*$)";
+	}
+
+	private String getAutoNumPrefix(QName type, QName propertyName) {
+		String prefix = DEFAULT_PREFIX;
+		NodeRef autoNumNodeRef = getAutoNumNodeRef(type, propertyName);
+        if(autoNumNodeRef != null){
+        	prefix = (String) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_PREFIX);
+        }
+        else{
+        	prefix = getDefaultPrefix(type,propertyName);
+        }
+		return prefix;
+	}
+
+	@Override
+	public String getPrefixedCode(QName type, QName propertyName, Long autoNumValue) {
+		String prefix = getAutoNumPrefix(type, propertyName);
+		return formatCode(prefix,autoNumValue);
+	}
+
+	private String formatCode(String prefix, Long autoNumValue) {
+		return prefix + autoNumValue;
+		
 	}	
 }

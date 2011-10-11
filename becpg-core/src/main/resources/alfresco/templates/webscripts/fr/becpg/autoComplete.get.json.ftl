@@ -3,7 +3,7 @@
    "result":
    [
 	<#list suggestions?keys as key>      	
-		{"value": "${key}","name": "${suggestions[key]}"}<#if key_has_next>,</#if>
+		{"value": "${key}","name": "${suggestions[key]}","type":"${companyhome.nodeByReference[key].type?replace("{http://www.bcpg.fr/model/becpg/1.0}","")}"}<#if key_has_next>,</#if>
 	</#list>
    
    ]

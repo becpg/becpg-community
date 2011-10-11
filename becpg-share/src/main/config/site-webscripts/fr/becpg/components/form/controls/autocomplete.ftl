@@ -2,6 +2,7 @@
 <#if field.control.params.prevFieldName?exists><#assign prevFieldName=field.control.params.prevFieldName><#else><#assign prevFieldName=''></#if>
 <#if field.control.params.width?exists><#assign width=field.control.params.width><#else><#assign width='30em'></#if>
 
+
 <div class="form-field">
    <#if form.mode == "view">
       <div class="viewmode-field">
@@ -19,7 +20,7 @@
    <#else>
       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory!false><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
       <div id="${fieldHtmlId}-autocomplete" style="width: ${width}; padding-bottom: 2em;">
-         <input id="${fieldHtmlId}" type="text" name="${field.name}" tabindex="0"
+        <span id="${fieldHtmlId}-toggle-autocomplete"></span><input id="${fieldHtmlId}" type="text" name="${field.name}" tabindex="0"
                 <#if field.control.params.styleClass?exists>class="${field.control.params.styleClass}"</#if>
                 <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if>
                 <#if field.description?exists>title="${field.description}"</#if>
@@ -34,11 +35,15 @@
 
 <script type="text/javascript">//<![CDATA[
 
-//variable used to update url of webservice
-var oAC${field.id} = null;
 
-function attachDataSource${field.id}()
+(function()
 {
+ var Dom = YAHOO.util.Dom,
+      Event = YAHOO.util.Event,
+      Lang = YAHOO.util.Lang;
+
+//Event.onDOMReady due to Popup
+setTimeout(function(){
 
 	var dsStr = '${ds}';	
 
@@ -47,82 +52,82 @@ function attachDataSource${field.id}()
    
    // Set the responseType
    oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
-   
+ 
    // Define the schema of the JSON results
    oDS.responseSchema = 
    {
       resultsList : "result",
-      fields : ["value", "name"]
+      fields : ["value", "name","type"]
    };
+   
 
    // Instantiate the AutoComplete
    var oAC = new YAHOO.widget.AutoComplete("${fieldHtmlId}", "${fieldHtmlId}-container", oDS);
    
-   // Throttle requests sent
+   oAC.autoHighlight = true;
+   oAC.allowBrowserAutocomplete = false;
    oAC.queryDelay = .5;
+   
+   var oParentField = '';	
+<#if field.control.params.parent?exists>
+
+	<#assign parentFieldHtmlId=args.htmlid + "_prop_" + field.control.params.parent >
+	var parentElem = Dom.get("${parentFieldHtmlId}");	
+	if(parentElem != null){
+			oParentField = parentElem.value;
+	}	
+	
+	//Callback for parent select change event.
+	Event.addListener(parentElem, "change", function(e) {		
+	   oParentField = e.target.value;			
+	} );			
+</#if>
+   
+
 
    // The webservice needs additional parameters
    oAC.generateRequest = function(sQuery) 
    {
-		//parent
-		var sParent = '';	
-		<#if field.control.params.parent?exists>
-			<#assign parentFieldHtmlId=args.htmlid + "_prop_" + field.control.params.parent >
-			var parentElem = YAHOO.util.Dom.get("${parentFieldHtmlId}");
-			if(parentElem != null)
-				sParent = parentElem.value;
-		</#if>		
-
+	 var q = Lang.substitute("q={query}&parent={parent}",{query:sQuery,parent:oParentField});
+	
       <#if ds?contains("?")>
-         return "&q=" + sQuery + "&parent=" + sParent ;
+         return "&" + q;
       <#else>
-         return "?q=" + sQuery + "&parent=" + sParent ;
+         return "?" + q;
       </#if>
    };
    
-   oAC${field.id} = oAC;   
+
+ oAC.formatResult = function(oResultData, sQuery, sResultMatch) {
+   		return "<span class='"+oResultData[2]+"' style='padding-left: 20px;' >"+oResultData[1]+"</span>";
+   }
    
-   return {
-      oDS: oDS,
-      oAC: oAC
-   };
-}
+    // Toggle button 
+	var bToggler = Dom.get("${fieldHtmlId}-toggle-autocomplete"); 
+	var oPushButtonB = new YAHOO.widget.Button({container:bToggler}); 
+	var toggleB = function(e) { 
+	 //Event.stopEvent(e); 
+	 if(!Dom.hasClass(bToggler, "openToggle")) { 
+	     Dom.addClass(bToggler, "openToggle") 
+	  } 
+	 // Is open 
+	 if(oAC.isContainerOpen()) { 
+	         oAC.collapseContainer(); 
+	  } 
+	  // Is closed 
+	   else { 
+	     oAC.getInputEl().focus(); // Needed to keep widget active 
+	     setTimeout(function() { // For IE 
+	     oAC.sendQuery("*"); 
+	      },0); 
+	    } 
+	  } 
+	  oPushButtonB.on("click", toggleB); 
+	 
+	  oAC.containerCollapseEvent.subscribe(function(){Dom.removeClass(bToggler, "openToggle")}); 
+	    
 
- 
-setTimeout(function()
-{
-   attachDataSource${field.id}();
-}, 500);
+},500);
 
-
-//TODO PQU : to test
-//attach to contentReady event
-//var element = new YAHOO.util.Element("${fieldHtmlId}");   
-//element.on('contentReady', attachDataSource${field.id}());  
-
-<#if field.control.params.parent?exists>
-
-(function() {
-
-	//Callback for parent select change event.
-	function onChangeValueCallback(e) {		
-		
-		var sParent = e.target.value;			
-		oAC${field.id}.generateRequest = function(sQuery) 
-	   {
-	      <#if ds?contains("?")>
-	         return "&q=" + sQuery + "&parent=" + sParent ;
-	      <#else>
-	         return "?q=" + sQuery + "&parent=" + sParent ;
-	      </#if>
-	   };
-	} 
-
-	<#assign parentFieldHtmlId=args.htmlid + "_prop_" + field.control.params.parent >
-	var parentElem = YAHOO.util.Dom.get("${parentFieldHtmlId}");		
-	//Add Listner for parent select change event.
-	YAHOO.util.Event.addListener(parentElem, "change", onChangeValueCallback);			
-})();	
-</#if>
-
+})();
 </script>

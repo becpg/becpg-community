@@ -3,7 +3,7 @@
 		<forms>
 			<dependencies>
 				<css src="/yui/autocomplete/assets/skins/sam/autocomplete.css" />
-
+				<css src="/components/autocomplete/autocomplete.css" />
 				<js src="/js/beCPG.js" />
 				<js src="/modules/simple-bulk-dialog.js" />
 				<js src="/components/autocomplete/autocomplete-picker.js" />
