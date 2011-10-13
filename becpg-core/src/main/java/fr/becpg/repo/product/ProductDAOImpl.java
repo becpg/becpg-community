@@ -6,6 +6,7 @@ package fr.becpg.repo.product;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.InvalidTypeException;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -77,15 +79,14 @@ public class ProductDAOImpl implements ProductDAO{
 	private static Log logger = LogFactory.getLog(ProductDAOImpl.class);
 	
 	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
+	private NodeService nodeService;	
 	
 	/** The ml node service. */
 	private NodeService mlNodeService;
 	
 	private EntityListDAO entityListDAO;
+	
+	private BehaviourFilter policyBehaviourFilter;
 	
 	/**
 	 * Sets the node service.
@@ -94,15 +95,6 @@ public class ProductDAOImpl implements ProductDAO{
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
-	}
-	
-	/**
-	 * Sets the file folder service.
-	 *
-	 * @param fileFolderService the new file folder service
-	 */
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
 	}
 	
 	/**
@@ -116,6 +108,10 @@ public class ProductDAOImpl implements ProductDAO{
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
+	}
+	
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	/**
@@ -336,30 +332,28 @@ public class ProductDAOImpl implements ProductDAO{
     		if(allergenListNodeRef != null)
     		{
     			allergenList = new ArrayList<AllergenListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(allergenListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(allergenListNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
 	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){
+	    		 					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
-		    		List<AssociationRef> allergenAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.PROP_ALLERGENLIST_ALLERGEN);
+		    		List<AssociationRef> allergenAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_ALLERGEN);
 		    		NodeRef allergenNodeRef = (allergenAssocRefs.get(0)).getTargetRef();
 		    		
-		    		List<AssociationRef> volSourcesAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY_SOURCES);
+		    		List<AssociationRef> volSourcesAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY_SOURCES);
 		    		List<NodeRef> volSources = new ArrayList<NodeRef>(volSourcesAssocRefs.size());
 		    		for(AssociationRef assocRef : volSourcesAssocRefs){
 		    			volSources.add(assocRef.getTargetRef());
 		    		}
 		    		
-		    		List<AssociationRef> inVolSourcesAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY_SOURCES);
+		    		List<AssociationRef> inVolSourcesAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY_SOURCES);
 		    		List<NodeRef> inVolSources = new ArrayList<NodeRef>(volSourcesAssocRefs.size());
 		    		for(AssociationRef assocRef : inVolSourcesAssocRefs){
 		    			inVolSources.add(assocRef.getTargetRef());
 		    		}
 		    		
-		    		AllergenListDataItem allergenListDataItem = new AllergenListDataItem(nodeRef, (Boolean)properties.get(BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY), (Boolean)properties.get(BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY), volSources, inVolSources, allergenNodeRef);
+		    		AllergenListDataItem allergenListDataItem = new AllergenListDataItem(listItemNodeRef, (Boolean)properties.get(BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY), (Boolean)properties.get(BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY), volSources, inVolSources, allergenNodeRef);
 		    		allergenList.add(allergenListDataItem);
 		    	}
     		}    		
@@ -385,24 +379,22 @@ public class ProductDAOImpl implements ProductDAO{
     		if(compoListNodeRef != null)
     		{
     			compoList = new ArrayList<CompoListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(compoListNodeRef);
-	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(compoListNodeRef, BeCPGModel.TYPE_COMPOLIST);
+    			
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){
+    				
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
-		    		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+		    		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
 		    		NodeRef part = (compoAssocRefs.get(0)).getTargetRef();		    		
 		    		CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 		    		
-		    		CompoListDataItem compoListDataItem = new CompoListDataItem(nodeRef, (Integer)properties.get(BeCPGModel.PROP_DEPTH_LEVEL), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), part);
+		    		CompoListDataItem compoListDataItem = new CompoListDataItem(listItemNodeRef, (Integer)properties.get(BeCPGModel.PROP_DEPTH_LEVEL), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), part);
 		    		compoList.add(compoListDataItem);
-		    	}
+		    	}    			
     		}    		
     	}
-    	
+    	    	
     	return compoList;
     }    
     
@@ -423,18 +415,15 @@ public class ProductDAOImpl implements ProductDAO{
     		if(costListNodeRef != null)
     		{
     			costList = new ArrayList<CostListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(costListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(costListNodeRef, BeCPGModel.TYPE_COSTLIST);
 	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){	    					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
-		    		List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
+		    		List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
 		    		NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
 		    		
-		    		CostListDataItem costListDataItem = new CostListDataItem(nodeRef, (Float)properties.get(BeCPGModel.PROP_COSTLIST_VALUE), (String)properties.get(BeCPGModel.PROP_COSTLIST_UNIT), costNodeRef);
+		    		CostListDataItem costListDataItem = new CostListDataItem(listItemNodeRef, (Float)properties.get(BeCPGModel.PROP_COSTLIST_VALUE), (String)properties.get(BeCPGModel.PROP_COSTLIST_UNIT), costNodeRef);
 		    		costList.add(costListDataItem);
 		    	}
     		}    		
@@ -460,21 +449,18 @@ public class ProductDAOImpl implements ProductDAO{
     		if(costDetailsListNodeRef != null)
     		{
     			costDetailsList = new ArrayList<CostDetailsListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(costDetailsListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(costDetailsListNodeRef, BeCPGModel.TYPE_COSTDETAILSLIST);
 	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){	    					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
-		    		List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_COSTDETAILSLIST_COST);
+		    		List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COSTDETAILSLIST_COST);
 		    		NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
 		    		
-		    		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_COSTDETAILSLIST_SOURCE);
+		    		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COSTDETAILSLIST_SOURCE);
 		    		NodeRef sourceNodeRef = (sourceAssocRefs.get(0)).getTargetRef();
 		    		
-		    		CostDetailsListDataItem costDetailsListDataItem = new CostDetailsListDataItem(nodeRef, 
+		    		CostDetailsListDataItem costDetailsListDataItem = new CostDetailsListDataItem(listItemNodeRef, 
 		    											(Float)properties.get(BeCPGModel.PROP_COSTDETAILSLIST_VALUE), 
 		    											(String)properties.get(BeCPGModel.PROP_COSTDETAILSLIST_UNIT), 
 		    											(Float)properties.get(BeCPGModel.PROP_COSTDETAILSLIST_PERC),
@@ -505,30 +491,27 @@ public class ProductDAOImpl implements ProductDAO{
     		if(ingListNodeRef != null)
     		{
     			ingList = new ArrayList<IngListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(ingListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(ingListNodeRef, BeCPGModel.TYPE_INGLIST);
 	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){	    					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
-		    		List<AssociationRef> ingAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_INGLIST_ING);
+		    		List<AssociationRef> ingAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_INGLIST_ING);
 		    		NodeRef ingNodeRef = (ingAssocRefs.get(0)).getTargetRef();
 		    		
-		    		List<AssociationRef> geoOriginAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
+		    		List<AssociationRef> geoOriginAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
 		    		List<NodeRef> geoOrigins = new ArrayList<NodeRef>(geoOriginAssocRefs.size());
 		    		for(AssociationRef assocRef : geoOriginAssocRefs){
 		    			geoOrigins.add(assocRef.getTargetRef());
 		    		}
 		    		
-		    		List<AssociationRef> bioOriginAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
+		    		List<AssociationRef> bioOriginAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
 		    		List<NodeRef> bioOrigins = new ArrayList<NodeRef>(bioOriginAssocRefs.size());
 		    		for(AssociationRef assocRef : bioOriginAssocRefs){
 		    			bioOrigins.add(assocRef.getTargetRef());
 		    		}
 		    				    		
-		    		IngListDataItem ingListDataItem = new IngListDataItem(nodeRef, 
+		    		IngListDataItem ingListDataItem = new IngListDataItem(listItemNodeRef, 
 		    								(Float)properties.get(BeCPGModel.PROP_INGLIST_QTY_PERC), 
 		    								geoOrigins, 
 		    								bioOrigins, 
@@ -561,17 +544,15 @@ public class ProductDAOImpl implements ProductDAO{
     		if(nutListNodeRef != null)
     		{
     			nutList = new ArrayList<NutListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(nutListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(nutListNodeRef, BeCPGModel.TYPE_NUTLIST);
 	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){
+    				
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
-		    		List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
+		    		List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
 		    		NodeRef nutNodeRef = (nutAssocRefs.get(0)).getTargetRef();
-		    		NutListDataItem nutListDataItem = new NutListDataItem(nodeRef, 
+		    		NutListDataItem nutListDataItem = new NutListDataItem(listItemNodeRef, 
 		    									(Float)properties.get(BeCPGModel.PROP_NUTLIST_VALUE),
 		    									(String)properties.get(BeCPGModel.PROP_NUTLIST_UNIT),
 		    									(Float)properties.get(BeCPGModel.PROP_NUTLIST_MINI),
@@ -604,17 +585,15 @@ public class ProductDAOImpl implements ProductDAO{
     		if(organoListNodeRef != null)
     		{
     			organoList = new ArrayList<OrganoListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(organoListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(organoListNodeRef, BeCPGModel.TYPE_ORGANOLIST);
 	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){
+  					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
-		    		List<AssociationRef> organoAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_ORGANOLIST_ORGANO);
+		    		List<AssociationRef> organoAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_ORGANOLIST_ORGANO);
 		    		NodeRef organoNodeRef = (organoAssocRefs.get(0)).getTargetRef();
-		    		OrganoListDataItem organoListDataItem = new OrganoListDataItem(nodeRef, (String)properties.get(BeCPGModel.PROP_ORGANOLIST_VALUE), organoNodeRef);
+		    		OrganoListDataItem organoListDataItem = new OrganoListDataItem(listItemNodeRef, (String)properties.get(BeCPGModel.PROP_ORGANOLIST_VALUE), organoNodeRef);
 		    		organoList.add(organoListDataItem);
 		    	}
     		}    		
@@ -640,24 +619,21 @@ public class ProductDAOImpl implements ProductDAO{
     		if(ingLabelingListNodeRef != null)
     		{
     			ingLabelingList = new ArrayList<IngLabelingListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(ingLabelingListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(ingLabelingListNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
 	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){	    					    		
 	    			
 	    			//Grp
-	    			String grp = (String)nodeService.getProperty(nodeRef, BeCPGModel.PROP_ILL_GRP);
+	    			String grp = (String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_GRP);
 		    		
 		    		//illValue
-		    		MLText illValue = (MLText)mlNodeService.getProperty(nodeRef, BeCPGModel.PROP_ILL_VALUE);
+		    		MLText illValue = (MLText)mlNodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_VALUE);
 //		            I18NUtil.setContentLocale(Locale.FRENCH);
-//		    		illValue.addValue(Locale.FRENCH, (String)nodeService.getProperty(nodeRef, BeCPGModel.PROP_ILL_VALUE));
+//		    		illValue.addValue(Locale.FRENCH, (String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_VALUE));
 //		            I18NUtil.setContentLocale(Locale.ENGLISH);
-//		    		illValue.addValue(Locale.ENGLISH, (String)nodeService.getProperty(nodeRef, BeCPGModel.PROP_ILL_VALUE));
+//		    		illValue.addValue(Locale.ENGLISH, (String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_VALUE));
 		            
-		    		IngLabelingListDataItem ingLabelingListDataItem = new IngLabelingListDataItem(nodeRef, grp, illValue);
+		    		IngLabelingListDataItem ingLabelingListDataItem = new IngLabelingListDataItem(listItemNodeRef, grp, illValue);
 		    		ingLabelingList.add(ingLabelingListDataItem);
 		    	}
     		}    		
@@ -683,17 +659,15 @@ public class ProductDAOImpl implements ProductDAO{
     		if(microbioListNodeRef != null)
     		{
     			microbioList = new ArrayList<MicrobioListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(microbioListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(microbioListNodeRef, BeCPGModel.TYPE_MICROBIOLIST);
 	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){
+    				
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
-		    		List<AssociationRef> microbioAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_MICROBIOLIST_MICROBIO);
+		    		List<AssociationRef> microbioAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_MICROBIOLIST_MICROBIO);
 		    		NodeRef organoNodeRef = (microbioAssocRefs.get(0)).getTargetRef();
-		    		MicrobioListDataItem microbioListDataItem = new MicrobioListDataItem(nodeRef, (Float)properties.get(BeCPGModel.PROP_MICROBIOLIST_VALUE), (String)properties.get(BeCPGModel.PROP_MICROBIOLIST_UNIT), (Float)properties.get(BeCPGModel.PROP_MICROBIOLIST_MAXI), organoNodeRef);
+		    		MicrobioListDataItem microbioListDataItem = new MicrobioListDataItem(listItemNodeRef, (Float)properties.get(BeCPGModel.PROP_MICROBIOLIST_VALUE), (String)properties.get(BeCPGModel.PROP_MICROBIOLIST_UNIT), (Float)properties.get(BeCPGModel.PROP_MICROBIOLIST_MAXI), organoNodeRef);
 		    		microbioList.add(microbioListDataItem);
 		    	}
     		}    		
@@ -719,17 +693,15 @@ public class ProductDAOImpl implements ProductDAO{
     		if(physicoChemListNodeRef != null)
     		{
     			physicoChemList = new ArrayList<PhysicoChemListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(physicoChemListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(physicoChemListNodeRef, BeCPGModel.TYPE_PHYSICOCHEMLIST);
 	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){
+    				
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
-		    		List<AssociationRef> physicoChemAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM);
+		    		List<AssociationRef> physicoChemAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM);
 		    		NodeRef physicoChemNodeRef = (physicoChemAssocRefs.get(0)).getTargetRef();
-		    		PhysicoChemListDataItem physicoChemListDataItem = new PhysicoChemListDataItem(nodeRef, (Float)properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_VALUE), (String)properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_UNIT), (Float)properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_MINI), (Float)properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_MAXI), physicoChemNodeRef);
+		    		PhysicoChemListDataItem physicoChemListDataItem = new PhysicoChemListDataItem(listItemNodeRef, (Float)properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_VALUE), (String)properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_UNIT), (Float)properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_MINI), (Float)properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_MAXI), physicoChemNodeRef);
 		    		physicoChemList.add(physicoChemListDataItem);
 		    	}
     		}    		
@@ -750,24 +722,22 @@ public class ProductDAOImpl implements ProductDAO{
     	
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);
+    		NodeRef pkgingListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);
     		
-    		if(costListNodeRef != null)
+    		if(pkgingListNodeRef != null)
     		{
     			packagingList = new ArrayList<PackagingListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(costListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(pkgingListNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);
 	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){
+	    					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
-		    		List<AssociationRef> productAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);
+		    		List<AssociationRef> productAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);
 		    		NodeRef productNodeRef = (productAssocRefs.get(0)).getTargetRef();
 		    		PackagingListUnit packagingListUnit = PackagingListUnit.valueOf((String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_UNIT));
 		    		
-		    		PackagingListDataItem packagingListDataItem = new PackagingListDataItem(nodeRef, (Float)properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY), packagingListUnit, (String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), productNodeRef);
+		    		PackagingListDataItem packagingListDataItem = new PackagingListDataItem(listItemNodeRef, (Float)properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY), packagingListUnit, (String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), productNodeRef);
 		    		packagingList.add(packagingListDataItem);
 		    	}
     		}    		
@@ -793,35 +763,33 @@ public class ProductDAOImpl implements ProductDAO{
     		if(forbiddenIngListNodeRef != null)
     		{
     			forbiddenIngList = new ArrayList<ForbiddenIngListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(forbiddenIngListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(forbiddenIngListNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);
 	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){	    					    		
+    				
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    		NullableBoolean isGMO = NullableBoolean.valueOf((String)properties.get(BeCPGModel.PROP_FIL_IS_GMO), true);
 		    		NullableBoolean isIonized = NullableBoolean.valueOf((String)properties.get(BeCPGModel.PROP_FIL_IS_IONIZED), true);
 		    	
-		    		List<AssociationRef> ingAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_FIL_INGS);
+		    		List<AssociationRef> ingAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_FIL_INGS);
 		    		List<NodeRef> ings = new ArrayList<NodeRef>(ingAssocRefs.size());
 		    		for(AssociationRef assocRef : ingAssocRefs){
 		    			ings.add(assocRef.getTargetRef());
 		    		}
 		    		
-		    		List<AssociationRef> geoOriginAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_FIL_GEO_ORIGINS);
+		    		List<AssociationRef> geoOriginAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_FIL_GEO_ORIGINS);
 		    		List<NodeRef> geoOrigins = new ArrayList<NodeRef>(geoOriginAssocRefs.size());
 		    		for(AssociationRef assocRef : geoOriginAssocRefs){
 		    			geoOrigins.add(assocRef.getTargetRef());
 		    		}
 		    		
-		    		List<AssociationRef> bioOriginAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_FIL_BIO_ORIGINS);
+		    		List<AssociationRef> bioOriginAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_FIL_BIO_ORIGINS);
 		    		List<NodeRef> bioOrigins = new ArrayList<NodeRef>(bioOriginAssocRefs.size());
 		    		for(AssociationRef assocRef : bioOriginAssocRefs){
 		    			bioOrigins.add(assocRef.getTargetRef());
 		    		}
 		    				    		
-		    		ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(nodeRef, 
+		    		ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(listItemNodeRef, 
 		    				(String)properties.get(BeCPGModel.PROP_FIL_REQ_TYPE), 
 		    				(String)properties.get(BeCPGModel.PROP_FIL_REQ_MESSAGE), 
 		    				(Float)properties.get(BeCPGModel.PROP_FIL_QTY_PERC_MAXI), 		    				
@@ -856,21 +824,18 @@ public class ProductDAOImpl implements ProductDAO{
     		if(reqCtrlListNodeRef != null)
     		{
     			reqCtrlList = new ArrayList<ReqCtrlListDataItem>();
-				List<FileInfo> nodes = fileFolderService.listFiles(reqCtrlListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(reqCtrlListNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
 	    		
-	    		for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
-		    	{	    			
-	    			FileInfo node = nodes.get(z_idx);
-	    			NodeRef nodeRef = node.getNodeRef();	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){	    					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
-		    		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_RCL_SOURCES);
+		    		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_RCL_SOURCES);
 		    		List<NodeRef> sources = new ArrayList<NodeRef>(sourceAssocRefs.size());
 		    		for(AssociationRef assocRef : sourceAssocRefs){
 		    			sources.add(assocRef.getTargetRef());
 		    		}		    		
 		    				    		
-		    		ReqCtrlListDataItem reqCtrlListDataItem = new ReqCtrlListDataItem(nodeRef, 
+		    		ReqCtrlListDataItem reqCtrlListDataItem = new ReqCtrlListDataItem(listItemNodeRef, 
 		    				(String)properties.get(BeCPGModel.PROP_RCL_REQ_TYPE), 
 		    				(String)properties.get(BeCPGModel.PROP_RCL_REQ_MESSAGE), 		    				
 		    				sources);
@@ -934,54 +899,63 @@ public class ProductDAOImpl implements ProductDAO{
 		productData.setListsContainer(containerNodeRef);
 		
 		//Lists		
-		if(dataLists != null){
-			for(QName dataList : dataLists)
-	    	{
-				if (dataList.equals(BeCPGModel.TYPE_ALLERGENLIST)) {
-					createAllergenList(containerNodeRef, productData.getAllergenList());
-	    		}
-	    		else if (dataList.equals(BeCPGModel.TYPE_COMPOLIST)) {
-	    			createCompoList(containerNodeRef, productData.getCompoList());
-	    		}
-	    		else if (dataList.equals(BeCPGModel.TYPE_COSTLIST)) {
-	    			createCostList(containerNodeRef, productData.getCostList());
-	    		}
-	    		else if (dataList.equals(BeCPGModel.TYPE_COSTDETAILSLIST)) {
-	    			createCostDetailsList(containerNodeRef, productData.getCostDetailsList());
-	    		}
-	    		else if (dataList.equals(BeCPGModel.TYPE_INGLIST)) {
-	    			createIngList(containerNodeRef, productData.getIngList());
-	    		}
-	    		else if (dataList.equals(BeCPGModel.TYPE_NUTLIST)) {
-	    			createNutList(containerNodeRef, productData.getNutList());
-	    		}
-	    		else if (dataList.equals(BeCPGModel.TYPE_ORGANOLIST)) {
-	    			createOrganoList(containerNodeRef, productData.getOrganoList());
-	    		}
-	    		else if (dataList.equals(BeCPGModel.TYPE_INGLABELINGLIST)) {
-	    			createIngLabelingList(containerNodeRef, productData.getIngLabelingList());
-	    		}
-	    		else if (dataList.equals(BeCPGModel.TYPE_MICROBIOLIST)) {
-	    			createMicrobioList(containerNodeRef, productData.getMicrobioList());
-	    		}
-	    		else if (dataList.equals(BeCPGModel.TYPE_PHYSICOCHEMLIST)) {
-	    			createPhysicoChemList(containerNodeRef, productData.getPhysicoChemList());
-	    		}
-	    		else if (dataList.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
-	    			createPackagingList(containerNodeRef, productData.getPackagingList());
-	    		}
-	    		else if (dataList.equals(BeCPGModel.TYPE_FORBIDDENINGLIST)) {
-	    			createForbiddenIngList(containerNodeRef, productData.getForbiddenIngList());
-	    		}
-	    		else if (dataList.equals(BeCPGModel.TYPE_REQCTRLLIST)) {
-	    			createReqCtrlList(containerNodeRef, productData.getReqCtrlList());
-	    		}
-	    		else{
-	    			// specific TODO
-	    			logger.error(String.format("DataList '%s' is not created since it is not implemented.", dataList));
-	    		}				
-	    	}
-		}    	
+		try
+        {
+            policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+            
+            if(dataLists != null){
+    			for(QName dataList : dataLists)
+    	    	{
+    				if (dataList.equals(BeCPGModel.TYPE_ALLERGENLIST)) {
+    					createAllergenList(containerNodeRef, productData.getAllergenList());
+    	    		}
+    	    		else if (dataList.equals(BeCPGModel.TYPE_COMPOLIST)) {
+    	    			createCompoList(containerNodeRef, productData.getCompoList());
+    	    		}
+    	    		else if (dataList.equals(BeCPGModel.TYPE_COSTLIST)) {
+    	    			createCostList(containerNodeRef, productData.getCostList());
+    	    		}
+    	    		else if (dataList.equals(BeCPGModel.TYPE_COSTDETAILSLIST)) {
+    	    			createCostDetailsList(containerNodeRef, productData.getCostDetailsList());
+    	    		}
+    	    		else if (dataList.equals(BeCPGModel.TYPE_INGLIST)) {
+    	    			createIngList(containerNodeRef, productData.getIngList());
+    	    		}
+    	    		else if (dataList.equals(BeCPGModel.TYPE_NUTLIST)) {
+    	    			createNutList(containerNodeRef, productData.getNutList());
+    	    		}
+    	    		else if (dataList.equals(BeCPGModel.TYPE_ORGANOLIST)) {
+    	    			createOrganoList(containerNodeRef, productData.getOrganoList());
+    	    		}
+    	    		else if (dataList.equals(BeCPGModel.TYPE_INGLABELINGLIST)) {
+    	    			createIngLabelingList(containerNodeRef, productData.getIngLabelingList());
+    	    		}
+    	    		else if (dataList.equals(BeCPGModel.TYPE_MICROBIOLIST)) {
+    	    			createMicrobioList(containerNodeRef, productData.getMicrobioList());
+    	    		}
+    	    		else if (dataList.equals(BeCPGModel.TYPE_PHYSICOCHEMLIST)) {
+    	    			createPhysicoChemList(containerNodeRef, productData.getPhysicoChemList());
+    	    		}
+    	    		else if (dataList.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
+    	    			createPackagingList(containerNodeRef, productData.getPackagingList());
+    	    		}
+    	    		else if (dataList.equals(BeCPGModel.TYPE_FORBIDDENINGLIST)) {
+    	    			createForbiddenIngList(containerNodeRef, productData.getForbiddenIngList());
+    	    		}
+    	    		else if (dataList.equals(BeCPGModel.TYPE_REQCTRLLIST)) {
+    	    			createReqCtrlList(containerNodeRef, productData.getReqCtrlList());
+    	    		}
+    	    		else{
+    	    			// specific
+    	    			logger.warn(String.format("DataList '%s' is not created since it is not implemented.", dataList));
+    	    		}				
+    	    	}
+    		}    
+        }
+        finally
+        {
+        	policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+        }					
     }	   
 	
 	/**
@@ -1010,7 +984,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		allergenListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
 	    		}
 	    		
-	    		List<FileInfo> files = fileFolderService.listFiles(allergenListNodeRef);
+    			List<NodeRef> listItemNodeRefs = listItems(allergenListNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
 	    		
 	    		//create temp list
 	    		List<NodeRef> allergenListToTreat = new ArrayList<NodeRef>();
@@ -1020,21 +994,22 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		Map<NodeRef, NodeRef> filesToUpdate = new HashMap<NodeRef, NodeRef>();
-	    		for(FileInfo file : files){
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){
 	    			
-	    			List<AssociationRef> allergenAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.PROP_ALLERGENLIST_ALLERGEN);
+	    			List<AssociationRef> allergenAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_ALLERGEN);
 		    		NodeRef allergenNodeRef = (allergenAssocRefs.get(0)).getTargetRef();	    			
 	    			
 	    			if(!allergenListToTreat.contains(allergenNodeRef)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.put(allergenNodeRef, file.getNodeRef());
+	    				filesToUpdate.put(allergenNodeRef, listItemNodeRef);
 	    			}
 	    		}
 	    		
-	    		//update or create nodes	    		
+	    		//update or create nodes
+	    		int sortIndex = 1;
 	    		for(AllergenListDataItem allergenListDataItem : allergenList)
 	    		{    				    			
 	    			NodeRef linkNodeRef = null;
@@ -1042,6 +1017,9 @@ public class ProductDAOImpl implements ProductDAO{
 	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 	    			properties.put(BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY, allergenListDataItem.getInVoluntary());
 		    		properties.put(BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, allergenListDataItem.getVoluntary());
+		    		
+		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
+		    		sortIndex++;
 		
 		    		if(filesToUpdate.containsKey(allergenNodeRef)){
 		    			//update
@@ -1110,10 +1088,9 @@ public class ProductDAOImpl implements ProductDAO{
 	 * @throws InvalidTypeException the invalid type exception
 	 */
 	private void createCompoList(NodeRef listContainerNodeRef, List<CompoListDataItem> compoList) throws InvalidTypeException
-	{
-		
+	{	
 		if(listContainerNodeRef != null)
-		{    	
+		{		
 			NodeRef compoListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
 			
 			if(compoList == null){
@@ -1122,14 +1099,14 @@ public class ProductDAOImpl implements ProductDAO{
 					nodeService.deleteNode(compoListNodeRef);
 			}
 			else{
-	    		
+				
 				//compo list, create if needed    			
 	    		if(compoListNodeRef == null)
 	    		{					
 					compoListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);					
 	    		}    				    			    		    		
-	
-	    		List<FileInfo> files = fileFolderService.listFiles(compoListNodeRef);
+	    		
+	    		List<NodeRef> listItemNodeRefs = listItems(compoListNodeRef, BeCPGModel.TYPE_COMPOLIST);
 	    		
 	    		//create temp list
 	    		List<NodeRef> compoListToTreat = new ArrayList<NodeRef>();
@@ -1139,14 +1116,14 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
-	    		for(FileInfo file : files){	    			
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){	    			
 		    		
-	    			if(!compoListToTreat.contains(file.getNodeRef())){
+	    			if(!compoListToTreat.contains(listItemNodeRef)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.add(file.getNodeRef());
+	    				filesToUpdate.add(listItemNodeRef);
 	    			}
 	    		}
 	    		
@@ -1208,12 +1185,13 @@ public class ProductDAOImpl implements ProductDAO{
 //	    		}	    
 	    		
 	    		Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(compoList);
-	    		createCompositeCompoListItem(compoListNodeRef, composite, filesToUpdate);
+	    		int sortIndex = 1;
+	    		createCompositeCompoListItem(compoListNodeRef, composite, filesToUpdate, sortIndex);
 			}
 		}
 	}    
 	
-	private void createCompositeCompoListItem(NodeRef compoListNodeRef, Composite<CompoListDataItem> composite, List<NodeRef> filesToUpdate){
+	private void createCompositeCompoListItem(NodeRef compoListNodeRef, Composite<CompoListDataItem> composite, List<NodeRef> filesToUpdate, int sortIndex){
 		
 		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){
 			
@@ -1227,14 +1205,17 @@ public class ProductDAOImpl implements ProductDAO{
     		properties.put(BeCPGModel.PROP_COMPOLIST_UNIT, compoListDataItem.getCompoListUnit() == CompoListUnit.Unknown ?  "" : compoListDataItem.getCompoListUnit().toString());
     		properties.put(BeCPGModel.PROP_COMPOLIST_LOSS_PERC, compoListDataItem.getLossPerc());
     		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_GRP, compoListDataItem.getDeclGrp());
-    		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_TYPE, compoListDataItem.getDeclType());		    		
+    		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_TYPE, compoListDataItem.getDeclType());
+    		    		
+    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
+    		sortIndex++;
 
     		if(filesToUpdate.contains(compoListDataItem.getNodeRef())){
     			//update
     			nodeService.setProperties(compoListDataItem.getNodeRef(), properties);		    			
     		}
     		else{
-    			//create
+    			//create    			
     			ChildAssociationRef childAssocRef = nodeService.createNode(compoListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, compoListDataItem.getProduct().getId()), BeCPGModel.TYPE_COMPOLIST, properties);
     			compoListDataItem.setNodeRef(childAssocRef.getChildRef());			    		
     		}			    			    	
@@ -1271,7 +1252,7 @@ public class ProductDAOImpl implements ProductDAO{
     		
     		if(component instanceof Composite){
     			
-    			createCompositeCompoListItem(compoListNodeRef, (Composite<CompoListDataItem>)component, filesToUpdate);
+    			createCompositeCompoListItem(compoListNodeRef, (Composite<CompoListDataItem>)component, filesToUpdate, sortIndex);
     		}
     		
 		}
@@ -1303,7 +1284,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		costListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
 	    		}
 			
-	    		List<FileInfo> files = fileFolderService.listFiles(costListNodeRef);
+	    		List<NodeRef> listItemNodeRefs = listItems(costListNodeRef, BeCPGModel.TYPE_COSTLIST);
 	    		
 	    		//create temp list
 	    		List<NodeRef> costListToTreat = new ArrayList<NodeRef>();
@@ -1313,21 +1294,22 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		Map<NodeRef, NodeRef> filesToUpdate = new HashMap<NodeRef, NodeRef>();
-	    		for(FileInfo file : files){
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){
 	    			
-	    			List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.ASSOC_COSTLIST_COST);
+	    			List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
 		    		NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
 		    		
 	    			if(!costListToTreat.contains(costNodeRef)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.put(costNodeRef, file.getNodeRef());
+	    				filesToUpdate.put(costNodeRef, listItemNodeRef);
 	    			}
 	    		}
 	    		
-	    		//update or create nodes	    		    			    		
+	    		//update or create nodes	    		    	
+	    		int sortIndex = 1;
 	    		for(CostListDataItem costListDataItem : costList)
 	    		{    			
 	    			NodeRef costNodeRef = costListDataItem.getCost();	  
@@ -1335,6 +1317,8 @@ public class ProductDAOImpl implements ProductDAO{
 		    		properties.put(BeCPGModel.PROP_COSTLIST_VALUE, costListDataItem.getValue());
 		    		properties.put(BeCPGModel.PROP_COSTLIST_UNIT, costListDataItem.getUnit());
 		    		
+		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
+		    		sortIndex++;
 	
 		    		if(filesToUpdate.containsKey(costNodeRef)){
 		    			//update
@@ -1376,7 +1360,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		costDetailsListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COSTDETAILSLIST);
 	    		}
 			
-	    		List<FileInfo> files = fileFolderService.listFiles(costDetailsListNodeRef);
+	    		List<NodeRef> listItemNodeRefs = listItems(costDetailsListNodeRef, BeCPGModel.TYPE_COSTDETAILSLIST);
 	    		
 	    		//create temp list
 	    		List<String> costDetailsListToTreat = new ArrayList<String>();
@@ -1386,26 +1370,27 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		Map<String, NodeRef> filesToUpdate = new HashMap<String, NodeRef>();
-	    		for(FileInfo file : files){
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){
 	    			
-	    			List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.ASSOC_COSTDETAILSLIST_COST);
+	    			List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COSTDETAILSLIST_COST);
 		    		NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
 		    		
-		    		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.ASSOC_COSTDETAILSLIST_SOURCE);
+		    		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COSTDETAILSLIST_SOURCE);
 		    		NodeRef sourceNodeRef = (sourceAssocRefs.get(0)).getTargetRef();
 		    		
 		    		String key = getCostDetailsKey(costNodeRef, sourceNodeRef);
 		    		
 	    			if(!costDetailsListToTreat.contains(key)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.put(key, file.getNodeRef());
+	    				filesToUpdate.put(key, listItemNodeRef);
 	    			}
 	    		}
 	    		
-	    		//update or create nodes	    		    			    		
+	    		//update or create nodes	  
+	    		int sortIndex = 1;
 	    		for(CostDetailsListDataItem costDetailsListDataItem : costDetailsList)
 	    		{    			
 	    			NodeRef costNodeRef = costDetailsListDataItem.getCost();
@@ -1417,6 +1402,9 @@ public class ProductDAOImpl implements ProductDAO{
 		    		properties.put(BeCPGModel.PROP_COSTDETAILSLIST_UNIT, costDetailsListDataItem.getUnit());
 		    		properties.put(BeCPGModel.PROP_COSTDETAILSLIST_PERC, costDetailsListDataItem.getPercentage());
 	
+		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
+		    		sortIndex++;
+		    		
 		    		if(filesToUpdate.containsKey(key)){
 		    			//update
 		    			nodeService.setProperties(filesToUpdate.get(key), properties);		    			
@@ -1458,7 +1446,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		ingListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_INGLIST);
 	    		}
 			
-	    		List<FileInfo> files = fileFolderService.listFiles(ingListNodeRef);
+	    		List<NodeRef> listItemNodeRefs = listItems(ingListNodeRef, BeCPGModel.TYPE_INGLIST);
 	    		
 	    		//create temp list
 	    		List<NodeRef> ingListToTreat = new ArrayList<NodeRef>();
@@ -1468,21 +1456,22 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		Map<NodeRef, NodeRef> filesToUpdate = new HashMap<NodeRef, NodeRef>();
-	    		for(FileInfo file : files){
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){
 	    			
-	    			List<AssociationRef> ingAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.ASSOC_INGLIST_ING);
+	    			List<AssociationRef> ingAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_INGLIST_ING);
 		    		NodeRef ingNodeRef = (ingAssocRefs.get(0)).getTargetRef();
 		    		
 	    			if(!ingListToTreat.contains(ingNodeRef)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.put(ingNodeRef, file.getNodeRef());
+	    				filesToUpdate.put(ingNodeRef, listItemNodeRef);
 	    			}
 	    		}
 	    		
-	    		//update or create nodes	    		    			    		
+	    		//update or create nodes
+	    		int sortIndex = 1;
 	    		for(IngListDataItem ingListDataItem : ingList)
 	    		{    			
 	    			NodeRef linkNodeRef = ingListDataItem.getIng();	  
@@ -1490,6 +1479,9 @@ public class ProductDAOImpl implements ProductDAO{
 	    			properties.put(BeCPGModel.PROP_INGLIST_QTY_PERC, ingListDataItem.getQtyPerc());
 		    		properties.put(BeCPGModel.PROP_INGLIST_IS_GMO, ingListDataItem.isGMO());
 		    		properties.put(BeCPGModel.PROP_INGLIST_IS_IONIZED, ingListDataItem.isIonized());
+		    		
+		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
+		    		sortIndex++;
 		    		
 		    		// Ing
 		    		if(filesToUpdate.containsKey(linkNodeRef)){
@@ -1577,7 +1569,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		nutListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_NUTLIST);
 	    		}
 	    		
-	    		List<FileInfo> files = fileFolderService.listFiles(nutListNodeRef);
+	    		List<NodeRef> listItemNodeRefs = listItems(nutListNodeRef, BeCPGModel.TYPE_NUTLIST);
 	    		
 	    		//create temp list
 	    		List<NodeRef> nutListToTreat = new ArrayList<NodeRef>();
@@ -1587,21 +1579,22 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		Map<NodeRef, NodeRef> filesToUpdate = new HashMap<NodeRef, NodeRef>();
-	    		for(FileInfo file : files){
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){
 	    			
-	    			List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.ASSOC_NUTLIST_NUT);
+	    			List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
 		    		NodeRef nutNodeRef = (nutAssocRefs.get(0)).getTargetRef();	    			
 	    			
 	    			if(!nutListToTreat.contains(nutNodeRef)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.put(nutNodeRef, file.getNodeRef());
+	    				filesToUpdate.put(nutNodeRef, listItemNodeRef);
 	    			}
 	    		}
 	    		
-	    		//update or create nodes	    		
+	    		//update or create nodes	
+	    		int sortIndex = 1;
 	    		for(NutListDataItem nutListDataItem : nutList)
 	    		{    				    			
 	    			NodeRef nutNodeRef = nutListDataItem.getNut();	    			
@@ -1612,6 +1605,9 @@ public class ProductDAOImpl implements ProductDAO{
 		    		properties.put(BeCPGModel.PROP_NUTLIST_MAXI, nutListDataItem.getMaxi());
 		    		properties.put(BeCPGModel.PROP_NUTLIST_GROUP, nutListDataItem.getGroup());
 			    		
+		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
+		    		sortIndex++;
+		    		
 		    		if(filesToUpdate.containsKey(nutNodeRef)){
 		    			//update
 		    			nodeService.setProperties(filesToUpdate.get(nutNodeRef), properties);
@@ -1652,7 +1648,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		organoListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ORGANOLIST);
 	    		}
 	    		
-	    		List<FileInfo> files = fileFolderService.listFiles(organoListNodeRef);
+	    		List<NodeRef> listItemNodeRefs = listItems(organoListNodeRef, BeCPGModel.TYPE_ORGANOLIST);
 	    		
 	    		//create temp list
 	    		List<NodeRef> organoListToTreat = new ArrayList<NodeRef>();
@@ -1662,17 +1658,17 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		Map<NodeRef, NodeRef> filesToUpdate = new HashMap<NodeRef, NodeRef>();
-	    		for(FileInfo file : files){
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){
 	    			
-	    			List<AssociationRef> organoAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.ASSOC_ORGANOLIST_ORGANO);
+	    			List<AssociationRef> organoAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_ORGANOLIST_ORGANO);
 		    		NodeRef organoNodeRef = (organoAssocRefs.get(0)).getTargetRef();	    			
 	    			
 	    			if(!organoListToTreat.contains(organoNodeRef)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.put(organoNodeRef, file.getNodeRef());
+	    				filesToUpdate.put(organoNodeRef, listItemNodeRef);
 	    			}
 	    		}
 	    		
@@ -1723,7 +1719,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		illNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
 	    		}
 	    		
-	    		List<FileInfo> files = fileFolderService.listFiles(illNodeRef);
+	    		List<NodeRef> listItemNodeRefs = listItems(illNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
 	    		
 	    		//create temp list
 	    		List<String> illToTreat = new ArrayList<String>();
@@ -1733,16 +1729,16 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		Map<String, NodeRef> filesToUpdate = new HashMap<String, NodeRef>();
-	    		for(FileInfo file : files){
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){
 	    			
-	    			String grp = (String)nodeService.getProperty(file.getNodeRef(), BeCPGModel.PROP_ILL_GRP);	    			
+	    			String grp = (String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_GRP);	    			
 	    			
 	    			if(!illToTreat.contains(grp)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.put(grp, file.getNodeRef());
+	    				filesToUpdate.put(grp, listItemNodeRef);
 	    			}
 	    		}
 	    		
@@ -1794,7 +1790,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    			microbioListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_MICROBIOLIST);
 	    		}
 	    		
-	    		List<FileInfo> files = fileFolderService.listFiles(microbioListNodeRef);
+	    		List<NodeRef> listItemNodeRefs = listItems(microbioListNodeRef, BeCPGModel.TYPE_MICROBIOLIST);
 	    		
 	    		//create temp list
 	    		List<NodeRef> microbioListToTreat = new ArrayList<NodeRef>();
@@ -1804,17 +1800,17 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		Map<NodeRef, NodeRef> filesToUpdate = new HashMap<NodeRef, NodeRef>();
-	    		for(FileInfo file : files){
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){
 	    			
-	    			List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.ASSOC_MICROBIOLIST_MICROBIO);
+	    			List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_MICROBIOLIST_MICROBIO);
 		    		NodeRef microbioNodeRef = (nutAssocRefs.get(0)).getTargetRef();	    			
 	    			
 	    			if(!microbioListToTreat.contains(microbioNodeRef)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.put(microbioNodeRef, file.getNodeRef());
+	    				filesToUpdate.put(microbioNodeRef, listItemNodeRef);
 	    			}
 	    		}
 	    		
@@ -1867,7 +1863,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		physicoChemListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_PHYSICOCHEMLIST);
 	    		}
 			
-	    		List<FileInfo> files = fileFolderService.listFiles(physicoChemListNodeRef);
+	    		List<NodeRef> listItemNodeRefs = listItems(physicoChemListNodeRef, BeCPGModel.TYPE_PHYSICOCHEMLIST);
 	    		
 	    		//create temp list
 	    		List<NodeRef> physicoChemListToTreat = new ArrayList<NodeRef>();
@@ -1877,17 +1873,17 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		Map<NodeRef, NodeRef> filesToUpdate = new HashMap<NodeRef, NodeRef>();
-	    		for(FileInfo file : files){
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){
 	    			
-	    			List<AssociationRef> physicoChemAssocRefs = nodeService.getTargetAssocs(file.getNodeRef(), BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM);
+	    			List<AssociationRef> physicoChemAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM);
 		    		NodeRef physicoChemNodeRef = (physicoChemAssocRefs.get(0)).getTargetRef();
 		    		
 	    			if(!physicoChemListToTreat.contains(physicoChemNodeRef)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.put(physicoChemNodeRef, file.getNodeRef());
+	    				filesToUpdate.put(physicoChemNodeRef, listItemNodeRef);
 	    			}
 	    		}
 	    		
@@ -1942,7 +1938,7 @@ public class ProductDAOImpl implements ProductDAO{
 					packagingListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);					
 	    		}    				    			    		    		
 	
-	    		List<FileInfo> files = fileFolderService.listFiles(packagingListNodeRef);
+	    		List<NodeRef> listItemNodeRefs = listItems(packagingListNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);
 	    		
 	    		//create temp list
 	    		List<NodeRef> packagingListToTreat = new ArrayList<NodeRef>();
@@ -1952,14 +1948,14 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
-	    		for(FileInfo file : files){	    			
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){	    			
 		    		
-	    			if(!packagingListToTreat.contains(file.getNodeRef())){
+	    			if(!packagingListToTreat.contains(listItemNodeRef)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.add(file.getNodeRef());
+	    				filesToUpdate.add(listItemNodeRef);
 	    			}
 	    		}
 	    		
@@ -2022,7 +2018,7 @@ public class ProductDAOImpl implements ProductDAO{
 					forbiddenIngListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);					
 	    		}    				    			    		    		
 	
-	    		List<FileInfo> files = fileFolderService.listFiles(forbiddenIngListNodeRef);
+	    		List<NodeRef> listItemNodeRefs = listItems(forbiddenIngListNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);
 	    		
 	    		//create temp list
 	    		List<NodeRef> forbiddenIngListToTreat = new ArrayList<NodeRef>();
@@ -2032,14 +2028,14 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
-	    		for(FileInfo file : files){	    			
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){	    			
 		    		
-	    			if(!forbiddenIngListToTreat.contains(file.getNodeRef())){
+	    			if(!forbiddenIngListToTreat.contains(listItemNodeRef)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.add(file.getNodeRef());
+	    				filesToUpdate.add(listItemNodeRef);
 	    			}
 	    		}
 	    		
@@ -2160,7 +2156,7 @@ public class ProductDAOImpl implements ProductDAO{
 					reqCtrlListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);					
 	    		}    				    			    		    		
 	
-	    		List<FileInfo> files = fileFolderService.listFiles(reqCtrlListNodeRef);
+	    		List<NodeRef> listItemNodeRefs = listItems(reqCtrlListNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
 	    		
 	    		//create temp list
 	    		List<NodeRef> reqCtrlListToTreat = new ArrayList<NodeRef>();
@@ -2170,14 +2166,14 @@ public class ProductDAOImpl implements ProductDAO{
 	    		
 	    		//remove deleted nodes
 	    		List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
-	    		for(FileInfo file : files){	    			
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){	    			
 		    		
-	    			if(!reqCtrlListToTreat.contains(file.getNodeRef())){
+	    			if(!reqCtrlListToTreat.contains(listItemNodeRef)){
 	    				//delete
-	    				nodeService.deleteNode(file.getNodeRef());
+	    				nodeService.deleteNode(listItemNodeRef);
 	    			}
 	    			else{
-	    				filesToUpdate.add(file.getNodeRef());
+	    				filesToUpdate.add(listItemNodeRef);
 	    			}
 	    		}
 	    		
@@ -2230,4 +2226,33 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		return String.format(KEY_COST_DETAILS, cost, source);
 	}
+	
+
+	/*
+	 * List the list items
+	 */
+	private List<NodeRef> listItems(NodeRef parentNodeRef, QName listItemType){
+		
+		Set<QName> searchTypeQNames = new HashSet<QName>(1);
+		searchTypeQNames.add(listItemType);
+		
+        // Do the query
+        List<ChildAssociationRef> childAssocRefs = nodeService.getChildAssocs(parentNodeRef, searchTypeQNames);
+        List<NodeRef> result = new ArrayList<NodeRef>(childAssocRefs.size());
+        for (ChildAssociationRef assocRef : childAssocRefs){
+        	
+            result.add(assocRef.getChildRef());
+        }
+        // Done
+        return result;
+		
+//		List<FileInfo> files = fileFolderService.listFiles(parentNodeRef);
+//        List<NodeRef> result = new ArrayList<NodeRef>(files.size());
+//        for (FileInfo file : files){
+//        	
+//            result.add(file.getNodeRef());
+//        }
+//        // Done
+//        return result;
+    }
 }

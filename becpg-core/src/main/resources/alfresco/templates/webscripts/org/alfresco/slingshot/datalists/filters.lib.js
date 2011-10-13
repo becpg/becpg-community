@@ -35,6 +35,10 @@ var Filters =
          limitResults: null,
          sort: [
          {
+            column: "@bcpg:sort",
+            ascending: true
+         },
+         {        	
             column: "@cm:created",
             ascending: true
          }],

@@ -1339,6 +1339,24 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:sortableListAspect">
+			<properties>
+				<property name="bcpg:sort">
+					<type>d:int</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:isManualListItemAspect">
+			<properties>
+				<property name="bcpg:isManualListItem">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:codeAspect">
 			<properties>
