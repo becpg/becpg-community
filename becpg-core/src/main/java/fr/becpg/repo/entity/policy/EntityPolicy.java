@@ -19,7 +19,7 @@ import fr.becpg.repo.entity.EntityService;
  *
  * @author querephi
  */
-public class EntityPolicy implements NodeServicePolicies.OnCreateNodePolicy {	
+public class EntityPolicy implements NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnDeleteNodePolicy {	
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityPolicy.class);
@@ -48,6 +48,7 @@ public class EntityPolicy implements NodeServicePolicies.OnCreateNodePolicy {
 	public void init(){
 		logger.debug("Init EntityPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "onCreateNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "onDeleteNode"));
 	}
 
 	/**
@@ -61,6 +62,14 @@ public class EntityPolicy implements NodeServicePolicies.OnCreateNodePolicy {
 		entityService.initializeEntity(entityNodeRef);
 		entityService.initializeEntityFolder(entityNodeRef);
 	
+	}
+
+	@Override
+	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
+		NodeRef entityNodeRef = childAssocRef.getChildRef();
+		
+		entityService.deleteEntity(entityNodeRef);
+		
 	}
 	
 }

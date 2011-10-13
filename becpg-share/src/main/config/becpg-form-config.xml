@@ -9,8 +9,8 @@
 				<js src="/components/autocomplete/autocomplete-picker.js" />
 				<js src="/yui/datasource/datasource-min.js" />
 				<js src="/yui/autocomplete/autocomplete-min.js" />
-				<js src="/yui/autocomplete/becpg-autocomplete-debug.js" />
-
+				<js src="/yui/event-delegate/event-delegate-min.js" />
+				<js src="/yui/paginator/paginator-min.js" />
 			</dependencies>
 		</forms>
 	</config>

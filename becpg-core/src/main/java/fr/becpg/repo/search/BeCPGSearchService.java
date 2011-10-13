@@ -7,6 +7,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 public interface BeCPGSearchService {
 
+
 	List<NodeRef> luceneSearch(String runnedQuery, int searchLimit);
 
 	List<NodeRef> unProtLuceneSearch(String runnedQuery);

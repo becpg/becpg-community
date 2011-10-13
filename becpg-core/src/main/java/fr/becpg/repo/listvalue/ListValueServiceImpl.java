@@ -108,6 +108,35 @@ public class ListValueServiceImpl implements ListValueService {
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
 	}
+	
+	/**
+	 * Used to extract properties from nodeRef
+	 * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+	 *
+	 */
+	public class NodeRefListValueExtractor implements ListValueExtractor {
+
+		private QName propName;
+	
+		public NodeRefListValueExtractor(QName propName) {
+			super();
+			this.propName = propName;
+		}
+
+		@Override
+		public Map<String, String> extract(List<NodeRef> nodeRefs) {
+			Map<String, String> suggestions = new HashMap<String, String>();
+	    	if(nodeRefs!=null){
+	    		for(NodeRef nodeRef : nodeRefs){
+	    			
+	    			String name = (String)nodeService.getProperty(nodeRef, propName);
+	                suggestions.put(nodeRef.toString(), name); 			
+	    		}
+	    	}
+			return suggestions;
+		}
+		
+	}
 
 	/**
 	 * Suggest target class according to query
@@ -120,11 +149,12 @@ public class ListValueServiceImpl implements ListValueService {
 	 * @return the map
 	 */
     @Override
-	public Map<String, String> suggestTargetAssoc(QName type, String query, Locale locale){			
+	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Locale locale){			
         
     	logger.debug("suggestTargetAssoc");
     	
     	String queryPath = "";
+    	
     	
     	//Is code or name search
     	if(isQueryCode(query,type)){
@@ -140,7 +170,7 @@ public class ListValueServiceImpl implements ListValueService {
 
        List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, new String[]{"@" + ContentModel.PROP_NAME},locale);
         
-        return extractSuggest(ret,ContentModel.PROP_NAME);
+        return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME));
        
 	}
     
@@ -157,7 +187,7 @@ public class ListValueServiceImpl implements ListValueService {
      * @return the map
      */
     @Override
-	public Map<String, String> suggestLinkedValue(String path, String parent, String query, Locale locale){			
+	public ListValuePage suggestLinkedValue(String path, String parent, String query, Integer pageNum, Locale locale){			
         
     	logger.debug("suggestLinkedValue");  
     	
@@ -167,7 +197,7 @@ public class ListValueServiceImpl implements ListValueService {
 	      
          List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, new String[]{"@" + RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE},locale);
         
-        return extractSuggest(ret, BeCPGModel.PROP_LINKED_VALUE_VALUE);
+         return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(BeCPGModel.PROP_LINKED_VALUE_VALUE));
  
 	}
     
@@ -182,7 +212,7 @@ public class ListValueServiceImpl implements ListValueService {
      * @return the map
      */
     @Override
-	public Map<String, String> suggestListValue(String path, String query, Locale locale){			
+	public ListValuePage suggestListValue(String path, String query, Integer pageNum, Locale locale){			
         
     	logger.debug("suggestListValue");  
     	
@@ -192,7 +222,7 @@ public class ListValueServiceImpl implements ListValueService {
 	
         List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, new String[]{"@" + ContentModel.PROP_NAME},locale);
        
-       return extractSuggest(ret, ContentModel.PROP_NAME);
+        return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME));
       
 	}
     
@@ -207,7 +237,7 @@ public class ListValueServiceImpl implements ListValueService {
      * @return the map
      */
     @Override
-	public Map<String, String> suggestProduct(String query, Locale locale){			
+	public ListValuePage suggestProduct(String query, Integer pageNum, Locale locale){			
         
     	logger.debug("suggestProduct");  
     	String queryPath = "";    	
@@ -224,7 +254,7 @@ public class ListValueServiceImpl implements ListValueService {
 					
 		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, new String[]{"@" + ContentModel.PROP_NAME}, locale);
 	       
-	    return extractSuggest(ret, ContentModel.PROP_NAME);
+		 return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME));
 	  
 	}
     
@@ -303,19 +333,13 @@ public class ListValueServiceImpl implements ListValueService {
 	 * @return the map
 	 */
 	@Override
-	public Map<String, String> suggestProductReportTemplates(QName nodeType, String query) {
-		
-		Map<String, String> suggestions = new HashMap<String, String>();
+	public ListValuePage suggestProductReportTemplates(QName nodeType, String query, Integer pageNum) {
 		
 		query = prepareQuery(query);
 		List<NodeRef> tplsNodeRef = reportTplService.suggestUserReportTemplates(ReportType.Document, nodeType, query);
 		
-		for(NodeRef tplNodeRef : tplsNodeRef){
-			String name = (String)nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME);
-            suggestions.put(tplNodeRef.toString(), name);
-		}
 		
-		return suggestions;
+		 return new ListValuePage(tplsNodeRef, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME));
 	}
 	
 	/**
@@ -397,16 +421,6 @@ public class ListValueServiceImpl implements ListValueService {
     	return luceneAnaLyzer;
 	}
 
-	private Map<String, String> extractSuggest(List<NodeRef> nodeRefs, QName propName) {
-    	Map<String, String> suggestions = new HashMap<String, String>();
-    	if(nodeRefs!=null){
-    		for(NodeRef nodeRef : nodeRefs){
-    			
-    			String name = (String)nodeService.getProperty(nodeRef, propName);
-                suggestions.put(nodeRef.toString(), name); 			
-    		}
-    	}
-		return suggestions;
-	}
+	
 
 }

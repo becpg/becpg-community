@@ -123,8 +123,12 @@ public class RepoConsts {
 
 	/*-- Lucene --*/
 	public static final int MAX_RESULTS_SINGLE_VALUE = 1;
-	public static final int MAX_SUGGESTIONS = 10;
+	
 	public static final int MAX_RESULTS_NO_LIMIT = 256;
+	public static final int MAX_SUGGESTIONS = 100;
+	public static final int SUGGEST_PAGE_SIZE = 10;
+	
+	
 	
 	/*-- IHM --*/
 	public static final String LABEL_SEPARATOR = ", ";
@@ -149,8 +153,7 @@ public class RepoConsts {
 	public static final String PERMISSION_EDITOR = "Editor";
 	public static final String PERMISSION_CONTRIBUTOR = "Contributor";
 	public static final String PERMISSION_COLLABORATOR = "Collaborator";
-	
-	
+
 
 
 

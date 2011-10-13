@@ -24,7 +24,6 @@ import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.listvalue.ListValueService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -170,7 +169,7 @@ public class ListValueServiceTest extends BaseAlfrescoTestCase {
 		properties.put(ContentModel.PROP_NAME, "Supplier 1");		
     	NodeRef supplierNodeRef = nodeService.createNode(tempFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
 
-    	Map<String, String> suggestions = listValueService.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1",null);
+    	Map<String, String> suggestions = listValueService.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0 ,null).getResults();
     	
     	for(String s : suggestions.keySet()){
     		logger.debug("supplier: " + nodeService.getProperty(new NodeRef(s), ContentModel.PROP_NAME));

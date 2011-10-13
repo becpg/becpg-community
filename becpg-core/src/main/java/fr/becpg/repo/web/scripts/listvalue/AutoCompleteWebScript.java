@@ -18,6 +18,7 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValueService;
 
 // TODO: Auto-generated Javadoc
@@ -66,6 +67,9 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	
 	/** The Constant SOURCE_TYPE_PRODUCT_REPORT. */
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
+
+	/** The Constant PARAM_QUERY. */
+	private static final String PARAM_PAGE = "page";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AutoCompleteWebScript.class);	
@@ -108,14 +112,25 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){
 				
-		Map<String, String> suggestions;
+		ListValuePage suggestions;
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		String sourceType = templateArgs.get(PARAM_SOURCE_TYPE);
 		String className = templateArgs.get(PARAM_CLASS_NAME);
 		String path = templateArgs.get(PARAM_PATH);
+		String page = req.getParameter(PARAM_PAGE);
 		String query = req.getParameter(PARAM_QUERY);
 		String parent = req.getParameter(PARAM_PARENT);
 		String productType = templateArgs.get(PARAM_PRODUCT_TYPE);
+		
+		Integer pageNum = null;
+		if(page!=null){
+			try {
+				pageNum = Integer.parseInt(page);
+			} catch (NumberFormatException e) {
+				logger.error("Cannot parse page argument",e);
+			}
+		}
+		
 		
 		Locale locale = I18NUtil.getLocale();
 		
@@ -123,21 +138,21 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		
 		if(sourceType.equals(SOURCE_TYPE_TARGET_ASSOC)){
 			QName type = QName.createQName(className, namespaceService);
-			suggestions = listValueService.suggestTargetAssoc(type, query, locale);
+			suggestions = listValueService.suggestTargetAssoc(type, query,pageNum, locale);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_PRODUCT)){
-			suggestions = listValueService.suggestProduct(query, locale);
+			suggestions = listValueService.suggestProduct(query,pageNum, locale);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_LINKED_VALUE)){
-			suggestions = listValueService.suggestLinkedValue(path, parent, query, locale);
+			suggestions = listValueService.suggestLinkedValue(path, parent, query,pageNum, locale);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_LIST_VALUE)){
-			suggestions = listValueService.suggestListValue(path, query, locale);
+			suggestions = listValueService.suggestListValue(path, query, pageNum, locale);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)){			
 			
 			QName productTypeQName = QName.createQName(productType, namespaceService);
-			suggestions = listValueService.suggestProductReportTemplates(productTypeQName, query);
+			suggestions = listValueService.suggestProductReportTemplates(productTypeQName, query,pageNum);
 		}
 		else{
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'sourcetype'. sourcetype = " + sourceType);

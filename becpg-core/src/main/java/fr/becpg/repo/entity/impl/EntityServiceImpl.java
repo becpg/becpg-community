@@ -21,13 +21,12 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.ibm.icu.util.Calendar;
-
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.TranslateHelper;
 
 /**
@@ -60,6 +59,8 @@ public class EntityServiceImpl implements EntityService {
 	
 	private EntityTplService entityTplService;
 	
+	private EntityVersionService entityVersionService;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -82,6 +83,11 @@ public class EntityServiceImpl implements EntityService {
 	
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
+	}
+
+
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
 	}
 
 	@Override
@@ -195,6 +201,12 @@ public class EntityServiceImpl implements EntityService {
 					// set inherit parents permissions
 					permissionService.deletePermissions(entityFolderNodeRef);
 					permissionService.setInheritParentPermissions(entityFolderNodeRef, true);
+//					for(FileInfo folder : fileFolderService.listFolders(entityFolderNodeRef)){
+//						NodeRef subFolderNodeRef = folder.getNodeRef();
+//						permissionService.deletePermissions(entityFolderNodeRef);
+//						permissionService.setInheritParentPermissions(subFolderNodeRef, true);
+//					}
+					
 					
 					//move entity in entityfolder and rename entityfolder
 					nodeService.moveNode(entityNodeRef, entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(entityNodeRef));
@@ -291,6 +303,12 @@ public class EntityServiceImpl implements EntityService {
 			nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
 		}
 		
+	}
+
+	@Override
+	public void deleteEntity(NodeRef entityNodeRef) {
+		logger.debug("delete entity");
+		entityVersionService.deleteVersionHistory(entityNodeRef);
 	}
 	
 
