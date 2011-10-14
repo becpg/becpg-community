@@ -8,7 +8,8 @@
 	margin-right:0px;
 	border: 1px solid #C5D6E2;
 	background-color: white;
-	
+	width:30em;
+	max-width:30em;
 }
 
 
@@ -58,6 +59,7 @@ stickers
     padding-right: 16px;
     border: 1px solid #C5D6E2;
     border-radius: 5px 5px 5px 5px;
+    background-color:#D2E5F2;
     vertical-align: middle;
     position: relative;
  }

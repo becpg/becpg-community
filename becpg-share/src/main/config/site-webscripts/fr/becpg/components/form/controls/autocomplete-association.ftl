@@ -1,5 +1,5 @@
 <#if field.control.params.ds?exists><#assign ds=field.control.params.ds><#else><#if field.dataType??><#assign ds='becpg/autocomplete/targetassoc/associations/${field.dataType}'></#if></#if>
-<#if field.control.params.style?exists><#assign style=field.control.params.style><#else><#assign style='width:100%'></#if>
+<#if field.control.params.style?exists><#assign style=field.control.params.style><#else><#assign style='width:30em'></#if>
 <#assign siteId=args.siteId!"">
 <#if siteId != ""><#assign targetLinkTemplate='${url.context}/page/site/${siteId}/document-details?nodeRef={nodeRef}'><#else><#assign targetLinkTemplate='${url.context}/page/document-details?nodeRef={nodeRef}'></#if>
 
@@ -21,7 +21,7 @@
       <div id="${controlId}" class="object-finder">        
          
          <#if form.mode != "view" && field.disabled == false>
-			<div style="padding-bottom: 2em;" >
+			<div style="padding-bottom: 2em;" class="yui-ac" >
 					 <div id="${fieldHtmlId}-autocomplete" class="ac-body" style="${style}">
 					 <span id="${fieldHtmlId}-toggle-autocomplete" class="ac-toogle"></span>
 					  <#if field.endpointMany>
@@ -68,6 +68,7 @@
  		currentValue: "${field.value}",
  		mode: "${form.mode}",
         multipleSelectMode: ${field.endpointMany?string}, 
+        isMandatory : ${field.mandatory?string},
  		targetLinkTemplate: "${targetLinkTemplate}" ,
  		dsStr:"${ds}"
 <#if field.control.params.parent?exists>
@@ -75,16 +76,6 @@
  		,parentFieldHtmlId:"${parentFieldHtmlId}"
 </#if>
   });
-
-<#if form.mode != "view">
-YAHOO.util.Event.onAvailable("${fieldHtmlId}-container",function(){
-	bAC.render();
-});
-<#else>
-YAHOO.util.Event.onAvailable("${fieldHtmlId}-values",function(){
-	bAC.render();
-});
-</#if>
 
 
 })();

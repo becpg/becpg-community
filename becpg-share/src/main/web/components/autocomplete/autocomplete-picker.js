@@ -15,13 +15,21 @@
       Lang = YAHOO.util.Lang,
       Element = YAHOO.util.Element;
 
-   beCPG.component.AutoCompletePicker = function(controlId, fieldHtmlId, isAssoc)
+   beCPG.component.AutoCompletePicker = function AutoCompletePicker_constructor(controlId, fieldHtmlId, isAssoc)
    {
+	  this.name = " beCPG.component.AutoCompletePicker";
       this.controlId = controlId;
       this.fieldHtmlId = fieldHtmlId;
       this.isAssoc = isAssoc;
   
-
+      /* Register this component */
+      Alfresco.util.ComponentManager.register(this);
+      
+      /* Load YUI Components */
+      Alfresco.util.YUILoaderHelper.require(["container"], this.onComponentsLoaded, this);
+      
+      
+      return this;
    } ;
    
     YAHOO.extend(beCPG.component.AutoCompletePicker, Alfresco.component.Base,{
@@ -33,17 +41,25 @@
          multipleSelectMode: true,
          targetLinkTemplate: null,      
          dsStr : null,
-         parentFieldHtmlId : null
-         
+         parentFieldHtmlId : null,
+         isMandatory : false
     	},     
-
-      setOptions: function (obj){
+      onComponentsLoaded: function AutoCompletePicker_onComponentsLoaded ()
+      {
+    	  if(this.options.mode!="view"){
+            Event.onContentReady(this.fieldHtmlId+"-container", this.render, this, true);
+    	  } else {
+    		Event.onContentReady(this.fieldHtmlId+"-values", this.render, this, true);
+    	  }
+      },
+      setOptions: function AutoCompletePicker_setOptions (obj){
 			this.options = YAHOO.lang.merge(this.options, obj);
 
          return this;
       },
 
-      render : function () {
+      
+      render :  function AutoCompletePicker_render() {
     	 
     	  var instance = this;
     	  
@@ -146,7 +162,7 @@
     	   		return "<span id='ac-choice-"+oResultData[0]+"' class='"+oResultData[2]+"' style='padding-left: 20px;' >"+oResultData[1]+"</span>";
     	   	}
 
-         
+           var initialValue = "";
     	   
     	    // Toggle button
     		var bToggler = Dom.get(instance.fieldHtmlId+"-toggle-autocomplete"); 
@@ -186,39 +202,41 @@
     		 
     		 
     		 oAC.doBeforeExpandContainer = function(elTextbox , elContainer , sQuery , aResults) {
-    			 if(parseInt(oAC.fullListSize)< parseInt(oAC.pageSize)+1 ) {
-    			      oAC.setFooter("");
-    			   } else {
-    			       oAC.setFooter("<div class='ac-footer'><div id='"+instance.fieldHtmlId+"-container-paging'></div></div>");
-    			   		var oACPagination = new YAHOO.widget.Paginator({
-    			   					rowsPerPage : oAC.pageSize,
-    							    totalRecords : oAC.fullListSize,
-    								containers : instance.fieldHtmlId+'-container-paging' 
-    					});
-    			   		oACPagination.setPage(parseInt(oAC.page),true);
-    			  		oACPagination.subscribe('changeRequest', function(state){
-    			  				try{
-    			  					oAC.page=state.page;
-    			  					previewTooltips=[];
-    			  					setTimeout(function() { // For IE
-    			  						var input = oAC.getInputEl().value;
-    			  						if(input==initialValue){
-    			  							oAC.sendQuery("*");
-    			  						} else {
-    			  							oAC.sendQuery(input);
-    			  						}
-    			  						//oACPagination.setState(state);
-    			  	    		     },0); 
-    			  				} catch (e) {
-    			  					alert(e);
-								}
-    						}); 
-    					oACPagination.render();
-    			
-    			   }
-    			 
-    			 previewTooltip.cfg.setProperty("context", previewTooltips);
-               
+    			try{
+	    			 if(parseInt(oAC.fullListSize)< parseInt(oAC.pageSize)+1 ) {
+	    			      oAC.setFooter("");
+	    			   } else {
+	    			       oAC.setFooter("<div class='ac-footer'><div id='"+instance.fieldHtmlId+"-container-paging'></div></div>");
+	    			   		var oACPagination = new YAHOO.widget.Paginator({
+	    			   					rowsPerPage : oAC.pageSize,
+	    							    totalRecords : oAC.fullListSize,
+	    								containers : instance.fieldHtmlId+'-container-paging' ,
+	    								initialPage: parseInt(oAC.page),
+	    						        template: "<div>{CurrentPageReport}</div> {PreviousPageLink} {PageLinks} {NextPageLink}",
+	    						        pageReportTemplate: instance.msg("autocomplete.pagination.template.page-report"),
+	    						        previousPageLinkLabel: instance.msg("autocomplete.pagination.previousPageLinkLabel"),
+	    						        nextPageLinkLabel: instance.msg("autocomplete.pagination.nextPageLinkLabel")
+	    					});
+	    			  		oACPagination.subscribe('changeRequest', function(state){
+	    			  					oAC.page=state.page;
+	    			  					previewTooltips=[];
+	    			  					setTimeout(function() { // For IE
+	    			  						var input = oAC.getInputEl().value;
+	    			  						if(input==initialValue){
+	    			  							oAC.sendQuery("*");
+	    			  						} else {
+	    			  							oAC.sendQuery(input);
+	    			  						}
+	    			  	    		     },0); 
+	    						}); 
+	    					oACPagination.render();
+	    			
+	    			   }
+	    			 
+	    			 previewTooltip.cfg.setProperty("context", previewTooltips);
+    			} catch (e) {
+  					alert(e);
+				}
     			 
     		   return true;
     		}
@@ -230,45 +248,50 @@
     					
     		
     		oAC.itemSelectEvent.subscribe(function(type , args){
-    			
-    			var selectedObj = args[2];
-
-    	 		var itemValue = selectedObj[0];
-    	 		var itemTitle = selectedObj[1];
-
-    	 		 if(instance.isAssoc){
-    	 			 
-    	 		     var inputOrig = Dom.get(instance.controlId+"-orig");
-    	 		     var inputAdded = Dom.get(instance.controlId+"-added");
-    	 		     var inputRemoved = Dom.get(instance.controlId+"-removed");
-    	 			 
-	    		    if(inputOrig != null && inputAdded != null && inputRemoved != null) {
-	    		
-	    				if(!instance.options.multipleSelectMode){
-	    					if(inputOrig.value != "" && inputOrig.value != itemValue) {
-	    						inputRemoved.value = inputOrig.value;
-	    					}
-	    					inputAdded.value = itemValue;
-	    				}
-	    				else{			
-	    					if(inputAdded.value != ""){
-	    						inputAdded.value += ",";
-	    					}
-	    					inputAdded.value += itemValue;
-	    				}			
-	    			}	
-    	 		 }
-    	 		 
-    			if(instance.isAssoc && instance.options.multipleSelectMode)
-    			{
-    				var  basket =  Dom.get(instance.controlId+"-basket");
-    				instance.addToBasket(basket,itemTitle,itemValue);
-    				oAC.getInputEl().value = "";
-    			} else {
-    				oAC.getInputEl().value = itemTitle;
-    			}
-    	 		
-    			
+    			try{
+	    			var selectedObj = args[2];
+	
+	    	 		var itemValue = selectedObj[0];
+	    	 		var itemTitle = selectedObj[1];
+	
+	    	 		 if(instance.isAssoc){
+	    	 			 
+	    	 		     var inputOrig = Dom.get(instance.controlId+"-orig");
+	    	 		     var inputAdded = Dom.get(instance.controlId+"-added");
+	    	 		     var inputRemoved = Dom.get(instance.controlId+"-removed");
+	    	 			 
+		    		    if(inputOrig != null && inputAdded != null && inputRemoved != null) {
+		    		
+		    				if(!instance.options.multipleSelectMode){
+		    					if(inputOrig.value != "" && inputOrig.value != itemValue) {
+		    						inputRemoved.value = inputOrig.value;
+		    					}
+		    					inputAdded.value = itemValue;
+		    				}
+		    				else{			
+		    					if(inputAdded.value != ""){
+		    						inputAdded.value += ",";
+		    					}
+		    					inputAdded.value += itemValue;
+		    				}			
+		    			}	
+	    	 		 }
+	    	 		 
+	    			if(instance.isAssoc && instance.options.multipleSelectMode)
+	    			{
+	    				var  basket =  Dom.get(instance.controlId+"-basket");
+	    				instance.addToBasket(basket,itemTitle,itemValue);
+	    				oAC.getInputEl().value = "";
+	    			} else {
+	    				oAC.getInputEl().value = itemTitle;
+	    			}
+	    	 		
+	    			if(instance.options.isMandatory){
+	    				YAHOO.Bubbling.fire("mandatoryControlValueUpdated", oAC.getInputEl());
+	    			}
+    			} catch (e) {
+  					alert(e);
+				}
     			return true;
     		
     		});
@@ -277,7 +300,7 @@
     		
       },
     		
-      addToBasket :  function (basket, itemTitle,itemValue){
+      addToBasket :  function AutoCompletePicker_addToBasket(basket, itemTitle,itemValue){
     		
     				
     			var displayVal =  "<span id='ac-m-selected-"+itemValue+"' class='ac-m-selected'><span class='ac-m-selected-body'>";
@@ -290,7 +313,7 @@
     				
     		},
     		
-      removeFromBasket:	function (nodeRef){
+      removeFromBasket:	function AutoCompletePicker_removeFromBasket(nodeRef){
     	  	var  basket =  new Element(this.controlId+"-basket");
     	  	var inputRemoved = Dom.get(this.controlId+"-removed");
     	  	basket.removeChild( Dom.get("ac-m-selected-"+nodeRef));
@@ -302,7 +325,7 @@
     		},
     		
     		
-    	loadItems :	function (){
+    	loadItems :	function AutoCompletePicker_loadItems(){
     			if (this.options.currentValue != "") {
     			 Alfresco.util.Ajax.jsonRequest(
     	            {
@@ -341,7 +364,7 @@
   
       
       
-      renderItems :  function (items){
+      renderItems :  function AutoCompletePicker_renderItems(items){
 		  	var displayValue = "", link;
 
   		  if (items === null){

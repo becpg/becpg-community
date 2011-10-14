@@ -1,6 +1,6 @@
 <#if field.control.params.ds?exists><#assign ds=field.control.params.ds><#else><#assign ds=''></#if>
 <#if field.control.params.prevFieldName?exists><#assign prevFieldName=field.control.params.prevFieldName><#else><#assign prevFieldName=''></#if>
-<#if field.control.params.style?exists><#assign style=field.control.params.style><#else><#assign style='width:100%;'></#if>
+<#if field.control.params.style?exists><#assign style=field.control.params.style><#else><#assign style='width:30em;'></#if>
 
 <div class="form-field">
    <#if form.mode == "view">
@@ -18,7 +18,7 @@
       </div>
    <#else>
       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory!false><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
-      <div style="padding-bottom: 2em;">
+      <div style="padding-bottom: 2em;" class="yui-ac">
         <div id="${fieldHtmlId}-autocomplete" class="ac-body" style="${style}">
         <span id="${fieldHtmlId}-toggle-autocomplete" class="ac-toogle" ></span>
         <input id="${fieldHtmlId}" type="text" name="${field.name}" tabindex="0"
@@ -26,7 +26,7 @@
                 <#if field.description?exists>title="${field.description}"</#if>
                 <#if field.control.params.maxLength?exists>maxlength="${field.control.params.maxLength}"</#if> 
                 <#if field.control.params.size?exists>size="${field.control.params.size}"</#if> 
-                <#if field.disabled>disabled="true"</#if> />
+                <#if field.disabled>disabled="true"</#if> class="yui-ac-input"  />
          </div>
          <div id="${fieldHtmlId}-container"></div>
       </div>
@@ -42,17 +42,13 @@
  		currentValue: "${field.value}",
  		mode: "${form.mode}",
         multipleSelectMode: false, 
+        isMandatory : ${field.mandatory?string},
  		dsStr:"${ds}"
 <#if field.control.params.parent?exists>
 <#assign parentFieldHtmlId=args.htmlid + "_prop_" + field.control.params.parent >
  		,parentFieldHtmlId:"${parentFieldHtmlId}"
 </#if>
   });
-
-
-YAHOO.util.Event.onAvailable("${fieldHtmlId}-container",function(){
-	bAC.render();
-});
 
 })();
 //]]></script>
