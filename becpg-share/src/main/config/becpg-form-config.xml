@@ -2158,7 +2158,6 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />
-					<show id="bcpg:sort" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
@@ -2185,7 +2184,6 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />
-					<show id="bcpg:sort" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 			</form>
@@ -2216,7 +2214,6 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />
-					<show id="bcpg:sort" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
@@ -2244,7 +2241,6 @@
 					<show id="bcpg:packagingListQty" />					
 					<show id="bcpg:packagingListUnit" />					
 					<show id="bcpg:packagingListPkgLevel" />
-					<show id="bcpg:sort" />
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -2265,7 +2261,6 @@
 					<show id="bcpg:packagingListQty" />					
 					<show id="bcpg:packagingListUnit" />					
 					<show id="bcpg:packagingListPkgLevel" />
-					<show id="bcpg:sort" />
 				</field-visibility>				
 			</form>
 			<form id="datagridWUsed">
@@ -2288,7 +2283,6 @@
 					<show id="bcpg:packagingListQty" />					
 					<show id="bcpg:packagingListUnit" />					
 					<show id="bcpg:packagingListPkgLevel" />
-					<show id="bcpg:sort" />
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -2624,7 +2618,6 @@
 					<show id="bcpg:mblValue" />
 					<show id="bcpg:mblUnit" />
 					<show id="bcpg:mblMaxi" />
-					<show id="bcpg:sort" />
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -2642,7 +2635,6 @@
 					<show id="bcpg:mblValue" />
 					<show id="bcpg:mblUnit" />
 					<show id="bcpg:mblMaxi" />
-					<show id="bcpg:sort" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -2657,7 +2649,6 @@
 					<show id="bcpg:mblValue" />
 					<show id="bcpg:mblUnit" />
 					<show id="bcpg:mblMaxi" />
-					<show id="bcpg:sort" />
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
