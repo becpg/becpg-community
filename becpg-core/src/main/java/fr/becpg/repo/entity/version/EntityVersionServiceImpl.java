@@ -569,5 +569,16 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 		logger.debug("entitiesHistoryNodeRef: " + entitiesHistoryNodeRef);
 	}
+	
+	
+
+	@Override
+	public void deleteVersionHistory(NodeRef entityNodeRef) {
+		NodeRef versionHistoryRef = getVersionHistoryNodeRef(entityNodeRef);
+		if (versionHistoryRef != null) {
+			nodeService.deleteNode(versionHistoryRef);
+		}
+		
+	}
 
 }

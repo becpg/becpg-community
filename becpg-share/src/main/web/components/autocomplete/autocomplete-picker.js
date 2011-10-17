@@ -8,348 +8,401 @@
 (function()
 {
    /**
-    * YUI Library aliases
-    */
+	 * YUI Library aliases
+	 */
    var Dom = YAHOO.util.Dom,
       Event = YAHOO.util.Event,
-      KeyListener = YAHOO.util.KeyListener;
+      Lang = YAHOO.util.Lang,
+      Element = YAHOO.util.Element;
 
-   /**
-    * Alfresco Slingshot aliases
-    */
-   var $html = Alfresco.util.encodeHTML,
-      $hasEventInterest = Alfresco.util.hasEventInterest,
-      $combine = Alfresco.util.combinePaths;
-   
-   /**
-    * AutoCompletePicker constructor.
-    * 
-    * @param {String} htmlId The HTML id of the parent element
-    * @param {String} currentValueHtmlId The HTML id of the parent element
-    * @return {beCPG.component.AutoCompletePicker} The new AutoCompletePicker instance
-    * @constructor
-    */
-   beCPG.component.AutoCompletePicker = function(htmlId, currentValueHtmlId)
+   beCPG.component.AutoCompletePicker = function AutoCompletePicker_constructor(controlId, fieldHtmlId, isAssoc)
    {
-      beCPG.component.AutoCompletePicker.superclass.constructor.call(this, "beCPG.component.AutoCompletePicker", htmlId, ["button", "menu", "container", "resize", "datasource", "datatable"]);
-      this.currentValueHtmlId = currentValueHtmlId;
-
-      /**
-       * Decoupled event listeners
-       */
-      this.eventGroup = htmlId;
-      YAHOO.Bubbling.on("renderCurrentValue", this.onRenderCurrentValue, this);
+	  this.name = " beCPG.component.AutoCompletePicker";
+      this.controlId = controlId;
+      this.fieldHtmlId = fieldHtmlId;
+      this.isAssoc = isAssoc;
+  
+      /* Register this component */
+      Alfresco.util.ComponentManager.register(this);
       
-		this.currentValueMeta = [];
-
-		this.options.objectRenderer = new Alfresco.ObjectRenderer(this);
-
+      /* Load YUI Components */
+      Alfresco.util.YUILoaderHelper.require(["container"], this.onComponentsLoaded, this);
+      
+      
       return this;
-   };
+   } ;
    
-   YAHOO.extend(beCPG.component.AutoCompletePicker, Alfresco.component.Base,
-   {
-
-      /**
-       * Object container for initialization options
-       *
-       * @property options
-       * @type object
-       */
-      options:
-      {         
-			/**
-          * Instance of an ObjectRenderer class
-          *
-          * @property objectRenderer
-          * @type object
-          */
-         objectRenderer: null,
-
-         /**
-          * The selected value to be displayed (but not yet persisted)
-          *
-          * @property selectedValue
-          * @type string
-          * @default null
-          */
-         selectedValue: null,
-
-         /**
-          * The current value
-          *
-          * @property currentValue
-          * @type string
-          */
+    YAHOO.extend(beCPG.component.AutoCompletePicker, Alfresco.component.Base,{
+   
+      options: {   
+    	 objectRenderer: new Alfresco.ObjectRenderer(this),
          currentValue: "",
-         
-         /**
-          * The mode (view/edit)
-          *
-          * @property mode
-          * @type string
-          */
          mode: "view",
-
-			/**
-          * Multiple Select mode flag
-          * 
-          * @property multipleSelectMode
-          * @type boolean
-          * @default false
-          */
          multipleSelectMode: true,
-			
-			/**
-          * Template string or function to use for link to target nodes, must
-          * be supplied when showLinkToTarget property is
-          * set to true
-          *
-          * @property targetLinkTemplate If of type string it will be used as a template, if of type function an
-          * item object will be passed as argument and link is expected to be returned by the function
-          * @type (string|function)
-          */
-         targetLinkTemplate: null
+         targetLinkTemplate: null,      
+         dsStr : null,
+         parentFieldHtmlId : null,
+         isMandatory : false
     	},     
-         
-
-      /**
-       * Set multiple initialization options at once.
-       *
-       * @override
-       * @method setOptions
-       * @param obj {object} Object literal specifying a set of options
-       * @return {beCPG.component.AutoCompletePicker} returns 'this' for method chaining
-       */
-      setOptions: function AutoCompletePicker_setOptions(obj)
+      onComponentsLoaded: function AutoCompletePicker_onComponentsLoaded ()
       {
+    	  if(this.options.mode!="view"){
+            Event.onContentReady(this.fieldHtmlId+"-container", this.render, this, true);
+    	  } else {
+    		Event.onContentReady(this.fieldHtmlId+"-values", this.render, this, true);
+    	  }
+      },
+      setOptions: function AutoCompletePicker_setOptions (obj){
 			this.options = YAHOO.lang.merge(this.options, obj);
 
          return this;
       },
 
-      /**
-       * Fired by YUI when parent element is available for scripting.
-       * Component initialisation, including instantiation of YUI widgets and event listener binding.
-       *
-       * @method onReady
-       */
-      onReady: function AutoCompletePicker_onReady()
-      {
-         this._loadSelectedItems();
-                           
+      
+      render :  function AutoCompletePicker_render() {
+    	 
+    	  var instance = this;
+    	  
+    	  
+    	  if(instance.isAssoc){
+	    	  // Start by loading new Item
+	    	  instance.loadItems();
+	    	  
+	    	  // attach event to basket
+	
+		  		if(instance.options.multipleSelectMode){
+		  			Event.delegate(instance.controlId+"-basket","click", function(e, matchedEl, container) {
+		  		 
+		  		 		var nodeRef = matchedEl.id.split('ac-close-')[1];
+		  		 		instance.removeFromBasket(nodeRef);
+		  		 	    e.preventDefault();
+		  		 	    e.stopPropagation();
+		  			}, "span.ac-closebutton");
+		  		}
+    	  }
+    	  
+    	  // Load autocomplete
+    	  if(instance.options.mode!="view"){
+    	  // Use an XHRDataSource
+    	   var oDS = new YAHOO.util.XHRDataSource(Alfresco.constants.PROXY_URI + instance.options.dsStr);  
+    	   
+    	   // Set the responseType
+    	   oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
+    	 
+    	   // Define the schema of the JSON results
+    	   oDS.responseSchema = 
+    	   {
+    	      resultsList : "result",
+    	      fields : ["value", "name","type"],
+    	      metaFields : {
+    	      	page : "page",
+    	      	pageSize : "pageSize",
+    	      	fullListSize : "fullListSize"
+    	      }
+    	   };
+    	   
+
+    	   // Instantiate the AutoComplete
+    	   var oAC = new YAHOO.widget.AutoComplete(instance.fieldHtmlId, instance.fieldHtmlId+"-container", oDS);
+
+    	   
+    	   oAC.queryDelay = .5;
+    	   oAC.page = 1;
+
+    	   // The webservice needs additional parameters
+    	   oAC.generateRequest = function(sQuery) 
+    	   {
+    	 
+    			if(instance.options.multipleSelectMode && sQuery.indexOf("%2C%20") > 0)
+    			{
+    				var arrQuery = sQuery.split("%2C%20");
+    				sQuery = arrQuery[arrQuery.length - 1];
+    			}
+  
+	    	   var oParentField = '';	
+	    	   
+	    	   if(instance.options.parentFieldHtmlId!=null){
+	    		   var parentElem = Dom.get(instance.options.parentFieldHtmlId);	
+		   			if(parentElem != null){
+		   					oParentField = parentElem.value;
+		   			}	
+	    	   }
+	    	  
+	    	    var q = Lang.substitute("q={query}&parent={parent}&page={page}",{query:sQuery,parent:oParentField,page: oAC.page});
+	    	     if(instance.options.dsStr.indexOf("?")>0){
+	    	    	 return "&" + q;
+	    	     } else {
+	    	    	 return "?" + q;
+	    	     }
+    	   
+    	   };
+
+    	   oAC.setHeader("<div class='ac-header' ><span>"+instance.msg("autocomplete.header.msg")+"</span></div>");
+    	   
+    	   var previewTooltips=[];
+    	   var previewTooltip = new YAHOO.widget.Tooltip("previewTooltip" ,
+        	         {
+    		   			container: instance.fieldHtmlId+"-container",
+        	            width: "108px",
+        	            showDelay: 500,
+        	            zIndex:9999
+        	         });
+    	   
+    	   previewTooltip.contextTriggerEvent.subscribe(function(type, args)
+        	         {
+        	            var context = args[0];
+        	            var nodeRef = context.id.split('ac-choice-')[1].replace(":/","");
+        	            this.cfg.setProperty("text", '<img src="' + Alfresco.constants.PROXY_URI + "api/node/" + nodeRef + "/content/thumbnails/doclib?c=queue&ph=true" + '" />');
+        	         });
+             
+        
+    	   oAC.formatResult = function(oResultData, sQuery, sResultMatch) {
+    		  
+    		    previewTooltips.push("ac-choice-"+oResultData[0]);
+    	   		return "<span id='ac-choice-"+oResultData[0]+"' class='"+oResultData[2]+"' style='padding-left: 20px;' >"+oResultData[1]+"</span>";
+    	   	}
+
+           var initialValue = "";
+    	   
+    	    // Toggle button
+    		var bToggler = Dom.get(instance.fieldHtmlId+"-toggle-autocomplete"); 
+    
+    		  Event.on(bToggler,"click", function(e) { 	  
+    	    		 if(oAC.isContainerOpen()) { 
+        		         oAC.collapseContainer(); 
+        		  } else { 
+        		     oAC.getInputEl().focus(); // Needed to keep widget active
+        		     initialValue = oAC.getInputEl().value;
+        		     setTimeout(function() { // For IE
+        		        oAC.sendQuery("*"); 
+        		      },0); 
+        		    } 
+        		 	oAC.page=1;
+        		 	previewTooltips=[];
+        		 	e.preventDefault();
+    		 	    e.stopPropagation();
+        		  } ); 
+    		 
+    		  oAC.containerExpandEvent.subscribe(function(){ 
+    		  	Dom.addClass(bToggler, "openToggle");
+    		  }); 
+    		  oAC.containerCollapseEvent.subscribe(function(){
+    		  		Dom.removeClass(bToggler, "openToggle");
+    		  		oAC.page=1;
+    		  		previewTooltips=[];
+    		  	}); 
+    		 
+    	      
+    		   oAC.doBeforeLoadData = function ( sQuery , oResponse , oPayload ) {
+    			    	oAC.fullListSize = oResponse.meta.fullListSize;
+    			    	oAC.pageSize = oResponse.meta.pageSize;   
+    		 			oAC.page = oResponse.meta.page;   
+    	 			return true;
+    		   }
+    		 
+    		 
+    		 oAC.doBeforeExpandContainer = function(elTextbox , elContainer , sQuery , aResults) {
+    			try{
+	    			 if(parseInt(oAC.fullListSize)< parseInt(oAC.pageSize)+1 ) {
+	    			      oAC.setFooter("");
+	    			   } else {
+	    			       oAC.setFooter("<div class='ac-footer'><div id='"+instance.fieldHtmlId+"-container-paging'></div></div>");
+	    			   		var oACPagination = new YAHOO.widget.Paginator({
+	    			   					rowsPerPage : oAC.pageSize,
+	    							    totalRecords : oAC.fullListSize,
+	    								containers : instance.fieldHtmlId+'-container-paging' ,
+	    								initialPage: parseInt(oAC.page),
+	    						        template: "<div>{CurrentPageReport}</div> {PreviousPageLink} {PageLinks} {NextPageLink}",
+	    						        pageReportTemplate: instance.msg("autocomplete.pagination.template.page-report"),
+	    						        previousPageLinkLabel: instance.msg("autocomplete.pagination.previousPageLinkLabel"),
+	    						        nextPageLinkLabel: instance.msg("autocomplete.pagination.nextPageLinkLabel")
+	    					});
+	    			  		oACPagination.subscribe('changeRequest', function(state){
+	    			  					oAC.page=state.page;
+	    			  					previewTooltips=[];
+	    			  					setTimeout(function() { // For IE
+	    			  						var input = oAC.getInputEl().value;
+	    			  						if(input==initialValue){
+	    			  							oAC.sendQuery("*");
+	    			  						} else {
+	    			  							oAC.sendQuery(input);
+	    			  						}
+	    			  	    		     },0); 
+	    						}); 
+	    					oACPagination.render();
+	    			
+	    			   }
+	    			 
+	    			 previewTooltip.cfg.setProperty("context", previewTooltips);
+    			} catch (e) {
+  					alert(e);
+				}
+    			 
+    		   return true;
+    		}
+    		
+    		oAC.textboxChangeEvent.subscribe(function(){
+    			oAC.page=1;
+    			previewTooltips=[];
+    		});
+    					
+    		
+    		oAC.itemSelectEvent.subscribe(function(type , args){
+    			try{
+	    			var selectedObj = args[2];
+	
+	    	 		var itemValue = selectedObj[0];
+	    	 		var itemTitle = selectedObj[1];
+	
+	    	 		 if(instance.isAssoc){
+	    	 			 
+	    	 		     var inputOrig = Dom.get(instance.controlId+"-orig");
+	    	 		     var inputAdded = Dom.get(instance.controlId+"-added");
+	    	 		     var inputRemoved = Dom.get(instance.controlId+"-removed");
+	    	 			 
+		    		    if(inputOrig != null && inputAdded != null && inputRemoved != null) {
+		    		
+		    				if(!instance.options.multipleSelectMode){
+		    					if(inputOrig.value != "" && inputOrig.value != itemValue) {
+		    						inputRemoved.value = inputOrig.value;
+		    					}
+		    					inputAdded.value = itemValue;
+		    				}
+		    				else{			
+		    					if(inputAdded.value != ""){
+		    						inputAdded.value += ",";
+		    					}
+		    					inputAdded.value += itemValue;
+		    				}			
+		    			}	
+	    	 		 }
+	    	 		 
+	    			if(instance.isAssoc && instance.options.multipleSelectMode)
+	    			{
+	    				var  basket =  Dom.get(instance.controlId+"-basket");
+	    				instance.addToBasket(basket,itemTitle,itemValue);
+	    				oAC.getInputEl().value = "";
+	    			} else {
+	    				oAC.getInputEl().value = itemTitle;
+	    			}
+	    	 		
+	    			if(instance.options.isMandatory){
+	    				YAHOO.Bubbling.fire("mandatoryControlValueUpdated", oAC.getInputEl());
+	    			}
+    			} catch (e) {
+  					alert(e);
+				}
+    			return true;
+    		
+    		});
+    		
+    	  }
+    		
       },
+    		
+      addToBasket :  function AutoCompletePicker_addToBasket(basket, itemTitle,itemValue){
+    		
+    				
+    			var displayVal =  "<span id='ac-m-selected-"+itemValue+"' class='ac-m-selected'><span class='ac-m-selected-body'>";
+    				displayVal += itemTitle;				
+    				displayVal += "</span>";
+    				displayVal +="<span id='ac-close-"+itemValue+"' class='ac-closebutton' ></span>";
+    				displayVal += "</span>";
+    				
+    				basket.innerHTML+=displayVal;
+    				
+    		},
+    		
+      removeFromBasket:	function AutoCompletePicker_removeFromBasket(nodeRef){
+    	  	var  basket =  new Element(this.controlId+"-basket");
+    	  	var inputRemoved = Dom.get(this.controlId+"-removed");
+    	  	basket.removeChild( Dom.get("ac-m-selected-"+nodeRef));
+    		 		
+    				if(inputRemoved.value != ""){
+    					inputRemoved.value += ",";
+    				}
+    				inputRemoved.value += nodeRef;
+    		},
+    		
+    		
+    	loadItems :	function AutoCompletePicker_loadItems(){
+    			if (this.options.currentValue != "") {
+    			 Alfresco.util.Ajax.jsonRequest(
+    	            {
+    	               url: Alfresco.constants.PROXY_URI + "api/forms/picker/items",
+    	               method: "POST",
+    	               dataObj:
+    	               {
+    	                  items: this.options.currentValue.split(",")
+    	               },
+    	               successCallback:
+    	               {
+    	                  fn: function(response){
+    	                  	 var items = response.json.data.items,
+    			               item,selectedItems = {};
+    			            for (var i = 0, il = items.length; i < il; i++){
+    			               item = items[i];
+    			               selectedItems[item.nodeRef] = item;
+    			            }
+    			            this.renderItems(selectedItems);
+    			                           
+    	                  },
+    	                  scope: this
+    	               },
+    	               failureCallback:
+    	               {
+    	                  fn: function(response){
+    	                  
+    	                  },
+    	                  scope: this
+    	               }
+    	            });
+    	         }
+    		
+    		},
+    		
+  
+      
+      
+      renderItems :  function AutoCompletePicker_renderItems(items){
+		  	var displayValue = "", link;
 
-		/**
-       * BUBBLING LIBRARY EVENT HANDLERS FOR PAGE EVENTS
-       * Disconnected event handlers for inter-component event notification
-       */
-
-      /**
-       * Renders current value in reponse to an event
-       *
-       * @method onRenderCurrentValue
-       * @param layer {object} Event fired (unused)
-       * @param args {array} Event parameters
-       */
-      onRenderCurrentValue: function ObjectFinder_onRenderCurrentValue(layer, args)
-      {
-         // Check the event is directed towards this instance
-    	  if ($hasEventInterest(this, args))
-    	  {
-    		  var items = this.selectedItems,
-               	displayValue = "", link;
-
-    		  if (items === null)
-    		  {
-    			  displayValue = "<span class=\"error\">" + this.msg("form.control.object-picker.current.failure") + "</span>";            
-    		  }
-    		  else
-    		  {                   			  
-					// multiple selection					
-					if(this.options.multipleSelectMode)
-					{
-						if(this.options.mode == "view")
-						{
+  		  if (items === null){
+  			  displayValue = "<span class=\"error\">" + this.msg("form.control.object-picker.current.failure") + "</span>";            
+  		  }	  else  {                   			  
+					// multiple selection
+						if(this.options.mode == "view"){
 							for (var key in items)
 				 			{
 								item = items[key];
-								if(displayValue != "")
-								{
+								if(displayValue != ""){
 									displayValue += ", ";
 								}
-
-								link = null;
-                        if (YAHOO.lang.isFunction(this.options.targetLinkTemplate))
-                        {
-                           link = this.options.targetLinkTemplate.call(this, item);
-                        }
-                        else if (YAHOO.lang.isString(this.options.targetLinkTemplate))
-                        {
-                           link = YAHOO.lang.substitute(this.options.targetLinkTemplate, item);
-                        }
-
+								link=Lang.substitute(this.options.targetLinkTemplate,item);
 								displayValue += this.options.objectRenderer.renderItem(item, 16,
-                                 "<div>{icon} <a href='" + link + "'>{name}</a></div>");
+		                                 "<div>{icon} <a href='" + link + "'>{name}</a></div>");
 				 			}
-							var htmlInput = Dom.get(this.currentValueHtmlId + "-values");
-							htmlInput.innerHTML = displayValue;
-						}
-						else
-						{
-							for (var key in items)
-				 			{
-								item = items[key];
-								if(displayValue != "")
-								{
-									displayValue += "<br/>";
-								}
-								displayValue += item.name							
-				 			}
-							var basketInput = Dom.get(this.currentValueHtmlId + "-cntrl-basket");				
-							basketInput.innerHTML = displayValue;
-						}						
-					}
-					else
-					{
-						
-						
-						if(this.options.mode == "view")
-						{
-							for (var key in items)
-				 			{
-								item = items[key];
-								if(displayValue != "")
-								{
-									displayValue += ", ";
-								}
-								
-								link = null;
-                        if (YAHOO.lang.isFunction(this.options.targetLinkTemplate))
-                        {
-                           link = this.options.targetLinkTemplate.call(this, item);
-                        }
-                        else if (YAHOO.lang.isString(this.options.targetLinkTemplate))
-                        {
-                           link = YAHOO.lang.substitute(this.options.targetLinkTemplate, item);
-                        }
-
-								displayValue += this.options.objectRenderer.renderItem(item, 16,
-                                 "<div>{icon} <a href='" + link + "'>{name}</a></div>");
-								
-				 			}
-
-							var htmlInput = Dom.get(this.currentValueHtmlId + "-values");
-							htmlInput.innerHTML = displayValue;
-						}
-						else
-						{
-							for (var key in items)
-				 			{
-								item = items[key];
-								if(displayValue != "")
-								{
-									displayValue += "<br/>";
-								}
-								displayValue += item.name							
-				 			}
-							
-							var htmlInput = Dom.get(this.currentValueHtmlId);
-							htmlInput.value = displayValue;
-						}
-					}
-										
-    		  }
-         }
-      },		
-
-		/**
-       * PRIVATE FUNCTIONS
-       */
-
-      /**
-       * Gets selected or current value's metadata from the repository
-       *
-       * @method _loadSelectedItems
-       * @private
-       */
-      _loadSelectedItems: function AutoCompletePicker__loadSelectedItems(useOptions)
-      {
-         var arrItems = "";
-         if (this.options.selectedValue)
-         {
-            arrItems = this.options.selectedValue;
-         }
-         else
-         {
-            arrItems = this.options.currentValue;
-         }
-
-         var onSuccess = function AutoCompletePicker__loadSelectedItems_onSuccess(response)
-         {
-            var items = response.json.data.items,
-               item;
-            this.selectedItems = {};
-
-            for (var i = 0, il = items.length; i < il; i++)
-            {
-               item = items[i];
-               this.selectedItems[item.nodeRef] = item;
-            }
-
-            YAHOO.Bubbling.fire("renderCurrentValue",
-            {
-               eventGroup: this
-            });
-         };
-         
-         var onFailure = function AutoCompletePicker__loadSelectedItems_onFailure(response)
-         {
-            this.selectedItems = null;
-         };
-
-         if (arrItems != "")
-         {
-            Alfresco.util.Ajax.jsonRequest(
-            {
-               url: Alfresco.constants.PROXY_URI + "api/forms/picker/items",
-               method: "POST",
-               dataObj:
-               {
-                  items: arrItems.split(","),
-                  itemValueType: this.options.valueType
-               },
-               successCallback:
-               {
-                  fn: onSuccess,
-                  scope: this
-               },
-               failureCallback:
-               {
-                  fn: onFailure,
-                  scope: this
-               }
-            });
-         }
-      }
-
+						   Dom.get(this.fieldHtmlId+"-values").innerHTML = displayValue;
+						} else	{
+							if(this.options.multipleSelectMode)	{	
+								var  basket =  Dom.get(this.controlId+"-basket");
+								for (var key in items) {
+									item = items[key];
+									this.addToBasket(basket,item.name,item.nodeRef);
+					 			}
+							}	else {
+								var htmlInput = Dom.get(this.fieldHtmlId);
+								for (var key in items) {
+									item = items[key];
+									displayValue += item.name;					
+					 			}
+								htmlInput.value = displayValue;
+							}
+					   }						
+					}		
+	
+     }
+            
+      
    });
 })();
-
-/**
- * Helper function to clear the selection of the control
- * represented by the given id.
- * 
- * @method removeAutoCompleteSelection
- * @param fieldHtmlId The id of the autocomplete input field
- * @static
- */
-beCPG.util.removeAutoCompleteSelection = function(autoCompleteFieldHtmlId)
-{   
-   var basketInput = YUIDom.get(autoCompleteFieldHtmlId + "-cntrl-basket");
-	var inputOrig = YUIDom.get(autoCompleteFieldHtmlId + "-cntrl-orig");
-	var inputRemoved = YUIDom.get(autoCompleteFieldHtmlId + "-cntrl-removed");
-
-	basketInput.innerHTML = '';
-	inputRemoved.value = inputOrig.value;
-};

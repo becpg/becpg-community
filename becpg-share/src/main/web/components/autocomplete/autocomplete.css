@@ -1,138 +1,261 @@
 /* custom styles for inline instances */
-.yui-skin-default .yui-ac-input { position:static;width:27em; vertical-align:middle;}
-.yui-skin-default .yui-ac-container { width:27em;left:0px;}
+
+.yui-ac .ac-body {
+	min-height: 20px;
+	line-height:20px;
+	vertical-align: middle;
+	padding:0px;
+	margin-right:0px;
+	border: 1px solid #C5D6E2;
+	background-color: white;
+	width:30em;
+	max-width:30em;
+}
+
+
+
+
+.yui-skin-default .yui-ac-container {
+	width: 100%;
+	left: 0px;
+	clear:both;
+}
+
+.yui-ac .ac-body .yui-ac-input{
+	border:0px;
+	background-color: white;
+	width:auto;
+	vertical-align: middle;
+	position: relative;
+}
+
 
 /* buttons */
-.yui-ac .yui-button {vertical-align:middle; min-height: 1.5em;}
-.yui-ac .yui-button button {background: url(../images/collapsed.png) center center no-repeat }
-.yui-ac .openToggle .yui-button button {background: url(../images/expanded.png) center center no-repeat}
 
 
+.ac-toogle {
+	padding: 0px;
+	height: 20px;
+	width:20px;
+	background: url(../images/collapsed.png) center center no-repeat;
+	vertical-align: middle;
+	background-color: white;
+	border:0px	;
+	cursor: pointer;
+	display: block;
+	float:left;
+}
+
+.ac-toogle.openToggle {
+	background: url(../images/expanded.png) center center no-repeat;
+}
+
+
+/**
+stickers
+*/
+
+ .yui-ac span.ac-m-selected{
+    padding-right: 16px;
+    border: 1px solid #C5D6E2;
+    border-radius: 5px 5px 5px 5px;
+    background-color:#D2E5F2;
+    vertical-align: middle;
+    position: relative;
+ }
+
+ .yui-ac span.ac-m-selected-body{
+ 	 padding: 1px 5px 2px;
+	 font: 11px "Lucida Grande","Verdana";
+	 white-space: nowrap;
+ }
+
+.yui-ac span.ac-closebutton{
+	background: url(../images/remove-icon-16.png) center center no-repeat;
+	display: block;
+    font-size: 1px;
+    height: 16px;
+    cursor: pointer;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 16px;
+}
+
+/**
+ header
+**/
+.yui-ac  .ac-header {
+	margin: 5px; padding-bottom : 5px;
+	border-bottom: 1px solid grey;
+	padding-bottom: 5px;
+}
+
+.yui-ac  .ac-header span {
+	margin: 5px; font-weight : bold;
+	color: grey;
+	font-weight: bold;
+}
+
+/**
+ footer
+**/
+
+.yui-ac  .ac-footer {
+	margin: 5px;
+	padding-top: 5px;
+	border-top: 1px solid grey;
+}
+
+
+.yui-ac  .ac-footer  .yui-pg-container span {
+	margin: 0px;
+	font-weight: bold;
+	color: grey;
+}
+
+.yui-ac  .ac-footer div {
+	font-weight: bold;
+	color: grey;
+	margin: 5px;
+}
+
+/**
+ Pagination
+**/
+
+.yui-skin-default  .yui-ac  .ac-footer  .yui-pg-first, .yui-skin-default .yui-pg-previous, .yui-skin-default .yui-pg-next, .yui-skin-default .yui-pg-last, .yui-skin-default .yui-pg-current, .yui-skin-default .yui-pg-pages, .yui-skin-default .yui-pg-page {
+    display: inline-block;
+    font-family: arial,helvetica,clean,sans-serif;
+    padding: 0px 3px;
+}
+
+.yui-skin-default .yui-ac  .ac-footer  .yui-pg-container a.yui-pg-first,.yui-skin-default .yui-pg-container a.yui-pg-previous,.yui-skin-default .yui-pg-container a.yui-pg-page,.yui-skin-default .yui-pg-container a.yui-pg-next,.yui-skin-default .yui-pg-container a.yui-pg-last
+	{
+	border-color: #CBCBCB;
+	color: grey;
+	text-decoration: none;
+}
+
+.yui-skin-default .yui-ac  .ac-footer  a.yui-pg-first:link,.yui-skin-default a.yui-pg-first:visited,.yui-skin-default a.yui-pg-first:active,.yui-skin-default a.yui-pg-first:hover,.yui-skin-default a.yui-pg-previous:link,.yui-skin-default a.yui-pg-previous:visited,.yui-skin-default a.yui-pg-previous:active,.yui-skin-default a.yui-pg-previous:hover,.yui-skin-default a.yui-pg-next:link,.yui-skin-default a.yui-pg-next:visited,.yui-skin-default a.yui-pg-next:active,.yui-skin-default a.yui-pg-next:hover,.yui-skin-default a.yui-pg-last:link,.yui-skin-default a.yui-pg-last:visited,.yui-skin-default a.yui-pg-last:active,.yui-skin-default a.yui-pg-last:hover,.yui-skin-default a.yui-pg-page:link,.yui-skin-default a.yui-pg-page:visited,.yui-skin-default a.yui-pg-page:active,.yui-skin-default a.yui-pg-page:hover
+	{
+	color: #grey;
+	outline: 0 none;
+	text-decoration: none;
+}
+
+.yui-skin-default  .yui-ac  .ac-footer  a.yui-pg-first:link, .yui-skin-default a.yui-pg-first:visited, .yui-skin-default a.yui-pg-first:active, .yui-skin-default a.yui-pg-first:hover, .yui-skin-default a.yui-pg-previous:link, .yui-skin-default a.yui-pg-previous:visited, .yui-skin-default a.yui-pg-previous:active, .yui-skin-default a.yui-pg-previous:hover, .yui-skin-default a.yui-pg-next:link, .yui-skin-default a.yui-pg-next:visited, .yui-skin-default a.yui-pg-next:active, .yui-skin-default a.yui-pg-next:hover, .yui-skin-default a.yui-pg-last:link, .yui-skin-default a.yui-pg-last:visited, .yui-skin-default a.yui-pg-last:active, .yui-skin-default a.yui-pg-last:hover, .yui-skin-default a.yui-pg-page:link, .yui-skin-default a.yui-pg-page:visited, .yui-skin-default a.yui-pg-page:active, .yui-skin-default a.yui-pg-page:hover {
+    color: #grey;
+    outline: 0 none;
+    text-decoration: none;
+}
 
 /* Icons */
-
- .yui-ac-container span.condSalesUnit
-{
-   background: url(../images/products/condSalesUnit-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.condSalesUnit {
+	background: url(../images/products/condSalesUnit-16.png) no-repeat;
+	padding-left: 20px;
 }
 
- .yui-ac-container span.finishedProduct
-{
-   background: url(../images/products/finishedProduct-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.finishedProduct {
+	background: url(../images/products/finishedProduct-16.png) no-repeat;
+	padding-left: 20px;
 }
 
- .yui-ac-container span.localSemiFinishedProduct
-{
-   background: url(../images/products/localSemiFinishedProduct-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.localSemiFinishedProduct {
+	background: url(../images/products/localSemiFinishedProduct-16.png)
+		no-repeat;
+	padding-left: 20px;
 }
 
- .yui-ac-container span.packagingKit
-{
-   background: url(../images/products/packagingKit-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.packagingKit {
+	background: url(../images/products/packagingKit-16.png) no-repeat;
+	padding-left: 20px;
 }
 
-.yui-ac-container span.packagingMaterial
-{
-   background: url(../images/products/packagingMaterial-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.packagingMaterial {
+	background: url(../images/products/packagingMaterial-16.png) no-repeat;
+	padding-left: 20px;
 }
 
-.yui-ac-container span.rawMaterial
-{
-   background: url(../images/products/rawMaterial-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.rawMaterial {
+	background: url(../images/products/rawMaterial-16.png) no-repeat;
+	padding-left: 20px;
 }
 
-.yui-ac-container span.semiFinishedProduct
-{
-   background: url(../images/products/semiFinishedProduct-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.semiFinishedProduct {
+	background: url(../images/products/semiFinishedProduct-16.png) no-repeat;
+	padding-left: 20px;
 }
 
-.yui-ac-container span.listValue
-{
-   background: url(../images/generic-file-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.listValue {
+	background: url(../images/generic-file-16.png) no-repeat;
+	padding-left: 20px;
 }
 
-.yui-ac-container span.client
-{
-   background: url(../images/filetypes/generic-client-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.client {
+	background: url(../images/filetypes/generic-client-16.png) no-repeat;
+	padding-left: 20px;
 }
 
-.yui-ac-container span.supplier
-{
-   background: url(../images/filetypes/generic-supplier-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.supplier {
+	background: url(../images/filetypes/generic-supplier-16.png) no-repeat;
+	padding-left: 20px;
 }
 
+.yui-ac-container span.supplier {
+	background: url(../images/filetypes/generic-supplier-16.png) no-repeat;
+	padding-left: 20px;
+}
 
+.yui-ac-container span.allergen {
+	background: url(../images/filetypes/generic-allergen-16.png) no-repeat;
+	padding-left: 20px;
+}
 
-.yui-ac-container span.supplier
-{
-   background: url(../images/filetypes/generic-supplier-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.bioOrigin {
+	background: url(../images/filetypes/generic-bioOrigin-16.png) no-repeat;
+	padding-left: 20px;
 }
 
 
-.yui-ac-container span.allergen
-{
-   background: url(../images/filetypes/generic-allergen-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.geoOrigin {
+	background: url(../images/filetypes/generic-geoOrigin-16.png) no-repeat;
+	padding-left: 20px;
 }
 
 
-.yui-ac-container span.bioOrigin
-{
-   background: url(../images/filetypes/generic-bioOrigin-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.cost {
+	background: url(../images/filetypes/generic-cost-16.png) no-repeat;
+	padding-left: 20px;
 }
 
-
-.yui-ac-container span.cost
-{
-   background: url(../images/filetypes/generic-cost-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.geo {
+	background: url(../images/filetypes/generic-geo-16.png) no-repeat;
+	padding-left: 20px;
 }
 
-
-.yui-ac-container span.geo
-{
-   background: url(../images/filetypes/generic-geo-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.ing {
+	background: url(../images/filetypes/generic-ing-16.png) no-repeat;
+	padding-left: 20px;
 }
 
-.yui-ac-container span.ing
-{
-   background: url(../images/filetypes/generic-ing-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.microbio {
+	background: url(../images/filetypes/generic-microbio-16.png) no-repeat;
+	padding-left: 20px;
 }
 
-.yui-ac-container span.microbio
-{
-   background: url(../images/filetypes/generic-microbio-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.organo {
+	background: url(../images/filetypes/generic-organo-16.png) no-repeat;
+	padding-left: 20px;
 }
 
-.yui-ac-container span.organo
-{
-   background: url(../images/filetypes/generic-organo-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.physicoChem {
+	background: url(../images/filetypes/generic-physicoChem-16.png)
+		no-repeat;
+	padding-left: 20px;
 }
 
-.yui-ac-container span.physicoChem
-{
-   background: url(../images/filetypes/generic-physicoChem-16.png) no-repeat;
-   padding-left: 20px;
-}
-
-.yui-ac-container span.nut
-{
-   background: url(../images/filetypes/generic-nut-16.png) no-repeat;
-   padding-left: 20px;
+.yui-ac-container span.nut {
+	background: url(../images/filetypes/generic-nut-16.png) no-repeat;
+	padding-left: 20px;
 }

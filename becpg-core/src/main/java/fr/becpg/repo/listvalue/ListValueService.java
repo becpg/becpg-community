@@ -4,7 +4,6 @@
 package fr.becpg.repo.listvalue;
 
 import java.util.Locale;
-import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -24,7 +23,7 @@ public interface ListValueService {
 	 * @param query the query
 	 * @return the map
 	 */
-	public Map<String, String> suggestTargetAssoc(QName type, String query, Locale locale);
+	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Locale locale);
 	
 	/**
 	 * Suggest linked value.
@@ -34,7 +33,7 @@ public interface ListValueService {
 	 * @param query the query
 	 * @return the map
 	 */
-	public Map<String, String> suggestLinkedValue(String path, String parent, String query, Locale locale);
+	public ListValuePage suggestLinkedValue(String path, String parent, String query, Integer pageNum, Locale locale);
 	
 	/**
 	 * Suggest list value.
@@ -43,7 +42,7 @@ public interface ListValueService {
 	 * @param query the query
 	 * @return the map
 	 */
-	public Map<String, String> suggestListValue(String path, String query, Locale locale);
+	public ListValuePage suggestListValue(String path, String query, Integer pageNum, Locale locale);
 	
 	/**
 	 * Suggest product.
@@ -51,7 +50,7 @@ public interface ListValueService {
 	 * @param query the query
 	 * @return the map
 	 */
-	public Map<String, String> suggestProduct(String query, Locale locale);
+	public ListValuePage suggestProduct(String query, Integer pageNum, Locale locale);
 	
 	/**
 	 * Gets the item by type and name.
@@ -69,5 +68,5 @@ public interface ListValueService {
 	 * @param query the query
 	 * @return the map
 	 */
-	public Map<String, String> suggestProductReportTemplates(QName nodeType, String query);
+	public ListValuePage suggestProductReportTemplates(QName nodeType, String query, Integer pageNum);
 }

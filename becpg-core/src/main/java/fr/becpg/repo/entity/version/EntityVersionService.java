@@ -44,4 +44,10 @@ public interface EntityVersionService {
 	 * @return the version history with properties
 	 */
 	public List<VersionData> getVersionHistoryWithProperties(NodeRef entityNodeRef);
+
+	/**
+	 * @param entityNodeRef
+	 * delete all version history
+	 */
+	public void deleteVersionHistory(NodeRef entityNodeRef);
 }

@@ -39,6 +39,12 @@ public interface EntityService {
 	 * @param entityNodeRef
 	 */
 	public void initializeEntity(NodeRef entityNodeRef);
+
+	/**
+	 * Delete all version of the entity
+	 * @param entityNodeRef
+	 */
+	public void deleteEntity(NodeRef entityNodeRef);
 	
     
 }
