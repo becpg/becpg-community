@@ -17,7 +17,7 @@
 	<bean id="reportTplService" class="fr.becpg.repo.report.template.impl.ReportTplServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="contentService" ref="contentService" />		
-		<property name="searchService" ref="searchService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="mimetypeService" ref="mimetypeService"/>		
 	</bean>
 	<!-- Node report -->	

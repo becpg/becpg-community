@@ -26,6 +26,8 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -139,6 +141,8 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 	
 	private EntityTplService entityTplService;
 	
+	private DictionaryService dictionaryService;
+	
 	/** The test folder. */
 	private NodeRef testFolder;
 	
@@ -169,6 +173,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
         dictionaryDAO = (DictionaryDAO)appCtx.getBean("dictionaryDAO");
         entityService = (EntityService)appCtx.getBean("entityService");
         entityTplService = (EntityTplService)appCtx.getBean("entityTplService");
+        dictionaryService = (DictionaryService)appCtx.getBean("dictionaryService");
         
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			public NodeRef execute() throws Throwable {
@@ -288,17 +293,20 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 				/*-- Add report template --*/
 				NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 			   	NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));			   	
-			   	NodeRef productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
+			   	NodeRef productReportTplsFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 			   	
-			   	reportTplService.createTplRptDesign(productReportTplFolder, 
-		   											"report MP", 
-		   											"beCPG/birt/document/product/default/ProductReport.rptdesign", 
-		   											ReportType.Document,
-		   											ReportFormat.PDF,
-		   											BeCPGModel.TYPE_RAWMATERIAL, 
-		   											true, 
-		   											true,
-		   											true);			
+			   	QName productType = BeCPGModel.TYPE_RAWMATERIAL;
+			   	ClassDefinition classDef = dictionaryService.getClass(productType);
+				NodeRef productReportTplFolder = repoService.createFolderByPath(productReportTplsFolder, classDef.getTitle(), classDef.getTitle());				
+				reportTplService.createTplRptDesign(productReportTplFolder, 
+													classDef.getTitle(), 
+													"beCPG/birt/document/product/default/ProductReport.rptdesign", 
+													ReportType.Document, 
+													ReportFormat.PDF,
+													productType, 
+													true, 
+													true,
+													true);
 				
 				/*-- Create test folder --*/
 				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			

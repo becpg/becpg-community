@@ -175,7 +175,7 @@
 						</goals>
 						<configuration>
 							<encoding>8859_1</encoding>
-							<dest>target/classes/alfresco/module/${pom.groupId}-${pom.artifactId}</dest>
+							<dest>target/classes/alfresco/module/${project.groupId}-${project.artifactId}</dest>
 							<src>src/main/config</src>
 							<includes>
 								**/*.properties
@@ -254,7 +254,7 @@
 			<resource>
 				<filtering>true</filtering>
 				<directory>src/main/config</directory>
-				<targetPath>alfresco/module/${groupId}-${artifactId}</targetPath>
+				<targetPath>alfresco/module/${project.groupId}-${project.artifactId}</targetPath>
 				<excludes>
 					<exclude>**README-*</exclude>
 					<exclude>**/*.properties</exclude>
@@ -272,7 +272,7 @@
 				<includes>
 					<include>module.properties</include>
 				</includes>
-				<targetPath>alfresco/module/${groupId}-${artifactId}</targetPath>
+				<targetPath>alfresco/module/${project.groupId}-${project.artifactId}</targetPath>
 			</testResource> -->
 		</testResources>
 	</build>
@@ -299,7 +299,7 @@
 								</goals>
 								<configuration>
 									<includeTypes>amp</includeTypes>
-									<outputDirectory>${build.directory}/${webapp.name}</outputDirectory>
+									<outputDirectory>${project.build.directory}/${webapp.name}</outputDirectory>
 									<excludes>META*</excludes>
 								</configuration>
 							</execution>
@@ -334,7 +334,7 @@
 							<primaryArtifact>false</primaryArtifact>
 							<!-- Don't remove the following line otherwise WAR and AMP builds 
 								will be done in the same folder, with unexpected results -->
-							<webappDirectory>${build.directory}/${webapp.name}</webappDirectory>
+							<webappDirectory>${project.build.directory}/${webapp.name}</webappDirectory>
 							<archive>
 								<addMavenDescriptor>false</addMavenDescriptor>
 							</archive>
@@ -342,7 +342,7 @@
 							<webResources></webResources>
 							<webResources>
 								<resource>
-									<directory>${build.testOutputDirectory}</directory>
+									<directory>${project.build.testOutputDirectory}</directory>
 									<targetPath>WEB-INF/classes</targetPath>
 									<filtering>true</filtering>
 									<includes>
@@ -391,7 +391,7 @@
 								</goals>
 								<configuration>
 									<contextPath>/${webapp.name}</contextPath>
-									<webApp>${pom.build.directory}/${webapp.name}</webApp>
+									<webApp>${project.build.directory}/${webapp.name}</webApp>
 									<scanIntervalSeconds>10</scanIntervalSeconds>
 									<connectors>
 										<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">

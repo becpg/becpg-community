@@ -51,15 +51,12 @@ public class ReportTplServiceImpl implements ReportTplService{
 	private NodeService nodeService;
 	
 	/** The content service. */
-	private ContentService contentService;
+	private ContentService contentService;	
 	
-	/** The search service. */
-	private SearchService searchService;
+	private BeCPGSearchService beCPGSearchService;
 	
 	/** The mimetype service. */
 	private MimetypeService mimetypeService;
-	
-	//private Map<String, List<NodeRef>> systemTpls = new HashMap<String, List<NodeRef>>();
 			
 	/**
 	 * Sets the node service.
@@ -80,16 +77,6 @@ public class ReportTplServiceImpl implements ReportTplService{
 	}
 		
 	/**
-	 * Sets the search service.
-	 *
-	 * @param searchService the new search service
-	 */
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
-	}	
-	
-	
-	/**
 	 * Sets the mimetype service.
 	 *
 	 * @param mimetypeService the new mimetype service
@@ -97,6 +84,10 @@ public class ReportTplServiceImpl implements ReportTplService{
 	public void setMimetypeService(MimetypeService mimetypeService){
 		this.mimetypeService = mimetypeService;
 	}				
+	
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
+	}
 
 	/**
 	 * Get the report templates of the product.
@@ -109,38 +100,13 @@ public class ReportTplServiceImpl implements ReportTplService{
 	@Override
 	public List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType) {    	  
     	
-		List<NodeRef> tplsNodeRef = new ArrayList<NodeRef>();    	
-		
 		if(nodeType == null){
-			return tplsNodeRef;
+			return new ArrayList<NodeRef>();
 		}		
 		
-		String query = getQueryReportTpl(reportType, nodeType, true);			
+		String query = getQueryReportTpl(reportType, nodeType, true);							
 		
-		logger.debug(query);
-		
-		SearchParameters sp = new SearchParameters();
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(query);	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_RESULTS_NO_LIMIT);
-        
-        ResultSet resultSet =null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-			
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        if(resultSet.length() > 0)
-	        	tplsNodeRef = resultSet.getNodeRefs();
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
-        
-        return tplsNodeRef;
+		return beCPGSearchService.unProtLuceneSearch(query, null, RepoConsts.MAX_RESULTS_NO_LIMIT);
 	}
 	
 	/**
@@ -149,36 +115,11 @@ public class ReportTplServiceImpl implements ReportTplService{
 	@Override
 	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {    	  
     	
-		NodeRef tplNodeRef = null;    	
-		
 		String query = getQueryReportTpl(reportType, nodeType, true);		
 		query += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
 		
-		logger.debug(query);
-		
-		SearchParameters sp = new SearchParameters();
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(query);	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-        sp.setMaxItems(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-        
-        ResultSet resultSet =null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-			
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        if(resultSet.length() > 0)
-	        	tplNodeRef = resultSet.getNodeRef(0);
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
-        
-        return tplNodeRef;
+        List<NodeRef> tplsNodeRef = beCPGSearchService.unProtLuceneSearch(query, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);       
+        return tplsNodeRef.size() > 0 ? tplsNodeRef.get(0) : null;        
 	}
 	
 	/**
@@ -191,43 +132,17 @@ public class ReportTplServiceImpl implements ReportTplService{
 	 * @param:tplName the name of the template or starting by
 	 */
 	@Override
-	public List<NodeRef> suggestUserReportTemplates(ReportType reportType, QName nodeType, String tplName) {
-		
-		List<NodeRef> tplsNodeRef = new ArrayList<NodeRef>();
+	public List<NodeRef> suggestUserReportTemplates(ReportType reportType, QName nodeType, String tplName) {		
 		
 		if(nodeType == null){
 			logger.warn("suggestUserReportTemplates: nodeType is null, exit.");
-			return null;
+			return new ArrayList<NodeRef>();
 		}		
     	
 		String query = getQueryReportTpl(reportType, nodeType, false);					
 		query += LuceneHelper.getCondContainsValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
 		
-		logger.debug(query);
-		
-		SearchParameters sp = new SearchParameters();
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(query);	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_SUGGESTIONS);
-        sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
-        
-        ResultSet resultSet =null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-			
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        if(resultSet.length() > 0)
-	        	tplsNodeRef = resultSet.getNodeRefs();
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
-        
-        return tplsNodeRef;
+		return beCPGSearchService.unProtLuceneSearch(query, null, RepoConsts.MAX_RESULTS_NO_LIMIT);
 	}
 	
 	/**
@@ -242,8 +157,6 @@ public class ReportTplServiceImpl implements ReportTplService{
 	@Override
 	public NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName) {
 		
-		NodeRef tplNodeRef = null;
-		
 		if(nodeType == null){
 			return null;
 		}		
@@ -251,31 +164,8 @@ public class ReportTplServiceImpl implements ReportTplService{
 		String query = getQueryReportTpl(reportType, nodeType, false);
 		query += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
 		
-		logger.debug(query);
-		
-		SearchParameters sp = new SearchParameters();
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(query);	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-        sp.setMaxItems(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-        
-        ResultSet resultSet =null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-			
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        if(resultSet.length() > 0)
-	        	tplNodeRef = resultSet.getNodeRefs().get(0);
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
-        
-        return tplNodeRef;
+		List<NodeRef> tplsNodeRef = beCPGSearchService.unProtLuceneSearch(query, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		return tplsNodeRef.size() > 0 ? tplsNodeRef.get(0) : null;		
 	}
 	
 	/**

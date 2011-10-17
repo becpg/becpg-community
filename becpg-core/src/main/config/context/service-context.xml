@@ -269,7 +269,6 @@
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	
 

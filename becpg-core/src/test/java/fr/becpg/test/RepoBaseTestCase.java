@@ -315,6 +315,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	    		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 	    		properties.put(ContentModel.PROP_NAME, "Nut " + i);
 	    		properties.put(BeCPGModel.PROP_NUTUNIT, "kcal");
+	    		properties.put(BeCPGModel.PROP_NUTGROUP, "Groupe 1");
 	    		ChildAssociationRef childAssocRef = nodeService.createNode(nutFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties);
 	    		nuts.add(childAssocRef.getChildRef());
 	    	}
