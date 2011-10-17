@@ -1266,8 +1266,7 @@ public class ProductDAOImpl implements ProductDAO{
 	 * @throws InvalidTypeException the invalid type exception
 	 */
 	private void createCostList(NodeRef listContainerNodeRef, List<CostListDataItem> costList) throws InvalidTypeException
-	{
-		
+	{		
 		if(listContainerNodeRef != null)
 		{  
 			NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);

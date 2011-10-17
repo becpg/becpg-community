@@ -27,6 +27,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ApplicationContextHelper;
+import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -132,13 +133,12 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
         super.tearDown();
     }			
 
-	
 	/**
-	 * change sort, 4 to 2
+	 * Create a list item and check initialization
 	 *
 	 * @throws InterruptedException the interrupted exception
 	 */
-	public void testChangeSortDecrease() throws InterruptedException{		   		
+	public void testInitSort() throws InterruptedException{		   		
 	   	
 		logger.debug("testChangeSortListItem()");
 		
@@ -154,7 +154,7 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 					fileFolderService.delete(folderNodeRef);    		
 				}			
 				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-				
+								
 				// create SF
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
@@ -166,102 +166,164 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 				sfData.setCostList(costList);
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
 				sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);				
-
-				// load SF and test it
-				sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);
 				
-				assertNotNull("Check costs exist", sfData.getCostList());
-				assertEquals("Check cost order", costs.get(0), sfData.getCostList().get(0).getCost());
-				assertEquals("Check cost order", costs.get(1), sfData.getCostList().get(1).getCost());
-				assertEquals("Check cost order", costs.get(2), sfData.getCostList().get(2).getCost());
-				assertEquals("Check cost order", costs.get(3), sfData.getCostList().get(3).getCost());
+				// simulate the UI
+				NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);
+				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
 				
-				// change sort pos4 => pos2
-				nodeService.setProperty(sfData.getCostList().get(3).getNodeRef(), BeCPGModel.PROP_SORT, 2);
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		    	ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), BeCPGModel.TYPE_COSTLIST, properties);
+		    	nodeService.createAssociation(childAssocRef.getChildRef(), costs.get(3), BeCPGModel.ASSOC_COSTLIST_COST);
+		    	
+		    	childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), BeCPGModel.TYPE_COSTLIST, properties);
+		    	nodeService.createAssociation(childAssocRef.getChildRef(), costs.get(3), BeCPGModel.ASSOC_COSTLIST_COST);
+		    	
+		    	// load SF and test it
+				sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);				
 				
-				sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);
-				
-				assertNotNull("Check costs exist", sfData.getCostList());
-				assertEquals("Check cost order", costs.get(0), sfData.getCostList().get(0).getCost());
-				assertEquals("Check cost order", costs.get(1), sfData.getCostList().get(1).getCost());
-				assertEquals("Check cost order", costs.get(2), sfData.getCostList().get(2).getCost());
-				assertEquals("Check cost order", costs.get(3), sfData.getCostList().get(3).getCost());
-				
-				assertEquals("Check cost order", 1, nodeService.getProperty(sfData.getCostList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 3, nodeService.getProperty(sfData.getCostList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 4, nodeService.getProperty(sfData.getCostList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 2, nodeService.getProperty(sfData.getCostList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-				
+		    	
+		    	assertEquals("Check cost order", 1, nodeService.getProperty(sfData.getCostList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals("Check cost order", 2, nodeService.getProperty(sfData.getCostList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals("Check cost order", 3, nodeService.getProperty(sfData.getCostList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals("Check cost order", 4, nodeService.getProperty(sfData.getCostList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals("Check cost order", 5, nodeService.getProperty(sfData.getCostList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals("Check cost order", 6, nodeService.getProperty(sfData.getCostList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		    	
 				return null;
 				
 			}},false,true);	   				
 	   
-	}	
+	}
 	
-	/**
-	 * change sort, 2 to 4
-	 *
-	 * @throws InterruptedException the interrupted exception
-	 */
-	public void testChangeSortIncrease() throws InterruptedException{		   		
-	   	
-		logger.debug("testChangeSortListItem()");
-		
-		// create product
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			@Override
-			public NodeRef execute() throws Throwable {
-							   	
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
-				if(folderNodeRef != null)
-				{
-					fileFolderService.delete(folderNodeRef);    		
-				}			
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-				
-				// create SF
-				SemiFinishedProductData sfData = new SemiFinishedProductData();
-				sfData.setName("SF");
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-				costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(0)));
-				costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(1)));
-				costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(2)));
-				costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(3)));
-				sfData.setCostList(costList);
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
-				sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);				
-
-				// load SF and test it
-				sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);
-				
-				assertNotNull("Check costs exist", sfData.getCostList());
-				assertEquals("Check cost order", costs.get(0), sfData.getCostList().get(0).getCost());
-				assertEquals("Check cost order", costs.get(1), sfData.getCostList().get(1).getCost());
-				assertEquals("Check cost order", costs.get(2), sfData.getCostList().get(2).getCost());
-				assertEquals("Check cost order", costs.get(3), sfData.getCostList().get(3).getCost());
-				
-				// change sort pos2 => pos4
-				nodeService.setProperty(sfData.getCostList().get(1).getNodeRef(), BeCPGModel.PROP_SORT, 4);
-				
-				sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);
-				
-				assertNotNull("Check costs exist", sfData.getCostList());
-				assertEquals("Check cost order", costs.get(0), sfData.getCostList().get(0).getCost());
-				assertEquals("Check cost order", costs.get(1), sfData.getCostList().get(1).getCost());
-				assertEquals("Check cost order", costs.get(2), sfData.getCostList().get(2).getCost());
-				assertEquals("Check cost order", costs.get(3), sfData.getCostList().get(3).getCost());
-				
-				assertEquals("Check cost order", 1, nodeService.getProperty(sfData.getCostList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 4, nodeService.getProperty(sfData.getCostList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 2, nodeService.getProperty(sfData.getCostList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 3, nodeService.getProperty(sfData.getCostList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-				
-				return null;
-				
-			}},false,true);	   				
-	   
-	}	
+//	/**
+//	 * change sort, 4 to 2
+//	 *
+//	 * @throws InterruptedException the interrupted exception
+//	 */
+//	public void testChangeSortDecrease() throws InterruptedException{		   		
+//	   	
+//		logger.debug("testChangeSortListItem()");
+//		
+//		// create product
+//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+//			@Override
+//			public NodeRef execute() throws Throwable {
+//							   	
+//				/*-- Create test folder --*/
+//				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+//				if(folderNodeRef != null)
+//				{
+//					fileFolderService.delete(folderNodeRef);    		
+//				}			
+//				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+//				
+//				// create SF
+//				SemiFinishedProductData sfData = new SemiFinishedProductData();
+//				sfData.setName("SF");
+//				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+//				costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(0)));
+//				costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(1)));
+//				costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(2)));
+//				costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(3)));
+//				sfData.setCostList(costList);
+//				Collection<QName> dataLists = productDictionaryService.getDataLists();
+//				sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);				
+//
+//				// load SF and test it
+//				sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);
+//				
+//				assertNotNull("Check costs exist", sfData.getCostList());
+//				assertEquals("Check cost order", costs.get(0), sfData.getCostList().get(0).getCost());
+//				assertEquals("Check cost order", costs.get(1), sfData.getCostList().get(1).getCost());
+//				assertEquals("Check cost order", costs.get(2), sfData.getCostList().get(2).getCost());
+//				assertEquals("Check cost order", costs.get(3), sfData.getCostList().get(3).getCost());
+//				
+//				// change sort pos4 => pos2
+//				nodeService.setProperty(sfData.getCostList().get(3).getNodeRef(), BeCPGModel.PROP_SORT, 2);
+//				
+//				sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);
+//				
+//				assertNotNull("Check costs exist", sfData.getCostList());
+//				assertEquals("Check cost order", costs.get(0), sfData.getCostList().get(0).getCost());
+//				assertEquals("Check cost order", costs.get(1), sfData.getCostList().get(1).getCost());
+//				assertEquals("Check cost order", costs.get(2), sfData.getCostList().get(2).getCost());
+//				assertEquals("Check cost order", costs.get(3), sfData.getCostList().get(3).getCost());
+//				
+//				assertEquals("Check cost order", 1, nodeService.getProperty(sfData.getCostList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+//				assertEquals("Check cost order", 3, nodeService.getProperty(sfData.getCostList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+//				assertEquals("Check cost order", 4, nodeService.getProperty(sfData.getCostList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+//				assertEquals("Check cost order", 2, nodeService.getProperty(sfData.getCostList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+//				
+//				return null;
+//				
+//			}},false,true);	   				
+//	   
+//	}	
+//	
+//	/**
+//	 * change sort, 2 to 4
+//	 *
+//	 * @throws InterruptedException the interrupted exception
+//	 */
+//	public void testChangeSortIncrease() throws InterruptedException{		   		
+//	   	
+//		logger.debug("testChangeSortListItem()");
+//		
+//		// create product
+//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+//			@Override
+//			public NodeRef execute() throws Throwable {
+//							   	
+//				/*-- Create test folder --*/
+//				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+//				if(folderNodeRef != null)
+//				{
+//					fileFolderService.delete(folderNodeRef);    		
+//				}			
+//				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+//				
+//				// create SF
+//				SemiFinishedProductData sfData = new SemiFinishedProductData();
+//				sfData.setName("SF");
+//				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+//				costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(0)));
+//				costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(1)));
+//				costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(2)));
+//				costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(3)));
+//				sfData.setCostList(costList);
+//				Collection<QName> dataLists = productDictionaryService.getDataLists();
+//				sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);				
+//
+//				// load SF and test it
+//				sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);
+//				
+//				assertNotNull("Check costs exist", sfData.getCostList());
+//				assertEquals("Check cost order", costs.get(0), sfData.getCostList().get(0).getCost());
+//				assertEquals("Check cost order", costs.get(1), sfData.getCostList().get(1).getCost());
+//				assertEquals("Check cost order", costs.get(2), sfData.getCostList().get(2).getCost());
+//				assertEquals("Check cost order", costs.get(3), sfData.getCostList().get(3).getCost());
+//				
+//				// change sort pos2 => pos4
+//				nodeService.setProperty(sfData.getCostList().get(1).getNodeRef(), BeCPGModel.PROP_SORT, 4);
+//				
+//				sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);
+//				
+//				assertNotNull("Check costs exist", sfData.getCostList());
+//				assertEquals("Check cost order", costs.get(0), sfData.getCostList().get(0).getCost());
+//				assertEquals("Check cost order", costs.get(1), sfData.getCostList().get(1).getCost());
+//				assertEquals("Check cost order", costs.get(2), sfData.getCostList().get(2).getCost());
+//				assertEquals("Check cost order", costs.get(3), sfData.getCostList().get(3).getCost());
+//				
+//				assertEquals("Check cost order", 1, nodeService.getProperty(sfData.getCostList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+//				assertEquals("Check cost order", 4, nodeService.getProperty(sfData.getCostList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+//				assertEquals("Check cost order", 2, nodeService.getProperty(sfData.getCostList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+//				assertEquals("Check cost order", 3, nodeService.getProperty(sfData.getCostList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+//				
+//				return null;
+//				
+//			}},false,true);	   				
+//	   
+//	}	
 	
 //	/**
 //	 * Test the fastest method to listFiles, getChildAssocs is the fastest, lucene search is the slowest

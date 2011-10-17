@@ -138,7 +138,7 @@ public class ListValueServiceImpl implements ListValueService {
     	
 		logger.debug("repository : " + queryPath);
 
-       List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, new String[]{"@" + ContentModel.PROP_NAME},locale);
+		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME),locale);
         
         return extractSuggest(ret,ContentModel.PROP_NAME);
        
@@ -165,7 +165,7 @@ public class ListValueServiceImpl implements ListValueService {
     	query = prepareQuery(query);    	    	
     	String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, path, parent, query);    			
 	      
-         List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, new String[]{"@" + RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE},locale);
+        List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(BeCPGModel.PROP_LINKED_VALUE_VALUE),locale);
         
         return extractSuggest(ret, BeCPGModel.PROP_LINKED_VALUE_VALUE);
  
@@ -190,7 +190,7 @@ public class ListValueServiceImpl implements ListValueService {
     	query = prepareQuery(query);
     	String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE, path, query);
 	
-        List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, new String[]{"@" + ContentModel.PROP_NAME},locale);
+        List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME),locale);
        
        return extractSuggest(ret, ContentModel.PROP_NAME);
       
@@ -222,7 +222,7 @@ public class ListValueServiceImpl implements ListValueService {
 			queryPath += String.format(RepoConsts.QUERY_SUGGEST_PRODUCT_BY_NAME, query, SystemState.Archived, SystemState.Refused);
 		}
 					
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, new String[]{"@" + ContentModel.PROP_NAME}, locale);
+		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME), locale);
 	       
 	    return extractSuggest(ret, ContentModel.PROP_NAME);
 	  
@@ -407,6 +407,14 @@ public class ListValueServiceImpl implements ListValueService {
     		}
     	}
 		return suggestions;
+	}
+	
+	private Map<String, Boolean> getSort(QName field){
+		
+		Map<String, Boolean> sort = new HashMap<String, Boolean>();
+		sort.put("@" + field, true);
+		
+		return sort;
 	}
 
 }

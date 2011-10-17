@@ -3,6 +3,7 @@ package fr.becpg.repo.search;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.search.LimitBy;
@@ -81,7 +82,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	}
 
 	@Override
-	public List<NodeRef> unProtLuceneSearch(String runnedQuery, String[] sort, int searchLimit) {
+	public List<NodeRef> unProtLuceneSearch(String runnedQuery, Map<String, Boolean> sort, int searchLimit) {
 		List<NodeRef> nodes = new LinkedList<NodeRef>();
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -98,13 +99,14 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		}
 		else{
 			sp.setLimit(searchLimit);
-			sp.setLimitBy(LimitBy.FINAL_SIZE);
+			sp.setMaxItems(searchLimit);
+			sp.setLimitBy(LimitBy.FINAL_SIZE);			
 		}
 		
 		sp.excludeDataInTheCurrentTransaction(false);
 		if (sort != null) {
-			for (String sortParam : sort) {
-				sp.addSort(sortParam, true);
+			for(Map.Entry<String, Boolean> kv : sort.entrySet()){
+				sp.addSort(kv.getKey(), kv.getValue());
 			}
 		} 
 		ResultSet result = unProtSearchService.query(sp);
@@ -127,7 +129,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	}
 
 	@Override
-	public List<NodeRef> suggestSearch(String runnedQuery, String[] sort, Locale locale) {
+	public List<NodeRef> suggestSearch(String runnedQuery, Map<String, Boolean> sort, Locale locale) {
 		
 		List<NodeRef> nodes = new LinkedList<NodeRef>();
 		StopWatch watch = null;
@@ -149,9 +151,9 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		}
 		
 		if (sort != null) {
-			for (String sortParam : sort) {
-				sp.addSort(sortParam, true);
-			}
+			for(Map.Entry<String, Boolean> kv : sort.entrySet()){
+				sp.addSort(kv.getKey(), kv.getValue());
+			}			
 		}
 
 		ResultSet result = searchService.query(sp);
