@@ -1,0 +1,19 @@
+div.olapChart {
+     height: 250px; 
+}
+
+
+.my-olapChart.dashlet .feed {
+    background-image:  url(../images/becpg-bi-16.png);
+    background-repeat: no-repeat;
+}
+
+
+.my-olapChart .toolbar div.actions, .my-olapChart .toolbar div.links {
+  float:right;
+}
+
+.my-olapChart .toolbar div.actions {
+  line-height:2em;
+  min-height:2em;
+}

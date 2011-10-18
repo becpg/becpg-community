@@ -1,0 +1,7 @@
+<webscript>
+	<shortname>Olap Chart</shortname>
+	<description>Olap Chart service - retrieve olap chart data</description>	
+	<url>/becpg/olap/chart</url>
+	<format default="">argument</format>
+	<authentication>user</authentication>
+</webscript>

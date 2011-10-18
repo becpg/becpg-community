@@ -15,224 +15,309 @@
       Lang = YAHOO.util.Lang,
       Element = YAHOO.util.Element;
    
- 
+   /**
+    * YUI Chart SWF
+    */
+   YAHOO.widget.Chart.SWFURL = Alfresco.constants.URL_CONTEXT+"/res/yui/charts/assets/charts.swf";
 
-   beCPG.component.OlapChart = function(fieldHtmlId) {
+   /**
+    * Preferences
+    */
+   var PREFERENCES_OLAP = "fr.becpg.olap.chart.dashlet",
+       PREF_QUERY = "query",
+       PREF_CHART_TYPE ="chartType";
+   
+ 
+   
+   beCPG.component.OlapChart = function(fieldHtmlId,instanceId) {
       this.id = fieldHtmlId;
+      this.instanceId = instanceId;
       
       Alfresco.util.YUILoaderHelper.require(["button", "container", "datasource"], this.onReady, this);
       
       // Initialise prototype properties
       this.preferencesService = new Alfresco.service.Preferences();
       
-      this.curGraph="";
+
       
    } ;
    
     YAHOO.extend(beCPG.component.OlapChart, Alfresco.component.Base,{
    
-      options: {      
-         dataSource :  "/saiku/rest/saiku/admin"         
-    	}, 
     	onChartSelected : function OlapChart_onChartSelected(menuItem){
     		
-    		 this.curGraph = encodeURIComponent(menuItem.cfg.getProperty("text"));
+    		 this.chartPicker.value = encodeURIComponent(menuItem.value);
+    		 this.preferencesService.set(this.getPreference(PREF_QUERY), this.chartPicker.value);
     		 this.onChartClicked(this);
     		
     	},
     	onChartClicked : function (ev){
-    		
-         try {
-	 		   var jsonData = new YAHOO.util.DataSource(this.options.dataSource+"/query/"+ this.curGraph+"/result/cheat" );
-	 		   jsonData.responseType = YAHOO.util.DataSource.TYPE_JSON;
-	 		   jsonData.responseSchema =
-	 		   {
-	 		   		fields: ["value","type","properties"]
-	 		   };
-	 		   
-	 		   
-	 		  Alfresco.util.Ajax.request(
-	                    {
-	                       url: "http://admin:becpg@localhost:8080/saiku/rest/saiku/admin/query/F6F63789-7B82-0B5C-ADE8-3D5EC944B6DE/result/cheat",
-	                       successCallback:
-	                       {
-	                          fn: this.processData,
-	                          scope: this
-	                       }
-	             });
-	 		   
-	 		   
- 		   
-    		} catch(e){
-    			alert(e);	
-    		}
-    		
+	 		  this.loadChartData();
     	},
+    	onChartTypeSelected : function OlapChart_onChartSelected(menuItem){	
+   		 this.chartTypePicker.value = menuItem.value;
+   		 this.preferencesService.set(this.getPreference(PREF_CHART_TYPE), this.chartTypePicker.value);
+   		 this.render();
+   		
+	   	},
+	   	getPreference : function(suffix){
+	   	   var ret = PREFERENCES_OLAP+"."+this.instanceId.replace(/\.|-|~/g,"");
+	   	   	if(suffix!=null){
+	   	   		ret+="."+suffix
+	   	   	}								
+	   		return ret;
+	   	},
+	   	onChartTypeClicked : function (ev){
+	   		this.render();
+	   	},
         onReady: function OlapChart_onReady()
         {
+
             var me = this;
+         
+            this.chartPicker = new YAHOO.widget.Button(me.id + "-charPicker-button",
+                        {
+                           type: "split",
+                           menu: me.id + "-charPicker-select",
+                           lazyloadmenu: false
+                        });
             
-            var chartPicker = new YAHOO.widget.Button(me.id + "-charPicker-button",
+            
+            this.chartTypePicker = new YAHOO.widget.Button(me.id + "-chartTypePicker-button",
                     {
                        type: "split",
-                       menu: me.id + "-charPicker-select"
+                       menu: me.id + "-chartTypePicker-select",
+                       lazyloadmenu: false
                     });
 
-            chartPicker.on("click", me.onChartClicked, this, true);
-            
-            var menu =   chartPicker.getMenu();
-            
-            menu.subscribe("click", function (p_sType, p_aArgs)
+            this.chartPicker.on("click", me.onChartClicked, me, true);
+            this.chartTypePicker.on("click", me.onChartTypeClicked, me, true);    
+	           
+            this.chartPicker.getMenu().subscribe("click", function (p_sType, p_aArgs)
+                {
+                     var menuItem = p_aArgs[1];
+                     if (menuItem)
+                     {
+                         me.chartPicker.set("label", menuItem.cfg.getProperty("text"));
+                         me.onChartSelected.call(me, menuItem);
+                     }
+                 });
+         
+
+            this.chartTypePicker.getMenu().subscribe("click", function (p_sType, p_aArgs)
             {
                  var menuItem = p_aArgs[1];
                  if (menuItem)
                  {
-                     chartPicker.set("label", menuItem.cfg.getProperty("text"));
-                     me.onChartSelected.call(me, menuItem);
+                	 me.chartTypePicker.set("label", menuItem.cfg.getProperty("text"));
+                     me.onChartTypeSelected.call(me, menuItem);
                  }
              });
+           	
+            
+            
+                Alfresco.util.Ajax.request(
+                        {
+                           url: Alfresco.constants.PROXY_URI + "/becpg/olap/chart",
+                           successCallback:
+                           {
+                              fn: me.fillQueries,
+                              scope: this
+                           }
+                 });
+                
+    
+        },fillQueries :  function(response){
+        	
+        	var me = this,
+        		json = response.json;
+        	
+           	  if(json!=null){
+           		  var items = []; 
+           		  var firstQueryId = "";
+           		  for(i in json.queries){
+           			  if(i==0){
+           				firstQueryId =json.queries[i].queryId;
+           			  }
+           			  items.push({text:json.queries[i].queryName,value:json.queries[i].queryId})
+           		  }
+           		  this.chartPicker.getMenu().addItems(items);
+           	      this.chartPicker.getMenu().render(document.body);
+           	      me.selectMenuValue(me.chartPicker,encodeURIComponent(firstQueryId));
+           	  }
+        	
+           	  
+              // Load preferences to override default filter and range
+           	  me.selectMenuValue(me.chartTypePicker,"barChart");
+           	  this.preferencesService.request(me.getPreference(),
+	            {
+	               successCallback:
+	               {
+	                  fn: function(p_oResponse)
+	                  {
+	                     var queryPreference = Alfresco.util.findValueByDotNotation(p_oResponse.json, me.getPreference(PREF_QUERY), null);
+	                     if (queryPreference !== null)
+	                     {
+	                    	me.selectMenuValue(me.chartPicker,queryPreference);
+	                     }
+	                     
+	                     var chartTypePreference = Alfresco.util.findValueByDotNotation(p_oResponse.json, me.getPreference(PREF_CHART_TYPE), null);
+	                     if (chartTypePreference !== null)
+	                     {
+	                    	me.selectMenuValue(me.chartTypePicker,chartTypePreference);
+	                    	
+	                     }
+	                     me.loadChartData();
+	                  },
+	                  scope: this
+	               },
+	               failureCallback:
+	               {
+	                  fn: function()
+	                  {
+	                	  me.loadChartData();
+	                  },
+	                  scope: this
+	               }
+	            });
+	           	 
+           	  
+        	
+        } ,  selectMenuValue : function(picker, value){
+        	picker.value = value;
+             // set the correct menu label
+             var menuItems = picker.getMenu().getItems();
+             for (index in menuItems)
+             {
+                if (menuItems.hasOwnProperty(index))
+                {
+                   if (menuItems[index].value === value)
+                   {
+                	   picker.set("label", menuItems[index].cfg.getProperty("text"));
+                      break;
+                   }
+                }
+             }
+        	
+        },
         
-            Alfresco.util.Ajax.request(
+        loadChartData : function(){
+        	Alfresco.util.Ajax.request(
                     {
-                       url: me.options.dataSource+"/repository",
+                       url: Alfresco.constants.PROXY_URI + "/becpg/olap/chart?olapQueryId="+ this.chartPicker.value ,
                        successCallback:
                        {
-                          fn: function(response){
-                        	  var json = response.json;
-                        	  if(json!=null){
-                        		  var items = []; 
-                        		  for(i in json){
-                        			  items.push({text:json[i].name,value:json[i].name})
-                        		  }
-                        		  menu.addItems(items);
-                        		  menu.render(document.body);
-                        	  }
-                        	  
-                          },
+                          fn: this.processData,
                           scope: this
                        }
              });
-            
-        },
-        processData: function(response) {
-        	
+        } ,processData: function(response) {
 
-        	  // [[{"value":"null","properties":{},"type":"COLUMN_HEADER"},{"value":"Oct","properties":{},"type":"COLUMN_HEADER"}],[{"value":"Type","properties":{"levelindex":"0"},"type":"ROW_HEADER_HEADER"},{"value":"Week41/2011","properties":{"levelindex":"1","dimension":"Date de modification"},"type":"COLUMN_HEADER"}],[{"value":"finishedProduct","properties":{"levelindex":"0","dimension":"Type de produit"},"type":"ROW_HEADER"},{"value":"10","properties":null,"type":"DATA_CELL"}],[{"value":"rawMaterial","properties":{"levelindex":"0","dimension":"Type de produit"},"type":"ROW_HEADER"},{"value":"14","properties":null,"type":"DATA_CELL"}]]
-        		   
+            this.data = response.json;
+          
+            var myFieldDefs = [];
+            this.columnDefs = [];
+            this.seriesDef = [];
+            this.barChartSeriesDef = [];
         	
-            this.data = {};
-            this.data.resultset = [];
-            this.data.metadata = [];
-            
-            if (response.json && response.json.length > 0) {
-                
-                var lowest_level = 0;
-            
-                for (var row = 0; row < response.json.length; row++) {
-                    if (response.json[row][0].type == "ROW_HEADER_HEADER") {
-                        this.data.metadata = [];
-                        for (var field = 0; field < response.json[row].length; field++) {
-                            if (response.json[row][field].type == "ROW_HEADER_HEADER") {
-                                this.data.metadata.shift();
-                                lowest_level = field;
-                            }
-                            
-                            this.data.metadata.push({
-                                colIndex: field,
-                                colType: typeof(response.json[row + 1][field].value) !== "number" &&
-                                    isNaN(response.json[row + 1][field].value
-                                    .replace(/[^a-zA-Z 0-9.]+/g,'')) ? "String" : "Numeric",
-                                colName: response.json[row][field].value
-                            });
-                        }
-                    } else if (response.json[row][0].value !== "null") {
-                        var record = [];
-                        for (var col = lowest_level; col < response.json[row].length; col++) {
-                            var value = 
-                                typeof(response.json[row][col].value) !== "number" &&
-                                parseFloat(response.json[row][col].value
-                                    .replace(/[^a-zA-Z 0-9.]+/g,'')) ?
-                                parseFloat(response.json[row][col].value
-                                    .replace(/[^a-zA-Z 0-9.]+/g,'')) :
-                                response.json[row][col].value;
-                            if (col == lowest_level) {
-                                value += " [" + row + "]";
-                            }
-                            record.push(value);
-                        }
-                        this.data.resultset.push(record);
-                    }
-                }
-                
-                this.render();
-            } else {
-                //No results
-            }
-        },
-        render : function(){
-
         	
-        	var myFieldDefs = [];
-        	
-        	 for(i in this.data.metadata){
-        		 myFieldDefs.push( this.data.metadata[i].colType);
+        	 for(i in this.data.metadatas){
+        		 myFieldDefs.push( "col"+i);
+        		 this.columnDefs.push({ key:  "col"+i, label: this.data.metadatas[i].colName });
+			    	if(i>0){
+			    		 this.seriesDef.push({displayName:this.data.metadatas[i].colName, yField:  "col"+i});
+			    		 this.barChartSeriesDef.push({displayName:this.data.metadatas[i].colName, xField: "col"+i});
+			    	}
 	 		    }
+        	 
         	
         	
-        	var myDataSource = new YAHOO.util.DataSource(this.data.resultset);
-        	myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
-        	myDataSource.responseSchema = {
+        	this.dataSource = new YAHOO.util.DataSource(this.data.resultsets);
+        	this.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+        	this.dataSource.responseSchema = {
            	      fields : myFieldDefs
         	};
         	 
-	 		   
-	 		  YAHOO.widget.Chart.SWFURL = "/share/res/yui/charts/assets/charts.swf";
-	 		   
-	 		     var seriesDef = [
-	 		                 {
-	 		                     displayName: "Rent",
-	 		                     yField: "rent",
-	 		                     style: {
-	 		                         color: 0xff0000,
-	 		                         size: 20
-	 		                     }
-	 		                 },
-	 		                 {
-	 		                     displayName: "Utilities",
-	 		                     yField: "utilities",
-	 		                     style: {
-	 		                         color: 0x0000ff,
-	 		                         size: 30
-	 		                     }
-	 		                 }
-	 		      ];
-	 		     
-	 		    var myColumnDefs = [];
-	 		    
-	 		    for(i in this.data.metadata){
-	 		    	myColumnDefs.push({ key:  this.data.metadata[i].colType, label: this.data.metadata[i].colName });
-	 		    	
-	 		    }
-	 		    
-	 		     
-	 		   var myDataTable = new YAHOO.widget.DataTable(this.id+"-chart", myColumnDefs, myDataSource);
-	 		     
-//	 		  
-//	 		   var mychart = new YAHOO.widget.ColumnChart(this.id+"-chart", myDataSource,
-//	 				   {
-//	 				   	xField: "x",
-//	 				   	yField: "y",
-//	 				     wmode: "opaque",
-//	 				   	style: {
-//	 				        padding: 20,
-//	 				        animationEnabled: true,
-//	 				    }
-//	 				   });
-//	 		   
-	 		  
+            
+            
+            this.render();
+          
+        },
+        render : function(){
+ 	
+	 		
+	 		//Create Line Chart
+		        if(this.dataSource!=null){
+			 		  
+			 		if(this.chartTypePicker.value=="lineChart"){
+				 		var lineChart = new YAHOO.widget.LineChart( this.id+"-chart", this.dataSource,
+				 		{
+				 			series: this.seriesDef,
+				 			xField: "col0",
+				 			wmode: "opaque" ,
+				 			style:
+					 		{
+					 				legend:
+					 				{
+					 					display: "bottom"
+					 				}
+					 		}
+				 		});
+				 		
+			 		} else if(this.chartTypePicker.value=="barChart"){
+		
+				 		//Create Bar Chart
+				 		var barChart = new YAHOO.widget.BarChart( this.id+"-chart", this.dataSource,
+				 		{
+				 			series:this.barChartSeriesDef,
+				 			yField: "col0",
+				 			wmode: "opaque" ,
+			 				style:
+				 			{
+				 				legend:
+				 				{
+				 					display: "bottom"
+				 				}
+				 			}
+				 		});
+		
+			 		} else if(this.chartTypePicker.value=="columnChart"){
+				 		//Create Column Chart
+				 		var columnChart = new YAHOO.widget.ColumnChart( this.id+"-chart", this.dataSource,
+				 		{
+				 			series: this.seriesDef,
+				 			xField: "col0",
+				 			wmode: "opaque" ,
+				 			style:
+					 		{
+					 				legend:
+					 				{
+					 					display: "bottom"
+					 				}
+					 		}
+				 		});
+				 		
+			 		}else if(this.chartTypePicker.value=="pieChart"){
+			 		
+				 		//Create Column Chart
+				 		var pieChart = new YAHOO.widget.PieChart( this.id+"-chart", this.dataSource,
+				 		{
+				 			dataField: "col1",
+				 			categoryField: "col0",
+				 			wmode: "opaque",
+				 			style:
+				 			{
+				 				legend:
+				 				{
+				 					display: "right"
+				 				}
+				 			}
+				 		});
+			 		}else if(this.chartTypePicker.value=="chartData"){
+			 			var chartData = new YAHOO.widget.DataTable(this.id+"-chart", this.columnDefs, this.dataSource);
+			 		}
+		        }
 
-        	
-        	
         }
         
     });

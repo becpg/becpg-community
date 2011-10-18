@@ -3,6 +3,7 @@
 <@script type="text/javascript" src="${page.url.context}/res/yui/json/json.js"></@script>
 <@script type="text/javascript" src="${page.url.context}/res/yui/swf/swf.js"></@script>
 <@script type="text/javascript" src="${page.url.context}/res/yui/charts/charts.js"></@script>
+<@script type="text/javascript" src="${page.url.context}/res/yui/tabview/tabview.js"></@script>
 
 
 <!-- Todo @ List Assets -->
