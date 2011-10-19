@@ -25,6 +25,7 @@
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/service-context.xml" />
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/report-context.xml" />
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/quality-context.xml" />
+   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/olap-context.xml" />
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/security-context.xml" />
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/webscripts-context.xml" />
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/workflow-context.xml" />

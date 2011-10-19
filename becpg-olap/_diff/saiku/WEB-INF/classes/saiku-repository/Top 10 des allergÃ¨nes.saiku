@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Query name="CB36E1D7-70E8-FA5A-99F9-AE3D1D9A6938" type="MDX" connection="beCPG" cube="[Produits]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+  <MDX>SELECT
+NON EMPTY {Hierarchize({[Measures].[Nombre de produits]})} ON COLUMNS,
+NON EMPTY Topcount([Allergène].[Allergène].Members,10,[Measures].[Nombre de produits]) ON ROWS
+FROM [Produits]</MDX>
+</Query>
+
