@@ -3,12 +3,7 @@ package fr.becpg.repo.olap;
 import java.io.IOException;
 import java.util.List;
 
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
 import org.json.JSONException;
-import org.xml.sax.SAXException;
 
 import fr.becpg.repo.olap.data.OlapChart;
 import fr.becpg.repo.olap.data.OlapChartData;
@@ -21,7 +16,7 @@ import fr.becpg.repo.olap.data.OlapChartData;
  */
 public interface OlapService {
 
-	List<OlapChart> retrieveOlapCharts() throws IOException, JSONException, SAXException, ParserConfigurationException, FactoryConfigurationError, TransformerException;
+	List<OlapChart> retrieveOlapCharts()  throws JSONException, IOException;
 	
 	OlapChartData retrieveChartData(String olapQueryId) throws IOException, JSONException;
 	

@@ -15,10 +15,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.logging.Log;
@@ -26,7 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.springframework.util.StopWatch;
-import org.xml.sax.SAXException;
 
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.olap.data.OlapChart;
@@ -58,7 +53,7 @@ public class OlapServiceImpl implements OlapService {
 	}
 
 	@Override
-	public List<OlapChart> retrieveOlapCharts() throws IOException, JSONException, SAXException, ParserConfigurationException, FactoryConfigurationError, TransformerException {
+	public List<OlapChart> retrieveOlapCharts() throws JSONException, IOException  {
 		
 		
 		List<OlapChart> olapCharts = new ArrayList<OlapChart>();
@@ -68,10 +63,15 @@ public class OlapServiceImpl implements OlapService {
 
 			for (int row = 0; row < jsonArray.length(); row++) {
 				String queryName = jsonArray.getJSONObject(row).getString("name");
-				OlapChart chart = new OlapChart(queryName);
-				String xml  = chart.load(buildQueryUrl(queryName));
-				sendCreateQueryPostRequest(xml,chart.getQueryId());
-				olapCharts.add(chart);
+				try {
+					
+					OlapChart chart = new OlapChart(queryName);
+					String xml  = chart.load(buildQueryUrl(queryName));
+					sendCreateQueryPostRequest(xml,chart.getQueryId());
+					olapCharts.add(chart);
+				} catch (Exception e) {
+					logger.error("Cannot load query :"+queryName,e);
+				}
 			}
 			
 			
