@@ -112,6 +112,10 @@ public class RepoConsts {
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PRODUCTS = "ExportProducts";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES = "ExportNCSynthesis";
 	
+	// ECO
+	public static final String PATH_SIMULATION_INPUT	= "SimulationInput";
+	public static final String PATH_SIMULATION_OUTPUT	= "SimulationOutput";
+	
 	
 	/*-- DataLists --*/
 	public static final String CONTAINER_DATALISTS = "DataLists";	
@@ -154,8 +158,9 @@ public class RepoConsts {
 	public static final String PERMISSION_CONTRIBUTOR = "Contributor";
 	public static final String PERMISSION_COLLABORATOR = "Collaborator";
 
-
-
+	// Configuration
+	public static final int MAX_DEPTH_LEVEL = 256;
+	
 
 
 	

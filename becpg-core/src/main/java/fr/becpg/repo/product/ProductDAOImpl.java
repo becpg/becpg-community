@@ -2243,15 +2243,6 @@ public class ProductDAOImpl implements ProductDAO{
             result.add(assocRef.getChildRef());
         }
         // Done
-        return result;
-		
-//		List<FileInfo> files = fileFolderService.listFiles(parentNodeRef);
-//        List<NodeRef> result = new ArrayList<NodeRef>(files.size());
-//        for (FileInfo file : files){
-//        	
-//            result.add(file.getNodeRef());
-//        }
-//        // Done
-//        return result;
+        return result;		
     }
 }

@@ -234,7 +234,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	/**
-	 * Formulate the product.
+	 * Formulate the product (update DB)
 	 *
 	 * @param productNodeRef the product node ref
 	 */
@@ -251,12 +251,7 @@ public class ProductServiceImpl implements ProductService {
         	// do the formulation if the product has a composition, or packaging list defined
         	if(productData.getCompoList() != null || productData.getPackagingList() != null){
         		
-        		//Call visitors   
-        		productData = compositionCalculatingVisitor.visit(productData);
-    	    	productData = allergensCalculatingVisitor.visit(productData);
-    	    	productData = nutsCalculatingVisitor.visit(productData);
-    	    	productData = costsCalculatingVisitor.visit(productData);
-    	    	productData = ingsCalculatingVisitor.visit(productData);
+        		productData = formulate(productData);
     	    	    	
     	    	dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
     	    	dataLists.add(BeCPGModel.TYPE_NUTLIST);
@@ -274,7 +269,37 @@ public class ProductServiceImpl implements ProductService {
 			throw new FormulateException("message.formulate.failure",e);
 			
 		}
-    }        
+    }       
+    
+    /**
+	 * Formulate the product (don't update DB)
+	 *
+	 * @param productNodeRef the product node ref
+	 */
+    @Override
+    public ProductData formulate(ProductData productData) throws FormulateException {
+    	try {  	    
+        	
+        	// do the formulation if the product has a composition, or packaging list defined
+        	if(productData.getCompoList() != null || productData.getPackagingList() != null){
+        		
+        		//Call visitors   
+        		productData = compositionCalculatingVisitor.visit(productData);
+    	    	productData = allergensCalculatingVisitor.visit(productData);
+    	    	productData = nutsCalculatingVisitor.visit(productData);
+    	    	productData = costsCalculatingVisitor.visit(productData);
+    	    	productData = ingsCalculatingVisitor.visit(productData);    	    	    
+        	}    	    	    
+    	} catch (Exception e) {
+			if(e instanceof FormulateException){
+				throw (FormulateException)e;
+			} 
+			throw new FormulateException("message.formulate.failure",e);
+			
+		}
+    	
+    	return productData;
+    }    
     
     /**
 	 * Check if the system should generate the report for this product

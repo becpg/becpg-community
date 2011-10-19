@@ -3,6 +3,12 @@ package fr.becpg.repo.data.hierarchicalList;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing a hierarchical data list
+ * @author quere
+ *
+ * @param <T>
+ */
 public class Composite<T> extends AbstractComponent<T> {
 
 	private List<AbstractComponent<T>> children = new ArrayList<AbstractComponent<T>>();

@@ -279,7 +279,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		return versionHistory;
 	}
-
+	
 	/**
 	 * Create the version.
 	 * 

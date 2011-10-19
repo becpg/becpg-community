@@ -23,19 +23,19 @@ import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.security.AuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.VersionNumber;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProductCheckOutCheckInServiceImpl.
  *
  * @author querephi
  */
-public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl {
+public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl implements EntityCheckOutCheckInService {
 
 	/** The Constant MSG_ERR_BAD_COPY. */
 	private static final String MSG_ERR_BAD_COPY = "coci_service.err_bad_copy";
@@ -334,6 +334,28 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
         }		
         
 		return entityNodeRef;
+	}
+	
+	/**
+	 * Calculate new version			
+	 * @param versionLabel
+	 * @param majorVersion
+	 * @return
+	 */
+	@Override
+	public VersionNumber getVersionNumber(String versionLabel, boolean majorVersion){
+		
+		VersionNumber versionNumber = new VersionNumber(versionLabel);
+		if(majorVersion){
+			int majorNb = versionNumber.getPart(0) + 1;
+			versionNumber = new VersionNumber(majorNb + EntityVersionService.VERSION_DELIMITER + 0);			
+		}
+		else{
+			int minorNb = versionNumber.getPart(1) + 1;
+			versionNumber = new VersionNumber(versionNumber.getPart(0) + EntityVersionService.VERSION_DELIMITER + minorNb);
+		}
+		
+		return versionNumber;
 	}
 	
 	/**
