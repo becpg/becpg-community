@@ -16,7 +16,7 @@
         <Dimensions>
           <Dimension name="Measures" hierarchizeMode="PRE" hierarchyConsistent="false">
             <Inclusions>
-              <Selection dimension="Measures" type="member" node="[Measures].[Moyenne des côuts]" operator="MEMBER" />
+              <Selection dimension="Measures" type="member" node="[Measures].[Moyenne des coûts]" operator="MEMBER" />
             </Inclusions>
             <Exclusions />
           </Dimension>
@@ -24,9 +24,9 @@
       </Axis>
       <Axis location="FILTER" nonEmpty="false">
         <Dimensions>
-          <Dimension name="Type de côut" hierarchizeMode="PRE" hierarchyConsistent="true">
+          <Dimension name="Type de coût" hierarchizeMode="PRE" hierarchyConsistent="true">
             <Inclusions>
-              <Selection dimension="Type de côut" type="member" node="[Type de côut].[Coût Emb]" operator="MEMBER" />
+              <Selection dimension="Type de coût" type="member" node="[Type de côut].[Coût Emb]" operator="MEMBER" />
             </Inclusions>
             <Exclusions />
           </Dimension>
@@ -35,7 +35,7 @@
     </Axes>
   </QueryModel>
   <MDX>SELECT
-NON EMPTY {Hierarchize({[Measures].[Moyenne des côuts]})} ON COLUMNS,
+NON EMPTY {Hierarchize({[Measures].[Moyenne des coûts]})} ON COLUMNS,
 NON EMPTY {Hierarchize({[Produits.Produit par famille].[Famille].Members})} ON ROWS
 FROM [Analyse des coûts]
 WHERE {Hierarchize({[Type de côut].[Coût Emb]})}</MDX>

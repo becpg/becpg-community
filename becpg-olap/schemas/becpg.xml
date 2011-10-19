@@ -146,15 +146,15 @@
         </Level>
       </Hierarchy>
     </Dimension>
-    <Dimension type="StandardDimension" highCardinality="false" name="Type de c&#244;ut">
+    <Dimension type="StandardDimension" highCardinality="false" name="Type de co&#251;t">
       <Hierarchy hasAll="true" allMemberCaption="Tous les types">
-        <Level name="Type de c&#244;ut" column="cost_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        <Level name="Type de co&#251;t" column="cost_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
-    <Measure name="Total des c&#244;uts" column="cost_value" aggregator="sum" visible="true">
+    <Measure name="Total des co&#251;ts" column="cost_value" aggregator="sum" visible="true">
     </Measure>
-    <Measure name="Moyenne des c&#244;uts" column="cost_value" aggregator="avg" visible="true">
+    <Measure name="Moyenne des co&#251;ts" column="cost_value" aggregator="avg" visible="true">
     </Measure>
   </Cube>
   <Cube name="Produits" cache="true" enabled="true">

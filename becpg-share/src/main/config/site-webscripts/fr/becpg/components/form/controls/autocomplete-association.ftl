@@ -34,13 +34,14 @@
 				             <#if field.disabled>disabled="true"</#if> 
 				             class="yui-ac-input" >
 				       </input>
+				       <span class="clear" ></span>
 			        </div>			
 			      <div id="${fieldHtmlId}-container"></div>
 			 	
-			 
+			  	 <input type="hidden" id="${controlId}-removed" name="${field.name}_removed" />
 		         <input type="hidden" id="${controlId}-orig" name="-" value="${field.value?html}" />
 		         <input type="hidden" id="${controlId}-added" name="${field.name}_added" />
-		         <input type="hidden" id="${controlId}-removed" name="${field.name}_removed" />
+		        
 			</div>
 			<#else>
 

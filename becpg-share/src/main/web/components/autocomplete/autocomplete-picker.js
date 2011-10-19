@@ -47,9 +47,9 @@
       onComponentsLoaded: function AutoCompletePicker_onComponentsLoaded ()
       {
     	  if(this.options.mode!="view"){
-            Event.onContentReady(this.fieldHtmlId+"-container", this.render, this, true);
+            Event.onAvailable(this.fieldHtmlId+"-container", this.render, this, true);
     	  } else {
-    		Event.onContentReady(this.fieldHtmlId+"-values", this.render, this, true);
+    		Event.onAvailable(this.fieldHtmlId+"-values", this.render, this, true);
     	  }
       },
       setOptions: function AutoCompletePicker_setOptions (obj){
@@ -75,11 +75,15 @@
 		  		 
 		  		 		var nodeRef = matchedEl.id.split('ac-close-')[1];
 		  		 		instance.removeFromBasket(nodeRef);
-		  		 	    e.preventDefault();
+		    			YAHOO.Bubbling.fire("mandatoryControlValueUpdated", oAC.getInputEl());
+		  		 		e.preventDefault();
 		  		 	    e.stopPropagation();
 		  			}, "span.ac-closebutton");
 		  		}
     	  }
+    	  
+    	 
+    	  
     	  
     	  // Load autocomplete
     	  if(instance.options.mode!="view"){
@@ -101,10 +105,12 @@
     	      }
     	   };
     	   
+    	   
 
     	   // Instantiate the AutoComplete
     	   var oAC = new YAHOO.widget.AutoComplete(instance.fieldHtmlId, instance.fieldHtmlId+"-container", oDS);
 
+    	  
     	   
     	   oAC.queryDelay = .5;
     	   oAC.page = 1;
@@ -166,6 +172,16 @@
     	   
     	    // Toggle button
     		var bToggler = Dom.get(instance.fieldHtmlId+"-toggle-autocomplete"); 
+    		
+    		
+    		 //Add focus to selected element
+     	   Event.on(instance.fieldHtmlId+"-autocomplete","click", function(e) {
+     		   if(!oAC.isContainerOpen()) { 
+     			   oAC.getInputEl().focus(); // Needed to keep widget active
+     		   }
+      		 
+     	   	});
+     	   
     
     		  Event.on(bToggler,"click", function(e) { 	  
     	    		 if(oAC.isContainerOpen()) { 
@@ -263,10 +279,12 @@
 		    		    if(inputOrig != null && inputAdded != null && inputRemoved != null) {
 		    		
 		    				if(!instance.options.multipleSelectMode){
-		    					if(inputOrig.value != "" && inputOrig.value != itemValue) {
-		    						inputRemoved.value = inputOrig.value;
+		    					if(inputOrig.value != itemValue) {
+		    						if(inputOrig.value != ""){
+		    							inputRemoved.value = inputOrig.value;
+		    						}
+		    						inputAdded.value = itemValue;
 		    					}
-		    					inputAdded.value = itemValue;
 		    				}
 		    				else{			
 		    					if(inputAdded.value != ""){
@@ -286,9 +304,8 @@
 	    				oAC.getInputEl().value = itemTitle;
 	    			}
 	    	 		
-	    			if(instance.options.isMandatory){
-	    				YAHOO.Bubbling.fire("mandatoryControlValueUpdated", oAC.getInputEl());
-	    			}
+	    			YAHOO.Bubbling.fire("mandatoryControlValueUpdated", oAC.getInputEl());
+	 
     			} catch (e) {
   					alert(e);
 				}
@@ -297,7 +314,8 @@
     		});
     		
     	  }
-    		
+    	  
+    	  
       },
     		
       addToBasket :  function AutoCompletePicker_addToBasket(basket, itemTitle,itemValue){

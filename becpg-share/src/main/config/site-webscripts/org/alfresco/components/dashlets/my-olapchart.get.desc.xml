@@ -1,6 +1,6 @@
 <webscript>
     <shortname>beCPG OLAP Chart</shortname>
     <description>beCPG OLAP Chart</description>
-    <family>user-dashlet</family>
+    <family>dashlet</family>
     <url>/becpg/olapchart</url>
 </webscript>

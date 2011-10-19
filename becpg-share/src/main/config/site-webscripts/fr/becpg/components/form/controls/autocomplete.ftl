@@ -27,6 +27,7 @@
                 <#if field.control.params.maxLength?exists>maxlength="${field.control.params.maxLength}"</#if> 
                 <#if field.control.params.size?exists>size="${field.control.params.size}"</#if> 
                 <#if field.disabled>disabled="true"</#if> class="yui-ac-input"  />
+                 <span class="clear" ></span>
          </div>
          <div id="${fieldHtmlId}-container"></div>
       </div>
