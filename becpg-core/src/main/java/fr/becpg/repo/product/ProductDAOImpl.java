@@ -389,7 +389,17 @@ public class ProductDAOImpl implements ProductDAO{
 		    		NodeRef part = (compoAssocRefs.get(0)).getTargetRef();		    		
 		    		CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 		    		
-		    		CompoListDataItem compoListDataItem = new CompoListDataItem(listItemNodeRef, (Integer)properties.get(BeCPGModel.PROP_DEPTH_LEVEL), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), (Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), (String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), part);
+		    		CompoListDataItem compoListDataItem = new CompoListDataItem(listItemNodeRef, 
+		    				(Integer)properties.get(BeCPGModel.PROP_DEPTH_LEVEL), 
+		    				(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), 
+		    				(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
+		    				(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), 
+		    				compoListUnit, 
+		    				(Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC),
+		    				(Float)properties.get(BeCPGModel.PROP_COMPOLIST_YIELD_PERC),
+		    				(String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), 
+		    				(String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), 
+		    				part);
 		    		compoList.add(compoListDataItem);
 		    	}    			
     		}    		
@@ -1138,6 +1148,7 @@ public class ProductDAOImpl implements ProductDAO{
 //		    		properties.put(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS, compoListDataItem.getQtyAfterProcess());
 //		    		properties.put(BeCPGModel.PROP_COMPOLIST_UNIT, compoListDataItem.getCompoListUnit() == CompoListUnit.Unknown ?  "" : compoListDataItem.getCompoListUnit().toString());
 //		    		properties.put(BeCPGModel.PROP_COMPOLIST_LOSS_PERC, compoListDataItem.getLossPerc());
+//	    			properties.put(BeCPGModel.PROP_COMPOLIST_YIELD_PERC, compoListDataItem.getYieldPerc());	    		
 //		    		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_GRP, compoListDataItem.getDeclGrp());
 //		    		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_TYPE, compoListDataItem.getDeclType());		    		
 //	
@@ -1191,7 +1202,7 @@ public class ProductDAOImpl implements ProductDAO{
 		}
 	}    
 	
-	private void createCompositeCompoListItem(NodeRef compoListNodeRef, Composite<CompoListDataItem> composite, List<NodeRef> filesToUpdate, int sortIndex){
+	private int createCompositeCompoListItem(NodeRef compoListNodeRef, Composite<CompoListDataItem> composite, List<NodeRef> filesToUpdate, int sortIndex){
 		
 		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){
 			
@@ -1204,6 +1215,7 @@ public class ProductDAOImpl implements ProductDAO{
     		properties.put(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS, compoListDataItem.getQtyAfterProcess());
     		properties.put(BeCPGModel.PROP_COMPOLIST_UNIT, compoListDataItem.getCompoListUnit() == CompoListUnit.Unknown ?  "" : compoListDataItem.getCompoListUnit().toString());
     		properties.put(BeCPGModel.PROP_COMPOLIST_LOSS_PERC, compoListDataItem.getLossPerc());
+    		properties.put(BeCPGModel.PROP_COMPOLIST_YIELD_PERC, compoListDataItem.getYieldPerc());
     		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_GRP, compoListDataItem.getDeclGrp());
     		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_TYPE, compoListDataItem.getDeclType());
     		    		
@@ -1252,10 +1264,12 @@ public class ProductDAOImpl implements ProductDAO{
     		
     		if(component instanceof Composite){
     			
-    			createCompositeCompoListItem(compoListNodeRef, (Composite<CompoListDataItem>)component, filesToUpdate, sortIndex);
+    			sortIndex = createCompositeCompoListItem(compoListNodeRef, (Composite<CompoListDataItem>)component, filesToUpdate, sortIndex);
     		}
     		
 		}
+		
+		return sortIndex;
 	}
 	
 	/**

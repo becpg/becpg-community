@@ -36,6 +36,8 @@ public class CompoListDataItem{
 	
 	private Float lossPerc = 0f;
 	
+	private Float yieldPerc = null;
+	
 	/** The decl grp. */
 	private String declGrp;
 	
@@ -141,6 +143,14 @@ public class CompoListDataItem{
 		this.lossPerc = lossPerc;
 	}
 
+	public Float getYieldPerc() {
+		return yieldPerc;
+	}
+
+	public void setYieldPerc(Float yieldPerc) {
+		this.yieldPerc = yieldPerc;
+	}
+
 	/**
 	 * Gets the decl grp.
 	 *
@@ -200,6 +210,35 @@ public class CompoListDataItem{
 	 */
 	public CompoListDataItem() {
 		
+	}
+	
+	/**
+	 * Instantiates a new compo list data item.
+	 * @param nodeRef
+	 * @param depthLevel
+	 * @param qty
+	 * @param qtySubFormula
+	 * @param qtyAfterProcess
+	 * @param compoListUnit
+	 * @param lossPerc
+	 * @param yieldPerc
+	 * @param declGrp
+	 * @param declType
+	 * @param product
+	 */
+	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Float qty, Float qtySubFormula, Float qtyAfterProcess, CompoListUnit compoListUnit, Float lossPerc, Float yieldPerc, String declGrp, String declType, NodeRef product){
+		
+		setNodeRef(nodeRef);
+		setDepthLevel(depthLevel);
+		setQty(qty);
+		setQtySubFormula(qtySubFormula);
+		setQtyAfterProcess(qtyAfterProcess);
+		setCompoListUnit(compoListUnit);
+		setLossPerc(lossPerc);
+		setYieldPerc(yieldPerc);
+		setDeclGrp(declGrp);
+		setDeclType(declType);
+		setProduct(product);
 	}
 	
 	/**

@@ -91,4 +91,21 @@
 			<column id="compoListUnit" attribute="bcpg:compoListUnit" type="Attribute"/>			
 		</columns>
 	</mapping> 
+	
+	<mapping name="bcpg:client">		
+		<nodeColumnKeys> 
+			<nodeColumnKey attribute="bcpg:erpCode"/>
+			<nodeColumnKey attribute="bcpg:code"/>
+		</nodeColumnKeys>
+		<columns/>
+	</mapping>	
+	
+	<mapping name="bcpg:supplier">		
+		<nodeColumnKeys> 
+			<nodeColumnKey attribute="bcpg:erpCode"/>
+			<nodeColumnKey attribute="bcpg:code"/>
+		</nodeColumnKeys>
+		<columns/>
+	</mapping>	
+		
 </mappings>

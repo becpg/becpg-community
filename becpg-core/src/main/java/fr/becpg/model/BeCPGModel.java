@@ -168,6 +168,9 @@ public interface BeCPGModel {
 	static final QName PROP_COMPOLIST_LOSS_PERC = QName.createQName(BECPG_URI,
 	"compoListLossPerc");
 	
+	static final QName PROP_COMPOLIST_YIELD_PERC = QName.createQName(BECPG_URI,
+			"compoListYieldPerc");
+	
 	/** The Constant PROP_COMPOLIST_DECL_GRP. */
 	static final QName PROP_COMPOLIST_DECL_GRP = QName.createQName(BECPG_URI,
 			"compoListDeclGrp");
@@ -625,6 +628,10 @@ public interface BeCPGModel {
 	
 	/** The Constant PROP_CODE. */
 	static final QName PROP_CODE = QName.createQName(BECPG_URI, "code");
+	
+	// code aspect
+	static final QName ASPECT_ERP_CODE = QName.createQName(BECPG_URI,	"erpCodeAspect");
+	static final QName PROP_ERP_CODE = QName.createQName(BECPG_URI, "erpCode");
 
 	/**
 	 * Email import user template Name

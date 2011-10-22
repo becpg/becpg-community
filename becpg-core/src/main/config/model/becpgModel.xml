@@ -363,7 +363,7 @@
 		<type name="bcpg:product">
 			<parent>bcpg:entity</parent>
 			<mandatory-aspects>
-				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:codeAspect</aspect>				
 				<aspect>bcpg:productAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
@@ -603,6 +603,10 @@
 					</constraints>
 				</property>
 				<property name="bcpg:compoListLossPerc">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:compoListYieldPerc">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 				</property>
@@ -1395,6 +1399,15 @@
 		<aspect name="bcpg:codeAspect">
 			<properties>
 				<property name="bcpg:code">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:erpCodeAspect">
+			<properties>
+				<property name="bcpg:erpCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 				</property>
