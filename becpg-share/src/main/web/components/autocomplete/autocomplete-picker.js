@@ -38,6 +38,7 @@
     	 objectRenderer: new Alfresco.ObjectRenderer(this),
          currentValue: "",
          mode: "view",
+         readOnly : false,
          multipleSelectMode: true,
          targetLinkTemplate: null,      
          dsStr : null,
@@ -46,7 +47,7 @@
     	},     
       onComponentsLoaded: function AutoCompletePicker_onComponentsLoaded ()
       {
-    	  if(this.options.mode!="view"){
+    	  if(this.options.mode!="view" && !this.options.readOnly){
             Event.onAvailable(this.fieldHtmlId+"-container", this.render, this, true);
     	  } else {
     		Event.onAvailable(this.fieldHtmlId+"-values", this.render, this, true);
@@ -86,7 +87,7 @@
     	  
     	  
     	  // Load autocomplete
-    	  if(instance.options.mode!="view"){
+    	  if(instance.options.mode!="view" && !this.options.readOnly){
     	  // Use an XHRDataSource
     	   var oDS = new YAHOO.util.XHRDataSource(Alfresco.constants.PROXY_URI + instance.options.dsStr);  
     	   
@@ -389,7 +390,7 @@
   			  displayValue = "<span class=\"error\">" + this.msg("form.control.object-picker.current.failure") + "</span>";            
   		  }	  else  {                   			  
 					// multiple selection
-						if(this.options.mode == "view"){
+						if(this.options.mode == "view" || this.options.readOnly){
 							for (var key in items)
 				 			{
 								item = items[key];

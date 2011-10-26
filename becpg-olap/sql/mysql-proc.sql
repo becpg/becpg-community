@@ -30,6 +30,9 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS `antDIM_TIME`$$ 
 CREATE PROCEDURE `antDIM_TIME` () 
 BEGIN
+	
+
+SET lc_time_names = 'fr_FR';
 
 SELECT '2010-01-01' INTO @ds; 
 SELECT '2030-01-01' INTO @de; 
@@ -75,10 +78,33 @@ END$$
 
 DELIMITER ; 
 
+
 CALL antDIM_TIME();
 
 
+--
+-- Product Type Table
+--   becpg_product
+-- 
+DROP TABLE IF EXISTS `becpg_product_type`;
 
+CREATE TABLE `becpg_product_type` (
+	`product_type_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`product_type`  TEXT NOT NULL ,
+	`product_label` TEXT NOT NULL,
+	 PRIMARY KEY (`product_type_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+SET character_set_client = utf8;
+
+insert into becpg_product_type(product_type,product_label) values ("product","Produit");
+insert into becpg_product_type(product_type,product_label) values ("condSalesUnit","Unité de vente conditionnée");
+insert into becpg_product_type(product_type,product_label) values ("finishedProduct","Produit fini");
+insert into becpg_product_type(product_type,product_label) values ("semiFinishedProduct","Produit semi fini");
+insert into becpg_product_type(product_type,product_label) values ("localSemiFinishedProduct","Produit semi fini local");
+insert into becpg_product_type(product_type,product_label) values ("rawMaterial","Matière première");
+insert into becpg_product_type(product_type,product_label) values ("packagingKit",'Kit d''emballage');
+insert into becpg_product_type(product_type,product_label) values ("packagingMaterial","Emballage");
 
 --
 -- Product Fact Table
@@ -106,24 +132,6 @@ DROP TABLE IF EXISTS `becpg_product`;
   `product_packaging_assoc_id` BIGINT(20) ,
   `product_compo_assoc_id` BIGINT(20),
   PRIMARY KEY (`product_fact_id`)
---  KEY `product_nut_assoc_id_fkey` (`product_nut_assoc_id`),
---  KEY `product_allergen_assoc_id_fkey` (`product_allergen_assoc_id`),
---  KEY `product_ing_assoc_id_fkey` (`product_ing_assoc_id`),
---  KEY `product_microbio_assoc_id_fkey` (`product_microbio_assoc_id`),
---  KEY `product_packaging_assoc_id_fkey` (`product_packaging_assoc_id`),
---  KEY `product_compo_assoc_id_fkey` (`product_compo_assoc_id`),
---  KEY `product_startEffectivity_id_fkey` (`product_startEffectivity_id`),
---  KEY `product_endEffectivity_id_fkey` (`product_endEffectivity_id`),
---  KEY `product_client_assoc_id_fkey` (`product_client_assoc_id`)
---  CONSTRAINT `product_nut_assoc_id_fkey` FOREIGN KEY (`product_nut_assoc_id`) REFERENCES `becpg_nut_list` (`entityListId`) ON DELETE CASCADE ON UPDATE CASCADE,
---  CONSTRAINT `product_allergen_assoc_id_fkey` FOREIGN KEY (`product_allergen_assoc_id`) REFERENCES `becpg_allergen_list` (`entityListId`) ON DELETE CASCADE ON UPDATE CASCADE,
---  CONSTRAINT `product_ing_assoc_id_fkey` FOREIGN KEY (`product_ing_assoc_id`) REFERENCES `becpg_ing_list` (`region_id`) ON DELETE CASCADE ON UPDATE CASCADE,
---  CONSTRAINT `product_microbio_assoc_id_fkey` FOREIGN KEY (`product_microbio_assoc_id`) REFERENCES `becpg_microbio_list` (`entityListId`) ON DELETE CASCADE ON UPDATE CASCADE,
---  CONSTRAINT `product_packaging_assoc_id_fkey` FOREIGN KEY (`product_packaging_assoc_id`) REFERENCES `becpg_pakaging_list` (`entityListId`) ON DELETE CASCADE ON UPDATE CASCADE,
---  CONSTRAINT `product_compo_assoc_id_fkey` FOREIGN KEY (`product_compo_assoc_id`) REFERENCES `becpg_compo_list` (`entityListId`) ON DELETE CASCADE ON UPDATE CASCADE,
---  CONSTRAINT `product_startEffectivity_id_fkey` FOREIGN KEY (`product_startEffectivity_id`) REFERENCES `becpg_dimdate` (`dimdate_id`) ON DELETE CASCADE ON UPDATE CASCADE,
---  CONSTRAINT `product_endEffectivity_id_fkey` FOREIGN KEY (`product_endEffectivity_id`) REFERENCES `becpg_dimdate` (`dimdate_id`) ON DELETE CASCADE ON UPDATE CASCADE,
---  CONSTRAINT `product_client_assoc_id_fkey` FOREIGN KEY (`product_client_assoc_id`) REFERENCES `becpg_client` (`assocId`) ON DELETE CASCADE ON UPDATE CASCADE,
   ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
   

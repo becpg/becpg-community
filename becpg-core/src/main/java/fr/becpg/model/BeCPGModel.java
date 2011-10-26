@@ -645,4 +645,21 @@ public interface BeCPGModel {
 	
 	public static final QName PROP_END_EFFECTIVITY = QName.createQName(BECPG_URI, "endEffectivity");
 
+	
+	/**
+	 * Profitability
+	 */
+	public static final QName ASPECT_PROFITABILITY = QName.createQName(BECPG_URI, "profitabilityAspect");
+	
+	public static final QName PROP_UNIT_PRICE = QName.createQName(BECPG_URI, "unitPrice");
+	
+	public static final QName PROP_BREAK_EVEN = QName.createQName(BECPG_URI, "breakEven");
+
+	public static final QName PROP_PROFITABILITY = QName.createQName(BECPG_URI, "profitability");
+	
+	public static final QName PROP_UNIT_TOTAL_COST = QName.createQName(BECPG_URI, "unitTotalCost");
+
+	public static final QName PROP_PRICE_CURRENCY =  QName.createQName(BECPG_URI, "priceCurrency");
+	
+
 }

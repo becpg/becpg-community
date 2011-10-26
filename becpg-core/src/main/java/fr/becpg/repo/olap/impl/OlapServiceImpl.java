@@ -70,7 +70,8 @@ public class OlapServiceImpl implements OlapService {
 					sendCreateQueryPostRequest(xml,chart.getQueryId());
 					olapCharts.add(chart);
 				} catch (Exception e) {
-					logger.error("Cannot load query :"+queryName,e);
+					logger.error("Cannot load query :"+queryName);
+					logger.debug(e,e);
 				}
 			}
 			

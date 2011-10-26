@@ -55,108 +55,102 @@ import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 
 /**
- * Initialize the folders of the repository (create folder, rules, WF and system contents).
- *
+ * Initialize the folders of the repository (create folder, rules, WF and system
+ * contents).
+ * 
  * @author Quere
  * 
- * Init repository :
- * - directories
- * - System/Lists/*
- * - System/LinkedLists
- * - Products
- * - Import
+ *         Init repository : - directories - System/Lists/* - System/LinkedLists
+ *         - Products - Import
  * 
- * - rules
- * - specialize type
- * - import
- * - document generation
- * - WF
- * - validation folder
- * -
+ *         - rules - specialize type - import - document generation - WF -
+ *         validation folder -
  */
-public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements InitVisitor{
-	
+public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements InitVisitor {
+
 	/** The Constant GROUP_SYSTEM_MGR. */
 	public static final String GROUP_SYSTEM_MGR = "SystemMgr";
-	
+
 	/** The Constant GROUP_RD_USER. */
 	public static final String GROUP_RD_USER = "RDUser";
-	
+
 	/** The Constant GROUP_RD_MGR. */
 	public static final String GROUP_RD_MGR = "RDMgr";
-	
+
 	/** The Constant GROUP_QUALITY_USER. */
 	public static final String GROUP_QUALITY_USER = "QualityUser";
-	
+
 	/** The Constant GROUP_QUALITY_MGR. */
 	public static final String GROUP_QUALITY_MGR = "QualityMgr";
-	
+
 	/** The Constant GROUP_PURCHASING_USER. */
 	public static final String GROUP_PURCHASING_USER = "PurchasingUser";
-	
+
 	/** The Constant GROUP_PURCHASING_MGR. */
 	public static final String GROUP_PURCHASING_MGR = "PurchasingMgr";
-	
+
 	/** The Constant GROUP_PRODUCT_REVIEWER. */
 	public static final String GROUP_PRODUCT_REVIEWER = "ProductReviewer";
-	
-	private static final String LOCALIZATION_PFX_GROUP	= "becpg.group";
+
+	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
 	private static final String PRODUCT_REPORT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
 	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
 	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/nonconformity/ExportSearchQuery.xml";
-	
+
 	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;	
-	
+	private ProductDictionaryService productDictionaryService;
+
 	/** The authority service. */
 	private AuthorityService authorityService;
-	
+
 	/** The permission service. */
 	private PermissionService permissionService;
-	
+
 	private ReportTplService reportTplService;
-	
+
 	private ContentService contentService;
-	
+
 	private MimetypeService mimetypeService;
-	
+
 	private DictionaryService dictionaryService;
-	
+
 	private EntityTplService entityTplService;
-	
+
 	private BeCPGMailService beCPGMailService;
-	
-	
+
 	/**
 	 * Sets the product dictionary service.
-	 *
-	 * @param productDictionaryService the new product dictionary service
+	 * 
+	 * @param productDictionaryService
+	 *            the new product dictionary service
 	 */
 	public void setProductDictionaryService(ProductDictionaryService productDictionaryService) {
 		this.productDictionaryService = productDictionaryService;
 	}
-	
+
 	/**
 	 * Sets the authority service.
-	 *
-	 * @param authorityService the new authority service
+	 * 
+	 * @param authorityService
+	 *            the new authority service
 	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
-	
+
 	/**
 	 * Sets the permission service.
-	 *
-	 * @param permissionService the new permission service
+	 * 
+	 * @param permissionService
+	 *            the new permission service
 	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
-	}		
-	
+	}
+
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
 	}
@@ -168,7 +162,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
-	
+
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
@@ -176,46 +170,47 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
-	
-	
+
 	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
 		this.beCPGMailService = beCPGMailService;
 	}
 
 	/**
 	 * Initialize the repository with system folders.
-	 *
-	 * @param companyHome the company home
-	 * @param locale : locale of the system
+	 * 
+	 * @param companyHome
+	 *            the company home
+	 * @param locale
+	 *            : locale of the system
 	 */
 	@Override
-	public void visitContainer(NodeRef companyHome){
-	
+	public void visitContainer(NodeRef companyHome) {
+
 		logger.debug("visit");
-		
-		//create groups
+
+		// create groups
 		logger.debug("Visit system groups");
 		createSystemGroups();
-		
-		//System
+
+		// System
 		logger.debug("Visit folders");
-		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM); 
-				
-		//Lists of characteristics		
+		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM);
+
+		// Lists of characteristics
 		NodeRef charactsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_CHARACTS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_LISTS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_LINKED_LISTS);		
-		visitFolder(charactsNodeRef, RepoConsts.PATH_NUTS);				
-		visitFolder(charactsNodeRef, RepoConsts.PATH_INGS);		
-		visitFolder(charactsNodeRef, RepoConsts.PATH_ORGANOS);	
-		visitFolder(charactsNodeRef, RepoConsts.PATH_ALLERGENS);		
+		visitFolder(charactsNodeRef, RepoConsts.PATH_LINKED_LISTS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_NUTS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_INGS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_ORGANOS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_ALLERGENS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_COSTS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_PHYSICO_CHEM);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_MICROBIOS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_GEO_ORIGINS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_BIO_ORIGINS);
-				
-		//Hierarchy
+
+		// Hierarchy
 		NodeRef hierarchyNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY1);
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGMATERIAL_HIERARCHY1);
@@ -230,395 +225,387 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY2);
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY2);
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY2);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY2);				
-		
-		//Exchange
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY2);
+
+		// Exchange
 		NodeRef exchangeNodeRef = visitFolder(companyHome, RepoConsts.PATH_EXCHANGE);
 		NodeRef importNodeRef = visitFolder(exchangeNodeRef, RepoConsts.PATH_IMPORT);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_TO_TREAT);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_SUCCEEDED);
-		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_FAILED);	
+		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_FAILED);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_USER);
-		
-		//Products		
+
+		// Products
 		NodeRef productsNodeRef = visitFolder(companyHome, RepoConsts.PATH_PRODUCTS);
 		productDictionaryService.initializeRepoHierarchy(productsNodeRef);
 
-		
-		//Quality		
+		// Quality
 		NodeRef qualityNodeRef = visitFolder(companyHome, RepoConsts.PATH_QUALITY);
-		//Regulations
+		// Regulations
 		NodeRef regulationsNodeRef = visitFolder(qualityNodeRef, RepoConsts.PATH_REGULATIONS);
 		visitFolder(regulationsNodeRef, RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA);
-		//Specifications
+		// Specifications
 		NodeRef qualSpecNodeRef = visitFolder(qualityNodeRef, RepoConsts.PATH_QUALITY_SPECIFICATIONS);
 		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_PLANS);
 		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_POINTS);
 		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_METHODS);
 		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_STEPS);
-		//NC
+		// NC
 		visitFolder(qualityNodeRef, RepoConsts.PATH_NC);
-		//QualityControls
-		visitFolder(qualityNodeRef, RepoConsts.PATH_QUALITY_CONTROLS);		
-		
-		
-		//Security
+		// QualityControls
+		visitFolder(qualityNodeRef, RepoConsts.PATH_QUALITY_CONTROLS);
+
+		// Security
 		visitFolder(systemNodeRef, RepoConsts.PATH_SECURITY);
-		
-		//Icons
+
+		// Icons
 		visitFolder(systemNodeRef, RepoConsts.PATH_ICON);
-		
-		//EntityTemplates				
-		visitFolderAndEntityTpls(systemNodeRef);		
-		
-		//MailTemplates
-		addFilesResources(beCPGMailService.getModelMailNodeRef(),"classpath:beCPG/mails/*.ftl");
-		
-		//Companies
+
+		// EntityTemplates
+		visitFolderAndEntityTpls(systemNodeRef);
+
+		// MailTemplates
+		addFilesResources(beCPGMailService.getModelMailNodeRef(), "classpath:beCPG/mails/*.ftl");
+
+		// Companies
 		NodeRef companiesNodeRef = visitFolder(companyHome, RepoConsts.PATH_COMPANIES);
 		visitFolder(companiesNodeRef, RepoConsts.PATH_SUPPLIERS);
 		visitFolder(companiesNodeRef, RepoConsts.PATH_CLIENTS);
-		
-		//Reports				
+
+		// Reports
 		visitReports(systemNodeRef);
-		
-		//AutoNum
+
+		// AutoNum
 		visitFolder(systemNodeRef, RepoConsts.PATH_AUTO_NUM);
-		
-		//System exchange
+
+		// System exchange
 		NodeRef systemExchangeNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_EXCHANGE);
 		NodeRef systemImportNodeRef = visitFolder(systemExchangeNodeRef, RepoConsts.PATH_IMPORT);
-		visitFolder(systemImportNodeRef, RepoConsts.PATH_MAPPING);	
+		visitFolder(systemImportNodeRef, RepoConsts.PATH_MAPPING);
 
-		visitFolder(systemImportNodeRef, RepoConsts.PATH_IMPORT_SAMPLES);	
-		
-		
-	}	
-	
+		visitFolder(systemImportNodeRef, RepoConsts.PATH_IMPORT_SAMPLES);
+
+	}
 
 	/**
-	 * Add resources to folder 
+	 * Add resources to folder
 	 */
 	@Override
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
 
-		if(folderName == RepoConsts.PATH_ICON){			
-			addFilesResources(folderNodeRef,"classpath:beCPG/images/*.png");	    	
-		} if(folderName == RepoConsts.PATH_MAPPING){
-			addFilesResources(folderNodeRef,"classpath:beCPG/import/mapping/*.xml");
-		} if(folderName == RepoConsts.PATH_IMPORT_SAMPLES){
-			addFilesResources(folderNodeRef,"classpath:beCPG/import/samples/*.csv");
+		if (folderName == RepoConsts.PATH_ICON) {
+			addFilesResources(folderNodeRef, "classpath:beCPG/images/*.png");
 		}
-		
-		
-	}
-	
-	
-	private void addFilesResources(NodeRef folderNodeRef,
-			String pattern) {
-		try {
-			
-			PathMatchingResourcePatternResolver resolver  = new PathMatchingResourcePatternResolver();
-			
-			for(Resource res : resolver.getResources(pattern)){
-			
-			String fileName = res.getFilename();
-			logger.debug("add file "+fileName);
-			
-	    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
-	    	properties.put(ContentModel.PROP_NAME, fileName);
-	    	
-	    	NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
-	    	if(nodeRef == null){
-	    		nodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
-		    	
-		    	ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+		if (folderName == RepoConsts.PATH_MAPPING) {
+			addFilesResources(folderNodeRef, "classpath:beCPG/import/mapping/*.xml");
+		}
+		if (folderName == RepoConsts.PATH_IMPORT_SAMPLES) {
+			addFilesResources(folderNodeRef, "classpath:beCPG/import/samples/*.csv");
+		}
 
-		    	InputStream in = res.getInputStream();			
-		    	writer.setMimetype(mimetypeService.guessMimetype(fileName));
-		    	if(fileName.endsWith(".csv")){
-		    		writer.setEncoding(BeCPGModel.ISO_CHARSET);
-		    	}
-		    	writer.putContent(in);
-		    	in.close();
-		    	
-		    	
-		    	
-	    	}    	
-		 }
+	}
+
+	private void addFilesResources(NodeRef folderNodeRef, String pattern) {
+		try {
+
+			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+
+			for (Resource res : resolver.getResources(pattern)) {
+
+				String fileName = res.getFilename();
+				logger.debug("add file " + fileName);
+
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(ContentModel.PROP_NAME, fileName);
+
+				NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS,
+						(String) properties.get(ContentModel.PROP_NAME));
+				if (nodeRef == null) {
+					nodeRef = nodeService.createNode(
+							folderNodeRef,
+							ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT,
+							properties).getChildRef();
+
+					ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+
+					InputStream in = res.getInputStream();
+					writer.setMimetype(mimetypeService.guessMimetype(fileName));
+					if (fileName.endsWith(".csv")) {
+						writer.setEncoding(BeCPGModel.ISO_CHARSET);
+					}
+					writer.putContent(in);
+					in.close();
+
+				}
+			}
 		} catch (Exception e) {
-			logger.error(e,e);
+			logger.error(e, e);
 		}
-		
+
 	}
 
 	/**
 	 * Initialize the rules of the repository
-	 */	
+	 */
 	@Override
 	protected void visitRules(NodeRef nodeRef, String folderName) {
-		
+
 		QName specialiseType = null;
 		boolean applyToChildren = false;
-		
-		if(folderName == RepoConsts.PATH_LISTS){			
+
+		if (folderName == RepoConsts.PATH_LISTS) {
 			specialiseType = BeCPGModel.TYPE_LIST_VALUE;
 			applyToChildren = true;
-		}
-		else if(folderName == RepoConsts.PATH_LINKED_LISTS){
+		} else if (folderName == RepoConsts.PATH_LINKED_LISTS) {
 			specialiseType = BeCPGModel.TYPE_LINKED_VALUE;
 			applyToChildren = true;
-		}	
-		else if(folderName == RepoConsts.PATH_NUTS){
-			specialiseType = BeCPGModel.TYPE_NUT;			
-		}		
-		else if(folderName == RepoConsts.PATH_INGS){
+		} else if (folderName == RepoConsts.PATH_NUTS) {
+			specialiseType = BeCPGModel.TYPE_NUT;
+		} else if (folderName == RepoConsts.PATH_INGS) {
 			specialiseType = BeCPGModel.TYPE_ING;
-		}
-		else if(folderName == RepoConsts.PATH_ORGANOS){			
+		} else if (folderName == RepoConsts.PATH_ORGANOS) {
 			specialiseType = BeCPGModel.TYPE_ORGANO;
-		}
-		else if(folderName == RepoConsts.PATH_ALLERGENS){
+		} else if (folderName == RepoConsts.PATH_ALLERGENS) {
 			specialiseType = BeCPGModel.TYPE_ALLERGEN;
-		}
-		else if(folderName == RepoConsts.PATH_COSTS){
+		} else if (folderName == RepoConsts.PATH_COSTS) {
 			specialiseType = BeCPGModel.TYPE_COST;
-		}
-		else if(folderName == RepoConsts.PATH_PHYSICO_CHEM){
+		} else if (folderName == RepoConsts.PATH_PHYSICO_CHEM) {
 			specialiseType = BeCPGModel.TYPE_PHYSICO_CHEM;
-		}
-		else if(folderName == RepoConsts.PATH_MICROBIOS){
+		} else if (folderName == RepoConsts.PATH_MICROBIOS) {
 			specialiseType = BeCPGModel.TYPE_MICROBIO;
-		}		
-		else if(folderName == RepoConsts.PATH_GEO_ORIGINS){
+		} else if (folderName == RepoConsts.PATH_GEO_ORIGINS) {
 			specialiseType = BeCPGModel.TYPE_GEO_ORIGIN;
-		}		
-		else if(folderName == RepoConsts.PATH_BIO_ORIGINS){
+		} else if (folderName == RepoConsts.PATH_BIO_ORIGINS) {
 			specialiseType = BeCPGModel.TYPE_BIO_ORIGIN;
-		}		
-		else if(folderName == RepoConsts.PATH_ENTITY_TEMPLATES){
+		} else if (folderName == RepoConsts.PATH_ENTITY_TEMPLATES) {
 			specialiseType = BeCPGModel.TYPE_ENTITY;
-		}		
-		else if(folderName.endsWith(RepoConsts.PATH_HIERARCHY_SFX_HIERARCHY1)){
+		} else if (folderName.endsWith(RepoConsts.PATH_HIERARCHY_SFX_HIERARCHY1)) {
 			specialiseType = BeCPGModel.TYPE_LIST_VALUE;
-		}
-		else if(folderName.endsWith(RepoConsts.PATH_HIERARCHY_SFX_HIERARCHY2)){
+		} else if (folderName.endsWith(RepoConsts.PATH_HIERARCHY_SFX_HIERARCHY2)) {
 			specialiseType = BeCPGModel.TYPE_LINKED_VALUE;
-		}
-		else if(folderName == RepoConsts.PATH_REPORTS){
-			
+		} else if (folderName == RepoConsts.PATH_REPORTS) {
+
 			// Action : apply type
-		    Map<String,Serializable> params = new HashMap<String, Serializable>();
-	  	  	params.put(SpecialiseTypeActionExecuter.PARAM_TYPE_NAME, ReportModel.TYPE_REPORT_TPL);
-		    CompositeAction compositeAction = actionService.createCompositeAction();
-		    Action myAction= actionService.createAction(SpecialiseTypeActionExecuter.NAME, params);
-		    compositeAction.addAction(myAction);
-		    	   
-		    // Conditions for the Rule : type must be different
-		    ActionCondition actionCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-		    actionCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, ReportModel.TYPE_REPORT_TPL);
-		    actionCondition.setInvertCondition(true);
-		    compositeAction.addActionCondition(actionCondition);
-		    
-		    // compare-name == *.rptdesign	        	        
-	        ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
-	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION, ComparePropertyValueOperation.ENDS.toString());
-	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, ReportTplService.PARAM_VALUE_DESIGN_EXTENSION);
-	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
-	        conditionOnName.setInvertCondition(false);
-	        compositeAction.addActionCondition(conditionOnName);
-		   	    
-		    // Create Rule
+			Map<String, Serializable> params = new HashMap<String, Serializable>();
+			params.put(SpecialiseTypeActionExecuter.PARAM_TYPE_NAME, ReportModel.TYPE_REPORT_TPL);
+			CompositeAction compositeAction = actionService.createCompositeAction();
+			Action myAction = actionService.createAction(SpecialiseTypeActionExecuter.NAME, params);
+			compositeAction.addAction(myAction);
+
+			// Conditions for the Rule : type must be different
+			ActionCondition actionCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+			actionCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, ReportModel.TYPE_REPORT_TPL);
+			actionCondition.setInvertCondition(true);
+			compositeAction.addActionCondition(actionCondition);
+
+			// compare-name == *.rptdesign
+			ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION,
+					ComparePropertyValueOperation.ENDS.toString());
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE,
+					ReportTplService.PARAM_VALUE_DESIGN_EXTENSION);
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
+			conditionOnName.setInvertCondition(false);
+			compositeAction.addActionCondition(conditionOnName);
+
+			// Create Rule
 			Rule rule = new Rule();
-		    rule.setTitle("Specialise type");
-		    rule.setDescription("Every item created will have this type");
-		    rule.applyToChildren(applyToChildren);
-		    rule.setExecuteAsynchronously(false);
-		    rule.setRuleDisabled(false);
-		    rule.setRuleType(RuleType.INBOUND);
-		    rule.setAction(compositeAction);	    	       	    
-		    ruleService.saveRule(nodeRef, rule);
-		}
-		else if(folderName == RepoConsts.PATH_SECURITY){
+			rule.setTitle("Specialise type");
+			rule.setDescription("Every item created will have this type");
+			rule.applyToChildren(applyToChildren);
+			rule.setExecuteAsynchronously(false);
+			rule.setRuleDisabled(false);
+			rule.setRuleType(RuleType.INBOUND);
+			rule.setAction(compositeAction);
+			ruleService.saveRule(nodeRef, rule);
+		} else if (folderName == RepoConsts.PATH_SECURITY) {
 			specialiseType = SecurityModel.TYPE_ACL_GROUP;
+		} else if (folderName == RepoConsts.PATH_IMPORT_TO_TREAT) {
+
+			// action
+			CompositeAction compositeAction = actionService.createCompositeAction();
+			Action action = actionService.createAction(ImporterActionExecuter.NAME, null);
+			compositeAction.addAction(action);
+
+			// compare-mime-type == text/csv
+			ActionCondition conditionOnMimeType = actionService.createActionCondition(CompareMimeTypeEvaluator.NAME);
+			conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE,
+					MimetypeMap.MIMETYPE_TEXT_CSV);
+			conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY,
+					ContentModel.PROP_CONTENT);
+			conditionOnMimeType.setInvertCondition(false);
+			compositeAction.addActionCondition(conditionOnMimeType);
+
+			// compare-name == *.csv
+			ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION,
+					ComparePropertyValueOperation.ENDS.toString());
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE,
+					ImporterActionExecuter.PARAM_VALUE_EXTENSION);
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
+			conditionOnName.setInvertCondition(false);
+			compositeAction.addActionCondition(conditionOnName);
+
+			// rule
+			Rule rule = new Rule();
+			rule.setRuleType(RuleType.INBOUND);
+			rule.setAction(compositeAction);
+			rule.applyToChildren(true);
+			rule.setTitle("import file");
+			rule.setExecuteAsynchronously(true);
+			rule.setDescription("Every item created will be imported");
+
+			ruleService.saveRule(nodeRef, rule);
+		} else if (folderName == RepoConsts.PATH_IMPORT_USER) {
+
+			// action
+			CompositeAction compositeAction = actionService.createCompositeAction();
+			Action action = actionService.createAction(UserImporterActionExecuter.NAME, null);
+			compositeAction.addAction(action);
+
+			// compare-mime-type == text/csv
+			ActionCondition conditionOnMimeType = actionService.createActionCondition(CompareMimeTypeEvaluator.NAME);
+			conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE,
+					MimetypeMap.MIMETYPE_TEXT_CSV);
+			conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY,
+					ContentModel.PROP_CONTENT);
+			conditionOnMimeType.setInvertCondition(false);
+			compositeAction.addActionCondition(conditionOnMimeType);
+
+			// compare-name == *.csv
+			ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION,
+					ComparePropertyValueOperation.ENDS.toString());
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE,
+					UserImporterActionExecuter.PARAM_VALUE_EXTENSION);
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
+			conditionOnName.setInvertCondition(false);
+			compositeAction.addActionCondition(conditionOnName);
+
+			// rule
+			Rule rule = new Rule();
+			rule.setRuleType(RuleType.INBOUND);
+			rule.setAction(compositeAction);
+			rule.applyToChildren(true);
+			rule.setTitle("import user");
+			rule.setExecuteAsynchronously(true);
+			rule.setDescription("Every item created will be imported");
+
+			ruleService.saveRule(nodeRef, rule);
 		}
-		else if(folderName == RepoConsts.PATH_IMPORT_TO_TREAT){
-						
-	        // action
-	        CompositeAction compositeAction = actionService.createCompositeAction();
-	        Action action = actionService.createAction(ImporterActionExecuter.NAME, null);        	        
-	        compositeAction.addAction(action);
-	        
-	        // compare-mime-type == text/csv	        
-	        ActionCondition conditionOnMimeType = actionService.createActionCondition(CompareMimeTypeEvaluator.NAME);
-	        conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, MimetypeMap.MIMETYPE_TEXT_CSV);
-	        conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_CONTENT);
-	        conditionOnMimeType.setInvertCondition(false);
-	        compositeAction.addActionCondition(conditionOnMimeType);
-	        
-	        // compare-name == *.csv	        	        
-	        ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
-	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION, ComparePropertyValueOperation.ENDS.toString());
-	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, ImporterActionExecuter.PARAM_VALUE_EXTENSION);
-	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
-	        conditionOnName.setInvertCondition(false);
-	        compositeAction.addActionCondition(conditionOnName);
-	        
-	        // rule
-	        Rule rule = new Rule();
-	        rule.setRuleType(RuleType.INBOUND);	        
-	        rule.setAction(compositeAction);	                	        				  	  
-	  	  	rule.applyToChildren(true);	  	
-	  	  	rule.setTitle("import file");
-	  	  	rule.setExecuteAsynchronously(true);
-	  	  	rule.setDescription("Every item created will be imported");
-	  	  	
-		    ruleService.saveRule(nodeRef, rule);
-		}
-		else if(folderName == RepoConsts.PATH_IMPORT_USER){
-			
-	        // action
-	        CompositeAction compositeAction = actionService.createCompositeAction();
-	        Action action = actionService.createAction(UserImporterActionExecuter.NAME, null);        	        
-	        compositeAction.addAction(action);
-	        
-	        // compare-mime-type == text/csv	        
-	        ActionCondition conditionOnMimeType = actionService.createActionCondition(CompareMimeTypeEvaluator.NAME);
-	        conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, MimetypeMap.MIMETYPE_TEXT_CSV);
-	        conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_CONTENT);
-	        conditionOnMimeType.setInvertCondition(false);
-	        compositeAction.addActionCondition(conditionOnMimeType);
-	        
-	        // compare-name == *.csv	        	        
-	        ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
-	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION, ComparePropertyValueOperation.ENDS.toString());
-	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, UserImporterActionExecuter.PARAM_VALUE_EXTENSION);
-	        conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
-	        conditionOnName.setInvertCondition(false);
-	        compositeAction.addActionCondition(conditionOnName);
-	        
-	        // rule
-	        Rule rule = new Rule();
-	        rule.setRuleType(RuleType.INBOUND);	        
-	        rule.setAction(compositeAction);	                	        				  	  
-	  	  	rule.applyToChildren(true);	  	
-	  	  	rule.setTitle("import user");
-	  	  	rule.setExecuteAsynchronously(true);
-	  	  	rule.setDescription("Every item created will be imported");
-	  	  	
-		    ruleService.saveRule(nodeRef, rule);
-		}
-		
-		else if(folderName == RepoConsts.PATH_SUPPLIERS){
-//			specialiseType = BeCPGModel.TYPE_SUPPLIER;
-//			applyToChildren = true;
-		}
-		else if(folderName == RepoConsts.PATH_CLIENTS){
-//			specialiseType = BeCPGModel.TYPE_CLIENT;
-//			applyToChildren = true;
+
+		else if (folderName == RepoConsts.PATH_SUPPLIERS) {
+			// specialiseType = BeCPGModel.TYPE_SUPPLIER;
+			// applyToChildren = true;
+		} else if (folderName == RepoConsts.PATH_CLIENTS) {
+			// specialiseType = BeCPGModel.TYPE_CLIENT;
+			// applyToChildren = true;
 		}
 		// quality
-		else if(folderName == RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA){
+		else if (folderName == RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA) {
 			specialiseType = BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA;
-		}	
-		else if(folderName == RepoConsts.PATH_CONTROL_PLANS){
-			specialiseType = QualityModel.TYPE_CONTROL_PLAN;			
-		}
-		else if(folderName == RepoConsts.PATH_CONTROL_POINTS){
-			specialiseType = QualityModel.TYPE_CONTROL_POINT;			
-		}
-		else if(folderName == RepoConsts.PATH_CONTROL_STEPS){
-			specialiseType = QualityModel.TYPE_CONTROL_STEP;			
-		}
-		else if(folderName == RepoConsts.PATH_CONTROL_METHODS){
-			specialiseType = QualityModel.TYPE_CONTROL_METHOD;			
-		}
-		else if(folderName == RepoConsts.PATH_QUALITY_CONTROLS){
-			specialiseType = QualityModel.TYPE_QUALITY_CONTROL;			
-		}
-		else if(folderName == RepoConsts.PATH_NC){
-			specialiseType = QualityModel.TYPE_NC;			
-		}
-		else{
+		} else if (folderName == RepoConsts.PATH_CONTROL_PLANS) {
+			specialiseType = QualityModel.TYPE_CONTROL_PLAN;
+		} else if (folderName == RepoConsts.PATH_CONTROL_POINTS) {
+			specialiseType = QualityModel.TYPE_CONTROL_POINT;
+		} else if (folderName == RepoConsts.PATH_CONTROL_STEPS) {
+			specialiseType = QualityModel.TYPE_CONTROL_STEP;
+		} else if (folderName == RepoConsts.PATH_CONTROL_METHODS) {
+			specialiseType = QualityModel.TYPE_CONTROL_METHOD;
+		} else if (folderName == RepoConsts.PATH_QUALITY_CONTROLS) {
+			specialiseType = QualityModel.TYPE_QUALITY_CONTROL;
+		} else if (folderName == RepoConsts.PATH_NC) {
+			specialiseType = QualityModel.TYPE_NC;
+		} else {
 			return;
 		}
-		
-		//specialise type
-		if(specialiseType != null){
-			
+
+		// specialise type
+		if (specialiseType != null) {
+
 			createRuleSpecialiseType(nodeRef, applyToChildren, specialiseType);
 		}
 	}
-	
+
 	/**
 	 * Initialize the permissions of the repository
 	 */
 	@Override
-	protected void visitPermissions(NodeRef nodeRef, String folderName) {		
-		
-		if(folderName == RepoConsts.PATH_SYSTEM){
-			
-//			boolean hasSystemMgrPerm = false;
-//			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nodeRef);
-//			for(AccessPermission permission : permissions){
-//				if(permission.getAuthority().equals(PermissionService.GROUP_PREFIX + GROUP_SYSTEM_MGR) && permission.getPermission().equals(PermissionService.WRITE))
-				
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_SYSTEM_MGR, PermissionService.WRITE, true);
+	protected void visitPermissions(NodeRef nodeRef, String folderName) {
+
+		if (folderName == RepoConsts.PATH_SYSTEM) {
+
+			// boolean hasSystemMgrPerm = false;
+			// Set<AccessPermission> permissions =
+			// permissionService.getAllSetPermissions(nodeRef);
+			// for(AccessPermission permission : permissions){
+			// if(permission.getAuthority().equals(PermissionService.GROUP_PREFIX
+			// + GROUP_SYSTEM_MGR) &&
+			// permission.getPermission().equals(PermissionService.WRITE))
+
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_SYSTEM_MGR,
+					PermissionService.WRITE, true);
+		} else if (folderName == RepoConsts.PATH_PRODUCTS) {
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_RD_MGR,
+					PermissionService.WRITE, true);
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_QUALITY_MGR,
+					PermissionService.WRITE, true);
+		} else if (folderName == RepoConsts.PATH_EXCHANGE) {
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_SYSTEM_MGR,
+					PermissionService.WRITE, true);
 		}
-		else if(folderName == RepoConsts.PATH_PRODUCTS){			
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_RD_MGR, PermissionService.WRITE, true);
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_QUALITY_MGR, PermissionService.WRITE, true);
-		}
-		else if(folderName == RepoConsts.PATH_EXCHANGE){			
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_SYSTEM_MGR, PermissionService.WRITE, true);
-		}	
-		
-		else if(folderName == RepoConsts.PATH_QUALITY){
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_QUALITY_MGR, PermissionService.WRITE, true);
+
+		else if (folderName == RepoConsts.PATH_QUALITY) {
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_QUALITY_MGR,
+					PermissionService.WRITE, true);
 		}
 	}
-	
+
 	/**
 	 * Create the folder and entity templates
+	 * 
 	 * @param productTplsNodeRef
 	 */
-	private void visitFolderAndEntityTpls(NodeRef systemNodeRef){
-		
+	private void visitFolderAndEntityTpls(NodeRef systemNodeRef) {
+
 		NodeRef folderTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_FOLDER_TEMPLATES);
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
-		
+
 		// create product tpls
 		visitProductTpls(folderTplsNodeRef, entityTplsNodeRef);
-		
+
 		Set<String> subFolders = new HashSet<String>();
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);
-		
+
 		// visit supplier
-		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, subFolders); 
-		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, null);		
-		
+		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, subFolders);
+		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, null);
+
 		// visit client
 		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, subFolders);
-		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, null);	
-		
+		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, null);
+
 		// visit acls
 		Set<QName> dataLists = new LinkedHashSet<QName>();
 		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
 		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists);
-		
+
 		// visit quality
-		visitQuality(folderTplsNodeRef, entityTplsNodeRef);				
+		visitQuality(folderTplsNodeRef, entityTplsNodeRef);
 	}
-	
+
 	/**
 	 * Create product tpls
+	 * 
 	 * @param entityTplsNodeRef
 	 */
-	private void visitProductTpls(NodeRef folderTplsNodeRef, NodeRef entityTplsNodeRef){
-		
+	private void visitProductTpls(NodeRef folderTplsNodeRef, NodeRef entityTplsNodeRef) {
+
 		NodeRef productFolderTplsNodeRef = visitFolder(folderTplsNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES);
 		NodeRef productTplsNodeRef = visitFolder(entityTplsNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES);
-		
+
 		Set<QName> productTypes = new HashSet<QName>();
 		productTypes.add(BeCPGModel.TYPE_RAWMATERIAL);
 		productTypes.add(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT);
@@ -626,175 +613,160 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		productTypes.add(BeCPGModel.TYPE_PACKAGINGMATERIAL);
 		productTypes.add(BeCPGModel.TYPE_PACKAGINGKIT);
 		productTypes.add(BeCPGModel.TYPE_CONDSALESUNIT);
-		
+
 		Set<String> subFolders = new HashSet<String>();
 		subFolders.add(RepoConsts.PATH_IMAGES);
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 		subFolders.add(RepoConsts.PATH_BRIEF);
-		
-		for(QName productType : productTypes){
-						
+
+		for (QName productType : productTypes) {
+
 			// datalists
 			Set<QName> dataLists = new LinkedHashSet<QName>();
-			
-			if(productType.equals(BeCPGModel.TYPE_RAWMATERIAL)){
-				
+
+			if (productType.equals(BeCPGModel.TYPE_RAWMATERIAL)) {
+
 				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-				dataLists.add(BeCPGModel.TYPE_COSTLIST);				
+				dataLists.add(BeCPGModel.TYPE_COSTLIST);
 				dataLists.add(BeCPGModel.TYPE_NUTLIST);
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-				
-			}
-			else if(productType.equals(BeCPGModel.TYPE_PACKAGINGMATERIAL)){
-				
-				dataLists.add(BeCPGModel.TYPE_COSTLIST);				
+
+			} else if (productType.equals(BeCPGModel.TYPE_PACKAGINGMATERIAL)) {
+
+				dataLists.add(BeCPGModel.TYPE_COSTLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-				
-			}
-			else if(productType.equals(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT)){
-				
+
+			} else if (productType.equals(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT)) {
+
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
 				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-				dataLists.add(BeCPGModel.TYPE_COSTLIST);				
+				dataLists.add(BeCPGModel.TYPE_COSTLIST);
 				dataLists.add(BeCPGModel.TYPE_NUTLIST);
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-				
-			}
-			else if(productType.equals(BeCPGModel.TYPE_FINISHEDPRODUCT) ||
-					productType.equals(BeCPGModel.TYPE_CONDSALESUNIT)){
-				
+
+			} else if (productType.equals(BeCPGModel.TYPE_FINISHEDPRODUCT)
+					|| productType.equals(BeCPGModel.TYPE_CONDSALESUNIT)) {
+
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
 				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
 				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-				dataLists.add(BeCPGModel.TYPE_COSTLIST);				
+				dataLists.add(BeCPGModel.TYPE_COSTLIST);
 				dataLists.add(BeCPGModel.TYPE_NUTLIST);
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-				
-			}
-			else if(productType.equals(BeCPGModel.TYPE_PACKAGINGKIT)){
-									
-				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);					
-				dataLists.add(BeCPGModel.TYPE_COSTLIST);				
+
+			} else if (productType.equals(BeCPGModel.TYPE_PACKAGINGKIT)) {
+
+				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+				dataLists.add(BeCPGModel.TYPE_COSTLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-				
-			}else if(productType.equals(SecurityModel.TYPE_ACL_GROUP)){
-								
-				dataLists.add(SecurityModel.TYPE_ACL_ENTRY);	
-				
+
+			} else if (productType.equals(SecurityModel.TYPE_ACL_GROUP)) {
+
+				dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
+
 			}
-							
-			
+
 			entityTplService.createFolderTpl(productFolderTplsNodeRef, productType, true, subFolders);
 			entityTplService.createEntityTpl(productTplsNodeRef, productType, true, dataLists);
 		}
-		
+
 		// create product tpls that don't have a product folder
-		entityTplService.createFolderTpl(productFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, false, subFolders);
-		entityTplService.createEntityTpl(productFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, true, null);		
+		entityTplService.createFolderTpl(productFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, false,
+				subFolders);
+		entityTplService
+				.createEntityTpl(productFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, true, null);
 	}
-	
-	private void visitQuality(NodeRef folderTplsNodeRef, NodeRef entityTplsNodeRef){
-		
+
+	private void visitQuality(NodeRef folderTplsNodeRef, NodeRef entityTplsNodeRef) {
+
 		NodeRef qualityFolderTplsNodeRef = visitFolder(folderTplsNodeRef, RepoConsts.PATH_QUALITY_TEMPLATES);
 		NodeRef qualityTplsNodeRef = visitFolder(entityTplsNodeRef, RepoConsts.PATH_QUALITY_TEMPLATES);
-		
+
 		// visit productMicrobioCriteria
 		Set<QName> dataLists = new LinkedHashSet<QName>();
 		dataLists.add(BeCPGModel.TYPE_MICROBIOLIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, false, null);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, true, dataLists);
-		
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, false,
+				null);
+		entityTplService
+				.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, true, dataLists);
+
 		// visit productSpecification
 		dataLists.clear();
 		dataLists.add(BeCPGModel.TYPE_FORBIDDENINGLIST);
 		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, false, null);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, true, dataLists);
-		
+
 		// visit controlPlan
 		Set<String> subFolders = new HashSet<String>();
-		subFolders.add(RepoConsts.PATH_DOCUMENTS);		
+		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 		dataLists.clear();
-		dataLists.add(QualityModel.TYPE_SAMPLINGDEF_LIST);		
+		dataLists.add(QualityModel.TYPE_SAMPLINGDEF_LIST);
 		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, true, subFolders);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, true, dataLists);
-		
+
 		// visit qualityControl
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLING_LIST);
 		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, true, null);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, true, dataLists);
-		
+
 		// visit controlPoint
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROLDEF_LIST);
 		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, true, null);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, true, dataLists);
-		
+
 		// visit workItemAnalysis
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
 		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, false, null);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, true, dataLists);
 	}
-	
-	
-	
+
 	/**
 	 * Create the reports templates
+	 * 
 	 * @param productReportTplsNodeRef
 	 */
-	private void visitReports(NodeRef systemNodeRef){
-		
+	private void visitReports(NodeRef systemNodeRef) {
+
 		// reports folder
 		NodeRef reportsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_REPORTS);
-		
+
 		// product report templates
 		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
-		QName [] productTypes = {BeCPGModel.TYPE_RAWMATERIAL, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT,
-				BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_PACKAGINGMATERIAL, BeCPGModel.TYPE_PACKAGINGKIT, BeCPGModel.TYPE_CONDSALESUNIT};
-		
-		for(QName productType : productTypes){
-			
-			try{
-				
+		QName[] productTypes = { BeCPGModel.TYPE_RAWMATERIAL, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT,
+				BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, BeCPGModel.TYPE_FINISHEDPRODUCT,
+				BeCPGModel.TYPE_PACKAGINGMATERIAL, BeCPGModel.TYPE_PACKAGINGKIT, BeCPGModel.TYPE_CONDSALESUNIT };
+
+		for (QName productType : productTypes) {
+
+			try {
+
 				ClassDefinition classDef = dictionaryService.getClass(productType);
-				NodeRef compareProductFolderNodeRef = repoService.createFolderByPath(productReportTplsNodeRef, classDef.getTitle(), classDef.getTitle());				
-				reportTplService.createTplRptDesign(compareProductFolderNodeRef, 
-													classDef.getTitle(), 
-													PRODUCT_REPORT_PATH, 
-													ReportType.Document, 
-													ReportFormat.PDF,
-													productType, 
-													true, 
-													true,
-													false);
-			}
-			catch(Exception e){
+				NodeRef compareProductFolderNodeRef = repoService.createFolderByPath(productReportTplsNodeRef,
+						classDef.getTitle(), classDef.getTitle());
+				reportTplService.createTplRptDesign(compareProductFolderNodeRef, classDef.getTitle(),
+						PRODUCT_REPORT_PATH, ReportType.Document, ReportFormat.PDF, productType, true, true, false);
+			} catch (Exception e) {
 				logger.error("Failed to create product report tpl. SystemProductType: " + productType, e);
 			}
-												
+
 		}
-		
+
 		// compare report
-		try{
+		try {
 			NodeRef compareProductFolderNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS);
-			reportTplService.createTplRptDesign(compareProductFolderNodeRef, 
-												TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS), 
-												COMPARE_ENTITIES_REPORT_PATH, 
-												ReportType.System, 	
-												ReportFormat.PDF,
-												null, 
-												true, 
-												true, 
-												false);
-		}
-		catch(IOException e){
+			reportTplService.createTplRptDesign(compareProductFolderNodeRef,
+					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS),
+					COMPARE_ENTITIES_REPORT_PATH, ReportType.System, ReportFormat.PDF, null, true, true, false);
+		} catch (IOException e) {
 			logger.error("Failed to create compare product report tpl.", e);
 		}
 
@@ -802,109 +774,125 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		 * Export Search reports
 		 */
 		NodeRef exportSearchNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH);
-		
+
 		// export search products
-		try{						
-			NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS);
-			reportTplService.createTplRptDesign(exportSearchProductsNodeRef, 
-												TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS), 
-												EXPORT_PRODUCTS_REPORT_RPTFILE_PATH, 
-												ReportType.ExportSearch, 
-												ReportFormat.XLS,
-												BeCPGModel.TYPE_PRODUCT, 
-												false, 
-												true, 
-												false);
-			
-			reportTplService.createTplRessource(exportSearchProductsNodeRef, 												
-												EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, 												
-												false);			
-		}
-		catch(IOException e){
+		try {
+			NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef,
+					RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS),
+					EXPORT_PRODUCTS_REPORT_RPTFILE_PATH, ReportType.ExportSearch, ReportFormat.XLS,
+					BeCPGModel.TYPE_PRODUCT, false, true, false);
+
+			reportTplService
+					.createTplRessource(exportSearchProductsNodeRef, EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, false);
+		} catch (IOException e) {
 			logger.error("Failed to create export search report tpl.", e);
-		}		
-		
+		}
+
 		// export search NC
-		try{
-			NodeRef exportNCSynthesisNodeRef = visitFolder(exportSearchNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES);
-			
-			reportTplService.createTplRptDesign(exportNCSynthesisNodeRef, 
-												TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES), 
-												EXPORT_NC_REPORT_RPTFILE_PATH, 
-												ReportType.ExportSearch, 
-												ReportFormat.PDF,
-												QualityModel.TYPE_NC, 
-												false, 
-												true, 
-												false);
-			
-			reportTplService.createTplRessource(exportNCSynthesisNodeRef, 												
-												EXPORT_NC_REPORT_XMLFILE_PATH, 												
-												false);			
-		}
-		catch(IOException e){
+		try {
+			NodeRef exportNCSynthesisNodeRef = visitFolder(exportSearchNodeRef,
+					RepoConsts.PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES);
+
+			reportTplService.createTplRptDesign(exportNCSynthesisNodeRef,
+					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES),
+					EXPORT_NC_REPORT_RPTFILE_PATH, ReportType.ExportSearch, ReportFormat.PDF, QualityModel.TYPE_NC,
+					false, true, false);
+
+			reportTplService.createTplRessource(exportNCSynthesisNodeRef, EXPORT_NC_REPORT_XMLFILE_PATH, false);
+		} catch (IOException e) {
 			logger.error("Failed to create export search report tpl.", e);
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Create system groups.
-	 *
-	 * @param locale the locale
+	 * 
+	 * @param locale
+	 *            the locale
 	 */
-	private void createSystemGroups(){
-		//http://forums.alfresco.com/en/viewtopic.php?t=14004
-		
+	private void createSystemGroups() {
 
-		String [] groups = {SystemGroup.SystemMgr.toString(), SystemGroup.RD.toString(), SystemGroup.RDUser.toString(), SystemGroup.RDMgr.toString(), SystemGroup.Quality.toString(), SystemGroup.QualityUser.toString(), SystemGroup.QualityMgr.toString(), SystemGroup.Purchasing.toString(), SystemGroup.PurchasingUser.toString(), SystemGroup.PurchasingMgr.toString(), SystemGroup.ProductReviewer.toString()};
+		String[] groups = { SystemGroup.SystemMgr.toString(), SystemGroup.RD.toString(), SystemGroup.RDUser.toString(),
+				SystemGroup.RDMgr.toString(), SystemGroup.Quality.toString(), SystemGroup.QualityUser.toString(),
+				SystemGroup.QualityMgr.toString(), SystemGroup.Purchasing.toString(),
+				SystemGroup.PurchasingUser.toString(), SystemGroup.PurchasingMgr.toString(),
+				SystemGroup.ProductReviewer.toString(), NPDGroup.NPD.toString(), NPDGroup.MarketingBrief.toString(),
+				NPDGroup.NeedDefinition.toString(), NPDGroup.ValidateNeedDefinition.toString(),
+				NPDGroup.DoPrototype.toString(), NPDGroup.StartProduction.toString(),
+				NPDGroup.ValidateFaisability.toString() 
+				,NPDGroup.PackagingAssigners.toString(),NPDGroup.RecipeAssigners.toString()};
+
 		Set<String> zones = new HashSet<String>();
 		zones.add(AuthorityService.ZONE_APP_DEFAULT);
 		zones.add(AuthorityService.ZONE_APP_SHARE);
 		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
-		
-		for(String group : groups){
-			
+
+		for (String group : groups) {
+
 			logger.debug("group: " + group);
-			String groupName = I18NUtil.getMessage(String.format("%s.%s",  LOCALIZATION_PFX_GROUP, group).toLowerCase());			
-			
-			if(!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)){
-				logger.debug("create group: " + groupName);				
-				authorityService.createAuthority(AuthorityType.GROUP, group, groupName, zones);				
-			}
-			else{
-				Set<String>zonesAdded =  authorityService.getAuthorityZones(PermissionService.GROUP_PREFIX + group);
-				Set<String>zonesToAdd = new HashSet<String>();  
-				for(String zone : zones)
-					if(!zonesAdded.contains(zone)){												
+			String groupName = I18NUtil.getMessage(String.format("%s.%s", LOCALIZATION_PFX_GROUP, group).toLowerCase());
+
+			if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
+				logger.debug("create group: " + groupName);
+				authorityService.createAuthority(AuthorityType.GROUP, group, groupName, zones);
+			} else {
+				Set<String> zonesAdded = authorityService.getAuthorityZones(PermissionService.GROUP_PREFIX + group);
+				Set<String> zonesToAdd = new HashSet<String>();
+				for (String zone : zones)
+					if (!zonesAdded.contains(zone)) {
 						zonesToAdd.add(zone);
 					}
-				
-				if(zonesToAdd.size() > 0){
+
+				if (zonesToAdd.size() > 0) {
 					logger.debug("Add group to zone: " + groupName + " - " + zonesToAdd.toString());
 					authorityService.addAuthorityToZones(PermissionService.GROUP_PREFIX + group, zonesToAdd);
 				}
 			}
 		}
+
+		// Group hierarchy
+		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
+				PermissionService.GROUP_PREFIX + SystemGroup.RD.toString(), true);
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.RDMgr.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.RD.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.RDMgr.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.RDUser.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.RD.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.RDUser.toString());
+
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
+				+ SystemGroup.Quality.toString(), true);
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.QualityMgr.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Quality.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.QualityMgr.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Quality.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString());
+
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
+				+ SystemGroup.Purchasing.toString(), true);
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.PurchasingMgr.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Purchasing.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.PurchasingMgr.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.PurchasingUser.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Purchasing.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.PurchasingUser.toString());
+		//NPD
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
+				+ NPDGroup.NPD.toString(), true);
 		
-		//Group hierarchy
-		Set<String>authorities =  authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + SystemGroup.RD.toString(), true);
-		if(!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.RDMgr.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.RD.toString(), PermissionService.GROUP_PREFIX + SystemGroup.RDMgr.toString());
-		if(!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.RDUser.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.RD.toString(), PermissionService.GROUP_PREFIX + SystemGroup.RDUser.toString());
-		
-		authorities =  authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + SystemGroup.Quality.toString(), true);
-		if(!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.QualityMgr.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Quality.toString(), PermissionService.GROUP_PREFIX + SystemGroup.QualityMgr.toString());
-		if(!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Quality.toString(), PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString());
-		
-		authorities =  authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + SystemGroup.Purchasing.toString(), true);
-		if(!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.PurchasingMgr.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Purchasing.toString(), PermissionService.GROUP_PREFIX + SystemGroup.PurchasingMgr.toString());
-		if(!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.PurchasingUser.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Purchasing.toString(), PermissionService.GROUP_PREFIX + SystemGroup.PurchasingUser.toString());
+		for(String group : new String[]{NPDGroup.MarketingBrief.toString(),
+				NPDGroup.NeedDefinition.toString(), NPDGroup.ValidateNeedDefinition.toString(),
+				NPDGroup.DoPrototype.toString(), NPDGroup.StartProduction.toString(),
+				NPDGroup.ValidateFaisability.toString() ,NPDGroup.PackagingAssigners.toString(),NPDGroup.RecipeAssigners.toString()}){
+			if (!authorities.contains(PermissionService.GROUP_PREFIX + group))
+				authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.NPD.toString(),
+						PermissionService.GROUP_PREFIX + group);
 			
+		}
+		
 	}
-	
+
 }

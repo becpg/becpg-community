@@ -3,7 +3,7 @@
 <#if field.control.params.style?exists><#assign style=field.control.params.style><#else><#assign style='width:30em;'></#if>
 
 <div class="form-field">
-   <#if form.mode == "view">
+   <#if form.mode == "view" || field.disabled >
       <div class="viewmode-field">
          <#if field.mandatory && !(field.value?is_number) && field.value == "">
             <span class="incomplete-warning"><img src="${url.context}/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
@@ -26,7 +26,7 @@
                 <#if field.description?exists>title="${field.description}"</#if>
                 <#if field.control.params.maxLength?exists>maxlength="${field.control.params.maxLength}"</#if> 
                 <#if field.control.params.size?exists>size="${field.control.params.size}"</#if> 
-                <#if field.disabled>disabled="true"</#if> class="yui-ac-input"  />
+                 class="yui-ac-input"  />
                  <span class="clear" ></span>
          </div>
          <div id="${fieldHtmlId}-container"></div>
@@ -42,6 +42,7 @@
    {
  		currentValue: "${field.value}",
  		mode: "${form.mode}",
+ 		readOnly : ${field.disabled?string},
         multipleSelectMode: false, 
         isMandatory : ${field.mandatory?string},
  		dsStr:"${ds}"

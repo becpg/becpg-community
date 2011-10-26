@@ -35,6 +35,7 @@
                   <item type="link" id="my-content">/user/user-content</item>
                   <item type="link" id="my-sites">/user/user-sites</item>
                   <item type="link" id="my-profile">{userprofilepage}</item>
+                   <item type="link" id="npd-list">/npd-list</item>
                   <item type="js" id="saved-searches" condition="false">Alfresco.module.SavedSearches</item>
                </container-group>
                <container-group id="tools" permission="admin">
@@ -43,6 +44,7 @@
                   <item type="link" id="replication-jobs">/console/admin-console/replication-jobs</item>
                   <item type="link" id="repository">/console/admin-console/repository</item>
                   <item type="link" id="users">/console/admin-console/users</item>
+                 
                   <item type="link" id="becpg-admin">/console/admin-console/becpg-admin</item>
                </container-group>
             </item>

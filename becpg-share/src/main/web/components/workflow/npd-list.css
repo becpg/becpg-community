@@ -1,0 +1,220 @@
+.npd-list
+{
+   clear: both;
+}
+
+/* npd-list bar */
+
+.npd-list .npd-list-bar
+{
+   background-color: #f8f8f8;
+   border-bottom: 1px dashed #c0c0c0;
+   margin: 0 -10px;
+   padding: 4px 0.5em 2px;
+}
+
+.npd-list .npd-list-bar-bottom
+{
+   border-top: 1px dashed #d9d9d9;
+   margin-top: 2em;
+   display: none;
+}
+
+.npd-list span.separator
+{
+   border-right: 1px dotted #457A9C;
+   border-top: medium none;
+   margin: 0 4px;
+   padding: 2px 0;
+   position: relative;
+   top: -4px;
+   vertical-align: bottom;
+}
+
+/* npd-list bar Buttons and Paginator */
+
+.npd-list .npd-list-bar .thin,
+.npd-list .npd-list-bar .paginator
+{
+   padding: 4px 1em;
+   margin: 0;
+}
+
+.npd-list .npd-list-bar .yui-u
+{
+   text-align: right;
+}
+
+.npd-list .npd-list-bar .yui-u.first
+{
+   text-align: left;
+}
+
+.npd-list .npd-list-bar .yui-pg-current
+{
+   margin-right: 0;
+}
+
+/* Data Table */
+
+.npd-list .workflows table
+{
+   border: medium none;
+   width: 100%;
+}
+
+.npd-list .workflows thead
+{
+   display: none;
+}
+
+.npd-list .workflows tbody
+{
+   outline: none;
+}
+
+.npd-list .workflows .yui-dt table
+{
+   border: none;
+}
+
+.npd-list tr.yui-dt-odd
+{
+   background-color: #ffffff;
+}
+
+.npd-list .workflows td.yui-dt-last .yui-dt-liner
+{
+   visibility: hidden;
+}
+
+.npd-list .workflows tr:hover td.yui-dt-last .yui-dt-liner
+{
+   border-left: 1px solid #c5e6e9;
+   visibility: visible;
+}
+
+/*
+.npd-list .workflows tr.yui-dt-highlighted td.yui-dt-last .yui-dt-liner
+{
+   border-left: 1px solid #c5e6e9;
+   visibility: visible;
+}
+*/
+
+.npd-list .workflows .yui-dt-data td
+{
+   border-bottom: 1px dashed #d9d9d9;
+   border-right: medium none;
+   vertical-align: top;
+}
+
+.npd-list .workflows .yui-dt-data .yui-dt-last td
+{
+   border-bottom: medium none;
+}
+
+.npd-list .workflows tr.yui-dt-first td
+{
+   border-top: medium none;
+}
+
+.npd-list .workflows td.yui-dt-last
+{
+   border-left: 1px solid #fff;
+   vertical-align: middle;
+}
+
+.npd-list .yui-dt-liner
+{
+   padding: 4px;
+}
+
+.npd-list .workflows tr.yui-dt-first td.yui-dt-empty,
+.npd-list .workflows tr.yui-dt-first td.yui-dt-loading
+{
+   border-right: medium none;
+   padding: 0.5em 1em;
+}
+
+.npd-list .yui-dt-error
+{
+   background: red;
+   color: white;
+   font-weight: bold;
+   margin: 1em auto;
+   padding: 1em;
+}
+
+/* This rule is vital to workaround a Firefox mouseout bug */
+
+.npd-list .yui-dt-col-2
+{
+   overflow: visible;
+}
+
+/* Cell Renderers */
+
+.npd-list .workflows
+{
+   color: #333333;
+   margin: 0 -10px 0 -8px;
+}
+
+.npd-list .workflows .yui-dt-col-id .yui-dt-liner
+{
+   padding: 0.5em 1em;
+   text-align: center;
+}
+
+.npd-list .workflows .yui-dt-col-title .yui-dt-liner div
+{
+   float: left;
+   margin-top: 0.5em;
+   min-width: 15em;
+}
+
+.npd-list .workflows .yui-dt-col-title .yui-dt-liner div.type
+{
+   clear: both;
+   margin-bottom: 0.5em;
+}
+
+.npd-list .npd-cancel-link,
+.npd-list .npd-view-link
+{
+   background: no-repeat scroll 4px 1px;
+   border: 1px solid transparent;
+   padding: 2px 0 2px 30px;
+   min-height: 16px;
+}
+
+.npd-list .npd-cancel-link
+{
+   background-image: url( ../images/remove-icon-16.png );
+}
+
+.npd-list .npd-view-link
+{
+   background-image: url( ../images/npd-16.png );
+}
+
+.npd-list .npd-cancel-link a,
+.npd-list .npd-view-link a
+{
+   min-height: 2em;
+   cursor: pointer;
+   color: #2B6EB5;
+   outline-color: invert;
+   outline-width: medium;
+   text-decoration: none;
+}
+
+
+.npd-list .npd-cancel-link-over,
+.npd-list .npd-view-link-over
+{
+   background-color: #FFF;
+   border: 1px solid #2B6EB5;
+   cursor: pointer;   
+}

@@ -1400,6 +1400,34 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:profitabilityAspect">
+			<properties>
+				<property name="bcpg:unitPrice">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:priceCurrency">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:currency" />
+					</constraints>
+				</property>
+				<property name="bcpg:breakEven">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:unitTotalCost">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:profitability">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+		</aspect>
 
 		<!-- Aspect used to store the entity type of the template (entityFolderTpl, 
 			entityTpl, etc...) -->

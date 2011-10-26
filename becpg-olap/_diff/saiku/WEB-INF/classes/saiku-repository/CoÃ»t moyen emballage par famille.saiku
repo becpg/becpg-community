@@ -26,7 +26,7 @@
         <Dimensions>
           <Dimension name="Type de coût" hierarchizeMode="PRE" hierarchyConsistent="true">
             <Inclusions>
-              <Selection dimension="Type de coût" type="member" node="[Type de côut].[Coût Emb]" operator="MEMBER" />
+              <Selection dimension="Type de coût" type="member" node="[Type de coût].[Coût Emb]" operator="MEMBER" />
             </Inclusions>
             <Exclusions />
           </Dimension>
@@ -38,6 +38,6 @@
 NON EMPTY {Hierarchize({[Measures].[Moyenne des coûts]})} ON COLUMNS,
 NON EMPTY {Hierarchize({[Produits.Produit par famille].[Famille].Members})} ON ROWS
 FROM [Analyse des coûts]
-WHERE {Hierarchize({[Type de côut].[Coût Emb]})}</MDX>
+WHERE {Hierarchize({[Type de coût].[Coût Emb]})}</MDX>
 </Query>
 

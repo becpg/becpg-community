@@ -619,5 +619,20 @@ public class ProductData implements ProductElement {
 	@Override
 	public void accept(ProductVisitor productVisitor) throws FormulateException {
 		this.accept(productVisitor);
+	}
+
+	@Override
+	public String toString() {
+		return "ProductData [nodeRef=" + nodeRef + ", versionLabel=" + versionLabel + ", hierarchy1=" + hierarchy1
+				+ ", hierarchy2=" + hierarchy2 + ", name=" + name + ", legalName=" + legalName + ", title=" + title
+				+ ", state=" + state + ", qty=" + qty + ", unit=" + unit + ", density=" + density + ", listsContainer="
+				+ listsContainer + ", allergenList=" + allergenList + ", compoList=" + compoList + ", costList="
+				+ costList + ", costDetailsList=" + costDetailsList + ", ingList=" + ingList + ", nutList=" + nutList
+				+ ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList + ", microbioList="
+				+ microbioList + ", physicoChemList=" + physicoChemList + ", packagingList=" + packagingList
+				+ ", forbiddenIngList=" + forbiddenIngList + ", reqCtrlList=" + reqCtrlList + "]";
 	}	
+	
+	
+	
 }

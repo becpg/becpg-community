@@ -1,13 +1,19 @@
 package fr.becpg.repo.entity.impl;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.LimitBy;
@@ -15,6 +21,7 @@ import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
 import org.alfresco.util.ISO8601DateFormat;
@@ -61,8 +68,17 @@ public class EntityServiceImpl implements EntityService {
 	
 	private EntityVersionService entityVersionService;
 	
+	private BehaviourFilter policyBehaviourFilter;
+	
+	private CopyService copyService;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+	
+	
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
@@ -85,6 +101,10 @@ public class EntityServiceImpl implements EntityService {
 		this.entityTplService = entityTplService;
 	}
 
+
+	public void setCopyService(CopyService copyService) {
+		this.copyService = copyService;
+	}
 
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
@@ -309,6 +329,46 @@ public class EntityServiceImpl implements EntityService {
 	public void deleteEntity(NodeRef entityNodeRef) {
 		logger.debug("delete entity");
 		entityVersionService.deleteVersionHistory(entityNodeRef);
+	}
+
+	@Override
+	public NodeRef createOrCopyFrom(final NodeRef parentNodeRef, final NodeRef sourceNodeRef, QName entityType, final String entityName) {
+		NodeRef ret = null;
+		Map<QName,Serializable> props = new HashMap<QName, Serializable>();
+		props.put(ContentModel.PROP_NAME, entityName);
+		
+		if(sourceNodeRef!=null && nodeService.exists(sourceNodeRef)){
+			logger.debug("Copy existing entity");
+			
+				policyBehaviourFilter.disableAllBehaviours();
+			try {
+				ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
+					@Override
+					public NodeRef doWork() throws Exception {
+						NodeRef ret =
+						 copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS,
+								ContentModel.ASSOC_CHILDREN, true);
+						
+						nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
+						initializeEntity(ret);
+						initializeEntityFolder(ret);
+						return ret;
+					}
+				}, AuthenticationUtil.getSystemUserName());
+			
+			} finally {
+				policyBehaviourFilter.enableAllBehaviours();
+			}
+		
+			 
+		} else {
+			logger.debug("Create new entity");
+			 ret = 
+					nodeService.createNode(parentNodeRef,
+							ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, entityName), entityType, props).getChildRef();		
+		}
+		return ret;
 	}
 	
 

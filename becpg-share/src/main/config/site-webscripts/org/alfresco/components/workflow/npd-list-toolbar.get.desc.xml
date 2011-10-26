@@ -1,0 +1,5 @@
+<webscript>
+   <shortname>NPD List Toolbar</shortname>
+   <description>Toolbar for the npd list</description>
+   <url>/components/workflow/npd-list-toolbar</url>
+</webscript>
