@@ -57,23 +57,24 @@
 
 /* Data Table */
 
-.npd-list .workflows table
+.npd-list .npds table
 {
    border: medium none;
    width: 100%;
 }
-
-.npd-list .workflows thead
+/* 
+.npd-list .npds thead
 {
    display: none;
-}
+} 
+*/
 
-.npd-list .workflows tbody
+.npd-list .npds tbody
 {
    outline: none;
 }
 
-.npd-list .workflows .yui-dt table
+.npd-list .npds .yui-dt table
 {
    border: none;
 }
@@ -83,43 +84,43 @@
    background-color: #ffffff;
 }
 
-.npd-list .workflows td.yui-dt-last .yui-dt-liner
+.npd-list .npds td.yui-dt-last .yui-dt-liner
 {
    visibility: hidden;
 }
 
-.npd-list .workflows tr:hover td.yui-dt-last .yui-dt-liner
+.npd-list .npds tr:hover td.yui-dt-last .yui-dt-liner
 {
    border-left: 1px solid #c5e6e9;
    visibility: visible;
 }
 
 /*
-.npd-list .workflows tr.yui-dt-highlighted td.yui-dt-last .yui-dt-liner
+.npd-list .npds tr.yui-dt-highlighted td.yui-dt-last .yui-dt-liner
 {
    border-left: 1px solid #c5e6e9;
    visibility: visible;
 }
 */
 
-.npd-list .workflows .yui-dt-data td
+.npd-list .npds .yui-dt-data td
 {
    border-bottom: 1px dashed #d9d9d9;
    border-right: medium none;
    vertical-align: top;
 }
 
-.npd-list .workflows .yui-dt-data .yui-dt-last td
+.npd-list .npds .yui-dt-data .yui-dt-last td
 {
    border-bottom: medium none;
 }
 
-.npd-list .workflows tr.yui-dt-first td
+.npd-list .npds tr.yui-dt-first td
 {
    border-top: medium none;
 }
 
-.npd-list .workflows td.yui-dt-last
+.npd-list .npds td.yui-dt-last
 {
    border-left: 1px solid #fff;
    vertical-align: middle;
@@ -130,8 +131,8 @@
    padding: 4px;
 }
 
-.npd-list .workflows tr.yui-dt-first td.yui-dt-empty,
-.npd-list .workflows tr.yui-dt-first td.yui-dt-loading
+.npd-list .npds tr.yui-dt-first td.yui-dt-empty,
+.npd-list .npds tr.yui-dt-first td.yui-dt-loading
 {
    border-right: medium none;
    padding: 0.5em 1em;
@@ -155,26 +156,26 @@
 
 /* Cell Renderers */
 
-.npd-list .workflows
+.npd-list .npds
 {
    color: #333333;
    margin: 0 -10px 0 -8px;
 }
 
-.npd-list .workflows .yui-dt-col-id .yui-dt-liner
+.npd-list .npds .yui-dt-col-id .yui-dt-liner
 {
    padding: 0.5em 1em;
    text-align: center;
 }
 
-.npd-list .workflows .yui-dt-col-title .yui-dt-liner div
+.npd-list .npds .yui-dt-col-title .yui-dt-liner div
 {
    float: left;
    margin-top: 0.5em;
    min-width: 15em;
 }
 
-.npd-list .workflows .yui-dt-col-title .yui-dt-liner div.type
+.npd-list .npds .yui-dt-col-title .yui-dt-liner div.type
 {
    clear: both;
    margin-bottom: 0.5em;
@@ -196,7 +197,7 @@
 
 .npd-list .npd-view-link
 {
-   background-image: url( ../images/npd-16.png );
+   background-image: url( ../images/workflow-16.png );
 }
 
 .npd-list .npd-cancel-link a,

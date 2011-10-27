@@ -127,7 +127,7 @@
    	
    	  <!-- Retrieves all npd instances. -->
     <bean id="webscript.fr.becpg.workflow.npd-instances.get"
-          class="org.alfresco.repo.web.scripts.workflow.WorkflowInstancesGet"
+          class="fr.becpg.repo.web.scripts.workflow.NpdInstancesGet"
           parent="webscript">
      	 <property name="namespaceService" ref="NamespaceService" />
         <property name="nodeService" ref="NodeService" />

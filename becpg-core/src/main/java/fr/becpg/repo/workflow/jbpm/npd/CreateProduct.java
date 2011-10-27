@@ -149,7 +149,7 @@ public class CreateProduct extends JBPMSpringActionHandler {
 					
 					//Delete existing clients
 					for( AssociationRef clientAssoc : nodeService.getTargetAssocs(productNodeRef, BeCPGModel.ASSOC_CLIENTS)){
-						nodeService.removeAssociation( productNodeRef, clientAssoc.getSourceRef(), BeCPGModel.ASSOC_CLIENTS);
+						nodeService.removeAssociation( productNodeRef, clientAssoc.getTargetRef(), BeCPGModel.ASSOC_CLIENTS);
 					}
 					
 					
@@ -192,8 +192,8 @@ public class CreateProduct extends JBPMSpringActionHandler {
 					for (FileInfo file : files) {
 						String name = (String) nodeService.getProperty(file.getNodeRef(), ContentModel.PROP_NAME);
 						if (briefNodeRef != null) {
-							fileFolderService.move(file.getNodeRef(), briefNodeRef, name)
-									.getNodeRef();
+							fileFolderService.move(file.getNodeRef(), briefNodeRef, name);
+							nodeService.removeChild(pkgNodeRef, file.getNodeRef());
 						} else {
 							logger.error("No brief folder found");
 							break;
@@ -219,12 +219,9 @@ public class CreateProduct extends JBPMSpringActionHandler {
 
 			private NodeRef getBriefNodeRef(NodeRef productNodeRef) {
 				
-				
 				NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(productNodeRef).getParentRef();
-				logger.debug(nodeService.getProperty(parentEntityNodeRef,ContentModel.PROP_NAME));
 				
 				for (FileInfo file : fileFolderService.listFolders(parentEntityNodeRef)) {
-					logger.debug(file.getName());
 					if (file.getName().equals(TranslateHelper.getTranslatedPath(RepoConsts.PATH_BRIEF))) {
 						return file.getNodeRef();
 					}

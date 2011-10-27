@@ -138,15 +138,16 @@
 //                 Com	Date Réception Fiche	N° Demande	Date Mise à disposition	Reseau	France / Export	CLIENT	Résumé de l'offre	Etat	Commentaire	Date Dernière Modification	Active	Mois																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																			
 
                [
-                  { key: "id", sortable: false, formatter: this.bind(this.renderCellIcons), width: 40 },
-                  { key: "npdType", sortable: false, formatter: this.bind(this.renderNpdType) },
-                  { key: "npdStatus", sortable: false, formatter: this.bind(this.renderNpdStatus) },
-                  { key: "npdProductName", sortable: false, formatter: this.bind(this.renderNpdProductName) },
-                  { key: "npdNumber", sortable: false, formatter: this.bind(this.renderNpdNumber) },
-                  { key: "title", sortable: false, formatter: this.bind(this.renderTitle) },
-                  { key: "startedDate",label:this.msg("label.started")  ,sortable: false, formatter: this.bind(this.renderStartedDate) },
-                  { key: "dueDate",label:this.msg("label.due") , sortable: false, formatter: this.bind(this.renderDueDate) }, 
-                  { key: "actions", sortable: false, formatter: this.bind(this.renderCellActions), width: 200 }
+                  { key: "id", label:"" ,sortable: false, formatter: this.bind(this.renderCellIcons), width: 20 },
+                  { key: "npdType", label:this.msg("label.npdType"), sortable: false, formatter: this.bind(this.renderNpdType) },
+                  { key: "npdStatus",  label:this.msg("label.npdStatus"),sortable: false, formatter: this.bind(this.renderNpdStatus) },
+                  { key: "npdProductName",  label:this.msg("label.npdProductName"),sortable: false, formatter: this.bind(this.renderNpdProductName) },
+                  { key: "npdNumber",  label:this.msg("label.npdNumber"),sortable: false, formatter: this.bind(this.renderNpdNumber) },
+                  { key: "description",  label:this.msg("label.npdDescription"),sortable: false, formatter: this.bind(this.renderTitle) },
+                  { key: "startedDate", label:this.msg("label.started")  ,sortable: false, formatter: this.bind(this.renderStartedDate) },
+                  { key: "dueDate", label:this.msg("label.due") , sortable: false, formatter: this.bind(this.renderDueDate) }, 
+                  { key: "npdComments", label:this.msg("label.npdComments") , sortable: false, formatter: this.bind(this.renderComments) }, 
+                  { key: "actions", label:this.msg("label.actions"), sortable: false, formatter: this.bind(this.renderCellActions), width: 200 }
                ],
                config:
                {
@@ -235,28 +236,40 @@
          {
             message = this.msg("workflow.no_message");
          }
-         elCell.innerHTML = '<h3><a href="' + $siteURL('workflow-details?workflowId=' + workflow.id + '&referrer=workflows&myWorkflowsLinkBack=true') + '" class="theme-color-1" title="' + this.msg("link.viewWorkflow") + '">' + $html(message) + '</a></h3>';
+         elCell.innerHTML = message;
       },
       
       renderNpdNumber: function NPDL_renderNpdNumber(elCell, oRecord, oColumn, oData)
       {
     	 var workflow = oRecord.getData();
-         elCell.innerHTML = (workflow.npdNumber? workflow.npdNumber :this.msg("label.none"));
+    	 var npdNumber = workflow.tasks[0].properties.npdwf_npdNumber;
+    	 
+         elCell.innerHTML = (npdNumber? npdNumber :this.msg("label.none"));
       },
       renderNpdProductName: function NPDL_renderNpdProductName(elCell, oRecord, oColumn, oData)
       {
     	 var workflow = oRecord.getData();
-         elCell.innerHTML = (workflow.npdProductName? workflow.npdProductName :this.msg("label.none"));
+    	 var npdProductName = workflow.tasks[0].properties.npdwf_npdProductName;
+         elCell.innerHTML = (npdProductName? npdProductName :this.msg("label.none"));
       },
       renderNpdStatus: function NPDL_renderNpdStatus(elCell, oRecord, oColumn, oData)
       {
     	 var workflow = oRecord.getData();
-         elCell.innerHTML = (workflow.npdStatus ? workflow.npdStatus  :this.msg("label.none"));
+    	 var npdStatus = workflow.tasks[0].properties.npdwf_npdStatus;
+         elCell.innerHTML = (npdStatus ? npdStatus  :this.msg("label.none"));
       },
       renderNpdType: function NPDL_renderNpdType(elCell, oRecord, oColumn, oData)
       {
     	 var workflow = oRecord.getData();
-         elCell.innerHTML = (workflow.npdType?workflow.npdType : this.msg("label.none"));
+    	 var npdType = (workflow.tasks[0].properties.npdwf_npdType ? workflow.tasks[0].properties.npdwf_npdType : this.msg("label.none"));
+    	 
+         elCell.innerHTML = '<a href="' + $siteURL('workflow-details?workflowId=' + workflow.id + '&referrer=workflows&myWorkflowsLinkBack=true') + '" class="theme-color-1" title="' + this.msg("link.viewWorkflow") + '">' + $html(npdType) + '</a>';
+      },
+      renderComments: function NPDL_renderComments(elCell, oRecord, oColumn, oData)
+      {
+    	 var workflow = oRecord.getData();
+    	 var npdComments = workflow.tasks[0].properties.bpm_comment;
+         elCell.innerHTML = (npdComments ? npdComments : this.msg("label.none"));
       },
       renderDueDate: function NPDL_renderDueDate(elCell, oRecord, oColumn, oData)
       {
@@ -283,8 +296,8 @@
       renderCellActions: function NPDL_renderCellActions(elCell, oRecord, oColumn, oData)
       {
          // Create actions using WorkflowAction
-         this.createAction(elCell, this.msg("link.viewWorkflow"), "workflow-view-link", $siteURL('workflow-details?workflowId=' + oRecord.getData('id') + '&referrer=workflows&myWorkflowsLinkBack=true'));
-         this.createAction(elCell, this.msg("link.cancelWorkflow"), "workflow-cancel-link", function(event, oRecord)
+         this.createAction(elCell, this.msg("link.viewWorkflow"), "npd-view-link", $siteURL('workflow-details?workflowId=' + oRecord.getData('id') + '&referrer=workflows&myWorkflowsLinkBack=true'));
+         this.createAction(elCell, this.msg("link.cancelWorkflow"), "npd-cancel-link", function(event, oRecord)
          {
             this.cancelWorkflow(oRecord.getData("id"), oRecord.getData("message"));
             Event.preventDefault(event);
