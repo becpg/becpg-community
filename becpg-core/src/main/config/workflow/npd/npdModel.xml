@@ -118,6 +118,20 @@
 				<aspect>npdwf:needDefinitionProductAspect</aspect>
 				<aspect>npdwf:packagingDescriptionAspect</aspect>
 				<aspect>npdwf:recipeDescriptionAspect</aspect>
+				<aspect>bpm:groupAssignees</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		
+		<type name="npdwf:feasibility-analysis-assignement">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>
+				<aspect>bpm:assignees</aspect>
 			</mandatory-aspects>
 		</type>
 		
@@ -131,55 +145,29 @@
 			</overrides>
 		</type>
 		
-		
-		<type name="npdwf:feasibility-analysis-recipe-assignement">
-			<parent>npdwf:feasibility-analysis</parent>
-			<mandatory-aspects>
-				<aspect>bpm:assignees</aspect>
-			</mandatory-aspects>
-		</type>
-		
-		
-		<type name="npdwf:feasibility-analysis-recipe">
-			<parent>npdwf:feasibility-analysis</parent>
-		</type>
-		
-		
-		<type name="npdwf:feasibility-analysis-packaging-assignement">
-			<parent>npdwf:feasibility-analysis</parent>
-			<mandatory-aspects>
-				<aspect>bpm:assignees</aspect>
-			</mandatory-aspects>
-		</type>
-		
-		
-		<type name="npdwf:feasibility-analysis-packaging">
-			<parent>npdwf:feasibility-analysis</parent>
-		</type>
-		
-		
-		<type name="npdwf:feasibility-analysis-quality">
-			<parent>npdwf:feasibility-analysis</parent>
-			<properties>
-			   <property name="npdwf:qualityDLC">
-					<type>d:text</type>
-				</property>
-				 <property name="npdwf:qualityAuditCost">
-					<type>d:text</type>
-				</property>
-				 <property name="npdwf:qualityCertificate">
-					<type>d:text</type>
-				</property>
-			</properties>
-		</type>
-		
-		
+
 		<type name="npdwf:validate-analysis">
-			<parent>npdwf:feasibility-analysis</parent>
-			 <mandatory-aspects>
-				<aspect>npdwf:npdAspect</aspect>
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>
+				<aspect>bpm:groupAssignees</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		
+		<type name="npdwf:send-client-offer">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+		</type>
+		
 		
 		<type name="npdwf:work-on-prototype">
 			<parent>bpm:workflowTask</parent>
@@ -287,6 +275,9 @@
 				<property name="npdwf:npdProductName">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<constraints>
+	                  <constraint ref="cm:filename" />
+	               </constraints>
 				</property>
 				<property name="npdwf:npdNumber">
 					<type>d:text</type>

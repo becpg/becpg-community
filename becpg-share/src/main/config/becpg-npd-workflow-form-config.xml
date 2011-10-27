@@ -267,6 +267,7 @@
 			   <show id="npdwf:needDefinitionPackagingKit" />
 			   <show id="npdwf:needDefinitionRecipeProduct" />
 			   <show id="npdwf:needDefinitionProduct" />
+			   <show id="bpm:groupAssignees" />
                <show id="message" />
                <show id="taskOwner" />
                <show id="bpm:priority" />
@@ -320,6 +321,7 @@
                <field id="bpm:dueDate" set="info" label-id="workflow.field.due">
                   <control template="/org/alfresco/components/form/controls/info.ftl" />
                </field>
+               <field id="bpm:groupAssignees" set="progress" label="Services assignés à l'analyse de faisabilité" />
                <field id="bpm:status" set="progress" />
                <field id="bpm:comment" label-id="workflow.field.comment" set="progress">
                   <control template="/org/alfresco/components/form/controls/textarea.ftl" />
@@ -331,7 +333,7 @@
 		</forms>
 	</config>
 	
-	<config evaluator="task-type" condition="npdwf:feasibility-analysis-recipe-assignement">
+	<config evaluator="task-type" condition="npdwf:feasibility-analysis-assignement">
 		<forms>			
 			<form>
             <field-visibility>
@@ -352,7 +354,7 @@
 	</config>
 	
 	
-	<config evaluator="task-type" condition="npdwf:feasibility-analysis-recipe">
+	<config evaluator="task-type" condition="npdwf:feasibility-analysis">
 		<forms>			
 			<form>
             <field-visibility>
@@ -376,105 +378,8 @@
 	
 	
 	
-	<config evaluator="task-type" condition="npdwf:feasibility-analysis-packaging-assignement">
-		<forms>			
-			<form>
-            <field-visibility>
-               <show id="bpm:comment" />
-               <show id="bpm:assignees" />
-               <show id="transitions" />
-            </field-visibility>
-            <appearance>
-               <set id="info" appearance="" />
-               <field id="bpm:assignees" set="info" label="Assigner à" />
-               <field id="bpm:comment" label-id="workflow.field.comment" set="info">
-                  <control template="/org/alfresco/components/form/controls/textarea.ftl" />
-               </field>
-               <field id="transitions" set="info" />
-            </appearance>
-			</form>
-		</forms>
-	</config>
 	
-	<config evaluator="task-type" condition="npdwf:feasibility-analysis-packaging">
-		<forms>			
-			<form>
-            <field-visibility>
-               <show id="bpm:status" />
-               <show id="bpm:comment" />
-               <show id="packageItems" />
-               <show id="transitions" />
-            </field-visibility>
-            <appearance>
-               <set id="info" appearance="" />
-               <field id="bpm:status" set="info" />
-               <field id="bpm:comment" label-id="workflow.field.comment" set="info">
-                  <control template="/org/alfresco/components/form/controls/textarea.ftl" />
-               </field>
-                <field id="packageItems" set="info" label="Produit" />
-               <field id="transitions" set="info" />
-            </appearance>
-			</form>
-		</forms>
-	</config>
-	
-	
-	
-	<config evaluator="task-type" condition="npdwf:feasibility-analysis-quality">
-		<forms>			
-			<form>
-            <field-visibility>
-               <show id="npdwf:qualityDLC" />
-			   <show id="npdwf:qualityCertificate" />
-			   <show id="npdwf:qualityAuditCost" />
-               <show id="message" />
-               <show id="taskOwner" />
-               <show id="bpm:dueDate" />
-               <show id="bpm:taskId" />
-               <show id="bpm:status" />
-               <show id="bpm:comment" />
-               <show id="transitions" />
-                <show id="packageItems" />
-            </field-visibility>
-            <appearance>
-               <set id="" appearance="title" label-id="workflow.set.task.info" />
-               <set id="info" appearance="" template="/org/alfresco/components/form/3-column-set.ftl" />
-               <set id="quality" appearance="title"  label="Qualité" />
-               <set id="packagingKit" appearance="title"  label="Packaging" />
-               <set id="recipe" appearance="title"  label="Recette" />
-               <set id="progress" appearance="title" label-id="workflow.set.task.progress" />
-			   <set id="items" appearance="title" label-id="workflow.set.items" />
-				
- 				<field id="npdwf:qualityDLC" set="quality" label="DLC" />
- 				<field id="npdwf:qualityCertificate" set="quality" label="Certificats" />
- 				<field id="npdwf:qualityAuditCost" set="quality" label="Coût audit" />
- 				
-               <field id="message">
-                  <control template="/org/alfresco/components/form/controls/info.ftl" />
-               </field>
-               <field id="taskOwner" set="info" />
-               <field id="bpm:taskId" set="info">
-                  <control template="/org/alfresco/components/form/controls/info.ftl" />
-               </field>
-               <field id="bpm:priority" set="info" read-only="true">
-                  <control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
-               </field>
-               <field id="bpm:dueDate" set="info" label-id="workflow.field.due">
-                  <control template="/org/alfresco/components/form/controls/info.ftl" />
-               </field>
-               <field id="bpm:status" set="progress" />
-               <field id="bpm:comment" label-id="workflow.field.comment" set="progress">
-                  <control template="/org/alfresco/components/form/controls/textarea.ftl" />
-               </field>
-               <field id="packageItems" set="items" label="Produit"  />
-               <field id="transitions" set="items" />
-               
-            </appearance>
-			</form>
-		</forms>
-	</config>
-	
-	<config evaluator="task-type" condition="npdwf:feasibility-analysis">
+	<config evaluator="task-type" condition="npdwf:send-client-offer">
 		<forms>			
 			<form>
             <field-visibility>
@@ -531,7 +436,7 @@
                <show id="packageItems" />
                <show id="bpm:comment" />
                <show id="transitions" />
-               <show id="npdwf:npdStatus" />
+               <show id="bpm:groupAssignees" />
             </field-visibility>
             <appearance>
                <set id="" appearance="title" label-id="workflow.set.task.info" />
@@ -549,11 +454,7 @@
                <field id="bpm:dueDate" set="info" label-id="workflow.field.due">
                   <control template="/org/alfresco/components/form/controls/info.ftl" />
                </field>
-               <field id="npdwf:npdStatus" set="progress" >
-               	  <control template="/org/alfresco/components/form/controls/selectone.ftl">
-               	    <control-param name="options">Faisabilité en  cours,Offre client,Standby</control-param>
-               	  </control>
-               </field>
+               <field id="bpm:groupAssignees" set="progress" label="Services assignés à l'analyse de faisabilité" />
                <field id="bpm:status" set="progress" />
                <field id="packageItems" set="items" />
                <field id="bpm:comment" label-id="workflow.field.comment" set="response">

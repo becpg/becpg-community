@@ -18,7 +18,6 @@ public enum NPDGroup {
 	DoPrototype,
 	StartProduction,
 	ValidateFaisability,
-	RecipeAssigners,
-	PackagingAssigners
+	FaisabilityAssignersGroup,
 
 }

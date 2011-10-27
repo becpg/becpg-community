@@ -822,7 +822,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				NPDGroup.NeedDefinition.toString(), NPDGroup.ValidateNeedDefinition.toString(),
 				NPDGroup.DoPrototype.toString(), NPDGroup.StartProduction.toString(),
 				NPDGroup.ValidateFaisability.toString() 
-				,NPDGroup.PackagingAssigners.toString(),NPDGroup.RecipeAssigners.toString()};
+				,NPDGroup.FaisabilityAssignersGroup.toString()};
 
 		Set<String> zones = new HashSet<String>();
 		zones.add(AuthorityService.ZONE_APP_DEFAULT);
@@ -886,9 +886,16 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		for(String group : new String[]{NPDGroup.MarketingBrief.toString(),
 				NPDGroup.NeedDefinition.toString(), NPDGroup.ValidateNeedDefinition.toString(),
 				NPDGroup.DoPrototype.toString(), NPDGroup.StartProduction.toString(),
-				NPDGroup.ValidateFaisability.toString() ,NPDGroup.PackagingAssigners.toString(),NPDGroup.RecipeAssigners.toString()}){
+				NPDGroup.ValidateFaisability.toString() ,NPDGroup.FaisabilityAssignersGroup.toString()}){
 			if (!authorities.contains(PermissionService.GROUP_PREFIX + group))
 				authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.NPD.toString(),
+						PermissionService.GROUP_PREFIX + group);
+			
+		}
+		
+		for(String group : new String[]{SystemGroup.RDMgr.toString(),SystemGroup.QualityMgr.toString()}){
+			if (!authorities.contains(PermissionService.GROUP_PREFIX + group))
+				authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(),
 						PermissionService.GROUP_PREFIX + group);
 			
 		}

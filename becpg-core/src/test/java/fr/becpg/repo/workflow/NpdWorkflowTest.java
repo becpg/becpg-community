@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
@@ -23,6 +24,9 @@ import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.search.ResultSet;
+import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
@@ -43,9 +47,6 @@ import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
-
-import com.ibm.icu.impl.PropsVectors;
-import com.sun.jmx.remote.internal.ClientNotifForwarder;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.NPDModel;
@@ -78,7 +79,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 	protected static String[] groups = { NPDGroup.MarketingBrief.toString(), NPDGroup.NeedDefinition.toString(),
 			NPDGroup.ValidateNeedDefinition.toString(), NPDGroup.DoPrototype.toString(),
 			NPDGroup.StartProduction.toString(), NPDGroup.ValidateFaisability.toString(),
-			NPDGroup.PackagingAssigners.toString(), NPDGroup.RecipeAssigners.toString(),SystemGroup.Quality.toString() };
+			NPDGroup.FaisabilityAssignersGroup.toString() };
 
 	/** The PAT h_ testfolder. */
 	private static String PATH_TESTFOLDER = "NPDTestFolder";
@@ -106,6 +107,8 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 	private WorkflowService workflowService;
 
 	private DynPropsConstraint dynPropsConstraint;
+	
+	 private  SearchService searchService;
 	
 	private NodeRef productNodeRef;
 
@@ -263,7 +266,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		repositoryHelper = (Repository) appCtx.getBean("repositoryHelper");
 		
 		entityService = (EntityService) appCtx.getBean("entityService");
-
+		searchService = registry.getSearchService();
 		workflowService = registry.getWorkflowService();
 		 productDAO = (ProductDAO)appCtx.getBean("productDAO");
 	        productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
@@ -292,7 +295,13 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 				authorityService.createAuthority(AuthorityType.GROUP, group);
 			}
 		}
-
+		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
+				PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(), true);
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + NPDGroup.ValidateFaisability.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(),
+					PermissionService.GROUP_PREFIX + NPDGroup.ValidateFaisability.toString());
+		
+		
 		NodeRef userOne = this.personService.getPerson(USER_ONE);
 		if (userOne != null) {
 			this.personService.deletePerson(userOne);
@@ -307,9 +316,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.StartProduction.toString(),
 					USER_ONE);
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.DoPrototype.toString(), USER_ONE);
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.PackagingAssigners.toString(),
-					USER_ONE);
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.RecipeAssigners.toString(),
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(),
 					USER_ONE);
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.ValidateFaisability.toString(),
 					USER_ONE);
@@ -930,7 +937,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
 		
 		for (WorkflowTask task : workflowTasks) {
-			if ("npdwf:feasibility-analysis-recipe".equals(task.getName())) {
+			if ("npdwf:feasibility-analysis".equals(task.getName())) {
 //				List<NodeRef> contents = workflowService.getPackageContents(task.getId());
 //				assertTrue(contents.size()==1);
 //				assertEquals( "Test NPD Product", nodeService.getProperty(contents.get(0),ContentModel.PROP_NAME));
@@ -940,23 +947,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 				workflowService.endTask(task.getId(),null );
 			}
 
-			if ("npdwf:feasibility-analysis-packaging".equals(task.getName())) {
-
-//				List<NodeRef> contents = workflowService.getPackageContents(task.getId());
-//				assertTrue(contents.size()==1);
-//				assertEquals( "Test NPD Product", nodeService.getProperty(contents.get(0),ContentModel.PROP_NAME));
-				logger.debug("End task"+task.getName());
-				workflowService.endTask(task.getId(),null );
-			}
-
-			if ("npdwf:feasibility-analysis-quality".equals(task.getName())) {
-
-//				List<NodeRef> contents = workflowService.getPackageContents(task.getId());
-//				assertTrue(contents.size()==1);
-//				assertEquals( "Test NPD Product", nodeService.getProperty(contents.get(0),ContentModel.PROP_NAME));
-				logger.debug("End task"+task.getName());
-				workflowService.endTask(task.getId(),null );
-			}
 		}
 
 	}
@@ -976,22 +966,46 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		assocs.put(WorkflowModel.ASSOC_ASSIGNEES, assignees);
 
 		for (WorkflowTask task : workflowTasks) {
-			if ("npdwf:feasibility-analysis-recipe-assignement".equals(task.getName())) {
-				logger.info("Assign recipe feasibity " + task.getName());
+			if ("npdwf:feasibility-analysis-assignement".equals(task.getName())) {
+				logger.info("Assign feasibity " + task.getName());
 				workflowService.updateTask(task.getId(), props, assocs, new HashMap<QName, List<NodeRef>>());
 				logger.debug("End task"+task.getName());
 				workflowService.endTask(task.getId(),null );
 			}
 
-			if ("npdwf:feasibility-analysis-packaging-assignement".equals(task.getName())) {
-				logger.info("Assign packaging feasibity " + task.getName());
-				workflowService.updateTask(task.getId(), props, assocs, new HashMap<QName, List<NodeRef>>());
-				logger.debug("End task"+task.getName());
-				workflowService.endTask(task.getId(),null );
-			}
 		}
 
 	}
+	
+	private NodeRef findGroupNode(String groupShortName)
+    {
+        //TODO Use new AuthorityService.getNode() method on HEAD
+        NodeRef group = null;
+        
+        String query = "+TYPE:\"cm:authorityContainer\" AND @cm\\:authorityName:*" + groupShortName;
+        
+        ResultSet results = null;
+        try
+        {
+            results = searchService.query(
+                    new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore"), 
+                    SearchService.LANGUAGE_LUCENE, query);
+            
+            if (results.length() > 0)
+            {
+                group = results.getNodeRefs().get(0);
+            }
+        }
+        finally
+        {
+            if (results != null)
+            {
+                results.close();
+            }
+        }
+        return group;
+    }
+	
 
 	private WorkflowPath doMarketingBriefStep(String workflowInstanceId) {
 
@@ -1074,14 +1088,24 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 
 		WorkflowPath path = null;
 		
+		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		
+
+		List<NodeRef> assignees = new ArrayList<NodeRef>();
+		assignees.add(findGroupNode(PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString()));
+		
+		java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
+		assocs.put(WorkflowModel.ASSOC_GROUP_ASSIGNEES, assignees);
 		for(WorkflowTask task : workflowTasks){
 			logger.debug("End task"+task.getName());
+		///	workflowService.updateTask(task.getId(), properties, assocs,new HashMap<QName, List<NodeRef>>());
 			task = workflowService.endTask(task.getId(), transition);
 			path = task.getPath();
 		}
-		return path;
 		
-
+		
+		
+		return path;
 	}
 
 }

@@ -139,9 +139,9 @@
 
                [
                   { key: "id", label:"" ,sortable: false, formatter: this.bind(this.renderCellIcons), width: 20 },
+                  { key: "npdProductName",  label:this.msg("label.npdProductName"),sortable: false, formatter: this.bind(this.renderNpdProductName) },
                   { key: "npdType", label:this.msg("label.npdType"), sortable: false, formatter: this.bind(this.renderNpdType) },
                   { key: "npdStatus",  label:this.msg("label.npdStatus"),sortable: false, formatter: this.bind(this.renderNpdStatus) },
-                  { key: "npdProductName",  label:this.msg("label.npdProductName"),sortable: false, formatter: this.bind(this.renderNpdProductName) },
                   { key: "npdNumber",  label:this.msg("label.npdNumber"),sortable: false, formatter: this.bind(this.renderNpdNumber) },
                   { key: "description",  label:this.msg("label.npdDescription"),sortable: false, formatter: this.bind(this.renderTitle) },
                   { key: "startedDate", label:this.msg("label.started")  ,sortable: false, formatter: this.bind(this.renderStartedDate) },
@@ -250,7 +250,7 @@
       {
     	 var workflow = oRecord.getData();
     	 var npdProductName = workflow.tasks[0].properties.npdwf_npdProductName;
-         elCell.innerHTML = (npdProductName? npdProductName :this.msg("label.none"));
+         elCell.innerHTML = '<a href="' + $siteURL('workflow-details?workflowId=' + workflow.id + '&referrer=workflows&myWorkflowsLinkBack=true') + '" class="theme-color-1" title="' + this.msg("link.viewWorkflow") + '">' + $html(npdProductName? npdProductName :this.msg("label.none")) + '</a>';
       },
       renderNpdStatus: function NPDL_renderNpdStatus(elCell, oRecord, oColumn, oData)
       {
@@ -263,7 +263,7 @@
     	 var workflow = oRecord.getData();
     	 var npdType = (workflow.tasks[0].properties.npdwf_npdType ? workflow.tasks[0].properties.npdwf_npdType : this.msg("label.none"));
     	 
-         elCell.innerHTML = '<a href="' + $siteURL('workflow-details?workflowId=' + workflow.id + '&referrer=workflows&myWorkflowsLinkBack=true') + '" class="theme-color-1" title="' + this.msg("link.viewWorkflow") + '">' + $html(npdType) + '</a>';
+         elCell.innerHTML = npdType;
       },
       renderComments: function NPDL_renderComments(elCell, oRecord, oColumn, oData)
       {

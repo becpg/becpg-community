@@ -32,23 +32,6 @@
 		</assignment>
 	</swimlane>
 
-	<swimlane name="faisability-recipe-assignment-group">
-		<assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
-			<pooledactors>#{people.getGroup('GROUP_RecipeAssigners')}</pooledactors>
-		</assignment>
-	</swimlane>
-	
-	<swimlane name="faisability-packaging-assignment-group">
-		<assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
-			<pooledactors>#{people.getGroup('GROUP_PackagingAssigners')}</pooledactors>
-		</assignment>
-	</swimlane>
-	
-	<swimlane name="faisability-quality-group">
-		<assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
-			<pooledactors>#{people.getGroup('GROUP_Quality')}</pooledactors>
-		</assignment>
-	</swimlane>
 
 	<swimlane name="validate-group">
 		<assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
@@ -126,7 +109,7 @@
 			<foreach>#{people.getMembers(people.getGroup('GROUP_ValidateNeedDefinition'))}</foreach> 
 				<var>reviewer</var> 
 		</action> 
-		<transition to="needDefinition-validation"></transition>
+		<transition to="needDefinition-validation"/>
 	</node>
 
 	<task-node name="needDefinition-validation" >
@@ -134,6 +117,9 @@
 		    <assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
                <actor>#{reviewer}</actor>
             </assignment>
+            <event type="task-create">
+				<action class="fr.becpg.repo.workflow.jbpm.npd.AssignDefaultGroup"/>
+			</event>
 		</task>
 		<transition to="end-needDefinition-validation" name="approve-needDefinition"/>
 		<transition to="needDefinition" name="reject-needDefinition"/>
@@ -146,30 +132,41 @@
 
 
 	<join name="end-needDefinition-validation">
-		<transition name="start-feasibility-analysis" to="start-feasibility-analysis" />
+		<transition name="start-feasibility-analysis" to="start-feasibility-analysis" >
+			<action class="fr.becpg.repo.workflow.jbpm.npd.CreateProduct"/>
+		</transition>
 	</join>
 
 	<!-- start-feasibility-analysis : every actor must work -->
 
+	
 
-
-	<fork name="start-feasibility-analysis">
-	     <event type="node-enter">
+	<node name="start-feasibility-analysis">
+		<action class="org.alfresco.repo.workflow.jbpm.ForEachFork">
+		      <foreach>#{bpm_groupAssignees}</foreach>
+		      <var>pooledassigners</var>
+		  </action>
+	     <event type="node-enter">	
 	     	<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
 				<status>Faisabilité en  cours</status>
 			</action>
-	     	<action class="fr.becpg.repo.workflow.jbpm.npd.CreateProduct"/>
 	     </event>
-		<transition to="feasibility-analysis-recipe-assignement" name="assign-feasibility-analysis-recipe"/>
-		<transition to="feasibility-analysis-quality" name="do-feasibility-analysis-quality"/>
-		<transition to="feasibility-analysis-packaging-assignement" name="assign-feasibility-analysis-packaging"/>
-	</fork>
+		<transition to="feasibility-analysis-assignement" name="feasibility-analysis-assignement"/>
+	</node>
 
 
-	<!-- Recipe -->
-
-	<task-node name="feasibility-analysis-recipe-assignement" >
-		<task name="npdwf:feasibility-analysis-recipe-assignement" swimlane="faisability-recipe-assignment-group">
+	<task-node name="feasibility-analysis-assignement" >
+		<task name="npdwf:feasibility-analysis-assignement" >
+		    <assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
+               <pooledactors>#{pooledassigners}</pooledactors>
+            </assignment>
+            <event type="task-create">
+				<action class="org.alfresco.repo.workflow.jbpm.AlfrescoJavaScript">
+					<script>
+						bpm_assignees = null;
+					</script>
+				</action>
+			</event>
 			<event type="task-end">
 				<action class="org.alfresco.repo.workflow.jbpm.AlfrescoJavaScript">
 					<script>
@@ -184,107 +181,38 @@
 				</action>
 			</event>
 		</task>
-		<transition name="assign-feasibility-analysis-recipe" to="feasibility-start-analysis-recipe"></transition>
+		<transition name="assign-feasibility-analysis" to="feasibility-start-analysis"></transition>
 	</task-node> 
 
-	<node name="feasibility-start-analysis-recipe">
+	<node name="feasibility-start-analysis">
 			 <action class="org.alfresco.repo.workflow.jbpm.ForEachFork">
 			      <foreach>#{bpm_assignees}</foreach>
 			      <var>reviewer</var>
 		    </action>
-		   <transition  to="feasibility-analysis-recipe" />
+		   <transition  to="feasibility-analysis" />
 	</node>
 
 
-	<task-node name="feasibility-analysis-recipe">
-		<task name="npdwf:feasibility-analysis-recipe">
+	<task-node name="feasibility-analysis">
+		<task name="npdwf:feasibility-analysis">
 			<assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
 				  <actor>#{reviewer}</actor>
 			</assignment>
 		</task>
-		<transition  name="end-feasibility-analysis-recipe" to="end-feasibility-analysis-recipe"></transition>
-	</task-node>
-
-
-	<join name="end-feasibility-analysis-recipe">
-		<transition to="end-feasibility-analysis" />
-	</join>
-
-
-	<!-- Packaging -->
-
-	<task-node name="feasibility-analysis-packaging-assignement">
-		<task name="npdwf:feasibility-analysis-packaging-assignement" swimlane="faisability-packaging-assignment-group">
-			<event type="task-end">
-				<action class="org.alfresco.repo.workflow.jbpm.AlfrescoJavaScript">
-					<script>
-						<variable name="bpm_assignee" access="write" />
-						<expression>
-							if (taskInstance.actorId != null)
-							people.getPerson(taskInstance.actorId);
-							else
-							person;
-						</expression>
-					</script>
-				</action>
-			</event>
-		</task>
-		<transition name="assign-feasibility-analysis-packaging" to="feasibility-start-analysis-packaging"></transition>
-
-	</task-node>
-
-
- 	<node name="feasibility-start-analysis-packaging">
-		   <action class="org.alfresco.repo.workflow.jbpm.ForEachFork">
-		      <foreach>#{bpm_assignees}</foreach>
-		      <var>reviewer</var>
-		   </action>
-		   <transition name="assign" to="feasibility-analysis-packaging" />
-	</node>
-
-	<task-node name="feasibility-analysis-packaging">
-		<task name="npdwf:feasibility-analysis-packaging">
-			<assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
-				  <actor>#{reviewer}</actor>
-			</assignment>
-		</task>
-		<transition name="end-feasibility-analysis-packaging" to="end-feasibility-analysis-packaging"></transition>
-
-
+		<transition  name="end-feasibility-analysis" to="end-fork-faisability"></transition>
 	</task-node>
 
 	
-
-	<join name="end-feasibility-analysis-packaging">
-		<transition to="end-feasibility-analysis" />
-	</join>
-	
-	<!-- quality -->
-
-	<task-node name="feasibility-analysis-quality">
-		<task name="npdwf:feasibility-analysis-quality" swimlane="faisability-quality-group">
-			<event type="task-end">
-				<action class="org.alfresco.repo.workflow.jbpm.AlfrescoJavaScript">
-					<script>
-						<variable name="bpm_assignee" access="write" />
-						<expression>
-							if (taskInstance.actorId != null)
-							people.getPerson(taskInstance.actorId);
-							else
-							person;
-						</expression>
-					</script>
-				</action>
-			</event>
-		</task>
-		<transition name="end-feasibility-analysis-quality" to="end-feasibility-analysis"></transition>
-
-	</task-node>
-
-
 	<join name="end-feasibility-analysis">
+		<transition to="end-fork-faisability" />
+	</join>
+	
+
+
+	<join name="end-fork-faisability">
 		<transition to="validate-analysis" />
 	</join>
+
 
 	<!-- end-feasibility-analysis -->
 
@@ -309,16 +237,52 @@
 				</action>
 			</event>
 		</task>
-		<transition to="work-on-prototype" name="approve" />
-		<transition to="feasibility-analysis-recipe-assignement"	name="reject-recipe-analysis"></transition>
-		<transition to="feasibility-analysis-quality"				name="reject-quality-analysis"></transition>
-		<transition to="feasibility-analysis-packaging-assignement"		name="reject-packaging-analysis"></transition>
+		<transition to="work-on-prototype" name="work-on-prototype" >
+			<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
+				<status>Stop</status>
+			</action>
+		</transition>
+		<transition to="send-client-offer" name="send-client-offer" >
+			<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
+				<status>Offre client</status>
+			</action>
+		</transition>
+		<transition to="start-feasibility-analysis"	name="reassign">
+			<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
+				<status>Faisabilité en  cours</status>
+			</action>	
+		</transition>
 		<transition to="end" name="end" >
 		  	<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
 				<status>Stop</status>
 			</action>
 		</transition>
 	</task-node>
+
+    <task-node name="send-client-offer">
+		<task name="npdwf:send-client-offer" swimlane="do-prototype-group">
+			<event type="task-create">
+				<action class="fr.becpg.repo.workflow.jbpm.common.AssignBusinessDueDate">
+					<addDuration>5 business days</addDuration>
+				</action>
+			</event>
+			<event type="task-end">
+				<action class="org.alfresco.repo.workflow.jbpm.AlfrescoJavaScript">
+					<script>
+						<variable name="bpm_assignee" access="write" />
+						<expression>
+							if (taskInstance.actorId != null)
+							people.getPerson(taskInstance.actorId);
+							else
+							person;
+						</expression>
+					</script>
+				</action>
+			</event>
+		</task>
+		<transition name="submit" to="work-on-prototype"></transition>
+	</task-node>
+
 
 	<task-node name="work-on-prototype">
 		<task name="npdwf:work-on-prototype" swimlane="do-prototype-group">
