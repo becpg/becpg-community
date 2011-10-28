@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
+
+<beans>
+   	 
+	<!-- changeOrderDAO -->
+	<bean id="changeOrderDAO" class="fr.becpg.repo.eco.impl.ChangeOrderDAOImpl">
+    	<property name="nodeService" ref="nodeService"/>
+    	<property name="entityListDAO" ref="entityListDAO"/>
+    	<property name="associationService" ref="associationService"/>		
+	</bean>
+	<!-- changeUnitDAO -->	
+	<bean id="changeUnitDAO" class="fr.becpg.repo.eco.impl.ChangeUnitDAOImpl">
+    	<property name="nodeService" ref="nodeService"/>
+    	<property name="associationService" ref="associationService"/>		
+	</bean>
+	
+	<!-- ecoService -->	
+	<bean id="ecoService" class="fr.becpg.repo.eco.impl.ECOServiceImpl">
+    	<property name="changeOrderDAO" ref="changeOrderDAO"/>
+    	<property name="wUsedListService" ref="wUsedListService"/>
+    	<property name="changeUnitDAO" ref="changeUnitDAO"/>
+    	<property name="nodeService" ref="nodeService"/>
+    	<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService"/>
+    	<property name="productService" ref="productService"/>
+    	<property name="productDAO" ref="productDAO"/>
+    	<property name="entityListDAO" ref="entityListDAO"/>
+    	<property name="dictionaryService" ref="dictionaryService"/>
+    	<property name="productDictionaryService" ref="productDictionaryService"/>
+    	<property name="repoService" ref="repoService"/>
+    	<property name="associationService" ref="associationService"/>		
+	</bean>
+   
+</beans>
