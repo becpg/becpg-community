@@ -1,6 +1,8 @@
 package fr.becpg.repo.entity;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
+
 
 /**
  * Entity service
@@ -45,6 +47,16 @@ public interface EntityService {
 	 * @param entityNodeRef
 	 */
 	public void deleteEntity(NodeRef entityNodeRef);
+
+	/**
+	 * Create or copy an entity
+	 * @param parentNodeRef
+	 * @param sourceNodeRef
+	 * @param entityType
+	 * @param entityName
+	 * @return
+	 */
+	public NodeRef createOrCopyFrom(NodeRef parentNodeRef, NodeRef sourceNodeRef, QName entityType, String entityName);
 	
     
 }

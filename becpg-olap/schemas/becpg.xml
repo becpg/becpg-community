@@ -318,9 +318,11 @@
         </Level>
       </Hierarchy>
     </Dimension>
-    <Dimension highCardinality="false" name="Type de produit">
-      <Hierarchy hasAll="true" allMemberCaption="Tous les types de produit" defaultMember="[Type de produit].[finishedProduct]">
-        <Level name="Type" column="product_type" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+    <Dimension foreignKey="product_type" highCardinality="false" name="Type de produit">
+      <Hierarchy hasAll="true" allMemberCaption="Tous les types de produit" primaryKey="product_type" defaultMember="[Type de produit].[Produit fini]">
+        <Table name="becpg_product_type">
+        </Table>
+        <Level approxRowCount="10" name="Type" column="product_type" nameColumn="product_label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>

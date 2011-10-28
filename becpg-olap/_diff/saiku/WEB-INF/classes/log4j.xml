@@ -60,7 +60,7 @@
    <!-- ================ -->
 
    <category name="org.saiku">
-     <priority value="DEBUG"/>
+     <priority value="ERROR"/>
    </category>
    
    <!-- ======================= -->
@@ -124,7 +124,7 @@
    <!-- ========================================================= -->
    <!-- Special Log File specifically for Mondrian SQL Statements -->
    <!-- ========================================================= -->
-<!-- 
+
    <appender name="SQLLOG" class="org.apache.log4j.RollingFileAppender">
      <param name="File" value="mondrian_sql.log"/>
      <param name="Append" value="false"/>
@@ -138,7 +138,7 @@
    <category name="mondrian.sql">
       <priority value="DEBUG"/>
       <appender-ref ref="SQLLOG"/>
-   </category> -->
+   </category> 
 
    
 </log4j:configuration>

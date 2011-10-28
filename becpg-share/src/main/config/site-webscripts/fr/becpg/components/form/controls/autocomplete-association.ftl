@@ -7,7 +7,7 @@
 
 
 <div class="form-field">
-   <#if form.mode == "view">
+   <#if form.mode == "view"  ||  field.disabled == true>
       <div id="${controlId}" class="viewmode-field">
          <#if (field.endpointMandatory!false || field.mandatory!false) && field.value == "">
             <span class="incomplete-warning"><img src="${url.context}/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
@@ -16,11 +16,8 @@
          <span id="${fieldHtmlId}-values" class="viewmode-value current-values"></span>
       </div>
    <#else>
-      <label for="${controlId}">${field.label?html}:<#if field.endpointMandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
-      
+      <label for="${controlId}">${field.label?html}:<#if field.endpointMandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>     
       <div id="${controlId}" class="object-finder">        
-         
-         <#if form.mode != "view" && field.disabled == false>
 			<div style="padding-bottom: 2em;" class="yui-ac" >
 					 <div id="${fieldHtmlId}-autocomplete" class="ac-body" style="${style}">
 					 <span id="${fieldHtmlId}-toggle-autocomplete" class="ac-toogle"></span>
@@ -43,18 +40,6 @@
 		         <input type="hidden" id="${controlId}-added" name="${field.name}_added" />
 		        
 			</div>
-			<#else>
-
-				<input id="${fieldHtmlId}" type="text" name="-" tabindex="0"
-			             <#if field.description?exists>title="${field.description}"</#if>
-			             <#if field.control.params.maxLength?exists>maxlength="${field.control.params.maxLength}"</#if> 
-			             <#if field.control.params.size?exists>size="${field.control.params.size}"</#if> 
-			             <#if field.disabled>disabled="true"</#if> 
-			             class="${styleClass}"
-			             style="${style}; position:relative;"
-			              >	
-			             
-         </#if>
       </div>
    </#if>
 </div>
@@ -68,6 +53,7 @@
    {
  		currentValue: "${field.value}",
  		mode: "${form.mode}",
+ 		readOnly : ${field.disabled?string},
         multipleSelectMode: ${field.endpointMany?string}, 
         isMandatory : ${field.mandatory?string},
  		targetLinkTemplate: "${targetLinkTemplate}" ,

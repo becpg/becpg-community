@@ -122,4 +122,20 @@
 			<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 			<property name="dictionaryService" ref="dictionaryService" />
    	</bean>
+   	
+   	<!-- NPD -->
+   	
+   	  <!-- Retrieves all npd instances. -->
+    <bean id="webscript.fr.becpg.workflow.npd-instances.get"
+          class="fr.becpg.repo.web.scripts.workflow.NpdInstancesGet"
+          parent="webscript">
+     	 <property name="namespaceService" ref="NamespaceService" />
+        <property name="nodeService" ref="NodeService" />
+        <property name="personService" ref="PersonService" />
+        <property name="dictionaryService" ref="DictionaryService" />
+        <property name="authenticationService" ref="AuthenticationService" />
+        <property name="authorityService" ref="AuthorityService" />
+        <property name="workflowService" ref="WorkflowService" />     
+    </bean>
+
 </beans>
