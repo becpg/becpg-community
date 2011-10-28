@@ -893,6 +893,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			
 		}
 		
+		 authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
+					PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(), true);
+		 
 		for(String group : new String[]{SystemGroup.RDMgr.toString(),SystemGroup.QualityMgr.toString()}){
 			if (!authorities.contains(PermissionService.GROUP_PREFIX + group))
 				authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(),
