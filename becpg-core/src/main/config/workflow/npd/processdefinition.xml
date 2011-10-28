@@ -199,7 +199,7 @@
 				  <actor>#{reviewer}</actor>
 			</assignment>
 		</task>
-		<transition  name="end-feasibility-analysis" to="end-fork-faisability"></transition>
+		<transition  name="end-feasibility-analysis" to="end-feasibility-analysis"></transition>
 	</task-node>
 
 	

@@ -1,102 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="npdwf:newProductDevelopmentWF" width="1741" height="1871">
-  <node name="initiate-npd" x="492" y="-48" width="132" height="36">
+<root-container name="npdwf:newProductDevelopmentWF" width="1356" height="1252">
+  <node name="initiate-npd" x="480" y="-48" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="marketing-brief" x="492" y="17" width="132" height="36">
+  <node name="marketing-brief" x="480" y="24" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="needDefinition" x="492" y="96" width="132" height="36">
+  <node name="needDefinition" x="480" y="96" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="start-needDefinition-validation" x="449" y="174" width="213" height="36">
+  <node name="start-needDefinition-validation" x="444" y="168" width="205" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="needDefinition-validation" x="422" y="261" width="277" height="36">
+  <node name="needDefinition-validation" x="444" y="240" width="205" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="282" h1="-84" w2="284" h2="81"/>
+      <bendpoint w1="168" h1="-3" w2="162" h2="141"/>
+      <bendpoint w1="167" h1="-143" w2="167" h2="1"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-442" h1="3" w2="-487" h2="-1036"/>
-      <bendpoint w1="-528" h1="615" w2="-573" h2="-424"/>
-    </edge>
-  </node>
-  <node name="end-needDefinition-validation" x="448" y="321" width="252" height="24">
-    <edge>
-      <label x="5" y="-10"/>
+      <label x="-35" y="-20"/>
+      <bendpoint w1="-275" h1="-1" w2="-284" h2="-927"/>
+      <bendpoint w1="-272" h1="927" w2="-281" h2="1"/>
     </edge>
   </node>
-  <node name="start-feasibility-analysis" x="363" y="431" width="405" height="43">
+  <node name="end-needDefinition-validation" x="480" y="324" width="133" height="24">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="feasibility-analysis-assignement" x="440" y="516" width="278" height="36">
+  <node name="start-feasibility-analysis" x="456" y="384" width="181" height="43">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="feasibility-start-analysis" x="423" y="573" width="313" height="36">
+  <node name="feasibility-analysis-assignement" x="408" y="468" width="278" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="feasibility-analysis" x="432" y="651" width="294" height="36">
+  <node name="feasibility-start-analysis" x="408" y="540" width="277" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="end-feasibility-analysis" x="0" y="0" width="252" height="24">
+  <node name="feasibility-analysis" x="408" y="612" width="277" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="end-fork-faisability" x="454" y="769" width="252" height="24">
+  <node name="end-feasibility-analysis" x="480" y="696" width="133" height="24">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="validate-analysis" x="351" y="928" width="394" height="36">
+  <node name="end-fork-faisability" x="480" y="756" width="133" height="24">
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="648" h1="-53" w2="277" h2="383"/>
-      <bendpoint w1="508" h1="401" w2="479" h2="-36"/>
-    </edge>
-    <edge>
-      <label x="13" y="91"/>
-      <bendpoint w1="-166" h1="20" w2="92" h2="-63"/>
-      <bendpoint w1="-224" h1="43" w2="34" h2="-40"/>
-    </edge>
-    <edge>
-      <label x="13" y="91"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="648" h1="-53" w2="277" h2="383"/>
-      <bendpoint w1="508" h1="401" w2="479" h2="-36"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-394" h1="-384" w2="-411" h2="110"/>
-    </edge>
-    <edge>
-      <label x="13" y="91"/>
-      <bendpoint w1="-166" h1="20" w2="92" h2="-63"/>
-      <bendpoint w1="-224" h1="43" w2="34" h2="-40"/>
     </edge>
   </node>
+  <node name="validate-analysis" x="443" y="813" width="211" height="36">
+    <edge>
+      <label x="12" y="-15"/>
+    </edge>
+    <edge>
+      <label x="11" y="27"/>
+      <bendpoint w1="204" h1="-2" w2="-1" h2="-103"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="275" h1="-2" w2="277" h2="424"/>
+      <bendpoint w1="273" h1="-424" w2="275" h2="2"/>
+    </edge>
+    <edge>
+      <label x="10" y="-44"/>
+      <bendpoint w1="-214" h1="-2" w2="-221" h2="-355"/>
+      <bendpoint w1="-214" h1="353" w2="-221" h2="0"/>
+    </edge>
+  </node>
+  <node name="send-client-offer" x="687" y="914" width="132" height="36">
+    <edge>
+      <label x="-15" y="12"/>
+    </edge>
+  </node>
+  <node name="work-on-prototype" x="483" y="914" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="validate-prototype" x="483" y="1005" width="138" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-151" h1="1" w2="-149" h2="127"/>
+      <bendpoint w1="-151" h1="-93" w2="-148" h2="-2"/>
+    </edge>
+  </node>
+  <node name="start-production" x="486" y="1080" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="end" x="489" y="1166" width="132" height="36"/>
 </root-container>
