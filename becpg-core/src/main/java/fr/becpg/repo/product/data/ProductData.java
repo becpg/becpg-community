@@ -4,6 +4,9 @@
 package fr.becpg.repo.product.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +14,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.cxf.binding.corba.wsdl.Array;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
@@ -534,6 +538,7 @@ public class ProductData implements ProductElement {
 	 */
 	public ProductData(ProductData productData){
 		
+		nodeRef = productData.getNodeRef();
 		setProperties(productData.getProperties());
 		
 		copyDataLists(productData);		
@@ -601,18 +606,80 @@ public class ProductData implements ProductElement {
 	 */
 	public void copyDataLists(ProductData productData){
 		
-		setAllergenList(productData.getAllergenList());
-		setCompoList(productData.getCompoList());
-		setCostList(productData.getCostList());
-		setCostDetailsList(productData.getCostDetailsList());
-		setIngList(productData.getIngList());
-		setNutList(productData.getNutList());
-		setOrganoList(productData.getOrganoList());
-		setIngLabelingList(productData.getIngLabelingList());
-		setMicrobioList(productData.getMicrobioList());
-		setPhysicoChemList(productData.getPhysicoChemList());
-	}
-
+		if(productData.getAllergenList() != null){
+			allergenList = new ArrayList<AllergenListDataItem>(productData.getAllergenList());
+			for(AllergenListDataItem a : productData.getAllergenList()){
+				allergenList.add(new AllergenListDataItem(a));
+			}
+		}
+		
+		if(productData.getCompoList() != null){
+			compoList = new ArrayList<CompoListDataItem>(productData.getCompoList());
+			for(CompoListDataItem c : productData.getCompoList()){
+				compoList.add(new CompoListDataItem(c));
+			}
+		}
+		
+		if(productData.getCostList() != null){
+			costList = new ArrayList<CostListDataItem>(productData.getCostList());
+			for(CostListDataItem c : productData.getCostList()){
+				costList.add(new CostListDataItem(c));
+			}
+		}
+		
+		if(productData.getCostDetailsList() != null){
+			costDetailsList = new ArrayList<CostDetailsListDataItem>(productData.getCostDetailsList());
+			for(CostDetailsListDataItem c : productData.getCostDetailsList()){
+				costDetailsList.add(new CostDetailsListDataItem(c));
+			}
+		}
+		
+		if(productData.getIngList() != null){
+			ingList = new ArrayList<IngListDataItem>(productData.getIngList());
+			for(IngListDataItem i : productData.getIngList()){
+				ingList.add(new IngListDataItem(i));
+			}
+		}
+		
+		if(productData.getNutList() != null){
+			nutList = new ArrayList<NutListDataItem>(productData.getNutList());
+			for(NutListDataItem n : productData.getNutList()){
+				nutList.add(new NutListDataItem(n));
+			}	
+		}
+			
+		if(productData.getOrganoList() != null){
+			organoList = new ArrayList<OrganoListDataItem>(productData.getOrganoList());
+			for(OrganoListDataItem o : productData.getOrganoList()){
+				organoList.add(new OrganoListDataItem(o));
+			}
+		}		
+		
+		if(productData.getIngLabelingList() != null){
+			setIngLabelingList(productData.getIngLabelingList());
+			ingLabelingList = new ArrayList<IngLabelingListDataItem>(productData.getIngLabelingList());
+			for(IngLabelingListDataItem i  : productData.getIngLabelingList()){
+				ingLabelingList.add(new IngLabelingListDataItem(i));
+			}
+		}
+		
+		if(productData.getMicrobioList() != null){
+			setMicrobioList(productData.getMicrobioList());
+			microbioList = new ArrayList<MicrobioListDataItem>(productData.getMicrobioList());
+			for(MicrobioListDataItem m : productData.getMicrobioList()){
+				microbioList.add(new MicrobioListDataItem(m));
+			}
+		}
+		
+		if(productData.getPhysicoChemList() != null){
+			setPhysicoChemList(productData.getPhysicoChemList());
+			physicoChemList = new ArrayList<PhysicoChemListDataItem>(productData.getPhysicoChemList());
+			for(PhysicoChemListDataItem p : productData.getPhysicoChemList()){
+				physicoChemList.add(new PhysicoChemListDataItem(p));
+			}
+		}		
+	}	
+	
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.food.ProductElement#accept(fr.becpg.repo.product.ProductVisitor)
 	 */
@@ -620,4 +687,5 @@ public class ProductData implements ProductElement {
 	public void accept(ProductVisitor productVisitor) throws FormulateException {
 		this.accept(productVisitor);
 	}	
+		
 }

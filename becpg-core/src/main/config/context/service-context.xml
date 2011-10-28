@@ -270,7 +270,10 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
-	
+	<!-- WUsedList -->
+	<bean id="wUsedListService" class="fr.becpg.repo.entity.wused.WUsedListServiceImpl">
+		<property name="nodeService" ref="nodeService" />
+	</bean>
 
 	<!-- Product dictionary -->
 	<bean id="productDictionaryService" class="fr.becpg.repo.product.ProductDictionaryServiceImpl">
@@ -307,6 +310,7 @@
 		<property name="ownableService" ref="ownableService"/>
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />		
 		<property name="lockService" ref="lockService" />
+		<property name="wUsedListService" ref="wUsedListService" />
 	</bean>
 	
 	<!-- Product report -->

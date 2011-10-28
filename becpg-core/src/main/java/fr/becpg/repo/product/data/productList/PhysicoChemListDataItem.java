@@ -164,4 +164,17 @@ public class PhysicoChemListDataItem {
 		this.maxi = maxi;
 		this.physicoChem = physicoChem;
 	}
+	
+	/**
+	 * Copy constructor
+	 * @param p
+	 */
+	public PhysicoChemListDataItem(PhysicoChemListDataItem p){
+		setNodeRef(p.getNodeRef());
+		setValue(p.getValue());
+		setUnit(p.getUnit());
+		setMini(p.getMini());
+		setMaxi(p.getMaxi());
+		setPhysicoChem(p.getPhysicoChem());
+	}
 }

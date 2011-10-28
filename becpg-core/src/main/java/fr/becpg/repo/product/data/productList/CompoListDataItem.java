@@ -267,6 +267,23 @@ public class CompoListDataItem{
 		setProduct(product);
 	}
 	
+	/**
+	 * Copy constructor
+	 * @param c
+	 */
+	public CompoListDataItem(CompoListDataItem c){
+		setNodeRef(new NodeRef(c.getNodeRef().toString()));
+		setDepthLevel(c.getDepthLevel());
+		setQty(c.getQty());
+		setQtySubFormula(c.getQtySubFormula());
+		setQtyAfterProcess(c.getQtyAfterProcess());
+		setCompoListUnit(c.getCompoListUnit());
+		setLossPerc(c.getLossPerc());
+		setDeclGrp(c.getDeclGrp());
+		setDeclType(c.getDeclType());
+		setProduct(new NodeRef(c.getProduct().toString()));
+	}
+	
 	public static Composite<CompoListDataItem> getHierarchicalCompoList(List<CompoListDataItem> items){
 		
 		Composite<CompoListDataItem> composite = new Composite<CompoListDataItem>();

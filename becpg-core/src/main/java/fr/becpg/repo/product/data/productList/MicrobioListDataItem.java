@@ -141,4 +141,16 @@ public class MicrobioListDataItem {
 		this.maxi = maxi;
 		this.microbio = microbio;		
 	}
+	
+	/**
+	 * Copy constructor
+	 * @param m
+	 */
+	public MicrobioListDataItem(MicrobioListDataItem m){
+		setNodeRef(m.getNodeRef());
+		setValue(m.getValue());
+		setUnit(m.getUnit());
+		setMaxi(m.getMaxi());
+		setMicrobio(m.getMicrobio());
+	}
 }

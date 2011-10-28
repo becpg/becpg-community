@@ -69,19 +69,13 @@ public class FormulationTest extends RepoBaseTestCase {
 	private static Log logger = LogFactory.getLog(FormulationTest.class);
 	
 	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-	
-	/** The search service. */
-	private SearchService searchService;
+	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();	
 	
 	/** The node service. */
 	private NodeService nodeService;
 	
 	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
-	/** The authentication component. */
-	private AuthenticationComponent authenticationComponent;
+	private FileFolderService fileFolderService;	
 	
 	/** The product service. */
 	private ProductService productService;    
@@ -230,7 +224,6 @@ public class FormulationTest extends RepoBaseTestCase {
     	logger.debug("ProductMgrTest:setUp");
     	    	
     	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	searchService = (SearchService)appCtx.getBean("searchService");
     	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
     	productService = (ProductService)appCtx.getBean("productService");       
         productDAO = (ProductDAO)appCtx.getBean("productDAO");

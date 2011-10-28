@@ -280,10 +280,9 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
 		
 		// Check that the working node still has the copy aspect applied
         if (nodeService.hasAspect(workingCopyNodeRef, ContentModel.ASPECT_COPIEDFROM) == true){        	
-        	
-        	Map<QName, Serializable> workingCopyProperties = nodeService.getProperties(workingCopyNodeRef);
+        
         	// Try and get the original node reference
-            entityNodeRef = (NodeRef) workingCopyProperties.get(ContentModel.PROP_COPY_REFERENCE);
+        	entityNodeRef = (NodeRef)nodeService.getProperty(workingCopyNodeRef, ContentModel.PROP_COPY_REFERENCE);        	
             if(entityNodeRef == null)
             {
                 // Error since the original node can not be found
@@ -299,15 +298,12 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
             {
                 throw new CheckOutCheckInServiceException(MSG_ERR_NOT_OWNER, exception);
             }            
-    		
+            
             //copy properties
     		copyService.copy(workingCopyNodeRef, entityNodeRef);
     		
     		//create new version
             entityVersionService.createVersion(entityNodeRef, properties);
-    		
-            logger.debug("workingCopyNodeRef.versionLabel: " + nodeService.getProperty(workingCopyNodeRef, BeCPGModel.PROP_VERSION_LABEL));
-            logger.debug("entityNodeRef.versionLabel: " + nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_VERSION_LABEL));                		
     		
     		// Copy entity datalists
     		// Rights are checked by copyService during recursiveCopy

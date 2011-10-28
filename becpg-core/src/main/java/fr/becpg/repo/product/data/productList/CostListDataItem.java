@@ -117,6 +117,18 @@ public class CostListDataItem{
 		setValue(value);
 		setUnit(unit);
 		setCost(cost);
-	}		
+	}
+	
+	/**
+	 * Copy constructor
+	 * @param c
+	 */
+	public CostListDataItem(CostListDataItem c){
+		
+		setNodeRef(c.getNodeRef());
+		setValue(c.getValue());
+		setUnit(c.getUnit());
+		setCost(c.getCost());
+	}
 }
 

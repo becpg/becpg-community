@@ -539,7 +539,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					resultSet.close();
 			}
 		}
-		logger.debug("entitiesHistoryNodeRef: " + entitiesHistoryNodeRef);
+
 		return entitiesHistoryNodeRef;
 	}
 
@@ -567,7 +567,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				}
 			}, AuthenticationUtil.getSystemUserName());
 		}
-		logger.debug("entitiesHistoryNodeRef: " + entitiesHistoryNodeRef);
 	}
 	
 	

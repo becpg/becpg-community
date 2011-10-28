@@ -693,30 +693,6 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
  				
  				assertEquals("MP should have 1 where Useds", 1, wUsedProducts.size());
  				CompoListDataItem wUsed0 = wUsedProducts.get(0);
-// 				CompoListDataItem wUsed1 = wUsedProducts.get(1);
-// 				CompoListDataItem wUsed2 = wUsedProducts.get(2);
- 				
-// 				assertEquals("check lSF2", lSF2NodeRef, wUsed0.getProduct());
-// 				assertEquals("check lSF2 level", new Integer(1), wUsed0.getDepthLevel());
-// 				assertEquals("check lSF2 qty", 3f, wUsed0.getQty());
-// 				assertEquals("check lSF2 qty perc", 0f, wUsed0.getQtySubFormula());
-// 				assertEquals("check lSF2 unit", CompoListUnit.kg, wUsed0.getCompoListUnit());
-// 				assertEquals("check lSF2 declaration", DeclarationType.OMIT_FR, wUsed0.getDeclType());
-// 				
-// 				assertEquals("check lSF1", lSF1NodeRef, wUsed1.getProduct());
-// 				assertEquals("check lSF1 level", new Integer(2), wUsed1.getDepthLevel());
-// 				assertEquals("check lSF1 qty", 1f, wUsed1.getQty());
-// 				assertEquals("check lSF1 qty perc", 4f, wUsed1.getQtySubFormula());
-// 				assertEquals("check lSF1 unit", CompoListUnit.P, wUsed1.getCompoListUnit());
-// 				assertEquals("check lSF1 declaration", DeclarationType.DECLARE_FR, wUsed1.getDeclType());
-// 				
-// 				assertEquals("check PF", finishedProductNodeRef, wUsed2.getProduct());
-// 				assertEquals("check PF level", new Integer(3), wUsed2.getDepthLevel());
-// 				assertEquals("check PF qty", 1f, wUsed2.getQty());
-// 				assertEquals("check PF qty perc", 1f, wUsed2.getQtySubFormula());
-// 				assertEquals("check PF unit", CompoListUnit.P, wUsed2.getCompoListUnit());
-// 				assertEquals("check PF declaration", DeclarationType.DECLARE_FR, wUsed2.getDeclType());
- 				
 
  				assertEquals("check PF", finishedProductNodeRef, wUsed0.getProduct());
  				assertEquals("check PF level", new Integer(1), wUsed0.getDepthLevel());
