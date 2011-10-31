@@ -110,6 +110,7 @@
 			<property name="repositoryHelper" ref="repositoryHelper" />
 			<property name="dictionaryDAO" ref="dictionaryDAO" />
 			<property name="repoService" ref="repoService" />
+			<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
    	</bean>
    	
    	<!-- Migration -->
