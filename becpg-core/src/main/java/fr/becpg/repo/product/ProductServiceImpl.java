@@ -352,7 +352,7 @@ public class ProductServiceImpl implements ProductService {
 	        }
 	        finally{
 	        	policyBehaviourFilter.enableBehaviour(productNodeRef, ContentModel.ASPECT_AUDITABLE);
-	        	policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_PRODUCT);			        	
+	        	policyBehaviourFilter.enableBehaviour(productNodeRef, BeCPGModel.TYPE_PRODUCT);			        	
 	        }	         
     	}    	
     }    
