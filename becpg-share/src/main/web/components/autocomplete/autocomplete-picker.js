@@ -25,9 +25,10 @@
       /* Register this component */
       Alfresco.util.ComponentManager.register(this);
       
+   
       /* Load YUI Components */
-      Alfresco.util.YUILoaderHelper.require(["container"], this.onComponentsLoaded, this);
-      
+
+      Alfresco.util.YUILoaderHelper.require(["button", "menu", "container"], this.onComponentsLoaded, this);
       
       return this;
    } ;
@@ -111,8 +112,7 @@
     	   // Instantiate the AutoComplete
     	   var oAC = new YAHOO.widget.AutoComplete(instance.fieldHtmlId, instance.fieldHtmlId+"-container", oDS);
 
-    	  
-    	   
+
     	   oAC.queryDelay = .5;
     	   oAC.page = 1;
 

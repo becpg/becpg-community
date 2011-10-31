@@ -13,6 +13,10 @@
 	display:block;
 }
 
+.yui-skin-default .yui-tt .bd {
+	background-color: white;
+}
+
 .yui-skin-default .yui-ac-container {
 	width: 100%;
 	left: 0px;
