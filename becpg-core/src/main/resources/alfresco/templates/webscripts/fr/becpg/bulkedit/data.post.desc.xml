@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>BulkEdit - Data retrieval</shortname>
+  <description>BulkEdit Component - retrieve data within a given query</description>
+  <url>/becpg/bulkedit/data?query={query?}&amp;itemType={itemType?}</url>
+  <format default="json">argument</format>
+  <authentication>user</authentication>
+  <transaction allow="readwrite" buffersize="0">required</transaction>
+  <lifecycle>internal</lifecycle>
+</webscript>

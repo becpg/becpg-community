@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>Bulk edit</shortname>
+  <description>Bulk edit: edit node properties</description>
+  <url>/components/bulk-edit/bulk-edit</url>
+</webscript>
