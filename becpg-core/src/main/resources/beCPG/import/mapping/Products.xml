@@ -2,110 +2,220 @@
 <mappings>
 	<settings>
 		<!-- <setting id="dateFormat" value="dd/MM/yyyy"/> -->
-		<!-- <setting id="decimalPattern" value="#0.00"/>-->
-	</settings>	
-	
+		<!-- <setting id="decimalPattern" value="#0.00"/> -->
+	</settings>
+
 	<!-- PRODUCT -->
-	<mapping name="bcpg:rawMaterial">		
-		<nodeColumnKeys> 
-			<nodeColumnKey attribute="bcpg:code"/>
+	<mapping name="bcpg:rawMaterial">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
 		<columns>
 
-			<column id="code" attribute="bcpg:code" type="Attribute"/>
-			
-			<!-- characteristic properties -->
-			<column id="coutMP" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+
+			<!-- costs -->
+			<column id="coutMP" dataListQName="bcpg:costList"
+				charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
 				charactNodeRef="" charactName="Coût MP" type="Characteristic" />
-			<column id="coutMPPrev" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+			<column id="coutMPPrev" dataListQName="bcpg:costList"
+				charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
 				charactNodeRef="" charactName="Coût prév MP" type="Characteristic" />
-			<column id="coutEmb" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
-				charactNodeRef="" charactName="Coût emb" type="Characteristic" />
-			<column id="nutProteines" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+			<column id="coutEmb" dataListQName="bcpg:costList"
+				charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+				charactNodeRef="" charactName="Coût Emb" type="Characteristic" />
+			<column id="coutEmbPrev" dataListQName="bcpg:costList"
+				charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+				charactNodeRef="" charactName="Coût prév Emb" type="Characteristic" />
+
+			<!-- nuts -->
+			<column id="nutProteines" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
 				charactNodeRef="" charactName="Protéines" type="Characteristic" />
-			<column id="nutLipides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+			<column id="nutLipides" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
 				charactNodeRef="" charactName="Lipides" type="Characteristic" />
-			<column id="nutGlucides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+			<column id="nutGlucides" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
 				charactNodeRef="" charactName="Glucides" type="Characteristic" />
-				
+
+			<column id="Alpha lactalbumine" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Alpha lactalbumine" type="Characteristic" />
+			<column id="Amidon" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut"
+				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Amidon"
+				type="Characteristic" />
+			<column id="Azote non protéique" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Azote non protéique" type="Characteristic" />
+			<column id="Béta lactoglobuline" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Béta lactoglobuline" type="Characteristic" />
+			<column id="Calcium" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Calcium" type="Characteristic" />
+			<column id="Caséine as1" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Caséine as1" type="Characteristic" />
+			<column id="Caséine as2" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Caséine as2" type="Characteristic" />
+			<column id="Caséine b" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Caséine b" type="Characteristic" />
+			<column id="Caséine k" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Caséine k" type="Characteristic" />
+			<column id="Caséines totales" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Caséines totales" type="Characteristic" />
+			<column id="Cholestérol " dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Cholestérol " type="Characteristic" />
+			<column id="Eau" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut"
+				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Eau"
+				type="Characteristic" />
+			<column id="Extrait sec " dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Extrait sec " type="Characteristic" />
+			<column id="Extrait sec laitier " dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Extrait sec laitier " type="Characteristic" />
+			<column id="Fibres alimentaires" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Fibres alimentaires" type="Characteristic" />
+			<column id="Fibres insolubles " dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Fibres insolubles " type="Characteristic" />
+			<column id="Fibres solubles " dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Fibres solubles " type="Characteristic" />
+			<column id="Glucides" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Glucides" type="Characteristic" />
+			<column id="Energie (kCalories)" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Energie (kCalories)" type="Characteristic" />
+			<column id="Energie (kJoules)" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Energie (kJoules)" type="Characteristic" />
+			<column id="Lactose" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Lactose" type="Characteristic" />
+			<column id="Lipides" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Lipides" type="Characteristic" />
+			<column id="Lipides insaturés" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Lipides insaturés" type="Characteristic" />
+			<column id="Lipides mono insaturés" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Lipides mono insaturés" type="Characteristic" />
+			<column id="Lipides polyinsaturés" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Lipides polyinsaturés" type="Characteristic" />
+			<column id="Lipides saturés" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Lipides saturés" type="Characteristic" />
+			<column id="Lipides trans totaux" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Lipides trans totaux" type="Characteristic" />
+			<column id="Magnésium" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Magnésium" type="Characteristic" />
+			<column id="Minéraux totaux" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Minéraux totaux" type="Characteristic" />
+			<column id="Phosphore" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Phosphore" type="Characteristic" />
+			<column id="Polyols totaux" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Polyols totaux" type="Characteristic" />
+			<column id="Potassium" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Potassium" type="Characteristic" />
+			<column id="Protéines sériques totales" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Protéines sériques totales" type="Characteristic" />
+			<column id="Protéines vraies" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Protéines vraies" type="Characteristic" />
+			<column id="Protides" dataListQName="bcpg:nutList"
+				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
+				charactNodeRef="" charactName="Protides" type="Characteristic" />
+			<column id="Sodium" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut"
+				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Sodium"
+				type="Characteristic" />
+			<column id="Sucres" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut"
+				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Sucres"
+				type="Characteristic" />
+
+
 			<!-- files -->
-			<column id="img1Path" attribute="cm:content" path="Images/produit.jpg" type="File"/>
-			<column id="img1Title" attribute="cm:title" path="Images/produit.jpg" type="File"/>
-				
-		</columns>
-	</mapping>	
-	
-	<mapping name="bcpg:entity">		
-		<nodeColumnKeys> 
-		</nodeColumnKeys>
-		<columns>
+			<column id="img1Path" attribute="cm:content" path="Images/produit.jpg"
+				type="File" />
+			<column id="img1Title" attribute="cm:title" path="Images/produit.jpg"
+				type="File" />
 
-			<!-- characteristic properties -->
-			<column id="coutMP" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
-				charactNodeRef="" charactName="Coût MP" type="Characteristic" />
-			<column id="coutMPPrev" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
-				charactNodeRef="" charactName="Coût prév MP" type="Characteristic" />
-			<column id="coutEmb" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
-				charactNodeRef="" charactName="Coût emb" type="Characteristic" />
-			<column id="nutProteines" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Protéines" type="Characteristic" />
-			<column id="nutLipides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Lipides" type="Characteristic" />
-			<column id="nutGlucides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Glucides" type="Characteristic" />
-				
-		</columns>
-	</mapping>		
-	
-	<!-- INGREDIENTS LIST -->
-	<mapping name="bcpg:ingList">
-		<nodeColumnKeys> 
-			<nodeColumnKey attribute="bcpg:code"/>
-		</nodeColumnKeys>
-		<dataListColumnKeys>
-			<dataListColumnKey attribute="bcpg:ingListIng"/>
-		</dataListColumnKeys>
-		<columns>
-			<column id="ingListQtyPerc" attribute="bcpg:ingListQtyPerc" type="Attribute"/>
-			<column id="ingListIsGMO" attribute="bcpg:ingListIsGMO" type="Attribute"/>
-			<column id="ingListIsIonized" attribute="bcpg:ingListIsIonized" type="Attribute"/>
-			<column id="ingListIng" attribute="bcpg:ingListIng" type="Attribute"/>			
-			<column id="ingListGeoOrigin" attribute="bcpg:ingListGeoOrigin" type="Attribute"/>
-			<column id="ingListBioOrigin" attribute="bcpg:ingListBioOrigin" type="Attribute"/>
 		</columns>
 	</mapping>
-	
-	<!-- COMPOSITION LIST -->
-	<mapping name="bcpg:compoList">
-		<nodeColumnKeys> 
-			<nodeColumnKey attribute="bcpg:code"/>
+
+	<!-- INGREDIENTS LIST -->
+	<mapping name="bcpg:ingList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
 		<dataListColumnKeys>
-			<dataListColumnKey attribute="bcpg:compoListProduct"/>
+			<dataListColumnKey attribute="bcpg:ingListIng" />
 		</dataListColumnKeys>
 		<columns>
-			<column id="code" attribute="bcpg:code" type="Attribute"/>
-			<column id="level" attribute="bcpg:depthLevel" type="Attribute"/>
-			<column id="compoListProduct" attribute="bcpg:compoListProduct" type="Attribute"/>			
-			<column id="compoListQty" attribute="bcpg:compoListQty" type="Attribute"/>
-			<column id="compoListUnit" attribute="bcpg:compoListUnit" type="Attribute"/>			
+			<column id="ingListQtyPerc" attribute="bcpg:ingListQtyPerc"
+				type="Attribute" />
+			<column id="ingListIsGMO" attribute="bcpg:ingListIsGMO" type="Attribute" />
+			<column id="ingListIsIonized" attribute="bcpg:ingListIsIonized"
+				type="Attribute" />
+			<column id="ingListIng" attribute="bcpg:ingListIng" type="Attribute" />
+			<column id="ingListGeoOrigin" attribute="bcpg:ingListGeoOrigin"
+				type="Attribute" />
+			<column id="ingListBioOrigin" attribute="bcpg:ingListBioOrigin"
+				type="Attribute" />
 		</columns>
-	</mapping> 
-	
-	<mapping name="bcpg:client">		
-		<nodeColumnKeys> 
-			<nodeColumnKey attribute="bcpg:erpCode"/>
-			<nodeColumnKey attribute="bcpg:code"/>
+	</mapping>
+
+	<!-- COMPOSITION LIST -->
+	<mapping name="bcpg:compoList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
-		<columns/>
-	</mapping>	
-	
-	<mapping name="bcpg:supplier">		
-		<nodeColumnKeys> 
-			<nodeColumnKey attribute="bcpg:erpCode"/>
-			<nodeColumnKey attribute="bcpg:code"/>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:compoListProduct" />
+		</dataListColumnKeys>
+		<columns>
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+			<column id="level" attribute="bcpg:depthLevel" type="Attribute" />
+			<column id="compoListProduct" attribute="bcpg:compoListProduct"
+				type="Attribute" />
+			<column id="compoListQty" attribute="bcpg:compoListQty" type="Attribute" />
+			<column id="compoListUnit" attribute="bcpg:compoListUnit"
+				type="Attribute" />
+		</columns>
+	</mapping>
+
+	<mapping name="bcpg:client">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
-		<columns/>
-	</mapping>	
-		
+		<columns />
+	</mapping>
+
+	<mapping name="bcpg:supplier">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns />
+	</mapping>
+
 </mappings>
