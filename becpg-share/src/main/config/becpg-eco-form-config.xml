@@ -1,0 +1,202 @@
+<alfresco-config>
+	
+	<!-- eco:changeOrder (existing nodes) -->
+	<config evaluator="node-type" condition="eco:changeOrder">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="cm:titled" />
+					
+					<show id="eco:ecoState" />
+					<show id="eco:effectiveDate" />
+					<show id="eco:ecoType" />
+					<show id="eco:calculatedCharacts" />							
+					
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />								
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>									
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- eco:changeUnit (existing nodes) -->
+	<config evaluator="node-type" condition="eco:changeUnit">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="cm:titled" />
+					
+					<show id="eco:cuRevision" />
+					<show id="eco:cuReqRespected" />
+					<show id="eco:cuReqDetails" />
+					<show id="eco:cuTreated" />
+					<show id="eco:cuSourceItem" />
+					<show id="eco:cuTargetItem" />		
+					
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />								
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>									
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- eco:replacementList type -->
+	<config evaluator="model-type" condition="eco:replacementList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="eco:revisionType" />
+					<show id="eco:sourceItem" />
+					<show id="eco:targetItem" />					
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="eco:sourceItem">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="eco:targetItem">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="eco:revisionType" />
+					<show id="eco:sourceItem" />
+					<show id="eco:targetItem" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- eco:replacementList type (existing nodes) -->
+	<config evaluator="node-type" condition="eco:replacementList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="eco:revisionType" />
+					<show id="eco:sourceItem" />
+					<show id="eco:targetItem" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="eco:sourceItem">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="eco:targetItem">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- eco:wUsedList type -->
+	<config evaluator="model-type" condition="eco:wUsedList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="eco:impactedDataList" />
+					<show id="eco:isWUsedImpacted" />
+					<show id="eco:wulChangeUnit" />										
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+					<show id="eco:impactedDataList" />
+					<show id="eco:isWUsedImpacted" />
+					<show id="eco:wulChangeUnit" />				
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- eco:wUsedList type (existing nodes) -->
+	<config evaluator="node-type" condition="eco:wUsedList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="eco:impactedDataList" />
+					<show id="eco:isWUsedImpacted" />
+					<show id="eco:wulChangeUnit" />				
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+			</form>
+		</forms>
+	</config>
+	
+	<!-- eco:simulationList type -->
+	<config evaluator="model-type" condition="eco:simulationList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="eco:slSourceValue" />
+					<show id="eco:slTargetValue" />
+					<show id="eco:slSourceItem" />
+					<show id="eco:slCharact" />										
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />				
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="eco:slSourceValue" />
+					<show id="eco:slTargetValue" />
+					<show id="eco:slSourceItem" />
+					<show id="eco:slCharact" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- eco:simulationList type (existing nodes) -->
+	<config evaluator="node-type" condition="eco:simulationList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="eco:slSourceValue" />
+					<show id="eco:slTargetValue" />
+					<show id="eco:slSourceItem" />
+					<show id="eco:slCharact" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />				
+			</form>
+		</forms>
+	</config>
+	
+</alfresco-config>
