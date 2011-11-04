@@ -30,5 +30,13 @@
     	<property name="repoService" ref="repoService"/>
     	<property name="associationService" ref="associationService"/>		
 	</bean>
+	
+	<!-- policy -->
+   
+   <bean id="ecoPolicy" class="fr.becpg.repo.eco.policy.ECOPolicy" init-method="init">
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="nodeService" ref="nodeService" />		
+		<property name="ecoService" ref="ecoService"/>	
+  </bean>
    
 </beans>

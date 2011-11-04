@@ -342,6 +342,8 @@
 		<type name="bcpg:productSpecification">
 			<parent>bcpg:entity</parent>
 			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -357,6 +359,7 @@
 			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -378,7 +381,7 @@
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:finishedProduct">
-			<parent>bcpg:product</parent>
+			<parent>bcpg:product</parent>			
 			<mandatory-aspects>
 				<aspect>bcpg:eanAspect</aspect>
 				<aspect>bcpg:transformationAspect</aspect>
@@ -578,6 +581,14 @@
 			<mandatory-aspects>
 				<aspect>bcpg:location</aspect>
 			</mandatory-aspects>
+		</type>
+		<!-- ______________________________________ SUBSIDIARY ______________________________________ -->
+		<type name="bcpg:subsidiary">
+			<parent>cm:content</parent>			
+		</type>
+		<!-- ______________________________________ TRADEMARK ______________________________________ -->								
+		<type name="bcpg:trademark">
+			<parent>cm:content</parent>			
 		</type>
 		<!-- _______________________________________ COMPO ________________________________________________ -->
 		<type name="bcpg:compoList">
@@ -1312,7 +1323,45 @@
 				</association>
 			</associations>
 		</aspect>
-
+		
+		<aspect name="bcpg:manufacturingAspect">			
+			<associations>				
+				<association name="bcpg:subsidiary">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:subsidiary</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:plants">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:plant</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:trademark">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:trademark</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		
 		<aspect name="bcpg:eanAspect">
 			<properties>
 				<property name="bcpg:eanCode">

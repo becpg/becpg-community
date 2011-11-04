@@ -668,5 +668,15 @@ public interface BeCPGModel {
 
 	public static final QName PROP_PRICE_CURRENCY =  QName.createQName(BECPG_URI, "priceCurrency");
 	
+	/**
+	 * manufacturingAspect
+	 */
+	static final QName ASPECT_MANUFACTURING = QName.createQName(BECPG_URI, "manufacturingAspect");	
+	static final QName ASSOC_SUBSIDIARY = QName.createQName(BECPG_URI, "subsidiary");
+	static final QName ASSOC_PLANTS = QName.createQName(BECPG_URI, "plants");
+	static final QName ASSOC_TRADEMARK = QName.createQName(BECPG_URI, "trademark");
 
+	static final QName TYPE_SUBSIDIARY = QName.createQName(BECPG_URI, "subsidiary");
+	static final QName TYPE_PLANT = QName.createQName(BECPG_URI, "plant");
+	static final QName TYPE_TRADEMARK = QName.createQName(BECPG_URI, "trademark");
 }

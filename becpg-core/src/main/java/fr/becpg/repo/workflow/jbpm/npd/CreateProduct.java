@@ -146,20 +146,33 @@ public class CreateProduct extends JBPMSpringActionHandler {
 						props.put(BeCPGModel.PROP_PRICE_CURRENCY, priceCurrency);
 						nodeService.addAspect(productNodeRef, BeCPGModel.ASPECT_PROFITABILITY, props );
 					}
+
+					//Delete existing subsidiary
+					for( AssociationRef subsidiaryAssoc : nodeService.getTargetAssocs(productNodeRef, BeCPGModel.ASSOC_SUBSIDIARY)){
+						nodeService.removeAssociation( productNodeRef, subsidiaryAssoc.getTargetRef(), BeCPGModel.ASSOC_SUBSIDIARY);
+					}
+					
+					
+					//Copy subsidiary 
+					JBPMNode subsidiaryNode = (JBPMNode) executionContext.getContextInstance().getVariable(
+							"npdwf_cftSubsidiary");
+					if(subsidiaryNode!=null && subsidiaryNode.getNodeRef()!=null && nodeService.exists( subsidiaryNode.getNodeRef())){
+						
+						nodeService.createAssociation( productNodeRef, subsidiaryNode.getNodeRef() , BeCPGModel.ASSOC_SUBSIDIARY);
+					}
 					
 					//Delete existing clients
 					for( AssociationRef clientAssoc : nodeService.getTargetAssocs(productNodeRef, BeCPGModel.ASSOC_CLIENTS)){
 						nodeService.removeAssociation( productNodeRef, clientAssoc.getTargetRef(), BeCPGModel.ASSOC_CLIENTS);
 					}
-					
-					
+										
 					//Copy client 
 					JBPMNode clientNode = (JBPMNode) executionContext.getContextInstance().getVariable(
 							"npdwf_cftClient");
 					if(clientNode!=null && clientNode.getNodeRef()!=null && nodeService.exists( clientNode.getNodeRef())){
 						
 						nodeService.createAssociation( productNodeRef, clientNode.getNodeRef() , BeCPGModel.ASSOC_CLIENTS);
-					}
+					}					
 					
 					// Copy datalist
 					if (recipeNodeRef != null && nodeService.exists(recipeNodeRef)) {

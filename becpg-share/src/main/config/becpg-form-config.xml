@@ -208,7 +208,7 @@
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
 					<show id="bcpg:productMicrobioCriteria" />
-
+		
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
@@ -224,7 +224,7 @@
 					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
-						template="/fr/becpg/components/form/3-column-set.ftl" />
+						template="/fr/becpg/components/form/3-column-set.ftl" />						
 					<set id="categories" appearance="bordered-panel" label="Catégories"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label="Audit"
@@ -283,7 +283,7 @@
 							<control-param name="style">width:200px</control-param>
 						</control>	
 					</field>
-
+										
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -443,7 +443,10 @@
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:productState" />
-					<show id="bcpg:eanCode" />					
+					<show id="bcpg:eanCode" />				
+					<show id="bcpg:subsidiary" />
+					<show id="bcpg:plants" />
+					<show id="bcpg:trademark" />
 					<show id="bcpg:clients" />
 					<show id="rep:reportTpls" />									
 
@@ -453,6 +456,13 @@
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
 					<show id="bcpg:productMicrobioCriteria" />
+					
+					<!-- Profitability -->
+					<show id="bcpg:unitPrice" />
+					<show id="bcpg:unitTotalCost" />
+					<show id="bcpg:priceCurrency" />					
+					<show id="bcpg:breakEven" />					
+					<show id="bcpg:profitability" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -473,6 +483,8 @@
 					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
+						template="/fr/becpg/components/form/3-column-set.ftl" />
+					<set id="profitability" appearance="bordered-panel" label="Rentabilité"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel" label="Catégories"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
@@ -513,6 +525,9 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:subsidiary" force="true" set="mainInfo"/>
+					<field id="bcpg:plants" force="true" set="mainInfo"/>
+					<field id="bcpg:trademark" force="true" set="mainInfo"/>
 					<field id="bcpg:clients" force="true" set="mainInfo"/>						
 					<field id="rep:reportTpls" set="mainInfo"/>
 						
@@ -531,7 +546,14 @@
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
 							<control-param name="style">width:200px</control-param>
 						</control>	
-					</field>
+					</field>					
+					
+					<!-- profitability -->
+					<field id="bcpg:unitPrice" read-only="true" set="profitability" />
+					<field id="bcpg:unitTotalCost" read-only="true" set="profitability" />
+					<field id="bcpg:priceCurrency" read-only="true" set="profitability" />					
+					<field id="bcpg:breakEven" read-only="true" set="profitability" />
+					<field id="bcpg:profitability" read-only="true" set="profitability" />				
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -580,6 +602,9 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:productState" />
+					<show id="bcpg:subsidiary" />
+					<show id="bcpg:plants" />
+					<show id="bcpg:trademark" />
 					<show id="bcpg:clients" />
 					<show id="rep:reportTpls" />
 					
@@ -639,6 +664,9 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:subsidiary" force="true" set="mainInfo"/>
+					<field id="bcpg:plants" force="true" set="mainInfo"/>
+					<field id="bcpg:trademark" force="true" set="mainInfo"/>
 					<field id="bcpg:clients" force="true" set="mainInfo"/>						
 					<field id="rep:reportTpls" set="mainInfo"/>
 						

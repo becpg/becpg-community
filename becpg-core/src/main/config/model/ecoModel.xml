@@ -33,7 +33,9 @@
 		<constraint name="eco:ecoStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value>ToValidate</value>
+					<value>ToCalculateWUsed</value>
+					<value>WUsedCalculated</value>
+					<value>ToValidate</value>					
 					<value>Valid</value>
 					<value>Refused</value>
 					<value>ToSimulate</value>
@@ -58,7 +60,7 @@
 		
 		<!-- type change order -->
 		<type name="eco:changeOrder">
-			<parent>cm:content</parent>
+			<parent>bcpg:entity</parent>
 			<properties>										
 				<property name="eco:ecoState">
 					<type>d:text</type>
@@ -106,6 +108,7 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		

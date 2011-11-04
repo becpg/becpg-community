@@ -259,6 +259,10 @@ public class ECOServiceImpl implements ECOService {
 						// add simulationEntityAspect
 						nodeService.addAspect(targetNodeRef, ECOModel.ASPECT_SIMULATION_ENTITY, null);
 						associationService.update(targetNodeRef, ECOModel.ASSOC_SIMULATION_SOURCE_ITEM, changeUnitData.getSourceItem());
+						
+						// store targetNodeRef
+						changeUnitData.setTargetItem(targetNodeRef);
+						changeUnitDAO.update(wul.getChangeUnit(), changeUnitData);
 					}
 				}
 			}			
@@ -464,7 +468,7 @@ public class ECOServiceImpl implements ECOService {
 			updateCalculatedCharactValues(ecoData, sourceData, targetData);
 			
 			// save in DB
-			if(isSimulation){
+			if(!isSimulation){
 				productDAO.update(targetNodeRef, targetData, productDictionaryService.getDataLists());
 			}					
 		}		

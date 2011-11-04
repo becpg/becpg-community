@@ -94,7 +94,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
         <omgdi:waypoint x="395" y="217"></omgdi:waypoint>
-        <omgdi:waypoint x="442" y="197"></omgdi:waypoint>
+        <omgdi:waypoint x="422" y="217"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
         <omgdi:waypoint x="1015" y="217"></omgdi:waypoint>
@@ -112,7 +112,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
         <omgdi:waypoint x="177" y="217"></omgdi:waypoint>
-        <omgdi:waypoint x="232" y="197"></omgdi:waypoint>
+        <omgdi:waypoint x="212" y="217"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
         <omgdi:waypoint x="585" y="217"></omgdi:waypoint>
@@ -131,21 +131,21 @@
         <omgdi:waypoint x="480" y="217"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
-        <omgdi:waypoint x="865" y="217"></omgdi:waypoint>
+        <omgdi:waypoint x="812" y="245"></omgdi:waypoint>
         <omgdi:waypoint x="812" y="290"></omgdi:waypoint>
         <omgdi:waypoint x="672" y="290"></omgdi:waypoint>
         <omgdi:waypoint x="672" y="245"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
-        <omgdi:waypoint x="232" y="197"></omgdi:waypoint>
+        <omgdi:waypoint x="252" y="217"></omgdi:waypoint>
         <omgdi:waypoint x="290" y="217"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow18" id="BPMNEdge_flow18">
-        <omgdi:waypoint x="585" y="217"></omgdi:waypoint>
+        <omgdi:waypoint x="532" y="245"></omgdi:waypoint>
         <omgdi:waypoint x="532" y="410"></omgdi:waypoint>
         <omgdi:waypoint x="324" y="410"></omgdi:waypoint>
         <omgdi:waypoint x="232" y="410"></omgdi:waypoint>
-        <omgdi:waypoint x="232" y="197"></omgdi:waypoint>
+        <omgdi:waypoint x="232" y="237"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

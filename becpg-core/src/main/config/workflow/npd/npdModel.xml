@@ -11,9 +11,10 @@
 	</imports>
 
 	<namespaces>
-		<namespace uri="http://www.bcpg.fr/model/npd-workflow/1.0" prefix="npdwf" />
+		<namespace uri="http://www.bcpg.fr/model/npd-workflow/1.0"
+			prefix="npdwf" />
 	</namespaces>
-	
+
 	<constraints>
 		<constraint name="npdwf:npdType" type="LIST">
 			<parameter name="allowedValues">
@@ -33,63 +34,47 @@
 					<value>Démarré</value>
 					<value>Brief marketing</value>
 					<value>Etude du besoin</value>
-					<value>Faisabilité en  cours</value>
+					<value>Faisabilité en cours</value>
 					<value>Commercialisé</value>
 					<value>Réservé</value>
 					<value>Offre client</value>
 					<value>Stop</value>
 					<value>Standby</value>
+					<value>Prototypage</value>
+					<value>Mise en production</value>
 				</list>
 			</parameter>
 		</constraint>
 	</constraints>
-	
 
-	<types>	
-		
-		<!--												-->
-		<!--		New product development workflow		-->
-		<!--												-->
-		
+
+	<types>
+
+		<!-- -->
+		<!-- New product development workflow -->
+		<!-- -->
+
 		<type name="npdwf:initiate-npd">
 			<parent>bpm:startTask</parent>
 			<overrides>
 				<property name="bpm:packageActionGroup">
-				  <default>add_package_item_actions</default>
+					<default>add_package_item_actions</default>
 				</property>
 				<property name="bpm:packageItemActionGroup">
-				  <default>edit_package_item_actions</default>
+					<default>edit_package_item_actions</default>
 				</property>
-				<property name="bpm:workflowDescription" >
+				<property name="bpm:workflowDescription">
 					<mandatory>true</mandatory>
 				</property>
 			</overrides>
-		    <mandatory-aspects>
-				<aspect>npdwf:npdAspect</aspect>
-			</mandatory-aspects>
-		</type>
-		
-			
-		<type name="npdwf:marketing-brief">
-			<parent>bpm:workflowTask</parent>
-			<overrides>
-				<property name="bpm:packageActionGroup">
-				  <default>add_package_item_actions</default>
-				</property>
-				<property name="bpm:packageItemActionGroup">
-				  <default>edit_package_item_actions</default>
-				</property>
-			</overrides>
 			<mandatory-aspects>
+				<aspect>npdwf:npdAspect</aspect>
 				<aspect>npdwf:cftAspect</aspect>
 				<aspect>npdwf:priceInformations</aspect>
 				<aspect>npdwf:volumeForeCastAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
-		
-		
-		
+
 		<type name="npdwf:needDefinition">
 			<parent>bpm:workflowTask</parent>
 			<overrides>
@@ -98,15 +83,17 @@
 				</property>
 			</overrides>
 			<mandatory-aspects>
+				<aspect>npdwf:npdAspect</aspect>	
+				<aspect>npdwf:cftAspect</aspect>
+				<aspect>npdwf:priceInformations</aspect>
+				<aspect>npdwf:volumeForeCastAspect</aspect>
 				<aspect>npdwf:needDefinitionProductAspect</aspect>
 				<aspect>npdwf:packagingDescriptionAspect</aspect>
 				<aspect>npdwf:recipeDescriptionAspect</aspect>
+				<aspect>bpm:groupAssignees</aspect>
 			</mandatory-aspects>
 		</type>
-		
-		
-		
-		
+
 		<type name="npdwf:needDefinition-validation">
 			<parent>bpm:workflowTask</parent>
 			<overrides>
@@ -115,14 +102,18 @@
 				</property>
 			</overrides>
 			<mandatory-aspects>
+				<aspect>npdwf:npdAspect</aspect>	
+				<aspect>npdwf:cftAspect</aspect>
+				<aspect>npdwf:priceInformations</aspect>
+				<aspect>npdwf:volumeForeCastAspect</aspect>
 				<aspect>npdwf:needDefinitionProductAspect</aspect>
 				<aspect>npdwf:packagingDescriptionAspect</aspect>
-				<aspect>npdwf:recipeDescriptionAspect</aspect>
-				<aspect>bpm:groupAssignees</aspect>
+				<aspect>npdwf:recipeDescriptionAspect</aspect>				
+				<aspect>bpm:groupAssignees</aspect>	
 			</mandatory-aspects>
 		</type>
-		
-		
+
+
 		<type name="npdwf:feasibility-analysis-assignement">
 			<parent>bpm:workflowTask</parent>
 			<overrides>
@@ -131,11 +122,15 @@
 				</property>
 			</overrides>
 			<mandatory-aspects>
+				<aspect>npdwf:npdAspect</aspect>	
+				<aspect>npdwf:cftAspect</aspect>
+				<aspect>npdwf:priceInformations</aspect>
+				<aspect>npdwf:volumeForeCastAspect</aspect>
 				<aspect>bpm:assignees</aspect>
 			</mandatory-aspects>
 		</type>
-		
-		
+
+
 		<type name="npdwf:feasibility-analysis">
 			<parent>bpm:workflowTask</parent>
 			<overrides>
@@ -143,8 +138,14 @@
 					<default>read_package_item_actions</default>
 				</property>
 			</overrides>
+				<mandatory-aspects>
+				<aspect>npdwf:npdAspect</aspect>	
+				<aspect>npdwf:cftAspect</aspect>
+				<aspect>npdwf:priceInformations</aspect>
+				<aspect>npdwf:volumeForeCastAspect</aspect>				
+			</mandatory-aspects>
 		</type>
-		
+
 
 		<type name="npdwf:validate-analysis">
 			<parent>bpm:workflowTask</parent>
@@ -154,11 +155,15 @@
 				</property>
 			</overrides>
 			<mandatory-aspects>
+				<aspect>npdwf:npdAspect</aspect>	
+				<aspect>npdwf:cftAspect</aspect>
+				<aspect>npdwf:priceInformations</aspect>
+				<aspect>npdwf:volumeForeCastAspect</aspect>
 				<aspect>bpm:groupAssignees</aspect>
 			</mandatory-aspects>
 		</type>
-		
-		
+
+
 		<type name="npdwf:send-client-offer">
 			<parent>bpm:workflowTask</parent>
 			<overrides>
@@ -167,8 +172,8 @@
 				</property>
 			</overrides>
 		</type>
-		
-		
+
+
 		<type name="npdwf:work-on-prototype">
 			<parent>bpm:workflowTask</parent>
 			<overrides>
@@ -177,7 +182,7 @@
 				</property>
 			</overrides>
 		</type>
-		
+
 		<type name="npdwf:validate-prototype">
 			<parent>bpm:workflowTask</parent>
 			<overrides>
@@ -186,7 +191,7 @@
 				</property>
 			</overrides>
 		</type>
-		
+
 		<type name="npdwf:start-production">
 			<parent>bpm:workflowTask</parent>
 			<overrides>
@@ -195,18 +200,15 @@
 				</property>
 			</overrides>
 		</type>
-		
+
 
 	</types>
-	
+
 	<aspects>
 		<!-- Call for tender -->
 		<aspect name="npdwf:cftAspect">
 			<properties>
 				<property name="npdwf:cftTransmitter">
-					<type>d:text</type>
-				</property>
-				<property name="npdwf:cftCompany">
 					<type>d:text</type>
 				</property>
 				<property name="npdwf:cftRequirements">
@@ -230,20 +232,31 @@
 				<property name="npdwf:cftResponseDateRealized">
 					<type>d:date</type>
 				</property>
-			  </properties>
-			  <associations>
-					<association name="npdwf:cftClient">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:client</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
-				</associations>
+			</properties>
+			<associations>
+				<association name="npdwf:cftSubsidiary">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:subsidiary</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="npdwf:cftClient">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:client</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 		<!-- Volume Forecast -->
 		<aspect name="npdwf:volumeForeCastAspect">
@@ -268,7 +281,7 @@
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<!-- NPD -->
 		<aspect name="npdwf:npdAspect">
 			<properties>
@@ -276,8 +289,8 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<constraints>
-	                  <constraint ref="cm:filename" />
-	               </constraints>
+						<constraint ref="cm:filename" />
+					</constraints>
 				</property>
 				<property name="npdwf:npdNumber">
 					<type>d:text</type>
@@ -296,86 +309,86 @@
 				</property>
 			</properties>
 			<associations>
-					<association name="npdwf:npdFolder">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>cm:folder</class>
-							<mandatory>true</mandatory>
-							<many>false</many>
-						</target>
-					</association>
+				<association name="npdwf:npdFolder">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:folder</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 			</associations>
 		</aspect>
 		<!-- Product description -->
 		<aspect name="npdwf:packagingDescriptionAspect">
 			<properties>
 				<property name="npdwf:packagingDescription">
-								<type>d:text</type>
-							</property>
+					<type>d:text</type>
+				</property>
 			</properties>
 			<associations>
 				<association name="npdwf:needDefinitionPackagingKit">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:finishedProduct</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:finishedProduct</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 			</associations>
 		</aspect>
 		<aspect name="npdwf:recipeDescriptionAspect">
 			<properties>
 				<property name="npdwf:recipeDescription">
-								<type>d:text</type>
-							</property>
+					<type>d:text</type>
+				</property>
 			</properties>
 			<associations>
 				<association name="npdwf:needDefinitionRecipeProduct">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:finishedProduct</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
-				
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:finishedProduct</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+
 			</associations>
 		</aspect>
 		<aspect name="npdwf:needDefinitionProductAspect">
-		<properties>
+			<properties>
 				<property name="npdwf:productDescription">
-								<type>d:text</type>
-							</property>
+					<type>d:text</type>
+				</property>
 			</properties>
-		<associations>
-					<association name="npdwf:needDefinitionProduct">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:finishedProduct</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
+			<associations>
+				<association name="npdwf:needDefinitionProduct">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:finishedProduct</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 			</associations>
-			</aspect>
-		
-		
-		
+		</aspect>
+
+
+
 	</aspects>
-	
-	
+
+
 
 </model>

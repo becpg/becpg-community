@@ -6,13 +6,7 @@
 	<!-- Swimlanes -->
 
 	<swimlane name="initiator" />
-
-	<swimlane name="marketing-brief-group">
-		<assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
-			<pooledactors>#{people.getGroup('GROUP_MarketingBrief')}</pooledactors>
-		</assignment>
-	</swimlane>
-
+	
 	<swimlane name="needDefinition-group">
 		<assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
 			<pooledactors>#{people.getGroup('GROUP_NeedDefinition')}</pooledactors>
@@ -47,35 +41,8 @@
 			     </script>
 			</event>
 		</task>
-		<transition to="marketing-brief" name="start" ></transition>
+		<transition to="needDefinition" name="start" ></transition>
 	</start-state>
-
-
-	<!-- Tasks -->
-
-	<task-node name="marketing-brief">
-		<task name="npdwf:marketing-brief" swimlane="marketing-brief-group">
-			<event type="task-create">
-				<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
-					<status>Brief marketing</status>
-				</action>
-			</event>
-			<event type="task-end">
-				<action class="org.alfresco.repo.workflow.jbpm.AlfrescoJavaScript">
-					<script>
-						<variable name="bpm_assignee" access="write" />
-						<expression>
-							if (taskInstance.actorId != null)
-							people.getPerson(taskInstance.actorId);
-							else
-							person;
-						</expression>
-					</script>
-				</action>
-			</event>
-		</task>
-		<transition name="submit" to="needDefinition"></transition>
-	</task-node>
 
 	<!-- Need Definition -->
 
@@ -85,7 +52,7 @@
 				<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
 					<status>Etude du besoin</status>
 				</action>
-				
+				<action class="fr.becpg.repo.workflow.jbpm.npd.AssignDefaultGroup"/>
 			</event>
 		<event type="task-end">
 				<action class="org.alfresco.repo.workflow.jbpm.AlfrescoJavaScript">
@@ -116,10 +83,7 @@
 		<task name="npdwf:needDefinition-validation" >
 		    <assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
                <actor>#{reviewer}</actor>
-            </assignment>
-            <event type="task-create">
-				<action class="fr.becpg.repo.workflow.jbpm.npd.AssignDefaultGroup"/>
-			</event>
+            </assignment>            
 		</task>
 		<transition to="end-needDefinition-validation" name="approve-needDefinition"/>
 		<transition to="needDefinition" name="reject-needDefinition"/>
@@ -182,6 +146,7 @@
 			</event>
 		</task>
 		<transition name="assign-feasibility-analysis" to="feasibility-start-analysis"></transition>
+		<transition name="submit-work" to="end-fork-faisability"></transition>
 	</task-node> 
 
 	<node name="feasibility-start-analysis">
@@ -239,7 +204,7 @@
 		</task>
 		<transition to="work-on-prototype" name="work-on-prototype" >
 			<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
-				<status>Stop</status>
+				<status>Prototypage</status>
 			</action>
 		</transition>
 		<transition to="send-client-offer" name="send-client-offer" >
@@ -329,7 +294,11 @@
 				</action>
 			</event>
 		</task>
-		<transition name="approve" to="start-production" />
+		<transition name="approve" to="start-production" >
+			<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
+				<status>Mise en production</status>
+			</action>
+		</transition>
 		<transition name="reject" to="work-on-prototype" />
 	</task-node>
 

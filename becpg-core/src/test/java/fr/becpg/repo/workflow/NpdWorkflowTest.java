@@ -827,7 +827,18 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		List<NodeRef> folderNodeRefs = new ArrayList<NodeRef>();
 		folderNodeRefs.add(folderNodeRef);
 		java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-		assocs.put(NPDModel.ASSOC_NPD_FOLDER, folderNodeRefs);
+		assocs.put(NPDModel.ASSOC_NPD_FOLDER, folderNodeRefs);		
+		
+		// Info de l'appel d'offre
+		properties.put(NPDModel.PROP_CFT_TRANSMITTER, "matthieu");
+		properties.put(NPDModel.PROP_CFT_COMPANY, "cftCompany");
+		properties.put(NPDModel.PROP_CFT_OPENING_DATE, new Date());
+		properties.put(NPDModel.PROP_CFT_SAMPLING_DATE, new Date());
+		properties.put(NPDModel.PROP_CFT_LAUNCH_DATE_DESIRED, new Date());
+		properties.put(NPDModel.PROP_CFT_RESPONSE_DATE_DESIRED, new Date());
+		properties.put(NPDModel.PROP_CFT_REPONSE_DATEREALIZED, new Date());
+		properties.put(NPDModel.PROP_UNIT_PRICE, new Float(10));
+		assocs.put(NPDModel.ASSOC_CFT_CLIENT, getClientsNodeRef());
 		
 
 		workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
@@ -840,9 +851,9 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		
 		// Go to marketing brief
 
-		assertEquals(path.getNode().getName(), "marketing-brief");
+		//assertEquals(path.getNode().getName(), "marketing-brief");
 	
-		path = doMarketingBriefStep(workflowInstanceId);
+		//path = doMarketingBriefStep(workflowInstanceId);
 
 		// //Go to needDefinition
 		assertEquals(path.getNode().getName(), "needDefinition");
@@ -1007,29 +1018,29 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
     }
 	
 
-	private WorkflowPath doMarketingBriefStep(String workflowInstanceId) {
-
-		WorkflowTask task = getNextTaskForWorkflow(workflowInstanceId);
-		logger.info("Set marketing brief information " + task.getName());
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(NPDModel.PROP_CFT_TRANSMITTER, "matthieu");
-		properties.put(NPDModel.PROP_CFT_COMPANY, "cftCompany");
-		properties.put(NPDModel.PROP_CFT_OPENING_DATE, new Date());
-		properties.put(NPDModel.PROP_CFT_SAMPLING_DATE, new Date());
-		properties.put(NPDModel.PROP_CFT_LAUNCH_DATE_DESIRED, new Date());
-		properties.put(NPDModel.PROP_CFT_RESPONSE_DATE_DESIRED, new Date());
-		properties.put(NPDModel.PROP_CFT_REPONSE_DATEREALIZED, new Date());
-		properties.put(NPDModel.PROP_UNIT_PRICE, new Float(10));
-		java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-		assocs.put(NPDModel.ASSOC_CFT_CLIENT, getClientsNodeRef());
-
-		workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
-		logger.debug("End task"+task.getName());
-		task = workflowService.endTask(task.getId(), "submit");
-
-		return task.getPath();
-
-	}
+//	private WorkflowPath doMarketingBriefStep(String workflowInstanceId) {
+//
+//		WorkflowTask task = getNextTaskForWorkflow(workflowInstanceId);
+//		logger.info("Set marketing brief information " + task.getName());
+//		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+//		properties.put(NPDModel.PROP_CFT_TRANSMITTER, "matthieu");
+//		properties.put(NPDModel.PROP_CFT_COMPANY, "cftCompany");
+//		properties.put(NPDModel.PROP_CFT_OPENING_DATE, new Date());
+//		properties.put(NPDModel.PROP_CFT_SAMPLING_DATE, new Date());
+//		properties.put(NPDModel.PROP_CFT_LAUNCH_DATE_DESIRED, new Date());
+//		properties.put(NPDModel.PROP_CFT_RESPONSE_DATE_DESIRED, new Date());
+//		properties.put(NPDModel.PROP_CFT_REPONSE_DATEREALIZED, new Date());
+//		properties.put(NPDModel.PROP_UNIT_PRICE, new Float(10));
+//		java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
+//		assocs.put(NPDModel.ASSOC_CFT_CLIENT, getClientsNodeRef());
+//
+//		workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
+//		logger.debug("End task"+task.getName());
+//		task = workflowService.endTask(task.getId(), "submit");
+//
+//		return task.getPath();
+//
+//	}
 
 
 	private WorkflowPath doNeedDefinition(String workflowInstanceId) {
@@ -1044,6 +1055,11 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		assocs.put(NPDModel.ASSOC_NEED_DEFINITION_PRODUCT, getProductNodeRef());
 		assocs.put(NPDModel.ASSOC_NEED_DEFINITION_RECIPE, getRecipeNodeRef());
 		assocs.put(NPDModel.ASSOC_NEED_DEFINITION_PACKAGING, getPackagingNodeRef());
+		
+		// groupe Asssignees
+		List<NodeRef> assignees = new ArrayList<NodeRef>();
+		assignees.add(findGroupNode(PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString()));		
+		assocs.put(WorkflowModel.ASSOC_GROUP_ASSIGNEES, assignees);
 		
 		workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
 		task = workflowService.endTask(task.getId(), "submit");

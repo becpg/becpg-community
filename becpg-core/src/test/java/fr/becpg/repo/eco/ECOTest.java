@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ECOModel;
 import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.eco.data.ChangeOrderData;
 import fr.becpg.repo.eco.data.ChangeOrderType;
@@ -392,11 +393,11 @@ public class ECOTest extends RepoBaseTestCase  {
 	   }
 	
 	/**
-	 * Test formulate product.
+	 * Test ecoService
 	 *
 	 * @throws Exception the exception
 	 */
-	public void testFormulateProduct() throws Exception{
+	public void testECOService() throws Exception{
 		   
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
@@ -526,7 +527,152 @@ public class ECOTest extends RepoBaseTestCase  {
 				}
 				assertEquals(8, checks);
 				
-				ecoService.apply(ecoNodeRef);
+				// apply
+				//ecoService.apply(ecoNodeRef);
+				
+				return null;
+
+			}},false,true);
+		   
+	   }
+	
+	/**
+	 * Test ecoService
+	 *
+	 * @throws Exception the exception
+	 */
+	public void testECOPolicy() throws Exception{
+		   
+	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			public NodeRef execute() throws Throwable {					   							
+					
+				NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
+				NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
+				
+				/*
+				 * Create a change order to replace RM4 by RM5
+				 */
+				
+				logger.debug("Create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+				
+				List<NodeRef>calculatedCharacts = new ArrayList<NodeRef>();
+				calculatedCharacts.add(cost1);
+				calculatedCharacts.add(cost2);
+				calculatedCharacts.add(nut1);
+				calculatedCharacts.add(nut2);
+				ChangeOrderData changeOrderData = new ChangeOrderData(null, "ECO", null, ECOState.ToValidate, ChangeOrderType.Simulation, calculatedCharacts);						
+
+				List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
+				replacementList.add(new ReplacementListDataItem(null, RevisionType.Minor, rawMaterial4NodeRef, rawMaterial5NodeRef));
+				changeOrderData.setReplacementList(replacementList);
+				
+				NodeRef ecoNodeRef = changeOrderDAO.create(folderNodeRef, changeOrderData);
+				
+				// calculate WUsed
+				nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.ToCalculateWUsed);
+				
+				//verify WUsed
+				int checks = 0;
+				ChangeOrderData dbECOData = changeOrderDAO.find(ecoNodeRef);
+				assertNotNull("check ECO exist in DB", dbECOData);
+				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+				assertEquals("Check 2 WUsed are impacted", 3, dbECOData.getWUsedList().size());
+				
+				for(WUsedListDataItem wul : dbECOData.getWUsedList()){
+					
+					assertNotNull(wul.getChangeUnit());
+					ChangeUnitData changeUnitData = changeUnitDAO.find(wul.getChangeUnit());					
+					assertNotNull(changeUnitData);
+					
+					if(changeUnitData.getSourceItem().equals(rawMaterial4NodeRef)){
+						
+						checks++;
+						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+					}
+					else if(changeUnitData.getSourceItem().equals(finishedProduct1NodeRef)){
+						
+						checks++;
+						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+					}
+					else if(changeUnitData.getSourceItem().equals(finishedProduct2NodeRef)){
+						
+						checks++;
+						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+					}					
+				}
+				assertEquals(3, checks);
+				
+				// simulation
+				nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.ToSimulate);
+				
+				//verify Simulation
+				checks = 0;
+				dbECOData = changeOrderDAO.find(ecoNodeRef);
+				assertNotNull("check ECO exist in DB", dbECOData);
+				assertNotNull("Check Simulation list", dbECOData.getSimulationList());
+				assertEquals("Check SchangeUnitDataimulation list", 8, dbECOData.getSimulationList().size());
+				
+				for(SimulationListDataItem sim : dbECOData.getSimulationList()){
+										
+					if(sim.getSourceItem().equals(finishedProduct1NodeRef)){
+						
+						if(sim.getCharact().equals(cost1)){
+						
+							checks++;
+							assertEquals("check cost1 PF1", 4.0f, sim.getSourceValue());
+							assertEquals("check cost1 PF1", 11.5f, sim.getTargetValue());
+						}
+						else if(sim.getCharact().equals(cost2)){
+							
+							checks++;
+							assertEquals("check cost2 PF1", 6.0f, sim.getSourceValue());
+							assertEquals("check cost2 PF1", 15f, sim.getTargetValue());
+						}
+						else if(sim.getCharact().equals(nut1)){
+							
+							checks++;
+							assertEquals("check nut1 PF1", 3.0f, sim.getSourceValue());
+							assertEquals("check nut1 PF1", 4.5f, sim.getTargetValue());
+						}
+						else if(sim.getCharact().equals(nut2)){
+							
+							checks++;
+							assertEquals("check nut2 PF1", 6.0f, sim.getSourceValue());
+							assertEquals("check nut2 PF1", 10.5f, sim.getTargetValue());
+						}						
+					}
+					else if(sim.getSourceItem().equals(finishedProduct2NodeRef)){
+						
+						if(sim.getCharact().equals(cost1)){
+							
+							checks++;
+							assertEquals("check cost1 PF2", 4.0f, sim.getSourceValue());
+							assertEquals("check cost1 PF2", 11.5f, sim.getTargetValue());
+						}
+						else if(sim.getCharact().equals(cost2)){
+							
+							checks++;
+							assertEquals("check cost2 PF2", 6.0f, sim.getSourceValue());
+							assertEquals("check cost2 PF2", 15f, sim.getTargetValue());
+						}
+						else if(sim.getCharact().equals(nut1)){
+							
+							checks++;
+							assertEquals("check nut1 PF2", 3.0f, sim.getSourceValue());
+							assertEquals("check nut1 PF2", 4.5f, sim.getTargetValue());
+						}
+						else if(sim.getCharact().equals(nut2)){
+							
+							checks++;
+							assertEquals("check nut2 PF2", 6.0f, sim.getSourceValue());
+							assertEquals("check nut2 PF2", 10.5f, sim.getTargetValue());
+						}
+					}					
+				}
+				assertEquals(8, checks);
+				
+				// apply
+				//nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.ToApply);
 				
 				return null;
 
