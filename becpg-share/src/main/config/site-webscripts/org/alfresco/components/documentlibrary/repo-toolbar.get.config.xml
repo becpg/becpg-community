@@ -5,8 +5,6 @@
       <content icon="xml" label="menu.create-content.localSemiFinishedProduct" formid="create" itemid="bcpg:localSemiFinishedProduct" />
       <content icon="xml" label="menu.create-content.semiFinishedProduct" formid="create" itemid="bcpg:semiFinishedProduct" />
       <content icon="xml" label="menu.create-content.finishedProduct" formid="create" itemid="bcpg:finishedProduct" />
-      <content icon="xml" label="menu.create-content.condSalesUnit" formid="create" itemid="bcpg:condSalesUnit" />
-      <content icon="xml" label="menu.create-content.packagingMaterial" formid="create" itemid="bcpg:packagingMaterial" />
       <content icon="xml" label="menu.create-content.packagingKit" formid="create" itemid="bcpg:packagingKit" />
       <content icon="xml" label="menu.create-content.supplier" formid="create" itemid="bcpg:supplier" />
       <content icon="xml" label="menu.create-content.client" formid="create" itemid="bcpg:client" />

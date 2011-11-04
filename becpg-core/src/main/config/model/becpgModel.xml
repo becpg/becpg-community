@@ -370,16 +370,7 @@
 				<aspect>bcpg:productAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
-		</type>
-		<type name="bcpg:condSalesUnit">
-			<parent>bcpg:product</parent>
-			<mandatory-aspects>
-				<aspect>bcpg:eanAspect</aspect>
-				<aspect>bcpg:transformationAspect</aspect>
-				<aspect>bcpg:clientsAspect</aspect>
-				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>
-			</mandatory-aspects>
-		</type>
+		</type>		
 		<type name="bcpg:finishedProduct">
 			<parent>bcpg:product</parent>			
 			<mandatory-aspects>
