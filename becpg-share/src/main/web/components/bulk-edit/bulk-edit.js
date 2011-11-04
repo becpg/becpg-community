@@ -1609,7 +1609,7 @@
     	  return false;
       }
        
-       var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=bulk-edit&fields={fields}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true",
+       var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=create&bulkEdit=true&fields={fields}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true",
        {
           itemKind: "type",
           itemId: this.options.itemType,

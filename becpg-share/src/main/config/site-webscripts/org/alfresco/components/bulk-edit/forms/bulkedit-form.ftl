@@ -1,5 +1,7 @@
 <#assign id=args.htmlid>
-<#assign fields=args.fields>
+<#if args.fields??>
+	<#assign fields=args.fields>
+</#if>
 <#if formUI == "true">
    <@formLib.renderFormsRuntime formId=formId />
 </#if>
@@ -79,7 +81,11 @@
 
                <#list form.structure as item>
                   <#if item.kind == "set">
-                     <@renderBulkSet set=item fields=fields/>
+                  	<#if fields??>
+                     	<@renderBulkSet set=item fields=fields/>
+                     <#else>
+		       	  		 <@formLib.renderSet set=item  />
+		         	 </#if>  
                   <#else>
                       <#if fields??>
 				          <#if fields?contains(item.id) > 
