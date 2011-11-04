@@ -8,7 +8,6 @@ var data =[ {type:"bcpg:finishedProduct",prefix:"PF"}
 				    ,{type:"bcpg:packagingMaterial",prefix:"E"}
 				    ,{type:"bcpg:packagingKit",prefix:"KE"}
 				    ,{type:"bcpg:semiFinishedProduct",prefix:"SF"}
-				    ,{type:"bcpg:condSalesUnit",prefix:"UVC"}
 				    ,{type:"bcpg:client",prefix:"C"}
 				    ,{type:"bcpg:supplier",prefix:"F"}];
 
