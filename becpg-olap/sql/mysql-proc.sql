@@ -98,7 +98,6 @@ CREATE TABLE `becpg_product_type` (
 SET character_set_client = utf8;
 
 insert into becpg_product_type(product_type,product_label) values ("product","Produit");
-insert into becpg_product_type(product_type,product_label) values ("condSalesUnit","Unité de vente conditionnée");
 insert into becpg_product_type(product_type,product_label) values ("finishedProduct","Produit fini");
 insert into becpg_product_type(product_type,product_label) values ("semiFinishedProduct","Produit semi fini");
 insert into becpg_product_type(product_type,product_label) values ("localSemiFinishedProduct","Produit semi fini local");

@@ -1,12 +1,6 @@
 
 /* Data Types */
 
-.datagrid span.condSalesUnit
-{
-   background: url(../images/products/condSalesUnit-16.png) no-repeat;
-   padding-left: 20px;
-}
-
 .datagrid span.finishedProduct
 {
    background: url(../images/products/finishedProduct-16.png) no-repeat;

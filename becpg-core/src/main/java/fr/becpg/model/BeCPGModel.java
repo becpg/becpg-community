@@ -72,11 +72,7 @@ public interface BeCPGModel {
 	/** The Constant PROP_PRODUCT_UNIT. */
 	static final QName PROP_PRODUCT_UNIT = QName.createQName(BECPG_URI,
 	"productUnit");	
-	
-	// condSalesUnit
-	/** The Constant TYPE_CONDSALESUNIT. */
-	static final QName TYPE_CONDSALESUNIT = QName.createQName(BECPG_URI,
-			"condSalesUnit");
+		
 	// finishedProduct
 	/** The Constant TYPE_FINISHEDPRODUCT. */
 	static final QName TYPE_FINISHEDPRODUCT = QName.createQName(BECPG_URI,
