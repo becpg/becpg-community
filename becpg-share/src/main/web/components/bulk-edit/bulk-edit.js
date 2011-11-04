@@ -55,6 +55,7 @@
 
       YAHOO.Bubbling.on("selectedItemsChanged", this.onSelectedItemsChanged, this);
       YAHOO.Bubbling.on("selectedTypeChanged", this.onSelectedTypeChanged, this);
+      YAHOO.Bubbling.on("dataItemUpdated", this.onDataItemUpdated, this);
  
       /* Deferred list population until DOM ready */
       this.deferredListPopulation = new Alfresco.util.Deferred(["onReady"],
@@ -139,7 +140,12 @@
         /**
          * The type of item
          */ 
-         itemType: null
+         itemType: null,
+         
+         /**
+          * Parent nodeRef
+          */
+         nodeRef : null,
       },
 
       /**
@@ -260,12 +266,46 @@
             elCell.innerHTML = '<input id="checkbox-' + oRecord.getId() + '" type="checkbox" name="fileChecked" value="'+ oData + '"' + (scope.selectedItems[oData] ? ' checked="checked">' : '>');
          };
       },
+      /**
+       * Returns actions custom datacell formatter
+       *
+       * @method fnRenderCellActions
+       */
+      fnRenderCellActions: function DataGrid_fnRenderCellActions()
+      {
+         var scope = this;
+         
+         /**
+          * Actions custom datacell formatter
+          *
+          * @method renderCellActions
+          * @param elCell {object}
+          * @param oRecord {object}
+          * @param oColumn {object}
+          * @param oData {object|string}
+          */
+         return function DataGrid_renderCellActions(elCell, oRecord, oColumn, oData)
+         {
+  
+        	 var   nodeRef = oRecord.getData().nodeRef;
+            Dom.setStyle(elCell, "width", oColumn.width + "px");
+            Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+            elCell.innerHTML = '<div id="' + scope.id + '-actions-' + oRecord.getId() + '" class="action-set simple" >'+
+            					'<div class="onActionEdit"><a title="Modifier"  class="action-link" href="" rel="edit"><span>Modifier</span></a></div>'+
+            					'</div>';
+         };
+      },
      /**
       * @method onSelectedItemsChanged
       * React on onSelectedItemsChanged event
       */
       onSelectedItemsChanged : function (){
-    	  this.buttons.submit.set("disabled", false);  	  
+
+    	  if(this.getSelectedItems().length>0){
+    		  this.buttons.editSelected.set("disabled", false);  	  
+    	  } else {
+    		  this.buttons.editSelected.set("disabled", true);  	  
+    	  }
       },      
       /**
        * @method onSelectedTypeChanged
@@ -282,7 +322,7 @@
        * @method getCellFormatter
        * @return {function} Function to render read-only value
        */
-      getCellFormatter: function BulkEdit_getCellFormatter(elCell, oRecord, oColumn, oData)
+      getCellFormatter: function BulkEdit_getCellFormatter(datalistColumn)
       {
          var scope = this;
          
@@ -313,14 +353,12 @@
             {
                if (!oData)
                {
-                  oData = oRecord.getData();
+                  oData = oRecord.getData("itemData")[oColumn.field];
                }
             
                if (oData)
                {
-                  var datalistColumn = scope.datalistColumns[oColumn.key];
-                  if (datalistColumn)
-                  {
+                  
                      oData = YAHOO.lang.isArray(oData) ? oData : [oData];
                      for (var i = 0, ii = oData.length, data; i < ii; i++)
                      {
@@ -344,24 +382,80 @@
                            case "date":
                               html += Alfresco.util.formatDate(Alfresco.util.fromISO8601(data.value), scope.msg("date-format.defaultDateOnly"));
                               break;
-                     
+                           case "bcpg:product":
+                        	   if(datalistColumn.name == "bcpg:compoListProduct")
+								{
+                        		   var padding = 10 + oRecord.getData("itemData")["prop_bcpg_depthLevel"].value * 10;
+                        		   html += '<span class="' + data.metadata + '" style="padding-left:' + padding + 'px;"><a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a></span>';                        	   
+								}
+                        	   	else if(datalistColumn.name == "bcpg:packagingListProduct")
+								{
+                        		   html += '<span class="' + data.metadata + '"><a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a></span>';                        	   
+								}
+								else
+								{
+									html += '<a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a>';
+								}
+                        	   break;
+                           case "boolean":
+								//color in red present allergens
+								if((datalistColumn.name == "bcpg:allergenListVoluntary" || datalistColumn.name == "bcpg:allergenListInVoluntary") && data.displayValue == true)
+								{											
+									html += '<span class="presentAllergen">' + $html(data.displayValue == true ? booleanValueTrue : booleanValueFalse ) + '</span>';
+								}
+								else
+								{
+									html += $html(data.displayValue == true ? booleanValueTrue : booleanValueFalse );											
+								}
+								break;  
+                           case "cm:authoritycontainer":
+                               html += '<span class="userGroup">' + $html(data.displayValue) + '</span>';
+                               break;                               
                            case "subtype":
                               html += '<a href="' + Alfresco.util.siteURL((data.metadata == "container" ? 'folder' : 'document') + '-details?nodeRef=' + data.value) + '">';
                               html += '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util.getFileIcon(data.displayValue, (data.metadata == "container" ? 'cm:folder' : null), 16) + '" width="16" alt="' + $html(data.displayValue) + '" title="' + $html(data.displayValue) + '" />';
                               html += ' ' + $html(data.displayValue) + '</a>'
                               break;
-
                            default:
-                              html += $links($html(data.displayValue));
+                        	   if(datalistColumn.name == "bcpg:rclReqType" || datalistColumn.name == "bcpg:filReqType")
+                    		   {
+                        		   if(data.displayValue == reqTypeForbidden)
+                        		   {
+                        			   html += '<span class="reqTypeForbidden">' + $html(data.displayValue) + '</span>';
+                        		   }
+                        		   else if(data.displayValue == reqTypeTolerated)
+                        		   {
+                        			   html += '<span class="reqTypeTolerated">' + $html(data.displayValue) + '</span>';
+                        		   }
+                        		   else if(data.displayValue == reqTypeInfo)
+                        		   {
+                        			   html += '<span class="reqTypeInfo">' + $html(data.displayValue) + '</span>';
+                        		   }                        		   
+                        		   else
+                    			   {
+                        			   html += $html(data.displayValue);
+                    			   }
+                    		   }
+                        	   else if(datalistColumn.name == "qa:sdlControlPoint" || datalistColumn.name == "qa:slControlPoint")
+                        	   {                        		   
+                        		   html += '<span class="sample"><a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a></span>';
+                        	   }
+                        	   else if(datalistColumn.name == "qa:clCharacts")
+                        	   {                        		   
+                        		   html += '<span class="control">' + $html(data.displayValue) + '</span>';
+                        	   }
+                        	   else
+                        	   {
+                        		   html += $html(data.displayValue);
+                        	   }
+                              
                               break;
                         }
-                        value = data.value;
                         if (i < ii - 1)
                         {
                            html += "<br />";
                         }
-                     }
-                  }
+                     }                  
                }
             }
 
@@ -378,13 +472,14 @@
        */
       getCellEditor: function BulkEdit_getCellEditor(column)
       {
+    	  var editor = null,
+    	  	scope = this,
+    	  	regexp = null;
+    	  
     	   if("prop_cm_name" == this._buildFormsName(column)
   			  || "prop_bcpg_code" == this._buildFormsName(column)){
     		   return null;
     	   }
-    	  var editor = new YAHOO.widget.TextboxCellEditor({disableBtns:true});
-    	  var regexp = null;
-    	  
     	 
     	  
     	  if(column.constraints!=null){
@@ -395,11 +490,10 @@
 	    				  regexp = column.constraints[i].parameters.expressions;
 	    			    break;
 	    			  case "LIST" :
-	    				return  new YAHOO.widget.DropdownCellEditor({dropdownOptions:column.constraints[i].parameters.allowedValues});
+	    				editor =  new YAHOO.widget.DropdownCellEditor({dropdownOptions:column.constraints[i].parameters.allowedValues});
 	    		      break;
     			  }
     		  }
-    		  
     		  
     	  }
     	  
@@ -408,28 +502,190 @@
     		  dataType = column.endpointType;
     	  }
     	  
-    	  switch (dataType.toLowerCase())
-          {
-             case "datetime":
-             case "date":
-          	   	editor =  new YAHOO.widget.DateCellEditor();
-                   break;
-             case "float":
-             case "int": 
-             case "long":
-            	 editor = new YAHOO.widget.TextboxCellEditor({validator: YAHOO.widget.DataTable.validateNumber,disableBtns:true});
-            	 break;
-             case "cm:person":
-             case "subtype":
-             default:
-            if(regexp==null){
-          	  editor = new YAHOO.widget.TextboxCellEditor({disableBtns:true});
-          	} else {
-          		//TODO
-          	  editor = new YAHOO.widget.TextboxCellEditor({disableBtns:true});
-          	}	
-                break;
-          }
+    	  if(editor==null){
+        	  
+	    	  switch (dataType.toLowerCase())
+	          {
+	             case "datetime":
+	             case "date":
+	          	   	editor =  new YAHOO.widget.DateCellEditor();
+	                   break;
+	             case "float":
+	             case "int": 
+	             case "long":
+	            	 editor = new YAHOO.widget.TextboxCellEditor({validator: YAHOO.widget.DataTable.validateNumber});
+	            	 break;
+	             case "text":
+	             case "mltext":
+	             if(regexp==null){
+	          	  editor = new YAHOO.widget.TextboxCellEditor();
+	          	 } else {
+	          		 editor = new YAHOO.widget.TextboxCellEditor({validator:  function(oData) {
+	          			 if(oData.match(regexp)){
+	          				 return oData;
+	          			 }
+	          			 return undefined;
+	  
+	          	    }});
+	          	  }	
+	              break;
+	             default:
+	            	 return null;
+	          }
+    	  
+    	  }
+    	  //Overide attach method
+    	  /**
+    	   * Attach CellEditor for a new interaction.
+    	   *
+    	   * @method attach
+    	   * @param oDataTable {YAHOO.widget.DataTable} Associated DataTable instance.
+    	   * @param elCell {HTMLElement} Cell to edit.  
+    	   */
+    	  editor.attach =  function(oDataTable, elCell) {
+    		    // Validate 
+    		    if(oDataTable instanceof YAHOO.widget.DataTable) {
+    		    	editor._oDataTable = oDataTable;
+    		        
+    		        // Validate cell
+    		        elCell = oDataTable.getTdEl(elCell);
+    		        if(elCell) {
+    		        	editor._elTd = elCell;
+
+    		            // Validate Column
+    		            var oColumn = oDataTable.getColumn(elCell);
+    		            if(oColumn) {
+    		            	editor._oColumn = oColumn;
+    		                
+    		                // Validate Record
+    		                var oRecord = oDataTable.getRecord(elCell);
+    		                if(oRecord) {
+    		                	editor._oRecord = oRecord;
+    		                	var oData;
+    		                	if(oData==null){
+    		                		oData = oRecord.getData("itemData")[editor.getColumn().getField()];
+    		                	}
+    		                    var value = undefined;
+    		                   oData = YAHOO.lang.isArray(oData) ? oData : [oData];
+    		                   var data = oData[0];
+    		                   if(data){
+    		                    switch (dataType.toLowerCase())
+    		                        {
+    		                          case "datetime":
+    		                        	 value = Alfresco.util.fromISO8601(data.value);
+    		                              break;              
+    		                          case "date":
+    		                        	 value = Alfresco.util.fromISO8601(data.value);
+    		                              break;
+    		                          default:
+    		                             value = data.displayValue;
+    		                              break;
+    		                        }
+    		                   }
+    		                    editor.value = (value !== undefined) ? value : editor.defaultValue;
+    		                    return true;
+    		                }
+    		            }            
+    		        }
+    		     }
+    		   };
+    		    
+    		    /**
+    		     * Saves value of CellEditor and hides UI.
+    		     *
+    		     * @method save
+    		     */
+    		    editor.save = function() {
+    		        // Get new value
+    		        var inputValue = this.getInputValue();
+    		        var validValue = inputValue;
+    		        
+    		        // Validate new value
+    		        if(this.validator) {
+    		            validValue = this.validator.call(this.getDataTable(), inputValue, this.value, this);
+    		            if(validValue === undefined ) {
+    		                if(this.resetInvalidData) {
+    		                    this.resetForm();
+    		                }
+    		                this.fireEvent("invalidDataEvent",
+    		                        {editor:this, oldData:this.value, newData:inputValue});
+    		                YAHOO.log("Could not save Cell Editor input due to invalid data " +
+    		                        lang.dump(inputValue), "warn", this.toString());
+    		                return;
+    		            }
+    		        }
+    		            
+    		        var oSelf = this;
+    		        var finishSave = function(bSuccess, oNewValue) {
+    		            var oOrigValue = oSelf.value;
+    		            if(bSuccess) {
+    		                // Update new value
+    		                oSelf.value = oNewValue;
+    		                oSelf.getDataTable().updateCell(oSelf.getRecord(), oSelf.getColumn(), {value: oNewValue,  displayValue : oNewValue });
+    		                
+    		                // Hide CellEditor
+    		                oSelf.hide();
+    		                
+    		                oSelf.fireEvent("saveEvent",
+    		                        {editor:oSelf, oldData:oOrigValue, newData:oSelf.value});
+    		            }
+    		            else {
+    		                oSelf.resetForm();
+    		                oSelf.fireEvent("revertEvent",
+    		                        {editor:oSelf, oldData:oOrigValue, newData:oNewValue});
+    		            }
+    		            oSelf.unblock();
+    		        };
+    		        
+    		        this.block();
+    		        
+    		        var record = this.getRecord(),
+		            column = this.getColumn();
+    		        	
+	                Alfresco.util.Ajax.jsonPost(
+	                {
+	                   url: Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/save" ,
+	                   dataObj: {
+	                	   		 value : validValue,
+	                	   		 field : column.getField(),
+	                	   		 nodeRef : record.getData("nodeRef")
+	                	   		},
+	                   successCallback:
+	                   {
+	                      fn: function(response)
+	                      {
+	                    	  finishSave(true, validValue);
+	                      },
+	                      scope: this
+	                   },
+	                   failureCallback:
+	                   {
+	                      fn: function(response)
+	                      {
+	                         Alfresco.util.PopupManager.displayMessage(
+	                         {
+	                            text: scope.msg("message.details.failure")
+	                         });
+	                         finishSave(false);
+	                      },
+	                      scope: this
+	                   }
+	                });
+    		        
+    		    };
+    		    /**
+    		     * Hides CellEditor UI at end of interaction.
+    		     *
+    		     * @method _hide
+    		     */
+    		    editor.hide = function() {
+    		        this.getContainerEl().style.display = "none";
+    		        if(this._elIFrame) {
+    		            this._elIFrame.style.display = "none";
+    		        }
+    		        this.isActive = false;
+    		        this.getDataTable()._oCellEditor =  null;
+    		    };
     	  
     
     	  return editor;
@@ -454,8 +710,8 @@
           */
          return function BulkEdit_sortFunction(a, b, desc, field)
          {
-            var fieldA = a.getData()[field],
-               fieldB = b.getData()[field];
+            var fieldA = a.getData().itemData[field],
+               fieldB = b.getData().itemData[field];
 
             if (YAHOO.lang.isArray(fieldA))
             {
@@ -476,8 +732,16 @@
                return -1;
             }
             
-            
-            return YAHOO.util.Sort.compare(fieldA, fieldB, desc);
+            var valA = fieldA.value,
+               valB = fieldB.value;
+
+            if (valA.indexOf && valA.indexOf("workspace://SpacesStore") == 0)
+            {
+               valA = fieldA.displayValue;
+               valB = fieldB.displayValue;
+            }
+
+            return YAHOO.util.Sort.compare(valA, valB, desc);
          };
       },
 
@@ -497,9 +761,11 @@
          this.widgets.typeSelect =  Alfresco.util.createYUIButton(this, "itemTypeSelect-button", this.onTypeSelect,
          {
                     type: "menu",
-                    menu: "itemTypeSelect-menu"
+                    menu: "itemTypeSelect-menu",
+                    lazyloadmenu : false
           });
 
+         
          this.widgets.typeSelect.getMenu().subscribe("click", function (p_sType, p_aArgs)
                  {
                       var menuItem = p_aArgs[1];
@@ -519,28 +785,48 @@
          });
          
          
+         //select first
+         var typeSelected =  this.widgets.typeSelect.getMenu().getItem(0);
+         if(typeSelected){
+        	 me.widgets.typeSelect.set("label", typeSelected.cfg.getProperty("text"));
+        	  this.options.itemType = typeSelected._oAnchor.children[0].attributes[0].nodeValue;
+        	 
+         }
+ 
+         
+         // Hook action events
+         var fnActionHandler = function DataGrid_fnActionHandler(layer, args)
+         {
+            var owner = Bubbling.getOwnerByTagName(args[1].anchor, "div");
+            if (owner !== null)
+            {
+               if (typeof me[owner.className] == "function")
+               {
+                  args[1].stop = true;
+                  var asset = me.widgets.dataTable.getRecord(args[1].target.offsetParent).getData();
+                  me[owner.className].call(me, asset, owner);
+               }
+            }
+            return true;
+         };
+         Bubbling.addDefaultAction("action-link", fnActionHandler);
+         
+         
          this.widgets.showButton = Alfresco.util.createYUIButton(this, "show-button", this.onBulkEditShow, {
-              disabled: true
+              disabled: false
           });
          
          
-         //The submit button
-         if (Dom.get(me.id + "-form-submit") !== null)
+        this.buttons.editSelected = Alfresco.util.createYUIButton(this, "edit-selected", this.onEditSelected,
          {
-            this.buttons.submit = Alfresco.util.createYUIButton(this, "form-submit", null,
-            {
-               type: "submit",
-               disabled: true
-            });
+           disabled: true
+         });
 
-            // force the generated button to have a name of "-" so it gets ignored in
-            // JSON submit. TODO: remove this when JSON submit behaviour is configurable
-            Dom.get(this.id + "-form-submit-button").name = "-";
-         }
+           
      
          // Assume no list chosen for now
          Dom.removeClass(this.id + "-selectTypeMessage", "hidden");
-
+  
          this.deferredListPopulation.fulfil("onReady");
 
          // Finally show the component body here to prevent UI artifacts on YUI button decoration
@@ -683,15 +969,12 @@
          {
             var column = this.datalistColumns[i],
                columnName = column.name.replace(":", "_"),
-               fieldLookup = "itemData."+this._buildFormsName(column)//+".value" TODO;
+               fieldLookup = this._buildFormsName(column);
          
             if(this._isSelectedProp(this._buildFormsName(column))){
             	Alfresco.logger.debug("Select prop "+this._buildFormsName(column));
 	            this.dataRequestFields.push(columnName);
 	            this.dataResponseFields.push(fieldLookup);
-	            fieldsDef.push({
-	            	key :  fieldLookup
-	            })
 	            this.dataTableColumn.push(column);
             }
             this.datalistColumns[fieldLookup] = column;
@@ -699,14 +982,13 @@
          
          // DataSource definition
          this.widgets.dataSource = new YAHOO.util.DataSource( 
-        		 Alfresco.constants.PROXY_URI_RELATIVE + "/becpg/bulkedit/data?query="+encodeURIComponent(this.options.searchQuery)+"&itemType="+encodeURIComponent(this.options.itemType),
+        		 Alfresco.constants.PROXY_URI_RELATIVE + "/becpg/bulkedit/data?query="+encodeURIComponent(this.options.searchQuery)+"&nodeRef="+encodeURIComponent(this.options.nodeRef)+"&itemType="+encodeURIComponent(this.options.itemType),
          {
             connMethodPost: true,
             responseType: YAHOO.util.DataSource.TYPE_JSON,
             responseSchema:
             {
                resultsList: "items",
-               fields : fieldsDef,
                metaFields:
                {
                   paginationRecordOffset: "startIndex",
@@ -813,6 +1095,39 @@
            	            });
             }
          }
+         
+        columnDefinitions.sort(function(a, b){
+           	 var keyA = a.key;
+        	 var keyB = b.key;
+        	 
+        	 
+        	 if(keyA == "nodeRef"){
+        		 return -1;
+        	 } else if(keyB == "nodeRef" ){
+        		 return 1;
+        	 }
+        	 
+        	  if(keyA == "prop_cm_name" && 
+        			 keyB != "prop_bcpg_code"){
+        		 return -1;
+        	 } else if(keyA == "prop_bcpg_code"){
+        		 return -1;
+        	 } else if(keyB == "prop_bcpg_code"){
+        		 return 1;
+        	 } else if(keyB == "prop_cm_name" && 
+        			 keyA != "prop_bcpg_code"){
+        		 return 1;
+        	 }
+        			 
+        	 return 0;
+        	 
+         });
+        
+
+        // Add actions as last column
+        columnDefinitions.push(
+           { key: "actions", label: "", sortable: false, formatter: this.fnRenderCellActions(), width: 35 }
+        );
       
          // DataTable definition
          var me = this;
@@ -874,6 +1189,7 @@
          {
             return true;
          }
+         
 
          // File checked handler
          this.widgets.dataTable.subscribe("checkboxClickEvent", function(e)
@@ -892,6 +1208,7 @@
              } ); 
          this.widgets.dataTable.subscribe("cellMouseoutEvent",   this.widgets.dataTable.onEventUnhighlightCell); 
          this.widgets.dataTable.subscribe("cellClickEvent",   this.widgets.dataTable.onEventShowCellEditor); 
+         this.widgets.dataTable.subscribe("cellUpdateEvent",   this.onCellChanged); 
          
          // To save onEventSaveCellEditor
 
@@ -935,6 +1252,7 @@
          Bubbling.fire("selectedTypeChanged");
          
       },
+
 
       /**
        * Public functions
@@ -1027,11 +1345,18 @@
          }
          Bubbling.fire("selectedItemsChanged");
       },
-    
+      /**
+       * Fired when cell content changed
+       *
+       * @method onCellChanged
+       */
+      onCellChanged: function BulkEdit_onCellChanged(oRecord, oColumn, oldData)
+      {
 
-
-    
-
+	    //  Dom.get("checkbox-" + oRecord.getId() ).checked="checked";
+	  
+	    //  Bubbling.fire("selectedItemsChanged");
+      },
 
       /**
        * BulkEdit show Required event handler
@@ -1215,7 +1540,7 @@
             scope: this
          });
       },
-
+   
       /**
        * Build URI parameter string for doclist JSON data webscript
        *
@@ -1256,8 +1581,280 @@
     	  formsName+=col.name.replace(/:/g, "_");
     	  return formsName;
     	  
+      },
+      
+      onEditSelected : function BulkEdit_onEditSelected(){
+    	
+       // Intercept before dialog show
+       var doBeforeDialogShow = function DataListToolbar_onNewRow_doBeforeDialogShow(p_form, p_dialog)
+       {
+          Alfresco.util.populateHTML(
+             [ p_dialog.id + "-dialogTitle", this.msg("label.edit-selected.title") ],
+             [ p_dialog.id + "-dialogHeader", this.msg("label.edit-selected.header") ]
+          );
+          
+       };
+       var displayFields = [];
+       for(var i in this.selectedFields){
+ 		 if(this.selectedFields[i].checked){
+ 				 displayFields.push(this.selectedFields[i].value);
+ 			} 	
+ 	   }
+       
+      if(displayFields.length<1){
+    	  Alfresco.util.PopupManager.displayMessage(
+           {
+                     text: this.msg("message.edit-selected.nofields")
+            });
+    	  return false;
       }
+       
+       var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=bulk-edit&fields={fields}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true",
+       {
+          itemKind: "type",
+          itemId: this.options.itemType,
+          mode: "create",
+          submitType: "json",
+          destination: "",
+          fields: displayFields
+       });
 
+       // Using Forms Service, so always create new instance
+       var createRow = new Alfresco.module.SimpleDialog(this.id + "-createRow");
+
+       createRow.setOptions(
+       {
+    	  width: "36em",
+          templateUrl: templateUrl,
+          actionUrl: null,
+          destroyOnHide: true,
+          doBeforeDialogShow:
+          {
+             fn: doBeforeDialogShow,
+             scope: this
+          },
+          onSuccess:
+          {
+             fn: function DataListToolbar_onNewRow_success(response)
+             {
+//                YAHOO.Bubbling.fire("dataItemCreated",
+//                {
+//                   nodeRef: response.json.persistedObject
+//                });
+
+                Alfresco.util.PopupManager.displayMessage(
+                {
+                   text: this.msg("message.edit-selected.success")
+                });
+             },
+             scope: this
+          },
+          onFailure:
+          {
+             fn: function DataListToolbar_onNewRow_failure(response)
+             {
+                Alfresco.util.PopupManager.displayMessage(
+                {
+                   text: this.msg("message.edit-selected.failure")
+                });
+             },
+             scope: this
+          }
+       }).show();
+    	  
+      },
+      
+    /**
+     * ACTIONS WHICH ARE LOCAL TO THE DATAGRID COMPONENT
+     */
+
+    /**
+     * Edit Data Item pop-up
+     *
+     * @method onActionEdit
+     * @param item {object} Object literal representing one data item
+     */
+    onActionEdit: function BulkEdit_onActionEdit(item)
+    {
+       var scope = this;
+       
+       // Intercept before dialog show
+       var doBeforeDialogShow = function DataGrid_onActionEdit_doBeforeDialogShow(p_form, p_dialog)
+       {
+          Alfresco.util.populateHTML(
+             [ p_dialog.id + "-dialogTitle", this.msg("label.edit-row.title") ]
+          );
+          
+      	// Is it a bulk action?
+	     if(Dom.get(p_dialog.id  + "-form-bulkAction"))
+		 {
+				Dom.get(p_dialog.id  + "-form-bulkAction").checked = true;
+				Dom.get(p_dialog.id  + "-form-bulkAction-msg").innerHTML = this.msg("button.bulk-action-edit");
+			}
+
+       };
+
+       var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=bulk-edit&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
+       {
+          itemKind: "node",
+          itemId: item.nodeRef,
+          mode: "edit",
+          submitType: "json"
+       });
+
+       // Using Forms Service, so always create new instance
+       var editDetails = new Alfresco.module.SimpleDialog(this.id + "-editDetails");
+       editDetails.setOptions(
+       {
+          width: "850px",
+          templateUrl: templateUrl,
+          actionUrl: null,
+          destroyOnHide: false,
+          doBeforeDialogShow:
+          {
+             fn: doBeforeDialogShow,
+             scope: this
+          },
+          onSuccess:
+          {
+             fn: function DataGrid_onActionEdit_success(response)
+             {
+                // Reload the node's metadata
+                Alfresco.util.Ajax.jsonPost(
+                {
+                   url: Alfresco.constants.PROXY_URI + "slingshot/datalists/item/node/" + new Alfresco.util.NodeRef(item.nodeRef).uri,
+                   dataObj: this._buildBulkEditParams(),
+                   successCallback:
+                   {
+                      fn: function DataGrid_onActionEdit_refreshSuccess(response)
+                      {
+                    	 
+                         // Fire "itemUpdated" event
+                         Bubbling.fire("dataItemUpdated",
+                         {
+                            item: response.json.item
+                         });
+                         // Display success message
+                         Alfresco.util.PopupManager.displayMessage(
+                         {
+                            text: this.msg("message.details.success")
+                         });
+                         
+                       //recall edit for next item
+                     	if ( Dom.get(this.id + "-form-bulkAction") && Dom.get(this.id + "-form-bulkAction").checked)
+            		    {
+		 					var recordFound = scope._findNextItemByParameter(response.json.item.nodeRef, "nodeRef");	
+		 					if(recordFound != null)
+		 					{
+		 						scope.onActionEdit(recordFound)
+		 					}	
+                        }
+                       
+                      },
+                      scope: this
+                   },
+                   failureCallback:
+                   {
+                      fn: function DataGrid_onActionEdit_refreshFailure(response)
+                      {
+                         Alfresco.util.PopupManager.displayMessage(
+                         {
+                            text: this.msg("message.details.failure")
+                         });
+                      },
+                      scope: this
+                   }
+                });
+             },
+             scope: this
+          },
+          onFailure:
+          {
+             fn: function DataGrid_onActionEdit_failure(response)
+             {
+                Alfresco.util.PopupManager.displayMessage(
+                {
+                   text: this.msg("message.details.failure")
+                });
+             },
+             scope: this
+          }
+       }).show();
+
+     
+    },
+    /**
+     * Searches the recordSet for the next item of a record with the given parameter value
+     *
+     * @method _findNextRecordByParameter
+     * @private
+     * @param p_value {string} Value to find (to get the previous)
+     * @param p_parameter {string} Parameter to look for the value in
+     */
+    _findNextItemByParameter: function DataGrid__findNextItemByParameter(p_value, p_parameter)
+    {
+      var recordSet = this.widgets.dataTable.getRecordSet();
+      for (var i = 0, j = recordSet.getLength(); i < j; i++)
+      {
+         if (recordSet.getRecord(i).getData(p_parameter) == p_value)
+         {
+					if(i != j)
+					{
+            		return recordSet.getRecord(i + 1).getData();
+					}
+         }
+      }
+      return null;
+    }, 
     
+    /**
+     * Data Item updated event handler
+     *
+     * @method onDataItemUpdated
+     * @param layer {object} Event fired
+     * @param args {array} Event parameters (depends on event type)
+     */
+    onDataItemUpdated: function BulkEdit_onDataItemUpdated(layer, args)
+    {
+       var obj = args[1];
+       if (obj && (obj.item !== null))
+       {
+          var recordFound = this._findRecordByParameter(obj.item.nodeRef, "nodeRef");
+          if (recordFound !== null)
+          {
+             this.widgets.dataTable.updateRow(recordFound, obj.item);
+             var el = this.widgets.dataTable.getTrEl(recordFound);
+             Alfresco.util.Anim.pulse(el);
+          }
+       }
+    },
+    
+
+    /**
+     * Searches the current recordSet for a record with the given parameter value
+     *
+     * @method _findRecordByParameter
+     * @private
+     * @param p_value {string} Value to find
+     * @param p_parameter {string} Parameter to look for the value in
+     */
+    _findRecordByParameter: function BulkEdit__findRecordByParameter(p_value, p_parameter)
+    {
+      var recordSet = this.widgets.dataTable.getRecordSet();
+      for (var i = 0, j = recordSet.getLength(); i < j; i++)
+      {
+         if (recordSet.getRecord(i).getData(p_parameter) == p_value)
+         {
+            return recordSet.getRecord(i);
+         }
+      }
+      return null;
+    }
+    
+
    }, true);
+   
+   
+
+
 })();

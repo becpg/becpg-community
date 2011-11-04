@@ -4,7 +4,8 @@
 <script type="text/javascript">//<![CDATA[
    new  beCPG.component.BulkEdit("${el}").setOptions(
    {
-      searchQuery: "${searchQuery}",
+      searchQuery: "${searchQuery?js_string}",
+      nodeRef: "${nodeRef?js_string}",
       usePagination: true
    }).setMessages(${messages});
    
@@ -13,7 +14,6 @@
    <div class="error">${error}</div>
 </#if>
 <div id="${el}-body" class="bulk-edit">
-   <form id="${formId}" accept-charset="utf-8"  enctype="multipart/form-data" method="POST" >
 	    <div class="bulk-edit-meta">
 	     <div class="item-type-select">
 	      <button id="${el}-itemTypeSelect-button" name="bulk-edit-itemSelect-button">${msg("menu.select.type")}</button>
@@ -43,17 +43,20 @@
 	                  </ul>
 	               </div>
 	            </div>
+	            <button id="${el}-edit-selected" >${msg("button.edit-selected")}</button>
 	         </div>
+	         
 	         <div id="${el}-paginatorTop" class="paginator"></div>
 	      </div>
 	      <div class="yui-u align-right">
-	    	 <div class="items-per-page" style="display: none;">
+	    	 <div class="items-per-page" style="visibility:hidden;">
 	            <button id="${el}-itemsPerPage-button">${msg("menu.items-per-page")}</button>
 	         </div>
-	      	 <input id="${formId}-submit" type="submit" value="${msg("form.button.submit.label")}" />
 	      </div>
 	   </div>
 	
+	   <div id="${el}-bulk-editor"></div>
+		
 	   <div id="${el}-grid" class="grid"></div>
 	
 	   <div id="${el}-selectTypeMessage" class="hidden select-type-message">${msg("message.select-type")}</div>
@@ -64,5 +67,4 @@
 	         <div id="${el}-paginatorBottom" class="paginator"></div>
 	      </div>
 	   </div>
-    </form>
 </div>

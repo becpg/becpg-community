@@ -263,6 +263,18 @@
    background-image: url(images/upload-disabled-16.png);
 }
 
+/** beCPG **/
+
+
+.toolbar .bulk-edit span.first-child
+{
+   background: transparent url(images/inline-edit-16.png) no-repeat 12px 4px;
+   padding-left: 22px; 
+}
+
+
+/** end beCPG **/
+
 .toolbar .customize span.first-child
 {
    background: transparent url(images/customize-16.png) no-repeat 12px 4px;

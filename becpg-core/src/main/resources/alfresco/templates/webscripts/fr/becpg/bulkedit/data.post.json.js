@@ -36,7 +36,7 @@ function getData()
       allNodes = [], node,
       items = [];
 
-   var filterParams = Filters.getFilterParams(filter, parsedArgs)
+   var filterParams = Filters.getFilterParams(filter, parsedArgs),
       query = filterParams.query;
 
    // Query the nodes - passing in default sort and result limit parameters
@@ -57,11 +57,9 @@ function getData()
       ///TODO  add type here
       for each (node in allNodes)
       {
-         try
-         {
+         try {
              items.push(Evaluator.run(node, fields));
-         }
-         catch(e) {}
+         }  catch(e) {}
       }
    }
 

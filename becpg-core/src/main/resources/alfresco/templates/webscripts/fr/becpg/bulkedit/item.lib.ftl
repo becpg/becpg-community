@@ -4,17 +4,21 @@
       <#assign tags><#list item.tags as tag>"${tag}"<#if tag_has_next>,</#if></#list></#assign>
          "nodeRef": "${node.nodeRef}",
          "createdOn": "${xmldate(node.properties.created)}",
+         <#if item.createdBy??>
          "createdBy":
          {
             "value": "${item.createdBy.userName}",
             "displayValue": "${item.createdBy.displayName}"
          },
+         </#if>
          "modifiedOn": "${xmldate(node.properties.modified)}",
+          <#if item.modifiedBy??>
          "modifiedBy":
          {
             "value": "${item.modifiedBy.userName}",
             "displayValue": "${item.modifiedBy.displayName}"
          },
+         </#if>
          "actionSet": "${item.actionSet}",
          "tags": <#noescape>[${tags}]</#noescape>,
          "permissions":

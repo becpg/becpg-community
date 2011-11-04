@@ -317,6 +317,8 @@
             menualignment: ["tr", "br"],
             lazyloadmenu: false
          });
+         
+       
 			// set initially selected export button label
          var menuItems = this.widgets.exportButton.getMenu().getItems();
          for (var m in menuItems)

@@ -52,7 +52,7 @@
 .bulk-edit .bulk-edit-bar .item-select
 {
    float: left;
-   width: 15%;
+   width: 30%;
 }
 
 .bulk-edit .bulk-edit-bar .paginator
@@ -61,7 +61,7 @@
    margin: 0;
    padding: 4px 0;
    text-align: center;
-   width: 80%;
+   width: 65%;
 }
 
 .bulk-edit .bulk-edit-bar .yui-pg-current
@@ -160,6 +160,12 @@
    vertical-align: text-bottom;
 }
 
+.bulk-edit .yui-dt-col-actions
+{
+   width: 35px;
+}
+
+
 /* Data Types */
 
 .bulk-edit span.person
@@ -180,3 +186,89 @@
    padding-left: 20px;
 }
 
+
+/* Actions */
+
+.bulk-edit .action-set div
+{
+   display: block;
+   margin: 0;
+}
+
+.bulk-edit a.action-link,
+.bulk-edit a.simple-link,
+.bulk-edit a.show-more
+{
+   background-position: 4px 1px;
+   background-repeat: no-repeat;
+   border: 1px solid transparent;
+   display: block;
+   min-height: 16px;
+   padding: 2px 0 2px 24px;
+}
+
+.bulk-edit .action-set a:active,
+.bulk-edit .action-set a:hover,
+.bulk-edit .action-set .highlighted
+{
+   background-color: #fff;
+   border: 1px solid #2b6eb5;
+   text-decoration: none;
+}
+
+/* Actions: Simple view */
+
+.bulk-edit div.simple div
+{
+   float: left;
+   line-height: 1em;
+}
+
+.bulk-edit div.simple a.action-link,
+.bulk-edit div.simple a.simple-link,
+.bulk-edit div.simple a.show-more
+{
+   background-position: 4px 0;
+   min-height: 16px;
+   padding: 0 0 0 24px;
+}
+
+.bulk-edit div.simple a.action-link span,
+.bulk-edit div.simple a.simple-link span
+{
+   display: none;
+}
+
+
+/* Actions: Icons */
+
+.bulk-edit .action-set a
+{
+   background-image: url(../images/generic-file-16.png);
+}
+
+
+.bulk-edit .onActionEdit a
+{
+   background-image: url(../images/edit-16.png);
+}
+/* Forms */
+
+.form-container .form-fields
+{
+   border-bottom: medium none;
+   padding: 1em;
+}
+
+/* Details Form */
+
+.form-container .edit-dataitem a
+{
+   background: transparent url(../images/edit-metadata-16.png) no-repeat 12px 4px;
+   padding-left: 32px;
+}
+
+
+.alfresco-share .yui-panel .bd .form-container .yui-u.first {
+    text-align: left;
+}

@@ -111,6 +111,13 @@
            */
           bulkAction: false,
           
+          /**
+           * forceBulkMode
+           * @property forceBulkMode
+           * @type boolean
+           * @default false
+           */
+          forceBulkMode : false,
 			/**
 
            * Message to display on check box
@@ -352,8 +359,8 @@
          else
          {
 				//bulk action is checked and callback was supplied ?
-				if (Dom.get(this.id + "-form-bulkAction") && Dom.get(this.id + "-form-bulkAction").checked && this.options.onBulkActionSuccess && typeof this.options.onBulkActionSuccess.fn == "function")
-		      {
+			if (this.options.forceBulkMode  || (Dom.get(this.id + "-form-bulkAction") && Dom.get(this.id + "-form-bulkAction").checked) && this.options.onBulkActionSuccess && typeof this.options.onBulkActionSuccess.fn == "function")
+		    {
 					this.options.onBulkActionSuccess.fn.call(this.options.onBulkActionSuccess.scope, response, this.options.onBulkActionSuccess.obj);
 		      }
 				// Invoke the callback if one was supplied
@@ -373,9 +380,4 @@
 
    });
 
-   /**
-    * Dummy instance to load optional YUI components early.
-    * Use fake "null" id, which is tested later in onComponentsLoaded()
-   */
-   //var dummyInstance = new Alfresco.module.SimpleDialog("null");
 })();

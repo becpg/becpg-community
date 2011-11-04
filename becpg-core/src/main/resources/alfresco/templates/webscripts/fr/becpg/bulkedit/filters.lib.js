@@ -29,10 +29,26 @@ var Filters =
     */
    getFilterParams: function Filter_getFilterParams(filter, parsedArgs)
    {
+	  
+	   
 	   var searchQuery = parsedArgs.searchQuery;
 	   if(parsedArgs.itemType!=null){
 		   searchQuery+=" +TYPE:\""+parsedArgs.itemType+"\"";
 	   }
+	   
+	   // Common types and aspects to filter from the UI
+	   searchQuery +=
+	         " -TYPE:\"cm:systemfolder\"" +
+	         " -@cm\\:lockType:READ_ONLY_LOCK";
+	   
+	  var nodeRef = parsedArgs.nodeRef;
+	  if(nodeRef!=null && nodeRef.length >0){
+		  var node = search.findNode(nodeRef);
+		  if(node!=null){
+			  searchQuery += " +PATH:\"" + node.qnamePath + "//*\"";
+          }
+	  }
+	   
 	   
       var filterParams =
       {
@@ -54,77 +70,6 @@ var Filters =
          filterParams.limitResults = argMax;
       }
 
-      // Create query based on passed-in arguments
-      var filterData = String(filter.filterData || ""),
-         filterQuery = filterParams.query;
-
-      // Common types and aspects to filter from the UI
-      var filterQueryDefaults =
-         " -TYPE:\"cm:systemfolder\"" +
-         " -@cm\\:lockType:READ_ONLY_LOCK";
-
-      switch (String(filter.filterId))
-      {
-         case "recentlyAdded":
-         case "recentlyModified":
-         case "recentlyCreatedByMe":
-         case "recentlyModifiedByMe":
-            var onlySelf = (filter.filterId.indexOf("ByMe")) > 0 ? true : false,
-               dateField = (filter.filterId.indexOf("Modified") > 0) ? "modified" : "created",
-               ownerField = (dateField == "created") ? "creator" : "modifier";
-
-            // Default to 7 days - can be overridden using "days" argument
-            var dayCount = 7,
-               argDays = args.days;
-            if ((argDays !== null) && !isNaN(argDays))
-            {
-               dayCount = argDays;
-            }
-
-            // Default limit to 50 documents - can be overridden using "max" argument
-            if (filterParams.limitResults === null)
-            {
-               filterParams.limitResults = 50;
-            }
-
-            var date = new Date();
-            var toQuery = date.getFullYear() + "\\-" + (date.getMonth() + 1) + "\\-" + date.getDate();
-            date.setDate(date.getDate() - dayCount);
-            var fromQuery = date.getFullYear() + "\\-" + (date.getMonth() + 1) + "\\-" + date.getDate();
-
-            filterQuery = searchQuery;
-            filterQuery += " +@cm\\:" + dateField + ":[" + fromQuery + "T00\\:00\\:00.000 TO " + toQuery + "T23\\:59\\:59.999]";
-            if (onlySelf)
-            {
-               filterQuery += " +@cm\\:" + ownerField + ":\"" + person.properties.userName + '"';
-            }
-            filterQuery += " -TYPE:\"folder\"";
-
-            filterParams.sort = [
-            {
-               column: "@cm:" + dateField,
-               ascending: false
-            }];
-            filterParams.query = filterQuery + filterQueryDefaults;
-            break;
-
-         case "createdByMe":
-            // Default limit to 50 documents - can be overridden using "max" argument
-            if (filterParams.limitResults === null)
-            {
-               filterParams.limitResults = 50;
-            }
-
-            filterQuery = searchQuery;
-            filterQuery += " +@cm\\:modifier:\"" + person.properties.userName + '"';
-            filterQuery += " -TYPE:\"folder\"";
-            filterParams.query = filterQuery + filterQueryDefaults;
-            break;
-
-         default:
-            filterParams.query = filterQuery + filterQueryDefaults;
-            break;
-      }
 
       return filterParams;
    }

@@ -124,6 +124,7 @@ var ParseArgs =
       {
          itemType: (args.itemType !== null) ? args.itemType : null,
          searchQuery: (args.query !== null) ? args.query : null,
+         nodeRef: (args.nodeRef !== null) ? args.nodeRef : null,
          filter: filter
       };
 

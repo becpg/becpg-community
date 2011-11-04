@@ -69,12 +69,13 @@ function getFormConfig(itemId, formId)
             formConfig = formsConfig.getForm(formId);
          }
          
-         // drop back to default form if formId config missing
+         
          if (formConfig === null)
          {
             // look up the default form
             formConfig = formsConfig.defaultForm;
          }
+    	  
       }
    }
    
@@ -96,7 +97,7 @@ function getVisibleFields(mode, formConfig)
 {
    var visibleFields = null;
    
-   if (formConfig !== null)
+   if (formConfig != null)
    {
       // get visible fields for the current mode
       switch (mode)
@@ -118,12 +119,7 @@ function getVisibleFields(mode, formConfig)
    
    if (logger.isLoggingEnabled())
    {
-      var listOfVisibleFields = visibleFields;
-      if (visibleFields !== null)
-      {
-         listOfVisibleFields = "[" + visibleFields.join(",") + "]";
-      }
-      logger.log("Fields configured to be visible for " + mode + " mode = " + listOfVisibleFields);
+      logger.log("Fields configured to be visible for " + mode + " mode = " + visibleFields);
    }
          
    return visibleFields;
