@@ -1,0 +1,6 @@
+<webscript>
+    <shortname>Bulk edit: Columns configuration</shortname>
+    <description>Bulk edit: Columns configuration webscript</description>
+    <url>/components/bulk-edit/config/columns</url>
+    <format default="json"></format>
+</webscript>

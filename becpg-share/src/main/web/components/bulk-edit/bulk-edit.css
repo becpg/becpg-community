@@ -1,0 +1,274 @@
+.bulk-edit
+{
+   padding-top: 0.5em;
+/*   visibility: hidden; */
+}
+
+.bulk-edit .bulk-edit-props-container{
+	 margin-left: 1em;
+	 padding: 10px;
+	 height: 10em;
+}
+
+
+.bulk-edit .bulk-edit-props-container  li {
+    line-height: 2em;
+  }
+
+  .bulk-edit .bulk-edit-props-container   li.reset {
+    margin-top: -10em;
+  }
+
+ .bulk-edit .bulk-edit-props-container  li.column-0 { margin-left: 0em; }
+ .bulk-edit .bulk-edit-props-container  li.column-1 { margin-left: 20em; }
+ .bulk-edit .bulk-edit-props-container  li.column-2 { margin-left: 40em; }
+ .bulk-edit .bulk-edit-props-container  li.column-3 { margin-left: 60em; }
+ .bulk-edit .bulk-edit-props-container  li.column-4 { margin-left: 80em; }
+ .bulk-edit .bulk-edit-props-container  li.column-5 { margin-left: 100em; }
+ 
+
+/* bulk-edit Metadata */
+.bulk-edit .bulk-edit-meta
+{
+   margin-left: 1em;
+}
+
+/* bulk-edit bar */
+
+.bulk-edit .bulk-edit-bar
+{
+   margin: 1em -10px;
+   padding: 4px 0.5em 2px;
+}
+
+.bulk-edit .bulk-edit-bar-bottom
+{
+   margin-top: 2em;
+   display: none;
+}
+
+/* bulk-edit bar Buttons and Paginator */
+
+.bulk-edit .bulk-edit-bar .item-select
+{
+   float: left;
+   width: 30%;
+}
+
+.bulk-edit .bulk-edit-bar .paginator
+{
+   float: left;
+   margin: 0;
+   padding: 4px 0;
+   text-align: center;
+   width: 65%;
+}
+
+.bulk-edit .bulk-edit-bar .yui-pg-current
+{
+   margin-right: 0;
+}
+
+/* bulk-edit bar Select menu */
+
+.bulk-edit .item-select .yuimenuitemlabel span
+{
+   background-position: 2px 50%;
+   background-repeat: no-repeat;
+   cursor: pointer;
+   display: block;
+   margin-left: -4px;
+   min-height: 16px;
+   padding: 2px 0px 1px 24px;
+}
+
+.bulk-edit .item-select .selectAll
+{
+   background-image: url(../images/select-rows-all-16.png);
+}
+
+.bulk-edit .item-select .selectNone
+{
+   background-image: url(../images/select-rows-none-16.png);
+}
+
+.bulk-edit .item-select .selectInvert
+{
+   background-image: url(../images/select-invert-16.png);
+}
+
+/* Data Table */
+
+.bulk-edit .grid table
+{
+   border-color: #e0e0e0;
+   width: 100%;
+}
+
+.bulk-edit .grid tbody
+{
+   outline: none;
+}
+
+.bulk-edit .grid .yui-dt table
+{
+   border: none;
+}
+
+.bulk-edit .grid.yui-dt .yui-dt-data td
+{
+   border-bottom: 1px solid #f0f0f0;
+   vertical-align: top;
+}
+
+.bulk-edit .grid.yui-dt .yui-dt-data .yui-dt-last td
+{
+   border-bottom: medium none;
+}
+
+.bulk-edit .grid.yui-dt tr.yui-dt-first td
+{
+   border-top: medium none;
+}
+
+.bulk-edit .grid.yui-dt td.yui-dt-last
+{
+   vertical-align: middle;
+}
+
+.bulk-edit .yui-dt-liner
+{
+   padding: 4px;
+}
+
+.bulk-edit .yui-dt-col-nodeRef
+{
+   width: 24px;
+}
+
+.bulk-edit .yui-dt-error
+{
+   background: red;
+   color: white;
+   font-weight: bold;
+   margin: 1em auto;
+   padding: 1em;
+}
+
+.bulk-edit .yui-dt-liner img
+{
+   vertical-align: text-bottom;
+}
+
+.bulk-edit .yui-dt-col-actions
+{
+   width: 35px;
+}
+
+
+/* Data Types */
+
+.bulk-edit span.person
+{
+   background: url(../images/filetypes/generic-user-16.png) no-repeat;
+   padding-left: 20px;
+}
+
+.bulk-edit span.container
+{
+   background: url(../images/filetypes/generic-folder-16.png) no-repeat;
+   padding-left: 20px;
+}
+
+.bulk-edit span.document
+{
+   background: url(../images/filetypes/generic-file-16.png) no-repeat;
+   padding-left: 20px;
+}
+
+
+/* Actions */
+
+.bulk-edit .action-set div
+{
+   display: block;
+   margin: 0;
+}
+
+.bulk-edit a.action-link,
+.bulk-edit a.simple-link,
+.bulk-edit a.show-more
+{
+   background-position: 4px 1px;
+   background-repeat: no-repeat;
+   border: 1px solid transparent;
+   display: block;
+   min-height: 16px;
+   padding: 2px 0 2px 24px;
+}
+
+.bulk-edit .action-set a:active,
+.bulk-edit .action-set a:hover,
+.bulk-edit .action-set .highlighted
+{
+   background-color: #fff;
+   border: 1px solid #2b6eb5;
+   text-decoration: none;
+}
+
+/* Actions: Simple view */
+
+.bulk-edit div.simple div
+{
+   float: left;
+   line-height: 1em;
+}
+
+.bulk-edit div.simple a.action-link,
+.bulk-edit div.simple a.simple-link,
+.bulk-edit div.simple a.show-more
+{
+   background-position: 4px 0;
+   min-height: 16px;
+   padding: 0 0 0 24px;
+}
+
+.bulk-edit div.simple a.action-link span,
+.bulk-edit div.simple a.simple-link span
+{
+   display: none;
+}
+
+
+/* Actions: Icons */
+
+.bulk-edit .action-set a
+{
+   background-image: url(../images/generic-file-16.png);
+}
+
+
+.bulk-edit .onActionEdit a
+{
+   background-image: url(../images/edit-16.png);
+}
+/* Forms */
+
+.form-container .form-fields
+{
+   border-bottom: medium none;
+   padding: 1em;
+}
+
+/* Details Form */
+
+.form-container .edit-dataitem a
+{
+   background: transparent url(../images/edit-metadata-16.png) no-repeat 12px 4px;
+   padding-left: 32px;
+}
+
+
+.alfresco-share .yui-panel .bd .form-container .yui-u.first {
+    text-align: left;
+}

@@ -25,13 +25,18 @@
 .yui-ac .ac-body .yui-ac-input{
 	border:0px;
 	background-color: white;
-	width:auto;
+	width:90%;
 	vertical-align: middle;
 	position: relative;
 	float:left;
 	display: block;
 	clear:none;
 }
+
+.yui-ac .ac-body .yui-ac-input.multi-assoc{
+	width:auto;
+}
+
 
 
 /* buttons */

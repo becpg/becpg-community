@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>BulkEdit - Save Data</shortname>
+  <description>BulkEdit Component - save data</description>
+  <url>/becpg/bulkedit/save</url>
+  <format default="json">argument</format>
+  <authentication>user</authentication>
+  <transaction allow="readwrite" buffersize="0">required</transaction>
+  <lifecycle>internal</lifecycle>
+</webscript>

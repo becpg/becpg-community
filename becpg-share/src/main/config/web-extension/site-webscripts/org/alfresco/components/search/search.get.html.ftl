@@ -45,6 +45,8 @@
          <div id="${el}-paginator-top" class="paginator hidden"></div>
       </div>
       <div class="yui-u align-right">
+      	
+      
          <span class="yui-button yui-push-button" id="${el}-sort-menubutton">
             <span class="first-child"><button></button></span>
          </span>
@@ -53,8 +55,10 @@
             <option value="${sort.type!""}">${sort.label}</option>
             </#list>
          </select>
-			<#-- beCPG : export -->
-			<span class="yui-button yui-push-button" id="${el}-export-menubutton">
+         
+		
+		<#-- beCPG : export -->
+		<span class="yui-button yui-push-button" id="${el}-export-menubutton">
             <span class="first-child"><button></button></span>
          </span>
          <select id="${el}-export-menu" >
@@ -63,6 +67,13 @@
             <option value="${exportSearchTpl.nodeRef}" fileName="${exportSearchTpl.name}.${exportSearchTpl.format?lower_case}">${exportSearchTpl.name}</option>
             </#list>
          </select>
+          <#-- beCPG : bulkedit -->
+		<span class="yui-button yui-push-button bulk-edit-button">
+		   <a class="action-link" rel="edit" href='/share/page/bulk-edit?term=${searchTerm?string}&query=${searchQuery?string}&siteId=${siteId}' title="${msg("button.bulkEdit")}">
+				<span>${msg("button.bulkEdit")}</span>
+			</a>
+		</span>
+         
       </div>
    </div>
    

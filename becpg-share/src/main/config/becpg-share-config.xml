@@ -141,4 +141,39 @@
       </types>
    </config>
    
+   
+   <config evaluator="string-compare" condition="bulk-edit">
+      <itemTypes>
+      		    <itemType name="bcpg:finishedProduct"  />	
+      		    <itemType name="bcpg:semiFinishedProduct" />	
+      		    <itemType name="bcpg:rawMaterial" />	
+      		    <itemType name="bcpg:packagingKit" />	
+      		    <itemType name="bcpg:condSalesUnit"/>
+      		    <itemType name="bcpg:localSemiFinishedProduct"/>
+      		    <itemType name="bcpg:packagingMaterial"/>
+      
+         		<itemType name="bcpg:allergen" />
+				<itemType name="bcpg:cost" />
+				<itemType name="bcpg:ing" />
+				<itemType name="bcpg:microBio" />
+				<itemType name="bcpg:nut" />	
+				<itemType name="bcpg:organo" />	
+				<itemType name="bcpg:physicoChem" />	
+				
+				<!-- 
+				<itemType name="qa:nc" />
+			    <itemType name="qa:controlPlan" />
+			    <itemType name="qa:qualityControl" />
+			    <itemType name="qa:controlPoint" />
+			    <itemType name="qa:controlStep" />
+			    <itemType name="qa:controlMethod" />
+			    <itemType name="qa:workItemAnalysis" />
+			     -->
+			    
+			    				
+				<itemType name="bcpg:supplier" />
+				<itemType name="bcpg:client" />		
+        </itemTypes>
+   </config>
+   
 </alfresco-config>
