@@ -69,19 +69,13 @@ public class FormulationTest extends RepoBaseTestCase {
 	private static Log logger = LogFactory.getLog(FormulationTest.class);
 	
 	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-	
-	/** The search service. */
-	private SearchService searchService;
+	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();	
 	
 	/** The node service. */
 	private NodeService nodeService;
 	
 	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
-	/** The authentication component. */
-	private AuthenticationComponent authenticationComponent;
+	private FileFolderService fileFolderService;	
 	
 	/** The product service. */
 	private ProductService productService;    
@@ -230,7 +224,6 @@ public class FormulationTest extends RepoBaseTestCase {
     	logger.debug("ProductMgrTest:setUp");
     	    	
     	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	searchService = (SearchService)appCtx.getBean("searchService");
     	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
     	productService = (ProductService)appCtx.getBean("productService");       
         productDAO = (ProductDAO)appCtx.getBean("productDAO");
@@ -505,6 +498,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			RawMaterialData rawMaterial5 = new RawMaterialData();
 			rawMaterial5.setName("Raw material 5");
 			rawMaterial5.setLegalName("Legal Raw material 5");
+			rawMaterial5.setDensity(0.1f);
 			//costList
 			costList = new ArrayList<CostListDataItem>();
 			costList.add(new CostListDataItem(null, 5f, "€/m", cost1));
@@ -1152,7 +1146,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.mL, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
 				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.P, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 30f, 0f, 0f, CompoListUnit.g, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 0.05f, 0f, 0f, CompoListUnit.m, 0f, "", DeclarationType.OMIT_FR, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 0.05f, 0f, 0f, CompoListUnit.P, 0f, "", DeclarationType.OMIT_FR, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
 				
@@ -1188,12 +1182,12 @@ public class FormulationTest extends RepoBaseTestCase {
 					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
-						assertEquals("nut1.getValue() == 1.22, actual values: " + trace, df.format(1.22f), df.format(nutListDataItem.getValue()));
+						assertEquals("nut1.getValue() == 0.77, actual values: " + trace, df.format(0.77f), df.format(nutListDataItem.getValue()));
 						assertEquals("nut1.getUnit() == kJ/100g, actual values: " + trace, "kJ/100g", nutListDataItem.getUnit());
 						assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
 					}
 					if(nutListDataItem.getNut().equals(nut2)){
-						assertEquals("nut2.getValue() == 2.94, actual values: " + trace, df.format(2.94f), df.format(nutListDataItem.getValue()));
+						assertEquals("nut2.getValue() == 1.59, actual values: " + trace, df.format(1.59f), df.format(nutListDataItem.getValue()));
 						assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g", nutListDataItem.getUnit());
 						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
 					}
@@ -2296,6 +2290,75 @@ public class FormulationTest extends RepoBaseTestCase {
 				}
 				
 				assertEquals("Verify checks done", 12, checks);
+								
+				return null;
+
+			}},false,true);
+		   
+	   }
+	
+	/**
+	 * Test formulate product, that the yield field is calculated
+	 *
+	 * @throws Exception the exception
+	 */
+	public void testCalculateYieldField() throws Exception{
+		   
+	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			public NodeRef execute() throws Throwable {					   							
+					
+				/*-- Create finished product --*/
+				logger.debug("/*-- Create finished product --*/");
+				 Collection<QName> dataLists = productDictionaryService.getDataLists();
+				FinishedProductData finishedProduct = new FinishedProductData();
+				finishedProduct.setName("Produit fini 1");
+				finishedProduct.setLegalName("Legal Produit fini 1");
+				finishedProduct.setUnit(ProductUnit.kg);
+				finishedProduct.setQty(2f);
+				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+				compoList.add(new CompoListDataItem(null, 1, null, 3f, 2f, CompoListUnit.kg, 10f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, null, 1f, 100f, CompoListUnit.kg, 10f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 80f, null, CompoListUnit.kg, 5f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 30f, null, CompoListUnit.kg, 10f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1f, 1f, 200f, CompoListUnit.kg, 20f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 170f, null, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 40f, null, CompoListUnit.kg, 0f, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 1f, null, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
+				finishedProduct.setCompoList(compoList);
+				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+				
+				/*-- Formulate product --*/
+				logger.debug("/*-- Formulate product --*/");
+				productService.formulate(finishedProductNodeRef);
+				
+				/*-- Verify formulation --*/
+				logger.debug("/*-- Verify formulation --*/");
+				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+				int checks = 0;
+				DecimalFormat df = new DecimalFormat("0.00");
+				
+				for(CompoListDataItem c : formulatedProduct.getCompoList()){
+					
+					logger.debug("Yield: " + c.getYieldPerc());
+					
+					if(c.getProduct().equals(localSF1NodeRef)){
+						double result = 100;
+						assertEquals("verify yield", df.format(result), df.format(c.getYieldPerc()));
+						checks++;
+					}
+					else if(c.getProduct().equals(localSF2NodeRef)){
+						double result = 100f * 100f / 110f;
+						assertEquals("verify yield", df.format(result), df.format(c.getYieldPerc()));
+						checks++;
+					}
+					else if(c.getProduct().equals(localSF3NodeRef)){
+						double result = 100f * 200f / (170f + 40f + 0.1f);
+						assertEquals("verify yield", df.format(result), df.format(c.getYieldPerc()));
+						checks++;
+					}
+				}
+				
+				assertEquals("verify checks", 3, checks);
 								
 				return null;
 

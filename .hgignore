@@ -11,3 +11,5 @@ syntax: regexp
 ^becpg-olap/sql/crontab$
 syntax: regexp
 ^becpg-core/becpg_data$
+syntax: regexp
+^becpg-bootstrap/birt-sdk/lib/.*\.jar

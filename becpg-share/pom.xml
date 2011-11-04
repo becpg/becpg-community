@@ -184,7 +184,7 @@
 				<includes>
 					<include>file-mapping.properties</include>
 				</includes>
-				<targetPath>../${pom.artifactId}-${pom.version}/</targetPath> <!-- hack -->
+				<targetPath>../${project.artifactId}-${pom.version}/</targetPath> <!-- hack -->
 			</resource>
 		</resources>
 	</build>
@@ -211,7 +211,7 @@
 								</goals>
 								<configuration>
 									<includeTypes>amp</includeTypes>
-									<outputDirectory>${build.directory}/${webapp.name}</outputDirectory>
+									<outputDirectory>${project.build.directory}/${webapp.name}</outputDirectory>
 									<excludes>META*</excludes>
 								</configuration>
 							</execution>
@@ -246,7 +246,7 @@
 							<primaryArtifact>false</primaryArtifact>
 							<!-- Don't remove the following line otherwise WAR and AMP builds 
 								will be done in the same folder, with unexpected results -->
-							<webappDirectory>${build.directory}/${webapp.name}</webappDirectory>
+							<webappDirectory>${project.build.directory}/${webapp.name}</webappDirectory>
 							<archive>
 								<addMavenDescriptor>false</addMavenDescriptor>
 							</archive>
@@ -254,7 +254,7 @@
 							<webResources></webResources>
 							<webResources>
 								<resource>
-									<directory>${build.testOutputDirectory}</directory>
+									<directory>${proejct.build.testOutputDirectory}</directory>
 									<targetPath>WEB-INF/classes</targetPath>
 									<filtering>true</filtering>
 									<includes>
@@ -296,7 +296,7 @@
 								</goals>
 								<configuration>
 									<contextPath>/${webapp.name}</contextPath>
-									<webApp>${pom.build.directory}/${webapp.name}</webApp>
+									<webApp>${project.build.directory}/${webapp.name}</webApp>
 									<scanIntervalSeconds>10</scanIntervalSeconds>
 									<connectors>
 										<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
@@ -334,7 +334,7 @@
 						<includes>
 							<include>module.properties</include>
 						</includes>
-						<targetPath>alfresco/module/${pom.groupId}-${pom.artifactId}</targetPath>
+						<targetPath>alfresco/module/${project.groupId}-${project.artifactId}</targetPath>
 					</testResource>
 				</testResources>
 			</build>

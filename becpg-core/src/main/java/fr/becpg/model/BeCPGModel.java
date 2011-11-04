@@ -168,6 +168,9 @@ public interface BeCPGModel {
 	static final QName PROP_COMPOLIST_LOSS_PERC = QName.createQName(BECPG_URI,
 	"compoListLossPerc");
 	
+	static final QName PROP_COMPOLIST_YIELD_PERC = QName.createQName(BECPG_URI,
+			"compoListYieldPerc");
+	
 	/** The Constant PROP_COMPOLIST_DECL_GRP. */
 	static final QName PROP_COMPOLIST_DECL_GRP = QName.createQName(BECPG_URI,
 			"compoListDeclGrp");
@@ -625,6 +628,10 @@ public interface BeCPGModel {
 	
 	/** The Constant PROP_CODE. */
 	static final QName PROP_CODE = QName.createQName(BECPG_URI, "code");
+	
+	// code aspect
+	static final QName ASPECT_ERP_CODE = QName.createQName(BECPG_URI,	"erpCodeAspect");
+	static final QName PROP_ERP_CODE = QName.createQName(BECPG_URI, "erpCode");
 
 	/**
 	 * Email import user template Name
@@ -661,5 +668,15 @@ public interface BeCPGModel {
 
 	public static final QName PROP_PRICE_CURRENCY =  QName.createQName(BECPG_URI, "priceCurrency");
 	
+	/**
+	 * manufacturingAspect
+	 */
+	static final QName ASPECT_MANUFACTURING = QName.createQName(BECPG_URI, "manufacturingAspect");	
+	static final QName ASSOC_SUBSIDIARY = QName.createQName(BECPG_URI, "subsidiary");
+	static final QName ASSOC_PLANTS = QName.createQName(BECPG_URI, "plants");
+	static final QName ASSOC_TRADEMARK = QName.createQName(BECPG_URI, "trademark");
 
+	static final QName TYPE_SUBSIDIARY = QName.createQName(BECPG_URI, "subsidiary");
+	static final QName TYPE_PLANT = QName.createQName(BECPG_URI, "plant");
+	static final QName TYPE_TRADEMARK = QName.createQName(BECPG_URI, "trademark");
 }

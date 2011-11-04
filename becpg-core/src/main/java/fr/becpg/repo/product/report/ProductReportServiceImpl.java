@@ -256,7 +256,7 @@ public class ProductReportServiceImpl implements ProductReportService {
 	    		nutElt.addAttribute(BeCPGModel.ASSOC_NUTLIST_NUT.getLocalName(), nut);
 	    		nutElt.addAttribute(BeCPGModel.PROP_NUTLIST_VALUE.getLocalName(), dataItem.getValue() == null ? VALUE_NULL :String.valueOf(dataItem.getValue()));
 	    		nutElt.addAttribute(BeCPGModel.PROP_NUTLIST_UNIT.getLocalName(), dataItem.getUnit());
-	    		nutElt.addAttribute(BeCPGModel.PROP_NUTLIST_GROUP .getLocalName(), dataItem.getGroup());	    		
+	    		nutElt.addAttribute(BeCPGModel.PROP_NUTLIST_GROUP.getLocalName(), dataItem.getGroup());	    		
 	    	}	    		    	
     	}
     	

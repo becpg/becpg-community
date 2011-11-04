@@ -18,20 +18,20 @@
 "PATH";"/Temp/Suppliers";;;;;;;;;;;;;;;;;;;;;;;
 "TYPE";"bcpg:supplier";;;;;;;;;;;;;;;;;;;;;;;
 "COLUMNS";"bcpg:code";"cm:name";;;;;;;;;;;;;;;;;;;;;;
-"VALUES";12;"Fournisseur fruits de mer";;;;;;;;;;;;;;;;;;;;;;
-"VALUES";13;"Fournisseur2";;;;;;;;;;;;;;;;;;;;;;
-"VALUES";14;"Fournisseur3";;;;;;;;;;;;;;;;;;;;;;
+"VALUES";"F12";"Fournisseur fruits de mer";;;;;;;;;;;;;;;;;;;;;;
+"VALUES";"F13";"Fournisseur2";;;;;;;;;;;;;;;;;;;;;;
+"VALUES";"F14";"Fournisseur3";;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
 "PATH";"/Temp/Products";;;;;;;;;;;;;;;;;;;;;;;
 "TYPE";"bcpg:rawMaterial";;;;;;;;;;;;;;;;;;;;;;;
 "MAPPING";"Products";;;;;;;;;;;;;;;;;;;;;;;
 "COLUMNS";"bcpg:code";"cm:name";"cm:description";"bcpg:legalName";"bcpg:productHierarchy1";"bcpg:productHierarchy2";"bcpg:productState";"bcpg:productQty";"bcpg:productUnit";"bcpg:productDensity";"bcpg:eanCode";"cm:created";"cm:creator";"cm:modified";"cm:modifier";"bcpg:suppliers";"coutMP";"coutMPPrev";"coutEmb";"nutProteines";"nutLipides";"nutGlucides";"img1Path";"img1Title"
-"VALUES";;"Saumon surgelé 80x20x4";;"saumon sugelé";"Sea food";"Fish";"ToValidate";;;;;"07/06/2011";"admin";;"admin";12,13;1;2;3,1;2,5;3,6;5,6;"/home/quere/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg";"saumon"
-"VALUES";;"Saumon surgelé 80x20x4";;"saumon sugelé";"Sea food";"Fish";"ToValidate";;;;;"07/06/2011";"admin";;"admin";12,13;1;2;3,1;2,5;3,6;5,6;"/home/quere/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg";"saumon"
-"VALUES";1019;"Saumon 80x20x3";;"saumon";"Sea food";"Fish";"ToValidate";;;;;"07/06/2011";"utilisateur.r&d";;"utilisateur.r&d";"12, 14";0;8,5;0;30;12,7;0;"/home/quere/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg";"sushi saumon"
-"VALUES";1016;"dorade 80x20x3";;"dorade";"Sea food";"Fish";"ToValidate";;;;;"08/06/2011";"utilisateur.r&d";;"utilisateur.r&d";12;0;5,3;0;19;0,35;0,8;"/home/quere/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi dorade/produit.jpg";"suhis dorade"
+"VALUES";;"Saumon surgelé 80x20x4";;"saumon sugelé";"Sea food";"Fish";"ToValidate";;;;;"07/06/2011";"admin";;"admin";"F12,F13";1;2;3,1;2,5;3,6;5,6;"/home/quere/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg";"saumon"
+"VALUES";;"Saumon surgelé 80x20x4";;"saumon sugelé";"Sea food";"Fish";"ToValidate";;;;;"07/06/2011";"admin";;"admin";"F12,F13";1;2;3,1;2,5;3,6;5,6;"/home/quere/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg";"saumon"
+"VALUES";1019;"Saumon 80x20x3";;"saumon";"Sea food";"Fish";"ToValidate";;;;;"07/06/2011";"utilisateur.r&d";;"utilisateur.r&d";"F12, F14";0;8,5;0;30;12,7;0;"/home/quere/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg";"sushi saumon"
+"VALUES";1016;"dorade 80x20x3";;"dorade";"Sea food";"Fish";"ToValidate";;;;;"08/06/2011";"utilisateur.r&d";;"utilisateur.r&d";"F12";0;5,3;0;19;0,35;0,8;"/home/quere/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi dorade/produit.jpg";"suhis dorade"
 "#";"name has an invalid character ' ', so test the trim is done";;;;;;;;;;;;;;;;;;;;;;;
-"VALUES";1020;"Thon 80x20x8 ";;"thon";"Sea food";"Fish";"ToValidate";;;;;"08/06/2011";"utilisateur.r&d";;"admin";13,14;0;9,5;0;24,3;1;0,9;"/home/quere/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi thon/produit.jpg";
+"VALUES";1020;"Thon 80x20x8 ";;"thon";"Sea food";"Fish";"ToValidate";;;;;"08/06/2011";"utilisateur.r&d";;"admin";"F13,F14";0;9,5;0;24,3;1;0,9;"/home/quere/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi thon/produit.jpg";
 ;;;;;;;;;;;;;;;;;;;;;;;;
 "PATH";"/Temp/Products";;;;;;;;;;;;;;;;;;;;;;;
 "TYPE";"bcpg:entity";;;;;;;;;;;;;;;;;;;;;;;
@@ -44,4 +44,4 @@
 "TYPE";"bcpg:rawMaterial";;;;;;;;;;;;;;;;;;;;;;;
 "MAPPING";"Products";;;;;;;;;;;;;;;;;;;;;;;
 "COLUMNS";"bcpg:code";"cm:name";"cm:description";"bcpg:legalName";"bcpg:productHierarchy1";"bcpg:productHierarchy2";"bcpg:productState";"bcpg:productQty";"bcpg:productUnit";"bcpg:productDensity";"bcpg:eanCode";"cm:created";"cm:creator";"cm:modified";"cm:modifier";"bcpg:suppliers";"coutMP";"coutMPPrev";"coutEmb";"nutProteines";"nutLipides";"nutGlucides";"img1Path";"img1Title"
-"VALUES";;"Saumon surgelé 80x20x4";;"saumon sugelé";"Sea food";"Fish";"ToValidate";;;;;"07/06/2011";"admin";;"admin";12,13;1;2;3,1;2,5;3,6;5,6;"/home/quere/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg";"saumon"
+"VALUES";;"Saumon surgelé 80x20x4";;"saumon sugelé";"Sea food";"Fish";"ToValidate";;;;;"07/06/2011";"admin";;"admin";"F12,F13";1;2;3,1;2,5;3,6;5,6;"/home/quere/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg";"saumon"

@@ -96,4 +96,14 @@ public class OrganoListDataItem {
 		setOrgano(organo);
 	}
 	
+	/**
+	 * copy constructor
+	 * @param o
+	 */
+	public OrganoListDataItem(OrganoListDataItem o){
+		setNodeRef(nodeRef);
+		setValue(value);
+		setOrgano(organo);
+	}
+	
 }

@@ -22,6 +22,7 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.repo.entity.version.EntityCheckOutCheckInService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 
 // TODO: Auto-generated Javadoc
@@ -55,7 +56,7 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 	private static Log logger = LogFactory.getLog(CheckInWebScript.class);	
 	
 	/** The entity check out check in service. */
-	private CheckOutCheckInService entityCheckOutCheckInService;
+	private EntityCheckOutCheckInService entityCheckOutCheckInService;
 
 	/**
 	 * Sets the entity check out check in service.
@@ -63,7 +64,7 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 	 * @param entityCheckOutCheckInService the new entity check out check in service
 	 */
 	public void setEntityCheckOutCheckInService(
-			CheckOutCheckInService entityCheckOutCheckInService) {
+			EntityCheckOutCheckInService entityCheckOutCheckInService) {
 		this.entityCheckOutCheckInService = entityCheckOutCheckInService;
 	}
 	
@@ -103,15 +104,7 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 		}
 		
 		//Calculate new version
-		VersionNumber versionNumber = new VersionNumber(version);
-		if(majorVersion){
-			int majorNb = versionNumber.getPart(0) + 1;
-			versionNumber = new VersionNumber(majorNb + EntityVersionService.VERSION_DELIMITER + 0);			
-		}
-		else{
-			int minorNb = versionNumber.getPart(1) + 1;
-			versionNumber = new VersionNumber(versionNumber.getPart(0) + EntityVersionService.VERSION_DELIMITER + minorNb);
-		}
+		VersionNumber versionNumber = entityCheckOutCheckInService.getVersionNumber(version, majorVersion);
 			
 		Map<String, Serializable> properties = new HashMap<String, Serializable>();
 		properties.put(ContentModel.PROP_VERSION_LABEL.toPrefixString(), versionNumber.toString());

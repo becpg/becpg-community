@@ -9,7 +9,8 @@
 				<value>alfresco/module/${groupId}-${artifactId}/model/reportModel.xml</value>
 				<value>alfresco/module/${groupId}-${artifactId}/model/becpgModel.xml</value>
 				<value>alfresco/module/${groupId}-${artifactId}/model/qualityModel.xml</value>
-				<value>alfresco/module/${groupId}-${artifactId}/model/securityModel.xml</value>				
+				<value>alfresco/module/${groupId}-${artifactId}/model/securityModel.xml</value>
+				<value>alfresco/module/${groupId}-${artifactId}/model/ecoModel.xml</value>							
 			</list>
 		</property>
 
@@ -19,7 +20,8 @@
 				<value>alfresco/module/${groupId}-${artifactId}/model/reportModel</value>
 				<value>alfresco/module/${groupId}-${artifactId}/model/becpgModel</value>
 				<value>alfresco/module/${groupId}-${artifactId}/model/qualityModel</value>
-				<value>alfresco/module/${groupId}-${artifactId}/model/securityModel</value>				
+				<value>alfresco/module/${groupId}-${artifactId}/model/securityModel</value>
+				<value>alfresco/module/${groupId}-${artifactId}/model/ecoModel</value>						
 			</list>
 		</property>
 	</bean>

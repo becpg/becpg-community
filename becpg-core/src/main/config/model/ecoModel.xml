@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="eco:ecomodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<!-- Optional meta-data about the model -->
+	<description>Engineering Change Order Model</description>
+	<author>QUERE</author>
+	<version>1.0</version>
+	<!-- Imports are required to allow references to definitions in other models -->
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</imports>
+	
+	<!-- Introduction of new namespaces defined by this model -->
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/eco/1.0" prefix="eco" />
+	</namespaces>
+	
+	<constraints>
+		<constraint name="eco:revisionTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>NoRevision</value>
+					<value>Minor</value>
+					<value>Major</value>					
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="eco:ecoStates" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>ToCalculateWUsed</value>
+					<value>WUsedCalculated</value>
+					<value>ToValidate</value>					
+					<value>Valid</value>
+					<value>Refused</value>
+					<value>ToSimulate</value>
+					<value>Simulated</value>
+					<value>ToApply</value>
+					<value>Applied</value>					
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="eco:ecoTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Replacement</value>
+					<value>Simulation</value>
+					<value>Variant</value>									
+				</list>
+			</parameter>
+		</constraint>
+	</constraints>
+
+	<types>
+		
+		<!-- type change order -->
+		<type name="eco:changeOrder">
+			<parent>bcpg:entity</parent>
+			<properties>										
+				<property name="eco:ecoState">
+					<type>d:text</type>
+					<multiple>false</multiple>
+					<default>ToValidate</default>
+					<constraints>
+						<constraint ref="eco:ecoStates" />
+					</constraints>
+				</property>
+				<property name="eco:effectiveDate">
+					<type>d:date</type>					
+				</property>
+				<property name="eco:ecoType">
+					<type>d:text</type>
+					<multiple>false</multiple>
+					<default>Replacement</default>
+					<constraints>
+						<constraint ref="eco:ecoTypes" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>				
+				<association name="eco:calculatedCharacts">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<child-association name="eco:changeUnits">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>eco:changeUnit</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</child-association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<!-- type change unit -->
+		<type name="eco:changeUnit">
+			<parent>cm:content</parent>
+			<properties>														
+				<property name="eco:cuRevision">
+					<type>d:text</type>
+					<multiple>false</multiple>
+					<constraints>
+						<constraint ref="eco:revisionTypes" />
+					</constraints>
+				</property>			
+				<property name="eco:cuReqRespected">
+					<type>d:boolean</type>					
+				</property>
+				<property name="eco:cuReqDetails">
+					<type>d:text</type>					
+				</property>	
+				<property name="eco:cuTreated">
+					<type>d:boolean</type>
+					<default>false</default>					
+				</property>	
+			</properties>		
+			<associations>
+				<association name="eco:cuSourceItem">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entity</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="eco:cuTargetItem">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entity</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>	
+		</type>
+		
+		<!-- replacementList -->
+		<type name="eco:replacementList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="eco:revisionType">
+					<type>d:text</type>
+					<multiple>false</multiple>
+					<constraints>
+						<constraint ref="eco:revisionTypes" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<association name="eco:sourceItem">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entity</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="eco:targetItem">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entity</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>
+	
+		<!-- wUsedList -->
+		<type name="eco:wUsedList">
+			<parent>bcpg:entityListItem</parent>			
+			<properties>
+				<property name="eco:impactedDataList">
+					<type>d:qname</type>					
+				</property>
+				<property name="eco:isWUsedImpacted">
+					<type>d:boolean</type>
+					<default>true</default>					
+				</property>			
+			</properties>
+			<associations>
+				<association name="eco:wulLink">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityListItem</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="eco:wulChangeUnit">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>eco:changeUnit</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>				
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<!-- wUsedList -->
+		<type name="eco:simulationList">
+			<parent>bcpg:entityListItem</parent>			
+			<properties>
+				<property name="eco:slSourceValue">
+					<type>d:float</type>					
+				</property>
+				<property name="eco:slTargetValue">
+					<type>d:float</type>			
+				</property>			
+			</properties>
+			<associations>
+				<association name="eco:slSourceItem">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entity</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>	
+				<association name="eco:slCharact">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>				
+			</associations>
+		</type>
+		
+	</types>
+	
+	<aspects>			
+		
+		<!-- automatic rawMaterial change order -->
+<!-- 		<aspect name="eco:automaticAspect"> -->
+<!-- 			<properties> -->
+<!-- 				<property name="eco:lastExecution"> -->
+<!-- 					<type>d:datetime</type>					 -->
+<!-- 				</property> -->
+<!-- 			</properties> -->
+<!-- 			<associations> -->
+<!-- 				<association name="eco:rawMaterialFolder"> -->
+<!-- 					<source> -->
+<!-- 						<mandatory>false</mandatory> -->
+<!-- 						<many>true</many> -->
+<!-- 					</source> -->
+<!-- 					<target> -->
+<!-- 						<class>cm:folder</class> -->
+<!-- 						<mandatory>false</mandatory> -->
+<!-- 						<many>false</many> -->
+<!-- 					</target> -->
+<!-- 				</association> -->
+<!-- 			</associations> -->
+<!-- 		</aspect> -->
+
+		<!-- simulation entity aspect -->
+		<aspect name="eco:simulationEntityAspect">		
+			<associations>
+				<association name="eco:simulationSourceItem">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entity</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+
+	</aspects>
+</model>

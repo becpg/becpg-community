@@ -36,6 +36,8 @@ public class CompoListDataItem{
 	
 	private Float lossPerc = 0f;
 	
+	private Float yieldPerc = null;
+	
 	/** The decl grp. */
 	private String declGrp;
 	
@@ -141,6 +143,14 @@ public class CompoListDataItem{
 		this.lossPerc = lossPerc;
 	}
 
+	public Float getYieldPerc() {
+		return yieldPerc;
+	}
+
+	public void setYieldPerc(Float yieldPerc) {
+		this.yieldPerc = yieldPerc;
+	}
+
 	/**
 	 * Gets the decl grp.
 	 *
@@ -208,6 +218,35 @@ public class CompoListDataItem{
 	 * @param depthLevel
 	 * @param qty
 	 * @param qtySubFormula
+	 * @param qtyAfterProcess
+	 * @param compoListUnit
+	 * @param lossPerc
+	 * @param yieldPerc
+	 * @param declGrp
+	 * @param declType
+	 * @param product
+	 */
+	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Float qty, Float qtySubFormula, Float qtyAfterProcess, CompoListUnit compoListUnit, Float lossPerc, Float yieldPerc, String declGrp, String declType, NodeRef product){
+		
+		setNodeRef(nodeRef);
+		setDepthLevel(depthLevel);
+		setQty(qty);
+		setQtySubFormula(qtySubFormula);
+		setQtyAfterProcess(qtyAfterProcess);
+		setCompoListUnit(compoListUnit);
+		setLossPerc(lossPerc);
+		setYieldPerc(yieldPerc);
+		setDeclGrp(declGrp);
+		setDeclType(declType);
+		setProduct(product);
+	}
+	
+	/**
+	 * Instantiates a new compo list data item.
+	 * @param nodeRef
+	 * @param depthLevel
+	 * @param qty
+	 * @param qtySubFormula
 	 * @param compoListUnit
 	 * @param qtyLossPerc
 	 * @param declGrp
@@ -226,6 +265,23 @@ public class CompoListDataItem{
 		setDeclGrp(declGrp);
 		setDeclType(declType);
 		setProduct(product);
+	}
+	
+	/**
+	 * Copy constructor
+	 * @param c
+	 */
+	public CompoListDataItem(CompoListDataItem c){
+		setNodeRef(new NodeRef(c.getNodeRef().toString()));
+		setDepthLevel(c.getDepthLevel());
+		setQty(c.getQty());
+		setQtySubFormula(c.getQtySubFormula());
+		setQtyAfterProcess(c.getQtyAfterProcess());
+		setCompoListUnit(c.getCompoListUnit());
+		setLossPerc(c.getLossPerc());
+		setDeclGrp(c.getDeclGrp());
+		setDeclType(c.getDeclType());
+		setProduct(new NodeRef(c.getProduct().toString()));
 	}
 	
 	public static Composite<CompoListDataItem> getHierarchicalCompoList(List<CompoListDataItem> items){

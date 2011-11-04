@@ -140,10 +140,12 @@
                [
                   { key: "id", label:"" ,sortable: false, formatter: this.bind(this.renderCellIcons), width: 20 },
                   { key: "npdProductName",  label:this.msg("label.npdProductName"),sortable: false, formatter: this.bind(this.renderNpdProductName) },
-                  { key: "npdType", label:this.msg("label.npdType"), sortable: false, formatter: this.bind(this.renderNpdType) },
-                  { key: "npdStatus",  label:this.msg("label.npdStatus"),sortable: false, formatter: this.bind(this.renderNpdStatus) },
+                  { key: "npdType", label:this.msg("label.npdType"), sortable: false, formatter: this.bind(this.renderNpdType) },                  
                   { key: "npdNumber",  label:this.msg("label.npdNumber"),sortable: false, formatter: this.bind(this.renderNpdNumber) },
                   { key: "description",  label:this.msg("label.npdDescription"),sortable: false, formatter: this.bind(this.renderTitle) },
+                  { key: "npdStatus",  label:this.msg("label.npdStatus"),sortable: false, formatter: this.bind(this.renderNpdStatus) },
+                  { key: "activeSteps",  label:this.msg("label.activeSteps"),sortable: false, formatter: this.bind(this.renderActiveSteps) },
+                  { key: "assignedUsers",  label:this.msg("label.assignedUsers"),sortable: false, formatter: this.bind(this.renderAssignedUsers) },
                   { key: "startedDate", label:this.msg("label.started")  ,sortable: false, formatter: this.bind(this.renderStartedDate) },
                   { key: "dueDate", label:this.msg("label.due") , sortable: false, formatter: this.bind(this.renderDueDate) }, 
                   { key: "npdComments", label:this.msg("label.npdComments") , sortable: false, formatter: this.bind(this.renderComments) }, 
@@ -258,6 +260,39 @@
     	 var npdStatus = workflow.tasks[0].properties.npdwf_npdStatus;
          elCell.innerHTML = (npdStatus ? npdStatus  :this.msg("label.none"));
       },
+      renderActiveSteps: function NPDL_renderSteps(elCell, oRecord, oColumn, oData)
+      {
+    	 var workflow = oRecord.getData();    	 
+    	 var npdSteps = "";
+    	 
+    	 for(i in workflow.tasks){
+    		 
+    		 if(workflow.tasks[i].state == "IN_PROGRESS"){
+    			 if(npdSteps != "")
+    				 npdSteps += ", ";
+    			 npdSteps += workflow.tasks[i].title;    			 
+    		 }
+    	 }
+    		     	     	 
+         elCell.innerHTML = (npdSteps ? npdSteps : this.msg("label.none"));
+      },
+      renderAssignedUsers: function NPDL_renderAssignedUsers(elCell, oRecord, oColumn, oData)
+      {
+    	 var workflow = oRecord.getData();
+    	 
+    	 var npdAsignedUsers = "";
+    	 
+    	 for(i in workflow.tasks){
+    		 
+    		 if(workflow.tasks[i].state == "IN_PROGRESS" && workflow.tasks[i].owner != null){
+    			 if(npdAsignedUsers != "")
+    				 npdAsignedUsers += ", ";
+    			 npdAsignedUsers += workflow.tasks[i].owner.firstName + " " + workflow.tasks[i].owner.lastName;    			 
+    		 }
+    	 }
+    		     	     	 
+         elCell.innerHTML = (npdAsignedUsers ? npdAsignedUsers : this.msg("label.none"));
+      },
       renderNpdType: function NPDL_renderNpdType(elCell, oRecord, oColumn, oData)
       {
     	 var workflow = oRecord.getData();
@@ -268,7 +303,18 @@
       renderComments: function NPDL_renderComments(elCell, oRecord, oColumn, oData)
       {
     	 var workflow = oRecord.getData();
-    	 var npdComments = workflow.tasks[0].properties.bpm_comment;
+    	 
+    	 //var npdComments = workflow.tasks[0].properties.bpm_comment;
+    	 var npdComments;
+    	 
+    	 for(i in workflow.tasks){
+    		 
+    		 if(workflow.tasks[i].name == "npdwf:validate-analysis"){
+    			 npdComments = workflow.tasks[i].properties.bpm_comment;
+    			 //break; we want the last comment
+    		 }
+    	 }
+    		     	     	 
          elCell.innerHTML = (npdComments ? npdComments : this.msg("label.none"));
       },
       renderDueDate: function NPDL_renderDueDate(elCell, oRecord, oColumn, oData)

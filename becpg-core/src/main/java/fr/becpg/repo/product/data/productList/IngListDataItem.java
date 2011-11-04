@@ -193,6 +193,21 @@ public class IngListDataItem implements Comparable<IngListDataItem>{
 	}
 	
 	/**
+	 * Copy contructor
+	 * @param i
+	 */
+	public IngListDataItem(IngListDataItem i){
+		
+		setNodeRef(i.getNodeRef());
+		setQtyPerc(i.getQtyPerc());
+		setGeoOrigin(i.getGeoOrigin());
+		setBioOrigin(i.getBioOrigin());
+		setIsGMO(i.isGMO());
+		setIonized(i.isIonized());
+		setIng(i.getIng());
+	}
+	
+	/**
 	 * Sort by qty perc in descending order.
 	 *
 	 * @param o the o

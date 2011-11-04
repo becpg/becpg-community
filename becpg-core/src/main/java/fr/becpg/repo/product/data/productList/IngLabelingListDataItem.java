@@ -97,4 +97,13 @@ public class IngLabelingListDataItem{
 		setValue(value);		
 	}
 	
+	/**
+	 * Copy constructor
+	 * @param i
+	 */
+	public IngLabelingListDataItem(IngLabelingListDataItem i){
+		setNodeRef(i.getNodeRef());
+		setGrp(i.getGrp());
+		setValue(i.getValue());
+	}
 }

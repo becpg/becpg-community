@@ -164,4 +164,19 @@ public class NutListDataItem{
 		setGroup(group);
 		setNut(nut);
 	}
+	
+	/**
+	 * Copy constructor
+	 * @param n
+	 */
+	public NutListDataItem(NutListDataItem n){
+
+		setNodeRef(n.getNodeRef());
+		setValue(n.getValue());
+		setUnit(n.getUnit());
+		setMini(n.getMini());
+		setMaxi(n.getMaxi());
+		setGroup(n.getGroup());
+		setNut(n.getNut());
+    }
 }

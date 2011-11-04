@@ -23,19 +23,19 @@ import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.security.AuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.VersionNumber;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProductCheckOutCheckInServiceImpl.
  *
  * @author querephi
  */
-public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl {
+public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl implements EntityCheckOutCheckInService {
 
 	/** The Constant MSG_ERR_BAD_COPY. */
 	private static final String MSG_ERR_BAD_COPY = "coci_service.err_bad_copy";
@@ -280,10 +280,9 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
 		
 		// Check that the working node still has the copy aspect applied
         if (nodeService.hasAspect(workingCopyNodeRef, ContentModel.ASPECT_COPIEDFROM) == true){        	
-        	
-        	Map<QName, Serializable> workingCopyProperties = nodeService.getProperties(workingCopyNodeRef);
+        
         	// Try and get the original node reference
-            entityNodeRef = (NodeRef) workingCopyProperties.get(ContentModel.PROP_COPY_REFERENCE);
+        	entityNodeRef = (NodeRef)nodeService.getProperty(workingCopyNodeRef, ContentModel.PROP_COPY_REFERENCE);        	
             if(entityNodeRef == null)
             {
                 // Error since the original node can not be found
@@ -299,15 +298,12 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
             {
                 throw new CheckOutCheckInServiceException(MSG_ERR_NOT_OWNER, exception);
             }            
-    		
+            
             //copy properties
     		copyService.copy(workingCopyNodeRef, entityNodeRef);
     		
     		//create new version
             entityVersionService.createVersion(entityNodeRef, properties);
-    		
-            logger.debug("workingCopyNodeRef.versionLabel: " + nodeService.getProperty(workingCopyNodeRef, BeCPGModel.PROP_VERSION_LABEL));
-            logger.debug("entityNodeRef.versionLabel: " + nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_VERSION_LABEL));                		
     		
     		// Copy entity datalists
     		// Rights are checked by copyService during recursiveCopy
@@ -334,6 +330,28 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
         }		
         
 		return entityNodeRef;
+	}
+	
+	/**
+	 * Calculate new version			
+	 * @param versionLabel
+	 * @param majorVersion
+	 * @return
+	 */
+	@Override
+	public VersionNumber getVersionNumber(String versionLabel, boolean majorVersion){
+		
+		VersionNumber versionNumber = new VersionNumber(versionLabel);
+		if(majorVersion){
+			int majorNb = versionNumber.getPart(0) + 1;
+			versionNumber = new VersionNumber(majorNb + EntityVersionService.VERSION_DELIMITER + 0);			
+		}
+		else{
+			int minorNb = versionNumber.getPart(1) + 1;
+			versionNumber = new VersionNumber(versionNumber.getPart(0) + EntityVersionService.VERSION_DELIMITER + minorNb);
+		}
+		
+		return versionNumber;
 	}
 	
 	/**

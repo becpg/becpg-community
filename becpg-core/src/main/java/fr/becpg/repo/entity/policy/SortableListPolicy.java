@@ -48,8 +48,6 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 	/** The search service. */
 	private BeCPGSearchService beCPGSearchService;
 	
-	private BehaviourFilter policyBehaviourFilter;
-	
 	/**
 	 * Sets the policy component.
 	 *
@@ -71,11 +69,7 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
 	}
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
+	
 	/**
 	 * Inits the.
 	 */
@@ -144,31 +138,19 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspect) {
 		
-		logger.debug("###onAddAspect");
-		
 		if(aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST)){
 			
 			Integer sortIndex = (Integer)nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
 			
-			logger.debug("###onAddAspect, sortIndex: " + sortIndex);
-			
 			if(sortIndex == null){
-				
-				logger.debug("###onAddAspect, sortIndex is null");
 				
 				NodeRef parentNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
 				String query = String.format(QUERY_LIST_ITEMS, parentNodeRef);
 				
-				logger.debug("###onAddAspect 1");
-				
 				Map<String, Boolean> sort = new HashMap<String, Boolean>();
 				sort.put("@" + BeCPGModel.PROP_SORT, false);
 				
-				logger.debug("###onAddAspect 2");
-				
 				List<NodeRef> listItems = beCPGSearchService.unProtLuceneSearch(query, sort, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-				
-				logger.debug("###onAddAspect 3");
 				
 				if(listItems.isEmpty()){
 					sortIndex = 1;
@@ -182,7 +164,6 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 					logger.error("Returned several results. Query: " + query);
 				}
 				
-				logger.debug("###Set sort property. sortIndex: " + sortIndex);
 				nodeService.setProperty(nodeRef, BeCPGModel.PROP_SORT, sortIndex);
 			}
 		}		

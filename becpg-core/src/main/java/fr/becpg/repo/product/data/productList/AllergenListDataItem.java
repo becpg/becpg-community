@@ -168,4 +168,18 @@ public class AllergenListDataItem{
 		setInVoluntarySources(inVoluntarySources);
 		setAllergen(allergen);
 	}
+	
+	/**
+	 * Copy constructor
+	 * @param a
+	 */
+	public AllergenListDataItem(AllergenListDataItem a){
+		
+		setNodeRef(a.getNodeRef());
+		setVoluntary(a.getVoluntary());
+		setInVoluntary(a.getInVoluntary());
+		setVoluntarySources(a.getVoluntarySources());
+		setInVoluntarySources(a.getInVoluntarySources());
+		setAllergen(a.getAllergen());
+	}
 }

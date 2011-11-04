@@ -41,6 +41,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ECOModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
@@ -209,6 +210,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(charactsNodeRef, RepoConsts.PATH_MICROBIOS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_GEO_ORIGINS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_BIO_ORIGINS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_SUBSIDIARIES);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_TRADEMARKS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_PLANTS);
 
 		// Hierarchy
 		NodeRef hierarchyNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
@@ -257,6 +261,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 		// Security
 		visitFolder(systemNodeRef, RepoConsts.PATH_SECURITY);
+
+		// ECO
+		visitFolder(systemNodeRef, RepoConsts.PATH_ECO);
 
 		// Icons
 		visitFolder(systemNodeRef, RepoConsts.PATH_ICON);
@@ -379,6 +386,12 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			specialiseType = BeCPGModel.TYPE_GEO_ORIGIN;
 		} else if (folderName == RepoConsts.PATH_BIO_ORIGINS) {
 			specialiseType = BeCPGModel.TYPE_BIO_ORIGIN;
+		} else if (folderName == RepoConsts.PATH_SUBSIDIARIES) {
+			specialiseType = BeCPGModel.TYPE_SUBSIDIARY;
+		} else if (folderName == RepoConsts.PATH_TRADEMARKS) {
+			specialiseType = BeCPGModel.TYPE_TRADEMARK;
+		} else if (folderName == RepoConsts.PATH_PLANTS) {
+			specialiseType = BeCPGModel.TYPE_PLANT;
 		} else if (folderName == RepoConsts.PATH_ENTITY_TEMPLATES) {
 			specialiseType = BeCPGModel.TYPE_ENTITY;
 		} else if (folderName.endsWith(RepoConsts.PATH_HIERARCHY_SFX_HIERARCHY1)) {
@@ -422,6 +435,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			ruleService.saveRule(nodeRef, rule);
 		} else if (folderName == RepoConsts.PATH_SECURITY) {
 			specialiseType = SecurityModel.TYPE_ACL_GROUP;
+		} else if (folderName == RepoConsts.PATH_ECO) {
+			specialiseType = ECOModel.TYPE_ECO;
 		} else if (folderName == RepoConsts.PATH_IMPORT_TO_TREAT) {
 
 			// action
@@ -576,8 +591,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		// create product tpls
 		visitProductTpls(folderTplsNodeRef, entityTplsNodeRef);
 
-		Set<String> subFolders = new HashSet<String>();
+		Set<String> subFolders = new HashSet<String>();		
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);
+		subFolders.add(RepoConsts.PATH_IMAGES);
 
 		// visit supplier
 		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, subFolders);
@@ -591,6 +607,17 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		Set<QName> dataLists = new LinkedHashSet<QName>();
 		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
 		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists);
+		
+		// visit ECO
+		subFolders = new HashSet<String>();
+		subFolders.add(RepoConsts.PATH_SIMULATION_INPUT);
+		subFolders.add(RepoConsts.PATH_SIMULATION_OUTPUT);
+		entityTplService.createFolderTpl(folderTplsNodeRef, ECOModel.TYPE_ECO, true, subFolders);
+		dataLists = new LinkedHashSet<QName>();
+		dataLists.add(ECOModel.TYPE_REPLACEMENTLIST);
+		dataLists.add(ECOModel.TYPE_WUSEDLIST);
+		dataLists.add(ECOModel.TYPE_SIMULATIONLIST);
+		entityTplService.createEntityTpl(entityTplsNodeRef, ECOModel.TYPE_ECO, true, dataLists);
 
 		// visit quality
 		visitQuality(folderTplsNodeRef, entityTplsNodeRef);
@@ -821,8 +848,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				SystemGroup.ProductReviewer.toString(), NPDGroup.NPD.toString(), NPDGroup.MarketingBrief.toString(),
 				NPDGroup.NeedDefinition.toString(), NPDGroup.ValidateNeedDefinition.toString(),
 				NPDGroup.DoPrototype.toString(), NPDGroup.StartProduction.toString(),
-				NPDGroup.ValidateFaisability.toString() 
-				,NPDGroup.FaisabilityAssignersGroup.toString()};
+				NPDGroup.ValidateFaisability.toString(), NPDGroup.FaisabilityAssignersGroup.toString() };
 
 		Set<String> zones = new HashSet<String>();
 		zones.add(AuthorityService.ZONE_APP_DEFAULT);
@@ -879,30 +905,40 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.PurchasingUser.toString()))
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Purchasing.toString(),
 					PermissionService.GROUP_PREFIX + SystemGroup.PurchasingUser.toString());
-		//NPD
+
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
+				+ SystemGroup.Trade.toString(), true);
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.TradeMgr.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Trade.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.TradeMgr.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.TradeUser.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Trade.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.TradeUser.toString());
+		// NPD
 		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
 				+ NPDGroup.NPD.toString(), true);
-		
-		for(String group : new String[]{NPDGroup.MarketingBrief.toString(),
-				NPDGroup.NeedDefinition.toString(), NPDGroup.ValidateNeedDefinition.toString(),
-				NPDGroup.DoPrototype.toString(), NPDGroup.StartProduction.toString(),
-				NPDGroup.ValidateFaisability.toString() ,NPDGroup.FaisabilityAssignersGroup.toString()}){
+
+		for (String group : new String[] { NPDGroup.MarketingBrief.toString(), NPDGroup.NeedDefinition.toString(),
+				NPDGroup.ValidateNeedDefinition.toString(), NPDGroup.DoPrototype.toString(),
+				NPDGroup.StartProduction.toString(), NPDGroup.ValidateFaisability.toString(),
+				NPDGroup.FaisabilityAssignersGroup.toString() }) {
 			if (!authorities.contains(PermissionService.GROUP_PREFIX + group))
 				authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.NPD.toString(),
 						PermissionService.GROUP_PREFIX + group);
-			
+
 		}
-		
-		 authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
-					PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(), true);
-		 
-		for(String group : new String[]{SystemGroup.RDMgr.toString(),SystemGroup.QualityMgr.toString()}){
+
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
+				+ NPDGroup.FaisabilityAssignersGroup.toString(), true);
+
+		for (String group : new String[] { SystemGroup.RDMgr.toString(), SystemGroup.QualityMgr.toString() }) {
 			if (!authorities.contains(PermissionService.GROUP_PREFIX + group))
-				authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(),
+				authorityService.addAuthority(
+						PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(),
 						PermissionService.GROUP_PREFIX + group);
-			
+
 		}
-		
+
 	}
 
 }

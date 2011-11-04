@@ -139,6 +139,20 @@ public class CostDetailsListDataItem{
 		setPercentage(percentage);
 		setCost(cost);
 		setSource(source);
-	}		
+	}
+	
+	/**
+	 * Copy constructor
+	 * @param c
+	 */
+	public CostDetailsListDataItem(CostDetailsListDataItem c){
+		
+		setNodeRef(c.getNodeRef());
+		setValue(c.getValue());
+		setUnit(c.getUnit());
+		setPercentage(c.getPercentage());
+		setCost(c.getCost());
+		setSource(c.getSource());
+	}
 }
 

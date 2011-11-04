@@ -96,12 +96,13 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 
 					<!-- bcpg:eanAspect -->
 					<show id="bcpg:eanCode" force="true" />
-
-					<!-- bcpg:supplierAspect -->
+					
 					<show id="bcpg:suppliers" force="true" />
+					<show id="bcpg:clients" force="true" />
 
 					<!-- modified -->
 					<show id="cm:modified" />
@@ -124,18 +125,10 @@
 					<!-- bcpg:productAspect -->
 					<field id="bcpg:legalName" set="product-criteria" />
 					<field id="bcpg:productHierarchy1" set="product-criteria">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/FinishedProduct_Hierarchy1
-							</control-param>
-						</control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:productHierarchy2" set="product-criteria">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/FinishedProduct_Hierarchy2
-							</control-param>
-							<control-param name="parent">bcpg_productHierarchy1
-							</control-param>
-						</control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:productState" set="product-criteria">
 						<control
@@ -144,12 +137,17 @@
 						</control>
 					</field>
 					<field id="bcpg:code" set="product-criteria" />
+					<field id="bcpg:erpCode" set="product-criteria" />
 
 					<!-- bcpg:eanAspect -->
 					<field id="bcpg:eanCode" force="true" set="product-criteria" />
 
-					<!-- bcpg:supplierAspect -->
 					<field id="bcpg:suppliers" force="true" set="product-criteria">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					<field id="bcpg:clients" force="true" set="product-criteria">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -197,7 +195,8 @@
 					<show id="bcpg:productComments" />
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />					
-					<show id="bcpg:code" />					
+					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />					
 					<show id="bcpg:productState" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:clients" />
@@ -209,7 +208,7 @@
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
 					<show id="bcpg:productMicrobioCriteria" />
-
+		
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
@@ -225,7 +224,7 @@
 					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
-						template="/fr/becpg/components/form/3-column-set.ftl" />
+						template="/fr/becpg/components/form/3-column-set.ftl" />						
 					<set id="categories" appearance="bordered-panel" label="Catégories"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label="Audit"
@@ -263,6 +262,7 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:clients" force="true" set="mainInfo"/>
 					<field id="rep:reportTpls" set="mainInfo"/>
@@ -283,7 +283,7 @@
 							<control-param name="style">width:200px</control-param>
 						</control>	
 					</field>
-
+										
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -326,6 +326,7 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:clients" />
 					<show id="rep:reportTpls" />
@@ -382,6 +383,7 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:clients" force="true" set="mainInfo"/>
 					<field id="rep:reportTpls" set="mainInfo"/>
@@ -439,8 +441,12 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />					
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:productState" />
-					<show id="bcpg:eanCode" />					
+					<show id="bcpg:eanCode" />				
+					<show id="bcpg:subsidiary" />
+					<show id="bcpg:plants" />
+					<show id="bcpg:trademark" />
 					<show id="bcpg:clients" />
 					<show id="rep:reportTpls" />									
 
@@ -450,6 +456,13 @@
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
 					<show id="bcpg:productMicrobioCriteria" />
+					
+					<!-- Profitability -->
+					<show id="bcpg:unitPrice" />
+					<show id="bcpg:unitTotalCost" />
+					<show id="bcpg:priceCurrency" />					
+					<show id="bcpg:breakEven" />					
+					<show id="bcpg:profitability" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -470,6 +483,8 @@
 					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
+						template="/fr/becpg/components/form/3-column-set.ftl" />
+					<set id="profitability" appearance="bordered-panel" label="Rentabilité"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel" label="Catégories"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
@@ -508,7 +523,11 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:subsidiary" force="true" set="mainInfo"/>
+					<field id="bcpg:plants" force="true" set="mainInfo"/>
+					<field id="bcpg:trademark" force="true" set="mainInfo"/>
 					<field id="bcpg:clients" force="true" set="mainInfo"/>						
 					<field id="rep:reportTpls" set="mainInfo"/>
 						
@@ -527,7 +546,14 @@
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
 							<control-param name="style">width:200px</control-param>
 						</control>	
-					</field>
+					</field>					
+					
+					<!-- profitability -->
+					<field id="bcpg:unitPrice" read-only="true" set="profitability" />
+					<field id="bcpg:unitTotalCost" read-only="true" set="profitability" />
+					<field id="bcpg:priceCurrency" read-only="true" set="profitability" />					
+					<field id="bcpg:breakEven" read-only="true" set="profitability" />
+					<field id="bcpg:profitability" read-only="true" set="profitability" />				
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -573,8 +599,12 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />					
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:productState" />
+					<show id="bcpg:subsidiary" />
+					<show id="bcpg:plants" />
+					<show id="bcpg:trademark" />
 					<show id="bcpg:clients" />
 					<show id="rep:reportTpls" />
 					
@@ -632,7 +662,11 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:subsidiary" force="true" set="mainInfo"/>
+					<field id="bcpg:plants" force="true" set="mainInfo"/>
+					<field id="bcpg:trademark" force="true" set="mainInfo"/>
 					<field id="bcpg:clients" force="true" set="mainInfo"/>						
 					<field id="rep:reportTpls" set="mainInfo"/>
 						
@@ -690,6 +724,7 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -742,6 +777,7 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />
 					
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -829,6 +865,7 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />
 					
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -868,6 +905,7 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportTpls" />
 
 					<!-- tags and categories -->
@@ -921,7 +959,8 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
 					<field id="bcpg:productUnit" set="mainInfo"/>
-					<field id="bcpg:code" read-only="true" set="mainInfo" />					
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />					
 					<field id="rep:reportTpls" set="mainInfo"/>
 						
 					<!-- categories -->
@@ -1014,7 +1053,8 @@
 						<control
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
-					<field id="bcpg:code" read-only="true" set="mainInfo" />					
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />					
 					<field id="rep:reportTpls" set="mainInfo"/>
 						
 					<!-- categories -->
@@ -1055,6 +1095,7 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="rep:reportTpls" />
@@ -1111,6 +1152,7 @@
 					</field>
 					<field id="bcpg:productUnit" set="mainInfo"/>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:suppliers" force="true" set="mainInfo"/>
 					<field id="rep:reportTpls" set="mainInfo"/>
@@ -1159,6 +1201,7 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="rep:reportTpls" />
@@ -1205,7 +1248,9 @@
 						<control
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
+					<field id="bcpg:productUnit" set="mainInfo"/>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:suppliers" force="true" set="mainInfo"/>						
 					<field id="rep:reportTpls" set="mainInfo"/>
@@ -1248,6 +1293,7 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="rep:reportTpls" />
@@ -1300,6 +1346,7 @@
 						</control>
 					</field>					
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
 						<control
@@ -1360,6 +1407,7 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="rep:reportTpls" />
@@ -1404,6 +1452,7 @@
 						</control>
 					</field>					
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
 						<control
@@ -1456,6 +1505,7 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportTpls" />					
 
 					<!-- formulation -->
@@ -1517,7 +1567,8 @@
 						<control
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
-					<field id="bcpg:code" read-only="true" set="mainInfo" />					
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />					
 					<field id="rep:reportTpls" set="mainInfo"/>
 						
 					<!-- formulation -->
@@ -1580,6 +1631,7 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportTpls" />					
 
 					<!-- formulation -->
@@ -1634,7 +1686,8 @@
 						<control
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
-					<field id="bcpg:code" read-only="true" set="mainInfo" />					
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />					
 					<field id="rep:reportTpls" set="mainInfo"/>
 						
 					<!-- formulation -->
@@ -2031,6 +2084,7 @@
 					<show id="cm:name" />
 					<show id="cm:description" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:supplierTel" />
 					<show id="bcpg:supplierEmail" />
 					<!-- bcpg:location type -->
@@ -2091,6 +2145,7 @@
 					<show id="cm:name" />
 					<show id="cm:description" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:clientTel" />
 					<show id="bcpg:clientEmail" />
 					<!-- bcpg:location type -->
@@ -2181,6 +2236,7 @@
 					<show id="bcpg:compoListQtyAfterProcess" />
 					<show id="bcpg:compoListQty" />
 					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />
@@ -2193,6 +2249,7 @@
 					<show id="bcpg:compoListProduct" />					
 					<show id="bcpg:compoListQty" />
 					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />

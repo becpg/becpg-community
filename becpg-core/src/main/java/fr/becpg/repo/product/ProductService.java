@@ -8,6 +8,7 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.NodeVisitor;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.formulation.FormulateException;
@@ -21,11 +22,20 @@ import fr.becpg.repo.product.formulation.FormulateException;
 public interface ProductService {
 		   	       
     /**
-     * Formulate.
+     * Formulate the product (update DB)
      *
      * @param productNodeRef the product node ref
      */
     public void formulate(NodeRef productNodeRef) throws FormulateException;
+    
+    
+    /**
+     * Formulate the product (don't update DB)
+     * @param productData
+     * @return
+     * @throws FormulateException
+     */
+    public ProductData formulate(ProductData productData) throws FormulateException;
     
     /**
 	 * Check if the system should generate the report for this product

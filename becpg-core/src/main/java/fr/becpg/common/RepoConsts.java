@@ -44,7 +44,10 @@ public class RepoConsts {
 	public static final String PATH_PHYSICO_CHEM = "PhysicoChems";
 	public static final String PATH_MICROBIOS = "Microbios";
 	public static final String PATH_GEO_ORIGINS = "GeoOrigins";
-	public static final String PATH_BIO_ORIGINS = "BioOrigins";	
+	public static final String PATH_BIO_ORIGINS = "BioOrigins";
+	public static final String PATH_SUBSIDIARIES = "Subsidiaries";	
+	public static final String PATH_TRADEMARKS = "Trademarks";	
+	public static final String PATH_PLANTS = "Plants";	
 	public static final String PATH_ENTITY_TEMPLATES = "EntityTemplates";
 	public static final String PATH_FOLDER_TEMPLATES = "FolderTemplates";
 	public static final String PATH_PRODUCT_TEMPLATES = "ProductTemplates";
@@ -112,6 +115,11 @@ public class RepoConsts {
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PRODUCTS = "ExportProducts";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES = "ExportNCSynthesis";
 	
+	// ECO
+	public static final String PATH_ECO = "ECO";
+	public static final String PATH_SIMULATION_INPUT = "SimulationInput";
+	public static final String PATH_SIMULATION_OUTPUT = "SimulationOutput";
+	
 	
 	/*-- DataLists --*/
 	public static final String CONTAINER_DATALISTS = "DataLists";	
@@ -154,9 +162,7 @@ public class RepoConsts {
 	public static final String PERMISSION_CONTRIBUTOR = "Contributor";
 	public static final String PERMISSION_COLLABORATOR = "Collaborator";
 
-
-
-
-
+	// Configuration
+	public static final int MAX_DEPTH_LEVEL = 256;
 	
 }

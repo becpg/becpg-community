@@ -58,7 +58,8 @@
             <aspect name="bcpg:permissionsTpl" />
             <aspect name="bcpg:clientsAspect" />
             <aspect name="bcpg:suppliersAspect" />
-            <aspect name="rep:reportTplsAspect" />            
+            <aspect name="rep:reportTplsAspect" /> 
+            <aspect name="bcpg:profitabilityAspect" />           
             <aspect name="qa:batchAspect" />        
             <aspect name="qa:acAspect" />    
          </visible>
@@ -71,6 +72,7 @@
             <aspect name="bcpg:clientsAspect" />
             <aspect name="bcpg:suppliersAspect" />
             <aspect name="rep:reportTplsAspect" />
+            <aspect name="bcpg:profitabilityAspect" />
             <aspect name="qa:batchAspect" />
             <aspect name="qa:acAspect" />
          </addable>
@@ -83,6 +85,7 @@
             <aspect name="bcpg:clientsAspect" />
             <aspect name="bcpg:suppliersAspect" />
             <aspect name="rep:reportTplsAspect" />
+            <aspect name="bcpg:profitabilityAspect" />
             <aspect name="qa:batchAspect" />
             <aspect name="qa:acAspect" />
          </removeable>
@@ -111,7 +114,9 @@
 			   <subtype name="qa:workItemAnalysis" />
 			    				
 				<subtype name="bcpg:supplier" />
-				<subtype name="bcpg:client" />		
+				<subtype name="bcpg:client" />	
+				
+				<subtype name="eco:changeOrder" />
 				
 				<subtype name="bcpg:linkedValue" />	
 				<subtype name="bcpg:listValue" />

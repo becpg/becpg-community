@@ -126,7 +126,7 @@ public class ProductReportVisitor implements NodeVisitor {
 		
 		if(!tplsNodeRef.isEmpty()){
 			
-			logger.debug("templateNodeRef " + tplsNodeRef);						
+			logger.debug("templateNodeRef " + tplsNodeRef);
 			
 			// extract data
 			EntityExtractor productExtractor = new ProductExtractorImpl(productNodeRef);
