@@ -288,8 +288,7 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 		if(systemProductType.equals(SystemProductType.RawMaterial) ||
 				systemProductType.equals(SystemProductType.SemiFinishedProduct) ||
 				systemProductType.equals(SystemProductType.LocalSemiFinishedProduct) ||
-				systemProductType.equals(SystemProductType.FinishedProduct) ||
-				systemProductType.equals(SystemProductType.CondSalesUnit)){
+				systemProductType.equals(SystemProductType.FinishedProduct)){
 			
 			wusedList = BeCPGModel.TYPE_COMPOLIST;
 		}

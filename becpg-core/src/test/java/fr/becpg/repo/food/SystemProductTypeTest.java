@@ -51,7 +51,6 @@ public class SystemProductTypeTest extends BaseAlfrescoTestCase{
 	@Test
 	public void testDetermineProductType(){
 		
-		assertEquals(SystemProductType.CondSalesUnit, SystemProductType.valueOf(BeCPGModel.TYPE_CONDSALESUNIT));
 		assertEquals(SystemProductType.FinishedProduct, SystemProductType.valueOf(BeCPGModel.TYPE_FINISHEDPRODUCT));
 		assertEquals(SystemProductType.LocalSemiFinishedProduct, SystemProductType.valueOf(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT));
 		assertEquals(SystemProductType.PackagingKit, SystemProductType.valueOf(BeCPGModel.TYPE_PACKAGINGKIT));

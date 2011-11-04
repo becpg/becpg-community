@@ -34,10 +34,7 @@ public enum SystemProductType {
 	LocalSemiFinishedProduct,
 	
 	/** The Packaging kit. */
-	PackagingKit,
-	
-	/** The Cond sales unit. */
-	CondSalesUnit;
+	PackagingKit;
 	
 	/**
 	 * Gets the product type.
@@ -54,10 +51,7 @@ public enum SystemProductType {
 			throw new InvalidParameterException("null value is not allowed for productType.");
 		}
 		
-		if(productType.getLocalName().equals(BeCPGModel.TYPE_CONDSALESUNIT.getLocalName())){
-			systemProductType = SystemProductType.CondSalesUnit;
-		}
-		else if(productType.getLocalName().equals(BeCPGModel.TYPE_FINISHEDPRODUCT.getLocalName())){
+		if(productType.getLocalName().equals(BeCPGModel.TYPE_FINISHEDPRODUCT.getLocalName())){
 			systemProductType = SystemProductType.FinishedProduct;
 		}
 		else if(productType.getLocalName().equals(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName())){

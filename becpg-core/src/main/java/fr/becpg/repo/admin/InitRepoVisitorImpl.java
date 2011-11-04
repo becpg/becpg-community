@@ -610,7 +610,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		// visit ECO
 		subFolders = new HashSet<String>();
-		subFolders.add(RepoConsts.PATH_SIMULATION_INPUT);
+		subFolders.add(RepoConsts.PATH_SIMULATION_COMPONENTS);
 		subFolders.add(RepoConsts.PATH_SIMULATION_OUTPUT);
 		entityTplService.createFolderTpl(folderTplsNodeRef, ECOModel.TYPE_ECO, true, subFolders);
 		dataLists = new LinkedHashSet<QName>();
@@ -639,7 +639,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		productTypes.add(BeCPGModel.TYPE_FINISHEDPRODUCT);
 		productTypes.add(BeCPGModel.TYPE_PACKAGINGMATERIAL);
 		productTypes.add(BeCPGModel.TYPE_PACKAGINGKIT);
-		productTypes.add(BeCPGModel.TYPE_CONDSALESUNIT);
 
 		Set<String> subFolders = new HashSet<String>();
 		subFolders.add(RepoConsts.PATH_IMAGES);
@@ -675,8 +674,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 
-			} else if (productType.equals(BeCPGModel.TYPE_FINISHEDPRODUCT)
-					|| productType.equals(BeCPGModel.TYPE_CONDSALESUNIT)) {
+			} else if (productType.equals(BeCPGModel.TYPE_FINISHEDPRODUCT)) {
 
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
 				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
@@ -770,7 +768,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
 		QName[] productTypes = { BeCPGModel.TYPE_RAWMATERIAL, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT,
 				BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, BeCPGModel.TYPE_FINISHEDPRODUCT,
-				BeCPGModel.TYPE_PACKAGINGMATERIAL, BeCPGModel.TYPE_PACKAGINGKIT, BeCPGModel.TYPE_CONDSALESUNIT };
+				BeCPGModel.TYPE_PACKAGINGMATERIAL, BeCPGModel.TYPE_PACKAGINGKIT };
 
 		for (QName productType : productTypes) {
 
@@ -845,6 +843,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				SystemGroup.RDMgr.toString(), SystemGroup.Quality.toString(), SystemGroup.QualityUser.toString(),
 				SystemGroup.QualityMgr.toString(), SystemGroup.Purchasing.toString(),
 				SystemGroup.PurchasingUser.toString(), SystemGroup.PurchasingMgr.toString(),
+				SystemGroup.Trade.toString(), SystemGroup.TradeUser.toString(), SystemGroup.TradeMgr.toString(),
 				SystemGroup.ProductReviewer.toString(), NPDGroup.NPD.toString(), NPDGroup.MarketingBrief.toString(),
 				NPDGroup.NeedDefinition.toString(), NPDGroup.ValidateNeedDefinition.toString(),
 				NPDGroup.DoPrototype.toString(), NPDGroup.StartProduction.toString(),

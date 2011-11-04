@@ -93,8 +93,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 		if(nodeType.isMatch(BeCPGModel.TYPE_RAWMATERIAL) ||
 				nodeType.isMatch(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT) ||
 				nodeType.isMatch(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT) ||
-				nodeType.isMatch(BeCPGModel.TYPE_FINISHEDPRODUCT) ||
-				nodeType.isMatch(BeCPGModel.TYPE_CONDSALESUNIT)){
+				nodeType.isMatch(BeCPGModel.TYPE_FINISHEDPRODUCT)){
 			
 			wUsedAssociations.add(BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
 		}

@@ -32,7 +32,6 @@ import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.data.CondSalesUnitData;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.PackagingKitData;
@@ -119,10 +118,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		
     	QName productType = BeCPGModel.TYPE_PRODUCT;
     	
-    	if (productData instanceof CondSalesUnitData) {
-			productType = BeCPGModel.TYPE_CONDSALESUNIT;			
-		}
-    	else if (productData instanceof FinishedProductData) {
+    	if (productData instanceof FinishedProductData) {
 			productType = BeCPGModel.TYPE_FINISHEDPRODUCT;			
 		}
     	else if (productData instanceof LocalSemiFinishedProduct) {
@@ -213,10 +209,6 @@ public class ProductDAOImpl implements ProductDAO{
 				
 		switch(systemProductType){
 		
-			case CondSalesUnit:				
-				productData = new CondSalesUnitData();				
-				break;
-				
 			case FinishedProduct:				
 				productData = new FinishedProductData();
 				break;
@@ -860,10 +852,6 @@ public class ProductDAOImpl implements ProductDAO{
      * @param dataLists the data lists
      */
     
-//    private NodeRef saveProduct(NodeRef parentNodeRef, CondSalesUnitData p, Set<ProductDataList> dataLists){
-//    	return saveProduct(parentNodeRef, p, FoodModel.TYPE_CONDSALESUNIT, dataLists);
-//    }
-//    
 //    private NodeRef saveProduct(NodeRef parentNodeRef, FinishedProductData p, Set<ProductDataList> dataLists){
 //    	return saveProduct(parentNodeRef, p, FoodModel.TYPE_FINISHEDPRODUCT, dataLists);
 //    }

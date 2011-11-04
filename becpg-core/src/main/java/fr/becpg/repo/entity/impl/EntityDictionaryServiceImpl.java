@@ -18,8 +18,7 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 		else if(entityType.getLocalName().equals(BeCPGModel.TYPE_RAWMATERIAL.getLocalName()) ||
 				entityType.getLocalName().equals(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT.getLocalName()) ||
 				entityType.getLocalName().equals(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName()) ||
-				entityType.getLocalName().equals(BeCPGModel.TYPE_FINISHEDPRODUCT.getLocalName()) ||
-				entityType.getLocalName().equals(BeCPGModel.TYPE_CONDSALESUNIT.getLocalName())){
+				entityType.getLocalName().equals(BeCPGModel.TYPE_FINISHEDPRODUCT.getLocalName())){
 			wUsedList = BeCPGModel.TYPE_COMPOLIST;
 		}
 		else if(entityType.getLocalName().equals(BeCPGModel.TYPE_PACKAGINGMATERIAL.getLocalName()) ||

@@ -117,7 +117,7 @@ public class RepoConsts {
 	
 	// ECO
 	public static final String PATH_ECO = "ECO";
-	public static final String PATH_SIMULATION_INPUT = "SimulationInput";
+	public static final String PATH_SIMULATION_COMPONENTS = "SimulationComponents";
 	public static final String PATH_SIMULATION_OUTPUT = "SimulationOutput";
 	
 	
