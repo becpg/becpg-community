@@ -153,7 +153,7 @@ function getRepositoryItem(folderPath, node)
 /**
  * Returns an item of the document library component.
  */
-function getDocumentItem(siteId, containerId, pathParts, node)
+function getDocumentItem(siteId, containerId, pathParts, node, metadataFields)
 {
    // PENDING: how to handle comments? the document should
    //          be returned instead
@@ -200,6 +200,18 @@ function getDocumentItem(siteId, containerId, pathParts, node)
       {
          item.type = "document";
          item.size = node.size;
+         var fields = [];
+         if(metadataFields!=null && metadataFields.length>0){
+        	var splitted = metadataFields.split(",");
+	         for (count in splitted)
+	         {
+	            fields.push(splitted[count].replace("_", ":"));
+	         }
+         }
+         if(fields.length<1){
+        	 fields.push("bcpg:code"); // avoid empty
+         }
+         item.nodeData = getFormData(node,fields);
       }
    }
    
@@ -391,6 +403,164 @@ function getWikiItem(siteId, containerId, pathParts, node)
    return item;
 }
 
+//ML becPG
+// get required formData
+function getFormData(node,fields){
+	
+	var nodeData = {};
+	
+	// Use the form service to parse the required properties
+	var  scriptObj = formService.getForm("node", node.nodeRef, fields, fields);
+
+    // Make sure we can quickly look-up the Field Definition within the formData loop...
+    var objDefinitions = {};
+    for each (formDef in scriptObj.fieldDefinitions)
+    {
+       objDefinitions[formDef.dataKeyName] = formDef;
+    }
+
+    // Populate the data model
+    var formData = scriptObj.formData.data;
+    for (var k in formData)
+    {
+       var isAssoc = k.indexOf("assoc") == 0,
+          value = formData[k].value,
+          values,
+          type = isAssoc ? objDefinitions[k].endpointType : objDefinitions[k].dataType,
+          endpointMany = isAssoc ? objDefinitions[k].endpointMany : false,
+          objData =
+          {
+             type: type,
+             label : objDefinitions[k].label
+          };
+
+       if (value instanceof java.util.Date)
+       {
+          objData.value = utils.toISO8601(value);
+          objData.displayValue = objData.value;
+          nodeData[k] = objData;
+       }
+       else if (endpointMany)
+       {
+          if (value.length() > 0)
+          {
+             values = value.split(",");
+             nodeData[k] = [];
+             for each (value in values)
+             {
+                var objLoop =
+                {
+                   label : objDefinitions[k].label,
+                   type: objData.type,
+                   value: value,
+                   displayValue: value
+                };
+
+                if (decorateFieldData(objLoop, node))
+                {
+                   nodeData[k].push(objLoop);
+                }
+             }
+          }
+       }
+       else
+       {
+    	   
+          objData.value = value;
+          objData.displayValue = objData.value;
+
+          if (decorateFieldData(objData, node))
+          {
+             nodeData[k] = objData;
+          }
+       }
+    }
+	
+	return nodeData;
+}
+
+
+
+/**
+ * Generate displayValue and any extra metadata for this field
+ *
+ * @method decorateFieldData
+ * @param objData {object} Object literal containing this field's data
+ * @param node {ScriptNode} The list item node for this field
+ * @return {Boolean} false to prevent this field being added to the output stream.
+ */
+function decorateFieldData(objData, node)
+{
+   var value = objData.value,
+      type = objData.type,
+      obj;
+   
+   if (type == "cm:person")
+   {
+
+      objData.displayValue = getPersonDisplayName(value);
+
+   }
+   else if (type == "cm:folder")
+   {
+      obj = getContentObject(value);
+      if (obj == null)
+      {
+         return false;
+      }
+      objData.displayValue = obj.displayPath.substring(companyhome.name.length() + 1);
+      objData.metadata = "container";
+   }
+   else if (type.indexOf(":") > 0 && node.isSubType("cm:cmobject"))
+   {
+      obj = getContentObject(value);
+      if (obj == null)
+      {
+         return false;
+      }
+      objData.type = "subtype";
+      objData.displayValue = obj.properties["cm:name"];
+      objData.metadata = obj.isContainer ? "container" : "document";
+   }
+   return true;
+}
+/**
+ * Cache for nodes that are subtypes of cm:cmobject
+ */
+var ContentObjectCache =  {};
+
+/**
+ * Gets / caches a content object
+ *
+ * @method getContentObject
+ * @param nodeRef {string} NodeRef
+ */
+function getContentObject(nodeRef)
+{
+   if (nodeRef == null || nodeRef == "")
+   {
+      return null;
+   }
+
+   if (typeof ContentObjectCache[nodeRef] == "undefined")
+   {
+      var node = search.findNode(nodeRef);
+      try
+      {
+         ContentObjectCache[nodeRef] = node;
+      }
+      catch(e)
+      {
+         // Possibly a stale indexed node
+         return null;
+      }
+   }
+   return ContentObjectCache[nodeRef];
+}
+
+
+
+
 function getLinkItem(siteId, containerId, pathParts, node)
 {
    // only process documents
@@ -497,7 +667,7 @@ function getDataItem(siteId, containerId, pathParts, node)
  * Delegates the extraction to the correct extraction function
  * depending on containerId.
  */
-function getItem(siteId, containerId, pathParts, node)
+function getItem(siteId, containerId, pathParts, node, metadataFields)
 {
    var item = null;
    if (siteId == null)
@@ -509,7 +679,7 @@ function getItem(siteId, containerId, pathParts, node)
       switch ("" + containerId)
       {
          case "documentLibrary":
-            item = getDocumentItem(siteId, containerId, pathParts, node);
+            item = getDocumentItem(siteId, containerId, pathParts, node, metadataFields);
             break;
          case "blog":
             item = getBlogPostItem(siteId, containerId, pathParts, node);
@@ -577,7 +747,7 @@ function splitQNamePath(node)
  * 
  * @return the final search results object
  */
-function processResults(nodes, maxResults)
+function processResults(nodes, maxResults,metadataFields)
 {    
    var results = [],
       added = 0,
@@ -594,7 +764,7 @@ function processResults(nodes, maxResults)
       parts = splitQNamePath(nodes[i]);
       if (parts !== null)
       {
-         item = getItem(parts[0], parts[1], parts[2], nodes[i]);
+         item = getItem(parts[0], parts[1], parts[2], nodes[i],metadataFields);
          if (item !== null)
          {
             results.push(item);
@@ -840,5 +1010,5 @@ function getSearchResults(params)
 //      nodes = [];
 //   }
    
-   return processResults(nodes, params.maxResults);
+   return processResults(nodes, params.maxResults, params.metadataFields);
 }

@@ -76,11 +76,23 @@ function main()
       });
    }
    
+   var metadatas = config.scoped["Search"]["metadata"].childrenMap["show"];
+   var metadataFields = "";
+   for (var i = 0, metadata; i < sortables.size(); i++)
+   {
+	   if(metadataFields.length>0){
+		   metadataFields+=",";
+	   }
+	   metadata = metadatas.get(i);
+	   metadataFields+=metadata.attributes["id"].replace(":","_");
+   }
+   
    // Prepare the model
    var repoconfig = config.scoped['Search']['search'].getChildValue('repository-search');
    model.siteId = siteId;
    model.siteTitle = (siteTitle != null ? siteTitle : "");
    model.sortFields = sortFields;
+   model.metadataFields = metadataFields;
    model.searchTerm = (page.url.args["t"] != null) ? page.url.args["t"] : "";
    model.searchTag = (page.url.args["tag"] != null) ? page.url.args["tag"] : "";
    model.searchSort = (page.url.args["s"] != null) ? page.url.args["s"] : "";
