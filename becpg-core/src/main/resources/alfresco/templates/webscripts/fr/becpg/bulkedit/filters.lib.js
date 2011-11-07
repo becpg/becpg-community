@@ -32,6 +32,10 @@ var Filters =
 	  
 	   
 	   var searchQuery = parsedArgs.searchQuery;
+	   if(searchQuery==null || searchQuery.length <1){
+		   searchQuery="";
+	   }
+	   
 	   if(parsedArgs.itemType!=null){
 		   searchQuery+=" +TYPE:\""+parsedArgs.itemType+"\"";
 	   }
@@ -39,7 +43,8 @@ var Filters =
 	   // Common types and aspects to filter from the UI
 	   searchQuery +=
 	         " -TYPE:\"cm:systemfolder\"" +
-	         " -@cm\\:lockType:READ_ONLY_LOCK";
+	         " -@cm\\:lockType:READ_ONLY_LOCK" +
+	         " -ASPECT:\"bcpg:compositeVersion\"";
 	   
 	  var nodeRef = parsedArgs.nodeRef;
 	  if(nodeRef!=null && nodeRef.length >0){

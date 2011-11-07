@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Bulk Form Persistence</shortname>
+  <description>Handles the submission of a bulk-edit form, data can be POSTed as JSON</description>
+  <url>/becpg/bulkedit/{item_kind}/{item_id}/bulksave?nodeRefs={nodeRefs}</url>
+  <format default="json" />
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+  <lifecycle>internal</lifecycle>
+</webscript>

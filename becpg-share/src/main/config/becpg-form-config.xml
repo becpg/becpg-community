@@ -4,8 +4,8 @@
 			<dependencies>
 				<css src="/yui/autocomplete/assets/skins/sam/autocomplete-min.css" />
 				<css src="/components/autocomplete/autocomplete-min.css" />
-				<js src="/js/beCPG.js" />
-				<js src="/modules/simple-bulk-dialog.js" />
+				<js src="/js/beCPG-min.js" />
+				<js src="/modules/simple-bulk-dialog-min.js" />
 				<js src="/components/autocomplete/autocomplete-picker-min.js" />
 				<js src="/yui/datasource/datasource-min.js" />
 				<js src="/yui/autocomplete/autocomplete-min.js" />

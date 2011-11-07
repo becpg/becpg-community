@@ -4,8 +4,8 @@
 <script type="text/javascript">//<![CDATA[
    new  beCPG.component.BulkEdit("${el}").setOptions(
    {
-      searchQuery: "${searchQuery?js_string}",
-      nodeRef: "${nodeRef?js_string}",
+      searchQuery: <#if nodeRef??>"${searchQuery?js_string}"<#else>""</#if>,
+      nodeRef: <#if nodeRef??>"${nodeRef?js_string}"<#else>""</#if>,
       usePagination: true
    }).setMessages(${messages});
    
