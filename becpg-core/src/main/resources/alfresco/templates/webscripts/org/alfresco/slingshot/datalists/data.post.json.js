@@ -58,8 +58,11 @@ function getData()
    var filterParams = Filters.getFilterParams(filter, parsedArgs)
       query = filterParams.query;
 
-   var hasWriteAccess = beCPGSecurity.hasWriteAccess(parsedArgs.listNode,parsedArgs.listNode.properties["dl:dataListItemType"]);
-   
+   var hasWriteAccess = true;
+   var  entityNodeRef = (args.entityNodeRef !== null) ? args.entityNodeRef : null;
+   if(entityNodeRef!=null){
+	   beCPGSecurity.hasWriteAccess(search.findNode(entityNodeRef),parsedArgs.listNode.properties["dl:dataListItemType"]);
+   }
    // Query the nodes - passing in default sort and result limit parameters
    if (query !== "")
    {

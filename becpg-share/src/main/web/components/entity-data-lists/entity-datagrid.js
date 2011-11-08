@@ -559,7 +559,7 @@
 		}
 		else
 		{
-	      this.widgets.dataSource = new YAHOO.util.DataSource(Alfresco.constants.PROXY_URI + "slingshot/datalists/data/node/" + listNodeRef.uri,
+	      this.widgets.dataSource = new YAHOO.util.DataSource(Alfresco.constants.PROXY_URI + "slingshot/datalists/data/node/" + listNodeRef.uri+"?entityNodeRef="+this.options.entityNodeRef,
 	      {
 	         connMethodPost: true,
 	         responseType: YAHOO.util.DataSource.TYPE_JSON,
