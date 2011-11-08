@@ -31,13 +31,15 @@
 				</list>
 			</parameter>
 		</constraint>
-
+<!-- 
 		<constraint name="sec:propNameConstraint"
 			type="fr.becpg.repo.security.constraint.DynPropsConstraint">
 			<parameter name="constraintType">
 				<value>PROP_NAME</value>
 			</parameter>
-		</constraint>
+		</constraint> 
+		
+		-->
 		
 	   <constraint name="sec:nodeTypeConstraint"
 			type="fr.becpg.repo.security.constraint.DynPropsConstraint">
@@ -51,7 +53,8 @@
 			<parameter name="constraintType">
 				<value>ASPECT_TYPE</value>
 			</parameter>
-		</constraint>
+		</constraint> 
+
 
 	</constraints>
 
@@ -68,7 +71,7 @@
 						<constraint ref="sec:nodeTypeConstraint" />
 					</constraints>
 				</property>
-				<property name="sec:nodeAspects">
+			   <property name="sec:nodeAspects">
 					<type>d:text</type>
 					<multiple>true</multiple>
 					<constraints>
@@ -96,9 +99,9 @@
 				<property name="sec:propName">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<constraints>
+					<!-- <constraints>
 						<constraint ref="sec:propNameConstraint" />
-					</constraints>
+					</constraints> -->
 				</property>
 			</properties>
 			<associations>
@@ -115,8 +118,6 @@
 				</association>
 			</associations>
 		</type>
-
-
 
 	</types>
 

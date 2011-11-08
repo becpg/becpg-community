@@ -644,7 +644,7 @@
 					<show id="qa:sdlControlingGroup" />
 					<show id="qa:sdlFixingGroup" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>					
 				</appearance>
 			</form>
@@ -665,7 +665,7 @@
 					<show id="qa:sdlControlingGroup" />
 					<show id="qa:sdlFixingGroup" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>					
 				</appearance>
 			</form>
@@ -698,7 +698,7 @@
 					<show id="qa:slDateTime" />
 					<show id="qa:slSampleState" />										
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>					
 				</appearance>
 			</form>
@@ -716,7 +716,7 @@
 					<show id="qa:slDateTime" />
 					<show id="qa:slSampleState" />										
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>					
 				</appearance>
 			</form>
@@ -746,7 +746,7 @@
 					<show id="qa:clCharacts" />
 					<show id="qa:clRequired" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>					
 				</appearance>
 			</form>
@@ -772,7 +772,7 @@
 					<show id="qa:clCharacts" />
 					<show id="qa:clRequired" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>					
 				</appearance>
 			</form>
@@ -797,7 +797,7 @@
 					<show id="qa:clState" />
 					<show id="qa:clRequired" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>					
 					<set id="reqInfo" appearance="bordered-panel" label="Exigences" />					
 					<field id="qa:clSampleId" set="reqInfo" />
@@ -848,7 +848,7 @@
 					<show id="qa:clState" />
 					<show id="qa:clRequired" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<set id="reqInfo" appearance="bordered-panel" label="Exigences" />					
 					<field id="qa:clSampleId" read-only="true" set="reqInfo" />

@@ -3,19 +3,15 @@
  */
 package fr.becpg.repo.web.scripts.entity;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -25,15 +21,13 @@ import org.springframework.extensions.webscripts.DeclarativeWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
-import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.QualityModel;
+import fr.becpg.model.DataListModel;
+import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplService;
-import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.product.ProductService;
+import fr.becpg.repo.security.SecurityService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -42,6 +36,7 @@ import fr.becpg.repo.product.ProductService;
  * @author querephi
  */
 public class EntityListsWebScript extends DeclarativeWebScript  {
+	
 
 	// request parameter names
 	/** The Constant PARAM_STORE_TYPE. */
@@ -49,6 +44,9 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 	
 	/** The Constant PARAM_STORE_ID. */
 	private static final String PARAM_STORE_ID = "store_id";
+	
+	/** The Constant PARAM_ACL_MODE. */
+	private static final String PARAM_ACL_MODE = "aclMode";
 	
 	/** The Constant PARAM_ID. */
 	private static final String PARAM_ID = "id";	
@@ -62,11 +60,17 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 	/** The Constant MODEL_KEY_NAME_LISTS. */
 	private static final String MODEL_KEY_NAME_LISTS = "lists";
 	
+	
 	/** The Constant MODEL_HAS_WRITE_PERMISSION. */
 	private static final String MODEL_HAS_WRITE_PERMISSION = "hasWritePermission";
 	
+	/** the Constant MODEL_KEY_ACL_TYPE **/
+	private static final String MODEL_KEY_ACL_TYPE = "aclType";
+	
 	/** The Constant MODEL_WUSED_LIST. */
 	private static final String MODEL_WUSED_LIST = "wUsedList";
+
+
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityListsWebScript.class);
@@ -74,8 +78,8 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 	/** The node service. */
 	private NodeService nodeService;
 	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;		
+	/** The security service. */
+	private SecurityService securityService;		
 	
 	private EntityListDAO entityListDAO;
 	
@@ -93,16 +97,11 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
-	/**
-	 * Sets the file folder service.
-	 *
-	 * @param fileFolderService the new file folder service
-	 */
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
-	}	
-	
+		
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
@@ -137,6 +136,7 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 		String storeType = templateArgs.get(PARAM_STORE_TYPE);
 		String storeId = templateArgs.get(PARAM_STORE_ID);
 		String nodeId = templateArgs.get(PARAM_ID);
+		String aclMode  = req.getParameter(PARAM_ACL_MODE);
 		
 		logger.debug("entityListsWebScript executeImpl()");
 			
@@ -145,18 +145,39 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 		NodeRef listContainerNodeRef = null;
 		QName nodeType = nodeService.getType(nodeRef);
 		boolean hasWritePermission = false;
+		boolean skipFilter = false;
 		String wUsedList = null;
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		//We get datalist for a given aclGroup 
+		if(aclMode!=null  &&  SecurityModel.TYPE_ACL_GROUP.equals(nodeService.getType(nodeRef))){
+			logger.debug("We want to get datalist for current ACL entity");
+			String aclType = (String) nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_GROUP_NODE_TYPE);
+			QName aclTypeQname = DefaultTypeConverter.INSTANCE.convert(QName.class, aclType);
+			model.put(MODEL_KEY_ACL_TYPE, aclTypeQname.toPrefixString(namespaceService));
 			
-		// entityTpl
-		if(nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_ENTITY_TPL)){
+			NodeRef  templateNodeRef = entityTplService.getEntityTpl(aclTypeQname);
+			if(templateNodeRef!=null ){
+				listContainerNodeRef = entityListDAO.getListContainer(templateNodeRef);			
+				if(listContainerNodeRef == null){			   				
+					listContainerNodeRef = entityListDAO.createListContainer(templateNodeRef);
+				}
+			} else {
+				logger.error("Cannot get templateNodeRef for type : "+aclType);
+			}
+			skipFilter  = true;
+		}
+		//We get datalist for entityTpl
+		else if(nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_ENTITY_TPL)){
 			
 			listContainerNodeRef = entityListDAO.getListContainer(nodeRef);			
 			if(listContainerNodeRef == null){			   				
 				listContainerNodeRef = entityListDAO.createListContainer(nodeRef);
 			}
 			hasWritePermission = true;
+			skipFilter  = true;
 		}
-		// entity
+		//We get datalist for entity
 		else {
 			
 			NodeRef templateNodeRef = entityTplService.getEntityTpl(nodeType);
@@ -180,12 +201,36 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 			listsNodeRef = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);			
 		}
 		
-		Map<String, Object> model = new HashMap<String, Object>();
+		
+		//filter list with perms
+		if(!skipFilter){
+			Iterator<NodeRef> it = listsNodeRef.iterator();
+			while (it.hasNext()) {
+				NodeRef temp = (NodeRef) it.next();
+				String dataListType = (String)nodeService.getProperty(temp,DataListModel.PROP_DATALISTITEMTYPE );
+				int access_mode = securityService.computeAccessMode(nodeType,dataListType) ;
+				
+				switch (access_mode) {
+					case SecurityService.NONE_ACCESS:
+						if(logger.isDebugEnabled()){
+							logger.debug("Don't display dataList:"+dataListType);
+						}
+						it.remove();
+						break;
+					default:
+						break;
+				}
+			}
+		}
+		
+
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
 		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
-		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
 		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission);
 		model.put(MODEL_WUSED_LIST, wUsedList);
+		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
+		
 		return model;
 	}
+
 }

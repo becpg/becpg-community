@@ -90,12 +90,15 @@ public class SecurityServiceImpl implements SecurityService {
 		try {
 
 			String key = computeAclKey(nodeType, propName);
+			logger.debug("Compute acl for: "+key);
+			
 			if (acls.containsKey(key)) {
 
 				List<ACLEntryDataItem.PermissionModel> perms = acls.get(key);
 				int ret = SecurityService.WRITE_ACCESS;
 				if (!isAdmin()) {
 
+					
 					// Rule to override if one of the rule says that is has a
 					// better right
 					for (PermissionModel permissionModel : perms) {
@@ -121,6 +124,7 @@ public class SecurityServiceImpl implements SecurityService {
 					}
 				}
 
+				
 				return ret;
 			}
 

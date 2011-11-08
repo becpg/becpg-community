@@ -1,6 +1,10 @@
 <#escape x as jsonUtils.encodeJSONString(x)>
 {
+  
+   <#if aclType??>"aclType":"${aclType}",</#if>
+   <#if container??>
    "container": "${container.nodeRef?string}",
+   </#if>
    "permissions":
    {
       "create": ${hasWritePermission?string}
@@ -9,7 +13,7 @@
    [
    <#list lists as list>
     {
-    	"entityName" : "${entity.name}",
+       "entityName" : "${entity.name}",
 	   "name": "${list.name}",
 	   "title": "${list.properties.title!list.name}",
 	   "description": "${list.properties.description!""}",
@@ -21,13 +25,13 @@
 	      "delete": ${hasWritePermission?string}
 	   }
 	}<#if list_has_next>,</#if>
-   </#list>      
+   </#list>
    <#if wUsedList??>
    		<#if lists?size != 0>
    	,
 		</#if>
 	{
-		"entityName" : "${entity.name}",
+	   "entityName" : "${entity.name}",
 	   "name": "WUsed",
 	   "title": "${message('entity-datalist-wused-title')}",
 	   "description": "${message('entity-datalist-wused-description')}",

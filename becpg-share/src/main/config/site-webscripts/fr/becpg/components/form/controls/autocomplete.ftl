@@ -1,6 +1,14 @@
 <#if field.control.params.ds?exists><#assign ds=field.control.params.ds><#else><#assign ds=''></#if>
 <#if field.control.params.prevFieldName?exists><#assign prevFieldName=field.control.params.prevFieldName><#else><#assign prevFieldName=''></#if>
 <#if field.control.params.style?exists><#assign style=field.control.params.style><#else><#assign style='width:30em;'></#if>
+<#if args.entityNodeRef?? >
+	<#if ds?contains("?")>
+		<#assign ds=ds+"&entityNodeRef="+args.entityNodeRef>
+	<#else>
+		<#assign ds=ds+"?entityNodeRef="+args.entityNodeRef>
+	</#if>
+</#if>
+
 
 <div class="form-field">
    <#if form.mode == "view" || field.disabled >
@@ -49,6 +57,18 @@
 <#if field.control.params.parent?exists>
 <#assign parentFieldHtmlId=args.htmlid + "_prop_" + field.control.params.parent >
  		,parentFieldHtmlId:"${parentFieldHtmlId}"
+</#if>
+<#if field.control.params.local?exists>
+ 		,isLocalProxy:${field.control.params.local?string}
+</#if>
+<#if field.control.params.showTooltip?exists>
+ 		,showToolTip:${field.control.params.showTooltip?string}
+</#if>
+<#if field.control.params.showPage?exists>
+ 		,showPage:${field.control.params.showPage?string}
+</#if>
+<#if field.control.params.saveTitle?exists>
+ 		,saveTitle:${field.control.params.saveTitle?string}
 </#if>
   });
 

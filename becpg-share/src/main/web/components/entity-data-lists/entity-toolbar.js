@@ -77,14 +77,14 @@
            */
          entityNodeRef:"",
 			
-			/**
-           * bulk action
-           *
-           * @property bulkAction
-           * @type boolean
-           * @default false
-           */
-			bulkAction:"false"
+         /**
+          * Current showFormulate.
+          * 
+          * @property showFormulate
+          * @type boolean
+          * @default ""
+          */	
+		 showFormulate:false
       },
 
       /**
@@ -118,14 +118,18 @@
             disabled: true
          });
 			
-			//formulate button
+		//formulate button
+         if(this.options.showFormulate){
 			this.widgets.formulateButton = Alfresco.util.createYUIButton(this, "formulateButton", this.onFormulate,
-         {
-            disabled: false
-         });
+	         {
+	            disabled: false
+	         });
+         } else {
+        	 Dom.setStyle(this.id+"-formulateButton","display","none");
+         }
 
-		 	//finish button
-			this.widgets.finishButton = Alfresco.util.createYUIButton(this, "finishButton", this.onFinish,
+		 //finish button
+		 this.widgets.finishButton = Alfresco.util.createYUIButton(this, "finishButton", this.onFinish,
          {
             disabled: false
          });
@@ -151,7 +155,8 @@
       {
          var datalistMeta = this.modules.dataGrid.datalistMeta,
             destination = datalistMeta.nodeRef,
-            itemType = datalistMeta.itemType;
+            itemType = datalistMeta.itemType,
+            scope = this;
 
          // Intercept before dialog show
          var doBeforeDialogShow = function DataListToolbar_onNewRow_doBeforeDialogShow(p_form, p_dialog)
@@ -160,28 +165,35 @@
                [ p_dialog.id + "-dialogTitle", this.msg("label.new-row.title") ],
                [ p_dialog.id + "-dialogHeader", this.msg("label.new-row.header") ]
             );
+            
+            // Is it a bulk action?
+            if(Dom.get(p_dialog.id  + "-form-bulkAction"))
+            {
+           		Dom.get(p_dialog.id  + "-form-bulkAction").checked = false;
+           		Dom.get(p_dialog.id  + "-form-bulkAction-msg").innerHTML = this.msg("button.bulk-action-create");
+           	}
+
          };
          
-         var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true",
+         var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true",
          {
             itemKind: "type",
             itemId: itemType,
             destination: destination,
             mode: "create",
-            submitType: "json"
+            submitType: "json",
+            entityNodeRef : this.options.entityNodeRef
          });
 
+         
          // Using Forms Service, so always create new instance
-         var createRow = new beCPG.module.SimpleBulkDialog(this.id + "-createRow");
-
+         var createRow = new Alfresco.module.SimpleDialog(this.id + "-createRow");
          createRow.setOptions(
          {
-            width: "33em",
+        	width: "33em",
             templateUrl: templateUrl,
             actionUrl: null,
             destroyOnHide: true,
-				bulkAction : this.bulkAction,
-				bulkActionMessage : this.msg("button.bulk-action-create"),
             doBeforeDialogShow:
             {
                fn: doBeforeDialogShow,
@@ -189,55 +201,43 @@
             },
             onSuccess:
             {
-               fn: function DataListToolbar_onNewRow_success(response)
+            	 fn: function DataListToolbar_onNewRow_success(response)
+           		 {
+               YAHOO.Bubbling.fire("dataItemCreated",
                {
-                  YAHOO.Bubbling.fire("dataItemCreated",
-                  {
-                     nodeRef: response.json.persistedObject
-                  });
+                  nodeRef: response.json.persistedObject							
+               });
 
-                  Alfresco.util.PopupManager.displayMessage(
-                  {
-                     text: this.msg("message.new-row.success")
-                  });
-               },
-               scope: this
-            },
-				onBulkActionSuccess:
-            {
-               fn: function DataListToolbar_onNewRow_bulkActionsuccess(response)
+               Alfresco.util.PopupManager.displayMessage(
                {
-                  YAHOO.Bubbling.fire("dataItemCreated",
-                  {
-                     nodeRef: response.json.persistedObject							
-                  });
-
-                  Alfresco.util.PopupManager.displayMessage(
-                  {
-                     text: this.msg("message.new-row.success")
-                  });
+                  text: this.msg("message.new-row.success")
+               });
 						
-						//recall create for another item
-						this.bulkAction = true;
-						this.onNewRow();
-               },
-               scope: this
+               //recall edit for next item
+               var checkBoxEl =  Dom.get(this.id + "-createRow" + "-form-bulkAction");
+               
+	           	if ( checkBoxEl && checkBoxEl.checked)
+	  		    {
+					scope.onNewRow();
+	             } 
+	
+            },
+            scope: this
             },
             onFailure:
             {
-               fn: function DataListToolbar_onNewRow_failure(response)
-               {
-                  Alfresco.util.PopupManager.displayMessage(
-                  {
-                     text: this.msg("message.new-row.failure")
-                  });
-               },
-               scope: this
+            	fn: function DataListToolbar_onNewRow_failure(response)
+            	{
+		               Alfresco.util.PopupManager.displayMessage(
+		               {
+		                  text: this.msg("message.new-row.failure")
+		               });
+		         },
+		        scope: this
             }
          }).show();
-      },
-
-		/**
+		},
+	  /**
        * Formulate button click handler
        *
        * @method onFormulate

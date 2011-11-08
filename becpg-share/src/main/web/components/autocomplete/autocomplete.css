@@ -270,3 +270,13 @@ stickers
 	background: url(../images/filetypes/generic-nut-16.png) no-repeat;
 	padding-left: 20px;
 }
+
+.yui-ac-container span.aclEntry {
+	background: url(../images/filetypes/generic-aclEntry-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.dataList {
+	background: url(../images/list-16.png) no-repeat;
+	padding-left: 20px;
+}

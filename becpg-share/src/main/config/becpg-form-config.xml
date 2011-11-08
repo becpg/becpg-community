@@ -5,7 +5,6 @@
 				<css src="/yui/autocomplete/assets/skins/sam/autocomplete-min.css" />
 				<css src="/components/autocomplete/autocomplete-min.css" />
 				<js src="/js/beCPG-min.js" />
-				<js src="/modules/simple-bulk-dialog-min.js" />
 				<js src="/components/autocomplete/autocomplete-picker-min.js" />
 				<js src="/yui/datasource/datasource-min.js" />
 				<js src="/yui/autocomplete/autocomplete-min.js" />
@@ -263,6 +262,7 @@
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/FinishedProduct_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -271,6 +271,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
@@ -402,6 +403,7 @@
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/FinishedProduct_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -410,6 +412,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
@@ -517,6 +520,7 @@
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -525,6 +529,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
@@ -605,6 +610,7 @@
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -613,6 +619,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
@@ -699,6 +706,7 @@
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/PackagingKit_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -707,6 +715,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
@@ -794,6 +803,7 @@
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/PackagingKit_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -802,6 +812,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
@@ -891,6 +902,7 @@
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/PackagingMaterial_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -899,6 +911,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
@@ -989,6 +1002,7 @@
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/PackagingMaterial_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -997,6 +1011,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
@@ -1090,6 +1105,7 @@
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/RawMaterial_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -1098,6 +1114,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>					
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
@@ -1196,6 +1213,7 @@
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/RawMaterial_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -1204,6 +1222,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>					
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
@@ -1308,6 +1327,7 @@
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/SemiFinishedProduct_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -1316,6 +1336,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
@@ -1427,6 +1448,7 @@
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/SemiFinishedProduct_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -1435,6 +1457,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
@@ -1970,7 +1993,7 @@
 					<show id="bcpg:compoListDeclType" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:compoListProduct">
 						<control
@@ -2028,7 +2051,7 @@
 					<show id="bcpg:compoListDeclType" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:compoListProduct">
 						<control
@@ -2054,7 +2077,7 @@
 					<show id="bcpg:packagingListUnit" />					
 					<show id="bcpg:packagingListPkgLevel" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:packagingListProduct">
 						<control
@@ -2096,7 +2119,7 @@
 					<show id="bcpg:packagingListUnit" />					
 					<show id="bcpg:packagingListPkgLevel" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:packagingListProduct">
 						<control
@@ -2125,7 +2148,7 @@
 					<show id="bcpg:allergenListInVolSources" />
 					<!-- <show id="bcpg:allergenListPlants"/> -->
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:allergenListAllergen">
 						<control
@@ -2166,7 +2189,7 @@
 					<show id="bcpg:allergenListInVolSources" />
 					<!-- <show id="bcpg:allergenListPlants"/> -->
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:allergenListAllergen">
 						<control
@@ -2192,7 +2215,7 @@
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:costListCost">
 						<control
@@ -2220,7 +2243,7 @@
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:costListCost">
 						<control
@@ -2243,7 +2266,7 @@
 					<show id="bcpg:costDetailsListUnit" />
 					<show id="bcpg:costDetailsListPerc" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:costDetailsListCost">
 						<control
@@ -2281,7 +2304,7 @@
 					<show id="bcpg:costDetailsListUnit" />
 					<show id="bcpg:costDetailsListPerc" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:costDetailsListCost">
 						<control
@@ -2307,7 +2330,7 @@
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 				</appearance>
 			</form>
@@ -2330,7 +2353,7 @@
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 				</appearance>
 			</form>
@@ -2352,7 +2375,7 @@
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListSubIng" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:ingListIng">
 						<control
@@ -2401,7 +2424,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListBioOrigin" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:ingListIng">
 						<control
@@ -2431,7 +2454,7 @@
 					<show id="bcpg:mblUnit" />
 					<show id="bcpg:mblMaxi" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:mblMicrobio">
 						<control
@@ -2462,7 +2485,7 @@
 					<show id="bcpg:mblUnit" />
 					<show id="bcpg:mblMaxi" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:mblMicrobio">
 						<control
@@ -2486,7 +2509,7 @@
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListGroup" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:nutListNut">
 						<control
@@ -2519,7 +2542,7 @@
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:nutListNut">
 						<control
@@ -2539,7 +2562,7 @@
 					<show id="bcpg:organoListOrgano" />
 					<show id="bcpg:organoListValue" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:organoListOrgano">
 						<control
@@ -2566,7 +2589,7 @@
 					<show id="bcpg:organoListOrgano" />
 					<show id="bcpg:organoListValue" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:organoListOrgano">
 						<control
@@ -2589,7 +2612,7 @@
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:pclPhysicoChem">
 						<control
@@ -2622,7 +2645,7 @@
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>
 					<field id="bcpg:pclPhysicoChem">
 						<control
@@ -2648,7 +2671,7 @@
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>					
 					<field id="bcpg:filReqMessage">
                   <control template="/org/alfresco/components/form/controls/textarea.ftl" />
@@ -2698,7 +2721,7 @@
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>					
 					<field id="bcpg:filReqMessage">
                   <control template="/org/alfresco/components/form/controls/textarea.ftl" />
@@ -2730,7 +2753,7 @@
 					<show id="bcpg:rclReqMessage" />
 					<show id="bcpg:rclSources" />					
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>							
 					<field id="bcpg:rclReqMessage">
                   <control template="/org/alfresco/components/form/controls/textarea.ftl" />
@@ -2758,7 +2781,7 @@
 					<show id="bcpg:rclReqMessage" />
 					<show id="bcpg:rclSources" />	
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				
 				<appearance>	
 					<field id="bcpg:rclReqMessage">
                   <control template="/org/alfresco/components/form/controls/textarea.ftl" />
