@@ -23,7 +23,8 @@ import fr.becpg.repo.helper.AssociationService;
 
 public class ChangeUnitDAOImpl implements BeCPGDao<ChangeUnitData> {
 
-	private final static String NAME_PATTERN = "%s-%s";
+	private final static String VALUE_TREATED = "Treated";
+	private final static String NAME_PATTERN_SEPARATOR = " - ";
 	
 	private static Log logger = LogFactory.getLog(ChangeUnitDAOImpl.class);
 	
@@ -43,9 +44,8 @@ public class ChangeUnitDAOImpl implements BeCPGDao<ChangeUnitData> {
 		
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		
-		String name = String.format(NAME_PATTERN, 
-							changeUnitData.getRevision(), 
-							(String)nodeService.getProperty(changeUnitData.getSourceItem(), ContentModel.PROP_NAME));
+		String name = getName(changeUnitData);
+		
 		properties.put(ContentModel.PROP_NAME, name);
 		properties.put(ECOModel.PROP_CU_REVISION, changeUnitData.getRevision());		
 		properties.put(ECOModel.PROP_CU_REQ_DETAILS, changeUnitData.getReqDetails());
@@ -65,10 +65,7 @@ public class ChangeUnitDAOImpl implements BeCPGDao<ChangeUnitData> {
 	@Override
 	public void update(NodeRef changeUnitNodeRef, ChangeUnitData changeUnitData) {
 		
-		String name = String.format(NAME_PATTERN, 
-						changeUnitData.getRevision(), 
-						(String)nodeService.getProperty(changeUnitData.getSourceItem(), ContentModel.PROP_NAME));
-		nodeService.setProperty(changeUnitNodeRef, ContentModel.PROP_NAME, name);
+		nodeService.setProperty(changeUnitNodeRef, ContentModel.PROP_NAME, getName(changeUnitData));
 		nodeService.setProperty(changeUnitNodeRef, ECOModel.PROP_CU_REVISION, changeUnitData.getRevision());		
 		nodeService.setProperty(changeUnitNodeRef, ECOModel.PROP_CU_REQ_DETAILS, changeUnitData.getReqDetails());
 		nodeService.setProperty(changeUnitNodeRef, ECOModel.PROP_CU_REQ_RESPECTED, changeUnitData.getReqRespected());
@@ -110,6 +107,21 @@ public class ChangeUnitDAOImpl implements BeCPGDao<ChangeUnitData> {
 		
 		nodeService.deleteNode(changeUnitNodeRef);
 		
+	}
+	
+	private String getName(ChangeUnitData changeUnitData){
+	
+		String name = changeUnitData.getRevision() + NAME_PATTERN_SEPARATOR + (String)nodeService.getProperty(changeUnitData.getSourceItem(), ContentModel.PROP_NAME);
+		
+		if(changeUnitData.getTargetItem() != null){
+			name += NAME_PATTERN_SEPARATOR + (String)nodeService.getProperty(changeUnitData.getTargetItem(), ContentModel.PROP_NAME);
+		}
+		
+		if(changeUnitData.getTreated()){
+			name += NAME_PATTERN_SEPARATOR + VALUE_TREATED;
+		}
+		
+		return name;
 	}
 
 }

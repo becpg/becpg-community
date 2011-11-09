@@ -165,6 +165,7 @@ public class ECOServiceImpl implements ECOService {
 	@Override
 	public void apply(NodeRef ecoNodeRef) {
 		
+		resetTreatedWUseds(ecoNodeRef);
 		impactWUseds(ecoNodeRef, false);		
 	}
 
@@ -183,6 +184,7 @@ public class ECOServiceImpl implements ECOService {
 	@Override
 	public void doSimulation(NodeRef ecoNodeRef) {
 		
+		resetTreatedWUseds(ecoNodeRef);
 		impactWUseds(ecoNodeRef, true);		
 	}
 
@@ -270,6 +272,27 @@ public class ECOServiceImpl implements ECOService {
 	}
 	
 	/**
+	 * Reset treated WUsed
+	 * @param ecoNodeRef
+	 */
+	private void resetTreatedWUseds(NodeRef ecoNodeRef){
+		
+		ChangeOrderData ecoData = changeOrderDAO.find(ecoNodeRef);
+				
+		for(WUsedListDataItem wul : ecoData.getWUsedList()){
+			
+			ChangeUnitData changeUnitData = changeUnitDAO.find(wul.getChangeUnit());
+			
+			if(changeUnitData.getTreated()){
+				changeUnitData.setTreated(Boolean.FALSE);
+				changeUnitDAO.update(wul.getChangeUnit(), changeUnitData);
+			}
+		}
+		
+		changeOrderDAO.update(ecoNodeRef, ecoData);
+	}
+	
+	/**
 	 * Impact the WUsed items
 	 * @param ecoNodeRef
 	 * @param isSimulation
@@ -277,9 +300,13 @@ public class ECOServiceImpl implements ECOService {
 	private void impactWUseds(NodeRef ecoNodeRef, boolean isSimulation){
 		
 		ChangeOrderData ecoData = changeOrderDAO.find(ecoNodeRef);
-		
-		// create simulation output
+				
 		if(isSimulation){
+			
+			// clear simulationList
+			ecoData.getSimulationList().clear();
+			
+			// create simulation output
 			createSimulationEntities(ecoData);
 		}
 		
@@ -337,15 +364,13 @@ public class ECOServiceImpl implements ECOService {
 				
 				for(int z_idx=0 ; z_idx<ecoData.getWUsedList().size() ; z_idx++){
 					
-					WUsedListDataItem wulDataItem = ecoData.getWUsedList().get(z_idx);
-					
-					logger.debug("wul level: " + wulDataItem.getDepthLevel() + " - dataList: " + wulDataItem.getImpactedDataList() + " wulDataItem.getLink(): " + wulDataItem.getLink());
+					WUsedListDataItem wulDataItem = ecoData.getWUsedList().get(z_idx);					
 					
 					if(linkNodeRef.equals(wulDataItem.getNodeRef())){
 							
 						// look for previous level
 						int index = z_idx;
-						while(ecoData.getWUsedList().get(index).getDepthLevel() == wulDataItem.getDepthLevel()){
+						while(ecoData.getWUsedList().get(index).getDepthLevel() >= wulDataItem.getDepthLevel()){
 							index--;
 						}
 						
@@ -354,7 +379,10 @@ public class ECOServiceImpl implements ECOService {
 						WUsedListDataItem wulDataItem2 = ecoData.getWUsedList().get(index);
 						NodeRef changeUnitNodeRef2 = wulDataItem2.getChangeUnit();
 						Boolean isWUsedImpacted = (Boolean)nodeService.getProperty(changeUnitNodeRef2, ECOModel.PROP_CU_TREATED);
-						if(isWUsedImpacted != null && isWUsedImpacted == Boolean.TRUE){
+						
+						// 1st level or treated
+						if(wulDataItem2.getDepthLevel() == 1 || 
+									(isWUsedImpacted != null && isWUsedImpacted == Boolean.TRUE)){
 							
 							List<AssociationRef> assocRefs2 = nodeService.getTargetAssocs(wulDataItem2.getChangeUnit(), ECOModel.ASSOC_CU_TARGET_ITEM);
 							NodeRef targetNodeRef2 = assocRefs2.size() > 0 ? assocRefs2.get(0).getTargetRef() : null;
@@ -362,7 +390,8 @@ public class ECOServiceImpl implements ECOService {
 							replacementLinks.put(wulDataItem.getLink(), targetNodeRef2);
 						}
 						else{
-							// WUsed not impacted => exit (it will be treated by another branch)
+							// WUsed not impacted => exit (it will be treated by another branch
+							logger.debug("WUsed not impacted => exit (it will be treated by another branch");
 							return;
 						}
 						
@@ -463,6 +492,10 @@ public class ECOServiceImpl implements ECOService {
 				
 				logger.error("Failed to formulate product. NodeRef: " + targetNodeRef, e);
 			}
+			
+			// isTreated and save in DB
+			changeUnitData.setTreated(Boolean.TRUE);
+			changeUnitDAO.update(changeUnitNodeRef, changeUnitData);			
 			
 			// update simulation List
 			updateCalculatedCharactValues(ecoData, sourceData, targetData);

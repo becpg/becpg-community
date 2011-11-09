@@ -88,27 +88,31 @@ public class ECOPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy{
 		
 		if(beforeState != null && afterState != null && !beforeState.equals(afterState)){						
 		
-			ECOState ecoState = ECOState.valueOf(afterState);
-			
-			if(ecoState.equals(ECOState.ToCalculateWUsed)){
-		
-				logger.debug("calculate WUsed");
-				ecoService.calculateWUsedList(ecoNodeRef);
-				nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.WUsedCalculated);
-			}
-			else if(ecoState.equals(ECOState.ToSimulate)){
-			
-				logger.debug("do simulation");
-				ecoService.doSimulation(ecoNodeRef);				
-				nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.Simulated);
-			}
-			else if(ecoState.equals(ECOState.ToApply)){
-			
-				logger.debug("apply");
-				ecoService.apply(ecoNodeRef);				
-				nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.Applied);
-			}
-			
+//			try{
+				ECOState ecoState = ECOState.valueOf(afterState);
+				
+				if(ecoState.equals(ECOState.ToCalculateWUsed)){
+					
+					logger.debug("calculate WUsed");
+					ecoService.calculateWUsedList(ecoNodeRef);
+					nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.WUsedCalculated);
+				}
+				else if(ecoState.equals(ECOState.ToSimulate)){
+				
+					logger.debug("do simulation");
+					ecoService.doSimulation(ecoNodeRef);				
+					nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.Simulated);
+				}
+				else if(ecoState.equals(ECOState.ToApply)){
+				
+					logger.debug("apply");
+					ecoService.apply(ecoNodeRef);				
+					nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.Applied);
+				}
+//			}	
+//			catch(Exception e){
+//				logger.error("Failed to apply ECO policy", e);
+//			}
 		}
 		
 	}	
