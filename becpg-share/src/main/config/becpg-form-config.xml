@@ -1869,8 +1869,9 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:description" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:supplierTel" />
-					<show id="bcpg:supplierEmail" />
+					<show id="bcpg:supplierEmail" />					
 					<!-- bcpg:location type -->
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
@@ -1931,8 +1932,9 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:description" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:clientTel" />
-					<show id="bcpg:clientEmail" />
+					<show id="bcpg:clientEmail" />					
 					<!-- bcpg:location type -->
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
@@ -2123,6 +2125,7 @@
 					<show id="bcpg:allergenListInVoluntary" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
+					<show id="bcpg:isManualListItem" force="true" />
 					<!-- <show id="bcpg:allergenListPlants"/> -->
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
@@ -2148,6 +2151,7 @@
 					<show id="bcpg:allergenListInVoluntary" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
+					<show id="bcpg:isManualListItem" />
 					<!-- <show id="bcpg:allergenListPlants"/> -->
 				</field-visibility>
 			</form>
@@ -2164,6 +2168,7 @@
 					<show id="bcpg:allergenListInVoluntary" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
+					<show id="bcpg:isManualListItem" force="true" />
 					<!-- <show id="bcpg:allergenListPlants"/> -->
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
@@ -2191,6 +2196,7 @@
 					<show id="bcpg:costListCost" />
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -2206,6 +2212,7 @@
 					<show id="bcpg:costListCost" />
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
+					<show id="bcpg:isManualListItem" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -2219,6 +2226,7 @@
 					<show id="bcpg:costListCost" />
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -2306,6 +2314,7 @@
 				<field-visibility>
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -2317,6 +2326,7 @@
 				<field-visibility>
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
+					<show id="bcpg:isManualListItem" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -2329,6 +2339,7 @@
 				<field-visibility>
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -2343,7 +2354,6 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListIsGMO" />
@@ -2351,6 +2361,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListSubIng" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -2375,7 +2386,6 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
-					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListIsGMO" />
@@ -2383,6 +2393,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListSubIng" />
+					<show id="bcpg:isManualListItem" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -2393,13 +2404,13 @@
 			<!-- Data List pop-up edit form -->
 			<form>
 				<field-visibility>
-					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListBioOrigin" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -2485,6 +2496,7 @@
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListGroup" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -2504,6 +2516,7 @@
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListGroup" />
+					<show id="bcpg:isManualListItem" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -2518,6 +2531,7 @@
 					<show id="bcpg:nutListValue" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					<show id="bcpg:isManualListItem" force="true" />					
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>

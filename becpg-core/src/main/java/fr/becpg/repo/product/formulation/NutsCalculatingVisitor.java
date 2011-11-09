@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
@@ -57,6 +58,8 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 	/** The product dao. */
 	private ProductDAO productDAO;
 	
+	private EntityListDAO entityListDAO;
+	
 	/**
 	 * Sets the node service.
 	 *
@@ -74,7 +77,11 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 	public void setProductDAO(ProductDAO productDAO){
 		this.productDAO = productDAO;
 	}
-
+	
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+	
 //	@Override
 //	public FinishedProductData visit(FinishedProductData finishedProductData) {
 //		visitProduct(finishedProductData);		
@@ -99,8 +106,8 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 //	public void visit(LocalSemiFinishedProduct localSemiFinishedProductData) {
 //		//Nothing to do		
 //	}
-	
-	/* (non-Javadoc)
+
+/* (non-Javadoc)
  * @see fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData)
  */
 @Override
@@ -125,19 +132,20 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		
 		for(CompoListDataItem compoItem : formulatedProduct.getCompoList()){			
 			visitPart(formulatedProduct, compoItem, nutMap);
-		}
-		
-		List<NutListDataItem> nutList = new ArrayList<NutListDataItem>(nutMap.values());
+		}				
 		
 		//Take in account net weight
 		Float qty = (formulatedProduct.getUnit() != ProductUnit.P) ? formulatedProduct.getQty():QTY_FOR_PIECE; //unit => qty == 1
 		Float density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
 		Float netWeight = qty * density;
-		for(NutListDataItem n : nutList){
+		for(NutListDataItem n : nutMap.values()){
 			
 			if(n.getValue() != null)
 				n.setValue(n.getValue() / netWeight);			
 		}
+		
+		// manual listItem
+		List<NutListDataItem> nutList = getListToUpdate(formulatedProduct.getNodeRef(), nutMap);
 				
 		//sort		
 		List<NutListDataItem> nutListSorted = sort(nutList); 
@@ -285,5 +293,34 @@ public class NutsCalculatingVisitor implements ProductVisitor {
         });
         
         return nutList;
+	}
+	
+	/**
+	 * Calculate nuts to update
+	 * @param productNodeRef
+	 * @param costMap
+	 * @return
+	 */
+	private List<NutListDataItem> getListToUpdate(NodeRef productNodeRef, Map<NodeRef, NutListDataItem> nutMap){
+				
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
+		
+		if(listContainerNodeRef != null){
+			
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_NUTLIST);
+			
+			if(listNodeRef != null){
+				
+				List<NodeRef> manualLinks = entityListDAO.getManualLinks(listNodeRef, BeCPGModel.TYPE_NUTLIST);
+				
+				for(NodeRef manualLink : manualLinks){
+					
+					NutListDataItem nutListDataItem = productDAO.loadNutListItem(manualLink);		    		
+		    		nutMap.put(nutListDataItem.getNut(), nutListDataItem);
+				}
+			}
+		}
+		
+		return new ArrayList<NutListDataItem>(nutMap.values());
 	}
 }

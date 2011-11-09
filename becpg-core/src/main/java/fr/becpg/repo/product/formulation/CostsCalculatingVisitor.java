@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.cmis.ws.GetChildren;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -25,6 +26,7 @@ import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.Leaf;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
@@ -62,6 +64,8 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	/** The product dao. */
 	private ProductDAO productDAO;
 	
+	private EntityListDAO entityListDAO;
+	
 	/**
 	 * Sets the node service.
 	 *
@@ -79,6 +83,10 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	public void setProductDAO(ProductDAO productDAO){
 		this.productDAO = productDAO;
 	}	
+	
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
 
 //	@Override
 //	public FinishedProductData visit(FinishedProductData finishedProductData) {
@@ -132,10 +140,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				Float qty = FormulationHelper.getQty(packagingListDataItem);
 				visitCostLeaf(packagingListDataItem.getProduct(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());
 			}
-		}		
-		
-		List<CostListDataItem> costList = new ArrayList<CostListDataItem>(compositeCosts.getCostMap().values());
-		List<CostDetailsListDataItem> costDetailsList = new ArrayList<CostDetailsListDataItem>(compositeCosts.getCostDetailsMap().values());
+		}						
 		
 		//Take in account net weight, calculate cost details perc
 		if(formulatedProduct.getUnit() != ProductUnit.P){
@@ -143,19 +148,19 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			Float density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
 			Float netWeight = qty * density;
 			
-			for(CostListDataItem c : costList){		
+			for(CostListDataItem c : compositeCosts.getCostMap().values()){		
 				if(c.getValue() != null)
 					c.setValue(c.getValue() / netWeight);
 			}
 			
-			for(CostDetailsListDataItem c : costDetailsList){		
+			for(CostDetailsListDataItem c : compositeCosts.getCostDetailsMap().values()){		
 				if(c.getValue() != null)
 					c.setValue(c.getValue() / netWeight);															
 			}
 		}
 		
 		// cost details perc
-		for(CostDetailsListDataItem c : costDetailsList){
+		for(CostDetailsListDataItem c : compositeCosts.getCostDetailsMap().values()){
 			
 			if(c.getValue() != null){
 			
@@ -166,6 +171,10 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				c.setPercentage(0f);
 			}					
 		}
+		
+		//manual listItem
+		List<CostListDataItem> costList = getListToUpdate(formulatedProduct.getNodeRef(), compositeCosts.getCostMap());
+		List<CostDetailsListDataItem> costDetailsList = new ArrayList<CostDetailsListDataItem>(compositeCosts.getCostDetailsMap().values());
 		
 		//sort
 		List<CostListDataItem> costListSorted = sortCost(costList);
@@ -471,6 +480,35 @@ public class CostsCalculatingVisitor implements ProductVisitor {
         });
         
         return costDetailsList;
+	}
+	
+	/**
+	 * Calculate costs to update
+	 * @param productNodeRef
+	 * @param costMap
+	 * @return
+	 */
+	private List<CostListDataItem> getListToUpdate(NodeRef productNodeRef, Map<NodeRef, CostListDataItem> costMap){
+				
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
+		
+		if(listContainerNodeRef != null){
+			
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
+			
+			if(listNodeRef != null){
+				
+				List<NodeRef> manualLinks = entityListDAO.getManualLinks(listNodeRef, BeCPGModel.TYPE_COSTLIST);				
+				
+				for(NodeRef manualLink : manualLinks){
+					
+					CostListDataItem costListDataItem = productDAO.loadCostListItem(manualLink);		    		
+		    		costMap.put(costListDataItem.getCost(), costListDataItem);
+				}
+			}
+		}
+		
+		return new ArrayList<CostListDataItem>(costMap.values());
 	}
 	
 	/**

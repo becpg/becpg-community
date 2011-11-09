@@ -305,7 +305,8 @@ public class ProductDAOImpl implements ProductDAO{
      * @param listContainerNodeRef the list container node ref
      * @return the list
      */
-    private List<AllergenListDataItem> loadAllergenList(NodeRef listContainerNodeRef)
+	@Override
+    public List<AllergenListDataItem> loadAllergenList(NodeRef listContainerNodeRef)
     {
     	List<AllergenListDataItem> allergenList = null;
     	
@@ -319,31 +320,37 @@ public class ProductDAOImpl implements ProductDAO{
     			List<NodeRef> listItemNodeRefs = listItems(allergenListNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
 	    		
     			for(NodeRef listItemNodeRef : listItemNodeRefs){
-	    		 					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
-		    	
-		    		List<AssociationRef> allergenAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_ALLERGEN);
-		    		NodeRef allergenNodeRef = (allergenAssocRefs.get(0)).getTargetRef();
-		    		
-		    		List<AssociationRef> volSourcesAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY_SOURCES);
-		    		List<NodeRef> volSources = new ArrayList<NodeRef>(volSourcesAssocRefs.size());
-		    		for(AssociationRef assocRef : volSourcesAssocRefs){
-		    			volSources.add(assocRef.getTargetRef());
-		    		}
-		    		
-		    		List<AssociationRef> inVolSourcesAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY_SOURCES);
-		    		List<NodeRef> inVolSources = new ArrayList<NodeRef>(volSourcesAssocRefs.size());
-		    		for(AssociationRef assocRef : inVolSourcesAssocRefs){
-		    			inVolSources.add(assocRef.getTargetRef());
-		    		}
-		    		
-		    		AllergenListDataItem allergenListDataItem = new AllergenListDataItem(listItemNodeRef, (Boolean)properties.get(BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY), (Boolean)properties.get(BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY), volSources, inVolSources, allergenNodeRef);
-		    		allergenList.add(allergenListDataItem);
+	    		 					    				    	
+		    		allergenList.add(loadAllergenListItem(listItemNodeRef));
 		    	}
     		}    		
     	}
     	
     	return allergenList;
+    }
+	
+	@Override
+    public AllergenListDataItem loadAllergenListItem(NodeRef listItemNodeRef)
+    {    		    		 					    		
+		List<AssociationRef> allergenAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_ALLERGEN);
+		NodeRef allergenNodeRef = (allergenAssocRefs.get(0)).getTargetRef();
+		
+		List<AssociationRef> volSourcesAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY_SOURCES);
+		List<NodeRef> volSources = new ArrayList<NodeRef>(volSourcesAssocRefs.size());
+		for(AssociationRef assocRef : volSourcesAssocRefs){
+			volSources.add(assocRef.getTargetRef());
+		}
+		
+		List<AssociationRef> inVolSourcesAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY_SOURCES);
+		List<NodeRef> inVolSources = new ArrayList<NodeRef>(volSourcesAssocRefs.size());
+		for(AssociationRef assocRef : inVolSourcesAssocRefs){
+			inVolSources.add(assocRef.getTargetRef());
+		}
+		
+		return new AllergenListDataItem(listItemNodeRef, 
+							(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY), 
+							(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY), 
+							volSources, inVolSources, allergenNodeRef);		
     }
     
     /**
@@ -398,7 +405,8 @@ public class ProductDAOImpl implements ProductDAO{
      * @param listContainerNodeRef the list container node ref
      * @return the list
      */
-    private List<CostListDataItem> loadCostList(NodeRef listContainerNodeRef)
+    @Override
+    public List<CostListDataItem> loadCostList(NodeRef listContainerNodeRef)
     {
     	List<CostListDataItem> costList = null;
     	
@@ -412,19 +420,25 @@ public class ProductDAOImpl implements ProductDAO{
     			List<NodeRef> listItemNodeRefs = listItems(costListNodeRef, BeCPGModel.TYPE_COSTLIST);
 	    		
     			for(NodeRef listItemNodeRef : listItemNodeRefs){	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
-		    		List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
-		    		NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
-		    		
-		    		CostListDataItem costListDataItem = new CostListDataItem(listItemNodeRef, (Float)properties.get(BeCPGModel.PROP_COSTLIST_VALUE), (String)properties.get(BeCPGModel.PROP_COSTLIST_UNIT), costNodeRef);
-		    		costList.add(costListDataItem);
+		    		costList.add(loadCostListItem(listItemNodeRef));
 		    	}
     		}    		
     	}
     	
     	return costList;
     }   
+    
+    @Override
+    public CostListDataItem loadCostListItem(NodeRef listItemNodeRef){
+    	
+    	List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
+		NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
+		
+		return new CostListDataItem(listItemNodeRef, 
+				(Float)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_VALUE), 
+				(String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT), costNodeRef);
+    }
     
     /**
      * Load cost details list.
@@ -474,7 +488,8 @@ public class ProductDAOImpl implements ProductDAO{
      * @param listContainerNodeRef the list container node ref
      * @return the list
      */
-    private List<IngListDataItem> loadIngList(NodeRef listContainerNodeRef)
+    @Override
+    public List<IngListDataItem> loadIngList(NodeRef listContainerNodeRef)
     {
     	List<IngListDataItem> ingList = null;
     	
@@ -487,38 +502,41 @@ public class ProductDAOImpl implements ProductDAO{
     			ingList = new ArrayList<IngListDataItem>();
     			List<NodeRef> listItemNodeRefs = listItems(ingListNodeRef, BeCPGModel.TYPE_INGLIST);
 	    		
-    			for(NodeRef listItemNodeRef : listItemNodeRefs){	    					    		
-		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
-		    	
-		    		List<AssociationRef> ingAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_INGLIST_ING);
-		    		NodeRef ingNodeRef = (ingAssocRefs.get(0)).getTargetRef();
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){	    					    				    		
 		    		
-		    		List<AssociationRef> geoOriginAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
-		    		List<NodeRef> geoOrigins = new ArrayList<NodeRef>(geoOriginAssocRefs.size());
-		    		for(AssociationRef assocRef : geoOriginAssocRefs){
-		    			geoOrigins.add(assocRef.getTargetRef());
-		    		}
-		    		
-		    		List<AssociationRef> bioOriginAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
-		    		List<NodeRef> bioOrigins = new ArrayList<NodeRef>(bioOriginAssocRefs.size());
-		    		for(AssociationRef assocRef : bioOriginAssocRefs){
-		    			bioOrigins.add(assocRef.getTargetRef());
-		    		}
-		    				    		
-		    		IngListDataItem ingListDataItem = new IngListDataItem(listItemNodeRef, 
-		    								(Float)properties.get(BeCPGModel.PROP_INGLIST_QTY_PERC), 
-		    								geoOrigins, 
-		    								bioOrigins, 
-		    								(Boolean)properties.get(BeCPGModel.PROP_INGLIST_IS_GMO), 
-		    								(Boolean)properties.get(BeCPGModel.PROP_INGLIST_IS_IONIZED), 
-		    								ingNodeRef);
-		    		
-		    		ingList.add(ingListDataItem);
+		    		ingList.add(loadIngListItem(listItemNodeRef));
 		    	}
     		}    		
     	}
     	
     	return ingList;
+    }
+    
+    @Override
+    public IngListDataItem loadIngListItem(NodeRef listItemNodeRef){
+    
+    	List<AssociationRef> ingAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_INGLIST_ING);
+		NodeRef ingNodeRef = (ingAssocRefs.get(0)).getTargetRef();
+		
+		List<AssociationRef> geoOriginAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
+		List<NodeRef> geoOrigins = new ArrayList<NodeRef>(geoOriginAssocRefs.size());
+		for(AssociationRef assocRef : geoOriginAssocRefs){
+			geoOrigins.add(assocRef.getTargetRef());
+		}
+		
+		List<AssociationRef> bioOriginAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
+		List<NodeRef> bioOrigins = new ArrayList<NodeRef>(bioOriginAssocRefs.size());
+		for(AssociationRef assocRef : bioOriginAssocRefs){
+			bioOrigins.add(assocRef.getTargetRef());
+		}
+				    		
+		return new IngListDataItem(listItemNodeRef, 
+								(Float)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_INGLIST_QTY_PERC), 
+								geoOrigins, 
+								bioOrigins, 
+								(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_INGLIST_IS_GMO), 
+								(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_INGLIST_IS_IONIZED), 
+								ingNodeRef);
     }
     
     /**
@@ -527,7 +545,8 @@ public class ProductDAOImpl implements ProductDAO{
      * @param listContainerNodeRef the list container node ref
      * @return the list
      */
-    private List<NutListDataItem> loadNutList(NodeRef listContainerNodeRef)
+    @Override
+    public List<NutListDataItem> loadNutList(NodeRef listContainerNodeRef)
     {
     	List<NutListDataItem> nutList = null;
     	
@@ -540,26 +559,29 @@ public class ProductDAOImpl implements ProductDAO{
     			nutList = new ArrayList<NutListDataItem>();
     			List<NodeRef> listItemNodeRefs = listItems(nutListNodeRef, BeCPGModel.TYPE_NUTLIST);
 	    		
-    			for(NodeRef listItemNodeRef : listItemNodeRefs){
-    				
-		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
-		    	
-		    		List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
-		    		NodeRef nutNodeRef = (nutAssocRefs.get(0)).getTargetRef();
-		    		NutListDataItem nutListDataItem = new NutListDataItem(listItemNodeRef, 
-		    									(Float)properties.get(BeCPGModel.PROP_NUTLIST_VALUE),
-		    									(String)properties.get(BeCPGModel.PROP_NUTLIST_UNIT),
-		    									(Float)properties.get(BeCPGModel.PROP_NUTLIST_MINI),
-		    									(Float)properties.get(BeCPGModel.PROP_NUTLIST_MAXI),
-		    									(String)nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_NUTGROUP), 
-		    									nutNodeRef);
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){    				 
 		    		
-		    		nutList.add(nutListDataItem);
+		    		nutList.add(loadNutListItem(listItemNodeRef));
 		    	}
     		}    		
     	}
     	
     	return nutList;
+    }
+    
+    @Override
+    public NutListDataItem loadNutListItem(NodeRef listItemNodeRef){
+    
+    	List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
+		NodeRef nutNodeRef = (nutAssocRefs.get(0)).getTargetRef();
+		return new NutListDataItem(listItemNodeRef, 
+									(Float)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_NUTLIST_VALUE),
+									(String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT),
+									(Float)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_NUTLIST_MINI),
+									(Float)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_NUTLIST_MAXI),
+									(String)nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_NUTGROUP), 
+									nutNodeRef);
+		
     }
     
     /**
@@ -602,7 +624,8 @@ public class ProductDAOImpl implements ProductDAO{
      * @param listContainerNodeRef the list container node ref
      * @return the list
      */
-    private List<IngLabelingListDataItem> loadIngLabelingList(NodeRef listContainerNodeRef)
+    @Override
+    public List<IngLabelingListDataItem> loadIngLabelingList(NodeRef listContainerNodeRef)
     {
     	List<IngLabelingListDataItem> ingLabelingList = null;
     	
@@ -616,24 +639,24 @@ public class ProductDAOImpl implements ProductDAO{
     			List<NodeRef> listItemNodeRefs = listItems(ingLabelingListNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
 	    		
     			for(NodeRef listItemNodeRef : listItemNodeRefs){	    					    		
-	    			
-	    			//Grp
-	    			String grp = (String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_GRP);
-		    		
-		    		//illValue
-		    		MLText illValue = (MLText)mlNodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_VALUE);
-//		            I18NUtil.setContentLocale(Locale.FRENCH);
-//		    		illValue.addValue(Locale.FRENCH, (String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_VALUE));
-//		            I18NUtil.setContentLocale(Locale.ENGLISH);
-//		    		illValue.addValue(Locale.ENGLISH, (String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_VALUE));
-		            
-		    		IngLabelingListDataItem ingLabelingListDataItem = new IngLabelingListDataItem(listItemNodeRef, grp, illValue);
-		    		ingLabelingList.add(ingLabelingListDataItem);
+	    				    			
+		    		ingLabelingList.add(loadIngLabelingListItem(listItemNodeRef));
 		    	}
     		}    		
     	}
     	
     	return ingLabelingList;
+    }
+    
+    @Override
+    public IngLabelingListDataItem loadIngLabelingListItem(NodeRef listItemNodeRef){
+    
+    	//Grp
+		String grp = (String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_GRP);
+		
+		//illValue
+		MLText illValue = (MLText)mlNodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_VALUE);		            
+		return new IngLabelingListDataItem(listItemNodeRef, grp, illValue);
     }
     
     /**

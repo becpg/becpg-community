@@ -2365,4 +2365,104 @@ public class FormulationTest extends RepoBaseTestCase {
 			}},false,true);
 		   
 	   }
+	
+	/**
+	 * Test formulate product, when there is a manual listItem
+	 *
+	 * @throws Exception the exception
+	 */
+	public void testManualListItem() throws Exception{
+		   
+	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			public NodeRef execute() throws Throwable {					   							
+					
+				/*-- Create finished product --*/
+				logger.debug("/*-- Create finished product --*/");
+				 Collection<QName> dataLists = productDictionaryService.getDataLists();
+				FinishedProductData finishedProduct = new FinishedProductData();
+				finishedProduct.setName("Produit fini 1");
+				finishedProduct.setLegalName("Legal Produit fini 1");
+				finishedProduct.setUnit(ProductUnit.kg);
+				finishedProduct.setQty(2f);
+				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				finishedProduct.setCompoList(compoList);
+				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
+				
+				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
+				
+				/*-- Formulate product --*/
+				logger.debug("/*-- Formulate product --*/");
+				productService.formulate(finishedProductNodeRef);
+				
+				/*-- Verify formulation --*/
+				logger.debug("/*-- Verify formulation --*/");
+				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+				
+				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
+				
+				//costs
+				int checks = 0;
+				assertNotNull("CostList is null", formulatedProduct.getCostList());
+				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					logger.debug(trace);
+					if(costListDataItem.getCost().equals(cost1)){
+						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0f, costListDataItem.getValue());
+						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+						checks++;
+					}
+					if(costListDataItem.getCost().equals(cost2)){
+						assertEquals("cost1.getValue() == 6.0, actual values: " + trace, 6.0f, costListDataItem.getValue());
+						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+						checks++;
+					}
+				}
+				assertEquals(2, checks);
+				
+				// manual modification
+				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					logger.debug(trace);
+					if(costListDataItem.getCost().equals(cost1)){
+						
+						nodeService.setProperty(costListDataItem.getNodeRef(), BeCPGModel.PROP_COSTLIST_VALUE, 5.0f);
+						nodeService.setProperty(costListDataItem.getNodeRef(), BeCPGModel.PROP_IS_MANUAL_LISTITEM, true);
+					}					
+				}
+				
+				productService.formulate(finishedProductNodeRef);
+				
+				formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+				
+				//check costs	
+				checks = 0;
+				assertNotNull("CostList is null", formulatedProduct.getCostList());
+				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					logger.debug(trace);
+					if(costListDataItem.getCost().equals(cost1)){
+						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 5.0f, costListDataItem.getValue());
+						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+						checks++;
+					}
+					if(costListDataItem.getCost().equals(cost2)){
+						assertEquals("cost1.getValue() == 6.0, actual values: " + trace, 6.0f, costListDataItem.getValue());
+						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+						checks++;
+					}
+				}
+				
+				assertEquals(2, checks);
+								
+				return null;
+
+			}},false,true);
+		   
+	   }
 }

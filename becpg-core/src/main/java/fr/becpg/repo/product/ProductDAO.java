@@ -4,11 +4,17 @@
 package fr.becpg.repo.product;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.AllergenListDataItem;
+import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -51,5 +57,16 @@ public interface ProductDAO {
 	 *
 	 * @param productNodeRef the product node ref
 	 */
-	public void delete(NodeRef productNodeRef);		
+	public void delete(NodeRef productNodeRef);
+	
+	public List<AllergenListDataItem> loadAllergenList(NodeRef listContainerNodeRef);
+	public AllergenListDataItem loadAllergenListItem(NodeRef listItemNodeRef);
+	public List<CostListDataItem> loadCostList(NodeRef listContainerNodeRef);
+	public CostListDataItem loadCostListItem(NodeRef listItemNodeRef);
+	public List<IngListDataItem> loadIngList(NodeRef listContainerNodeRef);
+	public IngListDataItem loadIngListItem(NodeRef listItemNodeRef);
+	public List<NutListDataItem> loadNutList(NodeRef listContainerNodeRef);
+	public NutListDataItem loadNutListItem(NodeRef listItemNodeRef);
+	public List<IngLabelingListDataItem> loadIngLabelingList(NodeRef listContainerNodeRef);
+	public IngLabelingListDataItem loadIngLabelingListItem(NodeRef listItemNodeRef);
 }

@@ -28,6 +28,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * 
@@ -35,6 +36,8 @@ import fr.becpg.repo.entity.EntityListDAO;
  *
  */
 public class EntityListDAOImpl implements EntityListDAO{	
+	
+	private static final String QUERY_PARENT = " PARENT:\"%s\" +TYPE:\"%s\" +@bcpg\\:isManualListItem:true";
 	
 	private static Log logger = LogFactory.getLog(EntityListDAOImpl.class);
 	
@@ -47,6 +50,8 @@ public class EntityListDAOImpl implements EntityListDAO{
 	private NamespaceService namespaceService;
 	
 	private CopyService copyService;
+	
+	private BeCPGSearchService beCPGSearchService;
 	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -68,12 +73,16 @@ public class EntityListDAOImpl implements EntityListDAO{
 		this.copyService = copyService;
 	}
 
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
+	}
+	
 	@Override
 	public NodeRef getListContainer(NodeRef nodeRef) {
 				
 		return nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
 	}
-	
+
 	@Override
 	public NodeRef getList(NodeRef listContainerNodeRef, QName listQName) {
 		
@@ -234,5 +243,16 @@ public class EntityListDAOImpl implements EntityListDAO{
 				}
         	}
         }    	
+	}
+    
+	/**
+	 * Get the manual links
+	 * @param listNodeRef
+	 * @return
+	 */
+    @Override
+	public List<NodeRef> getManualLinks(NodeRef listNodeRef, QName listQName){
+		
+		return beCPGSearchService.unProtLuceneSearch(String.format(QUERY_PARENT, listNodeRef, listQName));
 	}
 }

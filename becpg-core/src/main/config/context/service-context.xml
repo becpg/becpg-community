@@ -217,6 +217,7 @@
 		<property name="fileFolderService" ref="fileFolderService"/>	
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="copyService" ref="copyService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
 	<bean id="entityTplService" class="fr.becpg.repo.entity.impl.EntityTplServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -336,22 +337,26 @@
 	<bean id="allergensCalculatingVisitor"
 		class="fr.becpg.repo.product.formulation.AllergensCalculatingVisitor">
 		<property name="productDAO" ref="productDAO" />
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 	<bean id="ingsCalculatingVisitor"
 		class="fr.becpg.repo.product.formulation.IngsCalculatingVisitor">
 		<property name="nodeService" ref="nodeService" />
 		<property name="productDAO" ref="productDAO" />
 		<property name="mlNodeService" ref="mlAwareNodeService" />
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 	<bean id="nutsCalculatingVisitor"
 		class="fr.becpg.repo.product.formulation.NutsCalculatingVisitor">
 		<property name="nodeService" ref="nodeService" />
 		<property name="productDAO" ref="productDAO" />
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 	<bean id="costsCalculatingVisitor"
 		class="fr.becpg.repo.product.formulation.CostsCalculatingVisitor">
 		<property name="nodeService" ref="nodeService" />
 		<property name="productDAO" ref="productDAO" />
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 	
 	<!-- Product Policies -->	

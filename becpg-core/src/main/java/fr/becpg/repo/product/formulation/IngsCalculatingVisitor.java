@@ -20,7 +20,10 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import sun.security.action.GetLongAction;
+
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
@@ -60,6 +63,8 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	/** The product dao. */
 	private ProductDAO productDAO;
 	
+	private EntityListDAO entityListDAO;
+	
 	/**
 	 * Sets the node service.
 	 *
@@ -85,6 +90,10 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 */
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
+	}
+	
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
 	
 //	@Override
@@ -116,7 +125,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 //		return localSemiFinishedProductData;
 //	}
 	
-	/* (non-Javadoc)
+/* (non-Javadoc)
  * @see fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData)
  */
 @Override
@@ -156,6 +165,10 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			mlTextILL.addValue(Locale.FRENCH, compositeIng.getIngLabeling(Locale.FRENCH));
 			ingLabelingList.add(new IngLabelingListDataItem(null, compositeIng.getName(), mlTextILL));
 		}
+		
+		// manual listItem
+		ingLabelingList = getILLToUpdate(formulatedProduct.getNodeRef(), ingLabelingList);
+		
 		logger.debug("ingLabelingList.size: " + ingLabelingList.size());
 		formulatedProduct.setIngLabelingList(ingLabelingList);
 		
@@ -193,8 +206,10 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			}
 		}
 		
-		//sort collection
-		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>(ingMap.values());				
+		// manual listItem
+		List<IngListDataItem> ingList = getILToUpdate(formulatedProduct.getNodeRef(), ingMap);
+		
+		//sort collection					
 		Collections.sort(ingList);		
 		formulatedProduct.setIngList(ingList);
 		
@@ -570,5 +585,67 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		
 		logger.trace("return parentIng: " + parentIng.getIngLabeling(Locale.FRENCH));
 		return parentIng;
+	}
+	
+	/**
+	 * Calculate ill to update
+	 * @param productNodeRef
+	 * @param costMap
+	 * @return
+	 */
+	private List<IngLabelingListDataItem> getILLToUpdate(NodeRef productNodeRef, List<IngLabelingListDataItem> illList){
+				
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
+		
+		if(listContainerNodeRef != null){
+			
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
+			
+			if(listNodeRef != null){
+				
+				List<NodeRef> manualLinks = entityListDAO.getManualLinks(listNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
+				
+				for(NodeRef manualLink : manualLinks){
+					
+					IngLabelingListDataItem illListDataItem = productDAO.loadIngLabelingListItem(manualLink);		    		
+					illList.add(illListDataItem);
+				}
+			}
+		}
+		
+		return illList;
+	}
+	
+	/**
+	 * Calculate ingList to update
+	 * @param productNodeRef
+	 * @param costMap
+	 * @return
+	 */
+	private List<IngListDataItem> getILToUpdate(NodeRef productNodeRef, Map<NodeRef, IngListDataItem> ingMap){
+				
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
+		
+		if(listContainerNodeRef != null){
+			
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_INGLIST);
+			
+			if(listNodeRef != null){
+				
+				List<NodeRef> manualLinks = entityListDAO.getManualLinks(listNodeRef, BeCPGModel.TYPE_INGLIST);
+				
+				if(!manualLinks.isEmpty()){
+					ingMap.clear();
+				}
+				
+				for(NodeRef manualLink : manualLinks){
+					
+					IngListDataItem ingListDataItem = productDAO.loadIngListItem(manualLink);		    		
+					ingMap.put(ingListDataItem.getIng(), ingListDataItem);
+				}
+			}
+		}
+		
+		return new ArrayList<IngListDataItem>(ingMap.values());
 	}
 }

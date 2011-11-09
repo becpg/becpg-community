@@ -11,12 +11,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
@@ -37,6 +41,8 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 	/** The product dao. */
 	private ProductDAO productDAO;
 	
+	private EntityListDAO entityListDAO;
+	
 	/**
 	 * Sets the product dao.
 	 *
@@ -44,8 +50,12 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 	 */
 	public void setProductDAO(ProductDAO productDAO){
 		this.productDAO = productDAO;
-	}	
-
+	}
+	
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+	
 //	@Override
 //	public RawMaterialData visit(RawMaterialData rawMaterialData) {		
 //		return (RawMaterialData)visitProduct(rawMaterialData);		
@@ -74,7 +84,7 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 //		return localSemiFinishedProductData;
 //	}	
 	
-	/* (non-Javadoc)
+/* (non-Javadoc)
  * @see fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData)
  */
 @Override
@@ -101,7 +111,7 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 			}				
 		}
 		
-		List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>(allergenMap.values());		
+		List<AllergenListDataItem> allergenList = getListToUpdate(formulatedProduct.getNodeRef(), allergenMap);		
 		formulatedProduct.setAllergenList(allergenList);
 		logger.debug("product Visited, allergens size: " +allergenList.size());
 		return formulatedProduct;
@@ -179,6 +189,37 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 				}				
 			}
 		}
+	}
+	
+	/**
+	 * Calculate allergens to update (take in account manual list items)
+	 * @param productNodeRef
+	 * @param allergenMap
+	 * @return
+	 */
+	private List<AllergenListDataItem> getListToUpdate(NodeRef productNodeRef, Map<NodeRef, AllergenListDataItem> allergenMap){
+				
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
+		
+		if(listContainerNodeRef != null){
+			
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
+			
+			if(listNodeRef != null){
+				
+				List<NodeRef> manualLinks = entityListDAO.getManualLinks(listNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
+				
+				for(NodeRef manualLink : manualLinks){
+					
+					logger.debug("###allergen manualLink nodeRef " + manualLink);
+					
+					AllergenListDataItem allergenListDataItem = productDAO.loadAllergenListItem(manualLink);		    		
+		    		allergenMap.put(allergenListDataItem.getAllergen(), allergenListDataItem);
+				}
+			}
+		}
+		
+		return new ArrayList<AllergenListDataItem>(allergenMap.values());
 	}
 		
 }

@@ -65,5 +65,13 @@ public interface EntityListDAO {
      * @param targetNodeRef the target node ref
      * @param override the override
      */
-    public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override);        
+    public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override);
+    
+    /**
+     * Get the manual links
+     * @param listContainerNodeRef
+     * @param listQName
+     * @return
+     */
+    public List<NodeRef> getManualLinks(NodeRef listNodeRef, QName listQName);
 }
