@@ -100,6 +100,7 @@
             </div>
 
             <div class="bdft">
+               <input id="${formId}-bulkAction" type="checkbox">&nbsp;<span id="${formId}-bulkAction-msg">&nbsp;</span></input>
                <input id="${formId}-submit" type="submit" value="${msg("form.button.submit.label")}" />
                &nbsp;<input id="${formId}-cancel" type="button" value="${msg("form.button.cancel.label")}" />
             </div>

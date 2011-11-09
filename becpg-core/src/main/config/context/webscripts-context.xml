@@ -24,7 +24,7 @@
    
    	<!-- Entity lists -->
    	<bean id="webscript.fr.becpg.entity.entityLists.get" class="fr.becpg.repo.web.scripts.entity.EntityListsWebScript" parent="webscript">      	     
-      	<property name="fileFolderService" ref="fileFolderService" />
+      	<property name="securityService" ref="securityService" />
       	<property name="nodeService" ref="nodeService" />      	
       	<property name="entityListDAO" ref="entityListDAO" />
       	<property name="entityTplService" ref="entityTplService" />

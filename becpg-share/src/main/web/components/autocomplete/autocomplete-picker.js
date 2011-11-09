@@ -44,7 +44,11 @@
          targetLinkTemplate: null,      
          dsStr : null,
          parentFieldHtmlId : null,
-         isMandatory : false
+         isMandatory : false,
+         isLocalProxy : false,
+         showToolTip : true,
+         showPage : true,
+         saveTitle : true
     	},     
       onComponentsLoaded: function AutoCompletePicker_onComponentsLoaded ()
       {
@@ -90,7 +94,13 @@
     	  // Load autocomplete
     	  if(instance.options.mode!="view" && !this.options.readOnly){
     	  // Use an XHRDataSource
-    	   var oDS = new YAHOO.util.XHRDataSource(Alfresco.constants.PROXY_URI + instance.options.dsStr);  
+    		  var oDS = null;
+	    	 if(this.options.isLocalProxy){
+	    		  oDS = new YAHOO.util.XHRDataSource(Alfresco.constants.URL_SERVICECONTEXT + instance.options.dsStr);  
+	    	 } else {
+	    		  oDS = new YAHOO.util.XHRDataSource(Alfresco.constants.PROXY_URI + instance.options.dsStr);  
+	    	 }
+    	  
     	   
     	   // Set the responseType
     	   oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
@@ -115,6 +125,7 @@
 
     	   oAC.queryDelay = .5;
     	   oAC.page = 1;
+    	   oAC.maxResultsDisplayed = 15;
 
     	   // The webservice needs additional parameters
     	   oAC.generateRequest = function(sQuery) 
@@ -147,25 +158,28 @@
     	   oAC.setHeader("<div class='ac-header' ><span>"+instance.msg("autocomplete.header.msg")+"</span></div>");
     	   
     	   var previewTooltips=[];
-    	   var previewTooltip = new YAHOO.widget.Tooltip("previewTooltip" ,
-        	         {
-    		   			container: instance.fieldHtmlId+"-container",
-        	            width: "108px",
-        	            showDelay: 500,
-        	            zIndex:9999
-        	         });
     	   
-    	   previewTooltip.contextTriggerEvent.subscribe(function(type, args)
-        	         {
-        	            var context = args[0];
-        	            var nodeRef = context.id.split('ac-choice-')[1].replace(":/","");
-        	            this.cfg.setProperty("text", '<img src="' + Alfresco.constants.PROXY_URI + "api/node/" + nodeRef + "/content/thumbnails/doclib?c=queue&ph=true" + '" />');
-        	         });
-             
+    	   if(instance.options.showToolTip){
+	    	   var previewTooltip = new YAHOO.widget.Tooltip("previewTooltip" ,
+	        	         {
+	    		   			container: instance.fieldHtmlId+"-container",
+	        	            width: "108px",
+	        	            showDelay: 500,
+	        	            zIndex:9999
+	        	         });
+	    	   
+	    	   previewTooltip.contextTriggerEvent.subscribe(function(type, args)
+	        	         {
+	        	            var context = args[0];
+	        	            var nodeRef = context.id.split('ac-choice-')[1].replace(":/","");
+	        	            this.cfg.setProperty("text", '<img src="' + Alfresco.constants.PROXY_URI + "api/node/" + nodeRef + "/content/thumbnails/doclib?c=queue&ph=true" + '" />');
+	        	         });
+    	   }
         
     	   oAC.formatResult = function(oResultData, sQuery, sResultMatch) {
-    		  
-    		    previewTooltips.push("ac-choice-"+oResultData[0]);
+    		   if(instance.options.showToolTip){
+    			   previewTooltips.push("ac-choice-"+oResultData[0]);
+    		   }
     	   		return "<span id='ac-choice-"+oResultData[0]+"' class='"+oResultData[2]+"' style='padding-left: 20px;' >"+oResultData[1]+"</span>";
     	   	}
 
@@ -211,16 +225,18 @@
     		 
     	      
     		   oAC.doBeforeLoadData = function ( sQuery , oResponse , oPayload ) {
-    			    	oAC.fullListSize = oResponse.meta.fullListSize;
+    			     if(instance.options.showPage){	
+    			   		oAC.fullListSize = oResponse.meta.fullListSize;
     			    	oAC.pageSize = oResponse.meta.pageSize;   
     		 			oAC.page = oResponse.meta.page;   
+    			     }
     	 			return true;
     		   }
     		 
     		 
     		 oAC.doBeforeExpandContainer = function(elTextbox , elContainer , sQuery , aResults) {
     			try{
-	    			 if(parseInt(oAC.fullListSize)< parseInt(oAC.pageSize)+1 ) {
+	    			 if(!instance.options.showPage  || parseInt(oAC.fullListSize)< parseInt(oAC.pageSize)+1 ) {
 	    			      oAC.setFooter("");
 	    			   } else {
 	    			       oAC.setFooter("<div class='ac-footer'><div id='"+instance.fieldHtmlId+"-container-paging'></div></div>");
@@ -249,8 +265,10 @@
 	    					oACPagination.render();
 	    			
 	    			   }
+	    			 if(instance.options.showToolTip){
 	    			 
-	    			 previewTooltip.cfg.setProperty("context", previewTooltips);
+	    				 previewTooltip.cfg.setProperty("context", previewTooltips);
+	    			 }
     			} catch (e) {
   					alert(e);
 				}
@@ -291,7 +309,9 @@
 		    					if(inputAdded.value != ""){
 		    						inputAdded.value += ",";
 		    					}
+		    					
 		    					inputAdded.value += itemValue;
+		    					
 		    				}			
 		    			}	
 	    	 		 }
@@ -302,7 +322,11 @@
 	    				instance.addToBasket(basket,itemTitle,itemValue);
 	    				oAC.getInputEl().value = "";
 	    			} else {
-	    				oAC.getInputEl().value = itemTitle;
+	    				if(instance.options.saveTitle){
+	    					oAC.getInputEl().value = itemTitle;
+    					} else {
+    						oAC.getInputEl().value = itemValue;
+    					}
 	    			}
 	    	 		
 	    			YAHOO.Bubbling.fire("mandatoryControlValueUpdated", oAC.getInputEl());

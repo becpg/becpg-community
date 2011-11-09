@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>AutoComplete</shortname>
+	<description>suggest for autocomplete</description>
+	<url>/components/security/autocomplete?entityNodeRef={entityNodeRef}</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readwrite" buffersize="0">required</transaction>
+</webscript>

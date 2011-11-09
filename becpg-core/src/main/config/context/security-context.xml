@@ -50,13 +50,28 @@
 		<property name="securityService" ref="securityService"/>
 	</bean>
    
-   <!-- policy -->
+   <!-- policy useless
    
    <bean id="aclGroupPolicies" class="fr.becpg.repo.security.policy.AclGroupPolicies" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="dictionaryDAO" ref="dictionaryDAO" />		
 		<property name="threadExecuter" ref="defaultAsyncThreadPool"/>	
   </bean>
+  
+   -->
    
+   <!-- script context -->
+   
+   	<bean id="beCPGSecurity" parent="baseJavaScriptExtension" class="fr.becpg.repo.security.jscript.BeCPGSecurity">
+        <property name="extensionName">
+            <value>beCPGSecurity</value>
+        </property> 
+        <property name="serviceRegistry">
+            <ref bean="ServiceRegistry"/>
+        </property>
+        <property name="securityService">
+            <ref bean="securityService"/>
+        </property>
+    </bean>
    
 </beans>

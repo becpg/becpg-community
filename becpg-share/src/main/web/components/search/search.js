@@ -114,6 +114,11 @@
          initialSearchTag: "",
          
          /**
+          * metadata to display
+          */
+         metadataFields : "",
+         
+         /**
           * States whether all sites should be searched.
           * 
           * @property initialSearchAllSites
@@ -359,6 +364,7 @@
             return true;
          };
          YAHOO.Bubbling.addDefaultAction("search-tag", fnActionHandler);
+         YAHOO.Bubbling.addDefaultAction("search-prop", fnActionHandler);
          
          // Finally show the component body here to prevent UI artifacts on YUI button decoration
          Dom.setStyle(this.id + "-body", "visibility", "visible");
@@ -564,6 +570,33 @@
                    desc += '<span id="' + me.id + '-' + $html(tags[i]) + '" class="searchByTag"><a class="search-tag" href="#">' + $html(tags[i]) + '</a> </span>';
                }
                desc += '</span></div>';
+            }
+            var itemData = oRecord.getData("itemData");
+            if(itemData!=null){
+            	
+            	for(key in itemData){
+            		var item = itemData[key];
+            		
+            		if(item.displayValue!=null && item.displayValue.length>0){
+		                desc += '<div class="details">' + $html(item.label) + ': ';
+		                desc += '<span id="' + me.id + '-' + $html(key)+'-'+ $html(item.value) + '" class="searchByProp" ><a class="search-prop" href="#">' + $html(item.displayValue) + '</a></span>'; 
+		                desc += '</div>';
+            		} else if(item.length>0){
+            			for(jj in  item){
+            				if(jj==0){
+            				 desc += '<div class="details">' + $html(item[jj].label) + ': ';
+            				}else {
+            					desc +=",&nbsp;";
+            				}
+            				desc += '<span id="' + me.id + '-' + $html(key)+'-'+ $html(item[jj].value) + '" class="searchByProp" ><a class="search-prop" href="#">' + $html(item[jj].displayValue) + '</a></span>'; 
+      		              
+            			}
+            			desc += '</div>';
+            			
+            			
+            		}
+            	}
+            	
             }
             
             elCell.innerHTML = desc;
@@ -779,6 +812,22 @@
             searchTag: param,
             searchTerm: "",
             searchQuery: ""
+         });
+      },
+      /**
+       * Perform a search for a given prop value
+       * The tag is simply handled as search term
+       */
+      searchByProp: function Search_searchProp(param)
+      {
+    	 var key = param.split("-")[0],
+    	 	value = param.split("-")[1];
+    	  
+         this.refreshSearch(
+         {
+            searchTag: "",
+            searchTerm: this.searchTerm,
+            searchQuery: encodeURIComponent("{\""+key+"\":\""+value+"\"}")
          });
       },
       
@@ -1176,7 +1225,7 @@
       _buildSearchParams: function Search__buildSearchParams(searchRepository, searchAllSites, searchTerm, searchTag, searchSort)
       {
          var site = searchAllSites ? "" : this.options.siteId;
-         var params = YAHOO.lang.substitute("site={site}&term={term}&tag={tag}&maxResults={maxResults}&sort={sort}&query={query}&repo={repo}",
+         var params = YAHOO.lang.substitute("site={site}&term={term}&tag={tag}&maxResults={maxResults}&sort={sort}&query={query}&repo={repo}&metadataFields={metadataFields}",
          {
             site: encodeURIComponent(site),
             repo: (searchRepository || this.options.searchQuery.length !== 0).toString(), // always search entire repo with advanced query
@@ -1184,12 +1233,14 @@
             tag: encodeURIComponent(searchTag),
             sort: encodeURIComponent(searchSort),
             query: encodeURIComponent(this.options.searchQuery),
+            metadataFields : encodeURIComponent(this.options.metadataFields),
             maxResults: this.options.maxSearchResults + 1 // to calculate whether more results were available
          });
          
          return params;
       },
       
+     
       /**
        * Resets the YUI DataTable errors to our custom messages
        * NOTE: Scope could be YAHOO.widget.DataTable, so can't use "this"

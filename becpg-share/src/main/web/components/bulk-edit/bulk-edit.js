@@ -21,7 +21,6 @@
       $links = Alfresco.util.activateLinks,
       $combine = Alfresco.util.combinePaths,
       $userProfile = Alfresco.util.userProfileLink;
-
    /**
     * BulkEdit constructor.
     * 
@@ -56,6 +55,7 @@
       YAHOO.Bubbling.on("selectedItemsChanged", this.onSelectedItemsChanged, this);
       YAHOO.Bubbling.on("selectedTypeChanged", this.onSelectedTypeChanged, this);
       YAHOO.Bubbling.on("dataItemUpdated", this.onDataItemUpdated, this);
+      YAHOO.Bubbling.on("bulkDataChanged",this.onBulkEditShow,this);
  
       /* Deferred list population until DOM ready */
       this.deferredListPopulation = new Alfresco.util.Deferred(["onReady"],
@@ -374,7 +374,13 @@
                            case "cm:person":
                               html += '<span class="person">' + $userProfile(data.metadata, data.displayValue) + '</span>';
                               break;
-                        
+                           case "category":
+                        	   if(datalistColumn.name == "cm:taggable"){
+	                        	   html+= '<img width="16" title="pwet" alt="" src="/share/res/components/images/filetypes/generic-tag-16.png">&nbsp;'+oRecord.getData("tags");
+                        	   } else {
+                        		   html += $html(data.displayValue);
+                        	   }
+                        	   break;
                            case "datetime":
                               html += Alfresco.util.formatDate(Alfresco.util.fromISO8601(data.value), scope.msg("date-format.default"));
                               break;
@@ -416,6 +422,7 @@
                               html += '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util.getFileIcon(data.displayValue, (data.metadata == "container" ? 'cm:folder' : null), 16) + '" width="16" alt="' + $html(data.displayValue) + '" title="' + $html(data.displayValue) + '" />';
                               html += ' ' + $html(data.displayValue) + '</a>'
                               break;
+                          
                            default:
                         	   if(datalistColumn.name == "bcpg:rclReqType" || datalistColumn.name == "bcpg:filReqType")
                     		   {
@@ -508,8 +515,13 @@
 	          {
 	             case "datetime":
 	             case "date":
+	            	//TODO test
 	          	   	editor =  new YAHOO.widget.DateCellEditor();
 	                   break;
+	             case "boolean":
+	            	//TODO test
+	            	 editor = new YAHOO.widget.CheckboxCellEditor();
+	            	 break;
 	             case "float":
 	             case "int": 
 	             case "long":
@@ -1592,6 +1604,13 @@
              [ p_dialog.id + "-dialogTitle", this.msg("label.edit-selected.title") ],
              [ p_dialog.id + "-dialogHeader", this.msg("label.edit-selected.header") ]
           );
+   
+          if(Dom.get(p_dialog.id  + "-form-bulkAction"))
+ 		 {
+			Dom.setStyle(p_dialog.id  + "-form-bulkAction", 'display', 'none');
+			Dom.setStyle(p_dialog.id  + "-form-bulkAction-msg", 'display', 'none');
+ 		  }
+
           
        };
        var displayFields = [];
@@ -1609,13 +1628,23 @@
     	  return false;
       }
        
-       var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=create&bulkEdit=true&fields={fields}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true",
+      var selectedNodeRef = this.getSelectedItems()
+      	,submissionParams = "";
+      for(var i in selectedNodeRef){
+    	  if(submissionParams.length>0){
+    		  submissionParams+=",";
+    	  }
+    	  submissionParams+=encodeURIComponent(selectedNodeRef[i].nodeRef);
+      }
+      
+      
+       var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=create&bulkEdit=true&fields={fields}&submissionUrl={submissionUrl}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
        {
           itemKind: "type",
           itemId: this.options.itemType,
           mode: "create",
           submitType: "json",
-          destination: "",
+          submissionUrl: "/becpg/bulkedit/type/"+this.options.itemType.replace(":","_")+"/bulksave?nodeRefs="+submissionParams,
           fields: displayFields
        });
 
@@ -1637,10 +1666,7 @@
           {
              fn: function DataListToolbar_onNewRow_success(response)
              {
-//                YAHOO.Bubbling.fire("dataItemCreated",
-//                {
-//                   nodeRef: response.json.persistedObject
-//                });
+                YAHOO.Bubbling.fire("bulkDataChanged");
 
                 Alfresco.util.PopupManager.displayMessage(
                 {
@@ -1734,21 +1760,25 @@
                          {
                             item: response.json.item
                          });
-                         // Display success message
-                         Alfresco.util.PopupManager.displayMessage(
-                         {
-                            text: this.msg("message.details.success")
-                         });
-                         
+                        
+                     
                        //recall edit for next item
-                     	if ( Dom.get(this.id + "-form-bulkAction") && Dom.get(this.id + "-form-bulkAction").checked)
+                         var checkBoxEl =  Dom.get(this.id + "-editDetails" + "-form-bulkAction");
+                         
+                     	if ( checkBoxEl && checkBoxEl.checked)
             		    {
 		 					var recordFound = scope._findNextItemByParameter(response.json.item.nodeRef, "nodeRef");	
 		 					if(recordFound != null)
 		 					{
-		 						scope.onActionEdit(recordFound)
+		 						scope.onActionEdit(recordFound);
 		 					}	
-                        }
+                        } 
+                     	
+                     	 // Display success message
+                        Alfresco.util.PopupManager.displayMessage(
+                        {
+                           text: this.msg("message.details.success")
+                        });
                        
                       },
                       scope: this

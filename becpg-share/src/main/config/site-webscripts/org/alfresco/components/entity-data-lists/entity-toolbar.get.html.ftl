@@ -3,7 +3,8 @@
    new beCPG.component.EntityDataListToolbar("${id}").setOptions(
    {
       siteId: "${page.url.templateArgs.site!""}",
-	  entityNodeRef: "${page.url.args.nodeRef!""}"
+	  entityNodeRef: "${page.url.args.nodeRef!""}",
+	  showFormulate: ${showFormulate?string}
    }).setMessages(${messages});
 //]]></script>
 <div id="${args.htmlid}-body" class="datalist-toolbar toolbar">
@@ -30,14 +31,14 @@
                </div>
             </div>			
          </div>
-			<div class="formulate">
+		<div class="formulate">
             <span id="${id}-formulateButton" class="yui-button yui-push-button">
                <span class="first-child">
                   <button type="button">${msg('button.formulate')}</button>
                </span>
             </span>
          </div>			
-			<div class="finish">
+		 <div class="finish">
             <span id="${id}-finishButton" class="yui-button yui-push-button">
                <span class="first-child">
                   <button type="button">${msg('button.finish')}</button>

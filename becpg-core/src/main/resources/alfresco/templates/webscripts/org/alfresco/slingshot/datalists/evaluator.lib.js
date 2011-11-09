@@ -171,7 +171,7 @@ var Evaluator =
    /**
     * Node Evaluator - main entrypoint
     */
-   run: function Evaluator_run(node, fields)
+   run: function Evaluator_run(node, fields, hasWriteAccess)
    {
       var permissions = {},
          actionSet = "",
@@ -179,15 +179,15 @@ var Evaluator =
          createdBy = Common.getPerson(node.properties["cm:creator"]),
          modifiedBy = Common.getPerson(node.properties["cm:modifier"]),
          nodeData = {};
-
+ 
       /**
        * PERMISSIONS
        */
       permissions =
       {
-         "create": node.hasPermission("CreateChildren"),
-         "edit": node.hasPermission("Write"),
-         "delete": node.hasPermission("Delete")
+         "create": hasWriteAccess && node.hasPermission("CreateChildren"),
+         "edit": hasWriteAccess && node.hasPermission("Write"),
+         "delete": hasWriteAccess && node.hasPermission("Delete")
       };
 
       // Use the form service to parse the required properties

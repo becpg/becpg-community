@@ -35,8 +35,6 @@
    {
 		return beCPG.component.EntityDataGrid.superclass.constructor.call(this, htmlId);
 		
-		// Initialise prototype properties
-		this.bulkAction = false;
    }     
    
    /**
@@ -179,38 +177,34 @@
             Alfresco.util.populateHTML(
                [ p_dialog.id + "-dialogTitle", this.msg("label.edit-row.title") ]
             );
+            
+        	// Is it a bulk action?
+	   	     if(Dom.get(p_dialog.id  + "-form-bulkAction"))
+	   		 {
+   				Dom.get(p_dialog.id  + "-form-bulkAction").checked = false;
+   				Dom.get(p_dialog.id  + "-form-bulkAction-msg").innerHTML = this.msg("button.bulk-action-edit");
+   			}
 
-            /**
-             * No full-page edit view for v3.3
-             *
-            // Data Item Edit Page link button
-            Alfresco.util.createYUIButton(p_dialog, "editDataItem", null, 
-            {
-               type: "link",
-               label: scope.msg("label.edit-row.edit-dataitem"),
-               href: scope.getActionUrls(item).editMetadataUrl
-            });
-             */
          };
 
-         var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
+         var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
          {
             itemKind: "node",
             itemId: item.nodeRef,
             mode: "edit",
-            submitType: "json"
+            submitType: "json",
+            entityNodeRef : this.options.entityNodeRef
          });
 
          // Using Forms Service, so always create new instance
-         var editDetails = new beCPG.module.SimpleBulkDialog(this.id + "-editDetails");
+         
+         var editDetails = new Alfresco.module.SimpleDialog(this.id + "-editDetails");
          editDetails.setOptions(
          {
             width: "34em",
             templateUrl: templateUrl,
             actionUrl: null,
-            destroyOnHide: true,
-				bulkAction : this.bulkAction,
-				bulkActionMessage : this.msg("button.bulk-action-edit"),
+            destroyOnHide: false,
             doBeforeDialogShow:
             {
                fn: doBeforeDialogShow,
@@ -234,6 +228,19 @@
                            {
                               item: response.json.item
                            });
+                           
+                           //recall edit for next item
+                           var checkBoxEl =  Dom.get(this.id + "-editDetails" + "-form-bulkAction");
+                           
+	                       	if ( checkBoxEl && checkBoxEl.checked)
+	              		    {
+								var recordFound = scope._findNextItemByParameter(response.json.item.nodeRef, "nodeRef");	
+								if(recordFound != null)
+								{
+									scope.onActionEdit(recordFound)
+								}		
+	              		    }
+                           
                            // Display success message
                            Alfresco.util.PopupManager.displayMessage(
                            {
@@ -245,55 +252,6 @@
                      failureCallback:
                      {
                         fn: function DataGrid_onActionEdit_refreshFailure(response)
-                        {
-                           Alfresco.util.PopupManager.displayMessage(
-                           {
-                              text: this.msg("message.details.failure")
-                           });
-                        },
-                        scope: this
-                     }
-                  });
-               },
-               scope: this
-            },
-				onBulkActionSuccess:
-            {
-               fn: function DataGrid_onActionEdit_successAndNext(response)
-               {
-                  // Reload the node's metadata
-                  Alfresco.util.Ajax.jsonPost(
-                  {
-                     url: Alfresco.constants.PROXY_URI + "slingshot/datalists/item/node/" + new Alfresco.util.NodeRef(item.nodeRef).uri,
-                     dataObj: this._buildDataGridParams(),
-                     successCallback:
-                     {
-                        fn: function DataGrid_onActionEdit_refreshSuccessAndNext(response)
-                        {
-                           // Fire "itemUpdated" event
-                           Bubbling.fire("dataItemUpdated",
-                           {
-                              item: response.json.item
-                           });
-                           // Display success message
-                           Alfresco.util.PopupManager.displayMessage(
-                           {
-                              text: this.msg("message.details.success")
-                           });
-									
-									//recall edit for next item
-									var recordFound = this._findNextItemByParameter(response.json.item.nodeRef, "nodeRef");	
-									if(recordFound != null)
-									{
-										this.bulkAction = true;
-										this.onActionEdit(recordFound)
-									}																		
-                        },
-                        scope: this
-                     },
-                     failureCallback:
-                     {
-                        fn: function DataGrid_onActionEdit_refreshFailureNoNext(response)
                         {
                            Alfresco.util.PopupManager.displayMessage(
                            {
@@ -601,7 +559,7 @@
 		}
 		else
 		{
-	      this.widgets.dataSource = new YAHOO.util.DataSource(Alfresco.constants.PROXY_URI + "slingshot/datalists/data/node/" + listNodeRef.uri,
+	      this.widgets.dataSource = new YAHOO.util.DataSource(Alfresco.constants.PROXY_URI + "slingshot/datalists/data/node/" + listNodeRef.uri+"?entityNodeRef="+this.options.entityNodeRef,
 	      {
 	         connMethodPost: true,
 	         responseType: YAHOO.util.DataSource.TYPE_JSON,
