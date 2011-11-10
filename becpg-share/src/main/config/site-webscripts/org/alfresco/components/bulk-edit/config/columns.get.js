@@ -69,6 +69,13 @@ function getFormConfig(itemId, formId)
             formConfig = formsConfig.getForm(formId);
          }
          
+         if (formConfig === null)
+         {
+            // look up the specific form
+            formConfig = formsConfig.getForm("create");
+         }
+         
+         
          
          if (formConfig === null)
          {
