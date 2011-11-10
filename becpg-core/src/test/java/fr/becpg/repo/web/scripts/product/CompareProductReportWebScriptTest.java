@@ -356,7 +356,7 @@ private void initObjects(){
 					List<CostListDataItem> costList = new ArrayList<CostListDataItem>();		    		
 					for(int j=0 ; j<costs.size() ; j++)
 					{		    			
-						CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "€/kg", costs.get(j));
+						CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "€/kg", costs.get(j), false);
 						costList.add(costListItemData);
 					}		
 					fp1.setCostList(costList);
@@ -373,7 +373,7 @@ private void initObjects(){
 						List<NodeRef> voluntarySources = new ArrayList<NodeRef>();
 						voluntarySources.add(allergenRawMaterialNodeRef);
 						
-						AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, true, false, voluntarySources, null, allergens.get(j));
+						AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, true, false, voluntarySources, null, allergens.get(j), false);
 						allergenList.add(allergenListItemData);
 					}		
 					fp1.setAllergenList(allergenList);
@@ -397,7 +397,7 @@ private void initObjects(){
 					costList = new ArrayList<CostListDataItem>();		    		
 					for(int j=0 ; j<costs.size() ; j++)
 					{		    			
-						CostListDataItem costListItemData = new CostListDataItem(null, 12.4f, "$/kg", costs.get(j));
+						CostListDataItem costListItemData = new CostListDataItem(null, 12.4f, "$/kg", costs.get(j), false);
 						costList.add(costListItemData);
 					}		
 					fp2.setCostList(costList);
@@ -411,10 +411,10 @@ private void initObjects(){
 						AllergenListDataItem allergenListItemData = null;
 						
 						if(j < 5){
-							allergenListItemData = new AllergenListDataItem(null, true, false, allSources, null, allergens.get(j));
+							allergenListItemData = new AllergenListDataItem(null, true, false, allSources, null, allergens.get(j), false);
 						}
 						else{
-							allergenListItemData = new AllergenListDataItem(null, false, true, null, allSources, allergens.get(j));
+							allergenListItemData = new AllergenListDataItem(null, false, true, null, allSources, allergens.get(j), false);
 						}						
 						
 						allergenList.add(allergenListItemData);

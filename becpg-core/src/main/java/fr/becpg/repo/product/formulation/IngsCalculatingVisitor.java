@@ -163,7 +163,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			MLText mlTextILL = new MLText();			
 			mlTextILL.addValue(Locale.ENGLISH, compositeIng.getIngLabeling(Locale.ENGLISH));
 			mlTextILL.addValue(Locale.FRENCH, compositeIng.getIngLabeling(Locale.FRENCH));
-			ingLabelingList.add(new IngLabelingListDataItem(null, compositeIng.getName(), mlTextILL));
+			ingLabelingList.add(new IngLabelingListDataItem(null, compositeIng.getName(), mlTextILL, Boolean.FALSE));
 		}
 		
 		// manual listItem

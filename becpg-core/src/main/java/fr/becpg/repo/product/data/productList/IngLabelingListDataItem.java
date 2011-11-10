@@ -12,7 +12,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
  *
  * @author querephi
  */
-public class IngLabelingListDataItem{
+public class IngLabelingListDataItem implements IManualDataItem{
 
 	/** The node ref. */
 	private NodeRef nodeRef;	
@@ -22,6 +22,8 @@ public class IngLabelingListDataItem{
 	
 	/** The value. */
 	private MLText value;
+	
+	private Boolean isManual;
 	
 	/**
 	 * Gets the node ref.
@@ -77,6 +79,18 @@ public class IngLabelingListDataItem{
 		this.value = value;
 	}
 	
+	@Override
+	public Boolean getIsManual() {
+
+		return isManual;
+	}
+
+	@Override
+	public void setIsManual(Boolean isManual) {
+		
+		this.isManual = isManual;		
+	}
+	
 	/**
 	 * Instantiates a new ing labeling list data item.
 	 */
@@ -91,10 +105,11 @@ public class IngLabelingListDataItem{
 	 * @param grp the grp
 	 * @param value the value
 	 */
-	public IngLabelingListDataItem(NodeRef nodeRef, String grp, MLText value){
+	public IngLabelingListDataItem(NodeRef nodeRef, String grp, MLText value, Boolean isManual){
 		setNodeRef(nodeRef);
 		setGrp(grp);
 		setValue(value);		
+		setIsManual(isManual);
 	}
 	
 	/**
@@ -105,5 +120,6 @@ public class IngLabelingListDataItem{
 		setNodeRef(i.getNodeRef());
 		setGrp(i.getGrp());
 		setValue(i.getValue());
+		setIsManual(i.getIsManual());
 	}
 }

@@ -14,7 +14,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
  *
  * @author querephi
  */
-public class AllergenListDataItem{
+public class AllergenListDataItem implements IManualDataItem{
 
 	/** The node ref. */
 	private NodeRef nodeRef;	
@@ -33,6 +33,8 @@ public class AllergenListDataItem{
 	
 	/** The allergen. */
 	private NodeRef allergen;
+	
+	private Boolean isManual;
 		
 	/**
 	 * Gets the node ref.
@@ -142,6 +144,18 @@ public class AllergenListDataItem{
 		this.allergen = allergen;
 	}
 	
+	@Override
+	public Boolean getIsManual() {
+
+		return isManual;
+	}
+
+	@Override
+	public void setIsManual(Boolean isManual) {
+		
+		this.isManual = isManual;		
+	}
+	
 	/**
 	 * Instantiates a new allergen list data item.
 	 */
@@ -159,7 +173,7 @@ public class AllergenListDataItem{
 	 * @param inVoluntarySources the in voluntary sources
 	 * @param allergen the allergen
 	 */
-	public AllergenListDataItem(NodeRef nodeRef, Boolean voluntary, Boolean inVoluntary, List<NodeRef> voluntarySources, List<NodeRef> inVoluntarySources, NodeRef allergen){
+	public AllergenListDataItem(NodeRef nodeRef, Boolean voluntary, Boolean inVoluntary, List<NodeRef> voluntarySources, List<NodeRef> inVoluntarySources, NodeRef allergen, Boolean isManual){
 		
 		setNodeRef(nodeRef);
 		setVoluntary(voluntary);
@@ -167,6 +181,7 @@ public class AllergenListDataItem{
 		setVoluntarySources(voluntarySources);
 		setInVoluntarySources(inVoluntarySources);
 		setAllergen(allergen);
+		setIsManual(isManual);
 	}
 	
 	/**
@@ -181,5 +196,6 @@ public class AllergenListDataItem{
 		setVoluntarySources(a.getVoluntarySources());
 		setInVoluntarySources(a.getInVoluntarySources());
 		setAllergen(a.getAllergen());
+		setIsManual(a.getIsManual());
 	}
 }

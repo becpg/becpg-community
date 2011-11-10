@@ -205,10 +205,10 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-				allergenList.add(new AllergenListDataItem(null, true, true, null, null, allergens.get(0)));
-				allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergens.get(1)));
-				allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergens.get(2)));
-				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3)));
+				allergenList.add(new AllergenListDataItem(null, true, true, null, null, allergens.get(0), false));
+				allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergens.get(1), false));
+				allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergens.get(2), false));
+				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
 				sfData.setAllergenList(allergenList);
 				
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
@@ -317,10 +317,10 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-				allergenList.add(new AllergenListDataItem(null, true, true, null, null, allergens.get(0)));
-				allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergens.get(1)));
-				allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergens.get(2)));
-				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3)));
+				allergenList.add(new AllergenListDataItem(null, true, true, null, null, allergens.get(0), false));
+				allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergens.get(1), false));
+				allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergens.get(2), false));
+				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
 				sfData.setAllergenList(allergenList);
 				
 				Collection<QName> dataLists = productDictionaryService.getDataLists();

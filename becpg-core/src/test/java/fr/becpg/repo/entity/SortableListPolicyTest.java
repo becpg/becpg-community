@@ -159,10 +159,10 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-				costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(0)));
-				costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(1)));
-				costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(2)));
-				costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(3)));
+				costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(0), false));
+				costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(1), false));
+				costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(2), false));
+				costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(3), false));
 				sfData.setCostList(costList);
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
 				sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);				

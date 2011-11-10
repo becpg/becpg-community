@@ -14,7 +14,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
  *
  * @author querephi
  */
-public class IngListDataItem implements Comparable<IngListDataItem>{
+public class IngListDataItem implements Comparable<IngListDataItem>, IManualDataItem{
 
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -36,6 +36,8 @@ public class IngListDataItem implements Comparable<IngListDataItem>{
 	
 	/** The ing. */
 	private NodeRef ing;
+	
+	private Boolean isManual;
 	
 	/**
 	 * Gets the node ref.
@@ -163,6 +165,18 @@ public class IngListDataItem implements Comparable<IngListDataItem>{
 		this.ing = ing;
 	}
 	
+	@Override
+	public Boolean getIsManual() {
+
+		return isManual;
+	}
+
+	@Override
+	public void setIsManual(Boolean isManual) {
+		
+		this.isManual = isManual;		
+	}
+	
 	/**
 	 * Instantiates a new ing list data item.
 	 */
@@ -181,7 +195,7 @@ public class IngListDataItem implements Comparable<IngListDataItem>{
 	 * @param isIonized the is ionized
 	 * @param ing the ing
 	 */
-	public IngListDataItem(NodeRef nodeRef,	Float qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, NodeRef ing)
+	public IngListDataItem(NodeRef nodeRef,	Float qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, NodeRef ing, Boolean isManual)
 	{
 		setNodeRef(nodeRef);
 		setQtyPerc(qtyPerc);
@@ -190,6 +204,7 @@ public class IngListDataItem implements Comparable<IngListDataItem>{
 		setIsGMO(isGMO);
 		setIonized(isIonized);
 		setIng(ing);
+		setIsManual(isManual);
 	}
 	
 	/**
@@ -205,6 +220,7 @@ public class IngListDataItem implements Comparable<IngListDataItem>{
 		setIsGMO(i.isGMO());
 		setIonized(i.isIonized());
 		setIng(i.getIng());
+		setIsManual(i.getIsManual());
 	}
 	
 	/**

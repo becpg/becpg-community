@@ -367,7 +367,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();		    		
 		for(int j=0 ; j<allergens.size() ; j++)
 		{		    			
-			AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, false, false, null, null, allergens.get(j));
+			AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, false, false, null, null, allergens.get(j), false);
 			allergenList.add(allergenListItemData);
 		}		
 		rawMaterial.setAllergenList(allergenList);
@@ -376,7 +376,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		List<CostListDataItem> costList = new ArrayList<CostListDataItem>();		    		
 		for(int j=0 ; j<costs.size() ; j++)
 		{		    			
-			CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "€/kg", costs.get(j));
+			CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "€/kg", costs.get(j), false);
 			costList.add(costListItemData);
 		}		
 		rawMaterial.setCostList(costList);
@@ -385,7 +385,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();		    		
 		for(int j=0 ; j<ings.size() ; j++)
 		{		    			
-			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2f, null, null, false, false, ings.get(j));
+			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2f, null, null, false, false, ings.get(j), false);
 			ingList.add(ingListItemData);
 		}		
 		rawMaterial.setIngList(ingList);
@@ -394,7 +394,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();		    		
 		for(int j=0 ; j<nuts.size() ; j++)
 		{		    			
-			NutListDataItem nutListItemData = new NutListDataItem(null, 2f, "kJ/100g", 0f, 0f, "Groupe 1", nuts.get(j));
+			NutListDataItem nutListItemData = new NutListDataItem(null, 2f, "kJ/100g", 0f, 0f, "Groupe 1", nuts.get(j), false);
 			nutList.add(nutListItemData);
 		}		
 		rawMaterial.setNutList(nutList);

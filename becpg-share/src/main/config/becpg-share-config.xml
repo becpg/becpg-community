@@ -152,12 +152,12 @@
       		    <itemType name="bcpg:packagingMaterial"/>
       
          		<itemType name="bcpg:allergen" />
-				<itemType name="bcpg:cost" />
-				<itemType name="bcpg:ing" />
-				<itemType name="bcpg:microBio" />
-				<itemType name="bcpg:nut" />	
-				<itemType name="bcpg:organo" />	
-				<itemType name="bcpg:physicoChem" />	
+					<itemType name="bcpg:cost" />
+					<itemType name="bcpg:ing" />
+					<itemType name="bcpg:microBio" />
+					<itemType name="bcpg:nut" />	
+					<itemType name="bcpg:organo" />	
+					<itemType name="bcpg:physicoChem" />	
 				
 				<!-- 
 				<itemType name="qa:nc" />

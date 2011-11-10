@@ -386,7 +386,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 				// Costs €
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
 				for (int j = 0; j < 10; j++) {
-					CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "", costs.get(j));
+					CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "", costs.get(j), false);
 					costList.add(costListItemData);
 				}
 				fp1.setCostList(costList);
@@ -403,7 +403,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 					volontarySources.add(allergenRawMaterialNodeRef);
 
 					AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, true, false,
-							volontarySources, null, allergens.get(j));
+							volontarySources, null, allergens.get(j), false);
 					allergenList.add(allergenListItemData);
 				}
 				fp1.setAllergenList(allergenList);
@@ -435,7 +435,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 				// Costs $
 				costList = new ArrayList<CostListDataItem>();
 				for (int j = 0; j < 10; j++) {
-					CostListDataItem costListItemData = new CostListDataItem(null, 12.4f, "", costs.get(j));
+					CostListDataItem costListItemData = new CostListDataItem(null, 12.4f, "", costs.get(j), false);
 					costList.add(costListItemData);
 				}
 				fp2.setCostList(costList);
@@ -449,10 +449,10 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 
 					if (j < 5) {
 						allergenListItemData = new AllergenListDataItem(null, true, false, allSources, null,
-								allergens.get(j));
+								allergens.get(j), false);
 					} else {
 						allergenListItemData = new AllergenListDataItem(null, false, true, null, allSources,
-								allergens.get(j));
+								allergens.get(j), false);
 					}
 
 					allergenList.add(allergenListItemData);

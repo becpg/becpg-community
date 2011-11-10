@@ -11,7 +11,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
  *
  * @author querephi
  */
-public class NutListDataItem{
+public class NutListDataItem implements IManualDataItem{
 
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -31,6 +31,8 @@ public class NutListDataItem{
 	
 	/** The nut. */
 	private NodeRef nut;
+	
+	private Boolean isManual;
 			
 	/**
 	 * Gets the node ref.
@@ -138,6 +140,18 @@ public class NutListDataItem{
 		this.nut = nut;
 	}	
 	
+	@Override
+	public Boolean getIsManual() {
+
+		return isManual;
+	}
+
+	@Override
+	public void setIsManual(Boolean isManual) {
+		
+		this.isManual = isManual;		
+	}
+	
 	/**
 	 * Instantiates a new nut list data item.
 	 */
@@ -154,7 +168,7 @@ public class NutListDataItem{
 	 * @param group the group
 	 * @param nut the nut
 	 */
-	public NutListDataItem(NodeRef nodeRef,	Float value, String unit, Float mini, Float maxi, String group, NodeRef nut)
+	public NutListDataItem(NodeRef nodeRef,	Float value, String unit, Float mini, Float maxi, String group, NodeRef nut, Boolean isManual)
 	{
 		setNodeRef(nodeRef);
 		setValue(value);
@@ -163,6 +177,7 @@ public class NutListDataItem{
 		setMaxi(maxi);
 		setGroup(group);
 		setNut(nut);
+		setIsManual(isManual);
 	}
 	
 	/**
@@ -178,5 +193,6 @@ public class NutListDataItem{
 		setMaxi(n.getMaxi());
 		setGroup(n.getGroup());
 		setNut(n.getNut());
+		setIsManual(n.getIsManual());
     }
 }

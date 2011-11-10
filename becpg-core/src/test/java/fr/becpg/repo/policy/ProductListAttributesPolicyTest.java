@@ -136,13 +136,13 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 					nodeService.setProperty(nut2, BeCPGModel.PROP_NUTUNIT, "kJ");
 					
 					List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-					costList.add(new CostListDataItem(null, 12f, "", cost1));
-					costList.add(new CostListDataItem(null, 11f, "", cost2));
+					costList.add(new CostListDataItem(null, 12f, "", cost1, false));
+					costList.add(new CostListDataItem(null, 11f, "", cost2, false));
 					rawMaterialData.setCostList(costList);
 					
 					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-					nutList.add(new NutListDataItem(null, 12.4f, "", 0f, 0f, "Groupe 1", nut1));
-					nutList.add(new NutListDataItem(null, 12.5f, "", 0f, 0f, "Groupe 1", nut2));
+					nutList.add(new NutListDataItem(null, 12.4f, "", 0f, 0f, "Groupe 1", nut1, false));
+					nutList.add(new NutListDataItem(null, 12.5f, "", 0f, 0f, "Groupe 1", nut2, false));
 					rawMaterialData.setNutList(nutList);
 					
 					Set<QName> dataLists = new HashSet<QName>();

@@ -10,7 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
  *
  * @author querephi
  */
-public class CostListDataItem{
+public class CostListDataItem implements IManualDataItem{
 	
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -23,6 +23,8 @@ public class CostListDataItem{
 	
 	/** The cost. */
 	private NodeRef cost;
+	
+	private Boolean isManual;
 		
 	/**
 	 * Gets the node ref.
@@ -96,6 +98,18 @@ public class CostListDataItem{
 		this.cost = cost;
 	}
 	
+	@Override
+	public Boolean getIsManual() {
+
+		return isManual;
+	}
+
+	@Override
+	public void setIsManual(Boolean isManual) {
+		
+		this.isManual = isManual;		
+	}
+	
 	/**
 	 * Instantiates a new cost list data item.
 	 */
@@ -111,12 +125,13 @@ public class CostListDataItem{
 	 * @param unit the unit
 	 * @param cost the cost
 	 */
-	public CostListDataItem(NodeRef nodeRef, Float value, String unit, NodeRef cost){
+	public CostListDataItem(NodeRef nodeRef, Float value, String unit, NodeRef cost, Boolean isManual){
 		
 		setNodeRef(nodeRef);		
 		setValue(value);
 		setUnit(unit);
 		setCost(cost);
+		setIsManual(isManual);
 	}
 	
 	/**
@@ -129,6 +144,7 @@ public class CostListDataItem{
 		setValue(c.getValue());
 		setUnit(c.getUnit());
 		setCost(c.getCost());
+		setIsManual(c.getIsManual());
 	}
 }
 

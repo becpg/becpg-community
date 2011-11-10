@@ -170,9 +170,7 @@
 		<show id="bcpg:eanCode" />
 		<show id="bcpg:suppliers"  />
 		<show id="bcpg:clients" />
-        <show id="bcpg:ingListIng" />
-		<show id="bcpg:ingListGeoOrigin"/>
-	    <show id="bcpg:ingListBioOrigin" />
+
       </metadata>
       
    </config>

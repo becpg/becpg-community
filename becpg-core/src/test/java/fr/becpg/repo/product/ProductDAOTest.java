@@ -160,10 +160,10 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 				List<NodeRef> allSources = new ArrayList<NodeRef>();
 				allSources.add(rmNodeRef);
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-				allergenList.add(new AllergenListDataItem(null, true, true, allSources, null, allergens.get(0)));
-				allergenList.add(new AllergenListDataItem(null, false, true, null, allSources, allergens.get(1)));
-				allergenList.add(new AllergenListDataItem(null, true, false, null, allSources, allergens.get(2)));
-				allergenList.add(new AllergenListDataItem(null, false, false, allSources, null, allergens.get(3)));
+				allergenList.add(new AllergenListDataItem(null, true, true, allSources, null, allergens.get(0), false));
+				allergenList.add(new AllergenListDataItem(null, false, true, null, allSources, allergens.get(1), false));
+				allergenList.add(new AllergenListDataItem(null, true, false, null, allSources, allergens.get(2), false));
+				allergenList.add(new AllergenListDataItem(null, false, false, allSources, null, allergens.get(3), false));
 				sfData.setAllergenList(allergenList);
 				
 				Collection<QName> dataLists = productDictionaryService.getDataLists();

@@ -2174,7 +2174,7 @@
 					<show id="bcpg:allergenListInVoluntary" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
-					<show id="bcpg:isManualListItem" />
+					<show id="bcpg:isManualListItem" force="true" />
 					<!-- <show id="bcpg:allergenListPlants"/> -->
 				</field-visibility>
 			</form>
@@ -2235,7 +2235,7 @@
 					<show id="bcpg:costListCost" />
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
-					<show id="bcpg:isManualListItem" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -2349,7 +2349,7 @@
 				<field-visibility>
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
-					<show id="bcpg:isManualListItem" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -2416,7 +2416,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListSubIng" />
-					<show id="bcpg:isManualListItem" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -2539,7 +2539,7 @@
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListGroup" />
-					<show id="bcpg:isManualListItem" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 			</form>
 		</forms>

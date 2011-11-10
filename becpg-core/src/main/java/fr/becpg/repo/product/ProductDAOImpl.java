@@ -350,7 +350,8 @@ public class ProductDAOImpl implements ProductDAO{
 		return new AllergenListDataItem(listItemNodeRef, 
 							(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY), 
 							(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY), 
-							volSources, inVolSources, allergenNodeRef);		
+							volSources, inVolSources, allergenNodeRef,
+							(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));		
     }
     
     /**
@@ -437,7 +438,8 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		return new CostListDataItem(listItemNodeRef, 
 				(Float)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_VALUE), 
-				(String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT), costNodeRef);
+				(String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT), costNodeRef,
+				(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
     }
     
     /**
@@ -536,7 +538,8 @@ public class ProductDAOImpl implements ProductDAO{
 								bioOrigins, 
 								(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_INGLIST_IS_GMO), 
 								(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_INGLIST_IS_IONIZED), 
-								ingNodeRef);
+								ingNodeRef,
+								(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
     }
     
     /**
@@ -580,7 +583,8 @@ public class ProductDAOImpl implements ProductDAO{
 									(Float)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_NUTLIST_MINI),
 									(Float)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_NUTLIST_MAXI),
 									(String)nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_NUTGROUP), 
-									nutNodeRef);
+									nutNodeRef,
+									(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
 		
     }
     
@@ -656,7 +660,8 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		//illValue
 		MLText illValue = (MLText)mlNodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_VALUE);		            
-		return new IngLabelingListDataItem(listItemNodeRef, grp, illValue);
+		return new IngLabelingListDataItem(listItemNodeRef, grp, illValue,
+				(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
     }
     
     /**
@@ -1030,6 +1035,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 	    			properties.put(BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY, allergenListDataItem.getInVoluntary());
 		    		properties.put(BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, allergenListDataItem.getVoluntary());
+		    		properties.put(BeCPGModel.PROP_IS_MANUAL_LISTITEM, allergenListDataItem.getIsManual());
 		    		
 		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
 		    		sortIndex++;
@@ -1332,6 +1338,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		    		properties.put(BeCPGModel.PROP_COSTLIST_VALUE, costListDataItem.getValue());
 		    		properties.put(BeCPGModel.PROP_COSTLIST_UNIT, costListDataItem.getUnit());
+		    		properties.put(BeCPGModel.PROP_IS_MANUAL_LISTITEM, costListDataItem.getIsManual());
 		    		
 		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
 		    		sortIndex++;
@@ -1495,6 +1502,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    			properties.put(BeCPGModel.PROP_INGLIST_QTY_PERC, ingListDataItem.getQtyPerc());
 		    		properties.put(BeCPGModel.PROP_INGLIST_IS_GMO, ingListDataItem.isGMO());
 		    		properties.put(BeCPGModel.PROP_INGLIST_IS_IONIZED, ingListDataItem.isIonized());
+		    		properties.put(BeCPGModel.PROP_IS_MANUAL_LISTITEM, ingListDataItem.getIsManual());
 		    		
 		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
 		    		sortIndex++;
@@ -1620,6 +1628,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		properties.put(BeCPGModel.PROP_NUTLIST_MINI, nutListDataItem.getMini());
 		    		properties.put(BeCPGModel.PROP_NUTLIST_MAXI, nutListDataItem.getMaxi());
 		    		properties.put(BeCPGModel.PROP_NUTLIST_GROUP, nutListDataItem.getGroup());
+		    		properties.put(BeCPGModel.PROP_IS_MANUAL_LISTITEM, nutListDataItem.getIsManual());
 			    		
 		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
 		    		sortIndex++;
@@ -1765,6 +1774,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		    		properties.put(BeCPGModel.PROP_ILL_GRP, illDataItem.getGrp());
 		    		properties.put(BeCPGModel.PROP_ILL_VALUE, illDataItem.getValue());
+		    		properties.put(BeCPGModel.PROP_IS_MANUAL_LISTITEM, illDataItem.getIsManual());
 			    		
 		    		if(filesToUpdate.containsKey(grp)){
 		    			//update
