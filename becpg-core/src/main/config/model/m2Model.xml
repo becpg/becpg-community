@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="m2:m2model"
+	 xmlns="http://www.alfresco.org/model/dictionary/1.0" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"               
+       xsi:schemaLocation="http://www.alfresco.org/model/dictionary/1.0 modelSchema.xsd"      
+       >
+	<!-- Optional meta-data about the model -->
+	<description>M2 Model</description>
+	<author>Laborie Matthieu</author>
+	<version>1.0</version>
+	<!-- Imports are required to allow references to definitions in other models -->
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</imports>
+	<!-- Introduction of new namespaces defined by this model -->
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/m2/1.0" prefix="m2" />
+	</namespaces>
+
+	<constraints>
+		 <constraint name="m2:nodeTypeConstraint"
+			type="fr.becpg.repo.security.constraint.DynPropsConstraint">
+			<parameter name="constraintType">
+				<value>NODE_TYPE</value>
+			</parameter>
+		</constraint>
+		
+		 <constraint name="m2:nodeAspectConstraint"
+			type="fr.becpg.repo.security.constraint.DynPropsConstraint">
+			<parameter name="constraintType">
+				<value>ASPECT_TYPE</value>
+			</parameter>
+		</constraint> 
+
+		<constraint name="m2:nodeAspectConstraint"
+			type="fr.becpg.repo.security.constraint.DynPropsConstraint">
+			<parameter name="constraintType">
+				<value>DATA_TYPE</value>
+			</parameter>
+		</constraint> 
+
+
+		<constraint name="m2:indexTokenisationModeConstraint"
+			 type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>true</value>
+					<value>false</value>
+					<value>both</value>
+				</list>
+			</parameter>
+		</constraint>
+
+	</constraints>
+
+	<types>
+
+		<!-- ACL Object -->
+		<type name="m2:model">
+			<title>Model</title>
+			<parent>sys:base</parent>
+			<properties>
+				<property name="m2:author">
+					<title>Author</title>
+					<type>d:text</type>
+				</property>
+				<property name="m2:published">
+					<title>Published</title>
+					<type>d:date</type>
+				</property>
+				<property name="m2:version">
+					<title>Version</title>
+					<type>d:text</type>
+				</property>
+			</properties>
+			<associations>
+				<child-association name="m2:namespaces">
+					<source>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>m2:namespace</class>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+               		
+				</child-association>
+				<child-association name="m2:imports">
+					<source>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>m2:namespace</class>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+				</child-association>
+				<child-association name="m2:dataTypes">
+					<source>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>m2:dataType</class>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+				</child-association>
+				<child-association name="m2:types">
+					<source>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>m2:type</class>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+               		
+				</child-association>
+				<child-association name="m2:aspects">
+					<source>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>m2:aspect</class>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+               		
+				</child-association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>m2:nameAspect</aspect>
+				<aspect>cm:author</aspect>
+				<aspect>m2:descriptionAspect</aspect>
+				<aspect>m2:constraintAspects</aspect>
+			</mandatory-aspects>
+		</type>
+
+
+		<type name="m2:classAssociation">
+			<title>Class Association</title>
+			<parent>sys:base</parent>
+			<properties>
+				<property name="m2:isProtected">
+					<title>Protected</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:sourceRoleName">
+					<title>Source Role Name</title>
+					<type>d:text</type>
+				</property>
+				<property name="m2:isSourceMandatory">
+					<title>Source is mandatory</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:isSourceMany">
+					<title>Source is many</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:targetClassName">
+					<title>Target class name</title>
+					<type>d:qname</type>
+					<mandatory>true</mandatory>
+					<constraints>
+		               <constraint ref="m2:nodeTypeConstraint" />
+		            </constraints>
+				</property>
+				<property name="m2:targetRoleName">
+					<title>Target role name</title>
+					<type>d:text</type>
+				</property>
+				<property name="m2:isTargetMandatory">
+					<title>Target is mandatory</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:isTargetMandatoryEnforced">
+					<title>Target is enforced</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:isTargetMany">
+					<title>Target is many</title>
+					<type>d:boolean</type>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>m2:nameAspect</aspect>
+				<aspect>m2:titleAspect</aspect>
+				<aspect>m2:descriptionAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+
+
+		<type name="m2:class">
+			<title>Class</title>
+			<parent>sys:base</parent>
+			<properties>
+				<property name="m2:parentName">
+				    <title>Parent Name</title>
+					<type>d:qname</type>
+					<constraints>
+		               <constraint ref="m2:nodeTypeConstraint" />
+		            </constraints>	
+				</property>
+				<property name="m2:archive">
+					<title>Archive</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:includedInSuperTypeQuery">
+					<title>Included In Super Type Query</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:mandatoryAspects">
+					<title>Mandatory aspect</title>
+					<type>d:qname</type>
+					<multiple>true</multiple>
+					<constraints>
+		               <constraint ref="m2:nodeAspectConstraint" />
+		            </constraints>
+				</property>
+			</properties>
+			<associations>
+				<child-association name="m2:properties">
+					<source>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>m2:property</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+				</child-association>
+				<child-association name="m2:propertyOverrides">
+					<source>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>m2:propertyOverride</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+				</child-association>
+				<child-association name="m2:associations">
+					<source>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>m2:classAssociation</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+				</child-association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>m2:nameAspect</aspect>
+				<aspect>m2:titleAspect</aspect>
+				<aspect>m2:descriptionAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+
+		<type name="m2:association">
+			<title>Association</title>
+			<parent>m2:classAssociation</parent>
+		</type>
+
+		<type name="m2:childAssociation">
+			<title>Child Association</title>
+			<parent>m2:classAssociation</parent>
+			<properties>
+				<property name="m2:requiredChildName">
+					<title>Required Child Name</title>
+					<type>d:text</type>
+				</property>
+				<property name="m2:allowDuplicateChildName">
+					<title>Allow Duplicate Child Name</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:propagateTimestamps">
+					<title>Propagate Timestamps</title>
+					<type>d:boolean</type>
+				</property>
+			</properties>
+		</type>
+
+
+		<type name="m2:type">
+			<title>Type</title>
+			<parent>m2:class</parent>
+			
+		</type>
+
+
+		<type name="m2:aspect">
+			<title>Aspect</title>
+			<parent>m2:class</parent>
+		</type>
+
+		<type name="m2:constraint">
+			<title>Constraint</title>
+			<parent>sys:base</parent>
+			<properties>
+				<property name="m2:ref">
+					<title>Reference</title>
+					<type>d:text</type>
+				</property>
+				<property name="m2:type">
+					<title>Type</title>
+					<type>d:text</type>
+				</property>
+			</properties>
+			<associations>
+				<child-association name="m2:parameters">
+					<source>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>m2:namedValue</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+				</child-association>
+			</associations>
+		</type>
+		
+		<type name="m2:dataType">
+			<title>DataType</title>
+			<parent>sys:base</parent>
+			<properties>
+				<property name="m2:javaClassName">
+					<title>Java ClassName</title>
+					<type>d:text</type>
+				</property>
+				<property name="m2:defaultAnalyserClassName">
+					<title>Default Analyser ClassName</title>
+					<type>d:text</type>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>m2:nameAspect</aspect>
+				<aspect>m2:titleAspect</aspect>
+				<aspect>m2:descriptionAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="m2:namespace">
+			<title>Namespace</title>
+			<parent>sys:base</parent>
+			<properties>
+				<property name="m2:uri">
+					<title>Uri</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="m2:prefix">
+					<title>Prefix</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
+		</type>
+
+		<type name="m2:property">
+		    <title>Property</title>
+			<parent>sys:base</parent>
+			<properties>
+				<property name="m2:isOverride">
+					<title>Is override</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:propertyType">
+					<title>Property type</title>
+					<type>d:qname</type>
+					<constraints>
+	                  <constraint ref="m2:dataTypeConstraint" />
+	               </constraints>
+				</property>
+				<property name="m2:isProtected">
+					<title>Is protected</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:isMultiValued">
+					<title>Is multiValued</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:isIndexedAtomically">
+					<title>Is indexed atomically</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:isIndexed">
+					<title>Is indexed</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:isStoredInIndex">
+					<title>Is stored in index</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:indexTokenisationMode">
+					<title>Index Tokenisation Mode</title>
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="m2:indexTokenisationModeConstraint"/>
+					</constraints>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>m2:propertyAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="m2:propertyOverride">
+			<title>Property Override</title>
+			<parent>sys:base</parent>
+			<mandatory-aspects>
+				<aspect>m2:propertyAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+
+		<type name="m2:namedValue">
+			<title>Named Value</title>
+			<parent>sys:base</parent>
+			<properties>
+				<property name="m2:nameValue">
+					<title>Name Value</title>
+					<type>d:text</type>
+				</property>
+				<property name="m2:simpleValue">
+					<title>Simple Value</title>
+					<type>d:text</type>
+				</property>
+				<property name="m2:listValue">
+					<title>Multi Value</title>
+					<type>d:text</type>
+					<multiple>true</multiple>
+				</property>
+			</properties>
+		</type>
+
+	</types>
+	<aspects>
+	
+		
+	
+		<aspect name="m2:nameAspect">
+			<title>Name Aspect</title>
+			<properties>
+				<property name="m2:name">
+					<title>Name</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
+		</aspect>
+	
+		<aspect name="m2:titleAspect">
+			<properties>
+				<property name="m2:title">
+					<title>Title</title>
+					<type>d:text</type>
+				</property>
+			</properties>
+		</aspect>
+	
+		<aspect name="m2:descriptionAspect">
+			<title>Description aspect</title>
+			<properties>
+				<property name="m2:description">
+					<title>Description</title>
+					<type>d:text</type>
+				</property>
+			</properties>
+		</aspect>
+	
+	
+		<aspect name="m2:constraintsAspect">
+			<title>Constraints Aspects</title>
+			<associations>
+				<child-association name="m2:constraints">
+					<source>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>m2:constraintsAspects</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+				</child-association>
+			</associations>
+		</aspect>
+		
+		
+		<aspect name="m2:propertyAspect">
+			<title>Property Aspect</title>
+			<properties>
+				<property name="m2:isMandatory">
+					<title>Is mandatory</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:isMandatoryEnforced">
+					<title>Is mandatory enforced</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="m2:defaultValue">
+					<title>Default Value</title>
+					<type>d:text</type>
+				</property>
+			</properties>
+				<mandatory-aspects>
+				<aspect>m2:nameAspect</aspect>
+				<aspect>m2:titleAspect</aspect>
+				<aspect>m2:descriptionAspect</aspect>
+				<aspect>m2:constraintsAspects</aspect>
+			</mandatory-aspects>
+		</aspect>
+				
+	</aspects>
+
+</model>

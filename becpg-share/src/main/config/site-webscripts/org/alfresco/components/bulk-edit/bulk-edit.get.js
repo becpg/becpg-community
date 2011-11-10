@@ -304,7 +304,8 @@ function main()
       itemTypes.push(
       {
          name: itemType.attributes["name"],
-         label: label ? label : itemType.attributes["name"]
+         label: label ? label : itemType.attributes["name"],
+         formId : itemType.attributes["formId"] ? itemType.attributes["formId"] : "bulk-edit"
       });
    }
    

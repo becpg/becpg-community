@@ -181,7 +181,7 @@
         	// Is it a bulk action?
 	   	     if(Dom.get(p_dialog.id  + "-form-bulkAction"))
 	   		 {
-   				Dom.get(p_dialog.id  + "-form-bulkAction").checked = false;
+   				Dom.get(p_dialog.id  + "-form-bulkAction").checked = this.bulkEdit;
    				Dom.get(p_dialog.id  + "-form-bulkAction-msg").innerHTML = this.msg("button.bulk-action-edit");
    			}
 
@@ -199,6 +199,7 @@
          // Using Forms Service, so always create new instance
          
          var editDetails = new Alfresco.module.SimpleDialog(this.id + "-editDetails");
+         editDetails.bulkEdit = false;
          editDetails.setOptions(
          {
             width: "34em",
@@ -234,11 +235,14 @@
                            
 	                       	if ( checkBoxEl && checkBoxEl.checked)
 	              		    {
+	                       		this.bulkEdit = true;
 								var recordFound = scope._findNextItemByParameter(response.json.item.nodeRef, "nodeRef");	
 								if(recordFound != null)
 								{
 									scope.onActionEdit(recordFound)
 								}		
+	              		    } else {
+	              		    	this.bulkEdit = false;
 	              		    }
                            
                            // Display success message
@@ -507,7 +511,7 @@
         {
            if (recordSet.getRecord(i).getData(p_parameter) == p_value)
            {
-					if(i != j)
+					if((i+1) != j)
 					{
               		return recordSet.getRecord(i + 1).getData();
 					}

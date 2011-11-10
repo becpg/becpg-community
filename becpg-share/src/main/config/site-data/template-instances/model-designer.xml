@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<template-instance>
+   <template-type>org/alfresco/model-designer</template-type>
+   <components>
+     	<!-- title -->
+   	 <component>
+         <region-id>title</region-id>
+         <url>/components/title/simple-title</url>
+         <properties>
+            <title>title.model-designer</title>
+         </properties>
+      </component>
+     
+	  <!-- model-designers -->
+      <component>
+         <region-id>toolbar</region-id>
+         <url>/components/model-designer/toolbar</url>
+      </component>
+      <component>
+         <region-id>modelForm</region-id>
+         <url>/components/form</url>
+         <properties>
+            <itemKind>node</itemKind>
+           <!--  <itemId>{nodeRef}</itemId> test -->
+            <itemId>workspace://SpacesStore/615c14fe-3274-4fea-9aa7-27cc240432d9</itemId>
+            <mode>edit</mode>
+            <submitType>json</submitType>
+            <showCaption>true</showCaption>
+            <showCancelButton>true</showCancelButton>
+         </properties>
+      </component>
+      <component>
+         <region-id>modelTree</region-id>
+         <url>/components/model-designer/tree</url>
+      </component>
+   </components>
+</template-instance>

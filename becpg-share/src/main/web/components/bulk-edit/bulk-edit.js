@@ -143,6 +143,11 @@
          itemType: null,
          
          /**
+          * The formId
+          */ 
+         formId: null,
+         
+         /**
           * Parent nodeRef
           */
          nodeRef : null,
@@ -801,8 +806,9 @@
          var typeSelected =  this.widgets.typeSelect.getMenu().getItem(0);
          if(typeSelected){
         	 me.widgets.typeSelect.set("label", typeSelected.cfg.getProperty("text"));
-        	  this.options.itemType = typeSelected._oAnchor.children[0].attributes[0].nodeValue;
-        	 
+        	 var className = typeSelected._oAnchor.children[0].attributes[0].nodeValue;
+        	  this.options.itemType = className.split("#")[0];
+        	  this.options.formId = className.split("#")[1];
          }
  
          
@@ -892,7 +898,7 @@
 	         // Query the visible columns for this list's item type
 	         Alfresco.util.Ajax.jsonGet(
 	         {
-	            url: $combine(Alfresco.constants.URL_SERVICECONTEXT, "components/bulk-edit/config/columns?itemType=" + encodeURIComponent(this.options.itemType)),
+	            url: $combine(Alfresco.constants.URL_SERVICECONTEXT, "components/bulk-edit/config/columns?itemType=" + encodeURIComponent(this.options.itemType)+"&formId="+encodeURIComponent(this.options.formId)),
 	            successCallback:
 	            {
 	               fn: this.onDatalistColumns,
@@ -994,7 +1000,7 @@
          
          // DataSource definition
          this.widgets.dataSource = new YAHOO.util.DataSource( 
-        		 Alfresco.constants.PROXY_URI_RELATIVE + "/becpg/bulkedit/data?query="+encodeURIComponent(this.options.searchQuery)+"&nodeRef="+encodeURIComponent(this.options.nodeRef)+"&itemType="+encodeURIComponent(this.options.itemType),
+        		 Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/data?query="+encodeURIComponent(this.options.searchQuery)+"&nodeRef="+encodeURIComponent(this.options.nodeRef)+"&itemType="+encodeURIComponent(this.options.itemType),
          {
             connMethodPost: true,
             responseType: YAHOO.util.DataSource.TYPE_JSON,
@@ -1258,9 +1264,10 @@
             eventTarget = aArgs[1];
   
          // Select based upon the className of the clicked item
+         var className = Alfresco.util.findEventClass(eventTarget)
+         this.options.itemType = className.split("#")[0];
+         this.options.formId = className.split("#")[1];
          
-         this.options.itemType = Alfresco.util.findEventClass(eventTarget);
-   	  
          Bubbling.fire("selectedTypeChanged");
          
       },
@@ -1828,9 +1835,9 @@
       {
          if (recordSet.getRecord(i).getData(p_parameter) == p_value)
          {
-					if(i != j)
+					if((i+1) != j)
 					{
-            		return recordSet.getRecord(i + 1).getData();
+						return recordSet.getRecord(i + 1).getData();
 					}
          }
       }

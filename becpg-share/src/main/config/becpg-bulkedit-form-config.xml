@@ -34,6 +34,27 @@
 
 				</field-visibility>
 			</form>
+			<form id="bulk-edit-2">
+				<field-visibility>
+					
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />			
+					<show id="bcpg:code" />
+				
+    			<!-- cm:dublincore aspect -->
+		    	      <show id="cm:publisher" force="true"/>
+		              <show id="cm:contributor" force="true"/>
+		              <show id="cm:type" force="true"/>
+		               <show id="cm:identifier"/>
+		               <show id="cm:dcsource"/>
+		               <show id="cm:coverage"/>
+		               <show id="cm:rights"/>
+		               <show id="cm:subject"/>
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 

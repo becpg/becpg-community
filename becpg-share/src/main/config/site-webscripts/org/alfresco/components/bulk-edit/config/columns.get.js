@@ -190,12 +190,15 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig)
 function main()
 {
    var itemType = getArgument("itemType"),
+   		formId = getArgument("formId"),
       columns = [];
    
    if (itemType !== null && itemType.length > 0)
    {
+	   
+	  formId = formId ? formId : "bulk-edit";
 
-      var formConfig = getFormConfig(itemType, "bulk-edit");
+      var formConfig = getFormConfig(itemType, formId);
       
       // get the configured visible fields
       var visibleFields = getVisibleFields("edit", formConfig);

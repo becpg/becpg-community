@@ -1,0 +1,84 @@
+<alfresco-config>
+
+
+
+	<config evaluator="model-designer" condition="model">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="description" />
+					<show id="author" />
+					<show id="published" />
+					<show id="version" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-designer" condition="type">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="parent" />
+					<show id="archive" />
+					<show id="includedInSuperTypeQuery" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+		<config evaluator="model-designer" condition="aspect">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="description" />
+					<show id="author" />
+					<show id="published" />
+					<show id="version" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-designer" condition="contraint">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="description" />
+					<show id="author" />
+					<show id="published" />
+					<show id="version" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+
+	<config evaluator="model-designer" condition="association">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="parent" />
+					<show id="archive" />
+					<show id="includedInSuperTypeQuery" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	
+	<config evaluator="model-designer" condition="property">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="type" />
+					<show id="protected" />
+					<show id="mandatory" />
+					<show id="mandatory" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+
+</alfresco-config>

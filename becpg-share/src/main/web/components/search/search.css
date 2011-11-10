@@ -3,15 +3,15 @@
 	margin: 0 -10px;
 }
 
-.search .align-right
+.search .search-bar .align-right
 {
    text-align: right;
-   width:40%;
+   width:35%;
 }
 
-.search div.first
+.search .search-bar div.first
 {
-   width:58%;
+   width:63%;
 }
 
 .search .search-sites

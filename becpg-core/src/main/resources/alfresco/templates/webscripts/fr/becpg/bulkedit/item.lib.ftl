@@ -73,13 +73,20 @@
       <#if data.metadata??>
    "metadata": "${data.metadata}",
       </#if>
-      <#if data.displayValue?is_boolean>
-   "displayValue": ${data.displayValue?string}
-      <#elseif data.displayValue?is_number>
-   "displayValue": ${data.displayValue?c}
-      <#else>
-   "displayValue": "${data.displayValue}"
+      <#if data.displayValue?exists >
+	      <#if data.displayValue?is_boolean>
+	   "displayValue": ${data.displayValue?string}
+	      <#elseif data.displayValue?is_number>
+		<#--beCPG -PQU : we want to display only 1/2/3 digits and not 8 digits, we force us separator (point instead of comma, and replace comma by space)-->
+	 	<#setting locale="en_US">
+	   "displayValue": "${"${data.displayValue}"?replace(',', ' ')}"
+	      <#else>
+	   "displayValue": "${data.displayValue}"
+	      </#if>
+	   <#else>
+	       "displayValue": " ${data.value?string}"
       </#if>
+      
 }
    </#escape>
 </#macro>

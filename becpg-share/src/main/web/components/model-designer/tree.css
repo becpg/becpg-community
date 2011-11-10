@@ -1,0 +1,47 @@
+.designerTree .header-bar
+{
+   margin-left: -10px;
+   min-height: 2em;
+   padding: 4px 1em;
+}
+
+.designerTree .left
+{
+   float: left;
+}
+
+.designerTree .new-model span.first-child
+{
+   background: url(../images/add-icon-16.png) no-repeat 12px 4px;
+}
+
+.designerTree h2
+{
+   padding-top: 0.5em;
+}
+
+.designerTree li
+{
+   overflow-x: hidden;
+   padding-left: 0px;
+}
+
+.designerTree li a
+{
+   background: url(../images/list-16.png) no-repeat 4px 0;
+   display: block;
+   margin-left: 14px;
+   padding: 0 0 0 24px;
+}
+
+.designerTree li a span
+{
+   cursor: pointer;
+   display: none;
+   float: right;
+   height: 16px;
+   left: -8px;
+   position: relative;
+   width: 18px;
+}
+

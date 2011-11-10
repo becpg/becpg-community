@@ -144,7 +144,8 @@
    <!-- Define elements that are bulk editable -->
    <config evaluator="string-compare" condition="bulk-edit">
       <itemTypes>
-      		    <itemType name="bcpg:finishedProduct"  />	
+      		    <itemType name="bcpg:finishedProduct" />	
+      		    <itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" formId="bulk-edit-2" />	
       		    <itemType name="bcpg:semiFinishedProduct" />	
       		    <itemType name="bcpg:rawMaterial" />	
       		    <itemType name="bcpg:packagingKit" />	

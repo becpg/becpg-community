@@ -200,19 +200,20 @@ function getDocumentItem(siteId, containerId, pathParts, node, metadataFields)
       {
          item.type = "document";
          item.size = node.size;
-         var fields = [];
-         if(metadataFields!=null && metadataFields.length>0){
-        	var splitted = metadataFields.split(",");
+        
+      }
+      var fields = [];
+      if(metadataFields!=null && metadataFields.length>0){
+     	var splitted = metadataFields.split(",");
 	         for (count in splitted)
 	         {
 	            fields.push(splitted[count].replace("_", ":"));
 	         }
-         }
-         if(fields.length<1){
-        	 fields.push("bcpg:code"); // avoid empty
-         }
-         item.nodeData = getFormData(node,fields);
       }
+      if(fields.length<1){
+     	 fields.push("bcpg:code"); // avoid empty
+      }
+      item.nodeData = getFormData(node,fields);
    }
    
    return item;

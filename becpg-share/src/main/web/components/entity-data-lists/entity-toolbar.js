@@ -169,7 +169,7 @@
             // Is it a bulk action?
             if(Dom.get(p_dialog.id  + "-form-bulkAction"))
             {
-           		Dom.get(p_dialog.id  + "-form-bulkAction").checked = false;
+           		Dom.get(p_dialog.id  + "-form-bulkAction").checked = this.bulkEdit;
            		Dom.get(p_dialog.id  + "-form-bulkAction-msg").innerHTML = this.msg("button.bulk-action-create");
            	}
 
@@ -188,12 +188,13 @@
          
          // Using Forms Service, so always create new instance
          var createRow = new Alfresco.module.SimpleDialog(this.id + "-createRow");
+         createRow.bulkEdit = false;
          createRow.setOptions(
          {
         	width: "33em",
             templateUrl: templateUrl,
             actionUrl: null,
-            destroyOnHide: true,
+            destroyOnHide: false,
             doBeforeDialogShow:
             {
                fn: doBeforeDialogShow,
@@ -218,8 +219,11 @@
                
 	           	if ( checkBoxEl && checkBoxEl.checked)
 	  		    {
+	           		this.bulkEdit = true;
 					scope.onNewRow();
-	             } 
+	             } else {
+	            	 this.bulkEdit = false;
+	             }
 	
             },
             scope: this

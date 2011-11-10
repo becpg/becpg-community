@@ -1,0 +1,28 @@
+.designer-toolbar
+{
+   margin: 0 -10px;
+   visibility: hidden;
+}
+
+.designer-toolbar .header-bar
+{
+   min-height: 2em;
+   padding: 4px 1em;
+}
+
+.designer-toolbar .left,
+.designer-toolbar .left div
+{
+   float: left;
+}
+
+.designer-toolbar .right
+{
+   float: right;
+}
+
+.designer-toolbar .new-row span.first-child
+{
+   background: url(../images/add-row-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}

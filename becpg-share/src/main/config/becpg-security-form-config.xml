@@ -9,32 +9,6 @@
 					<show id="sec:nodeType" />
 					<!-- <show id="sec:nodeAspects" /> -->
 				</field-visibility>
-	<!-- 	Can be used to provide custom types 
-			<appearance>
-					<field id="sec:nodeType">
-						<control
-							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">
-							 {http://www.bcpg.fr/model/becpg/1.0}rawMaterial|{type.bcpg_rawMaterial},
-							 {http://www.bcpg.fr/model/becpg/1.0}semiFinishedProduct|{type.bcpg_semiFinishedProduct},
-							 {http://www.bcpg.fr/model/becpg/1.0}localSemiFinishedProduct|{type.bcpg_localSemiFinishedProduct},
-							 {http://www.bcpg.fr/model/becpg/1.0}finishedProduct|{type.bcpg_finishedProduct},
-							 {http://www.bcpg.fr/model/becpg/1.0}condSalesUnit|{type.bcpg_condSalesUnit},
-							 {http://www.bcpg.fr/model/becpg/1.0}packagingMaterial|{type.bcpg_packagingMaterial},
-							 {http://www.bcpg.fr/model/becpg/1.0}packagingKit|{type.bcpg_packagingKit},							 							 
-							 {http://www.bcpg.fr/model/quality/1.0}nc|{type.qa_nc},
-							 {http://www.bcpg.fr/model/quality/1.0}controlPlan|{type.qa_controlPlan},
-						     {http://www.bcpg.fr/model/quality/1.0}qualityControl|{type.qa_qualityControl},
-						     {http://www.bcpg.fr/model/quality/1.0}controlPoint|{type.qa_controlPoint},
-						     {http://www.bcpg.fr/model/quality/1.0}controlStep|{type.qa_controlStep},
-						     {http://www.bcpg.fr/model/quality/1.0}controlMethod|{type.qa_controlMethod},
-						     {http://www.bcpg.fr/model/quality/1.0}workItemAnalysis|{type.qa_workItemAnalysis},
-						     {http://www.bcpg.fr/model/becpg/1.0}supplier|{type.bcpg_supplier},
-							 {http://www.bcpg.fr/model/becpg/1.0}client|{type.bcpg_client}				 
-							</control-param>
-						</control>
-					</field>
-				</appearance>-->
 			</form>
 			
 		</forms>
@@ -75,10 +49,7 @@
 					<field id="sec:aclPermission">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">
-							 read|Lecture seule,
-							 write|Lecture et écriture
-							</control-param>
+							 <control-param name="options">read|Lecture seule,write|Lecture et écriture</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -106,10 +77,7 @@
 					<field id="sec:aclPermission">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">
-							 read|Lecture seule,
-							 write|Lecture et écriture
-							</control-param>
+							 <control-param name="options">read|Lecture seule,write|Lecture et écriture</control-param>
 						</control>
 					</field>
 				</appearance>

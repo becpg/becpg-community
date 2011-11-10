@@ -4,7 +4,7 @@
 <script type="text/javascript">//<![CDATA[
    new  beCPG.component.BulkEdit("${el}").setOptions(
    {
-      searchQuery: <#if nodeRef??>"${searchQuery?js_string}"<#else>""</#if>,
+      searchQuery: <#if searchQuery??>"${searchQuery?js_string}"<#else>""</#if>,
       nodeRef: <#if nodeRef??>"${nodeRef?js_string}"<#else>""</#if>,
       usePagination: true
    }).setMessages(${messages});
@@ -21,7 +21,7 @@
 	               <div class="bd">
 	                  <ul>
 	                  <#list itemTypes as itemType >
-	                     <li><a href="#"><span class="${itemType.name}">${itemType.label}</span></a></li>
+	                     <li><a href="#"><span class="${itemType.name}#${itemType.formId}">${itemType.label}</span></a></li>
 	                  </#list>
 	                  </ul>
 	               </div>
@@ -43,7 +43,7 @@
 	                  </ul>
 	               </div>
 	            </div>
-	            <button id="${el}-edit-selected" >${msg("button.edit-selected")}</button>
+	             <button id="${el}-edit-selected" >${msg("button.edit-selected")}</button>
 	         </div>
 	         
 	         <div id="${el}-paginatorTop" class="paginator"></div>

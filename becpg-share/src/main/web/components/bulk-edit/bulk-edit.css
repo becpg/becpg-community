@@ -24,7 +24,16 @@
  .bulk-edit .bulk-edit-props-container  li.column-2 { margin-left: 40em; }
  .bulk-edit .bulk-edit-props-container  li.column-3 { margin-left: 60em; }
  .bulk-edit .bulk-edit-props-container  li.column-4 { margin-left: 80em; }
- .bulk-edit .bulk-edit-props-container  li.column-5 { margin-left: 100em; }
+ .bulk-edit .bulk-edit-props-container  li.column-5 { margin-left: 120em; }
+ .bulk-edit .bulk-edit-props-container  li.column-6 { margin-left: 140em; }
+ .bulk-edit .bulk-edit-props-container  li.column-7 { margin-left: 160em; }
+ .bulk-edit .bulk-edit-props-container  li.column-8 { margin-left: 180em; }
+ .bulk-edit .bulk-edit-props-container  li.column-9 { margin-left: 200em; }
+ .bulk-edit .bulk-edit-props-container  li.column-10 { margin-left: 220em; }
+ .bulk-edit .bulk-edit-props-container  li.column-11 { margin-left: 240em; }
+ .bulk-edit .bulk-edit-props-container  li.column-12 { margin-left: 260em; }
+ .bulk-edit .bulk-edit-props-container  li.column-13 { margin-left: 300em; }
+         
  
 
 /* bulk-edit Metadata */
@@ -52,7 +61,7 @@
 .bulk-edit .bulk-edit-bar .item-select
 {
    float: left;
-   width: 30%;
+   width: 40%;
 }
 
 .bulk-edit .bulk-edit-bar .paginator
@@ -61,7 +70,7 @@
    margin: 0;
    padding: 4px 0;
    text-align: center;
-   width: 65%;
+   width: 55%;
 }
 
 .bulk-edit .bulk-edit-bar .yui-pg-current

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="dsg:designerModel"
+	 xmlns="http://www.alfresco.org/model/dictionary/1.0" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"               
+       xsi:schemaLocation="http://www.alfresco.org/model/dictionary/1.0 modelSchema.xsd"      
+       >
+	<!-- Optional meta-data about the model -->
+	<description>Designer Model</description>
+	<author>Laborie Matthieu</author>
+	<version>1.0</version>
+	<!-- Imports are required to allow references to definitions in other models -->
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.bcpg.fr/model/m2/1.0" prefix="m2" />
+	</imports>
+	<!-- Introduction of new namespaces defined by this model -->
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/designer/1.0" prefix="dsg" />
+	</namespaces>
+
+	<aspects>
+	
+		<aspect name="dsg:modelAspect">
+			<title>Model Aspect</title>
+			<associations>
+				<child-association name="dsg:model">
+					<target>
+						<many>false</many>
+						<mandatory>true</mandatory>
+						<class>m2:model</class>
+					</target>
+				</child-association>
+			</associations>
+		</aspect>
+				
+	</aspects>
+
+</model>
