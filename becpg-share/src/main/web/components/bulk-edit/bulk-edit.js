@@ -706,10 +706,23 @@
     		                YAHOO.log("Could not save Cell Editor input due to invalid data " +
     		                        lang.dump(inputValue), "warn", this.toString());
     		                return;
-    		            }
+    		            } 
     		        }
-    		            
+    		        
     		        var oSelf = this;
+    		        if(oSelf instanceof YAHOO.widget.CheckboxCellEditor){
+	            		var tmp = "";
+	            		for(var i in validValue){
+	            			if(tmp.length>0){
+	            				tmp+=",";
+	            			}
+	            			tmp+=validValue[i];
+	            		}
+	            		validValue = tmp;
+	            	}
+	            	
+    		            
+    		       
     		        var finishSave = function(bSuccess, oNewValue) {
     		            var oOrigValue = oSelf.value;
     		            if(bSuccess) {    		            	
