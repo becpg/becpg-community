@@ -1,385 +1,60 @@
 <alfresco-config>
 
 
-	<!-- bcpg:finishedProduct type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:finishedProduct">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
+<!-- 	<config evaluator="model-type" condition="bcpg:finishedProduct"> -->
+<!-- 		<forms> -->
+<!-- 			<form id="bulk-edit"> -->
+<!-- 				<field-visibility> -->
 					
-					<!-- mainInfo -->
-					<show id="cm:name" />
-					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />
-					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />					
-					<show id="bcpg:code" />
+<!-- 					mainInfo -->
+<!-- 					<show id="cm:name" /> -->
+<!-- 					<show id="bcpg:legalName" /> -->
+<!-- 					<show id="cm:description" force="true" /> -->
+<!-- 					<show id="bcpg:productComments" /> -->
+<!-- 					<show id="bcpg:productHierarchy1" /> -->
+<!-- 					<show id="bcpg:productHierarchy2" />					 -->
+<!-- 					<show id="bcpg:code" /> -->
 				
-					<show id="bcpg:eanCode" />					
-					<show id="bcpg:clients" />
-					<show id="rep:reportTpls" />									
+<!-- 					<show id="bcpg:eanCode" />					 -->
+<!-- 					<show id="bcpg:clients" /> -->
+<!-- 					<show id="rep:reportTpls" />									 -->
 
-					<!-- formulation -->
-					<show id="bcpg:productUnit" />
-					<show id="bcpg:productQty" />
-					<show id="bcpg:productDensity" />
-					<show id="bcpg:productSpecification" />
-					<show id="bcpg:productMicrobioCriteria" />
+<!-- 					formulation -->
+<!-- 					<show id="bcpg:productUnit" /> -->
+<!-- 					<show id="bcpg:productQty" /> -->
+<!-- 					<show id="bcpg:productDensity" /> -->
+<!-- 					<show id="bcpg:productSpecification" /> -->
+<!-- 					<show id="bcpg:productMicrobioCriteria" /> -->
 
-					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+<!-- 					tags and categories -->
+<!-- 					<show id="cm:taggable" force="true" /> -->
+<!-- 					<show id="cm:categories" force="true" /> -->
 
 
-				</field-visibility>
-			</form>
-			<form id="bulk-edit-2">
-				<field-visibility>
+<!-- 				</field-visibility> -->
+<!-- 			</form> -->
+<!-- 			<form id="bulk-edit-2"> -->
+<!-- 				<field-visibility> -->
 					
-					<!-- mainInfo -->
-					<show id="cm:name" />
-					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />			
-					<show id="bcpg:code" />
+<!-- 					mainInfo -->
+<!-- 					<show id="cm:name" /> -->
+<!-- 					<show id="bcpg:legalName" /> -->
+<!-- 					<show id="cm:description" force="true" /> -->
+<!-- 					<show id="bcpg:productComments" />			 -->
+<!-- 					<show id="bcpg:code" /> -->
 				
-    			<!-- cm:dublincore aspect -->
-		    	      <show id="cm:publisher" force="true"/>
-		              <show id="cm:contributor" force="true"/>
-		              <show id="cm:type" force="true"/>
-		               <show id="cm:identifier"/>
-		               <show id="cm:dcsource"/>
-		               <show id="cm:coverage"/>
-		               <show id="cm:rights"/>
-		               <show id="cm:subject"/>
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-
-	<!-- bcpg:localSemiFinishedProduct type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:localSemiFinishedProduct">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-				
-					<!-- mainInfo -->
-					<show id="cm:name" />
-					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />
-					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
-				
-					<show id="bcpg:code" />
-					
-					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
-
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-
-	<!-- bcpg:packagingKit type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:packagingKit">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-					
-					<!-- mainInfo -->
-					<show id="cm:name" />
-					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />
-					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
-				
-					<show id="bcpg:productUnit" />
-					<show id="bcpg:code" />
-					<show id="rep:reportTpls" />
-
-					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
-
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-
-	<!-- bcpg:packagingMaterial type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:packagingMaterial">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-
-					<!-- mainInfo -->
-					<show id="cm:name" />
-					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />
-					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
-				
-					<show id="bcpg:productUnit" />
-					<show id="bcpg:code" />
-					<show id="bcpg:eanCode" />
-					<show id="bcpg:suppliers" />
-					<show id="rep:reportTpls" />
-
-					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
-
-
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<!-- bcpg:rawMaterial type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:rawMaterial">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-
-					<!-- mainInfo -->
-					<show id="cm:name" />
-					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />
-					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
-				
-					<show id="bcpg:productUnit" />
-					<show id="bcpg:code" />
-					<show id="bcpg:eanCode" />
-					<show id="bcpg:suppliers" />
-					<show id="rep:reportTpls" />
-					<show id="bcpg:productMicrobioCriteria" />
-
-					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
-
-
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-	
-	<!-- bcpg:semiFinishedProduct type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:semiFinishedProduct">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-
-					<!-- mainInfo -->
-					<show id="cm:name" />
-					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />
-					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
-					<show id="bcpg:code" />
-					<show id="rep:reportTpls" />					
-
-					<!-- formulation -->
-					<show id="bcpg:productUnit" />
-					<show id="bcpg:productQty" />
-					<show id="bcpg:productDensity" />
-					<show id="bcpg:productSpecification" />
-					<show id="bcpg:productMicrobioCriteria" />
-
-					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
-
-
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-
-	<!-- ___________________________________________________ CARACTERISTIQUES 
-		__________________________________________________ -->
-
-	<!-- bcpg:allergen type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:allergen">
-		<forms>
-			<form id="bulk-edit">
-
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:allergenType" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<!-- bcpg:cost type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:cost">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:costCurrency" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<!-- bcpg:ing type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:ing">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:ingMLName" />
-					<show id="bcpg:ingCEECode" />
-					<show id="bcpg:ingType" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<!-- bcpg:microBio type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:microBio">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<!-- bcpg:nut type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:nut">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:nutGroup" />
-					<show id="bcpg:nutType" />
-					<show id="bcpg:nutUnit" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<!-- bcpg:organo type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:organo">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<!-- bcpg:physicoChem type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:physicoChem">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:physicoChemUnit" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<!-- bcpg:geoOrigin type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:geoOrigin">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:geoOriginISOCode" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<!-- bcpg:bioOrigin type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:bioOrigin">
-		<forms>
-			<form id="bulk-edit">
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:bioOriginType" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<!-- ______________________________________________ SUPPLIER_________________________________________ -->
-	<!-- bcpg:supplier type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:supplier">
-		<forms>
-			<form id="bulk-edit">
-
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" />
-					<show id="bcpg:code" />
-					<show id="bcpg:supplierTel" />
-					<show id="bcpg:supplierEmail" />
-					<!-- bcpg:location type -->
-					<show id="bcpg:locationAddress1" />
-					<show id="bcpg:locationAddress2" />
-					<show id="bcpg:locationAddress3" />
-					<show id="bcpg:locationZip" />
-					<show id="bcpg:locationCountry" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-
-	<!-- ______________________________________________ CLIENT_________________________________________ -->
-	<!-- bcpg:client type (existing nodes) -->
-	<config evaluator="model-type" condition="bcpg:client">
-		<forms>
-			<form id="bulk-edit">
-
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" />
-					<show id="bcpg:code" />
-					<show id="bcpg:clientTel" />
-					<show id="bcpg:clientEmail" />
-					<!-- bcpg:location type -->
-					<show id="bcpg:locationAddress1" />
-					<show id="bcpg:locationAddress2" />
-					<show id="bcpg:locationAddress3" />
-					<show id="bcpg:locationZip" />
-					<show id="bcpg:locationState" />
-					<show id="bcpg:locationCountry" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	
-
+<!--     			cm:dublincore aspect -->
+<!-- 		    	      <show id="cm:publisher" force="true"/> -->
+<!-- 		              <show id="cm:contributor" force="true"/> -->
+<!-- 		              <show id="cm:type" force="true"/> -->
+<!-- 		               <show id="cm:identifier"/> -->
+<!-- 		               <show id="cm:dcsource"/> -->
+<!-- 		               <show id="cm:coverage"/> -->
+<!-- 		               <show id="cm:rights"/> -->
+<!-- 		               <show id="cm:subject"/> -->
+<!-- 				</field-visibility> -->
+<!-- 			</form> -->
+<!-- 		</forms> -->
+<!-- 	</config> -->
 
 </alfresco-config>

@@ -31,6 +31,7 @@
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/workflow-context.xml" />
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/bootstrap-context.xml" />
    <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/script-services-context.xml" />  
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/eco-context.xml" /> 
+   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/eco-context.xml" />
+   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/patch-alfresco-form-services-context.xml" /> 
   
 </beans>

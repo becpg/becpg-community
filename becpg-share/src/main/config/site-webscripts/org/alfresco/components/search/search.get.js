@@ -78,7 +78,7 @@ function main()
    
    var metadatas = config.scoped["Search"]["metadata"].childrenMap["show"];
    var metadataFields = "";
-   for (var i = 0, metadata; i < sortables.size(); i++)
+   for (var i = 0, metadata; i < metadatas.size(); i++)
    {
 	   if(metadataFields.length>0){
 		   metadataFields+=",";

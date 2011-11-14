@@ -344,6 +344,9 @@
          {
             var html = "";
             var value = "";
+            var booleanValueTrue = scope.msg("data.boolean.true");
+            var booleanValueFalse = scope.msg("data.boolean.false");
+            
             // Populate potentially missing parameters
             if (!oRecord)
             {
@@ -524,8 +527,7 @@
 	          	   	editor =  new YAHOO.widget.DateCellEditor();
 	                   break;
 	             case "boolean":
-	            	//TODO test
-	            	 editor = new YAHOO.widget.CheckboxCellEditor();
+	            	 editor = new YAHOO.widget.RadioCellEditor({radioOptions:[{label:scope.msg("data.boolean.true"), value:true},{label:scope.msg("data.boolean.false"), value:false}],disableBtns:true});
 	            	 break;
 	             case "float":
 	             case "int": 
@@ -594,6 +596,14 @@
     		                          case "date":
     		                        	 value = Alfresco.util.fromISO8601(data.value);
     		                              break;
+    		                          case "boolean":
+    		                        	  if(data.value == scope.msg("data.boolean.true")){
+    		                        		  value = true;  
+    		                        	  }
+    		                        	  else{
+    		                        		  value = false;  
+    		                        	  }     		                        	 
+     		                              break;
     		                          default:
     		                             value = data.displayValue;
     		                              break;
@@ -635,11 +645,24 @@
     		        var oSelf = this;
     		        var finishSave = function(bSuccess, oNewValue) {
     		            var oOrigValue = oSelf.value;
-    		            if(bSuccess) {
-    		                // Update new value
-    		                oSelf.value = oNewValue;
-    		                oSelf.getDataTable().updateCell(oSelf.getRecord(), oSelf.getColumn(), {value: oNewValue,  displayValue : oNewValue });
-    		                
+    		            if(bSuccess) {    		            	
+    		            	// Update new value
+    		            	var oDisplayValue = oNewValue;
+    		            	if(oSelf instanceof YAHOO.widget.RadioCellEditor){
+    		            		for(var i in oSelf.radioOptions){
+    		            			if(String(oSelf.radioOptions[i]["value"]) == oNewValue){
+    		            				oDisplayValue = oSelf.radioOptions[i]["label"];
+    		            				break;
+    		            			}
+    		            		}    		            			
+    		            	}    		            	
+    		            	else if(oSelf instanceof YAHOO.widget.DateCellEditor){
+    		            		oDisplayValue = Alfresco.util.formatDate(oNewValue, scope.msg("date-format.defaultDateOnly"));   		            		
+    		            	}
+    		            	
+	    		          	oSelf.value = oNewValue;	    		          		    		          	
+	    		          	oSelf.getDataTable().updateCell(oSelf.getRecord(), oSelf.getColumn(), {value: oNewValue,  displayValue : oDisplayValue });
+	    		          	
     		                // Hide CellEditor
     		                oSelf.hide();
     		                

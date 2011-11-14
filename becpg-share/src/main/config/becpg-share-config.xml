@@ -1,179 +1,142 @@
 <alfresco-config>
 
-  <!-- <config evaluator="string-compare" condition="DocumentLibrary">
-   
-      <types>
-         <type name="cm:content">
-            <subtype name="ws:article"/>
-         </type>
+	<!-- <config evaluator="string-compare" condition="DocumentLibrary"> <types> 
+		<type name="cm:content"> <subtype name="ws:article"/> </type> <type name="cm:folder"> 
+		<subtype name="ws:website"/> <subtype name="ws:webroot"/> </type> </types> 
+		<workflows> <workflow definition="wswf:reviewPublish" /> <workflow definition="wswf:publishTree" 
+		/> </workflows> </config> -->
 
-         <type name="cm:folder">
-            <subtype name="ws:website"/>
-            <subtype name="ws:webroot"/>
-         </type>
-      </types>
+	<config evaluator="string-compare" condition="Workflow">
+		<hidden-workflows>
+			<workflow name="jbpm$wf:reviewpooled" />
+			<workflow name="jbpm$wf:parallelgroupreview" />
+			<workflow name="jbpm$wf:review" />
+			<workflow name="jbpm$wf:parallelreview" />
+		</hidden-workflows>
+	</config>
 
-      <workflows>
-         <workflow definition="wswf:reviewPublish" />
-         <workflow definition="wswf:publishTree" />
-      </workflows>
+	<config evaluator="string-compare" condition="AdvancedSearch">
+		<advanced-search>
+			<!-- Forms for the advanced search type list -->
+			<forms>
+				<!-- The 'form' config element contains the name of the model type of 
+					the form to display. The element supports the following optional attributes: 
+					id = form id, the id of "search" will be assumed if not set label = label 
+					text to display - defaults to model type if not set labelId = I18N message 
+					id of label text to display description = description text to display descriptionId 
+					= I18N message id of description text to display -->
+				<form labelId="search.form.label.bcpg_product" descriptionId="search.form.desc.bcpg_product">bcpg:product
+				</form>
+				<form labelId="search.form.label.qa_nc" descriptionId="search.form.desc.qa_nc">qa:nc
+				</form>
+			</forms>
+		</advanced-search>
+	</config>
 
-   </config>-->
+	<config evaluator="string-compare" condition="DocumentLibrary">
+		<aspects>
+			<visible>
+				<aspect name="cm:generalclassifiable" />
+				<aspect name="cm:taggable" />
+				<aspect name="bcpg:permissionsTpl" />
+				<aspect name="bcpg:clientsAspect" />
+				<aspect name="bcpg:suppliersAspect" />
+				<aspect name="rep:reportTplsAspect" />
+				<aspect name="bcpg:profitabilityAspect" />
+				<aspect name="qa:batchAspect" />
+				<aspect name="qa:acAspect" />
+			</visible>
 
-  	<config evaluator="string-compare" condition="Workflow">
-      <hidden-workflows>
-         <workflow name="jbpm$wf:reviewpooled"/>
-         <workflow name="jbpm$wf:parallelgroupreview"/>
-         <workflow name="jbpm$wf:review"/>
-         <workflow name="jbpm$wf:parallelreview"/>
-      </hidden-workflows>
-   </config>
-   
- <config evaluator="string-compare" condition="AdvancedSearch">
-      <advanced-search>
-         <!-- Forms for the advanced search type list -->
-         <forms>
-            <!--
-               The 'form' config element contains the name of the model type
-               of the form to display.
-               
-               The element supports the following optional attributes:
-                  id = form id, the id of "search" will be assumed if not set
-                  label = label text to display - defaults to model type if not set
-                  labelId = I18N message id of label text to display
-                  description = description text to display
-                  descriptionId = I18N message id of description text to display
-            -->
-            <form labelId="search.form.label.bcpg_product" descriptionId="search.form.desc.bcpg_product">bcpg:product</form>
-            <form labelId="search.form.label.qa_nc" descriptionId="search.form.desc.qa_nc">qa:nc</form>
-         </forms>
-      </advanced-search>
-   </config>
+			<!-- Aspects that a user can add. Same as "visible" if left empty -->
+			<addable>
+				<aspect name="cm:generalclassifiable" />
+				<aspect name="cm:taggable" />
+				<aspect name="bcpg:permissionsTpl" />
+				<aspect name="bcpg:clientsAspect" />
+				<aspect name="bcpg:suppliersAspect" />
+				<aspect name="rep:reportTplsAspect" />
+				<aspect name="bcpg:profitabilityAspect" />
+				<aspect name="qa:batchAspect" />
+				<aspect name="qa:acAspect" />
+			</addable>
 
-   <config evaluator="string-compare" condition="DocumentLibrary">
-      <aspects>
-         <visible>
-            <aspect name="cm:generalclassifiable" />
-            <aspect name="cm:taggable" />
-            <aspect name="bcpg:permissionsTpl" />
-            <aspect name="bcpg:clientsAspect" />
-            <aspect name="bcpg:suppliersAspect" />
-            <aspect name="rep:reportTplsAspect" /> 
-            <aspect name="bcpg:profitabilityAspect" />           
-            <aspect name="qa:batchAspect" />        
-            <aspect name="qa:acAspect" />    
-         </visible>
-         
-         <!-- Aspects that a user can add. Same as "visible" if left empty -->
-         <addable>
-            <aspect name="cm:generalclassifiable" />
-            <aspect name="cm:taggable" />
-            <aspect name="bcpg:permissionsTpl" />
-            <aspect name="bcpg:clientsAspect" />
-            <aspect name="bcpg:suppliersAspect" />
-            <aspect name="rep:reportTplsAspect" />
-            <aspect name="bcpg:profitabilityAspect" />
-            <aspect name="qa:batchAspect" />
-            <aspect name="qa:acAspect" />
-         </addable>
+			<!-- Aspects that a user can remove. Same as "visible" if left empty -->
+			<removeable>
+				<aspect name="cm:generalclassifiable" />
+				<aspect name="cm:taggable" />
+				<aspect name="bcpg:permissionsTpl" />
+				<aspect name="bcpg:clientsAspect" />
+				<aspect name="bcpg:suppliersAspect" />
+				<aspect name="rep:reportTplsAspect" />
+				<aspect name="bcpg:profitabilityAspect" />
+				<aspect name="qa:batchAspect" />
+				<aspect name="qa:acAspect" />
+			</removeable>
+		</aspects>
 
-         <!-- Aspects that a user can remove. Same as "visible" if left empty -->
-         <removeable>
-         	<aspect name="cm:generalclassifiable" />
-            <aspect name="cm:taggable" />
-            <aspect name="bcpg:permissionsTpl" />
-            <aspect name="bcpg:clientsAspect" />
-            <aspect name="bcpg:suppliersAspect" />
-            <aspect name="rep:reportTplsAspect" />
-            <aspect name="bcpg:profitabilityAspect" />
-            <aspect name="qa:batchAspect" />
-            <aspect name="qa:acAspect" />
-         </removeable>
-      </aspects>
-      
-      <types>
-         <type name="cm:content">
-				<subtype name="bcpg:productTemplate" />							
-				<subtype name="bcpg:productMicrobioCriteria"/>
+		<types>
+			<type name="cm:content">
+				<subtype name="bcpg:productTemplate" />
+				<subtype name="bcpg:productMicrobioCriteria" />
 				<subtype name="bcpg:productSpecification" />
-				
+
 				<subtype name="bcpg:allergen" />
 				<subtype name="bcpg:cost" />
 				<subtype name="bcpg:ing" />
-				<subtype name="bcpg:microBio" />		
+				<subtype name="bcpg:microBio" />
 				<subtype name="bcpg:nut" />
-				<subtype name="bcpg:organo" />	
-				<subtype name="bcpg:physicoChem" />	
-				
-			  	<subtype name="qa:nc" />
-			   <subtype name="qa:controlPlan" />
-			   <subtype name="qa:qualityControl" />
-			   <subtype name="qa:controlPoint" />
-			   <subtype name="qa:controlStep" />
-			   <subtype name="qa:controlMethod" />
-			   <subtype name="qa:workItemAnalysis" />
-			    				
+				<subtype name="bcpg:organo" />
+				<subtype name="bcpg:physicoChem" />
+
+				<subtype name="qa:nc" />
+				<subtype name="qa:controlPlan" />
+				<subtype name="qa:qualityControl" />
+				<subtype name="qa:controlPoint" />
+				<subtype name="qa:controlStep" />
+				<subtype name="qa:controlMethod" />
+				<subtype name="qa:workItemAnalysis" />
+
 				<subtype name="bcpg:supplier" />
-				<subtype name="bcpg:client" />	
-				
+				<subtype name="bcpg:client" />
+
 				<subtype name="eco:changeOrder" />
-				
-				<subtype name="bcpg:linkedValue" />	
+
+				<subtype name="bcpg:linkedValue" />
 				<subtype name="bcpg:listValue" />
-         </type>
+			</type>
 
 			<type name="cm:folder">
 				<subtype name="bcpg:productReportTemplate" />
 				<subtype name="bcpg:entityFolder" />
-         </type>
-         
-         <type name="dl:dataListItem">
+			</type>
+
+			<type name="dl:dataListItem">
 				<subtype name="bcpg:allergenList" />
 				<subtype name="bcpg:costList" />
 				<subtype name="bcpg:compoList" />
 				<subtype name="bcpg:ingLabelingList" />
 				<subtype name="bcpg:ingList" />
 				<subtype name="bcpg:microBioList" />
-				<subtype name="bcpg:nutList" />	
-				<subtype name="bcpg:organoList" />	
-				<subtype name="bcpg:physicoChemList" />	
-			 </type>
-      </types>
-   </config>
-   
-   <!-- Define elements that are bulk editable -->
-   <config evaluator="string-compare" condition="bulk-edit">
-      <itemTypes>
-      		    <itemType name="bcpg:finishedProduct" />	
-      		    <itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" formId="bulk-edit-2" />	
-      		    <itemType name="bcpg:semiFinishedProduct" />	
-      		    <itemType name="bcpg:rawMaterial" />	
-      		    <itemType name="bcpg:packagingKit" />	
-      		    <itemType name="bcpg:localSemiFinishedProduct"/>
-      		    <itemType name="bcpg:packagingMaterial"/>
-      
-         		<itemType name="bcpg:allergen" />
-					<itemType name="bcpg:cost" />
-					<itemType name="bcpg:ing" />
-					<itemType name="bcpg:microBio" />
-					<itemType name="bcpg:nut" />	
-					<itemType name="bcpg:organo" />	
-					<itemType name="bcpg:physicoChem" />	
-				
-				<!-- 
-				<itemType name="qa:nc" />
-			    <itemType name="qa:controlPlan" />
-			    <itemType name="qa:qualityControl" />
-			    <itemType name="qa:controlPoint" />
-			    <itemType name="qa:controlStep" />
-			    <itemType name="qa:controlMethod" />
-			    <itemType name="qa:workItemAnalysis" />
-			     -->
-			    
-			    				
-				<itemType name="bcpg:supplier" />
-				<itemType name="bcpg:client" />		
-        </itemTypes>
-   </config>
-   
+				<subtype name="bcpg:nutList" />
+				<subtype name="bcpg:organoList" />
+				<subtype name="bcpg:physicoChemList" />
+			</type>
+		</types>
+	</config>
+
+	<!-- Define elements that are bulk editable -->
+	<config evaluator="string-compare" condition="bulk-edit">
+		<itemTypes>
+			<itemType name="bcpg:finishedProduct" />
+<!-- 			<itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" -->
+<!-- 				formId="bulk-edit-2" /> -->
+			<itemType name="bcpg:semiFinishedProduct" />
+			<itemType name="bcpg:rawMaterial" />			
+			<itemType name="bcpg:packagingMaterial" />
+
+			<itemType name="bcpg:supplier" />
+			<itemType name="bcpg:client" />
+		</itemTypes>
+	</config>
+
 </alfresco-config>
