@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nonconformity name="NC" code="1246" created="" description="" ncType="Type de NC" ncCreated="nc created" ncQuantityNc="12300" ncQuantityNcUnit="kg"
+	ncService="Service" ncSeverity="Sévérité" ncDetected="date de détection" ncCost="1235" ncCause="Cause de la NC" ncCreationStep="" ncDetectionStep=""
+	acType="Type d'AC" acExpectedDate="expected date" acEffectiveDate="effective date" acCheckDate="date de vérif" acDescription="" acAssignedTo=""
+	acEfficiency="" acChecker="" acComments="">
+
+	<attributes>
+		<attribute set="Set1" name="Nom" value="Assortiment 8 sushis" />
+		<attribute set="Set1" name="Famille" value="Menus"  />
+		<attribute set="Set2" name="Sous-famille" value="Sushis"  />
+		<attribute set="Set2" name="Clients" value="Client1, Client2"  />
+		<attribute set="aSet2" name="integer" value="12"/>
+		<attribute set="aSet2" name="decimal" value="12.36"/>
+	</attributes>
+	
+</nonconformity>

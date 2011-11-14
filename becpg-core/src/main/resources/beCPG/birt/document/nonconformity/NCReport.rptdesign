@@ -1,0 +1,1459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">131</property>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="7">
+            <property name="FILELIST">/home/quere/Documents/beCPG/dev/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/document/nonconformity/NCReport.xml</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="nc" id="8">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">name</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">name</text-property>
+                    <property name="analysisColumn">name</property>
+                </structure>
+                <structure>
+                    <property name="columnName">code</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">code</text-property>
+                    <property name="analysisColumn">code</property>
+                </structure>
+                <structure>
+                    <property name="columnName">created</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">created</text-property>
+                    <property name="analysisColumn">created</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncType</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncType</text-property>
+                    <property name="analysisColumn">ncType</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncCreated</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncCreated</text-property>
+                    <property name="analysisColumn">ncCreated</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncQuantityNc</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncQuantityNc</text-property>
+                    <property name="analysisColumn">ncQuantityNc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncQuantityNcUnit</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncQuantityNcUnit</text-property>
+                    <property name="analysisColumn">ncQuantityNcUnit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncService</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncService</text-property>
+                    <property name="analysisColumn">ncService</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncSeverity</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncSeverity</text-property>
+                    <property name="analysisColumn">ncSeverity</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncDetected</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncDetected</text-property>
+                    <property name="analysisColumn">ncDetected</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncCost</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncCost</text-property>
+                    <property name="analysisColumn">ncCost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncCause</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncCause</text-property>
+                    <property name="analysisColumn">ncCause</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncCreationStep</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncCreationStep</text-property>
+                    <property name="analysisColumn">ncCreationStep</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncDetectionStep</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncDetectionStep</text-property>
+                    <property name="analysisColumn">ncDetectionStep</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">description</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">code</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">created</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ncType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">ncCreated</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">ncQuantityNc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">ncQuantityNcUnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">ncService</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">ncSeverity</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">ncDetected</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">ncCost</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">ncCause</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">ncCreationStep</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">ncDetectionStep</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">code</property>
+                    <property name="nativeName">code</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">created</property>
+                    <property name="nativeName">created</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ncType</property>
+                    <property name="nativeName">ncType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">ncCreated</property>
+                    <property name="nativeName">ncCreated</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">ncQuantityNc</property>
+                    <property name="nativeName">ncQuantityNc</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ncQuantityNcUnit</property>
+                    <property name="nativeName">ncQuantityNcUnit</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">ncService</property>
+                    <property name="nativeName">ncService</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">ncSeverity</property>
+                    <property name="nativeName">ncSeverity</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">ncDetected</property>
+                    <property name="nativeName">ncDetected</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">ncCost</property>
+                    <property name="nativeName">ncCost</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">ncCause</property>
+                    <property name="nativeName">ncCause</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">ncCreationStep</property>
+                    <property name="nativeName">ncCreationStep</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">ncDetectionStep</property>
+                    <property name="nativeName">ncDetectionStep</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">description</property>
+                    <property name="nativeName">description</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/nonconformity]#:#{name;STRING;/@name},{code;STRING;/@code},{created;STRING;/@created},{ncType;STRING;/@ncType},{ncCreated;STRING;/@ncCreated},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncService;STRING;/@ncService},{ncSeverity;STRING;/@ncSeverity},{ncDetected;STRING;/@ncDetected},{ncCost;STRING;/@ncCost},{ncCause;STRING;/@ncCause},{ncCreationStep;STRING;/@ncCreationStep},{ncDetectionStep;STRING;/@ncDetectionStep},{description;STRING;/@description}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>name</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>code</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>code</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>created</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>created</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="ncAction" id="1577">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">acType</property>
+                    <text-property name="heading">acType</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">acExpectedDate</property>
+                    <text-property name="heading">acExpectedDate</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">acEffectiveDate</property>
+                    <text-property name="heading">acEffectiveDate</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">acCheckDate</property>
+                    <text-property name="heading">acCheckDate</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">acDescription</property>
+                    <text-property name="heading">acDescription</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">acAssignedTo</property>
+                    <text-property name="heading">acAssignedTo</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">acEfficiency</property>
+                    <text-property name="heading">acEfficiency</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">acChecker</property>
+                    <text-property name="heading">acChecker</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">acComments</property>
+                    <text-property name="heading">acComments</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">acType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">acExpectedDate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">acEffectiveDate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">acCheckDate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">acDescription</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">acAssignedTo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">acEfficiency</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">acChecker</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">acComments</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">acType</property>
+                    <property name="nativeName">acType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">acExpectedDate</property>
+                    <property name="nativeName">acExpectedDate</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">acEffectiveDate</property>
+                    <property name="nativeName">acEffectiveDate</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">acCheckDate</property>
+                    <property name="nativeName">acCheckDate</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">acDescription</property>
+                    <property name="nativeName">acDescription</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">acAssignedTo</property>
+                    <property name="nativeName">acAssignedTo</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">acEfficiency</property>
+                    <property name="nativeName">acEfficiency</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">acChecker</property>
+                    <property name="nativeName">acChecker</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">acComments</property>
+                    <property name="nativeName">acComments</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/nonconformity]#:#{acType;STRING;/@acType},{acExpectedDate;STRING;/@acExpectedDate},{acEffectiveDate;STRING;/@acEffectiveDate},{acCheckDate;STRING;/@acCheckDate},{acDescription;STRING;/@acDescription},{acAssignedTo;STRING;/@acAssignedTo},{acEfficiency;STRING;/@acEfficiency},{acChecker;STRING;/@acChecker},{acComments;STRING;/@acComments}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acType</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acType</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acExpectedDate</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acExpectedDate</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acEffectiveDate</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acEffectiveDate</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acCheckDate</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acCheckDate</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acDescription</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acDescription</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acAssignedTo</design:name>
+              <design:position>6</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acAssignedTo</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acEfficiency</design:name>
+              <design:position>7</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acEfficiency</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acChecker</design:name>
+              <design:position>8</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acChecker</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acComments</design:name>
+              <design:position>9</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acComments</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="attributes" id="1653">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">set</property>
+                    <text-property name="heading">set</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">name</property>
+                    <text-property name="heading">name</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">value</property>
+                    <text-property name="heading">value</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">set</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">value</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">set</property>
+                    <property name="nativeName">set</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">value</property>
+                    <property name="nativeName">value</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/nonconformity/attributes/attribute]#:#{set;STRING;/@set},{name;STRING;/@name},{value;STRING;/@value}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>set</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>set</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>name</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>value</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>value</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="report" id="4">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+        </style>
+        <style name="crosstab-cell" id="5">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="6">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="becpg-col-header" id="1479">
+            <property name="fontWeight">bold</property>
+            <property name="color">#339966</property>
+            <property name="textAlign">left</property>
+        </style>
+        <style name="becpg-chapter-header" id="1482">
+            <property name="backgroundColor">#F2ECD2</property>
+            <property name="fontSize">14pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#339966</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-row-header" id="1483">
+            <property name="fontWeight">bold</property>
+            <property name="color">#808080</property>
+        </style>
+        <style name="becpg-col-border" id="1500">
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+        </style>
+        <style name="becpg-row-border" id="1501">
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="becpg-table" id="1502">
+            <property name="borderBottomColor">#339966</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftColor">#339966</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightColor">#339966</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopColor">#339966</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="becpg-group-header" id="1575">
+            <property name="backgroundColor">#669999</property>
+            <property name="color">#FFFFFF</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="headerHeight">0.8in</property>
+            <page-header>
+                <grid id="765">
+                    <property name="style">becpg-table</property>
+                    <property name="backgroundImageType">url</property>
+                    <property name="borderBottomColor">#FFFFFF</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderLeftColor">#FFFFFF</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderRightColor">#FFFFFF</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderTopColor">#FFFFFF</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <property name="pageBreakAfter">auto</property>
+                    <property name="width">100%</property>
+                    <column id="766">
+                        <property name="width">2.0972222222222223in</property>
+                    </column>
+                    <column id="767">
+                        <property name="width">2.4305555555555554in</property>
+                    </column>
+                    <column id="768">
+                        <property name="width">2.2777777777777777in</property>
+                    </column>
+                    <row id="769">
+                        <cell id="770">
+                            <image id="771">
+                                <property name="height">0.5725190839694656in</property>
+                                <property name="width">1.8778625954198473in</property>
+                                <property name="source">embed</property>
+                                <property name="imageName">logo_small.jpg</property>
+                            </image>
+                        </cell>
+                        <cell id="772">
+                            <property name="borderBottomColor">#FFFFFF</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">medium</property>
+                            <property name="borderLeftColor">#FFFFFF</property>
+                            <property name="borderLeftStyle">solid</property>
+                            <property name="borderLeftWidth">medium</property>
+                            <property name="borderRightColor">#FFFFFF</property>
+                            <property name="borderRightStyle">solid</property>
+                            <property name="borderRightWidth">medium</property>
+                            <property name="borderTopColor">#FFFFFF</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                            <property name="textAlign">center</property>
+                            <label id="773">
+                                <property name="fontFamily">"arial"</property>
+                                <property name="fontWeight">bold</property>
+                                <property name="color">#999999</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text">Non conformité</text-property>
+                            </label>
+                            <data id="1526">
+                                <property name="fontWeight">bold</property>
+                                <property name="color">#339966</property>
+                                <property name="dataSet">nc</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">name</property>
+                                        <text-property name="displayName">name</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <property name="resultSetColumn">name</property>
+                            </data>
+                        </cell>
+                        <cell id="776">
+                            <property name="borderBottomColor">#FFFFFF</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderLeftColor">#FFFFFF</property>
+                            <property name="borderLeftStyle">solid</property>
+                            <property name="borderLeftWidth">thin</property>
+                            <property name="borderRightColor">#FFFFFF</property>
+                            <property name="borderRightStyle">solid</property>
+                            <property name="borderRightWidth">thin</property>
+                            <property name="borderTopColor">#FFFFFF</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <grid id="777">
+                                <property name="borderTopStyle">none</property>
+                                <property name="width">3.25in</property>
+                                <column id="778">
+                                    <property name="width">0.7678571428571429in</property>
+                                </column>
+                                <column id="1519">
+                                    <property name="width">2.482142857142857in</property>
+                                </column>
+                                <row id="779">
+                                    <cell id="780">
+                                        <property name="borderBottomColor">#FFFFFF</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderLeftColor">#FFFFFF</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
+                                        <property name="borderRightColor">#FFFFFF</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#FFFFFF</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <label id="1520">
+                                            <text-property name="text">Créé le</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1516">
+                                        <property name="borderBottomColor">#FFFFFF</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderLeftColor">#FFFFFF</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
+                                        <property name="borderRightColor">#FFFFFF</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#FFFFFF</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <data id="1654">
+                                            <property name="dataSet">nc</property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">ncCreated</property>
+                                                    <text-property name="displayName">ncCreated</text-property>
+                                                    <expression name="expression" type="javascript">dataSetRow["ncCreated"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                            </list-property>
+                                            <property name="resultSetColumn">ncCreated</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="783">
+                                    <cell id="784">
+                                        <property name="borderBottomColor">#FFFFFF</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderLeftColor">#FFFFFF</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
+                                        <property name="borderRightColor">#FFFFFF</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#FFFFFF</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <label id="1521">
+                                            <text-property name="text">Code</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1517">
+                                        <property name="borderBottomColor">#FFFFFF</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderLeftColor">#FFFFFF</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
+                                        <property name="borderRightColor">#FFFFFF</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#FFFFFF</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <data id="1523">
+                                            <property name="whiteSpace">nowrap</property>
+                                            <property name="dataSet">nc</property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">code</property>
+                                                    <text-property name="displayName">code</text-property>
+                                                    <expression name="expression" type="javascript">dataSetRow["code"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                            </list-property>
+                                            <property name="resultSetColumn">code</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="923">
+                                    <property name="fontSize">9pt</property>
+                                    <property name="textAlign">left</property>
+                                    <cell id="924">
+                                        <property name="borderBottomColor">#FFFFFF</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderLeftColor">#FFFFFF</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
+                                        <property name="borderRightColor">#FFFFFF</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#FFFFFF</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <label id="925">
+                                            <property name="fontFamily">"arial"</property>
+                                            <property name="display">inline</property>
+                                            <text-property name="text">Page : </text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1518">
+                                        <property name="borderBottomColor">#FFFFFF</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderLeftColor">#FFFFFF</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
+                                        <property name="borderRightColor">#FFFFFF</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#FFFFFF</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <auto-text id="933">
+                                            <property name="color">#339966</property>
+                                            <property name="display">inline</property>
+                                            <property name="type">page-number</property>
+                                        </auto-text>
+                                        <text id="935">
+                                            <property name="color">#339966</property>
+                                            <property name="display">inline</property>
+                                            <property name="contentType">plain</property>
+                                            <text-property name="content"><![CDATA[/]]></text-property>
+                                        </text>
+                                        <auto-text id="937">
+                                            <property name="color">#339966</property>
+                                            <property name="display">inline</property>
+                                            <property name="type">total-page</property>
+                                        </auto-text>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </grid>
+            </page-header>
+            <page-footer>
+                <text id="3">
+                    <property name="contentType">html</property>
+                    <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                </text>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <label id="1576">
+            <property name="style">becpg-chapter-header</property>
+            <property name="backgroundColor">#F2ECD2</property>
+            <property name="fontSize">14pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="textAlign">center</property>
+            <text-property name="text">MÉTADONNÉES</text-property>
+        </label>
+        <table id="1484">
+            <property name="style">becpg-table</property>
+            <property name="dataSet">attributes</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">set</property>
+                    <text-property name="displayName">set</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["set"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">name</property>
+                    <text-property name="displayName">name</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">value</property>
+                    <text-property name="displayName">value</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["value"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="sortByGroups">false</property>
+            <column id="1494"/>
+            <column id="1495">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <header>
+                <row id="1485">
+                    <cell id="1486">
+                        <label id="1496">
+                            <property name="style">becpg-col-header</property>
+                            <text-property name="text">Nom</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1487">
+                        <label id="1498">
+                            <property name="style">becpg-col-header</property>
+                            <text-property name="text">Valeur</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <group id="1645">
+                <property name="groupName">Set</property>
+                <expression name="keyExpr" type="javascript">row["set"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["set"]</expression>
+                </structure>
+                <property name="hideDetail">false</property>
+                <header>
+                    <row id="1646">
+                        <cell id="1647">
+                            <property name="colSpan">2</property>
+                            <property name="rowSpan">1</property>
+                            <data id="1608">
+                                <property name="style">becpg-group-header</property>
+                                <property name="resultSetColumn">set</property>
+                            </data>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="1648">
+                        <cell id="1649"/>
+                        <cell id="1650"/>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="1488">
+                    <property name="style">becpg-row-border</property>
+                    <cell id="1489">
+                        <data id="1651">
+                            <property name="style">becpg-row-header</property>
+                            <property name="whiteSpace">nowrap</property>
+                            <property name="resultSetColumn">name</property>
+                        </data>
+                    </cell>
+                    <cell id="1490">
+                        <data id="1652">
+                            <property name="whiteSpace">nowrap</property>
+                            <property name="resultSetColumn">value</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="1491">
+                    <cell id="1492"/>
+                    <cell id="1493"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+    <list-property name="images">
+        <structure>
+            <property name="name">logo_small.jpg</property>
+            <property name="data">
+                /9j/4AAQSkZJRgABAQEAIwAjAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB
+                AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB
+                AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCABPAPIDASIAAhEBAxEB/8QA
+                HgABAAMBAQADAQEAAAAAAAAAAAgJCgcGBAULAgP/xABBEAAABwACAQMCAwUEBQ0BAAABAgMEBQYHAAgJ
+                ERITCiEUFbcWMThBeBciMjkjUVh1thgZJCgzN0JSU2Nxd5TW/8QAHAEAAgMBAQEBAAAAAAAAAAAAAAYC
+                BQcEAwgB/8QANREAAgIBAwMDAwMCAwkAAAAAAQIDBAUABhEHEiETFDFBUWEVIiMyUhYkgTY3QmJ0dZKz
+                tP/aAAwDAQACEQMRAD8A38ccccNGnHHHDRpxxxw0accccNGnHHHDRpxxxw0acc49q/YXBcIYpyO2bTlW
+                SM1kzKtldHv9WpgvSl9wekelYJRgtIKmMUxE0WSa6yqgfGkmc/oXkD7D5tvFnWXCjaS7fUpyomJgMavV
+                PULa3ESj6D8buqUWaaKgI/4RSWOBg+5REPvysuZrDY9+y/lsZRf+y5fq1n+/9M0qH4/Gqe/uHAYp/Tye
+                cw+OkHzHfydKm/8A42J42+o+n11ajxyrmr+ajxc290m0ie4OftFVTEIU9og9Bo7UBOPoAqPbpTq+yRKA
+                /wCM6rghEw+6higAjyfGY7Zje1xR53HNZzXV4ZMCirK5xeazdmCHvH0KVw6rcnJItz+71KKax01CnASG
+                KBwEA/aeYxGRbtx+Vxt5uOe2neq2W4HkniGVzxx5+NSoZ/BZVuzF5rE5J+Ce2hkqdxuB8ntrzSHgfU8a
+                6dxxyIHYPv1086p26JofYbeadllvna43t0TBWFKcO8fVt3JysM2lkRjIiQQBsrKQkqzKB1iK/KyV9UwJ
+                7DH6rVypRiNi7ar04AyqZrU8VeIMx4VTJKyIGY+FBbknwOddd2/Rx0BtZC5UoVlZUaxdsQ1YA7nhFMs7
+                xxhnPhVLcsfABOpf8crI/wCeX8YP+2LmH/57d/8AzXPlsPMV4x5F2gyb9yMlTWcHBNM79xYItoUw/uFe
+                Qk4Jowak/wBarlyimH8zhysG5duEgDP4QkngAZWiSSfgAev5J1UDd+02IA3Rt0kkAAZvGkknjgACzySe
+                Rxx9xqyzjnMcu2zG9vhTWPGdXzjWIFMSlWmM4u1busc3UP6+iLp1XZKRSauAEpinbuTJLkOQ5DplOQxQ
+                6dy3ilimjWWGSOWJxykkTrJG4+6uhKsPyCRq+hmhsRpNBLHPDIO6OWGRZY3U/DJIhZWB+6kjTjjjnpr0
+                045wveOznXzrDWS2/sDsNCyaCWBf8vVuE+zj5GbVbFA67WtwJTqz1mfJEEDnj6/GSb4Cep/w/tARCkDX
+                /qbOhlGduo3MKhuG3OUTCDeZh6tFUWoOygIh7ivr1NRdvRE32MQqtEKAlERMYhg9g0OW3Pt7Bnty2YoU
+                pOA3oSzq1kqfIYVY++wVP9wiK+R586Ws3vLau2z2ZzPY3HTcBvbTWUa4VI5DLTi9S0ykEcMsJXyPPka0
+                Z8cyJvvquqsm5Esb0gsDtn7xAq77sDHR7kU/5HFq3x6TSKcf5pg8MUP/AFR50+h/VR9cJNyinpnWDaqa
+                2OIFWc0qy0jQzICIgHv/AA80vmplUy+vuOJFAVAoD7EVDehBX4+qGw5XEa7ghDE8cyU8lEn+sktNIwPy
+                X4+vxpWi6y9NJpBEm6a4YnjmWhl4I/8AWWfHxxAefkuB8+fB1qd45Wz1j8uXj/7Zvo+v5h2ArkReZJRJ
+                u0zvTUXWa3F2+X9PijYdrak2MTapA4D6g1p8xYVPQpxH/sz+2ybjjQyWPykAs429Uv1yePWqWIrEYPHP
+                azRMwVx9Ubhh8EA6fsblsXmawuYnI0slVJ49ejZhtRBuOexnhdwjgf1I3DqfDKD40444526sNOOOOGjU
+                QO9/Yyy9UOr+g7rUYGDss/T3dMbsoaxmflh3RbLdq9V3RnQxjpm9AzdpMLOG/wATggfiEkvkA6fvIbv+
+                TW95oWV5nfpFq1YyF4z6mW9+yZCqLNm8stcjZp01aCudVcWrdd6dJuKyiivxEJ8hzn9TDX15l/8ALu2/
+                /eeUfq5R+dnp3ZXBOu/WDrpI7Xq9MztOQw3LFY1lPSqYTksklRoEiy0PXGZXc/LooH9CLqxsY6TROJSq
+                mIYxQE0am9xyFGZeRrpHsFhbVSh9iqO9sL5cjSOi59Ofo68m8VP8SLKKNeoatoyj1wp6Ebs49Vy5cGMU
+                EElBOX1mvw0acc5BsO/4r1/g0bFs+m1DOYt2ZUkeayy6DR9LKoFA66EJDkFWYnHCJBA6reIYPV0yCBjp
+                gUQHkdKL5MuiOjTret1jsnRgl3a5WrRGyt7LRWrpyob2JN20peYKuRS6y6ggm3SSenO4VMRJAqihyFMa
+                NTq45/JTFOUpyGKchygYhyiBimKYAEpimARAxTAICAgIgICAgPpzy18vFVzKkW/RrzMNa9S6HWZy4Wyd
+                eiYGkPXK3GOZeZknAJlOoZNnHtHC5k0iKKqez40kzqGKQYu6xqzuyoiKzu7EKqqoJZmY8AKoBJJIAAJO
+                ou6RI8kjrHHGrPI7sFREQFmd2YgKqqCWYkAAEk8DXLuynZ3Eeo2Uzmy75eY2j0mEAEElXIi5mLDMKpKq
+                Ma1VIND3SNisckCKotIuORVUKgi5kHh2kWyfPm2OPsJ5rvIT5FNPX6+eOzPr1mFZmjum0Y0zxqnJ7pYY
+                UFiNj2G3aAiYYnJ4dL5Grl07rUhBo1k66iMpokszORUIe6rpnZzz5+QeDoNQWfV+ghIy6Oc1mQOs4qeG
+                YtGOm37Q3+ys2qxGzuzyTMjB7ZHoLld2O0vYGlxT5COSrjNluW6VdGcA6G5LH5Zh1WQZrKoM1rvfpNFu
+                4vWkT7dESKzttmipFVWD5VHB4uDai3ga+g4Vaw0e0TVXMvjaZLcHUq9bgwt6xgNm0p2rT5SuCmTzMqcG
+                SOq54aCEqQeAVCRyK1gTvJ7WL5/jy+6OruRvVtvZG1tfp/jrLU7OZqAx5jPzJwZIqch7XqwMjKeAVEcM
+                qNbWzJJ7OHMLhH0yW46k6DRO7PZotZsU+qSTnqxR03Wp394u4KArksumWmQaQrWbR9oEXVjoy+sFR9BS
+                lVSk9TWZVX6aPxwwDRNCac9gbw5KUoKvrFp0UwUUOAf3zFRp9LrDdMhh9faT4zmIT0KKhzAJzaDOONdD
+                ppsuhGFGFguyHzJYyTSXppnPy7+sxhVmPlhDFEnPJCgk6eMZ0h6e4yML/h6tkZj5lt5d5clYnc+Wkk9w
+                7QK7HywhghTnkhASec89w+mc8ddhZqpV6X7C0F4JB+B5AaPAyqaav7yCu1t9HsQLo+voCiSazZQ5PUCO
+                EjiCgVh7Z9Nl2qwSSHUeivZgbjZIAVX0PDPnsjhmsMhL6im0q17g511W5OTOJUzC5k5LPGnoJg9/uTIC
+                21Tjn5f6abMvL+3Dx4+YEGK1i5JKM8LjyHjETegWUjkerDIAfIHOo5PpB0+ySftwMOLsLwYbuGllxtmv
+                IDyssQgf2zOpHK+tXmUHz28+dY7fHb5X/KHROyML0i7V9cdR7E2hN22YyLZertqhvtAgQVTbDbpibkSw
+                VIt1HbJmI5NZ7q+hUZRNylIf2nOEFWqDqKn1SX8c+Jfy/wCqdVf1g2n/AFc3ag0aA7O/Bq3B8o3TaKPQ
+                RTB2doioqsk1O4AvzGbpLLrKpoicUyKLKqFKBlDiOEr6pL+OfEv6Tqr+sG08Rd/YXIYLp5fp3s9dzq/q
+                tA05b0cazVawmISBpgzzWXHy8s0hHhViiiQFTm3U/b2T230ryVDI7lyG5UGbxjUZslFEtinTE5EdZ7Ct
+                JPccfLzzykeFWGGBAVazLrT9Or0H1zrjgGrWmw9iUrPp2J5VoVjSiNDqTSKSnrpRIGyS6cY0Xzd4u2jy
+                SEk4KybrO3SqLYEk1HK5ymVN1Wa+mE8fcgzVSitB7SQLwU1AbvG9/wA6fpkWEo/Edw1kcjXBdEh/QVEU
+                V2iihPcUrhIwgoW5Doz/AATdPP6Wevn6S1HkpuPVDYWzZsfSeTbuMZ5adZ5H9DhmZ4UZmLKwIYkkkgg8
+                kn6nWk4zplsCxisdJNtTDvJNj6byye27Xd5K8bO5dWDBmYkkgg8kn5OsPHZX6f8A7mdLHa3YHoVuNq1B
+                zTU1pQsZTTyeYdgYNgiQV3g10sBMLxt+RTRbiZ7GxMhDTksB0o+Np00cxyGm94gPPFN7Tc611N7uuGDD
+                V5t62q+YbQnHt4Brd7F7haNqTpUSgVtHQt3k3ZSsoCdimUdFWGRURgpCLjp47V5YNVPMG31KfVqo4J2y
+                y3sBm7BKqB2Ur1mnrQzhynYJm1bNZaBSsNxZC2FJNi+sMXbag8kfwZUlV7EylLA4VVkZp0sKZuXBTdN0
+                XdW0Z7EGMhs10zW3p7Es2PsQWJUgWaH1mkkil9V0i7yZJIzKrxOsaSQy5/u7bc/SSNd67Fs2a2HguVo9
+                w7Vs2p7GLs1rc8ddbFb13lkgm9aSOHvZpZImmSSF0hjkrzbyeZifLZ58onrfM2brd03VgrnuMUo7hb9r
+                TxFtO0nKJYgGQcwNajzirH3PQotUTlkjPwcVOpyKJIyTZ2WWTmISF+D3W8t11zfw59XdGrVgPH9nu4eZ
+                MKaxske4OjI189UikIPb9Ni1CgCjWWTkSoRcIdFVN1Czt0YzDNwspAGBWIX07/i6rOmJF79dga+hZIWI
+                sr+N68VGdbleRUpZK6+M2n9clmrgFEJQtenkHMBTEHQLIoWaMn55w2K+h649LZ7i3XlM7kcbtLZsvtru
+                ToV8nksuw/dicZahisIUCklLL15onLghlM9aKB1mn9WC43XvfMblyuI2P0/se0yGYxlXMZfOsOWweHuV
+                4bUZjAJMduSrYhkaQEOhsVIa0iT2BPW491J8HnczyHz6PZ3vxrF9zes3UW8umtdFHVm3+9w6wgs1FhD2
+                E5o3M60duscsCawNl12LYiARmfDBOGL0+lDCPCr41sCYskojrPUNJmmxE/xNp3Eqmtykkul6e144iLYD
+                ulR7j7AIlr9ThWvvAFAbAoInG1LjjLgun22sIgkNGPK5Fz32MplkW7bnnby8q+uHjr9zE8CFVfg8SSSv
+                3OzdtrpZtDbkYkOOizWVcmS1mc3GmRvWLDHukmX3AkirFmJIFdEcg/yyzOWkbikd1r65w7QrCIwHFIti
+                QnxkZR2V0Vi0In9v7hWzaBSRKT7B/dAgF+wfbnHtM8dnRHX2TlnoPUbr9MHdEORWVZZhVq1ZSlU/xg3t
+                lWj4WzsxMP8Ae9zSXQMBwA4CBgAQmZxxplxmNnjMU2PozREcGKWpBJGR9ijxlSPxxp1mw+JsxGCxi8dP
+                AR2mGalWliK/HaY3iZCOPoRxrLH3D+mMw+5xsrZumGgzOO3AiazhjmukSUndMvklC+4UY1laFk32g1L3
+                iYffJSbnQSG+NJEI5sB1XRZIeFfrp5X8BRs9Z7k6HHtcCrYSNaouWXmXaanooyEYqLNpN0e8Q0+4LTs8
+                ICRSx0VOyllQfsURShabV0XSFhW0GccWauwdvY/NQ5zFxWsTPGHEtTG2pKuOt93HaLNROVMaHyIIWhgZ
+                uDLFJx5T6fTLauL3DX3HhYLmDsxBxPRxFyWlir/d/QLlGP8AjMUR/ctaAwVnbgzQycaccccdNaDpxxxw
+                0aq68y/+Xdt/+88o/Vyj8iV46PGPQ7rmdM7MdwY91tejaLWK7LUuqXp6/laxSs7SiGbajNXsM5VKhNv3
+                FaSYqt42VI5r9fhVYyIj4ZB4yXeKy18y/wDl3bf/ALzyj9XKPzv/AEC2Smbf1Ewu0U2RbOyweeVOiWeP
+                TXKq7rtxpdei4KwQkin6EVQWSctSvWYrpImfQ76MlESC1ftznNGuf7f4velW10+QrYYfRcvmFGiqcJdM
+                jrMNQJ6Cf/GJGz8UK6zYRE8RI3p80fYY+TaOExP6FRc/C6RgZ1E7j6H1Pr/cDq92ll3F5t3Smlyd7z+w
+                uHaoyV7zpAI1rXoEz9+qu6+B87s1BGprvzunjGJuSUO8OmhX2iPL9znImQyihikIQpjnOcwFIQhQExjG
+                MYQApSgAiYwiAAACIj6BzKdp9VlO83Y3ymaxiqC9golU68RmeV+ahiqOEbvaKTNZdOFZQa7YBSmk7Ajj
+                9wPDg0O4/GsVq6oUDJyTYTmjUs+jXSBv3Ibj3u72C41q3au5eSea5rLOXyFFqVHbSLxvDrKwiTspXEcu
+                JHB6vV1VlYFnBKoy8qhNTs0q4jea+RiodT7Xa4bpJ1G6oZFbe1VpesUpGdziqxdJZY1HtzJunL+yzNKL
+                BN3UwRgYziRY2FdzBwEUcZSyoruDRkY8+lzHyKX++dU+sHTjpNW5Wb7TTeZxWfWywLRx2cNjcLTiHqju
+                0qSDhE8ceQfRUe3sKM4cV4uux8g2dOgdWVdrDJ2+dHOjND6a0h4VJ2N52i7+klrGuSpFXE1Z5dwsL51H
+                Rrl6ZZ8yrLZ+oqui3VWM9l3ommZtVw/USI0NGuh9Muvc91e680TG7No87p03XGqqj6dl3Ci7CNWe/Gqe
+                s1FNymD9pTYExTNYFtIqrugSFZYCx7ZZtER1Xv1HWwy2XeNqdrcM6VaLbjrmd5I/WbmMRwEICNh0yVRK
+                qQxTpt5BHNyRL4AESuGUi4ZKlMi7UKN3lTvlHvrZ+8o1yqlzaRcg5iZN1VLDEWJvHSrJZVs8jXy8Q8eJ
+                tH7Vwgsg5ZuDJuEFkVU1EynTMAUMfUvZvLXbx0R1qi26iyORdgc3vU+qmmJwbQEvC3XMxUVEB/0aRrDf
+                66QVPQQA4kIIABxMCnvtp02buRq3d6oxNsErz3CExlbBBHkcVzKSR8DnSP1Le0mwN3NU7hMMHeBKc9wg
+                aIrbI48gCqZiSPgAnxxqOH0tWEwUL187Adj3LJE9tv2qI5LHPVUyncMqdntagLM4TYrD6mQbzlivKpZN
+                Egl/FK1eKUWAwNW4l1Q8zJ/S6atC2Hp7tePg7SG05nvDq1OmAHD5U6npVNrSMA8MmI+4QXn6TckDHKHs
+                AGyRR9DmETabOcfTZKybH297UL2NTd5CvHmy1iY2ixHywseop58jjt+nGuDpGlSPpztUUwnptQd5SnHm
+                29qwbpY/Vxb9ZW58grx4AADjjjjxrR9OOOOGjTmEL6pL+OfEv6Tqr+sG083e8whfVJfxz4l/SdVf1g2n
+                mWdY/wDYi1/1+P8A/frFuvv+7q5/3PFf/QdbF+jP8E3Tz+lnr5+ktR5KbmOzr/8AUx45jWD4nkEh1d0y
+                bf5Tkeb5s+mWV7qzVnLvKNTYasOZNo2Xi1Fm7Z+tFndoILHOqikqRNQ5jlER6FOfVZZkgzVPW+m97k5A
+                EziihOa9X4JmZX0H4wVdsKRYlypib095iMjmKHr7SmHnVR6mbHgoU45c/CrxVK8ciCpkXZXSFFdeEpty
+                QwI/bzyR451243rB04rYvHxTbnrpJBQqRSoKOVkZZI68aOvEdByxVgR+3u5IPHOtaIiAAIiIAAB6iI/Y
+                AAP3iI/yAOfn++fft1A93u6Wc4d19UPpUBh7R1ltff1Qn50S+bHoNhjU7Sxph4864TrBJxFVCoxy7RMx
+                ZOwRcwpGqPoxeMeOOgap5I/Lr5cUpHGur2LWWg5VYQPF2GOxOPmmqUjGOgO1cxmlb9ZnEVDRcM7BRdo9
+                YtH1EiZhmZWNl2UskKqal0/iV8F9R6TSsV2A7DycBqHZVFt8tVjYhNdzQcZO8aqIPFYJw+SbrWq7KN11
+                Wq1qdMGTGFIos1rbEypRsT9azmUyHU5Itv7bpXK+3JLMMuX3FervXglhgkWVYaEUnDTsHVJAviVpViEi
+                QQB5mUNyZnJ9Y0g2vtHH3qu1JbdefO7ryNWSpWmgrSrMlfGwzBXsMJESUIQJnnSFZY61YSTvmu81Wez/
+                AF7t/SHqbLvAcE699GMvjJVNA3uYKaLbbff5bSJSP9oikZq/mGbNqgqT3HVbRjcVllVAES7u+h+fw2W9
+                KuqFDgW6DdhX+vmTJqC3KUpHsq/pMNKz8scCCJBcTc6+kph2cn9xR0+WOUAKYADKj9U7hUvGbR1v7JtG
+                SylduGbymMzL5FM4tY+xUSxy9yhEnyvp8aTufiL3LhHE9fe4QqkiPp7WnqOi3w/djoLsz48+t9qjX6Lq
+                wUGhQmLX9mVUFHsbc8oimFTcmkiAIgi6sUKyhLmiQB9Bj7KyOBU/cKSctk14MV1J3li5F9OYUaQxoc8s
+                cbAlYJHGx/rCwPTBC+eIm8fxt2z6d1q+G6udQMPKvpTjHY4YlZTy7YmrHTWOOJ24MgWtJQBC8niFiR/E
+                3bZlxxxzbNfRGnHHHDRpxzmG3Kqt8Y11dBVRFdHML8qiskcyaqSqdUljpqpKEEp01EzlA5DkEDFMAGKI
+                CADzDv8ATdaHf7R5EJGMst5uFijg69aW5CPnbNNSzIHKU/QipOAaP3rhAF0yqKFTVBP5CFUOBTABjeqj
+                nd1phM7tzCNRaw24Z5YFsiwIhVMTwJ3NEYXMwb1+eBJHx28cnnkIm5N7x7d3JtLbrY57bbqszVktraWF
+                aRhkrR97QmCU2O73APaJIeOzjk93I3r8cccbtPenHHHDRqH3fLrpaO13V3QsLps5AVyxXB3S3DGXswyJ
+                YVqWtXevWd2V2MUykHwGXaQ67dv8LRUPxKqQKCml71C1ttPFV2M63rxN66F9mUcpuUjV6yz0zO7mL+Zz
+                C0WmKiWreZlo1w+g7QVVg+k/zN3FMLLTZF9EDJOSxk7DtFisWshdE7P7vd9Zyak53QKlVLzS+8Voz9Om
+                W3aLxWoLU8dV6pdzpWqaBc5GAxmWR/ZO4Os8SvdLiKwx1apK2qrs69MXGv6RRLnC0f7R/wB8djudXl7b
+                h2LZY+b5j1YzftJscJsW2yefOiNdIS1FRpmtEm4TNbfHnWhAxq+hKancWcDSln6EFFxbB8Re5SlANGo2
+                z3UDy0dlGalA7I9tM1zvIpIv4O1x2QRYDY7JGqAKbxgsnEU2lneMJJt727tlJ28kSoRf1dwL9Mp2w2yd
+                butuV9VMshskyOGUjK/GqKvpGRfqkd2C0z7siRJGy2WSIigD+XfggimYyaLdmyZt2kZFs2MWyZs0IAXH
+                yc2uCgLVN/2KU6oRBtaxfDs3uV+12WUgbFetN6b1bujZ3c1XKjls1bkoupUqwOc7oleqTS233btiRr9G
+                rlZrZbW2mI6x/CrfpN+yal3HXc4aZJoc/HOHthzpnaC3D9mBGSepRbV9Mkiocicy7hUo6SnoJNs6JVZp
+                6/q5JuxlhwsEmaNVa7R4utCpuxTPY7x77Wh1x0mxmeq2iiSzVRbM51eQcC+f/h0kYqxNGEU8fkTfqVOY
+                qFmryMkKbyIJBJM2rQnh5fq55j91YGz/AGjttlGbZvJJGj7VJZfGETt01GreiLsiAV6h0x6sk7bGXSdR
+                5bjWo94iqds8bLIKCmSXiXcLcVs227ss0x/JXfW7LIztUpFM1tjskfuEw96tv9HrTtxKV5vlM1R4st7u
+                uYWCJGuFtyk9ntecRk7PmlrOE/nld8mn3s3ea7AVDr/W+u9A/bpklmzraKRJbVKubXRoq+MIq02i2s3s
+                Vlq1fbZ7kdDn4JaXu9mWi2Wna+/cYbmDKVkIt5dQNGpX9TupeTdOsubZllce4MVw4LK2y2S5kV7LdLCK
+                CbdWXmnSKSKRE0kiA3i4pmkjHRTQBTbImcLvXbvoe8YvSuxWM6bhmiszPaVqdNm6bPERBIHjRvMM1EEJ
+                aMUWTVTbzMG9/DTMK8FM4spZgzdlKJ0S8hV/y09qWnazc47Hclede7n21snUCGfv9tmIXaGFnqO0WzBZ
+                a/yFM/sxlanIRzq/0W0Hb51F3A1viqalFWqdkGUmpaKfTo7x/kN7L1epZfRHuR5jo/ZTSLb2bewdLR1q
+                ZSQu0NmXYa05pTM0zRxHYlW3s3a1GzVVK0XSeqtdz7IcupT/AGLWbOP5gEKt5yxRzxSwTIssM0bxSxuA
+                ySRyKUdHU+CrqSrA+CCRrynghswzVrEaTQWIpIJ4pAGSWGVDHJG6nwyOjMrA+CCQdZUML0Xf/Ax5GpmA
+                02BkZqpoiep6JFRyZm0VsWHzkkVzB6FRFHipWS0k0OxQsNdFV0mpHzsdNUScexh1rEmj+gdiG45V2OzC
+                q7Hi1ziL5nlyj038LPQ6/vKBhAAdxkm0OBHkNOxTj3sZqClEGsrESCKzKQaoOEjphFrvL4+MM8iuMxtJ
+                3KCQgbxExxpGiaXT3KUlZcyssi0bmfkgZl2wiwtFSeOUkUJmClmDGPsrJs1fA0g5xrEycRkDm8O8svgb
+                0advmXryF46/vJD8XOWmuREndsCvEW1OUjVXVKUmsWVzWwFaA3aHmnK9fkmqh3EVVr7MR4ulHGL1VzPS
+                yzZganbzWxbNh7MNiqvrXsE0hHeLEXILQDgCRyVhkIE6SRWHlry/PlJc90VuXKz0b24em1yzJbr2qSmx
+                ktsvKR6i2YSQXreAJXLJBKQtlJYbUk9WffzxzMh1n+p36r3uPjors5m99wa1imilI2KrNFNQzVVQoexd
+                8Q0Um0v8UVc/oulEp1CyC1SMZA829USKq4tIq3mE8ZVwapPInuVkDRFYhTkJaX8zRnRQOHqALMbrDV96
+                3OH/AIk126ZyD9jlKP25omP3rtPKRLLU3BiyGAPpWLcVOwvP99a20M68HxyY+OfgnWq4rqHsjMwpNR3R
+                hj3gH0bN2GjbXnjw9S61eyvBPBJi458AnVk/HKzrj5j/ABjUdmq+me42VP0kSCcyVPPY9BeHAPUPakwo
+                kDY3ipxH7ARNAw/f1H0L9+VLdn/qhMDqTGRhep+P3DXbP7FUWVy00gZ9nbRYfd8MghCNXL+82VuQSl+W
+                Let6EsoU/qSUTEglNHJb42liomlt5/GkqCfRrWY7tliPgLXqGebz8AlAvPywAJEcv1G2NhIXmvbnxBKg
+                n29O5FkLbEDwFqUWsT/uPgM0apz8sACRqa5hC+qS/jnxL+k6q/rBtPJV+O+2eejuD2Zh+0spe5HLsMlT
+                Mm1gbbFV3sPg03RAc/iywuZ4ci6hZuzPRROoWKv0G9hZBdVI6E3q5jqOWz2Kn1SX8c+Jev8AsnVX9YNp
+                /wDnmab/ANwruTp7fvRYvKY2sMrQSs+TgSA3YfW5SzXVZXYxMPBLAL3HhHk4YrkHU/dS7u6V5LJQ4bM4
+                moubxkdN8vWjrHI1/XJS3VRZpHaFhwGZlCBj2xyS9rFdR3S/qD1Mn+nfU+ener3XabnJvrThMvMzMvie
+                ayUrLysll1WeSMnJyLysrPH8g/eLLOnr10sq5dOVVV11VFVDGGVcV1I6pQK4OoPrJ17hnICAg4isXzeO
+                XAQ/cILM60ip6h/Ifd6h/LnnejP8E3Tz+lnr5+ktR5Kbmt4vHY/9Px7+xp93sqp7vbQ93Jgj5Pd2c8n6
+                nnk63PDYvGfpWKf9Ood/6dRbv9nX7u41ouT3enzyfqeeTr/Bq1asWyDNk2bs2bVIiDZo1RTbtmyCRQIk
+                iggiUiSKSZAApE0yFIQoAUpQAADn+/HHLoAAcAcAeAB8AfbTCAAOAOAPAA+APtqIPerp1n/evrVfevN/
+                OEaWwIozFLtqbUjx9Q9BhSrq1a3sEDHSMt+CXXXj5dkm4anmK3JzcJ+Lakkzrp4f+oHaHs34Ie490x7f
+                KRNPc1sD2OZa3nzJb5WNor6K7hGs7Pj0q8FnGSb9uzO7PGLKKM2NjjTyNQs35HOsEHlW/Q+5DXun0M63
+                99c3/s832nBIuIwrxWlX+BURitCz2SeJkItIVSwmbufjRcCkgeRgpVrKVqYM2aGlod4qzZKts/3js+zl
+                rNLcGAtrjd0Ykf5Sy3iC7ACxNO3wG/YQ8io5R0KSywTI0UgaLLt/bCt5y5j907XuriN54Mf5K244rZCu
+                C5NC9wr/ALCJJUjkZJIzHNNXsRvDKrwdc6+djsU7T5pC65g2gwOiUabTIBJGHc/9NiZD4UlnEFZYdcEp
+                WtWJgVZP8fBTbRlJNQUSUO3+FZFVTt3MLujeIPyr+MjRZLYeg+i2rVqomf3jJ5CqmyvruHaqHcNYjR8M
+                mlZKKv6CKpvahHQiGhM3SxQkFIiHVUK3Q6jm31MPa7F3xaJ3C6kQdks0SVNrJOIxxacEvSQFMJDvZ2qW
+                eBuMa4kDGKf3oR8fUmJzl9qaLb2m9a2r1KjxvbT3viMhtrIJwj2faz28TZYDgyVLFcTuVYgnsRbCIPHu
+                HIbiop9XosSUodRcFlNo5NOI5LfsrF7B3HUcGWlaqLYkKOwJCItmOMePdyEHjajxzLZH/VRdYlWfvles
+                u8spD2ev4WPmM+k2fyf+T8c5m4hf2fv/ANJ+Xe7/ANr7/bkOifVYVxNqo3yXp1NyD9UhyoyWiawxiWrR
+                X7gkdSCrVOmlpIgj6e9IliizB9wKsb7Dy0l6n7Fij9Q5+BxxyFiq35ZD+OxKhYE/8wAH1IAOrqbrJ01h
+                iMrboruOOQkNLJzSt9gI46TOCfj9wUD/AIiACRqe3P8A7kti/wDqzQf+EpfmEv6Z7/Mdkf6dNP8A+IM/
+                512xaX54vMGX9kq9SrRjmB2Q50ZAsDCzGB4u6hnRfYqM/ebM5dXnS4gEDJBIV+Jl7i0XOIOEaqUwgBL6
+                /FR4Wc78dck616031/q3YyfqzuqyM9GkdwOe1GBlnEc/loKqQKiov5tZy8jGZHVpsxyru27RAYuu1kyr
+                9N4oSzX9+bu2tmMTh8hUwe3rEs82UysYpR3FleCQinCxeWYcQAIydwYv/L6AXlkOefJ9TN9bLz2DwOUo
+                7c2rams2Mzmohj4r6zSVpCMfXYvNOOKwWNk7gzSfzisF5a7/AI445tuvorTjjjho1yCtdfsPps24slTy
+                agVufd3yT09xMQlXiY2RV0KZhbZXZW3mdNWySoTkhDX28snTwpgOsW52tYwC4sMus78NfemfU/UmdUj9
+                F675FdWFIhVazV2Njo8HKM4yrLvUZNaqC1ctDoPqopKtmsuesSRHkCaYaM5YY/8AMWjZylJjjho1xid6
+                6YRZ6VYs5sGSUKXo1sk61N2GsPa5HLRUlO0uBqVYps+dAUfVCfqUDQqTG1icamQla+jU68aJdtFolkoj
+                9lmOGY5i7UrLJszpedNQgo2tGSqMBHwgLwkTPW21MmTozJFI7v22i+3WyOXLoyzt/P2ufmX7hzIyjxyr
+                1Xjho1HB50/6tSN3uGkv8Ayh5etAi7TD3KzOKXCqyVgZ3mC/Ze8HfHO1FIZC61kCVy3zCSSUvZ4FJGHn
+                Hz+PQSbk+70HrH141e7VvSNKxfOLxe6ilEt4G1WWqxUrMNWlemVbHW2Tly5bnGUYViyLr2WsMJYHzOt2
+                RdawQaDCYVUem7pxw0ajk86g9XJDVC7e+wHKHetksLK3o6A4pcKrZG1yYEYIt7ozfHaiLO5i1ioyPc25
+                qVGxvoqOYxL2TcRrRBqn8zQeqXWzVoCEq2j4hm1ygK3L2udgIycq0a7RiJK+yDyUvh2JxRKsg1vT2Qeq
+                3WNIqEbbSulkLC0kW5xS5IHjho15SoUSl5+weRdGqsBUYt/IfmjuMrkWzh49WQ/L4+KByDFgkg1TOSMi
+                o1gmCSRCJtGLVBMpU0SFD1CiaayZ0lSEVSVIZNRNQpTpqJnKJTkOQwCU5DlESmKYBKYoiAgIDz++OGjV
+                a+7+ILxydinr2Yv/AFcocZZHyijhxZ81NMZPMrvVfX5JB+OdSVbjpt8oIiZVefj5YVjj8ixVFAKYK+p7
+                6Yjx4zDwzqPvHaeqoGEwhHQOj504ZkAR9QKU9nx6xyAgUPsX3vjm9P8AEJh+/NFvHFq7s3auRkMtzb+J
+                llY8vKKcMUrk+eZJIVjdz+XZjpQyGwNk5WVp7+1sJPO57nnGPghmkY/LSywJFJK35kZj9OeNZ2619Mf4
+                7IJ6R1KWzs/c0CnKc0dZdKorVkoUogIpHUp+UVSQAh/T0MKb8igAI+xQg+ghZH1+8WPj+6xvGMxknWHO
+                mVmjjlWY3G4NpHS7exdlEphfRdi0V/aJKDdmMX1+SBWjCplMZJEiSJhTGwHjkqO0Nr4yRZqOAxUEyHlJ
+                hTheZCDyCk0qvIh5APKMNTxuw9mYeVZ8dtjC1rCENHYFCCSxGR8GOeZJJoz+UdefrpyvLtz4temXePQY
+                DUOxuez1tuVZprOhREhFaBdamghWWM3O2FsyUj63NRrJdUkrZJdcXiyB3RyOCInVFJBEhLDeOW97H0cn
+                XNTI0616szK7V7cMdiEuh5RjHKrIWU+VJHIPxq9yWLxuYqtSy1CnkqbOkjVb1eK1XZ4z3RuYpldCyN5U
+                leQfjXkM+o1bzChUjNKczVj6hnlQrVGqrBd25frsa3UoZlAQbNZ+9VWePVW0ZHtUVHbtZVy5OQVl1VFT
+                nOPr+OOdSIsaLGiqiIqoiKAqqqgKqqB4CqAAAPAA4GuyNEiRIo0WOONFSNEAVERAFVFUcBVVQAoAAAAA
+                8acccclqenHHHDRpzyVvoNE0KO/J79SqleIn1MP5Xb65D2WO9TAAGH8FNM3rb1MAABh+L7gAevr6Bz1v
+                HIuiOpR1V0YcMrqGVh9ipBBH4I1F0SRGjkRZEYcMjqHRh9mVgQR+CCNQ+f8Aj16Dybkz2Q6SdSnbs6gq
+                quVuumQmWXUH953Cn7IAZwI/z+cVPX+fOoULrF1rypyi8y/r1h2bvGwgLd1QsmoVPcoCA+oCivXoCOVS
+                EBABASHKID9w+/O48c5I8bjoX9WLH0opAeRJHVgRwfv3rGG5/POuCLEYmCT1YcXjoZQeRLFSrRyA/fvS
+                INz+eedOOOOdurHTjjjho1//2Q==
+            </property>
+        </structure>
+    </list-property>
+</report>
