@@ -488,7 +488,7 @@
 								}
 								else
 								{
-									html += $html(data.displayValue == true ? booleanValueTrue : booleanValueFalse );											
+									html += $html(data.displayValue == true || data.displayValue == "true" ? booleanValueTrue : booleanValueFalse );											
 								}
 								break;  
                            case "cm:authoritycontainer":
@@ -574,7 +574,11 @@
 	    				  regexp = column.constraints[i].parameters.expressions;
 	    			    break;
 	    			  case "LIST" :
-	    				editor =  new YAHOO.widget.DropdownCellEditor({dropdownOptions:column.constraints[i].parameters.allowedValues});
+	    				if(column.repeating){
+	    					editor =  new YAHOO.widget.CheckboxCellEditor({checkboxOptions:column.constraints[i].parameters.allowedValues});
+	    				} else {
+	    					editor =  new YAHOO.widget.DropdownCellEditor({dropdownOptions:column.constraints[i].parameters.allowedValues});
+	    				}
 	    		      break;
     			  }
     		  }
@@ -595,7 +599,7 @@
 	          	   	editor =  new YAHOO.widget.DateCellEditor();
 	                   break;
 	             case "boolean":
-	            	 editor = new YAHOO.widget.RadioCellEditor({radioOptions:[{label:scope.msg("data.boolean.true"), value:true},{label:scope.msg("data.boolean.false"), value:false}],disableBtns:true});
+	            	 editor = new YAHOO.widget.RadioCellEditor({radioOptions:[{label:scope.msg("data.boolean.true"), value: "true"},{label:scope.msg("data.boolean.false"), value:"false"}]});
 	            	 break;
 	             case "float":
 	             case "int": 
@@ -665,12 +669,7 @@
     		                        	 value = Alfresco.util.fromISO8601(data.value);
     		                              break;
     		                          case "boolean":
-    		                        	  if(data.displayValue == scope.msg("data.boolean.true") || data.value == scope.msg("data.boolean.true")  || data.value){
-    		                        		  value = true;  
-    		                        	  }
-    		                        	  else{
-    		                        		  value = false;  
-    		                        	  }     		                        	 
+    		                        	  value = ""+ data.displayValue;                       	 
      		                              break;
     		                          default:
     		                             value = data.displayValue;
@@ -718,15 +717,8 @@
     		            	var oDisplayValue = oNewValue;
     		            	oSelf.value = oNewValue;	    
     		            	
-    		            	if(oSelf instanceof YAHOO.widget.RadioCellEditor){
-    		            		for(var i in oSelf.radioOptions){
-    		            			if(String(oSelf.radioOptions[i]["value"]) == oNewValue){
-    		            				oDisplayValue = oSelf.radioOptions[i]["label"];
-    		            				break;
-    		            			}
-    		            		}    		            			
-    		            	}    		            	
-    		            	else if(oSelf instanceof YAHOO.widget.DateCellEditor){
+    		            		            	
+    		            	 if(oSelf instanceof YAHOO.widget.DateCellEditor){
     		            		oDisplayValue = Alfresco.util.formatDate(oNewValue, scope.msg("date-format.defaultDateOnly"));   
     		            		oNewValue = Alfresco.util.formatDate(oNewValue,"yyyy-mm-dd'T'HH:MM:ss");
     		            	}
