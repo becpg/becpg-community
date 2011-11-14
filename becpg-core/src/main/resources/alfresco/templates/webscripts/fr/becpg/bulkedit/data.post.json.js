@@ -3,8 +3,9 @@
 <import resource="classpath:/alfresco/templates/webscripts/fr/becpg/bulkedit/parse-args.lib.js">
 
 /**
- * Main entry point: Return bulk edit data list with properties being supplied in POSTed arguments
- *
+ * Main entry point: Return bulk edit data list with properties being supplied
+ * in POSTed arguments
+ * 
  * @method getData
  */
 function getData()
@@ -31,37 +32,81 @@ function getData()
       }
    }
 
+   
+ 
+ 
    // Try to find a filter query based on the passed-in arguments
    var filter = parsedArgs.filter,
       allNodes = [], node,
       items = [];
-
+	   
    var filterParams = Filters.getFilterParams(filter, parsedArgs),
-      query = filterParams.query;
+	      query = filterParams.query;
 
-   // Query the nodes - passing in default sort and result limit parameters
-   if (query !== "")
-   {
-      allNodes = search.query(
-      {
-         query: query,
-         language: filterParams.language,
-         page:
-         {
-            maxItems: (filterParams.limitResults ? parseInt(filterParams.limitResults, 10) : 0)
-         },
-         sort: filterParams.sort,
-         templates: filterParams.templates,
-         namespace: (filterParams.namespace ? filterParams.namespace : null)
-      });
-      ///TODO  add type here
-      for each (node in allNodes)
-      {
-         try {
-             items.push(Evaluator.run(node, fields));
-         }  catch(e) {}
-      }
-   }
+    var nodeRef = parsedArgs.nodeRef;
+	if(nodeRef!=null && nodeRef.length >0){
+
+	   // Query the nodes - passing in default sort and result limit
+ 	   // parameters
+       if (query !== "") {
+			  
+	    allNodes = search.query(
+			      {
+			         query: query,
+			         language: filterParams.language,
+			         page:
+			         {
+			            maxItems: (filterParams.limitResults ? parseInt(filterParams.limitResults, 10) : 0)
+			         },
+			         sort: filterParams.sort,
+			         templates: filterParams.templates,
+			         namespace: (filterParams.namespace ? filterParams.namespace : null)
+			      });
+			
+		   }
+       
+       } else {
+		  var params = parsedArgs.searchParams;
+			  
+			  
+			var  formData = params.query;
+		    var criteria = [];
+			var datatype = "";
+
+			if (formData !== null && formData.length !== 0)
+			{
+		     var formQuery = "",
+		         formJson = jsonUtils.toObject(formData);
+		           
+		     for (var p in formJson)
+		     {
+		   	  var propValue = formJson[p];
+		   	  if (propValue.length !== 0)
+		   	  {
+		   		  criteria[p] = propValue;
+		   	  }
+		     }
+		     if(formJson.length !== 0)
+		     {
+		   	  datatype = formJson.datatype;
+		     }
+		     if(parsedArgs.itemType!=null && parsedArgs.itemType.length>0){
+		    	 datatype = parsedArgs.itemType;
+		     }
+		     
+			}	
+			  
+		   allNodes = bSearch.queryAdvSearch(datatype, params.term, params.tag, criteria, params.sort, params.repo, params.siteId, params.containerId);
+			   
+			  
+	  }
+	      // /TODO add type here
+	  for each (node in allNodes) {
+	         try {
+	             items.push(Evaluator.run(node, fields));
+	         }  catch(e) {}
+	   }
+
 
    return (
    {

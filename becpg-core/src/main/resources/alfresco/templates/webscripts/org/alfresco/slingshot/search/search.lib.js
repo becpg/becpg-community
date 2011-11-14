@@ -102,7 +102,7 @@ function checkProcessed(category, key)
 /**
  * Returns an item outside of a site in the main repository.
  */
-function getRepositoryItem(folderPath, node)
+function getRepositoryItem(folderPath, node, metadataFields)
 {
    // check whether we already processed this document
    var cat = "repository", refkey = "" + node.nodeRef.toString();
@@ -145,6 +145,19 @@ function getRepositoryItem(folderPath, node)
          item.type = "document";
          item.size = node.size;
       }
+      var fields = [];
+      if(metadataFields!=null && metadataFields.length>0){
+     	var splitted = metadataFields.split(",");
+	         for (count in splitted)
+	         {
+	            fields.push(splitted[count].replace("_", ":"));
+	         }
+      }
+      if(fields.length<1){
+     	 fields.push("bcpg:code"); // avoid empty
+      }
+      item.nodeData = getFormData(node,fields);
+      
    }
    
    return item;
@@ -673,7 +686,7 @@ function getItem(siteId, containerId, pathParts, node, metadataFields)
    var item = null;
    if (siteId == null)
    {
-      item = getRepositoryItem(pathParts, node);
+      item = getRepositoryItem(pathParts, node, metadataFields);
    }
    else
    {

@@ -123,10 +123,21 @@ var ParseArgs =
       var objRet =
       {
          itemType: (args.itemType !== null) ? args.itemType : null,
-         searchQuery: (args.query !== null) ? args.query : null,
          nodeRef: (args.nodeRef !== null) ? args.nodeRef : null,
-         filter: filter
+         filter: filter,
+         searchParams : {
+		      siteId: (args.site !== null) ? args.site : null,
+		      containerId: (args.container !== null) ? args.container : null,
+		      repo: (args.repo !== null) ? (args.repo == "true") : false,
+		      term: (args.term !== null) ? args.term : null,
+		      tag: (args.tag !== null) ? args.tag : null,
+		      query: (args.query !== null) ? args.query : null,
+		      sort: (args.sort !== null) ? args.sort : null		  
+		   }
       };
+      
+      
+      
 
       return objRet;
    }

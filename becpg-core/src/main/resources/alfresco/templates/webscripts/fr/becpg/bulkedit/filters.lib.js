@@ -31,10 +31,7 @@ var Filters =
    {
 	  
 	   
-	   var searchQuery = parsedArgs.searchQuery;
-	   if(searchQuery==null || searchQuery.length <1){
-		   searchQuery="";
-	   }
+	   var  searchQuery = "";
 	   
 	   if(parsedArgs.itemType!=null){
 		   searchQuery+=" +TYPE:\""+parsedArgs.itemType+"\"";

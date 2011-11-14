@@ -70,7 +70,7 @@
          </select>
           <#-- beCPG : bulkedit -->
 		<span class="yui-button yui-push-button bulk-edit-button">
-		   <a class="action-link" rel="edit" href='/share/page/bulk-edit?term=${searchTerm?string}&query=${searchQuery?string}&siteId=${siteId}' title="${msg("button.bulkEdit")}">
+		   <a class="action-link" rel="edit" href='/share/page/bulk-edit?t=${searchTerm?string}&q=${searchQuery?string}&site=${siteId?string}' title="${msg("button.bulkEdit")}">
 				<span>${msg("button.bulkEdit")}</span>
 			</a>
 		</span>

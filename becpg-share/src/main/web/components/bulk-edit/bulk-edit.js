@@ -85,6 +85,75 @@
        */
       options:
       {
+    	  
+    	  /**
+           * Current siteId
+           * 
+           * @property siteId
+           * @type string
+           */
+          siteId: "",
+          
+          /**
+           * Current site title
+           * 
+           * @property siteTitle
+           * @type string
+           */
+          siteTitle: "",
+       
+        
+          /**
+           * Search term to use for the initial search
+           * @property initialSearchTerm
+           * @type string
+           * @default ""
+           */
+          initialSearchTerm: "",
+          
+          /**
+           * Search tag to use for the initial search
+           * @property initialSearchTag
+           * @type string
+           * @default ""
+           */
+          initialSearchTag: "",
+          
+          /**
+           * States whether all sites should be searched.
+           * 
+           * @property initialSearchAllSites
+           * @type boolean
+           */
+          initialSearchAllSites: true,
+          
+          /**
+           * States whether repository should be searched.
+           * This is in preference to current or all sites.
+           * 
+           * @property initialSearchRepository
+           * @type boolean
+           */
+          initialSearchRepository: false,
+          
+          /**
+           * Sort property to use for the initial search.
+           * Empty default value will use score relevance default.
+           * @property initialSort
+           * @type string
+           * @default ""
+           */
+          initialSort: "",
+          
+          /**
+           * Advanced Search query - forms data json format based search.
+           * @property searchQuery
+           * @type string
+           * @default ""
+           */
+          searchQuery: "",
+          
+         
          /**
           * Flag indicating whether pagination is available or not.
           * 
@@ -523,7 +592,6 @@
 	          {
 	             case "datetime":
 	             case "date":
-	            	//TODO test
 	          	   	editor =  new YAHOO.widget.DateCellEditor();
 	                   break;
 	             case "boolean":
@@ -597,7 +665,7 @@
     		                        	 value = Alfresco.util.fromISO8601(data.value);
     		                              break;
     		                          case "boolean":
-    		                        	  if(data.value == scope.msg("data.boolean.true")){
+    		                        	  if(data.displayValue == scope.msg("data.boolean.true") || data.value == scope.msg("data.boolean.true")  || data.value){
     		                        		  value = true;  
     		                        	  }
     		                        	  else{
@@ -648,6 +716,8 @@
     		            if(bSuccess) {    		            	
     		            	// Update new value
     		            	var oDisplayValue = oNewValue;
+    		            	oSelf.value = oNewValue;	    
+    		            	
     		            	if(oSelf instanceof YAHOO.widget.RadioCellEditor){
     		            		for(var i in oSelf.radioOptions){
     		            			if(String(oSelf.radioOptions[i]["value"]) == oNewValue){
@@ -657,10 +727,11 @@
     		            		}    		            			
     		            	}    		            	
     		            	else if(oSelf instanceof YAHOO.widget.DateCellEditor){
-    		            		oDisplayValue = Alfresco.util.formatDate(oNewValue, scope.msg("date-format.defaultDateOnly"));   		            		
+    		            		oDisplayValue = Alfresco.util.formatDate(oNewValue, scope.msg("date-format.defaultDateOnly"));   
+    		            		oNewValue = Alfresco.util.formatDate(oNewValue,"yyyy-mm-dd'T'HH:MM:ss");
     		            	}
     		            	
-	    		          	oSelf.value = oNewValue;	    		          		    		          	
+	    		                    		    		          	
 	    		          	oSelf.getDataTable().updateCell(oSelf.getRecord(), oSelf.getColumn(), {value: oNewValue,  displayValue : oDisplayValue });
 	    		          	
     		                // Hide CellEditor
@@ -1021,9 +1092,24 @@
             this.datalistColumns[fieldLookup] = column;
          }
          
+         
+         var site = this.options.initialSearchAllSites ? "" : this.options.siteId;
+         var params = YAHOO.lang.substitute("site={site}&term={term}&tag={tag}&sort={sort}&query={query}&repo={repo}&nodeRef={nodeRef}&itemType={itemType}",
+         {
+            site: encodeURIComponent(site),
+            repo: (this.options.initialSearchRepository || this.options.searchQuery.length !== 0).toString(), // always search entire repo with advanced query
+            term: encodeURIComponent(this.options.initialSearchTerm),
+            tag: encodeURIComponent(this.options.initialSearchTag),
+            sort: encodeURIComponent(this.options.initialSort),
+            query: encodeURIComponent(this.options.searchQuery),
+            nodeRef: encodeURIComponent(this.options.nodeRef),
+            itemType : encodeURIComponent(this.options.itemType)
+            
+         });
+         
          // DataSource definition
          this.widgets.dataSource = new YAHOO.util.DataSource( 
-        		 Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/data?query="+encodeURIComponent(this.options.searchQuery)+"&nodeRef="+encodeURIComponent(this.options.nodeRef)+"&itemType="+encodeURIComponent(this.options.itemType),
+        		 Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/data?"+params,
          {
             connMethodPost: true,
             responseType: YAHOO.util.DataSource.TYPE_JSON,
