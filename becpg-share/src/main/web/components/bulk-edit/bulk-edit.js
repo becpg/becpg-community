@@ -721,7 +721,7 @@
     		            	 if(oSelf instanceof YAHOO.widget.DateCellEditor){
     		            		oDisplayValue = Alfresco.util.formatDate(oNewValue, scope.msg("date-format.defaultDateOnly"));   
     		            		oNewValue = Alfresco.util.formatDate(oNewValue,"yyyy-mm-dd'T'HH:MM:ss");
-    		            	}
+    		            	} 
     		            	
 	    		                    		    		          	
 	    		          	oSelf.getDataTable().updateCell(oSelf.getRecord(), oSelf.getColumn(), {value: oNewValue,  displayValue : oDisplayValue });
