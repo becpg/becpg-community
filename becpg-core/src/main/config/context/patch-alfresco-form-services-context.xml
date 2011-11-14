@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+
+<beans>
+
+	 <!-- Form processors  -->
+    <bean id="baseFormProcessor" abstract="true" init-method="register"
+        class="fr.becpg.patch.repo.forms.processor.node.ContentModelFormProcessor">
+        <property name="processorRegistry" ref="formProcessorRegistry" />
+        <property name="nodeService" ref="NodeService" />
+        <property name="contentService" ref="ContentService" />
+        <property name="dictionaryService" ref="DictionaryService" />
+        <property name="fileFolderService" ref="FileFolderService" />
+        <property name="namespaceService" ref="NamespaceService" />
+        <property name="fieldProcessorRegistry" ref="fieldProcessorRegistry" />
+    </bean>
+    
+    <bean id="nodeFormProcessor"
+      class="fr.becpg.patch.repo.forms.processor.node.NodeFormProcessor"
+      parent="baseFormProcessor">
+      <property name="filterRegistry" ref="nodeFilterRegistry" />
+      <property name="matchPattern">
+         <value>node</value>
+      </property>
+   </bean>
+
+   <bean id="typeFormProcessor"
+      class="fr.becpg.patch.repo.forms.processor.node.TypeFormProcessor"
+      parent="baseFormProcessor">
+        <property name="filterRegistry" ref="typeFilterRegistry" />
+      <property name="matchPattern">
+         <value>type</value>
+      </property>
+   </bean>
+    
+    <!--  Workflow Form Processor Config -->
+
+    <bean id="workflowFormProcessor"
+        class="fr.becpg.patch.repo.forms.processor.workflow.WorkflowFormProcessor"
+        parent="baseFormProcessor">
+        <property name="filterRegistry" ref="workflowFilterRegistry" />
+        <property name="workflowService" ref="WorkflowService" />
+        <property name="matchPattern">
+            <value>workflow</value>
+        </property>
+    </bean>
+
+   <bean id="taskFormProcessor"
+      class="fr.becpg.patch.repo.forms.processor.workflow.TaskFormProcessor"
+      parent="baseFormProcessor">
+      <property name="filterRegistry" ref="taskFilterRegistry" />
+      <property name="workflowService" ref="workflowServiceImpl" />
+      <property name="authenticationService" ref="AuthenticationService" />
+      <property name="personService" ref="PersonService" />
+      <property name="matchPattern">
+         <value>task</value>
+      </property>
+   </bean>
+    
+</beans>
