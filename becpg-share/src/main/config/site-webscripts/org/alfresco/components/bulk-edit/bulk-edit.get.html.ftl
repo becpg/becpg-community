@@ -4,7 +4,14 @@
 <script type="text/javascript">//<![CDATA[
    new  beCPG.component.BulkEdit("${el}").setOptions(
    {
-      searchQuery: <#if searchQuery??>"${searchQuery?js_string}"<#else>""</#if>,
+      siteId: "${siteId}",
+      siteTitle: "${siteTitle?js_string}",
+      initialSearchTerm: "${searchTerm?js_string}",
+      initialSearchTag: "${searchTag?js_string}",
+      initialSearchAllSites: ${searchAllSites?string},
+      initialSearchRepository: ${searchRepo?string},
+      initialSort: "${searchSort?js_string}",
+      searchQuery: "${searchQuery?js_string}",
       nodeRef: <#if nodeRef??>"${nodeRef?js_string}"<#else>""</#if>,
       usePagination: true
    }).setMessages(${messages});
