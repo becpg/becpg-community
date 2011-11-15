@@ -45,6 +45,7 @@
 				<aspect name="bcpg:profitabilityAspect" />
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
+				<aspect name="dsg:modelAspect" />
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -58,6 +59,7 @@
 				<aspect name="bcpg:profitabilityAspect" />
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
+				<aspect name="dsg:modelAspect" />
 			</addable>
 
 			<!-- Aspects that a user can remove. Same as "visible" if left empty -->
@@ -71,6 +73,7 @@
 				<aspect name="bcpg:profitabilityAspect" />
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
+				<aspect name="dsg:modelAspect" />
 			</removeable>
 		</aspects>
 
@@ -130,7 +133,10 @@
 			<itemType name="bcpg:finishedProduct" />
 <!-- 			<itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" -->
 <!-- 				formId="bulk-edit-2" /> -->
+			<itemType name="bcpg:allergenList" />
+			<itemType name="sec:aclGroup"/>
 			<itemType name="bcpg:semiFinishedProduct" />
+			
 			<itemType name="bcpg:rawMaterial" />			
 			<itemType name="bcpg:packagingMaterial" />
 

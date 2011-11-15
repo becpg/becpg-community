@@ -10,7 +10,9 @@
 				<value>alfresco/module/${groupId}-${artifactId}/model/becpgModel.xml</value>
 				<value>alfresco/module/${groupId}-${artifactId}/model/qualityModel.xml</value>
 				<value>alfresco/module/${groupId}-${artifactId}/model/securityModel.xml</value>
-				<value>alfresco/module/${groupId}-${artifactId}/model/ecoModel.xml</value>							
+				<value>alfresco/module/${groupId}-${artifactId}/model/ecoModel.xml</value>
+				<value>alfresco/module/${groupId}-${artifactId}/model/m2Model.xml</value>	
+				<value>alfresco/module/${groupId}-${artifactId}/model/designerModel.xml</value>							
 			</list>
 		</property>
 

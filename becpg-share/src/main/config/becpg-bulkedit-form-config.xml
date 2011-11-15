@@ -1,60 +1,72 @@
 <alfresco-config>
 
+<!-- 
+	<config evaluator="model-type" condition="bcpg:finishedProduct">
+		<forms>
+			<form id="bulk-edit">
+				<field-visibility>
 
-<!-- 	<config evaluator="model-type" condition="bcpg:finishedProduct"> -->
-<!-- 		<forms> -->
-<!-- 			<form id="bulk-edit"> -->
-<!-- 				<field-visibility> -->
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:code" />
+
+					<show id="bcpg:eanCode" />
+					<show id="bcpg:clients" />
+					<show id="rep:reportTpls" />
+
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productDensity" />
+					<show id="bcpg:productSpecification" />
+					<show id="bcpg:productMicrobioCriteria" />
 					
-<!-- 					mainInfo -->
-<!-- 					<show id="cm:name" /> -->
-<!-- 					<show id="bcpg:legalName" /> -->
-<!-- 					<show id="cm:description" force="true" /> -->
-<!-- 					<show id="bcpg:productComments" /> -->
-<!-- 					<show id="bcpg:productHierarchy1" /> -->
-<!-- 					<show id="bcpg:productHierarchy2" />					 -->
-<!-- 					<show id="bcpg:code" /> -->
-				
-<!-- 					<show id="bcpg:eanCode" />					 -->
-<!-- 					<show id="bcpg:clients" /> -->
-<!-- 					<show id="rep:reportTpls" />									 -->
+					<show id="bcpg:startEffectivity"/>
 
-<!-- 					formulation -->
-<!-- 					<show id="bcpg:productUnit" /> -->
-<!-- 					<show id="bcpg:productQty" /> -->
-<!-- 					<show id="bcpg:productDensity" /> -->
-<!-- 					<show id="bcpg:productSpecification" /> -->
-<!-- 					<show id="bcpg:productMicrobioCriteria" /> -->
-
-<!-- 					tags and categories -->
-<!-- 					<show id="cm:taggable" force="true" /> -->
-<!-- 					<show id="cm:categories" force="true" /> -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
 
 
-<!-- 				</field-visibility> -->
-<!-- 			</form> -->
-<!-- 			<form id="bulk-edit-2"> -->
-<!-- 				<field-visibility> -->
-					
-<!-- 					mainInfo -->
-<!-- 					<show id="cm:name" /> -->
-<!-- 					<show id="bcpg:legalName" /> -->
-<!-- 					<show id="cm:description" force="true" /> -->
-<!-- 					<show id="bcpg:productComments" />			 -->
-<!-- 					<show id="bcpg:code" /> -->
-				
-<!--     			cm:dublincore aspect -->
-<!-- 		    	      <show id="cm:publisher" force="true"/> -->
-<!-- 		              <show id="cm:contributor" force="true"/> -->
-<!-- 		              <show id="cm:type" force="true"/> -->
-<!-- 		               <show id="cm:identifier"/> -->
-<!-- 		               <show id="cm:dcsource"/> -->
-<!-- 		               <show id="cm:coverage"/> -->
-<!-- 		               <show id="cm:rights"/> -->
-<!-- 		               <show id="cm:subject"/> -->
-<!-- 				</field-visibility> -->
-<!-- 			</form> -->
-<!-- 		</forms> -->
-<!-- 	</config> -->
+				</field-visibility>
+			</form>
+			<form id="bulk-edit-2">
+				<field-visibility>
+
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />
+					<show id="bcpg:code" />
+
+					<show id="cm:publisher" force="true" />
+					<show id="cm:contributor" force="true" />
+					<show id="cm:type" force="true" />
+					<show id="cm:identifier" />
+					<show id="cm:dcsource" />
+					<show id="cm:coverage" />
+					<show id="cm:rights" />
+					<show id="cm:subject" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config> -->
+
+
+		<config evaluator="model-type" condition="sec:aclGroup">
+		<forms>
+			<form id="bulk-edit">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="sec:nodeType" />
+					<show id="sec:nodeAspects" />
+				</field-visibility>
+			</form>
+			
+		</forms>
+	</config>
+	
 
 </alfresco-config>

@@ -190,7 +190,8 @@
             workingCopyUrl: fnPageURL("document-details?nodeRef=" + (custom.workingCopyNode || nodeRef)),
             originalUrl: fnPageURL("document-details?nodeRef=" + (custom.workingCopyOriginal || nodeRef)),
             sourceRepositoryUrl: this.viewInSourceRepositoryURL(recordData) + "\" target=\"_blank",
-				dataListsUrl: fnPageURL("entity-data-lists?nodeRef=" + nodeRef)
+			dataListsUrl: fnPageURL("entity-data-lists?nodeRef=" + nodeRef),
+			designerUrl: fnPageURL("model-designer?nodeRef=" + nodeRef)
          });
       },
        

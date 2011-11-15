@@ -1,0 +1,7 @@
+<webscript>
+	<shortname>ModelList</shortname>
+	<description>ModelList - List available model</description>
+	<url>/becpg/designer/model/list</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+</webscript>

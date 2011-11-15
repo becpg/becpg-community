@@ -22,7 +22,7 @@ var Evaluator =
       else if (node.hasAspect("bcpg:entityListsAspect"))
       {
          nodeType = "entity";
-      }      
+      }    
       else
       {
          nodeType = "document";
@@ -270,6 +270,10 @@ var Evaluator =
                status["transferred-node"] = true;
                permissions["view-source-repository"] = true;
                actionSet = "transferredDocument";
+            }
+            
+            if(node.hasAspect("dsg:modelAspect")){
+            	  actionSet = "designerModel";
             }
          	
             break;

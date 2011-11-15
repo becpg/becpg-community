@@ -1,0 +1,93 @@
+<alfresco-config>
+
+	<config evaluator="node-type" condition="m2:model">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+					<show id="m2:author" />
+					<show id="m2:version" />
+					<show id="m2:published" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+
+	<config evaluator="node-type" condition="m2:type">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="m2:parentName" />
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+					<show id="m2:includedInSuperTypeQuery" />
+					<show id="m2:archive" />
+					<show id="m2:mandatoryAspects" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="node-type" condition="m2:property">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+					<show id="m2:propertyType" />
+					<show id="m2:defaultValue" />
+					<show id="m2:isMandatory" />
+					<show id="m2:isMandatoryEnforced" />
+					<show id="m2:isOverride" />
+					<show id="m2:isMultiValued" />
+					<show id="m2:isIndexedAtomically" />
+					<show id="m2:isIndexed" />
+					<show id="m2:isStoredInIndex" />
+					<show id="m2:indexTokenisationMode" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="node-type" condition="m2:propertyOverride">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+					<show id="m2:propertyType" />
+					<show id="m2:defaultValue" />
+					<show id="m2:isMandatory" />
+					<show id="m2:isMandatoryEnforced" />
+					<show id="m2:isOverride" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	
+	
+	
+	<config evaluator="node-type" condition="m2:constraint">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+					<show id="m2:ref" />
+					<show id="m2:type" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+
+	
+</alfresco-config>

@@ -97,15 +97,14 @@ function getData()
 			}	
 			  
 		   allNodes = bSearch.queryAdvSearch(datatype, params.term, params.tag, criteria, params.sort, params.repo, params.siteId, params.containerId);
-			   
-			  
+
 	  }
 	      // /TODO add type here
 	  for each (node in allNodes) {
 	         try {
 	             items.push(Evaluator.run(node, fields));
 	         }  catch(e) {}
-	   }
+	  }
 
 
    return (
