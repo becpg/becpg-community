@@ -8,6 +8,7 @@
 
 	<config evaluator="string-compare" condition="Workflow">
 		<hidden-workflows>
+			<workflow name="jbpm$wf:adhoc" />
 			<workflow name="jbpm$wf:reviewpooled" />
 			<workflow name="jbpm$wf:parallelgroupreview" />
 			<workflow name="jbpm$wf:review" />

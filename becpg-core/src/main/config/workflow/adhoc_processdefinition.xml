@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.1" name="bcpgwf:adhoc">
+
+   <swimlane name="initiator"/>
+
+   <start-state name="start">
+      <task name="bcpgwf:submitAdhocTask" swimlane="initiator"/>
+      <transition name="" to="adhoc">
+      	<action class="org.alfresco.repo.workflow.jbpm.AlfrescoJavaScript">
+           <script>
+              if (bcpgwf_notifyAssignee)
+              {
+                 var mail = actions.create("mail");
+                 mail.parameters.to = bpm_assignee.properties.email;
+                 mail.parameters.subject = "beCPG Adhoc : " + bpm_workflowDescription;
+                 mail.parameters.from = initiator.properties.email;
+		 			  mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/app:workflow/cm:adhoc-notify-task-email.ftl")[0];
+                 mail.parameters.text = "Vous êtes assigné à une tâche.";
+                 mail.execute(bpm_package);
+              }
+           </script>
+         </action>
+      </transition>
+   </start-state>
+
+   <swimlane name="assignee">
+      <assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
+         <actor>#{bpm_assignee}</actor>
+      </assignment>
+   </swimlane>
+   
+   <task-node name="adhoc">
+      <task name="bcpgwf:adhocTask" swimlane="assignee">
+	      <event type="task-create">
+	         <script>
+	            if (bpm_workflowDueDate != void) taskInstance.dueDate = bpm_workflowDueDate;
+	            if (bpm_workflowPriority != void) taskInstance.priority = bpm_workflowPriority;
+	         </script>
+	      </event>
+      </task>
+      <transition name="" to="completed">
+         <action class="org.alfresco.repo.workflow.jbpm.AlfrescoJavaScript">
+           <script>
+              if (bcpgwf_notifyMe)
+              {
+                 var mail = actions.create("mail");
+                 mail.parameters.to = initiator.properties.email;
+                 mail.parameters.subject = "beCPG Adhoc : " + bpm_workflowDescription;
+                 mail.parameters.from = bpm_assignee.properties.email;
+		 			  mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/app:workflow/cm:adhoc-completed-task-email.ftl")[0];
+                 mail.parameters.text = "Tâche terminée.";
+                 mail.execute(bpm_package);
+              }
+           </script>
+         </action>
+      </transition>
+   </task-node>
+   
+   <task-node name="completed">
+      <task name="bcpgwf:completedAdhocTask" swimlane="initiator"/>
+      <transition name="" to="end"/>
+   </task-node>
+      
+   <end-state name="end"/>
+   
+</process-definition>

@@ -819,6 +819,7 @@
 						<control
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
+					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />					
 					<field id="rep:reportTpls" set="mainInfo"/>

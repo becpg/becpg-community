@@ -1,5 +1,6 @@
 package fr.becpg.repo.mail.impl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.TemplateService;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchService;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +39,8 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 
 	
 	public static final String EMAIL_MODEL_PATH_QUERY = "PATH:\"/app:company_home/app:dictionary/app:email_templates/.\"";
+	private static final String PATH_WORKFLOW = "workflow";
+	public static final String EMAIL_WORKFLOW_MODEL_PATH_QUERY = "PATH:\"/app:company_home/app:dictionary/app:email_templates/app:workflow/.\"";
 	
 
 	private NodeService nodeService;
@@ -47,7 +52,7 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 	
 	private NodeRef modelMailNodeRef;
 	
-	
+	private NodeRef workflowModelMailNodeRef;
 	
 	private String mailFrom;
 
@@ -89,7 +94,7 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 		
 		String email = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_EMAIL);
 		if(!StringUtils.isEmpty(email)){
-			sendMail(email, I18NUtil.getMessage("becpg.mail.newUser.title"), BeCPGModel.EMAIL_NEW_USER_TEMPLATE, templateModel);
+			sendMail(email, I18NUtil.getMessage("becpg.mail.newUser.title"), RepoConsts.EMAIL_NEW_USER_TEMPLATE, templateModel);
 		}
 		
 	}
@@ -142,9 +147,29 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 		
 		return modelMailNodeRef;
 	}
-	
-	
-	
-	
+
+	@Override
+	public NodeRef getWorkflowModelMailNodeRef() {
+		
+		if(workflowModelMailNodeRef==null){
+			ResultSet  resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_LUCENE, EMAIL_WORKFLOW_MODEL_PATH_QUERY);
+			
+			if(resultSet.length() > 0){
+				workflowModelMailNodeRef =  resultSet.getNodeRef(0);
+			}
+			else{
+				// create folder
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		    	properties.put(ContentModel.PROP_NAME, I18NUtil.getMessage("path.email.workflow"));
+		    	
+		    	workflowModelMailNodeRef = nodeService.createNode(getModelMailNodeRef(), ContentModel.ASSOC_CONTAINS, 
+											QName.createQName(NamespaceService.APP_MODEL_1_0_URI, PATH_WORKFLOW), 
+											ContentModel.TYPE_FOLDER, properties).getChildRef();
+			}
+			
+		}
+		
+		return workflowModelMailNodeRef;		
+	}	
 	
 }

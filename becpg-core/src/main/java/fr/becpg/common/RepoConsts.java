@@ -165,4 +165,14 @@ public class RepoConsts {
 	// Configuration
 	public static final int MAX_DEPTH_LEVEL = 256;
 	
+	/*
+	 * Email templates
+	 */
+	public static final String EMAIL_NEW_USER_TEMPLATE = "importuser-email.ftl";
+
+	/**
+	 * ISO charset
+	 */
+	public static final String ISO_CHARSET = "ISO-8859-15";
+	
 }

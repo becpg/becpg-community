@@ -17,9 +17,15 @@ public interface BeCPGMailService {
 
 	/**
 	 * 
-	 * @return the dictionnary model mail nodeRef
+	 * @return the dictionary model mail nodeRef
 	 */
 	public NodeRef getModelMailNodeRef();
+	
+	/**
+	 * 
+	 * @return the workflow model mail nodeRef
+	 */
+	public NodeRef getWorkflowModelMailNodeRef();
 
 	
 
