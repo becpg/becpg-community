@@ -96,7 +96,7 @@ function getData()
 		     
 			}	
 			  
-		   allNodes = bSearch.queryAdvSearch(datatype, params.term, params.tag, criteria, params.sort, params.repo, params.siteId, params.containerId);
+		   allNodes = bSearch.queryAdvSearch(datatype, params.term, params.tag, criteria, filterParams.sort, params.repo, params.siteId, params.containerId);
 			   
 			  
 	  }
