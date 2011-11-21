@@ -36,8 +36,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	/** The Constant SITES_SPACE_QNAME_PATH. */
 	private static final String SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";	
 	
-	/** The Constant EXCLUDE_PRODUCT_HISTORY. */
-	private static final String EXCLUDE_PRODUCT_HISTORY = " AND -ASPECT:\"bcpg:compositeVersion\" ";
+	/** The Constant PRODUCTS_TO_EXCLUDE. */
+	private static final String PRODUCTS_TO_EXCLUDE = " AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"eco:simulationEntityAspect\" ";
 	
 	private static final String DEFAULT_FIELD_NAME = "keywords";
 	
@@ -236,7 +236,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			 ftsQuery = "(" + ftsQuery + ") AND -TYPE:\"cm:thumbnail\"";
 			  
 			 //beCPG : now, exclude always product history
-			 ftsQuery += EXCLUDE_PRODUCT_HISTORY; 
+			 ftsQuery += PRODUCTS_TO_EXCLUDE; 
 		}
 		
 		return ftsQuery;

@@ -19,8 +19,6 @@ public class ECOModel {
 			"ecoType");
 	public static final QName ASSOC_CALCULATED_CHARACTS = QName.createQName(ECO_URI,
 			"calculatedCharacts");	
-	public static final QName ASSOC_CHANGE_UNITS = QName.createQName(ECO_URI,
-			"changeUnits");	
 	
 	//replacementList
 	public static final QName TYPE_REPLACEMENTLIST = QName.createQName(ECO_URI,
@@ -41,8 +39,8 @@ public class ECOModel {
 			"isWUsedImpacted");	
 	public static final QName ASSOC_WUL_LINK = QName.createQName(ECO_URI,
 			"wulLink");
-	public static final QName ASSOC_WUL_CHANGE_UNIT = QName.createQName(ECO_URI,
-			"wulChangeUnit");
+	public static final QName ASSOC_WUL_SOURCE_ITEM = QName.createQName(ECO_URI,
+			"wulSourceItem");
 	
 	//simulationList
 	public static final QName TYPE_SIMULATIONLIST = QName.createQName(ECO_URI,
@@ -56,23 +54,21 @@ public class ECOModel {
 	public static final QName ASSOC_SL_CHARACT = QName.createQName(ECO_URI,
 			"slCharact");
 	
-	//changeUnit
-	public static final QName TYPE_CHANGE_UNIT = QName.createQName(ECO_URI,
-			"changeUnit");
-	public static final QName PROP_CU_REVISION = QName.createQName(ECO_URI,
-			"cuRevision");
-	public static final QName PROP_CU_REQ_RESPECTED = QName.createQName(ECO_URI,
-			"cuReqRespected");
-	public static final QName PROP_CU_REQ_DETAILS = QName.createQName(ECO_URI,
-			"cuReqDetails");
-	public static final QName PROP_CU_TREATED = QName.createQName(ECO_URI,
-			"cuTreated");	
-	public static final QName ASSOC_CU_ECO = QName.createQName(ECO_URI,
-			"cuECO");
-	public static final QName ASSOC_CU_SOURCE_ITEM = QName.createQName(ECO_URI,
-			"cuSourceItem");
-	public static final QName ASSOC_CU_TARGET_ITEM = QName.createQName(ECO_URI,
-			"cuTargetItem");	
+	//changeUnitList
+	public static final QName TYPE_CHANGEUNITLIST = QName.createQName(ECO_URI,
+			"changeUnitList");
+	public static final QName PROP_CUL_REVISION = QName.createQName(ECO_URI,
+			"culRevision");
+	public static final QName PROP_CUL_REQ_RESPECTED = QName.createQName(ECO_URI,
+			"culReqRespected");
+	public static final QName PROP_CUL_REQ_DETAILS = QName.createQName(ECO_URI,
+			"culReqDetails");
+	public static final QName PROP_CUL_TREATED = QName.createQName(ECO_URI,
+			"culTreated");	
+	public static final QName ASSOC_CUL_SOURCE_ITEM = QName.createQName(ECO_URI,
+			"culSourceItem");
+	public static final QName ASSOC_CUL_TARGET_ITEM = QName.createQName(ECO_URI,
+			"culTargetItem");	
 	
 	//simulationEntityAspect
 	public static final QName ASPECT_SIMULATION_ENTITY = QName.createQName(ECO_URI,

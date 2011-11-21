@@ -33,11 +33,11 @@
 		<constraint name="eco:ecoStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value>ToCalculateWUsed</value>
-					<value>WUsedCalculated</value>
 					<value>ToValidate</value>					
 					<value>Valid</value>
 					<value>Refused</value>
+					<value>ToCalculateWUsed</value>
+					<value>WUsedCalculated</value>					
 					<value>ToSimulate</value>
 					<value>Simulated</value>
 					<value>ToApply</value>
@@ -93,73 +93,14 @@
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
-				</association>
-				<child-association name="eco:changeUnits">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>eco:changeUnit</class>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</target>
-				</child-association>
+				</association>				
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
-		<!-- type change unit -->
-		<type name="eco:changeUnit">
-			<parent>cm:content</parent>
-			<properties>														
-				<property name="eco:cuRevision">
-					<type>d:text</type>
-					<multiple>false</multiple>
-					<constraints>
-						<constraint ref="eco:revisionTypes" />
-					</constraints>
-				</property>			
-				<property name="eco:cuReqRespected">
-					<type>d:boolean</type>					
-				</property>
-				<property name="eco:cuReqDetails">
-					<type>d:text</type>					
-				</property>	
-				<property name="eco:cuTreated">
-					<type>d:boolean</type>
-					<default>false</default>					
-				</property>	
-			</properties>		
-			<associations>
-				<association name="eco:cuSourceItem">
-					<source>
-						<mandatory>true</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:entity</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-				<association name="eco:cuTargetItem">
-					<source>
-						<mandatory>true</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:entity</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-			</associations>	
-		</type>
-		
+				
 		<!-- replacementList -->
 		<type name="eco:replacementList">
 			<parent>bcpg:entityListItem</parent>
@@ -222,13 +163,13 @@
 						<many>false</many>
 					</target>
 				</association>
-				<association name="eco:wulChangeUnit">
+				<association name="eco:wulSourceItem">
 					<source>
 						<mandatory>true</mandatory>
 						<many>true</many>
 					</source>
 					<target>
-						<class>eco:changeUnit</class>
+						<class>bcpg:entity</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -238,6 +179,54 @@
 				<aspect>bcpg:depthLevelAspect</aspect>
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
+		</type>
+		
+		<!-- changeUnitList -->
+		<type name="eco:changeUnitList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>														
+				<property name="eco:culRevision">
+					<type>d:text</type>
+					<multiple>false</multiple>
+					<constraints>
+						<constraint ref="eco:revisionTypes" />
+					</constraints>
+				</property>			
+				<property name="eco:culReqRespected">
+					<type>d:boolean</type>					
+				</property>
+				<property name="eco:culReqDetails">
+					<type>d:text</type>					
+				</property>	
+				<property name="eco:culTreated">
+					<type>d:boolean</type>
+					<default>false</default>					
+				</property>	
+			</properties>		
+			<associations>
+				<association name="eco:culSourceItem">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entity</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="eco:culTargetItem">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entity</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>	
 		</type>
 		
 		<!-- wUsedList -->

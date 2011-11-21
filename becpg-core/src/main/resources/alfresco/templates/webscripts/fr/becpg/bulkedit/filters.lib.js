@@ -41,7 +41,7 @@ var Filters =
 	   searchQuery +=
 	         " -TYPE:\"cm:systemfolder\"" +
 	         " -@cm\\:lockType:READ_ONLY_LOCK" +
-	         " -ASPECT:\"bcpg:compositeVersion\"";
+	         " -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"eco:simulationEntityAspect\"";
 	   
 	  var nodeRef = parsedArgs.nodeRef;
 	  if(nodeRef!=null && nodeRef.length >0){

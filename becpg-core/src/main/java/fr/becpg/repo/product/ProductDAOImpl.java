@@ -55,6 +55,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.data.productList.RequirementType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -810,9 +811,15 @@ public class ProductDAOImpl implements ProductDAO{
 		    		for(AssociationRef assocRef : bioOriginAssocRefs){
 		    			bioOrigins.add(assocRef.getTargetRef());
 		    		}
+		    		
+		    		RequirementType reqType = null;
+		    		String strReqType = (String)properties.get(BeCPGModel.PROP_FIL_REQ_TYPE);
+		    		if(strReqType != null){
+		    			reqType = RequirementType.valueOf(strReqType);
+		    		}
 		    				    		
 		    		ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(listItemNodeRef, 
-		    				(String)properties.get(BeCPGModel.PROP_FIL_REQ_TYPE), 
+		    				reqType, 
 		    				(String)properties.get(BeCPGModel.PROP_FIL_REQ_MESSAGE), 
 		    				(Float)properties.get(BeCPGModel.PROP_FIL_QTY_PERC_MAXI), 		    				
 		    				isGMO, 
@@ -848,7 +855,7 @@ public class ProductDAOImpl implements ProductDAO{
     			reqCtrlList = new ArrayList<ReqCtrlListDataItem>();
     			List<NodeRef> listItemNodeRefs = listItems(reqCtrlListNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
 	    		
-    			for(NodeRef listItemNodeRef : listItemNodeRefs){	    					    		
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){   					    		
 		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
 		    		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_RCL_SOURCES);
@@ -856,9 +863,15 @@ public class ProductDAOImpl implements ProductDAO{
 		    		for(AssociationRef assocRef : sourceAssocRefs){
 		    			sources.add(assocRef.getTargetRef());
 		    		}		    		
+		    		
+		    		RequirementType reqType = null;
+		    		String strReqType = (String)properties.get(BeCPGModel.PROP_RCL_REQ_TYPE);
+		    		if(strReqType != null){
+		    			reqType = RequirementType.valueOf(strReqType);
+		    		}
 		    				    		
 		    		ReqCtrlListDataItem reqCtrlListDataItem = new ReqCtrlListDataItem(listItemNodeRef, 
-		    				(String)properties.get(BeCPGModel.PROP_RCL_REQ_TYPE), 
+		    				reqType, 
 		    				(String)properties.get(BeCPGModel.PROP_RCL_REQ_MESSAGE), 		    				
 		    				sources);
 		    		

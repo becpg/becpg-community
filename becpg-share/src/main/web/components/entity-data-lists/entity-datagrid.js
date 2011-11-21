@@ -392,17 +392,17 @@
                            default:
                         	   if(datalistColumn.name == "bcpg:rclReqType" || datalistColumn.name == "bcpg:filReqType")
                     		   {
-                        		   if(data.displayValue == reqTypeForbidden)
+                        		   if(data.displayValue == "Forbidden")
                         		   {
-                        			   html += '<span class="reqTypeForbidden">' + $html(data.displayValue) + '</span>';
+                        			   html += '<span class="reqTypeForbidden">' + $html(reqTypeForbidden) + '</span>';
                         		   }
-                        		   else if(data.displayValue == reqTypeTolerated)
+                        		   else if(data.displayValue == "Tolerated")
                         		   {
-                        			   html += '<span class="reqTypeTolerated">' + $html(data.displayValue) + '</span>';
+                        			   html += '<span class="reqTypeTolerated">' + $html(reqTypeTolerated) + '</span>';
                         		   }
-                        		   else if(data.displayValue == reqTypeInfo)
+                        		   else if(data.displayValue == "Info")
                         		   {
-                        			   html += '<span class="reqTypeInfo">' + $html(data.displayValue) + '</span>';
+                        			   html += '<span class="reqTypeInfo">' + $html(reqTypeInfo) + '</span>';
                         		   }                        		   
                         		   else
                     			   {

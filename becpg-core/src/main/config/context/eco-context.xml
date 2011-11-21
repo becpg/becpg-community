@@ -9,17 +9,11 @@
     	<property name="entityListDAO" ref="entityListDAO"/>
     	<property name="associationService" ref="associationService"/>		
 	</bean>
-	<!-- changeUnitDAO -->	
-	<bean id="changeUnitDAO" class="fr.becpg.repo.eco.impl.ChangeUnitDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="associationService" ref="associationService"/>		
-	</bean>
 	
 	<!-- ecoService -->	
 	<bean id="ecoService" class="fr.becpg.repo.eco.impl.ECOServiceImpl">
     	<property name="changeOrderDAO" ref="changeOrderDAO"/>
     	<property name="wUsedListService" ref="wUsedListService"/>
-    	<property name="changeUnitDAO" ref="changeUnitDAO"/>
     	<property name="nodeService" ref="nodeService"/>
     	<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService"/>
     	<property name="productService" ref="productService"/>

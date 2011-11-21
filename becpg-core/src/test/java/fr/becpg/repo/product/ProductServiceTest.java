@@ -152,7 +152,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 	 */
 	@Override
 	protected void setUp() throws Exception {		
-		super.setUp();	
+		super.setUp();
 		
     	logger.debug("ProductServiceTest:setUp");
     
