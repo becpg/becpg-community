@@ -30,9 +30,9 @@
 			<associations>
 				<child-association name="dsg:model">
 					<target>
-						<many>false</many>
-						<mandatory>true</mandatory>
 						<class>m2:model</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
 					</target>
 				</child-association>
 			</associations>

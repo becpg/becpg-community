@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
+
+<beans>
+    
+    <bean id="metaModelVisitor" class="fr.becpg.repo.designer.impl.MetaModelVisitor" >
+		<property name="nodeService" ref="nodeService"/>
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+    
+
+	<bean id="designerService" class="fr.becpg.repo.designer.impl.DesignerServiceImpl">
+		<property name="metaModelVisitor" ref="metaModelVisitor" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="contentService" ref="contentService" />	
+	</bean>
+
+    
+    <!-- Webscripts -->
+    
+       	
+   	<bean id="webscript.fr.becpg.designer.modelTree.get" class="fr.becpg.repo.designer.web.scripts.ModelTreeWebScript" parent="webscript">
+      	<property name="designerService" ref="designerService" />
+   	</bean>
+   	
+   	  	
+   	<!-- Constraints -->
+   	
+   
+	<bean id="designerConstraint" class="fr.becpg.repo.designer.constraint.DynPropsConstraint">
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+	</bean>
+
+   
+</beans>

@@ -15,7 +15,7 @@
 		<import uri="http://www.alfresco.org/model/dictionary/1.0"
 			prefix="d" />
 		<!-- Import Alfresco Content Domain Model Definitions -->
-		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.alfresco.org/model/system/1.0" prefix="sys" />
 		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
 	</imports>
 	<!-- Introduction of new namespaces defined by this model -->
@@ -24,22 +24,32 @@
 	</namespaces>
 
 	<constraints>
-		 <constraint name="m2:nodeTypeConstraint"
-			type="fr.becpg.repo.security.constraint.DynPropsConstraint">
+<!-- 		 
+        <constraint name="m2:nodeTypeConstraint"
+			type="fr.becpg.repo.designer.constraint.DynPropsConstraint">
 			<parameter name="constraintType">
 				<value>NODE_TYPE</value>
 			</parameter>
 		</constraint>
 		
 		 <constraint name="m2:nodeAspectConstraint"
-			type="fr.becpg.repo.security.constraint.DynPropsConstraint">
+			type="fr.becpg.repo.designer.constraint.DynPropsConstraint">
 			<parameter name="constraintType">
 				<value>ASPECT_TYPE</value>
 			</parameter>
 		</constraint> 
+-->
+		<constraint name="m2:qNameConstraint"
+			type="REGEX">
+			<parameter name="expression">
+				<value>^.*:.*$</value>
+			</parameter>
+			<parameter name="requiresMatch"><value>true</value></parameter>
+		</constraint> 
 
-		<constraint name="m2:nodeAspectConstraint"
-			type="fr.becpg.repo.security.constraint.DynPropsConstraint">
+
+		<constraint name="m2:dataTypeConstraint"
+			type="fr.becpg.repo.designer.constraint.DynPropsConstraint">
 			<parameter name="constraintType">
 				<value>DATA_TYPE</value>
 			</parameter>
@@ -87,7 +97,7 @@
 					</source>
 					<target>
 						<class>m2:namespace</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
 					<duplicate>false</duplicate>
@@ -100,7 +110,7 @@
 					</source>
 					<target>
 						<class>m2:namespace</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
 					<duplicate>false</duplicate>
@@ -112,7 +122,7 @@
 					</source>
 					<target>
 						<class>m2:dataType</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
 					<duplicate>false</duplicate>
@@ -124,7 +134,7 @@
 					</source>
 					<target>
 						<class>m2:type</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
 					<duplicate>false</duplicate>
@@ -137,7 +147,7 @@
 					</source>
 					<target>
 						<class>m2:aspect</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
 					<duplicate>false</duplicate>
@@ -146,9 +156,8 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>m2:nameAspect</aspect>
-				<aspect>cm:author</aspect>
 				<aspect>m2:descriptionAspect</aspect>
-				<aspect>m2:constraintAspects</aspect>
+				<aspect>m2:constraintsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -157,10 +166,6 @@
 			<title>Class Association</title>
 			<parent>sys:base</parent>
 			<properties>
-				<property name="m2:isProtected">
-					<title>Protected</title>
-					<type>d:boolean</type>
-				</property>
 				<property name="m2:sourceRoleName">
 					<title>Source Role Name</title>
 					<type>d:text</type>
@@ -175,10 +180,10 @@
 				</property>
 				<property name="m2:targetClassName">
 					<title>Target class name</title>
-					<type>d:qname</type>
+					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<constraints>
-		               <constraint ref="m2:nodeTypeConstraint" />
+					 <constraints>
+		               <constraint ref="m2:qNameConstraint" />
 		            </constraints>
 				</property>
 				<property name="m2:targetRoleName">
@@ -202,6 +207,7 @@
 				<aspect>m2:nameAspect</aspect>
 				<aspect>m2:titleAspect</aspect>
 				<aspect>m2:descriptionAspect</aspect>
+				<aspect>m2:isProtectedAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -213,10 +219,10 @@
 			<properties>
 				<property name="m2:parentName">
 				    <title>Parent Name</title>
-					<type>d:qname</type>
-					<constraints>
-		               <constraint ref="m2:nodeTypeConstraint" />
-		            </constraints>	
+					<type>d:text</type>
+				<constraints>
+		               <constraint ref="m2:qNameConstraint" />
+		            </constraints>
 				</property>
 				<property name="m2:archive">
 					<title>Archive</title>
@@ -228,10 +234,10 @@
 				</property>
 				<property name="m2:mandatoryAspects">
 					<title>Mandatory aspect</title>
-					<type>d:qname</type>
+					<type>d:text</type>
 					<multiple>true</multiple>
 					<constraints>
-		               <constraint ref="m2:nodeAspectConstraint" />
+		               <constraint ref="m2:qNameConstraint" />
 		            </constraints>
 				</property>
 			</properties>
@@ -394,15 +400,12 @@
 				</property>
 				<property name="m2:propertyType">
 					<title>Property type</title>
-					<type>d:qname</type>
+					<type>d:text</type>
 					<constraints>
 	                  <constraint ref="m2:dataTypeConstraint" />
-	               </constraints>
+	                </constraints>
 				</property>
-				<property name="m2:isProtected">
-					<title>Is protected</title>
-					<type>d:boolean</type>
-				</property>
+				
 				<property name="m2:isMultiValued">
 					<title>Is multiValued</title>
 					<type>d:boolean</type>
@@ -422,13 +425,14 @@
 				<property name="m2:indexTokenisationMode">
 					<title>Index Tokenisation Mode</title>
 					<type>d:text</type>
-					<constraints>
+				    <constraints>
 						<constraint ref="m2:indexTokenisationModeConstraint"/>
-					</constraints>
+					</constraints> 
 				</property>
 			</properties>
 			<mandatory-aspects>
 				<aspect>m2:propertyAspect</aspect>
+				<aspect>m2:isProtectedAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -473,6 +477,9 @@
 					<title>Name</title>
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<constraints>
+		               <constraint ref="m2:qNameConstraint" />
+		            </constraints>
 				</property>
 			</properties>
 		</aspect>
@@ -485,6 +492,17 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="m2:isProtectedAspect">
+			<title>Is protected aspect</title>
+			<properties>
+				<property name="m2:isProtected">
+					<title>Is protected</title>
+					<type>d:boolean</type>
+				</property>
+			</properties>
+		</aspect>
+	
 	
 		<aspect name="m2:descriptionAspect">
 			<title>Description aspect</title>
@@ -506,7 +524,7 @@
 						<many>false</many>
 					</source>
 					<target>
-						<class>m2:constraintsAspects</class>
+						<class>m2:constraint</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -536,7 +554,7 @@
 				<aspect>m2:nameAspect</aspect>
 				<aspect>m2:titleAspect</aspect>
 				<aspect>m2:descriptionAspect</aspect>
-				<aspect>m2:constraintsAspects</aspect>
+				<aspect>m2:constraintsAspect</aspect>
 			</mandatory-aspects>
 		</aspect>
 				

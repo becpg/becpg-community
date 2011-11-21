@@ -3,7 +3,7 @@
       <actionSet id="empty"></actionSet>
 
       <actionSet id="document">
-         <action type="simple-link" id="onActionDetails" permission="edit" href="{editMetadataUrl}" label="actions.document.edit-metadata" />
+          <action type="simple-link" id="onActionDetails" permission="edit" href="{editMetadataUrl}" label="actions.document.edit-metadata" />
          <action type="action-link" id="onActionCopyTo" label="actions.document.copy-to" />
          <action type="action-link" id="onActionMoveTo" permission="delete" label="actions.document.move-to" />
          <action type="action-link" id="onActionDelete" permission="delete" label="actions.document.delete" />
@@ -79,7 +79,7 @@
 		<!-- Entity actions -->
 		
 		<actionSet id="entity">
- 			<action type="simple-link" id="onActionViewDataLists" permission="" href="{dataListsUrl}" label="actions.document.viewEntityLists" />
+ 		 <action type="simple-link" id="onActionViewDataLists" permission="" href="{dataListsUrl}" label="actions.document.viewEntityLists" />
          <action type="simple-link" id="onActionDetails" permission="edit" href="{editMetadataUrl}" label="actions.document.edit-metadata" />
          <action type="action-link" id="onActionCopyTo" label="actions.document.copy-to" />
          <action type="action-link" id="onActionMoveTo" permission="delete" label="actions.document.move-to" />
@@ -89,6 +89,28 @@
          <action type="action-link" id="onActionCheckOutEntity" permission="edit" label="actions.document.checkout-entity" />         
          <action type="action-link" id="onActionManageAspects" permission="edit" label="actions.document.manage-aspects" />
       </actionSet>      
+      
+       <!-- Model Designer -->
+      
+      	<actionSet id="designerModel">
+ 		 <action type="simple-link" id="onActionViewDesigner" permission="edit" href="{designerUrl}" label="actions.document.viewDesigner" />
+         <action type="simple-link" id="onActionDetails" permission="edit" href="{editMetadataUrl}" label="actions.document.edit-metadata" />
+         <action type="action-link" id="onActionCopyTo" label="actions.document.copy-to" />
+         <action type="action-link" id="onActionMoveTo" permission="delete" label="actions.document.move-to" />
+         <action type="action-link" id="onActionDelete" permission="delete" label="actions.document.delete" />
+         <action type="action-link" id="onActionAssignWorkflow" label="actions.document.assign-workflow" />
+         <action type="simple-link" id="onActionDownload" href="{downloadUrl}" label="actions.document.download" /> 
+         <action type="action-link" id="onActionSimpleApprove" permission="simple-approve" label="actions.document.simple-approve" />
+         <action type="action-link" id="onActionSimpleReject" permission="simple-reject" label="actions.document.simple-reject" />
+         <action type="action-link" id="onActionUploadNewVersion" permission="edit" label="actions.document.upload-new-version" />
+         <action type="simple-link" id="onActionInlineEdit" permission="edit,inline-edit" href="{inlineEditUrl}" label="actions.document.inline-edit" />
+         <action type="action-link" id="onActionEditOnline" permission="edit,online-edit" label="actions.document.edit-online" />
+         <action type="action-link" id="onActionEditOffline" permission="edit,~googledocs-edit" label="actions.document.edit-offline" />
+         <action type="action-link" id="onActionCheckoutToGoogleDocs" permission="edit,googledocs-edit" label="actions.document.checkout-google" />         
+         <action type="action-link" id="onActionManageAspects" permission="edit" label="actions.document.manage-aspects" />
+      </actionSet>     
+      
+   
       
       <actionSet id="entityLocked">
       	<action type="simple-link" id="onActionViewDataLists" permission="" href="{dataListsUrl}" label="actions.document.viewEntityLists" />
