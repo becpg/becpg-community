@@ -118,7 +118,7 @@
             
                 Alfresco.util.Ajax.request(
                         {
-                           url: Alfresco.constants.PROXY_URI + "/becpg/olap/chart",
+                           url: Alfresco.constants.PROXY_URI + "becpg/olap/chart",
                            successCallback:
                            {
                               fn: me.fillQueries,
@@ -204,7 +204,7 @@
         loadChartData : function(){
         	Alfresco.util.Ajax.request(
                     {
-                       url: Alfresco.constants.PROXY_URI + "/becpg/olap/chart?olapQueryId="+ this.chartPicker.value ,
+                       url: Alfresco.constants.PROXY_URI + "becpg/olap/chart?olapQueryId="+ this.chartPicker.value ,
                        successCallback:
                        {
                           fn: this.processData,

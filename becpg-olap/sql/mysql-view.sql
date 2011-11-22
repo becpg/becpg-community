@@ -3,9 +3,8 @@
 -- #############################
 
 
-
-create or replace view becpg_alf_prop (node_id,string_value,long_value,float_value,local_name) as
-  select prop.node_id, prop.string_value, prop.long_value, prop.float_value, qname.local_name
+create or replace view becpg_alf_prop (node_id,string_value,long_value,float_value, boolean_value ,local_name) as
+  select prop.node_id, prop.string_value, prop.long_value, prop.float_value, prop.boolean_value, qname.local_name
 	from alf_node_properties prop
 	inner join alf_qname qname on prop.qname_id = qname.id;
 
@@ -81,11 +80,14 @@ create or replace view becpg_alf_prop (node_id,string_value,long_value,float_val
  -- bcpg:allergenList
  --  
  
+ 
  create or replace view becpg_allergen_list (id, name, entityListId) as
 select node.id, name.string_value , entityListAssoc.parent_node_id
  from alf_node node
  left outer join alf_node_assoc assoc__ on assoc__.source_node_id = node.id
  left outer join becpg_alf_prop name on (assoc__.target_node_id = name.node_id and name.local_name = 'name')
+ left outer join becpg_alf_prop allergenListVoluntary on (node.id = allergenListVoluntary.node_id and allergenListVoluntary.local_name = 'allergenListVoluntary')
+ left outer join becpg_alf_prop allergenListInVoluntary on (node.id = allergenListInVoluntary.node_id and allergenListInVoluntary.local_name = 'allergenListInVoluntary')
  inner join alf_qname assoc_qname on (assoc_qname.id =  assoc__.type_qname_id)
  inner join alf_child_assoc entityListAssoc on (node.id = entityListAssoc.child_node_id)
  inner join alf_child_assoc entityAssoc  on (entityListAssoc.parent_node_id = entityAssoc.child_node_id)
@@ -94,8 +96,9 @@ select node.id, name.string_value , entityListAssoc.parent_node_id
   where node_qname.local_name = 'allergenList' 
   		and node_store.identifier = 'SpacesStore' 
   		and node_store.protocol='workspace'
-  		and assoc_qname.local_name = 'allergenListAllergen';
-  	
+  		and assoc_qname.local_name = 'allergenListAllergen'
+  		and ( allergenListInVoluntary.boolean_value = true or allergenListInVoluntary.boolean_value = true);
+
   
  --
  -- bcpg:ingList
