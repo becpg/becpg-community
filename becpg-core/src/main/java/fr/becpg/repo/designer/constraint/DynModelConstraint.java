@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @author matthieu
  */
-public class DynPropsConstraint extends ListOfValuesConstraint {
+public class DynModelConstraint extends ListOfValuesConstraint {
 
 	public static String TYPE_NODE = "NODE_TYPE";
 
@@ -35,7 +35,7 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(DynPropsConstraint.class);
+	private static Log logger = LogFactory.getLog(DynModelConstraint.class);
 
 	/** The constraint type. */
 	private String constraintType = null;
@@ -50,7 +50,7 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 	 *            the new service registry
 	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
-		DynPropsConstraint.serviceRegistry = serviceRegistry;
+		DynModelConstraint.serviceRegistry = serviceRegistry;
 	}
 
 	public void setConstraintType(String constraintType) {
@@ -67,7 +67,7 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 	@Override
 	public void initialize() {
 		checkPropertyNotNull("constraintType", constraintType);
-		logger.debug("Init DynPropsConstraint for constraintType :" + constraintType);
+		logger.debug("Init DynModelConstraint for constraintType :" + constraintType);
 	}
 
 	/*
@@ -78,7 +78,6 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 	 */
 	@Override
 	public List<String> getAllowedValues() {
-		logger.debug("getAllowedValues");
 		List<String> allowedValues = new ArrayList<String>();
 		try {
 			if (constraintType != null) {
@@ -96,16 +95,18 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 			}
 
 			if (logger.isDebugEnabled()) {
-				logger.debug("DynPropsConstraint return " + allowedValues.size() + " values");
+				logger.debug("DynModelConstraint return " + allowedValues.size() + " values");
 			}
 
 		} catch (Exception e) {
 			logger.error(e, e);
 		}
+
+		super.setAllowedValues(allowedValues);
 		return allowedValues;
 	}
 
-	
+
 	
 	
 	protected List<String> getAvailableDataTypeNames() {
@@ -159,4 +160,4 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 		return ret;
 	}
 
-}
+ee}

@@ -53,6 +53,87 @@
 			</form>
 		</forms>
 	</config>
+
+	<config evaluator="node-type" condition="m2:association">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+					<show id="m2:sourceRoleName"/>
+					<show id="m2:isSourceMandatory"/>
+					<show id="m2:isSourceMany"/>
+					<show id="m2:targetClassName"/>
+					<show id="m2:targetRoleName"/>
+					<show id="m2:isTargetMandatory"/>
+					<show id="m2:isTargetMandatoryEnforced"/>
+					<show id="m2:isTargetMany"/>
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Infos" />					
+					<set id="sourceInfo" appearance="bordered-panel" label="Source" />
+					<set id="targetInfo" appearance="bordered-panel" label="Cible" />					
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo"/>
+					<field id="m2:description" set="mainInfo"/>
+					<field id="m2:sourceRoleName" set="sourceInfo"/>
+					<field id="m2:isSourceMandatory" set="sourceInfo"/>
+					<field id="m2:isSourceMany" set="sourceInfo"/>
+					<field id="m2:targetClassName" set="targetInfo"/>
+					<field id="m2:targetRoleName" set="targetInfo"/>
+					<field id="m2:isTargetMandatory" set="targetInfo"/>
+					<field id="m2:isTargetMandatoryEnforced" set="targetInfo"/>
+					<field id="m2:isTargetMany" set="targetInfo"/>
+				
+			   </appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
+	<config evaluator="node-type" condition="m2:childAssociation">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+					<show id="m2:sourceRoleName"/>
+					<show id="m2:isSourceMandatory"/>
+					<show id="m2:isSourceMany"/>
+					<show id="m2:targetClassName"/>
+					<show id="m2:targetRoleName"/>
+					<show id="m2:isTargetMandatory"/>
+					<show id="m2:isTargetMandatoryEnforced"/>
+					<show id="m2:isTargetMany"/>
+					<show id="m2:requiredChildName"/>
+				    <show id="m2:allowDuplicateChildName"/>
+				    <show id="m2:propagateTimestamps"/>
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Infos" />					
+					<set id="sourceInfo" appearance="bordered-panel" label="Source" />
+					<set id="targetInfo" appearance="bordered-panel" label="Cible" />					
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo"/>
+					<field id="m2:description" set="mainInfo"/>
+					<field id="m2:sourceRoleName" set="sourceInfo"/>
+					<field id="m2:isSourceMandatory" set="sourceInfo"/>
+					<field id="m2:isSourceMany" set="sourceInfo"/>
+					<field id="m2:targetClassName" set="targetInfo"/>
+					<field id="m2:targetRoleName" set="targetInfo"/>
+					<field id="m2:isTargetMandatory" set="targetInfo"/>
+					<field id="m2:isTargetMandatoryEnforced" set="targetInfo"/>
+					<field id="m2:isTargetMany" set="targetInfo"/>
+					<field id="m2:requiredChildName" set="mainInfo"/>
+				    <field id="m2:allowDuplicateChildName" set="mainInfo"/>
+				    <field id="m2:propagateTimestamps" set="mainInfo"/>
+			   </appearance>
+			</form>
+		</forms>
+	</config>
+	
 	
 	<config evaluator="node-type" condition="m2:propertyOverride">
 		<forms>

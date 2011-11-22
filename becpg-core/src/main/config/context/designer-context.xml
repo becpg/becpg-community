@@ -27,7 +27,7 @@
    	<!-- Constraints -->
    	
    
-	<bean id="designerConstraint" class="fr.becpg.repo.designer.constraint.DynPropsConstraint">
+	<bean id="dynModelConstraint" class="fr.becpg.repo.designer.constraint.DynModelConstraint">
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 	</bean>
 
