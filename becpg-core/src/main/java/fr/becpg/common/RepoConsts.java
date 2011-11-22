@@ -15,10 +15,10 @@ public class RepoConsts {
 	/*-- Path query --*/			
 	public static final String PATH_QUERY_SUGGEST_VALUE = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:listValue\" +@cm\\:name:(%s) ";
 	public static final String PATH_QUERY_SUGGEST_LKV_VALUE = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:lkvPrevValue:\"%s\"  +@bcpg\\:lkvValue:(%s) ";
-	public static final String QUERY_SUGGEST_PRODUCT_BY_NAME = " +TYPE:\"bcpg:product\" +@cm\\:name:(%s) -@cm\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\"  ";
-	public static final String QUERY_SUGGEST_PRODUCT_BY_CODE = " +TYPE:\"bcpg:product\" +@bcpg\\:code:%s -@cm\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" ";
-	public static final String QUERY_SUGGEST_TARGET_BY_NAME = " +TYPE:\"%s\"  +@cm\\:name:(%s) AND -ASPECT:\"bcpg:compositeVersion\" ";
-	public static final String QUERY_SUGGEST_TARGET_BY_CODE = "  +TYPE:\"%s\"  +@bcpg\\:code:%s AND -ASPECT:\"bcpg:compositeVersion\" ";
+	public static final String QUERY_SUGGEST_PRODUCT_BY_NAME = " +TYPE:\"bcpg:product\" +@cm\\:name:(%s) -@cm\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"eco:simulationEntityAspect\" ";
+	public static final String QUERY_SUGGEST_PRODUCT_BY_CODE = " +TYPE:\"bcpg:product\" +@bcpg\\:code:%s -@cm\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"eco:simulationEntityAspect\" ";
+	public static final String QUERY_SUGGEST_TARGET_BY_NAME = " +TYPE:\"%s\"  +@cm\\:name:(%s) AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"eco:simulationEntityAspect\" ";
+	public static final String QUERY_SUGGEST_TARGET_BY_CODE = "  +TYPE:\"%s\"  +@bcpg\\:code:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"eco:simulationEntityAspect\" ";
 	public static final String PATH_QUERY_LIST_CONSTRAINTS = "PATH:\"/app:company_home/%s/*\" +TYPE:\"%s\"";
 	public static final String PATH_QUERY_IMPORT_FAILED_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportFailed\"";
 	public static final String PATH_QUERY_IMPORT_SUCCEEDED_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportSucceeded\"";	
@@ -164,5 +164,15 @@ public class RepoConsts {
 
 	// Configuration
 	public static final int MAX_DEPTH_LEVEL = 256;
+	
+	/*
+	 * Email templates
+	 */
+	public static final String EMAIL_NEW_USER_TEMPLATE = "importuser-email.ftl";
+
+	/**
+	 * ISO charset
+	 */
+	public static final String ISO_CHARSET = "ISO-8859-15";
 	
 }

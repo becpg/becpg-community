@@ -30,11 +30,10 @@ import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.eco.data.ChangeOrderData;
 import fr.becpg.repo.eco.data.ChangeOrderType;
 import fr.becpg.repo.eco.data.RevisionType;
-import fr.becpg.repo.eco.data.dataList.ChangeUnitData;
+import fr.becpg.repo.eco.data.dataList.ChangeUnitDataItem;
 import fr.becpg.repo.eco.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.eco.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.eco.data.dataList.WUsedListDataItem;
-import fr.becpg.repo.eco.impl.ChangeUnitDAOImpl;
 import fr.becpg.repo.product.FormulationTest;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
@@ -84,9 +83,7 @@ public class ECOTest extends RepoBaseTestCase  {
 	
 	private TransactionService transactionService;
 	
-	private BeCPGDao<ChangeOrderData> changeOrderDAO;
-	
-	private BeCPGDao<ChangeUnitData> changeUnitDAO;
+	private BeCPGDao<ChangeOrderData> changeOrderDAO;	
 	
 	private ECOService ecoService;
 	
@@ -169,7 +166,6 @@ public class ECOTest extends RepoBaseTestCase  {
         transactionService = (TransactionService)appCtx.getBean("TransactionService");
         repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
         changeOrderDAO = (BeCPGDao<ChangeOrderData>)appCtx.getBean("changeOrderDAO");
-        changeUnitDAO = (BeCPGDao<ChangeUnitData>)appCtx.getBean("changeUnitDAO");
         ecoService = (ECOService)appCtx.getBean("ecoService");
         
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
@@ -436,8 +432,8 @@ public class ECOTest extends RepoBaseTestCase  {
 				
 				for(WUsedListDataItem wul : dbECOData.getWUsedList()){
 					
-					assertNotNull(wul.getChangeUnit());
-					ChangeUnitData changeUnitData = changeUnitDAO.find(wul.getChangeUnit());					
+					assertNotNull(wul.getSourceItem());
+					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItem());					
 					assertNotNull(changeUnitData);
 					
 					if(changeUnitData.getSourceItem().equals(rawMaterial4NodeRef)){
@@ -576,12 +572,12 @@ public class ECOTest extends RepoBaseTestCase  {
 				ChangeOrderData dbECOData = changeOrderDAO.find(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-				assertEquals("Check 2 WUsed are impacted", 3, dbECOData.getWUsedList().size());
+				assertEquals("Check impacted WUsed", 3, dbECOData.getWUsedList().size());
 				
 				for(WUsedListDataItem wul : dbECOData.getWUsedList()){
 					
-					assertNotNull(wul.getChangeUnit());
-					ChangeUnitData changeUnitData = changeUnitDAO.find(wul.getChangeUnit());					
+					assertNotNull(wul.getSourceItem());
+					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItem());					
 					assertNotNull(changeUnitData);
 					
 					if(changeUnitData.getSourceItem().equals(rawMaterial4NodeRef)){

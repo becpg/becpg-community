@@ -9,7 +9,7 @@ public class ReqCtrlListDataItem {
 
 	NodeRef nodeRef;
 	
-	String reqType;
+	RequirementType reqType;
 	
 	String reqMessage;
 	
@@ -23,11 +23,11 @@ public class ReqCtrlListDataItem {
 		this.nodeRef = nodeRef;
 	}
 
-	public String getReqType() {
+	public RequirementType getReqType() {
 		return reqType;
 	}
 
-	public void setReqType(String reqType) {
+	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
 	}
 
@@ -47,7 +47,7 @@ public class ReqCtrlListDataItem {
 		this.sources = sources;
 	}
 	
-	public ReqCtrlListDataItem(NodeRef nodeRef, String reqType, String reqMessage, List<NodeRef> sources){
+	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, List<NodeRef> sources){
 		setNodeRef(nodeRef);
 		setReqType(reqType);
 		setReqMessage(reqMessage);

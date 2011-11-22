@@ -10,7 +10,7 @@ import fr.becpg.repo.eco.data.RevisionType;
  * @author quere
  *
  */
-public class ChangeUnitData extends BeCPGDataObject {
+public class ChangeUnitDataItem {
 
 	private NodeRef nodeRef;
 	private RevisionType revision;
@@ -63,7 +63,7 @@ public class ChangeUnitData extends BeCPGDataObject {
 		this.targetItem = targetItem;
 	}
 	
-	public ChangeUnitData(NodeRef nodeRef, RevisionType revision, Boolean reqRespected, String reqDetails, Boolean treated, NodeRef sourceItem, NodeRef targetItem){
+	public ChangeUnitDataItem(NodeRef nodeRef, RevisionType revision, Boolean reqRespected, String reqDetails, Boolean treated, NodeRef sourceItem, NodeRef targetItem){
 		
 		setNodeRef(nodeRef);
 		setRevision(revision);

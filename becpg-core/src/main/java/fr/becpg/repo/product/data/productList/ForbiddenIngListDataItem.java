@@ -11,7 +11,7 @@ public class ForbiddenIngListDataItem {
 
 	NodeRef nodeRef;
 	
-	String reqType;
+	RequirementType reqType;
 	
 	String reqMessage;
 	
@@ -35,11 +35,11 @@ public class ForbiddenIngListDataItem {
 		this.nodeRef = nodeRef;
 	}
 
-	public String getReqType() {
+	public RequirementType getReqType() {
 		return reqType;
 	}
 
-	public void setReqType(String reqType) {
+	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
 	}
 
@@ -99,7 +99,7 @@ public class ForbiddenIngListDataItem {
 		this.bioOrigins = bioOrigins;
 	}
 	
-	public ForbiddenIngListDataItem(NodeRef nodeRef, String reqType, String reqMessage, Float qtyPercMaxi, NullableBoolean isGMO, NullableBoolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
+	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, Float qtyPercMaxi, NullableBoolean isGMO, NullableBoolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
 	{
 		setNodeRef(nodeRef);
 		setReqType(reqType);

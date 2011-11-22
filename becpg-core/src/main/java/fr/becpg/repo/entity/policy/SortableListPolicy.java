@@ -158,16 +158,42 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 				else if(listItems.size() == 1){
 					
 					NodeRef lastIndexNodeRef = listItems.get(0);
-					sortIndex = (Integer)nodeService.getProperty(lastIndexNodeRef, BeCPGModel.PROP_SORT) + 1;
+					sortIndex = (Integer)nodeService.getProperty(lastIndexNodeRef, BeCPGModel.PROP_SORT);
+
+					if(sortIndex != null){
+						sortIndex++;
+					}
+					else{
+						fixSortableList(parentNodeRef);
+					}
 				}
 				else{
 					logger.error("Returned several results. Query: " + query);
 				}
 				
-				nodeService.setProperty(nodeRef, BeCPGModel.PROP_SORT, sortIndex);
+				if(sortIndex != null){
+					nodeService.setProperty(nodeRef, BeCPGModel.PROP_SORT, sortIndex);
+				}				
 			}
 		}		
-	}
+	}	
 	
+	private void fixSortableList(NodeRef parentNodeRef){
+	
+		Integer sortIndex = 0;
+		
+		String query = String.format(QUERY_LIST_ITEMS, parentNodeRef);		
+		Map<String, Boolean> sort = new HashMap<String, Boolean>();
+		sort.put("@" + ContentModel.PROP_CREATED, true);
+		List<NodeRef> listItems = beCPGSearchService.unProtLuceneSearch(query, sort, RepoConsts.MAX_RESULTS_NO_LIMIT);
+		
+		for(NodeRef listItem : listItems){
+		
+			sortIndex++;
+			nodeService.setProperty(listItem, BeCPGModel.PROP_SORT, sortIndex);			
+		}
+		
+		logger.info("FixSortableList. parentNodeRef: " + parentNodeRef + ", last sortIndex: " + sortIndex);		
+	}
 	
 }

@@ -10,13 +10,12 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.BeCPGDataObject;
 import fr.becpg.repo.eco.ECOState;
+import fr.becpg.repo.eco.data.dataList.ChangeUnitDataItem;
 import fr.becpg.repo.eco.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.eco.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.eco.data.dataList.WUsedListDataItem;
 
 public class ChangeOrderData extends BeCPGDataObject {
-
-	private static final String KEY = "%s-%s";
 	
 	private String code;
 	private ECOState ecoState;
@@ -25,11 +24,8 @@ public class ChangeOrderData extends BeCPGDataObject {
 	
 	private List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
 	private List<WUsedListDataItem> wUsedList = new ArrayList<WUsedListDataItem>();
-	private List<SimulationListDataItem> simulationList = new ArrayList<SimulationListDataItem>();
-	
-	//for internal use
-	private Map<String, NodeRef> changeUnitsMap = new HashMap<String, NodeRef>();
-			
+	private Map<NodeRef, ChangeUnitDataItem> changeUnitMap = new HashMap<NodeRef, ChangeUnitDataItem>();
+	private List<SimulationListDataItem> simulationList = new ArrayList<SimulationListDataItem>();				
 	
 	public String getCode() {
 		return code;
@@ -66,23 +62,18 @@ public class ChangeOrderData extends BeCPGDataObject {
 	}
 	public void setWUsedList(List<WUsedListDataItem> wUsedList) {
 		this.wUsedList = wUsedList;
+	}		
+	public Map<NodeRef, ChangeUnitDataItem> getChangeUnitMap() {
+		return changeUnitMap;
 	}
-	public Map<String, NodeRef> getChangeUnitsMap() {
-		return changeUnitsMap;
+	public void setChangeUnitMap(Map<NodeRef, ChangeUnitDataItem> changeUnitMap) {
+		this.changeUnitMap = changeUnitMap;
 	}
-	public void setChangeUnitsMap(Map<String, NodeRef> changeUnitsMap) {
-		this.changeUnitsMap = changeUnitsMap;
-	}	
 	public List<SimulationListDataItem> getSimulationList() {
 		return simulationList;
 	}
 	public void setSimulationList(List<SimulationListDataItem> simulationList) {
 		this.simulationList = simulationList;
-	}
-	
-	public static String getChangeUnitKey(NodeRef sourceItem, NodeRef targetItem){
-		
-		return String.format(ChangeOrderData.KEY, sourceItem, targetItem);
 	}
 	
 	public ChangeOrderData(NodeRef nodeRef, String name, String code, ECOState ecoState, ChangeOrderType ecoType, List<NodeRef> calculatedCharacts){

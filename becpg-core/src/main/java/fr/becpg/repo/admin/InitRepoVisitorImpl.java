@@ -273,6 +273,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 		// MailTemplates
 		addFilesResources(beCPGMailService.getModelMailNodeRef(), "classpath:beCPG/mails/*.ftl");
+		addFilesResources(beCPGMailService.getWorkflowModelMailNodeRef(), "classpath:beCPG/mails/workflow/*.ftl");
 
 		// Companies
 		NodeRef companiesNodeRef = visitFolder(companyHome, RepoConsts.PATH_COMPANIES);
@@ -340,7 +341,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 					InputStream in = res.getInputStream();
 					writer.setMimetype(mimetypeService.guessMimetype(fileName));
 					if (fileName.endsWith(".csv")) {
-						writer.setEncoding(BeCPGModel.ISO_CHARSET);
+						writer.setEncoding(RepoConsts.ISO_CHARSET);
 					}
 					writer.putContent(in);
 					in.close();

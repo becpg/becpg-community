@@ -319,8 +319,8 @@
 			<parameter name="allowedValues">
 				<list>
 					<value></value>
-					<value>Interdit</value>
-					<value>Toléré</value>
+					<value>Forbidden</value>
+					<value>Tolerated</value>
 					<value>Info</value>
 				</list>
 			</parameter>

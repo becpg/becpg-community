@@ -84,11 +84,11 @@ public class ECOPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy{
 		String beforeState = (String)before.get(ECOModel.PROP_ECO_STATE);
 		String afterState = (String)after.get(ECOModel.PROP_ECO_STATE);
 		
-		logger.debug("onUpdateProperties, sort beforeState: " + beforeState + "afterState: " + afterState);
+		logger.debug("onUpdateProperties, beforeState: " + beforeState + "afterState: " + afterState);
 		
 		if(beforeState != null && afterState != null && !beforeState.equals(afterState)){						
 		
-//			try{
+			try{
 				ECOState ecoState = ECOState.valueOf(afterState);
 				
 				if(ecoState.equals(ECOState.ToCalculateWUsed)){
@@ -109,10 +109,11 @@ public class ECOPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy{
 					ecoService.apply(ecoNodeRef);				
 					nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.Applied);
 				}
-//			}	
-//			catch(Exception e){
-//				logger.error("Failed to apply ECO policy", e);
-//			}
+			}	
+			catch(Exception e){
+				logger.error("Failed to apply ECO policy", e);
+				nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, beforeState);
+			}
 		}
 		
 	}	

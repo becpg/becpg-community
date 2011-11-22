@@ -628,18 +628,6 @@ public interface BeCPGModel {
 	// code aspect
 	static final QName ASPECT_ERP_CODE = QName.createQName(BECPG_URI,	"erpCodeAspect");
 	static final QName PROP_ERP_CODE = QName.createQName(BECPG_URI, "erpCode");
-
-	/**
-	 * Email import user template Name
-	 */
-	
-	public static final String EMAIL_NEW_USER_TEMPLATE = "importuser-email.ftl";
-
-	/**
-	 * ISO charset
-	 */
-	public static final String ISO_CHARSET = "ISO-8859-15";
-
 	
 	/**
 	 * Effectivity

@@ -55,6 +55,7 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -1967,27 +1968,27 @@ public class FormulationTest extends RepoBaseTestCase {
 				List<NodeRef> bioOrigins = new ArrayList<NodeRef>();
 				
 				List<ForbiddenIngListDataItem> forbiddenIngList = new ArrayList<ForbiddenIngListDataItem>();
-				forbiddenIngList.add(new ForbiddenIngListDataItem(null, "Interdit", "OGM interdit", null, NullableBoolean.True, NullableBoolean.Null, ings, geoOrigins, bioOrigins));
-				forbiddenIngList.add(new ForbiddenIngListDataItem(null, "Interdit", "Ionisation interdite", null, NullableBoolean.Null, NullableBoolean.True, ings, geoOrigins, bioOrigins));
+				forbiddenIngList.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "OGM interdit", null, NullableBoolean.True, NullableBoolean.Null, ings, geoOrigins, bioOrigins));
+				forbiddenIngList.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ionisation interdite", null, NullableBoolean.Null, NullableBoolean.True, ings, geoOrigins, bioOrigins));
 				
 				ings = new ArrayList<NodeRef>();
 				geoOrigins = new ArrayList<NodeRef>();
 				ings.add(ing3);				
 				geoOrigins.add(geoOrigin1);
-				forbiddenIngList.add(new ForbiddenIngListDataItem(null, "Toléré", "Ing3 geoOrigin1 toléré", null, NullableBoolean.Null, NullableBoolean.Null, ings, geoOrigins, bioOrigins));
+				forbiddenIngList.add(new ForbiddenIngListDataItem(null, RequirementType.Tolerated, "Ing3 geoOrigin1 toléré", null, NullableBoolean.Null, NullableBoolean.Null, ings, geoOrigins, bioOrigins));
 				
 				ings = new ArrayList<NodeRef>();
 				geoOrigins = new ArrayList<NodeRef>();
 				ings.add(ing1);
 				ings.add(ing4);
 				geoOrigins.clear();
-				forbiddenIngList.add(new ForbiddenIngListDataItem(null, "Interdit", "Ing1 et ing4 interdits", null, NullableBoolean.Null, NullableBoolean.Null, ings, geoOrigins, bioOrigins));
+				forbiddenIngList.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing1 et ing4 interdits", null, NullableBoolean.Null, NullableBoolean.Null, ings, geoOrigins, bioOrigins));
 				
 				ings = new ArrayList<NodeRef>();
 				geoOrigins = new ArrayList<NodeRef>();
 				ings.add(ing2);				
 				geoOrigins.add(geoOrigin2);
-				forbiddenIngList.add(new ForbiddenIngListDataItem(null, "Info", "Ing2 geoOrigin2 interdit sur charcuterie", null, NullableBoolean.Null, NullableBoolean.Null, ings, geoOrigins, bioOrigins));
+				forbiddenIngList.add(new ForbiddenIngListDataItem(null, RequirementType.Info, "Ing2 geoOrigin2 interdit sur charcuterie", null, NullableBoolean.Null, NullableBoolean.Null, ings, geoOrigins, bioOrigins));
 				
 				productSpecification.setForbiddenIngList(forbiddenIngList);
 				productDAO.update(productSpecificationNodeRef, productSpecification, dataLists);
@@ -2027,7 +2028,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					
 					if(reqCtrlList.getReqMessage().equals("OGM interdit")){
 						
-						assertEquals("Interdit", reqCtrlList.getReqType());
+						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 						assertEquals(4, reqCtrlList.getSources().size());
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial3NodeRef));
@@ -2037,7 +2038,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					}
 					else if(reqCtrlList.getReqMessage().equals("Ionisation interdite")){
 						
-						assertEquals("Interdit", reqCtrlList.getReqType());
+						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 						assertEquals(4, reqCtrlList.getSources().size());
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial3NodeRef));
@@ -2049,11 +2050,11 @@ public class FormulationTest extends RepoBaseTestCase {
 						
 						// should not occured
 						assertTrue(false);
-						assertEquals("Toléré", reqCtrlList.getReqType());
+						assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					}
 					else if(reqCtrlList.getReqMessage().equals("Ing1 et ing4 interdits")){
 						
-						assertEquals("Interdit", reqCtrlList.getReqType());
+						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 						assertEquals(2, reqCtrlList.getSources().size());
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial1NodeRef));
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
@@ -2061,7 +2062,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					}
 					else if(reqCtrlList.getReqMessage().equals("Ing2 geoOrigin2 interdit sur charcuterie")){
 						
-						assertEquals("Info", reqCtrlList.getReqType());
+						assertEquals(RequirementType.Info, reqCtrlList.getReqType());
 						assertEquals(2, reqCtrlList.getSources().size());
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
 						checks++;

@@ -21,7 +21,7 @@ const SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";
 const COMMENT_QNAMEPATH = "/fm:discussion/cm:Comments/";
 const QUERY_TEMPLATES = [
    {field: "keywords", template: "%(cm:name cm:title cm:description ia:whatEvent ia:descriptionEvent lnk:title lnk:description TEXT)"}];
-const EXCLUDE_PRODUCT_HISTORY = ' AND -ASPECT:"bcpg:compositeVersion" '
+const PRODUCTS_TO_EXCLUDE = ' AND -ASPECT:"bcpg:compositeVersion" AND -ASPECT:\"eco:simulationEntityAspect\" '
 /**
  * Returns site information data structure.
  * { shortName: siteId, title: title }
@@ -134,6 +134,19 @@ function getRepositoryItem(folderPath, node, metadataFields)
          };
          item.modifiedBy = getPersonDisplayName(item.modifiedByUser);
          item.createdBy = getPersonDisplayName(item.createdByUser);
+         
+         var fields = [];
+         if(metadataFields!=null && metadataFields.length>0){
+        	var splitted = metadataFields.split(",");
+   	         for (count in splitted)
+   	         {
+   	            fields.push(splitted[count].replace("_", ":"));
+   	         }
+         }
+         if(fields.length<1){
+        	 fields.push("bcpg:code"); // avoid empty
+         }
+         item.nodeData = getFormData(node,fields);
       }
       if (node.isContainer)
       {
@@ -144,20 +157,7 @@ function getRepositoryItem(folderPath, node, metadataFields)
       {
          item.type = "document";
          item.size = node.size;
-      }
-      var fields = [];
-      if(metadataFields!=null && metadataFields.length>0){
-     	var splitted = metadataFields.split(",");
-	         for (count in splitted)
-	         {
-	            fields.push(splitted[count].replace("_", ":"));
-	         }
-      }
-      if(fields.length<1){
-     	 fields.push("bcpg:code"); // avoid empty
-      }
-      item.nodeData = getFormData(node,fields);
-      
+      }            
    }
    
    return item;
@@ -203,6 +203,19 @@ function getDocumentItem(siteId, containerId, pathParts, node, metadataFields)
          };
          item.modifiedBy = getPersonDisplayName(item.modifiedByUser);
          item.createdBy = getPersonDisplayName(item.createdByUser);
+         
+         var fields = [];
+         if(metadataFields!=null && metadataFields.length>0){
+        	var splitted = metadataFields.split(",");
+   	         for (count in splitted)
+   	         {
+   	            fields.push(splitted[count].replace("_", ":"));
+   	         }
+         }
+         if(fields.length<1){
+        	 fields.push("bcpg:code"); // avoid empty
+         }
+         item.nodeData = getFormData(node,fields);
       }
       if (node.isContainer)
       {
@@ -214,19 +227,7 @@ function getDocumentItem(siteId, containerId, pathParts, node, metadataFields)
          item.type = "document";
          item.size = node.size;
         
-      }
-      var fields = [];
-      if(metadataFields!=null && metadataFields.length>0){
-     	var splitted = metadataFields.split(",");
-	         for (count in splitted)
-	         {
-	            fields.push(splitted[count].replace("_", ":"));
-	         }
-      }
-      if(fields.length<1){
-     	 fields.push("bcpg:code"); // avoid empty
-      }
-      item.nodeData = getFormData(node,fields);
+      }      
    }
    
    return item;
@@ -966,7 +967,7 @@ function getSearchResults(params)
 //      }
 //      ftsQuery = '(' + ftsQuery + ') AND -TYPE:"cm:thumbnail"';
 //      //beCPG : now, exclude always product history
-//      ftsQuery += EXCLUDE_PRODUCT_HISTORY; 
+//      ftsQuery += PRODUCTS_TO_EXCLUDE; 
 //      
 //      // sort field - expecting field to in one of the following formats:
 //      //  - short QName form such as: cm:name

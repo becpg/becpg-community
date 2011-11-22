@@ -191,8 +191,8 @@ public class ImportHelper{
 	
 	
 	public static Charset guestCharset(InputStream is, String readerCharset){
-		Charset defaultCharset = Charset.forName(BeCPGModel.ISO_CHARSET);
-		if(BeCPGModel.ISO_CHARSET.equals(readerCharset)){
+		Charset defaultCharset = Charset.forName(RepoConsts.ISO_CHARSET);
+		if(RepoConsts.ISO_CHARSET.equals(readerCharset)){
 			return defaultCharset;
 		}
 		CharactersetFinder finder = new GuessEncodingCharsetFinder();

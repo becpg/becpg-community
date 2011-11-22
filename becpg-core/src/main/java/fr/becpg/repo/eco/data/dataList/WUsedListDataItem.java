@@ -12,7 +12,7 @@ public class WUsedListDataItem {
 	private Boolean isWUsedImpacted;
 	private QName impactedDataList;
 	private NodeRef link;
-	private NodeRef changeUnit;
+	private NodeRef sourceItem;
 	
 	public NodeRef getNodeRef() {
 		return nodeRef;
@@ -43,21 +43,21 @@ public class WUsedListDataItem {
 	}
 	public void setLink(NodeRef link) {
 		this.link = link;
+	}	
+	public NodeRef getSourceItem() {
+		return sourceItem;
 	}
-	public NodeRef getChangeUnit() {
-		return changeUnit;
-	}
-	public void setChangeUnit(NodeRef changeUnit) {
-		this.changeUnit = changeUnit;
+	public void setSourceItem(NodeRef sourceItem) {
+		this.sourceItem = sourceItem;
 	}
 	public WUsedListDataItem(NodeRef nodeRef, Integer depthLevel, QName impactedDataList,
-			Boolean isWUsedImpacted, NodeRef link, NodeRef changeUnit){
+			Boolean isWUsedImpacted, NodeRef link, NodeRef sourceItem){
 		
 		setNodeRef(nodeRef);
 		setDepthLevel(depthLevel);
 		setImpactedDataList(impactedDataList);
 		setIsWUsedImpacted(isWUsedImpacted);
 		setLink(link);
-		setChangeUnit(changeUnit);
+		setSourceItem(sourceItem);
 	}
 }
