@@ -49,7 +49,7 @@
 
 
 		<constraint name="m2:dataTypeConstraint"
-			type="fr.becpg.repo.designer.constraint.DynPropsConstraint">
+			type="fr.becpg.repo.designer.constraint.DynModelConstraint">
 			<parameter name="constraintType">
 				<value>DATA_TYPE</value>
 			</parameter>
@@ -182,9 +182,9 @@
 					<title>Target class name</title>
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					 <constraints>
+					 <!-- <constraints>
 		               <constraint ref="m2:qNameConstraint" />
-		            </constraints>
+		            </constraints> -->
 				</property>
 				<property name="m2:targetRoleName">
 					<title>Target role name</title>
@@ -220,9 +220,9 @@
 				<property name="m2:parentName">
 				    <title>Parent Name</title>
 					<type>d:text</type>
-				<constraints>
+				<!-- <constraints>
 		               <constraint ref="m2:qNameConstraint" />
-		            </constraints>
+		            </constraints> -->
 				</property>
 				<property name="m2:archive">
 					<title>Archive</title>
@@ -236,9 +236,9 @@
 					<title>Mandatory aspect</title>
 					<type>d:text</type>
 					<multiple>true</multiple>
-					<constraints>
+					<!-- <constraints>
 		               <constraint ref="m2:qNameConstraint" />
-		            </constraints>
+		            </constraints> -->
 				</property>
 			</properties>
 			<associations>
@@ -477,9 +477,9 @@
 					<title>Name</title>
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<constraints>
+					<!-- <constraints>
 		               <constraint ref="m2:qNameConstraint" />
-		            </constraints>
+		            </constraints> -->
 				</property>
 			</properties>
 		</aspect>
