@@ -1,7 +1,10 @@
 package fr.becpg.repo.designer.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.M2Model;
@@ -11,9 +14,11 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.apache.commons.io.IOUtils;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import fr.becpg.model.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
@@ -79,16 +84,14 @@ public class DesignerServiceImpl implements DesignerService {
 		if(nodeService.hasAspect(dictionaryModelNodeRef, DesignerModel.ASPECT_MODEL)){
 			ContentWriter writer = contentService.getWriter(dictionaryModelNodeRef, ContentModel.PROP_CONTENT,true);
 			OutputStream out = null ;
-			InputStream in = null;
 			try {
 				out = writer.getContentOutputStream();
 				 NodeRef modelNodeRef = findModelNodeRef(dictionaryModelNodeRef);	
 				
 				if(modelNodeRef != null){
-					in  = metaModelVisitor.visitModelXml( modelNodeRef);
-					IOUtils.copy(in, out);
+					metaModelVisitor.visitModelXml( modelNodeRef,out);
+
 				}
-				logger.error("No assoc model found ");
 			} catch (Exception e){
 				logger.error(e,e);
 			}
@@ -96,7 +99,6 @@ public class DesignerServiceImpl implements DesignerService {
 				if(out!=null){
 					try {
 						out.close();
-						in.close();
 					} catch (Exception e) {
 						//Cannot do nothing here
 					}
@@ -106,13 +108,32 @@ public class DesignerServiceImpl implements DesignerService {
 	}
 
 	
-	
-	private NodeRef findModelNodeRef(NodeRef dictionaryModelNodeRef) {
-		 NodeRef modelNodeRef = null;
-		for(ChildAssociationRef assoc :  nodeService.getChildAssocs(dictionaryModelNodeRef)){
-			if(assoc.getQName().equals(DesignerModel.ASSOC_MODEL)){
-				modelNodeRef = assoc.getChildRef();
-				break;
+	@Override
+	public NodeRef findModelNodeRef(NodeRef nodeRef) {
+		
+		if(logger.isDebugEnabled()){
+			logger.debug("Find model for nodeRef:"+nodeRef.toString());
+			if(nodeRef!=null){
+				logger.debug("nodeRef type:"+nodeService.getType(nodeRef).toString());
+			}
+		}
+		
+		NodeRef modelNodeRef = null;
+		if(nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)){
+			for(ChildAssociationRef assoc :  nodeService.getChildAssocs(nodeRef)){
+				if(assoc.getQName().equals(DesignerModel.ASSOC_MODEL)){
+					return assoc.getChildRef();
+				}
+			}
+		} else {
+			if(nodeService.getType(nodeRef).equals(DesignerModel.TYPE_M2_MODEL)){
+				return nodeRef;
+			}
+			for(ChildAssociationRef assoc : nodeService.getParentAssocs(nodeRef)){
+				modelNodeRef = findModelNodeRef(assoc.getParentRef());
+				if(modelNodeRef!=null){
+					return modelNodeRef;
+				}
 			}
 		}
 		return modelNodeRef;
@@ -162,6 +183,84 @@ public class DesignerServiceImpl implements DesignerService {
 			logger.warn("Node is not of type : dictionnary model");
 		}
 		return null;
+	}
+
+	@Override
+	public NodeRef createModelElement(NodeRef parentNodeRef, QName nodeTypeQname, QName assocQname, Map<QName, Serializable> props,
+			String modelTemplate) {
+		
+		ChildAssociationRef childAssociationRef = nodeService.createNode(parentNodeRef,
+				assocQname, assocQname, nodeTypeQname);
+		
+		NodeRef ret = childAssociationRef.getChildRef();
+		
+		InputStream in = null ;
+		try {
+			try {
+				in = getModelTemplate(modelTemplate);
+			} catch (IOException e) {
+				logger.error(e,e);
+			}
+			if(in!=null){
+				metaModelVisitor.visitModelTemplate(ret, nodeTypeQname, in);
+			}
+			
+		} catch (Exception e){
+			logger.error(e,e);
+		} 
+		finally {
+			if(in!=null){
+				try {
+					in.close();
+				} catch (Exception e) {
+					//Cannot do nothing here
+				}
+			}
+		}
+		if(props!=null){
+			if(logger.isDebugEnabled()){
+				logger.debug("Set properties on node:"+ret.toString());
+			}
+			nodeService.setProperties(ret, props);
+		}
+		
+		return ret;
+	}
+
+	private InputStream getModelTemplate(String modelTemplate) throws IOException {
+		if(modelTemplate!=null){
+			Resource resource = new ClassPathResource("beCPG/designer/"+modelTemplate+".xml");
+			if(resource.exists()){
+				return resource.getInputStream();
+			}
+			logger.warn("No model found for :"+modelTemplate);
+		}
+		return null;
+	}
+
+	@Override
+	public String prefixName(NodeRef elementRef, String name) {
+		
+		NodeRef modelNodeRef = findModelNodeRef(elementRef);
+		if(modelNodeRef!=null){
+			for(ChildAssociationRef assoc :  nodeService.getChildAssocs(modelNodeRef)){
+				if(assoc.getQName().equals(DesignerModel.ASSOC_M2_NAMESPACES)){
+					NodeRef namespaceNodeRef = assoc.getChildRef();
+				    String prefix = (String) nodeService.getProperty(namespaceNodeRef,DesignerModel.PROP_M2_PREFIX);
+				    if(logger.isDebugEnabled()){
+				    	logger.debug("Prefix name : "+prefix+":"+name);
+				    }
+					return prefix+":"+name;
+				}
+			}
+			
+		} else {
+			logger.warn("Cannot find model nodeRef");
+		}
+		
+		logger.warn("Could not find any namespace");
+		
+		return name;
 	}
 
 }

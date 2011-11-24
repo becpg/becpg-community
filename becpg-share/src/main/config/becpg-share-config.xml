@@ -145,5 +145,87 @@
 			<itemType name="bcpg:client" />
 		</itemTypes>
 	</config>
+	
+	<config evaluator="string-compare" condition="ModelDesigner">
+
+		<types>
+			<type name="m2:model">
+				<association name="m2:types" >
+					<subtype name="m2:type">
+						<model name="CONTENT" />
+						<model name="TASKNODE" />
+						<model name="STARTTASK" />
+					</subtype>
+				</association>
+				<association name="m2:aspects" >
+					<subtype name="m2:aspect"/>
+				</association>
+				<association name="m2:constraints" >
+					<subtype name="m2:constraint">
+						<model name="LIST"/>
+						<model name="REGEXP"/>
+						<model name="LENGTH"/>
+						<model name="MINMAX"/>
+					</subtype>
+				</association>
+				<association name="m2:imports"  >
+					<subtype name="m2:namespace">
+						<model name="IMPORT_WF" />
+						<model name="IMPORT_BCPG" />
+					</subtype>
+				</association>
+				<association name="m2:namespaces" >
+					<subtype name="m2:namespace"/>
+				</association> 
+				<association name="m2:dataTypes" >
+					<subtype name="m2:dataType"/>
+				</association>
+			</type>
+			
+			<type name="m2:type">
+				<association name="m2:properties"  >
+					<subtype name="m2:property"/>
+				</association>
+				<association name="m2:propertyOverrides"  >
+					<subtype name="m2:propertyOverride"/>
+				</association>
+				<association name="m2:associations" >
+					<subtype name="m2:association"/>
+					<subtype name="m2:childAssociation"/>
+				</association>
+			</type>
+
+			<type name="m2:aspect">
+				<association name="m2:properties"  >
+					<subtype name="m2:property"/>
+				</association>
+				<association name="m2:propertyOverrides"  >
+					<subtype name="m2:propertyOverride"/>
+				</association>
+				<association name="m2:associations" >
+					<subtype name="m2:association"/>
+					<subtype name="m2:childAssociation"/>
+				</association>
+			</type>
+		
+			<type name="m2:property">
+				<association name="m2:constraints"   >
+					<subtype name="m2:constraint">
+						<model name="LIST"/>
+						<model name="REGEXP"/>
+						<model name="LENGTH"/>
+						<model name="MINMAX"/>
+					</subtype>
+				</association>
+			</type>
+			
+			<type name="m2:constraint">
+				<association name="m2:parameters" >
+					<subtype name="m2:namedValue"/>
+				</association>
+			</type>
+			
+		</types>
+	</config>
 
 </alfresco-config>

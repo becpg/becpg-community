@@ -1,0 +1,14 @@
+<type name="modelTemplate">
+	<parent>bpm:startTask</parent>
+	<overrides>
+		<property name="bpm:packageActionGroup">
+			<default>add_package_item_actions</default>
+		</property>
+		<property name="bpm:packageItemActionGroup">
+			<default>edit_package_item_actions</default>
+		</property>
+		<property name="bpm:workflowDescription">
+			<mandatory>true</mandatory>
+		</property>
+	</overrides>
+</type>

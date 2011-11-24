@@ -18,7 +18,7 @@
    <#else>
       <label for="${controlId}">${field.label?html}:<#if field.endpointMandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>     
       <div id="${controlId}" class="object-finder">        
-			<div style="padding-bottom: 2em;" class="yui-ac" >
+			<div class="yui-ac" >
 					 <div id="${fieldHtmlId}-autocomplete" class="ac-body" style="${style}">
 					 <span id="${fieldHtmlId}-toggle-autocomplete" class="ac-toogle"></span>
 					  <#if field.endpointMany>

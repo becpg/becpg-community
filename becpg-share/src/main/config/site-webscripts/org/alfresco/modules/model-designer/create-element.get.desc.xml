@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>create-element</shortname>
+  <description>Create a new model element</description>
+  <url>/modules/model-designer/create-element</url>
+</webscript>

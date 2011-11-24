@@ -1,0 +1,11 @@
+<constraint name="modelTemplate" type="LIST">
+	<parameter name="allowedValues">
+		<list>
+			<value>ABC</value>
+			<value>DEF</value>
+		</list>
+	</parameter>
+	<parameter name="caseSensitive">
+		<value>true</value>
+	</parameter>
+</constraint>

@@ -1,0 +1,8 @@
+<constraint name="modelTemplate" type="LENGTH">
+	<parameter name="minLength">
+		<value>0</value>
+	</parameter>
+	<parameter name="maxLength">
+		<value>128</value>
+	</parameter>
+</constraint>

@@ -1,0 +1,8 @@
+<type name="modelTemplate">
+	<parent>bpm:workflowTask</parent>
+	<overrides>
+		<property name="bpm:packageItemActionGroup">
+			<default>read_package_item_actions</default>
+		</property>
+	</overrides>
+</type>

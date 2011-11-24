@@ -1,0 +1,1679 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="bcpg:bcpgmodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<!-- Optional meta-data about the model -->
+	<description>beCPG Model</description>
+	<author>QUERE</author>
+	<version>1.0</version>
+	<!-- Imports are required to allow references to definitions in other models -->
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.alfresco.org/model/datalist/1.0"
+			prefix="dl" />
+		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
+	</imports>
+	<!-- Introduction of new namespaces defined by this model -->
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</namespaces>
+
+	<constraints>
+		<constraint name="bcpg:autoNumPrefix" type="REGEX">
+	        <parameter name="expression"><value>[A-Z]*</value></parameter>
+	        <parameter name="requiresMatch"><value>true</value></parameter>
+	     </constraint>
+		<constraint name="bcpg:systemState" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>ToValidate</value>
+					<value>Valid</value>
+					<value>Refused</value>
+					<value>Archived</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:productUnit" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>kg</value>
+					<value>L</value>
+					<value>P</value>
+					<value>m</value>
+					<value>m2</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:ingType" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Adipate</value>
+					<value>Alginate</value>
+					<value>Antibiotique</value>
+					<value>Antioxidant</value>
+					<value>Autre additif</value>
+					<value>Carbonate</value>
+					<value>Chlorure</value>
+					<value>Cire et hydrocarbure</value>
+					<value>Citrate</value>
+					<value>Colorant alimentaire</value>
+					<value>Conservateur</value>
+					<value>Dérivé cellulosique</value>
+					<value>Dérivé d'acide gras alimentaire</value>
+					<value>Diphosphate</value>
+					<value>Edulcorant</value>
+					<value>Exhausteur</value>
+					<value>Ferrocyanure</value>
+					<value>Gaz</value>
+					<value>Glace</value>
+					<value>Gluconate</value>
+					<value>Gomme</value>
+					<value>Gomme à mâcher</value>
+					<value>Guanylate</value>
+					<value>Hydroxyde</value>
+					<value>Ingrédient</value>
+					<value>Inosinate</value>
+					<value>Lactate</value>
+					<value>Lécithine</value>
+					<value>Malate</value>
+					<value>Orthophosphate</value>
+					<value>Phosphate</value>
+					<value>Silicate</value>
+					<value>Stearate</value>
+					<value>Sulfate</value>
+					<value>Tartrate</value>
+					<value>Thiosulfate</value>
+					<value>Triosulfate</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:nutGroup" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Groupe 1</value>
+					<value>Groupe 2</value>
+					<value>Autre</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:nutType" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Nutriment</value>
+					<value>Vitamine</value>
+					<value>Minéraux</value>
+					<value>Valeur énergétique</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:nutUnit" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>-</value>
+					<value>g</value>
+					<value>mg</value>
+					<value>kJ</value>
+					<value>kcal</value>
+					<value>µg</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:nutListUnit" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>-/100g</value>
+					<value>g/100g</value>
+					<value>mg/100g</value>
+					<value>kJ/100g</value>
+					<value>kcal/100g</value>
+					<value>µg/100g</value>
+					<value>-/100mL</value>
+					<value>g/100mL</value>
+					<value>mg/100mL</value>
+					<value>kJ/100mL</value>
+					<value>kcal/100mL</value>
+					<value>µg/100mL</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:allergenType" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Allergène informatif</value>
+					<value>Allergène majeur</value>
+					<value>Risque</value>
+					<value>Substance indésirable</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:declarationTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Déclarer</value>
+					<value>Détailler</value>
+					<value>Omettre</value>
+					<value>Ne pas déclarer</value>
+				</list>
+			</parameter>
+		</constraint>
+		<!--<constraint name="bcpg:declGrp" type="fr.becpg.repo.dictionary.constraint.DynListConstraint"> 
+			<parameter name="path"><value>System/Lists/DeclarationGrp</value></parameter> 
+			<parameter name="constraintType"><value>bcpg:listValue</value></parameter> 
+			<parameter name="constraintProp"><value>cm:name</value></parameter> </constraint> -->
+		<constraint name="bcpg:declGrp" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Garniture</value>
+					<value>Pâte</value>
+					<value>-</value>
+					<value></value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:currency" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>€</value>
+					<value>$</value>
+					<value>£</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:compoListUnit" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>kg</value>
+					<value>g</value>
+					<value>L</value>
+					<value>mL</value>
+					<value>P</value>
+					<value>m</value>
+					<value>m2</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:costListUnit" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>€/L</value>
+					<value>€/kg</value>
+					<value>€/P</value>
+					<value>€/m</value>
+					<value>$/L</value>
+					<value>$/kg</value>
+					<value>$/P</value>
+					<value>$/m</value>
+					<value>£/L</value>
+					<value>£/kg</value>
+					<value>£/P</value>
+					<value>£/m</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:physicoChemUnit" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>L</value>
+					<value>kg</value>
+					<value>P</value>
+					<value>%</value>
+					<value>°C</value>
+					<value>-</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:microbioUnit" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>UFC/cm²</value>
+					<value>UFC/25cm²</value>
+					<value>UFC/g</value>
+					<value>UFC/10g</value>
+					<value>UFC/25g</value>
+					<value>UFC/50g</value>
+					<value>UFG/g</value>
+					<value>UFG/L</value>
+					<value>/g</value>
+					<value>/10g</value>
+					<value>/25g</value>
+					<value>/100cm² n=50,c=2</value>
+					<value>-</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:productHierarchy1"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>System/ProductHierarchy/RawMaterial_Hierarchy1</value>
+					<value>System/ProductHierarchy/PackagingMaterial_Hierarchy1</value>
+					<value>System/ProductHierarchy/SemiFinishedProduct_Hierarchy1</value>
+					<value>System/ProductHierarchy/FinishedProduct_Hierarchy1</value>
+					<value>System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy1</value>
+					<value>System/ProductHierarchy/PackagingKit_Hierarchy1</value>
+					<value>System/ProductHierarchy/CondSalesUnit_Hierarchy1</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:productHierarchy2"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>System/ProductHierarchy/RawMaterial_Hierarchy2</value>
+					<value>System/ProductHierarchy/PackagingMaterial_Hierarchy2</value>
+					<value>System/ProductHierarchy/SemiFinishedProduct_Hierarchy2</value>
+					<value>System/ProductHierarchy/FinishedProduct_Hierarchy2</value>
+					<value>System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy2</value>
+					<value>System/ProductHierarchy/PackagingKit_Hierarchy2</value>
+					<value>System/ProductHierarchy/CondSalesUnit_Hierarchy2</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:linkedValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lkvValue</value>
+			</parameter>
+		</constraint>
+		<!-- <constraint name="bcpg:plant" type="fr.becpg.repo.dictionary.constraint.DynListConstraint"> 
+			<parameter name="path"> <list> <value>System/Plants</value> </list> </parameter> 
+			<parameter name="constraintType"> <value>bcpg:plant</value> </parameter> 
+			<parameter name="constraintProp"> <value>cm:name</value> </parameter> </constraint> -->
+		<!-- <constraint name="bcpg:plant" type="LIST"> <parameter name="allowedValues"> 
+			<list> <value>Formulation</value> <value>Site A</value> <value>Site B</value> 
+			<value>Site C</value> <value></value> </list> </parameter> </constraint> -->
+		<constraint name="bcpg:packagingListUnit" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>P</value>
+					<value>PP</value>
+					<value>m</value>
+					<value>m2</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:packagingLevel" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Primaire</value>
+					<value>Secondaire</value>
+					<value>Tertiaire</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:reqTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Interdit</value>
+					<value>Toléré</value>
+					<value>Info</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:nullableBoolean" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Vrai</value>
+					<value>Faux</value>
+				</list>
+			</parameter>
+		</constraint>
+	</constraints>
+
+	<types>
+		<!-- _________________________________________________ PRODUCTS________________________________________________ -->
+
+		<type name="bcpg:productSpecification">
+			<parent>bcpg:entity</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="bcpg:productMicrobioCriteria">
+			<parent>bcpg:entity</parent>
+			<properties>
+				<property name="bcpg:pmcRegulation">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:pmcConcernedProducts">
+					<type>d:text</type>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="bcpg:product">
+			<parent>bcpg:entity</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>				
+				<aspect>bcpg:productAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
+			</mandatory-aspects>
+		</type>		
+		<type name="bcpg:finishedProduct">
+			<parent>bcpg:product</parent>			
+			<mandatory-aspects>
+				<aspect>bcpg:eanAspect</aspect>
+				<aspect>bcpg:transformationAspect</aspect>
+				<aspect>bcpg:clientsAspect</aspect>
+				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		<type name="bcpg:semiFinishedProduct">
+			<parent>bcpg:product</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:transformationAspect</aspect>
+				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		<type name="bcpg:localSemiFinishedProduct">
+			<parent>bcpg:product</parent>
+		</type>
+		<type name="bcpg:rawMaterial">
+			<parent>bcpg:product</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:eanAspect</aspect>
+				<aspect>bcpg:suppliersAspect</aspect>
+				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		<type name="bcpg:packagingKit">
+			<parent>bcpg:product</parent>
+			<mandatory-aspects>
+			</mandatory-aspects>
+		</type>
+		<type name="bcpg:packagingMaterial">
+			<parent>bcpg:product</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:eanAspect</aspect>
+				<aspect>bcpg:suppliersAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		<!-- ________________________________________________________________ CARACTERISTIQUES 
+			________________________________________________________________ -->
+
+
+		<type name="bcpg:charact">
+			<parent>cm:content</parent>
+		</type>
+
+		<type name="bcpg:allergen">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:allergenType">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:allergenType" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
+
+		<type name="bcpg:cost">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:costCurrency">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:currency" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
+
+		<type name="bcpg:ing">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:ingMLName">
+					<type>d:mltext</type>
+				</property>
+				<property name="bcpg:ingCEECode">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:ingType">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:ingType" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
+
+		<type name="bcpg:microbio">
+			<parent>bcpg:charact</parent>
+		</type>
+
+		<type name="bcpg:nut">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:nutGroup">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:nutGroup" />
+					</constraints>
+				</property>
+				<property name="bcpg:nutType">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:nutType" />
+					</constraints>
+				</property>
+				<property name="bcpg:nutUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:nutUnit" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
+
+		<type name="bcpg:organo">
+			<parent>bcpg:charact</parent>
+		</type>
+
+		<type name="bcpg:physicoChem">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:physicoChemUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:physicoChemUnit" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
+
+		<type name="bcpg:geoOrigin">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:geoOriginISOCode">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
+		</type>
+
+		<type name="bcpg:bioOrigin">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:bioOriginType">
+					<type>d:text</type>
+				</property>
+			</properties>
+		</type>
+		<!-- ______________________________________ FOURNISSEUR ______________________________________ -->
+		<type name="bcpg:supplier">
+			<parent>bcpg:entity</parent>
+			<properties>
+				<property name="bcpg:supplierTel">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:supplierEmail">
+					<type>d:text</type>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:location</aspect>
+			</mandatory-aspects>
+		</type>
+		<!-- ______________________________________ CLIENT ______________________________________ -->
+		<type name="bcpg:client">
+			<parent>bcpg:entity</parent>
+			<properties>
+				<property name="bcpg:clientTel">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:clientEmail">
+					<type>d:text</type>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:location</aspect>
+			</mandatory-aspects>
+		</type>
+		<!-- ______________________________________ PLANT ______________________________________ -->
+		<type name="bcpg:plant">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="bcpg:plantTel">
+					<type>d:text</type>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:location</aspect>
+			</mandatory-aspects>
+		</type>
+		<!-- ______________________________________ SUBSIDIARY ______________________________________ -->
+		<type name="bcpg:subsidiary">
+			<parent>cm:content</parent>			
+		</type>
+		<!-- ______________________________________ TRADEMARK ______________________________________ -->								
+		<type name="bcpg:trademark">
+			<parent>cm:content</parent>			
+		</type>
+		<!-- _______________________________________ COMPO ________________________________________________ -->
+		<type name="bcpg:compoList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:compoListQty">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:compoListQtySubFormula">
+					<type>d:float</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="bcpg:compoListQtyAfterProcess">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:compoListUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:compoListUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:compoListLossPerc">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:compoListYieldPerc">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:compoListDeclGrp">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:declGrp" />
+					</constraints>
+				</property>
+				<property name="bcpg:compoListDeclType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:declarationTypes" />
+					</constraints>
+				</property>
+				<!-- <property name="bcpg:compoListPlants"> <type>d:text</type> <mandatory>false</mandatory> 
+					<multiple>true</multiple> <constraints> <constraint ref="bcpg:plant" /> </constraints> 
+					</property> -->
+			</properties>
+			<associations>
+				<!-- assoc used to store the direct father node (multi-leve recipe)l -->
+				<association name="bcpg:compoListFather">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:compoList</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<!-- assoc used to store the product -->
+				<association name="bcpg:compoListProduct">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<!-- _______________________________________ PACKAGING ________________________________________________ -->
+		<type name="bcpg:packagingList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:packagingListQty">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:packagingListUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:packagingListUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:packagingListPkgLevel">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:packagingLevel" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:packagingListProduct">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<!-- ________________________________________________________________ LISTES 
+			DE CARACT. ________________________________________________________________ -->
+
+		<type name="bcpg:entityListItem">
+			<parent>dl:dataListItem</parent>
+		</type>
+
+		<type name="bcpg:productListItem">
+			<parent>bcpg:entityListItem</parent>
+		</type>
+
+		<type name="bcpg:allergenList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:allergenListVoluntary">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+				<property name="bcpg:allergenListInVoluntary">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+				<!-- <property name="bcpg:allergenListPlants"> <type>d:text</type> <mandatory>false</mandatory> 
+					<multiple>true</multiple> <constraints> <constraint ref="bcpg:plant" /> </constraints> 
+					</property> -->
+			</properties>
+			<associations>
+				<association name="bcpg:allergenListAllergen">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:allergen</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:allergenListVolSources">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:allergenListInVolSources">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="bcpg:costList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:costListValue">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:costListUnit">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:costListUnit" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:costListCost">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:cost</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="bcpg:costDetailsList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:costDetailsListValue">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>				
+				<property name="bcpg:costDetailsListUnit">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:costListUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:costDetailsListPerc">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:costDetailsListCost">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:cost</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:costDetailsListSource">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:content</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="bcpg:ingLabelingList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:illGrp">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:declGrp" />
+					</constraints>
+				</property>
+				<property name="bcpg:illValue">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+		</type>
+
+		<type name="bcpg:ingList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:ingListQtyPerc">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:ingListIsGMO">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+				<property name="bcpg:ingListIsIonized">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:ingListIng">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:ing</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:ingListGeoOrigin">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:ingListBioOrigin">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:bioOrigin</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:ingListSubIng">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:ing</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="bcpg:microbioList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:mblValue">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:mblUnit">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:microbioUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:mblMaxi">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:mblMicrobio">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:microbio</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="bcpg:nutList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:nutListValue">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:nutListUnit">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:nutListUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:nutListMini">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:nutListMaxi">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:nutListGroup">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:nutGroup" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:nutListNut">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:nut</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="bcpg:organoList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:organoListValue">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:organoListOrgano">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:organo</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="bcpg:physicoChemList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:pclValue">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:pclUnit">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:physicoChemUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:pclMini">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:pclMaxi">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:pclPhysicoChem">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:physicoChem</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<!-- List used to specify what is forbidden -->
+		<type name="bcpg:forbiddenIngList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:filReqType">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:reqTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:filReqMessage">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:filQtyPercMaxi">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:filIsGMO">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:nullableBoolean" />
+					</constraints>
+				</property>
+				<property name="bcpg:filIsIonized">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:nullableBoolean" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:filIngs">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:ing</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:filGeoOrigins">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:filBioOrigins">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:bioOrigin</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<!-- List used to display the result of the requirement controls -->
+		<type name="bcpg:reqCtrlList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:rclReqType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:reqTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:rclReqMessage">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:rclSources">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		<!-- ________________________________________________________________ AUTO 
+			COMP ________________________________________________________________ -->
+
+		<type name="bcpg:linkedValue">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="bcpg:lkvPrevValue">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:lkvValue">
+					<type>d:text</type>
+				</property>
+			</properties>
+		</type>
+
+		<type name="bcpg:listValue">
+			<parent>cm:content</parent>
+		</type>
+
+		<type name="bcpg:entityFolder">
+			<parent>cm:folder</parent>
+		</type>
+
+		<type name="bcpg:entity">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="bcpg:startEffectivity">
+					<type>d:datetime</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="bcpg:endEffectivity">
+					<type>d:datetime</type>
+				</property>
+			</properties>
+		</type>
+
+		<type name="bcpg:autoNum">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="bcpg:autoNumClassName">
+					<type>d:qname</type>
+				</property>
+				<property name="bcpg:autoNumPropertyName">
+					<type>d:qname</type>
+				</property>
+				<property name="bcpg:autoNumValue">
+					<type>d:long</type>
+				</property>
+				<property name="bcpg:autoNumPrefix">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:autoNumPrefix"/>
+					</constraints>
+				</property>
+			</properties>
+		</type>
+
+	</types>
+	<!-- __________________________________________ ASPECTS _________________________________________ -->
+
+	<aspects>
+		<aspect name="bcpg:productAspect">
+			<properties>
+				<property name="bcpg:legalName">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:productComments">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:productHierarchy1">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:productHierarchy1" />
+					</constraints>
+				</property>
+				<property name="bcpg:productHierarchy2">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:productHierarchy2" />
+					</constraints>
+				</property>
+				<property name="bcpg:productState">
+					<type>d:text</type>
+					<default>ToValidate</default>
+					<constraints>
+						<constraint ref="bcpg:systemState" />
+					</constraints>
+				</property>
+				<property name="bcpg:productUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<default>kg</default>
+					<constraints>
+						<constraint ref="bcpg:productUnit" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+
+		<aspect name="bcpg:transformationAspect">
+			<properties>
+				<property name="bcpg:productQty">
+					<type>d:float</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="bcpg:productDensity">
+					<type>d:float</type>
+					<mandatory>true</mandatory>
+					<default>1</default>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:productSpecification">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:productSpecification</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		
+		<aspect name="bcpg:manufacturingAspect">			
+			<associations>				
+				<association name="bcpg:subsidiary">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:subsidiary</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:plants">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:plant</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:trademark">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:trademark</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		
+		<aspect name="bcpg:eanAspect">
+			<properties>
+				<property name="bcpg:eanCode">
+					<type>d:text</type>
+				</property>
+			</properties>
+		</aspect>
+
+		<aspect name="bcpg:suppliersAspect">
+			<associations>
+				<association name="bcpg:suppliers">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:supplier</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+
+		<aspect name="bcpg:clientsAspect">
+			<associations>
+				<association name="bcpg:clients">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:client</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+
+		<aspect name="bcpg:productMicrobioCriteriaAspect">
+			<associations>
+				<association name="bcpg:productMicrobioCriteria">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:productMicrobioCriteria</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+
+		<aspect name="bcpg:depthLevelAspect">
+			<properties>
+				<property name="bcpg:depthLevel">
+					<type>d:int</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:sortableListAspect">
+			<properties>
+				<property name="bcpg:sort">
+					<type>d:int</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:isManualListItemAspect">
+			<properties>
+				<property name="bcpg:isManualListItem">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+			</properties>
+		</aspect>
+
+		<aspect name="bcpg:codeAspect">
+			<properties>
+				<property name="bcpg:code">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:erpCodeAspect">
+			<properties>
+				<property name="bcpg:erpCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+		</aspect>
+
+		<aspect name="bcpg:profitabilityAspect">
+			<properties>
+				<property name="bcpg:unitPrice">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:priceCurrency">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:currency" />
+					</constraints>
+				</property>
+				<property name="bcpg:breakEven">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:unitTotalCost">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:profitability">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+		</aspect>
+
+		<!-- Aspect used to store the entity type of the template (entityFolderTpl, 
+			entityTpl, etc...) -->
+		<aspect name="bcpg:entityTplAspect">
+			<properties>
+				<property name="bcpg:entityTplClassName">
+					<type>d:qname</type>
+				</property>
+				<property name="bcpg:entityTplEnabled">
+					<type>d:boolean</type>
+					<default>true</default>
+				</property>
+			</properties>
+		</aspect>
+
+		<aspect name="bcpg:entityListsAspect">
+			<associations>
+				<child-association name="bcpg:entityLists">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:folder</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+				</child-association>
+			</associations>
+		</aspect>
+
+		<aspect name="bcpg:location">
+			<title>Location</title>
+			<properties>
+				<property name="bcpg:locationAddress1">
+					<title>Address 1</title>
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:locationAddress2">
+					<title>Address 2</title>
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:locationAddress3">
+					<title>Address 3</title>
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:locationZip">
+					<title>Zip/Post Code</title>
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:locationCountry">
+					<title>Country</title>
+					<type>d:text</type>
+				</property>
+			</properties>
+		</aspect>
+
+		<!-- versionable with datalists -->
+		<aspect name="bcpg:compositeVersionable">
+			<title>Versionable with datalists</title>
+			<properties>
+				<property name="bcpg:versionLabel">
+					<title>Version Label</title>
+					<type>d:text</type>
+					<protected>true</protected>
+				</property>
+				<property name="bcpg:initialVersion">
+					<title>Initial Version</title>
+					<type>d:boolean</type>
+					<default>true</default>
+				</property>
+			</properties>
+		</aspect>
+
+		<!-- version with datalists -->
+		<aspect name="bcpg:compositeVersion">
+			<title>Versionable with datalists</title>
+			<properties>
+				<property name="bcpg:versionDescription">
+					<title>Version Label</title>
+					<type>d:text</type>
+					<protected>true</protected>
+				</property>
+				<property name="bcpg:frozenCreated">
+					<title>Created</title>
+					<type>d:datetime</type>
+					<protected>true</protected>
+					<index enabled="true">
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
+				</property>
+				<property name="bcpg:frozenCreator">
+					<title>Creator</title>
+					<type>d:text</type>
+					<protected>true</protected>
+				</property>
+				<property name="bcpg:frozenModified">
+					<title>Modified</title>
+					<type>d:datetime</type>
+					<protected>true</protected>
+					<index enabled="true">
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
+				</property>
+				<property name="bcpg:frozenModifier">
+					<title>Modifier</title>
+					<type>d:text</type>
+					<protected>true</protected>
+				</property>
+				<property name="bcpg:frozenAccessed">
+					<title>Accessed</title>
+					<type>d:datetime</type>
+					<protected>true</protected>
+					<index enabled="true">
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
+				</property>
+				<property name="bcpg:frozenNodeRef">
+					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>
+				</property>
+				<property name="bcpg:frozenNodeDbId">
+					<type>d:long</type>
+					<mandatory enforced="true">true</mandatory>
+				</property>
+			</properties>
+		</aspect>
+
+		<!-- Aspect for folder templates used to store permission groups -->
+		<aspect name="bcpg:permissionsTpl">
+			<associations>
+
+				<association name="bcpg:consumerGroups">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<!-- TODO: Refactor when group is pulled into content model -->
+						<class>cm:authorityContainer</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+
+				<association name="bcpg:editorGroups">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<!-- TODO: Refactor when group is pulled into content model -->
+						<class>cm:authorityContainer</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+
+				<association name="bcpg:contributorGroups">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<!-- TODO: Refactor when group is pulled into content model -->
+						<class>cm:authorityContainer</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+
+				<association name="bcpg:collaboratorGroups">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<!-- TODO: Refactor when group is pulled into content model -->
+						<class>cm:authorityContainer</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+
+			</associations>
+		</aspect>
+
+	</aspects>
+</model>

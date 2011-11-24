@@ -97,7 +97,7 @@ select node.id, name.string_value , entityListAssoc.parent_node_id
   		and node_store.identifier = 'SpacesStore' 
   		and node_store.protocol='workspace'
   		and assoc_qname.local_name = 'allergenListAllergen'
-  		and ( allergenListInVoluntary.boolean_value = true or allergenListInVoluntary.boolean_value = true);
+  		and ( allergenListInVoluntary.boolean_value = true or allergenListVoluntary.boolean_value = true);
 
   
  --

@@ -114,6 +114,8 @@ public class ModelTree {
 		this.childrens = childrens;
 	}
 
+	
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -122,8 +124,10 @@ public class ModelTree {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((childrens == null) ? 0 : childrens.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -145,6 +149,11 @@ public class ModelTree {
 				return false;
 		} else if (!childrens.equals(other.childrens))
 			return false;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -154,6 +163,11 @@ public class ModelTree {
 			if (other.nodeRef != null)
 				return false;
 		} else if (!nodeRef.equals(other.nodeRef))
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
 			return false;
 		if (type == null) {
 			if (other.type != null)
@@ -168,7 +182,8 @@ public class ModelTree {
 	 */
 	@Override
 	public String toString() {
-		return "ModelTree [type=" + type + ", nodeRef=" + nodeRef + ", name=" + name + ",  \n -- > childrens=" + childrens + "]";
+		return "ModelTree [type=" + type + ", nodeRef=" + nodeRef + ", name=" + name + ", title=" + title
+				+ ", description=" + description + ", \n --> childrens=" + childrens + "]";
 	}
 	
 	

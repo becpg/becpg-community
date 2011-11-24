@@ -24,21 +24,7 @@
 	</namespaces>
 
 	<constraints>
-<!-- 		 
-        <constraint name="m2:nodeTypeConstraint"
-			type="fr.becpg.repo.designer.constraint.DynPropsConstraint">
-			<parameter name="constraintType">
-				<value>NODE_TYPE</value>
-			</parameter>
-		</constraint>
-		
-		 <constraint name="m2:nodeAspectConstraint"
-			type="fr.becpg.repo.designer.constraint.DynPropsConstraint">
-			<parameter name="constraintType">
-				<value>ASPECT_TYPE</value>
-			</parameter>
-		</constraint> 
--->
+
 		<constraint name="m2:qNameConstraint"
 			type="REGEX">
 			<parameter name="expression">
@@ -47,13 +33,6 @@
 			<parameter name="requiresMatch"><value>true</value></parameter>
 		</constraint> 
 
-
-		<constraint name="m2:dataTypeConstraint"
-			type="fr.becpg.repo.designer.constraint.DynModelConstraint">
-			<parameter name="constraintType">
-				<value>DATA_TYPE</value>
-			</parameter>
-		</constraint> 
 
 
 		<constraint name="m2:indexTokenisationModeConstraint"
@@ -401,11 +380,7 @@
 				<property name="m2:propertyType">
 					<title>Property type</title>
 					<type>d:text</type>
-					<constraints>
-	                  <constraint ref="m2:dataTypeConstraint" />
-	                </constraints>
 				</property>
-				
 				<property name="m2:isMultiValued">
 					<title>Is multiValued</title>
 					<type>d:boolean</type>

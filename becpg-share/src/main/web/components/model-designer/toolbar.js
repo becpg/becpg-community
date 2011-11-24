@@ -27,6 +27,7 @@
 	   beCPG.component.DesignerToolbar.superclass.constructor.call(this, "beCPG.component.DesignerToolbar", htmlId, ["button", "container"]);
       
 	   YAHOO.Bubbling.on("designerModelNodeChange", this.onDesignerModelNodeChange, this);
+	   YAHOO.Bubbling.on("selectedModelChanged", this.onSelectedModelChanged, this);
 	   
       return this;
    };
@@ -60,22 +61,33 @@
           itemType: null,
           
           /**
-           * Current selected itemType.
+           * Current selected nodeRef.
            * 
-           * @property itemType
+           * @property destination
            * @type string
            * @default ""
            */
-          destination: null
+          destination: null,
+          
+          /**
+           * Current selected displayName.
+           * 
+           * @property displayName
+           * @type string
+           * @default ""
+           */
+          displayName: null,
+          
+          /**
+           * Current modelNodeRef.
+           * 
+           * @property modelNodeRef
+           * @type string
+           * @default ""
+           */
+    	  modelNodeRef: null
       },
 
-      typeList : { 
-    	  "m2:model" : ["m2:imports","m2:namespaces","m2:dataTypes","m2:types,m2:aspects","m2:constraints"],
-          "m2:type" :  ["m2:properties","m2:propertyOverrides","m2:associations"],
-          "m2:aspect" :["m2:properties","m2:propertyOverrides","m2:associations"],
-          "m2:property" :["m2:constraints"],
-      	  "m2:constraint" : ["m2:parameters"]
-      },
       
       /**
        * Fired by YUI when parent element is available for scripting.
@@ -84,29 +96,206 @@
        */
       onReady: function DesignerToolbar_onReady()
       {
-         this.widgets.newRowButton = Alfresco.util.createYUIButton(this, "newRowButton", this.onNewRow,
+         this.widgets.newRowButton = Alfresco.util.createYUIButton(this, "newRowButton", this.onCreateElement,
          {
             disabled: true,
             value: "create"
          });
+         
+         this.widgets.deleteButton = Alfresco.util.createYUIButton(this, "deleteButton", this.onDelete,
+         {
+            disabled: true,
+            value: "delete"
+         });
+         
+         this.widgets.publishButton = Alfresco.util.createYUIButton(this, "publishButton", this.onPublish,
+         {
+            disabled: false,
+            value: "publish"
+          });
 
          // Finally show the component body here to prevent UI artifacts on YUI button decoration
          Dom.setStyle(this.id + "-body", "visibility", "visible");
       },
-      
       /**
        * New Row button click handler
        *
-       * @method onNewRow
+       * @method onPublish
        * @param e {object} DomEvent
        * @param p_obj {object} Object passed back from addListener method
        */
-      onNewRow: function DesignerToolbar_onNewRow(e, p_obj)
-      {
-    	 
-    	  
+      onPublish: function DesignerToolbar_onPublish(e, p_obj)
+      { 
+    	  var me = this;
+    	  var templateUrl = Alfresco.constants.PROXY_URI + "becpg/designer/model/publish?nodeRef="+this.options.modelNodeRef;
+    	  Alfresco.util.Ajax.request( {
+    	              method : Alfresco.util.Ajax.POST,
+    	              url: templateUrl,
+    	              successMessage: this.msg("message.publish.success"),
+    	              failureMessage: this.msg("message.publish.failure"),
+    	              scope: this,
+    	              execScripts: false
+    	   });
     	  
       },
+      /**
+       * Delete record.
+       *
+       * @method onDelete
+       * @param e {object} DomEvent
+       * @param p_obj {object} Object passed back from addListener method
+       */
+      onDelete: function onDelete()
+      {
+         var me = this;
+
+         Alfresco.util.PopupManager.displayPrompt(
+         {
+            title: this.msg("actions.delete"),
+            text: this.msg("message.confirm.delete", me.options.displayName),
+            buttons: [
+            {
+               text: this.msg("button.delete"),
+               handler: function DesignerToolbar_onActionDelete_delete()
+               {
+                  this.destroy();
+                  me._onActionDeleteConfirm.call(me);
+               }
+            },
+            {
+               text: this.msg("button.cancel"),
+               handler: function DesignerToolbar_onActionDelete_cancel()
+               {
+                  this.destroy();
+               },
+               isDefault: true
+            }]
+         });
+      },
+
+      /**
+       * Delete record confirmed.
+       *
+       * @method _onActionDeleteConfirm
+       * @param record {object} Object literal representing the file or folder to be actioned
+       * @private
+       */
+      _onActionDeleteConfirm: function DesignerToolbar__onActionDeleteConfirm(record)
+      {
+    	  var me = this;
+    	  var templateUrl = Alfresco.constants.PROXY_URI  + "slingshot/doclib/action/file/node/"+me.options.destination.replace("://","/");
+    	  Alfresco.util.Ajax.request(
+    	            {
+    	            	
+    	              method : Alfresco.util.Ajax.DELETE,
+    	               url: templateUrl,
+    	               successCallback:
+    	               {
+    	                  fn: function(){
+    	                	  YAHOO.Bubbling.fire("elementDeleted",{nodeRef: me.options.destination});
+                    		  
+                    		  Alfresco.util.PopupManager.displayMessage({
+                                         text:  this.msg("message.delete.success", me.options.displayName)
+                              });
+    	                  },
+    	                  scope: this
+    	               },
+    	               failureMessage: this.msg("message.delete.failure", me.options.displayName),
+    	               scope: this,
+    	               execScripts: false
+    	            });
+    	    
+      },
+      
+      /**
+       * onCreateElement button click handler
+       *
+       * @method onCreateElement
+       * @param e {object} DomEvent
+       * @param p_obj {object} Object passed back from addListener method
+       */
+      onCreateElement: function DesignerToolbar_onCreateElement(e, p_obj)
+      { 
+          var  actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/create/element?nodeRef="+this.options.destination;
+
+          var doSetupFormsValidation = function DesignerToolbar_oACT_doSetupFormsValidation(p_form)
+            {
+               // Validation
+               p_form.addValidation(this.id + "-createElement-assocType", function fnValidateType(field, args, event, form, silent, message)
+               {
+                  return field.options[field.selectedIndex].value !== "-";
+               }, null, "change");
+               p_form.addValidation(this.id + "-createElement-type", function fnValidateType(field, args, event, form, silent, message)
+               {
+                  return field.options[field.selectedIndex].value !== "-";
+               }, null, "change");
+               
+               p_form.setShowSubmitStateDynamically(true, false);
+            };
+
+            // Always create a new instance
+            this.modules.createElement = new Alfresco.module.SimpleDialog(this.id + "-createElement").setOptions(
+            {
+               width: "30em",
+               templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "/modules/model-designer/create-element?currentType="+this.options.itemType,
+               actionUrl: actionUrl,
+               doSetupFormsValidation:
+               {
+                  fn: doSetupFormsValidation,
+                  scope: this
+               },
+               firstFocus: this.id + "-createElement-type",
+               onSuccess:
+               {
+                  fn: function DesignerToolbar_onActionChangeType_success(response)
+                  {
+                	  
+                	  if (response.json && response.json.persistedObject)
+                      {
+                          
+                		  YAHOO.Bubbling.fire("elementCreated",{nodeRef: response.json.persistedObject});
+                		  
+                		  Alfresco.util.PopupManager.displayMessage(
+                                  {
+                                     text: this.msg("message.create-element.success")
+                                  });
+                	  } else {
+                		  Alfresco.util.PopupManager.displayMessage(
+                                  {
+                                     text: this.msg("message.create-element.failure")
+                                  });
+                	  }
+                	  
+                    
+                  },
+                  scope: this
+               },
+               onFailure:
+               {
+                  fn: function DesignerToolbar_onActionChangeType_failure(response)
+                  {
+                     Alfresco.util.PopupManager.displayMessage(
+                     {
+                        text: this.msg("message.create-element.failure")
+                     });
+                  },
+                  scope: this
+               }
+            });
+            this.modules.createElement.show();
+         },
+         /**
+          * @method onSelectedModelChanged
+          */
+         onSelectedModelChanged: function DesignerToolbar_onNodeClicked(layer, args)
+         {
+       	  var obj = args[1];
+       	  
+            var nodeRef = obj.nodeRef;
+            	if(nodeRef!=null){
+                 this.options.modelNodeRef = nodeRef;
+            	} 
+          },
       
       /**
        * Fired by YUI TreeView when a node label is clicked
@@ -120,113 +309,20 @@
     	  var obj = args[1];
     	  
          var nodeRef = obj.nodeRef,
-         	itemType = obj.itemType;
+         	itemType = obj.itemType,
+            label = obj.label;
          	if(nodeRef!=null){
               this.options.destination = nodeRef;
               this.options.itemType = itemType;
-              this.widgets.newRowButton.setDisable(false);
+              this.options.displayName = label;
+              this.widgets.newRowButton.set("disabled", false);
+              this.widgets.deleteButton.set("disabled", false);
          	} else {
-         	  this.widgets.newRowButton.setDisable(true);
+         	  this.widgets.newRowButton.set("disabled", true);
+         	  this.widgets.deleteButton.set("disabled", true);
          	}
          	
-       },
-      
-      /**
-       * CreateNewItem
-       *
-       * @method createNewItem
-       * @param itemType 
-       * @param destination 
-       */
-      _createNewItem : function DesignerToolbar_createNewItem (itemType, destination) {
-    	  
-    	  var scope = this;
-
-       // Intercept before dialog show
-       var doBeforeDialogShow = function DataListToolbar_onNewRow_doBeforeDialogShow(p_form, p_dialog)
-       {
-          Alfresco.util.populateHTML(
-             [ p_dialog.id + "-dialogTitle", this.msg("label.new-row.title") ],
-             [ p_dialog.id + "-dialogHeader", this.msg("label.new-row.header") ]
-          );
-          
-          // Is it a bulk action?
-          if(Dom.get(p_dialog.id  + "-form-bulkAction"))
-          {
-         		Dom.get(p_dialog.id  + "-form-bulkAction").checked = this.bulkEdit;
-         		Dom.get(p_dialog.id  + "-form-bulkAction-msg").innerHTML = this.msg("button.bulk-action-create");
-         	}
-
-       };
-       
-       var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true",
-       {
-          itemKind: "type",
-          itemId: itemType,
-          destination: destination,
-          mode: "create",
-          submitType: "json",
-          entityNodeRef : this.options.entityNodeRef
-       });
-
-       
-       // Using Forms Service, so always create new instance
-       var createRow = new Alfresco.module.SimpleDialog(this.id + "-createRow");
-       createRow.bulkEdit = false;
-       createRow.setOptions(
-       {
-      	width: "33em",
-          templateUrl: templateUrl,
-          actionUrl: null,
-          destroyOnHide: false,
-          doBeforeDialogShow:
-          {
-             fn: doBeforeDialogShow,
-             scope: this
-          },
-          onSuccess:
-          {
-          	 fn: function DataListToolbar_onNewRow_success(response)
-         		 {
-//        TODO     YAHOO.Bubbling.fire("dataItemCreated",
-//             {
-//                nodeRef: response.json.persistedObject							
-//             });
-
-             Alfresco.util.PopupManager.displayMessage(
-             {
-                text: this.msg("message.new-row.success")
-             });
-						
-             //recall edit for next item
-             var checkBoxEl =  Dom.get(this.id + "-createRow" + "-form-bulkAction");
-             
-	           	if ( checkBoxEl && checkBoxEl.checked)
-	  		    {
-	           		this.bulkEdit = true;
-					scope.onNewRow();
-	             } else {
-	            	 this.bulkEdit = false;
-	             }
-	
-          },
-          scope: this
-          },
-          onFailure:
-          {
-          	fn: function DataListToolbar_onNewRow_failure(response)
-          	{
-		               Alfresco.util.PopupManager.displayMessage(
-		               {
-		                  text: this.msg("message.new-row.failure")
-		               });
-		         },
-		        scope: this
-          }
-       }).show();
-    	  
-    	  
-      }
+       }
       
       
    }, true);

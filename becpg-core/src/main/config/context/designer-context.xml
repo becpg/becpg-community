@@ -23,13 +23,24 @@
       	<property name="designerService" ref="designerService" />
    	</bean>
    	
-   	  	
-   	<!-- Constraints -->
+   	<bean id="webscript.fr.becpg.designer.createElement.post" class="fr.becpg.repo.designer.web.scripts.CreateModelElementWebScript" parent="webscript">
+      	<property name="designerService" ref="designerService" />
+      	<property name="namespaceService" ref="namespaceService" />
+   	</bean>
    	
-   
-	<bean id="dynModelConstraint" class="fr.becpg.repo.designer.constraint.DynModelConstraint">
+   	
+   	  <bean id="webscript.fr.becpg.designer.publishModel.post" class="fr.becpg.repo.designer.web.scripts.PublishModelWebScript" parent="webscript">
+      	<property name="designerService" ref="designerService" />
+   	</bean>
+   	
+	<!-- List Values -->
+	
+	<bean id="designerListValuePlugin" parent="baseListValuePlugin"  init-method="init"
+			 class="fr.becpg.repo.designer.listvalue.DesignerListValuePlugin">
 		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="designerService" ref="designerService" />
 	</bean>
+	
 
    
 </beans>

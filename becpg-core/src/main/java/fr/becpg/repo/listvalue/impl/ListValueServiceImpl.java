@@ -1,10 +1,11 @@
 /*
  *  Copyright (C) 2010-2011 beCPG. All rights reserved.
  */
-package fr.becpg.repo.listvalue;
+package fr.becpg.repo.listvalue.impl;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +31,15 @@ import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.repo.listvalue.ListValuePage;
+import fr.becpg.repo.listvalue.ListValuePlugin;
+import fr.becpg.repo.listvalue.ListValuePluginRegistry;
+import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGSearchService;
 
-// TODO: Auto-generated Javadoc
+// TODO: Move into plugins
 /**
  * The Class ListValueServiceImpl.
  *
@@ -75,7 +80,18 @@ public class ListValueServiceImpl implements ListValueService {
 	
 	private Analyzer luceneAnaLyzer = null;
 	
+	protected ListValuePluginRegistry listValuePluginRegistry;
 	
+	
+	/**
+	 * @param listValuePluginRegistry the listValuePluginRegistry to set
+	 */
+	public void setListValuePluginRegistry(ListValuePluginRegistry listValuePluginRegistry) {
+		this.listValuePluginRegistry = listValuePluginRegistry;
+	}
+
+
+
 	public void setDictionaryDAO(DictionaryDAO dictionaryDAO) {
 		this.dictionaryDAO = dictionaryDAO;
 	}
@@ -109,34 +125,7 @@ public class ListValueServiceImpl implements ListValueService {
 		this.beCPGSearchService = beCPGSearchService;
 	}
 	
-	/**
-	 * Used to extract properties from nodeRef
-	 * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
-	 *
-	 */
-	public class NodeRefListValueExtractor implements ListValueExtractor {
 
-		private QName propName;
-	
-		public NodeRefListValueExtractor(QName propName) {
-			super();
-			this.propName = propName;
-		}
-
-		@Override
-		public Map<String, String> extract(List<NodeRef> nodeRefs) {
-			Map<String, String> suggestions = new HashMap<String, String>();
-	    	if(nodeRefs!=null){
-	    		for(NodeRef nodeRef : nodeRefs){
-	    			
-	    			String name = (String)nodeService.getProperty(nodeRef, propName);
-	                suggestions.put(nodeRef.toString(), name); 			
-	    		}
-	    	}
-			return suggestions;
-		}
-		
-	}
 
 	/**
 	 * Suggest target class according to query
@@ -169,7 +158,7 @@ public class ListValueServiceImpl implements ListValueService {
 
 		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME),locale);
         
-        return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME));
+        return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
        
 	}
     
@@ -196,7 +185,7 @@ public class ListValueServiceImpl implements ListValueService {
 	      
         List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(BeCPGModel.PROP_LINKED_VALUE_VALUE),locale);
         
-         return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(BeCPGModel.PROP_LINKED_VALUE_VALUE));
+         return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(BeCPGModel.PROP_LINKED_VALUE_VALUE,nodeService));
  
 	}
     
@@ -221,7 +210,7 @@ public class ListValueServiceImpl implements ListValueService {
 	
         List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME),locale);
        
-        return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME));
+        return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
       
 	}
     
@@ -253,7 +242,7 @@ public class ListValueServiceImpl implements ListValueService {
 					
 		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME), locale);
 	       
-		 return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME));
+		 return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
 	  
 	}
     
@@ -337,7 +326,7 @@ public class ListValueServiceImpl implements ListValueService {
 		query = prepareQuery(query);
 		List<NodeRef> tplsNodeRef = reportTplService.suggestUserReportTemplates(ReportType.Document, nodeType, query);		
 		
-		 return new ListValuePage(tplsNodeRef, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME));
+		 return new ListValuePage(tplsNodeRef, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
 	}
 	
 	/**
@@ -426,6 +415,24 @@ public class ListValueServiceImpl implements ListValueService {
 		sort.put("@" + field, true);
 		
 		return sort;
+	}
+
+
+
+	@Override
+	public ListValuePage suggestBySourceType(String sourceType, String query, Integer pageNum, Map<String,Serializable> extraProps) {
+		
+		ListValuePlugin plugin = listValuePluginRegistry.getListValuePluginBySourceType(sourceType);
+		if(plugin!=null){
+			if(logger.isDebugEnabled()){
+				logger.debug("Use plugin to suggest : "+plugin.getClass().getSimpleName());
+			}
+			return plugin.suggest(sourceType, query,  pageNum, extraProps);
+			
+		}
+		logger.warn("No plugin found for sourceType :"+sourceType);
+		//TODO better to throw exception here
+		return null;
 	}
 
 }

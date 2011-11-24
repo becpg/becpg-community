@@ -36,6 +36,9 @@
       beCPG.component.DesignerForm.superclass.constructor.call(this, "beCPG.component.DesignerForm", htmlId, ["button", "container"]);
       
       YAHOO.Bubbling.on("designerModelNodeChange", this.onDesignerModelNodeChange, this);
+      YAHOO.Bubbling.on("selectedModelChanged", this.onSelectedModelChanged, this);
+      YAHOO.Bubbling.on("elementCreated", this.onDesignerModelNodeChange, this);
+      YAHOO.Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
       return this;
    };
    
@@ -95,12 +98,14 @@
       {
         if(this.options.nodeRef!=null){ 
 
-	        var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=false",
+	        var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=false",
 	         {
 	            itemKind: "node",
 	            itemId: this.options.nodeRef,
 	            mode: "edit",
-	            submitType: "json"
+	            submitType: "json",
+	            entityNodeRef : this.options.modelNodeRef
+	            	
 	         });
 	        var data =
             {
@@ -126,11 +131,7 @@
     
        
       /**
-       * Fired by YUI TreeView when a node label is clicked
-       * @method onNodeClicked
-       * @param args.event {HTML Event} the event object
-       * @param args.node {YAHOO.widget.Node} the node clicked
-       * @return allowExpand {boolean} allow or disallow node expansion
+       * @method onDesignerModelNodeChange
        */
       onDesignerModelNodeChange: function DesignerForm_onNodeClicked(layer, args)
       {
@@ -140,8 +141,23 @@
          	if(nodeRef!=null){
               this.options.nodeRef = nodeRef;
               this.show();
+         	} else {
+         		var containerDiv = Dom.get(this.id+"-model-form");
+                containerDiv.innerHTML = this.msg("model.please-select");
          	}
        },
+       /**
+        * @method onSelectedModelChanged
+        */
+       onSelectedModelChanged: function DesignerForm_onNodeClicked(layer, args)
+       {
+     	  var obj = args[1];
+     	  
+          var nodeRef = obj.nodeRef;
+          	if(nodeRef!=null){
+               this.options.modelNodeRef = nodeRef;
+          	} 
+        },
        /**
         * Event callback when dialog template has been loaded
         *
@@ -154,22 +170,52 @@
           var containerDiv = Dom.get(this.id+"-model-form");
           containerDiv.innerHTML = response.serverResponse.responseText;
 
-          // The panel is created from the HTML returned in the XHR request, not the container
-//          var dialogDiv = Dom.getFirstChild(containerDiv);
-//          while (dialogDiv && dialogDiv.tagName.toLowerCase() != "div")
-//          {
-//             dialogDiv = Dom.getNextSibling(dialogDiv);
-//          }
+          
+       }, 
+       /**
+        * Event handler called when the "beforeFormRuntimeInit" event is received.
+        *
+        * @method onBeforeFormRuntimeInit
+        * @param layer {String} Event type
+        * @param args {Object} Event arguments
+        * <pre>
+        *    args.[1].component: Alfresco.FormUI component instance,
+        *    args.[1].runtime: Alfresco.forms.Form instance
+        * </pre>
+        */
+       onBeforeFormRuntimeInit: function DesignerForm_onBeforeFormRuntimeInit(layer, args)
+       {
+          var formUI = args[1].component,
+             formsRuntime = args[1].runtime;
 
-//         
-//          // Are we controlling a Forms Service-supplied form?
-//          if (Dom.get(this.id + "-form-submit"))
-//          {
-//             // FormUI component will initialise form, so we'll continue processing later
-//             this.formsServiceDeferred.fulfil("onTemplateLoaded");
-//          }
-//          
-       }
+          this.form = formsRuntime;
+          this.form.setAJAXSubmit(true,
+          {
+             successCallback:
+             {
+            	 fn: function DesignerForm_onActionChangeType_failure(response)
+	             {
+	                 Alfresco.util.PopupManager.displayMessage(
+	                 {
+	                    text: this.msg("message.save-element.success")
+	                 });
+	              },
+                scope: this
+             },
+             failureCallback:
+             {
+               fn: function DesignerForm_onActionChangeType_failure(response)
+                {
+                    Alfresco.util.PopupManager.displayMessage(
+                    {
+                       text: this.msg("message.save-element.failure")
+                    });
+                 },
+                scope: this
+             }
+          });
+          
+       },
       
      
    });
