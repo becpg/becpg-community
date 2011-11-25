@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.dictionary.DictionaryModelType;
 import org.alfresco.repo.dictionary.M2Model;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -106,6 +108,12 @@ public class DesignerServiceImpl implements DesignerService {
 			}
 		}
 	}
+	
+	@Override
+	public void publish(NodeRef dictionaryModelNodeRef) {
+		nodeService.setProperty(dictionaryModelNodeRef, ContentModel.PROP_MODEL_ACTIVE, true);
+		
+	}
 
 	
 	@Override
@@ -147,6 +155,9 @@ public class DesignerServiceImpl implements DesignerService {
 			  if(logger.isWarnEnabled() && modelNodeRef==null){
 				  logger.warn("No assoc model found for this nodeRef");
 			  }
+		 } else if (nodeService.getType(dictionaryModelNodeRef).getNamespaceURI().equals(DesignerModel.M2_URI)
+				 || nodeService.getType(dictionaryModelNodeRef).getNamespaceURI().equals(DesignerModel.DESIGNER_URI)){ 
+			 modelNodeRef  = dictionaryModelNodeRef;
 		 } else {
 				logger.info("Node has not mandatory aspect : model aspect. Creating ...");
 		}
@@ -196,13 +207,15 @@ public class DesignerServiceImpl implements DesignerService {
 		
 		InputStream in = null ;
 		try {
+			String[] splitted = modelTemplate.split("_");
+			
 			try {
-				in = getModelTemplate(modelTemplate);
+				in = getModelTemplate(splitted[0]);
 			} catch (IOException e) {
 				logger.error(e,e);
 			}
 			if(in!=null){
-				metaModelVisitor.visitModelTemplate(ret, nodeTypeQname, in);
+				metaModelVisitor.visitModelTemplate(ret, nodeTypeQname,splitted[1], in);
 			}
 			
 		} catch (Exception e){
@@ -221,7 +234,11 @@ public class DesignerServiceImpl implements DesignerService {
 			if(logger.isDebugEnabled()){
 				logger.debug("Set properties on node:"+ret.toString());
 			}
-			nodeService.setProperties(ret, props);
+			for(Entry<QName,Serializable> entry : props.entrySet()){
+				nodeService.setProperty(ret, entry.getKey(),entry.getValue());
+			}
+			
+			
 		}
 		
 		return ret;

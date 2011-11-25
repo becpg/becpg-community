@@ -1,8 +1,0 @@
-<constraint name="modelTemplate" type="MINMAX">
-	<parameter name="minValue">
-		<value>0</value>
-	</parameter>
-	<parameter name="maxValue">
-		<value>256</value>
-	</parameter>
-</constraint>

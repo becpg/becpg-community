@@ -294,7 +294,11 @@
 		<type name="m2:type">
 			<title>Type</title>
 			<parent>m2:class</parent>
-			
+			<overrides>
+				<property name="m2:parentName">
+					<mandatory>true</mandatory>
+				</property>
+			</overrides>
 		</type>
 
 
@@ -330,6 +334,19 @@
 					<duplicate>false</duplicate>
 				</child-association>
 			</associations>
+		</type>
+		
+		<type name="m2:constraintRef">
+			<title>Constraint Ref</title>
+			<parent>m2:constraint</parent>
+			<overrides>
+				<property name="m2:name">
+					<mandatory>false</mandatory>
+				</property>
+				<property name="m2:ref">
+					<mandatory>true</mandatory>
+				</property>
+			</overrides>
 		</type>
 		
 		<type name="m2:dataType">
@@ -380,6 +397,7 @@
 				<property name="m2:propertyType">
 					<title>Property type</title>
 					<type>d:text</type>
+					<mandatory>true</mandatory>
 				</property>
 				<property name="m2:isMultiValued">
 					<title>Is multiValued</title>
@@ -392,6 +410,7 @@
 				<property name="m2:isIndexed">
 					<title>Is indexed</title>
 					<type>d:boolean</type>
+					<default>true</default>
 				</property>
 				<property name="m2:isStoredInIndex">
 					<title>Is stored in index</title>
@@ -407,6 +426,8 @@
 			</properties>
 			<mandatory-aspects>
 				<aspect>m2:propertyAspect</aspect>
+				<aspect>m2:titleAspect</aspect>
+				<aspect>m2:descriptionAspect</aspect>
 				<aspect>m2:isProtectedAspect</aspect>
 			</mandatory-aspects>
 		</type>
@@ -460,6 +481,7 @@
 		</aspect>
 	
 		<aspect name="m2:titleAspect">
+			<title>Title aspect</title>
 			<properties>
 				<property name="m2:title">
 					<title>Title</title>
@@ -527,8 +549,6 @@
 			</properties>
 				<mandatory-aspects>
 				<aspect>m2:nameAspect</aspect>
-				<aspect>m2:titleAspect</aspect>
-				<aspect>m2:descriptionAspect</aspect>
 				<aspect>m2:constraintsAspect</aspect>
 			</mandatory-aspects>
 		</aspect>

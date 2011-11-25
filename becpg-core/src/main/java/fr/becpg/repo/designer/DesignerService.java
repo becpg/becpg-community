@@ -24,5 +24,7 @@ public interface DesignerService {
 	public String prefixName(NodeRef elementRef, String name);
 
 	public NodeRef findModelNodeRef(NodeRef nodeRef);
+
+	void publish(NodeRef dictionaryModelNodeRef);
 	
 }

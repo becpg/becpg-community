@@ -194,7 +194,7 @@ public class DesignerServiceTest extends RepoBaseTestCase {
 						props.put(DesignerModel.PROP_M2_NAME,"bcpg:test");
 						
 					
-						NodeRef elNodeRef =  designerService.createModelElement(modelNodeRef, DesignerModel.TYPE_M2_TYPE, DesignerModel.ASSOC_M2_TYPES, props, "STARTTASK");
+						NodeRef elNodeRef =  designerService.createModelElement(modelNodeRef, DesignerModel.TYPE_M2_TYPE, DesignerModel.ASSOC_M2_TYPES, props, "templateModel_STARTTASK");
 						
 						assertEquals("bcpg:test", (String)nodeService.getProperty(elNodeRef, DesignerModel.PROP_M2_NAME));
 						assertEquals("bpm:startTask", (String)nodeService.getProperty(elNodeRef, DesignerModel.PROP_M2_PARENT_NAME));

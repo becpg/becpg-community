@@ -32,6 +32,8 @@ public class DesignerModel {
 	
 	public static final QName TYPE_M2_PROPERTY_OVERRIDE = QName.createQName(M2_URI,"propertyOverride");
 	
+
+	public static final QName TYPE_M2_CONSTRAINT = QName.createQName(M2_URI,"constraint");
 	
 	/**
 	 * Aspects
@@ -44,6 +46,8 @@ public class DesignerModel {
 	/**
 	 * Props
 	 */
+	
+	public static QName PROP_DSG_ID = QName.createQName(DESIGNER_URI,"id");
 	
 	public static final QName PROP_M2_NAME =  QName.createQName(M2_URI,
 			"name");
@@ -90,6 +94,9 @@ public class DesignerModel {
 	public static final QName ASSOC_M2_CONSTRAINTS = QName.createQName(M2_URI,"constraints");
 
 	public static final QName ASSOC_M2_DATA_TYPE = QName.createQName(M2_URI,"dataTypes");
+
+	
+
 
 	
 }

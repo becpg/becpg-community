@@ -67,6 +67,7 @@ public class PublishModelWebScript extends DeclarativeWebScript  {
 		Map<String, Object> model = new HashMap<String, Object>();
 		
 		designerService.writeXmlFromModelAspectNode(parentNodeRef);
+		designerService.publish(parentNodeRef);
 		
 		model.put(PERSISTED_OBJECT, parentNodeRef.toString() );
 	

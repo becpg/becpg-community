@@ -30,6 +30,13 @@
                </span>
             </span>
          </div>
+          <div class="preview">
+            <span id="${id}-previewButton" class="yui-button yui-push-button">
+               <span class="first-child">
+                  <button type="button">${msg('button.preview')}</button>
+               </span>
+            </span>
+         </div>
       </div>
    </div>
 </div>

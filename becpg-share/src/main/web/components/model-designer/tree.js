@@ -267,7 +267,7 @@
             
         	this._updateSelectedNode(node);
          
-            YAHOO.Bubbling.fire("designerModelNodeChange",{nodeRef: node.data.nodeRef,itemType : node.data.itemType,label: node.data.label});
+            YAHOO.Bubbling.fire("designerModelNodeChange",{node : node.data});
        
          }
          Event.stopEvent(args.event);
@@ -282,21 +282,40 @@
        */
       onElementCreated: function DesignerTree_onElementCreated(layer, args)
       {
-    	 
     	  
-         var obj = args[1];
-         this.renderDesignerTree();
-         
-         if (obj && (obj.nodeRef !== null))
+    	 var obj = args[1].node;
+         if (obj && (obj.parentNodeRef !== null))
          {
-            var node = this.widgets.treeview.getNodeByProperty("nodeRef", obj.nodeRef);
-            if (node !== null)
-            {
-               this.widgets.treeview().animateExpand(null,node);
-               this._updateSelectedNode(node);
-            }
+        	 try {
+             var parentNode = this.widgets.treeview.getNodeByProperty("nodeRef", obj.parentNodeRef);
+             if (parentNode !== null)
+             {
+            	 var tmpNode = null;
+            	 for(var n in parentNode.children){
+            		 if(parentNode.children[n].data.name == obj.assocName){
+            			 tmpNode = parentNode.children[n];
+            			 break;
+            		 }
+            		 
+            	 }
+            	 if(tmpNode==null){
+            		tmpNode = this._buildTreeNode({name:obj.assocName,childrens:[obj], type: "m2:"+obj.assocName}, parentNode, false)
+            		tmpNode.expand();
+            	 } else {
+            		tmpNode.expand();
+                 	tmpNode =  this._buildTreeNode(obj, tmpNode, false);
+            	 }
+            		 
+            	this.widgets.treeview.render();
+            	this._updateSelectedNode(tmpNode);
+            	
+             }
+        	 } catch(e){
+        		 alert(e);
+        	 }
          }
-         
+    	 
+   
       },
       /**
        * Fired when an element has been deleted
@@ -424,6 +443,7 @@
         	 treeNode =  new YAHOO.widget.TextNode(
 	                   {
 	                      label: ((p_oData.title!=null && p_oData.title.length>0)?p_oData.title:p_oData.name)  ,
+	                      name : p_oData.name,
 	                      nodeRef: p_oData.nodeRef,
 	                      itemType : p_oData.type,
 	                      description: p_oData.description

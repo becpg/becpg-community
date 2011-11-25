@@ -87,7 +87,8 @@
            */
     	  modelNodeRef: null
       },
-
+      
+      selectedTypeName : null,
       
       /**
        * Fired by YUI when parent element is available for scripting.
@@ -113,6 +114,12 @@
             disabled: false,
             value: "publish"
           });
+         
+         this.widgets.previewButton = Alfresco.util.createYUIButton(this, "previewButton", this.onPreview,
+          {
+             disabled: true,
+             value: "preview"
+          });
 
          // Finally show the component body here to prevent UI artifacts on YUI button decoration
          Dom.setStyle(this.id + "-body", "visibility", "visible");
@@ -136,6 +143,62 @@
     	              scope: this,
     	              execScripts: false
     	   });
+    	  
+      },
+      /**
+       * Preview button click handler
+       *
+       * @method onPreview
+       * @param e {object} DomEvent
+       * @param p_obj {object} Object passed back from addListener method
+       */
+      onPreview: function onPreview(e, p_obj)
+      { 
+    	  
+    	  var doBeforeDialogShow = function DataListToolbar_onNewRow_doBeforeDialogShow(p_form, p_dialog)
+          {
+             Alfresco.util.populateHTML(
+                [ p_dialog.id + "-dialogTitle", this.msg("label.preview.title") ],
+                [ p_dialog.id + "-dialogHeader", this.msg("label.preview.header") ]
+             );
+      
+             if(Dom.get(p_dialog.id  + "-form-submit"))
+    		 {
+	   			Dom.setStyle(p_dialog.id  + "-form-submit", 'display', 'none');
+    		  }
+             
+
+             if(Dom.get(p_dialog.id  + "-form-bulkAction"))
+    		 {
+	   			Dom.setStyle(p_dialog.id  + "-form-bulkAction", 'display', 'none');
+	   			Dom.setStyle(p_dialog.id  + "-form-bulkAction-msg", 'display', 'none');
+    		  }
+
+             
+          };
+
+          var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?bulkEdit=true&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&showSubmitButton=true",
+          {
+             itemKind: "type",
+             itemId: this.selectedTypeName,
+             mode: "create",
+             submitType: "json"
+          });
+
+          // Using Forms Service, so always create new instance
+          var preview = new Alfresco.module.SimpleDialog(this.id + "-preview");
+
+          preview.setOptions(
+          {
+        	  width: "850px",
+             templateUrl: templateUrl,
+             destroyOnHide: true,
+             doBeforeDialogShow:
+             {
+                fn: doBeforeDialogShow,
+                scope: this
+             }
+          }).show();
     	  
       },
       /**
@@ -216,6 +279,8 @@
        */
       onCreateElement: function DesignerToolbar_onCreateElement(e, p_obj)
       { 
+    	  
+    	  var me = this;
           var  actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/create/element?nodeRef="+this.options.destination;
 
           var doSetupFormsValidation = function DesignerToolbar_oACT_doSetupFormsValidation(p_form)
@@ -239,6 +304,7 @@
                width: "30em",
                templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "/modules/model-designer/create-element?currentType="+this.options.itemType,
                actionUrl: actionUrl,
+               destroyOnHide : true,
                doSetupFormsValidation:
                {
                   fn: doSetupFormsValidation,
@@ -253,7 +319,16 @@
                 	  if (response.json && response.json.persistedObject)
                       {
                           
-                		  YAHOO.Bubbling.fire("elementCreated",{nodeRef: response.json.persistedObject});
+                		  var treeNode = response.json.treeNode;
+                		  treeNode.parentNodeRef = me.options.destination;
+                		  treeNode.assocName = response.json.assocName;
+                		  
+                		  YAHOO.Bubbling.fire("elementCreated",{node:treeNode});
+                		  
+                		  me.options.destination = treeNode.nodeRef;
+                		  me.options.displayName = treeNode.name;
+                		  me.options.itemType = treeNode.type;
+                		  me.selectedTypeName =  treeNode.name;
                 		  
                 		  Alfresco.util.PopupManager.displayMessage(
                                   {
@@ -308,15 +383,21 @@
       {
     	  var obj = args[1];
     	  
-         var nodeRef = obj.nodeRef,
-         	itemType = obj.itemType,
-            label = obj.label;
+         var nodeRef = obj.node.nodeRef,
+         	itemType = obj.node.itemType,
+            label = obj.node.name;
          	if(nodeRef!=null){
               this.options.destination = nodeRef;
               this.options.itemType = itemType;
               this.options.displayName = label;
+              this.selectedTypeName = label;
               this.widgets.newRowButton.set("disabled", false);
               this.widgets.deleteButton.set("disabled", false);
+              if(this.options.itemType=="m2:type" &&  this.selectedTypeName!=null && this.selectedTypeName.length>0){
+            	  this.widgets.previewButton.set("disabled", false);
+              } else {
+            	  this.widgets.previewButton.set("disabled", true);
+              }
          	} else {
          	  this.widgets.newRowButton.set("disabled", true);
          	  this.widgets.deleteButton.set("disabled", true);

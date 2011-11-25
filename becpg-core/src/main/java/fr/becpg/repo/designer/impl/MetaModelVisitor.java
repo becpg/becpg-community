@@ -15,8 +15,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.alfresco.repo.dictionary.IndexTokenisationMode;
+import org.alfresco.repo.dictionary.M2Constraint;
 import org.alfresco.repo.dictionary.M2Model;
-import org.alfresco.service.cmr.dictionary.DictionaryException;
+import org.alfresco.repo.dictionary.M2Property;
+import org.alfresco.repo.dictionary.M2PropertyOverride;
+import org.alfresco.repo.dictionary.M2Type;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -25,10 +28,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.IBindingFactory;
-import org.jibx.runtime.IUnmarshallingContext;
-import org.jibx.runtime.JiBXException;
 
 import com.google.gdata.data.dublincore.Date;
 
@@ -100,7 +99,7 @@ public class MetaModelVisitor {
 							if (m2List != null) {
 								for (Object m2Obj : m2List) {
 									QName assocQname = getAssocQname(field);
-									QName assocTypeQname = getNodeTypeQName(m2Obj);
+									QName assocTypeQname = getNodeTypeQName(m2Obj,model);
 									if (logger.isDebugEnabled()) {
 										logger.debug("Add child : " + assocQname + " " + assocTypeQname);
 									}
@@ -161,8 +160,16 @@ public class MetaModelVisitor {
 			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_URI);
 		}
 
-		if (name == null) {
+		if (name == null || name.isEmpty()) {
 			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_REF);
+		}
+		
+		if (name == null || name.isEmpty()) {
+			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_DSG_ID);
+		}
+		
+		if (name == null || name.isEmpty()) {
+			name = "-";
 		}
 
 		tmp.setName(name);
@@ -186,14 +193,20 @@ public class MetaModelVisitor {
 		return (Serializable) ret;
 	}
 
-	private QName getNodeTypeQName(Object m2Object) {
+	private QName getNodeTypeQName(Object m2Object, Object model) {
 
 		String name = "string";
-		Class<?> fieldArgClass = m2Object.getClass();
-		name = fieldArgClass.getSimpleName().replace("M2", "");
-
-		name = new StringBuffer(name.length()).append(Character.toLowerCase(name.charAt(0))).append(name.substring(1))
-				.toString();
+		
+		if(m2Object instanceof M2Constraint && (model instanceof M2Property || model instanceof M2PropertyOverride)){
+			name = "constraintRef";
+		} else {
+		
+			Class<?> fieldArgClass = m2Object.getClass();
+			name = fieldArgClass.getSimpleName().replace("M2", "");
+	
+			name = new StringBuffer(name.length()).append(Character.toLowerCase(name.charAt(0))).append(name.substring(1))
+					.toString();
+		}
 		return QName.createQName(DesignerModel.M2_URI, name);
 	}
 
@@ -263,7 +276,7 @@ public class MetaModelVisitor {
 					}
 				} else {
 					setterMethod = retieveSetter(entry.getKey(), m2Model.getClass());
-					if (setterMethod != null && entry.getValue()!=null) {
+					if (setterMethod != null && entry.getValue()!=null && !(entry.getValue() instanceof String && ((String)entry.getValue()).isEmpty()) ) {
 						logger.debug("Invoke :"+setterMethod.getName()+" "+entry.getValue().getClass().getSimpleName());
 						setterMethod.invoke(m2Model, getPropValue(entry));
 					} 
@@ -275,21 +288,25 @@ public class MetaModelVisitor {
 		 
 		 for(ChildAssociationRef assoc : assocs){
 			 NodeRef childRef = assoc.getChildRef();
-			 Method createAssocMethod = retieveCreateMethod(childRef, assoc.getQName(), m2Model.getClass());
-			 if(assoc.getQName().equals(DesignerModel.ASSOC_M2_CONSTRAINTS)
-					 && (nodeService.getType(modelNodeRef).equals(DesignerModel.TYPE_M2_PROPERTY)
-						|| nodeService.getType(modelNodeRef).equals(DesignerModel.TYPE_M2_PROPERTY_OVERRIDE)) ){
-				 createAssocMethod = retriveMethod( m2Model.getClass(),"addConstraintRef");
-			 } else {
-				 createAssocMethod = retieveCreateMethod(childRef, assoc.getQName(), m2Model.getClass());
-			 }
-			 if(createAssocMethod!=null){
-				 logger.debug("Invoke :"+createAssocMethod.getName());
-				 Object m2Object = createAssocMethod.invoke(m2Model, new Object[createAssocMethod.getParameterTypes().length]);
-				 if(m2Object!=null){
-					 visitModel(m2Object, childRef);
+			 Method createAssocMethod = null;
+			 if(assoc.getQName().getNamespaceURI().equals(DesignerModel.M2_URI)){
+				 if(assoc.getQName().equals(DesignerModel.ASSOC_M2_CONSTRAINTS)
+						 && (nodeService.getType(modelNodeRef).equals(DesignerModel.TYPE_M2_PROPERTY)
+							|| nodeService.getType(modelNodeRef).equals(DesignerModel.TYPE_M2_PROPERTY_OVERRIDE)) ){
+					 createAssocMethod = retriveMethod( m2Model.getClass(),"addConstraintRef");
+				 } else {
+					 createAssocMethod = retieveCreateMethod(childRef, assoc.getQName(), m2Model.getClass());
 				 }
-				 
+				 if(createAssocMethod!=null){
+					 logger.debug("Invoke :"+createAssocMethod.getName());
+					 Object m2Object = createAssocMethod.invoke(m2Model, new Object[createAssocMethod.getParameterTypes().length]);
+					 if(m2Object!=null){
+						 visitModel(m2Object, childRef);
+					 }
+					 
+				 }
+			 } else {
+				 logger.debug("Skip assoc :"+assoc.getQName().toString());
 			 }
 		 }
 		
@@ -363,30 +380,41 @@ public class MetaModelVisitor {
 		return null;
 	}
 
-	public void visitModelTemplate(NodeRef ret, QName nodeTypeQname, InputStream xml) throws IllegalArgumentException,
+	public void visitModelTemplate(NodeRef ret, QName nodeTypeQname, String modelName, InputStream xml) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException, ClassNotFoundException {
-
-		Class<?> clazz = getClassFromQname(nodeTypeQname);
+		logger.debug("Visiting template model for:"+modelName);
 		
-		
-		Object model = null;
-		try {
-			IBindingFactory factory = BindingDirectory.getFactory("default",clazz);
-			IUnmarshallingContext context = factory.createUnmarshallingContext();
-			model = context.unmarshalDocument(xml, null);
-		} catch (JiBXException e) {
-			throw new DictionaryException("Failed to parse model", e);
-		}
+		M2Model templateModel = M2Model.createModel(xml);
 
-		if (model != null) {
-
-			visitModelNodeRef(ret, model);
+		//TODO better 
+		if(nodeTypeQname.equals(DesignerModel.TYPE_M2_CONSTRAINT)){
+			
+			for(M2Constraint constraint : templateModel.getConstraints()) {
+				if(constraint.getName().equals(modelName)){
+					visitModelNodeRef(ret, constraint);
+					return;
+				}
+			}
+		} else if(nodeTypeQname.equals(DesignerModel.TYPE_M2_TYPE)){
+			for(M2Type type : templateModel.getTypes()) {
+				if(type.getName().equals(modelName)){
+					visitModelNodeRef(ret, type);
+					return;
+				}
+			}
 		} else {
 			logger.error("Unable to read model");
 		}
 
 	}
 
+	/**
+	 * For future use
+	 * @param nodeTypeQname
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	@SuppressWarnings("unused")
 	private Class<?> getClassFromQname(QName nodeTypeQname) throws ClassNotFoundException {
 		String className = "org.alfresco.repo.dictionary.M2" + StringUtils.capitalize(nodeTypeQname.getLocalName());
 		logger.debug("Try to instanciate from xml :" + className);

@@ -38,6 +38,7 @@
       YAHOO.Bubbling.on("designerModelNodeChange", this.onDesignerModelNodeChange, this);
       YAHOO.Bubbling.on("selectedModelChanged", this.onSelectedModelChanged, this);
       YAHOO.Bubbling.on("elementCreated", this.onDesignerModelNodeChange, this);
+      YAHOO.Bubbling.on("elementDeleted", this.onDesignerModelNodeChange, this);
       YAHOO.Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
       return this;
    };
@@ -136,9 +137,10 @@
       onDesignerModelNodeChange: function DesignerForm_onNodeClicked(layer, args)
       {
     	  var obj = args[1];
-    	  
-         var nodeRef = obj.nodeRef;
-         	if(nodeRef!=null){
+    	 
+        
+         	if(obj!=null &&  obj.node!=null && obj.node.nodeRef!=null){
+              var nodeRef = obj.node.nodeRef;
               this.options.nodeRef = nodeRef;
               this.show();
          	} else {

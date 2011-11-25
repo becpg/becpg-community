@@ -11,6 +11,7 @@ import java.util.List;
 public class ModelTree {
 	
 	private String type;
+	private String formId;
 	private String nodeRef;
 	private String name;
 	private String title;
@@ -115,7 +116,21 @@ public class ModelTree {
 	}
 
 	
-	
+
+	/**
+	 * @return the formId
+	 */
+	public String getFormId() {
+		return formId;
+	}
+
+	/**
+	 * @param formId the formId to set
+	 */
+	public void setFormId(String formId) {
+		this.formId = formId;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

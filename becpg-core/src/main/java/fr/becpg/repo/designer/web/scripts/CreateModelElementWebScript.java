@@ -48,6 +48,10 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 
 	private static final String REDIRECT = "alf_redirect";
 
+	private static final String TREE_NODE = "treeNode";
+	
+	private static final String ASSOC_NAME = "assocName";
+
 	
 	
 //	assocType
@@ -120,9 +124,11 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 			}
 		}
 		
+		NodeRef createNodeRef = designerService.createModelElement(parentNodeRef, typeName, assocName, props, jsonPostParams.getModel());
+		model.put(PERSISTED_OBJECT, createNodeRef.toString());
+		model.put(TREE_NODE,designerService.getModelTree(createNodeRef));
+		model.put(ASSOC_NAME, assocName.getLocalName());
 		
-		model.put(PERSISTED_OBJECT, designerService.createModelElement(parentNodeRef, typeName, assocName, props, jsonPostParams.getModel()).toString());
-	
 		if(jsonPostParams.getRedirect()!=null){
 			model.put("redirect",jsonPostParams.getRedirect());
 		}
