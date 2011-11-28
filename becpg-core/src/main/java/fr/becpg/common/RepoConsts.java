@@ -114,12 +114,11 @@ public class RepoConsts {
 	public static final String PATH_REPORTS_EXPORT_SEARCH = "ExportSearch";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PRODUCTS = "ExportProducts";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES = "ExportNCSynthesis";
+	public static final String PATH_REPORTS_ECO = "ECOReports";
 	
 	// ECO
 	public static final String PATH_ECO = "ECO";
-	public static final String PATH_SIMULATION_COMPONENTS = "SimulationComponents";
-	public static final String PATH_SIMULATION_OUTPUT = "SimulationOutput";
-	
+	public static final String PATH_ECO_TEMPORARY = "Temporary";	
 	
 	/*-- DataLists --*/
 	public static final String CONTAINER_DATALISTS = "DataLists";	

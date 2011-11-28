@@ -31,6 +31,7 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.FormulateException;
 
@@ -75,6 +76,11 @@ public class ProductData implements ProductElement {
 	/** The density. */
 	private Float density;
 	
+	private Float unitTotalCost;
+	
+	private Float unitPrice;
+	
+	private Float profitability;
 	
 	/** The lists container. */
 	private NodeRef listsContainer;
@@ -89,6 +95,8 @@ public class ProductData implements ProductElement {
 	private List<CostListDataItem> costList;
 	
 	private List<CostDetailsListDataItem> costDetailsList;
+	
+	private List<PriceListDataItem> priceList;
 	
 	/** The ing list. */
 	private List<IngListDataItem> ingList;
@@ -312,6 +320,30 @@ public class ProductData implements ProductElement {
 		this.unit = unit;
 	}	
 	
+	public Float getUnitTotalCost() {
+		return unitTotalCost;
+	}
+
+	public void setUnitTotalCost(Float unitTotalCost) {
+		this.unitTotalCost = unitTotalCost;
+	}
+
+	public Float getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(Float unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+
+	public Float getProfitability() {
+		return profitability;
+	}
+
+	public void setProfitability(Float profitability) {
+		this.profitability = profitability;
+	}
+
 	/**
 	 * Gets the lists container.
 	 *
@@ -390,6 +422,14 @@ public class ProductData implements ProductElement {
 
 	public void setCostDetailsList(List<CostDetailsListDataItem> costDetailsList) {
 		this.costDetailsList = costDetailsList;
+	}
+
+	public List<PriceListDataItem> getPriceList() {
+		return priceList;
+	}
+
+	public void setPriceList(List<PriceListDataItem> priceList) {
+		this.priceList = priceList;
 	}
 
 	/**
@@ -572,7 +612,10 @@ public class ProductData implements ProductElement {
 		properties.put(BeCPGModel.PROP_PRODUCT_STATE, this.getState().toString());
 		properties.put(BeCPGModel.PROP_PRODUCT_QTY, this.getQty());
 		properties.put(BeCPGModel.PROP_PRODUCT_UNIT, this.getUnit().toString());
-		properties.put(BeCPGModel.PROP_PRODUCT_DENSITY, this.getDensity());
+		properties.put(BeCPGModel.PROP_PRODUCT_DENSITY, this.getDensity());		
+		properties.put(BeCPGModel.PROP_UNIT_TOTAL_COST, this.getUnitTotalCost());
+		properties.put(BeCPGModel.PROP_UNIT_PRICE, this.getUnitPrice());
+		properties.put(BeCPGModel.PROP_PROFITABILITY, this.getProfitability());
 		
 		return properties;
 	}
@@ -595,7 +638,10 @@ public class ProductData implements ProductElement {
     	this.setQty((Float)properties.get(BeCPGModel.PROP_PRODUCT_QTY));
     	String strProductUnit = (String)properties.get(BeCPGModel.PROP_PRODUCT_UNIT);  
     	this.setUnit(ProductUnit.getUnit(strProductUnit));
-    	this.setDensity((Float)properties.get(BeCPGModel.PROP_PRODUCT_DENSITY));
+    	this.setDensity((Float)properties.get(BeCPGModel.PROP_PRODUCT_DENSITY));    	
+    	this.setUnitTotalCost((Float)properties.get(BeCPGModel.PROP_UNIT_TOTAL_COST));
+    	this.setUnitPrice((Float)properties.get(BeCPGModel.PROP_UNIT_PRICE));
+    	this.setProfitability((Float)properties.get(BeCPGModel.PROP_PROFITABILITY));
     	
 	}
 	

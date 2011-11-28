@@ -293,9 +293,9 @@
          var scope = this;
          var booleanValueTrue = this.msg("data.boolean.true");
          var booleanValueFalse = this.msg("data.boolean.false");
-         var reqTypeForbidden = this.msg("data.reqType.Forbidden");
-         var reqTypeTolerated = this.msg("data.reqType.Tolerated");
-         var reqTypeInfo = this.msg("data.reqType.Info");
+         var reqTypeForbidden = this.msg("data.reqtype.forbidden");
+         var reqTypeTolerated = this.msg("data.reqtype.tolerated");
+         var reqTypeInfo = this.msg("data.reqtype.info");
          
          /**
           * Data Type custom formatter
@@ -354,7 +354,10 @@
                      
                            case "cm:content":
                            case "cm:cmobject":
-                           case "cm:folder":                                                     
+                           case "cm:folder":  
+                           case "bcpg:supplier":
+                           case "bcpg:client":
+                           case "bcpg:entity":
                               html += '<a href="' + Alfresco.util.siteURL((data.metadata == "container" ? 'folder' : 'document') + '-details?nodeRef=' + data.value) + '">';
                               html += '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util.getFileIcon(data.displayValue, (data.metadata == "container" ? 'cm:folder' : null), 16) + '" width="16" alt="' + $html(data.displayValue) + '" title="' + $html(data.displayValue) + '" />';
                               html += ' ' + $html(data.displayValue) + '</a>'
@@ -363,7 +366,7 @@
                            case "bcpg:product":
                         	   if(datalistColumn.name == "bcpg:compoListProduct")
 								{
-                        		   var padding = 10 + oRecord.getData("itemData")["prop_bcpg_depthLevel"].value * 10;
+                        		   var padding = 5 + oRecord.getData("itemData")["prop_bcpg_depthLevel"].value * 15;
                         		   html += '<span class="' + data.metadata + '" style="padding-left:' + padding + 'px;"><a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a></span>';                        	   
 								}
                         	   	else if(datalistColumn.name == "bcpg:packagingListProduct")
@@ -390,7 +393,7 @@
                                html += '<span class="userGroup">' + $html(data.displayValue) + '</span>';
                                break;                               
                            default:
-                        	   if(datalistColumn.name == "bcpg:rclReqType" || datalistColumn.name == "bcpg:filReqType")
+                        	   if(datalistColumn.name == "bcpg:rclReqType" || datalistColumn.name == "bcpg:filReqType" || datalistColumn.name == "bcpg:culReqType")
                     		   {
                         		   if(data.displayValue == "Forbidden")
                         		   {
@@ -408,6 +411,13 @@
                     			   {
                         			   html += $html(data.displayValue);
                     			   }
+                    		   }
+                        	   else if(datalistColumn.name == "eco:rlRevisionType" || datalistColumn.name == "eco:culRevision")
+                    		   {
+                        		   if(data.displayValue != null)
+                    			   {
+                        			   html += scope.msg("data.revisiontype." + data.displayValue.toLowerCase());
+                    			   }                        		                           		  
                     		   }
                         	   else if(datalistColumn.name == "qa:sdlControlPoint" || datalistColumn.name == "qa:slControlPoint")
                         	   {                        		   

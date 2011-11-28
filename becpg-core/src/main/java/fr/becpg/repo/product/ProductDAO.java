@@ -5,6 +5,7 @@ package fr.becpg.repo.product;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -58,6 +59,9 @@ public interface ProductDAO {
 	 * @param productNodeRef the product node ref
 	 */
 	public void delete(NodeRef productNodeRef);
+	
+	public void createCostList(NodeRef listContainerNodeRef, List<CostListDataItem> costList);
+	public void createCostListItem(NodeRef listNodeRef, CostListDataItem costListDataItem, Map<NodeRef, NodeRef> filesToUpdate, Integer sortIndex);
 	
 	public List<AllergenListDataItem> loadAllergenList(NodeRef listContainerNodeRef);
 	public AllergenListDataItem loadAllergenListItem(NodeRef listItemNodeRef);

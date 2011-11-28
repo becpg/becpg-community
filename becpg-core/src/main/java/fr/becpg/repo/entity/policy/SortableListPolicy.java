@@ -33,8 +33,8 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy{
 			
-	//private static final String QUERY_LIST_ITEMS_BY_SORT = "PARENT:\"%s\" AND +@bcpg\\:sort:[%s TO %s]";
-	private static final String QUERY_LIST_ITEMS = "PARENT:\"%s\"";
+	//private static final String QUERY_LIST_ITEMS_BY_SORT = "+PARENT:\"%s\" AND +@bcpg\\:sort:[%s TO %s]";
+	private static final String QUERY_LIST_ITEMS = "+PARENT:\"%s\"";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(SortableListPolicy.class);

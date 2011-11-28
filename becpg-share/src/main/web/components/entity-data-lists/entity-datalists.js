@@ -230,7 +230,7 @@
                list,
                permissions,
                elHighlight = null,
-               container, el, elEdit, elDelete, elLink, elText;
+               container, el, elLink, elText;
 
             if (this.dataListsLength === 0)
             {
@@ -252,42 +252,40 @@
                      
                      // Build the DOM elements
                      el = document.createElement("li");
-                     el.onclick = fnOnClick();
-                     elEdit = document.createElement("span");
+                     el.onclick = fnOnClick();                                                             
+                     elLink = document.createElement("a");
                      if (permissions["edit"])
                      {
+                    	var elEdit = document.createElement("span");
                         elEdit.className = "edit";
                         elEdit.title = this.msg("label.edit-list");
                         elEdit.onclick = fnEditOnClick(list.name, true);
-                     }
-                     else
-                     {
-                        elEdit.className = "edit-disabled";
-                        elEdit.onclick = fnEditOnClick(list.name, false);
-                     }
-                     elDelete = document.createElement("span");
+                        elLink.appendChild(elEdit);
+                     }                                        
                      if (permissions["delete"])
                      {
+                    	var elDelete = document.createElement("span");
                         elDelete.className = "delete";
                         elDelete.title = this.msg("label.delete-list");
                         elDelete.onclick = fnDeleteOnClick(list.name, true);
-                     }
+                        elLink.appendChild(elDelete);
+                     } 
+                     //### beCPG : isEditaleList ?
+                     if(list.editableList)
+                	 {
+                    	 elLink.className = "filter-link-editable-list";
+                	 }
                      else
-                     {
-                        elDelete.className = "delete-disabled";
-                        elDelete.onclick = fnDeleteOnClick(list.name, false);
-                     }
-                     elLink = document.createElement("a");
-                     elLink.className = "filter-link";
+                	 {
+                    	 elLink.className = "filter-link";
+                	 }                     
                      elLink.title = list.description;
 					 //### beCPG : change url to entity-data-lists and add the nodeRef reference
                      //elLink.href = "data-lists?list=" + $html(list.name);
 					 elLink.href = "entity-data-lists?list=" + $html(list.name) + "&nodeRef=" + $html(this.options.entityNodeRef);
                      elText = document.createTextNode(list.title);
 
-                     // Build the DOM structure with the new elements
-                     elLink.appendChild(elDelete);
-                     elLink.appendChild(elEdit);
+                     // Build the DOM structure with the new elements                     
                      elLink.appendChild(elText);
                      el.appendChild(elLink);
                      container.appendChild(el);

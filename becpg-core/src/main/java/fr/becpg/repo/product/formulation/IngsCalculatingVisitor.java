@@ -169,7 +169,6 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		// manual listItem
 		ingLabelingList = getILLToUpdate(formulatedProduct.getNodeRef(), ingLabelingList);
 		
-		logger.debug("ingLabelingList.size: " + ingLabelingList.size());
 		formulatedProduct.setIngLabelingList(ingLabelingList);
 		
 		return formulatedProduct;
@@ -212,10 +211,8 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		//sort collection					
 		Collections.sort(ingList);		
 		formulatedProduct.setIngList(ingList);
-		
-		List<ReqCtrlListDataItem> reqCtrlList = reqCtrlMap.values().isEmpty() ? null : new ArrayList<ReqCtrlListDataItem>(reqCtrlMap.values());
-		
-		formulatedProduct.setReqCtrlList(reqCtrlList);
+				
+		formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
 	}
 	
 	/**

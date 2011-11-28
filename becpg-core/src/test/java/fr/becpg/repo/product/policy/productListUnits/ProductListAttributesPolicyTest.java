@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2010-2011 beCPG. All rights reserved.
  */
-package fr.becpg.repo.policy;
+package fr.becpg.repo.product.policy.productListUnits;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -136,8 +136,8 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 					nodeService.setProperty(nut2, BeCPGModel.PROP_NUTUNIT, "kJ");
 					
 					List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-					costList.add(new CostListDataItem(null, 12f, "", cost1, false));
-					costList.add(new CostListDataItem(null, 11f, "", cost2, false));
+					costList.add(new CostListDataItem(null, 12f, "", null, cost1, false));
+					costList.add(new CostListDataItem(null, 11f, "", null, cost2, false));
 					rawMaterialData.setCostList(costList);
 					
 					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();

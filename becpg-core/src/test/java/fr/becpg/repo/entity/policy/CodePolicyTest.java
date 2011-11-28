@@ -1,7 +1,7 @@
 /*
  * 
  */
-package fr.becpg.repo.policy;
+package fr.becpg.repo.entity.policy;
 
 import java.io.Serializable;
 import java.util.HashMap;

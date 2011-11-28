@@ -19,6 +19,7 @@
 	   "description": "${list.properties.description!""}",
 	   "nodeRef": "${list.nodeRef}",
 	   "itemType": "${list.properties["dl:dataListItemType"]!""}",
+	   "editableList": ${editableLists?seq_contains(list)?string("true", "false")},	   
 	   "permissions":
 	   {
 	      "edit": ${hasWritePermission?string},

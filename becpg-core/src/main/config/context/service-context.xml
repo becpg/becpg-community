@@ -294,6 +294,7 @@
 		<property name="mlNodeService" ref="mlAwareNodeService" />
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="associationService" ref="associationService" />
 	</bean>
 
 	<!-- Product -->
@@ -376,6 +377,12 @@
 	<bean id="productListUnits.ProductListPolicy" class="fr.becpg.repo.product.policy.productListUnits.ProductListPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
+	</bean>
+	<bean id="productListUnits.PriceListPolicy" class="fr.becpg.repo.product.policy.productListUnits.PriceListPolicy" init-method="init">
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="productDAO" ref="productDAO" />
 	</bean>
 	
 	<!-- Search -->

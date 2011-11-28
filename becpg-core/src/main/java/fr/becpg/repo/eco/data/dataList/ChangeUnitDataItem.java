@@ -4,6 +4,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.BeCPGDataObject;
 import fr.becpg.repo.eco.data.RevisionType;
+import fr.becpg.repo.product.data.productList.RequirementType;
 
 /**
  * Change Unit class
@@ -14,11 +15,12 @@ public class ChangeUnitDataItem {
 
 	private NodeRef nodeRef;
 	private RevisionType revision;
-	private Boolean reqRespected;
+	private RequirementType reqType;
 	private String reqDetails;
 	private Boolean treated;
 	private NodeRef sourceItem;
 	private NodeRef targetItem;
+	private NodeRef simulationItem;
 	
 	public NodeRef getNodeRef() {
 		return nodeRef;
@@ -31,12 +33,12 @@ public class ChangeUnitDataItem {
 	}
 	public void setRevision(RevisionType revision) {
 		this.revision = revision;
+	}	
+	public RequirementType getReqType() {
+		return reqType;
 	}
-	public Boolean getReqRespected() {
-		return reqRespected;
-	}
-	public void setReqRespected(Boolean reqRespected) {
-		this.reqRespected = reqRespected;
+	public void setReqType(RequirementType reqType) {
+		this.reqType = reqType;
 	}
 	public String getReqDetails() {
 		return reqDetails;
@@ -63,14 +65,21 @@ public class ChangeUnitDataItem {
 		this.targetItem = targetItem;
 	}
 	
-	public ChangeUnitDataItem(NodeRef nodeRef, RevisionType revision, Boolean reqRespected, String reqDetails, Boolean treated, NodeRef sourceItem, NodeRef targetItem){
+	public NodeRef getSimulationItem() {
+		return simulationItem;
+	}
+	public void setSimulationItem(NodeRef simulationItem) {
+		this.simulationItem = simulationItem;
+	}
+	public ChangeUnitDataItem(NodeRef nodeRef, RevisionType revision, RequirementType reqType, String reqDetails, Boolean treated, NodeRef sourceItem, NodeRef targetItem, NodeRef simulationItem){
 		
 		setNodeRef(nodeRef);
 		setRevision(revision);
-		setReqRespected(reqRespected);
+		setReqType(reqType);
 		setReqDetails(reqDetails);
 		setTreated(treated);
 		setSourceItem(sourceItem);
 		setTargetItem(targetItem);
+		setSimulationItem(simulationItem);
 	}
 }

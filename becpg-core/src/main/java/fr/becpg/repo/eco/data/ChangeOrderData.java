@@ -2,6 +2,7 @@ package fr.becpg.repo.eco.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class ChangeOrderData extends BeCPGDataObject {
 	
 	private List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
 	private List<WUsedListDataItem> wUsedList = new ArrayList<WUsedListDataItem>();
-	private Map<NodeRef, ChangeUnitDataItem> changeUnitMap = new HashMap<NodeRef, ChangeUnitDataItem>();
+	private Map<NodeRef, ChangeUnitDataItem> changeUnitMap = new LinkedHashMap<NodeRef, ChangeUnitDataItem>();
 	private List<SimulationListDataItem> simulationList = new ArrayList<SimulationListDataItem>();				
 	
 	public String getCode() {

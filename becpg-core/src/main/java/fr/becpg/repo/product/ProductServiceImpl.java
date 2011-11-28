@@ -46,6 +46,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.FormulateException;
 import fr.becpg.repo.product.report.ProductReportService;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -256,6 +257,7 @@ public class ProductServiceImpl implements ProductService {
     		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
     		dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
     		dataLists.add(BeCPGModel.TYPE_NUTLIST); // TODO keep min/max
+    		dataLists.add(BeCPGModel.TYPE_COSTLIST); // TODO keep max
         	ProductData productData = productDAO.find(productNodeRef, dataLists);     	    
         	
         	// do the formulation if the product has a composition, or packaging list defined
@@ -264,12 +266,11 @@ public class ProductServiceImpl implements ProductService {
         		productData = formulate(productData);
     	    	    	
     	    	dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-    	    	dataLists.add(BeCPGModel.TYPE_NUTLIST);
-    	    	dataLists.add(BeCPGModel.TYPE_COSTLIST);
     	    	dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
     	    	dataLists.add(BeCPGModel.TYPE_INGLIST);
     	    	dataLists.add(BeCPGModel.TYPE_INGLABELINGLIST);
     	    	dataLists.add(BeCPGModel.TYPE_REQCTRLLIST);
+    	    	
     	    	productDAO.update(productNodeRef, productData, dataLists);
         	}    	    	    
     	} catch (Exception e) {
@@ -293,12 +294,18 @@ public class ProductServiceImpl implements ProductService {
         	// do the formulation if the product has a composition, or packaging list defined
         	if(productData.getCompoList() != null || productData.getPackagingList() != null){
         		
-        		//Call visitors   
+        		productData.setReqCtrlList(new ArrayList<ReqCtrlListDataItem>());
+        		
+        		//Call visitors         		
         		productData = compositionCalculatingVisitor.visit(productData);
     	    	productData = allergensCalculatingVisitor.visit(productData);
     	    	productData = nutsCalculatingVisitor.visit(productData);
     	    	productData = costsCalculatingVisitor.visit(productData);
-    	    	productData = ingsCalculatingVisitor.visit(productData);    	    	    
+    	    	productData = ingsCalculatingVisitor.visit(productData);  
+    	    	
+    	    	if(productData.getReqCtrlList().isEmpty()){
+    	    		productData.setReqCtrlList(null);
+    	    	}
         	}    	    	    
     	} catch (Exception e) {
 			if(e instanceof FormulateException){

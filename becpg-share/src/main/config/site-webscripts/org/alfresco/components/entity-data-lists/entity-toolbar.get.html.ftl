@@ -4,7 +4,8 @@
    {
       siteId: "${page.url.templateArgs.site!""}",
 	  entityNodeRef: "${page.url.args.nodeRef!""}",
-	  showFormulate: ${showFormulate?string}
+	  showFormulate: ${showFormulate?string},
+	  showECO: ${showECO?string}
    }).setMessages(${messages});
 //]]></script>
 <div id="${args.htmlid}-body" class="datalist-toolbar toolbar">
@@ -31,14 +32,36 @@
                </div>
             </div>			
          </div>
-		<div class="formulate">
-            <span id="${id}-formulateButton" class="yui-button yui-push-button">
-               <span class="first-child">
-                  <button type="button">${msg('button.formulate')}</button>
-               </span>
-            </span>
-         </div>			
-		 <div class="finish">
+			<div class="formulate">
+	         <span id="${id}-formulateButton" class="yui-button yui-push-button">
+	            <span class="first-child">
+	               <button type="button">${msg('button.formulate')}</button>
+	            </span>
+	         </span>
+	      </div>
+	      <div class="eco-calculate-wused">
+	         <span id="${id}-ecoCalculateWUsedButton" class="yui-button yui-push-button">
+	            <span class="first-child">
+	               <button type="button">${msg('button.eco-calculate-wused')}</button>
+	            </span>
+	         </span>
+	      </div>
+	      <div class="eco-do-simulation">
+	         <span id="${id}-ecoDoSimulationButton" class="yui-button yui-push-button">
+	            <span class="first-child">
+	               <button type="button">${msg('button.eco-do-simulation')}</button>
+	            </span>
+	         </span>
+	      </div>
+	      <div class="eco-apply">
+	         <span id="${id}-ecoApplyButton" class="yui-button yui-push-button">
+	            <span class="first-child">
+	               <button type="button">${msg('button.eco-apply')}</button>
+	            </span>
+	         </span>
+	      </div>
+        			
+		 	<div class="finish">
             <span id="${id}-finishButton" class="yui-button yui-push-button">
                <span class="first-child">
                   <button type="button">${msg('button.finish')}</button>

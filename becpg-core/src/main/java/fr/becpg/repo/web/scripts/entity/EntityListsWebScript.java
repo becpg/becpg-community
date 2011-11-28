@@ -60,6 +60,8 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 	/** The Constant MODEL_KEY_NAME_LISTS. */
 	private static final String MODEL_KEY_NAME_LISTS = "lists";
 	
+	private static final String MODEL_KEY_NAME_EDITABLE_LISTS = "editableLists";
+	
 	
 	/** The Constant MODEL_HAS_WRITE_PERMISSION. */
 	private static final String MODEL_HAS_WRITE_PERMISSION = "hasWritePermission";
@@ -141,6 +143,7 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 		logger.debug("entityListsWebScript executeImpl()");
 			
 		List<NodeRef> listsNodeRef = new ArrayList<NodeRef>();
+		List<NodeRef> editableListsNodeRef = new ArrayList<NodeRef>();
 		NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);		
 		NodeRef listContainerNodeRef = null;
 		QName nodeType = nodeService.getType(nodeRef);
@@ -200,8 +203,7 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 			
 			listsNodeRef = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);			
 		}
-		
-		
+				
 		//filter list with perms
 		if(!skipFilter){
 			Iterator<NodeRef> it = listsNodeRef.iterator();
@@ -212,10 +214,16 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 				
 				switch (access_mode) {
 					case SecurityService.NONE_ACCESS:
-						if(logger.isDebugEnabled()){
-							logger.debug("Don't display dataList:"+dataListType);
+						if(logger.isTraceEnabled()){
+							logger.trace("Don't display dataList:"+dataListType);
 						}
 						it.remove();
+						break;
+					case SecurityService.WRITE_ACCESS:
+						if(logger.isTraceEnabled()){
+							logger.trace("editable dataList:"+dataListType);
+						}
+						editableListsNodeRef.add(temp);
 						break;
 					default:
 						break;
@@ -223,12 +231,12 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 			}
 		}
 		
-
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
 		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
 		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission);
 		model.put(MODEL_WUSED_LIST, wUsedList);
 		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
+		model.put(MODEL_KEY_NAME_EDITABLE_LISTS, editableListsNodeRef);
 		
 		return model;
 	}

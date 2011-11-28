@@ -38,6 +38,7 @@ public class ProductListPolicy implements NodeServicePolicies.OnCreateAssociatio
 		
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, 
 				BeCPGModel.TYPE_NUTLIST, BeCPGModel.ASSOC_NUTLIST_NUT, new JavaBehaviour(this, "onCreateAssociation"));
+				
 	}
 	
 	@Override

@@ -166,8 +166,8 @@ public class EntityListsWebScriptTest extends BaseWebScriptTest{
 					RawMaterialData rawMaterialTpl = new RawMaterialData();
 					rawMaterialTpl.setName("Raw material Tpl");
 					List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-					costList.add(new CostListDataItem(null, 3f, "€/kg", cost1, false));
-					costList.add(new CostListDataItem(null, 2f, "€/kg", cost2, false));
+					costList.add(new CostListDataItem(null, 3f, "€/kg", null, cost1, false));
+					costList.add(new CostListDataItem(null, 2f, "€/kg", null, cost2, false));
 					rawMaterialTpl.setCostList(costList);
 					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
 					nutList.add(new NutListDataItem(null, 1f, "kJ/100g", 0f,  0f, "Groupe 1", nut1, false));
