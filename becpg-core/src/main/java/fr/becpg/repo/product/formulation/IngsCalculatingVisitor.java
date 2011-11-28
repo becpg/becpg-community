@@ -20,8 +20,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import sun.security.action.GetLongAction;
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.ProductDAO;

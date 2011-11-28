@@ -2,7 +2,7 @@
 <script type="text/javascript">//<![CDATA[
    new beCPG.component.DesignerTree("${id}").setOptions(
    {
-      modelNodeRef: "${nodeRef}"
+      modelNodeRef: "${nodeRef!""}"
    }).setMessages(${messages});
 //]]></script>
 <div id="${id}-body" class="designerTree">

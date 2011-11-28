@@ -1,7 +1,7 @@
 <#include "include/alfresco-template.ftl" />
 <@templateHeader>
    <script type="text/javascript">//<![CDATA[
-      new Alfresco.widget.Resizer("modelTree");
+      (new Alfresco.widget.Resizer("modelTree")).DEFAULT_FILTER_PANEL_WIDTH=190;
    //]]></script>
 </@>
 

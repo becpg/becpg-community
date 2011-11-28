@@ -201,14 +201,26 @@
 	
 	
 	<!-- ListValue -->
-	<bean id="listValueService" class="fr.becpg.repo.listvalue.ListValueServiceImpl">
+	
+	<!-- Plugin registry -->
+	<bean id="listValuePluginRegistry" class="fr.becpg.repo.listvalue.impl.ListValuePluginRegistryImpl"/>
+	
+	<bean id="baseListValuePlugin" abstract="true"  class="fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin" init-method="init">
+		<property name="listValuePluginRegistry" ref="listValuePluginRegistry"/>
+	</bean>
+	
+	
+	<bean id="listValueService" class="fr.becpg.repo.listvalue.impl.ListValueServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="reportTplService" ref="reportTplService" />
 		<property name="dictionaryDAO" ref="dictionaryDAO"/>
 		<property name="dictionaryService" ref="dictionaryService"/>
 		<property name="autoNumService" ref="autoNumService"/>
+		<property name="listValuePluginRegistry" ref="listValuePluginRegistry" />
 	</bean>
+	
+	
 	
 	<!-- Entity -->
 	<bean id="entityListDAO" class="fr.becpg.repo.entity.impl.EntityListDAOImpl">

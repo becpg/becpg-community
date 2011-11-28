@@ -26,7 +26,7 @@
       </div>
    <#else>
       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory!false><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
-      <div style="padding-bottom: 2em;" class="yui-ac">
+      <div  class="yui-ac">
         <div id="${fieldHtmlId}-autocomplete" class="ac-body" style="${style}">
         <span id="${fieldHtmlId}-toggle-autocomplete" class="ac-toogle" ></span>
         <input id="${fieldHtmlId}" type="text" name="${field.name}" tabindex="0"

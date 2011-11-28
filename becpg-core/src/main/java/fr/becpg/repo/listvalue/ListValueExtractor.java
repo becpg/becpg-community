@@ -3,10 +3,8 @@ package fr.becpg.repo.listvalue;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.service.cmr.repository.NodeRef;
+public interface ListValueExtractor<T> {
 
-public interface ListValueExtractor {
-
-	Map<String, String> extract(List<NodeRef> nodeRefs);
+	Map<String, String> extract(List<T> values);
 
 }

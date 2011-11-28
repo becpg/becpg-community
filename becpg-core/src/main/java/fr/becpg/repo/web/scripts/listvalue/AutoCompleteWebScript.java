@@ -3,12 +3,14 @@
  */
 package fr.becpg.repo.web.scripts.listvalue;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.web.ui.repo.RepoConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -18,6 +20,8 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.common.RepoConsts;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValueService;
 
@@ -41,6 +45,9 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	
 	/** The Constant PARAM_PARENT. */
 	private static final String PARAM_PARENT = "parent";
+	
+	/** The Constant PARAM_NODEREF. */
+	private static final String PARAM_NODEREF = "entityNodeRef";
 	
 	/** The Constant PARAM_QUERY. */
 	private static final String PARAM_QUERY = "q";
@@ -70,6 +77,8 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 
 	/** The Constant PARAM_QUERY. */
 	private static final String PARAM_PAGE = "page";
+
+	private static final String MODEL_PAGE_SIZE = "pageSize";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AutoCompleteWebScript.class);	
@@ -120,6 +129,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		String page = req.getParameter(PARAM_PAGE);
 		String query = req.getParameter(PARAM_QUERY);
 		String parent = req.getParameter(PARAM_PARENT);
+		String nodeRef = req.getParameter(PARAM_NODEREF);
 		String productType = templateArgs.get(PARAM_PRODUCT_TYPE);
 		
 		Integer pageNum = null;
@@ -135,6 +145,9 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		Locale locale = I18NUtil.getLocale();
 		
 		logger.debug("exec webscript");
+		
+		
+		
 		
 		if(sourceType.equals(SOURCE_TYPE_TARGET_ASSOC)){
 			QName type = QName.createQName(className, namespaceService);
@@ -153,13 +166,24 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 			
 			QName productTypeQName = QName.createQName(productType, namespaceService);
 			suggestions = listValueService.suggestProductReportTemplates(productTypeQName, query,pageNum);
+		} else {
+			Map<String,Serializable> props = new HashMap<String, Serializable>();
+			props.put(ListValueService.PROP_LOCALE,locale);
+			props.put(ListValueService.PROP_NODEREF,nodeRef);
+			props.put(ListValueService.PROP_PATH,path);
+			//TODO put all here
+			
+			suggestions = listValueService.suggestBySourceType(sourceType , query,  pageNum, props);
 		}
-		else{
+		
+		
+		if(suggestions==null){
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'sourcetype'. sourcetype = " + sourceType);
 		}
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(MODEL_KEY_NAME_SUGGESTIONS, suggestions);
+		model.put(MODEL_PAGE_SIZE, RepoConsts.SUGGEST_PAGE_SIZE);
 		logger.debug("return model");
 		return model;		
 	}

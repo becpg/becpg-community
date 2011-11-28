@@ -6,5 +6,5 @@
    }).setMessages(${messages});
 //]]></script>
 <div id="${id}-model-form"  >
-Message ici ....
+${msg('model.please-select')}
 </div>

@@ -1,8 +1,45 @@
 <alfresco-config>
 
+
+	<config evaluator="node-type" condition="m2:namespace">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="m2:uri" />
+					<show id="m2:prefix" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<field id="m2:uri" set="mainInfo" />
+					<field id="m2:prefix" set="mainInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="m2:namedValue">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="m2:nameValue" />
+					<show id="m2:simpleValue" />
+					<show id="m2:listValue" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<field id="m2:nameValue" set="mainInfo" />
+					<field id="m2:simpleValue" set="mainInfo" />
+					<field id="m2:listValue" set="mainInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+
+
 	<config evaluator="node-type" condition="m2:model">
 		<forms>
-			<form >
+			<form>
 				<field-visibility>
 					<show id="m2:name" />
 					<show id="m2:title" />
@@ -11,14 +48,25 @@
 					<show id="m2:version" />
 					<show id="m2:published" />
 				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="m2:author" set="mainInfo" />
+					<field id="m2:version" set="mainInfo" />
+					<field id="m2:published" set="mainInfo" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
-	
+
 
 	<config evaluator="node-type" condition="m2:type">
 		<forms>
-			<form >
+			<form>
 				<field-visibility>
 					<show id="m2:parentName" />
 					<show id="m2:name" />
@@ -28,18 +76,92 @@
 					<show id="m2:archive" />
 					<show id="m2:mandatoryAspects" />
 				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<field id="m2:parentName" set="mainInfo" />
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="m2:includedInSuperTypeQuery" set="mainInfo" />
+					<field id="m2:archive" set="mainInfo" />
+					<field id="m2:mandatoryAspects" set="mainInfo" />
+					<field id="m2:parentName" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/parentName
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="m2:mandatoryAspects" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/mandatoryAspects
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
-	
-	<config evaluator="node-type" condition="m2:property">
+
+
+	<config evaluator="node-type" condition="m2:aspect">
 		<forms>
-			<form >
+			<form>
 				<field-visibility>
+					<show id="m2:parentName" />
 					<show id="m2:name" />
 					<show id="m2:title" />
 					<show id="m2:description" />
+					<show id="m2:includedInSuperTypeQuery" />
+					<show id="m2:archive" />
+					<show id="m2:mandatoryAspects" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<field id="m2:parentName" set="mainInfo" />
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="m2:includedInSuperTypeQuery" set="mainInfo" />
+					<field id="m2:archive" set="mainInfo" />
+					<field id="m2:mandatoryAspects" set="mainInfo" />
+					<field id="m2:parentName" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/parentName
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="m2:mandatoryAspects" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/mandatoryAspects
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="m2:property">
+		<forms>
+			<form>
+
+				<field-visibility>
 					<show id="m2:propertyType" />
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
 					<show id="m2:defaultValue" />
 					<show id="m2:isMandatory" />
 					<show id="m2:isMandatoryEnforced" />
@@ -50,125 +172,280 @@
 					<show id="m2:isStoredInIndex" />
 					<show id="m2:indexTokenisationMode" />
 				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<set id="indexInfo" appearance="bordered-panel" label="Indexation" />
+					<field id="m2:propertyType" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/propertyType
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="m2:defaultValue" set="mainInfo" />
+					<field id="m2:isMandatory" set="mainInfo" />
+					<field id="m2:isMandatoryEnforced" set="mainInfo" />
+					<field id="m2:isOverride" set="mainInfo" />
+					<field id="m2:isMultiValued" set="mainInfo" />
+					<field id="m2:isIndexedAtomically" set="indexInfo" />
+					<field id="m2:isIndexed" set="indexInfo" />
+					<field id="m2:isStoredInIndex" set="indexInfo" />
+					<field id="m2:indexTokenisationMode" set="indexInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+
+	<config evaluator="node-type" condition="m2:propertyOverride">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:defaultValue" />
+					<show id="m2:isMandatory" />
+					<show id="m2:isMandatoryEnforced" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />	
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:defaultValue" set="mainInfo" />
+					<field id="m2:isMandatory" set="mainInfo" />
+					<field id="m2:isMandatoryEnforced" set="mainInfo" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
 
 	<config evaluator="node-type" condition="m2:association">
 		<forms>
-			<form >
+			<form>
 				<field-visibility>
 					<show id="m2:name" />
 					<show id="m2:title" />
 					<show id="m2:description" />
-					<show id="m2:sourceRoleName"/>
-					<show id="m2:isSourceMandatory"/>
-					<show id="m2:isSourceMany"/>
-					<show id="m2:targetClassName"/>
-					<show id="m2:targetRoleName"/>
-					<show id="m2:isTargetMandatory"/>
-					<show id="m2:isTargetMandatoryEnforced"/>
-					<show id="m2:isTargetMany"/>
+					<show id="m2:sourceRoleName" />
+					<show id="m2:isSourceMandatory" />
+					<show id="m2:isSourceMany" />
+					<show id="m2:targetClassName" />
+					<show id="m2:targetRoleName" />
+					<show id="m2:isTargetMandatory" />
+					<show id="m2:isTargetMandatoryEnforced" />
+					<show id="m2:isTargetMany" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Infos" />					
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
 					<set id="sourceInfo" appearance="bordered-panel" label="Source" />
-					<set id="targetInfo" appearance="bordered-panel" label="Cible" />					
+					<set id="targetInfo" appearance="bordered-panel" label="Cible" />
 					<field id="m2:name" set="mainInfo" />
-					<field id="m2:title" set="mainInfo"/>
-					<field id="m2:description" set="mainInfo"/>
-					<field id="m2:sourceRoleName" set="sourceInfo"/>
-					<field id="m2:isSourceMandatory" set="sourceInfo"/>
-					<field id="m2:isSourceMany" set="sourceInfo"/>
-					<field id="m2:targetClassName" set="targetInfo"/>
-					<field id="m2:targetRoleName" set="targetInfo"/>
-					<field id="m2:isTargetMandatory" set="targetInfo"/>
-					<field id="m2:isTargetMandatoryEnforced" set="targetInfo"/>
-					<field id="m2:isTargetMany" set="targetInfo"/>
-				
-			   </appearance>
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="m2:sourceRoleName" set="sourceInfo" />
+					<field id="m2:isSourceMandatory" set="sourceInfo" />
+					<field id="m2:isSourceMany" set="sourceInfo" />
+					<field id="m2:targetClassName" set="targetInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetClassName
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="m2:targetRoleName" set="targetInfo" />
+					<field id="m2:isTargetMandatory" set="targetInfo" />
+					<field id="m2:isTargetMandatoryEnforced" set="targetInfo" />
+					<field id="m2:isTargetMany" set="targetInfo" />
+
+				</appearance>
 			</form>
 		</forms>
 	</config>
-	
-	
+
+
 	<config evaluator="node-type" condition="m2:childAssociation">
 		<forms>
-			<form >
+			<form>
 				<field-visibility>
 					<show id="m2:name" />
 					<show id="m2:title" />
 					<show id="m2:description" />
-					<show id="m2:sourceRoleName"/>
-					<show id="m2:isSourceMandatory"/>
-					<show id="m2:isSourceMany"/>
-					<show id="m2:targetClassName"/>
-					<show id="m2:targetRoleName"/>
-					<show id="m2:isTargetMandatory"/>
-					<show id="m2:isTargetMandatoryEnforced"/>
-					<show id="m2:isTargetMany"/>
-					<show id="m2:requiredChildName"/>
-				    <show id="m2:allowDuplicateChildName"/>
-				    <show id="m2:propagateTimestamps"/>
+					<show id="m2:sourceRoleName" />
+					<show id="m2:isSourceMandatory" />
+					<show id="m2:isSourceMany" />
+					<show id="m2:targetClassName" />
+					<show id="m2:targetRoleName" />
+					<show id="m2:isTargetMandatory" />
+					<show id="m2:isTargetMandatoryEnforced" />
+					<show id="m2:isTargetMany" />
+					<show id="m2:requiredChildName" />
+					<show id="m2:allowDuplicateChildName" />
+					<show id="m2:propagateTimestamps" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Infos" />					
-					<set id="sourceInfo" appearance="bordered-panel" label="Source" />
-					<set id="targetInfo" appearance="bordered-panel" label="Cible" />					
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<set id="sourceInfo" appearance="bordered-panel" label="Source de l'association" />
+					<set id="targetInfo" appearance="bordered-panel" label="Cible de l'association" />
 					<field id="m2:name" set="mainInfo" />
-					<field id="m2:title" set="mainInfo"/>
-					<field id="m2:description" set="mainInfo"/>
-					<field id="m2:sourceRoleName" set="sourceInfo"/>
-					<field id="m2:isSourceMandatory" set="sourceInfo"/>
-					<field id="m2:isSourceMany" set="sourceInfo"/>
-					<field id="m2:targetClassName" set="targetInfo"/>
-					<field id="m2:targetRoleName" set="targetInfo"/>
-					<field id="m2:isTargetMandatory" set="targetInfo"/>
-					<field id="m2:isTargetMandatoryEnforced" set="targetInfo"/>
-					<field id="m2:isTargetMany" set="targetInfo"/>
-					<field id="m2:requiredChildName" set="mainInfo"/>
-				    <field id="m2:allowDuplicateChildName" set="mainInfo"/>
-				    <field id="m2:propagateTimestamps" set="mainInfo"/>
-			   </appearance>
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="m2:sourceRoleName" set="sourceInfo" />
+					<field id="m2:isSourceMandatory" set="sourceInfo" />
+					<field id="m2:isSourceMany" set="sourceInfo" />
+					<field id="m2:targetClassName" set="targetInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetClassName
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="m2:targetRoleName" set="targetInfo" />
+					<field id="m2:isTargetMandatory" set="targetInfo" />
+					<field id="m2:isTargetMandatoryEnforced" set="targetInfo" />
+					<field id="m2:isTargetMany" set="targetInfo" />
+					<field id="m2:requiredChildName" set="mainInfo" />
+					<field id="m2:allowDuplicateChildName" set="mainInfo" />
+					<field id="m2:propagateTimestamps" set="mainInfo" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
-	
-	
-	<config evaluator="node-type" condition="m2:propertyOverride">
-		<forms>
-			<form >
-				<field-visibility>
-					<show id="m2:name" />
-					<show id="m2:title" />
-					<show id="m2:description" />
-					<show id="m2:propertyType" />
-					<show id="m2:defaultValue" />
-					<show id="m2:isMandatory" />
-					<show id="m2:isMandatoryEnforced" />
-					<show id="m2:isOverride" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-	
-	
-	
-	
+
+
+
+
 	<config evaluator="node-type" condition="m2:constraint">
 		<forms>
-			<form >
+			<form>
 				<field-visibility>
 					<show id="m2:name" />
 					<show id="m2:title" />
 					<show id="m2:description" />
-					<show id="m2:ref" />
 					<show id="m2:type" />
 				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="m2:type" set="mainInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+
+	<config evaluator="node-type" condition="m2:constraintRef">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="m2:ref" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<field id="m2:ref" set="mainInfo">
+						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/constraintRef
+							</control-param>
+							<control-param name="fieldTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
+	
+	<config evaluator="node-type" condition="dsg:form">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="dsg:id" />
+					<show id="dsg:submissionUrl" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<field id="dsg:id" set="mainInfo" />
+					<field id="dsg:submissionUrl" set="mainInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
+	<config evaluator="node-type" condition="dsg:formSet">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="dsg:id" />
+					<show id="dsg:label" />
+					<show id="dsg:labelId" />
+					<show id="dsg:appearance" />
+					<show id="dsg:templatePath" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<field id="dsg:id" set="mainInfo"/>
+					<field id="dsg:label" set="mainInfo" />
+					<field id="dsg:labelId" set="mainInfo" />
+					<field id="dsg:appearance" set="mainInfo" />
+					<field id="dsg:templatePath" set="mainInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="node-type" condition="dsg:formField">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="dsg:id" />
+					<show id="dsg:label" />
+					<show id="dsg:labelId" />
+					<show id="dsg:description" />
+					<show id="dsg:descriptionId" />
+					<show id="dsg:help" />
+					<show id="dsg:helpId" />
+					<show id="dsg:readOnly" />
+					<show id="dsg:mandatory" />
+					<show id="dsg:hide" />
+					<show id="dsg:force" />
+					<show id="dsg:forMode" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label="Information" />
+					<set id="appearanceInfo" appearance="bordered-panel" label="Apparance" />
+					<set id="visibilityInfo" appearance="bordered-panel" label="Visibilité" />
+					<field id="dsg:hide" set="visibilityInfo"  />
+					<field id="dsg:force" set="visibilityInfo" />
+					<field id="dsg:forMode" set="visibilityInfo" />
+					<field id="dsg:id" set="mainInfo"/>
+					<field id="dsg:label" set="mainInfo" />
+					<field id="dsg:labelId" set="mainInfo" />
+					<field id="dsg:description" set="appearanceInfo"/>
+					<field id="dsg:descriptionId" set="appearanceInfo" />
+					<field id="dsg:help" set="appearanceInfo"/>
+					<field id="dsg:helpId" set="appearanceInfo"/>
+					<field id="dsg:readOnly" set="appearanceInfo"/>
+					<field id="dsg:mandatory" set="appearanceInfo" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
 	
 
-	
 </alfresco-config>

@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Create model element</shortname>
+  <description>Create a new model element</description>
+  <url>/becpg/designer/create/element?nodeRef={nodeRef}</url>
+  <format default="json" />
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+  <lifecycle>internal</lifecycle>
+</webscript>

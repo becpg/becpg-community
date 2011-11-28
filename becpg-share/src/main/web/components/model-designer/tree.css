@@ -1,3 +1,6 @@
+
+
+
 .designerTree .header-bar
 {
    margin-left: -10px;
@@ -20,13 +23,13 @@
    padding-top: 0.5em;
 }
 
-.designerTree li
+.designerTree .filter li
 {
    overflow-x: hidden;
    padding-left: 0px;
 }
 
-.designerTree li a
+.designerTree .filter li a
 {
    background: url(../images/list-16.png) no-repeat 4px 0;
    display: block;
@@ -34,7 +37,7 @@
    padding: 0 0 0 24px;
 }
 
-.designerTree li a span
+.designerTree .filter li a span
 {
    cursor: pointer;
    display: none;
@@ -45,3 +48,57 @@
    width: 18px;
 }
 
+/* Tree */
+
+
+.designerTree .tree
+{
+   display: none;
+   padding: 0.5em 0 1em;
+}
+
+.designerTree .ygtvspacer
+{
+   display: block;
+   width: 18px;
+}
+
+.designerTree .ygtvchildren
+{
+   width: 100%;
+}
+
+.designerTree .ygtvitem
+{
+   background-color: #ffffff;
+   overflow-x: hidden;
+}
+
+.designerTree .ygtvitem .folders-trimmed
+{
+   color: #f00;
+}
+
+.designerTree .ygtvlabel,
+.designerTree .ygtvlabel:link,
+.designerTree .ygtvlabel:visited,
+.designerTree .ygtvlabel:hover
+{
+   background: none;
+   color: #000;
+   white-space: nowrap;
+}
+
+.designerTree .ygtverror,
+.designerTree .ygtverror:link,
+.designerTree .ygtverror:visited,
+.designerTree .ygtverror:hover
+{
+   background: red;
+   color: white;
+}
+
+.designerTree .selected
+{
+   background-color: #e1f0fa;
+}

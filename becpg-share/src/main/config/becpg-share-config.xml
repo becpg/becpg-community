@@ -145,5 +145,122 @@
 			<itemType name="bcpg:client" />
 		</itemTypes>
 	</config>
+	
+	<config evaluator="string-compare" condition="ModelDesigner">
+
+		<types>
+			<type name="m2:model">
+				<association name="m2:types" >
+					<subtype name="m2:type" >
+						<model name="templateModel_CONTENT" />
+						<model name="templateModel_TASKNODE" />
+						<model name="templateModel_STARTTASK" />
+					</subtype>
+				</association>
+				<association name="m2:aspects" >
+					<subtype name="m2:aspect"/>
+				</association>
+				<association name="m2:constraints" >
+					<subtype name="m2:constraint">
+						<model name="templateModel_LIST"/>
+						<model name="templateModel_REGEXP"/>
+						<model name="templateModel_LENGTH"/>
+						<model name="templateModel_MINMAX"/>
+					</subtype>
+				</association>
+				<association name="m2:imports"   hideName="true" >
+					<subtype name="m2:namespace"/>
+				</association>
+				<association name="m2:namespaces"  hideName="true" >
+					<subtype name="m2:namespace"/>
+				</association> 
+				<association name="m2:dataTypes" >
+					<subtype name="m2:dataType"/>
+				</association>
+			</type>
+			
+			<type name="m2:type">
+				<association name="dsg:forms"  >
+					<subtype name="dsg:form"/>
+				</association>
+				<association name="m2:properties"  >
+					<subtype name="m2:property"/>
+				</association>
+				<association name="m2:propertyOverrides"  >
+					<subtype name="m2:propertyOverride"/>
+				</association>
+				<association name="m2:associations" >
+					<subtype name="m2:association"/>
+					<subtype name="m2:childAssociation"/>
+				</association>
+			</type>
+
+
+			<type name="dsg:form">
+				<association name="dsg:fields"  >
+					<subtype name="dsg:formField"/>
+				</association>
+				<association name="dsg:sets"  >
+					<subtype name="dsg:formSet"/>
+				</association>
+			</type>
+			
+			<type name="dsg:formSet">
+				<association name="dsg:fields"  >
+					<subtype name="dsg:formField"/>
+				</association>
+				<association name="dsg:sets"  >
+					<subtype name="dsg:formSet"/>
+				</association>
+			</type>
+			
+			<type name="dsg:formField">
+				<association name="dsg:controls"  >
+					<subtype name="dsg:formControls"/>
+				</association>
+			</type>
+			
+			
+			<type name="dsg:formControls">
+				<association name="dsg:parameters"  >
+					<subtype name="m2:namedValue"/>
+				</association>
+			</type>
+			
+
+			<type name="m2:aspect">
+				<association name="m2:properties"  >
+					<subtype name="m2:property"/>
+				</association>
+				<association name="m2:propertyOverrides"  >
+					<subtype name="m2:propertyOverride"/>
+				</association>
+				<association name="m2:associations" >
+					<subtype name="m2:association"/>
+					<subtype name="m2:childAssociation"/>
+				</association>
+			</type>
+		
+			<type name="m2:property">
+				<association name="m2:constraints" hideName="true"  >
+					<subtype name="m2:constraintRef" />
+				</association>
+			</type>
+			
+			<type name="m2:propertyOverride">
+				<association name="m2:constraints" hideName="true"  >
+					<subtype name="m2:constraintRef" />
+				</association>
+			</type>
+			
+			
+			<type name="m2:constraint">
+				<association name="m2:parameters" >
+					<subtype name="m2:namedValue"/>
+				</association>
+			</type>
+			
+		</types>
+	</config>
 
 </alfresco-config>

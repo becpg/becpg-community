@@ -6,7 +6,7 @@
    <#list items as node>
     {
        "nodeRef": "${node.nodeRef}",
-       "displayName": "${node.displayName}"
+       "displayName": "${node.name}"
 	}<#if node_has_next>,</#if>
    </#list>
     </#if>
