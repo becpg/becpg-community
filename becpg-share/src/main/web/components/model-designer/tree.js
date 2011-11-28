@@ -299,8 +299,10 @@
             		 
             	 }
             	 if(tmpNode==null){
-            		tmpNode = this._buildTreeNode({name:obj.assocName,childrens:[obj], type: "m2:"+obj.assocName}, parentNode, false)
-            		tmpNode.expand();
+            		parentNode.isLeaf = false;
+            		parentNode.expand();
+            		tmpNode = this._buildTreeNode({name:obj.assocName,childrens:[obj], type: "m2:"+obj.assocName}, parentNode, true); 
+            		tmpNode = tmpNode.children[0];
             	 } else {
             		tmpNode.expand();
                  	tmpNode =  this._buildTreeNode(obj, tmpNode, false);
