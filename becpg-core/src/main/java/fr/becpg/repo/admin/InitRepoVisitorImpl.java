@@ -676,7 +676,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-				dataLists.add(BeCPGModel.TYPE_REQCTRLLIST);
 
 			} else if (productType.equals(BeCPGModel.TYPE_FINISHEDPRODUCT)) {
 
