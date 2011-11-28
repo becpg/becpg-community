@@ -94,20 +94,17 @@ public class ECOPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy{
 				if(ecoState.equals(ECOState.ToCalculateWUsed)){
 					
 					logger.debug("calculate WUsed");
-					ecoService.calculateWUsedList(ecoNodeRef);
-					nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.WUsedCalculated);
+					ecoService.calculateWUsedList(ecoNodeRef);					
 				}
 				else if(ecoState.equals(ECOState.ToSimulate)){
 				
 					logger.debug("do simulation");
-					ecoService.doSimulation(ecoNodeRef);				
-					nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.Simulated);
+					ecoService.doSimulation(ecoNodeRef);									
 				}
 				else if(ecoState.equals(ECOState.ToApply)){
 				
 					logger.debug("apply");
 					ecoService.apply(ecoNodeRef);				
-					nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE, ECOState.Applied);
 				}
 			}	
 			catch(Exception e){

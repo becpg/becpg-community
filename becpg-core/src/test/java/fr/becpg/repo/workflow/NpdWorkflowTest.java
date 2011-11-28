@@ -491,8 +491,8 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			rawMaterial1.setLegalName("Legal Raw material 1");
 			//costList
 			List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 3f, "€/kg", cost1, false));
-			costList.add(new CostListDataItem(null, 2f, "€/kg", cost2, false));
+			costList.add(new CostListDataItem(null, 3f, "€/kg", null, cost1, false));
+			costList.add(new CostListDataItem(null, 2f, "€/kg", null, cost2, false));
 			rawMaterial1.setCostList(costList);
 			//nutList
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
@@ -526,8 +526,8 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			rawMaterial2.setLegalName("Legal Raw material 2");
 			//costList
 			costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 1f, "€/kg", cost1, false));
-			costList.add(new CostListDataItem(null, 2f, "€/kg", cost1, false));
+			costList.add(new CostListDataItem(null, 1f, "€/kg", null, cost1, false));
+			costList.add(new CostListDataItem(null, 2f, "€/kg", null, cost1, false));
 			rawMaterial2.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
@@ -562,8 +562,8 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			rawMaterial3.setLegalName("Legal Raw material 3");
 			//costList
 			costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 1f, "€/kg", cost1, false));
-			costList.add(new CostListDataItem(null, 2f, "€/kg", cost1, false));
+			costList.add(new CostListDataItem(null, 1f, "€/kg", null, cost1, false));
+			costList.add(new CostListDataItem(null, 2f, "€/kg", null, cost1, false));
 			rawMaterial3.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
@@ -609,8 +609,8 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			rawMaterial5.setLegalName("Legal Raw material 5");
 			//costList
 			costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 5f, "€/m", cost1, false));
-			costList.add(new CostListDataItem(null, 6f, "€/m", cost1, false));
+			costList.add(new CostListDataItem(null, 5f, "€/m", null, cost1, false));
+			costList.add(new CostListDataItem(null, 6f, "€/m", null, cost1, false));
 			rawMaterial5.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();

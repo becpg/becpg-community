@@ -780,6 +780,10 @@
 						<constraint ref="bcpg:costListUnit" />
 					</constraints>
 				</property>
+				<property name="bcpg:costListMaxi">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:costListCost">
@@ -846,15 +850,62 @@
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		<type name="bcpg:priceList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:priceListValue">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:priceListUnit">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:costListUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:priceListPurchaseQty">
+					<type>d:float</type>
+					<mandatory>false</mandatory>					
+				</property>
+				<property name="bcpg:priceListPurchaseUnit">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:productUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:priceListPrefRank">
+					<type>d:int</type>
+					<mandatory>false</mandatory>					
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:priceListCost">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:cost</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+				<aspect>bcpg:suppliersAspect</aspect>
+				<aspect>bcpg:effectivityAspect</aspect>				
+			</mandatory-aspects>
+		</type>
 
 		<type name="bcpg:ingLabelingList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:illGrp">
 					<type>d:text</type>
-					<constraints>
-						<constraint ref="bcpg:declGrp" />
-					</constraints>
 				</property>
 				<property name="bcpg:illValue">
 					<type>d:mltext</type>
@@ -1211,16 +1262,7 @@
 		</type>
 
 		<type name="bcpg:entity">
-			<parent>cm:content</parent>
-			<properties>
-				<property name="bcpg:startEffectivity">
-					<type>d:datetime</type>
-					<mandatory>true</mandatory>
-				</property>
-				<property name="bcpg:endEffectivity">
-					<type>d:datetime</type>
-				</property>
-			</properties>
+			<parent>cm:content</parent>			
 		</type>
 
 		<type name="bcpg:autoNum">
@@ -1468,7 +1510,11 @@
 					</constraints>
 				</property>
 				<property name="bcpg:breakEven">
-					<type>d:float</type>
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:projectedQty">
+					<type>d:int</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:unitTotalCost">
@@ -1673,6 +1719,17 @@
 				</association>
 
 			</associations>
+		</aspect>
+		
+		<aspect name="bcpg:effectivityAspect">
+			<properties>
+				<property name="bcpg:startEffectivity">
+					<type>d:datetime</type>
+				</property>
+				<property name="bcpg:endEffectivity">
+					<type>d:datetime</type>
+				</property>
+			</properties>
 		</aspect>
 
 	</aspects>

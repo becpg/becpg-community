@@ -136,9 +136,11 @@
 	<config evaluator="string-compare" condition="bulk-edit">
 		<itemTypes>
 			<itemType name="bcpg:finishedProduct" />
+			<itemType name="bcpg:finishedProduct" label="NPD"
+				formId="bulk-edit-npd" />
 <!-- 			<itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" -->
 <!-- 				formId="bulk-edit-2"  editSelectedFormId ="bulk-edit" /> -->
-			<itemType name="bcpg:allergenList" />
+			<!-- <itemType name="bcpg:allergenList" />-->
 			<itemType name="sec:aclGroup"/>
 			<itemType name="bcpg:semiFinishedProduct" />
 			

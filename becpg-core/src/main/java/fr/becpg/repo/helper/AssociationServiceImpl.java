@@ -6,9 +6,13 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class AssociationServiceImpl implements AssociationService {
 
+	private static Log logger = LogFactory.getLog(AssociationServiceImpl.class);
+	
 	private NodeService nodeService;
 	
 	public void setNodeService(NodeService nodeService) {
@@ -28,17 +32,15 @@ public class AssociationServiceImpl implements AssociationService {
     				nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
     			else
     				assocNodeRefs.remove(assocRef.getTargetRef());//already in db
-    		}
-    		//add nodes that are not in db
-    		for(NodeRef n : assocNodeRefs){
-    			nodeService.createAssociation(nodeRef, n, qName);
-    		}
-		}
-		else{
-			for(AssociationRef assocRef : dbAssocNodeRefs)
-				nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
+    		}    		
 		}
 		
+		//add nodes that are not in db
+		if(assocNodeRefs != null){
+			for(NodeRef n : assocNodeRefs){
+				nodeService.createAssociation(nodeRef, n, qName);
+			}
+		}		
 	}
 	
 	// TODO : refactor : utiliser cette méthode dans la création des datalists ! productdao, etc...
@@ -58,6 +60,7 @@ public class AssociationServiceImpl implements AssociationService {
 		}
 		
 		if(createAssoc && assocNodeRef != null){
+			logger.debug("###createAssoc: " + qName + "nodeRef: " + nodeRef);
 			nodeService.createAssociation(nodeRef, assocNodeRef, qName);
 		}
 	}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eco name="Mon OM" code="ECO16">
+	<calculatedCharacts>
+		<calculatedCharact sourceItemHierarchy1="Famille1" sourceItemHierarchy2="sous-famille1" sourceItemName="Produit A" sourceItemCode="PF1235" charactName="Coût MP" sourceValue="1.2" targetValue="1.1111445555" projectedQty="1000" isCost="true"/>
+		<calculatedCharact sourceItemHierarchy1="Famille1" sourceItemHierarchy2="sous-famille1" sourceItemName="Produit A" sourceItemCode="PF1235" charactName="Coût Emb" sourceValue="1.7" targetValue="1.1" projectedQty="1000" isCost="true"/>
+		<calculatedCharact sourceItemHierarchy1="Famille1" sourceItemHierarchy2="sous-famille1" sourceItemName="Produit A" sourceItemCode="PF1235" charactName="Glucides" sourceValue="1000" targetValue="800" projectedQty="1000" isCost="false"/>
+		<calculatedCharact sourceItemHierarchy1="Famille1" sourceItemHierarchy2="sous-famille1" sourceItemName="Produit B" sourceItemCode="PF1236" charactName="Coût MP" sourceValue="1.6" targetValue="2" projectedQty="2000" isCost="true"/>
+		<calculatedCharact sourceItemHierarchy1="Famille1" sourceItemHierarchy2="sous-famille1" sourceItemName="Produit B" sourceItemCode="PF1236" charactName="Coût Emb" sourceValue="1.9" targetValue="1.1" projectedQty="2000" isCost="true"/>
+		<calculatedCharact sourceItemHierarchy1="Famille1" sourceItemHierarchy2="sous-famille1" sourceItemName="Produit B" sourceItemCode="PF1236" charactName="Glucides" sourceValue="1200" targetValue="1250" projectedQty="2000" isCost="false"/>
+		<calculatedCharact sourceItemHierarchy1="Famille2" sourceItemHierarchy2="sous-famille2" sourceItemName="Produit C" sourceItemCode="PF1237" charactName="Coût MP" sourceValue="1.2" targetValue="1.1"  projectedQty="3000" isCost="true"/>
+		<calculatedCharact sourceItemHierarchy1="Famille2" sourceItemHierarchy2="sous-famille2" sourceItemName="Produit C" sourceItemCode="PF1237" charactName="Coût Emb" sourceValue="1.2" targetValue="1.1"  projectedQty="3000" isCost="true"/>
+		<calculatedCharact sourceItemHierarchy1="Famille2" sourceItemHierarchy2="sous-famille2" sourceItemName="Produit C" sourceItemCode="PF1237" charactName="Glucides" sourceValue="1500" targetValue="1550"  projectedQty="3000" isCost="false"/>
+		<calculatedCharact sourceItemHierarchy1="Famille2" sourceItemHierarchy2="sous-famille3" sourceItemName="Produit D" sourceItemCode="PF1238" charactName="Coût MP" sourceValue="1.2" targetValue="1.12223355" projectedQty="700" isCost="true"/>
+		<calculatedCharact sourceItemHierarchy1="Famille2" sourceItemHierarchy2="sous-famille3" sourceItemName="Produit D" sourceItemCode="PF1238" charactName="Coût Emb" sourceValue="1.2" targetValue="1.1" projectedQty="700" isCost="true"/>
+		<calculatedCharact sourceItemHierarchy1="Famille2" sourceItemHierarchy2="sous-famille3" sourceItemName="Produit D" sourceItemCode="PF1238" charactName="Glucides" sourceValue="1100" targetValue="1200" projectedQty="700" isCost="false"/>	
+	</calculatedCharacts>
+</eco>

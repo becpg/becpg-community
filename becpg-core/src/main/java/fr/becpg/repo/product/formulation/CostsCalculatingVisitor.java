@@ -20,6 +20,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
@@ -35,6 +36,8 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.data.productList.RequirementType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -54,6 +57,8 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	public static final String UNIT_SEPARATOR = "/";
 	
 	public static final String KEY_COST_DETAILS = "%s-%s";
+	
+	protected static final String MSG_REQ_NOT_RESPECTED = "message.formulate.warning.requirement.cost";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CostsCalculatingVisitor.class);
@@ -164,12 +169,24 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			
 			if(c.getValue() != null){
 			
-				Float sum = compositeCosts.getCostMap().get(c.getCost()).getValue();
-				c.setPercentage(c.getValue() / sum * 100);
+				Float sum = compositeCosts.getCostMap().get(c.getCost()).getValue();				
+				if(sum != null && !sum.equals(0f)){
+					c.setPercentage(c.getValue() / sum * 100);
+				}				
 			}
 			else{
 				c.setPercentage(0f);
 			}					
+		}
+		
+		//keep maxi
+		if(formulatedProduct.getCostList() != null){
+			for(CostListDataItem c : formulatedProduct.getCostList()){
+				CostListDataItem cToUpdate = compositeCosts.getCostMap().get(c.getCost());
+				if(cToUpdate != null){
+					cToUpdate.setMaxi(c.getMaxi());
+				}
+			}
 		}
 		
 		//manual listItem
@@ -179,9 +196,15 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		//sort
 		List<CostListDataItem> costListSorted = sortCost(costList);
 		List<CostDetailsListDataItem> costDetailsListSorted = sortCostDetails(costDetailsList);
-				
+		
 		formulatedProduct.setCostList(costListSorted);					
-		formulatedProduct.setCostDetailsList(costDetailsListSorted);			
+		formulatedProduct.setCostDetailsList(costDetailsListSorted);	
+		
+		//profitability
+		formulatedProduct = calculateProfitability(formulatedProduct);
+		
+		// check requirements
+		formulatedProduct = checkReqCtrl(formulatedProduct);
 		
 		return formulatedProduct;
 	}
@@ -534,6 +557,48 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	private String getCostDetailsKey(NodeRef cost, NodeRef source){
 		
 		return String.format(KEY_COST_DETAILS, cost, source);
+	}
+	
+	private ProductData calculateProfitability(ProductData formulatedProduct){
+		
+		float unitTotalCost = 0f;
+		
+		for(CostListDataItem c : formulatedProduct.getCostList()){
+			
+			if(c.getValue() != null)
+				unitTotalCost += c.getValue();
+		}
+				
+		formulatedProduct.setUnitTotalCost(unitTotalCost);
+		
+		if(formulatedProduct.getUnitPrice() != null && formulatedProduct.getUnitTotalCost() != null){
+			
+			Float profitability = 100 * (formulatedProduct.getUnitPrice() - formulatedProduct.getUnitTotalCost()) / formulatedProduct.getUnitPrice();
+			logger.debug("profitability: " + profitability);
+			formulatedProduct.setProfitability(profitability);
+		}
+		else{
+			formulatedProduct.setProfitability(null);
+		}
+		
+		return formulatedProduct;
+	}
+	
+	private ProductData checkReqCtrl(ProductData formulatedProduct){
+		
+		for(CostListDataItem c : formulatedProduct.getCostList()){
+			
+			if(c.getValue() != null && c.getMaxi() != null && c.getValue() > c.getMaxi()){
+				
+				String msg = I18NUtil.getMessage(MSG_REQ_NOT_RESPECTED, 
+						nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME),
+						c.getValue(),
+						c.getMaxi());
+				formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, msg, null));
+			}
+		}
+		
+		return formulatedProduct;
 	}
 	
 	private class CompositeCosts{

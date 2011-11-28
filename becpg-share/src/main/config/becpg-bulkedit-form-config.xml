@@ -1,9 +1,9 @@
 <alfresco-config>
 
-<!-- 
+
 	<config evaluator="model-type" condition="bcpg:finishedProduct">
 		<forms>
-			<form id="bulk-edit">
+			<!--<form id="bulk-edit">
 				<field-visibility>
 
 					<show id="cm:name" />
@@ -31,8 +31,8 @@
 
 
 				</field-visibility>
-			</form>
-			<form id="bulk-edit-2">
+			</form>-->
+			<form id="bulk-edit-npd">
 				<field-visibility>
 
 					<show id="cm:name" />
@@ -40,19 +40,29 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:productComments" />
 					<show id="bcpg:code" />
+					<show id="bcpg:clients" />
+					<show id="cm:modified" />
 
-					<show id="cm:publisher" force="true" />
-					<show id="cm:contributor" force="true" />
-					<show id="cm:type" force="true" />
-					<show id="cm:identifier" />
-					<show id="cm:dcsource" />
-					<show id="cm:coverage" />
-					<show id="cm:rights" />
-					<show id="cm:subject" />
+					<!-- NPD -->
+					<show id="npd:npdNumber" force="true" />
+					<show id="npd:npdType" force="true" />
+					<show id="npd:npdStatus" force="true" />					
+					<show id="npd:npdInitiator" force="true" />
+					
 				</field-visibility>
+				<appearance>					
+					<set id="npd" appearance="bordered-panel" label="NPD"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+						
+					<!-- NPD -->
+					<field id="npd:npdNumber" set="npd" />
+					<field id="npd:npdType" set="npd" />
+					<field id="npd:npdStatus" set="npd" />					
+					<field id="npd:npdInitiator" set="npd" />		
+				</appearance>
 			</form>
 		</forms>
-	</config> -->
+	</config> 
 
 
 		<config evaluator="model-type" condition="sec:aclGroup">

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2010-2011 beCPG. All rights reserved.
  */
-package fr.becpg.repo.policy;
+package fr.becpg.repo.entity.policy;
 
 import java.io.Serializable;
 import java.util.HashMap;

@@ -135,6 +135,7 @@ public class CreateProduct extends JBPMSpringActionHandler {
 					NodeRef productNodeRef = entityService.createOrCopyFrom(parentNodeRef, sourceNodeRef, entityType,
 							entityName);
 
+					// profitability
 					Float unitPrice = (Float) executionContext.getContextInstance().getVariable(
 							"npdwf_unitPrice");
 					String priceCurrency= (String) executionContext.getContextInstance().getVariable(
@@ -146,6 +147,22 @@ public class CreateProduct extends JBPMSpringActionHandler {
 						props.put(BeCPGModel.PROP_PRICE_CURRENCY, priceCurrency);
 						nodeService.addAspect(productNodeRef, BeCPGModel.ASPECT_PROFITABILITY, props );
 					}
+					
+					// npd aspect
+					String npdNumber = (String) executionContext.getContextInstance().getVariable(
+							"npdwf_npdNumber");
+					String npdType = (String) executionContext.getContextInstance().getVariable(
+							"npdwf_npdType");
+					String npdStatus = (String) executionContext.getContextInstance().getVariable(
+							"npdwf_npdStatus");
+					JBPMNode npdInitiator = (JBPMNode) executionContext.getContextInstance().getVariable(
+							"initiator");					
+					Map<QName, Serializable> props = new HashMap<QName, Serializable>();
+					props.put(NPDModel.PROP_NPD_NUMBER, npdNumber);
+					props.put(NPDModel.PROP_NPD_TYPE, npdType);
+					props.put(NPDModel.PROP_NPD_STATUS, npdStatus);
+					props.put(NPDModel.PROP_NPD_INITIATOR, npdInitiator.getName());
+					nodeService.addAspect(productNodeRef, NPDModel.ASPECT_NPD, props );
 
 					//Delete existing subsidiary
 					for( AssociationRef subsidiaryAssoc : nodeService.getTargetAssocs(productNodeRef, BeCPGModel.ASSOC_SUBSIDIARY)){

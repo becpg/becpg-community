@@ -159,10 +159,10 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-				costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(0), false));
-				costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(1), false));
-				costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(2), false));
-				costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(3), false));
+				costList.add(new CostListDataItem(null, 3f, "€/kg", null, costs.get(0), false));
+				costList.add(new CostListDataItem(null, 2f, "€/kg", null, costs.get(1), false));
+				costList.add(new CostListDataItem(null, 3f, "€/kg", null, costs.get(2), false));
+				costList.add(new CostListDataItem(null, 2f, "€/kg", null, costs.get(3), false));
 				sfData.setCostList(costList);
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
 				sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);				
@@ -361,10 +361,10 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 //					
 //					for(int z_idx=0 ; z_idx<nbFiles ; z_idx++){
 //						
-//						costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(0)));
-//						costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(1)));
-//						costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(2)));
-//						costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(3)));
+//						costList.add(new CostListDataItem(null, 3f, "€/kg", null, costs.get(0), false));
+//						costList.add(new CostListDataItem(null, 2f, "€/kg", null, costs.get(1), false));
+//						costList.add(new CostListDataItem(null, 3f, "€/kg", null, costs.get(2), false));
+//						costList.add(new CostListDataItem(null, 2f, "€/kg", null, costs.get(3), false));
 //					}
 //					
 //					sfData.setCostList(costList);
@@ -407,10 +407,10 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 //					
 //					for(int z_idx=0 ; z_idx<nbFiles ; z_idx++){
 //						
-//						costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(0)));
-//						costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(1)));
-//						costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(2)));
-//						costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(3)));
+//						costList.add(new CostListDataItem(null, 3f, "€/kg", null, costs.get(0), false));
+//						costList.add(new CostListDataItem(null, 2f, "€/kg", null, costs.get(1), false));
+//						costList.add(new CostListDataItem(null, 3f, "€/kg", null, costs.get(2), false));
+//						costList.add(new CostListDataItem(null, 2f, "€/kg", null, costs.get(3), false));
 //					}
 //					
 //					sfData.setCostList(costList);
@@ -423,8 +423,9 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 //					NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);
 //					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
 //					
-//					String query = String.format("PARENT:\"%s\"", listNodeRef);
-//					String [] sort = {BeCPGModel.PROP_SORT.toString()};
+//					String query = String.format("+PARENT:\"%s\"", listNodeRef);
+//					Map<String, Boolean> sort = new HashMap<String, Boolean>();
+//					sort.put("@" + BeCPGModel.PROP_SORT, true);
 //					
 //					StopWatch watch = new StopWatch();
 //					watch.start();				
@@ -456,10 +457,10 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 //					
 //					for(int z_idx=0 ; z_idx<nbFiles ; z_idx++){
 //						
-//						costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(0)));
-//						costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(1)));
-//						costList.add(new CostListDataItem(null, 3f, "€/kg", costs.get(2)));
-//						costList.add(new CostListDataItem(null, 2f, "€/kg", costs.get(3)));
+//						costList.add(new CostListDataItem(null, 3f, "€/kg", null, costs.get(0), false));
+//						costList.add(new CostListDataItem(null, 2f, "€/kg", null, costs.get(1), false));
+//						costList.add(new CostListDataItem(null, 3f, "€/kg", null, costs.get(2), false));
+//						costList.add(new CostListDataItem(null, 2f, "€/kg", null, costs.get(3), false));
 //					}
 //					
 //					sfData.setCostList(costList);

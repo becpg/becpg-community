@@ -96,6 +96,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
 	private static final String PRODUCT_REPORT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
 	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
+	private static final String ECO_REPORT_PATH = "beCPG/birt/system/eco/ECOReport.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
@@ -610,14 +611,12 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists);
 		
 		// visit ECO
-		subFolders = new HashSet<String>();
-		subFolders.add(RepoConsts.PATH_SIMULATION_COMPONENTS);
-		subFolders.add(RepoConsts.PATH_SIMULATION_OUTPUT);
-		entityTplService.createFolderTpl(folderTplsNodeRef, ECOModel.TYPE_ECO, true, subFolders);
+		entityTplService.createFolderTpl(folderTplsNodeRef, ECOModel.TYPE_ECO, true, null);
 		dataLists = new LinkedHashSet<QName>();
 		dataLists.add(ECOModel.TYPE_REPLACEMENTLIST);
 		dataLists.add(ECOModel.TYPE_WUSEDLIST);
-		dataLists.add(ECOModel.TYPE_SIMULATIONLIST);
+		dataLists.add(ECOModel.TYPE_CALCULATEDCHARACTLIST);
+		dataLists.add(ECOModel.TYPE_CHANGEUNITLIST);
 		entityTplService.createEntityTpl(entityTplsNodeRef, ECOModel.TYPE_ECO, true, dataLists);
 
 		// visit quality
@@ -655,6 +654,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
+				dataLists.add(BeCPGModel.TYPE_PRICELIST);
 				dataLists.add(BeCPGModel.TYPE_NUTLIST);
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
@@ -663,6 +663,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			} else if (productType.equals(BeCPGModel.TYPE_PACKAGINGMATERIAL)) {
 
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
+				dataLists.add(BeCPGModel.TYPE_PRICELIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 
 			} else if (productType.equals(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT)) {
@@ -670,10 +671,12 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
 				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
+				dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
 				dataLists.add(BeCPGModel.TYPE_NUTLIST);
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(BeCPGModel.TYPE_REQCTRLLIST);
 
 			} else if (productType.equals(BeCPGModel.TYPE_FINISHEDPRODUCT)) {
 
@@ -681,15 +684,18 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
 				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
+				dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
 				dataLists.add(BeCPGModel.TYPE_NUTLIST);
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(BeCPGModel.TYPE_REQCTRLLIST);
 
 			} else if (productType.equals(BeCPGModel.TYPE_PACKAGINGKIT)) {
 
 				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
+				dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 
 			} else if (productType.equals(SecurityModel.TYPE_ACL_GROUP)) {
@@ -794,6 +800,16 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 					COMPARE_ENTITIES_REPORT_PATH, ReportType.System, ReportFormat.PDF, null, true, true, false);
 		} catch (IOException e) {
 			logger.error("Failed to create compare product report tpl.", e);
+		}
+		
+		// eco report
+		try {
+			NodeRef ecoFolderNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_ECO);
+			reportTplService.createTplRptDesign(ecoFolderNodeRef,
+					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_ECO),
+					ECO_REPORT_PATH, ReportType.System, ReportFormat.PDF, null, true, true, false);
+		} catch (IOException e) {
+			logger.error("Failed to create eco report tpl.", e);
 		}
 
 		/*

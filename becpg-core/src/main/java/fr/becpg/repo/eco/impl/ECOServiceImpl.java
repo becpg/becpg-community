@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.search.impl.NodeSearcher;
+import org.alfresco.repo.search.impl.parsers.CMISParser.simpleTable_return;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -19,12 +21,17 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.VersionNumber;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECOModel;
 import fr.becpg.repo.BeCPGDao;
+import fr.becpg.repo.eco.ECOReportService;
 import fr.becpg.repo.eco.ECOService;
+import fr.becpg.repo.eco.ECOState;
 import fr.becpg.repo.eco.data.ChangeOrderData;
 import fr.becpg.repo.eco.data.RevisionType;
 import fr.becpg.repo.eco.data.dataList.ChangeUnitDataItem;
@@ -51,6 +58,9 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.product.formulation.FormulateException;
+import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.template.ReportType;
 
 /**
  * Engineering change order service implementation
@@ -74,6 +84,7 @@ public class ECOServiceImpl implements ECOService {
 	private ProductDictionaryService productDictionaryService;
 	private RepoService repoService;
 	private AssociationService associationService;
+	private ECOReportService ecoReportService;
 	
 	public void setChangeOrderDAO(BeCPGDao<ChangeOrderData> changeOrderDAO) {
 		this.changeOrderDAO = changeOrderDAO;
@@ -118,6 +129,10 @@ public class ECOServiceImpl implements ECOService {
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
+	
+	public void setEcoReportService(ECOReportService ecoReportService) {
+		this.ecoReportService = ecoReportService;
+	}
 
 	@Override
 	public void calculateWUsedList(NodeRef ecoNodeRef) {
@@ -140,12 +155,14 @@ public class ECOServiceImpl implements ECOService {
 												null, 
 												Boolean.FALSE, 
 												replacementListDataItem.getSourceItem(), 
-												replacementListDataItem.getTargetItem());
+												replacementListDataItem.getTargetItem(),
+												null);
 				
 				if(ecoData.getChangeUnitMap() == null){
-					ecoData.setChangeUnitMap(new HashMap<NodeRef, ChangeUnitDataItem>());
+					ecoData.setChangeUnitMap(new LinkedHashMap<NodeRef, ChangeUnitDataItem>());
 				}
 				
+				logger.debug("###Add cul, sourceItem: " + nodeService.getProperty(replacementListDataItem.getSourceItem(), ContentModel.PROP_NAME));
 				ecoData.getChangeUnitMap().put(replacementListDataItem.getSourceItem(), changeUnitDataItem);
 				ecoData.getWUsedList().add(new WUsedListDataItem(null, 1, null, true, null, replacementListDataItem.getSourceItem()));
 				
@@ -163,6 +180,9 @@ public class ECOServiceImpl implements ECOService {
 				}
 			}					
 		}	
+
+		// change state
+		ecoData.setEcoState(ECOState.Simulated);
 		
 		changeOrderDAO.update(ecoNodeRef, ecoData);
 	}
@@ -170,8 +190,19 @@ public class ECOServiceImpl implements ECOService {
 	@Override
 	public void apply(NodeRef ecoNodeRef) {
 		
-		resetTreatedWUseds(ecoNodeRef);
-		impactWUseds(ecoNodeRef, false);		
+		ChangeOrderData ecoData = changeOrderDAO.find(ecoNodeRef);
+		
+		// execute
+		resetTreatedWUseds(ecoData);
+		impactWUseds(ecoData, false);
+		
+		// change state
+		ecoData.setEcoState(ECOState.Applied);
+		
+		changeOrderDAO.update(ecoNodeRef, ecoData);
+		
+		// generate report
+		ecoReportService.generateReport(ecoData);
 	}
 
 	@Override
@@ -181,16 +212,21 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	@Override
-	public NodeRef generateSimulationReport(NodeRef ecoNodeRef) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void doSimulation(NodeRef ecoNodeRef) {
 		
-		resetTreatedWUseds(ecoNodeRef);
-		impactWUseds(ecoNodeRef, true);		
+		ChangeOrderData ecoData = changeOrderDAO.find(ecoNodeRef);				
+		
+		// execute
+		resetTreatedWUseds(ecoData);
+		impactWUseds(ecoData, true);	
+		
+		// change state
+		ecoData.setEcoState(ECOState.Simulated);
+		
+		changeOrderDAO.update(ecoNodeRef, ecoData);
+		
+		// generate report
+		ecoReportService.generateReport(ecoData);		
 	}
 
 	private void calculateWUsedList(ChangeOrderData ecoData, RevisionType revision, WUsedData wUsedData, QName dataListQName, int level){
@@ -203,8 +239,8 @@ public class ECOServiceImpl implements ECOService {
 			
 			if(changeUnitDataItem == null){
 				
-				logger.debug("revision: " + revision);				
-				changeUnitDataItem = new ChangeUnitDataItem(null, revision, null, null, Boolean.FALSE, sourceItem, null);
+				logger.debug("###Add cul, sourceItem: " + nodeService.getProperty(sourceItem, ContentModel.PROP_NAME));
+				changeUnitDataItem = new ChangeUnitDataItem(null, revision, null, null, Boolean.FALSE, sourceItem, null, null);
 				ecoData.getChangeUnitMap().put(sourceItem, changeUnitDataItem);
 			}
 			else{
@@ -235,18 +271,15 @@ public class ECOServiceImpl implements ECOService {
 			// recursive
 			calculateWUsedList(ecoData, revision, kv.getValue(), dataListQName, level+1);
 		}
-	}	
-		
-	private void createSimulationEntities(ChangeOrderData ecoData){
-		
-		List<NodeRef> sourceItems = new ArrayList<NodeRef>();		
-		Collection<QName> dataListQNames = productDictionaryService.getDataLists();
+	}		
+	
+	private void createSimulationEntities(ChangeOrderData ecoData){		
 		
 		// create simulation output folder
 		NodeRef parentNodeRef = nodeService.getPrimaryParent(ecoData.getNodeRef()).getParentRef();
-		NodeRef simulationOutputFolder = repoService.createFolderByPath(parentNodeRef, 
-							RepoConsts.PATH_SIMULATION_OUTPUT, 
-							TranslateHelper.getTranslatedPath(RepoConsts.PATH_SIMULATION_OUTPUT));
+		NodeRef tempFolder = repoService.createFolderByPath(parentNodeRef, 
+							RepoConsts.PATH_ECO_TEMPORARY, 
+							TranslateHelper.getTranslatedPath(RepoConsts.PATH_ECO_TEMPORARY));
 		
 		
 		for(int z_idx=0 ; z_idx<ecoData.getWUsedList().size() ; z_idx++){
@@ -260,44 +293,47 @@ public class ECOServiceImpl implements ECOService {
 				if(wul.getDepthLevel() > 1 && nextWUL.getDepthLevel() > wul.getDepthLevel()){
 					
 					ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(wul.getSourceItem());
-					if(changeUnitDataItem.getTargetItem() == null){
+					if(changeUnitDataItem.getSimulationItem() == null){
 						
 						// create simulation output
-						ProductData productData = productDAO.find(wul.getSourceItem(), dataListQNames);
-						NodeRef targetNodeRef = productDAO.create(simulationOutputFolder, productData, dataListQNames);
+						NodeRef productToFormulateNodeRef;
+						if(changeUnitDataItem.getTargetItem() == null){
+							productToFormulateNodeRef = changeUnitDataItem.getSourceItem();
+						}
+						else{
+							productToFormulateNodeRef = changeUnitDataItem.getTargetItem();
+						}
+						
+						ProductData productData = productDAO.find(productToFormulateNodeRef, null);
+						NodeRef simulationNodeRef = productDAO.create(tempFolder, productData, null);
 						
 						// add simulation aspect
-						nodeService.addAspect(targetNodeRef, ECOModel.ASPECT_SIMULATION_ENTITY, null);
-						nodeService.createAssociation(targetNodeRef, wul.getSourceItem(), ECOModel.ASSOC_SIMULATION_SOURCE_ITEM);
-						
-						// add simulationEntityAspect
-						nodeService.addAspect(targetNodeRef, ECOModel.ASPECT_SIMULATION_ENTITY, null);
-						associationService.update(targetNodeRef, ECOModel.ASSOC_SIMULATION_SOURCE_ITEM, wul.getSourceItem());
-						
-						// store targetNodeRef
-						changeUnitDataItem.setTargetItem(targetNodeRef);
+						nodeService.addAspect(simulationNodeRef, ECOModel.ASPECT_SIMULATION_ENTITY, null);
+						nodeService.createAssociation(simulationNodeRef, productToFormulateNodeRef, ECOModel.ASSOC_SIMULATION_SOURCE_ITEM);
+
+						logger.debug("simulationNodeRef product: " + productToFormulateNodeRef + " created: " + simulationNodeRef);
+						// store simulation item
+						changeUnitDataItem.setSimulationItem(simulationNodeRef);
 					}
 				}
 			}			
-		}
+		}		
 	}
 	
 	/**
 	 * Reset treated WUsed
 	 * @param ecoNodeRef
 	 */
-	private void resetTreatedWUseds(NodeRef ecoNodeRef){
-		
-		ChangeOrderData ecoData = changeOrderDAO.find(ecoNodeRef);
+	private void resetTreatedWUseds(ChangeOrderData ecoData){
 				
 		for(ChangeUnitDataItem cul : ecoData.getChangeUnitMap().values()){					
 			
 			if(cul.getTreated()){
 				cul.setTreated(Boolean.FALSE);
+				cul.setReqDetails("");
+				cul.setReqType(null);
 			}
-		}
-		
-		changeOrderDAO.update(ecoNodeRef, ecoData);
+		}		
 	}
 	
 	/**
@@ -305,10 +341,8 @@ public class ECOServiceImpl implements ECOService {
 	 * @param ecoNodeRef
 	 * @param isSimulation
 	 */
-	private void impactWUseds(NodeRef ecoNodeRef, boolean isSimulation){
+	private void impactWUseds(ChangeOrderData ecoData, boolean isSimulation){				
 		
-		ChangeOrderData ecoData = changeOrderDAO.find(ecoNodeRef);
-				
 		if(isSimulation){
 			
 			// clear simulationList
@@ -321,40 +355,82 @@ public class ECOServiceImpl implements ECOService {
 		// clear changeUnitList
 		for(ChangeUnitDataItem cul : ecoData.getChangeUnitMap().values()){
 			cul.setTreated(Boolean.FALSE);
-			cul.setReqRespected(null);
+			cul.setReqType(null);
 			cul.setReqDetails(null);
 		}
 		
 		logger.debug("impactWUseds, WUsed impacted size: " + ecoData.getWUsedList().size());
 		
-		for(WUsedListDataItem wul : ecoData.getWUsedList()){
+		for(int z_idx=0 ; z_idx<ecoData.getWUsedList().size() ; z_idx++){
 					
-			// is CU treated ? yes => go to next wul
-			ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(wul.getSourceItem());
+			WUsedListDataItem wul = ecoData.getWUsedList().get(z_idx);
 			
-			if(changeUnitDataItem != null){
+			// impact WUsed ?
+			if(wul.getIsWUsedImpacted()){
 			
-				Boolean isCUTreated = changeUnitDataItem.getTreated();
+				// is CU treated ? yes => go to next wul
+				ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(wul.getSourceItem());
 				
-				if(isCUTreated != null && isCUTreated.equals(Boolean.TRUE)){
-					continue;
-				}
-				else{
-										
-					// 1st level : nothing to do...
-					if(wul.getDepthLevel() == 1){					
-						changeUnitDataItem.setTreated(Boolean.TRUE);
+				if(changeUnitDataItem != null){
+				
+					Boolean isCUTreated = changeUnitDataItem.getTreated();
+					
+					if(isCUTreated != null && isCUTreated.equals(Boolean.TRUE)){
+						continue;
 					}
 					else{
-						impactWUsed(ecoData, wul.getSourceItem(), isSimulation);
-					}
+											
+						// 1st level : nothing to do...
+						if(wul.getDepthLevel() == 1){					
+							changeUnitDataItem.setTreated(Boolean.TRUE);
+						}
+						else{
+							impactWUsed(ecoData, wul.getSourceItem(), isSimulation);
+						}
+					}	
 				}	
-			}				
-		}
-		
-		changeOrderDAO.update(ecoNodeRef, ecoData);
+			}
+			else{
+				// look for next sibling node, and delete unused changeUnit
+				//TODO : gérer le cas où recoche l'impact d'un cas d'emploi, il faut recréer le changeUnit
+				if(z_idx<ecoData.getWUsedList().size()){
+				
+					int index = z_idx+1;
+					while(index<ecoData.getWUsedList().size() && ecoData.getWUsedList().get(index).getDepthLevel() > wul.getDepthLevel()){
+						index++;
+						//deleteChangeUnit(ecoData, ecoData.getWUsedList().get(index).getSourceItem());
+					}
+					logger.debug("Next sibling node of : " + z_idx + " is : " + index);
+					z_idx = index;
+				}				
+			}
+		}				
 	}
 	
+//	private void deleteChangeUnit(ChangeOrderData ecoData, NodeRef sourceItemNodeRef){
+//		
+//		ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(sourceItemNodeRef);
+//		
+//		if(changeUnitDataItem != null){
+//		
+//			// delete simulation item
+//			if(changeUnitDataItem.getSimulationItem() != null){
+//				
+//				NodeRef parentNodeRef = nodeService.getPrimaryParent(changeUnitDataItem.getSimulationItem()).getParentRef();
+//				QName parentQName = nodeService.getType(parentNodeRef);
+//				
+//				if(parentQName.equals(BeCPGModel.TYPE_ENTITY_FOLDER)){
+//												
+//					nodeService.deleteNode(parentNodeRef);
+//				}
+//			}
+//			
+//			nodeService.deleteNode(changeUnitDataItem.getNodeRef());
+//			
+//			ecoData.getChangeUnitMap().remove(changeUnitDataItem.getSourceItem());
+//		}		
+//	}
+//	
 	
 	/**
 	 * Impact the WUsed item
@@ -364,7 +440,6 @@ public class ECOServiceImpl implements ECOService {
 	private void impactWUsed(ChangeOrderData ecoData, NodeRef sourceItemNodeRef, boolean isSimulation){
 
 		ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(sourceItemNodeRef);		
-		NodeRef targetNodeRef = null;
 		// calculate dataList to load
 		List<QName> dataListQNames = new ArrayList<QName>();	
 		
@@ -402,8 +477,25 @@ public class ECOServiceImpl implements ECOService {
 						// 1st level or treated
 						if(wulDataItem2.getDepthLevel() == 1 || 
 									(isWUsedImpacted != null && isWUsedImpacted == Boolean.TRUE)){
-																				
-							replacementLinks.put(wulDataItem.getLink(), changeUnitDataItem2.getTargetItem());
+													
+							NodeRef replacementNodeRef = null;
+							
+							if(changeUnitDataItem2.getTargetItem() == null){
+								replacementNodeRef = changeUnitDataItem2.getSourceItem();
+							}
+							else{
+								replacementNodeRef = changeUnitDataItem2.getTargetItem();
+							}
+							
+							if(isSimulation){
+								
+								// is there any simulation created ?								
+								if(changeUnitDataItem2.getSimulationItem() != null){
+									replacementNodeRef = changeUnitDataItem2.getSimulationItem();
+								}								
+							}
+							
+							replacementLinks.put(wulDataItem.getLink(), replacementNodeRef);
 						}
 						else{
 							// WUsed not impacted => exit (it will be treated by another branch
@@ -420,30 +512,40 @@ public class ECOServiceImpl implements ECOService {
 				}			
 			}
 			
-			/*
-			 *  get targetNodeRef	
-			 */
-			if(changeUnitDataItem.getTargetItem() != null){
-				targetNodeRef = changeUnitDataItem.getTargetItem();
+			NodeRef simulationNodeRef = null;
+			NodeRef productToFormulateNodeRef = null;
+			
+			if(changeUnitDataItem.getTargetItem() == null){
+				productToFormulateNodeRef = changeUnitDataItem.getSourceItem();
 			}
-			else if(changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)){
-				targetNodeRef = sourceItemNodeRef;
+			else{
+				productToFormulateNodeRef = changeUnitDataItem.getTargetItem();
+			}
+			
+			if(isSimulation){
+				
+				// is there any simulation created ?
+				if(changeUnitDataItem.getSimulationItem() != null){
+					simulationNodeRef = changeUnitDataItem.getSimulationItem();
+				}
+				
+				logger.debug("simulation node is" + simulationNodeRef);
 			}
 			else{
 				
-				if(isSimulation){
-					// simulation, but not simulation entity has been create so we work on the sourceNodeRef
-					targetNodeRef = sourceItemNodeRef;
+				/*
+				 *  manage revision
+				 */
+				if(changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)){
+					
+					//nothing to do...
 				}
 				else{
 					
-					/*
-					 *  do revision
-					 */
+					boolean majorVersion = changeUnitDataItem.getRevision().equals(RevisionType.Major) ? true : false;
 					String versionLabel = (String)nodeService.getProperty(sourceItemNodeRef, BeCPGModel.PROP_VERSION_LABEL);
 					versionLabel = versionLabel == null ? VERSION_INITIAL : versionLabel;
-					boolean majorVersion = changeUnitDataItem.getRevision().equals(RevisionType.Major) ? true : false;
-					
+										
 					//Calculate new version
 					VersionNumber versionNumber = entityCheckOutCheckInService.getVersionNumber(versionLabel, majorVersion);
 					
@@ -455,46 +557,37 @@ public class ECOServiceImpl implements ECOService {
 					properties.put(ContentModel.PROP_VERSION_LABEL.toPrefixString(), versionNumber.toString());
 					properties.put(Version.PROP_DESCRIPTION, String.format(VERSION_DESCRIPTION, ecoData.getCode()));	
 					
-					targetNodeRef = entityCheckOutCheckInService.checkin(workingCopyNodeRef, properties);					
-					
-					changeUnitDataItem.setTargetItem(targetNodeRef);
-				}
-							
-			}	
-			
-			NodeRef listContainerNodeRef = entityListDAO.getListContainer(sourceItemNodeRef);
+					productToFormulateNodeRef = entityCheckOutCheckInService.checkin(workingCopyNodeRef, properties);									
+					changeUnitDataItem.setTargetItem(productToFormulateNodeRef);
+				}							
+			}
+									
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(productToFormulateNodeRef);
 			List<QName> existingLists = entityListDAO.getExistingListsQName(listContainerNodeRef);
 			
-			ProductData sourceData = productDAO.find(sourceItemNodeRef, existingLists);
-			ProductData targetData = null;
-			if(sourceItemNodeRef.equals(targetNodeRef)){		
-				//TODO: do a deep copy in memory instead of load it from DB
-				//targetData = new ProductData(sourceData);
-				targetData = productDAO.find(targetNodeRef, existingLists);
-			}
-			else{
-				targetData = productDAO.find(targetNodeRef, existingLists);
-			}
+			ProductData productToFormulateData = productDAO.find(productToFormulateNodeRef, existingLists);
+						
+			logger.debug("do replacement for node: " + nodeService.getProperty(sourceItemNodeRef, ContentModel.PROP_NAME));
 			
 			for(QName dataListQName : dataListQNames){
 				
 				//TODO not generic
 				if(dataListQName.equals(BeCPGModel.TYPE_COMPOLIST)){
 					
-					for(CompoListDataItem c : targetData.getCompoList()){
+					for(CompoListDataItem c : productToFormulateData.getCompoList()){
 						
 						if(replacementLinks.containsKey(c.getNodeRef())){
-							logger.debug("Replace CompoList item, linkNodeRef: " + c.getNodeRef() + " - target: " + replacementLinks.get(c.getNodeRef()));
+
 							c.setProduct(replacementLinks.get(c.getNodeRef()));
 						}
 					}
 				}
 				else if(dataListQName.equals(BeCPGModel.TYPE_PACKAGINGLIST)){
 					
-					for(PackagingListDataItem p : targetData.getPackagingList()){
+					for(PackagingListDataItem p : productToFormulateData.getPackagingList()){
 						
 						if(replacementLinks.containsKey(p.getNodeRef())){
-							logger.debug("Replace pkgingList item, linkNodeRef: " + p.getNodeRef() + " - target: " + replacementLinks.get(p.getNodeRef()));
+							
 							p.setProduct(replacementLinks.get(p.getNodeRef()));
 						}
 					}
@@ -502,27 +595,33 @@ public class ECOServiceImpl implements ECOService {
 			}
 			
 			try {
-				logger.debug("formulate nodeRef: " + targetNodeRef);
-				targetData = productService.formulate(targetData);
+				productToFormulateData = productService.formulate(productToFormulateData);
 			} catch (FormulateException e) {
 				
-				logger.error("Failed to formulate product. NodeRef: " + targetNodeRef, e);
+				logger.error("Failed to formulate product. NodeRef: " + productToFormulateNodeRef, e);
 			}
 			
 			// isTreated and save in DB
 			changeUnitDataItem.setTreated(Boolean.TRUE);			
 			
 			// update simulation List
-			updateCalculatedCharactValues(ecoData, sourceData, targetData);
+			ProductData sourceData = productDAO.find(sourceItemNodeRef, existingLists);
+			updateCalculatedCharactValues(ecoData, sourceData, productToFormulateData);
 			
 			// check req
-			checkRequirements(ecoData, sourceData, targetData);
+			checkRequirements(ecoData, sourceData, productToFormulateData);
 			
 			// save in DB
-			if(!isSimulation){
-				productDAO.update(targetNodeRef, targetData, productDictionaryService.getDataLists());
-			}					
-		}		
+			if(isSimulation){
+				//save in DB if we created a simulation node
+				if(simulationNodeRef != null){					
+					productDAO.update(simulationNodeRef, productToFormulateData, productDictionaryService.getDataLists());
+				}
+			}	
+			else{
+				productDAO.update(productToFormulateNodeRef, productToFormulateData, productDictionaryService.getDataLists());
+			}
+		}
 	}	
 	
 	
@@ -542,22 +641,37 @@ public class ECOServiceImpl implements ECOService {
 	
 	private void checkRequirements(ChangeOrderData ecoData, ProductData sourceData, ProductData targetData){
 		
-		boolean isReqRespected = true;
+		RequirementType reqType = null;
 		String reqDetails = null;
 		
 		if(targetData.getReqCtrlList() != null){
 			for(ReqCtrlListDataItem rcl : targetData.getReqCtrlList()){
 				
-				if(!RequirementType.Info.equals(rcl.getReqType())){
-					isReqRespected = false;
+				RequirementType newReqType = rcl.getReqType();
+				
+				if(reqType == null){
+					reqType = newReqType;
+				}
+				else{
 					
-					if(reqDetails == null){
-						reqDetails = rcl.getReqMessage();
+					if(RequirementType.Info.equals(newReqType)){
+						
+						//nothing todo...
 					}
-					else{
-						reqDetails += RepoConsts.LABEL_SEPARATOR;
-						reqDetails += rcl.getReqMessage();
-					}				
+					else if(RequirementType.Tolerated.equals(newReqType) && reqType.equals(RequirementType.Info)){
+						reqType = newReqType;
+					}
+					else if(RequirementType.Forbidden.equals(newReqType) && !reqType.equals(RequirementType.Forbidden)){
+						reqType = newReqType;
+					}
+				}
+				
+				if(reqDetails == null){
+					reqDetails = rcl.getReqMessage();
+				}
+				else{
+					reqDetails += RepoConsts.LABEL_SEPARATOR;
+					reqDetails += rcl.getReqMessage();
 				}
 			}
 		}		
@@ -565,7 +679,7 @@ public class ECOServiceImpl implements ECOService {
 		ChangeUnitDataItem cuDataItem = ecoData.getChangeUnitMap().get(sourceData.getNodeRef());
 		
 		if(cuDataItem != null){
-			cuDataItem.setReqRespected(isReqRespected);
+			cuDataItem.setReqType(reqType);
 			cuDataItem.setReqDetails(reqDetails);
 		}
 	}

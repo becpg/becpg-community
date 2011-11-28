@@ -356,7 +356,7 @@ private void initObjects(){
 					List<CostListDataItem> costList = new ArrayList<CostListDataItem>();		    		
 					for(int j=0 ; j<costs.size() ; j++)
 					{		    			
-						CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "€/kg", costs.get(j), false);
+						CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "€/kg", null, costs.get(j), false);
 						costList.add(costListItemData);
 					}		
 					fp1.setCostList(costList);
@@ -397,7 +397,7 @@ private void initObjects(){
 					costList = new ArrayList<CostListDataItem>();		    		
 					for(int j=0 ; j<costs.size() ; j++)
 					{		    			
-						CostListDataItem costListItemData = new CostListDataItem(null, 12.4f, "$/kg", costs.get(j), false);
+						CostListDataItem costListItemData = new CostListDataItem(null, 12.4f, "$/kg", null, costs.get(j), false);
 						costList.add(costListItemData);
 					}		
 					fp2.setCostList(costList);

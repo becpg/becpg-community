@@ -21,6 +21,8 @@ public class CostListDataItem implements IManualDataItem{
 	/** The unit. */
 	private String unit;	
 	
+	private Float maxi = null;
+	
 	/** The cost. */
 	private NodeRef cost;
 	
@@ -80,6 +82,14 @@ public class CostListDataItem implements IManualDataItem{
 		this.unit = unit;
 	}
 	
+	public Float getMaxi() {
+		return maxi;
+	}
+
+	public void setMaxi(Float maxi) {
+		this.maxi = maxi;
+	}
+
 	/**
 	 * Gets the cost.
 	 *
@@ -125,11 +135,12 @@ public class CostListDataItem implements IManualDataItem{
 	 * @param unit the unit
 	 * @param cost the cost
 	 */
-	public CostListDataItem(NodeRef nodeRef, Float value, String unit, NodeRef cost, Boolean isManual){
+	public CostListDataItem(NodeRef nodeRef, Float value, String unit, Float maxi, NodeRef cost, Boolean isManual){
 		
 		setNodeRef(nodeRef);		
 		setValue(value);
 		setUnit(unit);
+		setMaxi(maxi);
 		setCost(cost);
 		setIsManual(isManual);
 	}
@@ -143,6 +154,7 @@ public class CostListDataItem implements IManualDataItem{
 		setNodeRef(c.getNodeRef());
 		setValue(c.getValue());
 		setUnit(c.getUnit());
+		setMaxi(c.getMaxi());
 		setCost(c.getCost());
 		setIsManual(c.getIsManual());
 	}

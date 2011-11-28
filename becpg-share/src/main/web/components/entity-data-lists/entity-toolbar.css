@@ -10,3 +10,21 @@
    padding-left: 24px;
 }
 
+.datalist-toolbar .eco-calculate-wused span.first-child
+{
+   background: url(../images/eco-calculate-wused-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .eco-do-simulation span.first-child
+{
+   background: url(../images/eco-do-simulation-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .eco-apply span.first-child
+{
+   background: url(../images/eco-apply-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+

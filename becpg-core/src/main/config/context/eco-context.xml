@@ -22,7 +22,8 @@
     	<property name="dictionaryService" ref="dictionaryService"/>
     	<property name="productDictionaryService" ref="productDictionaryService"/>
     	<property name="repoService" ref="repoService"/>
-    	<property name="associationService" ref="associationService"/>		
+    	<property name="associationService" ref="associationService"/>
+    	<property name="ecoReportService" ref="ecoReportService"/>		
 	</bean>
 	
 	<!-- policy -->
@@ -32,5 +33,20 @@
 		<property name="nodeService" ref="nodeService" />		
 		<property name="ecoService" ref="ecoService"/>	
   </bean>
+  
+  <!-- Report service -->
+   
+   <bean id="ecoReportService" class="fr.becpg.repo.eco.impl.ECOReportServiceImpl">
+		<property name="reportTplService" ref="reportTplService" />
+		<property name="nodeService" ref="nodeService" />		
+		<property name="contentService" ref="contentService"/>
+		<property name="mimetypeService" ref="mimetypeService"/>
+		<property name="reportEngine" ref="reportEngine"/>	
+  </bean>
+  
+  <!-- ChangeOrder Webscript -->
+  <bean id="webscript.fr.becpg.eco.changeOrder.get" class="fr.becpg.repo.web.scripts.eco.ChangeOrderWebScript" parent="webscript">
+      	<property name="ecoService" ref="ecoService" />
+   	</bean>
    
 </beans>

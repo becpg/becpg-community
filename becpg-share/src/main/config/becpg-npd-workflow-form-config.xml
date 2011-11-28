@@ -399,11 +399,12 @@
 					<set id="items" appearance="title" label-id="workflow.set.items" />
 					<field id="packageItems" set="items" label="Documents du brief" />
 					
+					<set id="progress" appearance="title" label-id="workflow.set.task.progress" />
 					<field id="bpm:comment" label-id="workflow.field.comment"
 						set="progress">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="transitions" set="items" />
+					<field id="transitions" set="progress" />
 				</appearance>
 			</form>
 		</forms>

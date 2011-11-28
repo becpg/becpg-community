@@ -6,6 +6,7 @@ package fr.becpg.repo.product;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +32,7 @@ import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
@@ -54,6 +56,7 @@ import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
 
@@ -80,6 +83,8 @@ public class ProductDAOImpl implements ProductDAO{
 	
 	private BehaviourFilter policyBehaviourFilter;
 	
+	private AssociationService associationService;
+	
 	/**
 	 * Sets the node service.
 	 *
@@ -104,6 +109,10 @@ public class ProductDAOImpl implements ProductDAO{
 	
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	/**
@@ -137,8 +146,7 @@ public class ProductDAOImpl implements ProductDAO{
     	else if (productData instanceof SemiFinishedProductData) {
 			productType = BeCPGModel.TYPE_SEMIFINISHEDPRODUCT;			
 		}
-    	    	
-    	logger.debug("createProduct type: " + productType);    	
+    	    	    	
     	Map<QName, Serializable> properties = productData.getProperties();		
     	NodeRef productNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, productData.getName()), productType, properties).getChildRef();		
 		createDataLists(productNodeRef, productData, dataLists);
@@ -261,6 +269,9 @@ public class ProductDAOImpl implements ProductDAO{
 	    		}
 	    		else if (dataList.equals(BeCPGModel.TYPE_COSTDETAILSLIST)) {
 	    			productData.setCostDetailsList(loadCostDetailsList(listsContainerNodeRef));
+	    		}
+	    		else if (dataList.equals(BeCPGModel.TYPE_PRICELIST)) {
+	    			productData.setPriceList(loadPriceList(listsContainerNodeRef));
 	    		}
 	    		else if (dataList.equals(BeCPGModel.TYPE_INGLIST)) {
 	    			productData.setIngList(loadIngList(listsContainerNodeRef));
@@ -439,7 +450,9 @@ public class ProductDAOImpl implements ProductDAO{
 		
 		return new CostListDataItem(listItemNodeRef, 
 				(Float)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_VALUE), 
-				(String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT), costNodeRef,
+				(String)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT), 
+				(Float)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_MAXI),
+				costNodeRef,
 				(Boolean)nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
     }
     
@@ -483,6 +496,55 @@ public class ProductDAOImpl implements ProductDAO{
     	}
     	
     	return costDetailsList;
+    }   
+    
+    /**
+     * Load price list.
+     *
+     * @param listContainerNodeRef the list container node ref
+     * @return the list
+     */
+    private List<PriceListDataItem> loadPriceList(NodeRef listContainerNodeRef)
+    {
+    	List<PriceListDataItem> priceList = null;
+    	
+    	if(listContainerNodeRef != null)
+    	{    		
+    		NodeRef priceListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_PRICELIST);
+    		
+    		if(priceListNodeRef != null)
+    		{
+    			priceList = new ArrayList<PriceListDataItem>();
+    			List<NodeRef> listItemNodeRefs = listItems(priceListNodeRef, BeCPGModel.TYPE_PRICELIST);
+	    		
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){	    					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
+		    	
+		    		List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_PRICELIST_COST);
+		    		NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
+		    		
+		    		List<NodeRef> suppliersNodeRef = new ArrayList<NodeRef>();
+		    		List<AssociationRef> targetAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+		    		for(AssociationRef assocRef : targetAssocRefs){
+		    			suppliersNodeRef.add(assocRef.getTargetRef());
+		    		}
+		    		
+		    		PriceListDataItem priceListDataItem = new PriceListDataItem(listItemNodeRef, 
+		    												(Float)properties.get(BeCPGModel.PROP_PRICELIST_VALUE), 
+    														(String)properties.get(BeCPGModel.PROP_PRICELIST_UNIT),
+    														(Float)properties.get(BeCPGModel.PROP_PRICELIST_PURCHASE_VALUE), 
+    														(String)properties.get(BeCPGModel.PROP_PRICELIST_PURCHASE_UNIT),
+    														(Integer)properties.get(BeCPGModel.PROP_PRICELIST_PREF_RANK),
+    														(Date)properties.get(BeCPGModel.PROP_START_EFFECTIVITY),
+    														(Date)properties.get(BeCPGModel.PROP_END_EFFECTIVITY),
+    														costNodeRef, 
+    														suppliersNodeRef);
+		    		priceList.add(priceListDataItem);
+		    	}
+    		}    		
+    	}
+    	
+    	return priceList;
     }   
     
     /**
@@ -919,9 +981,7 @@ public class ProductDAOImpl implements ProductDAO{
     
     
     private void createDataLists(NodeRef productNodeRef, ProductData productData, Collection<QName> dataLists)
-    {   
-    	logger.debug("createDataLists of product " + productNodeRef);    	    
-		 			
+    {   		 			
 		//Container
 		NodeRef containerNodeRef = entityListDAO.getListContainer(productNodeRef);
 		if(containerNodeRef == null){
@@ -937,6 +997,7 @@ public class ProductDAOImpl implements ProductDAO{
             if(dataLists != null){
     			for(QName dataList : dataLists)
     	    	{
+    				
     				if (dataList.equals(BeCPGModel.TYPE_ALLERGENLIST)) {
     					createAllergenList(containerNodeRef, productData.getAllergenList());
     	    		}
@@ -948,6 +1009,9 @@ public class ProductDAOImpl implements ProductDAO{
     	    		}
     	    		else if (dataList.equals(BeCPGModel.TYPE_COSTDETAILSLIST)) {
     	    			createCostDetailsList(containerNodeRef, productData.getCostDetailsList());
+    	    		}
+    	    		else if(dataList.equals(BeCPGModel.TYPE_PRICELIST)){
+    	    			createPriceList(containerNodeRef, productData.getPriceList());
     	    		}
     	    		else if (dataList.equals(BeCPGModel.TYPE_INGLIST)) {
     	    			createIngList(containerNodeRef, productData.getIngList());
@@ -1157,65 +1221,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    			else{
 	    				filesToUpdate.add(listItemNodeRef);
 	    			}
-	    		}
-	    		
-	    		//update or create nodes	    		    			    		
-//	    		CompoListDataItem prevCompoListDataItem = null;
-//	    		for(CompoListDataItem compoListDataItem : compoList)
-//	    		{    				    			
-//	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-//		    		properties.put(BeCPGModel.PROP_DEPTH_LEVEL, compoListDataItem.getDepthLevel());
-//		    		properties.put(BeCPGModel.PROP_COMPOLIST_QTY, compoListDataItem.getQty());
-//		    		properties.put(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA, compoListDataItem.getQtySubFormula());
-//		    		properties.put(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS, compoListDataItem.getQtyAfterProcess());
-//		    		properties.put(BeCPGModel.PROP_COMPOLIST_UNIT, compoListDataItem.getCompoListUnit() == CompoListUnit.Unknown ?  "" : compoListDataItem.getCompoListUnit().toString());
-//		    		properties.put(BeCPGModel.PROP_COMPOLIST_LOSS_PERC, compoListDataItem.getLossPerc());
-//	    			properties.put(BeCPGModel.PROP_COMPOLIST_YIELD_PERC, compoListDataItem.getYieldPerc());	    		
-//		    		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_GRP, compoListDataItem.getDeclGrp());
-//		    		properties.put(BeCPGModel.PROP_COMPOLIST_DECL_TYPE, compoListDataItem.getDeclType());		    		
-//	
-//		    		if(filesToUpdate.contains(compoListDataItem.getNodeRef())){
-//		    			//update
-//		    			nodeService.setProperties(compoListDataItem.getNodeRef(), properties);		    			
-//		    		}
-//		    		else{
-//		    			//create
-//		    			ChildAssociationRef childAssocRef = nodeService.createNode(compoListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, compoListDataItem.getProduct().getId()), BeCPGModel.TYPE_COMPOLIST, properties);
-//		    			compoListDataItem.setNodeRef(childAssocRef.getChildRef());			    		
-//		    		}			    			    	
-//		    		
-//		    		//Update product
-//		    		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-//		    		if(compoAssocRefs.size() > 0){
-//			    		NodeRef part = (compoAssocRefs.get(0)).getTargetRef();
-//			    		if(part != compoListDataItem.getProduct()){
-//				    		nodeService.removeAssociation(compoListDataItem.getNodeRef(), part, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);				    		
-//			    		}
-//		    		}
-//		    		nodeService.createAssociation(compoListDataItem.getNodeRef(), compoListDataItem.getProduct(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-//		    		
-//		    		//store father if level > 1
-//		    		if(compoListDataItem.getDepthLevel() > 1){
-//		    			
-//		    			boolean createFather = true;
-//		    			compoAssocRefs = nodeService.getTargetAssocs(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_FATHER);
-//		    			if(compoAssocRefs.size() > 0){
-//				    		NodeRef fatherNodeRef = (compoAssocRefs.get(0)).getTargetRef();
-//				    		
-//				    		if(fatherNodeRef != null && fatherNodeRef == prevCompoListDataItem.getNodeRef()){
-//				    			createFather = false;
-//				    		}
-//				    		else{
-//				    			nodeService.removeAssociation(compoListDataItem.getNodeRef(), fatherNodeRef, BeCPGModel.ASSOC_COMPOLIST_FATHER);
-//				    		}
-//		    			}
-//		    			if(createFather && prevCompoListDataItem != null)
-//		    				nodeService.createAssociation(compoListDataItem.getNodeRef(), prevCompoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_FATHER);		    				    						    	
-//		    		}
-//		    		
-//		    		
-//		    		prevCompoListDataItem = compoListDataItem;
-//	    		}	    
+	    		}	    			    	    
 	    		
 	    		Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(compoList);
 	    		int sortIndex = 1;
@@ -1301,7 +1307,7 @@ public class ProductDAOImpl implements ProductDAO{
 	 * @param costList the cost list
 	 * @throws InvalidTypeException the invalid type exception
 	 */
-	private void createCostList(NodeRef listContainerNodeRef, List<CostListDataItem> costList) throws InvalidTypeException
+	public void createCostList(NodeRef listContainerNodeRef, List<CostListDataItem> costList)
 	{		
 		if(listContainerNodeRef != null)
 		{  
@@ -1347,27 +1353,37 @@ public class ProductDAOImpl implements ProductDAO{
 	    		int sortIndex = 1;
 	    		for(CostListDataItem costListDataItem : costList)
 	    		{    			
-	    			NodeRef costNodeRef = costListDataItem.getCost();	  
-	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		    		properties.put(BeCPGModel.PROP_COSTLIST_VALUE, costListDataItem.getValue());
-		    		properties.put(BeCPGModel.PROP_COSTLIST_UNIT, costListDataItem.getUnit());
-		    		properties.put(BeCPGModel.PROP_IS_MANUAL_LISTITEM, costListDataItem.getIsManual());
-		    		
-		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
-		    		sortIndex++;
-	
-		    		if(filesToUpdate.containsKey(costNodeRef)){
-		    			//update
-		    			nodeService.setProperties(filesToUpdate.get(costNodeRef), properties);		    			
-		    		}
-		    		else{
-		    			//create
-		    			ChildAssociationRef childAssocRef = nodeService.createNode(costListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, costListDataItem.getCost().getId()), BeCPGModel.TYPE_COSTLIST, properties);	    	
-			    		nodeService.createAssociation(childAssocRef.getChildRef(), costListDataItem.getCost(), BeCPGModel.ASSOC_COSTLIST_COST);
-		    		}			    			    	
+	    			createCostListItem(costListNodeRef, costListDataItem, filesToUpdate, sortIndex);
+	    			sortIndex++;
 	    		}
 			}
 		}
+	}  
+	
+	public void createCostListItem(NodeRef costListNodeRef, CostListDataItem costListDataItem, Map<NodeRef, NodeRef> filesToUpdate, Integer sortIndex)
+	{		
+		NodeRef costNodeRef = costListDataItem.getCost();	  
+		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		properties.put(BeCPGModel.PROP_COSTLIST_VALUE, costListDataItem.getValue());
+		properties.put(BeCPGModel.PROP_COSTLIST_UNIT, costListDataItem.getUnit());
+		properties.put(BeCPGModel.PROP_COSTLIST_MAXI, costListDataItem.getMaxi());
+		properties.put(BeCPGModel.PROP_IS_MANUAL_LISTITEM, costListDataItem.getIsManual());
+		
+		properties.put(BeCPGModel.PROP_SORT, sortIndex);		
+
+		if(filesToUpdate != null && filesToUpdate.containsKey(costNodeRef)){
+			//update
+			nodeService.setProperties(filesToUpdate.get(costNodeRef), properties);		    			
+		}
+		else{
+			//create			
+			ChildAssociationRef childAssocRef = nodeService.createNode(costListNodeRef, 
+														ContentModel.ASSOC_CONTAINS, 
+														QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, costListDataItem.getCost().getId()), 
+														BeCPGModel.TYPE_COSTLIST, 
+														properties);	    	
+    		nodeService.createAssociation(childAssocRef.getChildRef(), costListDataItem.getCost(), BeCPGModel.ASSOC_COSTLIST_COST);
+		}	
 	}  
 	
 	/**
@@ -1379,7 +1395,6 @@ public class ProductDAOImpl implements ProductDAO{
 	 */
 	private void createCostDetailsList(NodeRef listContainerNodeRef, List<CostDetailsListDataItem> costDetailsList) throws InvalidTypeException
 	{
-		
 		if(listContainerNodeRef != null)
 		{  
 			NodeRef costDetailsListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTDETAILSLIST);
@@ -1448,13 +1463,95 @@ public class ProductDAOImpl implements ProductDAO{
 		    		else{
 		    			//create
 		    			ChildAssociationRef childAssocRef = nodeService.createNode(costDetailsListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, costDetailsListDataItem.getCost().getId()), BeCPGModel.TYPE_COSTDETAILSLIST, properties);	    	
-			    		nodeService.createAssociation(childAssocRef.getChildRef(), costDetailsListDataItem.getCost(), BeCPGModel.ASSOC_COSTDETAILSLIST_COST);
-			    		nodeService.createAssociation(childAssocRef.getChildRef(), costDetailsListDataItem.getSource(), BeCPGModel.ASSOC_COSTDETAILSLIST_SOURCE);
+		    			nodeService.createAssociation(childAssocRef.getChildRef(), costDetailsListDataItem.getCost(), BeCPGModel.ASSOC_COSTDETAILSLIST_COST);
+		    			nodeService.createAssociation(childAssocRef.getChildRef(), costDetailsListDataItem.getSource(), BeCPGModel.ASSOC_COSTDETAILSLIST_SOURCE);
+		    		}			    			    	
+	    		}
+			}
+		}		
+	}  
+	
+	/**
+	 * Create/Update price list.
+	 *
+	 * @param listContainerNodeRef the list container node ref
+	 * @param costList the price list
+	 * @throws InvalidTypeException the invalid type exception
+	 */
+	private void createPriceList(NodeRef listContainerNodeRef, List<PriceListDataItem> priceList) throws InvalidTypeException
+	{
+		if(listContainerNodeRef != null)
+		{  
+			NodeRef priceListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_PRICELIST);
+			
+			if(priceList == null){
+				//delete existing list
+				if(priceListNodeRef != null)
+					nodeService.deleteNode(priceListNodeRef);
+			}
+			else{    			
+	    		//price list, create if needed	    		
+	    		if(priceListNodeRef == null)
+	    		{		    						
+		    		priceListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_PRICELIST);
+	    		}
+			
+	    		List<NodeRef> listItemNodeRefs = listItems(priceListNodeRef, BeCPGModel.TYPE_PRICELIST);
+	    		
+	    		//create temp list
+	    		List<NodeRef> priceListToTreat = new ArrayList<NodeRef>();
+	    		for(PriceListDataItem priceListDataItem : priceList){
+	    			priceListToTreat.add(priceListDataItem.getNodeRef());
+	    		}
+	    		
+	    		//remove deleted nodes
+	    		List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){	    			
+		    		
+	    			if(!priceListToTreat.contains(listItemNodeRef)){
+	    				//delete
+	    				nodeService.deleteNode(listItemNodeRef);
+	    			}
+	    			else{
+	    				filesToUpdate.add(listItemNodeRef);
+	    			}
+	    		}
+	    			    		
+	    		//update or create nodes	  
+	    		int sortIndex = 1;
+	    		for(PriceListDataItem priceListDataItem : priceList)
+	    		{    				    			
+	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		    		properties.put(BeCPGModel.PROP_PRICELIST_VALUE, priceListDataItem.getValue());
+		    		properties.put(BeCPGModel.PROP_PRICELIST_UNIT, priceListDataItem.getUnit());
+		    		properties.put(BeCPGModel.PROP_PRICELIST_PURCHASE_VALUE, priceListDataItem.getPurchaseValue());
+		    		properties.put(BeCPGModel.PROP_PRICELIST_PURCHASE_UNIT, priceListDataItem.getPurchaseUnit());
+		    		properties.put(BeCPGModel.PROP_PRICELIST_PREF_RANK, priceListDataItem.getPrefRank());
+	
+		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
+		    		sortIndex++;
+		    		
+		    		if(filesToUpdate.contains(priceListDataItem.getNodeRef())){
+		    			//update
+		    			nodeService.setProperties(priceListDataItem.getNodeRef(), properties);		    			
+		    		}
+		    		else{
+		    			//create
+		    			ChildAssociationRef childAssocRef = nodeService.createNode(priceListNodeRef, 
+		    						ContentModel.ASSOC_CONTAINS,
+	    							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), 
+	    							BeCPGModel.TYPE_PRICELIST, 
+	    							properties);
+		    			
+		    			associationService.update(childAssocRef.getChildRef(), BeCPGModel.ASSOC_PRICELIST_COST, priceListDataItem.getCost());
+		    			associationService.update(childAssocRef.getChildRef(), BeCPGModel.ASSOC_SUPPLIERS, priceListDataItem.getSuppliers());			    		
 		    		}			    			    	
 	    		}
 			}
 		}
 	}  
+	
+	
 	
 	/**
 	 * Create/Update ings.
@@ -2285,4 +2382,5 @@ public class ProductDAOImpl implements ProductDAO{
         // Done
         return result;		
     }
+
 }

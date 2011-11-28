@@ -37,7 +37,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 public class EntityListDAOImpl implements EntityListDAO{	
 	
-	private static final String QUERY_PARENT = " PARENT:\"%s\" +TYPE:\"%s\" +@bcpg\\:isManualListItem:true";
+	private static final String QUERY_PARENT = " +PARENT:\"%s\" +TYPE:\"%s\" +@bcpg\\:isManualListItem:true";
 	
 	private static Log logger = LogFactory.getLog(EntityListDAOImpl.class);
 	
@@ -174,15 +174,15 @@ public class EntityListDAOImpl implements EntityListDAO{
 	}
 
 	@Override
-	public NodeRef getLink(NodeRef listContainerNodeRef, QName propertyQName, NodeRef nodeRef) {
+	public NodeRef getLink(NodeRef listContainerNodeRef, QName assocQName, NodeRef nodeRef) {
 		
-		if(listContainerNodeRef != null && propertyQName != null && nodeRef != null){
+		if(listContainerNodeRef != null && assocQName != null && nodeRef != null){
 			
 			List<FileInfo> fileInfos = fileFolderService.listFiles(listContainerNodeRef);
     		
     		for(FileInfo fileInfo : fileInfos){
     			
-    			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(fileInfo.getNodeRef(), propertyQName);
+    			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(fileInfo.getNodeRef(), assocQName);
     			if(assocRefs.size() > 0 && nodeRef.equals(assocRefs.get(0).getTargetRef())){
     				return fileInfo.getNodeRef();
     			}

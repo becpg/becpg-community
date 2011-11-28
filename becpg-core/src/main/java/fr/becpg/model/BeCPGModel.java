@@ -207,6 +207,9 @@ public interface BeCPGModel {
 	static final QName PROP_COSTLIST_UNIT = QName.createQName(BECPG_URI,
 			"costListUnit");
 	
+	static final QName PROP_COSTLIST_MAXI = QName.createQName(BECPG_URI,
+			"costListMaxi");
+	
 	/** The Constant ASSOC_COSTLIST_COST. */
 	static final QName ASSOC_COSTLIST_COST = QName.createQName(BECPG_URI,
 			"costListCost");
@@ -233,7 +236,28 @@ public interface BeCPGModel {
 	/** The Constant ASSOC_COSTDETAILSLIST_SOURCE. */
 	static final QName ASSOC_COSTDETAILSLIST_SOURCE = QName.createQName(BECPG_URI,
 			"costDetailsListSource");
-
+	
+	// priceList
+	static final QName TYPE_PRICELIST = QName.createQName(BECPG_URI, "priceList");
+	
+	static final QName ASSOC_PRICELIST_COST = QName.createQName(BECPG_URI,
+			"priceListCost");
+	
+	static final QName PROP_PRICELIST_PREF_RANK = QName.createQName(BECPG_URI,
+			"priceListPrefRank");
+	
+	static final QName PROP_PRICELIST_VALUE = QName.createQName(BECPG_URI,
+			"priceListValue");
+	
+	static final QName PROP_PRICELIST_UNIT = QName.createQName(BECPG_URI,
+			"priceListUnit");
+	
+	static final QName PROP_PRICELIST_PURCHASE_VALUE = QName.createQName(BECPG_URI,
+			"priceListPurchaseQty");
+	
+	static final QName PROP_PRICELIST_PURCHASE_UNIT = QName.createQName(BECPG_URI,
+			"priceListPurchaseUnit");
+			
 	// ingList
 	/** The Constant TYPE_INGLIST. */
 	static final QName TYPE_INGLIST = QName.createQName(BECPG_URI, "ingList");
@@ -645,6 +669,8 @@ public interface BeCPGModel {
 	public static final QName PROP_UNIT_PRICE = QName.createQName(BECPG_URI, "unitPrice");
 	
 	public static final QName PROP_BREAK_EVEN = QName.createQName(BECPG_URI, "breakEven");
+	
+	public static final QName PROP_PROJECTED_QTY = QName.createQName(BECPG_URI, "projectedQty");	
 
 	public static final QName PROP_PROFITABILITY = QName.createQName(BECPG_URI, "profitability");
 	

@@ -376,7 +376,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		List<CostListDataItem> costList = new ArrayList<CostListDataItem>();		    		
 		for(int j=0 ; j<costs.size() ; j++)
 		{		    			
-			CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "€/kg", costs.get(j), false);
+			CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "€/kg", null, costs.get(j), false);
 			costList.add(costListItemData);
 		}		
 		rawMaterial.setCostList(costList);

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,7 @@ import fr.becpg.repo.eco.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.eco.data.dataList.WUsedListDataItem;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.product.data.productList.RequirementType;
 
 /**
  * ECO DAO
@@ -380,11 +382,11 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 	    		
 	    		//update or create nodes	  	    		
 	    		for(ChangeUnitDataItem changeUnitListDataItem : changeUnitMap.values())
-	    		{    	
+	    		{
 	    			NodeRef changeUnitNodeRef = changeUnitListDataItem.getNodeRef();
 	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		    		properties.put(ECOModel.PROP_CUL_REQ_DETAILS, changeUnitListDataItem.getReqDetails());
-		    		properties.put(ECOModel.PROP_CUL_REQ_RESPECTED, changeUnitListDataItem.getReqRespected());
+		    		properties.put(ECOModel.PROP_CUL_REQ_TYPE, changeUnitListDataItem.getReqType());
 		    		properties.put(ECOModel.PROP_CUL_REVISION, changeUnitListDataItem.getRevision());
 		    		properties.put(ECOModel.PROP_CUL_TREATED, changeUnitListDataItem.getTreated());
 		    				    		
@@ -401,8 +403,11 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 		    						properties).getChildRef();		    					    					    			
 		    		}			    			
 		    		
+		    		logger.debug("###cul, sourceItem: " + nodeService.getProperty(changeUnitListDataItem.getSourceItem(), ContentModel.PROP_NAME));
+		    		
 		    		associationService.update(changeUnitNodeRef, ECOModel.ASSOC_CUL_SOURCE_ITEM, changeUnitListDataItem.getSourceItem());
 		    		associationService.update(changeUnitNodeRef, ECOModel.ASSOC_CUL_TARGET_ITEM, changeUnitListDataItem.getTargetItem());
+		    		associationService.update(changeUnitNodeRef, ECOModel.ASSOC_CUL_SIMULATION_ITEM, changeUnitListDataItem.getSimulationItem());
 	    		}
 			}
 		}
@@ -420,7 +425,7 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 		
 		if(listContainerNodeRef != null)
 		{  
-			NodeRef simulationListNodeRef = entityListDAO.getList(listContainerNodeRef, ECOModel.TYPE_SIMULATIONLIST);
+			NodeRef simulationListNodeRef = entityListDAO.getList(listContainerNodeRef, ECOModel.TYPE_CALCULATEDCHARACTLIST);
 			
 			if(simulationList == null){
 				//delete existing list
@@ -431,10 +436,10 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 	    		//simulation list, create if needed	    		
 	    		if(simulationListNodeRef == null)
 	    		{		    						
-		    		simulationListNodeRef = entityListDAO.createList(listContainerNodeRef, ECOModel.TYPE_SIMULATIONLIST);
+		    		simulationListNodeRef = entityListDAO.createList(listContainerNodeRef, ECOModel.TYPE_CALCULATEDCHARACTLIST);
 	    		}
 				
-	    		List<NodeRef> listItemNodeRefs = listItems(simulationListNodeRef, ECOModel.TYPE_SIMULATIONLIST);
+	    		List<NodeRef> listItemNodeRefs = listItems(simulationListNodeRef, ECOModel.TYPE_CALCULATEDCHARACTLIST);
 	    		
 	    		//create temp list
 	    		List<NodeRef> simulationListToTreat = new ArrayList<NodeRef>();
@@ -459,8 +464,8 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 	    		for(SimulationListDataItem simulationListDataItem : simulationList)
 	    		{    				    				    			
 	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		    		properties.put(ECOModel.PROP_SL_SOURCE_VALUE, simulationListDataItem.getSourceValue());
-		    		properties.put(ECOModel.PROP_SL_TARGET_VALUE, simulationListDataItem.getTargetValue());		    				    		
+		    		properties.put(ECOModel.PROP_CCL_SOURCE_VALUE, simulationListDataItem.getSourceValue());
+		    		properties.put(ECOModel.PROP_CCL_TARGET_VALUE, simulationListDataItem.getTargetValue());		    				    		
 		    		
 		    		if(filesToUpdate.contains(simulationListDataItem.getNodeRef())){
 		    			//update
@@ -471,11 +476,11 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 		    			ChildAssociationRef childAssocRef = nodeService.createNode(simulationListNodeRef, 
 		    						ContentModel.ASSOC_CONTAINS, 
 		    						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), 
-		    						ECOModel.TYPE_SIMULATIONLIST, 
+		    						ECOModel.TYPE_CALCULATEDCHARACTLIST, 
 		    						properties);
 		    					    			
-		    			nodeService.createAssociation(childAssocRef.getChildRef(), simulationListDataItem.getSourceItem(), ECOModel.ASSOC_SL_SOURCE_ITEM);
-		    			nodeService.createAssociation(childAssocRef.getChildRef(), simulationListDataItem.getCharact(), ECOModel.ASSOC_SL_CHARACT);
+		    			nodeService.createAssociation(childAssocRef.getChildRef(), simulationListDataItem.getSourceItem(), ECOModel.ASSOC_CCL_SOURCE_ITEM);
+		    			nodeService.createAssociation(childAssocRef.getChildRef(), simulationListDataItem.getCharact(), ECOModel.ASSOC_CCL_CHARACT);
 		    		}			    					    				    		
 	    		}
 			}
@@ -561,7 +566,7 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
     		
     		if(changeUnitListNodeRef != null)
     		{    			
-    			changeUnitMap = new HashMap<NodeRef, ChangeUnitDataItem>();
+    			changeUnitMap = new LinkedHashMap<NodeRef, ChangeUnitDataItem>();
 				List<NodeRef> nodeRefs = listItems(changeUnitListNodeRef, ECOModel.TYPE_CHANGEUNITLIST);
 				
 				logger.debug("loadChangeUnit, size: " + nodeRefs.size());
@@ -574,21 +579,31 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 		    		List<AssociationRef> targetItemAssocRefs = nodeService.getTargetAssocs(nodeRef, ECOModel.ASSOC_CUL_TARGET_ITEM);
 		    		NodeRef targetItemNodeRef = targetItemAssocRefs.isEmpty() ? null : (targetItemAssocRefs.get(0)).getTargetRef();
 		    		
+		    		List<AssociationRef> simulationItemAssocRefs = nodeService.getTargetAssocs(nodeRef, ECOModel.ASSOC_CUL_SIMULATION_ITEM);
+		    		NodeRef simulationItemNodeRef = simulationItemAssocRefs.isEmpty() ? null : (simulationItemAssocRefs.get(0)).getTargetRef();
+		    		
 		    		RevisionType revision = null;
 		    		String strRevision = (String)nodeService.getProperty(nodeRef, ECOModel.PROP_CUL_REVISION);
 		    		if(strRevision != null){
 		    			revision = RevisionType.valueOf(strRevision);
 		    		}
 		    		
+		    		RequirementType reqType = null;
+		    		String strReqType = (String)nodeService.getProperty(nodeRef, ECOModel.PROP_CUL_REQ_TYPE);
+		    		if(strReqType != null){
+		    			reqType = RequirementType.valueOf(strReqType);
+		    		}
+		    		
 		    		logger.debug("revision: " + revision);
 		    		
 		    		ChangeUnitDataItem changeUnitDataItem = new ChangeUnitDataItem(nodeRef, 
 		    												revision, 
-		    												(Boolean)nodeService.getProperty(nodeRef, ECOModel.PROP_CUL_REQ_RESPECTED), 
+		    												reqType, 
 		    												(String)nodeService.getProperty(nodeRef, ECOModel.PROP_CUL_REQ_DETAILS), 
 		    												(Boolean)nodeService.getProperty(nodeRef, ECOModel.PROP_CUL_TREATED), 
 		    												sourceItemNodeRef, 
-		    												targetItemNodeRef);
+		    												targetItemNodeRef,
+		    												simulationItemNodeRef);
 		    		changeUnitMap.put(sourceItemNodeRef, changeUnitDataItem);
 		    	}
     		}    		
@@ -603,26 +618,26 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 		
     	if(listContainerNodeRef != null)
     	{    		
-    		NodeRef simulationListNodeRef = entityListDAO.getList(listContainerNodeRef, ECOModel.TYPE_SIMULATIONLIST);
+    		NodeRef simulationListNodeRef = entityListDAO.getList(listContainerNodeRef, ECOModel.TYPE_CALCULATEDCHARACTLIST);
     		
     		if(simulationListNodeRef != null)
     		{    			
     			simList = new ArrayList<SimulationListDataItem>();
-				List<NodeRef> nodeRefs = listItems(simulationListNodeRef, ECOModel.TYPE_SIMULATIONLIST);
+				List<NodeRef> nodeRefs = listItems(simulationListNodeRef, ECOModel.TYPE_CALCULATEDCHARACTLIST);
 	    		
 	    		for(NodeRef nodeRef : nodeRefs)
 		    	{	
-		    		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(nodeRef, ECOModel.ASSOC_SL_SOURCE_ITEM);
+		    		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(nodeRef, ECOModel.ASSOC_CCL_SOURCE_ITEM);
 		    		NodeRef sourceNodeRef = sourceAssocRefs.isEmpty() ? null : (sourceAssocRefs.get(0)).getTargetRef();		    		
 		    		
-		    		List<AssociationRef> charactAssocRefs = nodeService.getTargetAssocs(nodeRef, ECOModel.ASSOC_SL_CHARACT);
+		    		List<AssociationRef> charactAssocRefs = nodeService.getTargetAssocs(nodeRef, ECOModel.ASSOC_CCL_CHARACT);
 		    		NodeRef charactNodeRef = charactAssocRefs.isEmpty() ? null : (charactAssocRefs.get(0)).getTargetRef();
 		    		
 		    		SimulationListDataItem simListDataItem = new SimulationListDataItem(nodeRef,
 		    																	sourceNodeRef,
 		    																	charactNodeRef,		    																	
-		    																	(Float)nodeService.getProperty(nodeRef, ECOModel.PROP_SL_SOURCE_VALUE),
-		    																	(Float)nodeService.getProperty(nodeRef, ECOModel.PROP_SL_TARGET_VALUE));
+		    																	(Float)nodeService.getProperty(nodeRef, ECOModel.PROP_CCL_SOURCE_VALUE),
+		    																	(Float)nodeService.getProperty(nodeRef, ECOModel.PROP_CCL_TARGET_VALUE));
 		    		simList.add(simListDataItem);
 		    	}
     		}    		

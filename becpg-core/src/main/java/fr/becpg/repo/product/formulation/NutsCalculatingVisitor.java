@@ -17,6 +17,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -28,6 +29,8 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutGroup;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.data.productList.RequirementType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -48,6 +51,8 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 	
 	/** The Constant UNIT_PER100ML. */
 	public static final String UNIT_PER100ML = "/100mL";
+	
+	protected static final String MSG_REQ_NOT_RESPECTED = "message.formulate.warning.requirement.nut";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(NutsCalculatingVisitor.class);
@@ -110,7 +115,7 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 /* (non-Javadoc)
  * @see fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData)
  */
-@Override
+	@Override
 	public ProductData visit(ProductData formulatedProduct) throws FormulateException{
 		logger.debug("Nuts calculating visitor");
 		
@@ -149,16 +154,12 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 				
 		//sort		
 		List<NutListDataItem> nutListSorted = sort(nutList); 
-		
 
-		for(NutListDataItem n : nutList)
-			logger.debug("unsorted list: " + (String)nodeService.getProperty(n.getNut(), ContentModel.PROP_NAME));
-		
-		for(NutListDataItem n : nutListSorted)
-        	logger.debug((String)nodeService.getProperty(n.getNut(), ContentModel.PROP_NAME) + " - " + n.getGroup());
-        
-		
 		formulatedProduct.setNutList(nutListSorted);		
+		
+		// check requirements
+		formulatedProduct = checkReqCtrl(formulatedProduct);
+				
 		return formulatedProduct;
 	}
 
@@ -322,5 +323,23 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		}
 		
 		return new ArrayList<NutListDataItem>(nutMap.values());
+	}
+	
+	private ProductData checkReqCtrl(ProductData formulatedProduct){
+		
+		for(NutListDataItem n : formulatedProduct.getNutList()){
+			
+			if(n.getValue() != null && (n.getMaxi() != null && n.getValue() > n.getMaxi() || n.getMini() != null && n.getValue() < n.getMini())){
+				
+				String msg = I18NUtil.getMessage(MSG_REQ_NOT_RESPECTED, 
+						nodeService.getProperty(n.getNut(), ContentModel.PROP_NAME),
+						n.getValue(),
+						n.getMini(),
+						n.getMaxi());
+				formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, msg, null));
+			}						
+		}
+		
+		return formulatedProduct;
 	}
 }
