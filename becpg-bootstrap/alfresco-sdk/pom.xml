@@ -1090,13 +1090,13 @@
 
 			<classifier>community</classifier>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.alfresco.sdk</groupId>
 			<artifactId>rhino-js-1.6R7</artifactId>
 			<version>${alfresco.version}</version>
 
 			<classifier>community</classifier>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.alfresco.sdk</groupId>
 			<artifactId>saxpath</artifactId>

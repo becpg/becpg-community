@@ -63,9 +63,6 @@
 				<property name="bpm:packageItemActionGroup">
 					<default>edit_package_item_actions</default>
 				</property>
-				<property name="bpm:workflowDescription">
-					<mandatory>true</mandatory>
-				</property>
 			</overrides>
 			<mandatory-aspects>
 				<aspect>npdwf:npdAspect</aspect>
