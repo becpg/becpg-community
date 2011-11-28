@@ -35,13 +35,13 @@
 
 	<start-state name="initiate-npd">
 		<task name="npdwf:initiate-npd" swimlane="initiator" >
-		<event type="task-create">
+		   <event type="task-create">
 				 <script>
-				 		 taskInstance.setVariable("npdwf:npdStatus","Démarré");
+				 	taskInstance.setVariable("npdwf:npdStatus","Démarré");
 			     </script>
 			</event>
 		</task>
-		<transition to="needDefinition" name="start" ></transition>
+		<transition to="needDefinition" name="start" />
 	</start-state>
 
 	<!-- Need Definition -->
@@ -52,6 +52,7 @@
 				<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
 					<status>Etude du besoin</status>
 				</action>
+				<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdNumber"/>
 				<action class="fr.becpg.repo.workflow.jbpm.npd.AssignDefaultGroup"/>
 			</event>
 		<event type="task-end">

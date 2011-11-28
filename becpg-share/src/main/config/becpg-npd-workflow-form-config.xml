@@ -19,11 +19,9 @@
 			<form>
 				<field-visibility>
 					<show id="npdwf:npdProductName" />
-					<show id="npdwf:npdNumber" />
 					<show id="npdwf:npdType" />
 					<show id="npdwf:npdStatus" />
 					<show id="npdwf:npdFolder" />
-					<show id="bpm:workflowDescription" />
 					<show id="bpm:workflowDueDate" />
 					<show id="bpm:workflowPriority" />					
 
@@ -50,7 +48,6 @@
 						template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="Demande d'étude" />					
 					<field id="npdwf:npdProductName" set="info" label="Désignation commercial" />
-					<field id="npdwf:npdNumber" set="info" label="Numéro demande" />
 					<field id="npdwf:npdType" set="info" label="Type" />
 					<field id="npdwf:npdStatus" set="info" label="Statut">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
@@ -62,8 +59,6 @@
 						<control
 							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
 					</field>
-					<field id="bpm:workflowDescription" label="Nom du processus"
-						set="info" />
 					
 					<!-- Appel d'offre -->
 					<set id="cft" appearance="title" label="Appel d'offre"
@@ -134,7 +129,6 @@
 			<form id="workflow-details">
 				<field-visibility>
 					<show id="npdwf:npdProductName" />
-					<show id="npdwf:npdNumber" />
 					<show id="npdwf:npdType" />
 					<show id="npdwf:npdStatus" />
 					<show id="npdwf:npdFolder" />
@@ -145,7 +139,6 @@
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="items" appearance="title" label-id="workflow.set.items" />
 					<field id="npdwf:npdProductName" set="info" label="Désignation commercial" />
-					<field id="npdwf:npdNumber" set="info" label="Numéro demande" />
 					<field id="npdwf:npdType" set="info" label="Type" />
 					<field id="npdwf:npdStatus" set="info" label="Statut">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />

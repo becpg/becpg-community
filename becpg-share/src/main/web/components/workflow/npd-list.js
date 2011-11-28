@@ -142,7 +142,7 @@
                   { key: "npdProductName",  label:this.msg("label.npdProductName"),sortable: false, formatter: this.bind(this.renderNpdProductName) },
                   { key: "npdType", label:this.msg("label.npdType"), sortable: false, formatter: this.bind(this.renderNpdType) },                  
                   { key: "npdNumber",  label:this.msg("label.npdNumber"),sortable: false, formatter: this.bind(this.renderNpdNumber) },
-                  { key: "description",  label:this.msg("label.npdDescription"),sortable: false, formatter: this.bind(this.renderTitle) },
+//                  { key: "description",  label:this.msg("label.npdDescription"),sortable: false, formatter: this.bind(this.renderTitle) },
                   { key: "npdStatus",  label:this.msg("label.npdStatus"),sortable: false, formatter: this.bind(this.renderNpdStatus) },
                   { key: "activeSteps",  label:this.msg("label.activeSteps"),sortable: false, formatter: this.bind(this.renderActiveSteps) },
                   { key: "assignedUsers",  label:this.msg("label.assignedUsers"),sortable: false, formatter: this.bind(this.renderAssignedUsers) },

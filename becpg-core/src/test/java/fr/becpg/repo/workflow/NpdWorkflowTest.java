@@ -793,7 +793,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		// Start NPD
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		Date dueDate = Calendar.getInstance().getTime();
-		properties.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, "description123");
+	//	properties.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, "description123");
 		properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
 		properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
 
@@ -844,6 +844,8 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
 
 		task = workflowService.endTask(task.getId(), "start");
+
+		logger.debug("NpdNUmber :"+task.getProperties().get(NPDModel.PROP_NPD_NUMBER));
 		logger.debug("End task"+task.getName());
 
 		path = task.getPath();
