@@ -121,10 +121,10 @@
 				</field-visibility>
 				<appearance>
 					<set id="product-criteria" appearance="bordered-panel" label="Critères sur le produit" />
-					<set id="ings-criteria" appearance="bordered-panel"
-						label="Critères sur les ingrédients" />
 					<set id="npd" appearance="bordered-panel" label="NPD"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="ings-criteria" appearance="bordered-panel"
+						label="Critères sur les ingrédients" />					
 
 					<field id="cm:name" set="product-criteria" />
 					<field id="cm:description" set="product-criteria" />
@@ -278,7 +278,7 @@
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -436,7 +436,7 @@
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -561,7 +561,7 @@
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -651,7 +651,7 @@
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -747,7 +747,7 @@
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -844,7 +844,7 @@
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -944,7 +944,7 @@
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -1044,7 +1044,7 @@
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -1147,7 +1147,7 @@
 					</field>
 					<field id="bcpg:productComments"  set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -1255,7 +1255,7 @@
 					</field>
 					<field id="bcpg:productComments"  set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -1369,7 +1369,7 @@
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -1490,7 +1490,7 @@
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
