@@ -28,7 +28,7 @@
 	               <div class="bd">
 	                  <ul>
 	                  <#list itemTypes as itemType >
-	                     <li><a href="#"><span class="${itemType.name}#${itemType.formId}">${itemType.label}</span></a></li>
+	                     <li><a href="#"><span class="${itemType.name}#${itemType.formId}#${itemType.editSelectedFormId}">${itemType.label}</span></a></li>
 	                  </#list>
 	                  </ul>
 	               </div>

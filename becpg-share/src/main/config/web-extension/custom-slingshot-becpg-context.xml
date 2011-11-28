@@ -27,6 +27,7 @@
             <value>classpath:alfresco/becpg-eco-form-config.xml</value>
             <value>classpath:alfresco/becpg-bulkedit-form-config.xml</value>
             <value>classpath:alfresco/becpg-m2Model-form-config.xml</value>
+            <value>classpath:alfresco/becpg-designer-form-config.xml</value>
          </list>
       </property>
    </bean>

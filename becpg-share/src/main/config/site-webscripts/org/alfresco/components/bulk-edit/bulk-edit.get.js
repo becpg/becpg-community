@@ -32,7 +32,8 @@ function main()
       {
          name: itemType.attributes["name"],
          label: label ? label : itemType.attributes["name"],
-         formId : itemType.attributes["formId"] ? itemType.attributes["formId"] : "bulk-edit"
+         formId : itemType.attributes["formId"] ? itemType.attributes["formId"] : "bulk-edit",
+         editSelectedFormId :  itemType.attributes["editSelectedFormId"] ? itemType.attributes["editSelectedFormId"] : "create"
       });
    }
    

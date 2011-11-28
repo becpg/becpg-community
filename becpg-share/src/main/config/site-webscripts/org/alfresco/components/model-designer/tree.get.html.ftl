@@ -18,7 +18,7 @@
 	                </ul>
 	          </div>
 	     </div>
-         <span id="${id}-newModelButton" class="yui-button yui-push-button new-model">
+         <span id="${id}-newModelButton" class="yui-button yui-push-button new-model" style="display:none;">
              <span class="first-child">
                  <button type="button">&nbsp;</button>
              </span>

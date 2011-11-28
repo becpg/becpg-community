@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="ext1:extensionModel">
+	<description>Extension model</description>
+	<author>beCPG</author>
+	<version>1.0</version>
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</imports>
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/ext1/1.0"
+			prefix="ext1" />
+	</namespaces>
+
+	<types>
+		<type name="ext1:extensionParent">
+			<title>Extension Parent Type</title>
+			<parent>bcpg:entity</parent>
+			<mandatory-aspects>
+				<aspect>ext1:extensionFormAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="ext1:customType">
+			<title>Custom Type</title>
+			<parent>ext1:extensionParent</parent>
+		</type>
+		
+	</types>
+	
+	
+     <aspects>
+	    <aspect name="ext1:extensionFormAspect">
+			<title>Form extension aspect</title>
+	   </aspect>
+	   
+	    <aspect name="ext1:customAspect">
+			<title>Custom aspect</title>
+			<mandatory-aspects>
+				<aspect>ext1:extensionFormAspect</aspect>
+			</mandatory-aspects>
+	   </aspect>
+	   
+	</aspects>
+
+
+</model>

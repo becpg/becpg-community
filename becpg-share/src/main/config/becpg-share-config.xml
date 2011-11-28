@@ -47,6 +47,7 @@
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
 				<aspect name="dsg:modelAspect" />
+				<aspect name="ext1:customAspect"/>
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -61,6 +62,7 @@
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
 				<aspect name="dsg:modelAspect" />
+				<aspect name="ext1:customAspect"/>
 			</addable>
 
 			<!-- Aspects that a user can remove. Same as "visible" if left empty -->
@@ -75,6 +77,7 @@
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
 				<aspect name="dsg:modelAspect" />
+				<aspect name="ext1:customAspect"/>
 			</removeable>
 		</aspects>
 
@@ -107,6 +110,7 @@
 
 				<subtype name="bcpg:linkedValue" />
 				<subtype name="bcpg:listValue" />
+				<subtype name="ext1:customType"/>
 			</type>
 
 			<type name="cm:folder">
@@ -133,7 +137,7 @@
 		<itemTypes>
 			<itemType name="bcpg:finishedProduct" />
 <!-- 			<itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" -->
-<!-- 				formId="bulk-edit-2" /> -->
+<!-- 				formId="bulk-edit-2"  editSelectedFormId ="bulk-edit" /> -->
 			<itemType name="bcpg:allergenList" />
 			<itemType name="sec:aclGroup"/>
 			<itemType name="bcpg:semiFinishedProduct" />

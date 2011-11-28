@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="extWf1:extensionWfModel">
+	<description>extensionWf model</description>
+	<author>beCPG</author>
+	<version>1.0</version>
+	<imports>
+	   <import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm"/>
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</imports>
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/extWf1/1.0"
+			prefix="extWf1" />
+	</namespaces>
+
+	<types>
+		<type name="extWf1:extensionWfTaskParent">
+			<title>Task Extension</title>
+			<parent>bpm:workflowTask</parent>
+			<mandatory-aspects>
+				<aspect>extWf1:extensionWfFormAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="extWf1:extensionWfStartTaskParent">
+			<title>Start Task Extension</title>
+			<parent>bpm:startTask</parent>
+			<mandatory-aspects>
+				<aspect>extWf1:extensionWfFormAspect</aspect>
+			</mandatory-aspects>
+		</type>
+	</types>
+	
+	
+     <aspects>
+	    <aspect name="extWf1:extensionWfFormAspect">
+			<title>Workflow extension aspect</title>
+	   </aspect>
+	</aspects>
+
+
+</model>

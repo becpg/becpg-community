@@ -217,6 +217,11 @@
          formId: null,
          
          /**
+          * The formId used to edit selected fields
+          */
+         editSelectedFormId : "create",
+         
+         /**
           * Parent nodeRef
           */
          nodeRef : null,
@@ -609,7 +614,7 @@
 	             case "text":
 	             case "mltext":
 	             if(regexp==null){
-	          	  editor = new YAHOO.widget.TextboxCellEditor();
+	          	  editor = new YAHOO.widget.TextareaCellEditor();
 	          	 } else {
 	          		 editor = new YAHOO.widget.TextboxCellEditor({validator:  function(oData) {
 	          			 if(oData.match(regexp)){
@@ -908,6 +913,7 @@
         	 var className = typeSelected._oAnchor.children[0].attributes[0].nodeValue;
         	  this.options.itemType = className.split("#")[0];
         	  this.options.formId = className.split("#")[1];
+        	  this.options.editSelectedFormId = className.split("#")[2];
          }
  
          
@@ -1759,9 +1765,10 @@
       }
       
       
-       var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=create&bulkEdit=true&fields={fields}&submissionUrl={submissionUrl}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
+       var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId={formId}&bulkEdit=true&fields={fields}&submissionUrl={submissionUrl}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
        {
           itemKind: "type",
+          formId : this.options.editSelectedFormId,
           itemId: this.options.itemType,
           mode: "create",
           submitType: "json",
