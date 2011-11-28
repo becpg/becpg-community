@@ -224,6 +224,7 @@
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
 					<show id="bcpg:productMicrobioCriteria" />
+					<show id="bcpg:useByDate" force="true" />
 					
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
@@ -325,7 +326,8 @@
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
 							<control-param name="style">width:200px</control-param>
 						</control>	
-					</field>					
+					</field>			
+					<field id="bcpg:useByDate" set="formulation" />		
 					
 					<!-- profitability -->
 					<field id="bcpg:unitPrice"  set="profitability" />
@@ -400,6 +402,7 @@
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
 					<show id="bcpg:productMicrobioCriteria" />
+					<show id="bcpg:useByDate" force="true" />
 					
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
@@ -484,6 +487,7 @@
 							<control-param name="style">width:200px</control-param>
 						</control>	
 					</field>
+					<field id="bcpg:useByDate" set="formulation" />
 					
 					<!-- profitability -->
 					<field id="bcpg:unitPrice"  set="profitability" />

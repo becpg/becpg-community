@@ -1402,6 +1402,14 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:consumerAspect">
+			<properties>
+				<property name="bcpg:useByDate">
+					<type>d:int</type>
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:suppliersAspect">
 			<associations>
