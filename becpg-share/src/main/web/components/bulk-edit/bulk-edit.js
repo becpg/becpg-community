@@ -1387,7 +1387,7 @@
          var className = Alfresco.util.findEventClass(eventTarget)
          this.options.itemType = className.split("#")[0];
          this.options.formId = className.split("#")[1];
-         
+         this.options.editSelectedFormId = className.split("#")[2];
          Bubbling.fire("selectedTypeChanged");
          
       },
