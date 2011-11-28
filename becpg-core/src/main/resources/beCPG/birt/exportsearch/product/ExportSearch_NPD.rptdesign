@@ -1,0 +1,730 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="layoutPreference">fixed layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">112</property>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="7">
+            <property name="FILELIST">/home/quere/Documents/beCPG/dev/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/exportsearch/product/ExportSearchQuery_NPD.xml</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="nodes" id="10">
+            <property name="nullsOrdering">nulls lowest</property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">id</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">id</text-property>
+                    <property name="analysisColumn">id</property>
+                </structure>
+                <structure>
+                    <property name="columnName">name</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">name</text-property>
+                    <property name="analysisColumn">name</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">description</text-property>
+                    <property name="analysisColumn">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">legalName</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">legalName</text-property>
+                    <property name="analysisColumn">legalName</property>
+                </structure>
+                <structure>
+                    <property name="columnName">productHierarchy1</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">productHierarchy1</text-property>
+                    <property name="analysisColumn">productHierarchy1</property>
+                </structure>
+                <structure>
+                    <property name="columnName">productHierarchy2</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">productHierarchy2</text-property>
+                    <property name="analysisColumn">productHierarchy2</property>
+                </structure>
+                <structure>
+                    <property name="columnName">code</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">code</text-property>
+                    <property name="analysisColumn">code</property>
+                </structure>
+                <structure>
+                    <property name="columnName">clients</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">clients</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">npdNumber</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">npdNumber</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">npdType</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">npdType</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">npdStatus</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">npdStatus</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">npdInitiator</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">npdInitiator</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">id</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">legalName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">productHierarchy1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">productHierarchy2</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">code</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">clients</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">npdNumber</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">npdType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">npdStatus</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">npdInitiator</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">ToValidateDuration</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">id</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">description</property>
+                    <property name="nativeName">description</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">legalName</property>
+                    <property name="nativeName">legalName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">productHierarchy1</property>
+                    <property name="nativeName">productHierarchy1</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">productHierarchy2</property>
+                    <property name="nativeName">productHierarchy2</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">code</property>
+                    <property name="nativeName">code</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">clients</property>
+                    <property name="nativeName">clients</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">npdNumber</property>
+                    <property name="nativeName">npdNumber</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">npdType</property>
+                    <property name="nativeName">npdType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">npdStatus</property>
+                    <property name="nativeName">npdStatus</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">npdInitiator</property>
+                    <property name="nativeName">npdInitiator</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/export/nodes/node]#:#{id;STRING;/@id},{name;STRING;/@name},{description;STRING;/@description},{legalName;STRING;/@legalName},{productHierarchy1;STRING;/@productHierarchy1},{productHierarchy2;STRING;/@productHierarchy2},{code;STRING;/@code},{clients;STRING;/@clients},{npdNumber;STRING;/@npdNumber},{npdType;STRING;/@npdType},{npdStatus;STRING;/@npdStatus},{npdInitiator;STRING;/@npdInitiator}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>name</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>created</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>created</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>creator</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>creator</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="report" id="4">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+        </style>
+        <style name="crosstab-cell" id="5">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="6">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="beCPG-Group" id="1551">
+            <property name="backgroundColor">#669999</property>
+            <property name="color">#FFFFFF</property>
+            <property name="textLineThrough">none</property>
+            <property name="marginTop">5pt</property>
+            <property name="marginBottom">5pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+        </style>
+        <style name="beCPG-Table-Header" id="1553">
+            <property name="fontWeight">bold</property>
+            <property name="color">#339966</property>
+        </style>
+        <style name="beCPG-table-row-header" id="1554">
+            <property name="fontWeight">bold</property>
+            <property name="color">#808080</property>
+        </style>
+        <style name="beCPG-Table-border" id="1557">
+            <property name="borderBottomColor">#339966</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftColor">#339966</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightColor">#339966</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopColor">#339966</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="beCPG-table-row" id="1558">
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="beCPG-table-cell" id="1559">
+            <property name="fontSize">9pt</property>
+            <property name="textOverline">none</property>
+            <property name="whiteSpace">normal</property>
+            <property name="display">inline</property>
+        </style>
+        <style name="beCPG-table-col" id="1583">
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="type">custom</property>
+            <property name="height">8in</property>
+            <property name="width">22in</property>
+            <property name="orientation">landscape</property>
+            <page-header>
+                <label id="773">
+                    <property name="fontFamily">"arial"</property>
+                    <property name="fontSize">18pt</property>
+                    <property name="fontWeight">bold</property>
+                    <property name="color">#999999</property>
+                    <property name="textAlign">center</property>
+                    <text-property name="text" key="label.title">NPD produits</text-property>
+                </label>
+            </page-header>
+            <page-footer>
+                <text id="3">
+                    <property name="contentType">html</property>
+                    <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                </text>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="2086">
+            <property name="style">beCPG-Table-border</property>
+            <property name="width">100%</property>
+            <property name="dataSet">nodes</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">code</property>
+                    <text-property name="displayName">code</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["code"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">name</property>
+                    <text-property name="displayName">name</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <text-property name="displayName">description</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">productHierarchy1</property>
+                    <text-property name="displayName">productHierarchy1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["productHierarchy1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">productHierarchy2</property>
+                    <text-property name="displayName">productHierarchy2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["productHierarchy2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">clients</property>
+                    <text-property name="displayName">clients</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["clients"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">npdNumber</property>
+                    <text-property name="displayName">npdNumber</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["npdNumber"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">npdType</property>
+                    <text-property name="displayName">npdType</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["npdType"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">npdStatus</property>
+                    <text-property name="displayName">npdStatus</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["npdStatus"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">npdInitiator</property>
+                    <text-property name="displayName">npdInitiator</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["npdInitiator"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="2120">
+                <property name="width">0.9618320610687023in</property>
+                <property name="style">beCPG-table-col</property>
+            </column>
+            <column id="2121">
+                <property name="width">0.7557251908396947in</property>
+                <property name="style">beCPG-table-col</property>
+            </column>
+            <column id="2122">
+                <property name="width">0.8778625954198473in</property>
+                <property name="style">beCPG-table-col</property>
+            </column>
+            <column id="2123">
+                <property name="width">0.7557251908396947in</property>
+                <property name="style">beCPG-table-col</property>
+            </column>
+            <column id="2124">
+                <property name="width">0.7862595419847328in</property>
+                <property name="style">beCPG-table-col</property>
+            </column>
+            <column id="2125">
+                <property name="width">3.4732824427480917in</property>
+                <property name="style">beCPG-table-col</property>
+            </column>
+            <column id="2126">
+                <property name="width">1.6488549618320612in</property>
+                <property name="style">beCPG-table-col</property>
+            </column>
+            <column id="2127">
+                <property name="width">1.0458015267175573in</property>
+                <property name="style">beCPG-table-col</property>
+            </column>
+            <column id="2128">
+                <property name="width">1.0458015267175573in</property>
+                <property name="style">beCPG-table-col</property>
+            </column>
+            <column id="2129">
+                <property name="width">0.9847328244274809in</property>
+                <property name="style">beCPG-table-col</property>
+            </column>
+            <header>
+                <row id="2087">
+                    <property name="style">beCPG-Table-Header</property>
+                    <cell id="2097">
+                        <label id="2148">
+                            <text-property name="text">Com</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2094">
+                        <label id="2142">
+                            <text-property name="text">N° demande</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2095">
+                        <label id="2144">
+                            <text-property name="text">Type</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2096">
+                        <label id="2146">
+                            <text-property name="text">Etat</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2088">
+                        <label id="2130">
+                            <text-property name="text">Code</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2089">
+                        <label id="2132">
+                            <text-property name="text">Nom</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2090">
+                        <label id="2134">
+                            <text-property name="text">Description</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2091">
+                        <label id="2136">
+                            <text-property name="text">Famille</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2092">
+                        <label id="2138">
+                            <text-property name="text">Sous-famille</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2093">
+                        <label id="2140">
+                            <text-property name="text">Clients</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="2098">
+                    <property name="style">beCPG-table-row</property>
+                    <cell id="2108">
+                        <data id="2149">
+                            <property name="resultSetColumn">npdInitiator</property>
+                        </data>
+                    </cell>
+                    <cell id="2105">
+                        <data id="2143">
+                            <property name="resultSetColumn">npdNumber</property>
+                        </data>
+                    </cell>
+                    <cell id="2106">
+                        <data id="2145">
+                            <property name="resultSetColumn">npdType</property>
+                        </data>
+                    </cell>
+                    <cell id="2107">
+                        <data id="2147">
+                            <property name="resultSetColumn">npdStatus</property>
+                        </data>
+                    </cell>
+                    <cell id="2099">
+                        <data id="2131">
+                            <property name="resultSetColumn">code</property>
+                        </data>
+                    </cell>
+                    <cell id="2100">
+                        <data id="2133">
+                            <property name="resultSetColumn">name</property>
+                        </data>
+                    </cell>
+                    <cell id="2101">
+                        <data id="2135">
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="2102">
+                        <data id="2137">
+                            <property name="resultSetColumn">productHierarchy1</property>
+                        </data>
+                    </cell>
+                    <cell id="2103">
+                        <data id="2139">
+                            <property name="resultSetColumn">productHierarchy2</property>
+                        </data>
+                    </cell>
+                    <cell id="2104">
+                        <data id="2141">
+                            <property name="resultSetColumn">clients</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="2109">
+                    <cell id="2110"/>
+                    <cell id="2111"/>
+                    <cell id="2112"/>
+                    <cell id="2113"/>
+                    <cell id="2114"/>
+                    <cell id="2115"/>
+                    <cell id="2116"/>
+                    <cell id="2117"/>
+                    <cell id="2118"/>
+                    <cell id="2119"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+    <list-property name="images">
+        <structure>
+            <property name="name">app-logo-becpg.png</property>
+            <property name="type">image/png</property>
+            <property name="data">
+                iVBORw0KGgoAAAANSUhEUgAAAJQAAAAwCAYAAAD3sVMsAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAD
+                YgAAA2IByzwVFAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAA4QSURBVHic7Zx7
+                eFXllcZ/7z4JCGMpCSgWrResojhe6mUs0tZWrE5tH59x2mbseCkC2ecAiuJMO2qnUhQ7+qgVKZBzTojM
+                aLW1teNlqoOoY30UvI5WtOqoo1YpwghJ6g0DyXnnj70TTq4kOScB8bz/JHt93/7W2vu8322t9W3ZpoQS
+                ioVgextQws6FEqFKKCpKhCqhqCgRqoSiokSoEoqKEqFKKCrKtrcBJQw+VK29EEcidkeMwlQiKjCbgHpE
+                PWYjOZ5hKS+5D74lfdL9UKrWGBJtL3UUOXZFNGIaEPVsZp2XubFPbc7QJKC8V5Wb+Qjzspe6vj/298qe
+                czWKZv6eHF9GTAT27MPtDZhHEQ+R4xbXek2Puj5JhNI8lbGGL5PgOHJMRHwBqOzFrf8DrEKspJn7vdR/
+                7FFPUg3AyD6atw7zIHA34nZn/GEf7+9sR6jjECmgChhaaHtAC7AcWMpYfuu5bu6k85NAKM3SZ2mmGpgO
+                fKbA5gw8gKmlkTv8K2/upK9/hMrHRmARZVzjxX6/rzcrpQOANOaELorfxKxErCLHCwQ0kqCRFt6ljGFs
+                pgJRgTgA8wXEscAEOq+3X8TMcdb3ttPdH0LNmDHj87lcbh9gRSaTKbgnDRQ0Q3uS41rg20CiQ7GBF4BH
+                gTcRjeRoJGATOUbEL3UUOQ6PX+qoLlRswMxnTxbn99Z2hBL/Bfy6GxOHA5/GHAxMAsZ2KH8TE3b80bp9
+                3ioNYSQXIS6h/Yj0PnATAUtc4+d701a7dqu1FwHfA6YAn2tfyG8JON9L/Br0c1FuezYwJQiC/YA3+tPG
+                QEJVSlDBLGA+8Km8IhMN2VkSPOQlbuh1m1Gv/1vMFOCgWDwasYC1JBWqU2+N8ZzTTvdKxwx9BTMbc1os
+                2htxj5Ka7YwXb+Pe3ankHsxReeImzE9o4TrX+b3e2NAV4nXTFcAVCnUa4hpgXFRIAy1sbK270+3yNEt7
+                MJI7gb/KE7cANSS4rrUn9RVO+xXgKuAqhTqOgMvzppSDEdVK6uFC1j6u8e+A3ympk4A6YC+iqWaRUhrq
+                tH/a1X2arn1IcB9wQJ74AcQMZ/xKf+3p0sasb9ds3cNmLiDHq876N/nlOxWhlNT+wAoU954ITxKQdI2f
+                KZYeZ70KmBz31h9hrnPWNxWt/YxXaJqOpYzlwKGRkKuU0qNO+9H8ukpqfxI8RPud25XO+OJi2dPJvoVu
+                IupcnbDTEErVOoyAe4E92oTR+mau5zo3EDqd9e3A7QPSdp3Xapa+QTOridZjZZg0cHhrHSVVjrgVt5HJ
+                wAXOeOFA2NQb7BSecp2jkQTcxVYy5YCZzvpHA0WmwYAX+y3gsjzRYQp1TNuV+Em7NZP58fYkE+wkhGII
+                WWCftmsROuOa7WdQEVHOjUQdJELAyQBK6kjMP7TJzUoauWLQ7euAokx5M2fOHN/c3Dw5CIIjbI+z/Yqk
+                1UEQ/GdNTc0bPd0bhuEhwImSDpO0r+03gJeam5tvrqurW7st3Qp1BuI7eaJbnXZdQQ+0A8GLvFFJvU3r
+                GsltHScEFP+fI8cU/8ot28HEdiiIULbLU6nUPNsXSyqPfVqWNBkgl8t9mEqlLspkMos6xoOqqqqGVFRU
+                XCrpn1rtiOsIoKysbF4qlVrQ1NR02bJlyz7q1oiAOWxteT2bSRXyTDso8neOw5XUcOC7bRKz3Ev96qBb
+                1QUKmvJs32f7UuBtYIrt8cDQIAgOBc4FNtlemEwm220tYzI9AvwQWGf7HNvjGxoayoMg2IvIgdZg++Kh
+                Q4d25xREoY7o4HfJ9jXutqNDVUoAn20TmLcwJwIj2mQB2cG3rGsUOuXtY/u2lpaWqXV1dfmOs+eB56ur
+                q2+T9BvgtDAMZ2az2SUAI0eOvAw4Brhr6NChZy1cuPDdvHv/FIZhg6TRwHu2u9yeAiDOzLvKAUsLfJ4d
+                D5WcjNml7TrgGcz+7eqYJwbbrO5Q6KL8mV122eXMDmRqQ21t7XrbpwONkq6eNm3a2Orq6sMkfR94vQsy
+                EYbhtyTdBmzK5XInZTKZR3rQPyHv/xec8ZsFPs8OBVUpgfnnPFE9Q7gDs1+ebDNZ1g22bd2h0Cnv2oUL
+                Fzb1VKe2tnYNsAAYXl5e/qUgCCYDge25XZDpdEm/BN6XdGJtbe1j2zBh363GsFORCYBKrgQm5kmu9EI3
+                oTxfG2zoS77SQKPQRfmqXtZ7TBK2jyQOgNp+Kr9OKpU6W9INRGunr2Uymd/3oumtroKAP/Xe8h0bcZD3
+                +jj1pBUPkOUaMoBZ17a/g9GSNJik0kyNJ8dX2wQJft6aFVEQocrKynr1EEEQrLON7T0kfSaWtbkEUqnU
+                NNtZYEMQBJNramp6GxF/lyhiD24XBP5YQpKo5iQqWMDWADSIh2ni222kEa/n3TaEkD2INkaDg2YmIfL9
+                fHcTZTQURqiWlpbe5vwcDiBpNVGuz2RJ+wLPJpPJGcBiYB1wQk1NzUt9MOF1Wr3jztsJfUygWdqVHKMx
+                E4AvEvIdOqeH3EwT073MW10n5n/zRihwtMEZDJu3hUJ3eacD25yabLemYzwtaX08Wp0ehuFXJC0A1kg6
+                IZ1O9y0ybt6IU1pBHKgqJXYE5147mPOV1Pn9uPM1xCynvbxTibifaHQeEV+H7CCEKmhRLmlOGIbH9FQn
+                lUp9F/gb4MmxY8c+nEgk7iAaWS6MyfTHRCJxfFdkCsPw+DAMT5s9e3Z36av35/2/G5Wc0s9H2VHQDNyP
+                +BZjGd8lmYA4ReYXeaKvq1r7dVV3sFHoCDVE0r2pVOqCdDp9Y37BvHnzgrVr184BLgc+tH3m3Llzm4H3
+                U6nUFNsPAki6dsmSJe1ylKqqqhIVFRUXSroMSDQ1NZ0AdHYffMStDGMBrUl0Jgn8R4HPVGy8CF34iYQx
+                H2AagA2xf+mpPuRTZdkafgkQN2ieJm/vYHi/UoBTqdQy21Nsz5d0PtEP+nvgKaIMzgOItrsHAv8n6Zx0
+                On1PfhthGE6VdD2wq+0nJD1B5DU/UNLEuI0Nkqan0+k7u32AlLKY6vjSiFO669mDhQ4pwNc77QsGRE+o
+                axEX5okudsZXDoSuDnqnIrbGS8vYO86MKGzKSyQSdcBfEo0K44kOAcwHvkcULrgFOKQjmQCy2ewNcYhm
+                uaQjiEI18yWdTZSp+MstW7ZM6IlM0dMxD9pSUIX5V03VboU818cGjVxM+zXsfCWV3F7mQBFPvVRVVSUq
+                KyvH53K5cWVlZa+MGTPmlblz5/Zq+E0mk+XAQbb36eu9AHHm5L/niR4BvumM/9zHxygKBmuEgtgn1MJD
+                wJg88Y+d8bwB09nDCNUtoSSNs/uXf709oKQWAbPyRKuBv3bGg+ef2WrLoBEKQDM1jhZWQF6Mz9xDglmu
+                8RtF19fPKS8stiHFhKTPSdp67CjLeYjr86ocBjymlL42gDZIoU5WlYYMlI7ewEv8GjkmAU+3CcUp5PiD
+                kvpBnO5SFCjUyYhzuyvv8xpK0ohtlUvqsV1JwyR1e1RbUieHaRd6J5AfeoEyMvwQyE/O3xuzQkndrBna
+                vSeb+grN0CRCHkcsp4KnldLRxWy/r3Ct19PARMxcoDW+OpzoMMFahVqoUIf0p21NV6VSmqakViGWA5+P
+                i5qB63iH9W1127z50qeAa4DVthdLehp4gCin6VJJQ2Pj/ky0q9vVdijpamCL7UskXU6URnIgsMT2w52M
+                k2YSLbrLiY543xbrfRy4kyhHaiNwNNHivgn4F6CRyJE3JK6zlMgdcbakM4i88QlgPUlexCyGdt7zD4Bf
+                kCPtWv93v15slYZQyanxrvKkDsUPAKc64w8He8rrZGdvTw7DHxD1JKgHGmhmF1oYSUAFAeMxUb6Z+CId
+                XUziYcwsZ/xcvji/0nCizMA74usVti+SlJR0EHAUcLPtJyUJaE2amwh8XdKXgGeBl4GpQKfAsaQ9gJG2
+                L4mvE0AFMM72dEmXEJHnROBt2w2SpgJ1tlfHI9+vbTdKuhF4R9IwountcuA64GqnvU6z9CDNXAbMJiLa
+                XwDTCZiupJ4FHkSsRDzqGncZWNY8BazlEOBYYCIVnIoZ3aHaGsQ/Ou1bu2pjeyA+Qzi5m28b7I3Ym9aM
+                TxONM61oPV/durTOD/FENe/CZJ3p+jRzG6Fsr5eUBs4DLsqrU0/0QYlK4u25bUtqPXW70vZ7cUJcJZHr
+                YI7dZQhkBFHIoFVnS8RNWt0Kw4BvAIk4WAwR4erj+jlJHTMyhxGNYtcDl9heBxBHvy/UDN1AjvOAM4hI
+                BdFodjjmAgxKqjnWUY/4ADMi1juS7p2/LyKWYtJOF/5hi4FAfH5wlc7VnAK+vvIO4nFyPEQ5P/di95h7
+                1fayYv+PaY3ed8ZNwE8l3U30gxzcanf89y5av8wBP5D0HLAbcIvtJgDbL0s6S9J0IiJsIhoRW9u4EfgZ
+                sCSeStPAvwFXxXqPgvbZirbrJZURhXO+Ga+/HgMabT8fn+VPara+TxNnIf4Oc3SsP/897A7sTs9elLeA
+                +wi4wTVe2WPNHQhe5I1E7/VnkPd9qOgofQVR5/k08CGinhz1wAbKeLavJ63buQ1iD/Xz8YgzzvZrknYD
+                mmy/G085xwPPAJVxeTv3gqRJwKvxiDfB9gudlEqHAh/Fp2PKgTF29N0hSUOALwOP2FGEPZ4ajyfyxI+O
+                9Y4iWru9G9fZn2hd92y8+9tkd/3tAiVVjjki7q0HQfzFkRwViOFE67UGolHrbcSTbOEx13mbp3Cgw/eh
+                trBmRzlAMBj4RHzOp4TBw85x0LOEHQYlQpVQVJQIVUJRUSJUCUVFiVAlFBUlQpVQVPw/ROKj2ROf1SwA
+                AAAASUVORK5CYII=
+            </property>
+        </structure>
+    </list-property>
+</report>
