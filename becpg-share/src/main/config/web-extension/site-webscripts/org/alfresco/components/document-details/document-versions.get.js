@@ -27,7 +27,7 @@ function main()
 	       	}
             versions[i].downloadURL = "/api/node/content/" + versions[i].nodeRef.replace(":/", "") + "/" + versions[i].name + "?a=true";
             if(isEntity){
-            	versions[i].compareURL = "/becpg/entity/compare/" + versions[i].name + "?entity1=" + versions[i].nodeRef + "&entity2=" + nodeRef;
+            	versions[i].compareURL = "/becpg/entity/compare/" + encodeURIComponent(versions[i].name) + ".pdf?entity1=" + versions[i].nodeRef + "&entity2=" + nodeRef;
             }
             if (versions[i].nodeRef == nodeRef)
             {
