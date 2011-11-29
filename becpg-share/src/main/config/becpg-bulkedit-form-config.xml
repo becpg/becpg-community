@@ -39,6 +39,8 @@
 					<show id="bcpg:legalName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:productComments" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:code" />
 					<show id="bcpg:clients" />
 					<show id="cm:modified" />
