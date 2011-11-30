@@ -419,10 +419,7 @@
             var html = "",
 	            value = "",
 	            booleanValueTrue = scope.msg("data.boolean.true"),
-	            booleanValueFalse = scope.msg("data.boolean.false"),
-	            i,
-	            dataType,
-	            padding;
+	            booleanValueFalse = scope.msg("data.boolean.false");
             
             // Populate potentially missing parameters
             if (!oRecord)
@@ -445,11 +442,11 @@
                {
                   
                      oData = YAHOO.lang.isArray(oData) ? oData : [oData];
-                     for ( i = 0, ii = oData.length, data; i < ii; i++)
+                     for (var i = 0, ii = oData.length, data; i < ii; i++)
                      {
                         data = oData[i];
                         
-                      dataType = datalistColumn.dataType;
+                     var dataType = datalistColumn.dataType;
                   	  if(dataType==null){
                   		  dataType = datalistColumn.endpointType;
                   	  }
@@ -473,10 +470,10 @@
                            case "date":
                               html += Alfresco.util.formatDate(Alfresco.util.fromISO8601(data.value), scope.msg("date-format.defaultDateOnly"));
                               break;
-                           case "bcpg:product":
+                            case "bcpg:product":
                         	   if(datalistColumn.name == "bcpg:compoListProduct")
 								{
-                        		   padding = 10 + oRecord.getData("itemData")["prop_bcpg_depthLevel"].value * 10;
+                        		  var  padding = 10 + oRecord.getData("itemData")["prop_bcpg_depthLevel"].value * 10;
                         		   html += '<span class="' + data.metadata + '" style="padding-left:' + padding + 'px;"><a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a></span>';                        	   
 								}
                         	   	else if(datalistColumn.name == "bcpg:packagingListProduct")
@@ -536,6 +533,11 @@
                         	   {                        		   
                         		   html += '<span class="control">' + $html(data.displayValue) + '</span>';
                         	   }
+                        	   else if(datalistColumn.name == "bcpg:code" || datalistColumn.name == "cm:name")
+                        	   {               
+                        		   html += '<a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + oRecord.getData("nodeRef")) + '">' + $html(data.displayValue) + '</a>';
+                        	   }
+                           
                         	   else
                         	   {
                         		   html += $html(data.displayValue);
