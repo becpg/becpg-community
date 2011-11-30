@@ -123,7 +123,15 @@
                            {
                               fn: me.fillQueries,
                               scope: this
-                           }
+                           },
+	                        failureCallback:
+	     	               {
+	     	                  fn: function()
+	     	                  {
+	     	                	//DO nothing
+	     	                  },
+	     	                  scope: this
+	     	               }
                  });
                 
     
@@ -209,7 +217,15 @@
                        {
                           fn: this.processData,
                           scope: this
-                       }
+                       },
+                       failureCallback:
+     	               {
+     	                  fn: function()
+     	                  {
+     	                	//DO nothing
+     	                  },
+     	                  scope: this
+     	               }
              });
         } ,processData: function(response) {
 

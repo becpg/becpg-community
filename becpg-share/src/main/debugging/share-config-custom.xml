@@ -1,0 +1,24 @@
+<alfresco-config>
+
+    <config replace="true">
+         <flags>
+            <!-- Developer debugging setting - DEBUG mode for client scripts in the browser -->
+            <client-debug>true</client-debug>
+
+            <!-- LOGGING can be toggled at runtime when in DEBUG mode (Ctrl, Ctrl, Shift, Shift).
+                 This flag automatically activates logging on page load. -->
+            <client-debug-autologging>false</client-debug-autologging>
+         </flags>
+     </config>
+     
+     <config evaluator="string-compare" condition="WebFramework">
+           <web-framework>
+               <!-- Autowire Runtime Settings -->
+               <autowire>
+                   <!-- Pick the mode: development, preview, production -->
+                   <mode>development</mode>
+               </autowire>
+           </web-framework>
+       </config>
+
+</alfresco-config>

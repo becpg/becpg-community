@@ -1,5 +1,5 @@
 #!/bin/bash
-. ../../common.sh
+. ../common.sh
 
 echo "Run  mysql-view.sql"
 time mysql --user=$MYSQL_USER --password=$MYSQL_PWD $MYSQL_SCHEMA < mysql-view.sql

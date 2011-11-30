@@ -22,7 +22,10 @@ insert into becpg_product(product_fact_id,
  				product_ing_assoc_id,
  				product_microbio_assoc_id,
  				product_packaging_assoc_id,
- 				product_compo_assoc_id
+ 				product_compo_assoc_id,
+ 				product_projectedQty,
+				product_unitTotalCost,
+				product_unitPrice
  				)
 select node.id, code.string_value, name.string_value  , legalName.string_value, productHierarchy1.string_value,
  		productHierarchy2.string_value, productState.string_value, node_qname.local_name,
@@ -35,7 +38,10 @@ select node.id, code.string_value, name.string_value  , legalName.string_value, 
  		ing_assoc.entityListId,
  		microbio_assoc.entityListId,
  		packaging_assoc.entityListId,
- 		compo_assoc.entityListId
+ 		compo_assoc.entityListId,
+ 		projectedQty.long_value,
+ 		unitTotalCost.float_value,
+ 		unitPrice.float_value
  from alf_node node
  inner join becpg_alf_prop code on (node.id = code.node_id   and code.local_name = 'code')
  inner join becpg_alf_prop name on (node.id = name.node_id   and name.local_name = 'name')
@@ -45,18 +51,24 @@ select node.id, code.string_value, name.string_value  , legalName.string_value, 
  left outer join becpg_alf_prop startEffectivity on (node.id = startEffectivity.node_id  and startEffectivity.local_name = 'startEffectivity')
  left outer join becpg_alf_prop endEffectivity on (node.id = endEffectivity.node_id  and endEffectivity.local_name = 'endEffectivity')
  left outer join becpg_alf_prop productState on (node.id = productState.node_id  and productState.local_name = 'productState')
+ left outer join becpg_alf_prop projectedQty on (node.id = projectedQty.node_id   and projectedQty.local_name = 'projectedQty')
+ left outer join becpg_alf_prop unitTotalCost on (node.id = unitTotalCost.node_id   and unitTotalCost.local_name = 'unitTotalCost')
+ left outer join becpg_alf_prop unitPrice on (node.id = unitPrice.node_id   and unitPrice.local_name = 'unitPrice')
  left outer join becpg_entity_list nut_assoc on (nut_assoc.entityId = node.id and nut_assoc.entityType = 'bcpg:nutList')
  left outer join becpg_entity_list allergen_assoc on (allergen_assoc.entityId = node.id and allergen_assoc.entityType = 'bcpg:allergenList')
  left outer join becpg_entity_list ing_assoc on (ing_assoc.entityId = node.id and ing_assoc.entityType = 'bcpg:ingList')
  left outer join becpg_entity_list microbio_assoc on (microbio_assoc.entityId = node.id and microbio_assoc.entityType = 'bcpg:microbioList')
  left outer join becpg_entity_list packaging_assoc on (packaging_assoc.entityId = node.id and packaging_assoc.entityType = 'bcpg:packagingList')
  left outer join becpg_entity_list compo_assoc on (compo_assoc.entityId = node.id and compo_assoc.entityType = 'bcpg:compoList')
+ left outer join alf_node_assoc simulation_assoc on (simulation_assoc.target_node_id = node.id and simulation_assoc.type_qname_id 
+ in (select simulation_assoc_qname.id from alf_qname simulation_assoc_qname where simulation_assoc_qname.local_name = 'simulationSourceItem')) 
  inner join alf_qname node_qname on (node.type_qname_id= node_qname.id)
  inner join alf_store node_store on (node.store_id = node_store.id)
  where node_store.identifier = 'SpacesStore' and node_store.protocol='workspace'
+ and simulation_assoc.source_node_id IS NULL
  order by code.long_value, name.string_value;
 
- 
+
  
 update  becpg_product set product_startEffectivity_id=20010101 where  product_startEffectivity_id is null or product_startEffectivity_id=0;
 update  becpg_product set product_endEffectivity_id=20300101 where  product_endEffectivity_id is null;

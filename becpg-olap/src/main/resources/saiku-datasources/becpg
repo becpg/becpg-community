@@ -1,0 +1,6 @@
+type=OLAP
+name=beCPG
+driver=mondrian.olap4j.MondrianOlap4jDriver
+location=jdbc:mondrian:Jdbc=jdbc:mysql://${olap.db.host}:${olap.db.port}/${olap.db.name};Catalog=res:becpg/becpg.xml;JdbcDrivers=com.mysql.jdbc.Driver;
+username=${olap.db.username}
+password=${olap.db.password}

@@ -8,8 +8,7 @@ create or replace view becpg_alf_prop (node_id,string_value,long_value,float_val
 	from alf_node_properties prop
 	inner join alf_qname qname on prop.qname_id = qname.id;
 
-
-
+	
 --
 -- bcpg:client
 --

@@ -105,6 +105,30 @@ insert into becpg_product_type(product_type,product_label) values ("rawMaterial"
 insert into becpg_product_type(product_type,product_label) values ("packagingKit",'Kit d''emballage');
 insert into becpg_product_type(product_type,product_label) values ("packagingMaterial","Emballage");
 
+
+--
+-- Product state Table
+--   becpg_product_state
+-- 
+DROP TABLE IF EXISTS `becpg_product_state`;
+
+CREATE TABLE `becpg_product_state` (
+	`product_state_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`product_state`  TEXT NOT NULL ,
+	`product_label` TEXT NOT NULL,
+	 PRIMARY KEY (`product_state_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+SET character_set_client = utf8;
+
+insert into becpg_product_state(product_state,product_label) values ("ToValidate","A validé");
+insert into becpg_product_state(product_state,product_label) values ("Valid","Validé");
+insert into becpg_product_state(product_state,product_label) values ("Refused","Refusé");
+insert into becpg_product_state(product_state,product_label) values ("Archived","Archivé");
+
+
+
+
 --
 -- Product Fact Table
 --   becpg_product
@@ -124,6 +148,9 @@ DROP TABLE IF EXISTS `becpg_product`;
   `product_productHierarchy2` TEXT NOT NULL,
   `product_productState` TEXT DEFAULT NULL,
   `product_type` TEXT NOT NULL,
+  `product_projectedQty` INT,
+  `product_unitTotalCost` FLOAT,
+  `product_unitPrice` FLOAT,
   `product_nut_assoc_id` BIGINT(20) ,
   `product_allergen_assoc_id` BIGINT(20) ,
   `product_ing_assoc_id` BIGINT(20) ,

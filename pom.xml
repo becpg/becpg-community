@@ -21,9 +21,6 @@
 		</mailingList>
 	</mailingLists>
 
-
-	<!-- The scm is required for the buildnumber-maven-plugin which is required 
-		for AMP version numbering -->
 	<scm>
 		<connection>scm:hg:https://www.becpg.fr/hg/becpg</connection>
 		<developerConnection>scm:hg:https://${maven.username}@becpg.fr/hg/becpg/</developerConnection>
@@ -64,33 +61,26 @@
 
 
 	<properties>
-		<!-- Default for which src/main/properties/<env>/application.properties 
-			is loaded. NB: used only for the 'test' profile (e.g. '-P test' on the mvn 
-			commandline) jetty run deployment, does not impact AMP behavior which is 
-			typically environment independent -->
-		<env>local</env>
-		<!-- | | By default the src/test/properties/local/application.properties 
-			uses the property "alfresco.data.location" to specify where | alf_data gets 
-			created. | For local jetty:run deployment default creation dir is under project 
-			root folder (as location is specified relatively to run | dir). Please add 
-			alf_data_jetty in svn/cvs ignores in order not to commit that. You can also 
-			specified a different (out of the | sproject) folder | by editing the following 
-			properties. | DB is also configurable here. Of course keep in sync these 
-			two values otherwise you'll get integrity errors. | | Empty log dir creates 
-			file alfresco.log in appserver default dir. You can also specify a meaningful 
-			log directory for the server | (add a trailing slash, e.g. '/var/log/alfresco/' 
-			) | | Jetty embedded run logs by default in target/alfresco.log -->
+	    <!-- Test -->
 		<alfresco.data.location>./becpg_data</alfresco.data.location>
+		<alfresco.db.host>localhost</alfresco.db.host>
 		<alfresco.db.name>becpg_34d_dev</alfresco.db.name>
 		<alfresco.db.username>becpg</alfresco.db.username>
 		<alfresco.db.password>becpg</alfresco.db.password>
-		<webapp.log.level>error</webapp.log.level>
-		<webapp.log.dir></webapp.log.dir>
-		<!-- End of testing webapp specific properties -->
+		<alfresco.server>/opt/alfresco-3.4.d</alfresco.server>
+		<!-- OLAP -->
+		<olap.server>/opt/alfresco-3.4.d</olap.server>
+		<olap.db.host>localhost</olap.db.host>
+		<olap.db.name>becpg</olap.db.name>
+		<olap.db.username>becpg</olap.db.username>
+		<olap.db.password>becpg</olap.db.password>
+		<olap.db.port>3306</olap.db.port>
+		<!-- Log -->
+		<webapp.log.dir>/var/log/alfresco</webapp.log.dir>
 		<!-- Module specific build time properties -->
 		<module.log.level>info</module.log.level>
+		<!-- build -->
 		<alfresco.version>3.4</alfresco.version>
-		<alfresco.server>/opt/alfresco-3.4.d</alfresco.server>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -122,28 +112,33 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
 	<modules>
 		<module>becpg-bootstrap/alfresco-sdk</module>
 		<module>becpg-bootstrap/birt-sdk</module>
 		<module>becpg-core</module>
 		<module>becpg-share</module>
+		<module>becpg-olap</module>
 	</modules>
 	<profiles>
 		<profile>
 			<id>dev-tours</id>
 			<properties>
+			    <!-- Test -->
 				<alfresco.data.location>./alf_data</alfresco.data.location>
+				<alfresco.db.host>localhost</alfresco.db.host>
 				<alfresco.db.name>becpg_test</alfresco.db.name>
 				<alfresco.db.username>becpg</alfresco.db.username>
 				<alfresco.db.password>becpg</alfresco.db.password>
 				<alfresco.server>/opt/becpg/alfresco-3.4.d</alfresco.server>
-				<webapp.log.level>error</webapp.log.level>
-				<webapp.log.dir></webapp.log.dir>
-				<module.log.level>info</module.log.level>
-				<alfresco.version>3.4</alfresco.version>
+				<!-- OLAP -->
+				<olap.server>/opt/becpg/alfresco-3.4.d</olap.server>
+				<olap.db.host>localhost</olap.db.host>
+				<olap.db.name>becpg_demo</olap.db.name>
+				<olap.db.username>becpg</olap.db.username>
+				<olap.db.password>becpg</olap.db.password>
+				<!-- Log -->
+				<webapp.log.dir>/tmp</webapp.log.dir>
 			</properties>
 		</profile>
-
 	</profiles>
 </project>
