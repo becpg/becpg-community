@@ -214,6 +214,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(charactsNodeRef, RepoConsts.PATH_SUBSIDIARIES);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_TRADEMARKS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_PLANTS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_CERTIFICATIONS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_APPROVALNUMBERS);
 
 		// Hierarchy
 		NodeRef hierarchyNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
@@ -394,6 +396,10 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			specialiseType = BeCPGModel.TYPE_TRADEMARK;
 		} else if (folderName == RepoConsts.PATH_PLANTS) {
 			specialiseType = BeCPGModel.TYPE_PLANT;
+		} else if (folderName == RepoConsts.PATH_CERTIFICATIONS) {
+			specialiseType = BeCPGModel.TYPE_CERTIFICATION;
+		} else if (folderName == RepoConsts.PATH_APPROVALNUMBERS) {
+			specialiseType = BeCPGModel.TYPE_APPROVAL_NUMBER;
 		} else if (folderName == RepoConsts.PATH_ENTITY_TEMPLATES) {
 			specialiseType = BeCPGModel.TYPE_ENTITY;
 		} else if (folderName.endsWith(RepoConsts.PATH_HIERARCHY_SFX_HIERARCHY1)) {

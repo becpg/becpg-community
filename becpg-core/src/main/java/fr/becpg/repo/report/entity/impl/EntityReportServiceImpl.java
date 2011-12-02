@@ -64,6 +64,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 
 	/** The Constant VALUE_NULL. */
 	private static final String VALUE_NULL = "";
+	private static final String VALUE_PERSON = "%s %s";
 		
 	private static final String KEY_XML_INPUTSTREAM = "org.eclipse.datatools.enablement.oda.xml.inputStream";
 	
@@ -238,7 +239,18 @@ public class EntityReportServiceImpl implements EntityReportService{
 
 			QName qName = assocRef.getTypeQName();
 			NodeRef targetNodeRef = assocRef.getTargetRef();
-			String name = (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
+			QName targetQName = nodeService.getType(targetNodeRef);
+			String name = "";
+			logger.debug("###targetQName: " + targetQName);
+			
+			if(targetQName.equals(ContentModel.TYPE_PERSON)){
+				name = String.format(VALUE_PERSON, (String)nodeService.getProperty(targetNodeRef, ContentModel.PROP_FIRSTNAME),
+								(String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_LASTNAME));
+			}
+			else{
+				name = (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
+			}
+			
 
 			if (tempValues.containsKey(qName)) {
 				String names = tempValues.get(qName);

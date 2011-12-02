@@ -1920,6 +1920,8 @@
 					<show id="bcpg:locationAddress3" />
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCountry" />
+					<show id="bcpg:plantCertifications" />
+					<show id="bcpg:plantApprovalNumbers" />					
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">

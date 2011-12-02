@@ -48,6 +48,8 @@ public class RepoConsts {
 	public static final String PATH_SUBSIDIARIES = "Subsidiaries";	
 	public static final String PATH_TRADEMARKS = "Trademarks";	
 	public static final String PATH_PLANTS = "Plants";	
+	public static final String PATH_CERTIFICATIONS = "Certifications";
+	public static final String PATH_APPROVALNUMBERS = "ApprovalNumbers";
 	public static final String PATH_ENTITY_TEMPLATES = "EntityTemplates";
 	public static final String PATH_FOLDER_TEMPLATES = "FolderTemplates";
 	public static final String PATH_PRODUCT_TEMPLATES = "ProductTemplates";
