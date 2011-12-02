@@ -61,6 +61,10 @@ public final class Search extends BaseScopableProcessorExtension{
 		Map<String, String> criteriaMap = null;
 		QName datatypeQName = (datatype != null && !datatype.isEmpty()) ? QName.createQName(datatype, services.getNamespaceService()) : null;
 		
+		if(logger.isDebugEnabled() && datatypeQName!=null){
+			logger.debug("Filter on dataType: "+datatypeQName.toString());
+		}
+		
 		if (criteria instanceof ScriptableObject){
 			
 			criteriaMap = new HashMap<String, String>(4, 1.0f);

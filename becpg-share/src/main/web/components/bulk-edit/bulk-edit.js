@@ -311,9 +311,9 @@
       selectedFields: null,
      
       /**
-       * The buttons
+       * The widgets
        */
-      buttons : {},
+      widgets : {},
 
       /**
        * DataTable Cell Renderers
@@ -339,10 +339,15 @@
           */
          return function BulkEdit_renderCellSelected(elCell, oRecord, oColumn, oData)
          {
-            Dom.setStyle(elCell, "width", oColumn.width + "px");
-            Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
-
-            elCell.innerHTML = '<input id="checkbox-' + oRecord.getId() + '" type="checkbox" name="fileChecked" value="'+ oData + '"' + (scope.selectedItems[oData] ? ' checked="checked">' : '>');
+        	 var   nodeRef = oRecord.getData().nodeRef,
+  	 	   		   editPermission = oRecord.getData().permissions.userAccess.edit;
+        	 
+        	 if(editPermission){ 
+	            Dom.setStyle(elCell, "width", oColumn.width + "px");
+	            Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+	
+	            elCell.innerHTML = '<input id="checkbox-' + oRecord.getId() + '" type="checkbox" name="fileChecked" value="'+ oData + '"' + (scope.selectedItems[oData] ? ' checked="checked">' : '>');
+        	 }
          };
       },
       /**
@@ -366,12 +371,16 @@
          return function BulkEdit_renderCellActions(elCell, oRecord, oColumn, oData)
          {
   
-        	 var   nodeRef = oRecord.getData().nodeRef;
-            Dom.setStyle(elCell, "width", oColumn.width + "px");
-            Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
-            elCell.innerHTML = '<div id="' + scope.id + '-actions-' + oRecord.getId() + '" class="action-set simple" >'+
-            					'<div class="onActionEdit"><a title="Modifier"  class="action-link" href="" rel="edit"><span>Modifier</span></a></div>'+
-            					'</div>';
+        	 var   nodeRef = oRecord.getData().nodeRef,
+        	 	   editPermission = oRecord.getData().permissions.userAccess.edit ;
+        	 
+        	if(editPermission){
+	            Dom.setStyle(elCell, "width", oColumn.width + "px");
+	            Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+	            elCell.innerHTML = '<div id="' + scope.id + '-actions-' + oRecord.getId() + '" class="action-set simple" >'+
+	            					'<div class="onActionEdit"><a title="Modifier"  class="action-link" href="" rel="edit"><span>Modifier</span></a></div>'+
+	            					'</div>';
+        	}
          };
       },
      /**
@@ -381,9 +390,9 @@
       onSelectedItemsChanged : function (){
 
     	  if(this.getSelectedItems().length>0){
-    		  this.buttons.editSelected.set("disabled", false);  	  
+    		  this.widgets.editSelected.set("disabled", false);  
     	  } else {
-    		  this.buttons.editSelected.set("disabled", true);  	  
+    		  this.widgets.editSelected.set("disabled", true);  
     	  }
       },      
       /**
@@ -505,7 +514,15 @@
                               html += ' ' + $html(data.displayValue) + '</a>'
                               break;
                           
-                           default:
+                           default: /**
+                                * Actions custom datacell formatter
+                               *
+                               * @method renderCellActions
+                               * @param elCell {object}
+                               * @param oRecord {object}
+                               * @param oColumn {object}
+                               * @param oData {object|string}
+                               */
                         	   if(datalistColumn.name == "bcpg:rclReqType" || datalistColumn.name == "bcpg:filReqType")
                     		   {
                         		   if(data.displayValue == reqTypeForbidden)
@@ -575,6 +592,12 @@
     		   return null;
     	   }
     	 
+    	   //Test permission 
+    	   if((column.protectedField !=null && column.protectedField) ){
+    		   return null;
+    	   }
+    	   
+    	   var repeating = column.repeating ? true : false;
     	  
     	  if(column.constraints!=null){
     		  for(var i in column.constraints){
@@ -647,10 +670,12 @@
     		    var oColumn,
     		    	oRecord,
     		    	oData;
-    		    	
-    		  
+    		    
+    		    
     		    // Validate 
-    		    if(oDataTable instanceof YAHOO.widget.DataTable) {
+    		    if( oDataTable instanceof YAHOO.widget.DataTable) {
+    		    	
+    		    	
     		    	editor._oDataTable = oDataTable;
     		        
     		        // Validate cell
@@ -665,31 +690,40 @@
     		                
     		                // Validate Record
     		                oRecord = oDataTable.getRecord(elCell);
-    		                if(oRecord) {
+    		            	editPermission = oRecord.getData().permissions.userAccess.edit ;
+    		                
+    		                if(oRecord && editPermission) {
     		                	editor._oRecord = oRecord;
     		                	oData;
     		                	if(oData==null){
     		                		oData = oRecord.getData("itemData")[editor.getColumn().getField()];
     		                	}
     		                    var value = undefined;
-    		                   oData = YAHOO.lang.isArray(oData) ? oData : [oData];
-    		                   if(oData[0]){
-    		                    switch (dataType.toLowerCase())
-    		                        {
-    		                          case "datetime":
-    		                        	 value = Alfresco.util.fromISO8601(oData[0].value);
-    		                              break;              
-    		                          case "date":
-    		                        	 value = Alfresco.util.fromISO8601(oData[0].value);
-    		                              break;
-    		                          case "boolean":
-    		                        	  value = ""+ oData[0].displayValue;                       	 
-     		                              break;
-    		                          default:
-    		                             value = oData[0].displayValue;
-    		                              break;
-    		                        }
-    		                   }
+    		                    
+    		                    if( oRecord.getData(this.getColumn().getField())!=null){
+    		                    	oData =  oRecord.getData(this.getColumn().getField());
+    		                    }
+	    		                oData = YAHOO.lang.isArray(oData) ? oData : [oData];
+	    		                   if(oData[0]){
+	    		                    switch (dataType.toLowerCase())
+	    		                        {
+	    		                          case "datetime":
+	    		                        	 value = Alfresco.util.fromISO8601(oData[0].value);
+	    		                              break;              
+	    		                          case "date":
+	    		                        	 value = Alfresco.util.fromISO8601(oData[0].value);
+	    		                              break;
+	    		                          case "boolean":
+	    		                        	  value = ""+ oData[0].displayValue;                       	 
+	     		                              break;
+	    		                          default:
+	    		                             value = oData[0].displayValue;
+	    		                              break;
+	    		                        }
+	    		                    if(repeating){
+	    		                    	value = value.split(",");
+	    		                    }
+	    		                   }    		 
     		                    editor.value = (value !== undefined) ? value : editor.defaultValue;
     		                    return true;
     		                }
@@ -780,6 +814,7 @@
 	                   dataObj: {
 	                	   		 value : validValue,
 	                	   		 field : column.getField(),
+	                	   		 isMultiple : repeating,
 	                	   		 nodeRef : record.getData("nodeRef")
 	                	   		},
 	                   successCallback:
@@ -951,11 +986,19 @@
           });
          
          
-        this.buttons.editSelected = Alfresco.util.createYUIButton(this, "edit-selected", this.onEditSelected,
+        this.widgets.editSelected = Alfresco.util.createYUIButton(this, "edit-selected", this.onEditSelected,
          {
            disabled: true
          });
 
+        
+        this.widgets.exportCSVButton = Alfresco.util.createYUIButton(this, "export-csv", this.onExportCSV,
+        {
+              disabled: true,
+              value: "export"
+        });
+                
+        
            
      
          // Assume no list chosen for now
@@ -1086,6 +1129,26 @@
 
        
       },
+      
+      _buildDataParamsUrl : function BulkEdit__buildDataParamsUrl(){
+    	
+          
+          var site = this.options.initialSearchAllSites ? "" : this.options.siteId;
+          var params = YAHOO.lang.substitute("site={site}&term={term}&tag={tag}&sort={sort}&query={query}&repo={repo}&nodeRef={nodeRef}&itemType={itemType}",
+          {
+             site: encodeURIComponent(site),
+             repo: (this.options.initialSearchRepository || this.options.searchQuery.length !== 0).toString(), // always search entire repo with advanced query
+             term: encodeURIComponent(this.options.initialSearchTerm),
+             tag: encodeURIComponent(this.options.initialSearchTag),
+             sort: encodeURIComponent(this.options.initialSort),
+             query: encodeURIComponent(this.options.searchQuery),
+             nodeRef: encodeURIComponent(this.options.nodeRef),
+             itemType : encodeURIComponent(this.options.itemType)
+             
+          });
+          
+         return params;
+      },
 
       /**
        * DataSource set-up and event registration
@@ -1097,41 +1160,25 @@
       _setupDataSource: function BulkEdit__setupDataSource()
       {
     	 
-    	 var fieldsDef = [];
+    	  var fieldsDef = [];
     	  
-         for (var i = 0, ii = this.datalistColumns.length; i < ii; i++)
-         {
-            var column = this.datalistColumns[i],
-               columnName = column.name.replace(":", "_"),
-               fieldLookup = this._buildFormsName(column);
-         
-            if(this._isSelectedProp(this._buildFormsName(column))){
-            	Alfresco.logger.debug("Select prop "+this._buildFormsName(column));
-	            this.dataRequestFields.push(columnName);
-	            this.dataResponseFields.push(fieldLookup);
-	            this.dataTableColumn.push(column);
-            }
-            this.datalistColumns[fieldLookup] = column;
-         }
-         
-         
-         var site = this.options.initialSearchAllSites ? "" : this.options.siteId;
-         var params = YAHOO.lang.substitute("site={site}&term={term}&tag={tag}&sort={sort}&query={query}&repo={repo}&nodeRef={nodeRef}&itemType={itemType}",
-         {
-            site: encodeURIComponent(site),
-            repo: (this.options.initialSearchRepository || this.options.searchQuery.length !== 0).toString(), // always search entire repo with advanced query
-            term: encodeURIComponent(this.options.initialSearchTerm),
-            tag: encodeURIComponent(this.options.initialSearchTag),
-            sort: encodeURIComponent(this.options.initialSort),
-            query: encodeURIComponent(this.options.searchQuery),
-            nodeRef: encodeURIComponent(this.options.nodeRef),
-            itemType : encodeURIComponent(this.options.itemType)
-            
-         });
+          for (var i = 0, ii = this.datalistColumns.length; i < ii; i++)
+          {
+             var column = this.datalistColumns[i],
+                columnName = column.name.replace(":", "_"),
+                fieldLookup = this._buildFormsName(column);
+          
+             if(this._isSelectedProp(this._buildFormsName(column))){
+             	Alfresco.logger.debug("Select prop "+this._buildFormsName(column));
+ 	            this.dataRequestFields.push(columnName);
+ 	            this.dataResponseFields.push(fieldLookup);
+ 	            this.dataTableColumn.push(column);
+             }
+             this.datalistColumns[fieldLookup] = column;
+          }
          
          // DataSource definition
-         this.widgets.dataSource = new YAHOO.util.DataSource( 
-        		 Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/data?"+params,
+         this.widgets.dataSource = new YAHOO.util.DataSource(   Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/data?"+this._buildDataParamsUrl() ,
          {
             connMethodPost: true,
             responseType: YAHOO.util.DataSource.TYPE_JSON,
@@ -1353,7 +1400,7 @@
                     var elCell = oArgs.target; 
                  if(YAHOO.util.Dom.hasClass(elCell, "yui-dt-editable")) { 
         	              this.highlightCell(elCell); 
-        	            } 
+        	      } 
              } ); 
          this.widgets.dataTable.subscribe("cellMouseoutEvent",   this.widgets.dataTable.onEventUnhighlightCell); 
          this.widgets.dataTable.subscribe("cellClickEvent",   this.widgets.dataTable.onEventShowCellEditor); 
@@ -1530,6 +1577,7 @@
 	        
 	     // Enable item select menu
 	     this.widgets.itemSelect.set("disabled", false);
+	     this.widgets.exportCSVButton.set("disabled", false); 
          this._updateBulkEdit.call(this);
       },
 
@@ -1732,11 +1780,22 @@
     	  return formsName;
     	  
       },
+      onExportCSV : function BulkEdit_onExportCSV(){
+    	  var i, fields = "";
+    	  for( i in this.dataRequestFields){
+    		  if(fields.length>0){
+    			  fields += "$";
+    		  }
+    		  fields+=this.dataRequestFields[i];
+    		  
+    	  }
+    	  window.location = Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/export.csv?"+this._buildDataParamsUrl()+"&fields="+fields;
+      },
       
       onEditSelected : function BulkEdit_onEditSelected(){
     	
        // Intercept before dialog show
-       var doBeforeDialogShow = function DataListToolbar_onNewRow_doBeforeDialogShow(p_form, p_dialog)
+       var doBeforeDialogShow = function BulkEdit_onNewRow_doBeforeDialogShow(p_form, p_dialog)
        {
           Alfresco.util.populateHTML(
              [ p_dialog.id + "-dialogTitle", this.msg("label.edit-selected.title") ],
@@ -1803,7 +1862,7 @@
           },
           onSuccess:
           {
-             fn: function DataListToolbar_onNewRow_success(response)
+             fn: function BulkEdit_onNewRow_success(response)
              {
                 YAHOO.Bubbling.fire("bulkDataChanged");
 
@@ -1816,7 +1875,7 @@
           },
           onFailure:
           {
-             fn: function DataListToolbar_onNewRow_failure(response)
+             fn: function BulkEdit_onNewRow_failure(response)
              {
                 Alfresco.util.PopupManager.displayMessage(
                 {

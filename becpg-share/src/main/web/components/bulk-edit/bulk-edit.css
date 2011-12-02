@@ -61,7 +61,21 @@
 .bulk-edit .bulk-edit-bar .item-select
 {
    float: left;
-   width: 40%;
+}
+
+.bulk-edit .bulk-edit-bar .edit-selected
+{
+   float: left;
+}
+
+.bulk-edit .bulk-edit-bar .items-per-page
+{
+   float: right;
+}
+
+.bulk-edit .bulk-edit-bar .export-csv
+{
+   float: right;
 }
 
 .bulk-edit .bulk-edit-bar .paginator
@@ -105,6 +119,19 @@
 {
    background-image: url(../images/select-invert-16.png);
 }
+
+.bulk-edit .edit-selected span.first-child
+{
+   background: url(../images/edit-inline-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.bulk-edit .export-csv span.first-child
+{
+   background: url(../images/filetypes/xls-file-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
 
 /* Data Table */
 
@@ -278,6 +305,13 @@
 }
 
 
+.form-container .yui-u
+{
+	margin-left:0px;
+}
+	
 .alfresco-share .yui-panel .bd .form-container .yui-u.first {
     text-align: left;
 }
+
+

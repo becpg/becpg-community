@@ -3,6 +3,15 @@
 
 <beans>
    
+   <!-- CSV -->
+   <bean parent="webscripts.formatmap">
+	      <property name="formats">
+	            <props>
+	                  <prop key="csv">application/vnd.ms-excel</prop>
+	            </props>
+	      </property>
+	</bean>
+   
    	<!-- Admin -->
    	<bean id="webscript.fr.becpg.admin.adminModule.get" class="fr.becpg.repo.web.scripts.admin.AdminModuleWebScript" parent="webscript">
       	<property name="initRepoVisitor" ref="initRepoVisitor" />

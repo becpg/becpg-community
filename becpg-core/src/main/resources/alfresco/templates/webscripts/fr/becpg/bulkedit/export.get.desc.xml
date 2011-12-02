@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>BulkEdit - Export CSV</shortname>
+  <description>BulkEdit Component - Export CSV</description>
+  <url>/becpg/bulkedit/export.csv?query={query?}&amp;itemType={itemType?}&amp;fields={fields?}</url>
+  <format default="csv">argument</format>
+  <authentication>user</authentication>
+  <transaction allow="readonly"/>
+  <lifecycle>internal</lifecycle>
+</webscript>

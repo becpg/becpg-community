@@ -3,6 +3,13 @@
 {
    "totalRecords": ${data.paging.totalRecords?c},
    "startIndex": ${data.paging.startIndex?c},
+   "itemTypes" : 
+   [
+      <#list data.itemTypes as item>
+        "${item}"
+      <#if item_has_next>,</#if>
+      </#list>
+   ],
    "items":
    [
       <#list data.items as item>

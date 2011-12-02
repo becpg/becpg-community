@@ -716,6 +716,10 @@ function getItem(siteId, containerId, pathParts, node, metadataFields)
             break;
       }
    }
+   if(item!=null){
+	   item.itemType = node.typeShort;
+   }
+   
    return item;
 }
 

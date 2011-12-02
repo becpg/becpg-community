@@ -1,21 +1,3 @@
-/**
- * Copyright (C) 2005-2010 Alfresco Software Limited.
- *
- * This file is part of Alfresco
- *
- * Alfresco is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Alfresco is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
- */
 
 var Common =
 {
@@ -119,12 +101,38 @@ var ParseArgs =
             }
          }
       }
+      
+      var fields =  [];
+      // Extract fields (if given)
+      
+      if (args.fields){
+    	 var  fieldsTmp = args.fields.split('$');
+    	  
+          for (count = 0; count < fieldsTmp.length; count++)
+          {
+             fields.push(fieldsTmp[count].replace("_", ":"));
+          }
+    	  
+      }  else if (typeof json !== "undefined" && json.has("fields"))
+      {
+         // Convert the JSONArray object into a native JavaScript array
+         var jsonFields = json.get("fields"),
+            numFields = jsonFields.length();
+         
+         for (count = 0; count < numFields; count++)
+         {
+            fields.push(jsonFields.get(count).replaceFirst("_", ":"));
+         }
+      }
+
+      
 
       var objRet =
       {
          itemType: (args.itemType !== null) ? args.itemType : null,
          nodeRef: (args.nodeRef !== null) ? args.nodeRef : null,
          filter: filter,
+         fields : fields,
          searchParams : {
 		      siteId: (args.site !== null) ? args.site : null,
 		      containerId: (args.container !== null) ? args.container : null,

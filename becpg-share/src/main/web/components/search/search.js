@@ -571,7 +571,8 @@
                }
                desc += '</span></div>';
             }
-            var itemData = oRecord.getData("itemData");
+            var itemType = oRecord.getData("itemType"),
+               itemData = oRecord.getData("itemData");
             if(itemData!=null){
             	
             	for(key in itemData){
@@ -579,7 +580,7 @@
             		
             		if(item.displayValue!=null && item.displayValue.length>0){
 		                desc += '<div class="details">' + $html(item.label) + ': ';
-		                desc += '<span id="' + me.id + '-' + $html(key)+'-'+ $html(item.value) + '" class="searchByProp" ><a class="search-prop" href="#">' + $html(item.displayValue) + '</a></span>'; 
+		                desc += '<span id="' + me.id + '-' + $html(key)+'-'+ $html(item.value) +"-"+$html(itemType)+ '" class="searchByProp" ><a class="search-prop" href="#">' + $html(item.displayValue) + '</a></span>'; 
 		                desc += '</div>';
             		} else if(item.length>0){
             			for(jj in  item){
@@ -588,7 +589,7 @@
             				}else {
             					desc +=",&nbsp;";
             				}
-            				desc += '<span id="' + me.id + '-' + $html(key)+'-'+ $html(item[jj].value) + '" class="searchByProp" ><a class="search-prop" href="#">' + $html(item[jj].displayValue) + '</a></span>'; 
+            				desc += '<span id="' + me.id + '-' + $html(key)+'-'+ $html(item[jj].value) +"-"+$html(itemType) + '" class="searchByProp" ><a class="search-prop" href="#">' + $html(item[jj].displayValue) + '</a></span>'; 
       		              
             			}
             			desc += '</div>';
@@ -641,6 +642,7 @@
                {
                   me._setDefaultDataTableErrors(me.widgets.dataTable);
                }
+               
             }
             else if (oResponse.results)
             {
@@ -822,12 +824,13 @@
       {
     	 var key = param.split("-")[0],
     	 	value = param.split("-")[1];
+    	 	type = param.split("-")[2];
     	  
          this.refreshSearch(
          {
             searchTag: "",
             searchTerm: this.searchTerm,
-            searchQuery: encodeURIComponent("{\""+key+"\":\""+value+"\"}")
+            searchQuery: encodeURIComponent("{\""+key+"\":\""+value+"\",\"datatype\":\""+type+"\"}")
          });
       },
       

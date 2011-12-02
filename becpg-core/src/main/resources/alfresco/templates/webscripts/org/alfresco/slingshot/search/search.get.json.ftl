@@ -1,6 +1,15 @@
+<#macro translateValue nameValue>
+<#escape x as jsonUtils.encodeJSONString(x)>
+      <#if nameValue?string == "ToValidate">"${msg("state.product.tovalidate")}"
+      <#elseif nameValue?string == "Valid">"${msg("state.product.valid")}"
+      <#elseif nameValue?string == "Refused">"${msg("state.product.refused")}"
+      <#elseif nameValue?string == "Archived">"${msg("state.product.archived")}"
+      <#else>${nameValue?html}</#if>
+</#escape>
+</#macro>
 <#macro dateFormat date>${date?string("dd MMM yyyy HH:mm:ss 'GMT'Z '('zzz')'")}</#macro>
-<#macro renderData data>
-   <#escape x as jsonUtils.encodeJSONString(x)>
+<#macro renderData key data>
+<#escape x as jsonUtils.encodeJSONString(x)>
 {
       <#if data.value?is_boolean>
    "value": ${data.value?string},
@@ -15,15 +24,19 @@
       <#if data.metadata??>
    "metadata": "${data.metadata}",
       </#if>
-      <#if data.displayValue?is_boolean>
-   "displayValue": ${data.displayValue?string}
-      <#elseif data.displayValue?is_number>
-   "displayValue": ${data.displayValue?c}
+       <#if key?string == "prop_bcpg_productState">
+      	 "displayValue": <@translateValue data.value />
       <#else>
-   "displayValue": "${data.displayValue}"
-      </#if>
+	      <#if data.displayValue?is_boolean>
+	   "displayValue": ${data.displayValue?string}
+	      <#elseif data.displayValue?is_number>
+	   "displayValue": ${data.displayValue?c}
+	      <#else>
+	   "displayValue": "${data.displayValue}"
+	      </#if>
+	   </#if>
 }
-   </#escape>
+</#escape>
 </#macro>
 <#escape x as jsonUtils.encodeJSONString(x)>
 {
@@ -33,6 +46,7 @@
 		{
 			"nodeRef": "${item.nodeRef}",
 			"type": "${item.type}",
+			"itemType": "${item.itemType}",
 			"name": "${item.name!''}",
 			"displayName": "${item.displayName!''}",
 			<#if item.title??>
@@ -60,11 +74,11 @@
 		         <#if itemData?is_sequence>
 		            [
 		            <#list itemData as data>
-		               <@renderData data /><#if data_has_next>,</#if>
+		               <@renderData key data /><#if data_has_next>,</#if>
 		            </#list>
 		            ]
 		         <#else>
-		            <@renderData itemData />
+		            <@renderData key itemData />
 		         </#if><#if key_has_next>,</#if>
 		      </#list>
 		         },
