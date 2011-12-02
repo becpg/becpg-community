@@ -119,6 +119,7 @@
 		<module>becpg-share</module>
 		<module>becpg-olap</module>
 	</modules>
+
 	<profiles>
 		<profile>
 			<id>dev-tours</id>

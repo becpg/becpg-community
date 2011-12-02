@@ -245,10 +245,8 @@
          // Bulk edit
          this.widgets.bulkEdit = Alfresco.util.createYUIButton(this, "bulkEdit-button", this.onBulkEdit,
          {
-            disabled: true,
-            value: "create"
+            disabled: false
          });
-         this.dynamicControls.push(this.widgets.bulkEdit);
          
 
          // Selected Items menu button

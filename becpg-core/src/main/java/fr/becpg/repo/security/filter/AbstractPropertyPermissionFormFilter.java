@@ -49,32 +49,32 @@ public abstract class AbstractPropertyPermissionFormFilter<ItemType> extends Abs
 	
 	
 	protected void filterFormFields(QName nodeType ,Form form){
-		
-		Iterator<FieldDefinition> it = form.getFieldDefinitions().iterator();
-		while(it.hasNext()){
-			FieldDefinition fieldDefinition = it.next();
-			int access_mode = securityService.computeAccessMode(nodeType, fieldDefinition.getName());
-			
-			switch (access_mode) {
-			case SecurityService.READ_ACCESS:
-				if(logger.isDebugEnabled()){
-					logger.debug("Mark as read only :"+fieldDefinition.getName());
+		if(form!=null && form.getFieldDefinitions()!=null){
+			Iterator<FieldDefinition> it = form.getFieldDefinitions().iterator();
+			while(it.hasNext()){
+				FieldDefinition fieldDefinition = it.next();
+				int access_mode = securityService.computeAccessMode(nodeType, fieldDefinition.getName());
+				
+				switch (access_mode) {
+				case SecurityService.READ_ACCESS:
+					if(logger.isDebugEnabled()){
+						logger.debug("Mark as read only :"+fieldDefinition.getName());
+					}
+					fieldDefinition.setProtectedField(true);
+					break;
+				case SecurityService.NONE_ACCESS:
+					if(logger.isDebugEnabled()){
+						logger.debug("Remove field from form :"+fieldDefinition.getName());
+					}
+					it.remove();
+					break;
+				default:
+					break;
 				}
-				fieldDefinition.setProtectedField(true);
-				break;
-			case SecurityService.NONE_ACCESS:
-				if(logger.isDebugEnabled()){
-					logger.debug("Remove field from form :"+fieldDefinition.getName());
-				}
-				it.remove();
-				break;
-			default:
-				break;
+				
+				
 			}
-			
-			
 		}
-		
 		
 	}
 	

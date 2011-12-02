@@ -1,11 +1,9 @@
 package fr.becpg.repo.search;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.repo.search.impl.NodeSearcher;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -20,8 +18,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONObject;
-import org.mozilla.javascript.Scriptable;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
@@ -79,6 +75,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		
 				
 		String searchQuery = getSearchQueryByProperties(datatype, term, tag, criteria, sort, isRepo, siteId, containerId);
+	
 		List<NodeRef> nodes = getSearchNodes(searchQuery); 
 		
 		nodes = getSearchNodesByAssociations(nodes, criteria);
@@ -194,13 +191,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				}												
 			}
 			
-			if (formQuery.length() != 0 || ftsQuery.length() != 0){
-							
-		         // extract data type for this search - advanced search query is type specific
-		         ftsQuery = "TYPE:\"" + datatype + "\"" +
-		                    (formQuery.length() != 0 ? " AND (" + formQuery + ")" : "") +
-		                    (ftsQuery.length() != 0 ? " AND (" + ftsQuery + ")" : "");
-			}
+			
 		}
 		
 				
@@ -233,10 +224,24 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			{
 				ftsQuery = "PATH:\"" + path + "/*\" AND " + ftsQuery;
 			 }
-			 ftsQuery = "(" + ftsQuery + ") AND -TYPE:\"cm:thumbnail\"";
 			  
 			 //beCPG : now, exclude always product history
-			 ftsQuery += PRODUCTS_TO_EXCLUDE; 
+			 ftsQuery += PRODUCTS_TO_EXCLUDE;
+			 
+			
+		}
+		
+		if (formQuery.length() != 0 || ftsQuery.length() != 0){
+			String typeQuery = "";
+			if(datatype!=null){
+				typeQuery = "+TYPE:\"" + datatype + "\"";
+			} else {
+				typeQuery = "-TYPE:\"cm:thumbnail\"";
+			}
+	         // extract data type for this search - advanced search query is type specific
+	         ftsQuery = typeQuery +
+	                    (formQuery.length() != 0 ? " AND (" + formQuery + ")" : "") +
+	                    (ftsQuery.length() != 0 ? " AND (" + ftsQuery + ")" : "");
 		}
 		
 		return ftsQuery;

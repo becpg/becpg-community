@@ -268,6 +268,7 @@ var Evaluator =
       return(
       {
          node: node,
+         type : node.typeShort,
          nodeData: nodeData,
          actionSet: actionSet,
          actionPermissions: permissions,

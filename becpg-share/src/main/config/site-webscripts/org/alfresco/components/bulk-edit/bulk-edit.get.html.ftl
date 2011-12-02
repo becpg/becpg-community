@@ -50,14 +50,26 @@
 	                  </ul>
 	               </div>
 	            </div>
-	             <button id="${el}-edit-selected" >${msg("button.edit-selected")}</button>
 	         </div>
-	         
+	          <div class="edit-selected">
+		            <span id="${el}-edit-selected" class="yui-button yui-push-button">
+		               <span class="first-child">
+		                  <button type="button" >${msg("button.edit-selected")}</button>
+		               </span>
+		            </span>
+		      </div>
 	         <div id="${el}-paginatorTop" class="paginator"></div>
 	      </div>
 	      <div class="yui-u align-right">
 	    	 <div class="items-per-page" style="visibility:hidden;">
 	            <button id="${el}-itemsPerPage-button">${msg("menu.items-per-page")}</button>
+	         </div>
+	           <div class="export-csv">
+	            <span id="${el}-export-csv" class="yui-button yui-push-button">
+	               <span class="first-child">
+	                  <button type="button">${msg('button.exportCSV')}</button>
+	               </span>
+	            </span>
 	         </div>
 	      </div>
 	   </div>

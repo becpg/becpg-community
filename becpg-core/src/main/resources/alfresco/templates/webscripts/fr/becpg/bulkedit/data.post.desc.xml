@@ -4,6 +4,6 @@
   <url>/becpg/bulkedit/data?query={query?}&amp;itemType={itemType?}</url>
   <format default="json">argument</format>
   <authentication>user</authentication>
-  <transaction allow="readwrite" buffersize="0">required</transaction>
+  <transaction allow="readonly"/>
   <lifecycle>internal</lifecycle>
-</webscript>
+</webscript>	
