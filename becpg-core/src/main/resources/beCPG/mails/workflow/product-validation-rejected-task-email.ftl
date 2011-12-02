@@ -1,6 +1,6 @@
 Bonjour,
 
-${person.properties["cm:firstName"]!""} ${person.properties["cm:lastName"]!""} a traité la demande de Validation Produit. La demande a été refusée.
+La demande de Validation Produit a été refusée.
 
 Cordialement,
 beCPG

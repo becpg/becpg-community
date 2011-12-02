@@ -99,7 +99,9 @@ public class ApproveActionHandler extends JBPMSpringActionHandler{
         		return null;
             }
         };
-        AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());		
+        AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());
+        
+        logger.debug("end ApproveActionHandler");
 	}
 
 }
