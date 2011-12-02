@@ -1961,8 +1961,47 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:plantTel" />					
+					<show id="cm:description" force="true" />		
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- bcpg:certification type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:certification">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />				
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- bcpg:approvalNumber type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:approvalNumber">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />			
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">

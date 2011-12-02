@@ -588,7 +588,7 @@
 					</source>
 					<target>
 						<class>bcpg:approvalNumber</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
 				</association>

@@ -44,7 +44,12 @@
 			<type name="association:bcpg:plant" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 			<type name="association:bcpg:trademark" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />								
 			<type name="association:bcpg:client" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:bcpg:supplier" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
+			<type name="association:bcpg:supplier" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+			<type name="association:bcpg:plant" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+			<type name="association:bcpg:trademark" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+			<type name="association:bcpg:subsidiary" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />			
+			<type name="association:bcpg:certification" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+			<type name="association:bcpg:approvalNumber" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />							
 			<type name="association:bcpg:productSpecification" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 			<type name="association:bcpg:productMicrobioCriteria" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
 			<type name="association:qa:controlPoint" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
