@@ -93,8 +93,14 @@
     	  
     	  // Load autocomplete
     	  if(instance.options.mode!="view" && !this.options.readOnly){
-    	  // Use an XHRDataSource
-    		  var oDS = null;
+    	  
+    		  var oDS = null,
+    		  	  oAC = null,
+    		  	  bToggler = null,
+    		  	  previewTooltips=[],
+    		  	  initialValue = "";
+    		  
+    		// Use an XHRDataSource
 	    	 if(this.options.isLocalProxy){
 	    		  oDS = new YAHOO.util.XHRDataSource(Alfresco.constants.URL_SERVICECONTEXT + instance.options.dsStr);  
 	    	 } else {
@@ -120,7 +126,7 @@
     	   
 
     	   // Instantiate the AutoComplete
-    	   var oAC = new YAHOO.widget.AutoComplete(instance.fieldHtmlId, instance.fieldHtmlId+"-container", oDS);
+    	   oAC = new YAHOO.widget.AutoComplete(instance.fieldHtmlId, instance.fieldHtmlId+"-container", oDS);
 
 
     	   oAC.queryDelay = .5;
@@ -157,8 +163,6 @@
 
     	   oAC.setHeader("<div class='ac-header' ><span>"+instance.msg("autocomplete.header.msg")+"</span></div>");
     	   
-    	   var previewTooltips=[];
-    	   
     	   if(instance.options.showToolTip){
 	    	   var previewTooltip = new YAHOO.widget.Tooltip("previewTooltip" ,
 	        	         {
@@ -183,10 +187,9 @@
     	   		return "<span id='ac-choice-"+oResultData[0]+"' class='"+oResultData[2]+"' style='padding-left: 20px;' >"+oResultData[1]+"</span>";
     	   	}
 
-           var initialValue = "";
     	   
     	    // Toggle button
-    		var bToggler = Dom.get(instance.fieldHtmlId+"-toggle-autocomplete"); 
+    		bToggler = Dom.get(instance.fieldHtmlId+"-toggle-autocomplete"); 
     		
     		
     		 //Add focus to selected element
@@ -198,7 +201,7 @@
      	   	});
      	   
     
-    		  Event.on(bToggler,"click", function(e) { 	  
+    	    Event.on(bToggler,"click", function(e) { 	  
     	    		 if(oAC.isContainerOpen()) { 
         		         oAC.collapseContainer(); 
         		  } else { 
@@ -235,7 +238,6 @@
     		 
     		 
     		 oAC.doBeforeExpandContainer = function(elTextbox , elContainer , sQuery , aResults) {
-    			try{
 	    			 if(!instance.options.showPage  || parseInt(oAC.fullListSize)< parseInt(oAC.pageSize)+1 ) {
 	    			      oAC.setFooter("");
 	    			   } else {
@@ -268,41 +270,50 @@
 	    			 if(instance.options.showToolTip){
 	    			 
 	    				 previewTooltip.cfg.setProperty("context", previewTooltips);
-	    			 }
-    			} catch (e) {
-  					alert(e);
-				}
-    			 
-    		   return true;
-    		}
+	    			 } 			 
+	    		   return true;
+	    		}
     		
     		oAC.textboxChangeEvent.subscribe(function(){
     			oAC.page=1;
     			previewTooltips=[];
+    			
     		});
-    					
+    			
+    		oAC.textboxBlurEvent.subscribe(function(){
+    			if(!instance.options.multipleSelectMode && instance.isAssoc){
+    		    	if(oAC.getInputEl().value == null ||oAC.getInputEl().value.length<1){
+    	  				var inputOrig = Dom.get(instance.controlId+"-orig"),
+    				     		inputAdded = Dom.get(instance.controlId+"-added"),
+    				     		inputRemoved = Dom.get(instance.controlId+"-removed");
+    				 		     if(inputOrig.value != ""){
+    				 		        inputRemoved.value = inputOrig.value;
+    							} 
+    							inputAdded.value = "";
+    		    	}
+    	  		}
+    		});
     		
     		oAC.itemSelectEvent.subscribe(function(type , args){
-    			try{
-	    			var selectedObj = args[2];
-	
-	    	 		var itemValue = selectedObj[0];
-	    	 		var itemTitle = selectedObj[1];
+	    			var selectedObj = args[2],
+	    			itemValue = selectedObj[0],
+	    	 		itemTitle = selectedObj[1];
 	
 	    	 		 if(instance.isAssoc){
 	    	 			 
-	    	 		     var inputOrig = Dom.get(instance.controlId+"-orig");
-	    	 		     var inputAdded = Dom.get(instance.controlId+"-added");
-	    	 		     var inputRemoved = Dom.get(instance.controlId+"-removed");
-	    	 			 
-		    		    if(inputOrig != null && inputAdded != null && inputRemoved != null) {
-		    		
+	    	 			var inputOrig = Dom.get(instance.controlId+"-orig"),
+	   	 		     		inputAdded = Dom.get(instance.controlId+"-added"),
+	   	 		     		inputRemoved = Dom.get(instance.controlId+"-removed");
+
 		    				if(!instance.options.multipleSelectMode){
 		    					if(inputOrig.value != itemValue) {
 		    						if(inputOrig.value != ""){
 		    							inputRemoved.value = inputOrig.value;
 		    						}
 		    						inputAdded.value = itemValue;
+		    					} else {
+		    						inputRemoved.value = "";
+		    						inputAdded.value = "";
 		    					}
 		    				}
 		    				else{			
@@ -313,7 +324,6 @@
 		    					inputAdded.value += itemValue;
 		    					
 		    				}			
-		    			}	
 	    	 		 }
 	    	 		 
 	    			if(instance.isAssoc && instance.options.multipleSelectMode)
@@ -329,11 +339,8 @@
     					}
 	    			}
 	    	 		
-	    			YAHOO.Bubbling.fire("mandatoryControlValueUpdated", oAC.getInputEl());
+	    		YAHOO.Bubbling.fire("mandatoryControlValueUpdated", oAC.getInputEl());
 	 
-    			} catch (e) {
-  					alert(e);
-				}
     			return true;
     		
     		});
@@ -342,6 +349,7 @@
     	  
     	  
       },
+      
     		
       addToBasket :  function AutoCompletePicker_addToBasket(basket, itemTitle,itemValue){
     		

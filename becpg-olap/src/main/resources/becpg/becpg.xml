@@ -108,13 +108,7 @@
         </Level>
         <Level name="Sous famille" column="product_productHierarchy2" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
-      </Hierarchy>
-      <Hierarchy name="Produit par nom" hasAll="true" allMemberCaption="Tous les produits" primaryKey="product_fact_id">
-        <Table name="becpg_product">
-        </Table>
-        <Level name="Type" column="product_type" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
-        </Level>
-        <Level name="Nom produit" column="product_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+         <Level name="Nom produit" column="product_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
         <Level name="Code produit" column="product_code" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
         </Level>
@@ -157,7 +151,7 @@
     <Measure name="Moyenne des co&#251;ts" column="cost_value" aggregator="avg" visible="true">
     </Measure>
   </Cube>
-  <Cube name="Produits" cache="true" enabled="true">
+  <Cube name="Produits" cache="true" enabled="true" defaultMeasure="Nombre de produits">
     <Table name="becpg_product">
     </Table>
     <Dimension type="TimeDimension" foreignKey="product_createdDate_id" highCardinality="false" name="Date de cr&#233;ation" caption="Date de cr&#233;ation">
@@ -294,19 +288,19 @@
         </Level>
         <Level name="Sous famille" column="product_productHierarchy2" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
-      </Hierarchy>
-      <Hierarchy name="Produit par nom" hasAll="true" allMemberCaption="Tous les produits">
-        <Level name="Nom produit" column="product_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+          <Level name="Nom produit" column="product_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
         <Level name="Code produit" column="product_code" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
         </Level>
         <Level name="Nom legal" column="product_legalName" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
-      </Hierarchy>
+      </Hierarchy>  
     </Dimension>
-    <Dimension highCardinality="false" name="&#201;tat">
-      <Hierarchy hasAll="true" allMemberCaption="Tous les &#233;tats">
-        <Level name="&#201;tat" column="product_productState" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+    <Dimension highCardinality="false" name="&#201;tat" foreignKey="product_productState">
+      <Hierarchy hasAll="true" allMemberCaption="Tous les &#233;tats" primaryKey="product_state" >
+        <Table name="becpg_product_state">
+        </Table>
+        <Level approxRowCount="5" name="&#201;tat" column="product_state" nameColumn="product_label"  type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
@@ -400,7 +394,21 @@
         </Level>
       </Hierarchy>
     </Dimension>
-    <Measure name="Nombre de produits" column="product_fact_id" datatype="Integer" aggregator="count" visible="true">
+    <Measure name="Nombre de produits" column="product_fact_id" datatype="Integer" aggregator="count" visible="true" >
     </Measure>
+    <Measure name="Quantit&#233; pr&#233;visionnelle" column="product_projectedQty" datatype="Integer" aggregator="sum" visible="true">
+    </Measure>
+     <Measure name="Co&#251;ts" column="product_unitTotalCost" datatype="Numeric" aggregator="sum" visible="true">
+    </Measure>
+     <Measure name="Rentabilit&#233; unitaire" column="product_profitability" datatype="Numeric" aggregator="sum" visible="true">
+     </Measure>
+     <Measure name="Prix unitaire" column="product_unitPrice" datatype="Numeric" aggregator="sum" visible="true">
+    </Measure>
+    <CalculatedMember name="Profit" dimension="Measures" visible="true">
+	    <Formula>([Measures].[Prix unitaire] - [Measures].[Co&#251;ts])*[Measures].[Quantit&#233; pr&#233;visionnelle]</Formula>
+    </CalculatedMember>
+    <CalculatedMember name="Rentabilit&#233;" dimension="Measures" visible="true">
+	    <Formula>([Measures].[Prix unitaire] - [Measures].[Co&#251;ts])/[Measures].[Co&#251;ts]</Formula>
+    </CalculatedMember>
   </Cube>
 </Schema>

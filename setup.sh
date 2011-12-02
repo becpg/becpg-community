@@ -12,33 +12,19 @@ fct_copy_old () {
 }
 
 
- echo "**********************************************************"
- echo "Add view and procs to BD"
- echo "**********************************************************"
- cd $BECPG_OLAP_ROOT/sql/
- ./setup_db.sh
- cd $BECPG_OLAP_ROOT
+echo "**********************************************************"
+echo "Add view and procs to BD"
+echo "**********************************************************"
+cd $BECPG_OLAP_ROOT
+mvn clean package -Dmaven.test.skip=true  $MVN_PROFILE
+cd target 
+tar xvfz becpg-olap-*-distribution.tar.gz
+cd becpg-olap-*
+echo `pwd`
+cp -f $BECPG_ROOT/common.sh .
+cd sql/
+./setup_db.sh
+cd $BECPG_OLAP_ROOT/target
+rm -rf becpg-olap-*
 
 
-
-echo "**********************************************************"
-echo "Configure OLAP DataSource"
-echo "**********************************************************"
-fct_copy_old "$BECPG_OLAP_ROOT/conf/becpg"
-cp $BECPG_OLAP_ROOT/conf/becpg.sample $BECPG_OLAP_ROOT/conf/becpg
-sed -i 's/\$MYSQL_HOST\$/'$MYSQL_HOST'/g' $BECPG_OLAP_ROOT/conf/becpg
-sed -i 's/\$MYSQL_PORT\$/'$MYSQL_PORT'/g' $BECPG_OLAP_ROOT/conf/becpg
-sed -i 's/\$MYSQL_SCHEMA\$/'$MYSQL_SCHEMA'/g' $BECPG_OLAP_ROOT/conf/becpg
-sed -i 's/\$MYSQL_USER\$/'$MYSQL_USER'/g' $BECPG_OLAP_ROOT/conf/becpg
-sed -i 's/\$MYSQL_PWD\$/'$MYSQL_PWD'/g' $BECPG_OLAP_ROOT/conf/becpg
-
-echo "**********************************************************"
-echo "Configure sample crontab"
-echo "**********************************************************"
-fct_copy_old "$BECPG_OLAP_ROOT/sql/crontab"
-cp $BECPG_OLAP_ROOT/sql/crontab.sample $BECPG_OLAP_ROOT/sql/crontab
-sed -i 's/\$MYSQL_HOST\$/'$MYSQL_HOST'/g' $BECPG_OLAP_ROOT/sql/crontab
-sed -i 's/\$MYSQL_PORT\$/'$MYSQL_PORT'/g' $BECPG_OLAP_ROOT/sql/crontab
-sed -i 's/\$MYSQL_SCHEMA\$/'$MYSQL_SCHEMA'/g' $BECPG_OLAP_ROOT/sql/crontab
-sed -i 's/\$MYSQL_USER\$/'$MYSQL_USER'/g' $BECPG_OLAP_ROOT/sql/crontab
-sed -i 's/\$MYSQL_PWD\$/'$MYSQL_PWD'/g' $BECPG_OLAP_ROOT/sql/crontab

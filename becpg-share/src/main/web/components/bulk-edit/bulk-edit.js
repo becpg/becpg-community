@@ -350,7 +350,7 @@
        *
        * @method fnRenderCellActions
        */
-      fnRenderCellActions: function DataGrid_fnRenderCellActions()
+      fnRenderCellActions: function BulkEdit_fnRenderCellActions()
       {
          var scope = this;
          
@@ -363,7 +363,7 @@
           * @param oColumn {object}
           * @param oData {object|string}
           */
-         return function DataGrid_renderCellActions(elCell, oRecord, oColumn, oData)
+         return function BulkEdit_renderCellActions(elCell, oRecord, oColumn, oData)
          {
   
         	 var   nodeRef = oRecord.getData().nodeRef;
@@ -416,10 +416,10 @@
           */
          return function BulkEdit_renderCellDataType(elCell, oRecord, oColumn, oData)
          {
-            var html = "";
-            var value = "";
-            var booleanValueTrue = scope.msg("data.boolean.true");
-            var booleanValueFalse = scope.msg("data.boolean.false");
+            var html = "",
+	            value = "",
+	            booleanValueTrue = scope.msg("data.boolean.true"),
+	            booleanValueFalse = scope.msg("data.boolean.false");
             
             // Populate potentially missing parameters
             if (!oRecord)
@@ -446,7 +446,7 @@
                      {
                         data = oData[i];
                         
-                      var dataType = datalistColumn.dataType;
+                     var dataType = datalistColumn.dataType;
                   	  if(dataType==null){
                   		  dataType = datalistColumn.endpointType;
                   	  }
@@ -470,10 +470,10 @@
                            case "date":
                               html += Alfresco.util.formatDate(Alfresco.util.fromISO8601(data.value), scope.msg("date-format.defaultDateOnly"));
                               break;
-                           case "bcpg:product":
+                            case "bcpg:product":
                         	   if(datalistColumn.name == "bcpg:compoListProduct")
 								{
-                        		   var padding = 10 + oRecord.getData("itemData")["prop_bcpg_depthLevel"].value * 10;
+                        		  var  padding = 10 + oRecord.getData("itemData")["prop_bcpg_depthLevel"].value * 10;
                         		   html += '<span class="' + data.metadata + '" style="padding-left:' + padding + 'px;"><a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a></span>';                        	   
 								}
                         	   	else if(datalistColumn.name == "bcpg:packagingListProduct")
@@ -533,6 +533,11 @@
                         	   {                        		   
                         		   html += '<span class="control">' + $html(data.displayValue) + '</span>';
                         	   }
+                        	   else if(datalistColumn.name == "bcpg:code" || datalistColumn.name == "cm:name")
+                        	   {               
+                        		   html += '<a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + oRecord.getData("nodeRef")) + '">' + $html(data.displayValue) + '</a>';
+                        	   }
+                           
                         	   else
                         	   {
                         		   html += $html(data.displayValue);
@@ -639,6 +644,11 @@
     	   * @param elCell {HTMLElement} Cell to edit.  
     	   */
     	  editor.attach =  function(oDataTable, elCell) {
+    		    var oColumn,
+    		    	oRecord,
+    		    	oData;
+    		    	
+    		  
     		    // Validate 
     		    if(oDataTable instanceof YAHOO.widget.DataTable) {
     		    	editor._oDataTable = oDataTable;
@@ -649,35 +659,34 @@
     		        	editor._elTd = elCell;
 
     		            // Validate Column
-    		            var oColumn = oDataTable.getColumn(elCell);
+    		            oColumn = oDataTable.getColumn(elCell);
     		            if(oColumn) {
     		            	editor._oColumn = oColumn;
     		                
     		                // Validate Record
-    		                var oRecord = oDataTable.getRecord(elCell);
+    		                oRecord = oDataTable.getRecord(elCell);
     		                if(oRecord) {
     		                	editor._oRecord = oRecord;
-    		                	var oData;
+    		                	oData;
     		                	if(oData==null){
     		                		oData = oRecord.getData("itemData")[editor.getColumn().getField()];
     		                	}
     		                    var value = undefined;
     		                   oData = YAHOO.lang.isArray(oData) ? oData : [oData];
-    		                   var data = oData[0];
-    		                   if(data){
+    		                   if(oData[0]){
     		                    switch (dataType.toLowerCase())
     		                        {
     		                          case "datetime":
-    		                        	 value = Alfresco.util.fromISO8601(data.value);
+    		                        	 value = Alfresco.util.fromISO8601(oData[0].value);
     		                              break;              
     		                          case "date":
-    		                        	 value = Alfresco.util.fromISO8601(data.value);
+    		                        	 value = Alfresco.util.fromISO8601(oData[0].value);
     		                              break;
     		                          case "boolean":
-    		                        	  value = ""+ data.displayValue;                       	 
+    		                        	  value = ""+ oData[0].displayValue;                       	 
      		                              break;
     		                          default:
-    		                             value = data.displayValue;
+    		                             value = oData[0].displayValue;
     		                              break;
     		                        }
     		                   }
@@ -696,8 +705,11 @@
     		     */
     		    editor.save = function() {
     		        // Get new value
-    		        var inputValue = this.getInputValue();
-    		        var validValue = inputValue;
+    		        var inputValue = this.getInputValue(),
+    		        	validValue = inputValue,
+    		        	oSelf = this,
+    		        	tmp = "",
+    		        	i;
     		        
     		        // Validate new value
     		        if(this.validator) {
@@ -714,10 +726,8 @@
     		            } 
     		        }
     		        
-    		        var oSelf = this;
     		        if(oSelf instanceof YAHOO.widget.CheckboxCellEditor){
-	            		var tmp = "";
-	            		for(var i in validValue){
+	            		for(i in validValue){
 	            			if(tmp.length>0){
 	            				tmp+=",";
 	            			}
@@ -729,10 +739,11 @@
     		            
     		       
     		        var finishSave = function(bSuccess, oNewValue) {
-    		            var oOrigValue = oSelf.value;
+    		            var oOrigValue = oSelf.value,
+    		            	oDisplayValue;
     		            if(bSuccess) {    		            	
     		            	// Update new value
-    		            	var oDisplayValue = oNewValue;
+    		            	oDisplayValue = oNewValue;
     		            	oSelf.value = oNewValue;	    
     		            	
     		            		            	
