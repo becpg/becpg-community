@@ -20,18 +20,9 @@ export BECPG_JAR=becpg-core-0.1.3.jar
 export BECPG_CONFIG_JAR=becpg-config.jar
 export TARGET_FOLDER=target/becpg-core-0.1.3
 
+#profile to use can be :
+#export MVN_PROFILE=-Dolap.server= -Dolap.db.host= -Dolap.db.name= -Dolap.db.username= -Dolap.db.password=
+#or export MVN_PROFILE=-Psva-prod
 export MVN_PROFILE=
 
 
-#####################################
-# Paramètres de configuration OLAP
-#####################################
-
-export BECPG_OLAP_ROOT=$BECPG_ROOT/becpg-olap
-
-# Mysql
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_SCHEMA=becpg
-MYSQL_USER=becpg
-MYSQL_PWD=becpg
