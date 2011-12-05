@@ -76,6 +76,7 @@
 .bulk-edit .bulk-edit-bar .export-csv
 {
    float: right;
+   display: none;
 }
 
 .bulk-edit .bulk-edit-bar .paginator
