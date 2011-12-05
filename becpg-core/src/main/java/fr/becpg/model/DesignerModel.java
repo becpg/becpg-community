@@ -42,6 +42,10 @@ public class DesignerModel {
 	public static final QName ASPECT_MODEL =  QName.createQName(DESIGNER_URI,
 			"modelAspect");
 
+
+	public static final QName ASPECT_MODEL_ERROR =  QName.createQName(DESIGNER_URI,
+			"modelError");
+	
 	
 	/**
 	 * Props
@@ -94,6 +98,7 @@ public class DesignerModel {
 	public static final QName ASSOC_M2_CONSTRAINTS = QName.createQName(M2_URI,"constraints");
 
 	public static final QName ASSOC_M2_DATA_TYPE = QName.createQName(M2_URI,"dataTypes");
+
 
 	
 

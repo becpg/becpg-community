@@ -451,6 +451,12 @@
 	                      description: p_oData.description
 	                   }, p_oParent, p_expanded);
 	         
+        	 if(p_oData.hasError){
+        		 treeNode.labelStyle= p_oData.type.replace(":","-");
+        	 } else {
+        		 treeNode.labelStyle= "dsg-error";
+        	 }
+        	 
 	         if(p_oData.childrens.length>0){
 		         for(var i in p_oData.childrens){
 		        	this._buildTreeNode( p_oData.childrens[i],treeNode,false)

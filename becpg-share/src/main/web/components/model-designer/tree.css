@@ -15,7 +15,7 @@
 
 .designerTree .new-model span.first-child
 {
-   background: url(../images/add-icon-16.png) no-repeat 12px 4px;
+   background: url(../images/add-icon-16.png) no-repeat 5px 0px;
 }
 
 .designerTree h2
@@ -102,3 +102,36 @@
 {
    background-color: #e1f0fa;
 }
+
+.dsg-error{  padding-left: 24px; background:  url(../images/filetypes/job-failed-16.png) no-repeat 5px 0px;}
+
+.m2-model {  padding-left: 24px; background:  url(../images/filetypes/xml-file-16.png) no-repeat 5px 0px;}
+.m2-associations {  padding-left: 24px; background:  url(../images/filetypes/generic-category-16.png) no-repeat 5px 0px;}
+.m2-namespaces {  padding-left: 24px; background:  url(../images/tag-16.png) no-repeat 5px 0px;}
+.m2-aspects {  padding-left: 24px; background:  url(../images/aspect-16.png) no-repeat 5px 0px; }
+.m2-dataTypes {  padding-left: 24px; background:  url(../images/aspect-16.png) no-repeat 5px 0px; }
+.m2-imports {  padding-left: 24px; background:  url(../images/tag-16.png) no-repeat 5px 0px;}
+.m2-types {  padding-left: 24px; background:  url(../images/details-16.png) no-repeat 5px 0px; }
+.m2-constraints {  padding-left: 24px; background:  url(../images/rule-16.png) no-repeat 5px 0px;}
+
+.m2-namespace {  padding-left: 24px; background:  url(../images/link-details-16.png) no-repeat 5px 0px;}
+
+.m2-type {  padding-left: 24px; background:  url(../images/filetypes/generic-file-16.png) no-repeat 5px 0px;}
+.m2-aspect {  padding-left: 24px; background:  url(../images/aspect-16.png) no-repeat 5px 0px; }
+
+.m2-properties {  padding-left: 24px; background:  url(../images/list-16.png) no-repeat 5px 0px;}
+.m2-property {  padding-left: 24px; background:  url(../images/duplicate-row-16.png) no-repeat 5px 0px;}
+.m2-propertyOverride {  padding-left: 24px; background:  url(../images/duplicate-row-16.png) no-repeat 5px 0px;}
+.m2-propertyOverrides {  padding-left: 24px; background:  url(../images/list-16.png) no-repeat 5px 0px;}
+
+.m2-constraint {  padding-left: 24px; background:  url(../images/rule-16.png) no-repeat 5px 0px;}
+.m2-constraintRef {  padding-left: 24px; background:  url(../images/tag-16.png) no-repeat 5px 0px;}
+.m2-parameters {  padding-left: 24px; background:  url(../images/list-16.png) no-repeat 5px 0px;}
+.m2-namedValue {  padding-left: 24px; background:  url(../images/duplicate-row-16.png) no-repeat 5px 0px;}
+
+.m2-association {  padding-left: 24px; background:  url(../images/filetypes/generic-category-16.png) no-repeat 5px 0px;}
+.m2-childAssociation {  padding-left: 24px; background:  url(../images/filetypes/generic-category-16.png) no-repeat 5px 0px;}
+
+
+
+

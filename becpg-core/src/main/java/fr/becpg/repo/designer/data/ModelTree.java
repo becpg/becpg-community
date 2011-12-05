@@ -16,6 +16,7 @@ public class ModelTree {
 	private String name;
 	private String title;
 	private String description;
+	private Boolean hasError = false; 
 	
 	
 	public ModelTree(String nodeRef) {
@@ -131,6 +132,20 @@ public class ModelTree {
 		this.formId = formId;
 	}
 
+	/**
+	 * @return the hasError
+	 */
+	public Boolean getHasError() {
+		return hasError;
+	}
+
+	/**
+	 * @param hasError the hasError to set
+	 */
+	public void setHasError(Boolean hasError) {
+		this.hasError = hasError;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -140,6 +155,8 @@ public class ModelTree {
 		int result = 1;
 		result = prime * result + ((childrens == null) ? 0 : childrens.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((formId == null) ? 0 : formId.hashCode());
+		result = prime * result + ((hasError == null) ? 0 : hasError.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
@@ -169,6 +186,16 @@ public class ModelTree {
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
+		if (formId == null) {
+			if (other.formId != null)
+				return false;
+		} else if (!formId.equals(other.formId))
+			return false;
+		if (hasError == null) {
+			if (other.hasError != null)
+				return false;
+		} else if (!hasError.equals(other.hasError))
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -197,13 +224,11 @@ public class ModelTree {
 	 */
 	@Override
 	public String toString() {
-		return "ModelTree [type=" + type + ", nodeRef=" + nodeRef + ", name=" + name + ", title=" + title
-				+ ", description=" + description + ", \n --> childrens=" + childrens + "]";
+		return "ModelTree [type=" + type + ", formId=" + formId + ", nodeRef=" + nodeRef + ", name=" + name
+				+ ", title=" + title + ", description=" + description + ", hasError=" + hasError + ", childrens="
+				+ childrens + "]";
 	}
-	
-	
-	
-	
+
 	
 	
 

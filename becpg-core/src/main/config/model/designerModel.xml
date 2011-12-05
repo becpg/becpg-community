@@ -180,6 +180,19 @@
 				</child-association>
 			</associations>
 		</aspect>
+		
+		<aspect name="dsg:modelError">
+			<title>Model error</title>
+			<properties>
+				<property name="dsg:errorMessages">
+					<title>Error message</title>
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="false"/>
+				</property>
+			</properties>
+		</aspect>
+		
 		<aspect name="dsg:labelAspect">
 			<title>Label aspect</title>
 			<properties>

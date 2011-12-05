@@ -72,8 +72,8 @@
 					<show id="m2:name" />
 					<show id="m2:title" />
 					<show id="m2:description" />
-					<show id="m2:includedInSuperTypeQuery" />
-					<show id="m2:archive" />
+					<!-- <show id="m2:includedInSuperTypeQuery" />
+					<show id="m2:archive" /> -->
 					<show id="m2:mandatoryAspects" />
 				</field-visibility>
 				<appearance>
@@ -84,8 +84,8 @@
 					<field id="m2:description" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="m2:includedInSuperTypeQuery" set="mainInfo" />
-					<field id="m2:archive" set="mainInfo" />
+				<!-- 	<field id="m2:includedInSuperTypeQuery" set="mainInfo" />
+					<field id="m2:archive" set="mainInfo" /> -->
 					<field id="m2:mandatoryAspects" set="mainInfo" />
 					<field id="m2:parentName" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
@@ -117,8 +117,8 @@
 					<show id="m2:name" />
 					<show id="m2:title" />
 					<show id="m2:description" />
-					<show id="m2:includedInSuperTypeQuery" />
-					<show id="m2:archive" />
+				<!-- 	<show id="m2:includedInSuperTypeQuery" />
+					<show id="m2:archive" /> -->
 					<show id="m2:mandatoryAspects" />
 				</field-visibility>
 				<appearance>
@@ -129,8 +129,8 @@
 					<field id="m2:description" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="m2:includedInSuperTypeQuery" set="mainInfo" />
-					<field id="m2:archive" set="mainInfo" />
+					<!-- <field id="m2:includedInSuperTypeQuery" set="mainInfo" />
+					<field id="m2:archive" set="mainInfo" /> -->
 					<field id="m2:mandatoryAspects" set="mainInfo" />
 					<field id="m2:parentName" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
@@ -164,8 +164,8 @@
 					<show id="m2:description" />
 					<show id="m2:defaultValue" />
 					<show id="m2:isMandatory" />
-					<show id="m2:isMandatoryEnforced" />
-					<show id="m2:isOverride" />
+					<!-- <show id="m2:isMandatoryEnforced" />
+					<show id="m2:isOverride" /> -->
 					<show id="m2:isMultiValued" />
 					<show id="m2:isIndexedAtomically" />
 					<show id="m2:isIndexed" />
@@ -190,8 +190,8 @@
 					</field>
 					<field id="m2:defaultValue" set="mainInfo" />
 					<field id="m2:isMandatory" set="mainInfo" />
-					<field id="m2:isMandatoryEnforced" set="mainInfo" />
-					<field id="m2:isOverride" set="mainInfo" />
+					<!-- <field id="m2:isMandatoryEnforced" set="mainInfo" />
+					<field id="m2:isOverride" set="mainInfo" /> -->
 					<field id="m2:isMultiValued" set="mainInfo" />
 					<field id="m2:isIndexedAtomically" set="indexInfo" />
 					<field id="m2:isIndexed" set="indexInfo" />
@@ -210,14 +210,14 @@
 					<show id="m2:name" />
 					<show id="m2:defaultValue" />
 					<show id="m2:isMandatory" />
-					<show id="m2:isMandatoryEnforced" />
+					<!-- <show id="m2:isMandatoryEnforced" /> -->
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel" label="Informations" />	
 					<field id="m2:name" set="mainInfo" />
 					<field id="m2:defaultValue" set="mainInfo" />
 					<field id="m2:isMandatory" set="mainInfo" />
-					<field id="m2:isMandatoryEnforced" set="mainInfo" />
+					<!-- <field id="m2:isMandatoryEnforced" set="mainInfo" /> -->
 				</appearance>
 			</form>
 		</forms>
@@ -230,13 +230,13 @@
 					<show id="m2:name" />
 					<show id="m2:title" />
 					<show id="m2:description" />
-					<show id="m2:sourceRoleName" />
+					<!-- <show id="m2:sourceRoleName" /> -->
 					<show id="m2:isSourceMandatory" />
 					<show id="m2:isSourceMany" />
 					<show id="m2:targetClassName" />
-					<show id="m2:targetRoleName" />
+				<!-- 	<show id="m2:targetRoleName" /> -->
 					<show id="m2:isTargetMandatory" />
-					<show id="m2:isTargetMandatoryEnforced" />
+					<!-- <show id="m2:isTargetMandatoryEnforced" /> -->
 					<show id="m2:isTargetMany" />
 				</field-visibility>
 				<appearance>
@@ -248,7 +248,7 @@
 					<field id="m2:description" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="m2:sourceRoleName" set="sourceInfo" />
+				<!-- 	<field id="m2:sourceRoleName" set="sourceInfo" /> -->
 					<field id="m2:isSourceMandatory" set="sourceInfo" />
 					<field id="m2:isSourceMany" set="sourceInfo" />
 					<field id="m2:targetClassName" set="targetInfo">
@@ -259,9 +259,9 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="m2:targetRoleName" set="targetInfo" />
+					<!-- <field id="m2:targetRoleName" set="targetInfo" /> -->
 					<field id="m2:isTargetMandatory" set="targetInfo" />
-					<field id="m2:isTargetMandatoryEnforced" set="targetInfo" />
+					<!-- <field id="m2:isTargetMandatoryEnforced" set="targetInfo" /> -->
 					<field id="m2:isTargetMany" set="targetInfo" />
 
 				</appearance>
@@ -277,13 +277,13 @@
 					<show id="m2:name" />
 					<show id="m2:title" />
 					<show id="m2:description" />
-					<show id="m2:sourceRoleName" />
+				<!-- 	<show id="m2:sourceRoleName" /> -->
 					<show id="m2:isSourceMandatory" />
 					<show id="m2:isSourceMany" />
 					<show id="m2:targetClassName" />
-					<show id="m2:targetRoleName" />
+					<!-- <show id="m2:targetRoleName" /> -->
 					<show id="m2:isTargetMandatory" />
-					<show id="m2:isTargetMandatoryEnforced" />
+				<!-- 	<show id="m2:isTargetMandatoryEnforced" /> -->
 					<show id="m2:isTargetMany" />
 					<show id="m2:requiredChildName" />
 					<show id="m2:allowDuplicateChildName" />
@@ -298,7 +298,7 @@
 					<field id="m2:description" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="m2:sourceRoleName" set="sourceInfo" />
+					<!-- <field id="m2:sourceRoleName" set="sourceInfo" /> -->
 					<field id="m2:isSourceMandatory" set="sourceInfo" />
 					<field id="m2:isSourceMany" set="sourceInfo" />
 					<field id="m2:targetClassName" set="targetInfo">
@@ -309,9 +309,9 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="m2:targetRoleName" set="targetInfo" />
+					<!-- <field id="m2:targetRoleName" set="targetInfo" /> -->
 					<field id="m2:isTargetMandatory" set="targetInfo" />
-					<field id="m2:isTargetMandatoryEnforced" set="targetInfo" />
+					<!-- <field id="m2:isTargetMandatoryEnforced" set="targetInfo" /> -->
 					<field id="m2:isTargetMany" set="targetInfo" />
 					<field id="m2:requiredChildName" set="mainInfo" />
 					<field id="m2:allowDuplicateChildName" set="mainInfo" />

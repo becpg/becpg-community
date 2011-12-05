@@ -58,14 +58,17 @@
 				<property name="m2:author">
 					<title>Author</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:published">
 					<title>Published</title>
 					<type>d:date</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:version">
 					<title>Version</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 			</properties>
 			<associations>
@@ -80,7 +83,6 @@
 						<many>true</many>
 					</target>
 					<duplicate>false</duplicate>
-               		
 				</child-association>
 				<child-association name="m2:imports">
 					<source>
@@ -148,14 +150,17 @@
 				<property name="m2:sourceRoleName">
 					<title>Source Role Name</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:isSourceMandatory">
 					<title>Source is mandatory</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:isSourceMany">
 					<title>Source is many</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:targetClassName">
 					<title>Target class name</title>
@@ -168,18 +173,22 @@
 				<property name="m2:targetRoleName">
 					<title>Target role name</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:isTargetMandatory">
 					<title>Target is mandatory</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:isTargetMandatoryEnforced">
 					<title>Target is enforced</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:isTargetMany">
 					<title>Target is many</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -199,6 +208,7 @@
 				<property name="m2:parentName">
 				    <title>Parent Name</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				<!-- <constraints>
 		               <constraint ref="m2:qNameConstraint" />
 		            </constraints> -->
@@ -206,10 +216,12 @@
 				<property name="m2:archive">
 					<title>Archive</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:includedInSuperTypeQuery">
 					<title>Included In Super Type Query</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:mandatoryAspects">
 					<title>Mandatory aspect</title>
@@ -278,14 +290,17 @@
 				<property name="m2:requiredChildName">
 					<title>Required Child Name</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:allowDuplicateChildName">
 					<title>Allow Duplicate Child Name</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:propagateTimestamps">
 					<title>Propagate Timestamps</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 			</properties>
 		</type>
@@ -314,10 +329,12 @@
 				<property name="m2:ref">
 					<title>Reference</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:type">
 					<title>Type</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 			</properties>
 			<associations>
@@ -356,10 +373,12 @@
 				<property name="m2:javaClassName">
 					<title>Java ClassName</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:defaultAnalyserClassName">
 					<title>Default Analyser ClassName</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -377,11 +396,13 @@
 					<title>Uri</title>
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:prefix">
 					<title>Prefix</title>
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="false"/>
 				</property>
 			</properties>
 		</type>
@@ -393,32 +414,39 @@
 				<property name="m2:isOverride">
 					<title>Is override</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:propertyType">
 					<title>Property type</title>
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:isMultiValued">
 					<title>Is multiValued</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:isIndexedAtomically">
 					<title>Is indexed atomically</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:isIndexed">
 					<title>Is indexed</title>
 					<type>d:boolean</type>
 					<default>true</default>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:isStoredInIndex">
 					<title>Is stored in index</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:indexTokenisationMode">
 					<title>Index Tokenisation Mode</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				    <constraints>
 						<constraint ref="m2:indexTokenisationModeConstraint"/>
 					</constraints> 
@@ -448,15 +476,18 @@
 				<property name="m2:nameValue">
 					<title>Name Value</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:simpleValue">
 					<title>Simple Value</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:listValue">
 					<title>Multi Value</title>
 					<type>d:text</type>
 					<multiple>true</multiple>
+					<index enabled="false"/>
 				</property>
 			</properties>
 		</type>
@@ -473,6 +504,7 @@
 					<title>Name</title>
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="false"/>
 					<!-- <constraints>
 		               <constraint ref="m2:qNameConstraint" />
 		            </constraints> -->
@@ -486,6 +518,7 @@
 				<property name="m2:title">
 					<title>Title</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 			</properties>
 		</aspect>
@@ -496,6 +529,7 @@
 				<property name="m2:isProtected">
 					<title>Is protected</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 			</properties>
 		</aspect>
@@ -507,6 +541,7 @@
 				<property name="m2:description">
 					<title>Description</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 			</properties>
 		</aspect>
@@ -537,14 +572,17 @@
 				<property name="m2:isMandatory">
 					<title>Is mandatory</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:isMandatoryEnforced">
 					<title>Is mandatory enforced</title>
 					<type>d:boolean</type>
+					<index enabled="false"/>
 				</property>
 				<property name="m2:defaultValue">
 					<title>Default Value</title>
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 			</properties>
 				<mandatory-aspects>
@@ -552,6 +590,8 @@
 				<aspect>m2:constraintsAspect</aspect>
 			</mandatory-aspects>
 		</aspect>
+		
+	
 				
 	</aspects>
 
