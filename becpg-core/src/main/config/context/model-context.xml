@@ -25,7 +25,8 @@
 				<value>alfresco/module/${groupId}-${artifactId}/model/qualityModel</value>
 				<value>alfresco/module/${groupId}-${artifactId}/model/securityModel</value>
 				<value>alfresco/module/${groupId}-${artifactId}/model/ecoModel</value>
-				<value>alfresco/module/${groupId}-${artifactId}/model/npdModel</value>						
+				<value>alfresco/module/${groupId}-${artifactId}/model/npdModel</value>		
+				<value>alfresco/module/${groupId}-${artifactId}/model/m2Model</value>						
 			</list>
 		</property>
 	</bean>

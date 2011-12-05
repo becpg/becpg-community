@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -28,6 +29,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import com.google.gdata.data.dublincore.Date;
 
@@ -137,7 +139,10 @@ public class MetaModelVisitor {
 			} else {
 				tmp = new ModelTree();
 				tmp.setName(assocName);
-				tmp.setTitle(assocName);
+				
+				String title = I18NUtil.getMessage("m2_m2model.association.m2_" + assocName.toLowerCase(), Locale.getDefault());
+				
+				tmp.setTitle(title);
 				tmp.setType(assoc.getTypeQName().toPrefixString(namespaceService));
 
 				assocRoots.put(assocName, tmp);
@@ -176,6 +181,11 @@ public class MetaModelVisitor {
 		tmp.setTitle(title);
 		tmp.setDescription(description);
 		tmp.setType(nodeService.getType(modelNodeRef).toPrefixString(namespaceService));
+		
+		if(nodeService.hasAspect(modelNodeRef, DesignerModel.ASPECT_MODEL_ERROR)){
+			tmp.setHasError(true);
+		}
+		
 		return tmp;
 	}
 
