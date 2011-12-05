@@ -141,5 +141,27 @@
 				<webapp.log.dir>/tmp</webapp.log.dir>
 			</properties>
 		</profile>
+		<profile>
+			<id>sva-dev</id>
+			<properties>
+				<!-- OLAP -->
+				<olap.server>/opt/alfresco-3.4.d-sva</olap.server>
+				<olap.db.host>localhost</olap.db.host>
+				<olap.db.name>becpg_34d_sva_int</olap.db.name>
+				<olap.db.username>becpg</olap.db.username>
+				<olap.db.password>becpg</olap.db.password>
+			</properties>
+		</profile>
+		<profile>
+			<id>sva-prod</id>
+			<properties>
+				<!-- OLAP -->
+				<olap.server>/opt/alfresco-3.4.d</olap.server>
+				<olap.db.host>localhost</olap.db.host>
+				<olap.db.name>beCPG</olap.db.name>
+				<olap.db.username>beCPG</olap.db.username>
+				<olap.db.password>becpgSVA</olap.db.password>
+			</properties>
+		</profile>
 	</profiles>
 </project>
