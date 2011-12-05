@@ -71,7 +71,7 @@
 		<!-- OLAP -->
 		<olap.server>/opt/alfresco-3.4.d</olap.server>
 		<olap.db.host>localhost</olap.db.host>
-		<olap.db.name>becpg</olap.db.name>
+		<olap.db.name>becpg_34d_demo</olap.db.name>
 		<olap.db.username>becpg</olap.db.username>
 		<olap.db.password>becpg</olap.db.password>
 		<olap.db.port>3306</olap.db.port>
