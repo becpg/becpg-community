@@ -5,8 +5,8 @@
 
 create or replace view becpg_alf_prop (node_id,string_value,long_value,float_value, boolean_value ,local_name) as
   select prop.node_id, prop.string_value, prop.long_value, prop.float_value, prop.boolean_value, qname.local_name
-	from alf_node_properties prop
-	inner join alf_qname qname on prop.qname_id = qname.id;
+	from alf_node_properties prop, alf_qname qname
+	where  prop.qname_id = qname.id;
 
 	
 --

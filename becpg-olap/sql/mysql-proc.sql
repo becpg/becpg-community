@@ -126,8 +126,22 @@ insert into becpg_product_state(product_state,product_label) values ("Valid","Va
 insert into becpg_product_state(product_state,product_label) values ("Refused","Refusé");
 insert into becpg_product_state(product_state,product_label) values ("Archived","Archivé");
 
+--
+-- Temp Tables
+--   becpg_entity_list_temp
+-- 
 
+DROP TABLE IF EXISTS `becpg_entity_list_temp`;
 
+CREATE TABLE `becpg_entity_list_temp` (
+	`becpg_entity_list_temp_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`entityId` BIGINT(20) NOT NULL,
+	`entityListId`   BIGINT(20) NOT NULL,
+	`entityType` TEXT NOT NULL,
+	 PRIMARY KEY (`becpg_entity_list_temp_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+CREATE INDEX entityId_idx ON becpg_entity_list_temp (entityId);
 
 --
 -- Product Fact Table
