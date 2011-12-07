@@ -223,12 +223,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			if (path != null)
 			{
 				ftsQuery = "PATH:\"" + path + "/*\" AND " + ftsQuery;
-			 }
-			  
-			 //beCPG : now, exclude always product history
-			 ftsQuery += PRODUCTS_TO_EXCLUDE;
-			 
-			
+			 }			
 		}
 		
 		if (formQuery.length() != 0 || ftsQuery.length() != 0){
@@ -237,11 +232,15 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				typeQuery = "+TYPE:\"" + datatype + "\"";
 			} else {
 				typeQuery = "-TYPE:\"cm:thumbnail\"";
-			}
+			}						
+			 
 	         // extract data type for this search - advanced search query is type specific
 	         ftsQuery = typeQuery +
 	                    (formQuery.length() != 0 ? " AND (" + formQuery + ")" : "") +
 	                    (ftsQuery.length() != 0 ? " AND (" + ftsQuery + ")" : "");
+	         
+	         //beCPG : now, exclude always product history
+	         ftsQuery += PRODUCTS_TO_EXCLUDE;
 		}
 		
 		return ftsQuery;
@@ -264,6 +263,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
         sp.setLimitBy(LimitBy.UNLIMITED);
         sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
         sp.addQueryTemplate(DEFAULT_FIELD_NAME, QUERY_TEMPLATES);
+        sp.excludeDataInTheCurrentTransaction(false);
         
         logger.debug("getSearchNodes, query: " + searchQueryPath);
         

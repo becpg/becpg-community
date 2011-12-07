@@ -399,7 +399,7 @@
 	
 	<!-- Search -->
 	<bean id="advSearchService" class="fr.becpg.repo.search.AdvSearchServiceImpl">
-		<property name="searchService" ref="SearchService" />
+		<property name="searchService" ref="searchService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="namespaceService" ref="namespaceService" />			
