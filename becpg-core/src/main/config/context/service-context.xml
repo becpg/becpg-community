@@ -376,7 +376,7 @@
 	<bean id="generateProductReportPolicy" class="fr.becpg.repo.product.policy.GenerateProductReportPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="transactionService" ref="transactionService"/>
-		<property name="threadPoolExecutor" ref="indexThreadPoolExecutor" />
+		<property name="taskExecutor" ref="taskReportExecutor" />
 		<property name="productService" ref="productService" />
 		<property name="nodeService" ref="nodeService" />
 	</bean>		
@@ -402,7 +402,8 @@
 		<property name="searchService" ref="searchService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="namespaceService" ref="namespaceService" />			
+		<property name="namespaceService" ref="namespaceService" />	
+		<property name="permissionService" ref="permissionService"/>		
 	</bean>		
 	<bean id="beCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
 		<property name="searchService" ref="SearchService" />
@@ -419,5 +420,11 @@
     	<property name="dictionaryService" ref="dictionaryService"/>
     	<property name="searchService" ref="searchService"/>
     </bean>
+    
+	    <bean id="taskReportExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+			<property name="corePoolSize" value="5" />
+			<property name="maxPoolSize" value="10" />
+			<property name="queueCapacity" value="2000" />
+		 </bean>
     
 </beans>

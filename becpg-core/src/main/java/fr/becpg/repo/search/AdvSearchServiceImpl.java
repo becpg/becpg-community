@@ -13,6 +13,7 @@ import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
@@ -22,6 +23,8 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
+import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 
 /**
  * This class do a search on the repository (association, properties and productLists), for the UI so it respects rights.
@@ -46,12 +49,15 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	
 	private static final String CRITERIA_BIO_ORIGIN = "assoc_bcpg_ingListBioOrigin_added";
 	
+	private static final int MAX_RESULTS = 256;
+	
 	private static Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 		
 	private SearchService searchService;
 	private NodeService nodeService;
 	private DictionaryService dictionaryService;
 	private NamespaceService namespaceService;
+	private PermissionService permissionService;
 		
 	public void setSearchService(SearchService searchService) {
 		this.searchService = searchService;
@@ -67,6 +73,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
+	}
+
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
 	}
 
 	@Override
@@ -85,6 +95,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			
 			nodes = getSearchNodesByIngListCriteria(nodes, criteria);
 		}
+		
+		// apply permissions
+		nodes = filterWithPermissions(nodes);
 		
 		return nodes; 				
 	}
@@ -270,9 +283,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
         sp.setLimitBy(LimitBy.UNLIMITED);
         sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
         sp.addQueryTemplate(DEFAULT_FIELD_NAME, QUERY_TEMPLATES);
-        sp.excludeDataInTheCurrentTransaction(false);
-        
-        logger.debug("getSearchNodes, query: " + searchQueryPath);
+        sp.excludeDataInTheCurrentTransaction(false);        
         
         if(searchQueryPath != null && !searchQueryPath.isEmpty()){
         	
@@ -512,6 +523,26 @@ public class AdvSearchServiceImpl implements AdvSearchService {
         if (logger.isDebugEnabled()) {
 			watch.stop();
 			logger.debug("getSearchNodesByIngListCriteria executed in  "
+					+ watch.getTotalTimeSeconds() + " seconds ");
+		}
+		
+		return nodes;
+	}
+	
+	private List<NodeRef> filterWithPermissions(List<NodeRef> nodes){
+		
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+		
+		BeCPGPermissionFilter filter = new ReadPermissionFilter();
+		nodes = filter.filter(nodes, permissionService, MAX_RESULTS);
+		
+		if (logger.isDebugEnabled()) {
+			watch.stop();
+			logger.debug("filterWithPermissions executed in  "
 					+ watch.getTotalTimeSeconds() + " seconds ");
 		}
 		
