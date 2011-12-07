@@ -18,6 +18,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StopWatch;
 
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
@@ -257,6 +258,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		
 		List<NodeRef> searchResults = new ArrayList<NodeRef>();
 		
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+		
 		SearchParameters sp = new SearchParameters();
         sp.addStore(RepoConsts.SPACES_STORE);
         sp.setLanguage(org.alfresco.service.cmr.search.SearchService.LANGUAGE_FTS_ALFRESCO);
@@ -286,7 +293,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
             }        	
         }
         
-        logger.debug("searchResults : " + searchResults.size());        
+        if (logger.isDebugEnabled()) {
+			watch.stop();
+			logger.debug(searchQueryPath + " executed in  "
+					+ watch.getTotalTimeSeconds() + " seconds - size results "
+					+ searchResults.size());
+		}
         
         return searchResults;
 	}
@@ -296,6 +308,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	 * @return
 	 */
 	private List<NodeRef> getSearchNodesByAssociations(List<NodeRef> nodes, Map<String, String> criteria){
+		
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
 		
 		for(Map.Entry<String, String>criterion : criteria.entrySet()){
 			
@@ -346,6 +364,13 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			}
 		}		
 		
+		 
+        if (logger.isDebugEnabled()) {
+			watch.stop();
+			logger.debug("getSearchNodesByAssociations executed in  "
+					+ watch.getTotalTimeSeconds() + " seconds ");
+		}
+		
 		return nodes;
 	}
 	
@@ -356,6 +381,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	private List<NodeRef> getSearchNodesByIngListCriteria(List<NodeRef> nodes, Map<String, String> criteria){								
 		
 		List<NodeRef> ingListItems = null;
+		
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
 		
 		for(Map.Entry<String, String>criterion : criteria.entrySet()){
 			
@@ -475,6 +506,13 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			if(productNodeRefs != null){
 				nodes.retainAll(productNodeRefs);
 			}
+		}
+		
+		 
+        if (logger.isDebugEnabled()) {
+			watch.stop();
+			logger.debug("getSearchNodesByIngListCriteria executed in  "
+					+ watch.getTotalTimeSeconds() + " seconds ");
 		}
 		
 		return nodes;
