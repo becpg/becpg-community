@@ -86,7 +86,7 @@ public final class Search extends BaseScopableProcessorExtension{
         
         Object[] results = set != null ? set.toArray(new Object[(set.size())]) : new Object[0];
         
-        logger.debug("queryAdvSearch, results" + results);
+        logger.debug("queryAdvSearch, results: " + results.length);
         
         return Context.getCurrentContext().newArray(getScope(), results);
 	}

@@ -50,7 +50,9 @@ function getSiteData(siteId)
  * 
  * Caches the person full name to avoid repeatedly querying the repository.
  */
-var personDataCache = [];
+var personDataCache = [],
+	formCache = [];
+
 function getPersonDisplayName(userId)
 {
    if (personDataCache[userId] != undefined)
@@ -67,6 +69,8 @@ function getPersonDisplayName(userId)
    personDataCache[userId] = displayName;
    return displayName;
 }
+
+
 
 /**
  * Cache to not display twice the same element (e.g. if two comments of the
@@ -418,14 +422,32 @@ function getWikiItem(siteId, containerId, pathParts, node)
    return item;
 }
 
+
+
+function getFormObj(node,fields)
+{
+   var itemType = node.typeShort;
+	
+   if (formCache[itemType] != undefined)
+   {
+      return formCache[itemType];
+   }
+   
+   var  scriptObj = formService.getForm("node", node.nodeRef, fields, fields);
+   formCache[itemType] = scriptObj;
+   return scriptObj;
+}
+
 //ML becPG
 // get required formData
 function getFormData(node,fields){
 	
 	var nodeData = {};
 	
+	//node.typeShort
+	
 	// Use the form service to parse the required properties
-	var  scriptObj = formService.getForm("node", node.nodeRef, fields, fields);
+	var  scriptObj = getFormObj(node, fields);
 
     // Make sure we can quickly look-up the Field Definition within the formData loop...
     var objDefinitions = {};
@@ -776,20 +798,24 @@ function processResults(nodes, maxResults,metadataFields)
    
    for (i = 0, j = nodes.length; i < j && added < maxResults; i++)
    {
-      /**
-       * For each node we extract the site/container qname path and then
-       * let the per-container helper function decide what to do.
-       */
-      parts = splitQNamePath(nodes[i]);
-      if (parts !== null)
-      {
-         item = getItem(parts[0], parts[1], parts[2], nodes[i],metadataFields);
-         if (item !== null)
-         {
-            results.push(item);
-            added++;
-         }
-      }
+	   try {
+	      /**
+	       * For each node we extract the site/container qname path and then
+	       * let the per-container helper function decide what to do.
+	       */
+	      parts = splitQNamePath(nodes[i]);
+	      if (parts !== null)
+	      {
+	         item = getItem(parts[0], parts[1], parts[2], nodes[i],metadataFields);
+	         if (item !== null)
+	         {
+	            results.push(item);
+	            added++;
+	         }
+	      }
+	   } catch(e){
+		   
+	   }
    }
    
    return (
