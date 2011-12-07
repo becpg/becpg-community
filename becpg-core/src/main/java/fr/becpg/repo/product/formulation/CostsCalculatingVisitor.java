@@ -169,10 +169,12 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			
 			if(c.getValue() != null){
 			
-				Float sum = compositeCosts.getCostMap().get(c.getCost()).getValue();				
-				if(sum != null && !sum.equals(0f)){
-					c.setPercentage(c.getValue() / sum * 100);
-				}				
+				if(compositeCosts.getCostMap().containsKey(c.getCost())){					
+					Float sum = compositeCosts.getCostMap().get(c.getCost()).getValue();				
+					if(sum != null && !sum.equals(0f)){
+						c.setPercentage(c.getValue() / sum * 100);
+					}
+				}							
 			}
 			else{
 				c.setPercentage(0f);
