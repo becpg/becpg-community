@@ -119,7 +119,9 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 		if(jsonPostParams.getName()!=null && jsonPostParams.getName().length()>0){
 			if(DesignerModel.TYPE_M2_NAMESPACE.equals(typeName) && (jsonPostParams.getModel()==null ||  jsonPostParams.getModel().length()<1)  ){
 				props.put(DesignerModel.PROP_M2_URI, jsonPostParams.getName());
-			} else {
+			} else if(DesignerModel.DESIGNER_URI.equals(typeName.getNamespaceURI())){
+				props.put(DesignerModel.PROP_DSG_ID, jsonPostParams.getName());
+			}	else {
 				props.put(DesignerModel.PROP_M2_NAME, designerService.prefixName(parentNodeRef,jsonPostParams.getName()));
 			}
 		}

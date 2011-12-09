@@ -455,7 +455,7 @@
                      {
                         data = oData[i];
                         
-                     var dataType = datalistColumn.dataType;
+                     var dataType = datalistColumn.dataType, url = "";
                   	  if(dataType==null){
                   		  dataType = datalistColumn.endpointType;
                   	  }
@@ -480,6 +480,7 @@
                               html += Alfresco.util.formatDate(Alfresco.util.fromISO8601(data.value), scope.msg("date-format.defaultDateOnly"));
                               break;
                             case "bcpg:product":
+                            	 url  = scope._buildCellUrl(data);
                         	   if(datalistColumn.name == "bcpg:compoListProduct")
 								{
                         		  var  padding = 10 + oRecord.getData("itemData")["prop_bcpg_depthLevel"].value * 10;
@@ -487,11 +488,11 @@
 								}
                         	   	else if(datalistColumn.name == "bcpg:packagingListProduct")
 								{
-                        		   html += '<span class="' + data.metadata + '"><a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a></span>';                        	   
+                        		   html += '<span class="' + data.metadata + '"><a href="' + url + '">' + $html(data.displayValue) + '</a></span>';                        	   
 								}
 								else
 								{
-									html += '<a href="' + Alfresco.util.siteURL('document-details?nodeRef=' + data.value) + '">' + $html(data.displayValue) + '</a>';
+									html += '<a href="' + url + '">' + $html(data.displayValue) + '</a>';
 								}
                         	   break;
                            case "boolean":
@@ -509,7 +510,8 @@
                                html += '<span class="userGroup">' + $html(data.displayValue) + '</span>';
                                break;                               
                            case "subtype":
-                              html += '<a href="' + Alfresco.util.siteURL((data.metadata == "container" ? 'folder' : 'document') + '-details?nodeRef=' + data.value) + '">';
+                        	   url  = scope._buildCellUrl(data);
+                              html += '<a href="' + url + '">';
                               html += '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util.getFileIcon(data.displayValue, (data.metadata == "container" ? 'cm:folder' : null), 16) + '" width="16" alt="' + $html(data.displayValue) + '" title="' + $html(data.displayValue) + '" />';
                               html += ' ' + $html(data.displayValue) + '</a>'
                               break;
@@ -574,6 +576,25 @@
          };
       },
       
+      _buildCellUrl : function EntityDataGrid__buildCellUrl(data){
+    	  
+    	  var containerType = "document", url = null;
+    	  if(data.metadata!=null && data.metadata.length){
+    		  containerType = (data.metadata == "container" ? 'folder' : 'document');
+    	  }
+    	  
+          if (data.siteId)
+          {
+             url = Alfresco.constants.URL_PAGECONTEXT + "site/" + data.siteId + "/"+containerType+ '-details?nodeRef=' + data.value;
+          }
+          else
+          {
+             url = Alfresco.constants.URL_PAGECONTEXT +containerType+ '-details?nodeRef=' + data.value;
+          }
+          return url;
+    	  
+    	  
+      },
       
       /**
        * Return data type-specific formatter

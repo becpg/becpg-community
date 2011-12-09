@@ -1,0 +1,601 @@
+<controls>
+	<control id="association"
+		template="/org/alfresco/components/form/controls/richtext.ftl">
+		<description>
+			The association control is used to allow objects in the
+			repository to
+			be picked and ultimately associated with the node being
+			edited. The
+			control uses the JavaScript Alfresco.ObjectFinder
+			component to allow
+			the user to browse the repository and pick
+			objects.
+		</description>
+		<control-param name="compactMode" optional="true" type="boolean">
+			Determines whether the picker will be shown in compact mode
+		</control-param>
+		<control-param name="displayMode" optional="true" type="string">
+			Determines the way to display current values, the default is
+			"items",
+			when set to "list" the current items are shown in a rich
+			list with
+			buttons to manage the current items
+		</control-param>
+		<control-param name="showTargetLink" optional="true"
+			type="boolean">Determines whether a link to the document details
+			page will be
+			rendered to content items" only applicable when
+			displayMode is set to
+			"items")
+		</control-param>
+		<control-param name="selectedValueContextProperty"
+			optional="true" type="string">The name of a component binding
+			property or url
+			parameter that contains the values of the items to
+			pre-select in the
+			picker
+		</control-param>
+		<control-param name="selectActionLabel" optional="true"
+			type="string">The label of the button that launches the picker, by
+			default the
+			label is "Select"
+		</control-param>
+		<control-param name="selectActionLabelId" optional="true"
+			type="string">The resource bundle key of the label of the button
+			that launches
+			the picker
+		</control-param>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+		<control-param name="startLocation" optional="true"
+			type="string">Determines where to start the picker, the value can be
+			any of
+			the
+			values below, the default is "{company home}". Customized
+			startLocations can also be implemented, see NodeLocatorService for
+			more details.
+			{companyhome}: The 'Company Home' space
+			{userhome}: The
+			current users home space
+			{siteshome}: The 'Sites' space
+			{doclib}: The
+			root of the Document Library for the site the item is part of.
+			If the
+			item is not part of a site the default is used. For "create"
+			forms
+			the
+			"item" is considered to be the location the new item is
+			being
+			created
+			in
+			{self}: The item being edited for "edit" forms and the
+			location the
+			item is
+			being created in for "create" forms. This
+			optional="true"ly
+			will
+			typically used with cm:folder types and
+			sub-types
+			{parent}: The
+			parent of the item being edited or the parent
+			of the location
+			the new
+			item is being created in
+			{ancestor}: An
+			ancestor node, same as {parent}
+			without parameters. A type
+			parameter
+			can limit the ancestor node to a
+			certain type or aspect
+			parameter can
+			limit to an ancestor node with a
+			certain aspect
+			applied. The node and
+			aspect parameters can be combined.
+			A NodeRef e.g.
+			workspace://SpacesStore/abcd-12345: Starts the picker
+			in a specific
+			location represented by the NodeRef
+			An XPath e.g.
+			/app:company_home/app:dictionary: Starts the picker in a
+			specific
+			location represented by the XPath
+		</control-param>
+		<control-param name="startLocationParams" optional="true"
+			type="string">Query string formatted parameters for startLocation
+		</control-param>
+		<control-param name="allowNavigationToContentChildren"
+			optional="true" type="boolean">Determines whether the picker can
+			navigate the
+			children of content nodes, the default is false." Only
+			available
+			since
+			3.4.c and 3.4.0)
+		</control-param>
+		<control-param name="editorAppearance">full
+		</control-param>
+	</control>
+
+	<control id="authority"
+		template="/org/alfresco/components/form/controls/authority.ftl">
+		<description>
+			The authority control is used to search for users and/or
+			groups in the
+			repository.
+		</description>
+		<control-param name="compactMode" optional="true" type="boolean">
+			Determines whether the picker will be shown in compact mode
+		</control-param>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+
+	</control>
+
+
+	<control id="category"
+		template="/org/alfresco/components/form/controls/category.ftl">
+		<description>
+			The category control is used to allow the user to select
+			categories for
+			the node being edited. The control uses the JavaScript
+			Alfresco.ObjectPicker component to allow the user to browse the
+			category hierarchy
+		</description>
+
+		<control-param name="compactMode" optional="true" type="boolean">
+			Determines whether the picker will be shown in compact mode
+		</control-param>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+		<control-param name="parentNodeRef" optional="true"
+			type="string">The nodeRef of the category to start the picker,
+			defaults to the
+			root of the category tree
+		</control-param>
+		<control-param name="showSubCategoriesOption" optional="true"
+			type="boolean">Shows a checkbox allowing sub-categories to be
+			included in an
+			advanced search
+		</control-param>
+
+	</control>
+
+	<control id="checkbox"
+		template="/org/alfresco/components/form/controls/checkbox.ftl">
+		<description>
+			The checkbox control renders a standard HTML checkbox
+			control.
+		</description>
+
+		<control-param name="styleClass" optional="true" type="string">
+			Allows a custom CSS class to be applied to the checkbox
+		</control-param>
+		<control-param name="style" optional="true" type="string">
+			Allows
+			CSS rules to applied directly to the checkbox
+		</control-param>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+
+	</control>
+
+
+	<control id="content"
+		template="/org/alfresco/components/form/controls/content.ftl">
+		<description>
+			The content control renders an input area appropriate for
+			the mime type
+			of the content. Plain text content is shown in a
+			standard textarea
+			whereas rich text content i.e. HTML is rendered in a
+			TinyMCE control,
+			the list of mime types considered to be plain and
+			rich content are
+			configurable" see below). If the mime type of the
+			content is not
+			recognized the control is automatically hidden. The
+			content control
+			is also only rendered when the form is in "edit" or
+			"create" mode.
+		</description>
+
+		<control-param name="rows" optional="true" type="int">The
+			number of rows the textarea will have" when editing plain text
+			content)
+		</control-param>
+		<control-param name="columns" optional="true" type="int">
+			The
+			number of columns the textarea will have" when editing plain text
+			content)
+		</control-param>
+		<control-param name="styleClass" optional="true" type="string">
+			Allows a custom CSS class to be applied to the textarea" when editing
+			plain text content)
+		</control-param>
+		<control-param name="style" optional="true" type="string">
+			Allows
+			CSS rules to applied directly to the textarea" when editing
+			plain text
+			content)
+		</control-param>
+		<control-param name="editorAppearance" optional="true"
+			type="string">The preset set of configuration options to use for the
+			TinyMCE
+			control" when editing rich text content), accepted values are
+			"full",
+			"explorer", "webeditor" and "custom". If ommitted a default
+			configuration is used
+		</control-param>
+		<control-param name="editorParameters" optional="true"
+			type="string">Used when the "custom" preset is used for the
+			"editorAppearance"
+			parameter. The value of this parameter is sent
+			directly to TinyMCE so
+			should contain valid TinyMCE configuration
+			options.
+		</control-param>
+		<control-param name="editorHeight" optional="true" type="int">
+			The height in pixels of the TinyMCE control" when editing rich text
+			content)
+		</control-param>
+		<control-param name="editorWidth" optional="true" type="int">
+			The width in pixels of the TinyMCE control" when editing rich text
+			content)
+		</control-param>
+		<control-param name="plainMimeTypes" optional="true"
+			type="comma separated string">Comma separated list of mime types that
+			represent plain text,
+			default is "text/plain,text/xml"
+		</control-param>
+		<control-param name="richMimeTypes" optional="true"
+			type="comma separated string">Comma separated list of mime types that
+			represent rich text,
+			default is "text/html,text/xhtml"
+		</control-param>
+		<control-param name="forceEditor" optional="true" type="boolean">
+			Forces the textarea to be displayed if the mime type of the content
+			is not recognized or not specified, default is false
+		</control-param>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+	</control>
+
+	<control id="date" template="/org/alfresco/components/form/controls/date.ftl">
+		<description>
+			The date control renders a date field allowing free form
+			entry of dates
+			as well as a calendar widget allowing dates to be
+			selected visually.
+			If appropriate a time field is also rendered.
+		</description>
+
+		<control-param name="showTime" optional="true" type="boolean">
+			Determines whether the time entry field should be displayed
+		</control-param>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+
+	</control>
+
+
+	<control id="encoding"
+		template="/org/alfresco/components/form/controls/encoding.ftl">
+		<description>
+			The encoding control renders a selectable list of
+			encodings.
+		</description>
+
+		<control-param name="property" optional="true" type="string">
+			The
+			name of a content property to retrieve the current encoding from,
+			if
+			omitted the field.value value is used
+		</control-param>
+		<control-param name="styleClass" optional="true" type="string">
+			Allows a custom CSS class to be applied to the select list
+		</control-param>
+		<control-param name="style" optional="true" type="string">
+			Allows
+			CSS rules to applied directly to the select list
+		</control-param>
+	</control>
+
+	<control id="hidden" template="/org/alfresco/components/form/controls/hidden.ftl">
+		<description>
+			The hidden control renders a standard HMTL input
+			type="hidden" control,
+			the value is either taken from the value of the
+			given contextProperty
+			parameter, from a URL argument with the name of
+			the field or from the
+			field's value.
+		</description>
+
+		<control-param name="contextProperty" optional="true"
+			type="string">The name of a context
+			property to retrieve the value from
+		</control-param>
+	</control>
+
+	<control id="info" template="/org/alfresco/components/form/controls/info.ftl">
+		<description>
+			The info control renders the field as if the form is in
+			view mode
+			regardless of the actual mode the form is in, this can be
+			useful when
+			the data needs to be present on an edit form but not
+			rendered as a
+			disabled input control.
+		</description>
+	</control>
+
+	<control id="invisible"
+		template="/org/alfresco/components/form/controls/invisible.ftl">
+		<description>
+			The invisible control literally renders nothing at all,
+			it can be used
+			when a form definition needs to be requested and
+			returned but not
+			displayed.
+		</description>
+	</control>
+
+	<control id="mimetype"
+		template="/org/alfresco/components/form/controls/mimetype.ftl">
+		<description>
+			The mimetype control renders a selectable list of
+			mimetypes.
+		</description>
+
+		<control-param name="property" optional="true" type="string">
+			The
+			name of a content property to retrieve the current mimetype from,
+			if
+			omitted the field.value value is used
+		</control-param>
+		<control-param name="styleClass" optional="true" type="string">
+			Allows a custom CSS class to be applied to the select list
+		</control-param>
+		<control-param name="style" optional="true" type="string">
+			Allows CSS rules to applied directly to the select list
+		</control-param>
+	</control>
+
+	<control id="number" template="/org/alfresco/components/form/controls/number.ftl">
+		<description>
+			The number control renders a standard HTML text field
+			intended for
+			accepting numbers. The only difference between this
+			control and the
+			textfield.ftl control is the addition of a default CSS
+			class called
+			"number" applied to the input element. The "number" CSS
+			class reduces
+			the width of the input element, further custom CSS
+			classes can still
+			be applied to the control.
+		</description>
+		<control-param name="styleClass" optional="true" type="string">
+			Allows a custom CSS class to be applied to the text field
+		</control-param>
+		<control-param name="style" optional="true" type="string">
+			Allows
+			CSS rules to applied directly to the text field
+		</control-param>
+		<control-param name="maxLength" optional="true" type="int">
+			Defines the maximum number of characters the user can enter, maps
+			directly to the standard HTML 'maxlength' attribute
+		</control-param>
+		<control-param name="size" optional="true" type="int">Defines
+			the number of characters the text field can display, maps directly to
+			the standard HTML 'size' attribute
+		</control-param>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+	</control>
+
+	<control id="period" template="/org/alfresco/components/form/controls/period.ftl">
+		<description>
+			The period control renders a selectable list of periods
+			and an
+			expression entry field.
+		</description>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+	</control>
+
+	<control id="richtext"
+		template="/org/alfresco/components/form/controls/richtext.ftl">
+		<description>
+			The rich text control renders a TinyMCE editor.
+		</description>
+
+		<control-param name="editorAppearance" optional="true"
+			type="string">The preset set of configuration options to use for the
+			TinyMCE
+			control, accepted values are "full", "explorer", "webeditor"
+			and
+			"custom". If ommitted a default configuration is used
+		</control-param>
+		<control-param name="editorParameters" optional="true"
+			type="string">Used when the "custom" preset is used for the
+			"editorAppearance"
+			parameter. The value of this parameter is sent
+			directly to TinyMCE so
+			should contain valid TinyMCE configuration
+			options.
+		</control-param>
+		<control-param name="editorHeight" optional="true" type="int">
+			The height in pixels of the TinyMCE control" when editing rich text
+			content)
+		</control-param>
+		<control-param name="editorWidth" optional="true" type="int">
+			The width in pixels of the TinyMCE control" when editing rich text
+			content)
+		</control-param>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+	</control>
+
+	<control id="selectone"
+		template="/org/alfresco/components/form/controls/selectone.ftl">
+		<description>
+			The selectone control renders a standard HTML select
+			list.
+		</description>
+
+		<control-param name="options" mandatory="true"
+			type="comma separated string">A comma separated list of options to
+			display, for example
+			"First,Second,Third". If a value for an option
+			also needs to be
+			specified the "1|First,2|Second,3|Third" format can
+			be used. In the
+			latter case message bundle IDs can also be specified
+			in place of an
+			explicit display value, e.g.
+			"1|{label.second},2|{label.second},3|{label.third}".
+		</control-param>
+		<control-param name="size" optional="true" type="int">The
+			size
+			of the list i.e. how many options are always visible, default is
+			1.
+		</control-param>
+		<control-param name="styleClass" optional="true" type="string">
+			Allows a custom CSS class to be applied to the select list
+		</control-param>
+		<control-param name="style" optional="true" type="string">
+			Allows
+			CSS rules to applied directly to the select list
+		</control-param>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+
+	</control>
+
+	<control id="selectmany"
+		template="/org/alfresco/components/form/controls/selectmany.ftl">
+		<description>
+			The selectmany control renders a standard HTML select
+			list allowing
+			multiple selections.
+		</description>
+
+		<control-param name="options" mandatory="true"
+			type="comma separated string">A comma separated list of options to
+			display, for example
+			"First,Second,Third". If a value for an option
+			also needs to be
+			specified the "First|1,Second|2,Third|3" format can
+			be used.
+		</control-param>
+		<control-param name="size" optional="true" type="int">The
+			size
+			of the list i.e. how many options are always visible, the
+			default is
+			5.
+		</control-param>
+		<control-param name="styleClass" optional="true" type="string">
+			Allows a custom CSS class to be applied to the select list
+		</control-param>
+		<control-param name="style" optional="true" type="string">
+			Allows
+			CSS rules to applied directly to the select list
+		</control-param>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+	</control>
+
+	<control id="size" template="/org/alfresco/components/form/controls/size.ftl">
+		<description>
+			The size control renders a read only human readable
+			representation of
+			the content size.
+		</description>
+
+		<control-param name="property" optional="true" type="string">
+			The
+			name of a content property to retrieve the current content size
+			from,
+			if omitted the field.value value is used
+		</control-param>
+
+	</control>
+
+	<control id="textarea"
+		template="/org/alfresco/components/form/controls/textarea.ftl">
+		<description>
+			The textarea control renders a standard HTML textarea
+			field.
+		</description>
+
+		<control-param name="rows" optional="true" type="int">The
+			number of rows the textarea will have
+		</control-param>
+		<control-param name="columns" optional="true" type="int">
+			The
+			number of columns the textarea will have
+		</control-param>
+		<control-param name="styleClass" optional="true" type="string">
+			Allows a custom CSS class to be applied to the textarea
+		</control-param>
+		<control-param name="style" optional="true" type="string">
+			Allows
+			CSS rules to applied directly to the textarea
+		</control-param>
+		<control-param name="activateLinks" optional="true"
+			type="boolean">When set to "true" and the form is in "view" mode the
+			control
+			will attempt to display links as active hyperlinks
+		</control-param>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+
+	</control>
+
+	<control id="textfield"
+		template="/org/alfresco/components/form/controls/textfield.ftl">
+		<description>
+			The textfield control renders a standard HTML text field.
+		</description>
+		<note>None of these are used in 'view' mode.</note>
+
+		<control-param name="styleClass" optional="true" type="string">
+			Allows a custom CSS class to be applied to the text field
+		</control-param>
+		<control-param name="style" optional="true" type="string">
+			Allows
+			CSS rules to applied directly to the text field
+		</control-param>
+		<control-param name="maxLength" optional="true" type="int">
+			Defines the maximum number of characters the user can enter, maps
+			directly to the standard HTML 'maxlength' attribute
+		</control-param>
+		<control-param name="size" optional="true" type="int">Defines
+			the number of characters the text field can display, maps directly to
+			the standard HTML 'size' attribute
+		</control-param>
+		<control-param name="activateLinks" optional="true"
+			type="boolean">When set to "true" and the form is in "view" mode the
+			control
+			will attempt to display links as active hyperlinks
+		</control-param>
+		<control-param name="forceEditable" optional="true"
+			type="boolean">Forces the control to be editable, default is false
+		</control-param>
+	</control>
+
+
+</controls>

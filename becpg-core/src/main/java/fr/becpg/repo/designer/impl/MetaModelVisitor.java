@@ -139,11 +139,19 @@ public class MetaModelVisitor {
 			} else {
 				tmp = new ModelTree();
 				tmp.setName(assocName);
-				
-				String title = I18NUtil.getMessage("m2_m2model.association.m2_" + assocName.toLowerCase(), Locale.getDefault());
+				tmp.setType(assoc.getTypeQName().toPrefixString(namespaceService));
+				String title = "";
+				if(DesignerModel.M2_URI.equals(assoc.getTypeQName().getNamespaceURI())){
+					title = I18NUtil.getMessage("m2_m2model.association.m2_" + assocName.toLowerCase());
+				} else {
+					title = I18NUtil.getMessage("dsg_designerModel.association.dsg_" + assocName.toLowerCase());
+				}
 				
 				tmp.setTitle(title);
-				tmp.setType(assoc.getTypeQName().toPrefixString(namespaceService));
+				
+				tmp.setNodeRef(assoc.getParentRef().toString());
+				tmp.setFormId("assoc");
+				tmp.setSubType(nodeService.getType(assoc.getChildRef()).toPrefixString(namespaceService));
 
 				assocRoots.put(assocName, tmp);
 				ret.getChildrens().add(tmp);

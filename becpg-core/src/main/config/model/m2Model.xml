@@ -15,7 +15,7 @@
 		<import uri="http://www.alfresco.org/model/dictionary/1.0"
 			prefix="d" />
 		<!-- Import Alfresco Content Domain Model Definitions -->
-		<import uri="http://www.alfresco.org/model/system/1.0" prefix="sys" />
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
 	</imports>
 	<!-- Introduction of new namespaces defined by this model -->
@@ -53,7 +53,7 @@
 		<!-- ACL Object -->
 		<type name="m2:model">
 			<title>Model</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<properties>
 				<property name="m2:author">
 					<title>Author</title>
@@ -145,7 +145,7 @@
 
 		<type name="m2:classAssociation">
 			<title>Class Association</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<properties>
 				<property name="m2:sourceRoleName">
 					<title>Source Role Name</title>
@@ -203,7 +203,7 @@
 
 		<type name="m2:class">
 			<title>Class</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<properties>
 				<property name="m2:parentName">
 				    <title>Parent Name</title>
@@ -324,7 +324,7 @@
 
 		<type name="m2:constraint">
 			<title>Constraint</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<properties>
 				<property name="m2:ref">
 					<title>Reference</title>
@@ -368,7 +368,7 @@
 		
 		<type name="m2:dataType">
 			<title>DataType</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<properties>
 				<property name="m2:javaClassName">
 					<title>Java ClassName</title>
@@ -390,7 +390,7 @@
 		
 		<type name="m2:namespace">
 			<title>Namespace</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<properties>
 				<property name="m2:uri">
 					<title>Uri</title>
@@ -409,7 +409,7 @@
 
 		<type name="m2:property">
 		    <title>Property</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<properties>
 				<property name="m2:isOverride">
 					<title>Is override</title>
@@ -462,7 +462,7 @@
 
 		<type name="m2:propertyOverride">
 			<title>Property Override</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<mandatory-aspects>
 				<aspect>m2:propertyAspect</aspect>
 			</mandatory-aspects>
@@ -471,7 +471,7 @@
 
 		<type name="m2:namedValue">
 			<title>Named Value</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<properties>
 				<property name="m2:nameValue">
 					<title>Name Value</title>

@@ -8,20 +8,29 @@
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
     
+    
+     <bean id="formModelVisitor" class="fr.becpg.repo.designer.impl.FormModelVisitor"/>
 
-	<bean id="designerService" class="fr.becpg.repo.designer.impl.DesignerServiceImpl">
+	<bean id="designerService" class="fr.becpg.repo.designer.impl.DesignerServiceImpl" init-method="init">
 		<property name="metaModelVisitor" ref="metaModelVisitor" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="contentService" ref="contentService" />	
+		<property name="formModelVisitor" ref="formModelVisitor"/>
 	</bean>
 
     
     <!-- Webscripts -->
     
        	
+   	<bean id="webscript.fr.becpg.designer.formControls.get" class="fr.becpg.repo.designer.web.scripts.FormControlsWebScript" parent="webscript">
+      	<property name="designerService" ref="designerService" />
+   	</bean>
+   	
+   	 	
    	<bean id="webscript.fr.becpg.designer.modelTree.get" class="fr.becpg.repo.designer.web.scripts.ModelTreeWebScript" parent="webscript">
       	<property name="designerService" ref="designerService" />
    	</bean>
+   	
    	
    	<bean id="webscript.fr.becpg.designer.createElement.post" class="fr.becpg.repo.designer.web.scripts.CreateModelElementWebScript" parent="webscript">
       	<property name="designerService" ref="designerService" />

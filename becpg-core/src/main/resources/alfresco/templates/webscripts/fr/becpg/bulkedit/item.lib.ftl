@@ -73,6 +73,9 @@
       <#if data.metadata??>
    "metadata": "${data.metadata}",
       </#if>
+      <#if data.siteId??>
+   "siteId": "${data.siteId}",
+      </#if>
       <#if data.displayValue?exists >
 	      <#if data.displayValue?is_boolean>
 	   "displayValue": ${data.displayValue?string}

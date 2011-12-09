@@ -16,6 +16,7 @@ public class ModelTree {
 	private String name;
 	private String title;
 	private String description;
+	private String subType;
 	private Boolean hasError = false; 
 	
 	
@@ -146,6 +147,20 @@ public class ModelTree {
 		this.hasError = hasError;
 	}
 
+	/**
+	 * @return the subType
+	 */
+	public String getSubType() {
+		return subType;
+	}
+
+	/**
+	 * @param subType the subType to set
+	 */
+	public void setSubType(String subType) {
+		this.subType = subType;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -159,6 +174,7 @@ public class ModelTree {
 		result = prime * result + ((hasError == null) ? 0 : hasError.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((subType == null) ? 0 : subType.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
@@ -206,6 +222,11 @@ public class ModelTree {
 				return false;
 		} else if (!nodeRef.equals(other.nodeRef))
 			return false;
+		if (subType == null) {
+			if (other.subType != null)
+				return false;
+		} else if (!subType.equals(other.subType))
+			return false;
 		if (title == null) {
 			if (other.title != null)
 				return false;
@@ -225,8 +246,8 @@ public class ModelTree {
 	@Override
 	public String toString() {
 		return "ModelTree [type=" + type + ", formId=" + formId + ", nodeRef=" + nodeRef + ", name=" + name
-				+ ", title=" + title + ", description=" + description + ", hasError=" + hasError + ", childrens="
-				+ childrens + "]";
+				+ ", title=" + title + ", description=" + description + ", subType=" + subType + ", hasError="
+				+ hasError + ", childrens=" + childrens + "]";
 	}
 
 	

@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.dictionary.DictionaryModelType;
 import org.alfresco.repo.dictionary.M2Model;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -24,6 +25,7 @@ import org.springframework.core.io.Resource;
 
 import fr.becpg.model.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
+import fr.becpg.repo.designer.data.FormControl;
 import fr.becpg.repo.designer.data.ModelTree;
 
 public class DesignerServiceImpl implements DesignerService {
@@ -37,6 +39,11 @@ public class DesignerServiceImpl implements DesignerService {
 	
 	
 	private MetaModelVisitor metaModelVisitor;
+	
+	private FormModelVisitor formModelVisitor;
+	
+	//Controls cache
+	private List<FormControl> controls = new ArrayList<FormControl>();
 	
 
 	private static Log logger = LogFactory.getLog(DesignerServiceImpl.class);
@@ -63,7 +70,43 @@ public class DesignerServiceImpl implements DesignerService {
 	public void setMetaModelVisitor(MetaModelVisitor metaModelVisitor) {
 		this.metaModelVisitor = metaModelVisitor;
 	}
+	
+	/**
+	 * @param formModelVisitor the formModelVisitor to set
+	 */
+	public void setFormModelVisitor(FormModelVisitor formModelVisitor) {
+		this.formModelVisitor = formModelVisitor;
+	}
 
+
+	public void init(){
+		logger.debug("Init DesignerServiceImpl");
+		InputStream in = null ;
+		try {
+			
+			try {
+				in = getControlsTemplate();
+			} catch (IOException e) {
+				logger.error(e,e);
+			}
+			if(in!=null){
+				controls = formModelVisitor.visitControls(in);
+			}
+			
+		} catch (Exception e){
+			logger.error(e,e);
+		} 
+		finally {
+			if(in!=null){
+				try {
+					in.close();
+				} catch (Exception e) {
+					//Cannot do nothing here
+				}
+			}
+		}
+	}
+	
 	@Override
 	public NodeRef createModelAspectNode(NodeRef parentNode, InputStream modelXml) {
 		logger.debug("call createModelAspectNode");
@@ -254,6 +297,16 @@ public class DesignerServiceImpl implements DesignerService {
 		}
 		return null;
 	}
+	
+	private InputStream getControlsTemplate() throws IOException {
+		Resource resource = new ClassPathResource("beCPG/designer/formControls.xml");
+		if(resource.exists()){
+			return resource.getInputStream();
+		}
+			logger.warn("No controls template for ");
+		return null;
+	}
+	
 
 	@Override
 	public String prefixName(NodeRef elementRef, String name) {
@@ -278,6 +331,11 @@ public class DesignerServiceImpl implements DesignerService {
 		logger.warn("Could not find any namespace");
 		
 		return name;
+	}
+
+	@Override
+	public List<FormControl> getFormControls() {
+		return controls;
 	}
 
 }

@@ -8,7 +8,7 @@
 			prefix="d" />
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.bcpg.fr/model/m2/1.0" prefix="m2" />
-		<import uri="http://www.alfresco.org/model/system/1.0" prefix="sys" />
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 	</imports>
 	<namespaces>
 		<namespace uri="http://www.bcpg.fr/model/designer/1.0"
@@ -42,7 +42,7 @@
 	<types>
 		<type name="dsg:form">
 			<title>Form</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<properties>
 				<property name="dsg:submissionUrl">
 					<title>Submission Url</title>
@@ -57,7 +57,7 @@
 		</type>
 		<type name="dsg:formSet">
 			<title>Form Set</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<properties>
 				<property name="dsg:appearance">
 					<title>Appearance</title>
@@ -77,7 +77,7 @@
 		</type>
 		<type name="dsg:formField">
 			<title>Form field</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<properties>
 				<property name="dsg:hide">
 					<title>Hide</title>
@@ -142,7 +142,7 @@
 		</type>
 		<type name="dsg:formControl">
 			<title>Form control</title>
-			<parent>sys:base</parent>
+			<parent>cm:content</parent>
 			<associations>
 				<child-association name="dsg:parameters">
 					<title>Control parameters</title>
@@ -244,7 +244,7 @@
 			</associations>
 		</aspect>
 		<aspect name="dsg:formFieldsAspect">
-			<title>Form fields Aspects</title>
+			<title>Form fields Aspect</title>
 			<associations>
 				<child-association name="dsg:fields">
 					<title>Fields association</title>
@@ -262,10 +262,10 @@
 			</associations>
 		</aspect>
 		<aspect name="dsg:formSetsAspect">
-			<title>Form sets Aspects</title>
+			<title>Form sets Aspect</title>
 			<associations>
 				<child-association name="dsg:sets">
-					<title>Fields association</title>
+					<title>Sets association</title>
 					<source>
 						<many>false</many>
 					</source>

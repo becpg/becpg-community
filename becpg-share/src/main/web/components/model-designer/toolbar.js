@@ -302,7 +302,7 @@
             this.modules.createElement = new Alfresco.module.SimpleDialog(this.id + "-createElement").setOptions(
             {
                width: "30em",
-               templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "/modules/model-designer/create-element?currentType="+this.options.itemType,
+               templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "modules/model-designer/create-element?currentType="+this.options.itemType,
                actionUrl: actionUrl,
                destroyOnHide : true,
                doSetupFormsValidation:
@@ -322,6 +322,7 @@
                 		  var treeNode = response.json.treeNode;
                 		  treeNode.parentNodeRef = me.options.destination;
                 		  treeNode.assocName = response.json.assocName;
+                		  treeNode.hasError = response.json.hasError;
                 		  
                 		  YAHOO.Bubbling.fire("elementCreated",{node:treeNode});
                 		  

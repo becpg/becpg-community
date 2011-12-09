@@ -53,6 +53,11 @@ var Filters =
          filterParams.limitResults = argMax;
       }
 
+      var itemType = args.itemType;
+      if ((itemType !== null)){
+    	  filterParams.query += " +TYPE:\""+itemType+"\"";
+      }
+      
       // Create query based on passed-in arguments
       var filterData = String(filter.filterData || ""),
          filterQuery = filterParams.query;

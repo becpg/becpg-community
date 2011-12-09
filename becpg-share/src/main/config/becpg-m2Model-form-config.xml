@@ -4,29 +4,42 @@
 	<config evaluator="node-type" condition="m2:namespace">
 		<forms>
 			<form>
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 					<show id="m2:uri" />
 					<show id="m2:prefix" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<set id="mainInfo" appearance="panel" label="Informations" />
 					<field id="m2:uri" set="mainInfo" />
 					<field id="m2:prefix" set="mainInfo" />
 				</appearance>
 			</form>
 		</forms>
 	</config>
-
+	<config evaluator="model-type" condition="m2:namespace">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:prefix" />
+					<show id="m2:uri" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+    
 	<config evaluator="node-type" condition="m2:namedValue">
 		<forms>
 			<form>
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 					<show id="m2:nameValue" />
 					<show id="m2:simpleValue" />
 					<show id="m2:listValue" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<set id="mainInfo" appearance="panel" label="Informations" />
 					<field id="m2:nameValue" set="mainInfo" />
 					<field id="m2:simpleValue" set="mainInfo" />
 					<field id="m2:listValue" set="mainInfo" />
@@ -34,12 +47,23 @@
 			</form>
 		</forms>
 	</config>
-
+	<config evaluator="model-type" condition="m2:namedValue">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:nameValue" />
+					<show id="m2:simpleValue" />
+					<show id="m2:listValue" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 
 	<config evaluator="node-type" condition="m2:model">
 		<forms>
 			<form>
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 					<show id="m2:name" />
 					<show id="m2:title" />
@@ -49,7 +73,7 @@
 					<show id="m2:published" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<set id="mainInfo" appearance="panel" label="Informations" />
 					<field id="m2:name" set="mainInfo" />
 					<field id="m2:title" set="mainInfo" />
 					<field id="m2:description" set="mainInfo">
@@ -67,6 +91,7 @@
 	<config evaluator="node-type" condition="m2:type">
 		<forms>
 			<form>
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 					<show id="m2:parentName" />
 					<show id="m2:name" />
@@ -77,7 +102,7 @@
 					<show id="m2:mandatoryAspects" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<set id="mainInfo" appearance="panel" label="Informations" />
 					<field id="m2:parentName" set="mainInfo" />
 					<field id="m2:name" set="mainInfo" />
 					<field id="m2:title" set="mainInfo" />
@@ -107,11 +132,22 @@
 			</form>
 		</forms>
 	</config>
-
+	<config evaluator="model-type" condition="m2:type">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:title" />
+					<show id="m2:name" />
+					<show id="m2:mandatoryAspects" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 	<config evaluator="node-type" condition="m2:aspect">
 		<forms>
 			<form>
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 					<show id="m2:parentName" />
 					<show id="m2:name" />
@@ -122,7 +158,7 @@
 					<show id="m2:mandatoryAspects" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<set id="mainInfo" appearance="panel" label="Informations" />
 					<field id="m2:parentName" set="mainInfo" />
 					<field id="m2:name" set="mainInfo" />
 					<field id="m2:title" set="mainInfo" />
@@ -152,14 +188,25 @@
 			</form>
 		</forms>
 	</config>
+	<config evaluator="model-type" condition="m2:aspect">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:title" />
+					<show id="m2:name" />
+					<show id="m2:mandatoryAspects" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 	<config evaluator="node-type" condition="m2:property">
 		<forms>
 			<form>
-
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
 				<field-visibility>
-					<show id="m2:propertyType" />
 					<show id="m2:name" />
+					<show id="m2:propertyType" />
 					<show id="m2:title" />
 					<show id="m2:description" />
 					<show id="m2:defaultValue" />
@@ -173,8 +220,8 @@
 					<show id="m2:indexTokenisationMode" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
-					<set id="indexInfo" appearance="bordered-panel" label="Indexation" />
+					<set id="mainInfo" appearance="panel" label="Informations" />
+					<set id="indexInfo" appearance="panel" label="Indexation" />
 					<field id="m2:propertyType" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/propertyType
@@ -201,11 +248,26 @@
 			</form>
 		</forms>
 	</config>
+	<config evaluator="model-type" condition="m2:property">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:title" />
+				    <show id="m2:name" />
+					<show id="m2:propertyType" />
+					<show id="m2:defaultValue" />
+					<show id="m2:isMandatory" />
+					<show id="m2:isMultiValued" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 
 	<config evaluator="node-type" condition="m2:propertyOverride">
 		<forms>
 			<form>
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 					<show id="m2:name" />
 					<show id="m2:defaultValue" />
@@ -213,7 +275,7 @@
 					<!-- <show id="m2:isMandatoryEnforced" /> -->
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Informations" />	
+					<set id="mainInfo" appearance="panel" label="Informations" />	
 					<field id="m2:name" set="mainInfo" />
 					<field id="m2:defaultValue" set="mainInfo" />
 					<field id="m2:isMandatory" set="mainInfo" />
@@ -222,10 +284,22 @@
 			</form>
 		</forms>
 	</config>
+	<config evaluator="model-type" condition="m2:propertyOverride">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+				    <show id="m2:name" />
+					<show id="m2:defaultValue" />
+					<show id="m2:isMandatory" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 	<config evaluator="node-type" condition="m2:association">
 		<forms>
 			<form>
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 					<show id="m2:name" />
 					<show id="m2:title" />
@@ -240,9 +314,9 @@
 					<show id="m2:isTargetMany" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
-					<set id="sourceInfo" appearance="bordered-panel" label="Source" />
-					<set id="targetInfo" appearance="bordered-panel" label="Cible" />
+					<set id="mainInfo" appearance="panel" label="Informations" />
+					<set id="sourceInfo" appearance="panel" label="Source" />
+					<set id="targetInfo" appearance="panel" label="Cible" />
 					<field id="m2:name" set="mainInfo" />
 					<field id="m2:title" set="mainInfo" />
 					<field id="m2:description" set="mainInfo">
@@ -268,11 +342,27 @@
 			</form>
 		</forms>
 	</config>
+	<config evaluator="model-type" condition="m2:association">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:title" />
+				    <show id="m2:name" />
+					<show id="m2:isSourceMandatory" />
+					<show id="m2:isSourceMany" />
+					<show id="m2:targetClassName" />
+					<show id="m2:isTargetMandatory" />
+					<show id="m2:isTargetMany" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 
 	<config evaluator="node-type" condition="m2:childAssociation">
 		<forms>
 			<form>
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 					<show id="m2:name" />
 					<show id="m2:title" />
@@ -290,9 +380,9 @@
 					<show id="m2:propagateTimestamps" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
-					<set id="sourceInfo" appearance="bordered-panel" label="Source de l'association" />
-					<set id="targetInfo" appearance="bordered-panel" label="Cible de l'association" />
+					<set id="mainInfo" appearance="panel" label="Informations" />
+					<set id="sourceInfo" appearance="panel" label="Source de l'association" />
+					<set id="targetInfo" appearance="panel" label="Cible de l'association" />
 					<field id="m2:name" set="mainInfo" />
 					<field id="m2:title" set="mainInfo" />
 					<field id="m2:description" set="mainInfo">
@@ -320,13 +410,28 @@
 			</form>
 		</forms>
 	</config>
-
+	<config evaluator="model-type" condition="m2:childAssociation">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:title" />
+				    <show id="m2:name" />
+					<show id="m2:isSourceMandatory" />
+					<show id="m2:isSourceMany" />
+					<show id="m2:targetClassName" />
+					<show id="m2:isTargetMandatory" />
+					<show id="m2:isTargetMany" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 
 
 	<config evaluator="node-type" condition="m2:constraint">
 		<forms>
 			<form>
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 					<show id="m2:name" />
 					<show id="m2:title" />
@@ -334,7 +439,7 @@
 					<show id="m2:type" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<set id="mainInfo" appearance="panel" label="Informations" />
 					<field id="m2:name" set="mainInfo" />
 					<field id="m2:title" set="mainInfo" />
 					<field id="m2:description" set="mainInfo">
@@ -345,16 +450,28 @@
 			</form>
 		</forms>
 	</config>
+	<config evaluator="model-type" condition="m2:constraint">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:title" />
+				    <show id="m2:name" />
+					<show id="m2:type" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 
 	<config evaluator="node-type" condition="m2:constraintRef">
 		<forms>
 			<form >
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 					<show id="m2:ref" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Informations" />
+					<set id="mainInfo" appearance="panel" label="Informations" />
 					<field id="m2:ref" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/constraintRef
@@ -367,7 +484,15 @@
 			</form>
 		</forms>
 	</config>
-	
+	<config evaluator="model-type" condition="m2:constraintRef">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+				    <show id="m2:ref" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 	
 
 

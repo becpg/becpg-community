@@ -46,7 +46,7 @@
       </component>
       <component>
          <region-id>datagrid</region-id>
-         <url>/components/entity-data-lists/entity-datagrid</url>
+         <url>/modules/entity-data-lists/entity-datagrid</url>
          <properties>
             <pagination>true</pagination>
          </properties>

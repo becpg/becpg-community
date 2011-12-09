@@ -3,6 +3,7 @@ package fr.becpg.repo.designer;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -20,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.DesignerModel;
+import fr.becpg.repo.designer.data.FormControl;
 import fr.becpg.repo.designer.data.ModelTree;
 import fr.becpg.repo.designer.impl.MetaModelVisitor;
 import fr.becpg.test.RepoBaseTestCase;
@@ -103,59 +105,59 @@ public class DesignerServiceTest extends RepoBaseTestCase {
 
 	}
 
-	public void testMetaModelVisitor() {
-
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
-					@Override
-					public NodeRef execute() throws Throwable {
-
-						/*-- Create test folder --*/
-						NodeRef folderNodeRef = nodeService.getChildByName(
-								repositoryHelper.getCompanyHome(),
-								ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-						if (folderNodeRef != null) {
-							fileFolderService.delete(folderNodeRef);
-						}
-						folderNodeRef = fileFolderService.create(
-								repositoryHelper.getCompanyHome(),
-								PATH_TESTFOLDER, ContentModel.TYPE_FOLDER)
-								.getNodeRef();
-						
-						
-
-						InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/designer/testModel.xml");
-						assertNotNull(in);
-						
-						M2Model m2Model = M2Model.createModel(in);
-						
-						NodeRef modelNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, DesignerModel.TYPE_M2_MODEL).getChildRef();
-						
-						//Try to parse becpgModel 
-						metaModelVisitor.visitModelNodeRef(modelNodeRef,
-								m2Model);
-						
-						
-						
-						
-						ModelTree tree = metaModelVisitor.visitModelTreeNodeRef(modelNodeRef);
-						assertNotNull(tree);
-						logger.debug(tree);
-
-						//To Xml
-						metaModelVisitor.visitModelXml(modelNodeRef, System.out);
-						
-						
-						
-						
-						return null;
-
-					}
-				}, false, true);
-
-
-	}
+//	public void testMetaModelVisitor() {
+//
+//		
+//		transactionService.getRetryingTransactionHelper().doInTransaction(
+//				new RetryingTransactionCallback<NodeRef>() {
+//					@Override
+//					public NodeRef execute() throws Throwable {
+//
+//						/*-- Create test folder --*/
+//						NodeRef folderNodeRef = nodeService.getChildByName(
+//								repositoryHelper.getCompanyHome(),
+//								ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
+//						if (folderNodeRef != null) {
+//							fileFolderService.delete(folderNodeRef);
+//						}
+//						folderNodeRef = fileFolderService.create(
+//								repositoryHelper.getCompanyHome(),
+//								PATH_TESTFOLDER, ContentModel.TYPE_FOLDER)
+//								.getNodeRef();
+//						
+//						
+//
+//						InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/designer/testModel.xml");
+//						assertNotNull(in);
+//						
+//						M2Model m2Model = M2Model.createModel(in);
+//						
+//						NodeRef modelNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, DesignerModel.TYPE_M2_MODEL).getChildRef();
+//						
+//						//Try to parse becpgModel 
+//						metaModelVisitor.visitModelNodeRef(modelNodeRef,
+//								m2Model);
+//						
+//						
+//						
+//						
+//						ModelTree tree = metaModelVisitor.visitModelTreeNodeRef(modelNodeRef);
+//						assertNotNull(tree);
+//						logger.debug(tree);
+//
+//						//To Xml
+//						metaModelVisitor.visitModelXml(modelNodeRef, System.out);
+//						
+//						
+//						
+//						
+//						return null;
+//
+//					}
+//				}, false, true);
+//
+//
+//	}
 	
 	public void testDesignerService() {
 
@@ -177,6 +179,15 @@ public class DesignerServiceTest extends RepoBaseTestCase {
 								PATH_TESTFOLDER, ContentModel.TYPE_FOLDER)
 								.getNodeRef();
 						
+						List<FormControl> controls = designerService.getFormControls();
+						
+						
+						assertNotNull(controls);
+						assertTrue(controls.size()>0);
+						
+						for(FormControl control : controls){
+							System.out.println(control.toString());
+						}
 						
 
 						InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/designer/testModel.xml");

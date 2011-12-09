@@ -167,7 +167,7 @@
          this.modules.actions = new Alfresco.module.DataListActions();
 
          // Reference to Data Grid component
-         this.modules.dataGrid = Alfresco.util.ComponentManager.findFirst("Alfresco.component.DataGrid");
+         this.modules.dataGrid = Alfresco.util.ComponentManager.findFirst("beCPG.module.EntityDataGrid");
 
          // Finally show the component body here to prevent UI artifacts on YUI button decoration
          Dom.setStyle(this.id + "-body", "visibility", "visible");

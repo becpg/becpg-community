@@ -4,15 +4,25 @@
 <![endif]-->
 <input id="yui-history-field" type="hidden" />
 <script type="text/javascript">//<![CDATA[
-   new beCPG.component.EntityDataGrid('${id}').setOptions(
+<#if page??>
+new beCPG.module.EntityDataGrid('${id}').setOptions(
    {
-      siteId: "${page.url.templateArgs.site!""}",
+      siteId: "${page.url.templateArgs.site!""}", //TODO unused ??
       containerId: "${template.properties.container!"dataLists"}",
       usePagination: ${(args.pagination!false)?string},
-	  	entityNodeRef: "${page.url.args.nodeRef!""}",
-	  	list: "${page.url.args.list!""}"
+	  entityNodeRef: "${page.url.args.nodeRef!""}",
+	  list: "${page.url.args.list!""}" //TODO unused ??
    }).setMessages(${messages});
-//]]></script>
+<#else>
+new beCPG.module.EntityDataGrid('${id}').setOptions(
+ {
+      containerId: "${args.containerId!"dataLists"}",
+      usePagination: ${(args.pagination!false)?string},
+	  entityNodeRef: "${args.nodeRef!""}"
+   }).setMessages(${messages});
+//]]>
+</#if>
+</script>
 <div id="${id}-body" class="datagrid">
    <div class="datagrid-meta">
       <h2 id="${id}-title"></h2>
@@ -21,8 +31,8 @@
    <div id="${id}-datagridBar" class="yui-ge datagrid-bar flat-button">
       <div class="yui-u first align-center">
          <div class="item-select">
-            <button id="${args.htmlid}-itemSelect-button" name="datagrid-itemSelect-button">${msg("menu.select")}</button>
-            <div id="${args.htmlid}-itemSelect-menu" class="yuimenu">
+            <button id="${id}-itemSelect-button" name="datagrid-itemSelect-button">${msg("menu.select")}</button>
+            <div id="${id}-itemSelect-menu" class="yuimenu">
                <div class="bd">
                   <ul>
                      <li><a href="#"><span class="selectAll">${msg("menu.select.all")}</span></a></li>
