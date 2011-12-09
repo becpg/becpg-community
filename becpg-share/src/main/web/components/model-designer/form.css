@@ -115,3 +115,27 @@ div.instruction {
    margin-top: 15px;
    display: block;
 }
+
+
+/** DnD **/
+
+
+.designer-form .elementDragOverHighlight
+{
+   outline: 1px solid #4f94c9;
+   outline-offset: -1px;
+   background-color: #cde8fa;
+   width: 100%;
+}
+
+.designer-form .elementDragOverArrow
+{
+   background: url(../images/drop-arrow-left-small.png) no-repeat;
+   z-index: 1;
+   height: 25px;
+   display: block;
+   position: absolute;
+   width: 25px;
+   margin-top: -30px;
+   margin-left: 10px;
+}

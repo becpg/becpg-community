@@ -439,7 +439,7 @@
     		  liTag.setAttribute('id', 'form-control-'+ id );
     		  liTag.innerHTML = id;
     		  controls.appendChild(liTag);
-    		  new beCPG.DnD('form-control-'+ id, this,"control");
+    		  new beCPG.DnD('form-control-'+ id, this);
     	  } 	 
     	  for(var i in results.sets){
     		  id =  results.sets[i].id;
@@ -447,7 +447,7 @@
     		  liTag.setAttribute('id', 'form-set-'+ id );
     		  liTag.innerHTML = id;
     		  sets.appendChild(liTag);
-    		  new beCPG.DnD('form-set-'+ id,this,"set");
+    		  new beCPG.DnD('form-set-'+ id,this);
     	  } 	 
 
       },
@@ -594,6 +594,10 @@
 	         } else {
 	        	  treeNode.isLeaf = true;
 	         }
+	         if(draggable){
+	        	 new beCPG.DnD(treeNode.getEl(),this,p_oData.type);
+	         }
+	         
          return treeNode;
       },
 
@@ -612,7 +616,7 @@
    
    
    /**
-    * Document Library Drag and Drop object declaration.
+    * Designer Library Drag and Drop object declaration.
     */
    beCPG.DnD = function(id, designerTree, sGroup, config) 
    {
@@ -635,16 +639,16 @@
       /**
        * Handles the beginning of a drag operation by setting up the proxy image element.
        */
-      startDrag: function DL_DND_startDrag(x, y) 
+      startDrag: function DesignerTree_DND_startDrag(x, y) 
       {
           var dragEl = this.getDragEl();
           var clickEl = this.getEl();
-          Dom.setStyle(clickEl, "visibility", "hidden");
-          var proxyImg = document.createElement("img");
-          proxyImg.src = clickEl.src;
-          dragEl.removeChild(dragEl.firstChild);
-          dragEl.appendChild(proxyImg);
-          Dom.setStyle(dragEl, "border", "none");
+//          Dom.setStyle(clickEl, "visibility", "hidden");
+//          var proxyImg = document.createElement("img");
+//          proxyImg.src = clickEl.src;
+//          dragEl.removeChild(dragEl.firstChild);
+//          dragEl.appendChild(proxyImg);
+//          Dom.setStyle(dragEl, "border", "none");
       },
 
       /**
@@ -655,7 +659,7 @@
        * 
        * @param The event object
        */
-      endDrag: function DL_DND_endDrag(e)
+      endDrag: function DesignerTree_DND_endDrag(e)
       {
          if (!this._inFlight)
          {
@@ -672,7 +676,7 @@
        * @param objectToAnimate The object to animate
        * @param animationTarget The object to create a motion animation to
        */
-      animateResult: function DL_DND_animateResult(objectToAnimate, animationTarget) 
+      animateResult: function DesignerTree_DND_animateResult(objectToAnimate, animationTarget) 
       {
           Dom.setStyle(objectToAnimate, "visibility", "");
           var a = new YAHOO.util.Motion( 
@@ -702,40 +706,10 @@
        * @param e The event object
        * @param id The id of the element that the proxy has been dropped onto
        */
-      onDragDrop: function DL_DND_onDragDrop(e, id) 
+      onDragDrop: function DesignerTree_DND_onDragDrop(e, id) 
       {
           var dropTarget = Dom.get(id);
-          if (DDM.interactionInfo.drop.length > 0) 
-          {
-             // See if the element exists within the table...
-             if (Dom.isAncestor(this.docLib.widgets.dataTable.getContainerEl(), dropTarget))
-             {
-                // If the drop target is contained within the data table then process "normally"...
-                var targetRecord = this.docLib.widgets.dataTable.getRecord(Dom.get(id)),
-                targetNode = targetRecord.getData();
-            
-                if (targetNode.node.isContainer)
-                {
-                   // Indicate that a request is about to be made - this will prevent the endDrag
-                   // function from animating the proxy to return to its source...
-                   this._inFlight = true;
-                  
-                   // Make sure we handle linked folders...
-                   var nodeRef;
-                   if (targetNode.node.isLink)
-                   {
-                      nodeRef = new Alfresco.util.NodeRef(targetNode.node.linkedNode.nodeRef);
-                   }
-                   else
-                   {
-                      nodeRef = new Alfresco.util.NodeRef(targetNode.node.nodeRef);
-                   }
-                   
-                   // Move the document/folder...
-                   this._performMove(nodeRef, targetNode.location.path + "/" + targetNode.location.file);
-                }
-             }
-             else if (Dom.hasClass(dropTarget, "documentDroppable"))
+          if (Dom.hasClass(dropTarget, "elementDroppable"))
              {
                 // The "documentDroppable" class is not defined in any CSS files but is simply used as
                 // a marker to indicate that the element can be used as a document drop target. Only 
@@ -753,7 +727,23 @@
                 YAHOO.Bubbling.fire("dropTargetOwnerRequest", payload);
                 this._setFailureTimeout();
              }
-          }
+      },
+      /**
+       * Callback function that is included in the payload of the "dropTargetOwnerRequest" event.
+       * This can then be used by a subscriber to the event that claims ownership of the target to
+       * generate the move using the associated nodeRef.
+       * 
+       * @method onDropTargetOwnerCallBack
+       * @property nodeRef The nodeRef to move the dragged object to.
+       */
+      onDropTargetOwnerCallBack: function DesignerTree_DND_onDropTargetOwnerCallBack(nodeRef, type)
+      {
+         // Clear the timeout that was set...
+         this._clearTimeout();
+         
+         // Move the document/folder...
+         var node = new Alfresco.util.NodeRef(nodeRef);
+         this._performDND(node, type);
       },
       
       /**
@@ -764,10 +754,10 @@
        * @method _performMove
        * @property nodeRef The nodeRef onto which the proxy should be moved.
        */
-      _performMove: function DL_DND__performMove(nodeRef, path)
+      _performDND: function DesignerTree_DND__performDND(nodeRef, path)
       {
          // Set variables required for move...
-         var toMoveRecord = this.docLib.widgets.dataTable.getRecord(this.getEl()),
+         var toMoveRecord = this.designerTree.widgets.treeview.getRecord(this.getEl()),
              webscriptName = "move-to/node/{nodeRef}",
              multipleFiles = []; 
       
@@ -869,7 +859,6 @@
             }
          });
       },
-      
       /**
        * The id of the current window timeout. This should only be non-null if a proxy has been
        * dropped onto a valid drop target that was NOT part of the DocumentList DataTable widget.
@@ -880,24 +869,7 @@
        * @type int
        */
       _currTimeoutId: null,
-      
-      /**
-       * Callback function that is included in the payload of the "dropTargetOwnerRequest" event.
-       * This can then be used by a subscriber to the event that claims ownership of the target to
-       * generate the move using the associated nodeRef.
-       * 
-       * @method onDropTargetOwnerCallBack
-       * @property nodeRef The nodeRef to move the dragged object to.
-       */
-      onDropTargetOwnerCallBack: function DL_DND_onDropTargetOwnerCallBack(nodeRef, path)
-      {
-         // Clear the timeout that was set...
-         this._clearTimeout();
-         
-         // Move the document/folder...
-         var node = new Alfresco.util.NodeRef(nodeRef);
-         this._performMove(node, path);
-      },
+     
       
       /**
        * Clears the timeout that is set when a proxy is dropped onto a valid drop target that is 
@@ -906,7 +878,7 @@
        * 
        * @method _clearTimeout
        */
-      _clearTimeout: function DL_DND__clearTimeout()
+      _clearTimeout: function DesignerTree_DND__clearTimeout()
       {
          if (this._currTimeoutId != null)
          {
@@ -924,7 +896,7 @@
        * 
        * @method _setFailureTimeout
        */
-      _setFailureTimeout: function DL_DND__setFailureTimeout()
+      _setFailureTimeout: function DesignerTree_DND__setFailureTimeout()
       {
          // Clear any previous timeout...
          this._clearTimeout();
@@ -939,21 +911,13 @@
       },
       
       /**
-       * If the element the proxy has been dragged over is a folder, then style class indicating
-       * that it is a viable drop target is added.
-       * 
        * @param e The event object
        * @param id The id of the element that the proxy has been dragged over
        */
-      onDragOver: function DL_DND_onDragOver(e, id) 
+      onDragOver: function DesignerTree_DND_onDragOver(e, id) 
       {
           var destEl = Dom.get(id);
-          if (destEl.tagName == "IMG" || destEl.className == "droppable")
-          {
-             this.dragFolderHighlight = Dom.getAncestorByClassName(destEl, "folder");
-             Dom.addClass(this.dragFolderHighlight, "dndFolderHighlight");
-          }
-          else if (Dom.hasClass(destEl, "documentDroppableHighlights"))
+          if (Dom.hasClass(destEl, "elementDroppableHighlights"))
           {
              // Fire an event indicating a document drag over
              var payload = 
@@ -961,26 +925,18 @@
                 elementId: id,
                 event: e
              }
-             YAHOO.Bubbling.fire("documentDragOver", payload);
+             YAHOO.Bubbling.fire("elementDragOver", payload);
           }
       },
       
       /**
-       * If the element the proxy has been dragged out of is a folder, then style class indicating
-       * that it is a viable drop target is removed.
-       * 
        * @param e The event object
        * @param id The id of the element that the proxy has been dragged out of
        */
-      onDragOut: function DL_DND_onDragOut(e, id) 
+      onDragOut: function DesignerTree_DND_onDragOut(e, id) 
       {
          var destEl = Dom.get(id);
-         if (destEl.tagName == "IMG" || destEl.className == "droppable")
-         {
-            this.dragFolderHighlight = Dom.getAncestorByClassName(destEl, "folder");
-            Dom.removeClass(this.dragFolderHighlight, "dndFolderHighlight");
-         }
-         else if (Dom.hasClass(destEl, "documentDroppableHighlights"))
+         if (Dom.hasClass(destEl, "elementDroppableHighlights"))
          {
             // Fire an event indicating a document drag out
             var payload = 
@@ -988,7 +944,7 @@
                elementId: id,
                event: e
             }
-            YAHOO.Bubbling.fire("documentDragOut", payload);
+            YAHOO.Bubbling.fire("elementDragOut", payload);
          }
       }
    });

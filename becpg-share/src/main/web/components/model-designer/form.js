@@ -40,6 +40,9 @@
       YAHOO.Bubbling.on("elementCreated", this.onDesignerModelNodeChange, this);
       YAHOO.Bubbling.on("elementDeleted", this.onDesignerModelNodeChange, this);
       YAHOO.Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
+      YAHOO.Bubbling.on("elementDragOver", this.onElementDragOver, this);
+      YAHOO.Bubbling.on("elementDragOut", this.onElementDragOut, this);
+      YAHOO.Bubbling.on("dropTargetOwnerRequest", this.onDropTargetOwnerRequest, this);
       return this;
    };
    
@@ -91,9 +94,8 @@
        */
       onReady: function DesignerForm_onReady()
       {
-    	this.dropZone = new YAHOO.util.DDTarget(this.id+"-dropZone");
     	this.show();
-    	
+    	this._applyDropTargets();
       },
       
       /**
@@ -272,53 +274,21 @@
        },
        
        /**
-        * Handles applying the styling and node creation required when a document is dragged
+        * Handles applying the styling and node creation required when a element is dragged
         * over a tree node.
         * 
-        * @method onDocumentDragOver
+        * @method onElementDragOver
         * @property layer The name of the event
         * @property args The event payload
         */
-       onDocumentDragOver: function DesignerForm_onDocumentDragOver(layer, args)
+       onElementDragOver: function DesignerForm_onElementDragOver(layer, args)
        {
           if (args && args[1] && args[1].elementId)
           {
-             var rootEl = this.widgets.treeview.getEl();
-             if (args[1].event.clientX > rootEl.clientWidth)
-             {
-                // If the current x co-ordinate of the mouse pointer is greater than the width
-                // of the tree element then we shouldn't add a highlight. This is to address
-                // the issue where the overflow of wide tree nodes is hidden behind the 
-                // document list. Without this test it is possible to show a highlight on 
-                // a tree node when it appears as though the mouse is not over it.
-             }
-             else
-             {
-                // The current x co-ordinate of the mouse pointer is within the tree element so
                 // the node can be highlighted...
                 var dropTargetEl = Dom.get(args[1].elementId); 
-                if (dropTargetEl != this.widgets.treeview.getEl())
-                {
-                   var node = this.widgets.treeview.getNodeByElement(dropTargetEl);
-                   if (node != null)
-                   {
-                      var currEl = dropTargetEl;
-                      while (currEl.tagName != "TABLE")
-                      {
-                         currEl = currEl.parentNode;
-                      }
-                      Dom.addClass(currEl, "documentDragOverHighlight");
-                      
-                      var folderCell = dropTargetEl.parentNode.children[dropTargetEl.parentNode.children.length - 2];
-                      while (folderCell.children.length == 1)
-                      {
-                         var arrowSpan = document.createElement("span");
-                         Dom.addClass(arrowSpan, "documentDragOverArrow");
-                         folderCell.appendChild(arrowSpan);
-                      }
-                   }
-                }
-             }
+                Dom.addClass(dropTargetEl, "elementDragOverHighlight");
+                Dom.addClass(dropTargetEl, "elementDragOverArrow");
           }
        },
        
@@ -326,54 +296,18 @@
         * Handles applying the styling and node deletion required when a document is dragged
         * out of a tree node.
         *
-        * @method onDocumentDragOut
+        * @method onElementDragOut
         * @property layer The name of the event
         * @property args The event payload
         */
-       onDocumentDragOut: function DesignerForm_onDocumentDragOut(layer, args)
+       onElementDragOut: function DesignerForm_onElementDragOut(layer, args)
        {
           if (args && args[1] && args[1].elementId)
           {
-             var dropTargetEl = Dom.get(args[1].elementId); 
-             if (dropTargetEl == this.widgets.treeview.getEl())
-             {
-                // If the document has been dragged out of the tree element then we need 
-                // to remove any highlight and arrow from previously highlighted tree nodes.
-                // This would be the case if the highlighted tree node is wider than the 
-                // tree element and the mouse has moved to the right of the splitter so is
-                // outside of the tree but still over the tree node...
-                var highlights = Dom.getElementsByClassName("documentDragOverHighlight", "table", dropTargetEl); // Should be only one
-                for (var i = 0, j = highlights.length; i < j ; i++)
-                {
-                   Dom.removeClass(highlights[i], "documentDragOverHighlight");
-                }
-                var arrows = Dom.getElementsByClassName("documentDragOverArrow", "span", dropTargetEl);
-                for (var i = 0, j = arrows.length; i < j ; i++)
-                {
-                   arrows[i].parentNode.removeChild(arrows[i]);
-                }
-             }
-             else
-             {
-                // If the document has been dragged out of a tree node then we need to 
-                // remove the highlight and arrow previously added when the document was
-                // dragged over it...
-                var node = this.widgets.treeview.getNodeByElement(dropTargetEl);
-                if (node != null)
-                {
-                   var currEl = dropTargetEl;
-                   while (currEl.tagName != "TABLE")
-                   {
-                      currEl = currEl.parentNode;
-                   }
-                   Dom.removeClass(currEl, "documentDragOverHighlight");
-                   var folderCell = dropTargetEl.parentNode.children[dropTargetEl.parentNode.children.length - 2];
-                   while (folderCell.children.length > 1)
-                   {
-                      folderCell.removeChild(Dom.getLastChild(folderCell));
-                   }
-                }
-             }
+        	  // the node can be highlighted...
+              var dropTargetEl = Dom.get(args[1].elementId); 
+              Dom.removeClass(dropTargetEl, "elementDragOverHighlight");
+              Dom.removeClass(dropTargetEl, "elementDragOverArrow");
           }
        },
        /**
@@ -385,24 +319,36 @@
         */
        _applyDropTargets: function DesignerForm__applyDropTargets()
        {
-          if (this.options.setDropTargets)
+    	   var dropZone = Dom.get(this.id+"-dropZone");
+    	   new YAHOO.util.DDTarget(dropZone);
+           Dom.addClass(dropZone, "elementDroppable");
+           Dom.addClass(dropZone, "elementDroppableHighlights");
+       },
+       /**
+        * Handles "dropTargetOwnerRequest" by determining whether or not the target belongs to the TreeView
+        * widget, and if it does determines it's nodeRef and uses the callback function with it.
+        * 
+        * @method onDropTargetOwnerRequest
+        * @property layer The name of the event
+        * @property args The event payload
+        */
+       onDropTargetOwnerRequest: function DesignerForm_onDropTargetOwnerRequest(layer, args)
+       {
+          if (args && args[1] && args[1].elementId)
           {
-             var rootEl = this.widgets.treeview.getEl();
-             
-             // Set the root element of the tree as a drop target. This is necessary in order
-             // to handle the specific problem of the hidden overflow of tree nodes being at
-             // the same location of the screen as the main DocumentList drop targets. Drop events
-             // will be ignored for this element, but dragOut events will be used to ensure that
-             // all tree highlights are cleared.
-             new YAHOO.util.DDTarget(rootEl);
-             Dom.addClass(rootEl, "documentDroppableHighlights");
-             
-             var dndTargets = Dom.getElementsByClassName("ygtvcell", "td", rootEl);
-             for (var i = 0, j = dndTargets.length; i < j; i++)
+             var node = this.currentNode;
+             if (node != null)
              {
-                new YAHOO.util.DDTarget(dndTargets[i]);
-                Dom.addClass(dndTargets[i], "documentDroppable");
-                Dom.addClass(dndTargets[i], "documentDroppableHighlights");
+                // Perform the drag out to clear the highlight...
+                this.onDocumentDragOut(layer, args);
+                
+                var nodeRef = node.data.nodeRef;
+                var type = node.type;
+                if(node.subType!=null){
+                	type = node.type;
+                }
+             
+                args[1].callback.call(args[1].scope, nodeRef, type);
              }
           }
        }
