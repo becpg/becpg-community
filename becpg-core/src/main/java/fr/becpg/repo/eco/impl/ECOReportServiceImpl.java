@@ -53,7 +53,7 @@ public class ECOReportServiceImpl implements ECOReportService {
 	private static final String ATTR_TARGET_VALUE = "targetValue";
 	private static final String ATTR_IS_COST = "isCost";
 	
-	private static final Float DEFAULT_PROJECTED_QTY = 1f;
+	private static final Integer DEFAULT_PROJECTED_QTY = 1;
 	
 	private static final String KEY_XML_INPUTSTREAM = "org.eclipse.datatools.enablement.oda.xml.inputStream";
 	
@@ -173,7 +173,7 @@ public class ECOReportServiceImpl implements ECOReportService {
 				isCost = Boolean.TRUE;
 			}
 			
-			Float projectedQty = (Float)nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_PROJECTED_QTY);
+			Integer projectedQty = (Integer)nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_PROJECTED_QTY);
 			if(projectedQty == null){
 				projectedQty = DEFAULT_PROJECTED_QTY;
 			}

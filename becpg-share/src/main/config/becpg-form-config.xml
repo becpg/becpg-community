@@ -223,6 +223,7 @@
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
 					<show id="bcpg:productMicrobioCriteria" />
+					<show id="bcpg:useByDate" force="true" />
 					
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
@@ -324,7 +325,8 @@
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
 							<control-param name="style">width:200px</control-param>
 						</control>	
-					</field>					
+					</field>			
+					<field id="bcpg:useByDate" set="formulation" />		
 					
 					<!-- profitability -->
 					<field id="bcpg:unitPrice"  set="profitability" />
@@ -399,6 +401,7 @@
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productSpecification" />
 					<show id="bcpg:productMicrobioCriteria" />
+					<show id="bcpg:useByDate" force="true" />
 					
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
@@ -483,6 +486,7 @@
 							<control-param name="style">width:200px</control-param>
 						</control>	
 					</field>
+					<field id="bcpg:useByDate" set="formulation" />
 					
 					<!-- profitability -->
 					<field id="bcpg:unitPrice"  set="profitability" />
@@ -1915,6 +1919,8 @@
 					<show id="bcpg:locationAddress3" />
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCountry" />
+					<show id="bcpg:plantCertifications" />
+					<show id="bcpg:plantApprovalNumbers" />					
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -1954,8 +1960,47 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:plantTel" />					
+					<show id="cm:description" force="true" />		
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- bcpg:certification type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:certification">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />				
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- bcpg:approvalNumber type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:approvalNumber">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />			
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -2116,7 +2161,7 @@
 					<field id="bcpg:compoListProduct">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct
 							</control-param>
 						</control>
 					</field>
@@ -2174,7 +2219,7 @@
 					<field id="bcpg:compoListProduct">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct
 							</control-param>
 						</control>
 					</field>
@@ -2200,7 +2245,7 @@
 					<field id="bcpg:packagingListProduct">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit
 							</control-param>
 						</control>
 					</field>
@@ -2242,7 +2287,7 @@
 					<field id="bcpg:packagingListProduct">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit
 							</control-param>
 						</control>
 					</field>

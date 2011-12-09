@@ -4,7 +4,9 @@
 package fr.becpg.repo.web.scripts.listvalue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -33,12 +35,16 @@ import fr.becpg.repo.listvalue.ListValueService;
  */
 public class AutoCompleteWebScript extends DeclarativeWebScript {
 	
+	private static final String PARAM_VALUES_SEPARATOR = ",";
+	
 	// request parameter names
 	/** The Constant PARAM_SOURCE_TYPE. */
 	private static final String PARAM_SOURCE_TYPE = "sourcetype";
 	
 	/** The Constant PARAM_CLASS_NAME. */
 	private static final String PARAM_CLASS_NAME = "className";
+	
+	private static final String PARAM_CLASS_NAMES = "classNames";
 	
 	/** The Constant PARAM_PATH. */
 	private static final String PARAM_PATH = "path";
@@ -154,7 +160,11 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 			suggestions = listValueService.suggestTargetAssoc(type, query,pageNum, locale);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_PRODUCT)){
-			suggestions = listValueService.suggestProduct(query,pageNum, locale);
+			
+			String classNames = req.getParameter(PARAM_CLASS_NAMES);			
+			String[] arrClassNames = classNames != null ? classNames.split(PARAM_VALUES_SEPARATOR) : null;
+			
+			suggestions = listValueService.suggestProduct(query,pageNum, locale, arrClassNames);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_LINKED_VALUE)){
 			suggestions = listValueService.suggestLinkedValue(path, parent, query,pageNum, locale);

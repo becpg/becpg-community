@@ -156,14 +156,16 @@ public class CreateProduct extends JBPMSpringActionHandler {
 					String npdStatus = (String) executionContext.getContextInstance().getVariable(
 							"npdwf_npdStatus");
 					JBPMNode npdInitiator = (JBPMNode) executionContext.getContextInstance().getVariable(
-							"initiator");					
+							"initiator");	
+					
 					Map<QName, Serializable> props = new HashMap<QName, Serializable>();
 					props.put(NPDModel.PROP_NPD_NUMBER, npdNumber);
 					props.put(NPDModel.PROP_NPD_TYPE, npdType);
 					props.put(NPDModel.PROP_NPD_STATUS, npdStatus);
-					props.put(NPDModel.PROP_NPD_INITIATOR, npdInitiator.getName());
+					//props.put(NPDModel.PROP_NPD_INITIATOR, npdInitiator.getName());
 					nodeService.addAspect(productNodeRef, NPDModel.ASPECT_NPD, props );
-
+					nodeService.createAssociation(productNodeRef, npdInitiator.getNodeRef(), NPDModel.ASSOC_NPD_INITIATOR);
+					
 					//Delete existing subsidiary
 					for( AssociationRef subsidiaryAssoc : nodeService.getTargetAssocs(productNodeRef, BeCPGModel.ASSOC_SUBSIDIARY)){
 						nodeService.removeAssociation( productNodeRef, subsidiaryAssoc.getTargetRef(), BeCPGModel.ASSOC_SUBSIDIARY);

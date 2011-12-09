@@ -187,6 +187,9 @@
 					<default>read_package_item_actions</default>
 				</property>
 			</overrides>
+			<mandatory-aspects>				
+				<aspect>bpm:groupAssignees</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="npdwf:start-production">

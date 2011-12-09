@@ -50,7 +50,7 @@ public class EntityServiceImpl implements EntityService {
 	private static final String QUERY_OPERATOR_OR = " OR ";
 	
 	/** The Constant QUERY_PARENT. */
-	private static final String QUERY_PARENT = " +PARENT:\"%s\"";
+	private static final String QUERY_PARENT = " PARENT:\"%s\"";
 		
 	private static Log logger = LogFactory.getLog(EntityServiceImpl.class);
 	

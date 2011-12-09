@@ -686,7 +686,30 @@ public interface BeCPGModel {
 	static final QName ASSOC_PLANTS = QName.createQName(BECPG_URI, "plants");
 	static final QName ASSOC_TRADEMARK = QName.createQName(BECPG_URI, "trademark");
 
+	/**
+	 * subsidiary
+	 */
 	static final QName TYPE_SUBSIDIARY = QName.createQName(BECPG_URI, "subsidiary");
+	
+	/**
+	 * plant
+	 */
 	static final QName TYPE_PLANT = QName.createQName(BECPG_URI, "plant");
+	static final QName ASSOC_PLANT_CERTIFICATIONS = QName.createQName(BECPG_URI, "plantCertifications");
+	static final QName ASSOC_PLANT_APPROVAL_NUMBERS = QName.createQName(BECPG_URI, "plantApprovalNumbers");
+	
+	/**
+	 * trademark
+	 */
 	static final QName TYPE_TRADEMARK = QName.createQName(BECPG_URI, "trademark");
+	
+	/**
+	 * certification
+	 */
+	static final QName TYPE_CERTIFICATION = QName.createQName(BECPG_URI, "certification");
+	
+	/**
+	 * approvalNumber
+	 */
+	static final QName TYPE_APPROVAL_NUMBER = QName.createQName(BECPG_URI, "approvalNumber");
 }

@@ -4,6 +4,7 @@
 "VALUES";"Coût MP";"€";;;;;
 "VALUES";"Coût prév MP";"€";;;;;
 "VALUES";"Coût Emb";"€";;;;;
+"VALUES";"Coût prév Emb";"€";;;;;
 ;;;;;;;
 "PATH";"/System/Nuts";;;;;;
 "TYPE";"bcpg:nut";;;;;;

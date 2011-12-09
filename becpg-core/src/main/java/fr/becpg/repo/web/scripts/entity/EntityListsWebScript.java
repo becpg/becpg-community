@@ -9,11 +9,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.Cache;
@@ -91,6 +95,8 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 	
 	private NamespaceService namespaceService;
 	
+	private TransactionService transactionService;
+	
 	/**
 	 * Sets the node service.
 	 *
@@ -121,6 +127,10 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 		this.namespaceService = namespaceService;
 	}
 
+	public void setTransactionService(TransactionService transactionService) {
+		this.transactionService = transactionService;
+	}
+
 	/**
 	 * Suggest values according to query
 	 * 
@@ -144,7 +154,7 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 			
 		List<NodeRef> listsNodeRef = new ArrayList<NodeRef>();
 		List<NodeRef> editableListsNodeRef = new ArrayList<NodeRef>();
-		NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);		
+		final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);		
 		NodeRef listContainerNodeRef = null;
 		QName nodeType = nodeService.getType(nodeRef);
 		boolean hasWritePermission = false;
@@ -183,10 +193,32 @@ public class EntityListsWebScript extends DeclarativeWebScript  {
 		//We get datalist for entity
 		else {
 			
-			NodeRef templateNodeRef = entityTplService.getEntityTpl(nodeType);
+			final NodeRef templateNodeRef = entityTplService.getEntityTpl(nodeType);
 			
 			if(templateNodeRef != null){
-				entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
+				
+				// Redmine #59 : copy missing datalists as admin, otherwise, if a datalist is added in product template, users cannot see datalists of valid products
+				RunAsWork<Object> actionRunAs = new RunAsWork<Object>()
+                {
+                    @Override
+					public Object doWork() throws Exception
+                    {
+                        RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>()
+                        {
+                            @Override
+							public Object execute()
+                            {                                   
+                                
+                            	entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
+            			        
+                                return null;
+                            }
+                        };
+                        return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
+                    }
+                };
+                AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());
+				
 				listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 			}			
 			

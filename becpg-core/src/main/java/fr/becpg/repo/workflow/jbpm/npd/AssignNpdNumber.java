@@ -44,7 +44,7 @@ public class AssignNpdNumber extends JBPMSpringActionHandler {
 	@Override
 	public void execute(ExecutionContext executionContext) throws Exception {
 				
-		String number = "NPD"+Calendar.getInstance().get(Calendar.YEAR)+"-"+executionContext.getContextInstance().getId();
+		String number = "NPD-"+Calendar.getInstance().get(Calendar.YEAR)+"-"+executionContext.getContextInstance().getId();
 		String description = number+" "+ (String) executionContext.getContextInstance().getVariable("npdwf_npdProductName");
 		
 		

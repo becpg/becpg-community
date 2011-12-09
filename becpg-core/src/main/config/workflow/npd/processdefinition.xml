@@ -226,7 +226,7 @@
 	</task-node>
 
     <task-node name="send-client-offer">
-		<task name="npdwf:send-client-offer" swimlane="do-prototype-group">
+		<task name="npdwf:send-client-offer" swimlane="initiator">
 			<event type="task-create">
 				<action class="fr.becpg.repo.workflow.jbpm.common.AssignBusinessDueDate">
 					<addDuration>5 business days</addDuration>
@@ -300,7 +300,12 @@
 				<status>Mise en production</status>
 			</action>
 		</transition>
-		<transition name="reject" to="work-on-prototype" />
+		<transition name="work-on-prototype" to="work-on-prototype" />		
+		<transition to="start-feasibility-analysis"	name="reassign">
+			<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
+				<status>Faisabilité en  cours</status>
+			</action>	
+		</transition>
 	</task-node>
 
 	<task-node name="start-production">

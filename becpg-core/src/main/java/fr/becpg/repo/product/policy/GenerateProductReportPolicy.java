@@ -26,6 +26,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.core.task.TaskExecutor;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.ProductService;
@@ -54,7 +55,7 @@ public class GenerateProductReportPolicy extends TransactionListenerAdapter impl
 	private TransactionService transactionService;
 	
 	/** The thread pool executor. */
-	private ThreadPoolExecutor threadPoolExecutor;
+	private TaskExecutor taskExecutor;
 	
 	/** The transaction listener. */
 	private TransactionListener transactionListener;	
@@ -82,15 +83,10 @@ public class GenerateProductReportPolicy extends TransactionListenerAdapter impl
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
-
-	/**
-	 * Sets the thread pool executor.
-	 *
-	 * @param threadPoolExecutor the new thread pool executor
-	 */
-	public void setThreadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
-		this.threadPoolExecutor = threadPoolExecutor;
-	}	
+	
+	public void setTaskExecutor(TaskExecutor taskExecutor) {
+		this.taskExecutor = taskExecutor;
+	}
 
 	/**
 	 * Sets the product service.
@@ -198,11 +194,12 @@ public class GenerateProductReportPolicy extends TransactionListenerAdapter impl
 			Set<NodeRef> readNodeRefs = (Set<NodeRef>) AlfrescoTransactionSupport
 					.getResource(KEY_PRODUCTREPORT_TO_GENERATE);
 			if (readNodeRefs != null) {
-				for (NodeRef nodeRef : readNodeRefs) {
-					Runnable runnable = new ProductReportGenerator(nodeRef);
-					//threadPoolExecutor.execute(runnable);
+				for (NodeRef nodeRef : readNodeRefs) {					
 					
-					runnable.run();
+					Runnable runnable = new ProductReportGenerator(nodeRef);
+					taskExecutor.execute(runnable);
+					
+					//runnable.run();
 				}
 			}
 		}
@@ -254,7 +251,7 @@ public class GenerateProductReportPolicy extends TransactionListenerAdapter impl
                                 return null;
                             }
                         };
-                        return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
+                        return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
                     }
                 };
                 AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());

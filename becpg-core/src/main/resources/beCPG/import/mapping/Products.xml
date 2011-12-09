@@ -39,117 +39,117 @@
 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
 				charactNodeRef="" charactName="Glucides" type="Characteristic" />
 
-			<column id="Alpha lactalbumine" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Alpha lactalbumine" type="Characteristic" />
-			<column id="Amidon" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut"
-				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Amidon"
-				type="Characteristic" />
-			<column id="Azote non protéique" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Azote non protéique" type="Characteristic" />
-			<column id="Béta lactoglobuline" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Béta lactoglobuline" type="Characteristic" />
-			<column id="Calcium" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Calcium" type="Characteristic" />
-			<column id="Caséine as1" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Caséine as1" type="Characteristic" />
-			<column id="Caséine as2" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Caséine as2" type="Characteristic" />
-			<column id="Caséine b" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Caséine b" type="Characteristic" />
-			<column id="Caséine k" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Caséine k" type="Characteristic" />
-			<column id="Caséines totales" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Caséines totales" type="Characteristic" />
-			<column id="Cholestérol " dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Cholestérol " type="Characteristic" />
-			<column id="Eau" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut"
-				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Eau"
-				type="Characteristic" />
-			<column id="Extrait sec " dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Extrait sec " type="Characteristic" />
-			<column id="Extrait sec laitier " dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Extrait sec laitier " type="Characteristic" />
-			<column id="Fibres alimentaires" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Fibres alimentaires" type="Characteristic" />
-			<column id="Fibres insolubles " dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Fibres insolubles " type="Characteristic" />
-			<column id="Fibres solubles " dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Fibres solubles " type="Characteristic" />
-			<column id="Glucides" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Glucides" type="Characteristic" />
-			<column id="Energie (kCalories)" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Energie (kCalories)" type="Characteristic" />
-			<column id="Energie (kJoules)" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Energie (kJoules)" type="Characteristic" />
-			<column id="Lactose" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Lactose" type="Characteristic" />
-			<column id="Lipides" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Lipides" type="Characteristic" />
-			<column id="Lipides insaturés" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Lipides insaturés" type="Characteristic" />
-			<column id="Lipides mono insaturés" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Lipides mono insaturés" type="Characteristic" />
-			<column id="Lipides polyinsaturés" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Lipides polyinsaturés" type="Characteristic" />
-			<column id="Lipides saturés" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Lipides saturés" type="Characteristic" />
-			<column id="Lipides trans totaux" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Lipides trans totaux" type="Characteristic" />
-			<column id="Magnésium" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Magnésium" type="Characteristic" />
-			<column id="Minéraux totaux" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Minéraux totaux" type="Characteristic" />
-			<column id="Phosphore" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Phosphore" type="Characteristic" />
-			<column id="Polyols totaux" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Polyols totaux" type="Characteristic" />
-			<column id="Potassium" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Potassium" type="Characteristic" />
-			<column id="Protéines sériques totales" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Protéines sériques totales" type="Characteristic" />
-			<column id="Protéines vraies" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Protéines vraies" type="Characteristic" />
-			<column id="Protides" dataListQName="bcpg:nutList"
-				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Protides" type="Characteristic" />
-			<column id="Sodium" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut"
-				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Sodium"
-				type="Characteristic" />
-			<column id="Sucres" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut"
-				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Sucres"
-				type="Characteristic" />
+<!-- 			<column id="Alpha lactalbumine" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Alpha lactalbumine" type="Characteristic" /> -->
+<!-- 			<column id="Amidon" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" -->
+<!-- 				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Amidon" -->
+<!-- 				type="Characteristic" /> -->
+<!-- 			<column id="Azote non protéique" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Azote non protéique" type="Characteristic" /> -->
+<!-- 			<column id="Béta lactoglobuline" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Béta lactoglobuline" type="Characteristic" /> -->
+<!-- 			<column id="Calcium" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Calcium" type="Characteristic" /> -->
+<!-- 			<column id="Caséine as1" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Caséine as1" type="Characteristic" /> -->
+<!-- 			<column id="Caséine as2" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Caséine as2" type="Characteristic" /> -->
+<!-- 			<column id="Caséine b" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Caséine b" type="Characteristic" /> -->
+<!-- 			<column id="Caséine k" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Caséine k" type="Characteristic" /> -->
+<!-- 			<column id="Caséines totales" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Caséines totales" type="Characteristic" /> -->
+<!-- 			<column id="Cholestérol " dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Cholestérol " type="Characteristic" /> -->
+<!-- 			<column id="Eau" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" -->
+<!-- 				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Eau" -->
+<!-- 				type="Characteristic" /> -->
+<!-- 			<column id="Extrait sec " dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Extrait sec " type="Characteristic" /> -->
+<!-- 			<column id="Extrait sec laitier " dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Extrait sec laitier " type="Characteristic" /> -->
+<!-- 			<column id="Fibres alimentaires" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Fibres alimentaires" type="Characteristic" /> -->
+<!-- 			<column id="Fibres insolubles " dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Fibres insolubles " type="Characteristic" /> -->
+<!-- 			<column id="Fibres solubles " dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Fibres solubles " type="Characteristic" /> -->
+<!-- 			<column id="Glucides" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Glucides" type="Characteristic" /> -->
+<!-- 			<column id="Energie (kCalories)" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Energie (kCalories)" type="Characteristic" /> -->
+<!-- 			<column id="Energie (kJoules)" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Energie (kJoules)" type="Characteristic" /> -->
+<!-- 			<column id="Lactose" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Lactose" type="Characteristic" /> -->
+<!-- 			<column id="Lipides" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Lipides" type="Characteristic" /> -->
+<!-- 			<column id="Lipides insaturés" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Lipides insaturés" type="Characteristic" /> -->
+<!-- 			<column id="Lipides mono insaturés" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Lipides mono insaturés" type="Characteristic" /> -->
+<!-- 			<column id="Lipides polyinsaturés" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Lipides polyinsaturés" type="Characteristic" /> -->
+<!-- 			<column id="Lipides saturés" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Lipides saturés" type="Characteristic" /> -->
+<!-- 			<column id="Lipides trans totaux" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Lipides trans totaux" type="Characteristic" /> -->
+<!-- 			<column id="Magnésium" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Magnésium" type="Characteristic" /> -->
+<!-- 			<column id="Minéraux totaux" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Minéraux totaux" type="Characteristic" /> -->
+<!-- 			<column id="Phosphore" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Phosphore" type="Characteristic" /> -->
+<!-- 			<column id="Polyols totaux" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Polyols totaux" type="Characteristic" /> -->
+<!-- 			<column id="Potassium" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Potassium" type="Characteristic" /> -->
+<!-- 			<column id="Protéines sériques totales" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Protéines sériques totales" type="Characteristic" /> -->
+<!-- 			<column id="Protéines vraies" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Protéines vraies" type="Characteristic" /> -->
+<!-- 			<column id="Protides" dataListQName="bcpg:nutList" -->
+<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Protides" type="Characteristic" /> -->
+<!-- 			<column id="Sodium" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" -->
+<!-- 				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Sodium" -->
+<!-- 				type="Characteristic" /> -->
+<!-- 			<column id="Sucres" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" -->
+<!-- 				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Sucres" -->
+<!-- 				type="Characteristic" /> -->
 
 
 			<!-- files -->

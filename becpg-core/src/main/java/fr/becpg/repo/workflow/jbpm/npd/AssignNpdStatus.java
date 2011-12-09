@@ -3,7 +3,16 @@
  */
 package fr.becpg.repo.workflow.jbpm.npd;
 
+import java.util.List;
+
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.workflow.jbpm.JBPMNode;
 import org.alfresco.repo.workflow.jbpm.JBPMSpringActionHandler;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.workflow.WorkflowException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +30,9 @@ public class AssignNpdStatus extends JBPMSpringActionHandler {
 	
 	private static Log logger = LogFactory.getLog(AssignNpdStatus.class);
 
+	private NodeService nodeService;
+	
+	private FileFolderService fileFolderService;
 	
 	/** The add duration. */
 	protected String status;
@@ -32,8 +44,10 @@ public class AssignNpdStatus extends JBPMSpringActionHandler {
 	 * @see org.alfresco.repo.workflow.jbpm.JBPMSpringActionHandler#initialiseHandler(org.springframework.beans.factory.BeanFactory)
 	 */
 	@Override
-	protected void initialiseHandler(BeanFactory arg0) {
+	protected void initialiseHandler(BeanFactory factory) {
 		
+		nodeService = (NodeService)factory.getBean("nodeService");
+		fileFolderService = (FileFolderService)factory.getBean("fileFolderService");
 	}
 	
 	/* (non-Javadoc)
@@ -48,8 +62,43 @@ public class AssignNpdStatus extends JBPMSpringActionHandler {
 				
 		logger.debug("assign npd status:"+status);
 		
+		/*
+		 * Modify WF status
+		 */
+		
 		executionContext.getContextInstance().setVariable(NPD_WF_STATUS , status);
 		executionContext.getContextInstance().setVariable(NPD_WF_STATUS_INST , status);
+		
+		/*
+		 * Modify Product status
+		 */
+		
+		final JBPMNode jBPMNode = (JBPMNode) executionContext.getContextInstance().getVariable("bpm_package");		
+		final NodeRef pkgNodeRef = jBPMNode.getNodeRef();
+		
+		RunAsWork<Object> actionRunAs = new RunAsWork<Object>()
+        {
+            @Override
+			public Object doWork() throws Exception
+            {
+            	try{
+        			//change state
+            		List<FileInfo> files = fileFolderService.listFiles(pkgNodeRef);
+            		for(FileInfo file : files){
+            			
+            			NodeRef productNodeRef = file.getNodeRef();
+            			nodeService.setProperty(productNodeRef, NPDModel.PROP_NPD_STATUS, status);		            			
+            		}
+        		}
+        		catch(Exception e){
+        			logger.error("Failed to change product NPD status", e);
+        			throw e;
+        		}
+        		
+        		return null;
+            }
+        };
+        AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());	
 		
 	}
 

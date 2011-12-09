@@ -19,7 +19,7 @@ public class NPDModel {
 			"npdType");
 	public static final QName PROP_NPD_STATUS = QName.createQName(NPD_URI,
 			"npdStatus");
-	public static final QName PROP_NPD_INITIATOR = QName.createQName(NPD_URI,
+	public static final QName ASSOC_NPD_INITIATOR = QName.createQName(NPD_URI,
 			"npdInitiator");
 		
 }

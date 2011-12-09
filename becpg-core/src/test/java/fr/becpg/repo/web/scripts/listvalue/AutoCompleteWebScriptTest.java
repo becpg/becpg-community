@@ -3,11 +3,23 @@
  */
 package fr.becpg.repo.web.scripts.listvalue;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.web.scripts.BaseWebScriptTest;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.transaction.TransactionService;
+import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
+
+import fr.becpg.repo.product.ProductDAO;
+import fr.becpg.repo.product.data.RawMaterialData;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -17,9 +29,22 @@ import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
  */
 public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 	
+	private static String PATH_PRODUCTFOLDER = "TestProductFolder";
+	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AutoCompleteWebScriptTest.class);
 	
+	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
+	
+	private NodeService nodeService;
+	
+	private ProductDAO productDAO;
+	
+	private FileFolderService fileFolderService;
+	
+	private Repository repositoryHelper;
+	
+	private TransactionService transactionService;
 	
 	/* (non-Javadoc)
 	 * @see org.alfresco.repo.web.scripts.BaseWebScriptTest#setUp()
@@ -27,6 +52,12 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 	@Override
 	protected void setUp() throws Exception
 	{	
+		nodeService = (NodeService)appCtx.getBean("nodeService");
+		productDAO = (ProductDAO) appCtx.getBean("productDAO");
+		fileFolderService = (FileFolderService) appCtx.getBean("fileFolderService");
+		repositoryHelper = (Repository) appCtx.getBean("repositoryHelper");
+		transactionService = (TransactionService)appCtx.getBean("transactionService");
+		
 		super.setUp();		
 	}
 	
@@ -37,6 +68,21 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 	protected void tearDown() throws Exception
 	{
 		super.tearDown();
+	}
+	
+	private void initProduct(){
+		
+		NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_PRODUCTFOLDER);			
+		if(folderNodeRef != null)
+		{
+			nodeService.deleteNode(folderNodeRef);    		
+		}			
+		folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_PRODUCTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+		
+		RawMaterialData rawMaterial1 = new RawMaterialData();
+		rawMaterial1.setName("Raw material 1");
+		
+		productDAO.create(folderNodeRef, rawMaterial1, null);
 	}
 	
 	/**
@@ -86,7 +132,7 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 		String url = "/becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/RawMaterial_Hierarchy1?q=s&parent=Fam4";
 		
 		Response response = sendRequest(new GetRequest(url), 200, "admin");
-		logger.debug("content : " + response.getContentAsString());
+		logger.debug("testSuggestLinkedValues : " + response.getContentAsString());
 				
     }
     
@@ -97,11 +143,28 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 	 */
 	public void testSuggestProduct() throws Exception {
 		
-		String url = "/becpg/autocomplete/product?q=p";
-				
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+ 			@Override
+			public NodeRef execute() throws Throwable {
+ 				
+ 				initProduct();
+ 				
+ 				return null;
+
+ 			}},false,true);
 		
+		
+		String url = "/becpg/autocomplete/product?q=ra";					
 		Response response = sendRequest(new GetRequest(url), 200, "admin");
-		logger.debug("content : " + response.getContentAsString());
+		logger.debug("testSuggestProduct : " + response.getContentAsString());
+		
+		url = "/becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct&q=ra";		
+		response = sendRequest(new GetRequest(url), 200, "admin");
+		logger.debug("testSuggestProduct : " + response.getContentAsString());
+		
+		url = "/becpg/autocomplete/product?classNames=bcpg:packagingMaterial&q=ra";		
+		response = sendRequest(new GetRequest(url), 200, "admin");
+		logger.debug("testSuggestProduct : " + response.getContentAsString());
     }
 	
 	/**
@@ -112,10 +175,9 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 	public void testProductReportTpls() throws Exception {		
 		
 		String url = "/becpg/autocomplete/productreport/reports/SemiFinishedProduct?q=u";
-				
 		
 		Response response = sendRequest(new GetRequest(url), 200, "admin");
-		logger.debug("content : " + response.getContentAsString());
+		logger.debug("testProductReportTpls : " + response.getContentAsString());
     }
 
 }

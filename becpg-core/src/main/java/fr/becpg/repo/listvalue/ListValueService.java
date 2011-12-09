@@ -69,7 +69,7 @@ public interface ListValueService {
 	 * @param query the query
 	 * @return the map
 	 */
-	public ListValuePage suggestProduct(String query, Integer pageNum, Locale locale);
+	public ListValuePage suggestProduct(String query, Integer pageNum, Locale locale, String[] arrClassNames);
 	
 	/**
 	 * Gets the item by type and name.

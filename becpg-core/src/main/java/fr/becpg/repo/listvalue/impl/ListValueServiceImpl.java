@@ -59,6 +59,8 @@ public class ListValueServiceImpl implements ListValueService {
 	/** The Constant SUFFIX_SIMPLE_QUOTE. */
 	private static final String SUFFIX_SIMPLE_QUOTE = "'";
 	
+	private static final String QUERY_TYPE = " +TYPE:\"%s\"";
+	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ListValueServiceImpl.class);
 	
@@ -225,7 +227,7 @@ public class ListValueServiceImpl implements ListValueService {
      * @return the map
      */
     @Override
-	public ListValuePage suggestProduct(String query, Integer pageNum, Locale locale){			
+	public ListValuePage suggestProduct(String query, Integer pageNum, Locale locale, String[] arrClassNames){			
         
     	logger.debug("suggestProduct");  
     	String queryPath = "";    	
@@ -238,6 +240,24 @@ public class ListValueServiceImpl implements ListValueService {
 		else{
 			query = prepareQuery(query);
 			queryPath += String.format(RepoConsts.QUERY_SUGGEST_PRODUCT_BY_NAME, query, SystemState.Archived, SystemState.Refused);
+		}
+		
+		// filter by classNames
+		if(arrClassNames != null){
+			
+			String queryClassNames = "";
+			
+			for(String className : arrClassNames){
+				
+				if(queryClassNames.isEmpty()){
+					queryClassNames += String.format(QUERY_TYPE, className);
+				}
+				else{
+					queryClassNames += " OR " + String.format(QUERY_TYPE, className);
+				}
+			}
+			
+			queryPath += " AND (" + queryClassNames + ")";
 		}
 					
 		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME), locale);

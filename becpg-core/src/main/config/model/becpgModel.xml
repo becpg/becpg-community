@@ -567,8 +567,32 @@
 			<properties>
 				<property name="bcpg:plantTel">
 					<type>d:text</type>
-				</property>
+				</property>				
 			</properties>
+			<associations>
+				<association name="bcpg:plantCertifications">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:certification</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:plantApprovalNumbers">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:approvalNumber</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:location</aspect>
 			</mandatory-aspects>
@@ -579,6 +603,14 @@
 		</type>
 		<!-- ______________________________________ TRADEMARK ______________________________________ -->								
 		<type name="bcpg:trademark">
+			<parent>cm:content</parent>			
+		</type>
+		<!-- ______________________________________ CERTIFICATION ______________________________________ -->								
+		<type name="bcpg:certification">
+			<parent>cm:content</parent>			
+		</type>
+		<!-- ______________________________________ APPROVAL NUMBER ______________________________________ -->								
+		<type name="bcpg:approvalNumber">
 			<parent>cm:content</parent>			
 		</type>
 		<!-- _______________________________________ COMPO ________________________________________________ -->
@@ -1378,7 +1410,7 @@
 					<target>
 						<class>bcpg:plant</class>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>
 				<association name="bcpg:trademark">
@@ -1399,6 +1431,14 @@
 			<properties>
 				<property name="bcpg:eanCode">
 					<type>d:text</type>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:consumerAspect">
+			<properties>
+				<property name="bcpg:useByDate">
+					<type>d:int</type>
 				</property>
 			</properties>
 		</aspect>
