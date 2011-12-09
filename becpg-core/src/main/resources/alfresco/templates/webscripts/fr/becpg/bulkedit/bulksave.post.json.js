@@ -30,6 +30,7 @@ function main()
     }
    
     var repoFormData = new Packages.org.alfresco.repo.forms.FormData();
+    var assocToRemoves = [];
     var jsonKeys = json.keys();
     for ( ; jsonKeys.hasNext(); )
     {
@@ -49,6 +50,10 @@ function main()
         {
            // add field to form data
            repoFormData.addFieldData(nextKey, json.get(nextKey));
+           if(nextKey.indexOf("assoc_")>-1 && nextKey.indexOf("_added")>-1){
+        	   assocToRemoves.push(nextKey.substring(nextKey.indexOf("assoc_")+6,nextKey.indexOf("_added") ));
+           }
+           
         }
     }
 
@@ -58,7 +63,16 @@ function main()
     	if(nodeRefs!=null){
     		var splitted =  nodeRefs.split(",");
 	    	for(var i in splitted){
-	    		persistedObject = formService.saveForm("node", splitted[i].replace(":/",""), repoFormData);
+	    		var nodeRef = splitted[i];
+	    		for(var j in assocToRemoves){
+	    			var node = search.findNode(nodeRef);
+	    			var assocToRemove = assocToRemoves[j].replace("_",":");
+	    			var assocs = node.assocs[assocToRemove];
+	    			for(z in assocs){
+	    				node.removeAssociation(assocs[z],assocToRemove);
+	    			}
+	    		}
+	    		persistedObject = formService.saveForm("node",nodeRef.replace(":/",""), repoFormData);
 	    	}
     	} //new node 
     	else {	
