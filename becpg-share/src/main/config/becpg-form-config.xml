@@ -2162,7 +2162,7 @@
 					<field id="bcpg:compoListProduct">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct
 							</control-param>
 						</control>
 					</field>
@@ -2220,7 +2220,7 @@
 					<field id="bcpg:compoListProduct">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct
 							</control-param>
 						</control>
 					</field>
@@ -2246,7 +2246,7 @@
 					<field id="bcpg:packagingListProduct">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit
 							</control-param>
 						</control>
 					</field>
@@ -2288,7 +2288,7 @@
 					<field id="bcpg:packagingListProduct">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit
 							</control-param>
 						</control>
 					</field>

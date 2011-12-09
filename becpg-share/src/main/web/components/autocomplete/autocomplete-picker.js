@@ -272,12 +272,11 @@
 	    				 previewTooltip.cfg.setProperty("context", previewTooltips);
 	    			 } 			 
 	    		   return true;
-	    		}
+	    		}    		
     		
-    		oAC.textboxChangeEvent.subscribe(function(){
+    		oAC.textboxKeyEvent.subscribe(function(){
     			oAC.page=1;
-    			previewTooltips=[];
-    			
+    			previewTooltips=[];    			
     		});
     			
     		oAC.textboxBlurEvent.subscribe(function(){
