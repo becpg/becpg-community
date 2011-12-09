@@ -91,7 +91,7 @@
 .m2-aspect {  padding-left: 24px; background:  url(../images/aspect-16.png) no-repeat 5px 0px; }
 
 .m2-properties {  padding-left: 24px; background:  url(../images/list-16.png) no-repeat 5px 0px;}
-.m2-property {  padding-left: 24px; background:  url(../images/duplicate-row-16.png) no-repeat 5px 0px;}
+.m2-property {  padding-left: 24px; background:  url(../images/duplicate-row-16.png) no-repeat 5px 0px; cursor: pointer;}
 .m2-propertyOverride {  padding-left: 24px; background:  url(../images/duplicate-row-16.png) no-repeat 5px 0px;}
 .m2-propertyOverrides {  padding-left: 24px; background:  url(../images/list-16.png) no-repeat 5px 0px;}
 
