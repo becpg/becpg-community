@@ -95,7 +95,6 @@
       onReady: function DesignerForm_onReady()
       {
     	this.show();
-    	this._applyDropTargets();
       },
       
       /**
@@ -107,14 +106,43 @@
       {
         if(this.options.nodeRef!=null){ 
 
-	        var templateUrl,data;
+	        var templateUrl,
+	        	data,
+	        	template,
+	        	templateInstance,
+	        	container = Dom.get(this.id+"-dnd-instructions");
 	        
 	   	   //First destroy old
 	       YAHOO.Bubbling.fire("formContainerDestroyed");
 	       YAHOO.Bubbling.fire("dataGridContainerDestroyed");
 	             
-	    	   
-	        
+	       //Clean instructions
+	       if(container.hasChildNodes() )
+    	   {
+    		    while ( container.childNodes.length >= 1 )
+    		    {
+    		    	container.removeChild( container.firstChild );       
+    		    } 
+    		}
+	       
+	       
+	       
+	       
+	       //show instructions
+	       if(this.currentNode.droppable){
+	           template = Dom.get(this.id+"-dnd-instructions-"+this.currentNode.dropGroup);
+	           templateInstance = template.cloneNode(true);
+	           templateInstance.id = this.id+"-dropZone";
+	           Dom.removeClass(templateInstance, "hidden");
+	           Dom.addClass(templateInstance, "elementDroppable");
+	           Dom.addClass(templateInstance, "elementDroppableHighlights");
+	           container.appendChild(templateInstance);
+	           new YAHOO.util.DDTarget(templateInstance,this.currentNode.dropGroup);
+	           
+	       } 
+	      
+           
+	        //show datas
 	        if(this.currentNode.subType!=null){
 		        templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-data-lists/entity-datagrid?nodeRef={modelNodeRef}",
 		   	         {
@@ -168,19 +196,6 @@
               
               this.currentNode = obj.node
              
-              
-              if(this.currentNode.droppable){
-            	  var nodes = YAHOO.util.Selector.query('div.instruction');
-            	  for(var i in nodes){
-            		  nodes[i].style.display = "none";
-            	  }
-         		  Dom.get(this.id+"-dropZone").style.display = "block";
-         		  Dom.get(this.id+"-dnd-instructions-"+this.currentNode.dropInstruction).style.display = "block";
-         		  
-         	  } else {
-         		  Dom.get(this.id+"-dropZone").style.display = "none";
-         	  }
-              
               this.show();
          	} else {
          		var containerDiv = Dom.get(this.id+"-model-form");
@@ -212,6 +227,15 @@
     	   
           // Inject the template from the XHR request into a new DIV element
           var containerDiv = Dom.get(this.id+"-model-form");
+          
+          if(containerDiv.hasChildNodes() )
+	   	   {
+	   		    while ( containerDiv.childNodes.length >= 1 )
+	   		    {
+	   		    	containerDiv.removeChild( containerDiv.firstChild );       
+	   		    } 
+	   		}
+          
           containerDiv.innerHTML = response.serverResponse.responseText;
 
           if(this.currentNode.subType!=null){
@@ -288,7 +312,6 @@
                 // the node can be highlighted...
                 var dropTargetEl = Dom.get(args[1].elementId); 
                 Dom.addClass(dropTargetEl, "elementDragOverHighlight");
-                Dom.addClass(dropTargetEl, "elementDragOverArrow");
           }
        },
        
@@ -307,22 +330,7 @@
         	  // the node can be highlighted...
               var dropTargetEl = Dom.get(args[1].elementId); 
               Dom.removeClass(dropTargetEl, "elementDragOverHighlight");
-              Dom.removeClass(dropTargetEl, "elementDragOverArrow");
           }
-       },
-       /**
-        * Creates the drag and drop targets within the tree. The targets get removed
-        * each time that the tree is refreshed in anyway, so it is imperative that they
-        * get reset when required.
-        * 
-        * @method _applyDropTargets
-        */
-       _applyDropTargets: function DesignerForm__applyDropTargets()
-       {
-    	   var dropZone = Dom.get(this.id+"-dropZone");
-    	   new YAHOO.util.DDTarget(dropZone);
-           Dom.addClass(dropZone, "elementDroppable");
-           Dom.addClass(dropZone, "elementDroppableHighlights");
        },
        /**
         * Handles "dropTargetOwnerRequest" by determining whether or not the target belongs to the TreeView
@@ -340,12 +348,12 @@
              if (node != null)
              {
                 // Perform the drag out to clear the highlight...
-                this.onDocumentDragOut(layer, args);
+                this.onElementDragOut(layer, args);
                 
-                var nodeRef = node.data.nodeRef;
-                var type = node.type;
+                var nodeRef = node.nodeRef;
+                var type = node.itemType;
                 if(node.subType!=null){
-                	type = node.type;
+                	type = node.subType;
                 }
              
                 args[1].callback.call(args[1].scope, nodeRef, type);

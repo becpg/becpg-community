@@ -42,23 +42,15 @@
 
 /** DnD **/
 
-span.droppable
-{
-   display:none;
-   background-color: white;
-   border: 1px dashed #73B4DA;
-   color: #515D6B;
-   padding: 10px;
-   margin:5px;
-}
 
 div.instruction {
-	display:none;
+   border: 1px dashed #73B4DA;
+   color: #515D6B;
+   margin:5px;
 }
 
 .designerInstructions
 {
-   background-color: white;
    color: #515D6B;
    padding: 10px;
 }
@@ -120,22 +112,8 @@ div.instruction {
 /** DnD **/
 
 
-.designer-form .elementDragOverHighlight
+.elementDragOverHighlight
 {
-   outline: 1px solid #4f94c9;
-   outline-offset: -1px;
    background-color: #cde8fa;
-   width: 100%;
 }
 
-.designer-form .elementDragOverArrow
-{
-   background: url(../images/drop-arrow-left-small.png) no-repeat;
-   z-index: 1;
-   height: 25px;
-   display: block;
-   position: absolute;
-   width: 25px;
-   margin-top: -30px;
-   margin-left: 10px;
-}

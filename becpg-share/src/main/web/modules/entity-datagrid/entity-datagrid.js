@@ -962,7 +962,7 @@
             this.datalistColumns[fieldLookup] = column;
          }
          
-         var url = Alfresco.constants.PROXY_URI + "slingshot/datalists/data/node/" + listNodeRef.uri+"?itemType=" + encodeURIComponent(this.datalistMeta.itemType);
+         var url = Alfresco.constants.PROXY_URI + "slingshot/datalists/data/node/" + listNodeRef.uri+"?entityNodeRef="+this.options.entityNodeRef+"&itemType=" + encodeURIComponent(this.datalistMeta.itemType);
          
          // DataSource definition
          //beCPG - PQU : manage WUsed 

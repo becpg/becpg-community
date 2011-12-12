@@ -429,25 +429,26 @@
        * @private
        */
       _buildControls : function DesignerTree_buildControls(results){
-    	  var controls = Dom.get(this.id + "-form-controls");
-    	  var sets = Dom.get(this.id + "-form-sets");
+    	  var controls = Dom.get(this.id + "-form-controls"),
+    	  	  sets = Dom.get(this.id + "-form-sets"),
+    	  	  liTag ;
     	  
     	  var id, description,fragment;
     	  for(var i in results.controls){
     		  id =  results.controls[i].id;
-    		  var liTag = document.createElement('li');
+    		  liTag = document.createElement('li');
     		  liTag.setAttribute('id', 'form-control-'+ id );
     		  liTag.innerHTML = id;
     		  controls.appendChild(liTag);
-    		  new beCPG.DnD('form-control-'+ id, this);
+    		  new beCPG.DnD('form-control-'+ id, this,"field");
     	  } 	 
     	  for(var i in results.sets){
     		  id =  results.sets[i].id;
-    		  var liTag = document.createElement('li');
+    		  liTag = document.createElement('li');
     		  liTag.setAttribute('id', 'form-set-'+ id );
     		  liTag.innerHTML = id;
     		  sets.appendChild(liTag);
-    		  new beCPG.DnD('form-set-'+ id,this);
+    		  new beCPG.DnD('form-set-'+ id, this,"form");
     	  } 	 
 
       },
@@ -476,15 +477,49 @@
 
          // Register tree-level listeners
          tree.subscribe("clickEvent", this.onNodeClicked, this, true);
+         tree.subscribe("expandComplete", this.onExpandComplete, this, true);
 
          // Render tree with this one top-level node
          tree.render();
+         
+       
+
          
          //Select first
          if(modelNode!=null){
 	         this._updateSelectedNode(modelNode);
 	         YAHOO.Bubbling.fire("designerModelNodeChange",{node : modelNode.data});
          }
+      },
+      /**
+       * Creates the drag and drop targets within the tree. The targets get removed
+       * each time that the tree is refreshed in anyway, so it is imperative that they
+       * get reset when required.
+       * 
+       * @method _applyDropTargets
+       */
+      _applyDropTargets: function  DesignerTree__applyDropTargets()
+      {
+    	  //add DND
+    	    
+          var rootEl = this.widgets.treeview.getEl();
+          
+          var dndTargets = Dom.getElementsByClassName("m2-property", "span", rootEl);
+          for (var i = 0, j = dndTargets.length; i < j; i++)
+          {
+ 	            var dnd = new beCPG.DnD(dndTargets[i].parentNode,this,"type");
+ 	       	 	dnd.addToGroup("form");
+          }
+      },
+      /**
+       * Fired by YUI TreeView when a node has finished expanding
+       * @method onExpandComplete
+       * @param oNode {YAHOO.widget.Node} the node recently expanded
+       */
+      onExpandComplete: function  DesignerTree_onExpandComplete(oNode)
+      {
+            // Finished expanding, can now safely set DND targets...
+            this._applyDropTargets();
       },
       /**
        * Highlights the currently selected node.
@@ -537,10 +572,12 @@
        */
       _buildTreeNode: function DesignerTree_buildTreeNode(p_oData, p_oParent, p_expanded)
       {
-    	  var treeNode = null;
-        	 var dropInstruction = null;
-        	 var draggable = false,
-        	 	 droppable = false;
+    	  
+    	  //TODO horrible !!!
+    	  	 var treeNode = null,
+    	  	 	dropGroup = null,
+    	  	 	draggable = false,
+        	 	droppable = false;
         	 switch(p_oData.type){
 	     	 	case  "m2:property":
 	     	 		draggable = true;
@@ -549,18 +586,18 @@
 	     	 	case  "m2:aspect":
 	     	 	case  "m2:properties":
 	     	 	case  "m2:propertyOverrides":
-	     	 		dropInstruction = "type";
+	     	 		dropGroup = "type";
 	     	 		droppable = true;
 		     	 	break;
 	     	 	case  "dsg:form":
 	     	 	case  "dsg:formSet":
 	     	 	case  "dsg:fields":
 	     	 	case  "dsg:sets":
-	     	 		dropInstruction = "form";
+	     	 		dropGroup = "form";
 	     	 		droppable = true;
 		     	 	break;
 	     	 	case  "dsg:formField":
-	     	 		dropInstruction = "field";
+	     	 		dropGroup = "field";
 	     	 		droppable = true;
 		     	 	break;
 	     	 }
@@ -575,7 +612,7 @@
 	                      description: p_oData.description,
 	                      draggable : draggable,
 	                      droppable : droppable,
-	                      dropInstruction : dropInstruction,
+	                      dropGroup : dropGroup,
 	                      formId : p_oData.formId ? p_oData.formId : null
 	                   }, p_oParent, p_expanded);
 	         
@@ -594,12 +631,10 @@
 	         } else {
 	        	  treeNode.isLeaf = true;
 	         }
-	         if(draggable){
-	        	 new beCPG.DnD(treeNode.getEl(),this,p_oData.type);
-	         }
 	         
          return treeNode;
       },
+      
 
       /**
        * Build URI parameter string for treenode JSON data webscript
@@ -622,7 +657,7 @@
    {
       beCPG.DnD.superclass.constructor.call(this, id, sGroup, config);
       var el = this.getDragEl();
-      Dom.setStyle(el, "opacity", 0.67);
+      Dom.setStyle(el, "opacity", 0.67); 	
       this.designerTree = designerTree;
    };
    
@@ -643,12 +678,7 @@
       {
           var dragEl = this.getDragEl();
           var clickEl = this.getEl();
-//          Dom.setStyle(clickEl, "visibility", "hidden");
-//          var proxyImg = document.createElement("img");
-//          proxyImg.src = clickEl.src;
-//          dragEl.removeChild(dragEl.firstChild);
-//          dragEl.appendChild(proxyImg);
-//          Dom.setStyle(dragEl, "border", "none");
+          Dom.setStyle(dragEl, "background-color", "yellow");
       },
 
       /**
@@ -754,110 +784,64 @@
        * @method _performMove
        * @property nodeRef The nodeRef onto which the proxy should be moved.
        */
-      _performDND: function DesignerTree_DND__performDND(nodeRef, path)
+      _performDND: function DesignerTree_DND__performDND(nodeRef, type)
       {
-         // Set variables required for move...
-         var toMoveRecord = this.designerTree.widgets.treeview.getRecord(this.getEl()),
-             webscriptName = "move-to/node/{nodeRef}",
-             multipleFiles = []; 
-      
-         multipleFiles.push(this.getEl().id);
-         
-         // Success callback function:
-         // If the operation succeeded then update the tree and refresh the document list.
-         var fnSuccess = function DLCMT__onOK_success(p_data)
-         {
-            this._inFlight = false; // Indicate that a request is no longer "in-flight"
-            
-            var result,
-                successCount = p_data.json.successCount,
-                failureCount = p_data.json.failureCount;
-
-            // Did the operation NOT succeed?
-            if (!p_data.json.overallSuccess)
-            {
-               this.animateResult(this.getDragEl(), this.getEl());
-               Alfresco.util.PopupManager.displayMessage(
-               {
-                  text: this.docLib.msg("message.file-dnd-move.failure")
-               });
-               Dom.removeClass(this.dragFolderHighlight, "dndFolderHighlight");
-               return;
-            }
-
-            // Refresh the document list...
-            this.docLib._updateDocList.call(this.docLib);
-           
-            // Update the tree if a folder has been moved...
-            var moved = toMoveRecord.getData();
-            if (moved.node.isContainer)
-            {
-               YAHOO.Bubbling.fire("folderMoved",
-               {
-                  multiple: true,
-                  nodeRef: moved.nodeRef,
-                  destination: path
-               });
-            }
-         };
-         // destination: targetNode.location.path + "/" + targetNode.location.file
-
-         // Failure callback function:
-         // If the move operation has failed then animate the proxy to return it to the
-         // location from which it was dragged. Also, post a failure message.
-         var fnFailure = function DLCMT__onOK_failure(p_data)
-         {
-            this._inFlight = false; // Indicate that a request is no longer "in-flight"
-            this.animateResult(this.getDragEl(), this.getEl());
-            Alfresco.util.PopupManager.displayMessage(
-            {
-               text: this.docLib.msg("message.file-dnd-move.failure")
-            });
-            Dom.removeClass(this.dragFolderHighlight, "dndFolderHighlight");
-         };
-         
-         // Make the request to move the dragged object to the target
-         this.docLib.modules.actions.genericAction(
-         {
-            success:
-            {
-               callback:
-               {
-                  fn: fnSuccess,
-                  scope: this
-               }
-            },
-            failure:
-            {
-               callback:
-               {
-                  fn: fnFailure,
-                  scope: this
-               }
-            },
-            webscript:
-            {
-               method: Alfresco.util.Ajax.POST,
-               name: webscriptName,
-               params:
-               {
-                  nodeRef: nodeRef.uri
-               }
-            },
-            wait:
-            {
-               message: this.docLib.msg("message.please-wait")
-            },
-            config:
-            {
-               requestContentType: Alfresco.util.Ajax.JSON,
-               dataObj:
-               {
-                  nodeRefs: multipleFiles,
-                  parentId: this.docLib.doclistMetadata.parent.nodeRef
-               }
-            }
-         });
+    	 try {
+    		 var id  = this.getEl().id,
+    		 	 actionUrl;
+    		 
+    		 
+    		 if(id!=null && (id.indexOf("form-set-")>-1 ||id.indexOf("form-field-")>-1) ){
+    			 actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/dnd/"+id+"?destNodeRef="+nodeRef;
+    	
+    		 } else {
+    			 var toMoveRecord = this.designerTree.widgets.treeview.getNodeByElement(this.getEl()); 
+    			 actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/dnd/"+toMoveRecord.data.nodeRef.replace(":/","")+"?destNodeRef="+nodeRef;
+    		 }
+    		 
+    		 var callback = function(response)
+             {
+           	  
+           	  if (response.json && response.json.persistedObject)
+                 {
+                     
+           		  var treeNode = response.json.treeNode;
+           		  treeNode.parentNodeRef = nodeRef;
+           		  
+           		  YAHOO.Bubbling.fire("elementCreated",{node:treeNode});
+           		 
+           		  //TODO if dropGroup = type it's a move
+           		
+           		  Alfresco.util.PopupManager.displayMessage(
+                             {
+                                text:  this.msg("message.dnd.success");
+                             });
+	           	  } else {
+	           		  Alfresco.util.PopupManager.displayMessage(
+	                             {
+	                                text: this.msg("message.dnd.failure")
+	                             });
+	           	  }
+           	  
+    		 }
+    		 
+    		 
+    		 //call webscript...
+   	      
+    		 Alfresco.util.Ajax.request( {
+	              method : Alfresco.util.Ajax.POST,
+	              url: actionUrl,
+	              successMessage: callback,
+	              failureMessage: this.msg("message.dnd.failure"),
+	              scope: this,
+	              execScripts: false
+    		 });
+    		 
+        
+    	 }catch(e){
+    		 alert(e);
+    	 }
+        
       },
       /**
        * The id of the current window timeout. This should only be non-null if a proxy has been
