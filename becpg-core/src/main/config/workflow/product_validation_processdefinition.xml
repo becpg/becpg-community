@@ -61,7 +61,6 @@
         </task>
         <transition name="approve" to="approved" >
         	<action class="fr.becpg.repo.workflow.jbpm.productvalidation.ApproveActionHandler">
-			  <runas>admin</runas>
 			</action>
 			<action class="org.alfresco.repo.workflow.jbpm.AlfrescoJavaScript">
            <script>
