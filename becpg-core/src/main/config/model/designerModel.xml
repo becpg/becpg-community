@@ -150,7 +150,7 @@
 						<many>false</many>
 					</source>
 					<target>
-						<class>m2:namedValue</class>
+						<class>dsg:controlParameter</class>
 						<mandatory enforced="false">false</mandatory>
 						<many>true</many>
 					</target>
@@ -159,9 +159,38 @@
 				</child-association>
 			</associations>
 			<mandatory-aspects>
+				<aspect>dsg:identifierAspect</aspect>
 				<aspect>dsg:templatePathAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+			<type name="dsg:controlParameter">
+			<title>Control parameter</title>
+			<parent>cm:content</parent>
+			<properties>
+				<property name="dsg:optional">
+					<title>Optional</title>
+					<type>d:boolean</type>
+				</property>
+				<property name="dsg:parameterType">
+					<title>Parameter type</title>
+					<type>d:text</type>
+				</property>
+				<property name="dsg:parameterValue">
+					<title>Parameter value</title>
+					<type>d:text</type>
+				</property>
+				<property name="dsg:parameterDescription">
+					<title>Parameter description</title>
+					<type>d:text</type>
+				</property>
+				
+			</properties>
+			<mandatory-aspects>
+					<aspect>dsg:identifierAspect</aspect>
+				</mandatory-aspects>
+		</type>
+		
 	</types>
 	<aspects>
 		<aspect name="dsg:modelAspect">

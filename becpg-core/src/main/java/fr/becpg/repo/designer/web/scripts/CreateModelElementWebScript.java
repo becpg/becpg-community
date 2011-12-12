@@ -50,8 +50,17 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 
 	private static final String TREE_NODE = "treeNode";
 	
-	private static final String ASSOC_NAME = "assocName";
+	private static final String PARAM_PALETTE_EL = "palette_el_id";
 
+	
+	/** The Constant PARAM_STORE_TYPE. */
+	private static final String PARAM_STORE_TYPE = "store_type";
+	
+	/** The Constant PARAM_STORE_ID. */
+	private static final String PARAM_STORE_ID = "store_id";
+	
+	/** The Constant PARAM_ID. */
+	private static final String PARAM_ID = "id";
 	
 	
 //	assocType
@@ -92,7 +101,9 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 	/**
 	 * Retrieve model Tree
 	 * 
-	 * url : /becpg/designer/create/element?nodeRef={nodeRef}.
+	 *    <url>/becpg/designer/create/element?nodeRef={nodeRef}</url>
+	 *	  <url>/becpg/designer/dnd/{palette_el_id}nodeRef={nodeRef}</url>
+	 *	  <url>/becpg/designer/dnd/{store_type}/{store_id}/{id}?nodeRef={nodeRef}</url>
 	 *
 	 * @param req the req
 	 * @param status the status
@@ -103,37 +114,73 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){
 				
 		logger.debug("CreateModelElementWebScript executeImpl()");
-			
-		NodeRef parentNodeRef = new NodeRef( req.getParameter(PARAM_NODEREF));		
 		
-		   JsonParams jsonPostParams = parsePostParams(req);
-	        
-	      
-		
+
 		Map<String, Object> model = new HashMap<String, Object>();
-		
-		QName typeName = parseQName(jsonPostParams.getType());
-		QName assocName = parseQName(jsonPostParams.getAssocType());
-		
+
+	
 		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
-		if(jsonPostParams.getName()!=null && jsonPostParams.getName().length()>0){
-			if(DesignerModel.TYPE_M2_NAMESPACE.equals(typeName) && (jsonPostParams.getModel()==null ||  jsonPostParams.getModel().length()<1)  ){
-				props.put(DesignerModel.PROP_M2_URI, jsonPostParams.getName());
-			} else if(DesignerModel.DESIGNER_URI.equals(typeName.getNamespaceURI())){
-				props.put(DesignerModel.PROP_DSG_ID, jsonPostParams.getName());
-			}	else {
-				props.put(DesignerModel.PROP_M2_NAME, designerService.prefixName(parentNodeRef,jsonPostParams.getName()));
+		NodeRef parentNodeRef = new NodeRef( req.getParameter(PARAM_NODEREF));	
+		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();	
+		
+		NodeRef createNodeRef = null;
+		
+		if(templateArgs.containsKey(PARAM_STORE_TYPE)){
+			    	
+			String storeType = templateArgs.get(PARAM_STORE_TYPE);
+			String storeId = templateArgs.get(PARAM_STORE_ID);
+			String nodeId = templateArgs.get(PARAM_ID);
+	    	
+			NodeRef fromNodeRef = new NodeRef(storeType, storeId, nodeId);
+			
+			createNodeRef = designerService.moveElement(fromNodeRef, parentNodeRef);
+			
+		} else if(templateArgs.containsKey(PARAM_PALETTE_EL)){
+			String paletteId = templateArgs.get(PARAM_PALETTE_EL);
+			QName typeName = DesignerModel.TYPE_DSG_FORMCONTROL;
+			QName assocName = DesignerModel.ASSOC_DSG_CONTROLS;
+			if(paletteId.contains("formSets_")){
+				typeName = DesignerModel.TYPE_DSG_FORMSET;
+				assocName = DesignerModel.ASSOC_DSG_SETS;
+				props.put(DesignerModel.PROP_DSG_APPEARANCE, paletteId.replace("formSets_", ""));
+				props.put(DesignerModel.PROP_DSG_ID, paletteId.replace("formSets_", ""));
+				paletteId = null;
+			}
+			
+			createNodeRef = designerService.createModelElement(parentNodeRef,typeName, assocName,props,paletteId );
+			
+		} else {
+
+			JsonParams jsonPostParams = parsePostParams(req);
+			
+			QName typeName = parseQName(jsonPostParams.getType());
+			QName assocName = parseQName(jsonPostParams.getAssocType());
+			
+			
+			if(jsonPostParams.getName()!=null && jsonPostParams.getName().length()>0){
+				if(DesignerModel.TYPE_M2_NAMESPACE.equals(typeName) && (jsonPostParams.getModel()==null ||  jsonPostParams.getModel().length()<1)  ){
+					props.put(DesignerModel.PROP_M2_URI, jsonPostParams.getName());
+				} else if(DesignerModel.DESIGNER_URI.equals(typeName.getNamespaceURI())){
+					props.put(DesignerModel.PROP_DSG_ID, jsonPostParams.getName());
+				}	else {
+					props.put(DesignerModel.PROP_M2_NAME, designerService.prefixName(parentNodeRef,jsonPostParams.getName()));
+				}
+			}
+		
+			createNodeRef = designerService.createModelElement(parentNodeRef, typeName, assocName, props, jsonPostParams.getModel());
+			
+
+			if(jsonPostParams.getRedirect()!=null){
+				model.put("redirect",jsonPostParams.getRedirect());
 			}
 		}
 		
-		NodeRef createNodeRef = designerService.createModelElement(parentNodeRef, typeName, assocName, props, jsonPostParams.getModel());
-		model.put(PERSISTED_OBJECT, createNodeRef.toString());
-		model.put(TREE_NODE,designerService.getModelTree(createNodeRef));
-		model.put(ASSOC_NAME, assocName.getLocalName());
-		
-		if(jsonPostParams.getRedirect()!=null){
-			model.put("redirect",jsonPostParams.getRedirect());
+		if(createNodeRef!=null){
+			model.put(PERSISTED_OBJECT, createNodeRef.toString());
+			model.put(TREE_NODE,designerService.getModelTree(parentNodeRef));
 		}
+		
+		
 		
 		return model;
 	}
@@ -153,8 +200,13 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 
 	private JsonParams parsePostParams(WebScriptRequest req)
 	    {
+			
+		
+		
 	        try
 	        {
+	        	
+	        	
 	            JSONObject json = new JSONObject(new JSONTokener(req.getContent().getContent()));
 	            
 	            JsonParams result = new JsonParams();

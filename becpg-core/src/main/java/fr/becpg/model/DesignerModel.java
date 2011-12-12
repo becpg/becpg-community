@@ -23,7 +23,9 @@ public class DesignerModel {
 	public static final QName TYPE_M2_NAMESPACE =  QName.createQName(M2_URI,"namespace");
 
 	public static final QName TYPE_M2_TYPE = QName.createQName(M2_URI,"type");
-	
+
+	public static final QName TYPE_M2_ASPECT = QName.createQName(M2_URI,"aspect");
+
 
 	public static final QName TYPE_M2_CHILD_ASSOCIATION = QName.createQName(M2_URI,"childAssociation");
 	
@@ -34,6 +36,19 @@ public class DesignerModel {
 	
 
 	public static final QName TYPE_M2_CONSTRAINT = QName.createQName(M2_URI,"constraint");
+	
+
+	public static final QName TYPE_DSG_FORM = QName.createQName(DESIGNER_URI,"form");
+	
+	public static final QName TYPE_DSG_FORMSET = QName.createQName(DESIGNER_URI,"formSet");
+	
+	public static final QName TYPE_DSG_FORMFIELD = QName.createQName(DESIGNER_URI,"formField");
+	
+	public static final QName TYPE_DSG_FORMCONTROL = QName.createQName(DESIGNER_URI,"formControl");
+	
+
+	public static final QName TYPE_DSG_CONTROLPARAMETER = QName.createQName(DESIGNER_URI,"controlParameter");
+	
 	
 	/**
 	 * Aspects
@@ -77,6 +92,21 @@ public class DesignerModel {
 	public static final QName PROP_M2_INDEX_MODE  = QName.createQName(M2_URI,
 			"indexTokenisationMode");
 
+	
+
+	public static final QName PROP_DSG_APPEARANCE = QName.createQName(DESIGNER_URI,"appearance");
+	
+
+	public static final QName PROP_DSG_TEMPLATEPATH = QName.createQName(DESIGNER_URI,"templatePath");
+
+	public static final QName PROP_DSG_OPTIONAL = QName.createQName(DESIGNER_URI,"optional");
+	
+	public static final QName PROP_DSG_PARAMETERTYPE = QName.createQName(DESIGNER_URI,"parameterType");
+	
+	public static final QName PROP_DSG_PARAMETERVALUE = QName.createQName(DESIGNER_URI,"parameterValue");
+	
+	public static final QName PROP_DSG_PARAMETERDESCRIPTION = QName.createQName(DESIGNER_URI,"parameterDescription");
+	
 
 	/**
 	 * Assoc
@@ -99,9 +129,27 @@ public class DesignerModel {
 
 	public static final QName ASSOC_M2_DATA_TYPE = QName.createQName(M2_URI,"dataTypes");
 
+	public static final QName ASSOC_M2_PROPERTIES =QName.createQName(M2_URI,"properties");
+
+	public static final QName ASSOC_DSG_FIELDS =QName.createQName(DESIGNER_URI,"fields");
+
+	public static final QName ASSOC_DSG_CONTROLS = QName.createQName(DESIGNER_URI,"controls");
+
+	public static final QName ASSOC_DSG_SETS = QName.createQName(DESIGNER_URI,"sets");
+	
+	public static final QName ASSOC_DSG_PARAMETERS = QName.createQName(DESIGNER_URI,"parameters");
+
+	
+	
+
+
+
+
+
 
 	
 
 
 	
+
 }

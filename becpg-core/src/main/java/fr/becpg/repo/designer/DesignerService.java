@@ -35,5 +35,8 @@ public interface DesignerService {
 	void publish(NodeRef dictionaryModelNodeRef);
 
 	public List<FormControl> getFormControls();
+
+	public NodeRef moveElement(NodeRef from, NodeRef to);
+
 	
 }

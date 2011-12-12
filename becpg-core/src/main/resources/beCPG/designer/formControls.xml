@@ -14,9 +14,8 @@
 		<control-param name="compactMode" optional="true" type="boolean">
 			Determines whether the picker will be shown in compact mode
 		</control-param>
-		<control-param name="displayMode" optional="true" type="string">
-			Determines the way to display current values, the default is
-			"items",
+		<control-param name="displayMode" optional="true" type="string" default="items">
+			Determines the way to display current values,
 			when set to "list" the current items are shown in a rich
 			list with
 			buttons to manage the current items
@@ -48,7 +47,7 @@
 		<control-param name="forceEditable" optional="true"
 			type="boolean">Forces the control to be editable, default is false
 		</control-param>
-		<control-param name="startLocation" optional="true"
+		<control-param name="startLocation" optional="true" default="{company home}"
 			type="string">Determines where to start the picker, the value can be
 			any of
 			the

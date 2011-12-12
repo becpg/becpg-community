@@ -248,28 +248,35 @@ public class DesignerServiceImpl implements DesignerService {
 		
 		NodeRef ret = childAssociationRef.getChildRef();
 		
-		InputStream in = null ;
-		try {
-			String[] splitted = modelTemplate.split("_");
-			
+		if(modelTemplate!=null){
+			InputStream in = null ;
 			try {
-				in = getModelTemplate(splitted[0]);
-			} catch (IOException e) {
-				logger.error(e,e);
-			}
-			if(in!=null){
-				metaModelVisitor.visitModelTemplate(ret, nodeTypeQname,splitted[1], in);
-			}
-			
-		} catch (Exception e){
-			logger.error(e,e);
-		} 
-		finally {
-			if(in!=null){
+				String[] splitted = modelTemplate.split("_");
+				
 				try {
-					in.close();
-				} catch (Exception e) {
-					//Cannot do nothing here
+					in = getModelTemplate(splitted[0]);
+				} catch (IOException e) {
+					logger.error(e,e);
+				}
+				if(in!=null){
+					
+					if(nodeService.getType(parentNodeRef).getNamespaceURI().equals(DesignerModel.DESIGNER_URI)){
+						formModelVisitor.visitModelTemplate(ret, nodeTypeQname,splitted[1], in);
+					} else {
+						metaModelVisitor.visitModelTemplate(ret, nodeTypeQname,splitted[1], in);
+					}
+				}
+				
+			} catch (Exception e){
+				logger.error(e,e);
+			} 
+			finally {
+				if(in!=null){
+					try {
+						in.close();
+					} catch (Exception e) {
+						//Cannot do nothing here
+					}
 				}
 			}
 		}
@@ -337,5 +344,55 @@ public class DesignerServiceImpl implements DesignerService {
 	public List<FormControl> getFormControls() {
 		return controls;
 	}
+
+	/**
+	 * Handle move of properties 
+	 * from type to aspect
+	 * from aspect to type
+	 * from type or aspect to form or set --> create field
+	 * move of field
+	 * from set to form
+	 * from form to set
+	 */
+	@Override
+	public NodeRef moveElement(NodeRef from, NodeRef to) {
+
+		NodeRef ret = null;
+		logger.debug("Try to move node");
+		if(DesignerModel.TYPE_M2_PROPERTY.equals(nodeService.getType(from))){
+			logger.debug("Node is a property");
+			if(DesignerModel.TYPE_M2_TYPE.equals(nodeService.getType(to))
+					|| DesignerModel.TYPE_M2_ASPECT.equals(nodeService.getType(to))){
+				logger.debug("Move to type or aspect");
+				ChildAssociationRef assocRef = nodeService.moveNode(from, to, DesignerModel.ASSOC_M2_PROPERTIES,  DesignerModel.ASSOC_M2_PROPERTIES);
+				ret = assocRef.getChildRef();
+			}
+			if(DesignerModel.TYPE_DSG_FORM.equals(nodeService.getType(to))
+					|| DesignerModel.TYPE_DSG_FORMSET.equals(nodeService.getType(to))){
+				logger.debug("Create field");
+				
+				ChildAssociationRef assocRef = 	nodeService.createNode(to, DesignerModel.ASSOC_DSG_FIELDS,  DesignerModel.ASSOC_DSG_FIELDS,  DesignerModel.TYPE_DSG_FORMFIELD);
+				ret = assocRef.getChildRef();
+				
+				//Copy prop name to field ID
+				nodeService.setProperty(ret, DesignerModel.PROP_DSG_ID, nodeService.getProperty(from, DesignerModel.PROP_M2_NAME));
+				
+			}
+		} else if(DesignerModel.TYPE_DSG_FORMFIELD.equals(nodeService.getType(from))){
+			if(DesignerModel.TYPE_DSG_FORM.equals(nodeService.getType(to))
+					|| DesignerModel.TYPE_DSG_FORMSET.equals(nodeService.getType(to))){
+				logger.debug("Move field");
+				ChildAssociationRef assocRef = nodeService.moveNode(from, to, DesignerModel.ASSOC_DSG_FIELDS,  DesignerModel.ASSOC_DSG_FIELDS);
+				ret = assocRef.getChildRef();
+			
+			}
+		}
+		if(ret==null){
+			logger.warn("unknow type");
+		}
+		return ret;
+	}
+
+
 
 }

@@ -346,33 +346,24 @@
       {
     	  
     	 var obj = args[1].node;
-         if (obj && (obj.parentNodeRef !== null))
+         if (obj && (obj.nodeRef !== null))
          {
         	 try {
-             var parentNode = this.widgets.treeview.getNodeByProperty("nodeRef", obj.parentNodeRef);
+             var parentNode = this.widgets.treeview.getNodeByProperty("nodeRef", obj.nodeRef);
              if (parentNode !== null)
              {
-            	 var tmpNode = null;
-            	 for(var n in parentNode.children){
-            		 if(parentNode.children[n].data.name == obj.assocName){
-            			 tmpNode = parentNode.children[n];
-            			 break;
-            		 }
-            		 
-            	 }
-            	 if(tmpNode==null){
-            		parentNode.isLeaf = false;
-            		parentNode.expand();
-            		tmpNode = this._buildTreeNode({name:obj.assocName,childrens:[obj], type: "m2:"+obj.assocName}, parentNode, true); 
-            		tmpNode = tmpNode.children[0];
-            	 } else {
-            		tmpNode.expand();
-                 	tmpNode =  this._buildTreeNode(obj, tmpNode, false);
-            	 }
+            	//create newParent
+            	var  newParentNode = this._buildTreeNode(obj, parentNode.parent, true); 
+            	this.widgets.treeview.removeNode(parentNode);
+            	
+            	//TODO sort
             		 
             	this.widgets.treeview.render();
-            	this._updateSelectedNode(tmpNode);
-            	
+            	if(args[1].focusNodeRef){
+            		var selected = this.widgets.treeview.getNodeByProperty("nodeRef", args[1].focusNodeRef);
+            		selected.parent.expand();	
+	            	this._updateSelectedNode(selected);
+            	}
              }
         	 } catch(e){
         		 alert(e);
@@ -437,18 +428,20 @@
     	  for(var i in results.controls){
     		  id =  results.controls[i].id;
     		  liTag = document.createElement('li');
-    		  liTag.setAttribute('id', 'form-control-'+ id );
+    		  liTag.setAttribute('id', 'formControls_'+ id );
+    		  liTag.setAttribute('class', 'form-control-'+ id );
     		  liTag.innerHTML = id;
     		  controls.appendChild(liTag);
-    		  new beCPG.DnD('form-control-'+ id, this,"field");
+    		  new beCPG.DnD('formControls_'+ id, this,"field");
     	  } 	 
     	  for(var i in results.sets){
     		  id =  results.sets[i].id;
     		  liTag = document.createElement('li');
-    		  liTag.setAttribute('id', 'form-set-'+ id );
+    		  liTag.setAttribute('id', 'formSets_'+ id );
+    		  liTag.setAttribute('class', 'form-set-'+ id );
     		  liTag.innerHTML = id;
     		  sets.appendChild(liTag);
-    		  new beCPG.DnD('form-set-'+ id, this,"form");
+    		  new beCPG.DnD('formSets_'+ id, this,"form");
     	  } 	 
 
       },
@@ -791,13 +784,15 @@
     		 	 actionUrl;
     		 
     		 
-    		 if(id!=null && (id.indexOf("form-set-")>-1 ||id.indexOf("form-field-")>-1) ){
-    			 actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/dnd/"+id+"?destNodeRef="+nodeRef;
+    		 if(id!=null && (id.indexOf("formSets_")>-1 ||id.indexOf("formControls_")>-1) ){
+    			 actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/dnd/"+id+"?nodeRef="+nodeRef;
     	
     		 } else {
     			 var toMoveRecord = this.designerTree.widgets.treeview.getNodeByElement(this.getEl()); 
-    			 actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/dnd/"+toMoveRecord.data.nodeRef.replace(":/","")+"?destNodeRef="+nodeRef;
+    			 actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/dnd/"+toMoveRecord.data.nodeRef.replace(":/","")+"?nodeRef="+nodeRef;
     		 }
+    		 
+    		 var me = this;
     		 
     		 var callback = function(response)
              {
@@ -806,20 +801,17 @@
                  {
                      
            		  var treeNode = response.json.treeNode;
-           		  treeNode.parentNodeRef = nodeRef;
-           		  
-           		  YAHOO.Bubbling.fire("elementCreated",{node:treeNode});
-           		 
+           		  YAHOO.Bubbling.fire("elementCreated",{node:treeNode, focusNodeRef : response.json.persistedObject});
+           	
            		  //TODO if dropGroup = type it's a move
            		
-           		  Alfresco.util.PopupManager.displayMessage(
-                             {
-                                text:  this.msg("message.dnd.success");
+           		  Alfresco.util.PopupManager.displayMessage( {
+                                text:  me.designerTree.msg("message.dnd.success")
                              });
 	           	  } else {
 	           		  Alfresco.util.PopupManager.displayMessage(
 	                             {
-	                                text: this.msg("message.dnd.failure")
+	                                text: me.designerTree.msg("message.dnd.failure")
 	                             });
 	           	  }
            	  
@@ -831,8 +823,12 @@
     		 Alfresco.util.Ajax.request( {
 	              method : Alfresco.util.Ajax.POST,
 	              url: actionUrl,
-	              successMessage: callback,
-	              failureMessage: this.msg("message.dnd.failure"),
+	              successCallback:
+	               {
+	                  fn:callback,
+	                  scope: this
+	               },
+	              failureMessage:  me.designerTree.msg("message.dnd.failure"),
 	              scope: this,
 	              execScripts: false
     		 });

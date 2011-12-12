@@ -2,8 +2,8 @@
   <shortname>Create model element</shortname>
   <description>Create a new model element</description>
   <url>/becpg/designer/create/element?nodeRef={nodeRef}</url>
-  <url>/becpg/designer/dnd/{palette-el-id}?destNodeRef={destNodeRef}</url>
-  <url>/becpg/designer/dnd/{store_type}/{store_id}/{id}?destNodeRef={destNodeRef}</url>
+  <url>/becpg/designer/dnd/{palette_el_id}?nodeRef={nodeRef}</url>
+  <url>/becpg/designer/dnd/{store_type}/{store_id}/{id}?nodeRef={nodeRef}</url>
   <format default="json" />
   <authentication>user</authentication>
   <transaction>required</transaction>

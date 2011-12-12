@@ -9,7 +9,9 @@
 	</bean>
     
     
-     <bean id="formModelVisitor" class="fr.becpg.repo.designer.impl.FormModelVisitor"/>
+     <bean id="formModelVisitor" class="fr.becpg.repo.designer.impl.FormModelVisitor">
+     	<property name="nodeService" ref="nodeService"/>
+     </bean>
 
 	<bean id="designerService" class="fr.becpg.repo.designer.impl.DesignerServiceImpl" init-method="init">
 		<property name="metaModelVisitor" ref="metaModelVisitor" />

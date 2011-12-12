@@ -119,6 +119,69 @@
 		</forms>
 	</config>
 	
+	<config evaluator="node-type" condition="dsg:formControl">
+		<forms>
+			<form>
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="dsg:id" />
+					<!-- <show id="dsg:templatePath" /> -->
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" />
+					<field id="dsg:id" set="mainInfo"/>
+					<!-- <field id="dsg:templatePath" set="mainInfo" /> -->
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="dsg:formControl">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="dsg:id" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+		<config evaluator="node-type" condition="dsg:controlParameter">
+		<forms>
+			<form>
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="dsg:id" />
+					<show id="dsg:optional" />
+					<show id="dsg:parameterType" />
+					<show id="dsg:parameterDescription" />
+					<show id="dsg:parameterValue" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" />
+					<field id="dsg:id" set="mainInfo"/>
+					<field id="dsg:optional"  set="mainInfo" />
+					<field id="dsg:parameterType"  set="mainInfo"  />
+					<field id="dsg:parameterDescription"  set="mainInfo" />
+					<field id="dsg:parameterValue" set="mainInfo"  />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="dsg:controlParameter">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="dsg:id" />
+					<show id="dsg:optional" />
+					<show id="dsg:parameterType" />
+					<show id="dsg:parameterDescription" />
+					<show id="dsg:parameterValue" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	
 	<!-- Extension form -->
 
 	<config evaluator="node-type" condition="ext1:customType">

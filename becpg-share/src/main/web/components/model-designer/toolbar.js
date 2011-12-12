@@ -320,11 +320,8 @@
                       {
                           
                 		  var treeNode = response.json.treeNode;
-                		  treeNode.parentNodeRef = me.options.destination;
-                		  treeNode.assocName = response.json.assocName;
-                		  treeNode.hasError = response.json.hasError;
-                		  
-                		  YAHOO.Bubbling.fire("elementCreated",{node:treeNode});
+                
+                		  YAHOO.Bubbling.fire("elementCreated",{node:treeNode, focusNodeRef : response.json.persistedObject});
                 		  
                 		  me.options.destination = treeNode.nodeRef;
                 		  me.options.displayName = treeNode.name;
