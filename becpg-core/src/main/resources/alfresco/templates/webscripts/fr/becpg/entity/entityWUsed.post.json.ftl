@@ -81,7 +81,7 @@
    "value": ${data?c},
       <#else>
    "value": "${data}",
-      </#if>      
+      </#if>          
       <#if data?is_boolean>
    "displayValue": ${data?string}
       <#elseif data?is_number>
@@ -90,7 +90,7 @@
    "displayValue": "${"${data}"?replace(',', ' ')}"
       <#else>
    "displayValue": "${data}"
-      </#if>
+      </#if>      
 }
 </#macro>
 
@@ -99,7 +99,19 @@
 {
 
    "value": "${data?string}",
-   "metadata": "${node.type?replace('{http://www.bcpg.fr/model/becpg/1.0}','')}",      
+   "metadata": "${node.type?replace('{http://www.bcpg.fr/model/becpg/1.0}','')}",    
+   <@getSiteId node />
    "displayValue": "${node.name}"
 }
+</#macro>
+
+<#macro getSiteId node>
+<#if node.qnamePath?contains("/app:company_home/st:sites/")>
+	<#assign tmp = node.qnamePath?replace("/app:company_home/st:sites/","")>
+	<#assign pos = tmp?index_of("/")>
+	<#if (pos>0) >
+		<#assign arrDisplayPath = node.displayPath?split("/")>
+		"siteId": "${arrDisplayPath[3]}",
+	</#if> 	
+</#if>   
 </#macro>

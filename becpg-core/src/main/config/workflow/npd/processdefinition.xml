@@ -332,7 +332,6 @@
 		<transition name="submit" to="end">
 			<action
 				class="fr.becpg.repo.workflow.jbpm.productvalidation.ApproveActionHandler">
-				<runas>admin</runas>
 			</action>
 		</transition>
 	</task-node>

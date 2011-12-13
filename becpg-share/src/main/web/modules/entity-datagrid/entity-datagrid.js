@@ -492,7 +492,7 @@
                                html += '<span class="userGroup">' + $html(data.displayValue) + '</span>';
                                break;                               
                            default:
-                        	   if(datalistColumn.name == "bcpg:rclReqType" || datalistColumn.name == "bcpg:filReqType" || datalistColumn.name == "bcpg:culReqType")
+                        	   if(datalistColumn.name == "bcpg:rclReqType" || datalistColumn.name == "bcpg:filReqType" || datalistColumn.name == "eco:culReqType")
                     		   {
                         		   if(data.displayValue == "Forbidden")
                         		   {

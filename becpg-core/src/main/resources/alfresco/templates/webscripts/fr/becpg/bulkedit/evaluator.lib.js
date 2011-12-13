@@ -17,6 +17,8 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
 
+const SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";
+
 var Evaluator =
 {
    /**
