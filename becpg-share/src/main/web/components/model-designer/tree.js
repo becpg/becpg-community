@@ -137,7 +137,6 @@
             }
          }
          
-         this.renderDesignerControls();
          
      
       },
@@ -264,55 +263,7 @@
          
          
       },
-      
-      /**
-       * Renders the controls palette
-       *
-       * @method renderDesignerControls
-       */
-      renderDesignerControls: function DesignerTree_renderDesignerControls()
-      {
-         var me = this;
-         
-
-       // Prepare the XHR callback object
-       var callback =
-            {
-               success: function DesignerTreelND_success(oResponse)
-               {
-                  var results = YAHOO.lang.JSON.parse(oResponse.responseText);
-
-                  if (results)
-                  {
-                      // Build the controls widget
-                      this._buildControls(results);
-                  }     
-               },
-               // If the XHR call is not successful, fire the controls callback anyway
-               failure: function DesignerTreelND_failure(oResponse)
-               {
-                  if (oResponse.status == 401)
-                  {
-                     // Our session has likely timed-out, so refresh to offer the login page
-                     window.location.reload();
-                  }
-                  alert("Unexpected error");
-               },
-               
-               // Callback function scope
-               scope: me
-            };
-       
-         
-        var uri = Alfresco.constants.PROXY_URI + "becpg/designer/controls";
-
-            // Make the XHR call using Connection Manager's asyncRequest method  
-         YAHOO.util.Connect.asyncRequest('GET', uri, callback);
-         
-         
-         
-      },
-       
+   
        
       /**
        * Fired by YUI TreeView when a node label is clicked
@@ -327,10 +278,8 @@
          
          if ( node != this.selectedNode) {
             
-        	this._updateSelectedNode(node);
-         
-            YAHOO.Bubbling.fire("designerModelNodeChange",{node : node.data});
-       
+        	 this._updateSelectedNode(node);
+        	 
          }
          Event.stopEvent(args.event);
          
@@ -345,33 +294,38 @@
       onElementCreated: function DesignerTree_onElementCreated(layer, args)
       {
     	  
-    	 var obj = args[1].node;
+    	 var obj = args[1].node, selected;
          if (obj && (obj.nodeRef !== null))
          {
-        	 try {
+
+        	//Always remove the focus if exists	 
+
+             selected = this.widgets.treeview.getNodeByProperty("nodeRef", args[1].focusNodeRef);
+             if(selected!=null){
+            	 this.widgets.treeview.removeNode(selected);
+             }
+        		 
              var parentNode = this.widgets.treeview.getNodeByProperty("nodeRef", obj.nodeRef);
              if (parentNode !== null)
              {
             	//create newParent
             	var  newParentNode = this._buildTreeNode(obj, parentNode.parent, true); 
-            	this.widgets.treeview.removeNode(parentNode);
+            	newParentNode.insertBefore(parentNode);
             	
-            	//TODO sort
-            		 
+            	this.widgets.treeview.removeNode(parentNode);
+
             	this.widgets.treeview.render();
-            	if(args[1].focusNodeRef){
-            		var selected = this.widgets.treeview.getNodeByProperty("nodeRef", args[1].focusNodeRef);
-            		selected.parent.expand();	
-	            	this._updateSelectedNode(selected);
-            	}
+            	//New selected
+            	selected = this.widgets.treeview.getNodeByProperty("nodeRef", args[1].focusNodeRef);
+            	selected.parent.expand();	
+            	this._updateSelectedNode(selected);
+
              }
-        	 } catch(e){
-        		 alert(e);
-        	 }
          }
     	 
    
       },
+      
       /**
        * Fired when an element has been deleted
        * @method onElementDeleted
@@ -404,11 +358,15 @@
                   }
                }
                this.widgets.treeview.render();
-               this._showHighlight(true);
+               if(parentNode!=null){
+            	   this._updateSelectedNode(parentNode);
+               }
+               
             }
          }
          
       },
+      
       
       /**
        * PRIVATE FUNCTIONS
@@ -432,7 +390,7 @@
     		  liTag.setAttribute('class', 'form-control-'+ id );
     		  liTag.innerHTML = id;
     		  controls.appendChild(liTag);
-    		  new beCPG.DnD('formControls_'+ id, this,"field");
+    		  new beCPG.DnD('formControls_'+ id, this,"control");
     	  } 	 
     	  for(var i in results.sets){
     		  id =  results.sets[i].id;
@@ -441,7 +399,7 @@
     		  liTag.setAttribute('class', 'form-set-'+ id );
     		  liTag.innerHTML = id;
     		  sets.appendChild(liTag);
-    		  new beCPG.DnD('formSets_'+ id, this,"form");
+    		  new beCPG.DnD('formSets_'+ id, this,"set");
     	  } 	 
 
       },
@@ -481,7 +439,6 @@
          //Select first
          if(modelNode!=null){
 	         this._updateSelectedNode(modelNode);
-	         YAHOO.Bubbling.fire("designerModelNodeChange",{node : modelNode.data});
          }
       },
       /**
@@ -500,8 +457,13 @@
           var dndTargets = Dom.getElementsByClassName("m2-property", "span", rootEl);
           for (var i = 0, j = dndTargets.length; i < j; i++)
           {
- 	            var dnd = new beCPG.DnD(dndTargets[i].parentNode,this,"type");
- 	       	 	dnd.addToGroup("form");
+ 	            var dnd = new beCPG.DnD(dndTargets[i].parentNode,this,"property");
+          }
+          
+          dndTargets = Dom.getElementsByClassName("dsg-formField", "span", rootEl);
+          for (var i = 0, j = dndTargets.length; i < j; i++)
+          {
+ 	            var dnd = new beCPG.DnD(dndTargets[i].parentNode,this,"field");
           }
       },
       /**
@@ -546,6 +508,8 @@
             this._showHighlight(false);
             this.selectedNode = node;
             this._showHighlight(true);
+            
+            YAHOO.Bubbling.fire("designerModelNodeChange",{node : node.data});
       },
       
 
@@ -565,36 +529,9 @@
        */
       _buildTreeNode: function DesignerTree_buildTreeNode(p_oData, p_oParent, p_expanded)
       {
+    	  try {
     	  
-    	  //TODO horrible !!!
-    	  	 var treeNode = null,
-    	  	 	dropGroup = null,
-    	  	 	draggable = false,
-        	 	droppable = false;
-        	 switch(p_oData.type){
-	     	 	case  "m2:property":
-	     	 		draggable = true;
-	     	 		break;
-	     	 	case  "m2:type":
-	     	 	case  "m2:aspect":
-	     	 	case  "m2:properties":
-	     	 	case  "m2:propertyOverrides":
-	     	 		dropGroup = "type";
-	     	 		droppable = true;
-		     	 	break;
-	     	 	case  "dsg:form":
-	     	 	case  "dsg:formSet":
-	     	 	case  "dsg:fields":
-	     	 	case  "dsg:sets":
-	     	 		dropGroup = "form";
-	     	 		droppable = true;
-		     	 	break;
-	     	 	case  "dsg:formField":
-	     	 		dropGroup = "field";
-	     	 		droppable = true;
-		     	 	break;
-	     	 }
-        	 treeNode =  new YAHOO.widget.TextNode(
+        var	 treeNode =  new YAHOO.widget.TextNode(
 	                   {
 	                      label: ((p_oData.title!=null && p_oData.title.length>0)?p_oData.title:p_oData.name)  ,
 	                      entityTitle : ((p_oData.title!=null && p_oData.title.length>0)?p_oData.title:p_oData.name) ,
@@ -603,9 +540,8 @@
 	                      itemType : p_oData.type,
 	                      subType : p_oData.subType,
 	                      description: p_oData.description,
-	                      draggable : draggable,
-	                      droppable : droppable,
-	                      dropGroup : dropGroup,
+	                      draggable : p_oData.draggable,
+	                      accepts : p_oData.accepts,
 	                      formId : p_oData.formId ? p_oData.formId : null
 	                   }, p_oParent, p_expanded);
 	         
@@ -616,7 +552,6 @@
         	 }
         	 
         	 
-        	 
 	         if(p_oData.childrens.length>0){
 		         for(var i in p_oData.childrens){
 		        	this._buildTreeNode( p_oData.childrens[i],treeNode,false)
@@ -624,8 +559,13 @@
 	         } else {
 	        	  treeNode.isLeaf = true;
 	         }
+    	 
 	         
          return treeNode;
+         
+    	  } catch(e){
+    		  alert(e);
+    	  }
       },
       
 

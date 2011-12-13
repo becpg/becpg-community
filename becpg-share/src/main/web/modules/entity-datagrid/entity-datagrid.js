@@ -306,8 +306,7 @@
        */
       onDataGridContainerDestroyed : function EntityDataGrid_onDataGridContainerDestroyed(){    	  
     	  
-    	  
-    	  if(this.widgets!=null){
+    	  if(this!=null){
 	    	  Bubbling.unsubscribe("changeFilter", this.onChangeFilter);
 	          Bubbling.unsubscribe("filterChanged", this.onFilterChanged);
 	          Bubbling.unsubscribe("dataListDetailsUpdated", this.onDataListDetailsUpdated);
@@ -317,7 +316,7 @@
 	          Bubbling.unsubscribe("dataItemsDuplicated", this.onDataGridRefresh);
 	          Bubbling.unsubscribe("activeDataListChanged", this.onActiveDataListChanged);
 	          Bubbling.unsubscribe("dataGridContainerDestroyed", this.onDataGridContainerDestroyed);
-        	  delete this.widgets;
+	          delete this.widgets;
           }
 
          },

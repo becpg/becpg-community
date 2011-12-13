@@ -1,7 +1,5 @@
 package fr.becpg.repo.product.formulation;
 
-import java.text.DecimalFormat;
-
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +16,7 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 public class CompositionCalculatingVisitor implements ProductVisitor {
 
 	public static final float DEFAULT_DENSITY = 1f;
+	public static final float DEFAULT_QUANTITY = 0f;
 	
 	private static Log logger = LogFactory.getLog(CompositionCalculatingVisitor.class);
 	
@@ -44,7 +43,7 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 			netWeight = formulatedProduct.getDensity();
 		}
 		else{
-			Float qty = formulatedProduct.getQty();
+			Float qty = (formulatedProduct.getQty()!=null) ? formulatedProduct.getQty() : DEFAULT_QUANTITY;
 			Float density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
 			netWeight = qty * density;
 		}

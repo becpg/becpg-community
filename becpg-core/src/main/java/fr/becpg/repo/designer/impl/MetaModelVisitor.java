@@ -141,9 +141,9 @@ public class MetaModelVisitor {
 				tmp.setType(assoc.getTypeQName().toPrefixString(namespaceService));
 				String title = "";
 				if(DesignerModel.M2_URI.equals(assoc.getTypeQName().getNamespaceURI())){
-					title = I18NUtil.getMessage("m2_m2model.association.m2_" + assocName.toLowerCase());
+					title = I18NUtil.getMessage("m2_m2model.association.m2_" + assocName.toLowerCase()+".title");
 				} else {
-					title = I18NUtil.getMessage("dsg_designerModel.association.dsg_" + assocName.toLowerCase());
+					title = I18NUtil.getMessage("dsg_designerModel.association.dsg_" + assocName.toLowerCase()+".title");
 				}
 				
 				tmp.setTitle(title);
@@ -188,6 +188,7 @@ public class MetaModelVisitor {
 		tmp.setTitle(title);
 		tmp.setDescription(description);
 		tmp.setType(nodeService.getType(modelNodeRef).toPrefixString(namespaceService));
+		
 		
 		if(nodeService.hasAspect(modelNodeRef, DesignerModel.ASPECT_MODEL_ERROR)){
 			tmp.setHasError(true);

@@ -26,7 +26,6 @@ import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutGroup;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -45,6 +44,9 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 	
 	/** The Constant DEFAULT_DENSITY. */
 	public static final float DEFAULT_DENSITY = 1f;
+	
+	/** The Constant DEFAULT_QUANTITY. */
+	public static final float DEFAULT_QUANTITY = 0f;
 	
 	/** The Constant UNIT_PER100G. */
 	public static final String UNIT_PER100G = "/100g";
@@ -141,6 +143,9 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		
 		//Take in account net weight
 		Float qty = (formulatedProduct.getUnit() != ProductUnit.P) ? formulatedProduct.getQty():QTY_FOR_PIECE; //unit => qty == 1
+		if(qty==null){
+			qty = DEFAULT_QUANTITY;
+		}
 		Float density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
 		Float netWeight = qty * density;
 		for(NutListDataItem n : nutMap.values()){

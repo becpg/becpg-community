@@ -455,7 +455,8 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="m2:title" />
-				    <show id="m2:name" />
+					<show id="m2:name" />
+					<show id="m2:description" />
 					<show id="m2:type" />
 				</field-visibility>
 			</form>

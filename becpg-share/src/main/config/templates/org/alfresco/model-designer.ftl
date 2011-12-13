@@ -14,8 +14,15 @@
         <div class="yui-t1" id="becpg-model-designer">
            <div id="yui-main">
               <div class="yui-b" id="alf-content">
-                <@region id="toolbar" scope="template" protected=true />         
-                <@region id="modelForm" scope="template" protected=true />
+	              <div class="yui-ge">
+	                <div class="yui-u first" id="dsg-content">
+		                <@region id="toolbar" scope="template" protected=true />         
+		                <@region id="modelForm" scope="template" protected=true />
+	                </div>
+	                 <div class="yui-u" id="dsg-palettes">
+		               <@region id="modelPalettes" scope="template" protected=true />
+		            </div>
+	               </div>
               </div>
            </div>
            <div class="yui-b" id="alf-filters">

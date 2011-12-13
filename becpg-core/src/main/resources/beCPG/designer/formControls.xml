@@ -3,13 +3,9 @@
 		template="/org/alfresco/components/form/controls/richtext.ftl">
 		<description>
 			The association control is used to allow objects in the
-			repository to
-			be picked and ultimately associated with the node being
-			edited. The
-			control uses the JavaScript Alfresco.ObjectFinder
-			component to allow
-			the user to browse the repository and pick
-			objects.
+			repository to be picked and ultimately associated with the node being
+			edited. The control uses the JavaScript Alfresco.ObjectFinder
+			component to allow 	the user to browse the repository and pick 	objects.
 		</description>
 		<control-param name="compactMode" optional="true" type="boolean">
 			Determines whether the picker will be shown in compact mode
@@ -34,18 +30,14 @@
 			pre-select in the
 			picker
 		</control-param>
-		<control-param name="selectActionLabel" optional="true"
-			type="string">The label of the button that launches the picker, by
-			default the
-			label is "Select"
+		<control-param name="selectActionLabel" optional="true" default="select"
+			type="string">The label of the button that launches the picker
 		</control-param>
 		<control-param name="selectActionLabelId" optional="true"
-			type="string">The resource bundle key of the label of the button
-			that launches
-			the picker
+			type="string">The resource bundle key of the label of the button that launches 	the picker
 		</control-param>
-		<control-param name="forceEditable" optional="true"
-			type="boolean">Forces the control to be editable, default is false
+		<control-param name="forceEditable" optional="true" default="false"
+			type="boolean">Forces the control to be editable
 		</control-param>
 		<control-param name="startLocation" optional="true" default="{company home}"
 			type="string">Determines where to start the picker, the value can be
@@ -105,15 +97,9 @@
 			type="string">Query string formatted parameters for startLocation
 		</control-param>
 		<control-param name="allowNavigationToContentChildren"
-			optional="true" type="boolean">Determines whether the picker can
-			navigate the
-			children of content nodes, the default is false." Only
-			available
-			since
-			3.4.c and 3.4.0)
+			optional="true" type="boolean">Determines whether the picker can 	navigate the	children of content nodes, the default is false.
 		</control-param>
-		<control-param name="editorAppearance">full
-		</control-param>
+		<control-param name="editorAppearance">full</control-param>
 	</control>
 
 	<control id="authority"
@@ -126,8 +112,8 @@
 		<control-param name="compactMode" optional="true" type="boolean">
 			Determines whether the picker will be shown in compact mode
 		</control-param>
-		<control-param name="forceEditable" optional="true"
-			type="boolean">Forces the control to be editable, default is false
+		<control-param name="forceEditable" optional="true" default="false"
+			type="boolean">Forces the control to be editable
 		</control-param>
 
 	</control>
@@ -146,10 +132,10 @@
 		<control-param name="compactMode" optional="true" type="boolean">
 			Determines whether the picker will be shown in compact mode
 		</control-param>
-		<control-param name="forceEditable" optional="true"
-			type="boolean">Forces the control to be editable, default is false
+		<control-param name="forceEditable" optional="true" default="false"
+			type="boolean">Forces the control to be editable
 		</control-param>
-		<control-param name="parentNodeRef" optional="true"
+		<control-param name="parentNodeRef" optional="true" 
 			type="string">The nodeRef of the category to start the picker,
 			defaults to the
 			root of the category tree
@@ -176,8 +162,8 @@
 			Allows
 			CSS rules to applied directly to the checkbox
 		</control-param>
-		<control-param name="forceEditable" optional="true"
-			type="boolean">Forces the control to be editable, default is false
+		<control-param name="forceEditable" optional="true" default="false"
+			type="boolean">Forces the control to be editable
 		</control-param>
 
 	</control>
@@ -276,8 +262,8 @@
 		<control-param name="showTime" optional="true" type="boolean">
 			Determines whether the time entry field should be displayed
 		</control-param>
-		<control-param name="forceEditable" optional="true"
-			type="boolean">Forces the control to be editable, default is false
+		<control-param name="forceEditable" optional="true" default="false"
+			type="boolean">Forces the control to be editable
 		</control-param>
 
 	</control>

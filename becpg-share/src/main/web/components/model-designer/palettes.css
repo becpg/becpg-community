@@ -1,0 +1,59 @@
+
+
+/*
+ Controls
+*/
+
+ul.form-controls, ul.form-sets  {
+		width: 220px;
+		clear:both;
+}
+
+ul.form-controls li, ul.form-sets li {
+	float: left;
+    width: 70px; 
+    line-height: 24px; 
+    padding: 0px;
+    cursor: pointer;
+ }
+
+
+.controls-container, .sets-container {
+	clear:both;
+}
+
+
+
+ul.form-controls  li.form-control-association { padding-left: 24px; background:  url(./images/association-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-authority { padding-left: 24px; background:  url(./images/authority-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-category { padding-left: 24px; background:  url(./images/category-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-checkbox { padding-left: 24px; background:  url(./images/checkbox-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-content { padding-left: 24px; background:  url(./images/content-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-date { padding-left: 24px; background:  url(./images/date-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-encoding { padding-left: 24px; background:  url(./images/encoding-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-hidden { padding-left: 24px; background:  url(./images/hidden-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-info { padding-left: 24px; background:  url(./images/info-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-invisible { padding-left: 24px; background:  url(./images/invisible-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-mimetype { padding-left: 24px; background:  url(./images/mimetype-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-number { padding-left: 24px; background:  url(./images/number-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-period { padding-left: 24px; background:  url(./images/period-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-richtext { padding-left: 24px; background:  url(./images/richtext-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-selectone { padding-left: 24px; background:  url(./images/selectone-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-selectmany { padding-left: 24px; background:  url(./images/selectmany-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-textarea { padding-left: 24px; background:  url(./images/textarea-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-textfield { padding-left: 24px; background:  url(./images/textfield-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-size { padding-left: 24px; background:  url(./images/size-16.png) no-repeat 5px;}
+
+/**
+
+Sets
+
+**/
+
+ul.form-sets  li.form-set-fieldset { padding-left: 24px; background:  url(./images/fieldset-16.png) no-repeat 5px;}
+ul.form-sets li.form-set-panel { padding-left: 24px; background:  url(./images/panel-16.png) no-repeat 5px;}
+ul.form-sets li.form-set-bordered-panel { padding-left: 24px; background:  url(./images/bordered-panel-16.png) no-repeat 5px;}
+ul.form-sets li.form-set-title { padding-left: 24px; background:  url(./images/title-16.png) no-repeat 5px;}
+ul.form-sets li.form-set-whitespace { padding-left: 24px; background:  url(./images/whitespace-16.png) no-repeat 5px;}
+
+

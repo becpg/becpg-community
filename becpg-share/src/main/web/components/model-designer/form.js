@@ -37,8 +37,6 @@
       
       YAHOO.Bubbling.on("designerModelNodeChange", this.onDesignerModelNodeChange, this);
       YAHOO.Bubbling.on("selectedModelChanged", this.onSelectedModelChanged, this);
-      YAHOO.Bubbling.on("elementCreated", this.onDesignerModelNodeChange, this);
-      YAHOO.Bubbling.on("elementDeleted", this.onDesignerModelNodeChange, this);
       YAHOO.Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
       YAHOO.Bubbling.on("elementDragOver", this.onElementDragOver, this);
       YAHOO.Bubbling.on("elementDragOut", this.onElementDragOut, this);
@@ -129,15 +127,37 @@
 	       
 	       
 	       //show instructions
-	       if(this.currentNode.droppable){
-	           template = Dom.get(this.id+"-dnd-instructions-"+this.currentNode.dropGroup);
+	       if(this.currentNode.accepts.length>0){
+	    	   
+	    	 	 var dropGroup = null;
+	        	 switch(this.currentNode.itemType){
+		     	 	case  "m2:type":
+		     	 	case  "dsg:fields":
+		     	 	case  "m2:aspect":
+		     	 	case  "m2:properties":
+		     	 	case  "m2:propertyOverrides":
+		     	 		dropGroup = "type";
+			     	 	break;
+		     	 	case  "dsg:form":
+		     	 	case  "dsg:formSet":
+		     	 	case  "dsg:sets":
+		     	 		dropGroup = "form";
+			     	 	break;
+		     	 	case  "dsg:formField":
+		     	 		dropGroup = "field";
+			     	 	break;
+		     	 }
+	           template = Dom.get(this.id+"-dnd-instructions-"+dropGroup);
 	           templateInstance = template.cloneNode(true);
 	           templateInstance.id = this.id+"-dropZone";
 	           Dom.removeClass(templateInstance, "hidden");
 	           Dom.addClass(templateInstance, "elementDroppable");
 	           Dom.addClass(templateInstance, "elementDroppableHighlights");
 	           container.appendChild(templateInstance);
-	           new YAHOO.util.DDTarget(templateInstance,this.currentNode.dropGroup);
+	          var dndTarget =  new YAHOO.util.DDTarget(templateInstance);
+	           for(i in this.currentNode.accepts){
+	        	   dndTarget.addToGroup(this.currentNode.accepts[i]);
+	           }
 	           
 	       } 
 	      

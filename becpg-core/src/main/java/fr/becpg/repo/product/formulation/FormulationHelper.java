@@ -3,6 +3,9 @@
  */
 package fr.becpg.repo.product.formulation;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -16,6 +19,10 @@ import fr.becpg.repo.product.data.productList.PackagingListUnit;
  */
 public class FormulationHelper {	
 
+	private static final Float DEFAULT_QUANTITY = 0f;
+	
+	private static Log logger = LogFactory.getLog(FormulationHelper.class);
+	
 	/**
 	 * Gets the qty.
 	 *
@@ -25,10 +32,10 @@ public class FormulationHelper {
 	 */
 	public static float getQty(CompoListDataItem compoListDataItem) throws FormulateException{
 		if(compoListDataItem.getQty() == null){
-			throw new FormulateException("message.formulate.failure.qty");
-		}
+			logger.warn("Composition element doesn't have any quantity");
+		} 
 		
-		float qty = compoListDataItem.getQty();		
+		float qty = compoListDataItem.getQty()!=null ? compoListDataItem.getQty() : DEFAULT_QUANTITY ;		
 		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
 		
 		if(compoListUnit == CompoListUnit.g || compoListUnit == CompoListUnit.mL){
@@ -45,7 +52,11 @@ public class FormulationHelper {
 	 */
 	public static float getQty(PackagingListDataItem packagingListDataItem){
 		
-		float qty = packagingListDataItem.getQty();		
+		if(packagingListDataItem.getQty() == null){
+			logger.warn("Packaging element doesn't have any quantity");
+		} 
+		
+		float qty = packagingListDataItem.getQty()!=null ? packagingListDataItem.getQty() : DEFAULT_QUANTITY ;	
 		PackagingListUnit packagingListUnit = packagingListDataItem.getPackagingListUnit();
 		
 		if(packagingListUnit == PackagingListUnit.PP){

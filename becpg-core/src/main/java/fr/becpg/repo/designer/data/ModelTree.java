@@ -118,7 +118,52 @@ public class ModelTree {
 	}
 
 	
+	/**
+	 * @return the isDraggable
+	 */
+	public Boolean getIsDraggable() {
+		if("m2:property".equals(type) 
+				||  "dsg:formField".equals(type)){
+			return true;
+		}
+		return false;
+	}
 
+	public List<String> getAccepts() {
+		List<String> ret = new ArrayList<String>();
+		if ("m2:type".equals(type) || "m2:aspect".equals(type) || "m2:properties".equals(type)
+				|| "m2:propertyOverrides".equals(type) ) {
+			ret.add("property");
+		}
+		if ("dsg:sets".equals(type)) {
+			ret.add("set");
+		}
+
+		if ("dsg:fields".equals(type)) {
+			ret.add("property");
+			ret.add("field");
+		}
+//		later
+//		if ("dsg:forms".equals(type) ) {
+//			
+//			ret.add("type");
+//		}
+//		
+		if ("dsg:form".equals(type) || "dsg:formSet".equals(type) || "dsg:fields".equals(type)
+				|| "dsg:sets".equals(type)) {
+			ret.add("property");
+			ret.add("field");
+			ret.add("set");
+		}
+
+		if ("dsg:formField".equals(type)) {
+			ret.add("control");
+		}
+
+		return ret;
+
+	}
+	
 	/**
 	 * @return the formId
 	 */

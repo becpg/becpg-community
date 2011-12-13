@@ -15,5 +15,9 @@
          <region-id>modelTree</region-id>
          <url>/components/model-designer/tree</url>
       </component>
+      <component>
+         <region-id>modelPalettes</region-id>
+         <url>/components/model-designer/palettes</url>
+      </component>
    </components>
 </template-instance>
