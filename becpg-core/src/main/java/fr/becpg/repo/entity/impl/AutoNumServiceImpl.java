@@ -132,6 +132,11 @@ public class AutoNumServiceImpl implements AutoNumService {
         if(autoNumNodeRef != null){
         	Long v = (Long)nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
         	prefix = (String) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_PREFIX);
+        	
+        	if(prefix == null){
+        		prefix = DEFAULT_PREFIX;
+        	}
+        	
         	if(v != null){
         		autoNumValue = v;
         		autoNumValue++;
