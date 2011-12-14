@@ -206,14 +206,17 @@
 					<value>€/kg</value>
 					<value>€/P</value>
 					<value>€/m</value>
+					<value>€/m2</value>
 					<value>$/L</value>
 					<value>$/kg</value>
 					<value>$/P</value>
 					<value>$/m</value>
+					<value>$/m2</value>
 					<value>£/L</value>
 					<value>£/kg</value>
 					<value>£/P</value>
 					<value>£/m</value>
+					<value>£/m2</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -233,6 +236,7 @@
 		<constraint name="bcpg:microbioUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>UFC/cm²</value>
 					<value>UFC/25cm²</value>
 					<value>UFC/g</value>
@@ -242,10 +246,11 @@
 					<value>UFG/g</value>
 					<value>UFG/L</value>
 					<value>/g</value>
+					<value>/1g</value>
 					<value>/10g</value>
 					<value>/25g</value>
 					<value>/100cm² n=50,c=2</value>
-					<value>-</value>
+					<value>-</value>					
 				</list>
 			</parameter>
 		</constraint>
