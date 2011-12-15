@@ -131,11 +131,7 @@ public class AutoNumServiceImpl implements AutoNumService {
         // get value store in db
         if(autoNumNodeRef != null){
         	Long v = (Long)nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
-        	prefix = (String) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_PREFIX);
-        	
-        	if(prefix == null){
-        		prefix = DEFAULT_PREFIX;
-        	}
+        	prefix = getPrefix(autoNumNodeRef);
         	
         	if(v != null){
         		autoNumValue = v;
@@ -172,7 +168,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		// get value store in db
         if(autoNumNodeRef != null){
         	Long v = (Long)nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
-        	prefix = (String) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_PREFIX);
+        	prefix = getPrefix(autoNumNodeRef);
         	if(v != null){
         		autoNumValue = v;
         		autoNumValue--;
@@ -344,7 +340,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		String prefix = DEFAULT_PREFIX;
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(type, propertyName);
         if(autoNumNodeRef != null){
-        	prefix = (String) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_PREFIX);
+        	prefix = getPrefix(autoNumNodeRef);        	
         }
         else{
         	prefix = getDefaultPrefix(type,propertyName);
@@ -356,6 +352,14 @@ public class AutoNumServiceImpl implements AutoNumService {
 	public String getPrefixedCode(QName type, QName propertyName, Long autoNumValue) {
 		String prefix = getAutoNumPrefix(type, propertyName);
 		return formatCode(prefix,autoNumValue);
+	}
+	
+	private String getPrefix(NodeRef autoNumNodeRef) {
+		String prefix = (String) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_PREFIX);
+    	if(prefix ==null){
+    		prefix = DEFAULT_PREFIX;
+    	}
+    	return prefix;
 	}
 
 	private String formatCode(String prefix, Long autoNumValue) {
