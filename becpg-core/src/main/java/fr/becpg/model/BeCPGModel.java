@@ -97,6 +97,8 @@ public interface BeCPGModel {
 	/** The Constant TYPE_PACKAGINGMATERIAL. */
 	static final QName TYPE_PACKAGINGMATERIAL = QName.createQName(BECPG_URI,
 			"packagingMaterial");
+	static final QName TYPE_RESOURCEPRODUCT = QName.createQName(BECPG_URI,
+			"resourceProduct");
 
 	/** The Constant ASSOC_ENTITYLISTS. */
 	static final QName ASSOC_ENTITYLISTS = QName.createQName(BECPG_URI,
@@ -351,6 +353,9 @@ public interface BeCPGModel {
 	static final QName PROP_MICROBIOLIST_MAXI = QName.createQName(BECPG_URI,
 			"mblMaxi");
 	
+	static final QName PROP_MICROBIOLIST_TEXT_CRITERIA = QName.createQName(BECPG_URI,
+			"mblTextCriteria");
+	
 	/** The Constant ASSOC_MICROBIOLIST_MICROBIO. */
 	static final QName ASSOC_MICROBIOLIST_MICROBIO = QName.createQName(
 			BECPG_URI, "mblMicrobio");
@@ -410,6 +415,10 @@ public interface BeCPGModel {
 	static final QName ASSOC_RCL_SOURCES = QName.createQName(BECPG_URI,
 			"rclSources");
 	
+	// contactList
+	static final QName TYPE_CONTACTLIST = QName.createQName(BECPG_URI,
+			"contactList");
+		
 	// allergen
 	/** The Constant TYPE_ALLERGEN. */
 	static final QName TYPE_ALLERGEN = QName.createQName(BECPG_URI, "allergen");

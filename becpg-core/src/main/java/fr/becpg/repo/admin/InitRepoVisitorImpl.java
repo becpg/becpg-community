@@ -226,6 +226,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY1);
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY1);
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY1);
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_RESOURCEPRODUCT_HIERARCHY1);
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2);
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGMATERIAL_HIERARCHY2);
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_SEMIFINISHEDPRODUCT_HIERARCHY2);
@@ -233,7 +234,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY2);
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY2);
 		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY2);
-
+		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_RESOURCEPRODUCT_HIERARCHY2);
+		
 		// Exchange
 		NodeRef exchangeNodeRef = visitFolder(companyHome, RepoConsts.PATH_EXCHANGE);
 		NodeRef importNodeRef = visitFolder(exchangeNodeRef, RepoConsts.PATH_IMPORT);
@@ -605,14 +607,18 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 		// visit supplier
 		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, subFolders);
-		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, null);
+		Set<QName> dataLists = new LinkedHashSet<QName>();
+		dataLists.add(BeCPGModel.TYPE_CONTACTLIST);
+		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, dataLists);
 
 		// visit client
 		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, subFolders);
-		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, null);
+		dataLists = new LinkedHashSet<QName>();
+		dataLists.add(BeCPGModel.TYPE_CONTACTLIST);
+		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, dataLists);
 
 		// visit acls
-		Set<QName> dataLists = new LinkedHashSet<QName>();
+		dataLists = new LinkedHashSet<QName>();
 		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
 		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists);
 		
@@ -645,6 +651,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		productTypes.add(BeCPGModel.TYPE_FINISHEDPRODUCT);
 		productTypes.add(BeCPGModel.TYPE_PACKAGINGMATERIAL);
 		productTypes.add(BeCPGModel.TYPE_PACKAGINGKIT);
+		productTypes.add(BeCPGModel.TYPE_RESOURCEPRODUCT);
 
 		Set<String> subFolders = new HashSet<String>();
 		subFolders.add(RepoConsts.PATH_IMAGES);
@@ -667,6 +674,12 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 
 			} else if (productType.equals(BeCPGModel.TYPE_PACKAGINGMATERIAL)) {
+
+				dataLists.add(BeCPGModel.TYPE_COSTLIST);
+				dataLists.add(BeCPGModel.TYPE_PRICELIST);
+				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+
+			} else if (productType.equals(BeCPGModel.TYPE_RESOURCEPRODUCT)) {
 
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
 				dataLists.add(BeCPGModel.TYPE_PRICELIST);
@@ -779,7 +792,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
 		QName[] productTypes = { BeCPGModel.TYPE_RAWMATERIAL, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT,
 				BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, BeCPGModel.TYPE_FINISHEDPRODUCT,
-				BeCPGModel.TYPE_PACKAGINGMATERIAL, BeCPGModel.TYPE_PACKAGINGKIT };
+				BeCPGModel.TYPE_PACKAGINGMATERIAL, BeCPGModel.TYPE_PACKAGINGKIT, BeCPGModel.TYPE_RESOURCEPRODUCT};
 
 		for (QName productType : productTypes) {
 

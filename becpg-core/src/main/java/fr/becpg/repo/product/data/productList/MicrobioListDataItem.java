@@ -25,6 +25,8 @@ public class MicrobioListDataItem {
 	/** The maxi. */
 	private Float maxi;
 	
+	private String textCriteria;
+	
 	/** The microbio. */
 	private NodeRef microbio;
 	
@@ -100,6 +102,14 @@ public class MicrobioListDataItem {
 		this.maxi = maxi;
 	}
 	
+	public String getTextCriteria() {
+		return textCriteria;
+	}
+
+	public void setTextCriteria(String textCriteria) {
+		this.textCriteria = textCriteria;
+	}
+
 	/**
 	 * Gets the microbio.
 	 *
@@ -134,12 +144,13 @@ public class MicrobioListDataItem {
 	 * @param maxi the maxi
 	 * @param microbio the microbio
 	 */
-	public MicrobioListDataItem(NodeRef nodeRef, Float value, String unit, Float maxi, NodeRef microbio){
+	public MicrobioListDataItem(NodeRef nodeRef, Float value, String unit, Float maxi, String textCriteria, NodeRef microbio){
 		this.nodeRef = nodeRef;
 		this.value = value;
 		this.unit = unit;
 		this.maxi = maxi;
 		this.microbio = microbio;		
+		this.textCriteria = textCriteria;
 	}
 	
 	/**
@@ -151,6 +162,7 @@ public class MicrobioListDataItem {
 		setValue(m.getValue());
 		setUnit(m.getUnit());
 		setMaxi(m.getMaxi());
+		setTextCriteria(m.getTextCriteria());
 		setMicrobio(m.getMicrobio());
 	}
 }

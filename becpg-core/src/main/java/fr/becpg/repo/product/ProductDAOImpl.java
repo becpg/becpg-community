@@ -38,6 +38,7 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
+import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -139,6 +140,9 @@ public class ProductDAOImpl implements ProductDAO{
 		}
     	else if (productData instanceof PackagingMaterialData) {
 			productType = BeCPGModel.TYPE_PACKAGINGMATERIAL;			
+		}
+    	else if (productData instanceof ResourceProductData) {
+			productType = BeCPGModel.TYPE_RESOURCEPRODUCT;			
 		}
     	else if (productData instanceof RawMaterialData) {
 			productType = BeCPGModel.TYPE_RAWMATERIAL;			
@@ -752,7 +756,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    	
 		    		List<AssociationRef> microbioAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_MICROBIOLIST_MICROBIO);
 		    		NodeRef organoNodeRef = (microbioAssocRefs.get(0)).getTargetRef();
-		    		MicrobioListDataItem microbioListDataItem = new MicrobioListDataItem(listItemNodeRef, (Float)properties.get(BeCPGModel.PROP_MICROBIOLIST_VALUE), (String)properties.get(BeCPGModel.PROP_MICROBIOLIST_UNIT), (Float)properties.get(BeCPGModel.PROP_MICROBIOLIST_MAXI), organoNodeRef);
+		    		MicrobioListDataItem microbioListDataItem = new MicrobioListDataItem(listItemNodeRef, (Float)properties.get(BeCPGModel.PROP_MICROBIOLIST_VALUE), (String)properties.get(BeCPGModel.PROP_MICROBIOLIST_UNIT), (Float)properties.get(BeCPGModel.PROP_MICROBIOLIST_MAXI), (String)properties.get(BeCPGModel.PROP_MICROBIOLIST_TEXT_CRITERIA), organoNodeRef);
 		    		microbioList.add(microbioListDataItem);
 		    	}
     		}    		
@@ -1958,7 +1962,8 @@ public class ProductDAOImpl implements ProductDAO{
 		    		properties.put(BeCPGModel.PROP_MICROBIOLIST_VALUE, microbioListDataItem.getValue());
 		    		properties.put(BeCPGModel.PROP_MICROBIOLIST_UNIT, microbioListDataItem.getUnit());
 		    		properties.put(BeCPGModel.PROP_MICROBIOLIST_MAXI, microbioListDataItem.getMaxi());
-			    		
+		    		properties.put(BeCPGModel.PROP_MICROBIOLIST_TEXT_CRITERIA, microbioListDataItem.getTextCriteria());
+		    		
 		    		if(filesToUpdate.containsKey(microbioNodeRef)){
 		    			//update
 		    			nodeService.setProperties(filesToUpdate.get(microbioNodeRef), properties);

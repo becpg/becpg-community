@@ -249,7 +249,7 @@
 					<value>/1g</value>
 					<value>/10g</value>
 					<value>/25g</value>
-					<value>/100cm² n=50,c=2</value>
+					<value>/100cm² n=50 c=2</value>
 					<value>-</value>					
 				</list>
 			</parameter>
@@ -415,6 +415,13 @@
 				<aspect>bcpg:suppliersAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		<type name="bcpg:resourceProduct">
+			<parent>bcpg:product</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:eanAspect</aspect>
+				<aspect>bcpg:suppliersAspect</aspect>
+			</mandatory-aspects>
+		</type>		
 		<!-- ________________________________________________________________ CARACTERISTIQUES 
 			________________________________________________________________ -->
 
@@ -541,6 +548,9 @@
 				<property name="bcpg:supplierTel">
 					<type>d:text</type>
 				</property>
+				<property name="bcpg:supplierFax">
+					<type>d:text</type>
+				</property>
 				<property name="bcpg:supplierEmail">
 					<type>d:text</type>
 				</property>
@@ -548,6 +558,7 @@
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:location</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<!-- ______________________________________ CLIENT ______________________________________ -->
@@ -564,6 +575,7 @@
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:location</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<!-- ______________________________________ PLANT ______________________________________ -->
@@ -1035,6 +1047,9 @@
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 				</property>
+				<property name="bcpg:mblTextCriteria">
+					<type>d:text</type>					
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:mblMicrobio">
@@ -1275,6 +1290,54 @@
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		<!-- Data List - Contact List -->
+      <type name="bcpg:contactList">
+         <parent>bcpg:entityListItem</parent>
+         <properties>
+            <property name="bcpg:contactListFirstName">
+               <title>First Name</title>
+               <type>d:text</type>
+               <mandatory>false</mandatory>
+            </property>
+            <property name="bcpg:contactListLastName">
+               <title>Last Name</title>
+               <type>d:text</type>
+               <mandatory>false</mandatory>
+            </property>
+            <property name="bcpg:contactListEmail">
+               <title>Email Address</title>
+               <type>d:text</type>
+               <mandatory>false</mandatory>
+            </property>
+            <property name="bcpg:contactListJobTitle">
+               <title>Job Title</title>
+               <type>d:text</type>
+               <mandatory>false</mandatory>
+            </property>
+            <property name="bcpg:contactListPhoneOffice">
+               <title>Phone (Office)</title>
+               <type>d:text</type>
+               <mandatory>false</mandatory>
+            </property>
+            <property name="bcpg:contactListPhoneMobile">
+               <title>Phone (Mobile)</title>
+               <type>d:text</type>
+               <mandatory>false</mandatory>
+            </property>
+            <property name="bcpg:contactListFax">
+               <title>Fax</title>
+               <type>d:text</type>
+               <mandatory>false</mandatory>
+            </property>
+            <property name="bcpg:contactListNotes">
+               <title>Notes</title>
+               <type>d:text</type>
+               <mandatory>false</mandatory>
+            </property>
+         </properties>
+      </type>
+		
 		<!-- ________________________________________________________________ AUTO 
 			COMP ________________________________________________________________ -->
 
@@ -1620,6 +1683,10 @@
 					<type>d:text</type>
 				</property>
 				<property name="bcpg:locationZip">
+					<title>Zip/Post Code</title>
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:locationCity">
 					<title>Zip/Post Code</title>
 					<type>d:text</type>
 				</property>

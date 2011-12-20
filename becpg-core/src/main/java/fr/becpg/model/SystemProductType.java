@@ -24,6 +24,8 @@ public enum SystemProductType {
 	/** The Packaging material. */
 	PackagingMaterial,
 	
+	ResourceProduct,
+	
 	/** The Semi finished product. */
 	SemiFinishedProduct,	
 	
@@ -68,7 +70,10 @@ public enum SystemProductType {
 		}
 		else if(productType.getLocalName().equals(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT.getLocalName())){
 			systemProductType = SystemProductType.SemiFinishedProduct;
-		}	
+		}
+		else if(productType.getLocalName().equals(BeCPGModel.TYPE_RESOURCEPRODUCT.getLocalName())){
+			systemProductType = SystemProductType.ResourceProduct;
+		}
 		else{
 			//must return Unknown, otherwise there is no way to verify an node is a product. We would have to test every type (RawMarterial,...)
 			//throw new InvalidParameterException("this value is not allowed for productType. productType" + productType);

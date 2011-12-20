@@ -535,8 +535,11 @@
 			<properties>
 				<property name="bcpg:supplierTel">
 					<type>d:text</type>
-				</property>
+				</property>				
 				<property name="bcpg:supplierEmail">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:supplierFax">
 					<type>d:text</type>
 				</property>
 			</properties>
@@ -553,6 +556,9 @@
 					<type>d:text</type>
 				</property>
 				<property name="bcpg:clientEmail">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:clientFax">
 					<type>d:text</type>
 				</property>
 			</properties>
@@ -1529,6 +1535,10 @@
 					<type>d:text</type>
 				</property>
 				<property name="bcpg:locationZip">
+					<title>Zip/Post Code</title>
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:locationCity">
 					<title>Zip/Post Code</title>
 					<type>d:text</type>
 				</property>

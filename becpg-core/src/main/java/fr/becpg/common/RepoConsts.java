@@ -91,14 +91,16 @@ public class RepoConsts {
 	public static final String PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY1 = "FinishedProduct_Hierarchy1";
 	public static final String PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY1 = "LocalSemiFinishedProduct_Hierarchy1";
 	public static final String PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY1 = "PackagingKit_Hierarchy1";
-	public static final String PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY1 = "CondSalesUnit_Hierarchy1";	
+	public static final String PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY1 = "CondSalesUnit_Hierarchy1";
+	public static final String PATH_HIERARCHY_RESOURCEPRODUCT_HIERARCHY1 = "ResourceProduct_Hierarchy1";
 	public static final String PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2 = "RawMaterial_Hierarchy2";
 	public static final String PATH_HIERARCHY_PACKAGINGMATERIAL_HIERARCHY2 = "PackagingMaterial_Hierarchy2";
 	public static final String PATH_HIERARCHY_SEMIFINISHEDPRODUCT_HIERARCHY2 = "SemiFinishedProduct_Hierarchy2";
 	public static final String PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY2 = "FinishedProduct_Hierarchy2";
 	public static final String PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY2 = "LocalSemiFinishedProduct_Hierarchy2";
 	public static final String PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY2 = "PackagingKit_Hierarchy2";
-	public static final String PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY2 = "CondSalesUnit_Hierarchy2";			
+	public static final String PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY2 = "CondSalesUnit_Hierarchy2";
+	public static final String PATH_HIERARCHY_RESOURCEPRODUCT_HIERARCHY2 = "ResourceProduct_Hierarchy2";
 	// Product folder
 	public static final String PATH_IMAGES = "Images";
 	public static final String PATH_DOCUMENTS = "Documents";

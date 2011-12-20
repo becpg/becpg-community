@@ -57,5 +57,6 @@ public class SystemProductTypeTest extends BaseAlfrescoTestCase{
 		assertEquals(SystemProductType.PackagingMaterial, SystemProductType.valueOf(BeCPGModel.TYPE_PACKAGINGMATERIAL));
 		assertEquals(SystemProductType.RawMaterial, SystemProductType.valueOf(BeCPGModel.TYPE_RAWMATERIAL));
 		assertEquals(SystemProductType.SemiFinishedProduct, SystemProductType.valueOf(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT));
+		assertEquals(SystemProductType.ResourceProduct, SystemProductType.valueOf(BeCPGModel.TYPE_RESOURCEPRODUCT));
 	}
 }
