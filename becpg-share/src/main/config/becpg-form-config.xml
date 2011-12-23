@@ -1930,6 +1930,7 @@
 					<show id="cm:name" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:costCurrency" />
+					<show id="bcpg:costFixed" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" />
@@ -1938,7 +1939,6 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:costCurrency" />
 				</appearance>
 			</form>
 		</forms>

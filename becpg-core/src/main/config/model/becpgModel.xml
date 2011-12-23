@@ -45,6 +45,7 @@
 					<value>P</value>
 					<value>m</value>
 					<value>m2</value>
+					<value>h</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -202,21 +203,27 @@
 		<constraint name="bcpg:costListUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value>€</value>
 					<value>€/L</value>
 					<value>€/kg</value>
 					<value>€/P</value>
 					<value>€/m</value>
 					<value>€/m2</value>
+					<value>€/h</value>
+					<value>$</value>
 					<value>$/L</value>
 					<value>$/kg</value>
 					<value>$/P</value>
 					<value>$/m</value>
 					<value>$/m2</value>
+					<value>$/h</value>
+					<value>£</value>
 					<value>£/L</value>
 					<value>£/kg</value>
 					<value>£/P</value>
 					<value>£/m</value>
 					<value>£/m2</value>
+					<value>£/h</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -249,6 +256,7 @@
 					<value>/1g</value>
 					<value>/10g</value>
 					<value>/25g</value>
+					<value>/100cm²</value>
 					<value>/100cm² n=50 c=2</value>
 					<value>-</value>					
 				</list>
@@ -452,6 +460,9 @@
 					<constraints>
 						<constraint ref="bcpg:currency" />
 					</constraints>
+				</property>
+				<property name="bcpg:costFixed">
+					<type>d:boolean</type>					
 				</property>
 			</properties>
 		</type>

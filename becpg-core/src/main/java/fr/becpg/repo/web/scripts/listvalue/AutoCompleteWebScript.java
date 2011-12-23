@@ -152,17 +152,15 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		
 		logger.debug("exec webscript");
 		
-		
-		
+		//filter by class names
+		String classNames = req.getParameter(PARAM_CLASS_NAMES);			
+		String[] arrClassNames = classNames != null ? classNames.split(PARAM_VALUES_SEPARATOR) : null;
 		
 		if(sourceType.equals(SOURCE_TYPE_TARGET_ASSOC)){
 			QName type = QName.createQName(className, namespaceService);
-			suggestions = listValueService.suggestTargetAssoc(type, query,pageNum, locale);
+			suggestions = listValueService.suggestTargetAssoc(type, query,pageNum, locale, arrClassNames);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_PRODUCT)){
-			
-			String classNames = req.getParameter(PARAM_CLASS_NAMES);			
-			String[] arrClassNames = classNames != null ? classNames.split(PARAM_VALUES_SEPARATOR) : null;
 			
 			suggestions = listValueService.suggestProduct(query,pageNum, locale, arrClassNames);
 		}

@@ -29,6 +29,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -265,8 +266,8 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				
 				//Modify working copy
 				int valueAdded = 1;
-				float newDensity = 2.33f;
-				workingCopyRawMaterial.setDensity(newDensity);
+				ProductUnit productUnit = ProductUnit.P;
+				workingCopyRawMaterial.setUnit(productUnit);
 				for(CostListDataItem c : workingCopyRawMaterial.getCostList()){
 					c.setValue(c.getValue() + valueAdded);
 				}
@@ -285,7 +286,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
 				ProductData newRawMaterial = productDAO.find(newRawMaterialNodeRef, dataLists);
 				assertEquals("Check version", "1.1", newRawMaterial.getVersionLabel());
-				assertEquals("Check density", newDensity, newRawMaterial.getDensity());
+				assertEquals("Check unit", productUnit, newRawMaterial.getUnit());
 				
 				// Check productCode
 				assertEquals("productCode should be the same after checkin", nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_CODE), nodeService.getProperty(newRawMaterialNodeRef, BeCPGModel.PROP_CODE));
@@ -336,20 +337,20 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				assertNotNull("Check working copy exists", workingCopyNodeRef);
 				
 				//modify
-				float newDensity2 = 4.33f;
+				ProductUnit productUnit2 = ProductUnit.m;
 				 Collection<QName> dataLists = productDictionaryService.getDataLists();
 				ProductData workingCopyRawMaterial = productDAO.find(workingCopyNodeRef, dataLists);
-				workingCopyRawMaterial.setDensity(newDensity2);
+				workingCopyRawMaterial.setUnit(productUnit2);
 				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
-				assertNull("Check density", rawMaterial.getDensity());
-				assertEquals("Check density", newDensity2, workingCopyRawMaterial.getDensity());
+				assertNull("Check unit", rawMaterial.getUnit());
+				assertEquals("Check unit", productUnit2, workingCopyRawMaterial.getUnit());
 								
 				//cancel check out
 				entityCheckOutCheckInService.cancelCheckout(workingCopyNodeRef);
 				
 				//Check
 				rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
-				assertNull("Check density", rawMaterial.getDensity());
+				assertNull("Check unit", rawMaterial.getUnit());
 			return null;
 			
 			}},false,true);

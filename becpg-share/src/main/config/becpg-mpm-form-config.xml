@@ -1,0 +1,107 @@
+<alfresco-config>	
+
+	<config evaluator="node-type" condition="mpm:processStep">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:titled" />
+					<show id="cm:description" />
+					<show id="bcpg:code" />
+				</field-visibility>				
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="node-type" condition="mpm:processResource">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:titled" />
+					<show id="cm:description" />
+					<show id="bcpg:code" />
+				</field-visibility>				
+			</form>
+		</forms>
+	</config>
+	
+	<!-- mpm:processList type -->
+	<config evaluator="model-type" condition="mpm:processList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="mpm:plStep" />
+					<show id="mpm:plProduct" />	
+					<show id="mpm:plQty" />										
+					<show id="mpm:plResource" />
+					<show id="mpm:plQtyResource" />
+					<show id="mpm:plRateResource" />	
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>					
+					<field id="mpm:plStep">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="mpm:plProduct">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="mpm:plResource">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="mpm:plStep" />
+					<show id="mpm:plProduct" />	
+					<show id="mpm:plQty" />										
+					<show id="mpm:plResource" />
+					<show id="mpm:plQtyResource" />
+					<show id="mpm:plRateResource" />
+					<show id="mpm:plRateProduct" />					
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- mpm:processList type (existing nodes) -->
+	<config evaluator="node-type" condition="mpm:processList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="mpm:plStep" />
+					<show id="mpm:plProduct" />	
+					<show id="mpm:plQty" />										
+					<show id="mpm:plResource" />
+					<show id="mpm:plQtyResource" />
+					<show id="mpm:plRateResource" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>					
+					<field id="mpm:plStep">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="mpm:plProduct">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="mpm:plResource">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
+</alfresco-config>

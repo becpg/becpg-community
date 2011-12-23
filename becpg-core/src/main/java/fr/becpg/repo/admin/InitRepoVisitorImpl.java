@@ -42,9 +42,11 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECOModel;
+import fr.becpg.model.MPMModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
+import fr.becpg.model.VariantModel;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.entity.EntityTplService;
@@ -216,6 +218,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(charactsNodeRef, RepoConsts.PATH_PLANTS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_CERTIFICATIONS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_APPROVALNUMBERS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_PROCESSSTEPS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_VARIANT_CHARACTS);
 
 		// Hierarchy
 		NodeRef hierarchyNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
@@ -402,6 +406,10 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			specialiseType = BeCPGModel.TYPE_CERTIFICATION;
 		} else if (folderName == RepoConsts.PATH_APPROVALNUMBERS) {
 			specialiseType = BeCPGModel.TYPE_APPROVAL_NUMBER;
+		} else if (folderName == RepoConsts.PATH_PROCESSSTEPS) {
+			specialiseType = MPMModel.TYPE_PROCESSSTEP;
+		} else if (folderName == RepoConsts.PATH_VARIANT_CHARACTS) {
+			specialiseType = VariantModel.TYPE_CHARACT;
 		} else if (folderName == RepoConsts.PATH_ENTITY_TEMPLATES) {
 			specialiseType = BeCPGModel.TYPE_ENTITY;
 		} else if (folderName.endsWith(RepoConsts.PATH_HIERARCHY_SFX_HIERARCHY1)) {
@@ -688,6 +696,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			} else if (productType.equals(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT)) {
 
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+				dataLists.add(MPMModel.TYPE_PROCESSLIST);
 				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
 				dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
@@ -700,6 +709,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
 				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+				dataLists.add(MPMModel.TYPE_PROCESSLIST);
 				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
 				dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);

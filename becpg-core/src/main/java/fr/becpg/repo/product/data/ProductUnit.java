@@ -23,7 +23,9 @@ public enum ProductUnit {
 	m,
 	
 	/** The m2. */
-	m2;
+	m2,
+	
+	h;
 		
 	public static ProductUnit getUnit(String productUnit){
 		return (productUnit != null && !productUnit.isEmpty()) ? ProductUnit.valueOf(productUnit) : ProductUnit.kg;

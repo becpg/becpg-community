@@ -133,11 +133,11 @@ public interface BeCPGModel {
 			.createQName(BECPG_URI, "allergenListInVoluntary");
 	
 	/** The Constant PROP_ALLERGENLIST_VOLUNTARY_SOURCES. */
-	static final QName PROP_ALLERGENLIST_VOLUNTARY_SOURCES = QName.createQName(
+	static final QName ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES = QName.createQName(
 			BECPG_URI, "allergenListVolSources");
 	
 	/** The Constant PROP_ALLERGENLIST_INVOLUNTARY_SOURCES. */
-	static final QName PROP_ALLERGENLIST_INVOLUNTARY_SOURCES = QName.createQName(
+	static final QName ASSOC_ALLERGENLIST_INVOLUNTARY_SOURCES = QName.createQName(
 			BECPG_URI, "allergenListInVolSources");
 
 	// compoList
@@ -432,6 +432,7 @@ public interface BeCPGModel {
 	
 	/** The Constant PROP_COSTCURRENCY. */
 	static final QName PROP_COSTCURRENCY = QName.createQName(BECPG_URI, "costCurrency");
+	static final QName PROP_COSTFIXED = QName.createQName(BECPG_URI, "costFixed");
 
 	// ing
 	/** The Constant TYPE_ING. */

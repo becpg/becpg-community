@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="mpm:mpmmodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<!-- Optional meta-data about the model -->
+	<description>Manufacturing Process Management</description>
+	<author>QUERE</author>
+	<version>1.0</version>
+	<!-- Imports are required to allow references to definitions in other models -->
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</imports>
+	
+	<!-- Introduction of new namespaces defined by this model -->
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/mpm/1.0" prefix="mpm" />
+	</namespaces>
+	
+	<constraints>
+	
+		<constraint name="mpm:resourceTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>User</value>
+					<value>Machine</value>					
+				</list>
+			</parameter>
+		</constraint>
+		
+	</constraints>
+
+	<types>
+		
+		<type name="mpm:processStep">
+			<parent>cm:content</parent>					
+			<mandatory-aspects>
+				<aspect>cm:titled</aspect>
+				<aspect>bcpg:codeAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<!-- processList -->
+		<type name="mpm:processList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="mpm:plQty">
+					<type>d:float</type>
+				</property>				
+				<property name="mpm:plQtyResource">
+					<type>d:float</type>
+				</property>
+				<property name="mpm:plRateResource">
+					<type>d:float</type>
+				</property>
+				<property name="mpm:plYield">
+					<type>d:float</type>
+				</property>
+				<property name="mpm:plRateProcess">
+					<type>d:float</type>
+				</property>
+				<property name="mpm:plRateProduct">
+					<type>d:float</type>
+				</property>
+			</properties>
+			<associations>
+				<association name="mpm:plStep">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>mpm:processStep</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>				
+				<association name="mpm:plProduct">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="mpm:plResource">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:resourceProduct</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>
+	
+		
+	</types>
+	
+	<aspects>	
+	
+		<aspect name="mpm:resourceAspect">
+			<properties>
+				<property name="mpm:resourceType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="mpm:resourceTypes" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>		
+		
+	</aspects>
+</model>

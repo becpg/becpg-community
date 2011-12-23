@@ -26,8 +26,8 @@ import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AllergensCalculatingVisitor.
  *
@@ -101,14 +101,31 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 		Set<NodeRef> visitedProducts = new HashSet<NodeRef>();
 		Map<NodeRef, AllergenListDataItem> allergenMap = new HashMap<NodeRef, AllergenListDataItem>();
 		
-		for(CompoListDataItem compoItem : formulatedProduct.getCompoList()){
-					
-			NodeRef part = compoItem.getProduct();
-			if(!visitedProducts.contains(part)){				
-				logger.debug("visitPart: " + part);				
-				visitPart(part, allergenMap);
-				visitedProducts.add(part);
-			}				
+		// compoList
+		if(formulatedProduct.getCompoList() != null){
+			for(CompoListDataItem compoItem : formulatedProduct.getCompoList()){
+				
+				NodeRef part = compoItem.getProduct();
+				if(!visitedProducts.contains(part)){				
+					logger.debug("visitPart: " + part);				
+					visitPart(part, allergenMap);
+					visitedProducts.add(part);
+				}				
+			}
+		}
+		
+		// process
+		if(formulatedProduct.getProcessList() != null){
+			for(ProcessListDataItem processItem : formulatedProduct.getProcessList()){
+				
+				NodeRef resource = processItem.getResource();
+				if(resource != null && !visitedProducts.contains(resource)){				
+					logger.debug("visitPart: " + resource);
+					//TODO : resource is not a product => il faudrait déplacer les méthodes loadAllergenList ailleurs que dans ProductDAOImpl
+					visitPart(resource, allergenMap);
+					visitedProducts.add(resource);
+				}				
+			}
 		}
 		
 		List<AllergenListDataItem> allergenList = getListToUpdate(formulatedProduct.getNodeRef(), allergenMap);		

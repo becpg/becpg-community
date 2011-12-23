@@ -36,6 +36,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
 
@@ -145,10 +146,33 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				Float qty = FormulationHelper.getQty(packagingListDataItem);
 				visitCostLeaf(packagingListDataItem.getProduct(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());
 			}
-		}						
+		}
+		
+		/*
+		 * Calculate the costs of the processes
+		 */
+		if(formulatedProduct.getProcessList() != null){
+			Float stepDuration = null;
+			
+			for(ProcessListDataItem processListDataItem : formulatedProduct.getProcessList()){
+				
+				//step : calculate step duration
+				if(processListDataItem.getStep() != null && 
+						processListDataItem.getRateProcess() != null && processListDataItem.getRateProcess() != 0f){
+					stepDuration = processListDataItem.getQty() / processListDataItem.getRateProcess();
+				}
+				
+				if(processListDataItem.getResource() != null && processListDataItem.getQtyResource() != null){
+					
+					Float qty = stepDuration * processListDataItem.getQtyResource();
+					visitCostLeaf(processListDataItem.getResource(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());										
+				}																
+			}
+		}
 		
 		//Take in account net weight, calculate cost details perc
 		if(formulatedProduct.getUnit() != ProductUnit.P){
+			
 			Float qty = formulatedProduct.getQty();
 			Float density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
 			Float netWeight = qty * density;
@@ -161,7 +185,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			for(CostDetailsListDataItem c : compositeCosts.getCostDetailsMap().values()){		
 				if(c.getValue() != null)
 					c.setValue(c.getValue() / netWeight);															
-			}
+			}			
 		}
 		
 		// cost details perc
@@ -202,8 +226,8 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		formulatedProduct.setCostList(costListSorted);					
 		formulatedProduct.setCostDetailsList(costDetailsListSorted);	
 		
-		//profitability
-		formulatedProduct = calculateProfitability(formulatedProduct);
+		//profitability		
+		formulatedProduct = calculateProfitability(formulatedProduct);		
 		
 		// check requirements
 		formulatedProduct = checkReqCtrl(formulatedProduct);
@@ -563,21 +587,43 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	
 	private ProductData calculateProfitability(ProductData formulatedProduct){
 		
-		float unitTotalCost = 0f;
+		float unitTotalVariableCost = 0f;
+		float unitTotalFixedCost = 0f;
 		
 		for(CostListDataItem c : formulatedProduct.getCostList()){
 			
-			if(c.getValue() != null)
-				unitTotalCost += c.getValue();
+			Boolean isFixed = (Boolean)nodeService.getProperty(c.getCost(), BeCPGModel.PROP_COSTFIXED);
+			
+			if(c.getValue() != null){
+				if(isFixed != null && isFixed == Boolean.TRUE){
+					unitTotalFixedCost += c.getValue();					
+				}
+				else{
+					unitTotalVariableCost += c.getValue();
+				}
+			}			
 		}
 				
-		formulatedProduct.setUnitTotalCost(unitTotalCost);
+		formulatedProduct.setUnitTotalCost(unitTotalVariableCost);
 		
 		if(formulatedProduct.getUnitPrice() != null && formulatedProduct.getUnitTotalCost() != null){
 			
-			Float profitability = 100 * (formulatedProduct.getUnitPrice() - formulatedProduct.getUnitTotalCost()) / formulatedProduct.getUnitPrice();
+			// profitability
+			Float profit = formulatedProduct.getUnitPrice() - formulatedProduct.getUnitTotalCost();
+			Float profitability = 100 * profit / formulatedProduct.getUnitPrice();
 			logger.debug("profitability: " + profitability);
 			formulatedProduct.setProfitability(profitability);
+			
+			// breakEven
+			if(profit > 0){
+				
+				Integer breakEven = Math.round(unitTotalFixedCost / profit);
+				formulatedProduct.setBreakEven(breakEven);
+			}
+			else{
+				formulatedProduct.setBreakEven(null);
+			}
+			
 		}
 		else{
 			formulatedProduct.setProfitability(null);

@@ -317,6 +317,7 @@
 		<property name="productDictionaryService" ref="productDictionaryService" />		
 		<property name="productReportVisitor" ref="productReportVisitor" />		
 		<property name="compositionCalculatingVisitor" ref="compositionCalculatingVisitor" />
+		<property name="processCalculatingVisitor" ref="processCalculatingVisitor" />
 		<property name="allergensCalculatingVisitor" ref="allergensCalculatingVisitor" />
 		<property name="nutsCalculatingVisitor" ref="nutsCalculatingVisitor" />
 		<property name="costsCalculatingVisitor" ref="costsCalculatingVisitor" />
@@ -346,6 +347,9 @@
 	<bean id="compositionCalculatingVisitor"
 		class="fr.becpg.repo.product.formulation.CompositionCalculatingVisitor">
 		<property name="nodeService" ref="nodeService" />
+	</bean>
+	<bean id="processCalculatingVisitor"
+		class="fr.becpg.repo.product.formulation.ProcessCalculatingVisitor">
 	</bean>
 	<bean id="allergensCalculatingVisitor"
 		class="fr.becpg.repo.product.formulation.AllergensCalculatingVisitor">

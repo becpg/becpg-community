@@ -454,7 +454,8 @@
                            case "cm:folder":  
                            case "bcpg:supplier":
                            case "bcpg:client":
-                           case "bcpg:entity":     	   
+                           case "bcpg:entity":
+                           case "bcpg:resourceProduct":
                         	  url  = scope._buildCellUrl(data); 
                               html += '<a href="' + url + '">';
                               html += '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util.getFileIcon(data.displayValue, (data.metadata == "container" ? 'cm:folder' : null), 16) + '" width="16" alt="' + $html(data.displayValue) + '" title="' + $html(data.displayValue) + '" />';

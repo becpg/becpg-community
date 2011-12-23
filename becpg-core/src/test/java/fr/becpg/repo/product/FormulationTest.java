@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.MPMModel;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.ProductService;
@@ -40,6 +41,7 @@ import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -48,6 +50,7 @@ import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.NullableBoolean;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -625,7 +628,14 @@ public class FormulationTest extends RepoBaseTestCase {
 		   
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
-					
+				
+				//fixed cost
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();				
+				properties.put(ContentModel.PROP_NAME, "fixedCost");			 					 				
+				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				properties.put(BeCPGModel.PROP_COSTFIXED, true);
+				NodeRef fixedCost = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+				
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
 				 Collection<QName> dataLists = productDictionaryService.getDataLists();
@@ -643,6 +653,9 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
+				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, 4000f, "€", null, fixedCost, true));
+				finishedProduct.setCostList(costList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
 				
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
@@ -677,6 +690,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				assertEquals("check unitPrice", 12.4f, formulatedProduct.getUnitPrice());
 				assertEquals("check unitTotalCost", 10f, formulatedProduct.getUnitTotalCost());
 				assertEquals("check profitability", df.format(19.35f), df.format(formulatedProduct.getProfitability()));
+				assertEquals("check breakEven", (Integer)1667, formulatedProduct.getBreakEven());				
 				
 				//nuts
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
@@ -2605,4 +2619,235 @@ public class FormulationTest extends RepoBaseTestCase {
 			}},false,true);
 		   
 	   }
+	
+	/**
+	 * Test formulate product, when there is process list
+	 *
+	 * @throws Exception the exception
+	 */
+	public void testProcess() throws Exception{
+		   
+	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			public NodeRef execute() throws Throwable {					   							
+				
+				Collection<QName> dataLists = new ArrayList<QName>();
+				dataLists.add(BeCPGModel.TYPE_COSTLIST);
+				
+				/*-- Create process steps, resources --*/
+				logger.debug("/*-- Create process steps, resources --*/");
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				//Costs
+				properties.put(ContentModel.PROP_NAME, "costTransfo");			 					 				
+				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				NodeRef costTransfoNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+				
+				properties.put(ContentModel.PROP_NAME, "costMOTransfo");			 					 				
+				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				NodeRef costMOTransfoNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+				
+				properties.put(ContentModel.PROP_NAME, "costMOMaintenance");			 					 				
+				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				NodeRef costMOMaintenanceNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+				
+				//Steps
+				logger.debug("Steps");
+				properties.put(ContentModel.PROP_NAME, "Découpe");			 					 				
+				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				NodeRef decoupeNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				
+				properties.put(ContentModel.PROP_NAME, "Hachage");			 					 				
+				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				NodeRef hachageNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				
+				properties.put(ContentModel.PROP_NAME, "Cuisson");			 					 				
+				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				NodeRef cuissonNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				
+				properties.put(ContentModel.PROP_NAME, "Mélange");			 					 				
+				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				NodeRef melangeNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				
+				properties.put(ContentModel.PROP_NAME, "Etape Ligne");			 					 				
+				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				NodeRef ligneStepNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				
+				// resources
+				logger.debug("Resources");
+				ResourceProductData boucherResourceData = new ResourceProductData();
+				boucherResourceData.setName("Boucher");
+				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, 8f, "€/h", null, costMOTransfoNodeRef, false));
+				boucherResourceData.setCostList(costList);
+				NodeRef boucherResourceNodeRef = productDAO.create(folderNodeRef, boucherResourceData, dataLists);
+				
+				ResourceProductData operateurResourceData = new ResourceProductData();
+				operateurResourceData.setName("Operateur");
+				costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, 15f, "€/h", null, costMOTransfoNodeRef, false));
+				operateurResourceData.setCostList(costList);
+				NodeRef operateurResourceNodeRef = productDAO.create(folderNodeRef, operateurResourceData, dataLists);
+				
+				ResourceProductData hachoirResourceData = new ResourceProductData();
+				hachoirResourceData.setName("Hachoir");
+				costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, 10f, "€/h", null, costTransfoNodeRef, false));
+				hachoirResourceData.setCostList(costList);
+				NodeRef hachoirResourceNodeRef = productDAO.create(folderNodeRef, hachoirResourceData, dataLists);
+				
+				ResourceProductData cuiseurResourceData = new ResourceProductData();
+				cuiseurResourceData.setName("Cuiseur");
+				costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, 30f, "€/h", null, costTransfoNodeRef, false));
+				cuiseurResourceData.setCostList(costList);
+				NodeRef cuiseurResourceNodeRef = productDAO.create(folderNodeRef, cuiseurResourceData, dataLists);
+				
+				ResourceProductData malaxeurResourceData = new ResourceProductData();
+				malaxeurResourceData.setName("Malaxeur");
+				costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, 40f, "€/h", null, costTransfoNodeRef, false));
+				malaxeurResourceData.setCostList(costList);
+				NodeRef malaxeurResourceNodeRef = productDAO.create(folderNodeRef, malaxeurResourceData, dataLists);
+				
+				ResourceProductData ligneResourceData = new ResourceProductData();
+				ligneResourceData.setName("Ligne");
+				costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, 30f, "€/h", null, costTransfoNodeRef, false));
+				costList.add(new CostListDataItem(null, 15f, "€/h", null, costMOTransfoNodeRef, false));
+				costList.add(new CostListDataItem(null, 5f, "€/h", null, costMOMaintenanceNodeRef, false));
+				ligneResourceData.setCostList(costList);
+				NodeRef ligneResourceNodeRef= productDAO.create(folderNodeRef, ligneResourceData, dataLists);
+				
+				/*-- Create finished product --*/
+				dataLists.clear();
+				dataLists.add(MPMModel.TYPE_PROCESSLIST);
+				logger.debug("/*-- Create finished product --*/");				 
+				FinishedProductData finishedProduct = new FinishedProductData();
+				finishedProduct.setName("Produit fini 1");
+				finishedProduct.setLegalName("Legal Produit fini 1");
+				finishedProduct.setUnit(ProductUnit.kg);
+				finishedProduct.setQty(1f);
+				List<ProcessListDataItem> processList = new ArrayList<ProcessListDataItem>();
+				//decoupe
+				processList.add(new ProcessListDataItem(null, 0.4f, 50f, 4f, null, null, null, decoupeNodeRef, null, boucherResourceNodeRef));
+				//hachage
+				processList.add(new ProcessListDataItem(null, 0.4f, null, null, null, null, null, hachageNodeRef, null, null));
+				processList.add(new ProcessListDataItem(null, null, 0.1f, null, null, null, null, null, null, operateurResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, null, 1f, 200f, null, null, null, null, null, hachoirResourceNodeRef));
+				//cuisson
+				processList.add(new ProcessListDataItem(null, 0.4f, null, null, null, null, null, cuissonNodeRef, null, null));
+				processList.add(new ProcessListDataItem(null, null, 0.1f, null, null, null, null, null, null, operateurResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, null, 1f, 200f, null, null, null, null, null, cuiseurResourceNodeRef));
+				//mélange
+				processList.add(new ProcessListDataItem(null, 0.24f, null, null, null, null, null, melangeNodeRef, null, null));
+				processList.add(new ProcessListDataItem(null, null, 0.1f, null, null, null, null, null, null, operateurResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, null, 1f, 600f, null, null, null, null, null, malaxeurResourceNodeRef));
+				//ligne
+				processList.add(new ProcessListDataItem(null, 1f, 1f, 500f, null, null, null, ligneStepNodeRef, null, ligneResourceNodeRef));				
+				finishedProduct.setProcessList(processList);
+				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
+								
+				/*-- Formulate product --*/
+				logger.debug("/*-- Formulate product --*/");
+				productService.formulate(finishedProductNodeRef);
+				
+				/*-- Verify formulation --*/
+				logger.debug("/*-- Verify formulation --*/");
+				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+				
+				//costs
+				logger.debug("/*-- Verify costs --*/");
+				DecimalFormat df = new DecimalFormat("0.00");
+				int checks = 0;
+				assertNotNull("CostList is null", formulatedProduct.getCostList());
+				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
+					//String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					//logger.debug(trace);
+					//Transfo
+					if(costListDataItem.getCost().equals(costTransfoNodeRef)){
+						assertEquals(df.format(0.156f), df.format(costListDataItem.getValue()));
+						assertEquals("€/kg", costListDataItem.getUnit());
+						checks++;
+					}
+					//MOTransfo
+					if(costListDataItem.getCost().equals(costMOTransfoNodeRef)){
+						assertEquals(df.format(0.8366f), df.format(costListDataItem.getValue()));
+						assertEquals("€/kg", costListDataItem.getUnit());
+						checks++;
+					}
+					//Maintenance
+					if(costListDataItem.getCost().equals(costMOMaintenanceNodeRef)){
+						assertEquals(df.format(0.01f), df.format(costListDataItem.getValue()));
+						assertEquals("€/kg", costListDataItem.getUnit());
+						checks++;
+					}
+				}
+				assertEquals(3, checks);
+				
+				logger.debug("/*-- Verify process --*/");							
+				checks = 0;
+				for(ProcessListDataItem p : formulatedProduct.getProcessList()){
+					//logger.debug(p.toString());
+					
+					if(p.getStep() != null){						
+					
+						//decoupe
+						if(p.getStep().equals(decoupeNodeRef)){
+							assertEquals(0.4f, p.getQty());
+							assertEquals(50.0f, p.getQtyResource());
+							assertEquals(4.0f, p.getRateResource());						
+							assertEquals(200.0f, p.getRateProcess());
+							assertEquals(500.0f, p.getRateProduct());						
+							checks++;
+						}
+						
+						//hachage
+						if(p.getStep().equals(hachageNodeRef)){
+							assertEquals(0.4f, p.getQty());
+							assertEquals(null, p.getQtyResource());
+							assertEquals(null, p.getRateResource());						
+							assertEquals(200.0f, p.getRateProcess());
+							assertEquals(500.0f, p.getRateProduct());						
+							checks++;
+						}
+						
+						//cuisson
+						if(p.getStep().equals(cuissonNodeRef)){
+							assertEquals(0.4f, p.getQty());
+							assertEquals(null, p.getQtyResource());
+							assertEquals(null, p.getRateResource());						
+							assertEquals(200.0f, p.getRateProcess());
+							assertEquals(500.0f, p.getRateProduct());						
+							checks++;
+						}
+						
+						//mélange
+						if(p.getStep().equals(melangeNodeRef)){
+							assertEquals(0.24f, p.getQty());
+							assertEquals(null, p.getQtyResource());
+							assertEquals(null, p.getRateResource());						
+							assertEquals(600.0f, p.getRateProcess());
+							assertEquals(2500.0f, p.getRateProduct());						
+							checks++;
+						}
+						
+						//ligne
+						if(p.getStep().equals(ligneStepNodeRef)){
+							assertEquals(1.0f, p.getQty());
+							assertEquals(1.0f, p.getQtyResource());
+							assertEquals(500.0f, p.getRateResource());						
+							assertEquals(500.0f, p.getRateProcess());
+							assertEquals(500.0f, p.getRateProduct());						
+							checks++;
+						}
+					}
+				}
+				
+				assertEquals(5, checks);
+								
+				return null;
+
+			}},false,true);
+		   
+	   }
 }
+

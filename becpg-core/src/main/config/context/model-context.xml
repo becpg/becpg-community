@@ -13,7 +13,9 @@
 				<value>alfresco/module/${groupId}-${artifactId}/model/ecoModel.xml</value>
 				<value>alfresco/module/${groupId}-${artifactId}/model/m2Model.xml</value>	
 				<value>alfresco/module/${groupId}-${artifactId}/model/designerModel.xml</value>
-				<value>alfresco/module/${groupId}-${artifactId}/model/npdModel.xml</value>							
+				<value>alfresco/module/${groupId}-${artifactId}/model/npdModel.xml</value>
+				<value>alfresco/module/${groupId}-${artifactId}/model/mpmModel.xml</value>
+				<value>alfresco/module/${groupId}-${artifactId}/model/variantModel.xml</value>							
 			</list>
 		</property>
 
@@ -27,7 +29,9 @@
 				<value>alfresco/module/${groupId}-${artifactId}/model/ecoModel</value>
 				<value>alfresco/module/${groupId}-${artifactId}/model/npdModel</value>		
 				<value>alfresco/module/${groupId}-${artifactId}/model/m2Model</value>
-				<value>alfresco/module/${groupId}-${artifactId}/model/designerModel</value>						
+				<value>alfresco/module/${groupId}-${artifactId}/model/designerModel</value>	
+				<value>alfresco/module/${groupId}-${artifactId}/model/mpmModel</value>
+				<value>alfresco/module/${groupId}-${artifactId}/model/variantModel</value>						
 			</list>
 		</property>
 	</bean>

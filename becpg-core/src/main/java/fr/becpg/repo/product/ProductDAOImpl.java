@@ -27,7 +27,10 @@ import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import sun.awt.motif.MPopupMenuPeer;
+
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.MPMModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
@@ -58,6 +61,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
 
@@ -127,6 +131,8 @@ public class ProductDAOImpl implements ProductDAO{
 	@Override
 	public NodeRef create(NodeRef parentNodeRef, ProductData productData, 	Collection<QName> dataLists) {
 		    		
+		logger.debug("Create product name: " + productData.getName());
+		
     	QName productType = BeCPGModel.TYPE_PRODUCT;
     	
     	if (productData instanceof FinishedProductData) {
@@ -140,17 +146,17 @@ public class ProductDAOImpl implements ProductDAO{
 		}
     	else if (productData instanceof PackagingMaterialData) {
 			productType = BeCPGModel.TYPE_PACKAGINGMATERIAL;			
-		}
-    	else if (productData instanceof ResourceProductData) {
-			productType = BeCPGModel.TYPE_RESOURCEPRODUCT;			
-		}
+		}    	
     	else if (productData instanceof RawMaterialData) {
 			productType = BeCPGModel.TYPE_RAWMATERIAL;			
 		}
     	else if (productData instanceof SemiFinishedProductData) {
 			productType = BeCPGModel.TYPE_SEMIFINISHEDPRODUCT;			
 		}
-    	    	    	
+    	else if (productData instanceof ResourceProductData) {
+			productType = BeCPGModel.TYPE_RESOURCEPRODUCT;			
+		}
+    	
     	Map<QName, Serializable> properties = productData.getProperties();		
     	NodeRef productNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, productData.getName()), productType, properties).getChildRef();		
 		createDataLists(productNodeRef, productData, dataLists);
@@ -245,6 +251,10 @@ public class ProductDAOImpl implements ProductDAO{
 			case SemiFinishedProduct:				
 				productData = new SemiFinishedProductData();
 				break;
+				
+			case ResourceProduct:				
+				productData = new ResourceProductData();
+				break;
 					
 			default:				
 				productData = new ProductData();
@@ -304,6 +314,9 @@ public class ProductDAOImpl implements ProductDAO{
 	    		else if (dataList.equals(BeCPGModel.TYPE_REQCTRLLIST)) {
 	    			productData.setReqCtrlList(loadReqCtrlList(listsContainerNodeRef));
 	    		}
+	    		else if (dataList.equals(MPMModel.TYPE_PROCESSLIST)) {
+	    			productData.setProcessList(loadProcessList(listsContainerNodeRef));
+	    		}
 	    		else{
 	    			// specific TODO
 	    			logger.error(String.format("DataList '%s' is not loaded since it is not implemented.", dataList));
@@ -351,13 +364,13 @@ public class ProductDAOImpl implements ProductDAO{
 		List<AssociationRef> allergenAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_ALLERGEN);
 		NodeRef allergenNodeRef = (allergenAssocRefs.get(0)).getTargetRef();
 		
-		List<AssociationRef> volSourcesAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY_SOURCES);
+		List<AssociationRef> volSourcesAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES);
 		List<NodeRef> volSources = new ArrayList<NodeRef>(volSourcesAssocRefs.size());
 		for(AssociationRef assocRef : volSourcesAssocRefs){
 			volSources.add(assocRef.getTargetRef());
 		}
 		
-		List<AssociationRef> inVolSourcesAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY_SOURCES);
+		List<AssociationRef> inVolSourcesAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_INVOLUNTARY_SOURCES);
 		List<NodeRef> inVolSources = new ArrayList<NodeRef>(volSourcesAssocRefs.size());
 		for(AssociationRef assocRef : inVolSourcesAssocRefs){
 			inVolSources.add(assocRef.getTargetRef());
@@ -950,6 +963,56 @@ public class ProductDAOImpl implements ProductDAO{
     }
     
     /**
+     * Load process list.
+     *
+     * @param listContainerNodeRef the list container node ref
+     * @return the list
+     */
+    private List<ProcessListDataItem> loadProcessList(NodeRef listContainerNodeRef)
+    {
+    	List<ProcessListDataItem> processList = null;
+    	
+    	if(listContainerNodeRef != null)
+    	{    		
+    		NodeRef processListNodeRef = entityListDAO.getList(listContainerNodeRef, MPMModel.TYPE_PROCESSLIST);
+    		
+    		if(processListNodeRef != null)
+    		{
+    			processList = new ArrayList<ProcessListDataItem>();
+    			List<NodeRef> listItemNodeRefs = listItems(processListNodeRef, MPMModel.TYPE_PROCESSLIST);
+	    		
+    			for(NodeRef listItemNodeRef : listItemNodeRefs){   					    		
+		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
+		    	
+		    		List<AssociationRef> stepAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, MPMModel.ASSOC_PL_STEP);
+		    		NodeRef stepNodeRef = stepAssocRefs.size() > 0 ? (stepAssocRefs.get(0)).getTargetRef() : null;
+		    		
+		    		List<AssociationRef> productAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, MPMModel.ASSOC_PL_PRODUCT);
+		    		NodeRef productNodeRef = productAssocRefs.size() > 0 ? (productAssocRefs.get(0)).getTargetRef() : null;
+		    		
+		    		List<AssociationRef> resourceAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, MPMModel.ASSOC_PL_RESOURCE);
+		    		NodeRef resourceNodeRef = resourceAssocRefs.size() > 0 ? (resourceAssocRefs.get(0)).getTargetRef() : null;
+		    		
+		    		ProcessListDataItem processListDataItem = new ProcessListDataItem(listItemNodeRef, 
+		    				(Float)properties.get(MPMModel.PROP_PL_QTY),
+		    				(Float)properties.get(MPMModel.PROP_PL_QTY_RESOURCE), 
+		    				(Float)properties.get(MPMModel.PROP_PL_RATE_RESOURCE), 
+		    				(Float)properties.get(MPMModel.PROP_PL_YIELD),
+		    				(Float)properties.get(MPMModel.PROP_PL_RATE_PROCESS),
+		    				(Float)properties.get(MPMModel.PROP_PL_RATE_PRODUCT),
+		    				stepNodeRef,
+		    				productNodeRef, 
+		    				resourceNodeRef);
+		    		
+		    		processList.add(processListDataItem);
+		    	}    			
+    		}    		
+    	}
+    	
+    	return processList;
+    }
+    
+    /**
      * **************************************************************************************************
      * Private methods for creation														*
      * **************************************************************************************************.
@@ -1044,6 +1107,9 @@ public class ProductDAOImpl implements ProductDAO{
     	    		else if (dataList.equals(BeCPGModel.TYPE_REQCTRLLIST)) {
     	    			createReqCtrlList(containerNodeRef, productData.getReqCtrlList());
     	    		}
+    	    		else if (dataList.equals(MPMModel.TYPE_PROCESSLIST)) {
+    	    			createProcessList(containerNodeRef, productData.getProcessList());
+    	    		}
     	    		else{
     	    			// specific
     	    			logger.warn(String.format("DataList '%s' is not created since it is not implemented.", dataList));
@@ -1134,47 +1200,10 @@ public class ProductDAOImpl implements ProductDAO{
 		    		}
 		    		
 		    		//Voluntary
-		    		List<AssociationRef> volSourcesAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY_SOURCES);
-		    		
-		    		if(allergenListDataItem.getVoluntarySources() != null){
-		    			//remove from db
-			    		for(AssociationRef assocRef : volSourcesAssocRefs){
-			    			if(!allergenListDataItem.getVoluntarySources().contains(assocRef.getTargetRef()))
-			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY_SOURCES);
-			    			else
-			    				allergenListDataItem.getVoluntarySources().remove(assocRef.getTargetRef());//already in db
-			    		}
-			    		//add nodes that are not in db
-			    		for(NodeRef nodeRef : allergenListDataItem.getVoluntarySources()){
-			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY_SOURCES);
-			    		}
-		    		}
-		    		else{
-		    			for(AssociationRef assocRef : volSourcesAssocRefs)
-		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY_SOURCES);
-		    		}
-		    		
+		    		associationService.update(linkNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES, allergenListDataItem.getVoluntarySources());
 		    		
 		    		//InVoluntary
-	    			List<AssociationRef> inVolSourcesAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY_SOURCES);
-		    		
-		    		if(allergenListDataItem.getInVoluntarySources() != null){
-		    			//remove from db
-			    		for(AssociationRef assocRef : inVolSourcesAssocRefs){
-			    			if(!allergenListDataItem.getInVoluntarySources().contains(assocRef.getTargetRef()))
-			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY_SOURCES);
-			    			else
-			    				allergenListDataItem.getInVoluntarySources().remove(assocRef.getTargetRef());//already in db
-			    		}
-			    		//add nodes that are not in db
-			    		for(NodeRef nodeRef : allergenListDataItem.getInVoluntarySources()){
-			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY_SOURCES);
-			    		}
-		    		}
-		    		else{
-		    			for(AssociationRef assocRef : inVolSourcesAssocRefs)
-		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY_SOURCES);
-		    		}
+		    		associationService.update(linkNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_INVOLUNTARY_SOURCES, allergenListDataItem.getInVoluntarySources());		    		
 	    		}  
 			}    		    		
 		}
@@ -1635,46 +1664,10 @@ public class ProductDAOImpl implements ProductDAO{
 		    		}
 		    		
 		    		// GeoOrigins
-		    		List<AssociationRef> geoOriginsAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
-		    		
-		    		if(ingListDataItem.getGeoOrigin() != null){
-		    			//remove from db
-			    		for(AssociationRef assocRef : geoOriginsAssocRefs){
-			    			if(!ingListDataItem.getGeoOrigin().contains(assocRef.getTargetRef()))
-			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
-			    			else
-			    				ingListDataItem.getGeoOrigin().remove(assocRef.getTargetRef());//already in db
-			    		}
-			    		//add nodes that are not in db
-			    		for(NodeRef nodeRef : ingListDataItem.getGeoOrigin()){
-			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
-			    		}
-		    		}
-		    		else{
-		    			for(AssociationRef assocRef : geoOriginsAssocRefs)
-		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
-		    		}
+		    		associationService.update(linkNodeRef, BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN, ingListDataItem.getGeoOrigin());
 		    		
 		    		// BioOrigins
-		    		List<AssociationRef> bioOriginsAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
-		    		
-		    		if(ingListDataItem.getBioOrigin() != null){
-		    			//remove from db
-			    		for(AssociationRef assocRef : bioOriginsAssocRefs){
-			    			if(!ingListDataItem.getBioOrigin().contains(assocRef.getTargetRef()))
-			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
-			    			else
-			    				ingListDataItem.getBioOrigin().remove(assocRef.getTargetRef());//already in db
-			    		}
-			    		//add nodes that are not in db
-			    		for(NodeRef nodeRef : ingListDataItem.getBioOrigin()){
-			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
-			    		}
-		    		}
-		    		else{
-		    			for(AssociationRef assocRef : bioOriginsAssocRefs)
-		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
-		    		}
+		    		associationService.update(linkNodeRef, BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN, ingListDataItem.getBioOrigin());		    		
 	    		}
 			}
 		}
@@ -2119,14 +2112,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		}			    			    	
 		    		
 		    		//Update product
-		    		List<AssociationRef> packagingAssocRefs = nodeService.getTargetAssocs(packagingListDataItem.getNodeRef(), BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);
-		    		if(packagingAssocRefs.size() > 0){
-			    		NodeRef part = (packagingAssocRefs.get(0)).getTargetRef();
-			    		if(part != packagingListDataItem.getProduct()){
-				    		nodeService.removeAssociation(packagingListDataItem.getNodeRef(), part, BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);				    		
-			    		}
-		    		}
-		    		nodeService.createAssociation(packagingListDataItem.getNodeRef(), packagingListDataItem.getProduct(), BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);		    				    		
+		    		associationService.update(packagingListDataItem.getNodeRef(), BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT, packagingListDataItem.getProduct());		    				    				    		
 	    		}	    		 
 			}
 		}
@@ -2204,67 +2190,13 @@ public class ProductDAOImpl implements ProductDAO{
 		    		}			    			    	
 		    		
 		    		// ings
-		    		List<AssociationRef> ingsAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.ASSOC_FIL_INGS);
-		    		
-		    		if(forbiddenIngListDataItem.getIngs() != null){
-		    			//remove from db
-			    		for(AssociationRef assocRef : ingsAssocRefs){
-			    			if(!forbiddenIngListDataItem.getIngs().contains(assocRef.getTargetRef()))
-			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_FIL_INGS);
-			    			else
-			    				forbiddenIngListDataItem.getIngs().remove(assocRef.getTargetRef());//already in db
-			    		}
-			    		//add nodes that are not in db
-			    		for(NodeRef nodeRef : forbiddenIngListDataItem.getIngs()){
-			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.ASSOC_FIL_INGS);
-			    		}
-		    		}
-		    		else{
-		    			for(AssociationRef assocRef : ingsAssocRefs)
-		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_FIL_INGS);
-		    		}
+		    		associationService.update(linkNodeRef, BeCPGModel.ASSOC_FIL_INGS, forbiddenIngListDataItem.getIngs());
 		    		
 		    		// GeoOrigins
-		    		List<AssociationRef> geoOriginsAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.ASSOC_FIL_GEO_ORIGINS);
-		    		
-		    		if(forbiddenIngListDataItem.getGeoOrigins() != null){
-		    			//remove from db
-			    		for(AssociationRef assocRef : geoOriginsAssocRefs){
-			    			if(!forbiddenIngListDataItem.getGeoOrigins().contains(assocRef.getTargetRef()))
-			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_FIL_GEO_ORIGINS);
-			    			else
-			    				forbiddenIngListDataItem.getGeoOrigins().remove(assocRef.getTargetRef());//already in db
-			    		}
-			    		//add nodes that are not in db
-			    		for(NodeRef nodeRef : forbiddenIngListDataItem.getGeoOrigins()){
-			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.ASSOC_FIL_GEO_ORIGINS);
-			    		}
-		    		}
-		    		else{
-		    			for(AssociationRef assocRef : geoOriginsAssocRefs)
-		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_FIL_GEO_ORIGINS);
-		    		}
+		    		associationService.update(linkNodeRef, BeCPGModel.ASSOC_FIL_GEO_ORIGINS, forbiddenIngListDataItem.getGeoOrigins());
 		    		
 		    		// BioOrigins
-		    		List<AssociationRef> bioOriginsAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.ASSOC_FIL_BIO_ORIGINS);
-		    		
-		    		if(forbiddenIngListDataItem.getBioOrigins() != null){
-		    			//remove from db
-			    		for(AssociationRef assocRef : bioOriginsAssocRefs){
-			    			if(!forbiddenIngListDataItem.getBioOrigins().contains(assocRef.getTargetRef()))
-			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_FIL_BIO_ORIGINS);
-			    			else
-			    				forbiddenIngListDataItem.getBioOrigins().remove(assocRef.getTargetRef());//already in db
-			    		}
-			    		//add nodes that are not in db
-			    		for(NodeRef nodeRef : forbiddenIngListDataItem.getBioOrigins()){
-			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.ASSOC_FIL_BIO_ORIGINS);
-			    		}
-		    		}
-		    		else{
-		    			for(AssociationRef assocRef : bioOriginsAssocRefs)
-		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_FIL_BIO_ORIGINS);
-		    		}		    				    		
+		    		associationService.update(linkNodeRef, BeCPGModel.ASSOC_FIL_BIO_ORIGINS, forbiddenIngListDataItem.getBioOrigins());		    				    				    	
 	    		}	    		 
 			}
 		}
@@ -2339,25 +2271,91 @@ public class ProductDAOImpl implements ProductDAO{
 		    		}			    			    	
 		    		
 		    		// sources
-		    		List<AssociationRef> ingsAssocRefs = nodeService.getTargetAssocs(linkNodeRef, BeCPGModel.ASSOC_RCL_SOURCES);
+		    		associationService.update(linkNodeRef, BeCPGModel.ASSOC_RCL_SOURCES, reqCtrlListDataItem.getSources());		    				    			    				    	
+	    		}	    		 
+			}
+		}
+	}  
+	
+	/**
+	 * Create/Update process.
+	 *
+	 * @param listContainerNodeRef the list container node ref
+	 * @param processList the process list
+	 * @throws InvalidTypeException the invalid type exception
+	 */
+	private void createProcessList(NodeRef listContainerNodeRef, List<ProcessListDataItem> processList) throws InvalidTypeException
+	{
+		if(listContainerNodeRef != null)
+		{    	
+			NodeRef processListNodeRef = entityListDAO.getList(listContainerNodeRef, MPMModel.TYPE_PROCESSLIST);
+			
+			if(processList == null){
+				//delete existing list
+				if(processListNodeRef != null)
+					nodeService.deleteNode(processListNodeRef);
+			}
+			else{
+				
+				//process list, create if needed    			
+	    		if(processListNodeRef == null)
+	    		{					
+					processListNodeRef = entityListDAO.createList(listContainerNodeRef, MPMModel.TYPE_PROCESSLIST);					
+	    		}    				    			    		    		
+	
+	    		List<NodeRef> listItemNodeRefs = listItems(processListNodeRef, MPMModel.TYPE_PROCESSLIST);
+	    		
+	    		//create temp list
+	    		List<NodeRef> processListToTreat = new ArrayList<NodeRef>();
+	    		for(ProcessListDataItem processListDataItem : processList){
+	    			processListToTreat.add(processListDataItem.getNodeRef());
+	    		}
+	    		
+	    		//remove deleted nodes
+	    		List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
+	    		for(NodeRef listItemNodeRef : listItemNodeRefs){	    			
 		    		
-		    		if(reqCtrlListDataItem.getSources() != null){
-		    			//remove from db
-			    		for(AssociationRef assocRef : ingsAssocRefs){
-			    			if(!reqCtrlListDataItem.getSources().contains(assocRef.getTargetRef()))
-			    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_RCL_SOURCES);
-			    			else
-			    				reqCtrlListDataItem.getSources().remove(assocRef.getTargetRef());//already in db
-			    		}
-			    		//add nodes that are not in db
-			    		for(NodeRef nodeRef : reqCtrlListDataItem.getSources()){
-			    			nodeService.createAssociation(linkNodeRef, nodeRef, BeCPGModel.ASSOC_RCL_SOURCES);
-			    		}
+	    			if(!processListToTreat.contains(listItemNodeRef)){
+	    				//delete
+	    				nodeService.deleteNode(listItemNodeRef);
+	    			}
+	    			else{
+	    				filesToUpdate.add(listItemNodeRef);
+	    			}
+	    		}
+	    		
+	    		//update or create nodes	    		    			    		
+	    		NodeRef linkNodeRef = null;
+	    		for(ProcessListDataItem processListDataItem : processList)
+	    		{    				    			
+	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		    		properties.put(MPMModel.PROP_PL_QTY, processListDataItem.getQty());
+		    		properties.put(MPMModel.PROP_PL_QTY_RESOURCE, processListDataItem.getQtyResource());
+		    		properties.put(MPMModel.PROP_PL_RATE_RESOURCE, processListDataItem.getRateResource());
+		    		properties.put(MPMModel.PROP_PL_YIELD, processListDataItem.getYield());
+		    		properties.put(MPMModel.PROP_PL_RATE_PROCESS, processListDataItem.getRateProcess());
+		    		properties.put(MPMModel.PROP_PL_RATE_PRODUCT, processListDataItem.getRateProduct());
+		    		
+		    		if(filesToUpdate.contains(processListDataItem.getNodeRef())){
+		    			//update
+		    			linkNodeRef = processListDataItem.getNodeRef();
+		    			nodeService.setProperties(linkNodeRef, properties);		    			
 		    		}
 		    		else{
-		    			for(AssociationRef assocRef : ingsAssocRefs)
-		    				nodeService.removeAssociation(linkNodeRef, assocRef.getTargetRef(), BeCPGModel.ASSOC_RCL_SOURCES);
-		    		}		    			    				    	
+		    			//create
+		    			ChildAssociationRef childAssocRef = nodeService.createNode(processListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), MPMModel.TYPE_PROCESSLIST, properties);
+		    			linkNodeRef = childAssocRef.getChildRef();
+		    			processListDataItem.setNodeRef(childAssocRef.getChildRef());			    		
+		    		}			    			    	
+		    		
+		    		//process
+		    		associationService.update(linkNodeRef, MPMModel.ASSOC_PL_STEP, processListDataItem.getStep());
+		    		
+		    		//product
+		    		associationService.update(linkNodeRef, MPMModel.ASSOC_PL_PRODUCT, processListDataItem.getProduct());
+		    		
+		    		//resource
+		    		associationService.update(linkNodeRef, MPMModel.ASSOC_PL_RESOURCE, processListDataItem.getResource());
 	    		}	    		 
 			}
 		}

@@ -140,7 +140,7 @@ public class ListValueServiceImpl implements ListValueService {
 	 * @return the map
 	 */
     @Override
-	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Locale locale){			
+	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Locale locale, String[] arrClassNames){			
         
     	logger.debug("suggestTargetAssoc");
     	
@@ -155,6 +155,9 @@ public class ListValueServiceImpl implements ListValueService {
 			query = prepareQuery(query);
 			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_NAME, type, query);
 		}
+    	
+    	// filter by classNames
+    	queryPath = filterByClass(queryPath, arrClassNames);
     	
 		logger.debug("repository : " + queryPath);
 
@@ -184,10 +187,10 @@ public class ListValueServiceImpl implements ListValueService {
     	path = encodePath(path);    	
     	query = prepareQuery(query);    	    	
     	String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, path, parent, query);    			
-	      
+	    
         List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(BeCPGModel.PROP_LINKED_VALUE_VALUE),locale);
         
-         return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(BeCPGModel.PROP_LINKED_VALUE_VALUE,nodeService));
+        return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(BeCPGModel.PROP_LINKED_VALUE_VALUE,nodeService));
  
 	}
     
@@ -209,7 +212,7 @@ public class ListValueServiceImpl implements ListValueService {
     	path = encodePath(path);    	
     	query = prepareQuery(query);
     	String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE, path, query);
-	
+    	
         List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME),locale);
        
         return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
@@ -243,22 +246,7 @@ public class ListValueServiceImpl implements ListValueService {
 		}
 		
 		// filter by classNames
-		if(arrClassNames != null){
-			
-			String queryClassNames = "";
-			
-			for(String className : arrClassNames){
-				
-				if(queryClassNames.isEmpty()){
-					queryClassNames += String.format(QUERY_TYPE, className);
-				}
-				else{
-					queryClassNames += " OR " + String.format(QUERY_TYPE, className);
-				}
-			}
-			
-			queryPath += " AND (" + queryClassNames + ")";
-		}
+		queryPath = filterByClass(queryPath, arrClassNames);
 					
 		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME), locale);
 	       
@@ -435,6 +423,28 @@ public class ListValueServiceImpl implements ListValueService {
 		sort.put("@" + field, true);
 		
 		return sort;
+	}
+	
+	private String filterByClass(String query, String [] arrClassNames){
+		
+		if(arrClassNames != null){
+			
+			String queryClassNames = "";
+			
+			for(String className : arrClassNames){
+				
+				if(queryClassNames.isEmpty()){
+					queryClassNames += String.format(QUERY_TYPE, className);
+				}
+				else{
+					queryClassNames += " OR " + String.format(QUERY_TYPE, className);
+				}
+			}
+			
+			query += " AND (" + queryClassNames + ")";
+		}
+
+		return query;
 	}
 
 

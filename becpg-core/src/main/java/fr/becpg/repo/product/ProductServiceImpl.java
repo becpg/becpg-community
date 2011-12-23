@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.MPMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
@@ -86,6 +87,8 @@ public class ProductServiceImpl implements ProductService {
 	private NodeVisitor productReportVisitor;
 	
 	private ProductVisitor compositionCalculatingVisitor;
+	
+	private ProductVisitor processCalculatingVisitor;
 	
 	/** The allergens calculating visitor. */
 	private ProductVisitor allergensCalculatingVisitor;
@@ -162,6 +165,10 @@ public class ProductServiceImpl implements ProductService {
 	public void setCompositionCalculatingVisitor(
 			ProductVisitor compositionCalculatingVisitor) {
 		this.compositionCalculatingVisitor = compositionCalculatingVisitor;
+	}
+
+	public void setProcessCalculatingVisitor(ProductVisitor processCalculatingVisitor) {
+		this.processCalculatingVisitor = processCalculatingVisitor;
 	}
 
 	/**
@@ -256,12 +263,13 @@ public class ProductServiceImpl implements ProductService {
         	Collection<QName> dataLists = new ArrayList<QName>();				
     		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
     		dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+    		dataLists.add(MPMModel.TYPE_PROCESSLIST);
     		dataLists.add(BeCPGModel.TYPE_NUTLIST); // TODO keep min/max
     		dataLists.add(BeCPGModel.TYPE_COSTLIST); // TODO keep max
         	ProductData productData = productDAO.find(productNodeRef, dataLists);     	    
         	
         	// do the formulation if the product has a composition, or packaging list defined
-        	if(productData.getCompoList() != null || productData.getPackagingList() != null){
+        	if(productData.getCompoList() != null || productData.getPackagingList() != null || productData.getProcessList() != null){
         		
         		productData = formulate(productData);
     	    	    	
@@ -290,14 +298,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductData formulate(ProductData productData) throws FormulateException {
     	try {  	    
-        	
-        	// do the formulation if the product has a composition, or packaging list defined
-        	if(productData.getCompoList() != null || productData.getPackagingList() != null){
+        	logger.debug("###productData.getProcessList(): " + productData.getProcessList());
+        	// do the formulation if the product has a composition, or packaging list or process list defined
+        	if(productData.getCompoList() != null || productData.getPackagingList() != null || productData.getProcessList() != null){
         		
         		productData.setReqCtrlList(new ArrayList<ReqCtrlListDataItem>());
         		
         		//Call visitors         		
         		productData = compositionCalculatingVisitor.visit(productData);
+        		productData = processCalculatingVisitor.visit(productData);
     	    	productData = allergensCalculatingVisitor.visit(productData);
     	    	productData = nutsCalculatingVisitor.visit(productData);
     	    	productData = costsCalculatingVisitor.visit(productData);

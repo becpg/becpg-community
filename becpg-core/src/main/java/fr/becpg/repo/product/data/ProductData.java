@@ -32,6 +32,7 @@ import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.FormulateException;
 
@@ -67,20 +68,22 @@ public class ProductData implements ProductElement {
 	/** The state. */
 	private SystemState state = SystemState.ToValidate;
 	
-	/** The qty. */
-	private Float qty;
-	
 	/** The unit. */
-	private ProductUnit unit = ProductUnit.kg;
+	private ProductUnit unit = ProductUnit.kg;	
 	
-	/** The density. */
+	/*
+	 * Transformable properties
+	 */
+	private Float qty;
 	private Float density;
 	
-	private Float unitTotalCost;
-	
-	private Float unitPrice;
-	
-	private Float profitability;
+	/*
+	 * Profitability properties
+	 */
+	private Float unitTotalCost;	
+	private Float unitPrice;	
+	private Float profitability;	
+	private Integer breakEven;
 	
 	/** The lists container. */
 	private NodeRef listsContainer;
@@ -121,6 +124,8 @@ public class ProductData implements ProductElement {
 	private List<ForbiddenIngListDataItem> forbiddenIngList;
 	
 	private List<ReqCtrlListDataItem> reqCtrlList;
+	
+	private List<ProcessListDataItem> processList;
 
 	/**
 	 * Gets the node ref.
@@ -267,6 +272,24 @@ public class ProductData implements ProductElement {
 	}
 	
 	/**
+	 * Gets the unit.
+	 *
+	 * @return the unit
+	 */
+	public ProductUnit getUnit() {
+		return unit;
+	}
+	
+	/**
+	 * Sets the unit.
+	 *
+	 * @param unit the new unit
+	 */
+	public void setUnit(ProductUnit unit) {
+		this.unit = unit;
+	}	
+	
+	/**
 	 * Gets the qty.
 	 *
 	 * @return the qty
@@ -302,24 +325,6 @@ public class ProductData implements ProductElement {
 		this.density = density;
 	}
 	
-	/**
-	 * Gets the unit.
-	 *
-	 * @return the unit
-	 */
-	public ProductUnit getUnit() {
-		return unit;
-	}
-	
-	/**
-	 * Sets the unit.
-	 *
-	 * @param unit the new unit
-	 */
-	public void setUnit(ProductUnit unit) {
-		this.unit = unit;
-	}	
-	
 	public Float getUnitTotalCost() {
 		return unitTotalCost;
 	}
@@ -344,6 +349,14 @@ public class ProductData implements ProductElement {
 		this.profitability = profitability;
 	}
 
+	public Integer getBreakEven() {
+		return breakEven;
+	}
+
+	public void setBreakEven(Integer breakEven) {
+		this.breakEven = breakEven;
+	}
+	
 	/**
 	 * Gets the lists container.
 	 *
@@ -564,6 +577,14 @@ public class ProductData implements ProductElement {
 		this.reqCtrlList = reqCtrlList;
 	}
 
+	public List<ProcessListDataItem> getProcessList() {
+		return processList;
+	}
+
+	public void setProcessList(List<ProcessListDataItem> processList) {
+		this.processList = processList;
+	}
+
 	/**
 	 * Instantiates a new product data.
 	 */
@@ -609,13 +630,14 @@ public class ProductData implements ProductElement {
 		properties.put(BeCPGModel.PROP_PRODUCT_LEGALNAME, this.getLegalName());
 		properties.put(BeCPGModel.PROP_PRODUCT_HIERARCHY1, this.getHierarchy1());
 		properties.put(BeCPGModel.PROP_PRODUCT_HIERARCHY2, this.getHierarchy2());
-		properties.put(BeCPGModel.PROP_PRODUCT_STATE, this.getState().toString());
-		properties.put(BeCPGModel.PROP_PRODUCT_QTY, this.getQty());
+		properties.put(BeCPGModel.PROP_PRODUCT_STATE, this.getState().toString());		
 		properties.put(BeCPGModel.PROP_PRODUCT_UNIT, this.getUnit().toString());
+		properties.put(BeCPGModel.PROP_PRODUCT_QTY, this.getQty());
 		properties.put(BeCPGModel.PROP_PRODUCT_DENSITY, this.getDensity());		
 		properties.put(BeCPGModel.PROP_UNIT_TOTAL_COST, this.getUnitTotalCost());
 		properties.put(BeCPGModel.PROP_UNIT_PRICE, this.getUnitPrice());
 		properties.put(BeCPGModel.PROP_PROFITABILITY, this.getProfitability());
+		properties.put(BeCPGModel.PROP_BREAK_EVEN, this.getBreakEven());
 		
 		return properties;
 	}
@@ -634,15 +656,15 @@ public class ProductData implements ProductElement {
 		this.setLegalName((String)properties.get(BeCPGModel.PROP_PRODUCT_LEGALNAME));
     	this.setTitle((String)properties.get(ContentModel.PROP_TITLE));
     	SystemState systemState = getSystemState((String)properties.get(BeCPGModel.PROP_PRODUCT_STATE));
-    	this.setState(systemState);
-    	this.setQty((Float)properties.get(BeCPGModel.PROP_PRODUCT_QTY));
+    	this.setState(systemState);    	
     	String strProductUnit = (String)properties.get(BeCPGModel.PROP_PRODUCT_UNIT);  
-    	this.setUnit(ProductUnit.getUnit(strProductUnit));
+    	this.setUnit(ProductUnit.getUnit(strProductUnit));    	    	
+    	this.setQty((Float)properties.get(BeCPGModel.PROP_PRODUCT_QTY));
     	this.setDensity((Float)properties.get(BeCPGModel.PROP_PRODUCT_DENSITY));    	
     	this.setUnitTotalCost((Float)properties.get(BeCPGModel.PROP_UNIT_TOTAL_COST));
     	this.setUnitPrice((Float)properties.get(BeCPGModel.PROP_UNIT_PRICE));
     	this.setProfitability((Float)properties.get(BeCPGModel.PROP_PROFITABILITY));
-    	
+    	this.setBreakEven((Integer)properties.get(BeCPGModel.PROP_BREAK_EVEN));	
 	}
 	
 	/**
@@ -723,7 +745,15 @@ public class ProductData implements ProductElement {
 			for(PhysicoChemListDataItem p : productData.getPhysicoChemList()){
 				physicoChemList.add(new PhysicoChemListDataItem(p));
 			}
-		}		
+		}
+		
+		if(productData.getProcessList() != null){
+			setProcessList(productData.getProcessList());
+			processList = new ArrayList<ProcessListDataItem>(productData.getProcessList());
+			for(ProcessListDataItem p : productData.getProcessList()){
+				processList.add(new ProcessListDataItem(p));
+			}
+		}
 	}	
 	
 	/* (non-Javadoc)

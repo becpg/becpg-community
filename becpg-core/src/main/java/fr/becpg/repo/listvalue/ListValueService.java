@@ -42,7 +42,7 @@ public interface ListValueService {
 	 * @param query the query
 	 * @return the map
 	 */
-	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Locale locale);
+	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Locale locale, String[] arrClassNames);
 	
 	/**
 	 * Suggest linked value.

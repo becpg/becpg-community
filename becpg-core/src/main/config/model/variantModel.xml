@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="var:varmodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<!-- Optional meta-data about the model -->
+	<description>Variant management</description>
+	<author>QUERE</author>
+	<version>1.0</version>
+	<!-- Imports are required to allow references to definitions in other models -->
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</imports>
+	
+	<!-- Introduction of new namespaces defined by this model -->
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/var/1.0" prefix="var" />
+	</namespaces>
+	
+	<constraints>
+		
+	</constraints>
+
+	<types>
+	
+		<type name="var:charact">
+			<parent>cm:content</parent>	
+			<properties>
+				<property name="var:charactKey">
+					<type>d:text</type>
+				</property>				
+			</properties>		
+		</type>
+		
+		<!-- propertyVariantList -->
+		<type name="var:propertyVariantList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="var:pvlValue">
+					<type>d:text</type>
+				</property>				
+			</properties>
+			<associations>
+				<association name="var:pvlPartner">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entity</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="var:pvlCharact">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>var:charact</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>
+	
+		
+	</types>
+	
+	<aspects>			
+		
+	</aspects>
+</model>

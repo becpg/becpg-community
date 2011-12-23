@@ -150,8 +150,8 @@ public class ProductReportServiceImpl implements ProductReportService {
 	    		AllergenElt.addAttribute(BeCPGModel.PROP_ALLERGEN_TYPE.getLocalName(), allergenType);
 	    		AllergenElt.addAttribute(BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY.getLocalName(), Boolean.toString(dataItem.getVoluntary()));
 	    		AllergenElt.addAttribute(BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY.getLocalName(), Boolean.toString(dataItem.getInVoluntary()));
-	    		AllergenElt.addAttribute(BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY_SOURCES.getLocalName(), voluntarySources);
-	    		AllergenElt.addAttribute(BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY_SOURCES.getLocalName(), inVoluntarySources);	    			    		
+	    		AllergenElt.addAttribute(BeCPGModel.ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES.getLocalName(), voluntarySources);
+	    		AllergenElt.addAttribute(BeCPGModel.ASSOC_ALLERGENLIST_INVOLUNTARY_SOURCES.getLocalName(), inVoluntarySources);	    			    		
 	    	}	    	
     	}
     	
