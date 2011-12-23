@@ -319,7 +319,7 @@ public class ProductDAOImpl implements ProductDAO{
 	    		}
 	    		else{
 	    			// specific TODO
-	    			logger.error(String.format("DataList '%s' is not loaded since it is not implemented.", dataList));
+	    			//logger.trace(String.format("DataList '%s' is not loaded since it is not implemented.", dataList));
 	    		}
 	    	}		
     	}
@@ -1112,7 +1112,7 @@ public class ProductDAOImpl implements ProductDAO{
     	    		}
     	    		else{
     	    			// specific
-    	    			logger.warn(String.format("DataList '%s' is not created since it is not implemented.", dataList));
+    	    			//logger.trace(String.format("DataList '%s' is not created since it is not implemented.", dataList));
     	    		}				
     	    	}
     		}    
