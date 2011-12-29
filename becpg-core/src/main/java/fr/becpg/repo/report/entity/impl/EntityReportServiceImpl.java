@@ -240,8 +240,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 			QName qName = assocRef.getTypeQName();
 			NodeRef targetNodeRef = assocRef.getTargetRef();
 			QName targetQName = nodeService.getType(targetNodeRef);
-			String name = "";
-			logger.debug("###targetQName: " + targetQName);
+			String name = "";			
 			
 			if(targetQName.equals(ContentModel.TYPE_PERSON)){
 				name = String.format(VALUE_PERSON, (String)nodeService.getProperty(targetNodeRef, ContentModel.PROP_FIRSTNAME),
@@ -249,13 +248,15 @@ public class EntityReportServiceImpl implements EntityReportService{
 			}
 			else{
 				name = (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
-			}
+			}						
 			
+			logger.debug("###targetQName: " + targetQName + ", name: " + name);
 
 			if (tempValues.containsKey(qName)) {
 				String names = tempValues.get(qName);
 				names += RepoConsts.LABEL_SEPARATOR;
 				names += name;
+				tempValues.put(qName, names);
 			} else {
 				tempValues.put(qName, name);
 			}

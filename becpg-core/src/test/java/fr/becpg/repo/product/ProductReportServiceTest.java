@@ -148,7 +148,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				policyBehaviourFilter.enableBehaviour(sfNodeRef, ContentModel.ASPECT_AUDITABLE);
 				return null;
 				
-			}},false,true);
+			}});
 		
 	}
 	
@@ -172,7 +172,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 			   	NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
 			   	NodeRef productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));		   			   		   
 		   		
-			   	reportTplService.createTplRptDesign(productReportTplFolder, 
+			   	NodeRef tplNodeRef = reportTplService.createTplRptDesign(productReportTplFolder, 
 			   										"report SF", 
 			   										"beCPG/birt/document/product/default/ProductReport.rptdesign", 
 		   											ReportType.Document, 
@@ -180,11 +180,13 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 		   											BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, 
 		   											true, 
 		   											true,
-		   											true);	
+		   											true);
+			   	
+			   	logger.debug("###tplNodeRef: " + tplNodeRef);
 			   	
 				return null;
 				
-			}},false,true);
+			}});
 		
 		assertEquals("check system templates", 1, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT).size());
 		
@@ -218,11 +220,14 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				
 				return null;
 				
-			}},false,true);	   				
+			}});	   				
 		
 		// load SF and test it
 		Collection<QName> dataLists = productDictionaryService.getDataLists();
 		final SemiFinishedProductData sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);
+		
+		// wait since it is done in a threadpool
+		Thread.sleep(6000);
 		
 		// product report should be update to date due to policy		
 		assertEquals("check if report is up to date", true, entityReportService.isReportUpToDate(sfNodeRef));
@@ -235,7 +240,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				nodeService.setProperty(sfNodeRef, ContentModel.PROP_NAME, "SF");				
 				return null;
 				
-			}},false,true);
+			}});
 		
 		assertEquals("check if report is up to date", true, entityReportService.isReportUpToDate(sfNodeRef));
 		
@@ -249,7 +254,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				policyBehaviourFilter.enableBehaviour(sfNodeRef, BeCPGModel.TYPE_PRODUCT);
 				return null;
 				
-			}},false,true);
+			}});
 		
 		
 		assertEquals("check if report is up to date", false, entityReportService.isReportUpToDate(sfNodeRef));
@@ -266,7 +271,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				nodeService.setProperty(sfNodeRef, ContentModel.PROP_NAME, "SF1");				
 				return null;
 				
-			}},false,true);
+			}});
 							
 		assertEquals("check if report is up to date", true, entityReportService.isReportUpToDate(sfNodeRef));
 		
@@ -284,7 +289,7 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, true);				
 				return null;
 				
-			}},false,true);
+			}});
 		
 		assertEquals("check if report is up to date", true, entityReportService.isReportUpToDate(sfNodeRef));															   
 	}

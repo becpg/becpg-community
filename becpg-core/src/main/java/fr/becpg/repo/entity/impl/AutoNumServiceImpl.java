@@ -136,8 +136,7 @@ public class AutoNumServiceImpl implements AutoNumService {
         	if(v != null){
         		autoNumValue = v;
         		autoNumValue++;
-        	}        	
-        	
+        	}        	        	
         	
         	// update autonum node in db
         	nodeService.setProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE, autoNumValue);
@@ -213,7 +212,7 @@ public class AutoNumServiceImpl implements AutoNumService {
         	nodeService.setProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE, autoNumValue);
         }
         else{
-        	createAutoNum(className, propertyName, autoNumValue, prefix );
+        	createAutoNum(className, propertyName, autoNumValue, prefix);
         }
         return formatCode(prefix, autoNumValue);
 	}

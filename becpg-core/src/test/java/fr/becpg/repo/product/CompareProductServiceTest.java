@@ -706,50 +706,50 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 				List<StructCompareResultDataItem> structCompareResult = compareEntityService.compareStructDatalist(
 						fp1NodeRef, fp2NodeRef, BeCPGModel.TYPE_COMPOLIST, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
 
-				// for(StructCompareResultDataItem c :
-				// structCompareResult){
-				//
-				// String product1Name = "";
-				// if(c.getCharacteristic1() != null){
-				// List<AssociationRef> compoAssocRefs =
-				// nodeService.getTargetAssocs(c.getCharacteristic1(),
-				// BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-				// NodeRef productNodeRef = ((AssociationRef)
-				// compoAssocRefs.get(0)).getTargetRef();
-				// product1Name =
-				// (String)nodeService.getProperty(productNodeRef,
-				// ContentModel.PROP_NAME);
-				// }
-				//
-				// String product2Name = "";
-				// if(c.getCharacteristic2() != null){
-				// List<AssociationRef> compoAssocRefs =
-				// nodeService.getTargetAssocs(c.getCharacteristic2(),
-				// BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-				// NodeRef productNodeRef = ((AssociationRef)
-				// compoAssocRefs.get(0)).getTargetRef();
-				// product2Name =
-				// (String)nodeService.getProperty(productNodeRef,
-				// ContentModel.PROP_NAME);
-				// }
-				//
-				// logger.debug(c.getProductList() + " - " +
-				// c.getDepthLevel() + " - " + c.getOperator() + " - " +
-				// product1Name + " - " + product2Name + " - " +
-				// c.getProperties1() + " - " + c.getProperties2());
-				//
-				// //Output for method checkCompareRow
-				// //Uncomment debug line, copy/paste in spreadsheet =>
-				// you will get the test lines
-				// String productList = c.getProductList() == null ? ""
-				// : c.getProductList().toString();
-				// logger.debug("-assertTrue(checkStructCompareRow(structCompareResult, \""
-				// + productList + "\", " + c.getDepthLevel() +
-				// ", StructCompareOperator." + c.getOperator() + ", \""
-				// + product1Name + "\", \"" + product2Name + "\", \"" +
-				// c.getProperties1() + "\", \"" + c.getProperties2() +
-				// "\"));");
-				// }
+//				 for(StructCompareResultDataItem c :
+//				 structCompareResult){
+//				
+//				 String product1Name = "";
+//				 if(c.getCharacteristic1() != null){
+//				 List<AssociationRef> compoAssocRefs =
+//				 nodeService.getTargetAssocs(c.getCharacteristic1(),
+//				 BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+//				 NodeRef productNodeRef = ((AssociationRef)
+//				 compoAssocRefs.get(0)).getTargetRef();
+//				 product1Name =
+//				 (String)nodeService.getProperty(productNodeRef,
+//				 ContentModel.PROP_NAME);
+//				 }
+//				
+//				 String product2Name = "";
+//				 if(c.getCharacteristic2() != null){
+//				 List<AssociationRef> compoAssocRefs =
+//				 nodeService.getTargetAssocs(c.getCharacteristic2(),
+//				 BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+//				 NodeRef productNodeRef = ((AssociationRef)
+//				 compoAssocRefs.get(0)).getTargetRef();
+//				 product2Name =
+//				 (String)nodeService.getProperty(productNodeRef,
+//				 ContentModel.PROP_NAME);
+//				 }
+//				
+//				 logger.debug(c.getEntityList()+ " - " +
+//				 c.getDepthLevel() + " - " + c.getOperator() + " - " +
+//				 product1Name + " - " + product2Name + " - " +
+//				 c.getProperties1() + " - " + c.getProperties2());
+//				
+//				 //Output for method checkCompareRow
+//				 //Uncomment debug line, copy/paste in spreadsheet =>
+//				 //you will get the test lines
+//				 String productList = c.getEntityList() == null ? ""
+//				 : c.getEntityList().toString();
+//				 logger.debug("-assertTrue(checkStructCompareRow(structCompareResult, \""
+//				 + productList + "\", " + c.getDepthLevel() +
+//				 ", StructCompareOperator." + c.getOperator() + ", \""
+//				 + product1Name + "\", \"" + product2Name + "\", \"" +
+//				 c.getProperties1() + "\", \"" + c.getProperties2() +
+//				 "\"));");
+//				 }
 
 				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
 						1, StructCompareOperator.Equal, "Local semi finished 1", "Local semi finished 1", "{}", "{}"));
@@ -778,7 +778,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 						"",
 						"Raw material 4",
 						"{}",
-						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclGrp=, {http://www.bcpg.fr/model/becpg/1.0}compoListQtyAfterProcess=0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 4, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}sort=4, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=2, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}"));
+						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclGrp=, {http://www.bcpg.fr/model/becpg/1.0}compoListQtyAfterProcess=0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 4, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=2, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}"));
 
 				return null;
 

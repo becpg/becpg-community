@@ -332,7 +332,7 @@
 					<field id="bcpg:unitPrice"  set="profitability" />
 					<field id="bcpg:unitTotalCost" read-only="true" set="profitability" />
 					<field id="bcpg:priceCurrency"  set="profitability" />					
-					<field id="bcpg:breakEven"  set="profitability" />
+					<field id="bcpg:breakEven" read-only="true" set="profitability" />
 					<field id="bcpg:projectedQty" set="profitability" />
 					<field id="bcpg:profitability" read-only="true" set="profitability" />
 					
@@ -492,7 +492,7 @@
 					<field id="bcpg:unitPrice"  set="profitability" />
 					<field id="bcpg:unitTotalCost" read-only="true" set="profitability" />
 					<field id="bcpg:priceCurrency"  set="profitability" />					
-					<field id="bcpg:breakEven"  set="profitability" />
+					<field id="bcpg:breakEven" read-only="true" set="profitability" />
 					<field id="bcpg:projectedQty" set="profitability" />
 					<field id="bcpg:profitability" read-only="true" set="profitability" />	
 

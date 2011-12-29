@@ -892,8 +892,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				qName.equals(BeCPGModel.PROP_FROZEN_MODIFIER) ||
 				qName.equals(BeCPGModel.PROP_FROZEN_MODIFIED) ||
 				//system properties
-				qName.equals(BeCPGModel.ASSOC_COMPOLIST_FATHER))
-		{
+				qName.equals(BeCPGModel.ASSOC_COMPOLIST_FATHER)){
+			
 			isCompareable = false;
 		}
 		
@@ -902,7 +902,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				qName.equals(ContentModel.PROP_CREATOR) ||
 				qName.equals(ContentModel.PROP_CREATED) ||
 				qName.equals(ContentModel.PROP_MODIFIER) ||
-				qName.equals(ContentModel.PROP_MODIFIED)){
+				qName.equals(ContentModel.PROP_MODIFIED) ||
+				qName.equals(BeCPGModel.PROP_SORT)){
 				
 				isCompareable = false;
 			}

@@ -341,8 +341,11 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				 Collection<QName> dataLists = productDictionaryService.getDataLists();
 				ProductData workingCopyRawMaterial = productDAO.find(workingCopyNodeRef, dataLists);
 				workingCopyRawMaterial.setUnit(productUnit2);
+				productDAO.update(workingCopyNodeRef, workingCopyRawMaterial, dataLists);
+				workingCopyRawMaterial = productDAO.find(workingCopyNodeRef, dataLists);
+				
 				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
-				assertNull("Check unit", rawMaterial.getUnit());
+				assertEquals("Check unit", ProductUnit.kg, rawMaterial.getUnit());
 				assertEquals("Check unit", productUnit2, workingCopyRawMaterial.getUnit());
 								
 				//cancel check out
@@ -350,7 +353,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				
 				//Check
 				rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
-				assertNull("Check unit", rawMaterial.getUnit());
+				assertEquals("Check unit", ProductUnit.kg, rawMaterial.getUnit());
 			return null;
 			
 			}},false,true);

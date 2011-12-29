@@ -292,7 +292,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	/**
 	 * Adds the mapping file.
 	 */
-	private void addMappingFile(){
+	private void addMappingFile(String mappingName, String mappingPath){
 					
 		logger.debug("/*-- Add mapping file --*/");
 		
@@ -309,18 +309,20 @@ public class ImportServiceTest extends RepoBaseTestCase {
 			importFolder = repoService.createFolderByPath(exchangeFolder, RepoConsts.PATH_IMPORT, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMPORT));
 		
 		NodeRef mappingFolder = repoService.getFolderByPath(importFolder, RepoConsts.PATH_MAPPING);
+		if(mappingFolder == null)			
+			mappingFolder = repoService.createFolderByPath(importFolder, RepoConsts.PATH_MAPPING, TranslateHelper.getTranslatedPath(RepoConsts.PATH_MAPPING));
 		
-		if(mappingFolder != null){
-			nodeService.deleteNode(mappingFolder);
+		NodeRef productsMappingNodeRef = nodeService.getChildByName(mappingFolder, ContentModel.ASSOC_CONTAINS, mappingName);
+		if(productsMappingNodeRef != null){
+			nodeService.deleteNode(productsMappingNodeRef);
 		}
-		mappingFolder = repoService.createFolderByPath(importFolder, RepoConsts.PATH_MAPPING, TranslateHelper.getTranslatedPath(RepoConsts.PATH_MAPPING));
-		
+				
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, "Products.xml");
-    	NodeRef productsMappingNodeRef = nodeService.createNode(mappingFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();    	    	
+		properties.put(ContentModel.PROP_NAME, mappingName);
+    	productsMappingNodeRef = nodeService.createNode(mappingFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();    	    	
     	
     	ContentWriter writer = contentService.getWriter(productsMappingNodeRef, ContentModel.PROP_CONTENT, true);
-    	String mappingFilePath = System.getProperty("user.dir" )  + "/src/main/resources/beCPG/import/mapping/Products.xml";
+    	String mappingFilePath = System.getProperty("user.dir" )  + mappingPath;
     	
     	logger.debug("Load birt file " + mappingFilePath);
     	FileInputStream in = null;
@@ -402,7 +404,8 @@ public class ImportServiceTest extends RepoBaseTestCase {
 					nodeService.deleteNode(siteFoldernode.get(0));
 				}			
 				
- 				addMappingFile();
+ 				addMappingFile("Products.xml", "/src/main/resources/beCPG/import/mapping/Products.xml");
+ 				addMappingFile("TestProducts.xml", "/src/test/resources/beCPG/import/mapping/TestProducts.xml");
  				
  				return null;
 
@@ -487,10 +490,10 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		/*-- check associations --*/
 		List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(product1NodeRef, BeCPGModel.ASSOC_SUPPLIERS);
 		assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
-		String supplier1Code = (String)nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_CODE);
-		String supplier2Code = (String)nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_CODE);
-		assertEquals("check supplier name", "12", supplier1Code);
-		assertEquals("check supplier name", "13", supplier2Code);
+		String supplier1Code = (String)nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
+		String supplier2Code = (String)nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
+		assertEquals("check supplier name", "1000012", supplier1Code);
+		assertEquals("check supplier name", "1000013", supplier2Code);
 		// does space between association values work ?
 		
 		/*
@@ -505,10 +508,10 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		assertNotNull("product 2 should exist", product2NodeRef);
 		supplierAssocRefs = nodeService.getTargetAssocs(product2NodeRef, BeCPGModel.ASSOC_SUPPLIERS);
 		assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
-		supplier1Code = (String)nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_CODE);
-		supplier2Code = (String)nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_CODE);
-		assertEquals("check supplier name", "12", supplier1Code);
-		assertEquals("check supplier name", "14", supplier2Code);
+		supplier1Code = (String)nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
+		supplier2Code = (String)nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
+		assertEquals("check supplier name", "1000012", supplier1Code);
+		assertEquals("check supplier name", "1000014", supplier2Code);
 		
 		/*-- check productLists --*/
 		assertEquals("costs should exist", (int)3, productData.getCostList().size());
@@ -759,7 +762,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  				}
  				
  				/*-- Add mapping file --*/
- 				addMappingFile();
+ 				addMappingFile("Products.xml", "/src/main/resources/beCPG/import/mapping/Products.xml");
  				
  				/*-- Create file to import --*/
  		    	logger.debug("create file to import");
