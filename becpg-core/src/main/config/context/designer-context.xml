@@ -8,6 +8,11 @@
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
     
+    <bean id="designerTreeVisitor" class="fr.becpg.repo.designer.impl.DesignerTreeVisitor" >
+		<property name="nodeService" ref="nodeService"/>
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+    
     
      <bean id="formModelVisitor" class="fr.becpg.repo.designer.impl.FormModelVisitor">
      	<property name="nodeService" ref="nodeService"/>
@@ -18,6 +23,9 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="contentService" ref="contentService" />	
 		<property name="formModelVisitor" ref="formModelVisitor"/>
+		<property name="designerTreeVisitor" ref="designerTreeVisitor"/>
+		<property name="configPath" value="${beCPG.designer.configPath}"></property>
+		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 
     
@@ -40,7 +48,7 @@
    	</bean>
    	
    	
-   	  <bean id="webscript.fr.becpg.designer.publishModel.post" class="fr.becpg.repo.designer.web.scripts.PublishModelWebScript" parent="webscript">
+   	 <bean id="webscript.fr.becpg.designer.publish.post" class="fr.becpg.repo.designer.web.scripts.PublishWebScript" parent="webscript">
       	<property name="designerService" ref="designerService" />
    	</bean>
    	

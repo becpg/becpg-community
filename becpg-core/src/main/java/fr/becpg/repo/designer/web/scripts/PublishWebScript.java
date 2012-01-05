@@ -18,11 +18,11 @@ import fr.becpg.repo.designer.DesignerService;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class PublishModelWebScript.
+ * The Class PublishWebScript.
  *
  * @author matthieu
  */
-public class PublishModelWebScript extends DeclarativeWebScript  {
+public class PublishWebScript extends DeclarativeWebScript  {
 	
 
 	private static final String PARAM_NODEREF = "nodeRef";
@@ -31,7 +31,7 @@ public class PublishModelWebScript extends DeclarativeWebScript  {
 
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(PublishModelWebScript.class);
+	private static Log logger = LogFactory.getLog(PublishWebScript.class);
 	
 	/** The node service. */
 	private DesignerService designerService;
@@ -46,9 +46,10 @@ public class PublishModelWebScript extends DeclarativeWebScript  {
 
 
 	/**
-	 * Publish model
+	 * Publish 
 	 * 
 	 * url : /becpg/designer/model/publish?nodeRef={nodeRef}.
+	 * url : /becpg/designer/form/publish?nodeRef={nodeRef}.
 	 *
 	 * @param req the req
 	 * @param status the status
@@ -58,14 +59,14 @@ public class PublishModelWebScript extends DeclarativeWebScript  {
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){
 				
-		logger.debug("CreateModelElementWebScript executeImpl()");
+		logger.debug("PublishWebScript executeImpl()");
 			
 		NodeRef parentNodeRef = new NodeRef( req.getParameter(PARAM_NODEREF));		
 
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		
-		designerService.writeXmlFromModelAspectNode(parentNodeRef);
+		designerService.writeXml(parentNodeRef);
 		designerService.publish(parentNodeRef);
 		
 		model.put(PERSISTED_OBJECT, parentNodeRef.toString() );

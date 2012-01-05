@@ -36,7 +36,6 @@
       beCPG.component.DesignerForm.superclass.constructor.call(this, "beCPG.component.DesignerForm", htmlId, ["button", "container"]);
       
       YAHOO.Bubbling.on("designerModelNodeChange", this.onDesignerModelNodeChange, this);
-      YAHOO.Bubbling.on("selectedModelChanged", this.onSelectedModelChanged, this);
       YAHOO.Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
       YAHOO.Bubbling.on("elementDragOver", this.onElementDragOver, this);
       YAHOO.Bubbling.on("elementDragOut", this.onElementDragOut, this);
@@ -57,30 +56,19 @@
        */
       options:
       {
-         /**
-           * Current modelNodeRef.
-           * 
-           * @property modelNodeRef
-           * @type string
-           * @default ""
-           */
-    	  modelNodeRef: null,
+    	  documentHeight : null
     	  
-    	  /**
-           * nodeRef to show.
-           * 
-           * @property nodeRef
-           * @type string
-           * @default ""
-           */
-    	  nodeRef : null
-
       },
 
       /**
        * Current tree node
        */
       currentNode : null,
+      
+      /**
+       * Current tree
+       */
+      tree: null,
       
       
       /**
@@ -92,7 +80,9 @@
        */
       onReady: function DesignerForm_onReady()
       {
-    	this.show();
+    	  
+    	  this.show();
+    	
       },
       
       /**
@@ -102,7 +92,7 @@
        */
       show: function DesignerForm_show()
       {
-        if(this.options.nodeRef!=null){ 
+        if(this.currentNode!=null){ 
 
 	        var templateUrl,
 	        	data,
@@ -146,6 +136,10 @@
 		     	 	case  "dsg:formField":
 		     	 		dropGroup = "field";
 			     	 	break;
+		     	 	case "dsg:config":
+		     	 	case "dsg:configElements":
+			     		dropGroup = "config";
+			     	 	break;
 		     	 }
 	           template = Dom.get(this.id+"-dnd-instructions-"+dropGroup);
 	           templateInstance = template.cloneNode(true);
@@ -166,17 +160,17 @@
 	        if(this.currentNode.subType!=null){
 		        templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-data-lists/entity-datagrid?nodeRef={modelNodeRef}",
 		   	         {
-		        	modelNodeRef : this.options.modelNodeRef
+		        	modelNodeRef :  this.tree.modelNodeRef
 		   	            	
 		   	         });
 	        } else {
 	        	templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=false",
 	       	         {
 	       	            itemKind: "node",
-	       	            itemId: this.options.nodeRef,
+	       	            itemId: this.currentNode.nodeRef,
 	       	            mode: "edit",
 	       	            submitType: "json",
-	       	            entityNodeRef : this.options.modelNodeRef
+	       	            entityNodeRef : this.tree.modelNodeRef
 	       	         });
 	        }
 	        
@@ -212,29 +206,17 @@
     	  var obj = args[1];
 
          	if(obj!=null &&  obj.node!=null && obj.node.nodeRef!=null){
-              this.options.nodeRef = obj.node.nodeRef;
+                    
+              this.currentNode = obj.node;
+              this.tree = obj.tree;
               
-              this.currentNode = obj.node
-             
               this.show();
          	} else {
          		var containerDiv = Dom.get(this.id+"-model-form");
                 containerDiv.innerHTML = this.msg("model.please-select");
          	}
        },
-       /**
-        * @method onSelectedModelChanged
-        */
-       onSelectedModelChanged: function DesignerForm_onNodeClicked(layer, args)
-       {
-     	  var obj = args[1];
-     	  
-     
-          var nodeRef = obj.nodeRef;
-          	if(nodeRef!=null){
-               this.options.modelNodeRef = nodeRef;
-          	} 
-        },
+       
        /**
         * Event callback when dialog template has been loaded
         *
@@ -376,10 +358,14 @@
                 	type = node.subType;
                 }
              
-                args[1].callback.call(args[1].scope, nodeRef, type);
+                args[1].callback.call(args[1].scope, nodeRef, type, this.tree);
              }
           }
        }
       
+      
    });
 })();
+
+
+

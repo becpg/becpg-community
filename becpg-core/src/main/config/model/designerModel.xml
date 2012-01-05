@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="dsg:designerModel">
+<model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="dsg:designerModel" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"               
+       xsi:schemaLocation="http://www.alfresco.org/model/dictionary/1.0 modelSchema.xsd"      
+
+>
 	<description>Designer Model</description>
 	<author>Laborie Matthieu</author>
 	<version>1.0</version>
@@ -27,6 +31,16 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="dsg:evaluator" type="LIST">
+			<title>Evaluator</title>
+			<parameter name="allowedValues">
+				<list>
+					<value>node-type</value>
+					<value>model-type</value>
+					<value>aspect</value>
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="dsg:forModeConstraint" type="LIST">
 			<title>For mode constraint</title>
 			<parameter name="allowedValues">
@@ -40,6 +54,60 @@
 		</constraint>
 	</constraints>
 	<types>
+		<type name="dsg:config">
+			<title>Alfresco configuration</title>
+			<parent>cm:content</parent>
+			<associations>
+				<child-association name="dsg:configElements">
+					<title>Config elements</title>
+					<source>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>dsg:configElement</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>true</many>
+					</target>
+				</child-association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>dsg:identifierAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		 <type name="dsg:configElement">
+			<title>Config Element</title>
+			<parent>cm:content</parent>
+			<properties>
+				<property name="dsg:configEvaluator">
+					<title>Evaluator</title>
+					<type>d:text</type>
+					<multiple>false</multiple>
+					<index enabled="false"/>
+					<constraints>
+						<constraint ref="dsg:evaluator"/>
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<child-association name="dsg:forms">
+					<title>Forms association</title>
+					<source>
+						<many>false</many>
+					</source>
+					<target>
+						<class>dsg:form</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+					<propagateTimestamps>false</propagateTimestamps>
+				</child-association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>dsg:identifierAspect</aspect>
+			</mandatory-aspects>
+		</type>
 		<type name="dsg:form">
 			<title>Form</title>
 			<parent>cm:content</parent>
@@ -82,10 +150,12 @@
 				<property name="dsg:hide">
 					<title>Hide</title>
 					<type>d:boolean</type>
+					<default>false</default>
 				</property>
 				<property name="dsg:forMode">
 					<title>For mode</title>
 					<type>d:text</type>
+					<default>all</default>
 					<constraints>
 						<constraint ref="dsg:forModeConstraint" />
 					</constraints>
@@ -93,6 +163,7 @@
 				<property name="dsg:force">
 					<title>Force</title>
 					<type>d:boolean</type>
+					<default>false</default>
 				</property>
 				<property name="dsg:description">
 					<title>Description label</title>
@@ -114,11 +185,12 @@
 				<property name="dsg:readOnly">
 					<title>Read only</title>
 					<type>d:boolean</type>
+					<default>false</default>
 				</property>
 				<property name="dsg:mandatory">
 					<type>d:boolean</type>
+					<default>false</default>
 				</property>
-				
 			</properties>
 			<associations>
 				<child-association name="dsg:controls">
@@ -209,7 +281,22 @@
 				</child-association>
 			</associations>
 		</aspect>
-		
+		<aspect name="dsg:configAspect">
+			<title>Config Aspect</title>
+			<associations>
+				<child-association name="dsg:config">
+					<source>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>dsg:config</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>false</many>
+					</target>
+				</child-association>
+			</associations>
+		</aspect>
 		<aspect name="dsg:modelError">
 			<title>Model error</title>
 			<properties>
@@ -254,24 +341,7 @@
 				</property>
 			</properties>
 		</aspect>
-		<aspect name="dsg:formsAspect">
-			<title>Forms  Aspects</title>
-			<associations>
-				<child-association name="dsg:forms">
-					<title>Forms association</title>
-					<source>
-						<many>false</many>
-					</source>
-					<target>
-						<class>dsg:form</class>
-						<mandatory enforced="false">false</mandatory>
-						<many>true</many>
-					</target>
-					<duplicate>false</duplicate>
-					<propagateTimestamps>false</propagateTimestamps>
-				</child-association>
-			</associations>
-		</aspect>
+		
 		<aspect name="dsg:formFieldsAspect">
 			<title>Form fields Aspect</title>
 			<associations>

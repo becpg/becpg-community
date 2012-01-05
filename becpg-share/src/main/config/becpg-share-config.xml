@@ -188,9 +188,6 @@
 			</type>
 			
 			<type name="m2:type">
-				<association name="dsg:forms"  >
-					<subtype name="dsg:form"/>
-				</association>
 				<association name="m2:properties"  >
 					<subtype name="m2:property"/>
 				</association>
@@ -203,13 +200,31 @@
 				</association>
 			</type>
 
+		    <type name="dsg:config">
+				<association name="dsg:configElements"  >
+					<subtype name="dsg:configElement"/>
+				</association>
+			</type>
+			
+			 <type name="dsg:configElement">
+				<association name="dsg:forms"  >
+					<subtype name="dsg:form"/>
+				</association>
+			</type>
+
 
 			<type name="dsg:form">
 				<association name="dsg:fields"  >
 					<subtype name="dsg:formField"/>
 				</association>
 				<association name="dsg:sets"  >
-					<subtype name="dsg:formSet"/>
+					<subtype name="dsg:formSet">
+						<model name="formSets_panel"/>
+						<model name="formSets_bordered-panel"/>
+						<model name="formSets_fieldset"/>
+						<model name="formSets_title"/>
+						<model name="formSets_whitespace"/>
+					</subtype>
 				</association>
 			</type>
 			
@@ -224,14 +239,33 @@
 			
 			<type name="dsg:formField">
 				<association name="dsg:controls"  >
-					<subtype name="dsg:formControls"/>
+					<subtype name="dsg:formControl">
+						<model name="formControls_association"/>
+						<model name="formControls_authority"/>
+						<model name="formControls_category"/>
+						<model name="formControls_checkbox"/>
+						<model name="formControls_content"/>
+						<model name="formControls_date"/>
+						<model name="formControls_encoding"/>
+						<model name="formControls_hidden"/>
+						<model name="formControls_info"/>
+						<model name="formControls_invisible"/>
+						<model name="formControls_mimetype"/>
+						<model name="formControls_number"/>
+						<model name="formControls_period"/>
+						<model name="formControls_richtext"/>
+						<model name="formControls_selectone"/>
+						<model name="formControls_selectmany"/>
+						<model name="formControls_textarea"/>
+						<model name="formControls_textfield"/>
+						<model name="formControls_size"/>
+					</subtype>
 				</association>
 			</type>
 			
-			
-			<type name="dsg:formControls">
+			<type name="dsg:formControl">
 				<association name="dsg:parameters"  >
-					<subtype name="m2:namedValue"/>
+					<subtype name="dsg:controlParameter"/>
 				</association>
 			</type>
 			

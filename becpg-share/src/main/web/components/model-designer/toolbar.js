@@ -27,7 +27,6 @@
 	   beCPG.component.DesignerToolbar.superclass.constructor.call(this, "beCPG.component.DesignerToolbar", htmlId, ["button", "container"]);
       
 	   YAHOO.Bubbling.on("designerModelNodeChange", this.onDesignerModelNodeChange, this);
-	   YAHOO.Bubbling.on("selectedModelChanged", this.onSelectedModelChanged, this);
 	   
       return this;
    };
@@ -51,44 +50,17 @@
        */
       options:
       {
-         /**
-           * Current selected itemType.
-           * 
-           * @property itemType
-           * @type string
-           * @default ""
-           */
-          itemType: null,
-          
-          /**
-           * Current selected nodeRef.
-           * 
-           * @property destination
-           * @type string
-           * @default ""
-           */
-          destination: null,
-          
-          /**
-           * Current selected displayName.
-           * 
-           * @property displayName
-           * @type string
-           * @default ""
-           */
-          displayName: null,
-          
-          /**
-           * Current modelNodeRef.
-           * 
-           * @property modelNodeRef
-           * @type string
-           * @default ""
-           */
-    	  modelNodeRef: null
+
       },
-      
-      selectedTypeName : null,
+
+      /**
+       * Current tree node
+       */
+      currentNode : null,
+      /**
+       * The current selected tree
+       */
+      tree : null,
       
       /**
        * Fired by YUI when parent element is available for scripting.
@@ -111,7 +83,7 @@
          
          this.widgets.publishButton = Alfresco.util.createYUIButton(this, "publishButton", this.onPublish,
          {
-            disabled: false,
+            disabled: true,
             value: "publish"
           });
          
@@ -134,7 +106,7 @@
       onPublish: function DesignerToolbar_onPublish(e, p_obj)
       { 
     	  var me = this;
-    	  var templateUrl = Alfresco.constants.PROXY_URI + "becpg/designer/model/publish?nodeRef="+this.options.modelNodeRef;
+    	  var templateUrl = Alfresco.constants.PROXY_URI + "becpg/designer/model/publish?nodeRef="+this.tree.modelNodeRef;
     	  Alfresco.util.Ajax.request( {
     	              method : Alfresco.util.Ajax.POST,
     	              url: templateUrl,
@@ -180,7 +152,7 @@
           var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?bulkEdit=true&formId=create&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&showSubmitButton=true",
           {
              itemKind: "type",
-             itemId: this.selectedTypeName,
+             itemId: this.currentNode.name, //TODO better
              mode: "create",
              submitType: "json"
           });
@@ -211,11 +183,11 @@
       onDelete: function onDelete()
       {
          var me = this;
-
+         
          Alfresco.util.PopupManager.displayPrompt(
          {
             title: this.msg("actions.delete"),
-            text: this.msg("message.confirm.delete", me.options.displayName),
+            text: this.msg("message.confirm.delete", me.currentNode.name),
             buttons: [
             {
                text: this.msg("button.delete"),
@@ -245,8 +217,9 @@
        */
       _onActionDeleteConfirm: function DesignerToolbar__onActionDeleteConfirm(record)
       {
-    	  var me = this;
-    	  var templateUrl = Alfresco.constants.PROXY_URI  + "slingshot/doclib/action/file/node/"+me.options.destination.replace("://","/");
+    	  var me = this,
+    	  	 label = me.currentNode.name;
+    	  var templateUrl = Alfresco.constants.PROXY_URI  + "slingshot/doclib/action/file/node/"+me.currentNode.nodeRef.replace("://","/");
     	  Alfresco.util.Ajax.request(
     	            {
     	            	
@@ -255,15 +228,15 @@
     	               successCallback:
     	               {
     	                  fn: function(){
-    	                	  YAHOO.Bubbling.fire("elementDeleted",{nodeRef: me.options.destination});
+    	                	  YAHOO.Bubbling.fire("elementDeleted",{nodeRef: me.currentNode.nodeRef,tree : me.tree});
                     		  
                     		  Alfresco.util.PopupManager.displayMessage({
-                                         text:  this.msg("message.delete.success", me.options.displayName)
+                                         text:  this.msg("message.delete.success", label)
                               });
     	                  },
     	                  scope: this
     	               },
-    	               failureMessage: this.msg("message.delete.failure", me.options.displayName),
+    	               failureMessage: this.msg("message.delete.failure", label),
     	               scope: this,
     	               execScripts: false
     	            });
@@ -280,8 +253,11 @@
       onCreateElement: function DesignerToolbar_onCreateElement(e, p_obj)
       { 
     	  
-    	  var me = this;
-          var  actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/create/element?nodeRef="+this.options.destination;
+    	  var me = this,
+    	  	  itemType = this.currentNode.itemType,
+    	  	  assocType = null,
+    	  	  templateUrl = null,
+    	  	  actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/create/element?nodeRef="+this.currentNode.nodeRef;
 
           var doSetupFormsValidation = function DesignerToolbar_oACT_doSetupFormsValidation(p_form)
             {
@@ -298,11 +274,22 @@
                p_form.setShowSubmitStateDynamically(true, false);
             };
 
+            
+            if(this.currentNode.subType!=null){
+            	itemType = this.currentNode.parentType;
+            	assocType = this.currentNode.itemType;
+            }
+            
+            templateUrl = Alfresco.constants.URL_SERVICECONTEXT + "modules/model-designer/create-element?currentType="+itemType;
+            if(assocType!=null){
+            	templateUrl+="&assocType="+assocType;
+            }
+            
             // Always create a new instance
             this.modules.createElement = new Alfresco.module.SimpleDialog(this.id + "-createElement").setOptions(
             {
                width: "30em",
-               templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "modules/model-designer/create-element?currentType="+this.options.itemType,
+               templateUrl: templateUrl,
                actionUrl: actionUrl,
                destroyOnHide : true,
                doSetupFormsValidation:
@@ -321,12 +308,8 @@
                           
                 		  var treeNode = response.json.treeNode;
                 
-                		  YAHOO.Bubbling.fire("elementCreated",{node:treeNode, focusNodeRef : response.json.persistedObject});
-                		  
-                		  me.options.destination = treeNode.nodeRef;
-                		  me.options.displayName = treeNode.name;
-                		  me.options.itemType = treeNode.type;
-                		  me.selectedTypeName =  treeNode.name;
+                		  YAHOO.Bubbling.fire("elementCreated",{node:treeNode, focusNodeRef : response.json.persistedObject,tree : me.tree});
+                		 
                 		  
                 		  Alfresco.util.PopupManager.displayMessage(
                                   {
@@ -357,18 +340,6 @@
             });
             this.modules.createElement.show();
          },
-         /**
-          * @method onSelectedModelChanged
-          */
-         onSelectedModelChanged: function DesignerToolbar_onNodeClicked(layer, args)
-         {
-       	  var obj = args[1];
-       	  
-            var nodeRef = obj.nodeRef;
-            	if(nodeRef!=null){
-                 this.options.modelNodeRef = nodeRef;
-            	} 
-          },
       
       /**
        * Fired by YUI TreeView when a node label is clicked
@@ -379,22 +350,24 @@
        */
       onDesignerModelNodeChange: function DesignerForm_onNodeClicked(layer, args)
       {
-    	  var obj = args[1];
+    	  var obj = args[1],
+    	  	  node = obj.node;
     	  
-         var nodeRef = obj.node.nodeRef,
-         	itemType = obj.node.itemType,
-            label = obj.node.name;
-         	if(nodeRef!=null){
-              this.options.destination = nodeRef;
-              this.options.itemType = itemType;
-              this.options.displayName = label;
-              this.selectedTypeName = label;
+    	  this.tree = obj.tree;
+    	  this.currentNode = node;
+    	  
+         	if(node.nodeRef!=null){
               this.widgets.newRowButton.set("disabled", false);
               this.widgets.deleteButton.set("disabled", false);
-              if(this.options.itemType=="m2:type" &&  this.selectedTypeName!=null && this.selectedTypeName.length>0){
+              if(node.itemType=="m2:type" || node.itemType=="dsg:form"){
             	  this.widgets.previewButton.set("disabled", false);
               } else {
             	  this.widgets.previewButton.set("disabled", true);
+              }
+              if(node.itemType=="m2:model" || node.itemType=="dsg:config"){
+            	  this.widgets.publishButton.set("disabled", false);
+              } else {
+            	  this.widgets.publishButton.set("disabled", true);
               }
          	} else {
          	  this.widgets.newRowButton.set("disabled", true);

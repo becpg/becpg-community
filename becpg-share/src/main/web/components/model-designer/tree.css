@@ -107,6 +107,9 @@
  Forms
 */
 
+.dsg-config {  padding-left: 24px; background:  url(../images/filetypes/xml-file-16.png) no-repeat 5px 0px;}
+.dsg-configElements {  padding-left: 24px; background:  url(../images/details-16.png) no-repeat 5px 0px;}
+.dsg-configElement {  padding-left: 24px; background:  url(../images/filetypes/generic-file-16.png) no-repeat 5px 0px;}
 .dsg-forms {  padding-left: 24px; background:  url(./images/application-form-16.png) no-repeat 5px 0px;}
 .dsg-form {  padding-left: 24px; background:  url(./images/application-form-16.png) no-repeat 5px 0px;}
 .dsg-sets {  padding-left: 24px; background:  url(./images/form-set-16.png) no-repeat 5px 0px;}

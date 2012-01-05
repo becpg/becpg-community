@@ -36,7 +36,8 @@
 	  this.id = htmlId;
       beCPG.component.DesignerTree.superclass.constructor.call(this, "beCPG.component.DesignerTree", htmlId, ["button", "container"]);
     
-      YAHOO.Bubbling.on("selectedModelChanged", this.renderDesignerTree, this);
+      YAHOO.Bubbling.on("selectedModelChanged", this.renderModelTree, this);
+      YAHOO.Bubbling.on("selectedConfigChanged", this.renderConfigTree, this);
       YAHOO.Bubbling.on("elementCreated", this.onElementCreated, this);
       YAHOO.Bubbling.on("elementDeleted", this.onElementDeleted, this);
       
@@ -64,7 +65,15 @@
            * @type string
            * @default ""
            */
-    	  modelNodeRef: null
+    	  modelNodeRef: null,
+    	  /**
+           * Current configNodeRef.
+           * 
+           * @property configNodeRef
+           * @type string
+           * @default ""
+           */
+    	  configNodeRef: null,
 
       },
       /**
@@ -74,7 +83,7 @@
        * @type {YAHOO.widget.Node}
        */
       selectedNode: null,
-
+      
       /**
      
       /**
@@ -84,10 +93,11 @@
        */
       onReady: function DesignerTree_onReady()
       {
-    	  var me = this;
-    	  
-         this.widgets.newModel = Alfresco.util.createYUIButton(this, "newModelButton", this.onNewModel);
-     
+          var me = this,
+          headers = YUISelector.query("h2", this.id);
+  
+         
+         //Models
          
          this.widgets.modelSelect =  Alfresco.util.createYUIButton(this, "modelSelect-button", this.onModelSelect,
                  {
@@ -96,17 +106,33 @@
                             lazyloadmenu : false
                   });
 
-         var modelSelectedMenu = this.widgets.modelSelect.getMenu()         
-        
-         modelSelectedMenu.subscribe("click", function (p_sType, p_aArgs) {
-                    var menuItem = p_aArgs[1];
-                       if (menuItem){
-                                  me.widgets.modelSelect.set("label", menuItem.cfg.getProperty("text"));
-                              }
-                          });
+         var modelSelectedMenu = this.widgets.modelSelect.getMenu();         
+//        
+//         modelSelectedMenu.subscribe("click", function (p_sType, p_aArgs) {
+//                    var menuItem = p_aArgs[1];
+//                       if (menuItem){
+//                                  me.widgets.modelSelect.set("label", menuItem.cfg.getProperty("text"));
+//                              }
+//                          });
                  
-         var me = this,
-         headers = YUISelector.query("h2", this.id);
+        //Configs
+         
+         this.widgets.configSelect =  Alfresco.util.createYUIButton(this, "configSelect-button", this.onConfigSelect,
+                 {
+                            type: "menu",
+                            menu: "configSelect-menu",
+                            lazyloadmenu : false
+                  });
+
+         var configSelectedMenu = this.widgets.configSelect.getMenu();         
+//        
+//         configSelectedMenu.subscribe("click", function (p_sType, p_aArgs) {
+//                    var menuItem = p_aArgs[1];
+//                       if (menuItem){
+//                                  me.widgets.configSelect.set("label", menuItem.cfg.getProperty("text"));
+//                              }
+//                          });
+         
       
 	      if (YAHOO.lang.isArray(headers))
 	      {
@@ -117,29 +143,58 @@
 	      }
                  
          //select first
-        
+	     var configSelected =  configSelectedMenu.getItem(0);
          var modelSelected =  modelSelectedMenu.getItem(0);
          
          if(this.options.modelNodeRef!=null && this.options.modelNodeRef.length>0){
-        	 for(var i in modelSelectedMenu.getItems()){
-        		 modelSelected =  modelSelectedMenu.getItems()[i];
-        		 if(modelSelected && modelSelected._oAnchor.children[0].attributes[0].nodeValue == me.options.modelNodeRef){
-        			 me.widgets.modelSelect.set("label", modelSelected.cfg.getProperty("text"));
-        			 
-        		 }
-        	 }
-             this.renderDesignerTree();
+//        	 for(var i in modelSelectedMenu.getItems()){
+//        		 modelSelected =  modelSelectedMenu.getItems()[i];
+//        		 if(modelSelected && modelSelected._oAnchor.children[0].attributes[0].nodeValue == me.options.modelNodeRef){
+//        			 me.widgets.modelSelect.set("label", modelSelected.cfg.getProperty("text"));
+//        			 
+//        		 }
+//        	 }
+             this.renderModelTree();
          } else {
         	 if(modelSelected){
-                 me.widgets.modelSelect.set("label", modelSelected.cfg.getProperty("text")); 	 
+               //  me.widgets.modelSelect.set("label", modelSelected.cfg.getProperty("text")); 	 
                  this.options.modelNodeRef = modelSelected._oAnchor.children[0].attributes[0].nodeValue;
                  Bubbling.fire("selectedModelChanged",{nodeRef: this.options.modelNodeRef});
+            }
+         }
+         
+         if(this.options.configNodeRef!=null && this.options.configNodeRef.length>0){
+//        	 for(var i in configSelectedMenu.getItems()){
+//        		 configSelected =  configSelectedMenu.getItems()[i];
+//        		 if(configSelected && configSelected._oAnchor.children[0].attributes[0].nodeValue == me.options.configNodeRef){
+//        			 me.widgets.configSelect.set("label", configSelected.cfg.getProperty("text"));
+//        			 
+//        		 }
+//        	 }
+             this.renderConfigTree();
+         } else {
+        	 if(configSelected){
+            //     me.widgets.configSelect.set("label", configSelected.cfg.getProperty("text")); 	 
+                 this.options.configNodeRef = configSelected._oAnchor.children[0].attributes[0].nodeValue;
+                 Bubbling.fire("selectedConfigChanged",{nodeRef: this.options.configNodeRef});
             }
          }
          
          
      
       },
+      
+      onConfigSelect: function DesignerTree_onConfigSelect (sType, aArgs, p_obj)
+      {
+          var domEvent = aArgs[0],
+             eventTarget = aArgs[1];
+   
+          // Select based upon the className of the clicked item
+          this.options.configNodeRef = Alfresco.util.findEventClass(eventTarget)
+         
+          Bubbling.fire("selectedConfigChanged",{nodeRef: this.options.configNodeRef});
+  
+      }, 
       
       onModelSelect : function DesignerTree_onModelSelect (sType, aArgs, p_obj)
       {
@@ -153,80 +208,38 @@
   
       }, 
       
+
       /**
-       * New model button click handler
+       * Renders the Model tree
        *
-       * @method onNewList
-       * @param e {object} DomEvent
-       * @param p_obj {object} Object passed back from addListener method
+       * @method renderModelTree
        */
-      onNewModel: function DesignerTree_onNewModel(e, p_obj)
+      renderModelTree: function DesignerTree_renderModelTree()
       {
-         var  actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/create/model";
-
-         var doSetupFormsValidation = function DesignerTree_oACT_doSetupFormsValidation(p_form)
-         {
-            // Validation
-            p_form.addValidation(this.id + "-createModel-type", function fnValidateType(field, args, event, form, silent, message)
-            {
-               return field.options[field.selectedIndex].value !== "-";
-            }, null, "change");
-            
-            p_form.setShowSubmitStateDynamically(true, false);
-         };
-
-         // Always create a new instance
-         this.modules.createModel = new Alfresco.module.SimpleDialog(this.id + "-createModel").setOptions(
-         {
-            width: "30em",
-            templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "/modules/model-designer/create-model",
-            actionUrl: actionUrl,
-            doSetupFormsValidation:
-            {
-               fn: doSetupFormsValidation,
-               scope: this
-            },
-            firstFocus: this.id + "-createModel-name",
-            onSuccess:
-            {
-               fn: function DesignerTree_onActionChangeType_success(response)
-               {
-                 
-                  Alfresco.util.PopupManager.displayMessage(
-                  {
-                     text: this.msg("message.create-model.success", displayName)
-                  });
-               },
-               scope: this
-            },
-            onFailure:
-            {
-               fn: function DesignerTree_onActionChangeType_failure(response)
-               {
-                  Alfresco.util.PopupManager.displayMessage(
-                  {
-                     text: this.msg("message.create-model.failure", displayName)
-                  });
-               },
-               scope: this
-            }
-         });
-         this.modules.createModel.show();
+    	  this.renderTree(this.id + "-model-tree",this.options.modelNodeRef);
+      },
+      /**
+       * Renders the Model tree
+       *
+       * @method renderModelTree
+       */
+      renderConfigTree: function DesignerTree_renderConfigTree()
+      {
+    	  this.renderTree(this.id + "-form-tree",this.options.configNodeRef);
       },
       
-    
       /**
-       * Renders the Data Lists into the DOM
+       * Renders the Model tree
        *
-       * @method renderDesignerTree
+       * @method renderModelTree
        */
-      renderDesignerTree: function DesignerTree_renderDesignerTree()
+      renderTree: function DesignerTree_renderModelTree(treeId,rootNodeRef)
       {
-         var me = this;
+        var me = this;
          
 
-       // Prepare the XHR callback object
-       var callback =
+        // Prepare the XHR callback object
+        var callback =
             {
                success: function DesignerTreelND_success(oResponse)
                {
@@ -235,7 +248,7 @@
                   if (results)
                   {
                       // Build the TreeView widget
-                      this._buildTree(results);
+                      this._buildTree(treeId, results, rootNodeRef);
                   }
                   
                },
@@ -255,7 +268,7 @@
                scope: me
             };
        
-        var uri = this._buildTreeNodeUrl(this.options.modelNodeRef);
+        var uri = this._buildTreeNodeUrl(rootNodeRef);
 
             // Make the XHR call using Connection Manager's asyncRequest method  
          YAHOO.util.Connect.asyncRequest('GET', uri, callback);
@@ -272,18 +285,23 @@
        * @param args.node {YAHOO.widget.Node} the node clicked
        * @return allowExpand {boolean} allow or disallow node expansion
        */
-      onNodeClicked: function DesignerTree_onNodeClicked(args)
+      onNodeClicked: function DesignerTree_onNodeClicked(tree)
       {
-         var node = args.node;
-         
-         if ( node != this.selectedNode) {
-            
-        	 this._updateSelectedNode(node);
-        	 
-         }
-         Event.stopEvent(args.event);
-         
-         return false;
+    	  
+        	  return function(args){
+    	  
+		         var node = args.node;
+		         
+		         if ( node != this.selectedNode) {
+		            
+		        	 this._updateSelectedNode(node,tree);
+		        	 
+		         }
+		         Event.stopEvent(args.event);
+		      
+		         
+		         return false;
+        	  }
       },
       /**
        * Fired when an element has been created
@@ -294,31 +312,32 @@
       onElementCreated: function DesignerTree_onElementCreated(layer, args)
       {
     	  
-    	 var obj = args[1].node, selected;
-         if (obj && (obj.nodeRef !== null))
-         {
+    	 var obj = args[1], selected, tree;
+         if (obj !== null)
+           {
+        	 tree = obj.tree;
+        	 
 
         	//Always remove the focus if exists	 
-
-             selected = this.widgets.treeview.getNodeByProperty("nodeRef", args[1].focusNodeRef);
+             selected = tree.getNodeByProperty("nodeRef", obj.focusNodeRef);
              if(selected!=null){
-            	 this.widgets.treeview.removeNode(selected);
+            	tree.removeNode(selected);
              }
         		 
-             var parentNode = this.widgets.treeview.getNodeByProperty("nodeRef", obj.nodeRef);
+             var parentNode = tree.getNodeByProperty("nodeRef", obj.node.nodeRef);
              if (parentNode !== null)
              {
             	//create newParent
-            	var  newParentNode = this._buildTreeNode(obj, parentNode.parent, true); 
+            	var  newParentNode = this._buildTreeNode(obj.node, parentNode.parent, true); 
             	newParentNode.insertBefore(parentNode);
             	
-            	this.widgets.treeview.removeNode(parentNode);
+            	tree.removeNode(parentNode);
 
-            	this.widgets.treeview.render();
+            	tree.render();
             	//New selected
-            	selected = this.widgets.treeview.getNodeByProperty("nodeRef", args[1].focusNodeRef);
+            	selected = tree.getNodeByProperty("nodeRef", obj.focusNodeRef);
             	selected.parent.expand();	
-            	this._updateSelectedNode(selected);
+            	this._updateSelectedNode(selected,tree);
 
              }
          }
@@ -339,16 +358,18 @@
          {
             var node = null;
             
+         	 var tree = obj.tree;
+            
             if (obj.nodeRef)
             {
-               node = this.widgets.treeview.getNodeByProperty("nodeRef", obj.nodeRef);
+               node = tree.getNodeByProperty("nodeRef", obj.nodeRef);
             }
             
             if (node !== null)
             {
                var parentNode = node.parent;
                // Node found, so delete it
-               this.widgets.treeview.removeNode(node);
+               tree.removeNode(node);
                // Have all the parent child nodes been removed now?
                if (parentNode !== null)
                {
@@ -357,9 +378,9 @@
                      parentNode.isLeaf = true;
                   }
                }
-               this.widgets.treeview.render();
+               tree.render();
                if(parentNode!=null){
-            	   this._updateSelectedNode(parentNode);
+            	   this._updateSelectedNode(parentNode,tree);
                }
                
             }
@@ -371,55 +392,22 @@
       /**
        * PRIVATE FUNCTIONS
        */
-
-      /**
-       * Creates the controls palette
-       * @method _buildControls
-       * @private
-       */
-      _buildControls : function DesignerTree_buildControls(results){
-    	  var controls = Dom.get(this.id + "-form-controls"),
-    	  	  sets = Dom.get(this.id + "-form-sets"),
-    	  	  liTag ;
-    	  
-    	  var id, description,fragment;
-    	  for(var i in results.controls){
-    		  id =  results.controls[i].id;
-    		  liTag = document.createElement('li');
-    		  liTag.setAttribute('id', 'formControls_'+ id );
-    		  liTag.setAttribute('class', 'form-control-'+ id );
-    		  liTag.innerHTML = id;
-    		  controls.appendChild(liTag);
-    		  new beCPG.DnD('formControls_'+ id, this,"control");
-    	  } 	 
-    	  for(var i in results.sets){
-    		  id =  results.sets[i].id;
-    		  liTag = document.createElement('li');
-    		  liTag.setAttribute('id', 'formSets_'+ id );
-    		  liTag.setAttribute('class', 'form-set-'+ id );
-    		  liTag.innerHTML = id;
-    		  sets.appendChild(liTag);
-    		  new beCPG.DnD('formSets_'+ id, this,"set");
-    	  } 	 
-
-      },
+ 
       
       /**
        * Creates the TreeView control and renders it to the parent element
        * @method _buildTree
        * @private
        */
-      _buildTree: function DesignerTree_buildTree(results)
+      _buildTree: function DesignerTree_buildTree(id, results, modelNodeRef)
       {
          // Create a new tree
-         var tree = new YAHOO.widget.TreeView(this.id + "-tree");
-         this.widgets.treeview = tree;
+         var tree = new YAHOO.widget.TreeView(id);
+         
+         tree.modelNodeRef = modelNodeRef;
          
          // Having both focus and highlight are just confusing (YUI 2.7.0 addition)
          YAHOO.widget.TreeView.FOCUS_CLASS_NAME = "";
-
-         // Turn dynamic loading on for entire tree
-         // tree.setDynamicLoad(this.fnLoadNodeData);
 
          // Get root node for tree
          var root = tree.getRoot();
@@ -427,18 +415,15 @@
          var modelNode =  this._buildTreeNode(results, tree.getRoot(), true);
 
          // Register tree-level listeners
-         tree.subscribe("clickEvent", this.onNodeClicked, this, true);
-         tree.subscribe("expandComplete", this.onExpandComplete, this, true);
+         tree.subscribe("clickEvent", this.onNodeClicked(tree), this, true);
+         tree.subscribe("expandComplete", this.onExpandComplete(tree), this, true);
 
          // Render tree with this one top-level node
          tree.render();
          
-       
-
-         
          //Select first
          if(modelNode!=null){
-	         this._updateSelectedNode(modelNode);
+	         this._updateSelectedNode(modelNode,tree);
          }
       },
       /**
@@ -448,33 +433,43 @@
        * 
        * @method _applyDropTargets
        */
-      _applyDropTargets: function  DesignerTree__applyDropTargets()
+      _applyDropTargets: function  DesignerTree__applyDropTargets(tree)
       {
     	  //add DND
     	    
-          var rootEl = this.widgets.treeview.getEl();
+          var rootEl = tree.getEl();
           
           var dndTargets = Dom.getElementsByClassName("m2-property", "span", rootEl);
           for (var i = 0, j = dndTargets.length; i < j; i++)
           {
- 	            var dnd = new beCPG.DnD(dndTargets[i].parentNode,this,"property");
+ 	            var dnd = new beCPG.DnD(dndTargets[i].parentNode, this, tree,"property");
           }
           
           dndTargets = Dom.getElementsByClassName("dsg-formField", "span", rootEl);
           for (var i = 0, j = dndTargets.length; i < j; i++)
           {
- 	            var dnd = new beCPG.DnD(dndTargets[i].parentNode,this,"field");
+ 	            var dnd = new beCPG.DnD(dndTargets[i].parentNode,this, tree,"field");
           }
+          
+          dndTargets = Dom.getElementsByClassName("m2-type", "span", rootEl);
+          for (var i = 0, j = dndTargets.length; i < j; i++)
+          {
+ 	            var dnd = new beCPG.DnD(dndTargets[i].parentNode,this, tree,"type");
+          }
+          
       },
       /**
        * Fired by YUI TreeView when a node has finished expanding
        * @method onExpandComplete
        * @param oNode {YAHOO.widget.Node} the node recently expanded
        */
-      onExpandComplete: function  DesignerTree_onExpandComplete(oNode)
+      onExpandComplete: function  DesignerTree_onExpandComplete(tree)
       {
+    	  return function(oNode){
+    	  
             // Finished expanding, can now safely set DND targets...
-            this._applyDropTargets();
+            this._applyDropTargets(tree);
+    	  }
       },
       /**
        * Highlights the currently selected node.
@@ -503,13 +498,13 @@
        * @param node {object} New node to set as currently selected one
        * @private
        */
-      _updateSelectedNode: function  DesignerTree_updateSelectedNode(node)
+      _updateSelectedNode: function  DesignerTree_updateSelectedNode(node,tree)
       {
             this._showHighlight(false);
             this.selectedNode = node;
             this._showHighlight(true);
             
-            YAHOO.Bubbling.fire("designerModelNodeChange",{node : node.data});
+            YAHOO.Bubbling.fire("designerModelNodeChange",{node : node.data, tree : tree});
       },
       
 
@@ -538,6 +533,7 @@
 	                      name : p_oData.name,
 	                      nodeRef: p_oData.nodeRef,
 	                      itemType : p_oData.type,
+	                      parentType: (p_oParent!=null &&  p_oParent.data!=null) ? p_oParent.data.itemType : null,
 	                      subType : p_oData.subType,
 	                      description: p_oData.description,
 	                      draggable : p_oData.draggable,
@@ -586,12 +582,13 @@
    /**
     * Designer Library Drag and Drop object declaration.
     */
-   beCPG.DnD = function(id, designerTree, sGroup, config) 
+   beCPG.DnD = function(id, designerTree, tree , sGroup, config) 
    {
       beCPG.DnD.superclass.constructor.call(this, id, sGroup, config);
       var el = this.getDragEl();
       Dom.setStyle(el, "opacity", 0.67); 	
       this.designerTree = designerTree;
+      this.tree = tree;
    };
    
    /**
@@ -699,14 +696,14 @@
        * @method onDropTargetOwnerCallBack
        * @property nodeRef The nodeRef to move the dragged object to.
        */
-      onDropTargetOwnerCallBack: function DesignerTree_DND_onDropTargetOwnerCallBack(nodeRef, type)
+      onDropTargetOwnerCallBack: function DesignerTree_DND_onDropTargetOwnerCallBack(nodeRef, type, tree)
       {
          // Clear the timeout that was set...
          this._clearTimeout();
          
          // Move the document/folder...
          var node = new Alfresco.util.NodeRef(nodeRef);
-         this._performDND(node, type);
+         this._performDND(node, type, tree);
       },
       
       /**
@@ -717,7 +714,7 @@
        * @method _performMove
        * @property nodeRef The nodeRef onto which the proxy should be moved.
        */
-      _performDND: function DesignerTree_DND__performDND(nodeRef, type)
+      _performDND: function DesignerTree_DND__performDND(nodeRef, type, toMovedTree)
       {
     	 try {
     		 var id  = this.getEl().id,
@@ -728,7 +725,8 @@
     			 actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/dnd/"+id+"?nodeRef="+nodeRef;
     	
     		 } else {
-    			 var toMoveRecord = this.designerTree.widgets.treeview.getNodeByElement(this.getEl()); 
+
+    			 var toMoveRecord = this.tree.getNodeByElement(this.getEl()); 
     			 actionUrl = Alfresco.constants.PROXY_URI + "becpg/designer/dnd/"+toMoveRecord.data.nodeRef.replace(":/","")+"?nodeRef="+nodeRef;
     		 }
     		 
@@ -741,7 +739,7 @@
                  {
                      
            		  var treeNode = response.json.treeNode;
-           		  YAHOO.Bubbling.fire("elementCreated",{node:treeNode, focusNodeRef : response.json.persistedObject});
+           		  YAHOO.Bubbling.fire("elementCreated",{node:treeNode, tree : toMovedTree , focusNodeRef : response.json.persistedObject});
            	
            		  //TODO if dropGroup = type it's a move
            		

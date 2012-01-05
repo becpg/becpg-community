@@ -1338,8 +1338,8 @@
       {
          var recordSet = this.widgets.dataTable.getRecordSet(),
             checks = Selector.query('input[type="checkbox"]', this.widgets.dataTable.getTbodyEl()),
-            aPageRecords = this.widgets.paginator.getPageRecords(),
-            startRecord = aPageRecords[0],
+            aPageRecords = this.options.usePagination ? this.widgets.paginator.getPageRecords() : null,
+            startRecord = this.options.usePagination ? aPageRecords[0] : 0,
             len = checks.length,
             record, i, fnCheck;
 

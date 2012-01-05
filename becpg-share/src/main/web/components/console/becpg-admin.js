@@ -66,6 +66,7 @@
          {
             // Buttons
             parent.widgets.reloadModelButton = Alfresco.util.createYUIButton(parent, "reload-model-button", parent.onReloadModelClick);
+            parent.widgets.reloadConfigButton = Alfresco.util.createYUIButton(parent, "reload-config-button", parent.onReloadConfigClick);
             parent.widgets.initRepoButton = Alfresco.util.createYUIButton(parent, "init-repo-button", parent.onInitRepoClick);      
             parent.widgets.initAclButton = Alfresco.util.createYUIButton(parent, "init-acl-button", parent.onInitAclClick);      
          },
@@ -155,7 +156,6 @@
          });
          this.widgets.reloadModelButton.set("disabled", false);
       },
-      
       /**
        * Reload model failure handler
        *
@@ -174,6 +174,73 @@
          {
             Alfresco.util.PopupManager.displayMessage({
                text: this.msg("message.reload-model.failure")
+            });
+         }
+         this.widgets.reloadModelButton.set("disabled", false);
+      },
+
+      /**
+       * Reload config click event handler
+       *
+       * @method onReloadConfigClick
+       * @param e {object} DomEvent
+       * @param args {array} Event parameters (depends on event type)
+       */
+      onReloadConfigClick: function ConsolebeCPGAdmin_onReloadConfigClick(e, args)
+      {
+         // Disable the button temporarily
+         this.widgets.reloadConfigButton.set("disabled", true);                                  
+
+         Alfresco.util.Ajax.request(
+         {
+            url: Alfresco.constants.URL_SERVICECONTEXT + "components/console/config/reload",
+            method: Alfresco.util.Ajax.GET,            
+				responseContentType: Alfresco.util.Ajax.JSON,
+            successCallback:
+            {
+               fn: this.onReloadConfigSuccess,
+               scope: this
+            },
+            failureCallback:
+            {
+               fn: this.onReloadConfigFailure,
+               scope: this
+            }
+         });
+      },
+      
+      /**
+       * Reload config success handler
+       *
+       * @method onReloadConfigSuccess
+       * @param response {object} Server response
+       */
+      onReloadConfigSuccess: function ConsolebeCPGAdmin_onReloadConfigSuccess(response)
+      {        
+         Alfresco.util.PopupManager.displayMessage({
+        	 text: this.msg("message.reload-config.success")
+         });
+         this.widgets.reloadConfigButton.set("disabled", false);
+      },
+      
+      /**
+       * Reload config failure handler
+       *
+       * @method onReloadModelFailure
+       * @param response {object} Server response
+       */
+      onReloadConfigFailure: function ConsolebeCPGAdmin_onReloadConfigFailure(response)
+      {
+         if (response.json.message != null)
+         {
+            Alfresco.util.PopupManager.displayPrompt({
+               text: response.json.message
+            });
+         }
+         else
+         {
+            Alfresco.util.PopupManager.displayMessage({
+               text: this.msg("message.reload-config.failure")
             });
          }
          this.widgets.reloadModelButton.set("disabled", false);

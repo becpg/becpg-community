@@ -1,5 +1,15 @@
 
 
+.designerPalettes-toolbar {
+	 margin: 0 -10px;
+}
+
+.designerPalettes .header-bar {
+    min-height: 2em;
+    padding: 4px 1em;
+    
+}
+
 /*
  Controls
 */

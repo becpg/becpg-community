@@ -9,7 +9,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.designer.data.FormControl;
-import fr.becpg.repo.designer.data.ModelTree;
+import fr.becpg.repo.designer.data.DesignerTree;
 
 /**
  * 
@@ -20,11 +20,9 @@ public interface DesignerService {
 
 	public NodeRef createModelAspectNode(NodeRef parentNode, InputStream modelXml);
 
-	public void writeXmlFromModelAspectNode(NodeRef dictionnaryModelNode);
+	public void writeXml(NodeRef nodeRef);
 	
-	public ModelTree getModelTree(NodeRef modelNodeRef);
-
-	public NodeRef createModelAspectNode(NodeRef dictionaryModelNodeRef);
+	public DesignerTree getDesignerTree(NodeRef nodeRef);
 	
 	public NodeRef createModelElement(NodeRef parentNodeRef, QName typeName, QName assocName, Map<QName,Serializable> props, String modelTemplate);
 
@@ -32,7 +30,7 @@ public interface DesignerService {
 
 	public NodeRef findModelNodeRef(NodeRef nodeRef);
 
-	void publish(NodeRef dictionaryModelNodeRef);
+	void publish(NodeRef nodeRef);
 
 	public List<FormControl> getFormControls();
 

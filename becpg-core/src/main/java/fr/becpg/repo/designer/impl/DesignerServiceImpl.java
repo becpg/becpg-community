@@ -1,5 +1,7 @@
 package fr.becpg.repo.designer.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,6 +13,8 @@ import java.util.Map.Entry;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.M2Model;
+import org.alfresco.service.cmr.dictionary.AssociationDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -18,15 +22,16 @@ import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import fr.becpg.model.DesignerModel;
+import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
+import fr.becpg.repo.designer.data.DesignerTree;
 import fr.becpg.repo.designer.data.FormControl;
-import fr.becpg.repo.designer.data.ModelTree;
 
 public class DesignerServiceImpl implements DesignerService {
 	
@@ -37,10 +42,18 @@ public class DesignerServiceImpl implements DesignerService {
 	/** The content service **/
 	private ContentService contentService;
 	
+	private DictionaryService dictionaryService;
 	
 	private MetaModelVisitor metaModelVisitor;
 	
 	private FormModelVisitor formModelVisitor;
+	
+	private DesignerTreeVisitor designerTreeVisitor;
+	
+	/**
+	 * Path where config files are stored when published
+	 */
+	private String configPath;
 	
 	//Controls cache
 	private List<FormControl> controls = new ArrayList<FormControl>();
@@ -48,7 +61,20 @@ public class DesignerServiceImpl implements DesignerService {
 
 	private static Log logger = LogFactory.getLog(DesignerServiceImpl.class);
 	
+	
+	/**
+	 * @param dictionaryService the dictionaryService to set
+	 */
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
 
+	/**
+	 * @param configPath the configPath to set
+	 */
+	public void setConfigPath(String configPath) {
+		this.configPath = configPath;
+	}
 
 	/**
 	 * @param contentService the contentService to set
@@ -78,6 +104,13 @@ public class DesignerServiceImpl implements DesignerService {
 		this.formModelVisitor = formModelVisitor;
 	}
 
+
+	/**
+	 * @param designerTreeVisitor the designerTreeVisitor to set
+	 */
+	public void setDesignerTreeVisitor(DesignerTreeVisitor designerTreeVisitor) {
+		this.designerTreeVisitor = designerTreeVisitor;
+	}
 
 	public void init(){
 		logger.debug("Init DesignerServiceImpl");
@@ -125,37 +158,68 @@ public class DesignerServiceImpl implements DesignerService {
 	}
 
 	@Override
-	public void writeXmlFromModelAspectNode(NodeRef dictionaryModelNodeRef) {
-		if(nodeService.hasAspect(dictionaryModelNodeRef, DesignerModel.ASPECT_MODEL)){
-			ContentWriter writer = contentService.getWriter(dictionaryModelNodeRef, ContentModel.PROP_CONTENT,true);
-			OutputStream out = null ;
-			try {
-				out = writer.getContentOutputStream();
-				 NodeRef modelNodeRef = findModelNodeRef(dictionaryModelNodeRef);	
-				
-				if(modelNodeRef != null){
-					metaModelVisitor.visitModelXml( modelNodeRef,out);
+	public void writeXml(NodeRef nodeRef) {
+
+		ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+		OutputStream out = null;
+		try {
+			out = writer.getContentOutputStream();
+			if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)) {
+				logger.debug("Write model XML");
+				NodeRef modelNodeRef = findModelNodeRef(nodeRef);
+
+				if (modelNodeRef != null) {
+					metaModelVisitor.visitModelXml(modelNodeRef, out);
 
 				}
-			} catch (Exception e){
-				logger.error(e,e);
+			} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)){
+				logger.debug("Write config XML");
+				NodeRef configNodeRef = findConfigNodeRef(nodeRef);
+				formModelVisitor.visitConfigXml(configNodeRef,out);
+				
 			}
-			finally {
-				if(out!=null){
-					try {
-						out.close();
-					} catch (Exception e) {
-						//Cannot do nothing here
-					}
+		} catch (Exception e) {
+			logger.error(e, e);
+		} finally {
+			if (out != null) {
+				try {
+					out.close();
+				} catch (Exception e) {
+					// Cannot do nothing here
 				}
 			}
 		}
+
 	}
 	
 	@Override
-	public void publish(NodeRef dictionaryModelNodeRef) {
-		nodeService.setProperty(dictionaryModelNodeRef, ContentModel.PROP_MODEL_ACTIVE, true);
-		
+	public void publish(NodeRef nodeRef) {
+		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)) {
+			logger.debug("Publish model");
+			nodeService.setProperty(nodeRef, ContentModel.PROP_MODEL_ACTIVE, true);
+		} else if(nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)){
+			String name = (String) nodeService.getProperty(nodeRef,ContentModel.PROP_NAME);
+			String path = configPath+System.getProperty("file.separator")+name;
+			logger.debug("Publish config under "+path);
+			ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+			
+			InputStream in = null ;
+			OutputStream out = null;
+			try {
+				File file = new File(path);
+				if(!file.exists()){
+					file.createNewFile();
+				}
+				out = new FileOutputStream(file);
+				in = reader.getContentInputStream();
+				IOUtils.copy(in, out);
+			}  catch (Exception e) {
+				logger.error(e,e);
+			}	finally {
+				IOUtils.closeQuietly(in);
+				IOUtils.closeQuietly(out);
+			}
+		}
 	}
 
 	
@@ -190,33 +254,51 @@ public class DesignerServiceImpl implements DesignerService {
 		return modelNodeRef;
 	}
 
+	public NodeRef findConfigNodeRef(NodeRef nodeRef) {
+
+		for (ChildAssociationRef assoc : nodeService.getChildAssocs(nodeRef)) {
+			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_CONFIG)) {
+				return assoc.getChildRef();
+			}
+		}
+		return null;
+	}
+
 	@Override
-	public ModelTree getModelTree(NodeRef dictionaryModelNodeRef) {
-		 NodeRef modelNodeRef = null;	
-		 if(nodeService.hasAspect(dictionaryModelNodeRef, DesignerModel.ASPECT_MODEL)){
-			  modelNodeRef = findModelNodeRef(dictionaryModelNodeRef);	
-			  if(logger.isWarnEnabled() && modelNodeRef==null){
+	public DesignerTree getDesignerTree(NodeRef nodeRef) {
+		 NodeRef treeNodeRef = null;	
+		 if(nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)){
+			  treeNodeRef = findModelNodeRef(nodeRef);	
+			  if(logger.isWarnEnabled() && treeNodeRef==null){
 				  logger.warn("No assoc model found for this nodeRef");
 			  }
-		 } else if (nodeService.getType(dictionaryModelNodeRef).getNamespaceURI().equals(DesignerModel.M2_URI)
-				 || nodeService.getType(dictionaryModelNodeRef).getNamespaceURI().equals(DesignerModel.DESIGNER_URI)){ 
-			 modelNodeRef  = dictionaryModelNodeRef;
+		 }else if(nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)){
+			  treeNodeRef = findConfigNodeRef(nodeRef);	
+			  if(logger.isWarnEnabled() && treeNodeRef==null){
+				  logger.warn("No assoc config found for this nodeRef");
+			  }
+		 } else if (nodeService.getType(nodeRef).getNamespaceURI().equals(DesignerModel.M2_URI)
+				 || nodeService.getType(nodeRef).getNamespaceURI().equals(DesignerModel.DESIGNER_URI)){ 
+			 treeNodeRef  = nodeRef;
 		 } else {
 				logger.info("Node has not mandatory aspect : model aspect. Creating ...");
 		}
-		if(modelNodeRef== null){
-			modelNodeRef  = createModelAspectNode(dictionaryModelNodeRef);
-		}
-		 
-		if(modelNodeRef!= null){
-			return metaModelVisitor.visitModelTreeNodeRef(modelNodeRef);
+		if(treeNodeRef== null){
+			 if(nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)){
+				 treeNodeRef  = createConfigAspectNode(nodeRef);
+			 } else {
+				 treeNodeRef  = createModelAspectNode(nodeRef);
+			 }
 		}
 		
-		return new ModelTree();
+		if(treeNodeRef!= null){
+			return designerTreeVisitor.visitModelTreeNodeRef(treeNodeRef);
+		}
+		
+		return new DesignerTree();
 	}
 	
 	
-	@Override
 	public NodeRef  createModelAspectNode(NodeRef dictionaryModelNodeRef){
 		if(ContentModel.TYPE_DICTIONARY_MODEL.equals(nodeService.getType(dictionaryModelNodeRef))){
 			ContentReader reader = contentService.getReader(dictionaryModelNodeRef, ContentModel.PROP_CONTENT);
@@ -238,10 +320,47 @@ public class DesignerServiceImpl implements DesignerService {
 		}
 		return null;
 	}
+	
+	
+	public NodeRef  createConfigAspectNode(NodeRef parentNodeRef){
+		ContentReader reader = contentService.getReader(parentNodeRef, ContentModel.PROP_CONTENT);
+		ChildAssociationRef childAssociationRef = nodeService.createNode(parentNodeRef, DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.TYPE_DSG_CONFIG);
+		NodeRef configNodeRef = childAssociationRef.getChildRef();
+		nodeService.setProperty(configNodeRef, DesignerModel.PROP_DSG_ID, nodeService.getProperty(parentNodeRef, ContentModel.PROP_NAME));
+		InputStream in = null ;
+			try {
+				in = reader.getContentInputStream();
+				
+				formModelVisitor.visitConfigNodeRef(configNodeRef,
+						in);
+			} catch (Exception e) {
+				logger.error(e,e);
+			} finally {
+				if(in!=null){
+					try {
+						in.close();
+					} catch (Exception e) {
+						//Cannot do nothing here
+					}
+				}
+			}
+			return configNodeRef;
+	}
 
 	@Override
 	public NodeRef createModelElement(NodeRef parentNodeRef, QName nodeTypeQname, QName assocQname, Map<QName, Serializable> props,
 			String modelTemplate) {
+		 
+		AssociationDefinition assocDef = dictionaryService.getAssociation(assocQname);
+		if(!assocDef.isTargetMany()){
+			logger.debug("Assoc is unique remove existing child");
+			List<ChildAssociationRef> assocs =  nodeService.getChildAssocs(parentNodeRef);
+			for(ChildAssociationRef assoc : assocs){
+				if(assoc.getTypeQName().equals(assocQname)){
+					nodeService.deleteNode(assoc.getChildRef());
+				}
+			}
+		}
 		
 		ChildAssociationRef childAssociationRef = nodeService.createNode(parentNodeRef,
 				assocQname, assocQname, nodeTypeQname);
@@ -353,12 +472,14 @@ public class DesignerServiceImpl implements DesignerService {
 	 * move of field
 	 * from set to form
 	 * from form to set
+	 * move of type
+	 * from model to config -->  create form
 	 */
 	@Override
 	public NodeRef moveElement(NodeRef from, NodeRef to) {
 
 		NodeRef ret = null;
-		logger.debug("Try to move node");
+		logger.debug("Try to move node from type :"+nodeService.getType(from));
 		if(DesignerModel.TYPE_M2_PROPERTY.equals(nodeService.getType(from))){
 			logger.debug("Node is a property");
 			if(DesignerModel.TYPE_M2_TYPE.equals(nodeService.getType(to))
@@ -385,6 +506,11 @@ public class DesignerServiceImpl implements DesignerService {
 				ChildAssociationRef assocRef = nodeService.moveNode(from, to, DesignerModel.ASSOC_DSG_FIELDS,  DesignerModel.ASSOC_DSG_FIELDS);
 				ret = assocRef.getChildRef();
 			
+			}
+		} else if(DesignerModel.TYPE_M2_TYPE.equals(nodeService.getType(from))){
+			if(DesignerModel.TYPE_DSG_CONFIG.equals(nodeService.getType(to))){
+			  ret = formModelVisitor.visitM2Type(from,to);
+			  	
 			}
 		}
 		if(ret==null){

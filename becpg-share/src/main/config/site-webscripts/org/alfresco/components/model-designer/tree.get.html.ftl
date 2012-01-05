@@ -18,17 +18,24 @@
 	                </ul>
 	          </div>
 	     </div>
-         <span id="${id}-newModelButton" class="yui-button yui-push-button new-model" style="display:none;">
-             <span class="first-child">
-                 <button type="button">&nbsp;</button>
-             </span>
-         </span>
+	      <button id="${id}-configSelect-button" name="configSelect-button">${msg("menu.select.config")}</button>
+	   	  <div id="${id}-configSelect-menu" class="yuimenu" style="visibility:hidden;">
+	          <div class="bd">
+	               <ul>
+	                  <#list configs as node >
+	                     <li><a href="#"><span class="${node.nodeRef}">${node.displayName}</span></a></li>
+	                  </#list>
+	                </ul>
+	          </div>
+	     </div>
       </div>
    </div>
    
    <div class="filter  tree-container" >
+   	   <h2>${msg("header.config")}</h2>
+	   <div id="${id}-form-tree" class="filter"></div>
 	   <h2>${msg("header.model")}</h2>
-	   <div id="${id}-tree" class="filter"></div>
+	   <div id="${id}-model-tree" class="filter"></div>
    </div>
    
 </div>

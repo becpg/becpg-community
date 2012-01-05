@@ -35,4 +35,15 @@
 	    <div style="clear:both"></div>
 	 </div>
 </div>
+
+<div  id="${id}-dnd-instructions-config"  class="hidden instruction">
+ 	<span class="designerInstructionTitle">${msg("dnd.drop.title")}</span>
+	 <div>
+	    <div class="designerInstructionColumn designerInstructionColumnRightBorder">
+	       <img class="designerInstructionImage" src="${url.context}/res/components/model-designer/images/help-drop-list-target-96.png">
+	       <span class="designerInstructionText">${msg("dnd.drop.createformconfig.description")}</span>
+	    </div>
+	    <div style="clear:both"></div>
+	 </div>
+</div>
 </#macro>

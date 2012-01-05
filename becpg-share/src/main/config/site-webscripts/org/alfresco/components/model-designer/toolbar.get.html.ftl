@@ -1,10 +1,6 @@
 <#assign id = args.htmlid>
 <script type="text/javascript">//<![CDATA[
-   new beCPG.component.DesignerToolbar("${id}").setOptions(
-   {
-      itemType: "${page.url.templateArgs.itemType!""}",
-      modelNodeRef: "${nodeRef!""}"
-   }).setMessages(${messages});
+   new beCPG.component.DesignerToolbar("${id}").setMessages(${messages});
 //]]></script>
 <div id="${args.htmlid}-body" class="designer-toolbar toolbar">
    <div id="${args.htmlid}-headerBar" class="header-bar flat-button theme-bg-2">

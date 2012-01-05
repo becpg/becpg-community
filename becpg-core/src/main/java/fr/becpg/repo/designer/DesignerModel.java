@@ -1,4 +1,4 @@
-package fr.becpg.model;
+package fr.becpg.repo.designer;
 
 import org.alfresco.service.namespace.QName;
 /**
@@ -49,10 +49,18 @@ public class DesignerModel {
 
 	public static final QName TYPE_DSG_CONTROLPARAMETER = QName.createQName(DESIGNER_URI,"controlParameter");
 	
+	public static final QName TYPE_DSG_CONFIG_ELEMENT = QName.createQName(DESIGNER_URI,"configElement");
+	
+
+	public static final QName TYPE_DSG_CONFIG = QName.createQName(DESIGNER_URI,"config");
+	
 	
 	/**
 	 * Aspects
 	 */
+	
+	public static final QName ASPECT_CONFIG =  QName.createQName(DESIGNER_URI,
+			"configAspect");
 	
 	public static final QName ASPECT_MODEL =  QName.createQName(DESIGNER_URI,
 			"modelAspect");
@@ -107,7 +115,33 @@ public class DesignerModel {
 	
 	public static final QName PROP_DSG_PARAMETERDESCRIPTION = QName.createQName(DESIGNER_URI,"parameterDescription");
 	
+	public static final QName PROP_DSG_CONFIGEVALUATOR = QName.createQName(DESIGNER_URI,"configEvaluator");
 
+	
+	public static final QName PROP_DSG_SUBMISSION_URL  = QName.createQName(DESIGNER_URI,"submissionUrl");
+	
+	public static final QName PROP_DSG_LABEL = QName.createQName(DESIGNER_URI,"label");
+	
+	public static final QName PROP_DSG_LABELID = QName.createQName(DESIGNER_URI,"labelId");
+	
+	public static final QName PROP_DSG_HIDE = QName.createQName(DESIGNER_URI,"hide");
+
+	public static final QName PROP_DSG_FORMODE = QName.createQName(DESIGNER_URI,"forMode");
+
+	public static final QName PROP_DSG_FORCE = QName.createQName(DESIGNER_URI,"force");
+
+	public static final QName PROP_DSG_DESCRIPTION = QName.createQName(DESIGNER_URI,"description");
+
+	public static final QName PROP_DSG_DESCRIPTIONID = QName.createQName(DESIGNER_URI,"descriptionId");
+
+	public static final QName PROP_DSG_HELP = QName.createQName(DESIGNER_URI,"help");
+
+	public static final QName PROP_DSG_HELPID = QName.createQName(DESIGNER_URI,"helpId");
+
+	public static final QName PROP_DSG_READONLY = QName.createQName(DESIGNER_URI,"readOnly");
+
+	public static final QName PROP_DSG_MANDATORY = QName.createQName(DESIGNER_URI,"mandatory");
+	
 	/**
 	 * Assoc
 	 */
@@ -138,6 +172,17 @@ public class DesignerModel {
 	public static final QName ASSOC_DSG_SETS = QName.createQName(DESIGNER_URI,"sets");
 	
 	public static final QName ASSOC_DSG_PARAMETERS = QName.createQName(DESIGNER_URI,"parameters");
+
+	public static final QName ASSOC_DSG_CONFIG_ELEMENTS = QName.createQName(DESIGNER_URI,"configElements");
+	
+	public static final QName ASSOC_DSG_FORMS = QName.createQName(DESIGNER_URI,"forms");
+
+	public static final QName ASSOC_DSG_CONFIG = QName.createQName(DESIGNER_URI,"config");
+
+
+
+
+
 
 	
 	

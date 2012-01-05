@@ -81,7 +81,7 @@ public class ModelTreeWebScript extends DeclarativeWebScript  {
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 
-		model.put(MODEL_TREE, designerService.getModelTree(nodeRef));
+		model.put(MODEL_TREE, designerService.getDesignerTree(nodeRef));
 	
 		
 		return model;

@@ -1,8 +1,12 @@
 <#include "include/alfresco-template.ftl" />
 <@templateHeader>
+   <@script type="text/javascript" src="${url.context}/res/templates/designer/designer.js"></@script>
+   <@link rel="stylesheet" type="text/css" href="${url.context}/res/templates/designer/designer.css" />
    <script type="text/javascript">//<![CDATA[
-      (new Alfresco.widget.Resizer("modelTree")).DEFAULT_FILTER_PANEL_WIDTH=190;
+      (new Alfresco.widget.Resizer("modelTree")).DEFAULT_FILTER_PANEL_WIDTH = 300;  
+       new beCPG.widget.separator("dsg-content-sep");
    //]]></script>
+   
 </@>
 
 <@templateBody>
@@ -18,6 +22,9 @@
 	                <div class="yui-u first" id="dsg-content">
 		                <@region id="toolbar" scope="template" protected=true />         
 		                <@region id="modelForm" scope="template" protected=true />
+		                <div id="dsg-content-sep"  >
+							<div class="dsg-content-sep-handle"></div>
+						</div>
 	                </div>
 	                 <div class="yui-u" id="dsg-palettes">
 		               <@region id="modelPalettes" scope="template" protected=true />

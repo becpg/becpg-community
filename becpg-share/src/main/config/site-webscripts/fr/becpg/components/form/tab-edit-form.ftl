@@ -39,8 +39,9 @@
         </@>
 </#if>
 
-<script>
-(function() {
-    var tabView = new YAHOO.widget.TabView('${formId}-tabview');
-})();
+<script type="text/javascript">//<![CDATA[
+	YAHOO.util.Event.onAvailable('${formId}-tabview', function(){
+		var tabView = new YAHOO.widget.TabView('${formId}-tabview');
+	},this);
+//]]>
 </script>

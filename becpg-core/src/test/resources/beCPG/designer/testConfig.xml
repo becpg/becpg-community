@@ -29,59 +29,6 @@
 	</config>
 	
 	
-	<config evaluator="node-type" condition="dsg:config">
-		<forms>
-			<form>
-				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
-				<field-visibility>
-					<show id="dsg:id" />
-				</field-visibility>
-				<appearance>
-					<set id="mainInfo" appearance="panel" label="Informations" />
-					<field id="dsg:id" set="mainInfo"/>
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	<config evaluator="model-type" condition="dsg:config">
-		<forms>
-			<form id="datagrid">
-				<field-visibility>
-					<show id="dsg:id" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-	
-	
-		<config evaluator="node-type" condition="dsg:configElement">
-		<forms>
-			<form>
-				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
-				<field-visibility>
-					<show id="dsg:id" />
-					<show id="dsg:configEvaluator" />
-				</field-visibility>
-				<appearance>
-					<set id="mainInfo" appearance="panel" label="Informations" />
-					<field id="dsg:id" set="mainInfo"/>
-					<field id="dsg:configEvaluator" set="mainInfo" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	<config evaluator="model-type" condition="dsg:configElement">
-		<forms>
-			<form id="datagrid">
-				<field-visibility>
-					<show id="dsg:id" />
-					<show id="dsg:configEvaluator" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-	
-	
 	<config evaluator="node-type" condition="dsg:formSet">
 		<forms>
 			<form>

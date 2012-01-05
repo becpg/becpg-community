@@ -22,7 +22,7 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
-import fr.becpg.model.DesignerModel;
+import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
 
 // TODO: Auto-generated Javadoc
@@ -102,7 +102,7 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 	 * Retrieve model Tree
 	 * 
 	 *    <url>/becpg/designer/create/element?nodeRef={nodeRef}</url>
-	 *	  <url>/becpg/designer/dnd/{palette_el_id}nodeRef={nodeRef}</url>
+	 *	  <url>/becpg/designer/dnd/{palette_el_id}?nodeRef={nodeRef}</url>
 	 *	  <url>/becpg/designer/dnd/{store_type}/{store_id}/{id}?nodeRef={nodeRef}</url>
 	 *
 	 * @param req the req
@@ -177,7 +177,7 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 		
 		if(createNodeRef!=null){
 			model.put(PERSISTED_OBJECT, createNodeRef.toString());
-			model.put(TREE_NODE,designerService.getModelTree(parentNodeRef));
+			model.put(TREE_NODE,designerService.getDesignerTree(parentNodeRef));
 		}
 		
 		

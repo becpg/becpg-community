@@ -16,7 +16,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.common.RepoConsts;
-import fr.becpg.model.DesignerModel;
+import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
 import fr.becpg.repo.listvalue.ListValueExtractor;
 import fr.becpg.repo.listvalue.ListValuePage;

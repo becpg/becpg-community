@@ -8,7 +8,7 @@ import java.util.List;
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  * Tree model representing the xml tree.
  */
-public class ModelTree {
+public class DesignerTree {
 	
 	private String type;
 	private String formId;
@@ -20,15 +20,15 @@ public class ModelTree {
 	private Boolean hasError = false; 
 	
 	
-	public ModelTree(String nodeRef) {
+	public DesignerTree(String nodeRef) {
 		super();
 		this.nodeRef = nodeRef;
 	}
 
-	public ModelTree() {
+	public DesignerTree() {
 	}
 
-	private List<ModelTree> childrens = new ArrayList<ModelTree>();
+	private List<DesignerTree> childrens = new ArrayList<DesignerTree>();
 
 	/**
 	 * @return the type
@@ -75,7 +75,7 @@ public class ModelTree {
 	/**
 	 * @return the childrens
 	 */
-	public List<ModelTree> getChildrens() {
+	public List<DesignerTree> getChildrens() {
 		return childrens;
 	}
 
@@ -113,7 +113,7 @@ public class ModelTree {
 	/**
 	 * @param childrens the childrens to set
 	 */
-	public void setChildrens(List<ModelTree> childrens) {
+	public void setChildrens(List<DesignerTree> childrens) {
 		this.childrens = childrens;
 	}
 
@@ -123,7 +123,8 @@ public class ModelTree {
 	 */
 	public Boolean getIsDraggable() {
 		if("m2:property".equals(type) 
-				||  "dsg:formField".equals(type)){
+				||  "dsg:formField".equals(type)
+				|| "m2:type".equals(type)){
 			return true;
 		}
 		return false;
@@ -135,25 +136,18 @@ public class ModelTree {
 				|| "m2:propertyOverrides".equals(type) ) {
 			ret.add("property");
 		}
-		if ("dsg:sets".equals(type)) {
+		
+		if ("dsg:form".equals(type) ||  "dsg:sets".equals(type)) {
 			ret.add("set");
 		}
 
-		if ("dsg:fields".equals(type)) {
-			ret.add("property");
-			ret.add("field");
+		if ("dsg:config".equals(type) || "dsg:configElements".equals(type) ) {	
+			ret.add("type");
 		}
-//		later
-//		if ("dsg:forms".equals(type) ) {
-//			
-//			ret.add("type");
-//		}
-//		
-		if ("dsg:form".equals(type) || "dsg:formSet".equals(type) || "dsg:fields".equals(type)
-				|| "dsg:sets".equals(type)) {
+	
+		if ("dsg:form".equals(type) || "dsg:formSet".equals(type) || "dsg:fields".equals(type)) {
 			ret.add("property");
 			ret.add("field");
-			ret.add("set");
 		}
 
 		if ("dsg:formField".equals(type)) {
@@ -236,7 +230,7 @@ public class ModelTree {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ModelTree other = (ModelTree) obj;
+		DesignerTree other = (DesignerTree) obj;
 		if (childrens == null) {
 			if (other.childrens != null)
 				return false;
@@ -292,7 +286,7 @@ public class ModelTree {
 	public String toString() {
 		return "ModelTree [type=" + type + ", formId=" + formId + ", nodeRef=" + nodeRef + ", name=" + name
 				+ ", title=" + title + ", description=" + description + ", subType=" + subType + ", hasError="
-				+ hasError + ", childrens=" + childrens + "]";
+				+ hasError + ", childrens=\n" + childrens + "]";
 	}
 
 	

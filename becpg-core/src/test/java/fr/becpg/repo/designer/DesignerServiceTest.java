@@ -20,9 +20,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
-import fr.becpg.model.DesignerModel;
 import fr.becpg.repo.designer.data.FormControl;
-import fr.becpg.repo.designer.data.ModelTree;
+import fr.becpg.repo.designer.data.DesignerTree;
+import fr.becpg.repo.designer.impl.DesignerTreeVisitor;
+import fr.becpg.repo.designer.impl.FormModelVisitor;
 import fr.becpg.repo.designer.impl.MetaModelVisitor;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -43,9 +44,11 @@ public class DesignerServiceTest extends RepoBaseTestCase {
 	/** The file folder service. */
 	private FileFolderService fileFolderService;
 	
-	private NamespaceService namespaceService;
-	
 	private MetaModelVisitor metaModelVisitor;
+	
+	private FormModelVisitor formModelVisitor;
+	
+	private DesignerTreeVisitor designerTreeVisitor;
 	
 	private DesignerService designerService;
 
@@ -63,7 +66,6 @@ public class DesignerServiceTest extends RepoBaseTestCase {
 	 * 
 	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -75,9 +77,12 @@ public class DesignerServiceTest extends RepoBaseTestCase {
 		fileFolderService = (FileFolderService) appCtx
 				.getBean("fileFolderService");
 		repositoryHelper = (Repository) appCtx.getBean("repositoryHelper");
-		namespaceService = (NamespaceService) appCtx.getBean("namespaceService");
 		
 		metaModelVisitor = (MetaModelVisitor) appCtx.getBean("metaModelVisitor");
+		
+		formModelVisitor = (FormModelVisitor) appCtx.getBean("formModelVisitor");
+		designerTreeVisitor= (DesignerTreeVisitor) appCtx.getBean("designerTreeVisitor");
+		
 		
 		authenticationComponent.setSystemUserAsCurrentUser();
 		
@@ -105,59 +110,106 @@ public class DesignerServiceTest extends RepoBaseTestCase {
 
 	}
 
-//	public void testMetaModelVisitor() {
-//
-//		
-//		transactionService.getRetryingTransactionHelper().doInTransaction(
-//				new RetryingTransactionCallback<NodeRef>() {
-//					@Override
-//					public NodeRef execute() throws Throwable {
-//
-//						/*-- Create test folder --*/
-//						NodeRef folderNodeRef = nodeService.getChildByName(
-//								repositoryHelper.getCompanyHome(),
-//								ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-//						if (folderNodeRef != null) {
-//							fileFolderService.delete(folderNodeRef);
-//						}
-//						folderNodeRef = fileFolderService.create(
-//								repositoryHelper.getCompanyHome(),
-//								PATH_TESTFOLDER, ContentModel.TYPE_FOLDER)
-//								.getNodeRef();
-//						
-//						
-//
-//						InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/designer/testModel.xml");
-//						assertNotNull(in);
-//						
-//						M2Model m2Model = M2Model.createModel(in);
-//						
-//						NodeRef modelNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, DesignerModel.TYPE_M2_MODEL).getChildRef();
-//						
-//						//Try to parse becpgModel 
-//						metaModelVisitor.visitModelNodeRef(modelNodeRef,
-//								m2Model);
-//						
-//						
-//						
-//						
-//						ModelTree tree = metaModelVisitor.visitModelTreeNodeRef(modelNodeRef);
-//						assertNotNull(tree);
-//						logger.debug(tree);
-//
-//						//To Xml
-//						metaModelVisitor.visitModelXml(modelNodeRef, System.out);
-//						
-//						
-//						
-//						
-//						return null;
-//
-//					}
-//				}, false, true);
-//
-//
-//	}
+	public void testMetaModelVisitor() {
+
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						/*-- Create test folder --*/
+						NodeRef folderNodeRef = nodeService.getChildByName(
+								repositoryHelper.getCompanyHome(),
+								ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
+						if (folderNodeRef != null) {
+							fileFolderService.delete(folderNodeRef);
+						}
+						folderNodeRef = fileFolderService.create(
+								repositoryHelper.getCompanyHome(),
+								PATH_TESTFOLDER, ContentModel.TYPE_FOLDER)
+								.getNodeRef();
+						
+						
+
+						InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/designer/testModel.xml");
+						assertNotNull(in);
+						
+						M2Model m2Model = M2Model.createModel(in);
+						
+						NodeRef modelNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, DesignerModel.TYPE_M2_MODEL).getChildRef();
+						
+						//Try to parse becpgModel 
+						metaModelVisitor.visitModelNodeRef(modelNodeRef,
+								m2Model);
+						
+						
+						
+						
+						DesignerTree tree = designerTreeVisitor.visitModelTreeNodeRef(modelNodeRef);
+						assertNotNull(tree);
+						logger.debug(tree);
+
+						//To Xml
+						metaModelVisitor.visitModelXml(modelNodeRef, System.out);
+						
+						
+						
+						
+						return null;
+
+					}
+				}, false, true);
+
+
+	}
+	
+	
+
+	public void testFormModelVisitor() {
+
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						/*-- Create test folder --*/
+						NodeRef folderNodeRef = nodeService.getChildByName(
+								repositoryHelper.getCompanyHome(),
+								ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
+						if (folderNodeRef != null) {
+							fileFolderService.delete(folderNodeRef);
+						}
+						folderNodeRef = fileFolderService.create(
+								repositoryHelper.getCompanyHome(),
+								PATH_TESTFOLDER, ContentModel.TYPE_FOLDER)
+								.getNodeRef();
+						
+						
+
+						InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/designer/testConfig.xml");
+						assertNotNull(in);
+						
+						
+						NodeRef configNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, ContentModel.TYPE_CONTENT).getChildRef();
+						nodeService.addAspect(configNodeRef, DesignerModel.ASPECT_CONFIG, new HashMap<QName, Serializable>());
+		
+						
+						formModelVisitor.visitConfigNodeRef(configNodeRef, in);
+						//To Xml
+						formModelVisitor.visitConfigXml(configNodeRef, System.out);
+						
+						
+						
+						
+						return null;
+
+					}
+				}, false, true);
+
+
+	}
 	
 	public void testDesignerService() {
 

@@ -22,5 +22,27 @@ function getListModels()
 	
 }
 
+function getListConfigs()
+{
+   var configs = [],
+      result = remote.call("/becpg/designer/config/list");
+   
+   if (result.status == 200)
+   {
+      var results = eval('(' + result + ')'),
+         node;
+      
+      for (var i = 0, ii = results.items.length; i < ii; i++)
+      {
+    	  node = results.items[i];
+    	  configs.push(node);
+      }
+   }
+
+   return configs;
+	
+}
+
 model.models = getListModels();
+model.configs = getListConfigs();
 model.nodeRef  =  (page.url.args["nodeRef"] !== null) ? page.url.args["nodeRef"] : null;

@@ -24,13 +24,14 @@
     background-color: #E3EAEC;
     color: #000000;
 }
-/* 
+ 
 .designer-form .yui-navset .yui-nav a {
     background-image: none ;
     background-color: #FFFFFF;
     border-color: #D8D8D8;
     color: #000000;
-}   */
+}  
+
  .designer-form .yui-navset .yui-nav, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav {
     border-color: #E3EAEC;
 }

@@ -4,6 +4,7 @@
 <![endif]-->
 <input id="yui-history-field" type="hidden" />
 <script type="text/javascript">//<![CDATA[
+(function() {
 <#if page??>
 new beCPG.module.EntityDataGrid('${id}').setOptions(
    {
@@ -20,6 +21,7 @@ new beCPG.module.EntityDataGrid('${id}').setOptions(
       usePagination: ${(args.pagination!false)?string},
 	  entityNodeRef: "${args.nodeRef!""}"
    }).setMessages(${messages});
+})();
 //]]>
 </#if>
 </script>

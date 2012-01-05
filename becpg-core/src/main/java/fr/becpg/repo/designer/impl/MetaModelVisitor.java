@@ -9,7 +9,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,12 +27,10 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import com.google.gdata.data.dublincore.Date;
 
-import fr.becpg.model.DesignerModel;
-import fr.becpg.repo.designer.data.ModelTree;
+import fr.becpg.repo.designer.DesignerModel;
 
 public class MetaModelVisitor {
 
@@ -124,79 +121,6 @@ public class MetaModelVisitor {
 		}
 
 	}
-
-	public ModelTree visitModelTreeNodeRef(NodeRef modelNodeRef) {
-		ModelTree ret = extractModelTreeNode(modelNodeRef);
-
-		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(modelNodeRef);
-		Map<String, ModelTree> assocRoots = new HashMap<String, ModelTree>();
-		for (ChildAssociationRef assoc : assocs) {
-			String assocName = assoc.getQName().getLocalName();
-			ModelTree tmp = null;
-			if (assocRoots.containsKey(assocName)) {
-				tmp = assocRoots.get(assocName);
-			} else {
-				tmp = new ModelTree();
-				tmp.setName(assocName);
-				tmp.setType(assoc.getTypeQName().toPrefixString(namespaceService));
-				String title = "";
-				if(DesignerModel.M2_URI.equals(assoc.getTypeQName().getNamespaceURI())){
-					title = I18NUtil.getMessage("m2_m2model.association.m2_" + assocName.toLowerCase()+".title");
-				} else {
-					title = I18NUtil.getMessage("dsg_designerModel.association.dsg_" + assocName.toLowerCase()+".title");
-				}
-				
-				tmp.setTitle(title);
-				
-				tmp.setNodeRef(assoc.getParentRef().toString());
-				tmp.setFormId("assoc");
-				tmp.setSubType(nodeService.getType(assoc.getChildRef()).toPrefixString(namespaceService));
-
-				assocRoots.put(assocName, tmp);
-				ret.getChildrens().add(tmp);
-			}
-			tmp.getChildrens().add(visitModelTreeNodeRef(assoc.getChildRef()));
-
-		}
-
-		return ret;
-	}
-
-	private ModelTree extractModelTreeNode(NodeRef modelNodeRef) {
-		ModelTree tmp = new ModelTree(modelNodeRef.toString());
-		String name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_NAME);
-		String title = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_TITLE);
-		String description = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_DESCRIPTION);
-
-		if (name == null) {
-			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_URI);
-		}
-
-		if (name == null || name.isEmpty()) {
-			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_REF);
-		}
-		
-		if (name == null || name.isEmpty()) {
-			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_DSG_ID);
-		}
-		
-		if (name == null || name.isEmpty()) {
-			name = "-";
-		}
-
-		tmp.setName(name);
-		tmp.setTitle(title);
-		tmp.setDescription(description);
-		tmp.setType(nodeService.getType(modelNodeRef).toPrefixString(namespaceService));
-		
-		
-		if(nodeService.hasAspect(modelNodeRef, DesignerModel.ASPECT_MODEL_ERROR)){
-			tmp.setHasError(true);
-		}
-		
-		return tmp;
-	}
-
 
 	private Serializable getPropValue(Method getterMethod, Object o) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException {

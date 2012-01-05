@@ -6,7 +6,7 @@ new beCPG.module.CreateDesignerElement('${el}').setMessages(${messages});
    <div id="${el}-dialogTitle" class="hd">${msg("title")}</div>
    <div class="bd">
       <form id="${el}-form" action="" method="post">
-      	 <div class="yui-gd">
+      	 <div class="yui-gd"  >
             <div class="yui-u first"><label for="${el}-name">${msg("label.name")}:</label></div>
             <div class="yui-u"><input id="${el}-name" type="text" name="name" tabindex="0" />&nbsp;*</div>
          </div>

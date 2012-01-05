@@ -138,7 +138,7 @@
     		  liTag.setAttribute('class', 'form-control-'+ id );
     		  liTag.innerHTML = id;
     		  controls.appendChild(liTag);
-    		  new beCPG.DnD('formControls_'+ id, this,"control");
+    		  new beCPG.DnD('formControls_'+ id, this, null,"control");
     	  } 	 
     	  for(var i in results.sets){
     		  id =  results.sets[i].id;
@@ -147,7 +147,7 @@
     		  liTag.setAttribute('class', 'form-set-'+ id );
     		  liTag.innerHTML = id;
     		  sets.appendChild(liTag);
-    		  new beCPG.DnD('formSets_'+ id, this,"set");
+    		  new beCPG.DnD('formSets_'+ id, this, null,"set");
     	  } 	 
 
       }
