@@ -278,6 +278,8 @@ public class ListValueServiceImpl implements ListValueService {
     	return Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD,query)
     			|| Pattern.matches(autoNumService.getAutoNumMatchPattern(type, BeCPGModel.PROP_CODE),query);
 	}
+	
+	
 
 	/**
      * Get the nodeRef of the item by type and name.
@@ -339,7 +341,7 @@ public class ListValueServiceImpl implements ListValueService {
 	
 	/**
 	 * Prepare query.
-	 *
+	 * //TODO escape + - && || ! ( ) { } [ ] ^ " ~ * ? : \
 	 * @param query the query
 	 * @return the string
 	 * @throws IOException 

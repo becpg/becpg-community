@@ -177,7 +177,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		        	            {
 		        	                NodeRef nodeRef = row.getNodeRef();
 		        	                String value = (String)serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
-		        	                if(!allowedValues.contains(value)){
+		        	                if(!allowedValues.contains(value) && value!=null){
 		        	                	allowedValues.add(value);
 		        	                }
 		        	            }                   	

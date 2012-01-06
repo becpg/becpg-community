@@ -202,7 +202,7 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 						
 						String prevValue = (String)nodeService.getProperty(file2.getNodeRef(), BeCPGModel.PROP_LINKED_VALUE_PREV_VALUE);
 						
-						if(prevValue.equals(hierarchy1)){
+						if(prevValue!=null && prevValue.equals(hierarchy1)){
 							
 							String hierarchy2 = (String)nodeService.getProperty(file2.getNodeRef(), BeCPGModel.PROP_LINKED_VALUE_VALUE);
 							NodeRef hierarchy2Folder = nodeService.getChildByName(hierarchy1Folder, ContentModel.ASSOC_CONTAINS, hierarchy2);
