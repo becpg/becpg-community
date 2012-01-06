@@ -30,7 +30,6 @@
             <value>classpath:alfresco/becpg-designer-form-config.xml</value>
             <value>classpath:alfresco/becpg-mpm-form-config.xml</value>
             <value>classpath:alfresco/becpg-var-form-config.xml</value>
-            <value>file:/etc/becpg/designer/*.xml</value>
          </list>
       </property>
    </bean>

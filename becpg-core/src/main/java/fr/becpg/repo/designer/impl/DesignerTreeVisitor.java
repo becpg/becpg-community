@@ -65,9 +65,9 @@ public class DesignerTreeVisitor {
 				tmp.setType(assoc.getTypeQName().toPrefixString(namespaceService));
 				String title = "";
 				if(DesignerModel.M2_URI.equals(assoc.getTypeQName().getNamespaceURI())){
-					title = I18NUtil.getMessage("m2_m2model.association.m2_" + assocName.toLowerCase()+".title");
+					title = I18NUtil.getMessage("m2_m2model.association.m2_" + assocName+".title");
 				} else {
-					title = I18NUtil.getMessage("dsg_designerModel.association.dsg_" + assocName.toLowerCase()+".title");
+					title = I18NUtil.getMessage("dsg_designerModel.association.dsg_" + assocName+".title");
 				}
 				
 				tmp.setTitle(title);

@@ -136,9 +136,11 @@ public class FormModelVisitor {
 
 		appendAtt(configEl,"evaluator",configElNodeRef, DesignerModel.PROP_DSG_CONFIGEVALUATOR);
 		appendAtt(configEl,"condition", configElNodeRef, DesignerModel.PROP_DSG_ID);
+		
+		Element formsEl =  DOMUtils.createElement(configEl, "forms");
 		for(ChildAssociationRef assoc : forms){
 			if(assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_FORMS)){
-				visitFormXml(assoc.getChildRef(),configEl);
+				visitFormXml(assoc.getChildRef(),formsEl);
 			}
 		}
 		
@@ -253,9 +255,12 @@ public class FormModelVisitor {
 	
 
 	private void visitParameterXml(NodeRef parameterRef, Element control) {
-		Element controlParam = DOMUtils.createElement(control, "control-param");
-		controlParam.setAttribute("name", (String) nodeService.getProperty(parameterRef, DesignerModel.PROP_DSG_ID));
-		controlParam.setTextContent((String) nodeService.getProperty(parameterRef, DesignerModel.PROP_DSG_PARAMETERVALUE));
+		String value = (String) nodeService.getProperty(parameterRef, DesignerModel.PROP_DSG_PARAMETERVALUE);
+		if(!StringUtils.isEmpty(value)){
+			Element controlParam = DOMUtils.createElement(control, "control-param");
+			controlParam.setAttribute("name", (String) nodeService.getProperty(parameterRef, DesignerModel.PROP_DSG_ID));
+			controlParam.setTextContent(value);
+		}
 	}
 
 	/**

@@ -188,14 +188,11 @@
 			"create" mode.
 		</description>
 
-		<control-param name="rows" optional="true" type="int">The
-			number of rows the textarea will have" when editing plain text
-			content)
+		<control-param name="rows" optional="true" type="int">
+			The number of rows the textarea will have" when editing plain text content
 		</control-param>
 		<control-param name="columns" optional="true" type="int">
-			The
-			number of columns the textarea will have" when editing plain text
-			content)
+			The number of columns the textarea will have" when editing plain text content
 		</control-param>
 		<control-param name="styleClass" optional="true" type="string">
 			Allows a custom CSS class to be applied to the textarea" when editing

@@ -116,7 +116,10 @@
 .dsg-formSet {  padding-left: 24px; background:  url(./images/form-set-16.png) no-repeat 5px 0px;}
 .dsg-fields {  padding-left: 24px; background:  url(./images/field-16.png) no-repeat 5px 0px;}
 .dsg-formField {  padding-left: 24px; background:  url(./images/field-16.png) no-repeat 5px 0px;}
-
+.dsg-controls {  padding-left: 24px; background:  url(../images/list-16.png) no-repeat 5px 0px;}
+.dsg-formControl {  padding-left: 24px; background:  url(../images/list-16.png) no-repeat 5px 0px;}
+.dsg-parameters {  padding-left: 24px; background:  url(../images/list-16.png) no-repeat 5px 0px;}
+.dsg-controlParameter {  padding-left: 24px; background:  url(../images/list-16.png) no-repeat 5px 0px;}
 .dsg-error {  padding-left: 24px; background:  url(../images/productLists/stop-16.png) no-repeat 5px 0px;}
 
 

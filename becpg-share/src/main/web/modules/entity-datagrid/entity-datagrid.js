@@ -316,7 +316,6 @@
 	          Bubbling.unsubscribe("dataItemsDuplicated", this.onDataGridRefresh);
 	          Bubbling.unsubscribe("activeDataListChanged", this.onActiveDataListChanged);
 	          Bubbling.unsubscribe("dataGridContainerDestroyed", this.onDataGridContainerDestroyed);
-	          delete this.widgets;
           }
 
          },

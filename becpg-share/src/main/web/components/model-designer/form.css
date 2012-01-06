@@ -1,3 +1,14 @@
+
+
+div.designer-form-container {
+	margin-right:10px;
+}
+
+.datagrid .action-set div.onActionDuplicate {
+	display:none;
+}
+
+
 /* Forms */
 
 .form-container .form-fields
@@ -7,6 +18,7 @@
 }
 
 /** Tab **/
+
 
 .designer-form  .yui-navset .yui-content {
    background-color: #FFFFFF;

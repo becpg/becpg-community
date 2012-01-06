@@ -110,11 +110,27 @@
     	  Alfresco.util.Ajax.request( {
     	              method : Alfresco.util.Ajax.POST,
     	              url: templateUrl,
-    	              successMessage: this.msg("message.publish.success"),
+    	              successCallback:
+	  		            {
+	  		               fn: function(){
+	     	            	  Alfresco.util.Ajax.request(
+	     	            		         {
+	     	            		            url: Alfresco.constants.URL_SERVICECONTEXT + "components/console/config/reload",
+	     	            		            method: Alfresco.util.Ajax.GET,            
+	     	            						responseContentType: Alfresco.util.Ajax.JSON,
+	     	            					 successMessage: this.msg("message.publish.success"),
+	     	            	    	         failureMessage: this.msg("message.publish.failure"),
+	     	            		         });
+	     	              },
+	  		               scope: this
+	  		            },
     	              failureMessage: this.msg("message.publish.failure"),
     	              scope: this,
     	              execScripts: false
     	   });
+    	  
+    	  
+    	  
     	  
       },
       /**
@@ -359,7 +375,7 @@
          	if(node.nodeRef!=null){
               this.widgets.newRowButton.set("disabled", false);
               this.widgets.deleteButton.set("disabled", false);
-              if(node.itemType=="m2:type" || node.itemType=="dsg:form"){
+              if(node.itemType=="m2:type" /* || node.itemType=="dsg:form" */){
             	  this.widgets.previewButton.set("disabled", false);
               } else {
             	  this.widgets.previewButton.set("disabled", true);

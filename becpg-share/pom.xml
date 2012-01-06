@@ -14,47 +14,165 @@
 	<name>beCPG vault share</name>
 	<version>0.1.3</version>
 	<description>beCPG Share ui</description>
+	<dependencies>
+		<!-- Servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+	
+	<!-- commons -->
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>commons-io-1.4</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+	<!-- Logs -->
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>commons-logging-1.1</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+	
+	<!-- Spring -->
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>org.springframework.aop-3.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>org.springframework.asm-3.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>org.springframework.beans-3.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>org.springframework.context-3.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>org.springframework.context.support-3.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>org.springframework.core-3.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>org.springframework.expression-3.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>org.springframework.jdbc-3.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>org.springframework.orm-3.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>org.springframework.transaction-3.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>org.springframework.web-3.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>org.springframework.webmvc-3.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+	
+	<!-- Surf -->
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>spring-surf-1.0.0.CI-SNAPSHOT</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>spring-surf-api-1.0.0.CI-SNAPSHOT</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>spring-surf-core-1.0.0.CI-SNAPSHOT</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>spring-surf-core-configservice-1.0.0.CI-SNAPSHOT</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>spring-webscripts-1.0.0.CI-SNAPSHOT</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>spring-webscripts-api-1.0.0.CI-SNAPSHOT</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 	<build>
+		
 		<plugins>
-			<plugin>
-				<artifactId>maven-nosnapshot-plugin</artifactId>
-				<groupId>com.sourcesense.maven</groupId>
-				<version>0.0.6</version>
-				<executions>
-					<execution>
-						<id>default</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>strip</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.0-beta-2</version>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<revisionOnScmFailure>1</revisionOnScmFailure>
-					<doCheck>false</doCheck>
-					<doUpdate>false</doUpdate>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
 			<!-- native2ascii -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -69,7 +187,7 @@
 						</goals>
 						<configuration>
 							<encoding>8859_1</encoding>
-							<dest>target/classes/alfresco</dest>
+							<dest>target/classes/alfresco/module/${project.groupId}-${project.artifactId}/config</dest>
 							<src>src/main/config</src>
 							<includes>
 								**/*.properties
@@ -77,7 +195,8 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>		 
+		
 			<!-- YUI Compressor -->
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
@@ -97,25 +216,9 @@
 						<exclude>**/*.lib.js</exclude>
 					</excludes>
 				</configuration>
-			</plugin>			 
-			<plugin>
-				<groupId>org.alfresco.maven.plugin</groupId>
-				<artifactId>maven-amp-plugin</artifactId>
-				<version>3.0.2</version>
-				<extensions>true</extensions>
-				<configuration>
-					<archive>
-						<addMavenDescriptor>false</addMavenDescriptor>
-					</archive>
-					<overlays>
-						<!-- This sample adds records management module in the finally built 
-							AMP <overlay> <groupId>org.org.alfresco</groupId> <artifactId>recordsmanagement</artifactId> 
-							<version>2.1.0</version> <type>amp</type> </overlay> -->
-						<!-- The current AMP is always last in order to overwrite other modules' 
-							modules.properties <overlay></overlay> -->
-					</overlays>
-				</configuration>
-			</plugin>
+			</plugin>	
+			
+			
 		</plugins>
 		<!-- Copies and filters resources in build folder so maven-amp-plugin can 
 			pick them up -->
@@ -132,29 +235,31 @@
 			<resource>
 				<filtering>false</filtering>
 				<directory>src/main/config</directory>
-				<targetPath>alfresco</targetPath>
+				<targetPath>alfresco/module/${project.groupId}-${project.artifactId}/config</targetPath>
 				<excludes>
 					<exclude>**README-*</exclude>
 					<exclude>**/*.properties</exclude>
 				</excludes>
 			</resource>
+			
 			<!-- Copies web files -->
 			<resource>
 				<filtering>false</filtering>
 				<directory>src/main/web</directory>
-				<targetPath>web</targetPath>
+				<targetPath>alfresco/module/${project.groupId}-${project.artifactId}/web</targetPath>
 				<excludes>
 					<exclude>**README-*</exclude>
 				</excludes>
 			</resource>
 			<!-- The file-mapping.properties is simply ignored by the plugin when 
 				assembling the AMP file -->
-			<resource>
+		 	<resource>
+				<filtering>true</filtering>
 				<directory>${basedir}</directory>
 				<includes>
 					<include>file-mapping.properties</include>
 				</includes>
-				<targetPath>../${project.artifactId}-${pom.version}/</targetPath> <!-- hack -->
+				<targetPath>../${project.artifactId}-${pom.version}/</targetPath><!-- hack TODO bug here make amp include all target -->
 			</resource>
 		</resources>
 	</build>

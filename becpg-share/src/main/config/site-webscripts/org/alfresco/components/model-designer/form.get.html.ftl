@@ -4,7 +4,9 @@
 <script type="text/javascript">//<![CDATA[
    new beCPG.component.DesignerForm("${id}").setMessages(${messages});
 //]]></script>
-<div id="${id}-dnd-instructions"></div>
-<div class="designer-form" id="${id}-model-form"  >
-${msg('model.please-select')}
+<div class="designer-form-container">
+	<div id="${id}-dnd-instructions"></div>
+	<div class="designer-form" id="${id}-model-form"  >
+	${msg('model.please-select')}
+	</div>
 </div>

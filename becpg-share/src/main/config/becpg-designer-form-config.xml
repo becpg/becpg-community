@@ -163,12 +163,8 @@
 					<show id="dsg:label" />
 					<show id="dsg:id" />
 					<show id="dsg:description" />
-					<show id="dsg:help" />
-					<show id="dsg:readOnly" />
 					<show id="dsg:mandatory" />
 					<show id="dsg:hide" />
-					<show id="dsg:force" />
-					<show id="dsg:forMode" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -246,54 +242,4 @@
 		</forms>
 	</config>
 	
-	
-	<!-- Extension form -->
-
-	<config evaluator="node-type" condition="ext1:customType">
-	   <forms>
-	      <form>
-	         <field-visibility>
-	            <hide id="cm:content" />
-	            <hide id="cm:name" />
-	            <hide id="cm:created" />
-	            <hide id="cm:creator" />
-	            <hide id="cm:accessed" />
-	            <hide id="cm:modifier" />
-	            <hide id="bcpg:startEffectivity"/>
-	            <hide id="bcpg:endEffectivity"/>
-	         </field-visibility>
-	      </form>
-	   </forms>
-	</config>
-	
-	<config evaluator="model-type" condition="ext1:customType">
-	   <forms>
-	      <form id="create">
-	         <field-visibility>
-	            <hide id="cm:content" />
-	            <hide id="cm:name" />
-	            <hide id="cm:created" />
-	            <hide id="cm:creator" />
-	            <hide id="cm:modified" />
-	            <hide id="cm:modifier" />
-	            <hide id="cm:accessed" />
-	            <hide id="bcpg:startEffectivity"/>
-	            <hide id="bcpg:endEffectivity"/>
-	         </field-visibility>
-	      </form>
-	   </forms>
-	</config>
-	
-	
-	<config evaluator="aspect" condition="ext1:customAspect">
-	   <forms>
-	      <form>
-	         <field-visibility>
-	            <hide id="cm:content" />
-	         </field-visibility>
-	      </form>
-	   </forms>
-	</config>
-
-
 </alfresco-config>
