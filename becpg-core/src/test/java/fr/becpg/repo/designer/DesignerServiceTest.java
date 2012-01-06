@@ -11,6 +11,7 @@ import org.alfresco.repo.dictionary.M2Model;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -192,9 +193,11 @@ public class DesignerServiceTest extends RepoBaseTestCase {
 						assertNotNull(in);
 						
 						
-						NodeRef configNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, ContentModel.TYPE_CONTENT).getChildRef();
-						nodeService.addAspect(configNodeRef, DesignerModel.ASPECT_CONFIG, new HashMap<QName, Serializable>());
+						NodeRef modelNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, ContentModel.TYPE_CONTENT).getChildRef();
+						nodeService.addAspect(modelNodeRef, DesignerModel.ASPECT_CONFIG, new HashMap<QName, Serializable>());
 		
+						ChildAssociationRef childAssociationRef = nodeService.createNode(modelNodeRef, DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.TYPE_DSG_CONFIG);
+						NodeRef configNodeRef = childAssociationRef.getChildRef();
 						
 						formModelVisitor.visitConfigNodeRef(configNodeRef, in);
 						//To Xml
