@@ -375,6 +375,10 @@
          	if(node.nodeRef!=null){
               this.widgets.newRowButton.set("disabled", false);
               this.widgets.deleteButton.set("disabled", false);
+              if(node.subType!=null){
+            	  this.widgets.deleteButton.set("disabled", true);
+              }
+              
               if(node.itemType=="m2:type" /* || node.itemType=="dsg:form" */){
             	  this.widgets.previewButton.set("disabled", false);
               } else {

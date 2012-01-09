@@ -21,9 +21,9 @@ new beCPG.module.EntityDataGrid('${id}').setOptions(
       usePagination: ${(args.pagination!false)?string},
 	  entityNodeRef: "${args.nodeRef!""}"
    }).setMessages(${messages});
+</#if>
 })();
 //]]>
-</#if>
 </script>
 <div id="${id}-body" class="datagrid">
    <div class="datagrid-meta">
