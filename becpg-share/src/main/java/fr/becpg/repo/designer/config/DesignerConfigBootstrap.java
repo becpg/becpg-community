@@ -101,11 +101,15 @@ public class DesignerConfigBootstrap  implements BeanNameAware, ConfigDeployer
 	                sourceString.indexOf(WILDCARD) != -1){
 			 logger.debug("processWidlCards: "+sourceString);
 			 File dir = new File(sourceString.substring(5,sourceString.lastIndexOf("/")));
-			 FileFilter fileFilter = new WildcardFileFilter(sourceString.substring(sourceString.lastIndexOf("/")+1));
-			 File[] files = dir.listFiles(fileFilter);
-			 for (int i = 0; i < files.length; i++) {
-				logger.debug("Add config file : "+PREFIX_FILE+files[i].getAbsolutePath());
-			    ret.add(PREFIX_FILE+files[i].getAbsolutePath());
+			 if(dir!=null && dir.exists()){
+				 FileFilter fileFilter = new WildcardFileFilter(sourceString.substring(sourceString.lastIndexOf("/")+1));
+				 File[] files = dir.listFiles(fileFilter);
+				 if(files!=null){
+					 for (int i = 0; i < files.length; i++) {
+						logger.debug("Add config file : "+PREFIX_FILE+files[i].getAbsolutePath());
+					    ret.add(PREFIX_FILE+files[i].getAbsolutePath());
+					 }
+				 }
 			 }
 
 			 
