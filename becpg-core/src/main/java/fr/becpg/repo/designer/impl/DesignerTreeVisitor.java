@@ -8,6 +8,7 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.designer.DesignerModel;
@@ -88,10 +89,19 @@ public class DesignerTreeVisitor {
 
 	private DesignerTree extractModelTreeNode(NodeRef modelNodeRef) {
 		DesignerTree tmp = new DesignerTree(modelNodeRef.toString());
+		String type = nodeService.getType(modelNodeRef).toPrefixString(namespaceService);
 		String name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_NAME);
 		String title = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_TITLE);
 		String description = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_DESCRIPTION);
 
+		if("dsg:configElement".equals(type)){
+			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_DSG_ID); 
+			String evaluator  =  (String)nodeService.getProperty(modelNodeRef, DesignerModel.PROP_DSG_CONFIGEVALUATOR);
+			if(!StringUtils.isEmpty(evaluator)){
+				name += " ("+evaluator+")";
+			}
+		}
+		
 		if (name == null) {
 			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_URI);
 		}
@@ -104,14 +114,19 @@ public class DesignerTreeVisitor {
 			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_DSG_ID);
 		}
 		
+		
+		
 		if (name == null || name.isEmpty()) {
 			name = "-";
+			if("dsg:form".equals(type)){
+				name = "default";
+			}
 		}
 
 		tmp.setName(name);
 		tmp.setTitle(title);
 		tmp.setDescription(description);
-		tmp.setType(nodeService.getType(modelNodeRef).toPrefixString(namespaceService));
+		tmp.setType(type);
 		
 		
 		if(nodeService.hasAspect(modelNodeRef, DesignerModel.ASPECT_MODEL_ERROR)){
