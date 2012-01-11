@@ -1,25 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-  <name>becpg-core</name>
-  <comment>BeCPG repository</comment>
-  <projects>
-    <project>alfresco-sdk</project>
-    <project>birt-sdk</project>
-  </projects>
-  <buildSpec>
-    <buildCommand>
-      <name>org.eclipse.jdt.core.javabuilder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-      <arguments>
-        <dictionary>
-          <key>LaunchConfigHandle</key>
-          <value>&lt;project&gt;/.externalToolBuilders/Maven_Ant_Builder.launch</value>
-        </dictionary>
-      </arguments>
-    </buildCommand>
-  </buildSpec>
-  <natures>
-    <nature>org.eclipse.jdt.core.javanature</nature>
-  </natures>
+	<name>becpg-core</name>
+	<comment>BeCPG repository</comment>
+	<projects>
+		<project>alfresco-sdk</project>
+		<project>birt-sdk</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+			<arguments>
+				<dictionary>
+					<key>LaunchConfigHandle</key>
+					<value>&lt;project&gt;/.externalToolBuilders/Maven_Ant_Builder.launch</value>
+				</dictionary>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
 </projectDescription>
