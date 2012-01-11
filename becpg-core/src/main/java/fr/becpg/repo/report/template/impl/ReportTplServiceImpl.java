@@ -31,9 +31,9 @@ import org.apache.commons.logging.LogFactory;
 import org.jaxen.expr.AdditiveExpr;
 import org.springframework.core.io.ClassPathResource;
 
-import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;

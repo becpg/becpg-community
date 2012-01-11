@@ -20,19 +20,18 @@
 
 <beans>
 	    
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/action-context.xml" />
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/model-context.xml" />
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/service-context.xml" />
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/report-context.xml" />
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/quality-context.xml" />
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/olap-context.xml" />
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/security-context.xml" />
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/webscripts-context.xml" />
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/workflow-context.xml" />
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/bootstrap-context.xml" />
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/script-services-context.xml" />  
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/eco-context.xml" />
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/designer-context.xml" />
-   <import resource="classpath:alfresco/module/${groupId}-${artifactId}/context/patch-alfresco-form-services-context.xml" /> 
+   <import resource="classpath:alfresco/module/${artifactId}/context/action-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/model-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/service-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/report-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/quality-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/olap-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/security-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/webscripts-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/workflow-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/bootstrap-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/script-services-context.xml" />  
+   <import resource="classpath:alfresco/module/${artifactId}/context/eco-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/patch-alfresco-form-services-context.xml" /> 
   
 </beans>

@@ -1,0 +1,14 @@
+<alfresco-config>
+	<config>
+		<forms>
+			<dependencies>
+				<css src="/components/autocomplete/autocomplete-min.css" />
+				<js src="/components/autocomplete/autocomplete-picker-min.js" />
+				<js src="/yui/datasource/datasource-min.js" />
+				<js src="/yui/autocomplete/autocomplete-min.js" />
+				<js src="/yui/event-delegate/event-delegate-min.js" />
+				<js src="/yui/paginator/paginator-min.js" />
+			</dependencies>
+		</forms>
+	</config>
+</alfresco-config>

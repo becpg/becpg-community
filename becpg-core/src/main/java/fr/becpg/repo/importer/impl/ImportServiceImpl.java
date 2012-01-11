@@ -42,9 +42,9 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.common.RepoConsts;
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportService;

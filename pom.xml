@@ -185,6 +185,11 @@
 	<modules>
 		<module>becpg-bootstrap/alfresco-sdk</module>
 		<module>becpg-bootstrap/birt-sdk</module>
+		<module>becpg-commons</module>
+		<module>becpg-controls/becpg-controls-core</module>
+		<module>becpg-controls/becpg-controls-share</module>
+		<module>becpg-designer/becpg-designer-core</module>
+		<module>becpg-designer/becpg-designer-share</module>
 		<module>becpg-core</module>
 		<module>becpg-share</module>
 		<module>becpg-olap</module>
@@ -195,7 +200,7 @@
 			<id>dev-tours</id>
 			<properties>
 			    <!-- Test -->
-				<alfresco.data.location>./alf_data</alfresco.data.location>
+				<alfresco.data.location>/opt/becpg/workspace/becpg/alf_data</alfresco.data.location>
 				<alfresco.db.host>localhost</alfresco.db.host>
 				<alfresco.db.name>becpg_test</alfresco.db.name>
 				<alfresco.db.username>becpg</alfresco.db.username>

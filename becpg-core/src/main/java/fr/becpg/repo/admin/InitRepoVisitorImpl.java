@@ -40,7 +40,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECOModel;
 import fr.becpg.model.MPMModel;
@@ -48,6 +47,7 @@ import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.model.VariantModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.designer.DesignerModel;

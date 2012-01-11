@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.common.RepoConsts;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.product.ProductDictionaryService;
 
 // TODO: Auto-generated Javadoc

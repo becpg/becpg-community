@@ -8,7 +8,7 @@
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>becpg</groupId>
+	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-core</artifactId>
 	<packaging>amp</packaging>
 	<name>beCPG core</name>
@@ -16,6 +16,34 @@
 	<description>BeCPG repository</description>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-controls-core</artifactId>
+			<version>0.1.3</version>
+			<type>jar</type>
+			<classifier>api</classifier>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-designer-core</artifactId>
+			<version>0.1.3</version>
+			<type>jar</type>
+			<classifier>api</classifier>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- commons -->
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-commons</artifactId>
+			<version>0.1.3</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		
 
 		<!-- alfresco -->
 		<dependency>
@@ -138,7 +166,7 @@
 						</goals>
 						<configuration>
 							<encoding>8859_1</encoding>
-							<dest>target/classes/alfresco/module/${project.groupId}-${project.artifactId}</dest>
+							<dest>target/classes/alfresco/module/${project.artifactId}</dest>
 							<src>src/main/config</src>
 							<includes>
 								**/*.properties
@@ -171,7 +199,7 @@
 			<resource>
 				<filtering>true</filtering>
 				<directory>src/main/config</directory>
-				<targetPath>alfresco/module/${project.groupId}-${project.artifactId}</targetPath>
+				<targetPath>alfresco/module/${project.artifactId}</targetPath>
 				<excludes>
 					<exclude>**README-*</exclude>
 					<exclude>**/*.properties</exclude>
@@ -183,14 +211,6 @@
 				<filtering>true</filtering>
 				<directory>src/test/resources</directory>
 			</testResource>
-	<!-- 		<testResource>
-				<filtering>true</filtering>
-				<directory>.</directory>
-				<includes>
-					<include>module.properties</include>
-				</includes>
-				<targetPath>alfresco/module/${project.groupId}-${project.artifactId}</targetPath>
-			</testResource> -->
 		</testResources>
 	</build>
 	

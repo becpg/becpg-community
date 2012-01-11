@@ -44,7 +44,7 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="listValueService" ref="listValueService" />
+		<property name="entityListValuePlugin" ref="entityListValuePlugin" />
 		<property name="productDictionaryService" ref="productDictionaryService" />
 		<property name="entityReportService" ref="entityReportService" />
 		<property name="propertyService" ref="propertyService"/>		

@@ -24,13 +24,6 @@
       	<property name="dictionaryDAO" ref="dictionaryDAO" />
    	</bean>
 
-   
-   	<!-- ListValue -->
-   	<bean id="webscript.fr.becpg.autoComplete.get" class="fr.becpg.repo.web.scripts.listvalue.AutoCompleteWebScript" parent="webscript">
-      	<property name="listValueService" ref="listValueService" />
-      	<property name="namespaceService" ref="namespaceService"/>
-   	</bean>
-   
    	<!-- Entity lists -->
    	<bean id="webscript.fr.becpg.entity.entityLists.get" class="fr.becpg.repo.web.scripts.entity.EntityListsWebScript" parent="webscript">      	     
       	<property name="securityService" ref="securityService" />

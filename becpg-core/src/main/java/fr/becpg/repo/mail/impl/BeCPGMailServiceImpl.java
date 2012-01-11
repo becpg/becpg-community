@@ -23,8 +23,8 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 
