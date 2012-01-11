@@ -1,0 +1,28 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/config" output="target/classes/alfresco/module/becpg-becpg-controls-share/config" excluding="**README-*|**/*.properties|**/*.java"/>
+  <classpathentry kind="src" path="src/main/web" output="target/classes/alfresco/module/becpg-becpg-controls-share/web" excluding="**README-*|**/*.java"/>
+  <classpathentry kind="src" path="." output="target/becpg-controls-share-0.1.3" including="file-mapping.properties" excluding="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar" sourcepath="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/commons-io-1.4/3.4/commons-io-1.4-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/commons-logging-1.1/3.4/commons-logging-1.1-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/org.springframework.aop-3.0.0/3.4/org.springframework.aop-3.0.0-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/org.springframework.asm-3.0.0/3.4/org.springframework.asm-3.0.0-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/org.springframework.beans-3.0.0/3.4/org.springframework.beans-3.0.0-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/org.springframework.context-3.0.0/3.4/org.springframework.context-3.0.0-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/org.springframework.context.support-3.0.0/3.4/org.springframework.context.support-3.0.0-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/org.springframework.core-3.0.0/3.4/org.springframework.core-3.0.0-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/org.springframework.expression-3.0.0/3.4/org.springframework.expression-3.0.0-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/org.springframework.jdbc-3.0.0/3.4/org.springframework.jdbc-3.0.0-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/org.springframework.orm-3.0.0/3.4/org.springframework.orm-3.0.0-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/org.springframework.transaction-3.0.0/3.4/org.springframework.transaction-3.0.0-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/org.springframework.web-3.0.0/3.4/org.springframework.web-3.0.0-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/org.springframework.webmvc-3.0.0/3.4/org.springframework.webmvc-3.0.0-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/spring-surf-1.0.0.CI-SNAPSHOT/3.4/spring-surf-1.0.0.CI-SNAPSHOT-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/spring-surf-api-1.0.0.CI-SNAPSHOT/3.4/spring-surf-api-1.0.0.CI-SNAPSHOT-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/spring-surf-core-1.0.0.CI-SNAPSHOT/3.4/spring-surf-core-1.0.0.CI-SNAPSHOT-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/spring-surf-core-configservice-1.0.0.CI-SNAPSHOT/3.4/spring-surf-core-configservice-1.0.0.CI-SNAPSHOT-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/spring-webscripts-1.0.0.CI-SNAPSHOT/3.4/spring-webscripts-1.0.0.CI-SNAPSHOT-3.4-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/spring-webscripts-api-1.0.0.CI-SNAPSHOT/3.4/spring-webscripts-api-1.0.0.CI-SNAPSHOT-3.4-community.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+</classpath>

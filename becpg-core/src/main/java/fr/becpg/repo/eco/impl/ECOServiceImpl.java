@@ -25,10 +25,10 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECOModel;
 import fr.becpg.repo.BeCPGDao;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.eco.ECOReportService;
 import fr.becpg.repo.eco.ECOService;
 import fr.becpg.repo.eco.ECOState;

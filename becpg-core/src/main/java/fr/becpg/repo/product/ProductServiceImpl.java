@@ -30,7 +30,6 @@ import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.MPMModel;
@@ -38,6 +37,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.NodeVisitor;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.wused.WUsedListService;
 import fr.becpg.repo.entity.wused.data.WUsedData;
 import fr.becpg.repo.helper.RepoService;

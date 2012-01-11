@@ -18,8 +18,8 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.eclipse.birt.report.model.parser.ReportState;
 
-import fr.becpg.common.RepoConsts;
 import fr.becpg.repo.NodeVisitor;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;

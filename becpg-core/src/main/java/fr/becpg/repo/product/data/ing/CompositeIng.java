@@ -16,7 +16,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.common.RepoConsts;
+import fr.becpg.repo.RepoConsts;
 
 // TODO: Auto-generated Javadoc
 /**

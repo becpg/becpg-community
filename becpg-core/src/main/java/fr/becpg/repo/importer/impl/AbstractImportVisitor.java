@@ -45,7 +45,6 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.common.RepoConsts;
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
@@ -53,12 +52,14 @@ import fr.becpg.config.mapping.FileMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
+import fr.becpg.repo.listvalue.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.ProductData;
@@ -143,7 +144,7 @@ public class AbstractImportVisitor  implements ImportVisitor {
 	protected NodeService nodeService;
 	
 	/** The list value service. */
-	protected ListValueService listValueService;
+	protected EntityListValuePlugin entityListValuePlugin;
 	
 	/** The search service. */
 	protected SearchService searchService;
@@ -175,15 +176,17 @@ public class AbstractImportVisitor  implements ImportVisitor {
 		this.nodeService = nodeService;
 	}
 	
-	/**
-	 * Sets the list value service.
-	 *
-	 * @param listValueService the new list value service
-	 */
-	public void setListValueService(ListValueService listValueService) {
-		this.listValueService = listValueService;
-	}
 	
+	
+	/**
+	 * @param entityListValuePlugin the entityListValuePlugin to set
+	 */
+	public void setEntityListValuePlugin(EntityListValuePlugin entityListValuePlugin) {
+		this.entityListValuePlugin = entityListValuePlugin;
+	}
+
+
+
 	/**
 	 * Sets the search service.
 	 *
@@ -584,7 +587,7 @@ public class AbstractImportVisitor  implements ImportVisitor {
 	    		}				
 				else if(!charactName.isEmpty()){					
 					AssociationDefinition assocDef = dictionaryService.getAssociation(charactQName);
-    				charactNodeRef = listValueService.getItemByTypeAndName(assocDef.getTargetClass().getName(), charactName);
+    				charactNodeRef = entityListValuePlugin.getItemByTypeAndName(assocDef.getTargetClass().getName(), charactName);
     				
     				if(charactNodeRef == null){
     					throw new MappingException(I18NUtil.getMessage(MSG_ERROR_GET_NODEREF_CHARACT, assocDef.getTargetClass().getName(), charactName));
@@ -1015,7 +1018,7 @@ public class AbstractImportVisitor  implements ImportVisitor {
 			}
 			// list value => by name
 			else if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)){
-				nodeRef = listValueService.getItemByTypeAndName(type, value);
+				nodeRef = entityListValuePlugin.getItemByTypeAndName(type, value);
 			}		
 			
 			// add in the cache

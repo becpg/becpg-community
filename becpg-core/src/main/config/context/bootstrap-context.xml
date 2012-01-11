@@ -6,7 +6,7 @@
 	<!-- Bootstrap classification-->
 	<!-- <bean id="org_alfresco_module_bootstrapSpaces" class="org.alfresco.repo.module.ImporterModuleComponent"
 		parent="module.baseComponent">
-		<property name="moduleId" value="${pom.groupId}-${pom.artifactId}" />
+		<property name="moduleId" value="${pom.artifactId}" />
 		<property name="name"
 			value="org.alfresco.module.yourmodule.bootstrapSpaces" />
 		<property name="description" value="Initial data requirements" />
@@ -18,7 +18,7 @@
 			<list>
 				<props>
 					<prop key="path">/cm:categoryRoot/cm:generalclassifiable</prop>
-					<prop key="location">alfresco/module/${pom.groupId}-${pom.artifactId}/bootstrap/categories.xml</prop>
+					<prop key="location">alfresco/module/${pom.artifactId}/bootstrap/categories.xml</prop>
 				</props>
 			</list>
 		</property>

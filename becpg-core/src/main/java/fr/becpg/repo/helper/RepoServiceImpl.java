@@ -19,8 +19,8 @@ import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.common.RepoConsts;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -10,7 +10,7 @@
 		<property name="ignoreResourceNotFound" value="true"></property>
 		<property name="locations">
 			<list>
-				<value>classpath:alfresco/module/${pom.groupId}-${pom.artifactId}/beCPG.properties</value>
+				<value>classpath:alfresco/module/${pom.artifactId}/beCPG.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -18,14 +18,14 @@
 	<bean id="bootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">      
       <property name="resourceBundles">
          <list>
-         	 <value>alfresco/module/${pom.groupId}-${pom.artifactId}/model/becpgModel</value>
-             <value>alfresco/module/${pom.groupId}-${pom.artifactId}/messages/paths</value>
-             <value>alfresco/module/${pom.groupId}-${pom.artifactId}/messages/product-types</value>
-             <value>alfresco/module/${pom.groupId}-${pom.artifactId}/messages/states</value>
-             <value>alfresco/module/${pom.groupId}-${pom.artifactId}/messages/becpg-messages</value>
-             <value>alfresco/module/${pom.groupId}-${pom.artifactId}/messages/groups</value>
-             <value>alfresco/module/${pom.groupId}-${pom.artifactId}/messages/demo</value>
-             <value>alfresco/module/${pom.groupId}-${pom.artifactId}/messages/import-service</value>             
+         	 <value>alfresco/module/${pom.artifactId}/model/becpgModel</value>
+             <value>alfresco/module/${pom.artifactId}/messages/paths</value>
+             <value>alfresco/module/${pom.artifactId}/messages/product-types</value>
+             <value>alfresco/module/${pom.artifactId}/messages/states</value>
+             <value>alfresco/module/${pom.artifactId}/messages/becpg-messages</value>
+             <value>alfresco/module/${pom.artifactId}/messages/groups</value>
+             <value>alfresco/module/${pom.artifactId}/messages/demo</value>
+             <value>alfresco/module/${pom.artifactId}/messages/import-service</value>             
          </list>
       </property>      
    </bean>
@@ -79,6 +79,19 @@
 	<bean id="associationService" class="fr.becpg.repo.helper.AssociationServiceImpl">		
 		<property name="nodeService" ref="nodeService" />
 	</bean>	
+	
+	<!-- List Values -->
+	
+	<bean id="entityListValuePlugin" parent="baseListValuePlugin"  init-method="init"
+			 class="fr.becpg.repo.listvalue.EntityListValuePlugin">
+		<property name="autoNumService" ref="autoNumService" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="dictionaryDAO" ref="dictionaryDAO" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="reportTplService" ref="reportTplService" />
+	</bean>
 
 	<!-- Importer -->
 	<bean id="importService" class="fr.becpg.repo.importer.impl.ImportServiceImpl">
@@ -98,7 +111,7 @@
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="nodeService" ref="nodeService" />
-		<property name="listValueService" ref="listValueService" />
+		<property name="entityListValuePlugin" ref="entityListValuePlugin" />
 		<property name="searchService" ref="searchService" />
 		<property name="repoService" ref="repoService" />
 		<property name="contentService" ref="contentService" />
@@ -110,7 +123,7 @@
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="listValueService" ref="listValueService" />
+		<property name="entityListValuePlugin" ref="entityListValuePlugin" />
 		<property name="searchService" ref="searchService" />
 		<property name="repoService" ref="repoService" />
 		<property name="contentService" ref="contentService" />
@@ -124,7 +137,7 @@
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="listValueService" ref="listValueService" />
+		<property name="entityListValuePlugin" ref="entityListValuePlugin" />
 		<property name="searchService" ref="searchService" />
 		<property name="repoService" ref="repoService" />
 		<property name="contentService" ref="contentService" />
@@ -135,7 +148,7 @@
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="nodeService" ref="nodeService" />
-		<property name="listValueService" ref="listValueService" />
+		<property name="entityListValuePlugin" ref="entityListValuePlugin" />
 		<property name="searchService" ref="searchService" />
 		<property name="repoService" ref="repoService" />
 		<property name="contentService" ref="contentService" />
@@ -198,27 +211,6 @@
 		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 	
-	
-	
-	<!-- ListValue -->
-	
-	<!-- Plugin registry -->
-	<bean id="listValuePluginRegistry" class="fr.becpg.repo.listvalue.impl.ListValuePluginRegistryImpl"/>
-	
-	<bean id="baseListValuePlugin" abstract="true"  class="fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin" init-method="init">
-		<property name="listValuePluginRegistry" ref="listValuePluginRegistry"/>
-	</bean>
-	
-	
-	<bean id="listValueService" class="fr.becpg.repo.listvalue.impl.ListValueServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="reportTplService" ref="reportTplService" />
-		<property name="dictionaryDAO" ref="dictionaryDAO"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
-		<property name="autoNumService" ref="autoNumService"/>
-		<property name="listValuePluginRegistry" ref="listValuePluginRegistry" />
-	</bean>
 	
 	
 	

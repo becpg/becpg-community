@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>becpg-parent</artifactId>
+		<groupId>fr.becpg</groupId>
+		<version>0.1.3</version>
+		<relativePath>../../</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>fr.becpg</groupId>
+	<artifactId>becpg-designer-core</artifactId>
+	<packaging>amp</packaging>
+	<name>beCPG Designer core</name>
+	<version>0.1.3</version>
+	<description>BeCPG designer</description>
+	<dependencies>
+
+	
+
+		<!-- commons -->
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-commons</artifactId>
+			<version>0.1.3</version>
+			<type>jar</type>
+		</dependency>
+
+
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-controls-core</artifactId>
+			<version>0.1.3</version>
+			<type>jar</type>
+			<classifier>api</classifier>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<!-- alfresco -->
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>alfresco-sdk</artifactId>
+			<version>${alfresco.version}</version>
+			<type>pom</type>
+			<scope>provided</scope>
+		</dependency>
+		
+		
+		 <dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>icu4j_3_6_1</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency> 
+		
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>rhino-js-1.6R7</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency> 
+
+	
+		<!-- mysql -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.9</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>jmock</groupId>
+			<artifactId>jmock</artifactId>
+			<version>1.2.0</version>
+			<scope>test</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-mock</artifactId>
+			<version>2.0.8</version>
+			<scope>test</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>spring-webscripts-1.0.0.CI-SNAPSHOT-tests</artifactId>
+			<version>3.4</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		
+		
+		<!-- Servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<!-- Don't add here amp dependencies as it will break amp packaging -->
+		
+		
+	</dependencies>
+	<properties>
+		<webapp.name>becpg-designer-core-webapp</webapp.name>
+	</properties>
+	<build>
+		<plugins>
+		  <plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-jar-plugin</artifactId>
+			  <executions>
+			    <execution>
+			      <phase>package</phase>
+			      <goals>
+			        <goal>jar</goal>
+			      </goals>
+			      <configuration>
+			        <classifier>api</classifier>
+			         <includes>
+		            	<include>**/designer/*</include>
+		          	</includes>
+			      </configuration>
+			    </execution>
+			  </executions>
+			</plugin>	
+			<!-- native2ascii -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>native2ascii-maven-plugin</artifactId>
+				<version>1.0-alpha-1</version>
+				<inherited>true</inherited>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>native2ascii</goal>
+						</goals>
+						<configuration>
+							<encoding>8859_1</encoding>
+							<dest>target/classes/alfresco/module/${project.artifactId}</dest>
+							<src>src/main/config</src>
+							<includes>
+								**/*.properties
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<!-- Copies and filters resources in build folder so maven-amp-plugin can 
+			pick them up -->
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>**README-*</exclude>
+				</excludes>
+			</resource>
+			<!-- Copies and filters AMP config in the proper package 'alfresco/module/becpg.becpg-core' 
+				so to enforce full module naming single sourcing from POM properties -->
+			<resource> 
+				<filtering>true</filtering>
+				<directory>src/main/config</directory>
+				<targetPath>alfresco/module/${project.artifactId}</targetPath>
+				<excludes>
+					<exclude>**README-*</exclude>
+					<exclude>**/*.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<filtering>true</filtering>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
+	</build>
+	
+</project>

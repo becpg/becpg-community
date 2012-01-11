@@ -49,10 +49,10 @@ import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.RenderOption;
 import org.springframework.core.io.ClassPathResource;
 
-import fr.becpg.common.RepoConsts;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.PropertyService;
 import fr.becpg.repo.helper.TranslateHelper;

@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import fr.becpg.common.RepoConsts;
+import fr.becpg.repo.RepoConsts;
 
 /**
  * Format of properties (used for import and reports)

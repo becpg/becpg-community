@@ -17,7 +17,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.common.RepoConsts;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitor;
 
 // TODO: Auto-generated Javadoc

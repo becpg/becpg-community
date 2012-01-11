@@ -4,8 +4,6 @@
 package fr.becpg.repo.report.search;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -16,7 +14,6 @@ import java.util.List;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
-import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -24,13 +21,9 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -38,9 +31,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
-import org.dom4j.io.XMLWriter;
 import org.eclipse.birt.report.engine.api.EXCELRenderOption;
 import org.eclipse.birt.report.engine.api.IRenderOption;
 import org.eclipse.birt.report.engine.api.IReportEngine;
@@ -48,21 +39,20 @@ import org.eclipse.birt.report.engine.api.IReportRunnable;
 import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.RenderOption;
 
-import fr.becpg.common.RepoConsts;
+import fr.becpg.common.BeCPGException;
 import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.config.mapping.FileMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.PropertyService;
-import fr.becpg.repo.listvalue.ListValueService;
+import fr.becpg.repo.listvalue.EntityListValuePlugin;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.report.entity.EntityReportService;
-import fr.becpg.repo.report.entity.impl.EntityReportServiceImpl;
 import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
-import fr.becpg.repo.report.template.ReportType;
 
 /**
  * Class used to render the result of a search in a report
@@ -158,7 +148,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	private EntityListDAO entityListDAO;
 	
 	/** The list value service. */
-	private ListValueService listValueService;
+	private EntityListValuePlugin entityListValuePlugin;
 	
 	/** The product dictionary service. */
 	private ProductDictionaryService productDictionaryService;
@@ -222,15 +212,14 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		this.entityListDAO = entityListDAO;
 	}
 
-	/**
-	 * Sets the list value service.
-	 *
-	 * @param listValueService the new list value service
-	 */
-	public void setListValueService(ListValueService listValueService) {
-		this.listValueService = listValueService;
-	}
 	
+	/**
+	 * @param entityListValuePlugin the entityListValuePlugin to set
+	 */
+	public void setEntityListValuePlugin(EntityListValuePlugin entityListValuePlugin) {
+		this.entityListValuePlugin = entityListValuePlugin;
+	}
+
 	/**
 	 * Sets the product dictionary service.
 	 *
@@ -612,7 +601,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
     		}				
 			else if(!charactName.isEmpty()){					
 				AssociationDefinition assocDef = dictionaryService.getAssociation(charactQName);
-				charactNodeRef = listValueService.getItemByTypeAndName(assocDef.getTargetClass().getName(), charactName);
+				charactNodeRef = entityListValuePlugin.getItemByTypeAndName(assocDef.getTargetClass().getName(), charactName);
 				
 				if(charactNodeRef == null){
 					throw new MappingException(String.format("ERROR : Failed to get the nodeRef of the characteristic. Type:%s - Name:%s",  assocDef.getTargetClass().getName(), charactName));

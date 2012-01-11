@@ -8,7 +8,7 @@
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>becpg</groupId>
+	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-share</artifactId>
 	<packaging>amp</packaging>
 	<name>beCPG vault share</name>
@@ -187,7 +187,7 @@
 						</goals>
 						<configuration>
 							<encoding>8859_1</encoding>
-							<dest>target/classes/alfresco/module/${project.groupId}-${project.artifactId}/config</dest>
+							<dest>target/classes/alfresco/module/${project.artifactId}/config</dest>
 							<src>src/main/config</src>
 							<includes>
 								**/*.properties
@@ -235,7 +235,7 @@
 			<resource>
 				<filtering>false</filtering>
 				<directory>src/main/config</directory>
-				<targetPath>alfresco/module/${project.groupId}-${project.artifactId}/config</targetPath>
+				<targetPath>alfresco/module/${project.artifactId}/config</targetPath>
 				<excludes>
 					<exclude>**README-*</exclude>
 					<exclude>**/*.properties</exclude>
@@ -246,7 +246,7 @@
 			<resource>
 				<filtering>false</filtering>
 				<directory>src/main/web</directory>
-				<targetPath>alfresco/module/${project.groupId}-${project.artifactId}/web</targetPath>
+				<targetPath>alfresco/module/${project.artifactId}/web</targetPath>
 				<excludes>
 					<exclude>**README-*</exclude>
 				</excludes>
