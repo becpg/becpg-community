@@ -184,7 +184,10 @@ public class FormModelVisitor {
 			el =  DOMUtils.createElement(fieldVisibility, "show");
 		}
 		el.setAttribute("id", (String) nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_ID));
-		el.setAttribute("for-mode", (String)nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_FORMODE));
+		String formode = (String)nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_FORMODE);
+		if(!formode.equals("-")){
+			el.setAttribute("for-mode",formode );
+		}
 		el.setAttribute("force", ((Boolean)nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_FORCE)).toString());
 		
 		Element field = DOMUtils.createElement(appearance, "field");

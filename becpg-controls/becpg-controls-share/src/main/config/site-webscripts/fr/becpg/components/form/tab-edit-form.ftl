@@ -1,10 +1,5 @@
 <#import "/org/alfresco/components/form/form.lib.ftl" as formLib />
 
-<!-- Dependency files for Tabview -->
-<link rel="stylesheet" type="text/css" href="${url.context}/yui/tabview/assets/skins/sam/tabview.css">
-<script type="text/javascript" src="${url.context}/yui/tabview/tabview-min.js"></script>
-
-
 <#if error?exists>
    <div class="error">${error}</div>
 <#elseif form?exists>

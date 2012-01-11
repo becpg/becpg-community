@@ -45,6 +45,7 @@
 			<title>For mode constraint</title>
 			<parameter name="allowedValues">
 				<list>
+					<value>-</value>
 					<value>all</value>
 					<value>view</value>
 					<value>edit</value>
@@ -155,7 +156,7 @@
 				<property name="dsg:forMode">
 					<title>For mode</title>
 					<type>d:text</type>
-					<default>all</default>
+					<default>-</default>
 					<constraints>
 						<constraint ref="dsg:forModeConstraint" />
 					</constraints>

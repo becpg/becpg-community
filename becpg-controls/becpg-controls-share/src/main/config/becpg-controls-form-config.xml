@@ -3,7 +3,9 @@
 		<forms>
 			<dependencies>
 				<css src="/components/autocomplete/autocomplete-min.css" />
+				<css src="/yui/tabview/assets/skins/sam/tabview.css" />
 				<js src="/components/autocomplete/autocomplete-picker-min.js" />
+				<js src="/yui/tabview/tabview-min.js" />
 				<js src="/yui/datasource/datasource-min.js" />
 				<js src="/yui/autocomplete/autocomplete-min.js" />
 				<js src="/yui/event-delegate/event-delegate-min.js" />
