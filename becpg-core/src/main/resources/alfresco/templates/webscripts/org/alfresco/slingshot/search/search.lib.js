@@ -21,7 +21,7 @@ const SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";
 const COMMENT_QNAMEPATH = "/fm:discussion/cm:Comments/";
 const QUERY_TEMPLATES = [
    {field: "keywords", template: "%(cm:name cm:title cm:description ia:whatEvent ia:descriptionEvent lnk:title lnk:description TEXT)"}];
-const PRODUCTS_TO_EXCLUDE = ' AND -ASPECT:"bcpg:compositeVersion" AND -ASPECT:\"eco:simulationEntityAspect\" '
+const PRODUCTS_TO_EXCLUDE = ' AND -ASPECT:"bcpg:compositeVersion" AND -ASPECT:\"ecm:simulationEntityAspect\" '
 /**
  * Returns site information data structure.
  * { shortName: siteId, title: title }

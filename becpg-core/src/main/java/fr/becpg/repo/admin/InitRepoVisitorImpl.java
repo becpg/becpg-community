@@ -41,7 +41,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ECOModel;
+import fr.becpg.model.ECMModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
@@ -100,7 +100,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
 	private static final String PRODUCT_REPORT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
 	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
-	private static final String ECO_REPORT_PATH = "beCPG/birt/system/eco/ECOReport.rptdesign";
+	private static final String ECO_REPORT_PATH = "beCPG/birt/system/ecm/ECOReport.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
@@ -530,7 +530,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		} else if (folderName == RepoConsts.PATH_SECURITY) {
 			specialiseType = SecurityModel.TYPE_ACL_GROUP;
 		} else if (folderName == RepoConsts.PATH_ECO) {
-			specialiseType = ECOModel.TYPE_ECO;
+			specialiseType = ECMModel.TYPE_ECO;
 		} else if (folderName == RepoConsts.PATH_IMPORT_TO_TREAT) {
 
 			// action
@@ -707,13 +707,13 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists);
 		
 		// visit ECO
-		entityTplService.createFolderTpl(folderTplsNodeRef, ECOModel.TYPE_ECO, true, null);
+		entityTplService.createFolderTpl(folderTplsNodeRef, ECMModel.TYPE_ECO, true, null);
 		dataLists = new LinkedHashSet<QName>();
-		dataLists.add(ECOModel.TYPE_REPLACEMENTLIST);
-		dataLists.add(ECOModel.TYPE_WUSEDLIST);
-		dataLists.add(ECOModel.TYPE_CALCULATEDCHARACTLIST);
-		dataLists.add(ECOModel.TYPE_CHANGEUNITLIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, ECOModel.TYPE_ECO, true, dataLists);
+		dataLists.add(ECMModel.TYPE_REPLACEMENTLIST);
+		dataLists.add(ECMModel.TYPE_WUSEDLIST);
+		dataLists.add(ECMModel.TYPE_CALCULATEDCHARACTLIST);
+		dataLists.add(ECMModel.TYPE_CHANGEUNITLIST);
+		entityTplService.createEntityTpl(entityTplsNodeRef, ECMModel.TYPE_ECO, true, dataLists);
 
 		// visit quality
 		visitQuality(folderTplsNodeRef, entityTplsNodeRef);

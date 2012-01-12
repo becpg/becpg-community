@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>ECM - change order</shortname>
+	<description>ecm service - manage change order</description>	
+	<url>/becpg/ecm/changeorder/{store_type}/{store_id}/{id}/{action}</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readwrite" buffersize="0">required</transaction>
+</webscript>

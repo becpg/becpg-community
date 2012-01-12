@@ -13,3 +13,6 @@ syntax: regexp
 ^becpg-core/becpg_data$
 syntax: regexp
 ^becpg-bootstrap/birt-sdk/lib/.*\.jar
+
+syntax: regexp
+^becpg_data$

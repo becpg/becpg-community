@@ -14,7 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ECOModel;
+import fr.becpg.model.ECMModel;
 import fr.becpg.repo.entity.wused.data.WUsedData;
 
 public class WUsedListServiceImpl implements WUsedListService {
@@ -57,7 +57,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 						logger.debug("rootNodeRef: " + rootNodeRef);
 						
 						//we don't display history version and simulation entities
-						if(!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION) && !nodeService.hasAspect(rootNodeRef, ECOModel.ASPECT_SIMULATION_ENTITY)){
+						if(!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION) && !nodeService.hasAspect(rootNodeRef, ECMModel.ASPECT_SIMULATION_ENTITY)){
 							
 							WUsedData wUsedData = null;
 							

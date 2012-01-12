@@ -62,7 +62,7 @@
 
 	<properties>
 	    <!-- Test -->
-		<alfresco.data.location>./becpg_data</alfresco.data.location>
+		<alfresco.data.location>/home/quere/Documents/beCPG/dev/workspace/becpg/becpg_data</alfresco.data.location>
 		<alfresco.db.host>localhost</alfresco.db.host>
 		<alfresco.db.name>becpg_34d_dev</alfresco.db.name>
 		<alfresco.db.username>becpg</alfresco.db.username>

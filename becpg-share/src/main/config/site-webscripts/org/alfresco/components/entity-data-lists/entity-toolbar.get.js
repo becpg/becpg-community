@@ -88,7 +88,7 @@ function showECO(nodeRef)
    {
       var node = eval('(' + result + ')');
       
-      if(node.item.nodeType == "eco:changeOrder"){
+      if(node.item.nodeType == "ecm:changeOrder"){
     	  return true;
       }      
    }

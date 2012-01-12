@@ -106,7 +106,7 @@
 				<subtype name="bcpg:supplier" />
 				<subtype name="bcpg:client" />
 
-				<subtype name="eco:changeOrder" />
+				<subtype name="ecm:changeOrder" />
 
 				<subtype name="bcpg:linkedValue" />
 				<subtype name="bcpg:listValue" />

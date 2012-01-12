@@ -37,7 +37,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	private static final String SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";	
 	
 	/** The Constant PRODUCTS_TO_EXCLUDE. */
-	private static final String PRODUCTS_TO_EXCLUDE = " AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"eco:simulationEntityAspect\" ";
+	private static final String PRODUCTS_TO_EXCLUDE = " AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	
 	private static final String DEFAULT_FIELD_NAME = "keywords";
 	

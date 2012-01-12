@@ -339,7 +339,7 @@
     	  Alfresco.util.Ajax.request(
          {
             method: Alfresco.util.Ajax.GET,
-            url: Alfresco.constants.PROXY_URI + "becpg/eco/changeorder/" + this.options.entityNodeRef.replace(":/", "") + "/calculatewused",
+            url: Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + this.options.entityNodeRef.replace(":/", "") + "/calculatewused",
             successCallback:
             {
                fn: function EntityDataListToolbar_onECOCalculateWUsed_success(response)
@@ -391,7 +391,7 @@
     	  Alfresco.util.Ajax.request(
          {
             method: Alfresco.util.Ajax.GET,
-            url: Alfresco.constants.PROXY_URI + "becpg/eco/changeorder/" + this.options.entityNodeRef.replace(":/", "") + "/dosimulation",
+            url: Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + this.options.entityNodeRef.replace(":/", "") + "/dosimulation",
             successCallback:
             {
                fn: function EntityDataListToolbar_onECODoSimulation_success(response)
@@ -443,7 +443,7 @@
     	  Alfresco.util.Ajax.request(
          {
             method: Alfresco.util.Ajax.GET,
-            url: Alfresco.constants.PROXY_URI + "becpg/eco/changeorder/" + this.options.entityNodeRef.replace(":/", "") + "/apply",
+            url: Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + this.options.entityNodeRef.replace(":/", "") + "/apply",
             successCallback:
             {
                fn: function EntityDataListToolbar_onECOApply_success(response)

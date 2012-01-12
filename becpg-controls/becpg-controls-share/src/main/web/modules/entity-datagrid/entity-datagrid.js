@@ -492,7 +492,7 @@
                                html += '<span class="userGroup">' + $html(data.displayValue) + '</span>';
                                break;                               
                            default:
-                        	   if(datalistColumn.name == "bcpg:rclReqType" || datalistColumn.name == "bcpg:filReqType" || datalistColumn.name == "eco:culReqType")
+                        	   if(datalistColumn.name == "bcpg:rclReqType" || datalistColumn.name == "bcpg:filReqType" || datalistColumn.name == "ecm:culReqType")
                     		   {
                         		   if(data.displayValue == "Forbidden")
                         		   {
@@ -511,7 +511,7 @@
                         			   html += $html(data.displayValue);
                     			   }
                     		   }
-                        	   else if(datalistColumn.name == "eco:rlRevisionType" || datalistColumn.name == "eco:culRevision")
+                        	   else if(datalistColumn.name == "ecm:rlRevisionType" || datalistColumn.name == "ecm:culRevision")
                     		   {
                         		   if(data.displayValue != null)
                     			   {

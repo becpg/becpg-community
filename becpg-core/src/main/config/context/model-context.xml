@@ -10,7 +10,7 @@
 				<value>alfresco/module/${artifactId}/model/becpgModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/qualityModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/securityModel.xml</value>
-				<value>alfresco/module/${artifactId}/model/ecoModel.xml</value>
+				<value>alfresco/module/${artifactId}/model/ecmModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/npdModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/mpmModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/variantModel.xml</value>							
@@ -24,7 +24,7 @@
 				<value>alfresco/module/${artifactId}/model/becpgModel</value>
 				<value>alfresco/module/${artifactId}/model/qualityModel</value>
 				<value>alfresco/module/${artifactId}/model/securityModel</value>
-				<value>alfresco/module/${artifactId}/model/ecoModel</value>
+				<value>alfresco/module/${artifactId}/model/ecmModel</value>
 				<value>alfresco/module/${artifactId}/model/npdModel</value>		
 				<value>alfresco/module/${artifactId}/model/mpmModel</value>
 				<value>alfresco/module/${artifactId}/model/variantModel</value>						

@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
+
+<beans>
+   	 
+	<!-- changeOrderDAO -->
+	<bean id="changeOrderDAO" class="fr.becpg.repo.ecm.impl.ChangeOrderDAOImpl">
+    	<property name="nodeService" ref="nodeService"/>
+    	<property name="entityListDAO" ref="entityListDAO"/>
+    	<property name="associationService" ref="associationService"/>		
+	</bean>
+	
+	<!-- ecoService -->	
+	<bean id="ecoService" class="fr.becpg.repo.ecm.impl.ECOServiceImpl">
+    	<property name="changeOrderDAO" ref="changeOrderDAO"/>
+    	<property name="wUsedListService" ref="wUsedListService"/>
+    	<property name="nodeService" ref="nodeService"/>
+    	<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService"/>
+    	<property name="productService" ref="productService"/>
+    	<property name="productDAO" ref="productDAO"/>
+    	<property name="entityListDAO" ref="entityListDAO"/>
+    	<property name="dictionaryService" ref="dictionaryService"/>
+    	<property name="productDictionaryService" ref="productDictionaryService"/>
+    	<property name="repoService" ref="repoService"/>
+    	<property name="associationService" ref="associationService"/>
+    	<property name="ecoReportService" ref="ecoReportService"/>		
+	</bean>
+	
+	<!-- policy -->
+   
+   <bean id="ecoPolicy" class="fr.becpg.repo.ecm.policy.ECOPolicy" init-method="init">
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="nodeService" ref="nodeService" />		
+		<property name="ecoService" ref="ecoService"/>	
+  </bean>
+  
+  <!-- Report service -->
+   
+   <bean id="ecoReportService" class="fr.becpg.repo.ecm.impl.ECOReportServiceImpl">
+		<property name="reportTplService" ref="reportTplService" />
+		<property name="nodeService" ref="nodeService" />		
+		<property name="contentService" ref="contentService"/>
+		<property name="mimetypeService" ref="mimetypeService"/>
+		<property name="reportEngine" ref="reportEngine"/>	
+  </bean>
+  
+  <!-- ChangeOrder Webscript -->
+  <bean id="webscript.fr.becpg.ecm.changeOrder.get" class="fr.becpg.repo.web.scripts.ecm.ChangeOrderWebScript" parent="webscript">
+      	<property name="ecoService" ref="ecoService" />
+   	</bean>
+   
+</beans>

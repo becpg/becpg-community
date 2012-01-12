@@ -13,7 +13,7 @@
       <content icon="xml" label="menu.create-content.nc" formid="create" itemid="qa:nc" />
   	  <content icon="xml" label="menu.create-content.controlPlan" formid="create" itemid="qa:controlPlan" />
   	  <content icon="xml" label="menu.create-content.qualityControl" formid="create" itemid="qa:qualityControl" />
-  	  <content icon="xml" label="menu.create-content.eco" formid="create" itemid="eco:changeOrder" />
+  	  <content icon="xml" label="menu.create-content.eco" formid="create" itemid="ecm:changeOrder" />
    </createContent>
    <actionSets>
       <actionSet id="default">

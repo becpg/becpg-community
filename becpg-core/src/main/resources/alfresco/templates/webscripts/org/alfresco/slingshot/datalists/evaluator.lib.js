@@ -153,7 +153,7 @@ var Evaluator =
          //objData.metadata = obj.type.replace('{http://www.bcpg.fr/model/becpg/1.0}', '');
          objData.metadata = obj.type.split("}")[1];
 	  }
-	  else if(type == "bcpg:ing" || type == "bcpg:nut" || type == "bcpg:allergen" || type == "bcpg:organo" || type == "bcpg:listValue" || type == "bcpg:cost" || type == "bcpg:physicoChem"  || type == "bcpg:microbio" || type == "bcpg:bioOrigin" || type == "bcpg:geoOrigin" ||  type == "bcpg:entity" || type == "bcpg:charact" || type == "qa:controlPoint" || type == "qa:controlStep"  || type == "qa:controlMethod" || type == "bcpg:entity" || type == "eco:changeUnit" || type == "bcpg:supplier" || type == "bcpg:client" || type == "bcpg:resourceProduct" || type == "mpm:processResource" || type == "mpm:processStep" || type == "var:charact") // don't forget to modify the file entity-datagrid.js otherwise, we cannont navigate to the object
+	  else if(type == "bcpg:ing" || type == "bcpg:nut" || type == "bcpg:allergen" || type == "bcpg:organo" || type == "bcpg:listValue" || type == "bcpg:cost" || type == "bcpg:physicoChem"  || type == "bcpg:microbio" || type == "bcpg:bioOrigin" || type == "bcpg:geoOrigin" ||  type == "bcpg:entity" || type == "bcpg:charact" || type == "qa:controlPoint" || type == "qa:controlStep"  || type == "qa:controlMethod" || type == "bcpg:entity" || type == "ecm:changeUnit" || type == "bcpg:supplier" || type == "bcpg:client" || type == "bcpg:resourceProduct" || type == "mpm:processResource" || type == "mpm:processStep" || type == "var:charact") // don't forget to modify the file entity-datagrid.js otherwise, we cannont navigate to the object
 	  {
 		 obj = Evaluator.getContentObject(value);
          if (obj == null)
