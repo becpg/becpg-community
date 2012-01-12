@@ -47,6 +47,7 @@
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
 				<aspect name="dsg:modelAspect" />
+				<aspect name="dsg:configAspect" />
 				<aspect name="ext1:customAspect"/>
 			</visible>
 
@@ -62,6 +63,7 @@
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
 				<aspect name="dsg:modelAspect" />
+				<aspect name="dsg:configAspect" />
 				<aspect name="ext1:customAspect"/>
 			</addable>
 
@@ -77,6 +79,7 @@
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
 				<aspect name="dsg:modelAspect" />
+				<aspect name="dsg:configAspect" />
 				<aspect name="ext1:customAspect"/>
 			</removeable>
 		</aspects>
@@ -111,6 +114,9 @@
 				<subtype name="bcpg:linkedValue" />
 				<subtype name="bcpg:listValue" />
 				<subtype name="ext1:customType"/>
+				
+				<subtype name="dsg:config" />
+				<subtype name="cm:dictionaryModel" />
 			</type>
 
 			<type name="cm:folder">

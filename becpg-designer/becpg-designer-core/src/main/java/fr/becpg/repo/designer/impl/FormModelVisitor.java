@@ -17,6 +17,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -64,7 +65,7 @@ public class FormModelVisitor {
 			Element elem = (Element) list.item(i);
 			FormControl formControl = new FormControl();
 			formControl.setId(elem.getAttribute("id"));
-			formControl.setDescription(DOMUtils.getElementText(elem, "description"));
+			formControl.setDescription(I18NUtil.getMessage("control."+elem.getAttribute("id")+".description"));
 			ret.add(formControl);
 		}
 		
@@ -93,7 +94,7 @@ public class FormModelVisitor {
 						nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_ID, param.getAttribute("name"));
 						nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_PARAMETERTYPE, param.getAttribute("type"));
 						nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_PARAMETERVALUE, param.getAttribute("default"));
-						nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_PARAMETERDESCRIPTION, DOMUtils.getElementText(param));
+						nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_PARAMETERDESCRIPTION, I18NUtil.getMessage("control."+controlId+".param."+param.getAttribute("name")));
 						
 					}
 					

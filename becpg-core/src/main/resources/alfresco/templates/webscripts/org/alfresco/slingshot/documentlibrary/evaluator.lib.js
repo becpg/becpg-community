@@ -272,7 +272,7 @@ var Evaluator =
                actionSet = "transferredDocument";
             }
             
-            if(node.hasAspect("dsg:modelAspect")){
+            if(node.typeShort == "cm:dictionaryModel"){
             	  actionSet = "designerModel";
             }
          	

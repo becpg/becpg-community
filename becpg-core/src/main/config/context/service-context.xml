@@ -15,7 +15,7 @@
 		</property>
 	</bean>
 	
-	<bean id="bootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">      
+	<bean id="becpgBootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">      
       <property name="resourceBundles">
          <list>
          	 <value>alfresco/module/${pom.artifactId}/model/becpgModel</value>
