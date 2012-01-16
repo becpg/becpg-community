@@ -2,15 +2,22 @@
 
 . ./common.sh
 
-#becpg-amp
-rm $ALF_SDK/lib/server/$BECPG_JAR
-rm $ALF_SDK/lib/server/$BECPG_CONFIG_JAR
-cd becpg-core
 mvn clean package -Dmaven.test.skip=true
-cd $TARGET_FOLDER
-cp lib/$BECPG_JAR $ALF_SDK//lib/server/
-cd config
+
+#clean
+rm $ALF_SDK/lib/server/becpg-commons-$BECPG_VERSION.jar
+rm $ALF_SDK/lib/server/becpg-core-$BECPG_VERSION.jar
+rm $ALF_SDK/lib/server/becpg-config.jar
+
+#becpg-commons
+cp becpg-commons/target/becpg-commons-$BECPG_VERSION.jar $ALF_SDK/lib/server/
+
+#becpg-core
+cp becpg-core/target/becpg-core-$BECPG_VERSION/lib/becpg-core-$BECPG_VERSION.jar $ALF_SDK/lib/server/
+
+#becpg config
+cd becpg-core/target/becpg-core-$BECPG_VERSION/config
 jar cf becpg-config.jar alfresco/*
-cp $BECPG_CONFIG_JAR $ALF_SDK/lib/server/
+cp becpg-config.jar $ALF_SDK/lib/server/
 
 
