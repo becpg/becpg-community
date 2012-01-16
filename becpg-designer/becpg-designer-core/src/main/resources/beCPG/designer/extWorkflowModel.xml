@@ -7,7 +7,6 @@
 	   <import uri="http://www.alfresco.org/model/dictionary/1.0"
 			prefix="d" />
 		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm"/>
-		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
 	</imports>
 	<namespaces>
 		<namespace uri="http://www.bcpg.fr/model/extWf1/1.0"
