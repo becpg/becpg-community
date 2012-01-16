@@ -143,7 +143,20 @@ public class DesignerServiceImpl implements DesignerService {
 	@Override
 	public NodeRef createModelAspectNode(NodeRef parentNode, InputStream modelXml) {
 		logger.debug("call createModelAspectNode");
-		M2Model m2Model = M2Model.createModel(modelXml);
+		M2Model m2Model =  null;
+		
+		try {
+			if(modelXml!=null){
+				m2Model = M2Model.createModel(modelXml);
+			} 
+		} catch (Exception e) {
+			logger.error(e,e);
+		}
+		
+		
+		if(m2Model==null){
+			m2Model = M2Model.createModel((String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME));
+		}
 		
 		NodeRef modelNodeRef = nodeService.createNode(parentNode, DesignerModel.ASSOC_MODEL, DesignerModel.ASSOC_MODEL, DesignerModel.TYPE_M2_MODEL).getChildRef();
 		

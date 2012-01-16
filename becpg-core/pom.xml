@@ -130,43 +130,42 @@
 	</properties>
 	<build>
 		<plugins>
-			
- 			<!-- proguard -->
-<!-- 	        <plugin> -->
-<!-- 			    <groupId>com.pyx4me</groupId> -->
-<!-- 			    <artifactId>proguard-maven-plugin</artifactId> -->
-<!-- 			    <version>2.0.4</version> -->
-<!-- 			    <executions> -->
-<!-- 			        <execution> -->
-<!-- 			            <phase>prepare-package</phase> -->
-<!-- 			            <goals> -->
-<!-- 			                <goal>proguard</goal> -->
-<!-- 			            </goals> -->
-<!-- 			        </execution> -->
-<!-- 			    </executions> -->
-<!-- 			    <configuration> -->
-<!-- 			    		<proguardVersion>4.4</proguardVersion> -->
-<!-- 			        <obfuscate>true</obfuscate>			         -->
-<!--                  <injar>classes</injar>  -->
-<!-- 			        <options> -->
-<!-- 			            <option>-dontoptimize</option> -->
-<!-- 			            <option>-renamesourcefileattribute SourceFile</option> -->
-<!-- 			            <option>-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod</option> -->
-<!-- 			            <option>-keep public class * { public protected *;}</option> -->
-<!-- 			            <option>-keepclassmembernames class * {java.lang.Class class$(java.lang.String); java.lang.Class class$(java.lang.String, boolean);}</option>			             -->
-<!-- 			            <option>-keepclassmembers enum * {public static **[] values(); public static ** valueOf(java.lang.String);}</option> -->
-<!-- 			            <option>-keepclassmembers class * implements java.io.Serializable { static final long serialVersionUID; private static final java.io.ObjectStreamField[] serialPersistentFields; private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream); java.lang.Object writeReplace(); java.lang.Object readResolve();}</option> -->
-<!-- 			            <option>-keep @org.springframework.beans.factory.annotation.Service class *</option> -->
-<!-- 			            <option>-keep @org.springframework.stereotype.Controller class *</option> -->
-<!-- 			            <option>-keepclassmembers class * { @org.springframework.beans.factory.annotation.Autowired *; }</option> -->
-<!-- 			        </options> -->
-<!-- 			        <libs> -->
-<!-- 			            <lib>${java.home}/lib/rt.jar</lib> -->
-<!-- 			            <lib>${java.home}/lib/jsse.jar</lib> -->
-<!-- 			        </libs> -->
-<!-- 			        <addMavenDescriptor>false</addMavenDescriptor> -->
-<!-- 			    </configuration> -->
-<!-- 			</plugin> -->
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-jar-plugin</artifactId>
+			  <executions>
+			    <execution>
+			      <phase>package</phase>
+			      <goals>
+			        <goal>jar</goal>
+			      </goals>
+			      <configuration>
+			        <classifier>api</classifier>
+			      </configuration>
+			    </execution>
+			  </executions>
+			</plugin>
+			<!-- proguard -->
+			<!-- <plugin> <groupId>com.pyx4me</groupId> <artifactId>proguard-maven-plugin</artifactId> 
+				<version>2.0.4</version> <executions> <execution> <phase>prepare-package</phase> 
+				<goals> <goal>proguard</goal> </goals> </execution> </executions> <configuration> 
+				<proguardVersion>4.4</proguardVersion> <obfuscate>true</obfuscate> <injar>classes</injar> 
+				<options> <option>-dontoptimize</option> <option>-keepdirectories</option> 
+				<option>-renamesourcefileattribute SourceFile</option> <option>-keepattributes 
+				Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod</option> 
+				<option>-keep public class * { public protected *;}</option> <option>-keepclassmembernames 
+				class * {java.lang.Class class$(java.lang.String); java.lang.Class class$(java.lang.String, 
+				boolean);}</option> <option>-keepclassmembers enum * {public static **[] 
+				values(); public static ** valueOf(java.lang.String);}</option> <option>-keepclassmembers 
+				class * implements java.io.Serializable { static final long serialVersionUID; 
+				private static final java.io.ObjectStreamField[] serialPersistentFields; 
+				private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream); 
+				java.lang.Object writeReplace(); java.lang.Object readResolve();}</option> 
+				<option>-keep @org.springframework.beans.factory.annotation.Service class 
+				*</option> <option>-keep @org.springframework.stereotype.Controller class 
+				*</option> <option>-keepclassmembers class * { @org.springframework.beans.factory.annotation.Autowired 
+				*; }</option> </options> <libs> <lib>${java.home}/lib/rt.jar</lib> <lib>${java.home}/lib/jsse.jar</lib> 
+				</libs> <addMavenDescriptor>false</addMavenDescriptor> </configuration> </plugin> -->
 			<!-- native2ascii -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

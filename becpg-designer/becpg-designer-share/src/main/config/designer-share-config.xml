@@ -1,5 +1,7 @@
 
 <alfresco-config>
+
+
 	<config evaluator="string-compare" condition="ModelDesigner">
 
 		<types>

@@ -53,6 +53,8 @@ ul.form-controls  li.form-control-selectmany { padding-left: 24px; background:  
 ul.form-controls  li.form-control-textarea { padding-left: 24px; background:  url(./images/textarea-16.png) no-repeat 5px;}
 ul.form-controls  li.form-control-textfield { padding-left: 24px; background:  url(./images/textfield-16.png) no-repeat 5px;}
 ul.form-controls  li.form-control-size { padding-left: 24px; background:  url(./images/size-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-autocomplete { padding-left: 24px; background:  url(./images/autocomplete-16.png) no-repeat 5px;}
+ul.form-controls  li.form-control-autocomplete-association { padding-left: 24px; background:  url(./images/autocomplete-16.png) no-repeat 5px;}
 
 /**
 

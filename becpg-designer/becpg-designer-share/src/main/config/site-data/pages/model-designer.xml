@@ -5,7 +5,7 @@
    <description>Model designer</description>
    <description-id>page.modelDesigner.description</description-id>
    <template-instance>model-designer</template-instance>
-   <authentication>user</authentication>
+   <authentication>admin</authentication>
    <components>
      	<!-- title -->
    	 <component>
