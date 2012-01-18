@@ -1,8 +1,0 @@
-<webscript>
-	<shortname>FormControls</shortname>
-	<description>Designer Form Controls - return the Form Controls</description>
-	<url>/becpg/designer/controls</url>
-	<format default="json">argument</format>
-	<authentication>user</authentication>
-	<transaction allow="readwrite" buffersize="0">required</transaction>
-</webscript>
