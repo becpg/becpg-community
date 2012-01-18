@@ -436,6 +436,9 @@
 
 		<type name="bcpg:charact">
 			<parent>cm:content</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:legalNameAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:allergen">
@@ -470,9 +473,6 @@
 		<type name="bcpg:ing">
 			<parent>bcpg:charact</parent>
 			<properties>
-				<property name="bcpg:ingMLName">
-					<type>d:mltext</type>
-				</property>
 				<property name="bcpg:ingCEECode">
 					<type>d:text</type>
 				</property>
@@ -1400,12 +1400,19 @@
 	</types>
 	<!-- __________________________________________ ASPECTS _________________________________________ -->
 
+
 	<aspects>
+		
+		<aspect name="bcpg:legalNameAspect">
+			<properties>
+			<property name="bcpg:legalName">
+					<type>d:mlText</type>
+				</property>
+			</properties>
+		</aspect>
+	
 		<aspect name="bcpg:productAspect">
 			<properties>
-				<property name="bcpg:legalName">
-					<type>d:text</type>
-				</property>
 				<property name="bcpg:productComments">
 					<type>d:text</type>
 				</property>
@@ -1439,6 +1446,9 @@
 					</constraints>
 				</property>
 			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:legalNameAspect</aspect>
+			</mandatory-aspects>
 		</aspect>
 
 		<aspect name="bcpg:transformationAspect">
