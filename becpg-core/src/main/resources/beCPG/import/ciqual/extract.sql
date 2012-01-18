@@ -18,10 +18,32 @@ SELECT CONCAT('"VALUES";"',ORIGCPNM,'";"',C_ORIGCPNMABR,'"') from COMPONENT
 
 -- Raw material
 -- "COLUMNS";"bcpg:code";"cm:name";"bcpg:legalName";"bcpg:productHierarchy1";"bcpg:productHierarchy2"
-SELECT CONCAT('"VALUES";"MP',FOOD.ORIGFDCD,'";"',FOOD.ORIGFDNM,'";"',FOOD.ORIGFDNM,'";"',hierachy1.ORIGGPFR,'";"',hierachy2.ORIGGPFR,'"' ) from FOOD, FOOD_GROUPS as hierachy1, FOOD_GROUPS as hierachy2 
-WHERE FOOD.ORIGGPCD = hierachy2.ORIGGPCD and  hierachy1.ORIGGPCD like SUBSTRING_INDEX(hierachy2.ORIGGPCD,".",1); 
+SELECT CONCAT('"VALUES";"MP',REPLACE(FOOD.ORIGFDCD,'"',"'"),'";"',FOOD.ORIGFDNM,'";"',FOOD.ORIGFDNM,'";"',hierachy1.ORIGGPFR,'";"',hierachy2.ORIGGPFR,'"' ) from FOOD, FOOD_GROUPS as hierachy1, FOOD_GROUPS as hierachy2 
+WHERE FOOD.ORIGGPCD = hierachy2.ORIGGPCD and  hierachy1.ORIGGPCD like SUBSTRING_INDEX(hierachy2.ORIGGPCD,".",1) and (hierachy1.ORIGGPFR not in ("Boulangerie-viennoiserie","Pâtisseries et biscuits","Céréales petit déjeuner et barres céréalières","Plats composés","Sandwichs") or hierachy2.ORIGGPFR in("Préparations pour pâtisseries") ) ; 
+
+-- Finished product
+-- "COLUMNS";"bcpg:code";"cm:name";"bcpg:legalName";"bcpg:productHierarchy1";"bcpg:productHierarchy2"
+SELECT CONCAT('"VALUES";"PF',REPLACE(FOOD.ORIGFDCD,'"',"'"),'";"',FOOD.ORIGFDNM,'";"',FOOD.ORIGFDNM,'";"',hierachy1.ORIGGPFR,'";"',hierachy2.ORIGGPFR,'"' ) from FOOD, FOOD_GROUPS as hierachy1, FOOD_GROUPS as hierachy2 
+WHERE FOOD.ORIGGPCD = hierachy2.ORIGGPCD and  hierachy1.ORIGGPCD like SUBSTRING_INDEX(hierachy2.ORIGGPCD,".",1) and (hierachy1.ORIGGPFR  in ("Boulangerie-viennoiserie","Pâtisseries et biscuits","Céréales petit déjeuner et barres céréalières","Plats composés","Sandwichs") or hierachy2.ORIGGPFR not in("Préparations pour pâtisseries") ) ; 
+
+
 
 -- NutList
 -- "COLUMNS";"code";"bcpg:nutListNut";"bcpg:nutListValue";"bcpg:nutListUnit";"bcpg:nutListMini";"bcpg:nutListMaxi";bcpg:nutListGroup;
 
-SELECT CONCAT('"VALUES";"MP',COMPILED_DATA.ORIGFDCD,'";"',COMPONENT.ORIGCPNM,'";"',COMPILED_DATA.SELVAL,'";"',COMPILED_DATA.UNIT,'";"',IFNULL(COMPILED_DATA.MIN,0),'";"',IFNULL(COMPILED_DATA.MAX,0))  FROM COMPILED_DATA,COMPONENT  WHERE COMPONENT.ORIGCPCD = COMPILED_DATA.ORIGCPCD;
+SELECT CONCAT('"VALUES";"MP',COMPILED_DATA.ORIGFDCD,'";"',COMPONENT.ORIGCPNM,'";"',REPLACE(COMPILED_DATA.SELVAL,",","."),'";"',COMPILED_DATA.UNIT,'";"',IFNULL(COMPILED_DATA.MIN,0),'";"',IFNULL(COMPILED_DATA.MAX,0),'"')  
+FROM COMPILED_DATA,COMPONENT  WHERE COMPONENT.ORIGCPCD = COMPILED_DATA.ORIGCPCD 
+AND COMPILED_DATA.ORIGFDCD IN (SELECT FOOD.ORIGFDCD from FOOD, FOOD_GROUPS as hierachy1, FOOD_GROUPS as hierachy2 
+WHERE FOOD.ORIGGPCD = hierachy2.ORIGGPCD and  hierachy1.ORIGGPCD like SUBSTRING_INDEX(hierachy2.ORIGGPCD,".",1) 
+and (hierachy1.ORIGGPFR not in ("Boulangerie-viennoiserie","Pâtisseries et biscuits","Céréales petit déjeuner et barres céréalières","Plats composés","Sandwichs")
+or hierachy2.ORIGGPFR in("Préparations pour pâtisseries") )
+);
+
+
+SELECT CONCAT('"VALUES";"PF',COMPILED_DATA.ORIGFDCD,'";"',COMPONENT.ORIGCPNM,'";"',REPLACE(COMPILED_DATA.SELVAL,",","."),'";"',COMPILED_DATA.UNIT,'";"',IFNULL(COMPILED_DATA.MIN,0),'";"',IFNULL(COMPILED_DATA.MAX,0),'"')  
+FROM COMPILED_DATA,COMPONENT  WHERE COMPONENT.ORIGCPCD = COMPILED_DATA.ORIGCPCD 
+AND COMPILED_DATA.ORIGFDCD IN (SELECT FOOD.ORIGFDCD from FOOD, FOOD_GROUPS as hierachy1, FOOD_GROUPS as hierachy2 
+WHERE FOOD.ORIGGPCD = hierachy2.ORIGGPCD and  hierachy1.ORIGGPCD like SUBSTRING_INDEX(hierachy2.ORIGGPCD,".",1) 
+and (hierachy1.ORIGGPFR  in ("Boulangerie-viennoiserie","Pâtisseries et biscuits","Céréales petit déjeuner et barres céréalières","Plats composés","Sandwichs")
+and hierachy2.ORIGGPFR not in("Préparations pour pâtisseries") )
+);
