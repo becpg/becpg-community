@@ -10,13 +10,11 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.eclipse.birt.report.model.parser.ReportState;
 
 import fr.becpg.repo.NodeVisitor;
 import fr.becpg.repo.RepoConsts;

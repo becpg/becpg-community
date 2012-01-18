@@ -128,7 +128,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
+		 	<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.0-beta-2</version>
@@ -145,9 +145,10 @@
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
 				</configuration>
-			</plugin>
+			</plugin> 
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
+			   	<version>2.3.2</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
@@ -156,6 +157,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.11</version>
 				<configuration>
 					<argLine>-Xmx512m -XX:MaxPermSize=128m</argLine>
 				</configuration>
@@ -186,13 +188,10 @@
 		<module>becpg-bootstrap/alfresco-sdk</module>
 		<module>becpg-bootstrap/birt-sdk</module>
 		<module>becpg-commons</module>
-		<module>becpg-controls/becpg-controls-core</module>
-		<module>becpg-controls/becpg-controls-share</module>
-		<module>becpg-designer/becpg-designer-core</module>
-		<module>becpg-designer/becpg-designer-share</module>
 		<module>becpg-core</module>
 		<module>becpg-share</module>
 		<module>becpg-olap</module>
+		<module>distribution</module>
 	</modules>
 
 	<profiles>

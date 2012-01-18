@@ -2,9 +2,11 @@
   <name>becpg-core</name>
   <comment>BeCPG repository. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
+    <project>alfresco-sdk</project>
     <project>becpg-commons</project>
     <project>becpg-controls-core</project>
     <project>becpg-designer-core</project>
+    <project>birt-sdk</project>
   </projects>
   <buildSpec>
     <buildCommand>

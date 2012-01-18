@@ -43,7 +43,7 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
-		
+
 
 		<!-- alfresco -->
 		<dependency>
@@ -60,9 +60,9 @@
 			<artifactId>birt-sdk</artifactId>
 			<version>3.7.1</version>
 			<type>pom</type>
-		</dependency>		
-
+		</dependency>
 	
+
 		<!-- mysql -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -70,7 +70,7 @@
 			<version>5.1.9</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- test -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -84,23 +84,23 @@
 			<version>1.2.0</version>
 			<scope>test</scope>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-mock</artifactId>
 			<version>2.0.8</version>
 			<scope>test</scope>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.alfresco.sdk</groupId>
 			<artifactId>spring-webscripts-1.0.0.CI-SNAPSHOT-tests</artifactId>
 			<version>3.4</version>
 			<scope>provided</scope>
 		</dependency>
-		
-		
-		
+
+
+
 		<!-- Servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -110,7 +110,7 @@
 		</dependency>
 
 
-		<!-- runtime -->
+		<!-- runtime 
 
 		<dependency>
 			<groupId>net.sf.proguard</groupId>
@@ -118,12 +118,12 @@
 			<version>4.4</version>
 			<scope>runtime</scope>
 			<optional>true</optional>
-		</dependency>
+		</dependency> -->
 
 
 		<!-- Don't add here amp dependencies as it will break amp packaging -->
-		
-		
+
+
 	</dependencies>
 	<properties>
 		<webapp.name>becpg-core-webapp</webapp.name>
@@ -131,41 +131,57 @@
 	<build>
 		<plugins>
 			<plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-jar-plugin</artifactId>
-			  <executions>
-			    <execution>
-			      <phase>package</phase>
-			      <goals>
-			        <goal>jar</goal>
-			      </goals>
-			      <configuration>
-			        <classifier>api</classifier>
-			      </configuration>
-			    </execution>
-			  </executions>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>api</classifier>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
-			<!-- proguard -->
-			<!-- <plugin> <groupId>com.pyx4me</groupId> <artifactId>proguard-maven-plugin</artifactId> 
-				<version>2.0.4</version> <executions> <execution> <phase>prepare-package</phase> 
-				<goals> <goal>proguard</goal> </goals> </execution> </executions> <configuration> 
-				<proguardVersion>4.4</proguardVersion> <obfuscate>true</obfuscate> <injar>classes</injar> 
-				<options> <option>-dontoptimize</option> <option>-keepdirectories</option> 
-				<option>-renamesourcefileattribute SourceFile</option> <option>-keepattributes 
-				Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod</option> 
-				<option>-keep public class * { public protected *;}</option> <option>-keepclassmembernames 
-				class * {java.lang.Class class$(java.lang.String); java.lang.Class class$(java.lang.String, 
-				boolean);}</option> <option>-keepclassmembers enum * {public static **[] 
-				values(); public static ** valueOf(java.lang.String);}</option> <option>-keepclassmembers 
-				class * implements java.io.Serializable { static final long serialVersionUID; 
-				private static final java.io.ObjectStreamField[] serialPersistentFields; 
-				private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream); 
-				java.lang.Object writeReplace(); java.lang.Object readResolve();}</option> 
-				<option>-keep @org.springframework.beans.factory.annotation.Service class 
-				*</option> <option>-keep @org.springframework.stereotype.Controller class 
-				*</option> <option>-keepclassmembers class * { @org.springframework.beans.factory.annotation.Autowired 
-				*; }</option> </options> <libs> <lib>${java.home}/lib/rt.jar</lib> <lib>${java.home}/lib/jsse.jar</lib> 
-				</libs> <addMavenDescriptor>false</addMavenDescriptor> </configuration> </plugin> -->
+			<!--  proguard  
+			 <plugin>
+			    <groupId>com.pyx4me</groupId>
+			    <artifactId>proguard-maven-plugin</artifactId>
+			    <version>2.0.4</version>
+			    <executions>
+			        <execution>
+			            <phase>prepare-package</phase>
+			            <goals>
+			                <goal>proguard</goal>
+			            </goals>
+			        </execution>
+			    </executions>
+			    <configuration>
+			    	<proguardVersion>4.4</proguardVersion>
+			        <obfuscate>true</obfuscate>			        
+                    <injar>classes</injar> 
+			        <options>
+			            <option>-dontoptimize</option>
+			            <option>-renamesourcefileattribute SourceFile</option>
+			            <option>-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod</option>
+			            <option>-keep public class * { public protected *;}</option>
+			            <option>-keepclassmembernames class * {java.lang.Class class$(java.lang.String); java.lang.Class class$(java.lang.String, boolean);}</option>			            
+			            <option>-keepclassmembers enum * {public static **[] values(); public static ** valueOf(java.lang.String);}</option>
+			            <option>-keepclassmembers class * implements java.io.Serializable { static final long serialVersionUID; private static final java.io.ObjectStreamField[] serialPersistentFields; private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream); java.lang.Object writeReplace(); java.lang.Object readResolve();}</option>
+			            <option>-keep @org.springframework.beans.factory.annotation.Service class *</option>
+			            <option>-keep @org.springframework.stereotype.Controller class *</option>
+			            <option>-keepclassmembers class * { @org.springframework.beans.factory.annotation.Autowired *; }</option>
+			        </options>
+			        <libs>
+			            <lib>${java.home}/lib/rt.jar</lib>
+			            <lib>${java.home}/lib/jsse.jar</lib>
+			        </libs>
+			        <addMavenDescriptor>false</addMavenDescriptor>
+			    </configuration>
+			</plugin>    --> 
 			<!-- native2ascii -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -227,5 +243,5 @@
 			</testResource>
 		</testResources>
 	</build>
-	
+
 </project>

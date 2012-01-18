@@ -209,7 +209,8 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>				
+				<configuration>		
+					<jswarn>false</jswarn>		
 					<excludes>
 						<exclude>**/entity-data-lists.js</exclude>
 						<exclude>**/*.get.js</exclude>
@@ -259,7 +260,7 @@
 				<includes>
 					<include>file-mapping.properties</include>
 				</includes>
-				<targetPath>../${project.artifactId}-${pom.version}/</targetPath><!-- hack TODO bug here make amp include all target -->
+				<targetPath>../${project.artifactId}-${project.version}/</targetPath><!-- hack TODO bug here make amp include all target -->
 			</resource>
 		</resources>
 	</build>

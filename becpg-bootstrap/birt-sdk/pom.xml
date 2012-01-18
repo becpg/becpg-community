@@ -10,7 +10,7 @@
 	</properties>
 	<version>3.7.1</version>
 	<dependencies>
-		<dependency>
+	     <dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>com.ibm.icu_4.4.2.v20110208</artifactId>
 			<version>3.7.1</version>
@@ -19,7 +19,7 @@
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>com.lowagie.text_2.1.7.v201004222200</artifactId>
 			<version>3.7.1</version>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>commons-cli-1.0</artifactId>
@@ -35,11 +35,11 @@
 			<artifactId>flute</artifactId>
 			<version>3.7.1</version>
 		</dependency>
-		<dependency>
+		 <dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>javax.wsdl_1.5.1.v201012040544</artifactId>
 			<version>3.7.1</version>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>js</artifactId>
@@ -54,7 +54,7 @@
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.apache.xml.serializer_2.7.1.v201005080400</artifactId>
 			<version>3.7.1</version>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.birt.runtime_3.7.1.v20110913-1734</artifactId>
@@ -90,7 +90,7 @@
 			<artifactId>org.eclipse.core.runtime_3.7.0.v20110110</artifactId>
 			<version>3.7.1</version>
 		</dependency>
-		<dependency>
+	<!-- 	<dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.connectivity.apache.derby.dbdefinition_1.0.2.v200906161815</artifactId>
 			<version>3.7.1</version>
@@ -99,7 +99,7 @@
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.connectivity.apache.derby_1.0.102.v201107130538</artifactId>
 			<version>3.7.1</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.connectivity.console.profile_1.0.0.v200906020553</artifactId>
@@ -150,7 +150,7 @@
 			<artifactId>org.eclipse.datatools.connectivity_1.2.3.v201108101135</artifactId>
 			<version>3.7.1</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.enablement.hsqldb.dbdefinition_1.0.0.v200906161800</artifactId>
 			<version>3.7.1</version>
@@ -159,8 +159,8 @@
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.enablement.hsqldb_1.0.0.v200906020900</artifactId>
 			<version>3.7.1</version>
-		</dependency>
-		<dependency>
+		</dependency> -->
+		<!-- <dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition_1.0.4.v201005211215</artifactId>
 			<version>3.7.1</version>
@@ -189,7 +189,7 @@
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.enablement.msft.sqlserver_1.0.1.v201001180222</artifactId>
 			<version>3.7.1</version>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.enablement.mysql.dbdefinition_1.0.4.v200906161800</artifactId>
@@ -199,7 +199,7 @@
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.enablement.mysql_1.0.2.v201109022323</artifactId>
 			<version>3.7.1</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.enablement.oda.ws_1.2.2.v201106161731</artifactId>
@@ -210,7 +210,7 @@
 			<artifactId>org.eclipse.datatools.enablement.oda.xml_1.2.1.v201104121500</artifactId>
 			<version>3.7.1</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.enablement.oracle.dbdefinition_1.0.102.v201101120745</artifactId>
 			<version>3.7.1</version>
@@ -229,17 +229,17 @@
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.enablement.postgresql_1.0.1.v200906020900</artifactId>
 			<version>3.7.1</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.modelbase.dbdefinition_1.0.2.v201002130228</artifactId>
 			<version>3.7.1</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.modelbase.derby_1.0.0.v201002161452</artifactId>
 			<version>3.7.1</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.eclipse.birt</groupId>
 			<artifactId>org.eclipse.datatools.modelbase.sql.query_1.1.1.v201008100700</artifactId>
