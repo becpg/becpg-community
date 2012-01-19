@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings>
+	<settings>
+		<!-- <setting id="dateFormat" value="dd/MM/yyyy"/> -->
+		<!-- <setting id="decimalPattern" value="#0.00"/> -->
+	</settings>
+
+	<!-- PRODUCT -->
+	<mapping name="bcpg:rawMaterial">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns>
+
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+
+		</columns>
+	</mapping>
+	
+	
+	<!-- NUT LIST -->
+	<mapping name="bcpg:nutList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:nutListNut" />
+		</dataListColumnKeys>
+		<columns>
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+			<column id="nutListNut" attribute="bcpg:nutListNut" type="Attribute" />
+			<column id="nutListValue" attribute="bcpg:nutListValue"
+				type="Attribute" />
+			<column id="nutListUnit" attribute="bcpg:nutListUnit" type="Attribute" />
+			<column id="nutListMini" attribute="bcpg:nutListMini"
+				type="Attribute" />
+			<column id="nutListMaxi" attribute="bcpg:nutListMaxi"
+				type="Attribute" />
+		</columns>
+	</mapping>
+
+	<!-- INGREDIENTS LIST -->
+	<mapping name="bcpg:ingList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:ingListIng" />
+		</dataListColumnKeys>
+		<columns>
+			<column id="ingListQtyPerc" attribute="bcpg:ingListQtyPerc"
+				type="Attribute" />
+			<column id="ingListIsGMO" attribute="bcpg:ingListIsGMO" type="Attribute" />
+			<column id="ingListIsIonized" attribute="bcpg:ingListIsIonized"
+				type="Attribute" />
+			<column id="ingListIng" attribute="bcpg:ingListIng" type="Attribute" />
+			<column id="ingListGeoOrigin" attribute="bcpg:ingListGeoOrigin"
+				type="Attribute" />
+			<column id="ingListBioOrigin" attribute="bcpg:ingListBioOrigin"
+				type="Attribute" />
+		</columns>
+	</mapping>
+
+	<!-- COMPOSITION LIST -->
+	<mapping name="bcpg:compoList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:compoListProduct" />
+		</dataListColumnKeys>
+		<columns>
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+			<column id="level" attribute="bcpg:depthLevel" type="Attribute" />
+			<column id="compoListProduct" attribute="bcpg:compoListProduct"
+				type="Attribute" />
+			<column id="compoListQty" attribute="bcpg:compoListQty" type="Attribute" />
+			<column id="compoListUnit" attribute="bcpg:compoListUnit"
+				type="Attribute" />
+		</columns>
+	</mapping>
+
+	<mapping name="bcpg:client">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns />
+	</mapping>
+
+	<mapping name="bcpg:supplier">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns />
+	</mapping>
+
+</mappings>

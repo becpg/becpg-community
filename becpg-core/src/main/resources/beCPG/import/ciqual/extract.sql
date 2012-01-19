@@ -19,12 +19,13 @@ SELECT CONCAT('"VALUES";"',ORIGCPNM,'";"',C_ORIGCPNMABR,'";"',ORIGCPNM,'";"',ORI
 -- Raw material
 -- "COLUMNS";"bcpg:code";"cm:name";"bcpg:legalName";"bcpg:productHierarchy1";"bcpg:productHierarchy2"
 SELECT CONCAT('"VALUES";"MP',REPLACE(FOOD.ORIGFDCD,'"',"'"),'";"',REPLACE(FOOD.ORIGFDNM,"\"","''"),'";"',REPLACE(FOOD.ORIGFDNM,"\"","''"),'";"',REPLACE(FOOD.ORIGFDNM,"\"","''"),'";"',REPLACE(FOOD.ENGFDNAM,"\"","''"),'";"',hierachy1.ORIGGPFR,'";"',hierachy2.ORIGGPFR,'"' ) from FOOD, FOOD_GROUPS as hierachy1, FOOD_GROUPS as hierachy2 
-WHERE FOOD.ORIGGPCD = hierachy2.ORIGGPCD and  hierachy1.ORIGGPCD like SUBSTRING_INDEX(hierachy2.ORIGGPCD,".",1) and (hierachy1.ORIGGPFR not in ("Boulangerie-viennoiserie","P√¢tisseries et biscuits","C√©r√©ales petit d√©jeuner et barres c√©r√©ali√®res","Plats compos√©s","Sandwichs") or hierachy2.ORIGGPFR in("Pr√©parations pour p√¢tisseries") ) ; 
+WHERE FOOD.ORIGGPCD = hierachy2.ORIGGPCD and  hierachy1.ORIGGPCD like SUBSTRING_INDEX(hierachy2.ORIGGPCD,".",1) and (hierachy1.ORIGGPFR 
+not in ("Boulangerie-viennoiserie","P‚tisseries et biscuits","CÈrÈales petit dÈjeuner et barres cÈrÈaliËres","Plats composÈs","Sandwichs") or hierachy2.ORIGGPFR in("PrÈparations pour p‚tisseries")) ; 
 
 -- Finished product
 -- "COLUMNS";"bcpg:code";"cm:name";"bcpg:legalName";"bcpg:productHierarchy1";"bcpg:productHierarchy2"
 SELECT CONCAT('"VALUES";"PF',REPLACE(FOOD.ORIGFDCD,'"',"'"),'";"',FOOD.ORIGFDNM,'";"',FOOD.ORIGFDNM,'";"',REPLACE(FOOD.ORIGFDNM,"\"","''"),'";"',REPLACE(FOOD.ENGFDNAM,"\"","''"),'";"',hierachy1.ORIGGPFR,'";"',hierachy2.ORIGGPFR,'"' ) from FOOD, FOOD_GROUPS as hierachy1, FOOD_GROUPS as hierachy2 
-WHERE FOOD.ORIGGPCD = hierachy2.ORIGGPCD and  hierachy1.ORIGGPCD like SUBSTRING_INDEX(hierachy2.ORIGGPCD,".",1) and (hierachy1.ORIGGPFR  in ("Boulangerie-viennoiserie","P√¢tisseries et biscuits","C√©r√©ales petit d√©jeuner et barres c√©r√©ali√®res","Plats compos√©s","Sandwichs") and hierachy2.ORIGGPFR not in("Pr√©parations pour p√¢tisseries") ) ; 
+WHERE FOOD.ORIGGPCD = hierachy2.ORIGGPCD and  hierachy1.ORIGGPCD like SUBSTRING_INDEX(hierachy2.ORIGGPCD,".",1) and (hierachy1.ORIGGPFR  in ("Boulangerie-viennoiserie","P‚tisseries et biscuits","CÈrÈales petit dÈjeuner et barres cÈrÈaliËres","Plats composÈs","Sandwichs") and hierachy2.ORIGGPFR not in("PrÈparations pour p‚tisseries") ) ; 
 
 
 
@@ -35,8 +36,8 @@ SELECT CONCAT('"VALUES";"MP',COMPILED_DATA.ORIGFDCD,'";"',COMPONENT.ORIGCPNM,'";
 FROM COMPILED_DATA,COMPONENT  WHERE COMPONENT.ORIGCPCD = COMPILED_DATA.ORIGCPCD 
 AND COMPILED_DATA.ORIGFDCD IN (SELECT FOOD.ORIGFDCD from FOOD, FOOD_GROUPS as hierachy1, FOOD_GROUPS as hierachy2 
 WHERE FOOD.ORIGGPCD = hierachy2.ORIGGPCD and  hierachy1.ORIGGPCD like SUBSTRING_INDEX(hierachy2.ORIGGPCD,".",1) 
-and (hierachy1.ORIGGPFR not in ("Boulangerie-viennoiserie","P√¢tisseries et biscuits","C√©r√©ales petit d√©jeuner et barres c√©r√©ali√®res","Plats compos√©s","Sandwichs")
-or hierachy2.ORIGGPFR in("Pr√©parations pour p√¢tisseries") )
+and (hierachy1.ORIGGPFR not in ("Boulangerie-viennoiserie","P‚tisseries et biscuits","CÈrÈales petit dÈjeuner et barres cÈrÈaliËres","Plats composÈs","Sandwichs")
+or hierachy2.ORIGGPFR in("PrÈparations pour p‚tisseries") )
 );
 
 
@@ -44,6 +45,6 @@ SELECT CONCAT('"VALUES";"PF',COMPILED_DATA.ORIGFDCD,'";"',COMPONENT.ORIGCPNM,'";
 FROM COMPILED_DATA,COMPONENT  WHERE COMPONENT.ORIGCPCD = COMPILED_DATA.ORIGCPCD 
 AND COMPILED_DATA.ORIGFDCD IN (SELECT FOOD.ORIGFDCD from FOOD, FOOD_GROUPS as hierachy1, FOOD_GROUPS as hierachy2 
 WHERE FOOD.ORIGGPCD = hierachy2.ORIGGPCD and  hierachy1.ORIGGPCD like SUBSTRING_INDEX(hierachy2.ORIGGPCD,".",1) 
-and (hierachy1.ORIGGPFR  in ("Boulangerie-viennoiserie","P√¢tisseries et biscuits","C√©r√©ales petit d√©jeuner et barres c√©r√©ali√®res","Plats compos√©s","Sandwichs")
-and hierachy2.ORIGGPFR not in("Pr√©parations pour p√¢tisseries") )
+and (hierachy1.ORIGGPFR  in ("Boulangerie-viennoiserie","P‚tisseries et biscuits","CÈrÈales petit dÈjeuner et barres cÈrÈaliËres","Plats composÈs","Sandwichs")
+and hierachy2.ORIGGPFR not in("PrÈparations pour p‚tisseries") )
 );

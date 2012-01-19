@@ -3,23 +3,18 @@
  */
 package fr.becpg.repo.product;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
@@ -28,14 +23,9 @@ import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
-import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -50,13 +40,13 @@ import fr.becpg.test.RepoBaseTestCase;
  *
  * @author querephi
  */
-public class ProductReportServiceTest extends RepoBaseTestCase {
+public class EntityReportServiceTest extends RepoBaseTestCase {
 
 	/** The PAT h_ testfolder. */
 	private static String PATH_TESTFOLDER = "TestFolder";    
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ProductReportServiceTest.class);
+	private static Log logger = LogFactory.getLog(EntityReportServiceTest.class);
 	
 	/** The app ctx. */
 	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
@@ -86,8 +76,6 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
 	/** The policy behaviour filter. */
 	private BehaviourFilter policyBehaviourFilter;
 	
-	private EntityListDAO entityListDAO;
-	
 	/** The sf node ref. */
 	private NodeRef sfNodeRef;
 	
@@ -109,7 +97,6 @@ public class ProductReportServiceTest extends RepoBaseTestCase {
     	reportTplService = (ReportTplService)appCtx.getBean("reportTplService");
     	policyBehaviourFilter = (BehaviourFilter)appCtx.getBean("policyBehaviourFilter");
     	repoService = (RepoService)appCtx.getBean("repoService");
-    	entityListDAO = (EntityListDAO)appCtx.getBean("entityListDAO");
     	
     	transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override
