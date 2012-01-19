@@ -35,7 +35,7 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.product.ProductReportServiceTest;
+import fr.becpg.repo.product.EntityReportServiceTest;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -77,7 +77,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	private static String VALUE_COST_CURRENCY = "€";
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ProductReportServiceTest.class);
+	private static Log logger = LogFactory.getLog(EntityReportServiceTest.class);
 	
 	/** The app ctx. */
 	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();

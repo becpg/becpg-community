@@ -382,6 +382,7 @@
 				<aspect>bcpg:codeAspect</aspect>				
 				<aspect>bcpg:productAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
+				<aspect>rep:reportEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>		
 		<type name="bcpg:finishedProduct">
@@ -1406,7 +1407,7 @@
 		<aspect name="bcpg:legalNameAspect">
 			<properties>
 			<property name="bcpg:legalName">
-					<type>d:mlText</type>
+					<type>d:mltext</type>
 				</property>
 			</properties>
 		</aspect>
@@ -1670,6 +1671,7 @@
 				</property>
 			</properties>
 		</aspect>
+		
 
 		<aspect name="bcpg:entityListsAspect">
 			<associations>

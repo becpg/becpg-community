@@ -6,37 +6,23 @@ package fr.becpg.repo.product;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.service.cmr.lock.LockService;
-import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
-import org.alfresco.service.cmr.model.FileNotFoundException;
-import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.security.OwnableService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.DataListModel;
 import fr.becpg.model.MPMModel;
-import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.NodeVisitor;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.wused.WUsedListService;
 import fr.becpg.repo.entity.wused.data.WUsedData;
@@ -49,8 +35,6 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.FormulateException;
-import fr.becpg.repo.product.report.ProductReportService;
-import fr.becpg.repo.report.entity.EntityReportService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -59,12 +43,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
  * @author querephi
  */
 public class ProductServiceImpl implements ProductService {
-	
-	/** The Constant PERMISSION_NOT_COPY_GROUP_SYSTEMMGR. */
-	private static final String PERMISSION_NOT_COPY_GROUP_SYSTEMMGR = "GROUP_SystemMgr";
-	
-	/** The Constant PERMISSION_NOT_COPY_GROUP_EVERYONE. */
-	private static final String PERMISSION_NOT_COPY_GROUP_EVERYONE = "GROUP_EVERYONE";
+
 	
 	private static final int WUSED_LEVEL = 1;	
 
@@ -83,8 +62,6 @@ public class ProductServiceImpl implements ProductService {
 	/** The product dictionary service. */
 	private ProductDictionaryService productDictionaryService;
 	
-	/** The product report visitor. */
-	private NodeVisitor productReportVisitor;
 	
 	private ProductVisitor compositionCalculatingVisitor;
 	
@@ -105,16 +82,9 @@ public class ProductServiceImpl implements ProductService {
 	/** The repo service. */
 	private RepoService repoService;
 	
-	/** The permission service. */
-	private PermissionService permissionService;
 	
 	/** The ownable service. */
 	private OwnableService ownableService;
-	
-	/** The policy behaviour filter. */
-	private BehaviourFilter policyBehaviourFilter;
-	
-	private LockService lockService;
 	
 	private WUsedListService wUsedListService;
 	
@@ -154,13 +124,6 @@ public class ProductServiceImpl implements ProductService {
 		this.productDictionaryService = productDictionaryService;
 	}
 	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.product.ProductService#setProductReportVisitor(fr.becpg.repo.product.NodeVisitor)
-	 */
-	@Override
-	public void setProductReportVisitor(NodeVisitor productReportVisitor){
-    	this.productReportVisitor = productReportVisitor;
-    }	
 		
 	public void setCompositionCalculatingVisitor(
 			ProductVisitor compositionCalculatingVisitor) {
@@ -216,14 +179,6 @@ public class ProductServiceImpl implements ProductService {
 		this.repoService = repoService;
 	}
 	
-	/**
-	 * Sets the permission service.
-	 *
-	 * @param permissionService the new permission service
-	 */
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
 	
 	/**
 	 * Sets the ownable service.
@@ -234,18 +189,7 @@ public class ProductServiceImpl implements ProductService {
 		this.ownableService = ownableService;
 	}	
 	
-	/**
-	 * Sets the policy behaviour filter.
-	 *
-	 * @param policyBehaviourFilter the new policy behaviour filter
-	 */
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}	
 	
-	public void setLockService(LockService lockService) {
-		this.lockService = lockService;
-	}
 
 	public void setwUsedListService(WUsedListService wUsedListService) {
 		this.wUsedListService = wUsedListService;
@@ -327,51 +271,8 @@ public class ProductServiceImpl implements ProductService {
     	return productData;
     }    
     
-    /**
-	 * Check if the system should generate the report for this product
-	 * @param productNodeRef
-	 * @return
-	 */
-    @Override
-	public boolean IsReportable(NodeRef productNodeRef) {
-		
-    	if(nodeService.exists(productNodeRef)){
-    		
-    		// do not generate report for product version
-    		if(!nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
-    			return true;
-    		}
-    	}
-		return false;			
-	}
-    
-    /**
-     * Generate product reports.
-     *
-     * @param productNodeRef the product node ref
-     */
-    @Override
-    public void generateReport(NodeRef productNodeRef){    
-    	    	
-    	if(lockService.getLockStatus(productNodeRef) == LockStatus.NO_LOCK){
-    	
-    		try{
-        		// Ensure that the policy doesn't refire for this node
-				// on this thread
-				// This won't prevent background processes from
-				// refiring, though
-	            policyBehaviourFilter.disableBehaviour(productNodeRef, BeCPGModel.TYPE_PRODUCT);	
-	            policyBehaviourFilter.disableBehaviour(productNodeRef, ContentModel.ASPECT_AUDITABLE);
-	            
-	            // generate reports
-	            productReportVisitor.visitNode(productNodeRef);				            
-	        }
-	        finally{
-	        	policyBehaviourFilter.enableBehaviour(productNodeRef, ContentModel.ASPECT_AUDITABLE);
-	        	policyBehaviourFilter.enableBehaviour(productNodeRef, BeCPGModel.TYPE_PRODUCT);			        	
-	        }	         
-    	}    	
-    }    
+
+  
     
     /**
      * Move the product in a folder according to the hierarchy.
@@ -535,4 +436,5 @@ public class ProductServiceImpl implements ProductService {
 		
 		return wUsedList;
 	}
+
 }

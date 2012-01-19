@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.NodeVisitor;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -37,27 +36,7 @@ public interface ProductService {
      */
     public ProductData formulate(ProductData productData) throws FormulateException;
     
-    /**
-	 * Check if the system should generate the report for this product
-	 * @param productNodeRef
-	 * @return
-	 */
-	public boolean IsReportable(NodeRef productNodeRef);
-	
-    /**
-     * Sets the product report visitor.
-     *
-     * @param productReportVisitor the new product report visitor
-     */
-    public void setProductReportVisitor(NodeVisitor productReportVisitor);    	
-    
-    /**
-     * Generate report.
-     *
-     * @param productNodeRef the product node ref
-     */
-    public void generateReport(NodeRef productNodeRef);
-        
+ 
     /**
      * Classify product.
      *

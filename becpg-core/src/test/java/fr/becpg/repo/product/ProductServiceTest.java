@@ -48,15 +48,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -66,7 +62,7 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
-import fr.becpg.repo.product.report.ProductReportService;
+import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
@@ -131,13 +127,12 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 	/** The content service. */
 	private ContentService contentService;
 	
-	private ProductReportService productReportService;
+	private EntityReportService entityReportService;
 	
 	private ReportTplService reportTplService;
 	
 	private DictionaryDAO dictionaryDAO;
 	
-	private EntityService entityService;
 	
 	private EntityTplService entityTplService;
 	
@@ -168,10 +163,9 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
         authorityDAO = (AuthorityDAO)appCtx.getBean("authorityDAO");
         repoService = (RepoService)appCtx.getBean("repoService");
         contentService = (ContentService)appCtx.getBean("contentService");
-        productReportService = (ProductReportService)appCtx.getBean("productReportService");
+        entityReportService = (EntityReportService)appCtx.getBean("entityReportService");
         reportTplService = (ReportTplService)appCtx.getBean("reportTplService");
         dictionaryDAO = (DictionaryDAO)appCtx.getBean("dictionaryDAO");
-        entityService = (EntityService)appCtx.getBean("entityService");
         entityTplService = (EntityTplService)appCtx.getBean("entityTplService");
         dictionaryService = (DictionaryService)appCtx.getBean("dictionaryService");
         
@@ -326,7 +320,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");		   		 
 			   
 			   /*-- Generate report --*/		  
-				productService.generateReport(rawMaterialNodeRef);
+				entityReportService.generateReport(rawMaterialNodeRef);
 			   
 			   	/*-- Check report --*/
 			   logger.debug("/*-- Check report --*/");
@@ -356,7 +350,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 		    							BeCPGModel.TYPE_ENTITY, 
 		    							properties).getChildRef();
 			   
-		    	productService.generateReport(rawMaterialNodeRef);
+		    	entityReportService.generateReport(rawMaterialNodeRef);
 		    	
 				return null;
 
@@ -678,7 +672,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
  				compoList.add(new CompoListDataItem(null, 2, 1f, 4f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, lSF2NodeRef));
  				compoList.add(new CompoListDataItem(null, 3, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.OMIT_FR, rawMaterialNodeRef));
 				finishedProduct.setCompoList(compoList); 				
-				Collection<QName> dataLists = new ArrayList();
+				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
  				NodeRef finishedProductNodeRef = productDAO.create(testFolder, finishedProduct, dataLists);
  				

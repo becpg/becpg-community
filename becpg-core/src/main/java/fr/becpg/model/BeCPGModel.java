@@ -663,6 +663,7 @@ public interface BeCPGModel {
 	static final QName ASPECT_ERP_CODE = QName.createQName(BECPG_URI,	"erpCodeAspect");
 	static final QName PROP_ERP_CODE = QName.createQName(BECPG_URI, "erpCode");
 	
+	
 	/**
 	 * Effectivity
 	 */

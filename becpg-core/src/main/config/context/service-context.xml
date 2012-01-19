@@ -307,7 +307,6 @@
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="productDAO" ref="productDAO" />		
 		<property name="productDictionaryService" ref="productDictionaryService" />		
-		<property name="productReportVisitor" ref="productReportVisitor" />		
 		<property name="compositionCalculatingVisitor" ref="compositionCalculatingVisitor" />
 		<property name="processCalculatingVisitor" ref="processCalculatingVisitor" />
 		<property name="allergensCalculatingVisitor" ref="allergensCalculatingVisitor" />
@@ -315,24 +314,8 @@
 		<property name="costsCalculatingVisitor" ref="costsCalculatingVisitor" />
 		<property name="ingsCalculatingVisitor" ref="ingsCalculatingVisitor" />		
 		<property name="repoService" ref="repoService" />
-		<property name="permissionService" ref="permissionService"/>
 		<property name="ownableService" ref="ownableService"/>
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />		
-		<property name="lockService" ref="lockService" />
 		<property name="wUsedListService" ref="wUsedListService" />
-	</bean>
-	
-	<!-- Product report -->
-	<bean id="productReportService" class="fr.becpg.repo.product.report.ProductReportServiceImpl">
-		<property name="nodeService" ref="nodeService" />		
-	</bean>
-	<bean id="productReportVisitor" class="fr.becpg.repo.product.report.ProductReportVisitor">
-		<property name="productDictionaryService" ref="productDictionaryService" />
-		<property name="productDAO" ref="productDAO" />		
-		<property name="productReportService" ref="productReportService" />
-		<property name="reportTplService" ref="reportTplService" />	
-		<property name="entityReportService" ref="entityReportService" />	
-		<property name="entityService" ref="entityService"/>
 	</bean>
 	
 	<!-- Formulation visitors -->
@@ -369,13 +352,7 @@
 	</bean>
 	
 	<!-- Product Policies -->	
-	<bean id="generateProductReportPolicy" class="fr.becpg.repo.product.policy.GenerateProductReportPolicy" init-method="init">
-		<property name="policyComponent" ref="policyComponent" />
-		<property name="transactionService" ref="transactionService"/>
-		<property name="taskExecutor" ref="taskReportExecutor" />
-		<property name="productService" ref="productService" />
-		<property name="nodeService" ref="nodeService" />
-	</bean>		
+
 	<bean id="productListUnits.ProductPolicy" class="fr.becpg.repo.product.policy.productListUnits.ProductPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
@@ -416,11 +393,5 @@
     	<property name="dictionaryService" ref="dictionaryService"/>
     	<property name="searchService" ref="searchService"/>
     </bean>
-    
-	    <bean id="taskReportExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-			<property name="corePoolSize" value="5" />
-			<property name="maxPoolSize" value="10" />
-			<property name="queueCapacity" value="2000" />
-		 </bean>
     
 </beans>
