@@ -79,7 +79,7 @@ delete from becpg_product where product_fact_id in
 	 
 update becpg_product node, becpg_alf_prop projectedQty set node.product_projectedQty = projectedQty.long_value where node.product_fact_id = projectedQty.node_id   and projectedQty.local_name = 'projectedQty';
 update becpg_product node, becpg_alf_prop unitTotalCost set node.product_unitTotalCost = unitTotalCost.float_value where node.product_fact_id = unitTotalCost.node_id   and unitTotalCost.local_name = 'unitTotalCost';
-update becpg_product node, becpg_alf_prop unitPrice set node.product_unitPrice = unitPrice.float_value where node.product_fact_id = node.product_fact_id = unitPrice.node_id   and unitPrice.local_name = 'unitPrice';
+update becpg_product node, becpg_alf_prop unitPrice set node.product_unitPrice = unitPrice.float_value where node.product_fact_id = unitPrice.node_id   and unitPrice.local_name = 'unitPrice';
 	 
  
 update  becpg_product set product_startEffectivity_id=20010101 where  product_startEffectivity_id is null or product_startEffectivity_id=0;
