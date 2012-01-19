@@ -49,32 +49,42 @@ public class ProductListPolicy implements NodeServicePolicies.OnCreateAssociatio
 		QName type = nodeService.getType(productListItemNodeRef);		
 		
 		if(type.equals(BeCPGModel.TYPE_COSTLIST)){
+			
+			Boolean costFixed = (Boolean)nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_COSTFIXED);
 			String costCurrency = (String)nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_COSTCURRENCY);
 			String costListUnit = (String)nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT);
 			
-			if(!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency + CostsCalculatingVisitor.UNIT_SEPARATOR))){
+			if(costFixed != null && costFixed == true){
 				
-				NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
-				
-				if(listNodeRef != null){
-					NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef(); 
-					
-					if(listContainerNodeRef != null){
-						
-						NodeRef productNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-						
-						if(productNodeRef != null){
-							
-							ProductUnit productUnit = ProductUnit.getUnit((String)nodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_UNIT));							
-							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT, CostsCalculatingVisitor.calculateUnit(productUnit, costCurrency));
-						}
-					}
-					
-				}				
+				if(!(costListUnit != null && costListUnit.equals(costCurrency))){
+					nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT, costCurrency);
+				}
 			}
+			else{
+											
+				if(!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency + CostsCalculatingVisitor.UNIT_SEPARATOR))){
+					
+					NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
+					
+					if(listNodeRef != null){
+						NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef(); 
+						
+						if(listContainerNodeRef != null){
+							
+							NodeRef productNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
+							
+							if(productNodeRef != null){
+								
+								ProductUnit productUnit = ProductUnit.getUnit((String)nodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_UNIT));							
+								nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT, CostsCalculatingVisitor.calculateUnit(productUnit, costCurrency));
+							}
+						}
+						
+					}				
+				}
+			}			
 		}
-		
-		if(type.equals(BeCPGModel.TYPE_NUTLIST)){
+		else if(type.equals(BeCPGModel.TYPE_NUTLIST)){
 			String nutUnit = (String)nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_NUTUNIT);
 			String nutListUnit = (String)nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT);
 			

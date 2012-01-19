@@ -129,6 +129,9 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 					nodeService.setProperty(cost1, BeCPGModel.PROP_COSTCURRENCY, "€");
 					NodeRef cost2 = costs.get(1);
 					nodeService.setProperty(cost2, BeCPGModel.PROP_COSTCURRENCY, "$");
+					NodeRef cost3 = costs.get(2);
+					nodeService.setProperty(cost3, BeCPGModel.PROP_COSTCURRENCY, "€");
+					nodeService.setProperty(cost3, BeCPGModel.PROP_COSTFIXED, true);
 					
 					NodeRef nut1 = nuts.get(0);
 					nodeService.setProperty(nut1, BeCPGModel.PROP_NUTUNIT, "kcal");
@@ -138,6 +141,7 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 					List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
 					costList.add(new CostListDataItem(null, 12f, "", null, cost1, false));
 					costList.add(new CostListDataItem(null, 11f, "", null, cost2, false));
+					costList.add(new CostListDataItem(null, 13f, "", null, cost3, false));
 					rawMaterialData.setCostList(costList);
 					
 					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
@@ -160,6 +164,9 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 						}
 						else if(c.getCost().equals(cost2)){
 							assertEquals("Check 2nd costList", "$/kg", c.getUnit());
+						}
+						else if(c.getCost().equals(cost3)){
+							assertEquals("Check 3rd costList", "€", c.getUnit());
 						}
 						else{
 							assertTrue(false);
@@ -196,6 +203,9 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 						else if(c.getCost().equals(cost2)){
 							assertEquals("Check 2nd costList", "$/L", c.getUnit());
 						}
+						else if(c.getCost().equals(cost3)){
+							assertEquals("Check 3rd costList", "€", c.getUnit());
+						}
 						else{
 							assertTrue(false);
 						}
@@ -220,6 +230,7 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 					 */
 					NodeRef costListItem1NodeRef = null;
 					NodeRef costListItem2NodeRef = null;
+					NodeRef costListItem3NodeRef = null;
 					for(CostListDataItem c : rawMaterialDBData.getCostList()){
 						
 						if(c.getCost().equals(cost1)){
@@ -227,13 +238,18 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 						}
 						else if(c.getCost().equals(cost2)){
 							costListItem2NodeRef = c.getNodeRef();
-						}						
+						}
+						else if(c.getCost().equals(cost3)){
+							costListItem3NodeRef = c.getNodeRef();
+						}
 					}
 					
 					nodeService.removeAssociation(costListItem1NodeRef, cost1, BeCPGModel.ASSOC_COSTLIST_COST);
-					nodeService.removeAssociation(costListItem2NodeRef, cost2, BeCPGModel.ASSOC_COSTLIST_COST);					
+					nodeService.removeAssociation(costListItem2NodeRef, cost2, BeCPGModel.ASSOC_COSTLIST_COST);
+					nodeService.removeAssociation(costListItem3NodeRef, cost3, BeCPGModel.ASSOC_COSTLIST_COST);
 					nodeService.createAssociation(costListItem1NodeRef, cost2, BeCPGModel.ASSOC_COSTLIST_COST);
-					nodeService.createAssociation(costListItem2NodeRef, cost1, BeCPGModel.ASSOC_COSTLIST_COST);
+					nodeService.createAssociation(costListItem2NodeRef, cost3, BeCPGModel.ASSOC_COSTLIST_COST);
+					nodeService.createAssociation(costListItem3NodeRef, cost1, BeCPGModel.ASSOC_COSTLIST_COST);
 					
 					NodeRef nutListItem1NodeRef = null;
 					NodeRef nutListItem2NodeRef = null;
@@ -261,6 +277,9 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 							assertEquals("Check 1st costList", "$/L", c.getUnit());
 						}
 						else if(c.getNodeRef().equals(costListItem2NodeRef)){
+							assertEquals("Check 2nd costList", "€", c.getUnit());
+						}
+						else if(c.getNodeRef().equals(costListItem3NodeRef)){
 							assertEquals("Check 2nd costList", "€/L", c.getUnit());
 						}
 						else{
