@@ -17,5 +17,12 @@ public interface EntityReportService {
 	 * @return
 	 */
 	public boolean isReportUpToDate(NodeRef sfNodeRef);
+
+	/**
+	 * Register new extractor
+	 * @param typeName
+	 * @param extractor
+	 */
+	public void registerExtractor(String typeName, EntityReportExtractor extractor);
 		
 }

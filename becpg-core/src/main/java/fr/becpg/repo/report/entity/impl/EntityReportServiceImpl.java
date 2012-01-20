@@ -77,7 +77,12 @@ public class EntityReportServiceImpl implements EntityReportService{
 	
 	private Map<String, EntityReportExtractor>  entityExtractors = new HashMap<String, EntityReportExtractor>();
 	
-	
+
+	@Override
+	public void registerExtractor(String typeName, EntityReportExtractor extractor) {
+		logger.debug("Register report extractor :"+typeName+" "+extractor.getClass().getSimpleName());
+		entityExtractors.put(typeName, extractor);
+	}
 			
 	/**
 	 * Sets the node service.
@@ -136,14 +141,6 @@ public class EntityReportServiceImpl implements EntityReportService{
 	}
 	
 	
-	
-	/**
-	 * @param entityExtractors the entityExtractors to set
-	 */
-	public void setEntityExtractors(Map<String, EntityReportExtractor> entityExtractors) {
-		this.entityExtractors = entityExtractors;
-	}
-	
 
 	@Override
 	public void generateReport(NodeRef entityNodeRef) {
@@ -178,6 +175,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 		
 		EntityReportExtractor ret = entityExtractors.get(type.getLocalName());
 		if(ret==null){
+			logger.debug("extractor :"+type.getLocalName()+ " not found returning "+DEFAULT_EXTRACTOR);
 			ret = entityExtractors.get(DEFAULT_EXTRACTOR);
 		}
 
@@ -310,6 +308,8 @@ public class EntityReportServiceImpl implements EntityReportService{
 					}
 					
 					task.run();
+					// set reportNodeGenerated property to now
+			        nodeService.setProperty(nodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, new Date());
 				}  				
 			}
 			catch(Exception e){
@@ -391,6 +391,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 
 		
 	}
+
 
 
 	

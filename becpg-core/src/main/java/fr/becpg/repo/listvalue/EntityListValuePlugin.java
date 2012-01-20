@@ -71,6 +71,9 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	/** The Constant SOURCE_TYPE_PRODUCT_REPORT. */
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
 	
+	
+	
+	
 
 	private static final String PARAM_VALUES_SEPARATOR = ",";
 
@@ -206,8 +209,9 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
     	if(isQueryCode(query,type)){
 			query = prepareQueryCode(query,type);
 			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_CODE, type, query);
-		}
-		else{
+		} else if(isAllQuery(query)){
+			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_ALL, type);
+		} else{
 			query = prepareQuery(query);
 			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_NAME, type, query);
 		}
@@ -223,6 +227,9 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
        
 	}
     
+
+
+
 
 	/**
      * Suggest linked value according to query
@@ -240,10 +247,15 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
         
     	logger.debug("suggestLinkedValue");  
     	
-    	path = encodePath(path);    	
-    	query = prepareQuery(query);    	    	
-    	String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, path, parent, query);    			
-	    
+    	String queryPath = "";
+    	path = encodePath(path);    
+		if(!isAllQuery(query)){ 
+	    	query = prepareQuery(query);    	    	
+	        queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, path, parent, query);    			
+		} else {
+			queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ALL, path, parent);    
+		}
+    	
         List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(BeCPGModel.PROP_LINKED_VALUE_VALUE));
         
         return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(BeCPGModel.PROP_LINKED_VALUE_VALUE,nodeService));
@@ -265,9 +277,14 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
         
     	logger.debug("suggestListValue");  
     	
-    	path = encodePath(path);    	
-    	query = prepareQuery(query);
-    	String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE, path, query);
+    	String queryPath = "";
+    	path = encodePath(path);    
+		if(!isAllQuery(query)){ 
+	    	query = prepareQuery(query);
+	        queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE, path, query);
+		} else {
+	    	 queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE_ALL, path);
+		}
     	
         List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME));
        
@@ -295,6 +312,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		if(isQueryCode(query, BeCPGModel.TYPE_PRODUCT)){
 			query = prepareQueryCode(query,BeCPGModel.TYPE_PRODUCT);
 			queryPath += String.format(RepoConsts.QUERY_SUGGEST_PRODUCT_BY_CODE, query, SystemState.Archived, SystemState.Refused);
+		} else if(isAllQuery(query)){
+			queryPath += String.format(RepoConsts.QUERY_SUGGEST_PRODUCT_ALL, SystemState.Archived, SystemState.Refused);
 		}
 		else{
 			query = prepareQuery(query);
@@ -506,5 +525,9 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	}
 
 
+
+	private boolean isAllQuery(String query) {
+		return query!=null && query.trim().equals(SUFFIX_ALL);
+	}
 	
 }

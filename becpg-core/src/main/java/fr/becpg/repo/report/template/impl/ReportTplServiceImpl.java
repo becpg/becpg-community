@@ -96,7 +96,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 		
 		String query = getQueryReportTpl(reportType, nodeType, true);							
 		
-		return beCPGSearchService.unProtLuceneSearch(query, null, RepoConsts.MAX_RESULTS_NO_LIMIT);
+		return beCPGSearchService.unProtLuceneSearch(query, new HashMap<String, Boolean>(), RepoConsts.MAX_RESULTS_NO_LIMIT);
 	}
 	
 	/**
@@ -106,9 +106,11 @@ public class ReportTplServiceImpl implements ReportTplService{
 	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {    	  
     	
 		String query = getQueryReportTpl(reportType, nodeType, true);		
-		query += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
+		if(tplName!=null && tplName!="*"){
+			query += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
+		}
 		
-        List<NodeRef> tplsNodeRef = beCPGSearchService.unProtLuceneSearch(query, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);       
+        List<NodeRef> tplsNodeRef = beCPGSearchService.unProtLuceneSearch(query, new HashMap<String, Boolean>(), RepoConsts.MAX_RESULTS_SINGLE_VALUE);       
         return tplsNodeRef.size() > 0 ? tplsNodeRef.get(0) : null;        
 	}
 	
@@ -130,7 +132,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 		}		
     	
 		String query = getQueryReportTpl(reportType, nodeType, false);		
-		if(tplName!=null){
+		if(tplName!=null && tplName!="*"){
 			query += LuceneHelper.getCondContainsValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
 		}
 		
@@ -154,7 +156,9 @@ public class ReportTplServiceImpl implements ReportTplService{
 		}		
     	
 		String query = getQueryReportTpl(reportType, nodeType, false);
-		query += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
+		if(tplName!=null && tplName!="*"){
+			query += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
+		}
 		
 		List<NodeRef> tplsNodeRef = beCPGSearchService.unProtLuceneSearch(query, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 		return tplsNodeRef.size() > 0 ? tplsNodeRef.get(0) : null;		

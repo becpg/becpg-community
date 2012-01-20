@@ -170,7 +170,7 @@ public class ListValueServiceTest extends BaseAlfrescoTestCase {
     	NodeRef supplierNodeRef = nodeService.createNode(tempFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
 
     	String[] arrClassNames = {"bcpg:supplier"};
-    	Map<String, String> suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0 ,null, arrClassNames).getResults();
+    	Map<String, String> suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0 , arrClassNames).getResults();
     	
     	for(String s : suggestions.keySet()){
     		logger.debug("supplier: " + nodeService.getProperty(new NodeRef(s), ContentModel.PROP_NAME));
@@ -182,7 +182,7 @@ public class ListValueServiceTest extends BaseAlfrescoTestCase {
     	
     	// filter by client : no results
     	String [] arrClassNames2 = {"bcpg:client"};
-    	suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0 ,null, arrClassNames2).getResults();
+    	suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0 , arrClassNames2).getResults();
     	
     	assertEquals("0 suggestion", 0, suggestions.size());
 	}
