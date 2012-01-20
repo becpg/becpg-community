@@ -9,6 +9,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
@@ -40,7 +41,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	
 	private static final String CRITERIA_BIO_ORIGIN = "assoc_bcpg_ingListBioOrigin_added";
 	
-	private static final int MAX_RESULTS = 256;
+	private static final int MAX_RESULTS = 250;
 	
 	private static Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 		
@@ -75,6 +76,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 										Map<String, String> criteria, boolean isRepo,
 										String siteId, String containerId, Map<String, Boolean> sortMap, int maxResults) {
 		
+		String language = SearchService.LANGUAGE_FTS_ALFRESCO;
 				
 		if(maxResults<=0){
 			maxResults = MAX_RESULTS;
@@ -82,9 +84,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		
 		if(searchQuery==null || searchQuery.isEmpty()){
 			searchQuery = getSearchQueryByProperties(datatype, term, tag, criteria, isRepo, siteId, containerId);
+		} else {
+			language  = SearchService.LANGUAGE_LUCENE;
 		}
 		 
-		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap, maxResults, new ReadPermissionFilter() );
+		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap, maxResults, language,  new ReadPermissionFilter() );
 				
 		
 		if(criteria!=null){

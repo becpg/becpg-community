@@ -214,7 +214,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 
 	@Override
 	public List<NodeRef> search(String searchQuery, Map<String, Boolean> sort, int maxResults,
-			BeCPGPermissionFilter beCPGPermissionFilter) {
+			String searchLanguage ,BeCPGPermissionFilter beCPGPermissionFilter) {
 
 			List<NodeRef> nodes = new LinkedList<NodeRef>();
 			
@@ -226,11 +226,13 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 			
 			SearchParameters sp = new SearchParameters();
 	        sp.addStore(RepoConsts.SPACES_STORE);
-	        sp.setLanguage(SearchService.LANGUAGE_FTS_ALFRESCO);
+	        sp.setLanguage(searchLanguage);
 	        sp.setQuery(searchQuery);	        
 	        sp.setLimitBy(LimitBy.UNLIMITED);
-	        sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
-	        sp.addQueryTemplate(DEFAULT_FIELD_NAME, QUERY_TEMPLATES);
+	        if(SearchService.LANGUAGE_FTS_ALFRESCO.equals(searchLanguage)){
+		        sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
+		        sp.addQueryTemplate(DEFAULT_FIELD_NAME, QUERY_TEMPLATES);
+	        }
 	        sp.excludeDataInTheCurrentTransaction(false);        
 	        
 

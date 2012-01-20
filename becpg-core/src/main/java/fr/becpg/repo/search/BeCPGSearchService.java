@@ -20,6 +20,6 @@ public interface BeCPGSearchService {
 	List<NodeRef> suggestSearch(String runnedQuery, Map<String, Boolean> sort, Locale locale);
 
 	List<NodeRef> search(String searchQuery, Map<String, Boolean> sortMap, int maxResults,
-			BeCPGPermissionFilter beCPGPermissionFilter);
+			String searchLanguage, BeCPGPermissionFilter beCPGPermissionFilter);
 
 }

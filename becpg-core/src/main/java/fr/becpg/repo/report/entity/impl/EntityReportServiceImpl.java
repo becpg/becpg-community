@@ -310,8 +310,6 @@ public class EntityReportServiceImpl implements EntityReportService{
 					}
 					
 					task.run();
-					// set reportNodeGenerated property to now
-			        nodeService.setProperty(nodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, new Date());
 				}  				
 			}
 			catch(Exception e){
@@ -365,6 +363,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 	
 
 	@Override
+	@Deprecated
 	public boolean isReportUpToDate(NodeRef entityNodeRef) {
 
         Date reportModified = (Date)nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
