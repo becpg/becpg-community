@@ -61,6 +61,7 @@
 		<property name="entityListValuePlugin" ref="entityListValuePlugin" />
 		<property name="entityService" ref="entityService" />
 		<property name="propertyService" ref="propertyService"/>		
+		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 	
  

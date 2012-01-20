@@ -1,11 +1,8 @@
 package fr.becpg.repo.helper;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -13,9 +10,6 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.TypeConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
@@ -25,8 +19,6 @@ import fr.becpg.repo.product.data.ProductData;
 public class PropertyServiceImpl implements PropertyService {
 
 	
-	
-	private static Log logger = LogFactory.getLog(PropertyServiceImpl.class);
 	
 	private NodeService nodeService;	
 		

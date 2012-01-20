@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -154,7 +153,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		String path = (String) props.get(ListValueService.PROP_PATH);
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
-		Locale locale = (Locale) props.get(ListValueService.PROP_LOCALE);
 		String classNames = (String) props.get(ListValueService.PROP_CLASS_NAMES);
 		String[] arrClassNames = classNames != null ? classNames.split(PARAM_VALUES_SEPARATOR) : null;
 		String parent = (String) props.get(ListValueService.PROP_PARENT);
@@ -163,17 +161,17 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		if(sourceType.equals(SOURCE_TYPE_TARGET_ASSOC)){
 			QName type = QName.createQName(className, namespaceService);
-			return suggestTargetAssoc(type, query,pageNum, locale, arrClassNames);
+			return suggestTargetAssoc(type, query,pageNum, arrClassNames);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_PRODUCT)){
 			
-			return suggestProduct(query,pageNum, locale, arrClassNames);
+			return suggestProduct(query,pageNum, arrClassNames);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_LINKED_VALUE)){
-			return suggestLinkedValue(path, parent, query,pageNum, locale);
+			return suggestLinkedValue(path, parent, query,pageNum);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_LIST_VALUE)){
-			return suggestListValue(path, query, pageNum, locale);
+			return suggestListValue(path, query, pageNum);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)){			
 			
@@ -198,7 +196,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 * @return the map
 	 */
     
-	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Locale locale, String[] arrClassNames){			
+	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, String[] arrClassNames){			
         
     	logger.debug("suggestTargetAssoc");
     	
@@ -219,7 +217,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
     	
 		logger.debug("repository : " + queryPath);
 
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME),locale);
+		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME));
         
         return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
        
@@ -238,7 +236,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
      * @return the map
      */
     
-	public ListValuePage suggestLinkedValue(String path, String parent, String query, Integer pageNum, Locale locale){			
+	public ListValuePage suggestLinkedValue(String path, String parent, String query, Integer pageNum){			
         
     	logger.debug("suggestLinkedValue");  
     	
@@ -246,7 +244,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
     	query = prepareQuery(query);    	    	
     	String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, path, parent, query);    			
 	    
-        List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(BeCPGModel.PROP_LINKED_VALUE_VALUE),locale);
+        List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(BeCPGModel.PROP_LINKED_VALUE_VALUE));
         
         return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(BeCPGModel.PROP_LINKED_VALUE_VALUE,nodeService));
  
@@ -263,7 +261,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
      * @return the map
      */
     
-	public ListValuePage suggestListValue(String path, String query, Integer pageNum, Locale locale){			
+	public ListValuePage suggestListValue(String path, String query, Integer pageNum){			
         
     	logger.debug("suggestListValue");  
     	
@@ -271,7 +269,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
     	query = prepareQuery(query);
     	String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE, path, query);
     	
-        List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME),locale);
+        List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME));
        
         return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
       
@@ -288,7 +286,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
      * @return the map
      */
     
-	public ListValuePage suggestProduct(String query, Integer pageNum, Locale locale, String[] arrClassNames){			
+	public ListValuePage suggestProduct(String query, Integer pageNum, String[] arrClassNames){			
         
     	logger.debug("suggestProduct");  
     	String queryPath = "";    	
@@ -306,7 +304,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		// filter by classNames
 		queryPath = filterByClass(queryPath, arrClassNames);
 					
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME), locale);
+		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME));
 	       
 		 return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
 	  

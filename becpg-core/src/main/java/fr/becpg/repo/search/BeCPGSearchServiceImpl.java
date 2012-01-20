@@ -74,6 +74,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		sp.setQuery(runnedQuery);
 		sp.setLimit(searchLimit);
 		sp.setLimitBy(LimitBy.FINAL_SIZE);
+		sp.addLocale(Locale.getDefault());
 		sp.setPermissionEvaluation(PermissionEvaluationMode.EAGER);
 		sp.excludeDataInTheCurrentTransaction(false);
 		sp.addSort(SearchParameters.SORT_IN_DOCUMENT_ORDER_DESCENDING);
@@ -119,6 +120,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		sp.addStore(RepoConsts.SPACES_STORE);
 		sp.setLanguage(SearchService.LANGUAGE_LUCENE);
 		sp.setQuery(runnedQuery);
+		sp.addLocale(Locale.getDefault());
 		
 		if(searchLimit == SIZE_UNLIMITED){
 			sp.setLimitBy(LimitBy.UNLIMITED);
@@ -156,7 +158,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	}
 
 	@Override
-	public List<NodeRef> suggestSearch(String runnedQuery, Map<String, Boolean> sort, Locale locale) {
+	public List<NodeRef> suggestSearch(String runnedQuery, Map<String, Boolean> sort) {
 		
 		List<NodeRef> nodes = new LinkedList<NodeRef>();
 		StopWatch watch = null;
@@ -173,9 +175,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	    sp.setMaxItems(RepoConsts.MAX_SUGGESTIONS);
 		sp.setDefaultOperator(Operator.AND);
 		sp.excludeDataInTheCurrentTransaction(false);
-		if(locale!=null){
-			sp.addLocale(locale);
-		}
+		sp.addLocale(Locale.getDefault());
 		
 		if (sort != null) {
 			for(Map.Entry<String, Boolean> kv : sort.entrySet()){
@@ -197,9 +197,6 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 						+ watch.getTotalTimeSeconds() + " seconds");
 				if(result!=null){
 					logger.debug("Found "+result.length()+" results");
-				}
-				if(locale!=null){
-					logger.debug("Locale use for search: "+locale.toString());
 				}
 			}
 			if (result != null) {
@@ -229,6 +226,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	        sp.setLanguage(searchLanguage);
 	        sp.setQuery(searchQuery);	        
 	        sp.setLimitBy(LimitBy.UNLIMITED);
+	        sp.addLocale(Locale.getDefault());
 	        if(SearchService.LANGUAGE_FTS_ALFRESCO.equals(searchLanguage)){
 		        sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
 		        sp.addQueryTemplate(DEFAULT_FIELD_NAME, QUERY_TEMPLATES);
