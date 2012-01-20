@@ -12,14 +12,6 @@ public interface EntityReportService {
 	public void generateReport(NodeRef entityNodeRef);
 
 	/**
-	 * 
-	 * @param tempNodeRef
-	 * @return
-	 */
-	public byte[] getImage(NodeRef tempNodeRef);
-
-	
-	/**
 	 * Check if the report is up to date
 	 * @param sfNodeRef
 	 * @return

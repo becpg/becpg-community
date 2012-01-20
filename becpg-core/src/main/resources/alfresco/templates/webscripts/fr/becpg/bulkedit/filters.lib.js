@@ -28,8 +28,52 @@ var Filters = {
 				searchQuery += " +PATH:\"" + node.qnamePath + "//*\"";
 			}
 		}
-
+		
 		var params = parsedArgs.searchParams, formData = params.query, criteria = [], datatype = "";
+		
+		 // sort field - expecting field to in one of the following formats:
+	    //  - short QName form such as: cm:name
+	    //  - pseudo cm:content field starting with "." such as: .size
+	    //  - any other directly supported search field such as: TYPE
+	    var sortColumns = [];
+	    var sort = params.sort;
+	    if (sort != null && sort.length != 0)
+	    {
+	       var asc = true;
+	       var separator = sort.indexOf("|");
+	       if (separator != -1)
+	       {
+	          sort = sort.substring(0, separator);
+	          asc = (sort.substring(separator + 1) == "true");
+	       }
+	       var column;
+	       if (sort.charAt(0) == '.')
+	       {
+	          // handle pseudo cm:content fields
+	          column = "@{http://www.alfresco.org/model/content/1.0}content" + sort;
+	       }
+	       else if (sort.indexOf(":") != -1)
+	       {
+	          // handle attribute field sort
+	          column = "@" + utils.longQName(sort);
+	       }
+	       else
+	       {
+	          // other sort types e.g. TYPE
+	          column = sort;
+	       }
+	       sortColumns.push(
+	       {
+	          column: column,
+	          ascending: asc
+	       });
+	    } else {
+	    	sortColumns.push(
+	    		       {
+	    		          column: "@{http://www.alfresco.org/model/content/1.0}name",
+	    		          ascending: true
+	    		       });
+	    }
 
 		if (formData !== null && formData.length !== 0) {
 			var formJson = jsonUtils.toObject(formData);
@@ -57,12 +101,7 @@ var Filters = {
 			datatype : datatype,
 			criteria : criteria,
 			params : params,
-			sort : [ {
-				column : "@cm:name",
-				ascending : true
-			} ],
-			language : "lucene",
-			templates : null
+			sort : sortColumns
 		};
 
 		// Max returned results specified?

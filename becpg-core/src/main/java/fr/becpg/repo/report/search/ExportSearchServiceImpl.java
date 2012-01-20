@@ -21,7 +21,6 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -47,12 +46,10 @@ import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.PropertyService;
 import fr.becpg.repo.listvalue.EntityListValuePlugin;
-import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportFormat;
-import fr.becpg.repo.report.template.ReportTplService;
 
 /**
  * Class used to render the result of a search in a report
@@ -95,8 +92,6 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	/** The Constant QUERY_ATTR_GET_CHARACT_NODE_REF. */
 	private static final String QUERY_ATTR_GET_CHARACT_NODE_REF = "@charactNodeRef";
 	
-	/** The Constant QUERY_ATTR_CHARACT_NODE_REF. */
-	private static final String QUERY_ATTR_CHARACT_NODE_REF = "charactNodeRef";
 	
 	/** The Constant QUERY_ATTR_GET_CHARACT_NAME. */
 	private static final String QUERY_ATTR_GET_CHARACT_NAME = "@charactName";
@@ -127,7 +122,6 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ExportSearchServiceImpl.class);	
 	
-	private SearchService searchService;
 	
 	/** The node service. */
 	private NodeService nodeService;
@@ -150,19 +144,19 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	/** The list value service. */
 	private EntityListValuePlugin entityListValuePlugin;
 	
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
 	
-	private EntityReportService entityReportService;				
+	private EntityService entityService;				
 	
 	private PropertyService propertyService;
 	
-	private ReportTplService reportTplService;
-	
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
+
+	/**
+	 * @param entityService the entityService to set
+	 */
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
 	}
-	
+
 	/**
 	 * Sets the node service.
 	 *
@@ -220,26 +214,9 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		this.entityListValuePlugin = entityListValuePlugin;
 	}
 
-	/**
-	 * Sets the product dictionary service.
-	 *
-	 * @param productDictionaryService the new product dictionary service
-	 */
-	public void setProductDictionaryService(
-			ProductDictionaryService productDictionaryService) {
-		this.productDictionaryService = productDictionaryService;
-	}	
-	
-	public void setEntityReportService(EntityReportService entityReportService) {
-		this.entityReportService = entityReportService;
-	}
 
 	public void setPropertyService(PropertyService propertyService) {
 		this.propertyService = propertyService;
-	}
-
-	public void setReportTplService(ReportTplService reportTplService) {
-		this.reportTplService = reportTplService;
 	}
 	
 	/* (non-Javadoc)
@@ -271,6 +248,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	 * @param searchQuery the search query
 	 * @param outputStream the output stream
 	 */
+	@SuppressWarnings("unchecked")
 	private void renderReport(NodeRef templateNodeRef, ExportSearchContext exportSearchCtx, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream){		
 		
 		try{
@@ -402,6 +380,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	 * @param nodeRef the node ref
 	 * @return the i run and render task
 	 */
+	@SuppressWarnings("unchecked")
 	private IRunAndRenderTask exportNode(ExportSearchContext exportSearchCtx, Element nodeElt, IRunAndRenderTask task, NodeRef nodeRef){				
 		
 		
@@ -430,7 +409,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 				// file content
 				if(fileMapping.getAttribute().equals(ContentModel.PROP_CONTENT)){
 					
-					byte[] imageBytes = entityReportService.getImage(tempNodeRef);
+					byte[] imageBytes = entityService.getImage(tempNodeRef);
 					if (imageBytes != null){
 											
 						task.getAppContext().put(String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId()), imageBytes);				
@@ -523,6 +502,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	 * @throws MappingException 
 	 * @throws BeCPGException 
 	 */
+	@SuppressWarnings("unchecked")
 	private ExportSearchContext getQuery(NodeRef templateNodeRef) throws MappingException{		
 		
 		Element queryElt = null;
@@ -567,7 +547,6 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		}
 		
 		// attributes
-		@SuppressWarnings("unchecked")
 		List<Node> columnNodes = queryElt.selectNodes(QUERY_XPATH_COLUMNS_ATTRIBUTE);
 		for(Node columnNode : columnNodes){
 			QName attribute = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);

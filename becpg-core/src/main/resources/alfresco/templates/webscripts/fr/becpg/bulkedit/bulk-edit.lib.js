@@ -39,61 +39,56 @@ var BulkEdit =
 	      query = filterParams.query;
 
     var nodeRef = parsedArgs.nodeRef;
-	if(nodeRef!=null && nodeRef.length >0){
+	if(nodeRef==null || nodeRef.length ==0){
 	   // Query the nodes - passing in default sort and result limit
  	   // parameters
-       if (query !== "") {		  
-		    allNodes = search.query(
-				      {
-				         query: query,
-				         language: filterParams.language,
-				         page:
-				         {
-				            maxItems: (filterParams.limitResults ? parseInt(filterParams.limitResults, 10) : 0)
-				         },
-				         sort: filterParams.sort,
-				         templates: filterParams.templates,
-				         namespace: (filterParams.namespace ? filterParams.namespace : null)
-				      });
-		   }
-       
-    } else {
-	   allNodes = bSearch.queryAdvSearch(filterParams.datatype, filterParams.params.term, filterParams.params.tag, filterParams.criteria,
-				   filterParams.sort, filterParams.params.repo, filterParams.params.siteId, filterParams.params.containerId);
-			   			  
-	 }
-	
-	var item = null,
-		itemTypes = [],
-		itemType = "";
-	
-	for each (node in allNodes) {
-	    try { 
-	    	  item = Evaluator.run(node, parsedArgs.fields);
-	    	  itemType = item.type;
-	    	  if(!contains(itemTypes,itemType)){
-	    		  itemTypes.push(itemType);
-	    	  }
-	          items.push(item);
-	    }  catch(e) {
-	    	
-	    }
+ 	   query = null;
 	}
 
-
-   return (
-   {
-      fields: parsedArgs.fields,
-      luceneQuery: query,
-      paging:
-      {
-         totalRecords: items.length,
-         startIndex: 0
-      },
-      items: items,
-      itemTypes : itemTypes
-   });
-}
+	   allNodes = bSearch.queryAdvSearch(
+			       query,
+			   	   filterParams.datatype, 
+			   	   filterParams.params.term, 
+			   	   filterParams.params.tag, 
+			   	   filterParams.criteria,
+				   filterParams.params.repo, 
+				   filterParams.params.siteId,  
+				   filterParams.params.containerId,
+				   filterParams.sort, 
+				   (filterParams.limitResults ? parseInt(filterParams.limitResults, 10) : 0));
+	
+	
+		var item = null,
+			itemTypes = [],
+			itemType = "";
+		
+		for each (node in allNodes) {
+		    try { 
+		    	  item = Evaluator.run(node, parsedArgs.fields);
+		    	  itemType = item.type;
+		    	  if(!contains(itemTypes,itemType)){
+		    		  itemTypes.push(itemType);
+		    	  }
+		          items.push(item);
+		    }  catch(e) {
+		    	
+		    }
+		}
+	
+	
+	   return (
+	   {
+	      fields: parsedArgs.fields,
+	      luceneQuery: filterParams.query,
+	      paging:
+	      {
+	         totalRecords: items.length,
+	         startIndex: 0
+	      },
+	      items: items,
+	      itemTypes : itemTypes
+	   });
+	}
 
 }
 

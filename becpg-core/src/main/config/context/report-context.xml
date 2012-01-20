@@ -21,17 +21,18 @@
 		<property name="mimetypeService" ref="mimetypeService"/>		
 	</bean>
 	
-	<bean id="entityReportExtractor" class="fr.becpg.repo.report.entity.impl.EntityReportExtractorImpl">
+	<!-- Extractor -->
+	<bean id="defaultProductReportExtractor" class="fr.becpg.repo.product.report.DefaultProductReportExtractor">
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="propertyService" ref="propertyService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="productDAO" ref="productDAO"/>
 		<property name="productDictionaryService" ref="productDictionaryService"/>
+		<property name="entityService" ref="entityService"/>
 	</bean>
 
 
-	
 	<!-- Node report -->	
 	<bean id="entityReportService" class="fr.becpg.repo.report.entity.impl.EntityReportServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -41,24 +42,25 @@
 		<property name="reportEngine" ref="reportEngine" />
 		<property name="mimetypeService" ref="mimetypeService"/>
 		<property name="reportTplService" ref="reportTplService" />		
-		<property name="entityExtractor" ref="entityReportExtractor"/>
-		<property name="entityService" ref="entityService"/>
+		<property name="entityExtractors" >
+			 <map>
+                <entry key="default">
+                    <ref bean="defaultProductReportExtractor"/>
+                </entry>
+            </map>
+		</property>
 	</bean>
 	
 		<!-- Search report -->	
 	<bean id="exportSearchService" class="fr.becpg.repo.report.search.ExportSearchServiceImpl">
-		<property name="searchService" ref="SearchService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="contentService" ref="contentService" />
 		<property name="reportEngine" ref="reportEngine" />
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="entityListValuePlugin" ref="entityListValuePlugin" />
-		<property name="productDictionaryService" ref="productDictionaryService" />
-		<property name="entityReportService" ref="entityReportService" />
+		<property name="entityService" ref="entityService" />
 		<property name="propertyService" ref="propertyService"/>		
-		<property name="reportTplService" ref="reportTplService" />
 	</bean>
 	
  

@@ -1,36 +1,20 @@
-package fr.becpg.repo.report.entity.impl;
+package fr.becpg.repo.product.report;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
-import org.alfresco.service.namespace.RegexQNamePattern;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-import org.springframework.core.io.ClassPathResource;
 
-import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.PropertyService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.ProductData;
@@ -43,108 +27,94 @@ import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
-import fr.becpg.repo.report.entity.EntityReportExtractor;
+import fr.becpg.repo.report.entity.EntityReportData;
+import fr.becpg.repo.report.entity.impl.AbstractEntityReportExtractor;
 
-public class EntityReportExtractorImpl implements EntityReportExtractor {
-	
-	
-	private static Log logger = LogFactory.getLog(EntityReportExtractorImpl.class);
+public class DefaultProductReportExtractor  extends AbstractEntityReportExtractor{
+
+
+
+	/** The Constant KEY_PRODUCT_IMAGE. */
+	private static final String KEY_PRODUCT_IMAGE = "productImage";
 	
 	/** The Constant TAG_PRODUCT. */
-	private static final String TAG_PRODUCT = "product";
+	protected static final String TAG_PRODUCT = "product";
 	
 	/** The Constant TAG_DATALISTS. */
-	private static final String TAG_DATALISTS = "dataLists";
-	private static final String TAG_ATTRIBUTES = "attributes";
-	private static final String TAG_ATTRIBUTE = "attribute";
-	private static final String ATTR_SET = "set";
-	private static final String ATTR_NAME = "name";
-	private static final String ATTR_VALUE = "value";
+	protected static final String TAG_DATALISTS = "dataLists";
+	protected static final String TAG_ATTRIBUTES = "attributes";
+	protected static final String TAG_ATTRIBUTE = "attribute";
+	protected static final String ATTR_SET = "set";
+	protected static final String ATTR_NAME = "name";
+	protected static final String ATTR_VALUE = "value";
 	
 	
 	/** The Constant TAG_ALLERGENLIST. */
-	private static final String TAG_ALLERGENLIST = "allergenList";
+	protected static final String TAG_ALLERGENLIST = "allergenList";
 	
 	/** The Constant TAG_COMPOLIST. */
-	private static final String TAG_COMPOLIST = "compoList";
+	protected static final String TAG_COMPOLIST = "compoList";
 	
 	/** The Constant TAG_COSTLIST. */
-	private static final String TAG_COSTLIST = "costList";
+	protected static final String TAG_COSTLIST = "costList";
 	
 	/** The Constant TAG_INGLIST. */
-	private static final String TAG_INGLIST = "ingList";
+	protected static final String TAG_INGLIST = "ingList";
 	
 	/** The Constant TAG_INGLABELINGLIST. */
-	private static final String TAG_INGLABELINGLIST = "ingLabelingList";
+	protected static final String TAG_INGLABELINGLIST = "ingLabelingList";
 	
 	/** The Constant TAG_NUTLIST. */
-	private static final String TAG_NUTLIST = "nutList";	
+	protected static final String TAG_NUTLIST = "nutList";	
 	
 	/** The Constant TAG_ORGANOLIST. */
-	private static final String TAG_ORGANOLIST = "organoList";
+	protected static final String TAG_ORGANOLIST = "organoList";
 	
 	/** The Constant TAG_MICROBIOLIST. */
-	private static final String TAG_MICROBIOLIST = "microbioList";
+	protected static final String TAG_MICROBIOLIST = "microbioList";
 	
 	/** The Constant TAG_PHYSICOCHEMLIST. */
-	private static final String TAG_PHYSICOCHEMLIST = "physicoChemList";
+	protected static final String TAG_PHYSICOCHEMLIST = "physicoChemList";
 	
 	/** The Constant TAG_ALLERGEN. */
-	private static final String TAG_ALLERGEN = "allergen";
+	protected static final String TAG_ALLERGEN = "allergen";
 	
 	/** The Constant TAG_COST. */
-	private static final String TAG_COST = "cost";
+	protected static final String TAG_COST = "cost";
 	
 	/** The Constant TAG_ING. */
-	private static final String TAG_ING = "ing";
+	protected static final String TAG_ING = "ing";
 	
 	/** The Constant TAG_INGLABELING. */
-	private static final String TAG_INGLABELING = "ingLabeling";
+	protected static final String TAG_INGLABELING = "ingLabeling";
 	
 	/** The Constant TAG_NUT. */
-	private static final String TAG_NUT = "nut";
+	protected static final String TAG_NUT = "nut";
 	
 	/** The Constant TAG_ORGANO. */
-	private static final String TAG_ORGANO = "organo";
+	protected static final String TAG_ORGANO = "organo";
 	
 	/** The Constant TAG_MICROBIO. */
-	private static final String TAG_MICROBIO = "microbio";
+	protected static final String TAG_MICROBIO = "microbio";
 	
 	/** The Constant TAG_PHYSICOCHEM. */
-	private static final String TAG_PHYSICOCHEM = "physicoChem";
+	protected static final String TAG_PHYSICOCHEM = "physicoChem";
 	
 	/** The Constant SUFFIX_LOCALE_FRENCH. */
-	private static final String SUFFIX_LOCALE_FRENCH = "_fr";
+	protected static final String SUFFIX_LOCALE_FRENCH = "_fr";
 	
 	/** The Constant SUFFIX_LOCALE_ENGLISH. */
-	private static final String SUFFIX_LOCALE_ENGLISH = "_en";
+	protected static final String SUFFIX_LOCALE_ENGLISH = "_en";
+
 
 	
-	/** The Constant VALUE_NULL. */
-	private static final String VALUE_NULL = "";
-	private static final String VALUE_PERSON = "%s %s";
+	protected static final String REPORT_FORM_CONFIG_PATH = "beCPG/birt/document/becpg-report-form-config.xml";
 	
-	private static final String QUERY_XPATH_FORM_SETS = "/alfresco-config/config[@evaluator=\"node-type\" and @condition=\"%s\"]/forms/form/appearance/set";
-	private static final String QUERY_XPATH_FORM_FIELDS_BY_SET = "/alfresco-config/config[@evaluator=\"node-type\" and @condition=\"%s\"]/forms/form/appearance/field[@set=\"%s\"]";
-	private static final String QUERY_XPATH_FORM_FIELDS = "/alfresco-config/config[@evaluator=\"node-type\" and @condition=\"%s\"]/forms/form/field-visibility/show";
-	private static final String QUERY_ATTR_GET_ID = "@id";
-	private static final String QUERY_ATTR_GET_LABEL = "@label";
-	private static final String SET_DEFAULT = "";
 	
-	private static final String REPORT_FORM_CONFIG_PATH = "beCPG/birt/document/becpg-report-form-config.xml";
 	
-	private NodeService nodeService;
-
+	protected ProductDAO productDAO;
 	
-	private DictionaryService dictionaryService;
-	
-	private NamespaceService namespaceService;
-	
-	private PropertyService propertyService;
-
-	private ProductDAO productDAO;
-	
-	private ProductDictionaryService productDictionaryService;
+	protected ProductDictionaryService productDictionaryService;
 	
 	
 	
@@ -166,54 +136,12 @@ public class EntityReportExtractorImpl implements EntityReportExtractor {
 	}
 
 
-	/**
-	 * @param nodeService the nodeService to set
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-
-
-	/**
-	 * @param dictionaryService the dictionaryService to set
-	 */
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
-
-
-
-
-	/**
-	 * @param namespaceService the namespaceService to set
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-
-
-
-
-	/**
-	 * @param propertyService the propertyService to set
-	 */
-	public void setPropertyService(PropertyService propertyService) {
-		this.propertyService = propertyService;
-	}
-
-
-
-
-
-
-
-
-
+	
 	@Override
-	public Element extractXml(NodeRef entityNodeRef) {
+	public EntityReportData extract(NodeRef entityNodeRef) {
+	
+		EntityReportData ret = new EntityReportData();
+		
 		Document document = DocumentHelper.createDocument();
 		Element entityElt = document.addElement(TAG_PRODUCT);
 
@@ -261,9 +189,32 @@ public class EntityReportExtractorImpl implements EntityReportExtractor {
     	Element dataListsElt = entityElt.addElement(TAG_DATALISTS);
     	dataListsElt = loadDataLists(entityNodeRef, dataListsElt);
     	
-    	return entityElt;
+    	ret.setXmlDataSource(entityElt);
+    	ret.setDataObjects(extractImages(entityNodeRef));
+    	
+    	
+    	return ret;
 	}
 	
+	
+
+	private Map<String, byte[]> extractImages(NodeRef entityNodeRef) {
+		Map<String, byte[]> images = new HashMap<String, byte[]>();
+		/*
+		 *	get the product image 
+		 */
+		String productImageFileName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_IMAGE).toLowerCase();
+		NodeRef imgNodeRef = entityService.getImage(entityNodeRef, productImageFileName);
+		byte[] imageBytes = null;
+		
+		if(imgNodeRef != null){
+			imageBytes = entityService.getImage(imgNodeRef);
+			images.put(KEY_PRODUCT_IMAGE, imageBytes);
+		}				
+		
+		return images;
+	}
+
 	
 	/**
 	 * load the datalists of the product data.
@@ -272,7 +223,7 @@ public class EntityReportExtractorImpl implements EntityReportExtractor {
 	 * @param dataListsElt the data lists elt
 	 * @return the element
 	 */
-	public Element loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
+	protected Element loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
 		
 		//TODO make it more generic!!!!
 		ProductData productData = productDAO.find(entityNodeRef, productDictionaryService.getDataLists());
@@ -473,147 +424,5 @@ public class EntityReportExtractorImpl implements EntityReportExtractor {
 	
 
 
-	/**
-	 * Load node attributes.
-	 *
-	 * @param nodeRef the node ref
-	 * @param elt the elt
-	 * @return the element
-	 */
-	private Map<ClassAttributeDefinition, String> loadNodeAttributes(NodeRef nodeRef) {
 
-		PropertyFormats propertyFormats = new PropertyFormats(false);
-		Map<ClassAttributeDefinition, String> values = new HashMap<ClassAttributeDefinition, String>();		
-		
-		// properties
-		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
-		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
-
-			// do not display system properties
-			if(!(property.getKey().equals(ContentModel.PROP_NODE_REF) || 
-			property.getKey().equals(ContentModel.PROP_NODE_DBID) ||
-			property.getKey().equals(ContentModel.PROP_NODE_UUID) ||
-			property.getKey().equals(ContentModel.PROP_STORE_IDENTIFIER) ||
-			property.getKey().equals(ContentModel.PROP_STORE_NAME) ||
-			property.getKey().equals(ContentModel.PROP_STORE_PROTOCOL) ||
-			property.getKey().equals(ContentModel.PROP_CONTENT) ||
-			property.getKey().equals(ContentModel.PROP_VERSION_LABEL))){
-			
-				PropertyDefinition propertyDef =  dictionaryService.getProperty(property.getKey());
-				if(propertyDef == null){
-					logger.error("This property doesn't exist. Name: " + property.getKey());
-					continue;
-				}
-				
-				String value = VALUE_NULL;				
-				if (property.getValue() != null) {
-					
-					value = propertyService.getStringValue(propertyDef, property.getValue(), propertyFormats);
-				}			
-				
-				values.put(propertyDef, value);
-			}			
-		}		
-		
-		
-		// associations
-		Map<QName, String> tempValues = new HashMap<QName, String>();
-		List<AssociationRef> associations = nodeService.getTargetAssocs(nodeRef, RegexQNamePattern.MATCH_ALL);
-
-		for (AssociationRef assocRef : associations) {
-
-			QName qName = assocRef.getTypeQName();
-			NodeRef targetNodeRef = assocRef.getTargetRef();
-			QName targetQName = nodeService.getType(targetNodeRef);
-			String name = "";			
-			
-			if(targetQName.equals(ContentModel.TYPE_PERSON)){
-				name = String.format(VALUE_PERSON, (String)nodeService.getProperty(targetNodeRef, ContentModel.PROP_FIRSTNAME),
-								(String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_LASTNAME));
-			}
-			else{
-				name = (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
-			}						
-			
-			logger.debug("###targetQName: " + targetQName + ", name: " + name);
-
-			if (tempValues.containsKey(qName)) {
-				String names = tempValues.get(qName);
-				names += RepoConsts.LABEL_SEPARATOR;
-				names += name;
-				tempValues.put(qName, names);
-			} else {
-				tempValues.put(qName, name);
-			}
-		}		
-		
-		for(Map.Entry<QName, String> tempValue : tempValues.entrySet()){
-			AssociationDefinition associationDef =  dictionaryService.getAssociation(tempValue.getKey());
-			values.put(associationDef, tempValue.getValue());
-		}
-		
-		return values;
-	}	
-
-	
-	
-
-
-	@SuppressWarnings("unchecked")
-	public Map<String, List<String>> getFieldsBySets(NodeRef nodeRef, String reportFormConfigPath){
-				
-		Map<String, List<String>> fieldsBySets = new LinkedHashMap<String, List<String>>();
-		Document doc = null;
-		try{
-			ClassPathResource classPathResource = new ClassPathResource(reportFormConfigPath);
-			
-			SAXReader reader = new SAXReader();
-			doc = reader.read(classPathResource.getInputStream());
-		}
-		catch(Exception e){
-			logger.error("Failed to load file " + reportFormConfigPath, e);
-			return fieldsBySets;
-		}				
-		
-		// fields to show
-		List<String> fields = new ArrayList<String>();
-		QName nodeType = nodeService.getType(nodeRef);		
-		String nodeTypeWithPrefix = nodeType.toPrefixString(namespaceService);
-		
-		List<Element> fieldElts = doc.selectNodes(String.format(QUERY_XPATH_FORM_FIELDS, nodeTypeWithPrefix));		
-		for(Element fieldElt : fieldElts){
-			fields.add(fieldElt.valueOf(QUERY_ATTR_GET_ID));
-		}				
-		
-		// sets to show
-		List<Element> setElts = doc.selectNodes(String.format(QUERY_XPATH_FORM_SETS, nodeTypeWithPrefix));		
-		for(Element setElt : setElts){
-						
-			String setId = setElt.valueOf(QUERY_ATTR_GET_ID);
-			String setLabel = setElt.valueOf(QUERY_ATTR_GET_LABEL);
-			
-			List<String> fieldsForSet = new ArrayList<String>(); 
-			List<Element> fieldsForSetElts = doc.selectNodes(String.format(QUERY_XPATH_FORM_FIELDS_BY_SET, nodeTypeWithPrefix, setId));			
-			for(Element fieldElt : fieldsForSetElts){
-				
-				String fieldId = fieldElt.valueOf(QUERY_ATTR_GET_ID);						
-				fieldsForSet.add(fieldId);
-				fields.remove(fieldId);
-			}
-
-			fieldsBySets.put(setLabel, fieldsForSet);
-		}
-		
-		// fields not associated to set
-		fieldsBySets.put(SET_DEFAULT, fields);	
-		
-		return fieldsBySets;
-	}
-
-
-
-
-
-	
-	
 }

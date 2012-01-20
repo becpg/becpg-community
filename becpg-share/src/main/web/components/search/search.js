@@ -280,6 +280,10 @@
          // search YUI button
          this.widgets.searchButton = Alfresco.util.createYUIButton(this, "search-button", this.onSearchClick);
          
+         //bulk-edit YUI button
+         this.widgets.bulkEditButton = Alfresco.util.createYUIButton(this, "bulk-edit", this.onBulkEditClick);
+         
+         
          // menu button for sort options
          this.widgets.sortButton = new YAHOO.widget.Button(this.id + "-sort-menubutton",
          {
@@ -314,39 +318,42 @@
 			/*
 			*		beCPG : export search in report   
 			*/
-			// menu button for export options
-         this.widgets.exportButton = new YAHOO.widget.Button(this.id + "-export-menubutton",
-         {
-            type: "menu", 
-            menu: this.id + "-export-menu",
-            menualignment: ["tr", "br"],
-            lazyloadmenu: false
-         });
+         if(Dom.get(this.id + "-export-menubutton")){
+				// menu button for export options
+	         this.widgets.exportButton = new YAHOO.widget.Button(this.id + "-export-menubutton",
+	         {
+	            type: "menu", 
+	            menu: this.id + "-export-menu",
+	            menualignment: ["tr", "br"],
+	            lazyloadmenu: false
+	         });
+	         
+	       
+				// set initially selected export button label
+	         var menuItems = this.widgets.exportButton.getMenu().getItems();
+	         for (var m in menuItems)
+	         {
+	            if (menuItems[m].value === "-")
+	            {
+	               this.widgets.exportButton.set("label", this.msg("label.export-search", menuItems[m].cfg.getProperty("text")));
+	               break;
+	            }
+	         }
+	         // event handler for export menu
+	         this.widgets.exportButton.getMenu().subscribe("click", function(p_sType, p_aArgs)
+	         {
+	            var menuItem = p_aArgs[1];
+	            if (menuItem)
+	            {
+	               me.exportSearch(
+	               {
+	                  reportTpl: menuItem.value,
+	                  reportFileName: menuItem.srcElement.attributes["fileName"].value      
+	               });
+	            }
+	         });
          
-       
-			// set initially selected export button label
-         var menuItems = this.widgets.exportButton.getMenu().getItems();
-         for (var m in menuItems)
-         {
-            if (menuItems[m].value === "-")
-            {
-               this.widgets.exportButton.set("label", this.msg("label.export-search", menuItems[m].cfg.getProperty("text")));
-               break;
-            }
          }
-         // event handler for export menu
-         this.widgets.exportButton.getMenu().subscribe("click", function(p_sType, p_aArgs)
-         {
-            var menuItem = p_aArgs[1];
-            if (menuItem)
-            {
-               me.exportSearch(
-               {
-                  reportTpl: menuItem.value,
-                  reportFileName: menuItem.srcElement.attributes["fileName"].value      
-               });
-            }
-         });
          
          // Hook action events
          var fnActionHandler = function Search_fnActionHandler(layer, args)
@@ -834,6 +841,8 @@
          });
       },
       
+      
+      
       /**
        * Refresh the search page by full URL refresh
        *
@@ -1025,6 +1034,26 @@
                searchSort: searchSort
             });
          }
+      },
+      
+      
+      /**
+       * Event handler that gets fired when user clicks the Search button.
+       *
+       * @method onSearchClick
+       * @param e {object} DomEvent
+       * @param obj {object} Object passed back from addListener method
+       */
+      onBulkEditClick: function Search_onBulkEditClick(e, obj)
+      {
+          
+          // redirect back to the search page - with appropriate site context
+          var url = Alfresco.constants.URL_PAGECONTEXT;
+         
+          // add search data webscript arguments
+          url += "bulk-edit" + location.search;
+         
+          window.location = url;
       },
       
       /**

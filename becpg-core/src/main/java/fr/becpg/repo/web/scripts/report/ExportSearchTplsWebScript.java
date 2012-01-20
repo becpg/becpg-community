@@ -12,14 +12,11 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
-import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 
@@ -70,9 +67,12 @@ public class ExportSearchTplsWebScript extends DeclarativeWebScript  {
 		// get datatype
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		String datatype = templateArgs.get(PARAM_DATATYPE);
-		QName datatypeQName = QName.createQName(datatype, namespaceService);
+		QName datatypeQName = null;
+		if(datatype!=null && datatype.length()>0){
+			datatypeQName = QName.createQName(datatype, namespaceService);
+		}
 		
-		List<NodeRef> reportTpls = reportTplService.suggestUserReportTemplates(ReportType.ExportSearch, datatypeQName, "*");					
+		List<NodeRef> reportTpls = reportTplService.suggestUserReportTemplates(ReportType.ExportSearch, datatypeQName, null);					
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(MODEL_KEY_NAME_REPORT_TEMPLATES, reportTpls);
 		

@@ -11,27 +11,17 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
-import org.alfresco.repo.search.impl.lucene.LuceneFunction;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchParameters;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jaxen.expr.AdditiveExpr;
 import org.springframework.core.io.ClassPathResource;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
@@ -139,8 +129,10 @@ public class ReportTplServiceImpl implements ReportTplService{
 			return new ArrayList<NodeRef>();
 		}		
     	
-		String query = getQueryReportTpl(reportType, nodeType, false);					
-		query += LuceneHelper.getCondContainsValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
+		String query = getQueryReportTpl(reportType, nodeType, false);		
+		if(tplName!=null){
+			query += LuceneHelper.getCondContainsValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
+		}
 		
 		return beCPGSearchService.unProtLuceneSearch(query, null, RepoConsts.MAX_RESULTS_NO_LIMIT);
 	}

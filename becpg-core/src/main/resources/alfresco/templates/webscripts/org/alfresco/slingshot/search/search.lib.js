@@ -862,198 +862,47 @@ function getSearchResults(params)
      }
 	}	
 	
-	nodes = bSearch.queryAdvSearch(datatype, term, tag, criteria, params.sort, params.repo, params.siteId, params.containerId);
-   
-//   // Simple keyword search and tag specific search
-//   if (term !== null && term.length !== 0)
-//   {
-//      ftsQuery = "(" + term + ") PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(term) + "/member\" ";
-//   }
-//   else if (tag !== null && tag.length !== 0)
-//   {
-//      ftsQuery = "PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(tag) + "/member\" ";
-//   }	
-//
-//   // Advanced search form data search.
-//   // Supplied as json in the standard Alfresco Forms data structure:
-//   //    prop_<name>:value|assoc_<name>:value
-//   //    name = namespace_propertyname|pseudopropertyname
-//   //    value = string value - comma separated for multi-value, no escaping yet!
-//   // - underscore represents colon character in name
-//   // - pseudo property is one of any cm:content url property: mimetype|encoding|size
-//   // - always string values - interogate DD for type data
-//   if (formData !== null && formData.length !== 0)
-//   {
-//      var formQuery = "",
-//          formJson = jsonUtils.toObject(formData);
-//      
-//      // extract form data and generate search query
-//      var first = true;
-//      for (var p in formJson)
-//      {
-//         // retrieve value and check there is someting to search for
-//         // currently all values are returned as strings
-//         var propValue = formJson[p];
-//         if (propValue.length !== 0)
-//         {
-//            if (p.indexOf("prop_") === 0)
-//            {
-//               // found a property - is it namespace_propertyname or pseudo property format?
-//               var propName = p.substr(5);
-//               if (propName.indexOf("_") !== -1)
-//               {
-//                  // property name - convert to DD property name format
-//                  propName = propName.replace("_", ":");
-//                  
-//                  // special case for range packed properties
-//                  if (propName.match("-range$") == "-range")
-//                  {
-//                     // currently support text based ranges (usually numbers) or date ranges
-//                     // range value is packed with a | character separator
-//                     
-//                     // if neither value is specified then there is no need to add the term
-//                     if (propValue.length > 1)
-//                     {
-//                        var from, to, sepindex = propValue.indexOf("|");
-//                        if (propName.match("-date-range$") == "-date-range")
-//                        {
-//                           // date range found
-//                           propName = propName.substr(0, propName.length - "-date-range".length)
-//                           
-//                           // work out if "from" and/or "to" are specified - use MIN and MAX otherwise;
-//                           // we only want the "YYYY-MM-DD" part of the ISO date value - so crop the strings
-//                           from = (sepindex === 0 ? "MIN" : propValue.substr(0, 10));
-//                           to = (sepindex === propValue.length - 1 ? "MAX" : propValue.substr(sepindex + 1, sepindex + 10));
-//                        }
-//                        else
-//                        {
-//                           // simple range found
-//                           propName = propName.substr(0, propName.length - "-range".length);
-//                           
-//                           // work out if "min" and/or "max" are specified - use MIN and MAX otherwise
-//                           from = (sepindex === 0 ? "MIN" : propValue.substr(0, sepindex));
-//                           to = (sepindex === propValue.length - 1 ? "MAX" : propValue.substr(sepindex + 1));
-//                        }
-//                        formQuery += (first ? '' : ' AND ') + propName + ':"' + from + '".."' + to + '"';
-//                     }
-//                  }
-//                  else
-//                  {
-//                	  // beCPG - bug fix : pb with operator -, AND, OR
-//                	  // poivre AND -noir
-//                	  // poivre AND noir
-//                	  // sushi AND (saumon OR thon) AND -dorade
-//                      //formQuery += (first ? '' : ' AND ') + propName + ':"' + propValue + '"';
-//                	  formQuery += (first ? '' : ' AND ') + propName + ':(' + propValue + ')';
-//                  }
-//               }
-//               else
-//               {
-//                  // pseudo cm:content property - e.g. mimetype, size or encoding
-//                  formQuery += (first ? '' : ' AND ') + 'cm:content.' + propName + ':"' + propValue + '"';
-//               }
-//               first = false;
-//            }
-//         }
-//      }
-//      
-//      if (formQuery.length !== 0 || ftsQuery.length !== 0)
-//      {
-//         // extract data type for this search - advanced search query is type specific
-//         ftsQuery = 'TYPE:"' + formJson.datatype + '"' +
-//                    (formQuery.length !== 0 ? ' AND (' + formQuery + ')' : '') +
-//                    (ftsQuery.length !== 0 ? ' AND (' + ftsQuery + ')' : '');
-//      }
-//   }
-//   
-//   if (ftsQuery.length !== 0)
-//   {
-//      // we processed the search terms, so suffix the PATH query
-//      var path = null;
-//      if (!params.repo)
-//      {
-//         path = SITES_SPACE_QNAME_PATH;
-//         if (params.siteId !== null && params.siteId.length > 0)
-//         {
-//            path += "cm:" + search.ISO9075Encode(params.siteId) + "/";
-//         }
-//         else
-//         {
-//            path += "*/";
-//         }
-//         if (params.containerId !== null && params.containerId.length > 0)
-//         {
-//            path += "cm:" + search.ISO9075Encode(params.containerId) + "/";
-//         }
-//         else
-//         {
-//            path += "*/";
-//         }
-//      }
-//      
-//      if (path != null)
-//      {
-//         ftsQuery = 'PATH:"' + path + '/*" AND ' + ftsQuery;
-//      }
-//      ftsQuery = '(' + ftsQuery + ') AND -TYPE:"cm:thumbnail"';
-//      //beCPG : now, exclude always product history
-//      ftsQuery += PRODUCTS_TO_EXCLUDE; 
-//      
-//      // sort field - expecting field to in one of the following formats:
-//      //  - short QName form such as: cm:name
-//      //  - pseudo cm:content field starting with "." such as: .size
-//      //  - any other directly supported search field such as: TYPE
-//      var sortColumns = [];
-//      var sort = params.sort;
-//      if (sort != null && sort.length != 0)
-//      {
-//         var asc = true;
-//         var separator = sort.indexOf("|");
-//         if (separator != -1)
-//         {
-//            sort = sort.substring(0, separator);
-//            asc = (sort.substring(separator + 1) == "true");
-//         }
-//         var column;
-//         if (sort.charAt(0) == '.')
-//         {
-//            // handle pseudo cm:content fields
-//            column = "@{http://www.alfresco.org/model/content/1.0}content" + sort;
-//         }
-//         else if (sort.indexOf(":") != -1)
-//         {
-//            // handle attribute field sort
-//            column = "@" + utils.longQName(sort);
-//         }
-//         else
-//         {
-//            // other sort types e.g. TYPE
-//            column = sort;
-//         }
-//         sortColumns.push(
-//         {
-//            column: column,
-//            ascending: asc
-//         });
-//      }
-//      
-//      // perform fts-alfresco language query
-//      var queryDef = {
-//         query: ftsQuery,
-//         language: "fts-alfresco",
-//         page: {maxItems: params.maxResults},
-//         templates: QUERY_TEMPLATES,
-//         defaultField: "keywords",
-//         onerror: "no-results",
-//         sort: sortColumns 
-//      };
-//      nodes = search.query(queryDef);
-//   }
-//   else
-//   {
-//      // failed to process the search string - empty list returned
-//      nodes = [];
-//   }
-   
+	
+	 // sort field - expecting field to in one of the following formats:
+    //  - short QName form such as: cm:name
+    //  - pseudo cm:content field starting with "." such as: .size
+    //  - any other directly supported search field such as: TYPE
+    var sortColumns = [];
+    var sort = params.sort;
+    if (sort != null && sort.length != 0)
+    {
+       var asc = true;
+       var separator = sort.indexOf("|");
+       if (separator != -1)
+       {
+          sort = sort.substring(0, separator);
+          asc = (sort.substring(separator + 1) == "true");
+       }
+       var column;
+       if (sort.charAt(0) == '.')
+       {
+          // handle pseudo cm:content fields
+          column = "@{http://www.alfresco.org/model/content/1.0}content" + sort;
+       }
+       else if (sort.indexOf(":") != -1)
+       {
+          // handle attribute field sort
+          column = "@" + utils.longQName(sort);
+       }
+       else
+       {
+          // other sort types e.g. TYPE
+          column = sort;
+       }
+       sortColumns.push(
+       {
+          column: column,
+          ascending: asc
+       });
+    }
+	
+	
+	nodes = bSearch.queryAdvSearch( datatype, term, tag, criteria, params.repo, params.siteId, params.containerId, sortColumns, params.maxResults);
+  
    return processResults(nodes, params.maxResults, params.metadataFields);
 }

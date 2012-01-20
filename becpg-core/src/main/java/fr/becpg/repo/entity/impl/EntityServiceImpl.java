@@ -1,10 +1,18 @@
 package fr.becpg.repo.entity.impl;
 
+import java.awt.Image;
+import java.awt.image.RenderedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -13,6 +21,8 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -25,6 +35,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
 import org.alfresco.util.ISO8601DateFormat;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -72,6 +83,8 @@ public class EntityServiceImpl implements EntityService {
 	
 	private CopyService copyService;
 	
+	private ContentService contentService;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -109,6 +122,13 @@ public class EntityServiceImpl implements EntityService {
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
+	
+	
+
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
+
 
 	@Override
 	public boolean hasDataListModified(NodeRef nodeRef) {
@@ -315,6 +335,39 @@ public class EntityServiceImpl implements EntityService {
 		
 		return imageNodeRef;
 	}
+	
+	
+	/**
+	 * Load the image associated to the node.
+	 *
+	 * @param nodeRef the node ref
+	 * @return the image
+	 */
+	public byte[] getImage(NodeRef nodeRef) {
+
+		byte[] imageBytes = null;
+		
+		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+		
+		if(reader != null){
+			InputStream in = reader.getContentInputStream();
+			OutputStream out = null;
+			try {
+				Image image = ImageIO.read(in);
+			    out = new ByteArrayOutputStream();
+			   	ImageIO.write((RenderedImage) image, "jpg", out);
+				imageBytes = ((ByteArrayOutputStream)out).toByteArray();
+			} catch (IOException e) {
+				logger.error("Failed to get the content", e);
+			} finally {
+				IOUtils.closeQuietly(in);
+				IOUtils.closeQuietly(out);
+			}
+		}		
+		
+		return imageBytes;
+	}
+	
 
 	@Override
 	public void initializeEntity(NodeRef entityNodeRef) {

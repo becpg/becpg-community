@@ -7,35 +7,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.search.impl.lucene.LuceneFunction;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchParameters;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.LuceneHelper;
-import fr.becpg.repo.helper.LuceneHelper.Operator;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.data.ProductData;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -45,17 +34,12 @@ import fr.becpg.repo.product.data.ProductData;
  */
 public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 
-	/** The Constant LOCALIZATION_PFX_PATH. */
-	private static final String LOCALIZATION_PFX_PATH	= "path";
 	
 	/** The Constant LOCALIZATION_PFX_STATE. */
 	private static final String LOCALIZATION_PFX_STATE	= "state";
 	
 	/** The Constant LOCALIZATION_PFX_PRODUCT. */
 	private static final String LOCALIZATION_PFX_PRODUCT	= "product";
-	
-	/** The Constant LOCALIZATION_PFX_PRODUCT_TYPE. */
-	private static final String LOCALIZATION_PFX_PRODUCT_TYPE	= "product-type";	
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductDictionaryServiceImpl.class);
@@ -65,9 +49,6 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 	
 	/** The dictionary service. */
 	private DictionaryService dictionaryService;
-	
-	/** The search service. */
-	private SearchService searchService;
 	
 	/** The file folder service. */
 	private FileFolderService fileFolderService;
@@ -94,15 +75,6 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
-	}
-	
-	/**
-	 * Sets the search service.
-	 *
-	 * @param searchService the new search service
-	 */
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
 	}
 	
 	/**

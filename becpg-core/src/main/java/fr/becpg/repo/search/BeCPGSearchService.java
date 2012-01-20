@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
+
 public interface BeCPGSearchService {
 
 
@@ -16,5 +18,8 @@ public interface BeCPGSearchService {
 	List<NodeRef> unProtLuceneSearch(String runnedQuery, Map<String, Boolean> sort, int searchLimit);
 
 	List<NodeRef> suggestSearch(String runnedQuery, Map<String, Boolean> sort, Locale locale);
+
+	List<NodeRef> search(String searchQuery, Map<String, Boolean> sortMap, int maxResults,
+			BeCPGPermissionFilter beCPGPermissionFilter);
 
 }

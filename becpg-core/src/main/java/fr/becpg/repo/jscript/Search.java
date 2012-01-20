@@ -36,6 +36,27 @@ public final class Search extends BaseScopableProcessorExtension{
 		this.advSearchService = advSearchService;
 	}
 
+	
+	/**
+	 * 
+	 * @param datatype
+	 * @param term
+	 * @param tag
+	 * @param criteria
+	 * @param isRepo
+	 * @param siteId
+	 * @param containerId
+	 * @param sort
+	 * @param maxResults
+	 * @return
+	 */
+	public Scriptable queryAdvSearch(String datatype, 
+			String term, String tag, Object criteria, 
+			boolean isRepo, String siteId, String containerId, Object sort,int maxResults){
+		return queryAdvSearch(null, datatype, term, tag, criteria, isRepo, siteId, containerId, sort, maxResults);
+		
+	}
+	
 
 	/**
 	 * Method a do the query for the advanced search
@@ -49,31 +70,44 @@ public final class Search extends BaseScopableProcessorExtension{
 	 * @param containerId
 	 * @return
 	 */
-	public Scriptable queryAdvSearch(String datatype, 
-			String term, String tag, Object criteria, String sort, 
-			boolean isRepo, String siteId, String containerId){
+	public Scriptable queryAdvSearch(String query, String datatype, 
+			String term, String tag, Object criteria,  
+			boolean isRepo, String siteId, String containerId, Object sort, int maxResults){
 
-		logger.debug("Start Scriptable queryAdvSearch");
-		
-		logger.debug("queryAdvSearch, criteria: " + criteria);		
+
 		
 		Collection<ScriptNode> set = null;        		
 		Map<String, String> criteriaMap = null;
+		Map<String, Boolean> sortMap = null;
 		QName datatypeQName = (datatype != null && !datatype.isEmpty()) ? QName.createQName(datatype, services.getNamespaceService()) : null;
-		
-		if(logger.isDebugEnabled() && datatypeQName!=null){
-			logger.debug("Filter on dataType: "+datatypeQName.toString());
-		}
 		
 		if (criteria instanceof ScriptableObject){
 			
 			criteriaMap = new HashMap<String, String>(4, 1.0f);
-            extractAttributes((ScriptableObject)criteria, criteriaMap);
+            extractCriteriaAttributes((ScriptableObject)criteria, criteriaMap);
         }
 		
-		logger.debug("queryAdvSearch, criteriaMap: " + criteriaMap);
+		if (sort instanceof ScriptableObject){
+			
+			sortMap = new HashMap<String, Boolean>();
+			extractSortAttributes((ScriptableObject)sort, sortMap);
+        }
 		
-        List<NodeRef> nodes = advSearchService.queryAdvSearch(datatypeQName, term, tag, criteriaMap, sort, isRepo, siteId, containerId);     
+		if(logger.isDebugEnabled()){
+			logger.debug("Start Scriptable queryAdvSearch");
+			logger.debug("queryAdvSearch, criteria: " + criteria +", sort: "+sort);
+			if( datatypeQName!=null){
+				logger.debug("Filter on dataType: "+datatypeQName.toString());
+			}
+
+			logger.debug("queryAdvSearch, criteriaMap: " + criteriaMap);
+			logger.debug("queryAdvSearch, sortMap: " + sortMap);
+		}
+		
+		
+		
+		
+        List<NodeRef> nodes = advSearchService.queryAdvSearch(query, datatypeQName, term, tag, criteriaMap, isRepo, siteId, containerId, sortMap, maxResults);     
         
         if(!nodes.isEmpty()){
         	
@@ -97,7 +131,7 @@ public final class Search extends BaseScopableProcessorExtension{
      * @param scriptable    The scriptable object to extract name/value pairs from.
      * @param map           The map to add the converted name/value pairs to.
      */
-    private void extractAttributes(ScriptableObject scriptable, Map<String, String> map)
+    private void extractCriteriaAttributes(ScriptableObject scriptable, Map<String, String> map)
     {
         // we need to get all the keys to the properties provided
         // and convert them to a Map of QName to Serializable objects
@@ -118,6 +152,31 @@ public final class Search extends BaseScopableProcessorExtension{
                     map.put(key, (String)value);
                 }
             }
+        }
+    }
+    
+	/**
+     * Extract a map of properties and associations from a scriptable object (generally an associative array)
+     * 
+     * @param scriptable    The scriptable object to extract name/value pairs from.
+     * @param map           The map to add the converted name/value pairs to.
+     */
+    private void extractSortAttributes(ScriptableObject scriptable, Map<String, Boolean> map)
+    {
+
+        Object[] propIds = scriptable.getIds();
+        for (int i = 0; i < propIds.length; i++)
+        {
+            // work on each key in turn
+            Object propId = propIds[i];
+            if (propId instanceof Integer)
+            {
+            	ScriptableObject array = (ScriptableObject) scriptable.get(0, scriptable);
+            	String column = (String) array.get("column", scriptable);
+            	Boolean asc =  (Boolean) array.get("ascending", scriptable);
+            	map.put(column, asc);
+            } 
+           
         }
     }
     

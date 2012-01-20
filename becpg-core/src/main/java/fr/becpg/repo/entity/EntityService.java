@@ -33,7 +33,13 @@ public interface EntityService {
 	 * @return the  image
 	 */
 	public NodeRef getImage(NodeRef nodeRef, String imgName);
-
+	
+	/**
+	 * 
+	 * @param imgNodeRef
+	 * @return
+	 */
+	public byte[] getImage(NodeRef imgNodeRef);
 	
 	/**
 	 * Initialyze default param on 
@@ -57,6 +63,8 @@ public interface EntityService {
 	 * @return
 	 */
 	public NodeRef createOrCopyFrom(NodeRef parentNodeRef, NodeRef sourceNodeRef, QName entityType, String entityName);
+
+
 	
     
 }

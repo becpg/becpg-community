@@ -9,11 +9,6 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
-import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchParameters;
-import org.alfresco.service.cmr.search.SearchService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
@@ -23,7 +18,6 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
 import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 
 /**
@@ -39,9 +33,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	/** The Constant PRODUCTS_TO_EXCLUDE. */
 	private static final String PRODUCTS_TO_EXCLUDE = " AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	
-	private static final String DEFAULT_FIELD_NAME = "keywords";
-	
-	private static final String QUERY_TEMPLATES = "%(cm:name cm:title cm:description ia:whatEvent ia:descriptionEvent lnk:title lnk:description TEXT)";
 	
 	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";
 	
@@ -53,15 +44,15 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	
 	private static Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 		
-	private SearchService searchService;
+
 	private NodeService nodeService;
 	private DictionaryService dictionaryService;
 	private NamespaceService namespaceService;
-	private PermissionService permissionService;
+
+	
+	private BeCPGSearchService beCPGSearchService;
+	
 		
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
-	}
 	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -74,30 +65,37 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
-
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
+	
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	@Override
-	public List<NodeRef> queryAdvSearch(QName datatype, String term, String tag,
-										Map<String, String> criteria, String sort, boolean isRepo,
-										String siteId, String containerId) {
+	public List<NodeRef> queryAdvSearch(String searchQuery, QName datatype, String term, String tag,
+										Map<String, String> criteria, boolean isRepo,
+										String siteId, String containerId, Map<String, Boolean> sortMap, int maxResults) {
 		
 				
-		String searchQuery = getSearchQueryByProperties(datatype, term, tag, criteria, sort, isRepo, siteId, containerId);
-	
-		List<NodeRef> nodes = getSearchNodes(searchQuery); 
-		
-		nodes = getSearchNodesByAssociations(nodes, criteria);
-		
-		if(datatype != null && dictionaryService.isSubClass(datatype, BeCPGModel.TYPE_PRODUCT)){
-			
-			nodes = getSearchNodesByIngListCriteria(nodes, criteria);
+		if(maxResults<=0){
+			maxResults = MAX_RESULTS;
 		}
 		
-		// apply permissions
-		nodes = filterWithPermissions(nodes);
+		if(searchQuery==null || searchQuery.isEmpty()){
+			searchQuery = getSearchQueryByProperties(datatype, term, tag, criteria, isRepo, siteId, containerId);
+		}
+		 
+		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap, maxResults, new ReadPermissionFilter() );
+				
+		
+		if(criteria!=null){
+			nodes = getSearchNodesByAssociations(nodes, criteria);
+			
+			if(datatype != null && dictionaryService.isSubClass(datatype, BeCPGModel.TYPE_PRODUCT)){
+				
+				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
+			}
+		}
+		
 		
 		return nodes; 				
 	}
@@ -115,7 +113,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	 * @return the form query
 	 */
 	
-	private String getSearchQueryByProperties(QName datatype, String term, String tag, Map<String, String> criteria, String sort, boolean isRepo, String siteId, String containerId){
+	private String getSearchQueryByProperties(QName datatype, String term, String tag, Map<String, String> criteria 
+			, boolean isRepo, String siteId, String containerId){
 		String formQuery = "";
 		String ftsQuery = "";
 		boolean first = true;				
@@ -260,60 +259,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return ftsQuery;
 	}
 	
-	/**
-	 * Excecute the search.
-	 *
-	 * @param searchQueryPath the search query path
-	 * @return the search nodes
-	 */
-	private List<NodeRef> getSearchNodes(String searchQueryPath){
-		
-		List<NodeRef> searchResults = new ArrayList<NodeRef>();
-		
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-		
-		SearchParameters sp = new SearchParameters();
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(org.alfresco.service.cmr.search.SearchService.LANGUAGE_FTS_ALFRESCO);
-        sp.setQuery(searchQueryPath.toString());	        
-        sp.setLimitBy(LimitBy.UNLIMITED);
-        sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
-        sp.addQueryTemplate(DEFAULT_FIELD_NAME, QUERY_TEMPLATES);
-        sp.excludeDataInTheCurrentTransaction(false);        
-        
-        if(searchQueryPath != null && !searchQueryPath.isEmpty()){
-        	
-        	ResultSet resultSet = null;
-            
-            try{
-            	
-    	        resultSet = searchService.query(sp);			
-    	        searchResults = new ArrayList<NodeRef>(resultSet.getNodeRefs());	        	        	        	        	        	      
-            }
-            catch(Exception e){
-            	logger.debug("Failed to get search nodes", e);
-            }
-            finally{
-            	if(resultSet != null){
-            		resultSet.close();
-            	}
-            }        	
-        }
-        
-        if (logger.isDebugEnabled()) {
-			watch.stop();
-			logger.debug(searchQueryPath + " executed in  "
-					+ watch.getTotalTimeSeconds() + " seconds - size results "
-					+ searchResults.size());
-		}
-        
-        return searchResults;
-	}
-
 	/**
 	 * Take in account criteria on associations (ie : assoc_bcpg_supplierAssoc_added)
 	 * @return
@@ -529,25 +474,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return nodes;
 	}
 	
-	private List<NodeRef> filterWithPermissions(List<NodeRef> nodes){
-		
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-		
-		BeCPGPermissionFilter filter = new ReadPermissionFilter();
-		nodes = filter.filter(nodes, permissionService, MAX_RESULTS);
-		
-		if (logger.isDebugEnabled()) {
-			watch.stop();
-			logger.debug("filterWithPermissions executed in  "
-					+ watch.getTotalTimeSeconds() + " seconds ");
-		}
-		
-		return nodes;
-	}
 
 	private boolean isWorkSpaceProtocol(NodeRef nodeRef){
 		

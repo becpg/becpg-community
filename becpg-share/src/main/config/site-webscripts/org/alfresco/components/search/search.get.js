@@ -6,21 +6,22 @@
 function getExportSearchTpls(datatype)
 {
    var reportTpls = [];
-
-   try
-   {            
-	   var uri = "/becpg/report/exportsearch/templates/" + datatype;
-		var connector = remote.connect("alfresco");
-		var result = connector.get(uri);
-      if (result.status.code == status.STATUS_OK && result != "{}")
-      {
-         var tpls = eval('(' + result.response + ')');
-			reportTpls = tpls.reportTpls;
-      }
-   }
-   catch (e)
-   {
-   }
+	  if(datatype!=null && datatype.length>0){
+		   try
+		   {            
+			  var uri = "/becpg/report/exportsearch/templates/" + datatype;
+			  var connector = remote.connect("alfresco");
+			  var result = connector.get(uri);
+		      if (result.status.code == status.STATUS_OK && result != "{}")
+		      {
+		         var tpls = eval('(' + result.response + ')');
+					reportTpls = tpls.reportTpls;
+		      }
+		   }
+		   catch (e)
+		   {
+		   }
+	  }
 
    return reportTpls;
 }
@@ -104,7 +105,7 @@ function main()
    model.searchQuery = (page.url.args["q"] != null) ? page.url.args["q"] : "";
 
 	// datatype
-	var datatype;
+	var datatype = null;
 	if (model.searchQuery !== null && model.searchQuery.length !== 0)
 	{
      var formJson = jsonUtils.toObject(model.searchQuery);

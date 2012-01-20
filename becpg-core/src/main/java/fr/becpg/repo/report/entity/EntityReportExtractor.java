@@ -4,7 +4,6 @@
 package fr.becpg.repo.report.entity;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.dom4j.Element;
 
 /**
  * Interface used by classes that extract product data and product images to generate report.
@@ -14,7 +13,7 @@ import org.dom4j.Element;
 public interface EntityReportExtractor{
 	
 	
-	public Element extractXml(NodeRef entityNodeRef);
+	public EntityReportData extract(NodeRef entityNodeRef);
 	
 	
 }

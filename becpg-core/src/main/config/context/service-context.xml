@@ -238,6 +238,7 @@
 		<property name="entityTplService" ref="entityTplService"/>
 		<property name="entityVersionService" ref="entityVersionService"/>
 		<property name="copyService" ref="copyService"/>
+		<property name="contentService" ref="contentService"/>
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">
@@ -286,7 +287,6 @@
 	<bean id="productDictionaryService" class="fr.becpg.repo.product.ProductDictionaryServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="searchService" ref="searchService" />
 		<property name="fileFolderService" ref="fileFolderService" />		
 		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="repoService" ref="repoService"/>
@@ -372,15 +372,15 @@
 	
 	<!-- Search -->
 	<bean id="advSearchService" class="fr.becpg.repo.search.AdvSearchServiceImpl">
-		<property name="searchService" ref="searchService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="namespaceService" ref="namespaceService" />	
-		<property name="permissionService" ref="permissionService"/>		
+		<property name="beCPGSearchService" ref="beCPGSearchService"/>
 	</bean>		
 	<bean id="beCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
 		<property name="searchService" ref="SearchService" />
 		<property name="unProtSearchService" ref="searchService" />	
+		<property name="permissionService" ref="permissionService"/>
 	</bean>
 	
 		   	

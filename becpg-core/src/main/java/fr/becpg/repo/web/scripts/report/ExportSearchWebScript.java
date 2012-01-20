@@ -4,7 +4,6 @@
 package fr.becpg.repo.web.scripts.report;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +26,6 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -135,6 +133,37 @@ public class ExportSearchWebScript extends AbstractWebScript  {
 		NodeRef templateNodeRef = new NodeRef(storeType, storeId, nodeId);		
 		String query = req.getParameter(PARAM_QUERY);
 		String sort = req.getParameter(PARAM_SORT);
+		
+		Map<String,Boolean> sortMap = new HashMap<String, Boolean>();
+	    if (sort != null && sort.length() != 0)
+	    {
+	       boolean asc = true;
+	       int separator = sort.indexOf("|");
+	       if (separator != -1)
+	       {
+	          sort = sort.substring(0, separator);
+	          asc = (sort.substring(separator + 1) == "true");
+	       }
+	       String column;
+	       if (sort.charAt(0) == '.')
+	       {
+	          // handle pseudo cm:content fields
+	          column = "@{http://www.alfresco.org/model/content/1.0}content" + sort;
+	       }
+	       else if (sort.indexOf(":") != -1)
+	       {
+	          // handle attribute field sort
+	          column = "@" + sort;
+	       }
+	       else
+	       {
+	          // other sort types e.g. TYPE
+	          column = sort;
+	       }
+	       sortMap.put(column, asc);
+	    }
+		
+		
 		String term = req.getParameter(PARAM_TERM);
 		String tag = req.getParameter(PARAM_TAG);
 		String siteId = req.getParameter(PARAM_SITE);
@@ -156,7 +185,8 @@ public class ExportSearchWebScript extends AbstractWebScript  {
         	Map<String, String> criteriaMap = new HashMap<String, String>();
     		
     		JSONObject jsonObject = new JSONObject(query);    		
-    		Iterator iterator =jsonObject.keys();
+    		@SuppressWarnings("unchecked")
+			Iterator<String> iterator =jsonObject.keys();
     		
     		while(iterator.hasNext()){
     			
@@ -167,14 +197,14 @@ public class ExportSearchWebScript extends AbstractWebScript  {
     		
         	QName datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
         	
-        	List<NodeRef> resultNodeRefs = advSearchService.queryAdvSearch(datatype, 
+        	List<NodeRef> resultNodeRefs = advSearchService.queryAdvSearch(null,datatype, 
 														        			term, 
 																			tag, 
 																			criteriaMap, 
-																			sort, 
 																			isRepo, 
 																			siteId, 
-																			containerId);
+																			containerId,
+																			sortMap, -1 );
 
         	// report format
 			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);

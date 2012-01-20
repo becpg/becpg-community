@@ -57,7 +57,7 @@
             </#list>
          </select>
          
-		
+		<#if exportSearchTpls?has_content >
 		<#-- beCPG : export -->
 		<span class="yui-button yui-push-button" id="${el}-export-menubutton">
             <span class="first-child"><button></button></span>
@@ -68,9 +68,10 @@
             <option value="${exportSearchTpl.nodeRef}" fileName="${exportSearchTpl.name}.${exportSearchTpl.format?lower_case}">${exportSearchTpl.name}</option>
             </#list>
          </select>
+         </#if>
           <#-- beCPG : bulkedit -->
-		<span class="yui-button yui-push-button bulk-edit-button">
-		   <a class="action-link" rel="edit" href='/share/page/bulk-edit?t=${searchTerm?string}&q=${searchQuery?string}&site=${siteId?string}' title="${msg("button.bulkEdit")}">
+		<span id="${el}-bulk-edit" class="yui-button yui-push-button bulk-edit-button">
+		   <a class="action-link" rel="edit"  title="${msg("button.bulkEdit")}">
 				<span>${msg("button.bulkEdit")}</span>
 			</a>
 		</span>

@@ -1,10 +1,6 @@
 package fr.becpg.repo.report.entity.impl;
 
-import java.awt.Image;
-import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -12,8 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -42,8 +36,8 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -52,15 +46,11 @@ import fr.becpg.repo.report.template.ReportType;
 public class EntityReportServiceImpl implements EntityReportService{
 
 	
-
-	/** The Constant KEY_PRODUCT_IMAGE. */
-	private static final String KEY_PRODUCT_IMAGE = "productImage";
-	
 	private static final String KEY_XML_INPUTSTREAM = "org.eclipse.datatools.enablement.oda.xml.inputStream";
 	
 	private static final String PARAM_VALUE_HIDE_CHAPTER_SUFFIX = "HideChapter";
 		
-
+	private static final String DEFAULT_EXTRACTOR = "default";
 	
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 	
@@ -84,11 +74,10 @@ public class EntityReportServiceImpl implements EntityReportService{
 	
 	private ReportTplService reportTplService;
 	
-	private EntityReportExtractor entityExtractor;
+	
+	private Map<String, EntityReportExtractor>  entityExtractors = new HashMap<String, EntityReportExtractor>();
 	
 	
-
-	private EntityService entityService;
 			
 	/**
 	 * Sets the node service.
@@ -141,44 +130,38 @@ public class EntityReportServiceImpl implements EntityReportService{
 		this.mimetypeService = mimetypeService;
 	}		
 
-	/**
-	 * @param entityExtractor the entityExtractor to set
-	 */
-	public void setEntityExtractor(EntityReportExtractor entityExtractor) {
-		this.entityExtractor = entityExtractor;
-	}
 
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
 	}
 	
-
-
+	
+	
 	/**
-	 * @param entityService the entityService to set
+	 * @param entityExtractors the entityExtractors to set
 	 */
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
+	public void setEntityExtractors(Map<String, EntityReportExtractor> entityExtractors) {
+		this.entityExtractors = entityExtractors;
 	}
-
-
-
-
 	
-	
+
 	@Override
 	public void generateReport(NodeRef entityNodeRef) {
-		List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);					
+		List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);			
+		//TODO here plug a template filter base on entityNodeRef
 		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);		
 		
+	
 		if(!tplsNodeRef.isEmpty()){
 			StopWatch watch = null;
 			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
 				watch.start();
 			}
+	
+			EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
 			
-			generateReports(entityNodeRef, tplsNodeRef, entityExtractor.extractXml(entityNodeRef), extractImages(entityNodeRef));	
+			generateReports(entityNodeRef, tplsNodeRef, reportData.getXmlDataSource() , reportData.getDataObjects());	
 			if (logger.isDebugEnabled()) {
 				watch.stop();
 				logger.debug( "Reports generated in  "
@@ -190,6 +173,17 @@ public class EntityReportServiceImpl implements EntityReportService{
 	
 	
 	
+	private EntityReportExtractor retrieveExtractor(NodeRef entityNodeRef) {
+		QName type = nodeService.getType(entityNodeRef);
+		
+		EntityReportExtractor ret = entityExtractors.get(type.getLocalName());
+		if(ret==null){
+			ret = entityExtractors.get(DEFAULT_EXTRACTOR);
+		}
+
+		return ret;
+	}
+
 	/**
 	 * Get the node where the document will we stored.
 	 *
@@ -369,54 +363,6 @@ public class EntityReportServiceImpl implements EntityReportService{
 	
 
 	
-	private Map<String, byte[]> extractImages(NodeRef entityNodeRef) {
-		Map<String, byte[]> images = new HashMap<String, byte[]>();
-		/*
-		 *	get the product image 
-		 */
-		String productImageFileName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_IMAGE).toLowerCase();
-		NodeRef imgNodeRef = entityService.getImage(entityNodeRef, productImageFileName);
-		byte[] imageBytes = null;
-		
-		if(imgNodeRef != null){
-			imageBytes = getImage(imgNodeRef);
-			images.put(KEY_PRODUCT_IMAGE, imageBytes);
-		}				
-		
-		return images;
-	}
-
-	/**
-	 * Load the image associated to the node.
-	 *
-	 * @param nodeRef the node ref
-	 * @return the image
-	 */
-	@Override
-	public byte[] getImage(NodeRef nodeRef) {
-
-		byte[] imageBytes = null;
-		
-		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-		
-		if(reader != null){
-			InputStream in = reader.getContentInputStream();
-			OutputStream out = null;
-			try {
-				Image image = ImageIO.read(in);
-			    out = new ByteArrayOutputStream();
-			   	ImageIO.write((RenderedImage) image, "jpg", out);
-				imageBytes = ((ByteArrayOutputStream)out).toByteArray();
-			} catch (IOException e) {
-				logger.error("Failed to get the content", e);
-			} finally {
-				IOUtils.closeQuietly(in);
-				IOUtils.closeQuietly(out);
-			}
-		}		
-		
-		return imageBytes;
-	}
 
 	@Override
 	public boolean isReportUpToDate(NodeRef entityNodeRef) {
