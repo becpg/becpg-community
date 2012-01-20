@@ -80,7 +80,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 
 	@Override
 	public void registerExtractor(String typeName, EntityReportExtractor extractor) {
-		logger.debug("Register report extractor :"+typeName+" "+extractor.getClass().getSimpleName());
+		logger.debug("Register report extractor :"+typeName+" - "+extractor.getClass().getSimpleName());
 		entityExtractors.put(typeName, extractor);
 	}
 			
