@@ -78,17 +78,25 @@ public class ProductPolicy implements NodeServicePolicies.OnUpdatePropertiesPoli
 					for(int z_idx=0 ; z_idx<nodes.size() ; z_idx++)
 			    	{	    			
 		    			FileInfo node = nodes.get(z_idx);
-		    			NodeRef productListItemNodeRef = node.getNodeRef();	    					    		
-			    		String costListUnit = (String)nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT);
-			    		
-			    		List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(productListItemNodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
+		    			NodeRef productListItemNodeRef = node.getNodeRef();
+		    			
+		    			List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(productListItemNodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
 			    		NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
-			    		String costCurrency = (String)nodeService.getProperty(costNodeRef, BeCPGModel.PROP_COSTCURRENCY); 
+			    		Boolean costFixed = (Boolean)nodeService.getProperty(costNodeRef, BeCPGModel.PROP_COSTFIXED);
 			    		
-			    		String suffix = CostsCalculatingVisitor.UNIT_SEPARATOR + costCurrency;
-			    		if(!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.endsWith(suffix))){
-			    			nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT, CostsCalculatingVisitor.calculateUnit(productUnit, costCurrency));
+			    		if(costFixed != null && costFixed == true){
+			    			//nothing to do...
 			    		}
+			    		else{
+			    			
+			    			String costCurrency = (String)nodeService.getProperty(costNodeRef, BeCPGModel.PROP_COSTCURRENCY);
+				    		String costListUnit = (String)nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT);
+				    		
+				    		String suffix = CostsCalculatingVisitor.UNIT_SEPARATOR + costCurrency;
+				    		if(!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.endsWith(suffix))){
+				    			nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT, CostsCalculatingVisitor.calculateUnit(productUnit, costCurrency));
+				    		}
+			    		}			    		
 			    	}					
 				}
 				
