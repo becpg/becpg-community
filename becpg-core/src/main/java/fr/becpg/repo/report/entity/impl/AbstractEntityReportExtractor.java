@@ -164,9 +164,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 			}
 			else{
 				name = (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
-			}						
-			
-			logger.debug("###targetQName: " + targetQName + ", name: " + name);
+			}									
 
 			if (tempValues.containsKey(qName)) {
 				String names = tempValues.get(qName);

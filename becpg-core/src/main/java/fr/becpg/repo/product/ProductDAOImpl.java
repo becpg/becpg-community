@@ -405,7 +405,7 @@ public class ProductDAOImpl implements ProductDAO{
 		    		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 		    	
 		    		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-		    		NodeRef part = (compoAssocRefs.get(0)).getTargetRef();		    		
+		    		NodeRef part = compoAssocRefs.size() > 0 ? (compoAssocRefs.get(0)).getTargetRef() : null;		    		
 		    		CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 		    		
 		    		CompoListDataItem compoListDataItem = new CompoListDataItem(listItemNodeRef, 
