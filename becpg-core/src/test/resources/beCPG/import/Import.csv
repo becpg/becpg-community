@@ -46,12 +46,12 @@
 ;;;;;;
 "PATH";"/System/Ings";;;;;
 "TYPE";"bcpg:ing";;;;;
-"COLUMNS";"cm:name";"bcpg:ingMLName";"bcpg:ingMLName_fr";"bcpg:ingMLName_en";"bcpg:ingType";"bcpg:ingCEECode"
+"COLUMNS";"cm:name";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en";"bcpg:ingType";"bcpg:ingCEECode"
 "VALUES";"Abricot";"Abricot default";"Abricot french";"Abricot english";"Ingrédient";
 "VALUES";"Acerola";"Acerola default";"Acerola french";"Acerola english";"Ingrédient";
 ;;;;;;
 "PATH";"/System/Ings";;;;;
 "TYPE";"bcpg:ing";;;;;
-"COLUMNS";"cm:name";"bcpg:ingType";"bcpg:ingCEECode";"bcpg:ingMLName";"bcpg:ingMLName_fr";"bcpg:ingMLName_en"
+"COLUMNS";"cm:name";"bcpg:ingType";"bcpg:ingCEECode";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en"
 "VALUES";"Abricot1";"Ingrédient";;"Abricot1 default";"Abricot1 french";"Abricot1 english"
 "VALUES";"Acerola1";"Ingrédient";;"Acerola1 default";"Acerola1 french";"Acerola1 english"

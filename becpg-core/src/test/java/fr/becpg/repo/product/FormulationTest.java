@@ -333,7 +333,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.getDefault(), "ing1 default");
 			mlName.addValue(Locale.ENGLISH, "ing1 english");
 			mlName.addValue(Locale.FRENCH, "ing1 french");	
-			properties.put(BeCPGModel.PROP_ING_MLNAME, mlName);
+			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
@@ -342,7 +342,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.getDefault(), "ing2 default");
 			mlName.addValue(Locale.ENGLISH, "ing2 english");
 			mlName.addValue(Locale.FRENCH, "ing2 french");	
-			properties.put(BeCPGModel.PROP_ING_MLNAME, mlName);
+			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
@@ -351,7 +351,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.getDefault(), "ing3 default");
 			mlName.addValue(Locale.ENGLISH, "ing3 english");
 			mlName.addValue(Locale.FRENCH, "ing3 french");	
-			properties.put(BeCPGModel.PROP_ING_MLNAME, mlName);
+			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.put(ContentModel.PROP_NAME, "ing4");
@@ -359,7 +359,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.getDefault(), "ing4 default");
 			mlName.addValue(Locale.ENGLISH, "ing4 english");
 			mlName.addValue(Locale.FRENCH, "ing4 french");	
-			properties.put(BeCPGModel.PROP_ING_MLNAME, mlName);
+			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			//Geo origins

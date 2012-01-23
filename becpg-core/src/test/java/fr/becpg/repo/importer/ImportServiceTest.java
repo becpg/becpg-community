@@ -251,7 +251,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		// Abricot 				 				 				
 		NodeRef ingNodeRef = nodeService.getChildByName(ingsFolder, ContentModel.ASSOC_CONTAINS, "Abricot");
 		assertNotNull("abricot ing should exist", ingNodeRef);
-		MLText mlText = (MLText)mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_ING_MLNAME);
+		MLText mlText = (MLText)mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 		assertNotNull("MLText exist", mlText);
 		assertEquals("MLText exist has 3 Locales", 3, mlText.getLocales().size());
 		assertEquals("Check default value", "Abricot default", mlText.getValue(Locale.getDefault()));
@@ -261,7 +261,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		// Acerola
 		ingNodeRef = nodeService.getChildByName(ingsFolder, ContentModel.ASSOC_CONTAINS, "Acerola");
 		assertNotNull("Acerola ing should exist", ingNodeRef);
-		mlText = (MLText)mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_ING_MLNAME);
+		mlText = (MLText)mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 		assertNotNull("MLText exist", mlText);
 		assertEquals("MLText exist has 3 Locales", 3, mlText.getLocales().size());
 		assertEquals("Check default value", "Acerola default", mlText.getValue(Locale.getDefault()));
@@ -271,7 +271,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		// Abricot1
 		ingNodeRef = nodeService.getChildByName(ingsFolder, ContentModel.ASSOC_CONTAINS, "Abricot1");
 		assertNotNull("Abricot1 ing should exist", ingNodeRef);
-		mlText = (MLText)mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_ING_MLNAME);
+		mlText = (MLText)mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 		assertNotNull("MLText exist", mlText);
 		assertEquals("MLText exist has 3 Locales", 3, mlText.getLocales().size());
 		assertEquals("Check default value", "Abricot1 default", mlText.getValue(Locale.getDefault()));
@@ -281,7 +281,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		// Acerola1
 		ingNodeRef = nodeService.getChildByName(ingsFolder, ContentModel.ASSOC_CONTAINS, "Acerola1");
 		assertNotNull("Acerola1 ing should exist", ingNodeRef);
-		mlText = (MLText)mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_ING_MLNAME);
+		mlText = (MLText)mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 		assertNotNull("MLText exist", mlText);
 		assertEquals("MLText exist has 3 Locales", 3, mlText.getLocales().size());
 		assertEquals("Check default value", "Acerola1 default", mlText.getValue(Locale.getDefault()));
