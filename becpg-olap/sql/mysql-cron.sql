@@ -67,6 +67,7 @@ select node.id, code.string_value, name.string_value  , legalName.string_value, 
  left outer join becpg_entity_list_temp packaging_assoc on (packaging_assoc.entityId = node.id and packaging_assoc.entityType = 'bcpg:packagingList')
  left outer join becpg_entity_list_temp compo_assoc on (compo_assoc.entityId = node.id and compo_assoc.entityType = 'bcpg:compoList')
  where node.store_id in (select id from alf_store where identifier = 'SpacesStore' and protocol = 'workspace')
+ group by node.id, code.string_value
  order by code.long_value, name.string_value;
 
  
