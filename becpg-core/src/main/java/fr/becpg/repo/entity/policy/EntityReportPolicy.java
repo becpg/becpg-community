@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -298,9 +299,9 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
                         				// on this thread
                         				// This won't prevent background processes from
                         				// refiring, though
-                        	           // policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
-                        	            policyBehaviourFilter.disableAllBehaviours();
-                        	            
+                        	            policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
+                        	            policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);	
+                        	     
                         	            // generate reports
                         	            entityReportService.generateReport(entityNodeRef);		
                         	            
@@ -308,8 +309,8 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
                     			        nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, Calendar.getInstance().getTime());
                         	        }
                         	        finally{
-                        	        	 policyBehaviourFilter.enableAllBehaviours();
-                        	        	//policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);			        	
+                        	        	policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);		
+                        	        	policyBehaviourFilter.enableBehaviour(entityNodeRef,  ContentModel.ASPECT_AUDITABLE);		
                         	        }	         
                             	}
             			        

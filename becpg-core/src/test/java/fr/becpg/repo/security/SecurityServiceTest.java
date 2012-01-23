@@ -34,9 +34,9 @@ import fr.becpg.test.RepoBaseTestCase;
 
 public class SecurityServiceTest extends RepoBaseTestCase {
 
-	protected static final String USER_ONE = "matthieu";
+	protected static final String USER_ONE = "matthieu_secu";
 
-	protected static final String USER_TWO = "philippe";
+	protected static final String USER_TWO = "philippe_secu";
 
 	private static String PATH_TESTFOLDER = "SecTestFolder";
 	
@@ -204,9 +204,6 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		acls.add(new ACLEntryDataItem(null, "sec:propName",
 				PermissionModel.READ_WRITE, groups));
 
-		groups = new ArrayList<String>();
-		groups.add(grp1);
-
 		acls.add(new ACLEntryDataItem(null, "sec:aclPermission",
 				PermissionModel.READ_ONLY, groups));
 
@@ -215,6 +212,15 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	}
 
+//	Failed tests:   testSuggestProduct(fr.becpg.repo.web.scripts.listvalue.AutoCompleteWebScriptTest): Status code 500 returned, but expected 200 for /becpg/autocomplete/product?q=ra (get)(..)
+//			  testComputeAccessMode(fr.becpg.repo.security.SecurityServiceTest): expected:<1> but was:<2>
+//
+//			Tests in error: 
+//			  testECOInMultiLeveCompo(fr.becpg.repo.ecm.ECOTest): 00230000 Exception in Transaction.
+//			  testImportProducts(fr.becpg.repo.importer.ImportServiceTest): 00230001 Exception from transactional callback: fr.becpg.repo.importer.impl.ImportServiceImpl$2@194b24b
+//
+//	
+//	
 	public void testComputeAccessMode() {
 
 		
@@ -294,9 +300,9 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		Assert.assertNotNull(types);
 		Assert.assertTrue(types.size()>0);
 		
-		for(String type : dynPropsConstraint.getAllowedValues()){
-			System.out.println("Type : "+type);
-		}
+//		for(String type : dynPropsConstraint.getAllowedValues()){
+//			System.out.println("Type : "+type);
+//		}
 		
 		dynPropsConstraint.setConstraintType(DynPropsConstraint.ASPECT_NODE);
 		List<String> aspects =  dynPropsConstraint.getAllowedValues();
@@ -305,9 +311,9 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		
 		
 		
-		for(String aspect : dynPropsConstraint.getAllowedValues()){
-			System.out.println("aspect : "+aspect);
-		}
+//		for(String aspect : dynPropsConstraint.getAllowedValues()){
+//			System.out.println("aspect : "+aspect);
+//		}
 		
 	}
 	

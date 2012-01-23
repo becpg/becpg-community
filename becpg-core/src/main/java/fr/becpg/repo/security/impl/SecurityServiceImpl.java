@@ -165,7 +165,7 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	public void init() {
-		logger.info("Init SecurityService");
+		logger.debug("Init SecurityService");
 		try {
 			computeAcls();
 		} catch(Exception e){

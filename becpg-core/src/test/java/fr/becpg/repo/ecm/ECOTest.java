@@ -175,7 +175,7 @@ public class ECOTest extends RepoBaseTestCase  {
 
  				// delete report tpls to avoid report generation
  				deleteReportTpls();
- 				
+ 				deleteCharacteristics();
  				initCharacteristics();
  				cost1 = costs.get(0);
  				cost2 = costs.get(1);
