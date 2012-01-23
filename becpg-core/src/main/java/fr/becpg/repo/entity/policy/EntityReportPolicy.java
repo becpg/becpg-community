@@ -28,6 +28,8 @@ import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.ibm.icu.util.Calendar;
+
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -296,13 +298,18 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
                         				// on this thread
                         				// This won't prevent background processes from
                         				// refiring, though
-                        	            policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
+                        	           // policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
+                        	            policyBehaviourFilter.disableAllBehaviours();
                         	            
                         	            // generate reports
-                        	            entityReportService.generateReport(entityNodeRef);				            
+                        	            entityReportService.generateReport(entityNodeRef);		
+                        	            
+                        	        	// set reportNodeGenerated property to now
+                    			        nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, Calendar.getInstance().getTime());
                         	        }
                         	        finally{
-                        	        	policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);			        	
+                        	        	 policyBehaviourFilter.enableAllBehaviours();
+                        	        	//policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);			        	
                         	        }	         
                             	}
             			        
