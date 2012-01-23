@@ -557,7 +557,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 				
 				if(ingItem == null){
 					
-					MLText mlName = (MLText)mlNodeService.getProperty(ingNodeRef, BeCPGModel.PROP_ING_MLNAME);
+					MLText mlName = (MLText)mlNodeService.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 					ingItem =new IngItem(ingName, mlName, 0f);
 					compositeIng.add(ingItem, isDeclared);
 				}															

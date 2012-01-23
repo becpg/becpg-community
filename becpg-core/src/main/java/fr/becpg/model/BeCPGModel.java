@@ -436,10 +436,7 @@ public interface BeCPGModel {
 
 	// ing
 	/** The Constant TYPE_ING. */
-	static final QName TYPE_ING = QName.createQName(BECPG_URI, "ing");
-	
-	/** The Constant PROP_ING_MLNAME. */
-	static final QName PROP_ING_MLNAME = QName.createQName(BECPG_URI, "ingMLName");
+	static final QName TYPE_ING = QName.createQName(BECPG_URI, "ing");	
 	
 	/** The Constant PROP_ING_CEECODE. */
 	static final QName PROP_ING_CEECODE = QName.createQName(BECPG_URI,
@@ -687,7 +684,7 @@ public interface BeCPGModel {
 	
 	public static final QName PROP_UNIT_TOTAL_COST = QName.createQName(BECPG_URI, "unitTotalCost");
 
-	public static final QName PROP_PRICE_CURRENCY =  QName.createQName(BECPG_URI, "priceCurrency");
+	public static final QName PROP_PRICE_CURRENCY =  QName.createQName(BECPG_URI, "priceCurrency");	
 	
 	/**
 	 * manufacturingAspect
@@ -723,4 +720,10 @@ public interface BeCPGModel {
 	 * approvalNumber
 	 */
 	static final QName TYPE_APPROVAL_NUMBER = QName.createQName(BECPG_URI, "approvalNumber");
+	
+	/**
+	 * legalName aspect
+	 */
+	public static final QName ASPECT_LEGAL_NAME = QName.createQName(BECPG_URI, "legalNameAspect");
+	static final QName PROP_LEGAL_NAME = QName.createQName(BECPG_URI, "legalName");
 }

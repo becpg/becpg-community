@@ -13,15 +13,19 @@ for(i in nodes){
 	nodes[i].save();
 }
 
-var nodes = search.luceneSearch('+ASPECT:"bcpg:productAspect"');	
+var nodes = search.luceneSearch('+ASPECT:"bcpg:productAspect" +TYPE:"bcpg:product"');	
 
 for(i in nodes){
 	
-	if(nodes[i].hasAspect('bcpg:legalNameAspect') == false){
-	
-		var propLegalName = nodes[i].properties["bcpg:legalName"];
+	if(nodes[i].hasAspect('bcpg:legalNameAspect') == false){	
 		
 		nodes[i].addAspect('bcpg:legalNameAspect', null);
 		nodes[i].save();
 	}
+	
+//	if(nodes[i].hasAspect('bcpg:productMicrobioCriteriaAspect') == false){	
+//		
+//		nodes[i].addAspect('bcpg:productMicrobioCriteriaAspect', null);
+//		nodes[i].save();
+//	}
 }

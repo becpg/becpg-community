@@ -379,7 +379,8 @@
 		<type name="bcpg:product">
 			<parent>bcpg:entity</parent>
 			<mandatory-aspects>
-				<aspect>bcpg:codeAspect</aspect>				
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:legalNameAspect</aspect>				
 				<aspect>bcpg:productAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 				<aspect>rep:reportEntityAspect</aspect>
@@ -483,7 +484,7 @@
 					<constraints>
 						<constraint ref="bcpg:ingType" />
 					</constraints>
-				</property>
+				</property>				
 			</properties>
 		</type>
 
@@ -1406,7 +1407,7 @@
 		
 		<aspect name="bcpg:legalNameAspect">
 			<properties>
-			<property name="bcpg:legalName">
+				<property name="bcpg:legalName">
 					<type>d:mltext</type>
 				</property>
 			</properties>
@@ -1446,10 +1447,7 @@
 						<constraint ref="bcpg:productUnit" />
 					</constraints>
 				</property>
-			</properties>
-			<mandatory-aspects>
-				<aspect>bcpg:legalNameAspect</aspect>
-			</mandatory-aspects>
+			</properties>			
 		</aspect>
 
 		<aspect name="bcpg:transformationAspect">
