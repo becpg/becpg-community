@@ -318,7 +318,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 				/*-- Create product --*/
 				logger.debug("Create product");
 				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");		   		 
-			   
+				
 			   /*-- Generate report --*/		  
 				entityReportService.generateReport(rawMaterialNodeRef);
 			   

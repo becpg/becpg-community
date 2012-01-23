@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,6 @@ import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -308,8 +306,6 @@ public class EntityReportServiceImpl implements EntityReportService{
 					}
 					
 					task.run();
-					// set reportNodeGenerated property to now
-			        nodeService.setProperty(nodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, new Date());
 				}  				
 			}
 			catch(Exception e){
@@ -359,39 +355,6 @@ public class EntityReportServiceImpl implements EntityReportService{
 	}
 	
 	
-
-	
-
-	@Override
-	@Deprecated
-	public boolean isReportUpToDate(NodeRef entityNodeRef) {
-
-        Date reportModified = (Date)nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
-
-        // report not generated
-        if(reportModified == null){
-        	logger.debug("report not up to date");
-        	return false;
-        }
-
-        // check modified date (modified is always bigger than reportModified so a delta is defined)
-        Date modified = (Date)nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);                
-     
-        //Test if report is older than 15s
-        if(reportModified.getTime()+1000*15-modified.getTime()<0){
-        	if(logger.isDebugEnabled()){
-	        	logger.debug("report not up to date :");
-	        	logger.debug("modified: " + ISO8601DateFormat.format(modified) + " - reportModified: " + ISO8601DateFormat.format(reportModified));
-        	}
-        	return false;
-        }
-        
-
-        return true;
-
-		
-	}
-
 
 
 	

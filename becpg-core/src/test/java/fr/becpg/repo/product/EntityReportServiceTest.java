@@ -17,6 +17,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ApplicationContextHelper;
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -66,8 +67,6 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 	/** The repository helper. */
 	private Repository repositoryHelper;
 	
-	/** The product report service. */
-	private EntityReportService entityReportService;
 	
 	private ReportTplService reportTplService;
 	
@@ -93,7 +92,6 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
     	productDAO = (ProductDAO)appCtx.getBean("productDAO");
     	productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
     	repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-    	entityReportService = (EntityReportService)appCtx.getBean("entityReportService");
     	reportTplService = (ReportTplService)appCtx.getBean("reportTplService");
     	policyBehaviourFilter = (BehaviourFilter)appCtx.getBean("policyBehaviourFilter");
     	repoService = (RepoService)appCtx.getBean("repoService");
@@ -138,6 +136,34 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 			}});
 		
 	}
+	
+	
+	/**
+	 * Check if node has changed, so the report is out of date.
+	 *
+	 * @param nodeRef the node ref
+	 * @return true, if is report up to date
+	 */	
+	private  boolean isReportUpToDate(NodeRef nodeRef) {
+					
+		Date reportModified = (Date)nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
+		
+		// report not generated
+		if(reportModified == null){
+			logger.debug("report not generated");
+			return false;
+		}
+		
+		// check modified date (modified is always bigger than reportModified so a delta is defined)
+		Date modified = (Date)nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);		
+		logger.debug("modified: " + ISO8601DateFormat.format(modified) + " - reportModified: " + ISO8601DateFormat.format(reportModified));
+		if(modified.after(reportModified)){			
+			logger.debug("node has been modified");
+			return false;
+		}		
+		
+		return true;
+	}	
 	
 	/**
 	 * Test is report up to date.
@@ -217,7 +243,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 		Thread.sleep(6000);
 		
 		// product report should be update to date due to policy		
-		assertEquals("check if report is up to date", true, entityReportService.isReportUpToDate(sfNodeRef));
+		assertEquals("check if report is up to date", true, isReportUpToDate(sfNodeRef));
 		
 		// change product property, should be still up to date due to policy
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
@@ -229,7 +255,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				
 			}});
 		
-		assertEquals("check if report is up to date", true, entityReportService.isReportUpToDate(sfNodeRef));
+		assertEquals("check if report is up to date", true, isReportUpToDate(sfNodeRef));
 		
 		//change product property, should be out of date (policy disabled)
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
@@ -244,11 +270,11 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 			}});
 		
 		
-		assertEquals("check if report is up to date", false, entityReportService.isReportUpToDate(sfNodeRef));
+		assertEquals("check if report is up to date", false, isReportUpToDate(sfNodeRef));
 		
 		// reset
 		resetReportModified();
-		assertEquals("check if report is up to date", true, entityReportService.isReportUpToDate(sfNodeRef));
+		assertEquals("check if report is up to date", true, isReportUpToDate(sfNodeRef));
 		
 		//change product property, should be out of date (policy enabled)		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
@@ -260,12 +286,12 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				
 			}});
 							
-		assertEquals("check if report is up to date", true, entityReportService.isReportUpToDate(sfNodeRef));
+		assertEquals("check if report is up to date", true, isReportUpToDate(sfNodeRef));
 		
 		
 		// reset
 		resetReportModified();		
-		assertEquals("check if report is up to date", true, entityReportService.isReportUpToDate(sfNodeRef));
+		assertEquals("check if report is up to date", true, isReportUpToDate(sfNodeRef));
 		
 		// setProperty of allergen without changing anything => should be up to date
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
@@ -278,7 +304,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				
 			}});
 		
-		assertEquals("check if report is up to date", true, entityReportService.isReportUpToDate(sfNodeRef));															   
+		assertEquals("check if report is up to date", true, isReportUpToDate(sfNodeRef));															   
 	}
 	
 	/**

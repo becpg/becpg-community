@@ -3,10 +3,8 @@
  */
 package fr.becpg.repo.web.scripts.entity;
 
-import java.util.Date;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -67,7 +65,6 @@ public class ReportWebScript extends AbstractWebScript
 		
 		// update node to indicate it is modified (audit and that will fire policies)
 		if(entityService.hasDataListModified(nodeRef)){
-			//nodeService.setProperty(nodeRef, ContentModel.PROP_MODIFIED, new Date()); // doesn't work
 			nodeService.setProperty(nodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, null);
 		}
     }    	  
