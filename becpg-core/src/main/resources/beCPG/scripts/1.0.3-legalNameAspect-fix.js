@@ -13,7 +13,7 @@ for(i in nodes){
 	nodes[i].save();
 }
 
-var nodes = search.luceneSearch('+ASPECT:"bcpg:productAspect" +TYPE:"bcpg:product"');	
+var nodes = search.luceneSearch('+ASPECT:"bcpg:productAspect" +TYPE:"bcpg:product" ');	
 
 for(i in nodes){
 	
