@@ -197,7 +197,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		String prefix = getDefaultPrefix(className,propertyName);
 		java.util.regex.Matcher ma = java.util.regex.Pattern.compile(DEFAULT_PATTERN).matcher(autoNumCode);
 		if(ma.matches()){
-			prefix = ma.group(0);
+			prefix = ma.group(1);
 			autoNumCode = ma.group(2); 
 		}
 		try {

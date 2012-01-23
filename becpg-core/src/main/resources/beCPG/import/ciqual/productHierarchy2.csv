@@ -66,7 +66,7 @@
 "VALUES";"Compléments alimentaires - Compléments alimentaires";"Compléments alimentaires";"Compléments alimentaires"
 "VALUES";"Fromages - Fromages";"Fromages";"Fromages"
 "VALUES";"Denrées destinées à une alimentation particulière - Denrées destinées à une alimentation particulière";"Denrées destinées à une alimentation particulière";"Denrées destinées à une alimentation particulière"
-"VALUES";"Plats composés - Plats composés";"Plats composés";"Plats composés"
+
 
 
 "PATH";"/System/ProductHierarchy/FinishedProduct_Hierarchy1";;
@@ -79,6 +79,7 @@
 "VALUES";"Pâtisseries et biscuits - Biscuits secs sucrés";"Pâtisseries et biscuits";"Biscuits secs sucrés"
 "VALUES";"Pâtisseries et biscuits - Biscuits salés apéritifs";"Pâtisseries et biscuits";"Biscuits salés apéritifs"
 "VALUES";"Céréales petit déjeuner et barres céréalières - Céréales petit déjeuner et barres céréalières";"Céréales petit déjeuner et barres céréalières";"Céréales petit déjeuner et barres céréalières"
+"VALUES";"Plats composés - Plats composés";"Plats composés";"Plats composés"
 "VALUES";"Plats composés - Plats à base de viande ou volaille";"Plats composés";"Plats à base de viande ou volaille"
 "VALUES";"Plats composés - Plats à base de poisson ou produits aquatiques";"Plats composés";"Plats à base de poisson ou produits aquatiques"
 "VALUES";"Plats composés - Plats à base de légumes ou légumineuses";"Plats composés";"Plats à base de légumes ou légumineuses"
