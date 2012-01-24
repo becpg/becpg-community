@@ -20,14 +20,10 @@ import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.importer.ImportContext;
 
-// TODO: Auto-generated Javadoc
 /**
  * Helper used by the import classes.
  *
@@ -37,9 +33,7 @@ public class ImportHelper{
 
 	/** The Constant MLTEXT_SEPARATOR. */
 	public static final String MLTEXT_SEPARATOR 		= "_";
-	
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(ImportHelper.class);
+
 	
 	/**
 	 * Load the property according to the property type.
@@ -72,7 +66,7 @@ public class ImportHelper{
 					boolean first = true;
 					for(int z_idx=pos; z_idx<importContext.getColumns().size() ; z_idx++){
 											
-						// bcpg:ingMLName_en
+						// bcpg:legalName_en
 						String transColumn = importContext.getColumns().get(z_idx).getId();
 						if(transColumn != ""){
 							

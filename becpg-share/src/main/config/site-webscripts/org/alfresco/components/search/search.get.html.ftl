@@ -71,9 +71,9 @@
          </#if>
           <#-- beCPG : bulkedit -->
 		<span id="${el}-bulk-edit" class="yui-button yui-push-button bulk-edit-button">
-		   <a class="action-link" rel="edit"  title="${msg("button.bulkEdit")}">
+		   <button>
 				<span>${msg("button.bulkEdit")}</span>
-			</a>
+			</button>
 		</span>
          
       </div>

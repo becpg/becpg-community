@@ -1,0 +1,118 @@
+
+body {
+    color: #333333;
+    font-size: 100%;
+    margin: 0;
+    display: block;
+    font-family: Verdana,Tahoma,"DejaVu Sans",sans-serif;
+}
+
+
+
+#page-wrapper{
+    margin-left: auto;
+    margin-right: auto;
+    width: 960px;
+}
+
+#page {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E1E1E1;
+    border-left: 1px solid #E1E1E1;
+    border-right: 1px solid #E1E1E1;
+    padding-bottom: 0;
+}
+
+
+h1 {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 1em 0 0.8em;
+}
+
+h2 {
+    border-bottom: 1px dashed #999999;
+    font-size: 1.5em;
+    line-height: 1.25em;
+    margin: 0.3em 0 0.8em;
+    padding-bottom: 0.3em;
+}
+
+h1, h2, h3, h4, h5 {
+    color: #006600;
+}
+
+
+a:link {
+}
+
+a {
+    color: #006600;
+    text-decoration: none;
+}
+
+#header {
+    background-color: #F5F8F2;
+    height: 80px;
+}
+
+#logo {
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+
+#logo img {
+    margin: 10px 10px 10px 25px;
+    vertical-align: bottom;
+}
+
+#main-wrapper {
+    position: relative;
+}
+
+#name-and-slogan {
+    float: left;
+    margin-left: 250px;
+    width: 200px;
+}
+
+
+#site-slogan {
+    color: #006600;
+    font-weight: bold;
+    padding-top: 15px;
+}
+
+
+.jauge {
+	background-color: #DDDDDD;
+	float: right;
+	height: 15px;
+	margin-right: 20px;
+	width: 50px;
+}
+
+#ings {
+	clear:both;
+	
+}
+#section-wrapper {
+	margin-top : 50px;
+	
+}
+
+#nuts {
+	float:right;
+	width:500px;
+	
+}
+#recipe {
+	float:left;
+	width:450px;
+	
+}
+
+
+
+

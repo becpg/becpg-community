@@ -1,8 +1,8 @@
-#Thu Jan 19 12:09:06 CET 2012
+#Tue Jan 24 10:14:25 CET 2012
 eclipse.preferences.version=1
 encoding//src/main/resources/beCPG/import/ciqual/costs.csv=UTF-8
-encoding//src/main/resources/beCPG/import/ciqual/extract.sql=ISO-8859-1
 encoding//src/main/resources/beCPG/import/ciqual/nuts.csv=ISO-8859-1
 encoding//src/main/resources/beCPG/import/ciqual/productHierarchy1.csv=ISO-8859-1
 encoding//src/main/resources/beCPG/import/ciqual/productHierarchy2.csv=ISO-8859-1
-encoding//src/main/resources/beCPG/import/ciqual/test.sql=ISO-8859-1
+encoding//src/main/resources/beCPG/import/ciqual/sql/extract.sql=ISO-8859-1
+encoding//src/main/resources/beCPG/import/ciqual/sql/test.sql=ISO-8859-1

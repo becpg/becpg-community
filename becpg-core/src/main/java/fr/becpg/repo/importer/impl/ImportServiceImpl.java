@@ -34,6 +34,7 @@ import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -104,7 +105,6 @@ public class ImportServiceImpl implements ImportService {
 	private static final int COLUMN_MAPPING = 1;
 	private static final int COLUMN_PATH = 1;
 	private static final int COLUMN_TYPE = 1;
-	private static final int COLUMN_STOP_ON_FIRST_ERROR	= 1;
 	
 	private static final int BATCH_SIZE	= 10;
 	
@@ -243,26 +243,36 @@ public class ImportServiceImpl implements ImportService {
 
 		// open file and load content
 		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+		CSVReader csvReader = null;
 		InputStream is = reader.getContentInputStream();
-		Charset charset = ImportHelper.guestCharset(is,reader.getEncoding());
-		if(logger.isDebugEnabled()){
-			logger.debug("reader.getEncoding() : " + reader.getEncoding());
-			logger.debug("finder.getEncoding() : " + charset );
-		}
-		CSVReader csvReader = new CSVReader(new InputStreamReader(is, charset), SEPARATOR);
-
-		// context
-		ImportContext importContext = new ImportContext(nodeRef, csvReader);
-		importContext.setDoUpdate(doUpdate);
-		importContext.setStopOnFirstError(true);
-		String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH:FORMAT_DATE_ENGLISH;		
-		importContext.getPropertyFormats().setDateFormat(new SimpleDateFormat(dateFormat));
-		importContext.getPropertyFormats().setDecimalFormat((DecimalFormat)NumberFormat.getNumberInstance(Locale.getDefault()));
-		importContext.setImportFileName((String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-		importContext.setRequiresNewTransaction(requiresNewTransaction);
+		try {
 		
-		// import				
-		return importCSV(importContext);				
+			Charset charset = ImportHelper.guestCharset(is,reader.getEncoding());
+			if(logger.isDebugEnabled()){
+				logger.debug("reader.getEncoding() : " + reader.getEncoding());
+				logger.debug("finder.getEncoding() : " + charset );
+			}
+			csvReader  = new CSVReader(new InputStreamReader(is, charset), SEPARATOR);
+		
+			// context
+			ImportContext importContext = new ImportContext(nodeRef, csvReader);
+			importContext.setDoUpdate(doUpdate);
+			importContext.setStopOnFirstError(true);
+			String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH
+					: FORMAT_DATE_ENGLISH;
+			importContext.getPropertyFormats().setDateFormat(new SimpleDateFormat(dateFormat));
+			importContext.getPropertyFormats().setDecimalFormat(
+					(DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault()));
+			importContext.setImportFileName((String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+			importContext.setRequiresNewTransaction(requiresNewTransaction);
+			// import				
+			return importCSV(importContext);				
+		} finally {
+			IOUtils.closeQuietly(is);
+			if(csvReader!=null){
+				csvReader.close();
+			}
+		}
 		
 	}
 	
@@ -674,14 +684,6 @@ public class ImportServiceImpl implements ImportService {
 		return mappingElt;
 	}
 	
-	/**
-	 * NOtify the import file to display what the importer is importing
-	 * @param importContext
-	 */
-	private void notifyImportFile(ImportContext importContext, String message){
-		
-		nodeService.setProperty(importContext.getImportFileNodeRef(), ContentModel.PROP_TITLE, message);
-	}
 	
 }
 

@@ -69,7 +69,7 @@
 
 
 
-"PATH";"/System/ProductHierarchy/FinishedProduct_Hierarchy1";;
+"PATH";"/System/ProductHierarchy/FinishedProduct_Hierarchy2";;
 "TYPE";"bcpg:linkedValue";;
 "COLUMNS";"cm:name";"bcpg:lkvPrevValue";"bcpg:lkvValue"
 "VALUES";"Boulangerie-viennoiserie - Pains";"Boulangerie-viennoiserie";"Pains"

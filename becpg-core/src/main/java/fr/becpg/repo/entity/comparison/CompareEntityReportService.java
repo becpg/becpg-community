@@ -21,8 +21,7 @@ public interface CompareEntityReportService {
 	 *
 	 * @param product1 the entity1
 	 * @param entitys the entitys
-	 * @param outputStream the output stream
-	 * @return the comparison report
+	 * @param out the output stream
 	 */
-	public OutputStream getComparisonReport(NodeRef entity1, List<NodeRef> entities, OutputStream outputStream);
+	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, OutputStream out);
 }

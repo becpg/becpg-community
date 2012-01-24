@@ -23,6 +23,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -251,10 +252,12 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	@SuppressWarnings("unchecked")
 	private void renderReport(NodeRef templateNodeRef, ExportSearchContext exportSearchCtx, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream){		
 		
+		InputStream inputStream =null;
+		ByteArrayInputStream bais =null;
 		try{
 			
 			ContentReader reader = contentService.getReader(templateNodeRef, ContentModel.PROP_CONTENT);
-			InputStream inputStream = reader.getContentInputStream();
+			inputStream = reader.getContentInputStream();
 			IReportRunnable design = reportEngine.openReportDesign(inputStream);																					
 			
 			//Create task to run and render the report,
@@ -292,47 +295,22 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			
 			// xml data
 			logger.debug("add Xml data");
-			ByteArrayInputStream bais = new ByteArrayInputStream( exportElt.asXML().getBytes());
+			bais = new ByteArrayInputStream( exportElt.asXML().getBytes());
 			task.getAppContext().put(KEY_XML_INPUTSTREAM, bais);
 			
 			task.run();
 			task.close();
-			outputStream.close();
+			
 				
-				
-//			//DEBUG code
-//			FileOutputStream fosXML = new FileOutputStream(new File("/tmp/exportSearch_written.xml"));
-//			OutputFormat format = OutputFormat.createPrettyPrint();
-//			XMLWriter writer = new XMLWriter(fosXML, format);
-//			writer.write(exportElt.getDocument().asXML());
-//			writer.flush();
-//			
-//			FileOutputStream fos = new FileOutputStream(new File("/tmp/exportSearch_written.pdf"));
-//			IRunAndRenderTask task2 = reportEngine.createRunAndRenderTask(design);
-//			IRenderOption options2 = new RenderOption();
-//			options2.setOutputStream(fos);							
-//			options2.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
-//			task2.setRenderOption(options2);
-//			
-//			// Prepare data source
-//			logger.debug("Prepare data source");												
-//			Document document2 = DocumentHelper.createDocument();
-//			Element exportElt2 = document2.addElement(TAG_EXPORT);
-//			task2 = loadReportData(exportSearchCtx, exportElt2, task2, searchResults);
-//			
-//			
-//			ByteArrayInputStream bais2 = new ByteArrayInputStream( exportElt.asXML().getBytes());
-//			task2.getAppContext().put(KEY_XML_INPUTSTREAM, bais2);
-//			
-//			task2.run();
-//			task2.close();
-//			fos.close();
-//			// End DEBUG code
 				
 		}
 		catch(Exception e){
 			logger.error("Failed to run report: ",  e);
-		}				
+		}	finally {
+			IOUtils.closeQuietly(inputStream);
+			IOUtils.closeQuietly(outputStream);
+			IOUtils.closeQuietly(bais);
+		}
 		
 	}
 	

@@ -20,11 +20,8 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchParameters;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -209,8 +206,9 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.entity.comparison.CompareEntityReportService#getComparisonReport(org.alfresco.service.cmr.repository.NodeRef, java.util.List, java.io.OutputStream)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public OutputStream getComparisonReport(NodeRef entity1, List<NodeRef> entities, OutputStream outputStream){				
+	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, OutputStream out){				
 		
 		// look for template
 		NodeRef templateNodeRef = reportTplService.getSystemReportTemplate(ReportType.System, 
@@ -241,12 +239,13 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 			Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
 			entitiesCmpElt.add(renderComparisonAsXmlData(entity1, entities, compareResult));
 			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults, BeCPGModel.ASSOC_COMPOLIST_PRODUCT));			
-					
+			InputStream in = null;
+			InputStream bais = null;
 			try{
 				
 				ContentReader reader = contentService.getReader(templateNodeRef, ContentModel.PROP_CONTENT);
-    			InputStream inputStream = reader.getContentInputStream();
-				IReportRunnable design = reportEngine.openReportDesign(inputStream);
+    			in = reader.getContentInputStream();
+				IReportRunnable design = reportEngine.openReportDesign(in);
 									
 				//Create task to run and render the report,
 				logger.debug("Create task to run and render the report");
@@ -254,46 +253,29 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 				
 				//Update data source
 				logger.debug("Update data source");
-				ByteArrayInputStream bais = new ByteArrayInputStream( entitiesCmpElt.asXML().getBytes());
+				bais = new ByteArrayInputStream( entitiesCmpElt.asXML().getBytes());
 				task.getAppContext().put(KEY_XML_INPUTSTREAM, bais);
 				
 				// hide struct comparison
 				task.setParameterValue(PARAM_VALUE_HIDE_STRUC_COMP, hideStructComparison);
 				
 				IRenderOption options = new RenderOption();
-				options.setOutputStream(outputStream);							
+				options.setOutputStream(out);							
 				options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
 				task.setRenderOption(options);					
 				task.run();
-				task.close();
-				outputStream.close();								
-				
-//				//DEBUG code
-//				FileOutputStream fosXML = new FileOutputStream(new File("/tmp/cmpEntitys_written.xml"));
-//				OutputFormat format = OutputFormat.createPrettyPrint();
-//				XMLWriter writer = new XMLWriter(fosXML, format);
-//				writer.write(entitiesCmpElt.getDocument());
-//				writer.flush();
-//				
-//				FileOutputStream fos = new FileOutputStream(new File("/tmp/cmpEntitys_written.pdf"));
-//				IRunAndRenderTask task2 = reportEngine.createRunAndRenderTask(design);					
-//				IRenderOption options2 = new RenderOption();
-//				options2.setOutputStream(fos);							
-//				options2.setOutputFormat(RenderOption.OUTPUT_FORMAT_PDF);
-//				task2.setRenderOption(options2);
-//				task2.setLocale(Locale.FRENCH);					
-//				task2.run();
-//				task2.close();
-//				outputStream.close();
-//				// End DEBUG code
+				task.close();				
 					
 			}
 			catch(Exception e){
 				logger.error("Failed to run comparison report: ",  e);
-			}								
+			}finally {
+				IOUtils.closeQuietly(in);
+				IOUtils.closeQuietly(bais);
+				IOUtils.closeQuietly(out);
+			}							
     	}
 		
-		return outputStream;
 	}
 	
 	/**

@@ -2,6 +2,7 @@ package fr.becpg.repo.report.template.impl;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -18,9 +19,11 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ClassPathResource;
+
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
@@ -190,49 +193,53 @@ public class ReportTplServiceImpl implements ReportTplService{
 		
 		NodeRef reportTplNodeRef = null;
 		ClassPathResource resource = new ClassPathResource(tplFilePath);
-		
+		InputStream in = null;
 		if(resource.exists()){
-			
-			reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  tplName);
-			
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, tplName);	    		
-			properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportType);
-			properties.put(ReportModel.PROP_REPORT_TPL_FORMAT, reportFormat);
-			properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType);
-			properties.put(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, isSystemTpl);
-			properties.put(ReportModel.PROP_REPORT_TPL_IS_DEFAULT, isDefaultTpl);				
-			
-			if(reportTplNodeRef != null){
+			try {
+				in = resource.getInputStream();
+				reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  tplName);
 				
-				if(overrideTpl){
-					logger.debug("override report Tpl, name: " + tplName);
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(ContentModel.PROP_NAME, tplName);	    		
+				properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportType);
+				properties.put(ReportModel.PROP_REPORT_TPL_FORMAT, reportFormat);
+				properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType);
+				properties.put(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, isSystemTpl);
+				properties.put(ReportModel.PROP_REPORT_TPL_IS_DEFAULT, isDefaultTpl);				
+				
+				if(reportTplNodeRef != null){
 					
-					nodeService.setProperties(reportTplNodeRef, properties);
+					if(overrideTpl){
+						logger.debug("override report Tpl, name: " + tplName);
+						
+						nodeService.setProperties(reportTplNodeRef, properties);
+					}
+					else{
+						return reportTplNodeRef;
+					}
 				}
 				else{
-					return reportTplNodeRef;
+					logger.debug("Create report Tpl, name: " + tplName);
+					
+					reportTplNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
+							(String)properties.get(ContentModel.PROP_NAME)), 
+							ReportModel.TYPE_REPORT_TPL, properties).getChildRef();
 				}
-			}
-			else{
-				logger.debug("Create report Tpl, name: " + tplName);
 				
-				reportTplNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
-						(String)properties.get(ContentModel.PROP_NAME)), 
-						ReportModel.TYPE_REPORT_TPL, properties).getChildRef();
+		    	ContentWriter writer = contentService.getWriter(reportTplNodeRef, ContentModel.PROP_CONTENT, true);
+		    	
+		    	String mimetype = mimetypeService.guessMimetype(tplFilePath);
+				ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
+		        Charset charset = charsetFinder.getCharset(in, mimetype);
+		        String encoding = charset.name();
+	
+		    	writer.setMimetype(mimetype);
+		    	writer.setEncoding(encoding);
+		    	writer.putContent(in);	
+			} finally {
+				IOUtils.closeQuietly(in);
 			}
-			
-	    	ContentWriter writer = contentService.getWriter(reportTplNodeRef, ContentModel.PROP_CONTENT, true);
-	    	
-	    	String mimetype = mimetypeService.guessMimetype(tplFilePath);
-			ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-	        Charset charset = charsetFinder.getCharset(resource.getInputStream(), mimetype);
-	        String encoding = charset.name();
-
-	    	writer.setMimetype(mimetype);
-	    	writer.setEncoding(encoding);
-	    	writer.putContent(resource.getInputStream());	
 		}		
 		
 		return reportTplNodeRef;
@@ -249,28 +256,42 @@ public class ReportTplServiceImpl implements ReportTplService{
 	public void createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException{
 		
 		ClassPathResource resource = new ClassPathResource(xmlFilePath);
-    	if(resource.exists()){
-    	
-    		NodeRef xmlReportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  resource.getFilename());
-    		
-    		if(xmlReportTplNodeRef == null || overrideRessource){
-    		
-    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-        		properties.put(ContentModel.PROP_NAME, resource.getFilename());
-        		NodeRef fileNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
-            	
-        		ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
-            	
-        		String mimetype = mimetypeService.guessMimetype(xmlFilePath);
-        		ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-        		BufferedInputStream bis = new BufferedInputStream(resource.getInputStream());
-        		Charset charset = charsetFinder.getCharset(bis, mimetype);
-        		String encoding = charset.name();
+		InputStream in = null;
+		BufferedInputStream bis = null;
+		if(resource.exists()){
+			try {
+				in = resource.getInputStream();
+				NodeRef xmlReportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+						resource.getFilename());
 
-            	writer.setMimetype(mimetype);
-            	writer.setEncoding(encoding);
-            	writer.putContent(resource.getInputStream());
-    		}	        		
+				if (xmlReportTplNodeRef == null || overrideRessource) {
+
+					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					properties.put(ContentModel.PROP_NAME, resource.getFilename());
+					NodeRef fileNodeRef = nodeService.createNode(
+							parentNodeRef,
+							ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT,
+							properties).getChildRef();
+
+					ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
+
+					String mimetype = mimetypeService.guessMimetype(xmlFilePath);
+					ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
+					bis = new BufferedInputStream(in);
+					Charset charset = charsetFinder.getCharset(bis, mimetype);
+					String encoding = charset.name();
+
+					writer.setMimetype(mimetype);
+					writer.setEncoding(encoding);
+					writer.putContent(in);
+				}
+			} finally {
+				IOUtils.closeQuietly(in);
+				IOUtils.closeQuietly(bis);
+			}
+
     	}
     	else{
     		logger.error("Resource not found. Path: " + xmlFilePath);

@@ -26,6 +26,7 @@ import org.alfresco.service.cmr.site.SiteVisibility;
 import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.PropertyMap;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -209,25 +210,28 @@ public class UserImporterServiceImpl implements UserImporterService {
 	private void processCSVUpload(InputStream input, Charset charset) throws IOException {
 		
 		CSVReader csvReader = new CSVReader(new InputStreamReader(input,charset), SEPARATOR);
+		try {
+				String[] splitted = null;
+				boolean isFirst = true;
+			    Map<String,Integer> headers = new HashMap<String, Integer>();
+				while ((splitted = csvReader.readNext())!=null) {
+						try {
+							if(isFirst){
+								headers = processHeaders(splitted);
+								isFirst = false;
+							} else if(splitted.length == headers.size()) {
+								processRow(headers, splitted);
+							}
+						} catch (Exception e) {
+							logger.warn(e,e);
+					    }
 	
-			String[] splitted = null;
-			boolean isFirst = true;
-		    Map<String,Integer> headers = new HashMap<String, Integer>();
-			while ((splitted = csvReader.readNext())!=null) {
-					try {
-						if(isFirst){
-							headers = processHeaders(splitted);
-							isFirst = false;
-						} else if(splitted.length == headers.size()) {
-							processRow(headers, splitted);
-						}
-					} catch (Exception e) {
-						logger.warn(e,e);
-				    }
-
-		           
-			}
-		
+			           
+				}
+		} finally {
+			csvReader.close();
+			IOUtils.closeQuietly(input);
+		}
 		
 	}
 
@@ -341,12 +345,12 @@ public class UserImporterServiceImpl implements UserImporterService {
 					            	if(logger.isDebugEnabled()){
 				            			logger.debug("Adding role "+role+ " to "+username+ " on site "+siteName);
 				            		}
-					            	if(siteService.getSite(siteName)!=null){
+					            	if(siteService.getSite(cleanSiteName(siteName))!=null){
 					            		siteService.setMembership(siteName,  username ,role );
 					            	} else {
 					            		logger.debug("Site "+siteName+" doesn't exist.");
 					            		
-					            		SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, siteName, sites[0], "", SiteVisibility.PUBLIC);
+					            		SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, cleanSiteName(siteName), siteName, "", SiteVisibility.PUBLIC);
 					            		//ISSUE ALF-4771
 					            		try {
 					            			logger.debug("Due to issue ALF-4771 we should call Share webscript to enable site");
@@ -367,10 +371,17 @@ public class UserImporterServiceImpl implements UserImporterService {
 								}
 					            	return null;
 				            }
+
+						
 				        }, "admin");
 
             }
 		
+	}
+	
+	//TODO regexp
+	private String cleanSiteName(String siteName) {
+		return siteName.replaceAll("&", "");
 	}
 	
 	

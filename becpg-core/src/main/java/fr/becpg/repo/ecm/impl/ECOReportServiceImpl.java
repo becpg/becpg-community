@@ -1,11 +1,8 @@
 package fr.becpg.repo.ecm.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -15,13 +12,12 @@ import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
 import org.eclipse.birt.report.engine.api.IRenderOption;
 import org.eclipse.birt.report.engine.api.IReportEngine;
 import org.eclipse.birt.report.engine.api.IReportRunnable;
@@ -29,8 +25,6 @@ import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.RenderOption;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ECMModel;
-import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.ecm.ECOReportService;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
@@ -85,7 +79,9 @@ public class ECOReportServiceImpl implements ECOReportService {
 		this.reportEngine = reportEngine;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
+	//TODO move that to entityReport Service
 	public void generateReport(ChangeOrderData ecoData) {
 				
 		NodeRef tplNodeRef = reportTplService.getSystemReportTemplate(ReportType.System, 
@@ -96,17 +92,19 @@ public class ECOReportServiceImpl implements ECOReportService {
 			
 			//Prepare data source
 			Element ecoXmlDataElt = extractXml(ecoData);						
-					
+			InputStream in = null;
+			InputStream bais = null;
+			OutputStream out = null;
 			try{
 				
 				ContentWriter contentWriter = contentService.getWriter(ecoData.getNodeRef(), ContentModel.PROP_CONTENT, true);			
 				String mimetype = mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF);
 				contentWriter.setMimetype(mimetype);
-				OutputStream outputStream = contentWriter.getContentOutputStream();
+				out = contentWriter.getContentOutputStream();
 				
 				ContentReader reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
-    			InputStream inputStream = reader.getContentInputStream();
-				IReportRunnable design = reportEngine.openReportDesign(inputStream);
+				in = reader.getContentInputStream();
+				IReportRunnable design = reportEngine.openReportDesign(in);
 									
 				//Create task to run and render the report,
 				logger.debug("Create task to run and render the report");
@@ -114,43 +112,26 @@ public class ECOReportServiceImpl implements ECOReportService {
 				
 				//Update data source
 				logger.debug("Update data source");
-				ByteArrayInputStream bais = new ByteArrayInputStream( ecoXmlDataElt.asXML().getBytes());
+			    bais = new ByteArrayInputStream( ecoXmlDataElt.asXML().getBytes());
 				task.getAppContext().put(KEY_XML_INPUTSTREAM, bais);
 								
 				IRenderOption options = new RenderOption();
-				options.setOutputStream(outputStream);							
+				options.setOutputStream(out);							
 				options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
 				task.setRenderOption(options);					
 				task.run();
-				task.close();
-				outputStream.close();								
-				
-//				//DEBUG code
-//				FileOutputStream fosXML = new FileOutputStream(new File("/tmp/eco_written.xml"));
-//				OutputFormat format = OutputFormat.createPrettyPrint();
-//				XMLWriter writer = new XMLWriter(fosXML, format);
-//				writer.write(ecoXmlDataElt.getDocument());
-//				writer.flush();
-//				
-//				FileOutputStream fos = new FileOutputStream(new File("/tmp/eco_written.pdf"));				
-//				IRunAndRenderTask task2 = reportEngine.createRunAndRenderTask(design);
-//				ByteArrayInputStream bais2 = new ByteArrayInputStream( ecoXmlDataElt.asXML().getBytes());
-//				task2.getAppContext().put(KEY_XML_INPUTSTREAM, bais2);
-//				
-//				IRenderOption options2 = new RenderOption();
-//				options2.setOutputStream(fos);							
-//				options2.setOutputFormat(RenderOption.OUTPUT_FORMAT_PDF);
-//				task2.setRenderOption(options2);
-//				task2.setLocale(Locale.FRENCH);					
-//				task2.run();
-//				task2.close();
-//				outputStream.close();
-//				// End DEBUG code
+				task.close();							
+
 					
 			}
 			catch(Exception e){
 				logger.error("Failed to run comparison report: ",  e);
+			} finally {
+				IOUtils.closeQuietly(in);
+				IOUtils.closeQuietly(bais);
+				IOUtils.closeQuietly(out);
 			}
+			
 		}
 		
 	}

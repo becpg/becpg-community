@@ -6,6 +6,8 @@ package fr.becpg.repo.importer.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -17,7 +19,6 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
-import org.alfresco.repo.search.impl.lucene.LuceneFunction;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -39,10 +40,14 @@ import org.alfresco.service.cmr.search.SearchParameters.Operator;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.io.Resource;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.config.mapping.AbstractAttributeMapping;
@@ -51,7 +56,6 @@ import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.config.mapping.FileMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
@@ -60,9 +64,6 @@ import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
 import fr.becpg.repo.listvalue.EntityListValuePlugin;
-import fr.becpg.repo.listvalue.ListValueService;
-import fr.becpg.repo.product.data.ProductUnit;
-import fr.becpg.repo.product.data.ProductData;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -70,7 +71,7 @@ import fr.becpg.repo.product.data.ProductData;
  *
  * @author querephi
  */
-public class AbstractImportVisitor  implements ImportVisitor {
+public class AbstractImportVisitor  implements ImportVisitor, ApplicationContextAware  {
 
 	// we don't know where is the node ? product may be in the Products folder or in the sites or somewhere else !
 	protected static final String QUERY_NODE_BY_TYPE = " +TYPE:\"%s\"";	
@@ -167,6 +168,21 @@ public class AbstractImportVisitor  implements ImportVisitor {
 	/** The namespace service. */
 	protected NamespaceService namespaceService;
 		
+	
+	protected ApplicationContext applicationContext;
+
+
+
+	
+	/**
+	 * @param applicationContext the applicationContext to set
+	 */
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
+
+
+
 	/**
 	 * Sets the node service.
 	 *
@@ -414,8 +430,9 @@ public class AbstractImportVisitor  implements ImportVisitor {
 						 
 						 // remove the last path since it is the fileName
 						 List<String> pathFolders = new ArrayList<String>();
-						 for(int cntPath=0 ; cntPath<fileMapping.getPath().size()-1 ; cntPath++)
+						 for(int cntPath=0 ; cntPath<fileMapping.getPath().size()-1 ; cntPath++){
 							 pathFolders.add(fileMapping.getPath().get(cntPath));
+						 }
 						 
 						 logger.debug("creates folders" + pathFolders);
 						 targetFolderNodeRef = repoService.createFolderByPaths(parentNodeRef, pathFolders);
@@ -438,30 +455,49 @@ public class AbstractImportVisitor  implements ImportVisitor {
 				
 					 // add file content
 					 if(fileMapping.getAttribute().getName().equals(ContentModel.PROP_CONTENT)){						 	
-						 
-						 if(new File(value).exists()){
-																									    
-							FileInputStream in = null;							
+						InputStream in = null;
+						try {
+						 if(value!=null && 
+								 (value.startsWith("classpath:")
+								 || value.startsWith("file:")
+								 || value.startsWith("http:")
+							     || value.startsWith("ftp:"))){
+				
+							try{
+								Resource resource = applicationContext.getResource(value);
+								in = resource.getInputStream();
+							}
+							catch (IOException e) {
+								throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_LOAD_FILE, value));
+							}		
+						
+						 }else if(new File(value).exists()){			
 							try{
 								in = new FileInputStream(value);	    		
 							}
 							catch(FileNotFoundException e){
 								throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_LOAD_FILE, value));
 							}							
-												
-							String mimetype = mimetypeService.guessMimetype(value);
-							ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-					        Charset charset = charsetFinder.getCharset(in, mimetype);
-					        String encoding = charset.name();
-	
-					        ContentWriter writer = contentService.getWriter(fileNodeRef, contentQName, true);
-					        writer.setMimetype(mimetype);
-					    	writer.setEncoding(encoding);
-					    	writer.putContent(in);
 						 }
 						 else{							 
 							 throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_FILE_NOT_FOUND, value));
 						 }
+						 
+						 if(in !=null){
+							    String mimetype = mimetypeService.guessMimetype(value);
+								ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
+						        Charset charset = charsetFinder.getCharset(in, mimetype);
+						        String encoding = charset.name();
+		
+						        ContentWriter writer = contentService.getWriter(fileNodeRef, contentQName, true);
+						        writer.setMimetype(mimetype);
+						    	writer.setEncoding(encoding);
+						    	writer.putContent(in);
+						 }
+						 
+						} finally {
+							IOUtils.closeQuietly(in);
+						}
 					 }
 					 // manage only properties
 					 else if(fileMapping.getAttribute() instanceof PropertyDefinition){
@@ -484,11 +520,11 @@ public class AbstractImportVisitor  implements ImportVisitor {
 	 * @return the import context
 	 * @throws ImporterException the be cpg exception
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public ImportContext loadClassMapping(Element mappingsElt, ImportContext importContext) throws MappingException {						
 		
 		NamespaceService namespaceService = serviceRegistry.getNamespaceService();
-		@SuppressWarnings("unchecked")
 		List<Node> mappingNodes = mappingsElt.selectNodes(QUERY_XPATH_MAPPING);
 		
 		Node dateFormat = mappingsElt.selectSingleNode(QUERY_XPATH_DATE_FORMAT);
@@ -514,7 +550,6 @@ public class AbstractImportVisitor  implements ImportVisitor {
 			importContext.getClassMappings().put(typeQName, classMapping);
 			
 			// node keys
-			@SuppressWarnings("unchecked")
 			List<Node> nodeColumnKeyNodes = mappingNode.selectNodes(QUERY_XPATH_NODE_COLUMN_KEY);
 			for(Node columnNode : nodeColumnKeyNodes){
 				QName attribute = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
@@ -534,7 +569,6 @@ public class AbstractImportVisitor  implements ImportVisitor {
 			
 
 			// productlist keys
-			@SuppressWarnings("unchecked")
 			List<Node>  dataListColumnKeyNodes = mappingNode.selectNodes(QUERY_XPATH_DATALIST_COLUMN_KEY);
 			for(Node columnNode : dataListColumnKeyNodes){
 				QName attribute = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
@@ -553,7 +587,6 @@ public class AbstractImportVisitor  implements ImportVisitor {
 			}
 			
 			// attributes
-			@SuppressWarnings("unchecked")
 			List<Node> columnNodes = mappingNode.selectNodes(QUERY_XPATH_COLUMNS_ATTRIBUTE);
 			for(Node columnNode : columnNodes){
 				QName attribute = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
@@ -1026,5 +1059,8 @@ public class AbstractImportVisitor  implements ImportVisitor {
 		}
 		
 		return nodeRef;	
-	}	
+	}
+
+
+
 }

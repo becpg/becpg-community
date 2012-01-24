@@ -2,5 +2,7 @@
     <shortname>beCPG OLAP Chart</shortname>
     <description>beCPG OLAP Chart</description>
     <family>dashlet</family>
+    <url>/components/dashlets/my-olapchart</url>
+    <!-- for backward compatibility -->
     <url>/becpg/olapchart</url>
 </webscript>

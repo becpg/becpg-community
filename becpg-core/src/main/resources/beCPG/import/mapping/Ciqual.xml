@@ -11,9 +11,8 @@
 			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
 		<columns>
-
 			<column id="code" attribute="bcpg:code" type="Attribute" />
-
+            <column id="supplier" attribute="bcpg:suppliers" type="Attribute" />
 		</columns>
 	</mapping>
 	
@@ -82,18 +81,28 @@
 
 	<mapping name="bcpg:client">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:erpCode" />
-			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="cm:name" />
 		</nodeColumnKeys>
-		<columns />
+		<columns>
+	
+		<column id="img1Path" attribute="cm:content" path="Images/produit.jpg"
+					type="File" />
+		<column id="img1Title" attribute="cm:title" path="Images/produit.jpg"
+					type="File" />	
+		</columns>
 	</mapping>
 
 	<mapping name="bcpg:supplier">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:erpCode" />
-			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="cm:name" />
 		</nodeColumnKeys>
-		<columns />
+		<columns>
+	
+		<column id="img1Path" attribute="cm:content" path="Images/produit.jpg"
+					type="File" />
+		<column id="img1Title" attribute="cm:title" path="Images/produit.jpg"
+					type="File" />	
+		</columns>
 	</mapping>
 
 </mappings>

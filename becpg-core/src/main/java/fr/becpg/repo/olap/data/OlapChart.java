@@ -10,6 +10,7 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -88,23 +89,27 @@ public class OlapChart {
 		
 		InputStream is = new URL(buildQueryUrl).openStream();
 
+		try {
 		
-		Document doc = DOMUtils.parse(is);
-		if(doc!=null){
-			Element queryEl = (Element) doc.getFirstChild();
-			if(queryEl!=null){
-				queryId = queryEl.getAttribute("name");
-				cube = queryEl.getAttribute("cube");
-				type = queryEl.getAttribute("type");
-				mdx = DOMUtils.getElementText(queryEl,"MDX");
+			Document doc = DOMUtils.parse(is);
+			if(doc!=null){
+				Element queryEl = (Element) doc.getFirstChild();
+				if(queryEl!=null){
+					queryId = queryEl.getAttribute("name");
+					cube = queryEl.getAttribute("cube");
+					type = queryEl.getAttribute("type");
+					mdx = DOMUtils.getElementText(queryEl,"MDX");
+				}
+				ByteArrayOutputStream buff = new ByteArrayOutputStream();
+				try{
+					DOMUtils.serialise(doc, buff);
+					return new String(buff.toByteArray(),"UTF-8");
+				} finally{
+					IOUtils.closeQuietly(buff);
+				}
 			}
-			ByteArrayOutputStream buff = new ByteArrayOutputStream();
-			try{
-				DOMUtils.serialise(doc, buff);
-				return new String(buff.toByteArray(),"UTF-8");
-			} finally{
-				buff.close();
-			}
+		} finally {
+			IOUtils.closeQuietly(is);
 		}
 		
 		return null;
