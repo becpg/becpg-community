@@ -1,7 +1,9 @@
 <webscript>
-     <shortname>Enable Site</shortname>
-<description>
-Utility script to enable site after programmatically creating it with siteService.createSite
-</description>
-     <url>/modules/enable-site</url>
+	<shortname>Enable Site</shortname>
+	<description>
+		Utility script to enable site after programatically creating it with
+		siteService.createSite
+	</description>
+	<url>/modules/enable-site</url>
+	<authentication>admin</authentication>
 </webscript>

@@ -1,0 +1,21 @@
+"PATH";"/System/Characts/Microbios";
+"TYPE";"bcpg:microbio";
+"COLUMNS";"cm:name";"cm:description"
+"VALUES";"Flore Aérobie Mésophile 30°C";
+"VALUES";"Coliformes totaux 30°C";
+"VALUES";"Coliformes thermotolérants 44°C";
+"VALUES";"Escherichia coli";
+"VALUES";"Staphyloccoques à coagulase +	";
+"VALUES";"ASR";
+"VALUES";"Salmonella spp";
+"VALUES";"Recherche Listeria monocytogenes";
+"VALUES";"Dénombrement Listeria monocytogenes";
+"VALUES";"Flore lactique";
+"VALUES";"Pseudomonas";
+"VALUES";"Levures-Moisissures";
+"VALUES";"Autre flore 1";
+"VALUES";"Entérobactéries";
+"VALUES";"Dénombrement de Legionella spp et pneumophila";
+"VALUES";"E. coli O157";
+"VALUES";"Bacillus cereus";
+"VALUES";"Clostridium perfrengens";

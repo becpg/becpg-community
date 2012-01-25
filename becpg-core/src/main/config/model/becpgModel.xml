@@ -446,6 +446,9 @@
 		<type name="bcpg:allergen">
 			<parent>bcpg:charact</parent>
 			<properties>
+				<property name="bcpg:allergenCode">
+					<type>d:text</type>
+				</property>
 				<property name="bcpg:allergenType">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
@@ -454,6 +457,19 @@
 					</constraints>
 				</property>
 			</properties>
+			<associations>
+				<association name="bcpg:allergenSubset">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:allergen</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 		</type>
 
 		<type name="bcpg:cost">

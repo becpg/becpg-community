@@ -3,7 +3,10 @@ package fr.becpg.repo.importer.user.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -346,7 +349,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 				            			logger.debug("Adding role "+role+ " to "+username+ " on site "+siteName);
 				            		}
 					            	if(siteService.getSite(cleanSiteName(siteName))!=null){
-					            		siteService.setMembership(siteName,  username ,role );
+					            		siteService.setMembership(cleanSiteName(siteName),  username ,role );
 					            	} else {
 					            		logger.debug("Site "+siteName+" doesn't exist.");
 					            		
@@ -354,8 +357,19 @@ public class UserImporterServiceImpl implements UserImporterService {
 					            		//ISSUE ALF-4771
 					            		try {
 					            			logger.debug("Due to issue ALF-4771 we should call Share webscript to enable site");
+					            			//TODO externalyze password
+					            			
+					            			Authenticator.setDefault (new Authenticator() {
+					            			    protected PasswordAuthentication getPasswordAuthentication() {
+					            			        return new PasswordAuthentication (AuthenticationUtil.getAdminUserName(), "becpg".toCharArray());
+					            			    }
+					            			});
+
+					            			
 						            		URL url = new URL("http://localhost:8080/share/service/modules/enable-site?url="+siteInfo.getShortName()+"&preset="+DEFAULT_PRESET+"");
-						            		InputStream in = url.openStream();
+						            		URLConnection con = url.openConnection();
+						            		
+						            		InputStream in = con.getInputStream();
 						            		if(in!=null){
 						            			in.close();
 						            		}
@@ -373,15 +387,28 @@ public class UserImporterServiceImpl implements UserImporterService {
 				            }
 
 						
-				        }, "admin");
+				        }, AuthenticationUtil.getAdminUserName());
 
             }
 		
 	}
 	
-	//TODO regexp
 	private String cleanSiteName(String siteName) {
-		return siteName.replaceAll("&", "");
+		return siteName
+				.toLowerCase()
+				.replaceAll("&", "")
+				.replaceAll("\\s","")
+		        .replaceAll("[àáâãäå]","a")
+		        .replaceAll("æ","ae")
+		        .replaceAll("ç","c")
+		        .replaceAll("[èéêë]","e")
+		        .replaceAll("[ìíîï]","i")
+		        .replaceAll("ñ","n")                
+		        .replaceAll("[òóôõö]","o")
+		        .replaceAll("œ","oe")
+		        .replaceAll("[ùúûü]","u")
+		        .replaceAll("[ýÿ]","y")
+		        .replaceAll("\\W","");
 	}
 	
 	

@@ -1896,6 +1896,8 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:allergenType" />
+					<show id="bcpg:allergenCode" />
+					<show id="bcpg:allergenSubset" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" />
@@ -1905,6 +1907,12 @@
 						</control>
 					</field>
 					<field id="bcpg:allergenType" />
+					<field id="bcpg:allergenCode" />
+					<field id="bcpg:allergenSubset">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>

@@ -17,6 +17,17 @@
 	</mapping>
 	
 	
+	<!-- Allergens -->
+	
+	<mapping name="bcpg:allergen">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:allergenCode" />
+		</nodeColumnKeys>
+		<columns>
+			
+		</columns>
+	</mapping>
+	
 	<!-- NUT LIST -->
 	<mapping name="bcpg:nutList">
 		<nodeColumnKeys>
