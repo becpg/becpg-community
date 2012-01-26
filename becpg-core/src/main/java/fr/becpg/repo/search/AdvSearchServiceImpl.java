@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.search.SearchService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
@@ -19,6 +20,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
 import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 
 /**
@@ -43,6 +45,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	
 	private static final int MAX_RESULTS = 250;
 	
+	private final int SIZE_UNLIMITED = -1;
+	
 	private static Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 		
 
@@ -53,6 +57,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	
 	private BeCPGSearchService beCPGSearchService;
 	
+
+	private PermissionService permissionService;
+	
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
 		
 	
 	public void setNodeService(NodeService nodeService) {
@@ -87,22 +97,60 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		} else {
 			language  = SearchService.LANGUAGE_LUCENE;
 		}
-		 
-		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap, maxResults, language,  new ReadPermissionFilter() );
+		boolean isAssocSearch =  isAssocSearch(criteria);
+		
+		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap,  isAssocSearch ?  SIZE_UNLIMITED :maxResults  , language);
 				
 		
-		if(criteria!=null){
+		
+		if(isAssocSearch){
 			nodes = getSearchNodesByAssociations(nodes, criteria);
 			
 			if(datatype != null && dictionaryService.isSubClass(datatype, BeCPGModel.TYPE_PRODUCT)){
 				
 				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
 			}
+			nodes =  filterWithPermissions(nodes,new ReadPermissionFilter() ,maxResults);
 		}
 		
 		
-		return nodes; 				
+		 return nodes;			
 	}
+	
+	private boolean isAssocSearch(Map<String, String> criteria) {
+		if(criteria!=null){
+			for(Map.Entry<String, String>criterion : criteria.entrySet()){
+					String key = criterion.getKey();
+					// association
+					if(key.startsWith("assoc_")){	
+						
+						return true;
+					}
+			}
+		}
+		return false;
+	}
+
+
+	private List<NodeRef> filterWithPermissions(List<NodeRef> nodes, BeCPGPermissionFilter filter, int maxResults){
+		
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+		
+		nodes = filter.filter(nodes, permissionService, maxResults);
+		
+		if (logger.isDebugEnabled()) {
+			watch.stop();
+			logger.debug("filterWithPermissions executed in  "
+					+ watch.getTotalTimeSeconds() + " seconds ");
+		}
+		
+		return nodes;
+	}
+	
 	
 	/**
 	 * Parse the criteria and construct a FTS-ALFRESCO query.
@@ -212,8 +260,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}
 		
 				
-		if (ftsQuery.length() != 0){
-			  
 			// we processed the search terms, so suffix the PATH query
 			String path = null;
 			if (!isRepo){
@@ -235,15 +281,15 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			    {
 			    	path += "*/";
 			     }
-			  }
+			
+			    if (path != null)
+				{
+					ftsQuery = "PATH:\"" + path + "/*\""+(ftsQuery.length()!=0?" AND " + ftsQuery:"");
+				 }		
+			    
+			 }
 			  
-			if (path != null)
-			{
-				ftsQuery = "PATH:\"" + path + "/*\" AND " + ftsQuery;
-			 }			
-		}
 		
-		if (formQuery.length() != 0 || ftsQuery.length() != 0){
 			String typeQuery = "";
 			if(datatype!=null){
 				typeQuery = "+TYPE:\"" + datatype + "\"";
@@ -258,7 +304,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	         
 	         //beCPG : now, exclude always product history
 	         ftsQuery += PRODUCTS_TO_EXCLUDE;
-		}
+
 		
 		return ftsQuery;
 	}

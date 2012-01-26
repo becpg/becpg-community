@@ -376,11 +376,11 @@
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="namespaceService" ref="namespaceService" />	
 		<property name="beCPGSearchService" ref="beCPGSearchService"/>
+		<property name="permissionService" ref="permissionService"/>
 	</bean>		
 	<bean id="beCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
 		<property name="searchService" ref="SearchService" />
 		<property name="unProtSearchService" ref="searchService" />	
-		<property name="permissionService" ref="permissionService"/>
 	</bean>
 	
 		   	

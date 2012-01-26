@@ -12,13 +12,11 @@ import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchParameters.Operator;
 import org.alfresco.service.cmr.search.SearchService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
 
 /**
  * BeCPG Search Service
@@ -35,7 +33,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	
 	private SearchService searchService;
 	private SearchService unProtSearchService;
-	private PermissionService permissionService;
+
 
 	public void setSearchService(SearchService searchService) {
 		this.searchService = searchService;
@@ -45,10 +43,6 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		this.unProtSearchService = unProtSearchService;
 	}
 	
-	
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
 
 
 
@@ -151,7 +145,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 				watch.stop();
 				logger.debug(runnedQuery + " executed in  "
 						+ watch.getTotalTimeSeconds() + " seconds - size results "
-						+ nodes.size());
+						+  nodes.size() );
 			}
 		}
 		return nodes;
@@ -211,7 +205,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 
 	@Override
 	public List<NodeRef> search(String searchQuery, Map<String, Boolean> sort, int maxResults,
-			String searchLanguage ,BeCPGPermissionFilter beCPGPermissionFilter) {
+			String searchLanguage ) {
 
 			List<NodeRef> nodes = new LinkedList<NodeRef>();
 			
@@ -225,13 +219,20 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	        sp.addStore(RepoConsts.SPACES_STORE);
 	        sp.setLanguage(searchLanguage);
 	        sp.setQuery(searchQuery);	        
-	        sp.setLimitBy(LimitBy.UNLIMITED);
+	        
+	        if(maxResults == SIZE_UNLIMITED){
+				sp.setLimitBy(LimitBy.UNLIMITED);
+			}
+			else{
+				sp.setLimit(maxResults);
+				sp.setMaxItems(maxResults);
+				sp.setLimitBy(LimitBy.FINAL_SIZE);			
+			}
 	        sp.addLocale(Locale.getDefault());
 	        if(SearchService.LANGUAGE_FTS_ALFRESCO.equals(searchLanguage)){
 		        sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
 		        sp.addQueryTemplate(DEFAULT_FIELD_NAME, QUERY_TEMPLATES);
 	        }
-	        sp.excludeDataInTheCurrentTransaction(false);        
 	        
 
 			if (sort != null) {
@@ -243,7 +244,11 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	        
 			ResultSet result = null;
 			try {
-				result = unProtSearchService.query(sp);
+				if(maxResults == SIZE_UNLIMITED){
+					 result = unProtSearchService.query(sp);
+				} else {
+					 result = searchService.query(sp);
+				}
 				if (result != null) {
 					nodes =  new LinkedList<NodeRef>(result.getNodeRefs());
 				}
@@ -255,32 +260,15 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 					watch.stop();
 					logger.debug(searchQuery + " executed in  "
 							+ watch.getTotalTimeSeconds() + " seconds - size results "
-							+ nodes.size());
+							+  nodes.size());
 				}
 			}
 			
-	        return filterWithPermissions(nodes,beCPGPermissionFilter,maxResults);
+			return nodes;
 	}
 
 	
-	private List<NodeRef> filterWithPermissions(List<NodeRef> nodes, BeCPGPermissionFilter filter, int maxResults){
-		
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-		
-		nodes = filter.filter(nodes, permissionService, maxResults);
-		
-		if (logger.isDebugEnabled()) {
-			watch.stop();
-			logger.debug("filterWithPermissions executed in  "
-					+ watch.getTotalTimeSeconds() + " seconds ");
-		}
-		
-		return nodes;
-	}
+
 
 	
 	

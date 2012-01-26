@@ -18,20 +18,19 @@
  */
 const DEFAULT_MAX_RESULTS = 250;
 const SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";
-const COMMENT_QNAMEPATH = "/fm:discussion/cm:Comments/";
-const QUERY_TEMPLATES = [
-   {field: "keywords", template: "%(cm:name cm:title cm:description ia:whatEvent ia:descriptionEvent lnk:title lnk:description TEXT)"}];
-const PRODUCTS_TO_EXCLUDE = ' AND -ASPECT:"bcpg:compositeVersion" AND -ASPECT:\"ecm:simulationEntityAspect\" '
+const DISCUSSION_QNAMEPATH = "/fm:discussion";
+const COMMENT_QNAMEPATH = DISCUSSION_QNAMEPATH + "/cm:Comments/";
+
 /**
  * Returns site information data structure.
  * { shortName: siteId, title: title }
  * 
  * Caches the data to avoid repeatedly querying the repository.
  */
-var siteDataCache = [];
+var siteDataCache = {};
 function getSiteData(siteId)
 {
-   if (siteDataCache[siteId] !== undefined)
+   if (typeof siteDataCache[siteId] === "object")
    {
       return siteDataCache[siteId];
    }
@@ -50,12 +49,11 @@ function getSiteData(siteId)
  * 
  * Caches the person full name to avoid repeatedly querying the repository.
  */
-var personDataCache = [],
-	formCache = [];
+var personDataCache = {};
 
 function getPersonDisplayName(userId)
 {
-   if (personDataCache[userId] != undefined)
+   if (typeof personDataCache[userId] === "object")
    {
       return personDataCache[userId];
    }
@@ -76,31 +74,17 @@ function getPersonDisplayName(userId)
  * Cache to not display twice the same element (e.g. if two comments of the
  * same blog post match the search criteria
  */
-var processedCache = {};
-function addToProcessed(category, key)
+var processedCache;
+function checkProcessedCache(key)
 {
-   var cat = processedCache[category];
-   if (cat === undefined)
+   var found = processedCache.hasOwnProperty(key);
+   if (!found)
    {
-      processedCache[category] = [];
-      cat = processedCache[category];
+      processedCache[key] = true;
    }
-   cat.push(key);
-}
-function checkProcessed(category, key)
-{
-   var cat = processedCache[category];
-   if (cat !== undefined)
-   {
-      for (var x in cat)
-      {
-         if (cat[x] == key)
-         {
-            return true;
-         }
-      }
-   }
-   return false;
+   else if (found && logger.isLoggingEnabled())
+      logger.log("...already processed item with key: " + key);
+   return found;
 }
 
 /**
@@ -109,16 +93,15 @@ function checkProcessed(category, key)
 function getRepositoryItem(folderPath, node, metadataFields)
 {
    // check whether we already processed this document
-   var cat = "repository", refkey = "" + node.nodeRef.toString();
-   if (checkProcessed(cat, refkey))
+    if (checkProcessedCache("" + node.nodeRef.toString()))
    {
       return null;
    }
-   addToProcessed(cat, refkey);
    
    // check whether this is a valid folder or a file
    var item = t = null;
-   if (node.qnamePath.indexOf(COMMENT_QNAMEPATH) == -1)
+   if (node.qnamePath.indexOf(COMMENT_QNAMEPATH) == -1 &&
+       !(node.qnamePath.match(DISCUSSION_QNAMEPATH+"$") == DISCUSSION_QNAMEPATH))
    {
       if (node.isContainer || node.isDocument)
       {
@@ -138,19 +121,7 @@ function getRepositoryItem(folderPath, node, metadataFields)
          };
          item.modifiedBy = getPersonDisplayName(item.modifiedByUser);
          item.createdBy = getPersonDisplayName(item.createdByUser);
-         
-         var fields = [];
-         if(metadataFields!=null && metadataFields.length>0){
-        	var splitted = metadataFields.split(",");
-   	         for (count in splitted)
-   	         {
-   	            fields.push(splitted[count].replace("_", ":"));
-   	         }
-         }
-         if(fields.length<1){
-        	 fields.push("bcpg:code"); // avoid empty
-         }
-         item.nodeData = getFormData(node,fields);
+         item.nodeData =  extractNodeData(node,metadataFields); 
       }
       if (node.isContainer)
       {
@@ -167,6 +138,10 @@ function getRepositoryItem(folderPath, node, metadataFields)
    return item;
 }
 
+
+
+
+
 /**
  * Returns an item of the document library component.
  */
@@ -176,16 +151,15 @@ function getDocumentItem(siteId, containerId, pathParts, node, metadataFields)
    //          be returned instead
    
    // check whether we already processed this document
-   var cat = siteId + containerId, refkey = "" + node.nodeRef.toString();
-   if (checkProcessed(cat, refkey))
+   if (checkProcessedCache("" + node.nodeRef.toString()))
    {
       return null;
    }
-   addToProcessed(cat, refkey);
    
    // check whether this is a valid folder or a file
    var item = t = null;
-   if (node.qnamePath.indexOf(COMMENT_QNAMEPATH) == -1)
+   if (node.qnamePath.indexOf(COMMENT_QNAMEPATH) == -1 &&
+       !(node.qnamePath.match(DISCUSSION_QNAMEPATH+"$") == DISCUSSION_QNAMEPATH))
    {
       if (node.isContainer || node.isDocument)
       {
@@ -207,19 +181,7 @@ function getDocumentItem(siteId, containerId, pathParts, node, metadataFields)
          };
          item.modifiedBy = getPersonDisplayName(item.modifiedByUser);
          item.createdBy = getPersonDisplayName(item.createdByUser);
-         
-         var fields = [];
-         if(metadataFields!=null && metadataFields.length>0){
-        	var splitted = metadataFields.split(",");
-   	         for (count in splitted)
-   	         {
-   	            fields.push(splitted[count].replace("_", ":"));
-   	         }
-         }
-         if(fields.length<1){
-        	 fields.push("bcpg:code"); // avoid empty
-         }
-         item.nodeData = getFormData(node,fields);
+         item.nodeData =  extractNodeData(node,metadataFields); 
       }
       if (node.isContainer)
       {
@@ -265,12 +227,10 @@ function getBlogPostItem(siteId, containerId, pathParts, node)
    }
    
    // check whether we already added this blog post
-   var cat = siteId + containerId, refkey = "" + child.nodeRef.toString();
-   if (checkProcessed(cat, refkey))
+   if (checkProcessedCache("" + child.nodeRef.toString()))
    {
       return null;
    }
-   addToProcessed(cat, refkey);
    
    // child is our blog post
    var item, t = null;
@@ -309,12 +269,10 @@ function getForumPostItem(siteId, containerId, pathParts, node)
    }
    
    // make sure we haven't already added the post
-   var cat = siteId + containerId, refkey = "" + topicNode.nodeRef.toString();
-   if (checkProcessed(cat, refkey))
+   if (checkProcessedCache("" + topicNode.nodeRef.toString()))
    {
       return null;
    }
-   addToProcessed(cat, refkey);
    
    // find the first post, which contains the post title
    // PENDING: error prone
@@ -352,13 +310,11 @@ function getCalendarItem(siteId, containerId, pathParts, node)
       return null;
    }
    
-   // make sure we haven't already added the post
-   var cat = siteId + containerId, refkey = "" + node.nodeRef.toString();
-   if (checkProcessed(cat, refkey))
+   // make sure we haven't already added the event
+   if (checkProcessedCache("" + node.nodeRef.toString()))
    {
       return null;
    }
-   addToProcessed(cat, refkey);
    
    var item, t = null;
    item =
@@ -392,12 +348,10 @@ function getWikiItem(siteId, containerId, pathParts, node)
    }
    
    // make sure we haven't already added the page
-   var cat = siteId + containerId, refkey = "" + node.nodeRef.toString();
-   if (checkProcessed(cat, refkey))
+   if (checkProcessedCache("" + node.nodeRef.toString()))
    {
       return null;
    }
-   addToProcessed(cat, refkey);
    
    var item, t = null;
    item =
@@ -423,31 +377,29 @@ function getWikiItem(siteId, containerId, pathParts, node)
 }
 
 
-
-function getFormObj(node,fields)
-{
-   var itemType = node.typeShort;
-	
-   if (formCache[itemType] != undefined)
-   {
-      return formCache[itemType];
-   }
-   
-   var  scriptObj = formService.getForm("node", node.nodeRef, fields, fields);
-   formCache[itemType] = scriptObj;
-   return scriptObj;
-}
-
 //ML becPG
 // get required formData
+function extractNodeData(node,metadataFields){
+    var fields = [];
+    if(metadataFields!=null && metadataFields.length>0){
+   	var splitted = metadataFields.split(",");
+	   for (var count in splitted) {
+	     fields.push(splitted[count].replace("_", ":"));
+	   }
+    }
+    if(fields.length<1){
+   	 fields.push("bcpg:code"); // avoid empty
+    }
+   return  getFormData(node,fields);
+}
+
 function getFormData(node,fields){
 	
 	var nodeData = {};
 	
-	//node.typeShort
 	
 	// Use the form service to parse the required properties
-	var  scriptObj = getFormObj(node, fields);
+	var  scriptObj = formService.getForm("node", node.nodeRef, fields, fields);
 
     // Make sure we can quickly look-up the Field Definition within the formData loop...
     var objDefinitions = {};
@@ -607,15 +559,14 @@ function getLinkItem(siteId, containerId, pathParts, node)
    }
    
    // make sure we haven't already added this link
-   var cat = siteId + containerId, refkey = "" + node.nodeRef.toString();
-   if (checkProcessed(cat, refkey))
+   if (checkProcessedCache("" + node.nodeRef.toString()))
    {
       return null;
    }
-   addToProcessed(cat, refkey);
    
    var item = t = null;
-   if (node.qnamePath.indexOf(COMMENT_QNAMEPATH) == -1)
+   if (node.qnamePath.indexOf(COMMENT_QNAMEPATH) == -1 &&
+       !(node.qnamePath.match(DISCUSSION_QNAMEPATH+"$") == DISCUSSION_QNAMEPATH))
    {
       item =
       {
@@ -643,12 +594,10 @@ function getLinkItem(siteId, containerId, pathParts, node)
 function getDataItem(siteId, containerId, pathParts, node)
 {
    // make sure we haven't already added this item
-   var cat = siteId + containerId, refkey = "" + node.nodeRef.toString();
-   if (checkProcessed(cat, refkey))
+   if (checkProcessedCache("" + node.nodeRef.toString()))
    {
       return null;
    }
-   addToProcessed(cat, refkey);
    
    var item = null;
    
@@ -755,14 +704,14 @@ function getItem(siteId, containerId, pathParts, node, metadataFields)
  */
 function splitQNamePath(node)
 {
-   var path = node.qnamePath;
-   var displayPath = node.displayPath.split("/");
-   var parts = null;
+   var path = node.qnamePath,
+       displayPath = node.displayPath.split("/"),
+       parts = null;
    
    if (path.match("^"+SITES_SPACE_QNAME_PATH) == SITES_SPACE_QNAME_PATH)
    {
-      var tmp = path.substring(SITES_SPACE_QNAME_PATH.length);
-      var pos = tmp.indexOf('/');
+      var tmp = path.substring(SITES_SPACE_QNAME_PATH.length),
+          pos = tmp.indexOf('/');
       if (pos >= 1)
       {
          // site id is the cm:name for the site - we cannot use the encoded QName version
@@ -780,7 +729,7 @@ function splitQNamePath(node)
       }
    }
    
-   return (parts != null ? parts : [ null, null, displayPath ]);
+   return (parts !== null ? parts : [ null, null, displayPath ]);
 }
 
 /**
@@ -790,38 +739,86 @@ function splitQNamePath(node)
  */
 function processResults(nodes, maxResults,metadataFields)
 {    
+   // empty cache state
+   processedCache = {};
    var results = [],
       added = 0,
       parts,
       item,
+      failed = 0,
       i, j;
    
-   for (i = 0, j = nodes.length; i < j && added < maxResults; i++)
+   if (logger.isLoggingEnabled())
+      logger.log("Processing resultset of length: " + nodes.length);
+   
+    for (i = 0, j = nodes.length; i < j && added < maxResults; i++)
    {
-	   try {
-	      /**
-	       * For each node we extract the site/container qname path and then
-	       * let the per-container helper function decide what to do.
-	       */
-	      parts = splitQNamePath(nodes[i]);
-	      if (parts !== null)
-	      {
-	         item = getItem(parts[0], parts[1], parts[2], nodes[i],metadataFields);
-	         if (item !== null)
-	         {
-	            results.push(item);
-	            added++;
-	         }
-	      }
-	   } catch(e){
-		   
-	   }
+      /**
+       * For each node we extract the site/container qname path and then
+       * let the per-container helper function decide what to do.
+       */
+      parts = splitQNamePath(nodes[i]);
+      item = getItem(parts[0], parts[1], parts[2], nodes[i], metadataFields);
+      if (item !== null)
+      {
+         results.push(item);
+         added++;
+      }
+      else
+      {
+         failed++;
+      }
    }
+		   
+   if (logger.isLoggingEnabled())
+      logger.log("Filtered resultset to length: " + results.length + ". Discarded item count: " + failed);
    
    return (
    {
       items: results
    });
+}
+
+/**
+ * Helper to escape the QName string so it is valid inside an fts-alfresco query.
+ * The language supports the SQL92 identifier standard.
+ * 
+ * @param qname   The QName string to escape
+ * @return escaped string
+ */
+function escapeQName(qname)
+{
+   var separator = qname.indexOf(':'),
+       namespace = qname.substring(0, separator),
+       localname = qname.substring(separator + 1);
+
+   return escapeString(namespace) + ':' + escapeString(localname);
+}
+
+function escapeString(value)
+{
+   var result = "";
+
+   for (var i=0,c; i<value.length; i++)
+   {
+      c = value.charAt(i);
+      if (i == 0)
+      {
+         if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'))
+         {
+            result += '\\';
+         }
+      }
+      else
+      {
+         if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '$' || c == '#'))
+         {
+            result += '\\';
+         }
+      }
+      result += c;
+   }
+   return result;
 }
 
 /**
@@ -875,8 +872,8 @@ function getSearchResults(params)
        var separator = sort.indexOf("|");
        if (separator != -1)
        {
-          sort = sort.substring(0, separator);
           asc = (sort.substring(separator + 1) == "true");
+          sort = sort.substring(0, separator);
        }
        var column;
        if (sort.charAt(0) == '.')
