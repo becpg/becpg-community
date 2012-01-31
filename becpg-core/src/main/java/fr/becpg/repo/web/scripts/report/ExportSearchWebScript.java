@@ -5,22 +5,18 @@ package fr.becpg.repo.web.scripts.report;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -29,35 +25,16 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
-import fr.becpg.repo.search.AdvSearchService;
+import fr.becpg.repo.web.scripts.search.AbstractSearchWebSrcipt;
 
 /**
  * Webscript that send the result of a search in a report
  *
  * @author querephi
  */
-public class ExportSearchWebScript extends AbstractWebScript  {
+public class ExportSearchWebScript extends AbstractSearchWebSrcipt  {
 	
-	/** The Constant PARAM_QUERY. */
-	private static final String PARAM_QUERY = "query";
 	
-	/** The Constant PARAM_SORT. */
-	private static final String PARAM_SORT = "sort";
-	
-	/** The Constant PARAM_TERM. */
-	private static final String PARAM_TERM = "term";
-	
-	/** The Constant PARAM_TAG. */
-	private static final String PARAM_TAG = "tag";
-	
-	/** The Constant PARAM_CONTAINER. */
-	private static final String PARAM_CONTAINER = "container";
-	
-	/** The Constant PARAM_SITE. */
-	private static final String PARAM_SITE = "site";
-	
-	/** The Constant PARAM_REPOSITORY. */
-	private static final String PARAM_REPOSITORY = "repo";
 
 	/** The Constant PARAM_STORE_TYPE. */
 	private static final String PARAM_STORE_TYPE = "store_type";
@@ -76,11 +53,7 @@ public class ExportSearchWebScript extends AbstractWebScript  {
 	
 	/** The mimetype service. */
 	private MimetypeService mimetypeService;
-	
-	private AdvSearchService advSearchService;
-	
-	private NamespaceService namespaceService;
-	
+
 	private ReportTplService reportTplService;
 	
 	/**
@@ -101,13 +74,7 @@ public class ExportSearchWebScript extends AbstractWebScript  {
 		this.mimetypeService = mimetypeService;
 	}
 	
-	public void setAdvSearchService(AdvSearchService advSearchService) {
-		this.advSearchService = advSearchService;
-	}
-	
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
+
 	
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
@@ -132,79 +99,21 @@ public class ExportSearchWebScript extends AbstractWebScript  {
     	
 		NodeRef templateNodeRef = new NodeRef(storeType, storeId, nodeId);		
 		String query = req.getParameter(PARAM_QUERY);
-		String sort = req.getParameter(PARAM_SORT);
 		
-		Map<String,Boolean> sortMap = new HashMap<String, Boolean>();
-	    if (sort != null && sort.length() != 0)
-	    {
-	       boolean asc = true;
-	       int separator = sort.indexOf("|");
-	       if (separator != -1)
-	       {
-	          sort = sort.substring(0, separator);
-	          asc = (sort.substring(separator + 1) == "true");
-	       }
-	       String column;
-	       if (sort.charAt(0) == '.')
-	       {
-	          // handle pseudo cm:content fields
-	          column = "@{http://www.alfresco.org/model/content/1.0}content" + sort;
-	       }
-	       else if (sort.indexOf(":") != -1)
-	       {
-	          // handle attribute field sort
-	          column = "@" + sort;
-	       }
-	       else
-	       {
-	          // other sort types e.g. TYPE
-	          column = sort;
-	       }
-	       sortMap.put(column, asc);
-	    }
-		
-		
-		String term = req.getParameter(PARAM_TERM);
-		String tag = req.getParameter(PARAM_TAG);
-		String siteId = req.getParameter(PARAM_SITE);
-		String containerId = req.getParameter(PARAM_CONTAINER);
-		String repo = req.getParameter(PARAM_REPOSITORY);
-		boolean isRepo = false;
-		if(repo != null && repo.equals("true")){
-			isRepo = true;
+		if (query == null || query.isEmpty()) {
+			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'query' argument cannot be null or empty");
 		}
-		
-		if(query == null || query.isEmpty())
-    		throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'query' argument cannot be null or empty");					
 		
 		// get the content and stream directly to the response output stream
         // assuming the repository is capable of streaming in chunks, this should allow large files
         // to be streamed directly to the browser response stream.
         try
         {      
-        	Map<String, String> criteriaMap = new HashMap<String, String>();
-    		
     		JSONObject jsonObject = new JSONObject(query);    		
-    		@SuppressWarnings("unchecked")
-			Iterator<String> iterator =jsonObject.keys();
-    		
-    		while(iterator.hasNext()){
-    			
-    			String key = (String)iterator.next();
-    			String value = jsonObject.getString(key);
-    			criteriaMap.put(key, value);    			
-    		}
-    		
+    	
         	QName datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
         	
-        	List<NodeRef> resultNodeRefs = advSearchService.queryAdvSearch(null,datatype, 
-														        			term, 
-																			tag, 
-																			criteriaMap, 
-																			isRepo, 
-																			siteId, 
-																			containerId,
-																			sortMap, -1 );
+        	List<NodeRef> resultNodeRefs = doSearch(req,null);
 
         	// report format
 			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);

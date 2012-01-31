@@ -1,0 +1,42 @@
+
+
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="ehcache.xsd"
+	updateCheck="false" monitoring="autodetect"
+	dynamicConfig="false" statistics="false"
+	>
+
+    <diskStore path="java.io.tmpdir/becpg-cache" />
+
+
+    <!--Default Cache configuration. These will applied to caches programmatically created through
+        the CacheManager.
+
+        The following attributes are required for defaultCache:
+
+        maxInMemory       - Sets the maximum number of objects that will be created in memory
+        eternal           - Sets whether elements are eternal. If eternal,  timeouts are ignored and the element
+                            is never expired.
+        timeToIdleSeconds - Sets the time to idle for an element before it expires.
+                            i.e. The maximum amount of time between accesses before an element expires
+                            Is only used if the element is not eternal.
+                            Optional attribute. A value of 0 means that an Element can idle for infinity
+        timeToLiveSeconds - Sets the time to live for an element before it expires.
+                            i.e. The maximum time between creation time and when an element expires.
+                            Is only used if the element is not eternal.
+        overflowToDisk    - Sets whether elements can overflow to disk when the in-memory cache
+                            has reached the maxInMemory limit.
+
+        -->
+
+	<defaultCache 
+        maxElementsInMemory="10000"
+        eternal="false"
+        timeToIdleSeconds="36000"
+        timeToLiveSeconds="36000"
+        overflowToDisk="true" 
+        />
+
+
+</ehcache>
+

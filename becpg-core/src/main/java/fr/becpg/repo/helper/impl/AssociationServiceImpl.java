@@ -1,4 +1,4 @@
-package fr.becpg.repo.helper;
+package fr.becpg.repo.helper.impl;
 
 import java.util.List;
 
@@ -8,6 +8,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import fr.becpg.repo.helper.AssociationService;
 
 public class AssociationServiceImpl implements AssociationService {
 

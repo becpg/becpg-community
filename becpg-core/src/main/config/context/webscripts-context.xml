@@ -23,6 +23,14 @@
    	<bean id="webscript.fr.becpg.admin.reloadModels.get" class="fr.becpg.repo.web.scripts.admin.ReloadModelsWebScript" parent="webscript">
       	<property name="dictionaryDAO" ref="dictionaryDAO" />
    	</bean>
+   	
+   	
+	<bean id="webscript.fr.becpg.admin.clearCache.get"
+      class="fr.becpg.repo.web.scripts.admin.CacheServiceWebscript"
+      parent="webscript">
+      <property name="beCPGCacheService" ref="beCPGCacheService" />
+    </bean>
+   	
 
    	<!-- Entity lists -->
    	<bean id="webscript.fr.becpg.entity.entityLists.get" class="fr.becpg.repo.web.scripts.entity.EntityListsWebScript" parent="webscript">      	     
@@ -92,14 +100,24 @@
    	</bean>
    	
    	<!-- Export search -->
-  		<bean id="webscript.fr.becpg.report.exportSearch.get" class="fr.becpg.repo.web.scripts.report.ExportSearchWebScript" parent="webscript">
+    <bean id="webscript.fr.becpg.report.exportSearch.get" class="fr.becpg.repo.web.scripts.report.ExportSearchWebScript" parent="webscript">
    		<property name="exportSearchService" ref="exportSearchService" />
    		<property name="mimetypeService" ref="mimetypeService" />
    		<property name="advSearchService" ref="advSearchService" />
    		<property name="namespaceService" ref="namespaceService" />
    		<property name="reportTplService" ref="reportTplService" />
    	</bean>
-  		<bean id="webscript.fr.becpg.report.exportSearchTpls.get" class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript" parent="webscript">
+    
+    <!-- Search -->
+   	<bean id="webscript.fr.becpg.search.search.get" class="fr.becpg.repo.web.scripts.search.SearchWebScript" parent="webscript">
+      	    <property name="advSearchService" ref="advSearchService" />      	
+			<property name="namespaceService" ref="namespaceService" />
+			<property name="serviceRegistry" ref="ServiceRegistry" />
+			<property name="propertyService" ref="propertyService" />
+   	</bean>
+   	
+    
+    <bean id="webscript.fr.becpg.report.exportSearchTpls.get" class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript" parent="webscript">
    		<property name="namespaceService" ref="namespaceService" />
    		<property name="reportTplService" ref="reportTplService" />
    	</bean>
@@ -128,6 +146,7 @@
 			<property name="mlNodeService" ref="mlAwareNodeService" />
    	</bean>
    	
+  
    	<!-- NPD -->
    	
    	  <!-- Retrieves all npd instances. -->

@@ -34,7 +34,7 @@
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
      inkscape:cx="571.37861"
@@ -50,7 +50,8 @@
      fit-margin-top="3"
      fit-margin-left="10"
      fit-margin-right="10"
-     fit-margin-bottom="3" />
+     fit-margin-bottom="3"
+     inkscape:showpageshadow="true" />
   <metadata
      id="metadata3771">
     <rdf:RDF>
@@ -75,19 +76,19 @@
          id="g3133">
         <text
            xml:space="preserve"
-           style="font-size:20.23284531px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#006600;fill-opacity:1;stroke:none;font-family:Caviar Dreams;-inkscape-font-specification:Caviar Dreams Bold"
-           x="356.64743"
-           y="157.4935"
+           style="font-size:20.23284530999999831px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#006600;fill-opacity:1;stroke:none;font-family:Caviar Dreams;-inkscape-font-specification:Caviar Dreams Bold Italic"
+           x="356.65424"
+           y="167.89114"
            id="text3004"
            sodipodi:linespacing="125%"
            transform="matrix(7.513962e-4,0.90979394,1.0991495,-5.9614178e-4,0,0)"><tspan
              sodipodi:role="line"
              id="tspan3006"
-             x="356.64743"
-             y="157.4935">le PLM au service des biens</tspan><tspan
+             x="356.65424"
+             y="167.89114">le PLM au service des biens</tspan><tspan
              sodipodi:role="line"
-             x="356.64743"
-             y="182.78456"
+             x="356.65424"
+             y="193.18221"
              id="tspan3008"> de grande consommation</tspan></text>
       </g>
     </g>

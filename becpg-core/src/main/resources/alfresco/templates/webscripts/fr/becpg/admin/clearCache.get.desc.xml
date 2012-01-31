@@ -1,0 +1,7 @@
+<webscript>
+  <shortname>Clear beCPG caches</shortname>
+  <description>Clear beCPG caches</description>
+  <url>/becpg/admin/clearCache</url>
+  <authentication>admin</authentication>
+  <transaction>required</transaction>
+</webscript>
