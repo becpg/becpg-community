@@ -159,6 +159,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		for(CompositeIng compositeIng : compositeIngs){
 						
 			MLText mlTextILL = new MLText();			
+			mlTextILL.addValue(Locale.getDefault(), compositeIng.getIngLabeling(Locale.getDefault()));
 			mlTextILL.addValue(Locale.ENGLISH, compositeIng.getIngLabeling(Locale.ENGLISH));
 			mlTextILL.addValue(Locale.FRENCH, compositeIng.getIngLabeling(Locale.FRENCH));
 			ingLabelingList.add(new IngLabelingListDataItem(null, compositeIng.getName(), mlTextILL, Boolean.FALSE));
