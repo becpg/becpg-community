@@ -5,6 +5,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import org.springframework.extensions.surf.util.I18NUtil;
+
 import fr.becpg.repo.RepoConsts;
 
 /**
@@ -69,10 +71,11 @@ public class PropertyFormats {
 		}
 		else{
 		
-			dateFormat = new SimpleDateFormat(RepoConsts.FORMAT_DATE);
-			datetimeFormat = new SimpleDateFormat(RepoConsts.FORMAT_DATETIME);
+			dateFormat = new SimpleDateFormat(RepoConsts.FORMAT_DATE,I18NUtil.getLocale());
+			datetimeFormat = new SimpleDateFormat(RepoConsts.FORMAT_DATETIME,I18NUtil.getLocale());
 		}
 		
 		decimalFormat = new DecimalFormat(FORMAT_DECIMAL_VALUE);
 	}
+
 }

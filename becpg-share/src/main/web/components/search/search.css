@@ -140,8 +140,8 @@
 
 .search .results div.details span.tags
 {
-   background-image: url(images/tag-16.png);
-   background-position: 0px 2px;
+   background-image: url(../images/tag-16.png);
+   padding-left: 16px;
    background-repeat: no-repeat;
 }
 

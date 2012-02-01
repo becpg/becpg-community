@@ -44,9 +44,6 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	}
 	
 
-
-
-
 	private static Log logger = LogFactory.getLog(BeCPGSearchServiceImpl.class);
 
 	/**

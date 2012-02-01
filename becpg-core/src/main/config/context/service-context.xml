@@ -68,15 +68,22 @@
 	</bean>
 
 	<!-- Helper -->
-	<bean id="repoService" class="fr.becpg.repo.helper.RepoServiceImpl">		
+	<bean id="repoService" class="fr.becpg.repo.helper.impl.RepoServiceImpl">		
 		<property name="nodeService" ref="nodeService" />
 		<property name="searchService" ref="searchService" />
 		<property name="namespaceService" ref="namespaceService"/>
 	</bean>
-	<bean id="propertyService" class="fr.becpg.repo.helper.PropertyServiceImpl">		
+	<bean id="propertyService" class="fr.becpg.repo.helper.impl.PropertyServiceImpl">		
 		<property name="nodeService" ref="nodeService" />
+		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="beCPGCacheService" ref="beCPGCacheService"/>
+		<property name="namespaceService" ref="namespaceService"/>
+		<property name="permissionService" ref="permissionService"/>
+		<property name="personService" ref="personService"/>
+		<property name="taggingService" ref="taggingService"/>
+		<property name="securityService" ref="securityService"/>
 	</bean>
-	<bean id="associationService" class="fr.becpg.repo.helper.AssociationServiceImpl">		
+	<bean id="associationService" class="fr.becpg.repo.helper.impl.AssociationServiceImpl">		
 		<property name="nodeService" ref="nodeService" />
 	</bean>	
 	
@@ -393,5 +400,15 @@
     	<property name="dictionaryService" ref="dictionaryService"/>
     	<property name="searchService" ref="searchService"/>
     </bean>
+    
+    <!-- Cache -->
+    
+    
+    <bean id="beCPGCacheService" class="fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl">
+	     <property name="configLocation">
+	    	<value>classpath:alfresco/module/${pom.artifactId}/becpg-ehcache.xml</value>
+	  	</property>
+    </bean>
+    
     
 </beans>

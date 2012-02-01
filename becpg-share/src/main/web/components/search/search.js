@@ -213,14 +213,19 @@
          var me = this;
          
          // DataSource definition
-         var uriSearchResults = Alfresco.constants.PROXY_URI_RELATIVE + "slingshot/search?";
+         var uriSearchResults = Alfresco.constants.PROXY_URI_RELATIVE + "becpg/search?";
          this.widgets.dataSource = new YAHOO.util.DataSource(uriSearchResults,
          {
             responseType: YAHOO.util.DataSource.TYPE_JSON,
             connXhrMode: "queueRequests",
             responseSchema:
             {
-                resultsList: "items"
+                resultsList: "items",
+                metaFields : {
+              	      	page : "page",
+              	      	pageSize : "pageSize",
+              	      	fullListSize : "fullListSize"
+              	      }
             }
          });
          
@@ -229,6 +234,7 @@
          {
             me.currentPage = state.page;
             me.widgets.paginator.setState(state);
+            YAHOO.Bubbling.fire("onSearch");
          };
          this.widgets.paginator = new YAHOO.widget.Paginator(
          {
@@ -568,7 +574,7 @@
             
             // tags (if any)
             var tags = oRecord.getData("tags");
-            if (tags.length !== 0)
+            if (tags && tags.length !== 0)
             {
                var i, j;
                desc += '<div class="details"><span class="tags">' + me.msg("label.tags") + ': ';
@@ -624,7 +630,8 @@
          {
             renderLoopSize: Alfresco.util.RENDERLOOPSIZE,
             initialLoad: false,
-            paginator: this.widgets.paginator,
+//            dynamicData: true,
+//            paginator: this.widgets.paginator,
             MSG_LOADING: ""
          });
 
@@ -653,16 +660,21 @@
             }
             else if (oResponse.results)
             {
+               //Pagination
+               me.resultsCount = oResponse.meta.fullListSize;
+               me.currentPage = oResponse.meta.page;   
+            	
                // clear the empty error message
                me.widgets.dataTable.set("MSG_EMPTY", "");
                
                // update the results count, update hasMoreResults.
-               me.hasMoreResults = (oResponse.results.length > me.options.maxSearchResults);
+               me.hasMoreResults = (me.resultsCount > me.options.maxSearchResults);
                if (me.hasMoreResults)
                {
                   oResponse.results = oResponse.results.slice(0, me.options.maxSearchResults);
+                  me.resultsCount = me.options.maxSearchResults;
                }
-               me.resultsCount = oResponse.results.length;
+        
                
                if (me.resultsCount > me.options.pageSize)
                {
@@ -1257,7 +1269,7 @@
       _buildSearchParams: function Search__buildSearchParams(searchRepository, searchAllSites, searchTerm, searchTag, searchSort)
       {
          var site = searchAllSites ? "" : this.options.siteId;
-         var params = YAHOO.lang.substitute("site={site}&term={term}&tag={tag}&maxResults={maxResults}&sort={sort}&query={query}&repo={repo}&metadataFields={metadataFields}",
+         var params = YAHOO.lang.substitute("site={site}&term={term}&tag={tag}&maxResults={maxResults}&sort={sort}&query={query}&repo={repo}&metadataFields={metadataFields}&page={page}&pageSize={pageSize}",
          {
             site: encodeURIComponent(site),
             repo: (searchRepository || this.options.searchQuery.length !== 0).toString(), // always search entire repo with advanced query
@@ -1266,6 +1278,8 @@
             sort: encodeURIComponent(searchSort),
             query: encodeURIComponent(this.options.searchQuery),
             metadataFields : encodeURIComponent(this.options.metadataFields),
+            page : this.currentPage,
+            pageSize : this.options.pageSize,
             maxResults: this.options.maxSearchResults + 1 // to calculate whether more results were available
          });
          
