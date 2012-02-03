@@ -385,11 +385,12 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			if(tempNodeRef != null){
 							
 				// file content
-				if(fileMapping.getAttribute().equals(ContentModel.PROP_CONTENT)){
+				if(fileMapping.getAttribute().getName().isMatch(ContentModel.PROP_CONTENT)){
 					
 					byte[] imageBytes = entityService.getImage(tempNodeRef);
 					if (imageBytes != null){
 											
+						logger.debug("###file content as blob : " + String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId()));
 						task.getAppContext().put(String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId()), imageBytes);				
 					}
 				}

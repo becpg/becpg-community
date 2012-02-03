@@ -7,202 +7,45 @@
     <property name="imageDPI">112</property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="7">
-            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/exportsearch/product/ExportSearchQuery.xml</property>
+            <property name="FILELIST">/home/quere/Documents/beCPG/dev/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/exportsearch/product/ExportSearchQuery.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="nodes" id="10">
-            <property name="nullsOrdering">nulls lowest</property>
-            <list-property name="computedColumns">
-                <structure>
-                    <property name="name">ToValidateDuration</property>
-                    <expression name="expression">if(row["productState"]=="ToValidate"){
-BirtDateTime.diffDay(row["created"], BirtDateTime.today())
-}
-else{
-BirtDateTime.diffDay(row["created"], row["modified"])
-}</expression>
-                    <property name="dataType">integer</property>
-                </structure>
-            </list-property>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="nodes" id="2054">
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">id</property>
-                    <property name="analysis">dimension</property>
                     <text-property name="heading">id</text-property>
                 </structure>
                 <structure>
+                    <property name="columnName">code</property>
+                    <text-property name="heading">code</text-property>
+                </structure>
+                <structure>
                     <property name="columnName">name</property>
-                    <property name="analysis">attribute</property>
                     <text-property name="heading">name</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">description</property>
-                    <property name="analysis">attribute</property>
                     <text-property name="heading">description</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">legalName</property>
-                    <property name="analysis">attribute</property>
                     <text-property name="heading">legalName</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productHierarchy1</property>
-                    <property name="analysis">attribute</property>
                     <text-property name="heading">productHierarchy1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productHierarchy2</property>
-                    <property name="analysis">attribute</property>
                     <text-property name="heading">productHierarchy2</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">productState</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">productState</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productQty</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">productQty</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productUnit</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">productUnit</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productDensity</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">productDensity</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">eanCode</property>
-                    <property name="analysis">attribute</property>
                     <text-property name="heading">eanCode</text-property>
                 </structure>
-                <structure>
-                    <property name="columnName">code</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">code</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">creator</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">creator</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">modifier</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">modifier</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">coutMP</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">coutMP</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">coutEmb</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">coutEmb</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">name_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">name_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">description_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">description_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">legalName_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">legalName_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productHierarchy1_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">productHierarchy1_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productHierarchy2_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">productHierarchy2_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productState_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">productState_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productQty_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">productQty_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productUnit_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">productUnit_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productDensity_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">productDensity_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">eanCode_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">eanCode_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">code_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">code_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">suppliers</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">suppliers</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">coutMP_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">coutMP_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">coutEmb_1</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">coutEmb_1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">nutProteines</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">nutProteines</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">nutLipides</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">nutLipides</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">nutGlucides</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">nutGlucides</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">modified</property>
-                    <property name="analysis">dimension</property>
-                    <text-property name="heading">modified</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">created</property>
-                    <property name="analysis">dimension</property>
-                    <text-property name="heading">created</text-property>
-                </structure>
             </list-property>
-            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -212,178 +55,38 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                     </structure>
                     <structure>
                         <property name="position">2</property>
-                        <property name="name">name</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">description</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">legalName</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">productHierarchy1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">6</property>
-                        <property name="name">productHierarchy2</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">7</property>
-                        <property name="name">productState</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">8</property>
-                        <property name="name">productQty</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">9</property>
-                        <property name="name">productUnit</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">10</property>
-                        <property name="name">productDensity</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">11</property>
-                        <property name="name">eanCode</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">12</property>
                         <property name="name">code</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">13</property>
-                        <property name="name">creator</property>
+                        <property name="position">3</property>
+                        <property name="name">name</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">14</property>
-                        <property name="name">modifier</property>
+                        <property name="position">4</property>
+                        <property name="name">description</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">15</property>
-                        <property name="name">coutMP</property>
+                        <property name="position">5</property>
+                        <property name="name">legalName</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">16</property>
-                        <property name="name">coutEmb</property>
+                        <property name="position">6</property>
+                        <property name="name">productHierarchy1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">17</property>
-                        <property name="name">name_1</property>
+                        <property name="position">7</property>
+                        <property name="name">productHierarchy2</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">18</property>
-                        <property name="name">description_1</property>
+                        <property name="position">8</property>
+                        <property name="name">eanCode</property>
                         <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">19</property>
-                        <property name="name">legalName_1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">20</property>
-                        <property name="name">productHierarchy1_1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">21</property>
-                        <property name="name">productHierarchy2_1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">22</property>
-                        <property name="name">productState_1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">23</property>
-                        <property name="name">productQty_1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">24</property>
-                        <property name="name">productUnit_1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">25</property>
-                        <property name="name">productDensity_1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">26</property>
-                        <property name="name">eanCode_1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">27</property>
-                        <property name="name">code_1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">28</property>
-                        <property name="name">suppliers</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">29</property>
-                        <property name="name">coutMP_1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">30</property>
-                        <property name="name">coutEmb_1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">31</property>
-                        <property name="name">nutProteines</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">32</property>
-                        <property name="name">nutLipides</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">33</property>
-                        <property name="name">nutGlucides</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">34</property>
-                        <property name="name">modified</property>
-                        <property name="dataType">date</property>
-                    </structure>
-                    <structure>
-                        <property name="position">35</property>
-                        <property name="name">created</property>
-                        <property name="dataType">date</property>
-                    </structure>
-                    <structure>
-                        <property name="position">36</property>
-                        <property name="name">ToValidateDuration</property>
-                        <property name="dataType">integer</property>
                     </structure>
                 </list-property>
             </structure>
@@ -398,244 +101,55 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                 </structure>
                 <structure>
                     <property name="position">2</property>
-                    <property name="name">name</property>
-                    <property name="nativeName">name</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">description</property>
-                    <property name="nativeName">description</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">legalName</property>
-                    <property name="nativeName">legalName</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">productHierarchy1</property>
-                    <property name="nativeName">productHierarchy1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">6</property>
-                    <property name="name">productHierarchy2</property>
-                    <property name="nativeName">productHierarchy2</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">7</property>
-                    <property name="name">productState</property>
-                    <property name="nativeName">productState</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">8</property>
-                    <property name="name">productQty</property>
-                    <property name="nativeName">productQty</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">9</property>
-                    <property name="name">productUnit</property>
-                    <property name="nativeName">productUnit</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">10</property>
-                    <property name="name">productDensity</property>
-                    <property name="nativeName">productDensity</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">11</property>
-                    <property name="name">eanCode</property>
-                    <property name="nativeName">eanCode</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">12</property>
                     <property name="name">code</property>
                     <property name="nativeName">code</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">13</property>
-                    <property name="name">creator</property>
-                    <property name="nativeName">creator</property>
+                    <property name="position">3</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">14</property>
-                    <property name="name">modifier</property>
-                    <property name="nativeName">modifier</property>
+                    <property name="position">4</property>
+                    <property name="name">description</property>
+                    <property name="nativeName">description</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">15</property>
-                    <property name="name">coutMP</property>
-                    <property name="nativeName">coutMP</property>
+                    <property name="position">5</property>
+                    <property name="name">legalName</property>
+                    <property name="nativeName">legalName</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">16</property>
-                    <property name="name">coutEmb</property>
-                    <property name="nativeName">coutEmb</property>
+                    <property name="position">6</property>
+                    <property name="name">productHierarchy1</property>
+                    <property name="nativeName">productHierarchy1</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">17</property>
-                    <property name="name">name_1</property>
-                    <property name="nativeName">name_1</property>
+                    <property name="position">7</property>
+                    <property name="name">productHierarchy2</property>
+                    <property name="nativeName">productHierarchy2</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">18</property>
-                    <property name="name">description_1</property>
-                    <property name="nativeName">description_1</property>
+                    <property name="position">8</property>
+                    <property name="name">eanCode</property>
+                    <property name="nativeName">eanCode</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">19</property>
-                    <property name="name">legalName_1</property>
-                    <property name="nativeName">legalName_1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">20</property>
-                    <property name="name">productHierarchy1_1</property>
-                    <property name="nativeName">productHierarchy1_1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">21</property>
-                    <property name="name">productHierarchy2_1</property>
-                    <property name="nativeName">productHierarchy2_1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">22</property>
-                    <property name="name">productState_1</property>
-                    <property name="nativeName">productState_1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">23</property>
-                    <property name="name">productQty_1</property>
-                    <property name="nativeName">productQty_1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">24</property>
-                    <property name="name">productUnit_1</property>
-                    <property name="nativeName">productUnit_1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">25</property>
-                    <property name="name">productDensity_1</property>
-                    <property name="nativeName">productDensity_1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">26</property>
-                    <property name="name">eanCode_1</property>
-                    <property name="nativeName">eanCode_1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">27</property>
-                    <property name="name">code_1</property>
-                    <property name="nativeName">code_1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">28</property>
-                    <property name="name">suppliers</property>
-                    <property name="nativeName">suppliers</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">29</property>
-                    <property name="name">coutMP_1</property>
-                    <property name="nativeName">coutMP_1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">30</property>
-                    <property name="name">coutEmb_1</property>
-                    <property name="nativeName">coutEmb_1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">31</property>
-                    <property name="name">nutProteines</property>
-                    <property name="nativeName">nutProteines</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">32</property>
-                    <property name="name">nutLipides</property>
-                    <property name="nativeName">nutLipides</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">33</property>
-                    <property name="name">nutGlucides</property>
-                    <property name="nativeName">nutGlucides</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">34</property>
-                    <property name="name">modified</property>
-                    <property name="nativeName">modified</property>
-                    <property name="dataType">date</property>
-                    <property name="nativeDataType">91</property>
-                </structure>
-                <structure>
-                    <property name="position">35</property>
-                    <property name="name">created</property>
-                    <property name="nativeName">created</property>
-                    <property name="dataType">date</property>
-                    <property name="nativeDataType">91</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/export/nodes/node]#:#{id;STRING;/@id},{name;STRING;/@name},{description;STRING;/@description},{legalName;STRING;/@legalName},{productHierarchy1;STRING;/@productHierarchy1},{productHierarchy2;STRING;/@productHierarchy2},{productState;STRING;/@productState},{productQty;STRING;/@productQty},{productUnit;STRING;/@productUnit},{productDensity;STRING;/@productDensity},{eanCode;STRING;/@eanCode},{code;STRING;/@code},{creator;STRING;/@creator},{modifier;STRING;/@modifier},{coutMP;STRING;/@coutMP},{coutEmb;STRING;/@coutEmb},{name_1;STRING;/@name},{description_1;STRING;/@description},{legalName_1;STRING;/@legalName},{productHierarchy1_1;STRING;/@productHierarchy1},{productHierarchy2_1;STRING;/@productHierarchy2},{productState_1;STRING;/@productState},{productQty_1;STRING;/@productQty},{productUnit_1;STRING;/@productUnit},{productDensity_1;STRING;/@productDensity},{eanCode_1;STRING;/@eanCode},{code_1;STRING;/@code},{suppliers;STRING;/@suppliers},{coutMP_1;STRING;/@coutMP},{coutEmb_1;STRING;/@coutEmb},{nutProteines;STRING;/@nutProteines},{nutLipides;STRING;/@nutLipides},{nutGlucides;STRING;/@nutGlucides},{modified;DATE;/@modified},{created;DATE;/@created}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/export/nodes/node]#:#{id;STRING;/@id},{code;STRING;/@code},{name;STRING;/@name},{description;STRING;/@description},{legalName;STRING;/@legalName},{productHierarchy1;STRING;/@productHierarchy1},{productHierarchy2;STRING;/@productHierarchy2},{eanCode;STRING;/@eanCode}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -645,8 +159,40 @@ BirtDateTime.diffDay(row["created"], row["modified"])
         <design:resultColumnDefinitions>
           <design:attributes>
             <design:identifier>
-              <design:name>name</design:name>
+              <design:name>id</design:name>
               <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>id</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>code</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>code</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>3</design:position>
             </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
@@ -661,23 +207,7 @@ BirtDateTime.diffDay(row["created"], row["modified"])
         <design:resultColumnDefinitions>
           <design:attributes>
             <design:identifier>
-              <design:name>created</design:name>
-              <design:position>3</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>created</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>creator</design:name>
+              <design:name>description</design:name>
               <design:position>4</design:position>
             </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
@@ -686,7 +216,71 @@ BirtDateTime.diffDay(row["created"], row["modified"])
             <design:nullability>Unknown</design:nullability>
           </design:attributes>
           <design:usageHints>
-            <design:label>creator</design:label>
+            <design:label>description</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>legalName</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>legalName</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>productHierarchy1</design:name>
+              <design:position>6</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>productHierarchy1</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>productHierarchy2</design:name>
+              <design:position>7</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>productHierarchy2</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>eanCode</design:name>
+              <design:position>8</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>eanCode</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -789,9 +383,8 @@ BirtDateTime.diffDay(row["created"], row["modified"])
     </styles>
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="2">
-            <property name="type">custom</property>
-            <property name="height">297mm</property>
-            <property name="width">530mm</property>
+            <property name="type">a4</property>
+            <property name="orientation">landscape</property>
             <page-header>
                 <label id="773">
                     <property name="fontFamily">"arial"</property>
@@ -813,13 +406,13 @@ BirtDateTime.diffDay(row["created"], row["modified"])
     <body>
         <table name="nodesTable" id="1884">
             <property name="style">beCPG-Table-border</property>
-            <property name="width">25.875in</property>
+            <property name="width">11.16030534351145in</property>
             <property name="dataSet">nodes</property>
             <list-property name="boundDataColumns">
                 <structure>
-                    <property name="name">id</property>
-                    <text-property name="displayName">id</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                    <property name="name">code</property>
+                    <text-property name="displayName">code</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["code"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -853,275 +446,47 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">productState</property>
-                    <text-property name="displayName">productState</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productState"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">productQty</property>
-                    <text-property name="displayName">productQty</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productQty"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">productUnit</property>
-                    <text-property name="displayName">productUnit</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productUnit"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">productDensity</property>
-                    <text-property name="displayName">productDensity</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productDensity"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
                     <property name="name">eanCode</property>
                     <text-property name="displayName">eanCode</text-property>
                     <expression name="expression" type="javascript">dataSetRow["eanCode"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">code</property>
-                    <text-property name="displayName">code</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["code"]</expression>
+                    <property name="name">id</property>
+                    <text-property name="displayName">id</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["id"]</expression>
                     <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">creator</property>
-                    <text-property name="displayName">creator</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["creator"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">modifier</property>
-                    <text-property name="displayName">modifier</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["modifier"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">coutMP</property>
-                    <text-property name="displayName">coutMP</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["coutMP"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">coutEmb</property>
-                    <text-property name="displayName">coutEmb</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["coutEmb"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">name_1</property>
-                    <text-property name="displayName">name_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["name_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">description_1</property>
-                    <text-property name="displayName">description_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["description_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">legalName_1</property>
-                    <text-property name="displayName">legalName_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["legalName_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">productHierarchy1_1</property>
-                    <text-property name="displayName">productHierarchy1_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productHierarchy1_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">productHierarchy2_1</property>
-                    <text-property name="displayName">productHierarchy2_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productHierarchy2_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">productState_1</property>
-                    <text-property name="displayName">productState_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productState_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">productQty_1</property>
-                    <text-property name="displayName">productQty_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productQty_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">productUnit_1</property>
-                    <text-property name="displayName">productUnit_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productUnit_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">productDensity_1</property>
-                    <text-property name="displayName">productDensity_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productDensity_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">eanCode_1</property>
-                    <text-property name="displayName">eanCode_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["eanCode_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">code_1</property>
-                    <text-property name="displayName">code_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["code_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">suppliers</property>
-                    <text-property name="displayName">suppliers</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["suppliers"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">coutMP_1</property>
-                    <text-property name="displayName">coutMP_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["coutMP_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">coutEmb_1</property>
-                    <text-property name="displayName">coutEmb_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["coutEmb_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">nutProteines</property>
-                    <text-property name="displayName">nutProteines</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["nutProteines"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">nutLipides</property>
-                    <text-property name="displayName">nutLipides</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["nutLipides"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">nutGlucides</property>
-                    <text-property name="displayName">nutGlucides</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["nutGlucides"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">modified</property>
-                    <text-property name="displayName">modified</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
-                    <property name="dataType">date</property>
-                </structure>
-                <structure>
-                    <property name="name">created</property>
-                    <text-property name="displayName">created</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["created"]</expression>
-                    <property name="dataType">date</property>
-                </structure>
-                <structure>
-                    <property name="name">ToValidateDuration</property>
-                    <text-property name="displayName">ToValidateDuration</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["ToValidateDuration"]</expression>
-                    <property name="dataType">integer</property>
                 </structure>
             </list-property>
             <column id="2007">
-                <property name="width">0.5714285714285714in</property>
+                <property name="width">0.5877862595419847in</property>
             </column>
             <column id="1908">
-                <property name="width">1.5267857142857142in</property>
+                <property name="width">0.8320610687022901in</property>
                 <property name="style">beCPG-table-col</property>
             </column>
             <column id="1909">
-                <property name="width">1.3839285714285714in</property>
+                <property name="width">1.16793893129771in</property>
                 <property name="style">beCPG-table-col</property>
             </column>
             <column id="1910">
-                <property name="width">1.1696428571428572in</property>
+                <property name="width">0.8625954198473282in</property>
                 <property name="style">beCPG-table-col</property>
             </column>
             <column id="1911">
-                <property name="width">1.4285714285714286in</property>
+                <property name="width">0.8625954198473282in</property>
                 <property name="style">beCPG-table-col</property>
             </column>
             <column id="1917">
-                <property name="width">1.7232142857142858in</property>
+                <property name="width">0.8625954198473282in</property>
                 <property name="style">beCPG-table-col</property>
             </column>
-            <column id="1929">
-                <property name="width">0.875in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="2043">
-                <property name="width">1.25in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="1933">
-                <property name="width">0.5in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="1937">
-                <property name="width">0.875in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="1945">
-                <property name="width">0.8660714285714286in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="1949">
-                <property name="width">0.8660714285714286in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="1921">
-                <property name="width">0.8660714285714286in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="1925">
-                <property name="width">0.8660714285714286in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="1991">
-                <property name="width">0.8660714285714286in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="1987">
-                <property name="width">0.8660714285714286in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="2013">
-                <property name="width">1.2857142857142858in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="1983">
-                <property name="width">0.6428571428571429in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="1975">
-                <property name="width">0.8660714285714286in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="2019">
-                <property name="width">0.8660714285714286in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="2023">
-                <property name="width">0.8660714285714286in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
-            <column id="2027">
-                <property name="width">0.8660714285714286in</property>
+            <column id="2050">
+                <property name="width">0.8625954198473282in</property>
                 <property name="style">beCPG-table-col</property>
             </column>
             <column id="2038">
-                <property name="width">0.8660714285714286in</property>
+                <property name="width">0.8549618320610687in</property>
                 <property name="style">beCPG-table-col</property>
             </column>
             <header>
@@ -1157,254 +522,120 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                             <text-property name="text">Sous famille</text-property>
                         </label>
                     </cell>
-                    <cell id="1926">
-                        <label id="1958">
-                            <text-property name="text">Etat</text-property>
+                    <cell id="2047">
+                        <label id="2051">
+                            <text-property name="text">EAN</text-property>
                         </label>
                     </cell>
-                    <cell id="2040">
-                        <label id="2044">
-                            <text-property name="text">Durée 'En développement'</text-property>
+                    <cell id="2035">
+                        <label id="2062">
+                            <text-property name="text">id</text-property>
                         </label>
                     </cell>
-                    <cell id="1930">
-                        <label id="1960">
-                            <text-property name="text">Quantité</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1934">
-                        <label id="1962">
-                            <text-property name="text">Unité</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1942">
-                        <label id="1964">
-                            <text-property name="text">Densité</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1946">
-                        <label id="1966">
-                            <text-property name="text">Code EAN</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1918">
-                        <label id="1970">
-                            <text-property name="text">Date de création</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1922">
-                        <label id="1992">
-                            <text-property name="text">Créateur</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1988">
-                        <label id="1994">
-                            <text-property name="text">Date de modification</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1984">
-                        <label id="1996">
-                            <text-property name="text">Modificateur</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2010">
-                        <label id="2014">
-                            <text-property name="text">Fournisseurs</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1980">
-                        <label id="1998">
-                            <text-property name="text">Coût MP</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1972">
-                        <label id="2002">
-                            <text-property name="text">Coût emballage</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2016">
-                        <label id="2028">
-                            <text-property name="text">Protéines</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2020">
-                        <label id="2030">
-                            <text-property name="text">Lipides</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2024">
-                        <label id="2032">
-                            <text-property name="text">Glucides</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2035"/>
                 </row>
             </header>
             <detail>
                 <row id="1894">
                     <property name="style">beCPG-table-row</property>
                     <cell id="2005">
-                        <data id="2009">
-                            <property name="whiteSpace">nowrap</property>
+                        <data id="2055">
                             <property name="resultSetColumn">code</property>
                         </data>
                     </cell>
                     <cell id="1895">
-                        <data id="1896">
-                            <property name="whiteSpace">nowrap</property>
+                        <data id="2056">
+                            <property name="dataSet">nodes</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">id</property>
+                                    <text-property name="displayName">id</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">code</property>
+                                    <text-property name="displayName">code</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["code"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">name</property>
+                                    <text-property name="displayName">name</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">description</property>
+                                    <text-property name="displayName">description</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">legalName</property>
+                                    <text-property name="displayName">legalName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">productHierarchy1</property>
+                                    <text-property name="displayName">productHierarchy1</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["productHierarchy1"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">productHierarchy2</property>
+                                    <text-property name="displayName">productHierarchy2</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["productHierarchy2"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">eanCode</property>
+                                    <text-property name="displayName">eanCode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["eanCode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">name</property>
                         </data>
                     </cell>
                     <cell id="1897">
-                        <data id="1951">
-                            <property name="whiteSpace">nowrap</property>
+                        <data id="2057">
                             <property name="resultSetColumn">description</property>
                         </data>
                     </cell>
                     <cell id="1899">
-                        <data id="1953">
-                            <property name="whiteSpace">nowrap</property>
+                        <data id="2058">
                             <property name="resultSetColumn">legalName</property>
                         </data>
                     </cell>
                     <cell id="1901">
-                        <data id="1955">
-                            <property name="whiteSpace">nowrap</property>
+                        <data id="2059">
                             <property name="resultSetColumn">productHierarchy1</property>
                         </data>
                     </cell>
                     <cell id="1915">
-                        <data id="2046">
-                            <property name="whiteSpace">nowrap</property>
+                        <data id="2060">
                             <property name="resultSetColumn">productHierarchy2</property>
                         </data>
                     </cell>
-                    <cell id="1927">
-                        <data id="1959">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">productState</property>
-                        </data>
-                    </cell>
-                    <cell id="2041">
-                        <list-property name="highlightRules">
-                            <structure>
-                                <property name="operator">gt</property>
-                                <property name="backgroundColor">#FF0000</property>
-                                <expression name="testExpr" type="javascript">row["ToValidateDuration"]</expression>
-                                <simple-property-list name="value1">
-                                    <value type="javascript">10</value>
-                                </simple-property-list>
-                            </structure>
-                            <structure>
-                                <property name="operator">le</property>
-                                <property name="backgroundColor">#248C0E</property>
-                                <expression name="testExpr" type="javascript">row["ToValidateDuration"]</expression>
-                                <simple-property-list name="value1">
-                                    <value type="javascript">10</value>
-                                </simple-property-list>
-                            </structure>
-                        </list-property>
-                        <data id="2045">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">ToValidateDuration</property>
-                        </data>
-                    </cell>
-                    <cell id="1931">
-                        <data id="1961">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">productQty</property>
-                        </data>
-                    </cell>
-                    <cell id="1935">
-                        <data id="1963">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">productUnit</property>
-                        </data>
-                    </cell>
-                    <cell id="1943">
-                        <data id="1965">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">productDensity</property>
-                        </data>
-                    </cell>
-                    <cell id="1947">
-                        <data id="1967">
-                            <property name="whiteSpace">nowrap</property>
+                    <cell id="2048">
+                        <data id="2061">
                             <property name="resultSetColumn">eanCode</property>
-                        </data>
-                    </cell>
-                    <cell id="1919">
-                        <data id="1971">
-                            <structure name="dateTimeFormat">
-                                <property name="category">Short Date</property>
-                                <property name="pattern">Short Date</property>
-                            </structure>
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">created</property>
-                        </data>
-                    </cell>
-                    <cell id="1923">
-                        <data id="1993">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">creator</property>
-                        </data>
-                    </cell>
-                    <cell id="1989">
-                        <data id="1995">
-                            <structure name="dateTimeFormat">
-                                <property name="category">Short Date</property>
-                                <property name="pattern">Short Date</property>
-                            </structure>
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">modified</property>
-                        </data>
-                    </cell>
-                    <cell id="1985">
-                        <data id="1997">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">modifier</property>
-                        </data>
-                    </cell>
-                    <cell id="2011">
-                        <data id="2015">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">suppliers</property>
-                        </data>
-                    </cell>
-                    <cell id="1981">
-                        <data id="1999">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">coutMP</property>
-                        </data>
-                    </cell>
-                    <cell id="1973">
-                        <data id="2003">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">coutEmb</property>
-                        </data>
-                    </cell>
-                    <cell id="2017">
-                        <data id="2029">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">nutProteines</property>
-                        </data>
-                    </cell>
-                    <cell id="2021">
-                        <data id="2031">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">nutLipides</property>
-                        </data>
-                    </cell>
-                    <cell id="2025">
-                        <data id="2033">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">nutGlucides</property>
                         </data>
                     </cell>
                     <cell id="2036">
                         <image id="2039">
                             <property name="height">0.6517857142857143in</property>
                             <property name="width">0.7678571428571429in</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">thumbnail</property>
+                                    <text-property name="displayName">thumbnail</text-property>
+                                    <expression name="expression" type="javascript">reportContext.getAppContext().get("node" + row._outer["id"] + "-thumbnail");</expression>
+                                    <property name="dataType">blob</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
                             <property name="source">expr</property>
                             <expression name="valueExpr">row["thumbnail"]</expression>
                         </image>
@@ -1419,22 +650,7 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                     <cell id="1906"/>
                     <cell id="1907"/>
                     <cell id="1916"/>
-                    <cell id="1928"/>
-                    <cell id="2042"/>
-                    <cell id="1932"/>
-                    <cell id="1936"/>
-                    <cell id="1944"/>
-                    <cell id="1948"/>
-                    <cell id="1920"/>
-                    <cell id="1924"/>
-                    <cell id="1990"/>
-                    <cell id="1986"/>
-                    <cell id="2012"/>
-                    <cell id="1982"/>
-                    <cell id="1974"/>
-                    <cell id="2018"/>
-                    <cell id="2022"/>
-                    <cell id="2026"/>
+                    <cell id="2049"/>
                     <cell id="2037"/>
                 </row>
             </footer>
