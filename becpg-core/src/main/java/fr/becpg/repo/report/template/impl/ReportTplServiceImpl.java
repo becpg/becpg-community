@@ -196,7 +196,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 		InputStream in = null;
 		if(resource.exists()){
 			try {
-				in = resource.getInputStream();
+				in = new BufferedInputStream(resource.getInputStream());
 				reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  tplName);
 				
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -257,10 +257,9 @@ public class ReportTplServiceImpl implements ReportTplService{
 		
 		ClassPathResource resource = new ClassPathResource(xmlFilePath);
 		InputStream in = null;
-		BufferedInputStream bis = null;
 		if(resource.exists()){
 			try {
-				in = resource.getInputStream();
+				in = new BufferedInputStream(resource.getInputStream());
 				NodeRef xmlReportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 						resource.getFilename());
 
@@ -279,17 +278,16 @@ public class ReportTplServiceImpl implements ReportTplService{
 
 					String mimetype = mimetypeService.guessMimetype(xmlFilePath);
 					ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-					bis = new BufferedInputStream(in);
-					Charset charset = charsetFinder.getCharset(bis, mimetype);
+					Charset charset = charsetFinder.getCharset(in, mimetype);
 					String encoding = charset.name();
-
+					
+					
 					writer.setMimetype(mimetype);
 					writer.setEncoding(encoding);
 					writer.putContent(in);
 				}
 			} finally {
 				IOUtils.closeQuietly(in);
-				IOUtils.closeQuietly(bis);
 			}
 
     	}

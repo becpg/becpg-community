@@ -36,9 +36,7 @@ public class RepoConsts {
 	
 	/*-- Path --*/	
 	public static final String PATH_SEPARATOR 	= "/";
-	public static final String PATH_DICTIONARY = "dictionary";
-	public static final String PATH_CONFIGS = "configs";
-	public static final String PATH_MODELS = "models";
+
 	public static final String PATH_SYSTEM = "System";
 	public static final String PATH_CHARACTS = "Characts";
 	public static final String PATH_LISTS = "Lists";

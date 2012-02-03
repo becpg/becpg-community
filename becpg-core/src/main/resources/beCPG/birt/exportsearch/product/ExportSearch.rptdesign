@@ -7,7 +7,7 @@
     <property name="imageDPI">112</property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="7">
-            <property name="FILELIST">/home/quere/Documents/beCPG/dev/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/exportsearch/product/ExportSearchQuery.xml</property>
+            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/exportsearch/product/ExportSearchQuery.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -28,153 +28,181 @@ BirtDateTime.diffDay(row["created"], row["modified"])
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">id</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">id</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">name</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">name</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">description</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">description</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">legalName</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">legalName</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productHierarchy1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">productHierarchy1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productHierarchy2</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">productHierarchy2</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productState</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">productState</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productQty</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">productQty</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productUnit</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">productUnit</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productDensity</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">productDensity</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">eanCode</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">eanCode</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">code</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">code</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">creator</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">creator</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">modifier</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">modifier</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">coutMP</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">coutMP</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">coutMPPrev</property>
-                    <text-property name="heading">coutMPPrev</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">coutEmb</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">coutEmb</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">name_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">name_1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">description_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">description_1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">legalName_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">legalName_1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productHierarchy1_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">productHierarchy1_1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productHierarchy2_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">productHierarchy2_1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productState_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">productState_1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productQty_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">productQty_1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productUnit_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">productUnit_1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productDensity_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">productDensity_1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">eanCode_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">eanCode_1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">code_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">code_1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">suppliers</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">suppliers</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">coutMP_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">coutMP_1</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">coutMPPrev_1</property>
-                    <text-property name="heading">coutMPPrev_1</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">coutEmb_1</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">coutEmb_1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">nutProteines</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">nutProteines</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">nutLipides</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">nutLipides</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">nutGlucides</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">nutGlucides</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">modified</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">modified</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">created</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">created</text-property>
                 </structure>
             </list-property>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -254,116 +282,106 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                     </structure>
                     <structure>
                         <property name="position">16</property>
-                        <property name="name">coutMPPrev</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">17</property>
                         <property name="name">coutEmb</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">18</property>
+                        <property name="position">17</property>
                         <property name="name">name_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">19</property>
+                        <property name="position">18</property>
                         <property name="name">description_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">20</property>
+                        <property name="position">19</property>
                         <property name="name">legalName_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">21</property>
+                        <property name="position">20</property>
                         <property name="name">productHierarchy1_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">22</property>
+                        <property name="position">21</property>
                         <property name="name">productHierarchy2_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">23</property>
+                        <property name="position">22</property>
                         <property name="name">productState_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">24</property>
+                        <property name="position">23</property>
                         <property name="name">productQty_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">25</property>
+                        <property name="position">24</property>
                         <property name="name">productUnit_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">26</property>
+                        <property name="position">25</property>
                         <property name="name">productDensity_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">27</property>
+                        <property name="position">26</property>
                         <property name="name">eanCode_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">28</property>
+                        <property name="position">27</property>
                         <property name="name">code_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">29</property>
+                        <property name="position">28</property>
                         <property name="name">suppliers</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">30</property>
+                        <property name="position">29</property>
                         <property name="name">coutMP_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">31</property>
-                        <property name="name">coutMPPrev_1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">32</property>
+                        <property name="position">30</property>
                         <property name="name">coutEmb_1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">33</property>
+                        <property name="position">31</property>
                         <property name="name">nutProteines</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">34</property>
+                        <property name="position">32</property>
                         <property name="name">nutLipides</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">35</property>
+                        <property name="position">33</property>
                         <property name="name">nutGlucides</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">36</property>
+                        <property name="position">34</property>
                         <property name="name">modified</property>
                         <property name="dataType">date</property>
                     </structure>
                     <structure>
-                        <property name="position">37</property>
+                        <property name="position">35</property>
                         <property name="name">created</property>
                         <property name="dataType">date</property>
                     </structure>
                     <structure>
-                        <property name="position">38</property>
+                        <property name="position">36</property>
                         <property name="name">ToValidateDuration</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -376,225 +394,248 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                     <property name="name">id</property>
                     <property name="nativeName">id</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
                     <property name="name">name</property>
                     <property name="nativeName">name</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">3</property>
                     <property name="name">description</property>
                     <property name="nativeName">description</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
                     <property name="name">legalName</property>
                     <property name="nativeName">legalName</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
                     <property name="name">productHierarchy1</property>
                     <property name="nativeName">productHierarchy1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">6</property>
                     <property name="name">productHierarchy2</property>
                     <property name="nativeName">productHierarchy2</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">7</property>
                     <property name="name">productState</property>
                     <property name="nativeName">productState</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
                     <property name="name">productQty</property>
                     <property name="nativeName">productQty</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">9</property>
                     <property name="name">productUnit</property>
                     <property name="nativeName">productUnit</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">10</property>
                     <property name="name">productDensity</property>
                     <property name="nativeName">productDensity</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">11</property>
                     <property name="name">eanCode</property>
                     <property name="nativeName">eanCode</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">12</property>
                     <property name="name">code</property>
                     <property name="nativeName">code</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">13</property>
                     <property name="name">creator</property>
                     <property name="nativeName">creator</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">14</property>
                     <property name="name">modifier</property>
                     <property name="nativeName">modifier</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">15</property>
                     <property name="name">coutMP</property>
                     <property name="nativeName">coutMP</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">16</property>
-                    <property name="name">coutMPPrev</property>
-                    <property name="nativeName">coutMPPrev</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">17</property>
                     <property name="name">coutEmb</property>
                     <property name="nativeName">coutEmb</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">18</property>
+                    <property name="position">17</property>
                     <property name="name">name_1</property>
                     <property name="nativeName">name_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">19</property>
+                    <property name="position">18</property>
                     <property name="name">description_1</property>
                     <property name="nativeName">description_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">20</property>
+                    <property name="position">19</property>
                     <property name="name">legalName_1</property>
                     <property name="nativeName">legalName_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">21</property>
+                    <property name="position">20</property>
                     <property name="name">productHierarchy1_1</property>
                     <property name="nativeName">productHierarchy1_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">22</property>
+                    <property name="position">21</property>
                     <property name="name">productHierarchy2_1</property>
                     <property name="nativeName">productHierarchy2_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">23</property>
+                    <property name="position">22</property>
                     <property name="name">productState_1</property>
                     <property name="nativeName">productState_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">24</property>
+                    <property name="position">23</property>
                     <property name="name">productQty_1</property>
                     <property name="nativeName">productQty_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">25</property>
+                    <property name="position">24</property>
                     <property name="name">productUnit_1</property>
                     <property name="nativeName">productUnit_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">26</property>
+                    <property name="position">25</property>
                     <property name="name">productDensity_1</property>
                     <property name="nativeName">productDensity_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">27</property>
+                    <property name="position">26</property>
                     <property name="name">eanCode_1</property>
                     <property name="nativeName">eanCode_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">28</property>
+                    <property name="position">27</property>
                     <property name="name">code_1</property>
                     <property name="nativeName">code_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">29</property>
+                    <property name="position">28</property>
                     <property name="name">suppliers</property>
                     <property name="nativeName">suppliers</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">30</property>
+                    <property name="position">29</property>
                     <property name="name">coutMP_1</property>
                     <property name="nativeName">coutMP_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">31</property>
-                    <property name="name">coutMPPrev_1</property>
-                    <property name="nativeName">coutMPPrev_1</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">32</property>
+                    <property name="position">30</property>
                     <property name="name">coutEmb_1</property>
                     <property name="nativeName">coutEmb_1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">33</property>
+                    <property name="position">31</property>
                     <property name="name">nutProteines</property>
                     <property name="nativeName">nutProteines</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">34</property>
+                    <property name="position">32</property>
                     <property name="name">nutLipides</property>
                     <property name="nativeName">nutLipides</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">35</property>
+                    <property name="position">33</property>
                     <property name="name">nutGlucides</property>
                     <property name="nativeName">nutGlucides</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">36</property>
+                    <property name="position">34</property>
                     <property name="name">modified</property>
                     <property name="nativeName">modified</property>
                     <property name="dataType">date</property>
+                    <property name="nativeDataType">91</property>
                 </structure>
                 <structure>
-                    <property name="position">37</property>
+                    <property name="position">35</property>
                     <property name="name">created</property>
                     <property name="nativeName">created</property>
                     <property name="dataType">date</property>
+                    <property name="nativeDataType">91</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/export/nodes/node]#:#{id;STRING;/@id},{name;STRING;/@name},{description;STRING;/@description},{legalName;STRING;/@legalName},{productHierarchy1;STRING;/@productHierarchy1},{productHierarchy2;STRING;/@productHierarchy2},{productState;STRING;/@productState},{productQty;STRING;/@productQty},{productUnit;STRING;/@productUnit},{productDensity;STRING;/@productDensity},{eanCode;STRING;/@eanCode},{code;STRING;/@code},{creator;STRING;/@creator},{modifier;STRING;/@modifier},{coutMP;STRING;/@coutMP},{coutMPPrev;STRING;/@coutMPPrev},{coutEmb;STRING;/@coutEmb},{name_1;STRING;/@name},{description_1;STRING;/@description},{legalName_1;STRING;/@legalName},{productHierarchy1_1;STRING;/@productHierarchy1},{productHierarchy2_1;STRING;/@productHierarchy2},{productState_1;STRING;/@productState},{productQty_1;STRING;/@productQty},{productUnit_1;STRING;/@productUnit},{productDensity_1;STRING;/@productDensity},{eanCode_1;STRING;/@eanCode},{code_1;STRING;/@code},{suppliers;STRING;/@suppliers},{coutMP_1;STRING;/@coutMP},{coutMPPrev_1;STRING;/@coutMPPrev},{coutEmb_1;STRING;/@coutEmb},{nutProteines;STRING;/@nutProteines},{nutLipides;STRING;/@nutLipides},{nutGlucides;STRING;/@nutGlucides},{modified;DATE;/@modified},{created;DATE;/@created}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/export/nodes/node]#:#{id;STRING;/@id},{name;STRING;/@name},{description;STRING;/@description},{legalName;STRING;/@legalName},{productHierarchy1;STRING;/@productHierarchy1},{productHierarchy2;STRING;/@productHierarchy2},{productState;STRING;/@productState},{productQty;STRING;/@productQty},{productUnit;STRING;/@productUnit},{productDensity;STRING;/@productDensity},{eanCode;STRING;/@eanCode},{code;STRING;/@code},{creator;STRING;/@creator},{modifier;STRING;/@modifier},{coutMP;STRING;/@coutMP},{coutEmb;STRING;/@coutEmb},{name_1;STRING;/@name},{description_1;STRING;/@description},{legalName_1;STRING;/@legalName},{productHierarchy1_1;STRING;/@productHierarchy1},{productHierarchy2_1;STRING;/@productHierarchy2},{productState_1;STRING;/@productState},{productQty_1;STRING;/@productQty},{productUnit_1;STRING;/@productUnit},{productDensity_1;STRING;/@productDensity},{eanCode_1;STRING;/@eanCode},{code_1;STRING;/@code},{suppliers;STRING;/@suppliers},{coutMP_1;STRING;/@coutMP},{coutEmb_1;STRING;/@coutEmb},{nutProteines;STRING;/@nutProteines},{nutLipides;STRING;/@nutLipides},{nutGlucides;STRING;/@nutGlucides},{modified;DATE;/@modified},{created;DATE;/@created}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -866,12 +907,6 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">coutMPPrev</property>
-                    <text-property name="displayName">coutMPPrev</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["coutMPPrev"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
                     <property name="name">coutEmb</property>
                     <text-property name="displayName">coutEmb</text-property>
                     <expression name="expression" type="javascript">dataSetRow["coutEmb"]</expression>
@@ -953,12 +988,6 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                     <property name="name">coutMP_1</property>
                     <text-property name="displayName">coutMP_1</text-property>
                     <expression name="expression" type="javascript">dataSetRow["coutMP_1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">coutMPPrev_1</property>
-                    <text-property name="displayName">coutMPPrev_1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["coutMPPrev_1"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -1075,10 +1104,6 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                 <property name="width">0.6428571428571429in</property>
                 <property name="style">beCPG-table-col</property>
             </column>
-            <column id="1979">
-                <property name="width">0.8660714285714286in</property>
-                <property name="style">beCPG-table-col</property>
-            </column>
             <column id="1975">
                 <property name="width">0.8660714285714286in</property>
                 <property name="style">beCPG-table-col</property>
@@ -1190,11 +1215,6 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                     <cell id="1980">
                         <label id="1998">
                             <text-property name="text">Coût MP</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1976">
-                        <label id="2000">
-                            <text-property name="text">Coût Prévisionel MP</text-property>
                         </label>
                     </cell>
                     <cell id="1972">
@@ -1357,12 +1377,6 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                             <property name="resultSetColumn">coutMP</property>
                         </data>
                     </cell>
-                    <cell id="1977">
-                        <data id="2001">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">coutMPPrev</property>
-                        </data>
-                    </cell>
                     <cell id="1973">
                         <data id="2003">
                             <property name="whiteSpace">nowrap</property>
@@ -1417,7 +1431,6 @@ BirtDateTime.diffDay(row["created"], row["modified"])
                     <cell id="1986"/>
                     <cell id="2012"/>
                     <cell id="1982"/>
-                    <cell id="1978"/>
                     <cell id="1974"/>
                     <cell id="2018"/>
                     <cell id="2022"/>

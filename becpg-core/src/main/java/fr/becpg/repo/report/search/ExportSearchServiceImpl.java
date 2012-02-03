@@ -495,15 +495,18 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		}
 		
 		ContentReader reader = contentService.getReader(queryNodeRef, ContentModel.PROP_CONTENT);
-		InputStream is = reader.getContentInputStream();
+		InputStream is = null;
 		SAXReader saxReader = new SAXReader();
 		
 		try{
+			is = reader.getContentInputStream();
 			Document doc = saxReader.read(is);
 			queryElt = doc.getRootElement();
 		}
 		catch(DocumentException e){
-			logger.error(String.format("Failed to read the query file", e));
+			logger.error("Failed to read the query file",e);
+		} finally {
+			IOUtils.closeQuietly(is);
 		}
 		
 		// date format

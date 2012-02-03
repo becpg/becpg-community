@@ -1,0 +1,6 @@
+<webscript>
+	<shortname>Get report datasource</shortname>
+	<description>Get report datasource for nodeRef</description>	
+	<url>/becpg/report/datasource?nodeRef={nodeRef}</url>
+	<authentication>user</authentication>
+</webscript>

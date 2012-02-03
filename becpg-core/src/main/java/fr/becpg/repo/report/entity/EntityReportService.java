@@ -20,4 +20,12 @@ public interface EntityReportService {
 	 */
 	public void generateReport(NodeRef entityNodeRef);
 
+	
+	/**
+	 * Retrieve XML report dataSource 
+	 * @param entityNodeRef
+	 * @return
+	 */
+	public String getXmlReportDataSource(NodeRef entityNodeRef);
+
 }

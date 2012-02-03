@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.json.JSONException;
@@ -37,7 +38,12 @@ public abstract class AbstractSearchWebSrcipt extends AbstractWebScript {
 
 	/** The Constant PARAM_REPOSITORY. */
 	protected static final String PARAM_REPOSITORY = "repo";
+	
+	/** The Constant PARAM_NODEREF. */
+	protected static final String PARAM_NODEREF = "nodeRef";
 
+	protected static final String PARAM_ITEMTYPE = "itemType";
+	
 	/** Pagination **/
 
 	protected static final String PARAM_PAGE = "page";
@@ -53,6 +59,8 @@ public abstract class AbstractSearchWebSrcipt extends AbstractWebScript {
 
 	/** Services **/
 
+	protected NodeService nodeService;
+	
 	protected AdvSearchService advSearchService;
 
 	public void setAdvSearchService(AdvSearchService advSearchService) {
@@ -64,6 +72,13 @@ public abstract class AbstractSearchWebSrcipt extends AbstractWebScript {
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
+	
+
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+
+
 
 	protected Map<String, Boolean> extractSortMap(String sort) {
 
@@ -122,6 +137,20 @@ public abstract class AbstractSearchWebSrcipt extends AbstractWebScript {
 		String siteId = req.getParameter(PARAM_SITE);
 		String containerId = req.getParameter(PARAM_CONTAINER);
 		String repo = req.getParameter(PARAM_REPOSITORY);
+		String itemType = req.getParameter(PARAM_ITEMTYPE);
+		String searchQuery = null;
+		
+		String nodeRef = req.getParameter(PARAM_NODEREF);
+		if(nodeRef!=null && !nodeRef.isEmpty()){
+			searchQuery += " -TYPE:\"cm:systemfolder\""
+					+ " -@cm\\:lockType:READ_ONLY_LOCK"
+					+ " -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\"";
+			searchQuery += " +PATH:\"" + getPath(nodeRef) + "//*\"";
+			if (itemType != null && !itemType.isEmpty()) {
+				searchQuery += " +TYPE:\"" + itemType + "\"";
+			}
+		}
+		
 		QName datatype = null;
 		Map<String, String> criteriaMap = null;
 		
@@ -141,9 +170,14 @@ public abstract class AbstractSearchWebSrcipt extends AbstractWebScript {
 		
 
 
-		return advSearchService.queryAdvSearch(null, datatype, term, tag, criteriaMap, isRepo, siteId, containerId,
+		return advSearchService.queryAdvSearch(searchQuery, datatype, term, tag, criteriaMap, isRepo, siteId, containerId,
 				sortMap, maxResults!=null ? maxResults : -1);
 
+	}
+
+
+	private String getPath(String nodeRef) {
+		return nodeService.getPath(new NodeRef(nodeRef)).toPrefixString(namespaceService);
 	}
 
 }

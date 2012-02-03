@@ -217,7 +217,7 @@ public class PropertyServiceImpl implements PropertyService {
 		Map<String, Object> ret = new LinkedHashMap<String, Object>();
 
 		TypeDefinition typeDef = dictionaryService.getType(itemType);
-
+		Integer order = 0;
 		for (String field : metadataFields) {
 			QName fieldQname =  QName.createQName(field, namespaceService);
 			
@@ -239,7 +239,9 @@ public class PropertyServiceImpl implements PropertyService {
 					}
 				}
 
-				if(tmp!=null){
+				if(tmp!=null && tmp.size()>0){
+					logger.debug("Extract field : "+field);
+					tmp.put("order", order++);
 					ret.put(field, tmp);
 				} 
 			}
@@ -272,7 +274,7 @@ public class PropertyServiceImpl implements PropertyService {
 	}
 
 	private Map<String, Object> extractNodeData(NodeRef nodeRef, ClassAttributeDefinition attribute) {
-		Map<String, Object> tmp = new LinkedHashMap<String, Object>();
+		Map<String, Object> tmp = new HashMap<String, Object>();
 		String value = "";
 		// property
 		if (attribute instanceof PropertyDefinition) {

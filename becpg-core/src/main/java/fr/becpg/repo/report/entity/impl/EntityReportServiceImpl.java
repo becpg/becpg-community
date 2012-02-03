@@ -166,6 +166,13 @@ public class EntityReportServiceImpl implements EntityReportService{
 		
 	}
 	
+	@Override
+	public String getXmlReportDataSource(NodeRef entityNodeRef){
+		EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
+		
+		return reportData.getXmlDataSource().asXML();
+	}
+	
 	
 	
 	private EntityReportExtractor retrieveExtractor(NodeRef entityNodeRef) {

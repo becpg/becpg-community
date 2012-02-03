@@ -4,13 +4,9 @@
 package fr.becpg.repo.web.scripts.search;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
@@ -99,8 +95,6 @@ public class SearchWebScript extends AbstractSearchWebSrcipt {
 		}
 		try {
 			List<NodeRef> results = doSearch(req, maxResults);
-
-			removeDuplicate(results);
 			
 			if (page == null) {
 				page = 1;
@@ -124,7 +118,7 @@ public class SearchWebScript extends AbstractSearchWebSrcipt {
 			
 			res.setContentType("application/json");
             res.setContentEncoding("UTF-8");
-			res.getWriter().write(ret.toString());
+			res.getWriter().write(ret.toString(3));
 			
 			
 
@@ -140,18 +134,6 @@ public class SearchWebScript extends AbstractSearchWebSrcipt {
 
 	}
 
-	private void removeDuplicate(List<NodeRef> results) {
-		Set<NodeRef> set = new HashSet<NodeRef>();
-		List<NodeRef> newList = new ArrayList<NodeRef>();
-		for (Iterator<NodeRef> iter = results.iterator(); iter.hasNext();) {
-			NodeRef element = iter.next();
-			if (set.add(element))
-				newList.add(element);
-		}
-		results.clear();
-		results.addAll(newList);
-
-	}
 
 	private Integer getNumParameter(WebScriptRequest req, String paramName) {
 		String param = req.getParameter(paramName);
@@ -175,7 +157,7 @@ public class SearchWebScript extends AbstractSearchWebSrcipt {
 		for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
 			NodeRef nodeRef = (NodeRef) iterator.next();
 			if(serviceRegistry.getNodeService().exists(nodeRef)){
-				items.put(toJSON(getExtractor(nodeRef, metadataFields).extract(nodeRef)));
+				items.put(new JSONObject(getExtractor(nodeRef, metadataFields).extract(nodeRef)));
 			}
 		}
 
@@ -185,24 +167,24 @@ public class SearchWebScript extends AbstractSearchWebSrcipt {
 
 	}
 
-	@SuppressWarnings("unchecked")
-	private JSONObject toJSON(Map<String, Object> datas) throws JSONException {
-		JSONObject item = new JSONObject();
-
-		for (String key : datas.keySet()) {
-			Object value = datas.get(key);
-			if (value != null) {
-				if (value instanceof Map) {
-					item.put(key, toJSON((Map<String, Object>) value));
-				} else {
-					item.put(key, value);
-				}
-			}
-
-		}
-
-		return item;
-	}
+//	@SuppressWarnings("unchecked")
+//	private JSONObject toJSON(Map<String, Object> datas) throws JSONException {
+//		JSONObject item = new JSONObject();
+//     
+//		for (String key : datas.keySet()) {
+//			Object value = datas.get(key);
+//			if (value != null) {
+//				if (value instanceof Map) {
+//					item.put(key, toJSON((Map<String, Object>) value));
+//				} else {
+//					item.put(key, value);
+//				}
+//			}
+//
+//		}
+//
+//		return item;
+//	}
 
 	private NodeDataExtractor getExtractor(NodeRef nodeRef, List<String> metadataFields) {
 

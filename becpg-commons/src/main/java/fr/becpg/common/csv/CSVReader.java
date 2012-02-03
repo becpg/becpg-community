@@ -124,7 +124,7 @@ public class CSVReader {
      * @throws IOException
      *             if bad things happen during the read
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
 	public List readAll() throws IOException {
 
         List allElements = new ArrayList();

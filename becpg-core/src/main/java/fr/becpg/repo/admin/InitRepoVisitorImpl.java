@@ -17,7 +17,6 @@ import org.alfresco.repo.action.evaluator.CompareMimeTypeEvaluator;
 import org.alfresco.repo.action.evaluator.ComparePropertyValueEvaluator;
 import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
 import org.alfresco.repo.action.evaluator.compare.ComparePropertyValueOperation;
-import org.alfresco.repo.action.executer.AddFeaturesActionExecuter;
 import org.alfresco.repo.action.executer.SpecialiseTypeActionExecuter;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.service.cmr.action.Action;
@@ -50,7 +49,6 @@ import fr.becpg.model.VariantModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
-import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -201,11 +199,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		// System
 		logger.debug("Visit folders");
 		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM);
-
-		//Data dictionnary
-		NodeRef dictionnary = visitFolder(companyHome, RepoConsts.PATH_DICTIONARY);
-		visitFolder(dictionnary, RepoConsts.PATH_CONFIGS); 
-		visitFolder(dictionnary, RepoConsts.PATH_MODELS); 
 		
 		
 		// Lists of characteristics
@@ -459,75 +452,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			rule.setRuleType(RuleType.INBOUND);
 			rule.setAction(compositeAction);
 			ruleService.saveRule(nodeRef, rule);
-		} else if(folderName == RepoConsts.PATH_MODELS){
-			// action
-			CompositeAction compositeAction = actionService.createCompositeAction();
-		    Map<String,Serializable> params = new HashMap<String, Serializable>();
-	  	  	params.put(AddFeaturesActionExecuter.PARAM_ASPECT_NAME, DesignerModel.ASPECT_MODEL);
-			Action action = actionService.createAction(AddFeaturesActionExecuter.NAME, params);
-			compositeAction.addAction(action);
-
-			// compare-mime-type == text/xml
-			ActionCondition conditionOnMimeType = actionService.createActionCondition(CompareMimeTypeEvaluator.NAME);
-			conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, MimetypeMap.MIMETYPE_XML);
-			conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY,
-					ContentModel.PROP_CONTENT);
-			conditionOnMimeType.setInvertCondition(false);
-			compositeAction.addActionCondition(conditionOnMimeType);
-
-			// compare-name == *.xml
-			ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
-			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION,
-					ComparePropertyValueOperation.ENDS.toString());
-			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, ".xml");
-			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
-			conditionOnName.setInvertCondition(false);
-			compositeAction.addActionCondition(conditionOnName);
-
-			// rule
-			Rule rule = new Rule();
-			rule.setRuleType(RuleType.INBOUND);
-			rule.setAction(compositeAction);
-			rule.applyToChildren(true);
-			rule.setTitle("Add model aspect");
-			rule.setExecuteAsynchronously(true);
-			rule.setDescription("Add model aspect to xml file");
-			ruleService.saveRule(nodeRef, rule);
-		} else if(folderName == RepoConsts.PATH_CONFIGS){
-			// action
-			CompositeAction compositeAction = actionService.createCompositeAction();
-			Map<String, Serializable> params = new HashMap<String, Serializable>();
-			params.put(AddFeaturesActionExecuter.PARAM_ASPECT_NAME, DesignerModel.ASPECT_CONFIG);
-			Action action = actionService.createAction(AddFeaturesActionExecuter.NAME, params);
-			compositeAction.addAction(action);
-
-			// compare-mime-type == text/xml
-			ActionCondition conditionOnMimeType = actionService.createActionCondition(CompareMimeTypeEvaluator.NAME);
-			conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, MimetypeMap.MIMETYPE_XML);
-			conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY,
-					ContentModel.PROP_CONTENT);
-			conditionOnMimeType.setInvertCondition(false);
-			compositeAction.addActionCondition(conditionOnMimeType);
-
-			// compare-name == *.xml
-			ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
-			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION,
-					ComparePropertyValueOperation.ENDS.toString());
-			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, ".xml");
-			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
-			conditionOnName.setInvertCondition(false);
-			compositeAction.addActionCondition(conditionOnName);
-
-			// rule
-			Rule rule = new Rule();
-			rule.setRuleType(RuleType.INBOUND);
-			rule.setAction(compositeAction);
-			rule.applyToChildren(true);
-			rule.setTitle("Add config aspect");
-			rule.setExecuteAsynchronously(true);
-			rule.setDescription("Add config aspect to xml file");
-			ruleService.saveRule(nodeRef, rule);
-		} else if (folderName == RepoConsts.PATH_SECURITY) {
+		}  else if (folderName == RepoConsts.PATH_SECURITY) {
 			specialiseType = SecurityModel.TYPE_ACL_GROUP;
 		} else if (folderName == RepoConsts.PATH_ECO) {
 			specialiseType = ECMModel.TYPE_ECO;

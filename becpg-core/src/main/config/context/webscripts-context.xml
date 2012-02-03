@@ -122,6 +122,12 @@
    		<property name="reportTplService" ref="reportTplService" />
    	</bean>
    	
+   	<!-- Report  -->
+   	 
+   	 <bean id="webscript.fr.becpg.report.reportDataSource.get" class="fr.becpg.repo.web.scripts.report.ReportDataSourceWebscript" parent="webscript">
+   		<property name="entityReportService" ref="entityReportService" />
+   	</bean>
+   	
    	<!-- Debug -->
    	<bean id="webscript.fr.becpg.debug.restoreArchivedNode.get" class="fr.becpg.repo.web.scripts.debug.RestoreArchivedNodeWebScript" parent="webscript">
       	<property name="nodeService" ref="nodeService" />      	

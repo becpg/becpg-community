@@ -26,7 +26,7 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 	
 	protected PropertyService propertyService;
 
-	protected static String PROP_NODEREF = "nodeRef";
+	protected static final String PROP_NODEREF = "nodeRef";
 	protected static final String PROP_TAGS = "tags";
 	protected static final String PROP_DISPLAYNAME = "displayName";
 	protected static final String PROP_NAME = "name";
@@ -83,7 +83,7 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 					if(siteId!=null){
 						site = siteService.getSite(siteId);
 					}
-					
+					//Keep order
 					Map<String, Object> ret = doExtract(nodeRef, itemType, site);
 					
 					ret.put(PROP_ITEMTYPE, itemType.toPrefixString(services.getNamespaceService()));
