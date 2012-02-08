@@ -65,6 +65,11 @@ var Filters =
       // Common types and aspects to filter from the UI
       var filterQueryDefaults =
          " -TYPE:\"systemfolder\"" +
+         " -TYPE:\"fm:forums\"" +
+         " -TYPE:\"fm:forum\"" +
+         " -TYPE:\"fm:topic\"" +
+         " -TYPE:\"fm:post\"" +
+         " -TYPE:\"cm:systemfolder\"" +
          " -@cm\\:lockType:READ_ONLY_LOCK";
 
       switch (String(filter.filterId))

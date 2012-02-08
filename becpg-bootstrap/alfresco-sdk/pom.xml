@@ -567,7 +567,6 @@
 			<groupId>org.alfresco.sdk</groupId>
 			<artifactId>config</artifactId>
 			<version>${alfresco.version}</version>
-
 			<classifier>community</classifier>
 		</dependency>
 		<dependency>
