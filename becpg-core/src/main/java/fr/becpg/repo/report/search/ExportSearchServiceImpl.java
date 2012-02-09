@@ -114,6 +114,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	
 	/** The Constant VALUE_NULL. */
 	public static final String VALUE_NULL = "";
+	private static final String VALUE_PERSON = "%s %s";
 	
 	/** The Constant KEY_IMAGE_NODE_IMG. */
 	public static final String KEY_IMAGE_NODE_IMG = "node%s-%s";
@@ -432,7 +433,16 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 				if(!value.isEmpty())
 					value += RepoConsts.LABEL_SEPARATOR;
 				
-				value += (String)nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME);
+				NodeRef targetNodeRef = assocRef.getTargetRef();
+				QName targetQName = nodeService.getType(targetNodeRef);						
+				
+				if(targetQName.equals(ContentModel.TYPE_PERSON)){
+					value = String.format(VALUE_PERSON, (String)nodeService.getProperty(targetNodeRef, ContentModel.PROP_FIRSTNAME),
+									(String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_LASTNAME));
+				}
+				else{
+					value = (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
+				}					
 			}
 		}
 		

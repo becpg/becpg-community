@@ -40,7 +40,7 @@
 		<node id="1" code="22223333" name="Assortiment de 10 sushis (4S + 4T + 2D)" description="descr" legalName="Assortiments de 10 sushis (3 saumons + 3 thons + 2 dorades)"
 			productHierarchy1="hierarchy1.1" productHierarchy2="hierarchy1.2" eanCode="1112222" />
 			
-		<node id="1" code="22223333" name="Assortiment de 8 sushis (4S + 4T)" description="descr" legalName="Assortiments de 8 sushis (3 saumons + 3 thons)"
-			productHierarchy1="hierarchy2.1" productHierarchy2="hierarchy2.2" eanCode="1112222"  />
+		<node id="1" code="22224444" name="Assortiment de 8 sushis (4S + 4T)" description="descr2" legalName="Assortiments de 8 sushis (3 saumons + 3 thons)"
+			productHierarchy1="hierarchy2.1" productHierarchy2="hierarchy2.2" eanCode="22224444"  />
 	</nodes>
 </export>

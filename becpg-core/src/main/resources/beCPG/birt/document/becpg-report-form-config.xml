@@ -1,6 +1,6 @@
 <alfresco-config>
 
-	<!-- bcpg:finishedProduct type (existing nodes) -->
+		<!-- bcpg:finishedProduct type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:finishedProduct">
 		<forms>
 			<form>
@@ -14,20 +14,44 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />					
 					<show id="bcpg:code" />
-					<show id="bcpg:eanCode" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:eanCode" />				
+					<show id="bcpg:subsidiary" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:trademark" force="true" />
 					<show id="bcpg:clients" />
-					<show id="rep:reportTpls" />
-					<show id="bcpg:productState" />					
+					<show id="rep:reportTpls" />									
 
 					<!-- formulation -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
-
+					<show id="bcpg:productSpecification" />
+					<show id="bcpg:productMicrobioCriteria" />
+					<show id="bcpg:useByDate" force="true" />
+					
+					<!-- Profitability -->
+					<show id="bcpg:unitPrice" force="true" />
+					<show id="bcpg:unitTotalCost" force="true" />
+					<show id="bcpg:priceCurrency" force="true" />					
+					<show id="bcpg:breakEven" force="true" />
+					<show id="bcpg:projectedQty" force="true" />					
+					<show id="bcpg:profitability" force="true" />
+					
+					<!-- NPD -->
+					<show id="npd:npdNumber" />
+					<show id="npd:npdType" />
+					<show id="npd:npdStatus" />					
+					<show id="npd:npdInitiator" />
+					
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
 
+					<!-- Effectivity 
+					<show id="bcpg:startEffectivity" for-mode="view" />
+					-->
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
 					<show id="cm:created" for-mode="view" />
@@ -39,8 +63,12 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="formulation" appearance="bordered-panel" label="Formulation"
+					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
+					<set id="profitability" appearance="bordered-panel" label="Rentabilité"
+						template="/fr/becpg/components/form/3-column-set.ftl" />
+					<set id="npd" appearance="bordered-panel" label="NPD"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel" label="Catégories"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label="Audit"
@@ -56,13 +84,14 @@
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProductHierarchy/FinishedProduct_Hierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -71,6 +100,7 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" read-only="true" set="mainInfo">
@@ -78,23 +108,45 @@
 							template="/fr/becpg/components/form/controls/product/productState.ftl" />
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:clients" force="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
-					<field id="rep:reportTpls" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/productreport/reports/FinishedProduct
-							</control-param>
-						</control>
-					</field>
-					
+					<field id="bcpg:subsidiary" set="mainInfo"/>
+					<field id="bcpg:plants" set="mainInfo"/>
+					<field id="bcpg:trademark" set="mainInfo"/>
+					<field id="bcpg:clients" set="mainInfo"/>						
+					<field id="rep:reportTpls" set="mainInfo"/>
+						
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:productSpecification" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
+					</field>
+					<field id="bcpg:productMicrobioCriteria" set="formulation">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="style">width:200px</control-param>
+						</control>	
+					</field>			
+					<field id="bcpg:useByDate" set="formulation" />		
+					
+					<!-- profitability -->
+					<field id="bcpg:unitPrice"  set="profitability" />
+					<field id="bcpg:unitTotalCost" read-only="true" set="profitability" />
+					<field id="bcpg:priceCurrency"  set="profitability" />					
+					<field id="bcpg:breakEven" read-only="true" set="profitability" />
+					<field id="bcpg:projectedQty" set="profitability" />
+					<field id="bcpg:profitability" read-only="true" set="profitability" />
+					
+					<!-- NPD -->
+					<field id="npd:npdNumber" set="npd" />
+					<field id="npd:npdType" set="npd" />
+					<field id="npd:npdStatus" set="npd" />					
+					<field id="npd:npdInitiator" set="npd" />			
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -112,7 +164,9 @@
 							<control-param name="compactMode">true</control-param>
 						</control>
 					</field>
-
+					<!-- Effectivity 
+					<field id="bcpg:startEffectivity" set="audit" />
+					-->
 					<!-- audit -->
 					<field id="cm:creator" set="audit" />
 					<field id="cm:created" set="audit" />

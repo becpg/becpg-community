@@ -535,7 +535,7 @@
                     <property name="style">beCPG-Table-Header</property>
                     <cell id="2097">
                         <label id="2148">
-                            <text-property name="text">Com</text-property>
+                            <text-property name="text">Commercial</text-property>
                         </label>
                     </cell>
                     <cell id="2094">

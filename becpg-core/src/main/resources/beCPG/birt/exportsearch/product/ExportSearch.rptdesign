@@ -529,7 +529,7 @@
                     </cell>
                     <cell id="2035">
                         <label id="2062">
-                            <text-property name="text">id</text-property>
+                            <text-property name="text">Photo</text-property>
                         </label>
                     </cell>
                 </row>
@@ -538,63 +538,12 @@
                 <row id="1894">
                     <property name="style">beCPG-table-row</property>
                     <cell id="2005">
-                        <data id="2055">
+                        <data id="2064">
                             <property name="resultSetColumn">code</property>
                         </data>
                     </cell>
                     <cell id="1895">
-                        <data id="2056">
-                            <property name="dataSet">nodes</property>
-                            <list-property name="boundDataColumns">
-                                <structure>
-                                    <property name="name">id</property>
-                                    <text-property name="displayName">id</text-property>
-                                    <expression name="expression" type="javascript">dataSetRow["id"]</expression>
-                                    <property name="dataType">string</property>
-                                </structure>
-                                <structure>
-                                    <property name="name">code</property>
-                                    <text-property name="displayName">code</text-property>
-                                    <expression name="expression" type="javascript">dataSetRow["code"]</expression>
-                                    <property name="dataType">string</property>
-                                </structure>
-                                <structure>
-                                    <property name="name">name</property>
-                                    <text-property name="displayName">name</text-property>
-                                    <expression name="expression" type="javascript">dataSetRow["name"]</expression>
-                                    <property name="dataType">string</property>
-                                </structure>
-                                <structure>
-                                    <property name="name">description</property>
-                                    <text-property name="displayName">description</text-property>
-                                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
-                                    <property name="dataType">string</property>
-                                </structure>
-                                <structure>
-                                    <property name="name">legalName</property>
-                                    <text-property name="displayName">legalName</text-property>
-                                    <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
-                                    <property name="dataType">string</property>
-                                </structure>
-                                <structure>
-                                    <property name="name">productHierarchy1</property>
-                                    <text-property name="displayName">productHierarchy1</text-property>
-                                    <expression name="expression" type="javascript">dataSetRow["productHierarchy1"]</expression>
-                                    <property name="dataType">string</property>
-                                </structure>
-                                <structure>
-                                    <property name="name">productHierarchy2</property>
-                                    <text-property name="displayName">productHierarchy2</text-property>
-                                    <expression name="expression" type="javascript">dataSetRow["productHierarchy2"]</expression>
-                                    <property name="dataType">string</property>
-                                </structure>
-                                <structure>
-                                    <property name="name">eanCode</property>
-                                    <text-property name="displayName">eanCode</text-property>
-                                    <expression name="expression" type="javascript">dataSetRow["eanCode"]</expression>
-                                    <property name="dataType">string</property>
-                                </structure>
-                            </list-property>
+                        <data id="2063">
                             <property name="resultSetColumn">name</property>
                         </data>
                     </cell>
@@ -627,6 +576,14 @@
                         <image id="2039">
                             <property name="height">0.6517857142857143in</property>
                             <property name="width">0.7678571428571429in</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">if(row["thumbnail"] == null){
+true
+}</expression>
+                                </structure>
+                            </list-property>
                             <list-property name="boundDataColumns">
                                 <structure>
                                     <property name="name">thumbnail</property>
