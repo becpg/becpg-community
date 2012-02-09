@@ -127,7 +127,7 @@ public class NpdInstancesGet extends AbstractWorkflowWebscript
         }
 
         // create and return results, paginated if necessary
-        return createResultModel(modelBuilder, req, "workflowInstances", results);
+        return createResultModel(req, "workflowInstances", results);
     }
     
     

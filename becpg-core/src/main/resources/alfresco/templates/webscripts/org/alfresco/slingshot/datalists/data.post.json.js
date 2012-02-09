@@ -2,6 +2,8 @@
 <import resource="classpath:/alfresco/templates/webscripts/org/alfresco/slingshot/datalists/filters.lib.js">
 <import resource="classpath:/alfresco/templates/webscripts/org/alfresco/slingshot/datalists/parse-args.lib.js">
 
+const REQUEST_MAX = 1000;
+
 /**
  * Copyright (C) 2005-2010 Alfresco Software Limited.
  *
@@ -46,7 +48,7 @@ function getData()
       
       for (count = 0; count < numFields; count++)
       {
-         fields.push(jsonFields.get(count).replace("_", ":"));
+         fields.push(jsonFields.get(count).replaceFirst("_", ":"));
       }
    }
 
@@ -55,6 +57,18 @@ function getData()
       allNodes = [], node,
       items = [];
 
+   if (args.itemType==null && (filter == null || filter.filterId == "all"))
+   {
+      // Use non-query method
+      var parentNode = parsedArgs.listNode;
+      if (parentNode != null)
+      {
+         var pagedResult = parentNode.childFileFolders(true, false, Filters.IGNORED_TYPES, -1, -1, REQUEST_MAX, "cm:name", true, null);
+         allNodes = pagedResult.page;
+      }
+   }
+   else
+   {
    var filterParams = Filters.getFilterParams(filter, parsedArgs)
       query = filterParams.query;
 
@@ -78,7 +92,11 @@ function getData()
          templates: filterParams.templates,
          namespace: (filterParams.namespace ? filterParams.namespace : null)
       });
+      }
+   }
       
+   if (allNodes.length > 0)
+   {
       for each (node in allNodes)
       {
          try

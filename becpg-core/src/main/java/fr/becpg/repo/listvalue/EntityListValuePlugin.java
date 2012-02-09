@@ -483,8 +483,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
     	if(luceneAnaLyzer==null){
     		DataTypeDefinition def  = dictionaryDAO.getDataType(DataTypeDefinition.TEXT);
         	
-    		try {
-				return  (Analyzer) Class.forName(def.getAnalyserClassName()).newInstance();
+    		try {								//def.getAnalyserName()
+				return  (Analyzer) Class.forName(def.getAnalyserResourceBundleName()).newInstance();
 			} catch (Exception e) {
 				logger.error(e,e);
 				return  new fr.becpg.repo.search.lucene.analysis.FrenchSnowballAnalyserThatRemovesAccents();

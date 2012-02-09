@@ -129,7 +129,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		String prefix = DEFAULT_PREFIX;
 		
         // get value store in db
-        if(autoNumNodeRef != null){
+        if(autoNumNodeRef != null && nodeService.exists(autoNumNodeRef)){
         	Long v = (Long)nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
         	prefix = getPrefix(autoNumNodeRef);
         	

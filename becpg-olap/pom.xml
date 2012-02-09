@@ -5,14 +5,14 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>0.1.3</version>
+		<version>0.1.4</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-olap</artifactId>
 	<packaging>jar</packaging>
 	<name>beCPG OLAP</name>
-	<version>0.1.3</version>
+	<version>0.1.4</version>
 	<build>
 	<plugins>
       <plugin>

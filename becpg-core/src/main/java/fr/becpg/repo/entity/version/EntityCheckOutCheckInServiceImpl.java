@@ -5,6 +5,7 @@ package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -16,6 +17,7 @@ import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockType;
 import org.alfresco.service.cmr.lock.UnableToReleaseLockException;
 import org.alfresco.service.cmr.repository.AspectMissingException;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -35,6 +37,7 @@ import fr.becpg.repo.entity.EntityListDAO;
  *
  * @author querephi
  */
+//TODO philippe alfresco 4.0
 public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl implements EntityCheckOutCheckInService {
 
 	/** The Constant MSG_ERR_BAD_COPY. */
@@ -190,7 +193,9 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
         
         // Rename the working copy
         String copyName = (String)this.nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-        copyName = createWorkingCopyName(copyName);
+        String workingCopyLabel = getWorkingCopyLabel();
+        copyName = createWorkingCopyName(copyName, workingCopyLabel);
+
 
         // Make the working copy
         final QName copyQName = QName.createQName(destinationAssocQName.getNamespaceURI(), QName.createValidLocalName(copyName));
@@ -274,6 +279,7 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
 	 * @return the node ref
 	 */
 	@Override
+	//TODO 4.0 migration
 	public NodeRef checkin(final NodeRef workingCopyNodeRef, Map<String, Serializable> properties) {		
 		
 		NodeRef entityNodeRef = null;
@@ -282,7 +288,7 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
         if (nodeService.hasAspect(workingCopyNodeRef, ContentModel.ASPECT_COPIEDFROM) == true){        	
         
         	// Try and get the original node reference
-        	entityNodeRef = (NodeRef)nodeService.getProperty(workingCopyNodeRef, ContentModel.PROP_COPY_REFERENCE);        	
+        	entityNodeRef = getCheckedOut(workingCopyNodeRef);      	
             if(entityNodeRef == null)
             {
                 // Error since the original node can not be found
@@ -331,6 +337,29 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
         
 		return entityNodeRef;
 	}
+	
+	  @Override
+	    public NodeRef getCheckedOut(NodeRef nodeRef)
+	    {
+	        NodeRef original = null;
+	        if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY))
+	        {
+	            List<AssociationRef> assocs = nodeService.getSourceAssocs(nodeRef, ContentModel.ASSOC_WORKING_COPY_LINK);
+	            // It is a 1:1 relationship
+	            if (assocs.size() > 0)
+	            {
+	                if (assocs.size() > 1)
+	                {
+	                    logger.warn("Found multiple " + ContentModel.ASSOC_WORKING_COPY_LINK + " associations to node: " + nodeRef);
+	                }
+	                original = assocs.get(0).getSourceRef();
+	            }
+	        }
+	        
+	        return original;
+	    }
+
+	
 	
 	/**
 	 * Calculate new version			

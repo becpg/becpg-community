@@ -17,8 +17,6 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";
-
 var Evaluator =
 {
    /**
@@ -103,7 +101,7 @@ var Evaluator =
    {
       var value = objData.value,
          type = objData.type,
-         obj, parts = [];
+         obj;
       
       if (type == "cm:person")
       {
@@ -122,20 +120,16 @@ var Evaluator =
          {
             return false;
          }
-         parts =  Evaluator.splitQNamePath(obj);
-         objData.siteId = parts[0];
          objData.displayValue = obj.displayPath.substring(companyhome.name.length() + 1);
          objData.metadata = "container";
       }
-      else if (type == "cm:cmobject" || type == "cm:content")
+      else if (type.indexOf(":") > 0 && node.isSubType("cm:cmobject"))
       {
          obj = Evaluator.getContentObject(value);
          if (obj == null)
          {
             return false;
          }
-         parts =  Evaluator.splitQNamePath(obj);
-         objData.siteId = parts[0];
          objData.displayValue = obj.properties["cm:name"];
          objData.metadata = obj.isContainer ? "container" : "document";
       }
@@ -146,8 +140,6 @@ var Evaluator =
          {
             return false;
          }
-         parts =  Evaluator.splitQNamePath(obj);
-         objData.siteId = parts[0];
          objData.displayValue = obj.properties["cm:name"];
          // the namespace may be different due to inheritance (ie: {http://www.bcpg.fr/model/clientName/1.0}
          //objData.metadata = obj.type.replace('{http://www.bcpg.fr/model/becpg/1.0}', '');
@@ -160,8 +152,6 @@ var Evaluator =
          {
             return false;
          }
-         parts =  Evaluator.splitQNamePath(obj);
-         objData.siteId = parts[0];
          objData.displayValue = obj.properties["cm:name"];
          objData.metadata = "document";
 	  }
@@ -189,44 +179,39 @@ var Evaluator =
       return true;
    },
    
-   /**
-    * Splits the qname path to a node.
-    * 
-    * Returns an array with:
-    * [0] = site
-    * [1] = container or null if the node does not match
-    * [2] = remaining part of the cm:name based path to the object - as an array
+    /**
+    * Translates a List fieldDefinition
+    *
+    * @method translateField
+    * @param objDef {FieldDefinition} objDef
+    * @param value {String} default value
     */
-    splitQNamePath : function(node)
+   translateField: function Evaluator_translateField(objDef, value)
    {
-      var path = node.qnamePath;
-      var displayPath = node.displayPath.split("/");
-      var parts = null;
-      
-      if (path.match("^"+SITES_SPACE_QNAME_PATH) == SITES_SPACE_QNAME_PATH)
+      if (objDef == null || objDef == "")
       {
-         var tmp = path.substring(SITES_SPACE_QNAME_PATH.length);
-         var pos = tmp.indexOf('/');
-         if (pos >= 1)
-         {
-            // site id is the cm:name for the site - we cannot use the encoded QName version
-            var siteId = displayPath[3];
-            tmp = tmp.substring(pos + 1);
-            pos = tmp.indexOf('/');
-            if (pos >= 1)
-            {
-               // strip container id from the path
-               var containerId = tmp.substring(0, pos);
-               containerId = containerId.substring(containerId.indexOf(":") + 1);
-               
-               parts = [ siteId, containerId, displayPath.slice(5, displayPath.length) ];
-            }
-         }
+         return null;
       }
-      
-      return (parts != null ? parts : [ null, null, displayPath ]);
+      if (objDef.constraints != null) 
+      {
+         for ( var i=0, len= objDef.constraints.size(); i<len; ++i )
+         {          
+             if ("LIST" == objDef.constraints.get(i).type) 
+             {
+                var allowedV = objDef.constraints.get(i).parameters.allowedValues;
+                for (var j=0; j<allowedV.size(); ++j )
+                {   
+                    var allowedVasString = "" + allowedV.get(j);
+                    var allValSplit = allowedVasString.split("|");
+                    if (value == allValSplit[0]) {
+                       return allValSplit[1];
+                    }
+                }
+              }
+          }
+      }
+      return value;
    },
-
    
    /**
     * Node Evaluator - main entrypoint
@@ -305,7 +290,7 @@ var Evaluator =
          else
          {
             objData.value = value;
-            objData.displayValue = objData.value;
+            objData.displayValue = isAssoc ? value : Evaluator.translateField(objDefinitions[k],value);
 
             if (Evaluator.decorateFieldData(objData, node))
             {

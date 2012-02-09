@@ -6,11 +6,9 @@ package fr.becpg.repo.food;
 import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
-import fr.becpg.repo.product.data.ProductData;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -48,7 +46,6 @@ public class SystemProductTypeTest extends BaseAlfrescoTestCase{
 	/**
 	 * Test determine product type.
 	 */
-	@Test
 	public void testDetermineProductType(){
 		
 		assertEquals(SystemProductType.FinishedProduct, SystemProductType.valueOf(BeCPGModel.TYPE_FINISHEDPRODUCT));

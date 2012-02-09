@@ -105,6 +105,7 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public ACLGroupData find(NodeRef cpNodeRef) {
 		ACLGroupData cpData = new ACLGroupData();

@@ -6,7 +6,7 @@
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>beCPG</name>
-	<version>0.1.3</version>
+	<version>0.1.4</version>
 	<description>BeCPG Parent Project</description>
 
 	<organization>
@@ -67,9 +67,9 @@
 		<alfresco.db.name>becpg_34d_dev</alfresco.db.name>
 		<alfresco.db.username>becpg</alfresco.db.username>
 		<alfresco.db.password>becpg</alfresco.db.password>
-		<alfresco.server>/opt/alfresco-3.4.d</alfresco.server>
+		<alfresco.server>/opt/alfresco-4.0.d</alfresco.server>
 		<!-- OLAP -->
-		<olap.server>/opt/alfresco-3.4.d</olap.server>
+		<olap.server>/opt/alfresco-4.0.d</olap.server>
 		<olap.db.host>localhost</olap.db.host>
 		<olap.db.name>becpg_34d_demo</olap.db.name>
 		<olap.db.username>becpg</olap.db.username>
@@ -80,7 +80,7 @@
 		<!-- Module specific build time properties -->
 		<module.log.level>info</module.log.level>
 		<!-- build -->
-		<alfresco.version>3.4</alfresco.version>
+		<alfresco.version>4.0.d</alfresco.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -187,7 +187,6 @@
 	<modules>
 		<module>becpg-bootstrap/alfresco-sdk</module>
 		<module>becpg-bootstrap/birt-sdk</module>
-		<module>becpg-commons</module>
 		<module>becpg-core</module>
 		<module>becpg-share</module>
 		<module>becpg-olap</module>
@@ -204,9 +203,9 @@
 				<alfresco.db.name>becpg_test</alfresco.db.name>
 				<alfresco.db.username>becpg</alfresco.db.username>
 				<alfresco.db.password>becpg</alfresco.db.password>
-				<alfresco.server>/opt/becpg/alfresco-3.4.d</alfresco.server>
+				<alfresco.server>/opt/becpg/alfresco-4.0.d</alfresco.server>
 				<!-- OLAP -->
-				<olap.server>/opt/becpg/alfresco-3.4.d</olap.server>
+				<olap.server>/opt/becpg/alfresco-4.0.d</olap.server>
 				<olap.db.host>localhost</olap.db.host>
 				<olap.db.name>becpg_demo</olap.db.name>
 				<olap.db.username>becpg</olap.db.username>
@@ -218,12 +217,12 @@
 		<profile>
 			<id>sva-int</id>
 			<properties>
-				<alfresco.data.location>/opt/alfresco-3.4.d-sva/becpg_data</alfresco.data.location>
+				<alfresco.data.location>/opt/alfresco-4.0.d-sva/becpg_data</alfresco.data.location>
 				<alfresco.db.name>becpg_34d_sva_int</alfresco.db.name>
 				<alfresco.db.username>becpg</alfresco.db.username>
 				<alfresco.db.password>becpg</alfresco.db.password>
 				<!-- OLAP -->
-				<olap.server>/opt/alfresco-3.4.d-sva</olap.server>
+				<olap.server>/opt/alfresco-4.0.d-sva</olap.server>
 				<olap.db.host>localhost</olap.db.host>
 				<olap.db.name>becpg_34d_sva_int</olap.db.name>
 				<olap.db.username>becpg</olap.db.username>
@@ -238,7 +237,7 @@
 				<alfresco.db.username>beCPG</alfresco.db.username>
 				<alfresco.db.password>becpgSVA</alfresco.db.password>
 				<!-- OLAP -->
-				<olap.server>/opt/alfresco-3.4.d</olap.server>
+				<olap.server>/opt/alfresco-4.0.d</olap.server>
 				<olap.db.host>localhost</olap.db.host>
 				<olap.db.name>beCPG</olap.db.name>
 				<olap.db.username>beCPG</olap.db.username>

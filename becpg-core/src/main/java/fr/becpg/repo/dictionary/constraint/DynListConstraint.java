@@ -176,16 +176,20 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		        	            for (ResultSetRow row : resultSet)
 		        	            {
 		        	                NodeRef nodeRef = row.getNodeRef();
-		        	                String value = (String)serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
-		        	                if(!allowedValues.contains(value) && value!=null){
-		        	                	allowedValues.add(value);
+		        	                if(serviceRegistry.getNodeService().exists(nodeRef)){
+			        	                String value = (String)serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
+			        	                if(!allowedValues.contains(value) && value!=null){
+			        	                	allowedValues.add(value);
+			        	                }
+		        	                } else {
+		        	                	logger.warn("Node doesn't exist : "+nodeRef);
 		        	                }
 		        	            }                   	
 		        	        }   
-		        	        
-//		        	        logger.debug("allowedValues.size() : " + allowedValues.size());
-//		        	        logger.debug("allowed values: " + allowedValues.toString());
-		        	        		
+		        	        if(logger.isDebugEnabled()){
+			        	        logger.debug("allowedValues.size() : " + allowedValues.size());
+			        	        logger.debug("allowed values: " + allowedValues.toString());
+		        	        }
 		        			return allowedValues;
 		        		}
 		        		finally{

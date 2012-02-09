@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -15,6 +18,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
@@ -52,6 +56,14 @@ public class SecurityServiceImpl implements SecurityService {
 	private DictionaryService dictionaryService;
 
 	private NamespacePrefixResolver namespacePrefixResolver;
+	
+	private TransactionService transactionService;
+	
+	
+
+	public void setTransactionService(TransactionService transactionService) {
+		this.transactionService = transactionService;
+	}
 
 	public void setNamespacePrefixResolver(
 			NamespacePrefixResolver namespacePrefixResolver) {
@@ -167,7 +179,27 @@ public class SecurityServiceImpl implements SecurityService {
 	public void init() {
 		logger.debug("Init SecurityService");
 		try {
-			computeAcls();
+			RunAsWork<Object> actionRunAs = new RunAsWork<Object>()
+                    {
+                        @Override
+    					public Object doWork() throws Exception
+                        {
+                            RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>()
+                            {
+                                @Override
+    							public Object execute()
+                                {                                   
+
+                        			computeAcls();
+                			        
+                                    return null;
+                                }
+                            };
+                            return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
+                        }
+                    };
+                    AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+			
 		} catch(Exception e){
 			logger.error(e,e);
 		}
@@ -299,7 +331,6 @@ public class SecurityServiceImpl implements SecurityService {
 				qName.equals(ContentModel.PROP_CONTENT) ||
 				qName.equals(ContentModel.PROP_AUTO_VERSION) ||
 				qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) ||				
-				qName.equals(ContentModel.PROP_COPY_REFERENCE) ||				
 				// do not compare frozen properties and version properties				
 				qName.equals(BeCPGModel.PROP_VERSION_DESCRIPTION) ||
 				qName.equals(BeCPGModel.PROP_VERSION_LABEL) ||

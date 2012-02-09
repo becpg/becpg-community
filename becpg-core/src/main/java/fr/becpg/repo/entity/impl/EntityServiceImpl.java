@@ -220,7 +220,7 @@ public class EntityServiceImpl implements EntityService {
 			// look for folderTpl
 			NodeRef folderTplNodeRef = entityTplService.getFolderTpl(entityType);
 			
-			if(folderTplNodeRef != null){
+			if(folderTplNodeRef != null && nodeService.exists(folderTplNodeRef)){
 				
 				logger.debug("folderTplNodeRef found");				
 

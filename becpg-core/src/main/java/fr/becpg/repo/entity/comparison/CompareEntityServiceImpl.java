@@ -4,15 +4,10 @@
 package fr.becpg.repo.entity.comparison;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -879,8 +874,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				qName.equals(ContentModel.PROP_STORE_PROTOCOL) ||
 				qName.equals(ContentModel.PROP_CONTENT) ||
 				qName.equals(ContentModel.PROP_AUTO_VERSION) ||
-				qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) ||				
-				qName.equals(ContentModel.PROP_COPY_REFERENCE) ||				
+				qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) ||							
 				// do not compare frozen properties and version properties				
 				qName.equals(BeCPGModel.PROP_VERSION_DESCRIPTION) ||
 				qName.equals(BeCPGModel.PROP_VERSION_LABEL) ||

@@ -9,13 +9,12 @@ export BECPG_ROOT=`pwd`
 export BOOTSTRAP_HOME=$BECPG_ROOT/becpg-bootstrap
 
 
-export ALF=/opt/alfresco-3.4.d
-export ALF_SDK=/opt/alfresco-3.4.d/sdk
-export AMPS=/opt/alfresco-3.4.d/amps
-export SERVER=/opt/alfresco-3.4.d/tomcat
-export AMPS_SHARE=/opt/alfresco-3.4.d/amps_share
-export BECPG_VERSION=0.1.3
-export TARGET_FOLDER=target/becpg-core-0.1.3
+export ALF=/opt/alfresco-4.0.d
+export ALF_SDK=/opt/alfresco-4.0.d/sdk
+export AMPS=/opt/alfresco-4.0.d/amps
+export SERVER=/opt/alfresco-4.0.d/tomcat
+export AMPS_SHARE=/opt/alfresco-4.0.d/amps_share
+export BECPG_VERSION=0.1.4
 export BECPG_OLAP_ROOT=$BECPG_ROOT/becpg-olap
 
 

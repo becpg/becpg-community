@@ -8,8 +8,21 @@ var Filters =
    {		
       "documents": '+(TYPE:"content" OR TYPE:"app:filelink" OR TYPE:"folder")',
       "folders": '+(TYPE:"folder" OR TYPE:"app:folderlink")',
-      "images": '-TYPE:"thumbnail" +@cm\\:content.mimetype:image/*'
+      "images": '+@cm\\:content.mimetype:image/*'
    },
+
+   /**
+    * Types that we want to suppress from the resultset
+    */
+   IGNORED_TYPES:
+   [
+      "cm:systemfolder",
+      "fm:forums",
+      "fm:forum",
+      "fm:topic",
+      "fm:post",
+      "dl:dataListItem" //beCPG
+   ],
 
    /**
     * Encode a path with ISO9075 encoding
@@ -55,6 +68,19 @@ var Filters =
 
       optional = optional || {};
 
+      // Sorting parameters specified?
+      var sortAscending = args.sortAsc,
+         sortField = args.sortField;
+
+      if (sortAscending == "false")
+      {
+         filterParams.sort[0].ascending = false;
+      }
+      if (sortField !== null)
+      {
+         filterParams.sort[0].column = (sortField.indexOf(":") != -1 ? "@" : "") + sortField;
+      }
+
       // Max returned results specified?
       var argMax = args.max;
       if ((argMax !== null) && !isNaN(argMax))
@@ -73,20 +99,13 @@ var Filters =
          filterQuery = "";
 
       // Common types and aspects to filter from the UI - known subtypes of cm:content and cm:folder
-      var filterQueryDefaults =
-         " -TYPE:\"thumbnail\"" +
-         " -TYPE:\"systemfolder\"" +
-         " -TYPE:\"fm:forums\"" +
-         " -TYPE:\"fm:forum\"" +
-         " -TYPE:\"fm:topic\"" +
-         " -TYPE:\"fm:post\"" +
-         " -TYPE:\"dl:dataListItem\""; //beCPG - PQU : we don't want datalistitem, since it displays guid
+      var filterQueryDefaults = ' -TYPE:"' + Filters.IGNORED_TYPES.join('" -TYPE:"') + '"';
 
       switch (String(filter))
       {
          case "all":
             filterQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath + "//*\"";
-            filterQuery += " +TYPE:\"content\"";
+            filterQuery += " +TYPE:\"cm:content\"";
             filterParams.query = filterQuery + filterQueryDefaults;
             break;
 
@@ -117,19 +136,13 @@ var Filters =
             date.setDate(date.getDate() - dayCount);
             var fromQuery = date.getFullYear() + "\\-" + (date.getMonth() + 1) + "\\-" + date.getDate();
 
-            filterQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath;
-            if (parsedArgs.nodeRef == "alfresco://sites/home")
-            {
-               // Special case for "Sites home" pseudo-nodeRef
-               filterQuery += "/*/cm:documentLibrary";
-            }
-            filterQuery += "//*\"";
+            filterQuery = this.constructPathQuery(parsedArgs);
             filterQuery += " +@cm\\:" + dateField + ":[" + fromQuery + "T00\\:00\\:00.000 TO " + toQuery + "T23\\:59\\:59.999]";
             if (onlySelf)
             {
                filterQuery += " +@cm\\:" + ownerField + ":\"" + person.properties.userName + '"';
             }
-            filterQuery += " +TYPE:\"content\"";
+            filterQuery += " +TYPE:\"cm:content\"";
 
             filterParams.sort = [
             {
@@ -140,16 +153,20 @@ var Filters =
             break;
 
          case "editingMe":
-            filterQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath + "//*\"";
-            filterQuery += " +ASPECT:\"workingcopy\"";
-            filterQuery += " +@cm\\:workingCopyOwner:\"" + person.properties.userName + '"';
+            filterQuery = this.constructPathQuery(parsedArgs);
+            filterQuery += " +((+ASPECT:\"workingcopy\"";
+            filterQuery += " +@cm\\:workingCopyOwner:\"" + person.properties.userName + '")';
+            filterQuery += " OR (+@cm\\:lockOwner:\"" + person.properties.userName + '"';
+            filterQuery += " +@cm\\:lockType:\"WRITE_LOCK\"))";
             filterParams.query = filterQuery;
             break;
 
          case "editingOthers":
-            filterQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath + "//*\"";
-            filterQuery += " +ASPECT:\"workingcopy\"";
-            filterQuery += " -@cm\\:workingCopyOwner:\"" + person.properties.userName + '"';
+            filterQuery = this.constructPathQuery(parsedArgs);
+            filterQuery += " +((+ASPECT:\"workingcopy\"";
+            filterQuery += " -@cm\\:workingCopyOwner:\"" + person.properties.userName + '")';
+            filterQuery += " OR (-@cm\\:lockOwner:\"" + person.properties.userName + '"';
+            filterQuery += " +@cm\\:lockType:\"WRITE_LOCK\"))";
             filterParams.query = filterQuery;
             break;
 
@@ -165,7 +182,18 @@ var Filters =
                foundOne = true;
                filterQuery += "ID:\"" + favourite + "\"";
             }
-            filterParams.query = filterQuery.length > 0 ? "+PATH:\"" + parsedArgs.rootNode.qnamePath + "//*\" +(" + filterQuery + ")" : "+ID:\"\"";
+            
+            if (filterQuery.length > 0)
+            {
+               filterQuery = "+(" + filterQuery + ") " + this.constructPathQuery(parsedArgs);
+            }
+            else
+            {
+               // empty favourites query
+               filterQuery = "+ID:\"\"";
+            }
+            
+            filterParams.query = filterQuery;
             break;
 
          case "node":
@@ -179,7 +207,8 @@ var Filters =
             {
                filterData = filterData.slice(0, -1);
             }
-            filterParams.query = "+PATH:\"" + parsedArgs.rootNode.qnamePath + "//*\" +PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(filterData) + "/member\"";
+            filterQuery = this.constructPathQuery(parsedArgs);
+            filterParams.query = filterQuery + " +PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(filterData) + "/member\"";
             break;
 
          case "category":
@@ -205,5 +234,20 @@ var Filters =
       }
 
       return filterParams;
+   },
+   
+   constructPathQuery: function constructPathQuery(parsedArgs)
+   {
+      var pathQuery = "";
+      if (parsedArgs.nodeRef != "alfresco://company/home")
+      {
+         pathQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath;
+         if (parsedArgs.nodeRef == "alfresco://sites/home")
+         {
+            pathQuery += "/*/cm:documentLibrary";
+         }
+         pathQuery += "//*\"";
+      }
+      return pathQuery;
    }
 };

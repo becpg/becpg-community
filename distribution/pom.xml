@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>0.1.3</version>
+		<version>0.1.4</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -12,7 +12,7 @@
 	<artifactId>distribution</artifactId>
 	<packaging>pom</packaging>
 	<name>beCPG distribution</name>
-	<version>0.1.3</version>
+	<version>0.1.4</version>
 	<properties>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 	</properties>
@@ -21,37 +21,37 @@
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-controls-core</artifactId>
 			<type>amp</type>
-			<version>0.1.3</version>
+			<version>0.1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-controls-share</artifactId>
 			<type>amp</type>
-			<version>0.1.3</version>
+			<version>0.1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-designer-core</artifactId>
 			<type>amp</type>
-			<version>0.1.3</version>
+			<version>0.1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-designer-share</artifactId>
 			<type>amp</type>
-			<version>0.1.3</version>
+			<version>0.1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-core</artifactId>
 			<type>amp</type>
-			<version>0.1.3</version>
+			<version>0.1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-share</artifactId>
 			<type>amp</type>
-			<version>0.1.3</version>
+			<version>0.1.4</version>
 		</dependency>
 	</dependencies>
 	<build>
