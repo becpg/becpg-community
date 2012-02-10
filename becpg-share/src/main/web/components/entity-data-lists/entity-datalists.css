@@ -21,6 +21,11 @@
    padding-top: 0.5em;
 }
 
+.datalists .no-lists
+{
+   padding: 4px;
+}
+
 .datalists li
 {
    overflow-x: hidden;
@@ -37,7 +42,7 @@
 
 .datalists li a.filter-link-editable-list
 {
-   background: url(../images/list-edit-16.png) no-repeat 4px 0;
+   background: url(images/list-edit-16.png) no-repeat 4px 0;
 }
 
 .datalists li a span

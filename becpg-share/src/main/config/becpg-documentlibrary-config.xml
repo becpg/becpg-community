@@ -1,0 +1,302 @@
+<alfresco-config>
+
+	<config evaluator="string-compare" condition="DocumentLibrary">
+		<aspects>
+			<visible>
+				<aspect name="cm:generalclassifiable" />
+				<aspect name="cm:complianceable" />
+				<aspect name="cm:dublincore" />
+				<aspect name="cm:effectivity" />
+				<aspect name="cm:summarizable" />
+				<aspect name="cm:versionable" />
+				<aspect name="cm:templatable" />
+				<aspect name="cm:emailed" />
+				<aspect name="emailserver:aliasable" />
+				<aspect name="cm:taggable" />
+				<aspect name="app:inlineeditable" />
+				<aspect name="gd:googleEditable" />
+				<aspect name="cm:geographic" />
+				<aspect name="exif:exif" />
+
+				<!-- beCPG -->
+				<aspect name="bcpg:permissionsTpl" />
+				<aspect name="bcpg:clientsAspect" />
+				<aspect name="bcpg:suppliersAspect" />
+				<aspect name="rep:reportTplsAspect" />
+				<aspect name="bcpg:profitabilityAspect" />
+				<aspect name="qa:batchAspect" />
+				<aspect name="qa:acAspect" />
+				<aspect name="dsg:modelAspect" />
+				<aspect name="dsg:configAspect" />
+				<aspect name="ext1:customAspect" />
+			</visible>
+
+			<!-- Aspects that a user can add. Same as "visible" if left empty -->
+			<addable>
+			<aspect name="cm:generalclassifiable" />
+				<aspect name="cm:complianceable" />
+				<aspect name="cm:dublincore" />
+				<aspect name="cm:effectivity" />
+				<aspect name="cm:summarizable" />
+				<aspect name="cm:versionable" />
+				<aspect name="cm:templatable" />
+				<aspect name="cm:emailed" />
+				<aspect name="emailserver:aliasable" />
+				<aspect name="cm:taggable" />
+				<aspect name="app:inlineeditable" />
+				<aspect name="gd:googleEditable" />
+				<aspect name="cm:geographic" />
+				<aspect name="exif:exif" />
+
+				<!-- beCPG -->
+				<aspect name="bcpg:permissionsTpl" />
+				<aspect name="bcpg:clientsAspect" />
+				<aspect name="bcpg:suppliersAspect" />
+				<aspect name="rep:reportTplsAspect" />
+				<aspect name="bcpg:profitabilityAspect" />
+				<aspect name="qa:batchAspect" />
+				<aspect name="qa:acAspect" />
+				<aspect name="dsg:modelAspect" />
+				<aspect name="dsg:configAspect" />
+				<aspect name="ext1:customAspect" />
+			</addable>
+
+			<!-- Aspects that a user can remove. Same as "visible" if left empty -->
+			<removeable>
+			<aspect name="cm:generalclassifiable" />
+				<aspect name="cm:complianceable" />
+				<aspect name="cm:dublincore" />
+				<aspect name="cm:effectivity" />
+				<aspect name="cm:summarizable" />
+				<aspect name="cm:versionable" />
+				<aspect name="cm:templatable" />
+				<aspect name="cm:emailed" />
+				<aspect name="emailserver:aliasable" />
+				<aspect name="cm:taggable" />
+				<aspect name="app:inlineeditable" />
+				<aspect name="gd:googleEditable" />
+				<aspect name="cm:geographic" />
+				<aspect name="exif:exif" />
+
+				<!-- beCPG -->
+				<aspect name="bcpg:permissionsTpl" />
+				<aspect name="bcpg:clientsAspect" />
+				<aspect name="bcpg:suppliersAspect" />
+				<aspect name="rep:reportTplsAspect" />
+				<aspect name="bcpg:profitabilityAspect" />
+				<aspect name="qa:batchAspect" />
+				<aspect name="qa:acAspect" />
+				<aspect name="dsg:modelAspect" />
+				<aspect name="dsg:configAspect" />
+				<aspect name="ext1:customAspect" />
+			</removeable>
+		</aspects>
+
+		<types>
+			<type name="cm:content">
+				<subtype name="bcpg:productTemplate" />
+				<subtype name="bcpg:productMicrobioCriteria" />
+				<subtype name="bcpg:productSpecification" />
+
+				<subtype name="bcpg:allergen" />
+				<subtype name="bcpg:cost" />
+				<subtype name="bcpg:ing" />
+				<subtype name="bcpg:microBio" />
+				<subtype name="bcpg:nut" />
+				<subtype name="bcpg:organo" />
+				<subtype name="bcpg:physicoChem" />
+
+				<subtype name="qa:nc" />
+				<subtype name="qa:controlPlan" />
+				<subtype name="qa:qualityControl" />
+				<subtype name="qa:controlPoint" />
+				<subtype name="qa:controlStep" />
+				<subtype name="qa:controlMethod" />
+				<subtype name="qa:workItemAnalysis" />
+
+				<subtype name="bcpg:supplier" />
+				<subtype name="bcpg:client" />
+
+				<subtype name="ecm:changeOrder" />
+
+				<subtype name="bcpg:linkedValue" />
+				<subtype name="bcpg:listValue" />
+				<subtype name="ext1:customType" />
+
+				<subtype name="dsg:config" />
+				<subtype name="cm:dictionaryModel" />
+			</type>
+
+			<type name="cm:folder">
+				<subtype name="bcpg:productReportTemplate" />
+				<subtype name="bcpg:entityFolder" />
+			</type>
+
+			<type name="dl:dataListItem">
+				<subtype name="bcpg:allergenList" />
+				<subtype name="bcpg:costList" />
+				<subtype name="bcpg:compoList" />
+				<subtype name="bcpg:ingLabelingList" />
+				<subtype name="bcpg:ingList" />
+				<subtype name="bcpg:microBioList" />
+				<subtype name="bcpg:nutList" />
+				<subtype name="bcpg:organoList" />
+				<subtype name="bcpg:physicoChemList" />
+			</type>
+		</types>
+	
+	
+	 <indicators>
+        <!--  
+          <indicator id="entity-tovalidate" index="10">
+            <evaluator>evaluator.becpf.doclib.indicator.entity.tovalidate</evaluator>
+         </indicator> 
+         <indicator id="entity-valid" index="10">
+            <evaluator>evaluator.becpg.doclib.indicator.product.valid</evaluator>
+         </indicator>
+         <indicator id="entity-refused" index="10">
+            <evaluator>evaluator.becpg.doclib.indicator.product.refused</evaluator>
+         </indicator>
+           <indicator id="entity-archived" index="10">
+            <evaluator>evaluator.becpg.doclib.indicator.product.archived</evaluator>
+         </indicator>
+         -->
+     </indicators>
+
+	 <metadata-templates>
+	<!--  <template id="producTemplate">
+            <evaluator>evaluator.becpg.doclib.action.product</evaluator>
+            <line index="10" id="date">{date}</line>
+            <line index="20" id="description" view="detailed">{description}</line>
+		    <line index="30" id="productInfo"   >{legalName label.legalName}{productHierarchy1 label.productHierarchy1}{productHierarchy2 label.productHierarchy2}</line>
+			<line index="40" id="productCode"  >{code label.code}{erpCode label.erpCode}{eanCode label.eanCode}</line>
+			<line index="10" id="bcpg:suppliers"  />
+			<line index="10" id="bcpg:clients"" />
+		</template>
+	  -->
+     </metadata-templates>
+     
+     
+</config>
+
+
+    <config evaluator="string-compare" condition="DocumentLibrary" replace="true">
+        <create-content>
+        	  <content id="plain-text" mimetype="text/plain" label="create-content.text" itemid="cm:content" icon="text"/>
+		      <content id="rawMaterial" label="menu.create-content.rawMaterial"  formid="create" itemid="bcpg:rawMaterial" />
+		      <content id="localSemiFinishedProduct" label="menu.create-content.localSemiFinishedProduct" formid="create" itemid="bcpg:localSemiFinishedProduct" />
+		      <content id="semiFinishedProduct" label="menu.create-content.semiFinishedProduct" formid="create" itemid="bcpg:semiFinishedProduct" />
+		      <content id="finishedProduct" label="menu.create-content.finishedProduct" formid="create" itemid="bcpg:finishedProduct" />
+		      <content id="packagingMaterial" label="menu.create-content.packagingMaterial" formid="create" itemid="bcpg:packagingMaterial" />
+		      <content id="packagingKit" label="menu.create-content.packagingKit" formid="create" itemid="bcpg:packagingKit" />
+		      <content id="resourceProduct" label="menu.create-content.resourceProduct" formid="create" itemid="bcpg:resourceProduct" />
+		      <content id="supplier" label="menu.create-content.supplier" formid="create" itemid="bcpg:supplier" />
+		      <content id="client" label="menu.create-content.client" formid="create" itemid="bcpg:client" />
+		  	  <content id="nc" label="menu.create-content.nc" formid="create" itemid="qa:nc" />
+		  	  <content id="controlPlan" label="menu.create-content.controlPlan" formid="create" itemid="qa:controlPlan" />
+		  	  <content id="qualityControl" label="menu.create-content.qualityControl" formid="create" itemid="qa:qualityControl" />
+		  	  <content id="changeOrder" label="menu.create-content.eco" formid="create" itemid="ecm:changeOrder" />
+	   </create-content>
+	  
+
+      <create-content-by-template>true</create-content-by-template>
+    </config>
+
+
+
+	<config evaluator="string-compare" condition="DocLibActions">
+
+		<!-- Action definitions -->
+		<actions>
+		
+		         <action id="entity-view-datalist" type="pagelink" label="actions.document.viewEntityLists">
+		            <param name="page">entity-data-lists?nodeRef={node.nodeRef}</param>
+		            <!-- aspect check bcpg:entityListsAspect -->
+		            <evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+		         </action>
+		         
+		         <action id="entity-checkin" type="pagelink" label="actions.document.checkin-entity">
+		             <param name="function">onActionCheckInEntity</param>
+		            <evaluator>evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
+		            <permissions>
+		               <permission allow="true">Write</permission>
+		            </permissions>
+		         </action>
+		         
+		          <action id="entity-chekout" type="pagelink" label="actions.document.checkout-entity" >
+		             <param name="function">onActionCheckOutEntity</param>
+		            <evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+		            <permissions>
+		               <permission allow="true">Write</permission>
+		            </permissions>
+		         </action>
+		         
+		         <!-- Cancel editing (cancel checkout) -->
+		         <action id="entity-cancel-editing" type="javascript" label="actions.document.cancel-checkout-entity">
+		            <param name="function">onActionCancelCheckOutEntity</param>
+		            <permissions>
+		               <permission allow="true">CancelCheckOut</permission>
+		            </permissions>
+		            <evaluator>evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
+		         </action>
+		         
+		         <!-- remove existing on entity -->
+		         
+		           <action id="document-change-type">        
+				          <evaluator negate="true">           
+				             evaluator.becpg.doclib.action.entity
+				          </evaluator>
+				   </action>
+		         
+		         <action id="document-edit-offline">
+		           	   <evaluator negate="true">           
+						    evaluator.becpg.doclib.action.entity
+						</evaluator>
+		         </action>
+		         
+		         <action id="document-cancel-editing">
+		           	   <evaluator negate="true">           
+						    evaluator.becpg.doclib.action.entity
+						</evaluator>
+		         </action>
+		         
+		         <action id="document-upload-new-version">
+		           	   <evaluator negate="true">           
+						    evaluator.becpg.doclib.action.entity
+						</evaluator>
+		         </action>
+		              
+		         
+		</actions>
+		
+		<actionGroups>
+			<actionGroup id="document-browse">
+	            <action index="10" id="entity-view-datalist" /> 
+	           
+	         </actionGroup>
+
+	         <actionGroup id="document-details">
+	            <action index="10" id="entity-view-datalist" />
+	            <action index="20" id="entity-checkin" /> 
+	            <action index="30" id="entity-chekout" /> 
+	            <action index="40" id="entity-cancel-editing" /> 
+	         </actionGroup>
+		
+		</actionGroups>
+	
+		
+	</config>
+	<config evaluator="string-compare" condition="DocLibCustom">   
+	
+		<dependencies>
+		   <!--  <cs src="/res/modules/entity-version/new-version.css" />  
+		    <js src="/res/modules/entity-version/new-version.js" />  -->
+		    <js src="/components/documentlibrary/becpg/fileIcons-min.js" />
+		    <js src="/components/documentlibrary/becpg/metadataRenderers-min.js" />
+		    <js src="/components/documentlibrary/becpg/docLibAction-min.js" />
+		</dependencies>    
+		
+	</config>
+	
+
+</alfresco-config>

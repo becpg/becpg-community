@@ -1,164 +1,134 @@
 <alfresco-config>
 
-	<!-- <config evaluator="string-compare" condition="DocumentLibrary"> <types> 
-		<type name="cm:content"> <subtype name="ws:article"/> </type> <type name="cm:folder"> 
-		<subtype name="ws:website"/> <subtype name="ws:webroot"/> </type> </types> 
-		<workflows> <workflow definition="wswf:reviewPublish" /> <workflow definition="wswf:publishTree" 
-		/> </workflows> </config> -->
+	<config evaluator="string-compare" condition="WebFramework">
+		<web-framework>
+			 <defaults>
+	            <theme>becpg</theme>
+	         </defaults>
+		</web-framework>
+		
+		  <autowire>
+            <!-- Pick the mode: "production" or "development" -->
+            <mode>development</mode>
+         </autowire>
+	</config>
+
+
+	<config evaluator="string-compare" condition="Edition" replace="true">
+		<!-- footer logo and copyright text -->
+		<footer>
+			<logo>alfresco-share-logo.png</logo>
+			<alt-text>Alfresco Share</alt-text>
+			<css-class>footer-com</css-class>
+			<label>beCPG @2010-2012</label>
+		</footer>
+		<about>
+			<css-class>logo-com</css-class>
+		</about>
+	</config>
+
+	<!-- Global config section -->
+	<config replace="true">
+
+		<header>
+			<app-items>
+				<!-- defaults: icon="{id}.png" label="header.{id}.label" description="header.{id}.description" -->
+				<item type="link" id="my-dashboard">{userdashboardpage}</item>
+				<item type="js" id="sites">Alfresco.module.Sites</item>
+				<item type="link" id="people">/people-finder</item>
+				<item type="link" id="repository" condition="conditionRepositoryRootNode">/repository</item>
+				<item type="container" id="more">
+					<container-group id="my">
+						<item type="link" id="my-tasks">/my-tasks</item>
+						<item type="link" id="my-workflows">/my-workflows</item>
+						<item type="link" id="my-content">/user/user-content</item>
+						<item type="link" id="my-sites">/user/user-sites</item>
+						<item type="link" id="my-profile">{userprofilepage}</item>
+						<item type="link" id="npd-list">/npd-list</item>
+					</container-group>
+					<container-group id="tools" permission="admin">
+						<item type="link" id="application">/console/admin-console/application
+						</item>
+						<item type="link" id="groups">/console/admin-console/groups</item>
+						<item type="link" id="replication-jobs" condition="!conditionEditionTeam">/console/admin-console/replication-jobs
+						</item>
+						<item type="link" id="repository">/console/admin-console/repository</item>
+						<item type="link" id="trashcan">/console/admin-console/trashcan</item>
+						<item type="link" id="users">/console/admin-console/users</item>
+						<item type="link" id="model-designer">/model-designer</item>
+						<item type="link" id="becpg-admin">/console/admin-console/becpg-admin
+						</item>
+						<item type="link" id="more">/console/admin-console/</item>
+					</container-group>
+				</item>
+			</app-items>
+			<user-items>
+				<item type="container" id="user" icon="" description="">
+					<container-group id="usermenu" label="">
+						<item type="user" id="status">{userprofilepage}</item>
+						<item type="link" id="my-profile">{userprofilepage}</item>
+						<item type="link" id="change-password" condition="user.capabilities.isMutable">/user/change-password
+						</item>
+						<item type="external-link" id="help">{share-help}</item>
+						<item type="link" id="logout" condition="!context.externalAuthentication">/dologout</item>
+					</container-group>
+				</item>
+			</user-items>
+			<dependencies>
+				<css src="/modules/create-site.css" />
+				<css src="/modules/header/sites.css" />
+				<js src="/modules/create-site.js" />
+				<js src="/modules/header/sites.js" />
+			</dependencies>
+		</header>
+	</config>
+
 
 	<config evaluator="string-compare" condition="Workflow">
 		<hidden-workflows>
-			<workflow name="jbpm$wf:adhoc" />
-			<workflow name="jbpm$wf:reviewpooled" />
-			<workflow name="jbpm$wf:parallelgroupreview" />
-			<workflow name="jbpm$wf:review" />
-			<workflow name="jbpm$wf:parallelreview" />
+			<!-- Hide all WCM related workflows -->
+			<workflow name="jbpm$wcmwf:*" />
+			<workflow name="jbpm$wf:articleapproval" />
+			<!-- Hide publishing workflows -->
+			<workflow name="activiti$publishWebContent" />
+			<workflow name="jbpm$publishWebContent" />
+			<!-- Hide invitation workflows -->
+			<workflow name="jbpm$inwf:invitation-nominated" />
+			<workflow name="jbpm$imwf:invitation-moderated" />
+			<workflow name="activiti$activitiInvitationModerated" />
+			<workflow name="activiti$activitiInvitationNominated" />
+			<!-- beCPG <workflow name="jbpm$wf:adhoc" /> <workflow name="jbpm$wf:reviewpooled" 
+				/> <workflow name="jbpm$wf:parallelgroupreview" /> <workflow name="jbpm$wf:review" 
+				/> <workflow name="jbpm$wf:parallelreview" /> -->
 		</hidden-workflows>
 	</config>
 
-	<config evaluator="string-compare" condition="AdvancedSearch">
-		<advanced-search>
-			<!-- Forms for the advanced search type list -->
-			<forms>
-				<!-- The 'form' config element contains the name of the model type of 
-					the form to display. The element supports the following optional attributes: 
-					id = form id, the id of "search" will be assumed if not set label = label 
-					text to display - defaults to model type if not set labelId = I18N message 
-					id of label text to display description = description text to display descriptionId 
-					= I18N message id of description text to display -->
-				<form labelId="search.form.label.bcpg_product" descriptionId="search.form.desc.bcpg_product">bcpg:product
-				</form>
-				<form labelId="search.form.label.qa_nc" descriptionId="search.form.desc.qa_nc">qa:nc
-				</form>
-			</forms>
-		</advanced-search>
-	</config>
 
-	<config evaluator="string-compare" condition="DocumentLibrary">
-		<aspects>
-			<visible>
-				<aspect name="cm:generalclassifiable" />
-				<aspect name="cm:taggable" />
-				<aspect name="bcpg:permissionsTpl" />
-				<aspect name="bcpg:clientsAspect" />
-				<aspect name="bcpg:suppliersAspect" />
-				<aspect name="rep:reportTplsAspect" />
-				<aspect name="bcpg:profitabilityAspect" />
-				<aspect name="qa:batchAspect" />
-				<aspect name="qa:acAspect" />
-				<aspect name="dsg:modelAspect" />
-				<aspect name="dsg:configAspect" />
-				<aspect name="ext1:customAspect"/>
-			</visible>
 
-			<!-- Aspects that a user can add. Same as "visible" if left empty -->
-			<addable>
-				<aspect name="cm:generalclassifiable" />
-				<aspect name="cm:taggable" />
-				<aspect name="bcpg:permissionsTpl" />
-				<aspect name="bcpg:clientsAspect" />
-				<aspect name="bcpg:suppliersAspect" />
-				<aspect name="rep:reportTplsAspect" />
-				<aspect name="bcpg:profitabilityAspect" />
-				<aspect name="qa:batchAspect" />
-				<aspect name="qa:acAspect" />
-				<aspect name="dsg:modelAspect" />
-				<aspect name="dsg:configAspect" />
-				<aspect name="ext1:customAspect"/>
-			</addable>
 
-			<!-- Aspects that a user can remove. Same as "visible" if left empty -->
-			<removeable>
-				<aspect name="cm:generalclassifiable" />
-				<aspect name="cm:taggable" />
-				<aspect name="bcpg:permissionsTpl" />
-				<aspect name="bcpg:clientsAspect" />
-				<aspect name="bcpg:suppliersAspect" />
-				<aspect name="rep:reportTplsAspect" />
-				<aspect name="bcpg:profitabilityAspect" />
-				<aspect name="qa:batchAspect" />
-				<aspect name="qa:acAspect" />
-				<aspect name="dsg:modelAspect" />
-				<aspect name="dsg:configAspect" />
-				<aspect name="ext1:customAspect"/>
-			</removeable>
-		</aspects>
-
-		<types>
-			<type name="cm:content">
-				<subtype name="bcpg:productTemplate" />
-				<subtype name="bcpg:productMicrobioCriteria" />
-				<subtype name="bcpg:productSpecification" />
-
-				<subtype name="bcpg:allergen" />
-				<subtype name="bcpg:cost" />
-				<subtype name="bcpg:ing" />
-				<subtype name="bcpg:microBio" />
-				<subtype name="bcpg:nut" />
-				<subtype name="bcpg:organo" />
-				<subtype name="bcpg:physicoChem" />
-
-				<subtype name="qa:nc" />
-				<subtype name="qa:controlPlan" />
-				<subtype name="qa:qualityControl" />
-				<subtype name="qa:controlPoint" />
-				<subtype name="qa:controlStep" />
-				<subtype name="qa:controlMethod" />
-				<subtype name="qa:workItemAnalysis" />
-
-				<subtype name="bcpg:supplier" />
-				<subtype name="bcpg:client" />
-
-				<subtype name="ecm:changeOrder" />
-
-				<subtype name="bcpg:linkedValue" />
-				<subtype name="bcpg:listValue" />
-				<subtype name="ext1:customType"/>
-				
-				<subtype name="dsg:config" />
-				<subtype name="cm:dictionaryModel" />
-			</type>
-
-			<type name="cm:folder">
-				<subtype name="bcpg:productReportTemplate" />
-				<subtype name="bcpg:entityFolder" />
-			</type>
-
-			<type name="dl:dataListItem">
-				<subtype name="bcpg:allergenList" />
-				<subtype name="bcpg:costList" />
-				<subtype name="bcpg:compoList" />
-				<subtype name="bcpg:ingLabelingList" />
-				<subtype name="bcpg:ingList" />
-				<subtype name="bcpg:microBioList" />
-				<subtype name="bcpg:nutList" />
-				<subtype name="bcpg:organoList" />
-				<subtype name="bcpg:physicoChemList" />
-			</type>
-		</types>
-	</config>
+	
 
 	<!-- Define elements that are bulk editable -->
 	<config evaluator="string-compare" condition="bulk-edit">
 		<itemTypes>
 			<itemType name="bcpg:finishedProduct" />
-			<itemType name="bcpg:finishedProduct" label="NPD"
-				formId="bulk-edit-npd" editSelectedFormId ="bulk-edit-npd"/>
-<!-- 			<itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" -->
-<!-- 				formId="bulk-edit-2"  editSelectedFormId ="bulk-edit" /> -->
-			<!-- <itemType name="bcpg:allergenList" />-->
-			<itemType name="sec:aclGroup"/>
+			<itemType name="bcpg:finishedProduct" label="NPD" formId="bulk-edit-npd"
+				editSelectedFormId="bulk-edit-npd" />
+			<!-- <itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" -->
+			<!-- formId="bulk-edit-2" editSelectedFormId ="bulk-edit" /> -->
+			<!-- <itemType name="bcpg:allergenList" /> -->
+			<itemType name="sec:aclGroup" />
 			<itemType name="bcpg:semiFinishedProduct" />
-			
-			<itemType name="bcpg:rawMaterial" />			
+
+			<itemType name="bcpg:rawMaterial" />
 			<itemType name="bcpg:packagingMaterial" />
 
 			<itemType name="bcpg:supplier" />
 			<itemType name="bcpg:client" />
-			
-			<itemType name="ext1:customType"/>
+
+			<itemType name="ext1:customType" />
 		</itemTypes>
 	</config>
-	
+
 
 </alfresco-config>

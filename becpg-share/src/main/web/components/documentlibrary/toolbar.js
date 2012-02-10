@@ -61,6 +61,7 @@
       this.currentFilter = {};
       this.dynamicControls = [];
       this.doclistMetadata = {};
+      this.actionsView = "browse";
 
       // Decoupled event listeners
       YAHOO.Bubbling.on("filterChanged", this.onFilterChanged, this);
@@ -69,6 +70,11 @@
       YAHOO.Bubbling.on("selectedFilesChanged", this.onSelectedFilesChanged, this);
       YAHOO.Bubbling.on("userAccess", this.onUserAccess, this);
       YAHOO.Bubbling.on("doclistMetadata", this.onDoclistMetadata, this);
+      YAHOO.Bubbling.on("showFileUploadDialog", this.onFileUpload, this);
+      YAHOO.Bubbling.on("dropTargetOwnerRequest", this.onDropTargetOwnerRequest, this);
+      YAHOO.Bubbling.on("documentDragOver", this.onDocumentDragOver, this);
+      YAHOO.Bubbling.on("documentDragOut", this.onDocumentDragOut, this);
+      YAHOO.Bubbling.on("registerAction", this.onRegisterAction, this);
 
       return this;
    };
@@ -97,22 +103,12 @@
       options:
       {
          /**
-          * Working mode: Site or Repository.
-          * Affects how actions operate, e.g. actvities are not posted in Repository mode.
-          * 
-          * @property workingMode
-          * @type number
-          * @default Alfresco.doclib.MODE_SITE
-          */
-         workingMode: Alfresco.doclib.MODE_SITE,
-
-         /**
           * Current siteId.
           * 
           * @property siteId
           * @type string
           */
-         siteId: "",
+         siteId: null,
 
          /**
           * ContainerId representing root container
@@ -147,7 +143,24 @@
           * @type boolean
           * @default false
           */
-         googleDocsEnabled: false
+         googleDocsEnabled: false,
+
+         /**
+          * Whether the Repo Browser is in use or not
+          *
+          * @property repositoryBrowsing
+          * @type boolean
+          */
+         repositoryBrowsing: true,
+
+         /**
+          * Decides it the title shall be displayed next to the name if it contains a value that is different from the name
+          *
+          * @property useTitle
+          * @type boolean
+          * @default true
+          */
+         useTitle: true
       },
       
       /**
@@ -222,23 +235,31 @@
             menu: "createContent-menu",
             lazyloadmenu: false,
             disabled: true,
-            value: "create"
+            value: "CreateChildren"
          });
+         // Make sure we load sub menu lazily with data on each click
+         var templateNodesMenus = this.widgets.createContent.getMenu().getSubmenus(),
+            templateNodesMenu = templateNodesMenus.length > 0 ? templateNodesMenus[0] : null;
+         if (templateNodesMenu)
+         {
+            templateNodesMenu.subscribe("beforeShow", this.onCreateByTemplateNodeBeforeShow, this, true);
+            templateNodesMenu.subscribe("click", this.onCreateByTemplateNodeClick, this, true);
+         }
          this.dynamicControls.push(this.widgets.createContent);
 
          // New Folder button: user needs "create" access
          this.widgets.newFolder = Alfresco.util.createYUIButton(this, "newFolder-button", this.onNewFolder,
          {
             disabled: true,
-            value: "create"
+            value: "CreateChildren"
          });
          this.dynamicControls.push(this.widgets.newFolder);
          
-         // File Upload button: user needs  "create" access
+         // File Upload button: user needs  "CreateChildren" access
          this.widgets.fileUpload = Alfresco.util.createYUIButton(this, "fileUpload-button", this.onFileUpload,
          {
             disabled: true,
-            value: "create"
+            value: "CreateChildren"
          });
          this.dynamicControls.push(this.widgets.fileUpload);
          
@@ -259,13 +280,18 @@
          });
          this.dynamicControls.push(this.widgets.selectedItems);
 
-         // Customize button
-         this.widgets.customize = Alfresco.util.createYUIButton(this, "customize-button", this.onCustomize);
-
          // Hide/Show NavBar button
-         this.widgets.hideNavBar = Alfresco.util.createYUIButton(this, "hideNavBar-button", this.onHideNavBar);
-         this.widgets.hideNavBar.set("label", this.msg(this.options.hideNavBar ? "button.navbar.show" : "button.navbar.hide"));
+         this.widgets.hideNavBar = Alfresco.util.createYUIButton(this, "hideNavBar-button", this.onHideNavBar,
+         {
+            type: "checkbox",
+            checked: this.options.hideNavBar
+         });
+         if (this.widgets.hideNavBar !== null)
+         {
+            this.widgets.hideNavBar.set("title", this.msg(this.options.hideNavBar ? "button.navbar.show" : "button.navbar.hide"));
          Dom.setStyle(this.id + "-navBar", "display", this.options.hideNavBar ? "none" : "block");
+            this.dynamicControls.push(this.widgets.hideNavBar);
+         }
          
          // RSS Feed link button
          this.widgets.rssFeed = Alfresco.util.createYUIButton(this, "rssFeed-button", null, 
@@ -277,12 +303,13 @@
          // Folder Up Navigation button
          this.widgets.folderUp =  Alfresco.util.createYUIButton(this, "folderUp-button", this.onFolderUp,
          {
-            disabled: true
+            disabled: true,
+            title: this.msg("button.up")
          });
          this.dynamicControls.push(this.widgets.folderUp);
 
          // DocLib Actions module
-         this.modules.actions = new Alfresco.module.DoclibActions(this.options.workingMode);
+         this.modules.actions = new Alfresco.module.DoclibActions();
          
          // Reference to Document List component
          this.modules.docList = Alfresco.util.ComponentManager.findFirst("Alfresco.DocumentList");
@@ -301,7 +328,7 @@
        */
 
       /**
-       * Create Content menu click handler
+       * Create Content menu click handler for create content menu items (not create by template node menu items)
        *
        * @method onCreateContent
        * @param sType {string} Event type, e.g. "click"
@@ -313,7 +340,8 @@
          var eventTarget = aArgs[1],
             anchor = eventTarget.element.getElementsByTagName("a")[0];
          
-         if (anchor && anchor.nodeName == "A")
+         // Make sure a create content menu item was clicked (not a template node)
+         if (eventTarget.parent === this.widgets.createContent.getMenu() && anchor && anchor.nodeName == "A")
          {
             anchor.href = YAHOO.lang.substitute(anchor.href,
             {
@@ -329,9 +357,63 @@
       },
 
       /**
-       * Bulk edit menu click handler
+       * Create Content Template Node menu beforeShow handler
        *
-       * @method onBulkEdit
+       * @method onCreateByTemplateNodeBeforeShow
+       */
+      onCreateByTemplateNodeBeforeShow: function DLTB_onCreateByTemplateNodeBeforeShow()
+      {
+         // Display loading message
+         var templateNodesMenu = this.widgets.createContent.getMenu().getSubmenus()[0];
+         if (templateNodesMenu.getItems().length == 0)
+         {
+            templateNodesMenu.clearContent();
+            templateNodesMenu.addItem(this.msg("label.loading"));
+            templateNodesMenu.render();
+
+            // Load template nodes
+            Alfresco.util.Ajax.jsonGet(
+            {
+               url: Alfresco.constants.PROXY_URI + "slingshot/doclib/node-templates",
+               successCallback:
+               {
+                  fn: function(response, menu)
+                  {
+                     var nodes = response.json.data,
+                        menuItems = [],
+                        name;
+                     for (var i = 0, il = nodes.length; i < il; i++)
+                     {
+                        node = nodes[i];
+                        name = $html(node.name);
+                        if (node.title && node.title !== node.name && this.options.useTitle)
+                        {
+                           name += '<span class="title">(' + $html(node.title) + ')</span>';
+                        }
+                        menuItems.push(
+                        {
+                           text: '<span title="' + $html(node.description) + '">' + name +'</span>',
+                           value: node
+                        });
+                     }
+                     if (menuItems.length == 0)
+                     {
+                        menuItems.push(this.msg("label.empty"));
+                     }
+                     templateNodesMenu.clearContent();
+                     templateNodesMenu.addItems(menuItems);
+                     templateNodesMenu.render();
+                  },
+                  scope: this
+               }
+            });
+         }
+      },
+
+      /**
+       * Create Content Template Node sub menu click handler
+       *
+       * @method onCreateContentTemplateNode
        * @param sType {string} Event type, e.g. "click"
        * @param aArgs {array} Arguments array, [0] = DomEvent, [1] = EventTarget
        * @param p_obj {object} Object passed back from subscribe method
@@ -353,6 +435,42 @@
             {
                anchor.href = anchor.href.replace("%7BnodeRef%7D", encodeURIComponent(this.doclistMetadata.parent.nodeRef));
             }
+         }
+      },
+      
+         onCreateByTemplateNodeClick: function DLTB_onCreateContentTemplateNode(sType, aArgs, p_obj)
+      {
+         // Create content based on a template
+         var node = aArgs[1].value,
+            destination = this.doclistMetadata.parent.nodeRef;
+
+         // If node is undefined the loading or empty menu items were clicked
+         if (node)
+         {
+            Alfresco.util.Ajax.jsonPost(
+            {
+               url: Alfresco.constants.PROXY_URI + "slingshot/doclib/node-templates",
+               dataObj:
+               {
+                  sourceNodeRef: node.nodeRef,
+                  parentNodeRef: destination
+               },
+               successCallback:
+               {
+                  fn: function (response)
+                  {
+                     // Make sure we get other components to update themselves to show the new content
+                     YAHOO.Bubbling.fire("nodeCreated",
+                     {
+                        name: node.name,
+                        parentNodeRef: destination,
+                        highlightFile: response.json.name
+                     });
+                  }
+               },
+               successMessage: this.msg("message.create-content-by-template-node.success", node.name),
+               failureMessage: this.msg("message.create-content-by-template-node.failure", node.name)
+            });
          }
       },
       
@@ -445,7 +563,7 @@
        *
        * @method onFileUpload
        * @param e {object} DomEvent
-       * @param p_obj {object} Object passed back from addListener method
+       * @param p_obj {object|array} Object passed back from addListener method or args from Bubbling event
        */
       onFileUpload: function DLTB_onFileUpload(e, p_obj)
       {
@@ -470,6 +588,34 @@
             }
          };
          this.fileUpload.show(multiUploadConfig);
+
+         if (YAHOO.lang.isArray(p_obj) && p_obj[1].tooltip)
+         {
+            var balloon = Alfresco.util.createBalloon(this.fileUpload.uploader.id + "-dialog",
+            {
+               html: p_obj[1].tooltip,
+               width: "30em"
+            });
+            balloon.show();
+
+            this.fileUpload.uploader.widgets.panel.hideEvent.subscribe(function()
+            {
+               balloon.hide()
+            });
+         }
+      },
+      
+      /**
+       * Calls the file Upload button click handler but creates an additional tooltip
+       * with information on Drag-and-Drop as an alternative method for uploading content
+       *
+       * @method onFileUploadWithTooltip
+       * @param e {object} DomEvent
+       * @param p_obj {object} Object passed back from addListener method
+       */
+      onFileUploadWithTooltip: function DLTB_onFileUploadWithTooltip(e, p_obj)
+      {
+         this.onFileUpload(e, p_obj);
       },
       /**
        * File Upload complete event handler
@@ -482,7 +628,7 @@
          var success = complete.successful.length, activityData, file;
          if (success > 0)
          {
-            if (success < this.options.groupActivitiesAt)
+            if (success < (this.options.groupActivitiesAt || 5))
             {
                // Below cutoff for grouping Activities into one
                for (var i = 0; i < success; i++)
@@ -538,23 +684,24 @@
       },
       
       /**
-       * Delete Multiple Assets.
+       * Delete Multiple Records.
        *
        * @method onActionDelete
-       * @param assets {object} Object literal representing one or more file(s) or folder(s) to be actioned
+       * @param records {object} Object literal representing one or more file(s) or folder(s) to be actioned
        */
-      onActionDelete: function DLTB_onActionDelete(assets)
+      onActionDelete: function DLTB_onActionDelete(records)
       {
          var me = this,
             fileNames = [];
          
-         for (var i = 0, j = assets.length; i < j; i++)
+         for (var i = 0, j = records.length; i < j; i++)
          {
-            fileNames.push("<span class=\"" + assets[i].type + "\">" + $html(assets[i].displayName) + "</span>");
+            fileNames.push("<span class=\"" + (records[i].jsNode.isContainer ? "folder" : "document") + "\">" + $html(records[i].displayName) + "</span>");
          }
          
          var confirmTitle = this.msg("title.multiple-delete.confirm"),
-            confirmMsg = this.msg("message.multiple-delete.confirm", assets.length);
+            confirmMsg = this.msg("message.multiple-delete.confirm", records.length);
+
          confirmMsg += "<div class=\"toolbar-file-list\">" + fileNames.join("") + "</div>";
 
          Alfresco.util.PopupManager.displayPrompt(
@@ -569,7 +716,7 @@
                handler: function DLTB_onActionDelete_delete()
                {
                   this.destroy();
-                  me._onActionDeleteConfirm.call(me, assets);
+                  me._onActionDeleteConfirm.call(me, records);
                }
             },
             {
@@ -583,23 +730,23 @@
          });
       },
 
-      /**
-       * Delete Multiple Assets confirmed.
+       /**
+       * Delete Multiple Records confirmed.
        *
        * @method _onActionDeleteConfirm
-       * @param assets {array} Array containing assets to be deleted
+       * @param records {array} Array containing records to be deleted
        * @private
        */
-      _onActionDeleteConfirm: function DLTB__onActionDeleteConfirm(assets)
+      _onActionDeleteConfirm: function DLTB__onActionDeleteConfirm(records)
       {
-         var multipleAssets = [], i, ii;
-         for (i = 0, ii = assets.length; i < ii; i++)
+         var multipleRecords = [], i, ii;
+         for (i = 0, ii = records.length; i < ii; i++)
          {
-            multipleAssets.push(assets[i].nodeRef);
+            multipleRecords.push(records[i].jsNode.nodeRef.nodeRef);
          }
          
          // Success callback function
-         var fnSuccess = function DLTB__oADC_success(data, assets)
+         var fnSuccess = function DLTB__oADC_success(data, records)
          {
             var result;
             var successCount = 0;
@@ -633,7 +780,7 @@
             }
 
             // Activities, in Site mode only
-            if (this.options.workingMode == Alfresco.doclib.MODE_SITE)
+            if (Alfresco.util.isValueSet(this.options.siteId))
             {
                var activityData;
                if (successCount > 0)
@@ -681,7 +828,7 @@
                {
                   fn: fnSuccess,
                   scope: this,
-                  obj: assets
+                  obj: records
                }
             },
             failure:
@@ -702,14 +849,14 @@
                requestContentType: Alfresco.util.Ajax.JSON,
                dataObj:
                {
-                  nodeRefs: multipleAssets
+                  nodeRefs: multipleRecords
                }
             }
          });
       },
 
       /**
-       * Deselect currectly selected assets.
+       * Deselect currectly selected records.
        *
        * @method onActionDeselectAll
        */
@@ -722,18 +869,6 @@
       },
 
       /**
-       * Customize button click handler
-       *
-       * @method onCustomize
-       * @param e {object} DomEvent
-       * @param p_obj {object} Object passed back from addListener method
-       */
-      onCustomize: function DLTB_onCustomize(e, p_obj)
-      {
-         Alfresco.logger.warn("DLTB_onCustomize: Not implemented");
-      },
-
-      /**
        * Show/Hide navigation bar button click handler
        *
        * @method onHideNavBar
@@ -742,13 +877,14 @@
        */
       onHideNavBar: function DLTB_onHideNavBar(e, p_obj)
       {
-         this.options.hideNavBar = !this.options.hideNavBar;
-         p_obj.set("label", this.msg(this.options.hideNavBar ? "button.navbar.show" : "button.navbar.hide"));
-
-         this.services.preferences.set(PREF_HIDE_NAVBAR, this.options.hideNavBar);
-
+         this.options.hideNavBar = this.widgets.hideNavBar.get("checked");
+         this.widgets.hideNavBar.set("title", this.msg(this.options.hideNavBar ? "button.navbar.show" : "button.navbar.hide"));
          Dom.setStyle(this.id + "-navBar", "display", this.options.hideNavBar ? "none" : "block");
-         Event.preventDefault(e);
+         this.services.preferences.set(PREF_HIDE_NAVBAR, this.options.hideNavBar);
+         if (e)
+         {
+            Event.preventDefault(e);
+         }
       },
 
       /**
@@ -789,23 +925,26 @@
          {
             obj.filterOwner = obj.filterOwner || Alfresco.util.FilterManager.getOwner(obj.filterId);
 
-            if (this.currentFilter.filterOwner != obj.filterOwner || this.currentFilter.filterId != obj.filterId)
+            if (obj.filterOwner)
             {
-               var filterOwner = obj.filterOwner.split(".")[1],
-                  ownerIdClass = filterOwner + "_" + obj.filterId;
-               
-               // Obtain array of DIVs we might want to hide
-               var divs = YAHOO.util.Selector.query('div.hideable', Dom.get(this.id)), div;
-               for (var i = 0, j = divs.length; i < j; i++)
+               if (this.currentFilter.filterOwner != obj.filterOwner || this.currentFilter.filterId != obj.filterId)
                {
-                  div = divs[i];
-                  if (Dom.hasClass(div, filterOwner) || Dom.hasClass(div, ownerIdClass))
+                  var filterOwner = obj.filterOwner.split(".")[1],
+                     ownerIdClass = filterOwner + "_" + obj.filterId;
+
+                  // Obtain array of DIVs we might want to hide
+                  var divs = YAHOO.util.Selector.query('div.hideable', Dom.get(this.id)), div;
+                  for (var i = 0, j = divs.length; i < j; i++)
                   {
-                     Dom.removeClass(div, "toolbar-hidden");
-                  }
-                  else
-                  {
-                     Dom.addClass(div, "toolbar-hidden");
+                     div = divs[i];
+                     if (Dom.hasClass(div, filterOwner) || Dom.hasClass(div, ownerIdClass))
+                     {
+                        Dom.removeClass(div, "toolbar-hidden");
+                     }
+                     else
+                     {
+                        Dom.addClass(div, "toolbar-hidden");
+                     }
                   }
                }
             }
@@ -988,18 +1127,23 @@
          if (this.modules.docList)
          {
             var files = this.modules.docList.getSelectedFiles(), fileTypes = [], file,
-               userAccess = {}, fileAccess, index,
+               fileType, userAccess = {}, fileAccess, index,
                menuItems = this.widgets.selectedItems.getMenu().getItems(), menuItem,
                actionPermissions, typeGroups, typesSupported, disabled,
                i, ii, j, jj;
             
+            var fnFileType = function fnFileType(file)
+            {
+               return (file.isContainer ? "folder" : "document");
+            };
+
             // Check each file for user permissions
             for (i = 0, ii = files.length; i < ii; i++)
             {
                file = files[i];
                
                // Required user access level - logical AND of each file's permissions
-               fileAccess = file.permissions.userAccess;
+               fileAccess = file.node.permissions.user;
                for (index in fileAccess)
                {
                   if (fileAccess.hasOwnProperty(index))
@@ -1009,10 +1153,11 @@
                }
                
                // Make a note of all selected file types Using a hybrid array/object so we can use both array.length and "x in object"
-               if (!(file.type in fileTypes))
+               fileType = fnFileType(file);
+               if (!(fileType in fileTypes))
                {
-                  fileTypes[file.type] = true;
-                  fileTypes.push(file.type);
+                  fileTypes[fileType] = true;
+                  fileTypes.push(fileType);
                }
             }
 
@@ -1099,7 +1244,107 @@
          }
       },
       
+      /**
+       * Handles "dropTargetOwnerRequest" by determining whether or not the target belongs to the breacrumb
+       * trail, and if it does determines it's path and uses it with the container nodeRef on the callback 
+       * function.
+       * 
+       * @method onDropTargetOwnerRequest
+       * @property layer The name of the event
+       * @property args The event payload
+       */
+      onDropTargetOwnerRequest: function DLTB_onDropTargetOwnerRequest(layer, args)
+      {
+         if (args && args[1] && args[1].elementId)
+         {
+            var crumb = Dom.get(args[1].elementId);
+            var trail = Dom.get(this.id + "-breadcrumb");
+            if (Dom.isAncestor(trail, crumb))
+            {
+               // The current element is part of the breadcrumb trail. 
+               // Calculate the path by working out its index within the breadcrumb trail
+               // and then apply that to the path (remembering to compensate for the SPAN
+               // elements that just contain the ">" separators !
+               var targetPath = "";
+               var paths = this.currentPath.split("/");
+               for (var i = 0, j = trail.children.length; i < j; i++)
+               {
+                  if (i % 2 == 0)
+                  {
+                     // Only use the current index if it's even (odd indexes indicate
+                     // the SPAN containing the ">" separator character...
+                     targetPath = targetPath + "/" + paths[i/2];
+                  }
+                  
+                  // If we've reached the target element then break out of the loop...
+                  if (crumb == trail.children[i])
+                  {
+                     break;
+                  }
+               }
+               
+               // Use the callback method with a nodeRef built from the the container nodeRef
+               // concatonated with the constructed path...
+               var nodeRef = this.doclistMetadata.container + targetPath;
+               args[1].callback.call(args[1].scope, nodeRef, targetPath);
+            }
+         }
+      },
    
+      /**
+       * Handles applying the styling and node creation required when a document is dragged
+       * over a tree node.
+       * 
+       * @method onDocumentDragOver
+       * @property layer The name of the event
+       * @property args The event payload
+       */
+      onDocumentDragOver: function DLTB_onDocumentDragOver(layer, args)
+      {
+         if (args && args[1] && args[1].elementId)
+         {
+            var crumb = Dom.get(args[1].elementId);
+            var trail = Dom.get(this.id + "-breadcrumb");
+            if (Dom.isAncestor(trail, crumb))
+            {
+               Dom.addClass(crumb, "documentDragOverHighlight");
+               var firstCrumbChild = Dom.getFirstChild(crumb);
+               if (firstCrumbChild != null && firstCrumbChild.tagName != "SPAN")
+               {
+                  var arrow = document.createElement("span");
+                  Dom.addClass(arrow, "documentDragOverArrow");
+                  Dom.insertBefore(arrow, firstCrumbChild);
+               }
+            }
+         }
+      },
+      
+      /**
+       * Handles applying the styling and node deletion required when a document is dragged
+       * out of a tree node.
+       *
+       * @method onDocumentDragOut
+       * @property layer The name of the event
+       * @property args The event payload
+       */
+      onDocumentDragOut: function DLTB_onDocumentDragOut(layer, args)
+      {
+         if (args && args[1] && args[1].elementId)
+         {
+            var crumb = Dom.get(args[1].elementId);
+            var trail = Dom.get(this.id + "-breadcrumb");
+            if (Dom.isAncestor(trail, crumb))
+            {
+               Dom.removeClass(crumb, "documentDragOverHighlight");
+               var firstCrumbChild = Dom.getFirstChild(crumb);
+               if (firstCrumbChild != null && firstCrumbChild.tagName == "SPAN")
+               {
+                  crumb.removeChild(firstCrumbChild);
+               }
+            }
+         }
+      },
+      
       /**
        * PRIVATE FUNCTIONS
        */
@@ -1157,6 +1402,8 @@
             newPath = paths.slice(0, i+1).join("/");
             eCrumb = new Element(document.createElement("div"));
             eCrumb.addClass("crumb");
+            eCrumb.addClass("documentDroppable"); // This class allows documents to be dropped onto the element
+            eCrumb.addClass("documentDroppableHighlights"); // This class allows drag over/out events to be processed
             
             // First crumb doesn't get an icon
             if (i > 0)
@@ -1200,6 +1447,13 @@
                   className: "separator"
                }));
             }
+         }
+         
+         var rootEl = Dom.get(this.id + "-breadcrumb");
+         var dndTargets = Dom.getElementsByClassName("crumb", "div", rootEl);
+         for (var i = 0, j = dndTargets.length; i < j; i++)
+         {
+            new YAHOO.util.DDTarget(dndTargets[i]);
          }
       },
 

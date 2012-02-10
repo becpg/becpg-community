@@ -90,7 +90,15 @@
           * @property savedQuery
           * @type string
           */
-         savedQuery: ""
+         savedQuery: "",
+         
+         /**
+          * It is possible to disable searching entire repo via config
+          * 
+          * @property searchRepo
+          * @type boolean
+          */
+         searchRepo: true
       },
       
       /**
@@ -133,24 +141,22 @@
          // search YUI button and menus
          this.widgets.searchButton1 = Alfresco.util.createYUIButton(this, "search-button-1", this.onSearchClick);
          this.widgets.searchButton2 = Alfresco.util.createYUIButton(this, "search-button-2", this.onSearchClick);
-         this.widgets.formButton = new YAHOO.widget.Button(this.id + "-selected-form-button",
-         {
-            type: "menu",
-            menu: this.id + "-selected-form-list"
-         });
-         this.widgets.formButton.set("label", defaultForm.label);
-         this.widgets.formButton.set("title", defaultForm.description);
-         
-         // event handler for form menu
-         this.widgets.formButton.getMenu().subscribe("click", function(p_sType, p_aArgs)
+           
+         this.widgets.formButton = Alfresco.util.createYUIButton(this, "selected-form-button", function(p_sType, p_aArgs)
          {
             // update selected item menu button label
-            var form = me.options.searchForms[p_aArgs[1].index];
-            me.widgets.formButton.set("label", form.label);
-            me.widgets.formButton.set("title", form.description);
+            var form = this.options.searchForms[p_aArgs[1].index];
+            this.widgets.formButton.set("label", form.label);
+            this.widgets.formButton.set("title", form.description);
             
             // render the appropriate form template
-            me.renderFormTemplate(form);
+            this.renderFormTemplate(form);
+         },
+         {
+            label: defaultForm.label,
+            title: defaultForm.description,
+            type: "menu",
+            menu: "selected-form-list"
          });
          
          // render initial form template
@@ -316,11 +322,12 @@
          formData.datatype = this.currentForm.type;
          
          // build and execute url for search page
-         var url = YAHOO.lang.substitute(Alfresco.constants.URL_PAGECONTEXT + "{site}search?t={terms}&q={query}",
+         var url = YAHOO.lang.substitute(Alfresco.constants.URL_PAGECONTEXT + "{site}search?t={terms}&q={query}&r={repo}",
          {
             site: (this.options.siteId.length !== 0 ? ("site/" + this.options.siteId + "/") : ""),
             terms: encodeURIComponent(Dom.get(this.id + "-search-text").value),
-            query: encodeURIComponent(YAHOO.lang.JSON.stringify(formData))
+            query: encodeURIComponent(YAHOO.lang.JSON.stringify(formData)),
+            repo: this.options.searchRepo.toString()
          });
          
          window.location.href = url;

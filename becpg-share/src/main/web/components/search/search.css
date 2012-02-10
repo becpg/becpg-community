@@ -140,8 +140,8 @@
 
 .search .results div.details span.tags
 {
-   background-image: url(../images/tag-16.png);
-   padding-left: 16px;
+   background-image: url(images/tag-16.png);
+   background-position: 0px 2px;
    background-repeat: no-repeat;
 }
 
@@ -187,7 +187,7 @@
 
 .search .search-bar span.bulk-edit-button
 {
-   background: transparent url(../documentlibrary/images/inline-edit-16.png) no-repeat 12px 4px;
+   background: transparent url(../images/edit-inline-16.png) no-repeat 12px 4px;
    padding-left: 22px; 
 }
 
@@ -225,16 +225,17 @@
 
 .search .keywords-box
 {
-   background-color: #F5FFF2;
-   margin-left: 1.5em;
-   border: 1px solid #C2C2C2;
-   padding: 1em;
    width: 800px;
 }
 
 .search .keywords-box .terms
 {
    width: 60em;
+}
+
+.search .keywords-box .set
+{
+   padding-bottom: 1em;
 }
 
 /* Forms list button and menu styles */

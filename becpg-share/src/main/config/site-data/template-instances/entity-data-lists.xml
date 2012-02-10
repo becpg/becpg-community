@@ -1,64 +1,75 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <template-instance>
-   <template-type>org/alfresco/entity-data-lists</template-type>
-   <properties>
-      <pageFamily>entity-data-lists</pageFamily>
-      <container>dataLists</container>
-   </properties>
-   <components>
+	<template-type>org/alfresco/entity-data-lists</template-type>
+	<properties>
+		<pageFamily>entity-data-lists</pageFamily>
+		<container>dataLists</container>
+	</properties>
+	<components>
       <!-- title: normal, portlet, repository & portlet+repository -->
-      <component>
-         <region-id>title</region-id>
-         <url>/components/title/collaboration-title</url>
-      </component>
-      <component>
-         <region-id>portlet-title</region-id>
-         <url>/components/title/portlet-collaboration-title</url>
-      </component>
-      <component>
-         <region-id>repo-title</region-id>
-         <url>/components/title/simple-title</url>
-         <properties>
-            <title>title.repository</title>
-            <subtitle>title.browser</subtitle>
-         </properties>
-      </component>
-      <component>
-         <region-id>portlet-repo-title</region-id>
-         <url>/components/title/simple-title</url>
-         <properties>
-            <title>title.repository</title>
-            <subtitle>title.browser</subtitle>
-         </properties>
-      </component>
-      <component>
-         <region-id>navigation</region-id>
-         <url>/components/navigation/collaboration-navigation</url>
-      </component>
-	  <!-- data-lists -->
-      <component>
-         <region-id>actions-common</region-id>
-         <url>/components/data-lists/actions-common</url>
-      </component>
-      <component>
-         <region-id>toolbar</region-id>
-         <url>/components/entity-data-lists/entity-toolbar</url>
-      </component>
-      <component>
-         <region-id>datagrid</region-id>
-         <url>/modules/entity-data-lists/entity-datagrid</url>
-         <properties>
-            <pagination>true</pagination>
-         </properties>
-      </component>
-      <component>
-         <region-id>datalists</region-id>
-         <url>/components/entity-data-lists/entity-datalists</url>
-      </component>
-      <component>
-         <region-id>filter</region-id>
-         <url>/components/data-lists/filter</url>
-      </component>
-   </components>
+		<component>
+			<region-id>title</region-id>
+			<url>/components/title/collaboration-title</url>
+		</component>
+		<component>
+			<region-id>portlet-title</region-id>
+			<url>/components/title/portlet-collaboration-title</url>
+		</component>
+		<component>
+			<region-id>repo-title</region-id>
+			<url>/components/title/simple-title</url>
+			<properties>
+				<title>title.repository</title>
+				<subtitle>title.browser</subtitle>
+			</properties>
+		</component>
+		<component>
+			<region-id>portlet-repo-title</region-id>
+			<url>/components/title/simple-title</url>
+			<properties>
+				<title>title.repository</title>
+				<subtitle>title.browser</subtitle>
+			</properties>
+		</component>
+
+		<!-- Navigation -->
+		<component>
+			<region-id>navigation</region-id>
+			<url>/components/navigation/collaboration-navigation</url>
+		</component>
+
+		<!-- Toolbar -->
+		<component>
+			<region-id>toolbar</region-id>
+			<url>/components/entity-data-lists/entity-toolbar</url>
+		</component>
+
+		<!-- Datagrid -->
+		<component>
+			<region-id>datagrid</region-id>
+			<url>/modules/entity-data-lists/entity-datagrid</url>
+			<properties>
+				<pagination>true</pagination>
+			</properties>
+		</component>
+
+		<!-- Datalist -->
+		<component>
+			<region-id>datalists</region-id>
+			<url>/components/entity-data-lists/entity-datalists</url>
+		</component>
+
+		<!-- Filter -->
+		<component>
+			<region-id>filter</region-id>
+			<url>/components/data-lists/filter</url>
+		</component>
+
+		<!-- Actions Common -->
+		<component>
+			<region-id>actions-common</region-id>
+			<url>/components/data-lists/actions-common</url>
+		</component>
+	</components>
 </template-instance>
 

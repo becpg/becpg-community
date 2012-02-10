@@ -20,6 +20,8 @@
          <list>
             <value>classpath:alfresco/becpg-form-config.xml</value>
             <value>classpath:alfresco/becpg-share-config.xml</value>
+            <value>classpath:alfresco/becpg-search-config.xml</value>
+            <value>classpath:alfresco/becpg-documentlibrary-config.xml</value>
             <value>classpath:alfresco/becpg-workflow-form-config.xml</value>
             <value>classpath:alfresco/becpg-npd-workflow-form-config.xml</value>
             <value>classpath:alfresco/becpg-quality-form-config.xml</value>
@@ -33,5 +35,66 @@
          </list>
       </property>
    </bean>
+
+  <!-- evaluators -->
+	
+  <bean id="evaluator.becpg.doclib.action.entity" parent="evaluator.doclib.action.hasAspect">
+      <property name="aspects">
+         <list>
+            <value>bcpg:entityListsAspect</value>
+         </list>
+      </property>
+   </bean>
+   
+   <bean id="evaluator.becpg.doclib.action.product" parent="evaluator.doclib.action.nodeType">
+      <property name="types">
+         <list>
+            <value>bcpg:product</value>
+         </list>
+      </property>
+   </bean>
+
+
+  <bean id="evaluator.becpg.doclib.action.entity.isWorkingCopy"  parent="evaluator.doclib.action.chainedMatchAll">
+      <property name="evaluators">
+         <list>
+            <ref bean="evaluator.doclib.action.isWorkingCopy" />
+            <ref bean="evaluator.becpg.doclib.action.entity" />
+         </list>
+      </property>
+   </bean>
+
+
+   <!--  
+ 	  bcpg:productState
+   -->
+   <bean id=" evaluator.becpg.doclib.indicator.product.valid" parent="evaluator.doclib.action.value">
+      <property name="accessor" value="properties.becpg_productState" />
+      <property name="comparator">
+         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+            <property name="value" value="valid" />
+         </bean>
+      </property>
+   </bean>
+
+	 <bean id=" evaluator.becpg.doclib.indicator.product.refused" parent="evaluator.doclib.action.value">
+      <property name="accessor" value="properties.becpg_productState" />
+      <property name="comparator">
+         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+            <property name="value" value="refused" />
+         </bean>
+      </property>
+   </bean>
+   
+    <bean id=" evaluator.becpg.doclib.indicator.product.archived" parent="evaluator.doclib.action.value">
+      <property name="accessor" value="properties.becpg_productState" />
+      <property name="comparator">
+         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+            <property name="value" value="archived" />
+         </bean>
+      </property>
+   </bean>
+	
+
 
 </beans>

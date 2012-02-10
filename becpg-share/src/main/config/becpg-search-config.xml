@@ -1,0 +1,152 @@
+<alfresco-config>
+   <config evaluator="string-compare" condition="Search">
+      <!-- beCPG -->
+      <metadata>
+		<show id="bcpg:legalName" />
+		<show id="bcpg:productHierarchy1" />
+		<show id="bcpg:productHierarchy2" />
+		<show id="bcpg:productState" />
+		<show id="bcpg:code" />
+		<show id="bcpg:erpCode"/>
+		<show id="bcpg:eanCode" />
+		<show id="bcpg:suppliers"  />
+		<show id="bcpg:clients" />
+      </metadata>
+      
+   </config>
+
+   
+	<config evaluator="string-compare" condition="AdvancedSearch">
+		<advanced-search>
+			<!-- Forms for the advanced search type list -->
+			<forms>
+				<!-- The 'form' config element contains the name of the model type of 
+					the form to display. The element supports the following optional attributes: 
+					id = form id, the id of "search" will be assumed if not set label = label 
+					text to display - defaults to model type if not set labelId = I18N message 
+					id of label text to display description = description text to display descriptionId 
+					= I18N message id of description text to display -->
+				<form labelId="search.form.label.bcpg_product" descriptionId="search.form.desc.bcpg_product">bcpg:product
+				</form>
+				<form labelId="search.form.label.qa_nc" descriptionId="search.form.desc.qa_nc">qa:nc
+				</form>
+			</forms>
+		</advanced-search>
+	</config>
+	
+	
+	<!-- bcpg:product type (creating nodes nodes) -->
+	<config evaluator="model-type" condition="bcpg:product">
+		<forms>
+
+			<form id="search">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" />
+
+					<!-- bcpg:productAspect -->
+					<show id="bcpg:legalName" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
+
+					<!-- bcpg:eanAspect -->
+					<show id="bcpg:eanCode" force="true" />
+					
+					<show id="bcpg:suppliers" force="true" />
+					<show id="bcpg:clients" force="true" />
+					
+					<!-- modified -->
+					<show id="cm:modified" />
+					<show id="cm:modifier" />
+
+					<!-- NPD -->
+					<show id="npd:npdNumber" force="true" />
+					<show id="npd:npdType" force="true" />
+					<show id="npd:npdStatus" force="true" />					
+					<show id="npd:npdInitiator" force="true" />
+					
+					<!-- ing information -->
+					<show id="bcpg:ingListIng" force="true" />
+					<show id="bcpg:ingListGeoOrigin" force="true" />
+					<show id="bcpg:ingListBioOrigin" force="true" />
+
+				</field-visibility>
+				<appearance>
+					<set id="product-criteria" appearance="bordered-panel" label="Critères sur le produit" />
+					<set id="npd" appearance="bordered-panel" label="NPD"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="ings-criteria" appearance="bordered-panel"
+						label="Critères sur les ingrédients" />					
+
+					<field id="cm:name" set="product-criteria" />
+					<field id="cm:description" set="product-criteria" />
+
+					<!-- bcpg:productAspect -->
+					<field id="bcpg:legalName" set="product-criteria" />
+					<field id="bcpg:productHierarchy1" set="product-criteria">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:productHierarchy2" set="product-criteria">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:productState" set="product-criteria">
+						<control
+							template="/fr/becpg/components/form/controls/product/productState.ftl">
+							<control-param name="searchMode">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" set="product-criteria" />
+					<field id="bcpg:erpCode" set="product-criteria" />
+
+					<!-- bcpg:eanAspect -->
+					<field id="bcpg:eanCode" set="product-criteria" />
+
+					<field id="bcpg:suppliers"  set="product-criteria">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					<field id="bcpg:clients" set="product-criteria">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+
+					<!-- modified -->
+					<field id="cm:modifier" set="product-criteria">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="cm:modified" set="product-criteria">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
+					
+					<!-- NPD -->
+					<field id="npd:npdNumber" set="npd" />
+					<field id="npd:npdType" set="npd" />
+					<field id="npd:npdStatus" set="npd" />					
+					<field id="npd:npdInitiator" set="npd" />		
+
+					<!-- ing information -->
+					<field id="bcpg:ingListIng" set="ings-criteria">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListGeoOrigin" set="ings-criteria">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListBioOrigin" set="ings-criteria">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+
+				</appearance>
+			</form>
+
+		</forms>
+	</config>
+</alfresco-config>
