@@ -1,13 +1,35 @@
 <script type="text/javascript">//<![CDATA[
-   new beCPG.component.OlapChart("${args.htmlid}", "${instance.object.id}");
+   var olapChart = new beCPG.dashlet.OlapChart("${args.htmlid}", "${instance.object.id}");
+ 
    new Alfresco.widget.DashletResizer("${args.htmlid}", "${instance.object.id}");
+
+   var saikuAccessEvent = new YAHOO.util.CustomEvent("openSaikuClick");
+   saikuAccessEvent.subscribe(olapChart.openSaikuClick, olapChart, true);
+   
+    new Alfresco.widget.DashletTitleBarActions("${args.htmlid}").setOptions(
+   {
+      actions:
+      [
+         {
+            cssClass: "saiku",
+            eventOnClick: saikuAccessEvent,
+            tooltip: "${msg("link.access.bi")?js_string}"
+         },
+         {
+            cssClass: "help",
+            bubbleOnClick:
+            {
+               message: "${msg("dashlet.help")?js_string}"
+            },
+            tooltip: "${msg("dashlet.help.tooltip")?js_string}"
+         }
+      ]
+   });
+   
 //]]></script>
 <div class="dashlet my-olapchart">
   <div class="title">${msg("header.myOlapChart")}</div>
-  <div class="feed">
-	  <a class="olapChart-link-bi" href="/saiku-ui/" title="${msg("link.access.bi")}">&nbsp;</a>
-  </div>
-  <div class="toolbar  flat-button">   
+  <div class="toolbar flat-button">   
       <input id="${args.htmlid}-charPicker-button" type="button" name="${args.htmlid}-charPicker-button" value="${msg("button.chart.choose")}" ></input>
       <select id="${args.htmlid}-charPicker-select" name="${args.htmlid}-charPicker-select"></select>
       <input id="${args.htmlid}-chartTypePicker-button" type="button" name="${args.htmlid}-chartTypePicker-button" value="${msg("button.chart.choose")}" ></input>
@@ -21,7 +43,9 @@
    </div>
 	<div class="body " >
 		<div id="${args.htmlid}-chartContainer" class="yui-content">
-			<div class="chart olapChart" id="${args.htmlid}-chart" >${msg("body.msg")}</div>
+			<div class="chart olapChart" id="${args.htmlid}-chart" >
+				<div class="empty"><h3>${msg("empty.title")}</h3><span>${msg("empty.description")}</span></div>
+			</div>
 		</div>
 	</div>
 </div>

@@ -13,16 +13,8 @@
    /**
     * YUI Library aliases
     */
-   var Dom = YAHOO.util.Dom,
-      Event = YAHOO.util.Event,
-      Selector = YAHOO.util.Selector,
-      Bubbling = YAHOO.Bubbling;
+   var Dom = YAHOO.util.Dom;
 
-   /**
-    * Alfresco Slingshot aliases
-    */
-   var $html = Alfresco.util.encodeHTML,
-      $combine = Alfresco.util.combinePaths;
 
    /**
     * EntityDataListToolbar constructor.
@@ -34,7 +26,7 @@
    beCPG.component.EntityDataListToolbar = function(htmlId)
    {
 		return beCPG.component.EntityDataListToolbar.superclass.constructor.call(this, htmlId);
-   }
+   };
    
    /**
     * Extend from Alfresco.component.DataListToolbar

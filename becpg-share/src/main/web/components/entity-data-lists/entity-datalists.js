@@ -15,8 +15,7 @@
     */
    var Dom = YAHOO.util.Dom,
       Event = YAHOO.util.Event,
-      Selector = YAHOO.util.Selector,
-      Bubbling = YAHOO.Bubbling;
+      Selector = YAHOO.util.Selector;
 
    /**
     * Alfresco Slingshot aliases
@@ -34,7 +33,7 @@
    beCPG.component.EntityDataLists = function(htmlId)
    {
 		return beCPG.component.EntityDataLists.superclass.constructor.call(this, htmlId);
-   }
+   };
    
    /**
     * Extend from Alfresco.component.DataLists
@@ -138,6 +137,11 @@
                {
                   errorMsg = this.msg("message.error-unknown");
                }
+               Alfresco.util.PopupManager.displayMessage({
+                          text: errorMsg
+               });
+               
+               
             }
          };		
 

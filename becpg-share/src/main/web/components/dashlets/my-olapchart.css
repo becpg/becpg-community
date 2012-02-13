@@ -1,19 +1,28 @@
 div.olapChart {
      height: 250px; 
+} 
+
+.my-olapchart .yui-button
+{
+   margin: auto 0;
+}
+
+.dashlet .titleBarActions .saiku {
+    background-image: url(images/becpg-bi-16.png);
 }
 
 
-.my-olapChart.dashlet .feed {
-    background-image:  url(images/becpg-bi-16.png);
-    background-repeat: no-repeat;
+
+.my-olapchart .empty
+{
+   background-image: url(../images/help-activities-bw-32.png);
+   background-position: 16px 4px;
+   background-repeat: no-repeat;
+   padding: 4px 8px 4px 64px;
 }
 
-
-.my-olapChart .toolbar div.actions, .my-olapChart .toolbar div.links {
-  float:right;
-}
-
-.my-olapChart .toolbar div.actions {
-  line-height:2em;
-  min-height:2em;
+.my-olapchart .empty div
+{
+   line-height: 1.5em;
+   padding-top: 1em;
 }
