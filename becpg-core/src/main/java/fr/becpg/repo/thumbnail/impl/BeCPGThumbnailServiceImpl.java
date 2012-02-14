@@ -26,7 +26,7 @@ import fr.becpg.repo.thumbnail.BeCPGThumbnailService;
  * Provide specific thumbnail for custom becpg types
  * 
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
- * 
+ * TODO
  */
 public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 		BeCPGThumbnailService, ThumbnailService {
@@ -85,11 +85,11 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 							BeCPGModel.TYPE_PRODUCT)) {
 				imgName = TranslateHelper.getTranslatedPath(
 						RepoConsts.PATH_LOGO_IMAGE).toLowerCase();
-				//boolean isContaintReport = false;
+	
 				if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
 					imgName = TranslateHelper.getTranslatedPath(
 							RepoConsts.PATH_PRODUCT_IMAGE).toLowerCase();
-					//isContaintReport = true;
+
 				}
 
 				logger.debug("Look for product thumbnail: " + imgName);
@@ -98,9 +98,6 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 					return super.getThumbnailByName(img,
 							ContentModel.PROP_CONTENT, DOC_LIB_THUMBNAIL);
 				}
-//				if (isContaintReport) {
-//					return null;
-//				}
 				
 			}
 			imgName = "generic-" + type.getLocalName() + "-thumb.png";

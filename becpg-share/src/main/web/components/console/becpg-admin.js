@@ -56,6 +56,8 @@
 						parent.onInitRepoClick);
 				parent.widgets.initAclButton = Alfresco.util.createYUIButton(parent, "init-acl-button",
 						parent.onInitAclClick);
+				parent.widgets.emptyCacheButton = Alfresco.util.createYUIButton(parent, "empty-cache-button",
+						parent.onEmptyCacheClick);
 			},
 
 			onShow : function onShow() {
@@ -341,6 +343,67 @@
 				});
 			}
 			this.widgets.initAclButton.set("disabled", false);
+		},	
+		/**
+		 * Empty cache click event handler
+		 * 
+		 * @method onEmptyCacheClick
+		 * @param e
+		 *            {object} DomEvent
+		 * @param args
+		 *            {array} Event parameters (depends on event type)
+		 */
+		onEmptyCacheClick : function ConsolebeCPGAdmin_onEmptyCacheClick(e, args) {
+			// Disable the button temporarily
+			this.widgets.emptyCacheButton.set("disabled", true);
+
+			Alfresco.util.Ajax.request({
+				url : Alfresco.constants.PROXY_URI + "becpg/admin/clearCache",
+				method : Alfresco.util.Ajax.GET,
+				responseContentType : Alfresco.util.Ajax.JSON,
+				successCallback : {
+					fn : this.emptyCacheSuccess,
+					scope : this
+				},
+				failureCallback : {
+					fn : this.emptyCacheFailure,
+					scope : this
+				}
+			});
+		},
+
+		/**
+		 * emptyCache success handler
+		 * 
+		 * @method emptyCacheRepoSuccess
+		 * @param response
+		 *            {object} Server response
+		 */
+		emptyCacheSuccess : function ConsolebeCPGAdmin_emptyCacheRepoSuccess(response) {
+			Alfresco.util.PopupManager.displayMessage({
+				text : this.msg("message.empty-cache.success")
+			});
+			this.widgets.emptyCacheButton.set("disabled", false);
+		},
+
+		/**
+		 * emptyCache failure handler
+		 * 
+		 * @method emptyCacheFailure
+		 * @param response
+		 *            {object} Server response
+		 */
+		emptyCacheFailure : function ConsolebeCPGAdmin_emptyCacheFailure(response) {
+			if (response.json.message != null) {
+				Alfresco.util.PopupManager.displayPrompt({
+					text : response.json.message
+				});
+			} else {
+				Alfresco.util.PopupManager.displayMessage({
+					text : this.msg("message.empty-cache.failure")
+				});
+			}
+			this.widgets.emptyCacheButton.set("disabled", false);
 		}
 	});
 

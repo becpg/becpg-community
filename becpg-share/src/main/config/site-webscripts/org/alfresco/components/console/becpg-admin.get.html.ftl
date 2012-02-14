@@ -29,6 +29,10 @@
 	    		<button type="button" name="${el}-init-acl-button" id="${el}-init-acl-button">${msg("button.init-acl")}</button>
 	    		<label for="${el}-init-acl-button">${msg("label.init-acl")}</label>    		
 	    	</div>
+	    	<div class="action">
+	    		<button type="button" name="${el}-empty-cache" id="${el}-empty-cache-button">${msg("button.empty-cache")}</button>
+	    		<label for="${el}-empty-cache-button">${msg("label.empty-cache")}</label>    		
+	    	</div>
 		</div>
     	
 	</div>

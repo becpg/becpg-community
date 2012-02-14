@@ -215,7 +215,7 @@
 		            <evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 		         </action>
 		         
-		         <action id="entity-checkin" type="pagelink" label="actions.document.checkin-entity">
+		         <action id="entity-checkin" type="javascript" label="actions.document.checkin-entity">
 		             <param name="function">onActionCheckInEntity</param>
 		            <evaluator>evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
 		            <permissions>
@@ -223,7 +223,7 @@
 		            </permissions>
 		         </action>
 		         
-		          <action id="entity-chekout" type="pagelink" label="actions.document.checkout-entity" >
+		          <action id="entity-checkout" type="javascript" label="actions.document.checkout-entity" >
 		             <param name="function">onActionCheckOutEntity</param>
 		            <evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 		            <permissions>
@@ -241,45 +241,75 @@
 		         </action>
 		         
 		         <!-- remove existing on entity -->
+
+				<action id="document-change-type">
+					<evaluator negate="true">
+						evaluator.becpg.doclib.action.entity
+					</evaluator>
+				</action>
+			
+				<action id="document-edit-offline">
+					<evaluator negate="true">
+						evaluator.becpg.doclib.action.entity
+					</evaluator>
+				</action>
+			
+				<action id="document-cancel-editing">
+					<evaluator negate="true">
+						evaluator.becpg.doclib.action.entity
+					</evaluator>
+				</action>
+			
+				<action id="document-upload-new-version">
+					<evaluator negate="true">
+						evaluator.becpg.doclib.action.entity
+					</evaluator>
+				</action>
+			
+				<action id="document-download">
+					<evaluator negate="true">
+						evaluator.becpg.doclib.action.entity
+					</evaluator>
+				</action>
+			
+				<action id="document-view-content">
+					<evaluator negate="true">
+						evaluator.becpg.doclib.action.entity
+					</evaluator>
+				</action>
+			
+				<action id="document-manage-site-permissions">
+					<evaluator negate="true">
+						evaluator.becpg.doclib.action.entity
+					</evaluator>
+				</action>
+			
+				<action id="document-manage-repo-permissions">
+					<evaluator negate="true">
+						evaluator.becpg.doclib.action.entity
+					</evaluator>
+				</action>
+
+
+	<!-- Change type -->
+	<action id="document-change-type">
+		<evaluator negate="true">evaluator.becpg.doclib.action.entity
+		</evaluator>
+	</action>
 		         
-		           <action id="document-change-type">        
-				          <evaluator negate="true">           
-				             evaluator.becpg.doclib.action.entity
-				          </evaluator>
-				   </action>
-		         
-		         <action id="document-edit-offline">
-		           	   <evaluator negate="true">           
-						    evaluator.becpg.doclib.action.entity
-						</evaluator>
-		         </action>
-		         
-		         <action id="document-cancel-editing">
-		           	   <evaluator negate="true">           
-						    evaluator.becpg.doclib.action.entity
-						</evaluator>
-		         </action>
-		         
-		         <action id="document-upload-new-version">
-		           	   <evaluator negate="true">           
-						    evaluator.becpg.doclib.action.entity
-						</evaluator>
-		         </action>
-		              
 		         
 		</actions>
 		
 		<actionGroups>
 			<actionGroup id="document-browse">
 	            <action index="10" id="entity-view-datalist" /> 
-	           
 	         </actionGroup>
 
 	         <actionGroup id="document-details">
-	            <action index="10" id="entity-view-datalist" />
-	            <action index="20" id="entity-checkin" /> 
-	            <action index="30" id="entity-chekout" /> 
-	            <action index="40" id="entity-cancel-editing" /> 
+	            <action index="10"  id="entity-view-datalist" />
+	            <action index="101" id="entity-checkin" /> 
+	            <action index="102" id="entity-checkout" /> 
+	            <action index="103" id="entity-cancel-editing" /> 
 	         </actionGroup>
 		
 		</actionGroups>
