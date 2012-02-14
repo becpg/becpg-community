@@ -764,6 +764,7 @@ html, body {
 .dialog_icon {
 	background-image: url("../../../images/src/login_becpg.png");
 	background-repeat: no-repeat;
+	margin-top: 30px;
 }
 
 
