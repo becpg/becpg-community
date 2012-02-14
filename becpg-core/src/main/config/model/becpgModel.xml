@@ -67,9 +67,11 @@
 					<value>Dérivé d'acide gras alimentaire</value>
 					<value>Diphosphate</value>
 					<value>Edulcorant</value>
+					<value>Epaississant</value>
 					<value>Exhausteur</value>
 					<value>Ferrocyanure</value>
 					<value>Gaz</value>
+					<value>Gélifiant</value>
 					<value>Glace</value>
 					<value>Gluconate</value>
 					<value>Gomme</value>
@@ -84,6 +86,7 @@
 					<value>Orthophosphate</value>
 					<value>Phosphate</value>
 					<value>Silicate</value>
+					<value>Stabilisant</value>
 					<value>Stearate</value>
 					<value>Sulfate</value>
 					<value>Tartrate</value>
