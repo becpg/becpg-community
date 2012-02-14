@@ -20,7 +20,7 @@ public class OlapServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(OlapServiceTest.class);
 
-	/** The app ctx. */
+//	/** The app ctx. */
 	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
 
 	/** The repository helper. */

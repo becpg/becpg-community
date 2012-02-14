@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Query name="53DB9405-6B9C-FAB9-8922-39423BAC5ECB" type="MDX" connection="beCPG" cube="[Analyse des coûts]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
   <MDX>SELECT
 NON EMPTY {Hierarchize({[Measures].[Total des coûts]})} ON COLUMNS,

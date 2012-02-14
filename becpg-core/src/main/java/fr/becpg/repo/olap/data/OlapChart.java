@@ -1,10 +1,9 @@
 package fr.becpg.repo.olap.data;
 
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,6 +31,8 @@ public class OlapChart {
 	private String mdx;
 	private String cube;
 	private String type;
+	private String xml;
+	
 	
 	private static Log logger = LogFactory.getLog(OlapChart.class);
 
@@ -64,6 +65,13 @@ public class OlapChart {
 	public String getType() {
 		return type;
 	}
+	
+	
+
+
+	public String getXml() {
+		return xml;
+	}
 
 
 	/**
@@ -75,6 +83,7 @@ public class OlapChart {
 	 * @throws MalformedURLException 
 	 * @throws ParserConfigurationException 
 	 * @throws TransformerException 
+	 * @throws JSONException 
 	 */
 
 //	<?xml version="1.0" encoding="UTF-8"?>
@@ -84,13 +93,13 @@ public class OlapChart {
 //	NON EMPTY {Hierarchize({[Measures].[Grocery Sqft]})} ON ROWS
 //	FROM [Store]</MDX>
 //	</Query>
-	public String load(String buildQueryUrl) throws MalformedURLException, SAXException, IOException, ParserConfigurationException, FactoryConfigurationError, TransformerException  {
-		logger.debug("Get XML data query from:"+buildQueryUrl);
+	public void load(String xml) throws MalformedURLException, SAXException, IOException, ParserConfigurationException, FactoryConfigurationError, TransformerException, JSONException  {
+		logger.debug("Get XML data query from xml"+xml);
+		this.xml = xml;
 		
-		InputStream is = new URL(buildQueryUrl).openStream();
-
+		InputStream is = new ByteArrayInputStream(xml.getBytes());
+		
 		try {
-		
 			Document doc = DOMUtils.parse(is);
 			if(doc!=null){
 				Element queryEl = (Element) doc.getFirstChild();
@@ -100,20 +109,12 @@ public class OlapChart {
 					type = queryEl.getAttribute("type");
 					mdx = DOMUtils.getElementText(queryEl,"MDX");
 				}
-				ByteArrayOutputStream buff = new ByteArrayOutputStream();
-				try{
-					DOMUtils.serialise(doc, buff);
-					return new String(buff.toByteArray(),"UTF-8");
-				} finally{
-					IOUtils.closeQuietly(buff);
-				}
 			}
-		} finally {
+		} 
+		
+		finally {
 			IOUtils.closeQuietly(is);
 		}
-		
-		return null;
-		
 	}
 
 	
@@ -133,7 +134,6 @@ public class OlapChart {
 		this.queryId = queryId;
 	}
 
-	
 	
 	
 }

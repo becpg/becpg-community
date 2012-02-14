@@ -1,29 +1,33 @@
 package fr.becpg.repo.olap.impl;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.springframework.util.StopWatch;
+import org.json.JSONObject;
 
+import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.olap.OlapService;
+import fr.becpg.repo.olap.OlapUtils;
 import fr.becpg.repo.olap.data.OlapChart;
 import fr.becpg.repo.olap.data.OlapChartData;
 import fr.becpg.repo.olap.data.OlapChartMetadata;
@@ -35,6 +39,9 @@ public class OlapServiceImpl implements OlapService {
 	private String olapPassword;
 
 	private String olapServerUrl;
+	
+	private BeCPGCacheService beCPGCacheService;
+	
 
 	private static String ROW_HEADER = "ROW_HEADER_HEADER";
 
@@ -52,69 +59,83 @@ public class OlapServiceImpl implements OlapService {
 		this.olapServerUrl = olapServerUrl;
 	}
 
-	@Override
-	public List<OlapChart> retrieveOlapCharts() throws JSONException, IOException  {
-		
-		
-		List<OlapChart> olapCharts = new ArrayList<OlapChart>();
-		JSONArray jsonArray = readJsonFromUrl(buildRepositoryUrl());
-		
-		if (jsonArray != null) {
-
-			for (int row = 0; row < jsonArray.length(); row++) {
-				String queryName = jsonArray.getJSONObject(row).getString("name");
-				try {
-					
-					OlapChart chart = new OlapChart(queryName);
-					String xml  = chart.load(buildQueryUrl(queryName));
-					sendCreateQueryPostRequest(xml,chart.getQueryId());
-					olapCharts.add(chart);
-				} catch (Exception e) {
-					logger.error("Cannot load query :"+queryName);
-					logger.debug(e,e);
-				}
-			}
-			
-			
-		}
-		
-		return olapCharts;
+	
+	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
+		this.beCPGCacheService = beCPGCacheService;
 	}
 
-
-	private String sendCreateQueryPostRequest(String xml, String olapQueryId) throws IOException {
-
-
-		logger.debug("Send POST request:\n"+xml);
+	@Override
+	public List<OlapChart> retrieveOlapCharts()  {
 		
-		String stringToReverse = URLEncoder.encode(xml, "UTF-8");
+		return beCPGCacheService.getFromUserCache(OlapService.class.getName(),"olapCharts" , new BeCPGCacheDataProviderCallBack<List<OlapChart>>() {
 
-		URL url = new URL(buildCreateQueryUrl(olapQueryId));
-		URLConnection connection = url.openConnection();
-		connection.setDoOutput(true);
+			@Override
+			public List<OlapChart> getData() {
+				HttpClient httpClient = getHttpClient();
 
-		OutputStreamWriter out = new OutputStreamWriter(
-	                              connection.getOutputStream());
-		out.write("xml=" + stringToReverse);
-		out.close();
-		
-		
-		BufferedReader in = new BufferedReader(
-				new InputStreamReader(
-				connection.getInputStream()));
-		try {
-			String decodedString;
-			
-			while ((decodedString = in.readLine()) != null) {
-				//keep it as it's important to read the stream
-			  logger.debug("POST response :"+decodedString);
-			}
-		} finally {
-			in.close();
-		}
+				List<OlapChart> olapCharts = new ArrayList<OlapChart>();
+				try {
+					JSONArray jsonArray = OlapUtils.readJsonArrayFromUrl(buildRepositoryUrl(),httpClient);
+				
+					if (jsonArray != null) {
 	
+						for (int row = 0; row < jsonArray.length(); row++) {
+							String queryName = jsonArray.getJSONObject(row).getString("name");
+							try {
+								
+								OlapChart chart = new OlapChart(queryName);
+								
+								JSONObject json = OlapUtils.readJsonObjectFromUrl(buildQueryUrl(queryName),httpClient);
+								
+								chart.load(json.getString("xml"));
+								olapCharts.add(chart);
+							} catch (Exception e) {
+								logger.error("Cannot load query :"+queryName);
+								logger.debug(e,e);
+							}
+						}
+	
+					}
+				} catch (Exception e) {
+					logger.error(e,e);
+				}
+				
+				return olapCharts;
+			}
+			
+		});
 		
-		return olapQueryId;
+		
+	}
+
+	
+	
+	
+	
+
+	private String sendCreateQueryPostRequest(HttpClient httpclient, String xml) throws IOException {
+		String uuid = UUID.randomUUID().toString();
+		
+		String postUrl = buildCreateQueryUrl(uuid);
+
+		if(logger.isDebugEnabled()){
+			logger.debug("Send POST request:\n"+xml+"\n to "+postUrl);
+		}
+		
+		HttpPost httpPost = new HttpPost(postUrl);
+
+		
+		HttpEntity entity = new StringEntity("xml=" + xml,"UTF-8");
+		
+		httpPost.setEntity(entity);
+		HttpResponse response = httpclient.execute(httpPost);
+		//keep that as we should read the response
+		entity = response.getEntity();
+		String ret = EntityUtils.toString(entity);
+		logger.debug("Ret: "+ret);
+		
+		
+		return uuid;
 	}
 
 	/**
@@ -141,36 +162,67 @@ public class OlapServiceImpl implements OlapService {
 	@Override
 	public OlapChartData retrieveChartData(String olapQueryId) throws IOException, JSONException {
 
+		
+		HttpClient httpclient = getHttpClient();
+		
+		OlapChart chart = getOlapChart(olapQueryId);
+		
 		OlapChartData ret = new OlapChartData();
-
-		JSONArray jsonArray = readJsonFromUrl(buildDataUrl(olapQueryId));
-
-		if (jsonArray != null) {
-
-			int lowest_level = 0;
-			for (int row = 0; row < jsonArray.length(); row++) {	
-				JSONArray cur =  jsonArray.getJSONArray(row);
-				if (ROW_HEADER.equals(cur.getJSONObject(0).getString("type"))) {
-					for (int field = 0; field < cur.length(); field++) {
-						if (ROW_HEADER.equals(cur.getJSONObject(field).getString("type"))) {
-							ret.shiftMetadata();
-							lowest_level = field;
+		if(chart!=null){
+			String uuid = sendCreateQueryPostRequest(httpclient, chart.getXml());
+			JSONArray jsonArray = OlapUtils.readJsonObjectFromUrl(buildDataUrl(uuid),httpclient).getJSONArray("cellset");
+	
+			if (jsonArray != null) {
+	
+				int lowest_level = 0;
+				for (int row = 0; row < jsonArray.length(); row++) {	
+					JSONArray cur =  jsonArray.getJSONArray(row);
+					if (ROW_HEADER.equals(cur.getJSONObject(0).getString("type"))) {
+						for (int field = 0; field < cur.length(); field++) {
+							if (ROW_HEADER.equals(cur.getJSONObject(field).getString("type"))) {
+								ret.shiftMetadata();
+								lowest_level = field;
+							}
+							ret.addMetadata(new OlapChartMetadata(field,
+									retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field).getString("value")),
+									cur.getJSONObject(field).getString("value")));
 						}
-						ret.addMetadata(new OlapChartMetadata(field,
-								retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field).getString("value")),
-								cur.getJSONObject(field).getString("value")));
+					} else if (cur.getJSONObject(0).getString("value") != null) {
+						List<Object> record = new ArrayList<Object>();
+						for (int col = lowest_level; col < cur.length(); col++) {
+							String value = cur.getJSONObject(col).getString("value");
+							record.add(convert(value));
+						}
+						ret.getResultsets().add(record);
 					}
-				} else if (cur.getJSONObject(0).getString("value") != null) {
-					List<Object> record = new ArrayList<Object>();
-					for (int col = lowest_level; col < cur.length(); col++) {
-						String value = cur.getJSONObject(col).getString("value");
-						record.add(convert(value));
-					}
-					ret.getResultsets().add(record);
 				}
 			}
-		}
+		} 
 		return ret;
+	}
+
+	private HttpClient getHttpClient() {
+		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(olapUser, olapPassword);
+		CredentialsProvider credsProvider = new BasicCredentialsProvider();
+		credsProvider.setCredentials(
+			    new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), 
+			    creds);
+		
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		httpclient.setCredentialsProvider(credsProvider);
+		
+		
+		return httpclient;
+	}
+
+	private OlapChart getOlapChart(String olapQueryId) throws JSONException, IOException {
+		for(OlapChart chart : retrieveOlapCharts()){
+			if(chart.getQueryId().equals(olapQueryId)){
+				return chart;
+			}
+		}
+		logger.warn("No chart found for id:"+olapQueryId);
+		return null;
 	}
 
 	//TODO crappy !!!
@@ -211,46 +263,6 @@ public class OlapServiceImpl implements OlapService {
 		return URIUtil.encodePath(buildRepositoryUrl()+"/"+queryName,"UTF-8");
 	}
 
-	public  JSONArray readJsonFromUrl(String url) throws IOException, JSONException {
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-		
-	   Authenticator.setDefault(new Authenticator() {
-			    protected PasswordAuthentication getPasswordAuthentication() {
-			        return new PasswordAuthentication (olapUser, olapPassword.toCharArray());
-			    }
-		});
-
-		InputStream is = new URL(url).openStream();
-		try {
-			BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-			String jsonText = readAll(rd);
-			JSONArray json = new JSONArray(jsonText.trim());
-
-			if (logger.isDebugEnabled()) {
-				watch.stop();
-				logger.debug("Retrivied JSON Data from :" + url + " in " + watch.getTotalTimeSeconds() + " seconds");
-				logger.debug("Value : " + json.toString());
-
-			}
-
-			return json;
-		} finally {
-			is.close();
-		}
-	}
-
-	private  String readAll(Reader rd) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		int cp;
-		while ((cp = rd.read()) != -1) {
-			sb.append((char) cp);
-		}
-		return sb.toString();
-	}
 	
 	
 	

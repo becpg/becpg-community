@@ -2,6 +2,13 @@
 . ./common.sh
 
 echo "**********************************************************"
+echo "Add default olap query to /etc/becpg/olap"
+echo "**********************************************************"
+
+mkdir -p /etc/becpg/olap/repository
+cp repository/* /etc/becpg/olap/repository
+
+echo "**********************************************************"
 echo "Copy files to /etc/becpg/olap"
 echo "**********************************************************"
 

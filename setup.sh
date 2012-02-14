@@ -21,8 +21,7 @@ cd target
 tar xvfz becpg-olap-*-distribution.tar.gz
 cd becpg-olap-*
 echo `pwd`
-cd sql/
-./setup_db.sh
+./install.sh
 cd $BECPG_OLAP_ROOT/target
 rm -rf becpg-olap-*
 

@@ -7,6 +7,7 @@
 		<property name="olapPassword" value="${becpg.olap.password}"/>
 		<property name="olapServerUrl" value="${becpg.olap.url}"/>
 		<property name="olapUser" value="${becpg.olap.user}"/>
+		<property name="beCPGCacheService" ref="beCPGCacheService"/>
 	</bean>
 
    
