@@ -2,16 +2,12 @@ package fr.becpg.repo.ecm.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.search.impl.NodeSearcher;
-import org.alfresco.repo.search.impl.parsers.CMISParser.simpleTable_return;
-import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -21,9 +17,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.VersionNumber;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
@@ -40,10 +33,8 @@ import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityCheckOutCheckInService;
-import fr.becpg.repo.entity.version.EntityCheckOutCheckInServiceImpl;
 import fr.becpg.repo.entity.wused.WUsedListService;
 import fr.becpg.repo.entity.wused.data.WUsedData;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
@@ -58,9 +49,6 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.product.formulation.FormulateException;
-import fr.becpg.repo.report.entity.EntityReportService;
-import fr.becpg.repo.report.template.ReportTplService;
-import fr.becpg.repo.report.template.ReportType;
 
 /**
  * Engineering change order service implementation
@@ -83,7 +71,6 @@ public class ECOServiceImpl implements ECOService {
 	private DictionaryService dictionaryService;
 	private ProductDictionaryService productDictionaryService;
 	private RepoService repoService;
-	private AssociationService associationService;
 	private ECOReportService ecoReportService;
 	
 	public void setChangeOrderDAO(BeCPGDao<ChangeOrderData> changeOrderDAO) {
@@ -124,10 +111,6 @@ public class ECOServiceImpl implements ECOService {
 
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
-	}
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
 	}
 	
 	public void setEcoReportService(ECOReportService ecoReportService) {

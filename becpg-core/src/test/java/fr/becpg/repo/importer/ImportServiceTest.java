@@ -33,10 +33,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
@@ -76,8 +74,6 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ImportServiceTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();	
 	
 	/** The import service. */
 	private ImportService importService;
@@ -103,9 +99,6 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	/** The namespace service. */
 	private NamespaceService namespaceService;
 	
-	/** The node service. */
-	private NodeService nodeService;
-	
 	/** The content service. */
 	private ContentService contentService;
 	
@@ -125,22 +118,20 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	protected void setUp() throws Exception {
     	super.setUp();		
     	
-    	importService = (ImportService)appCtx.getBean("importService");
-        authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-        repository = (Repository)appCtx.getBean("repositoryHelper");
-        mlNodeServiceImpl = (NodeService) appCtx.getBean("mlAwareNodeService");
-        mimetypeService = (MimetypeService)appCtx.getBean("mimetypeService");
-        fileFolderService = (FileFolderService)appCtx.getBean("FileFolderService");
-        productDAO = (ProductDAO)appCtx.getBean("productDAO");
-        searchService = (SearchService)appCtx.getBean("searchService");
-        namespaceService = (NamespaceService)appCtx.getBean("namespaceService");
-        nodeService = (NodeService)appCtx.getBean("nodeService");
-        contentService = (ContentService)appCtx.getBean("contentService");
-        repoService = (RepoService)appCtx.getBean("repoService");
-        policyBehaviourFilter = (BehaviourFilter)appCtx.getBean("policyBehaviourFilter");
-        entityTplService = (EntityTplService)appCtx.getBean("entityTplService");
-        dictionaryDAO = (DictionaryDAO)appCtx.getBean("dictionaryDAO");
-        
+    	importService = (ImportService)ctx.getBean("importService");
+        authenticationComponent = (AuthenticationComponent)ctx.getBean("authenticationComponent");
+        repository = (Repository)ctx.getBean("repositoryHelper");
+        mlNodeServiceImpl = (NodeService) ctx.getBean("mlAwareNodeService");
+        mimetypeService = (MimetypeService)ctx.getBean("mimetypeService");
+        fileFolderService = (FileFolderService)ctx.getBean("FileFolderService");
+        productDAO = (ProductDAO)ctx.getBean("productDAO");
+        searchService = (SearchService)ctx.getBean("searchService");
+        namespaceService = (NamespaceService)ctx.getBean("namespaceService");
+        repoService = (RepoService)ctx.getBean("repoService");
+        policyBehaviourFilter = (BehaviourFilter)ctx.getBean("policyBehaviourFilter");
+        entityTplService = (EntityTplService)ctx.getBean("entityTplService");
+        dictionaryDAO = (DictionaryDAO)ctx.getBean("dictionaryDAO");
+        contentService = (ContentService)ctx.getBean("contentService");
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override
 			public NodeRef execute() throws Throwable {
@@ -415,7 +406,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		 * Create file to import
 		 */
 		
-		NodeRef nodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override
 			public NodeRef execute() throws Throwable { 				 				
  				
@@ -667,7 +658,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 				rmData.setHierarchy1("ZZZZZZZ");
 	 				
 	 				try{
-	 					NodeRef rmNodeRef = productDAO.create(repository.getCompanyHome(), rmData, null);
+	 					 productDAO.create(repository.getCompanyHome(), rmData, null);
 	 				}
 	 				catch(Exception e){
 	 					assertNotNull("Should not be null" ,e);

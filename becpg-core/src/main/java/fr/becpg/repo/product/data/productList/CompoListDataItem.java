@@ -3,7 +3,6 @@
  */
 package fr.becpg.repo.product.data.productList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;

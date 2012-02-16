@@ -1,17 +1,10 @@
 package fr.becpg.repo.product.formulation;
 
-import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
-import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductUnit;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 
 public class ProcessCalculatingVisitor implements ProductVisitor {

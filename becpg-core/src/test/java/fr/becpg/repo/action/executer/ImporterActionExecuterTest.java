@@ -14,7 +14,6 @@ import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -49,8 +48,6 @@ public class ImporterActionExecuterTest  extends BaseAlfrescoTestCase {
 	/** The node service. */
 	private NodeService nodeService;
 	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
 	
 	/** The repository. */
 	private Repository repository;
@@ -65,8 +62,7 @@ public class ImporterActionExecuterTest  extends BaseAlfrescoTestCase {
     	super.setUp();		
     	
     	nodeService = (NodeService)applicationContext.getBean("NodeService");
-    	fileFolderService = (FileFolderService)applicationContext.getBean("FileFolderService");
-        authenticationComponent = (AuthenticationComponent)applicationContext.getBean("authenticationComponent");
+         authenticationComponent = (AuthenticationComponent)applicationContext.getBean("authenticationComponent");
         repository = (Repository)applicationContext.getBean("repositoryHelper");
         mimetypeService = (MimetypeService)applicationContext.getBean("mimetypeService");
     }

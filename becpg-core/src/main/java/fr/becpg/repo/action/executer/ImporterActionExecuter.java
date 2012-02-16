@@ -42,7 +42,6 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
 	private static final String LOG_ENDING_DATE = "Ending date: ";	
 	private static final String LOG_ERROR = "Error: ";	
 	private static final String LOG_SEPARATOR = "\n";
-	private static final int LOG_MAX_ERRORS = 20;
 	private static final String KEY_FILES_TO_IMPORT = "keyFilesToImport";	
 	
 	/** The logger. */

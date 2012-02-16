@@ -10,10 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.repo.workflow.WorkflowModel;
-import org.alfresco.repo.workflow.jbpm.JBPMEngine;
 import org.alfresco.repo.workflow.jbpm.JBPMSpringActionHandler;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchService;
@@ -43,8 +41,6 @@ public class AssignDefaultGroup extends JBPMSpringActionHandler {
 	private static Log logger = LogFactory.getLog(AssignDefaultGroup.class);
 
 	
-	private NodeService nodeService;
-
 	private  SearchService searchService;
 	 
 	private AuthorityService authorityService;
@@ -60,7 +56,6 @@ public class AssignDefaultGroup extends JBPMSpringActionHandler {
 		workflowService = (WorkflowService) factory.getBean("WorkflowService");
 		searchService = (SearchService) factory.getBean("searchService");
 		authorityService = (AuthorityService) factory.getBean("authorityService");
-		nodeService = (NodeService) factory.getBean("nodeService");
 	}
 	
 	/* (non-Javadoc)

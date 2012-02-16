@@ -1,25 +1,5 @@
 package fr.becpg.repo.ecm.impl;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.alfresco.model.ContentModel;
-import org.alfresco.repo.search.impl.NodeSearcher;
-import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import fr.becpg.model.ECMModel;
-import fr.becpg.repo.BeCPGDao;
-import fr.becpg.repo.ecm.data.RevisionType;
-import fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem;
-import fr.becpg.repo.helper.AssociationService;
 
 //public class ChangeUnitDAOImpl implements BeCPGDao<ChangeUnitDataItem> {
 //

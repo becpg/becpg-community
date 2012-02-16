@@ -3,31 +3,20 @@
  */
 package fr.becpg.repo.admin;
 
-import java.util.List;
-import java.util.Locale;
-
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
-import org.alfresco.util.ApplicationContextHelper;
-import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.admin.InitDemoVisitorImpl;
-import fr.becpg.repo.admin.InitVisitor;
-import fr.becpg.repo.product.ProductDictionaryService;
+import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -35,22 +24,14 @@ import fr.becpg.repo.product.ProductDictionaryService;
  *
  * @author querephi
  */
-public class InitDemoVisitorImplTest extends BaseAlfrescoTestCase {	
+public class InitDemoVisitorImplTest extends RepoBaseTestCase {	
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(InitDemoVisitorImplTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();	
-	
 	/** The site service. */
 	private SiteService siteService;
 	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
 	
 	/** The init repo visitor. */
 	private InitVisitor initRepoVisitor;
@@ -64,8 +45,6 @@ public class InitDemoVisitorImplTest extends BaseAlfrescoTestCase {
 	/** The authentication component. */
 	private AuthenticationComponent authenticationComponent;
 	
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
 	
 	/** The person service. */
 	private PersonService personService;
@@ -79,15 +58,14 @@ public class InitDemoVisitorImplTest extends BaseAlfrescoTestCase {
     	
     	logger.debug("InitSiteVisitorImplTest::setUp");
     	
-    	siteService = (SiteService)appCtx.getBean("siteService");
-    	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)appCtx.getBean("FileFolderService");
-    	initRepoVisitor = (InitVisitor)appCtx.getBean("initRepoVisitor");
-    	initDemoVisitor = (InitVisitor)appCtx.getBean("initDemoVisitor");
-    	repository = (Repository)appCtx.getBean("repositoryHelper");
-    	authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-    	productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
-    	personService	 = (PersonService)appCtx.getBean("personService");
+    	siteService = (SiteService)ctx.getBean("siteService");
+    	nodeService = (NodeService)ctx.getBean("nodeService");
+    	fileFolderService = (FileFolderService)ctx.getBean("FileFolderService");
+    	initRepoVisitor = (InitVisitor)ctx.getBean("initRepoVisitor");
+    	initDemoVisitor = (InitVisitor)ctx.getBean("initDemoVisitor");
+    	repository = (Repository)ctx.getBean("repositoryHelper");
+    	authenticationComponent = (AuthenticationComponent)ctx.getBean("authenticationComponent");
+    	personService	 = (PersonService)ctx.getBean("personService");
     	
     	//Authenticate as user
 	    authenticationComponent.setCurrentUser("admin");
@@ -122,18 +100,7 @@ public class InitDemoVisitorImplTest extends BaseAlfrescoTestCase {
 			}},false,true);
 	}
 	
-	/**
-	 * Clear repo.
-	 */
-	private void clearRepo(){
-		
-		// Clear repository		
-		NodeRef systemNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_SYSTEM);
-		List<FileInfo> folders = fileFolderService.listFolders(systemNodeRef);
-		for(FileInfo fileInfo : folders)
-			fileFolderService.delete(fileInfo.getNodeRef());
-		
-	}
+	
 	
 	/**
 	 * Inits the repo and demo.

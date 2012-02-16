@@ -3,8 +3,6 @@
  */
 package fr.becpg.repo.admin;
 
-import java.util.Locale;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 
 // TODO: Auto-generated Javadoc

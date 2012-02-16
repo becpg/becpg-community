@@ -3,7 +3,6 @@
  */
 package fr.becpg.repo.web.scripts.admin;
 
-import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.repo.model.Repository;

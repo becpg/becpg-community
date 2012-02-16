@@ -124,10 +124,9 @@ public class CSVReader {
      * @throws IOException
      *             if bad things happen during the read
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	public List readAll() throws IOException {
+	public List<String[]> readAll() throws IOException {
 
-        List allElements = new ArrayList();
+        List<String[]> allElements = new ArrayList<String[]>();
         while (hasNext) {
             String[] nextLineAsTokens = readNext();
             if (nextLineAsTokens != null)
@@ -181,14 +180,13 @@ public class CSVReader {
      * @return the comma-tokenized list of elements, or null if nextLine is null
      * @throws IOException if bad things happen during the read
      */
-    @SuppressWarnings("unchecked")
 	private String[] parseLine(String nextLine) throws IOException {
 
         if (nextLine == null) {
             return null;
         }
 
-        List tokensOnThisLine = new ArrayList();
+        List<String> tokensOnThisLine = new ArrayList<String>();
         StringBuffer sb = new StringBuffer();
         boolean inQuotes = false;
         do {

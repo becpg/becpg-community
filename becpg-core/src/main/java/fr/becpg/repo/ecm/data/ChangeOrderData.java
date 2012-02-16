@@ -1,13 +1,11 @@
 package fr.becpg.repo.ecm.data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.BeCPGDataObject;
 import fr.becpg.repo.ecm.ECOState;

@@ -3,8 +3,6 @@ package fr.becpg.repo.ecm.data.dataList;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.repo.ecm.data.RevisionType;
-
 public class WUsedListDataItem {
 
 	private NodeRef nodeRef;

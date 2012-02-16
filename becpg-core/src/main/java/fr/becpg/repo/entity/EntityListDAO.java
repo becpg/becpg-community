@@ -1,12 +1,9 @@
 package fr.becpg.repo.entity;
 
 import java.util.List;
-import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-
-import fr.becpg.repo.BeCPGDao;
 
 public interface EntityListDAO {
 

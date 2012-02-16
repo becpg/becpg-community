@@ -5,7 +5,6 @@ package fr.becpg.repo.admin;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -15,7 +14,6 @@ import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
-import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.site.SiteVisibility;
 import org.alfresco.service.namespace.QName;
@@ -116,21 +114,7 @@ public class InitDemoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		createUsers();
 	}
-	
-/**
- * Delete sites.
- */
-private void deleteSites(){
-		
-		String [] sites = {SITE_RD, SITE_QUALITY, SITE_PURCHASING};
-		
-		for(String site : sites){			
-			
-			if(siteService.getSite(site) != null){				
-				siteService.deleteSite(site);
-			}
-		}
-}
+
 	
 	/**
 	 * Creates the sites.
@@ -146,7 +130,7 @@ private void deleteSites(){
 			if(siteService.getSite(site) == null){
 				String siteTitle = I18NUtil.getMessage(String.format("%s.%s",  LOCALIZATION_PFX_SITE_TITLE, site));
 				String siteDescription = I18NUtil.getMessage(String.format("%s.%s",  LOCALIZATION_PFX_SITE_DESCRIPTION, site));
-				SiteInfo siteInfo = siteService.createSite("myPreset", site, siteTitle, siteDescription, SiteVisibility.PRIVATE);
+				siteService.createSite("myPreset", site, siteTitle, siteDescription, SiteVisibility.PRIVATE);
 			}			
 		}			
 		

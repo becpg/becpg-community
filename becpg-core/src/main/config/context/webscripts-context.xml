@@ -130,25 +130,15 @@
    	
    	<!-- Debug -->
    	<bean id="webscript.fr.becpg.debug.restoreArchivedNode.get" class="fr.becpg.repo.web.scripts.debug.RestoreArchivedNodeWebScript" parent="webscript">
-      	<property name="nodeService" ref="nodeService" />      	
+      	    <property name="nodeService" ref="nodeService" />      	
 			<property name="searchService" ref="searchService" />
-			<property name="fileFolderService" ref="fileFolderService" />
-			<property name="transactionService" ref="transactionService" />
-			<property name="repositoryHelper" ref="repositoryHelper" />
-			<property name="dictionaryDAO" ref="dictionaryDAO" />
-			<property name="repoService" ref="repoService" />
 			<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
    	</bean>
    	
    	<!-- Migration -->
    	<bean id="webscript.fr.becpg.migration.migrateRepository.get" class="fr.becpg.repo.web.scripts.migration.MigrateRepositoryWebScript" parent="webscript">
-      	<property name="nodeService" ref="nodeService" />      	
 			<property name="searchService" ref="searchService" />
-			<property name="fileFolderService" ref="fileFolderService" />
-			<property name="repositoryHelper" ref="repositoryHelper" />
-			<property name="repoService" ref="repoService" />
 			<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-			<property name="dictionaryService" ref="dictionaryService" />
 			<property name="mlNodeService" ref="mlAwareNodeService" />
    	</bean>
    	

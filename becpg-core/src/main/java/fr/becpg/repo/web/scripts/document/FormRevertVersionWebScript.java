@@ -21,8 +21,6 @@ import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.util.VersionNumber;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.webscripts.Cache;
@@ -61,9 +59,6 @@ public class FormRevertVersionWebScript extends DeclarativeWebScript {
 	// values
 	/** The Constant VALUE_TRUE. */
 	private static final String VALUE_TRUE = "true";
-	
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(FormRevertVersionWebScript.class);	
 	
 	/** The node service. */
 	private NodeService nodeService;

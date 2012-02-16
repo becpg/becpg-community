@@ -20,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
-import fr.becpg.model.QualityModel;
 
 // TODO: Auto-generated Javadoc
 /**

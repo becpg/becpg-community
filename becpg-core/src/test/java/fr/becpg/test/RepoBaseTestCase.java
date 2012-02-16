@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -27,15 +26,16 @@ import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
+import org.subethamail.wiser.Wiser;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitor;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.product.EntityReportServiceTest;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.product.EntityReportServiceTest;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -69,9 +69,6 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	
 	/** The Constant HIERARCHY2_QUICHE. */
 	protected static final String HIERARCHY2_QUICHE = "Quiche";
-	
-	/** The BIR t_ template s_ folder. */
-	private static String BIRT_TEMPLATES_FOLDER = "/src/main/resources/beCPG/birt/";
 	
 	private static String VALUE_ALLERGEN_TYPE = "Allergène majeur";
 	private static String VALUE_COST_CURRENCY = "€";
@@ -124,6 +121,11 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
     
     /** The organos. */
     protected List<NodeRef> organos = new ArrayList<NodeRef>();
+    
+	
+	protected Wiser wiser;
+
+	    
 	
 	/* (non-Javadoc)
 	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
@@ -131,6 +133,11 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	@Override
 	protected void setUp() throws Exception {		
 		super.setUp();	
+		
+
+	    wiser = new Wiser(2500);
+	    wiser.start();
+
 		
 		nodeService = (NodeService)appCtx.getBean("nodeService");    	    	
     	mimetypeService = (MimetypeService)appCtx.getBean("mimetypeService");
@@ -152,6 +159,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	protected void tearDown() throws Exception
     {
         super.tearDown();
+        wiser.stop();
     }
 	
 	/**

@@ -265,9 +265,11 @@ public class EntityReportServiceImpl implements EntityReportService{
 			OutputStream out =null;
 			InputStream buffer = null;
 			IRunAndRenderTask task = null;
+			ContentReader reader = null;
 			//prepare
 			try{							
-				ContentReader reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
+				reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
+				//in = new BufferedInputStream(reader.getContentInputStream());
 				in = reader.getContentInputStream();
 				IReportRunnable design = reportEngine.openReportDesign(in);							
 				
@@ -316,7 +318,11 @@ public class EntityReportServiceImpl implements EntityReportService{
 				}  				
 			}
 			catch(Exception e){
-				logger.error("Failed to execute report: ",  e);
+				logger.error("Failed to execute report for template : "+ tplNodeRef,  e);
+//				if(reader!=null){
+//					logger.error("reader :"+reader.getContentString());
+//				}
+				
 			} finally {
 				IOUtils.closeQuietly(in);
 				IOUtils.closeQuietly(buffer);

@@ -11,8 +11,6 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.InvalidTypeException;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -25,13 +23,11 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
-import fr.becpg.model.QualityModel;
 import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.ecm.ECOState;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.ecm.data.ChangeOrderType;
 import fr.becpg.repo.ecm.data.RevisionType;
-import fr.becpg.repo.ecm.data.dataList.ActionType;
 import fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem;
 import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
@@ -113,12 +109,7 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 		String strECOType = (String)nodeService.getProperty(ecoNodeRef, ECMModel.PROP_ECO_TYPE);
 		if(strECOType != null){
 			ecoType = ChangeOrderType.valueOf(strECOType);
-		}		
-		RevisionType revision= null;
-		String strRevision = (String)nodeService.getProperty(ecoNodeRef, ECMModel.PROP_REVISION);
-		if(strRevision != null){
-			revision = RevisionType.valueOf(strRevision);
-		}		
+		}			
 
 		// calculated characts
 		List<AssociationRef> charactsAssocRefs = nodeService.getTargetAssocs(ecoNodeRef, ECMModel.ASSOC_CALCULATED_CHARACTS);

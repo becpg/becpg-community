@@ -14,8 +14,6 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.ecm.ECOService;
-import fr.becpg.repo.product.ProductService;
-import fr.becpg.repo.product.formulation.FormulateException;
 
 // TODO: Auto-generated Javadoc
 /**

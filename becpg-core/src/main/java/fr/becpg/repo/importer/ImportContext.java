@@ -4,8 +4,6 @@
 package fr.becpg.repo.importer;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

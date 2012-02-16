@@ -8,8 +8,6 @@ import java.util.Date;
 
 import org.alfresco.repo.workflow.jbpm.JBPMSpringActionHandler;
 import org.alfresco.service.cmr.workflow.WorkflowException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jbpm.calendar.BusinessCalendar;
 import org.jbpm.calendar.Duration;
 import org.jbpm.graph.exe.ExecutionContext;
@@ -37,9 +35,7 @@ public class AssignBusinessDueDate extends JBPMSpringActionHandler {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5350531116399906801L;
-	
-	private static Log logger = LogFactory.getLog(AssignBusinessDueDate.class);
-	
+
 	/** The business calendar. */
 	protected static BusinessCalendar businessCalendar = new BusinessCalendar();
 	

@@ -2,7 +2,6 @@ package fr.becpg.repo.ecm.data.dataList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.BeCPGDataObject;
 import fr.becpg.repo.ecm.data.RevisionType;
 import fr.becpg.repo.product.data.productList.RequirementType;
 

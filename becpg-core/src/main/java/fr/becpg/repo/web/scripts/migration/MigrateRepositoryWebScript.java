@@ -5,19 +5,10 @@ package fr.becpg.repo.web.scripts.migration;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.dictionary.TypeDefinition;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.ResultSet;
@@ -32,10 +23,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.QualityModel;
-import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.RepoService;
 
 /**
  * The Class MigrateRepositoryWebScript.
@@ -50,43 +38,16 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 				
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_PAGINATION = "pagination";
-	private static final String VALUE_ACTION_MIGRATE_PROPERTIES = "migrateProperties";
-	private static final String VALUE_ACTION_MIGRATE_AUTONUM = "migrateAutoNum";
-	private static final String VALUE_ACTION_MIGRATE_ENTITYLISTS = "migrateEntityLists";
-	private static final String VALUE_ACTION_MIGRATE_VERSIONHISTORY = "migrateVersionHistory";
-	
-	private static final String ENTITIES_HISTORY_XPATH = "/bcpg:entitiesHistory";
-	private static final String PRODUCTS_HISTORY_XPATH = "/bcpg:productsHistory";
-	private static final String ENTITIES_HISTORY_NAME = "entitiesHistory";
-    private static final QName QNAME_ENTITIES_HISTORY  = QName.createQName(BeCPGModel.BECPG_URI, ENTITIES_HISTORY_NAME);
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
+
 	/** The search service. */
 	private SearchService searchService;
 	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
-	private Repository repositoryHelper;
-	
-	private RepoService repoService;
 	
 	private BehaviourFilter policyBehaviourFilter;
 	
-	private DictionaryService dictionaryService;
-	
 	private NodeService mlNodeService;
 		   					
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
+	
 	
 	/**
 	 * Sets the search service.
@@ -96,30 +57,9 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	public void setSearchService(SearchService searchService) {
 		this.searchService = searchService;
 	}
-	
-	/**
-	 * Sets the file folder service.
-	 *
-	 * @param fileFolderService the new file folder service
-	 */
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
-	}
-	
-	public void setRepositoryHelper(Repository repositoryHelper) {
-		this.repositoryHelper = repositoryHelper;
-	}
-	
-	public void setRepoService(RepoService repoService) {
-		this.repoService = repoService;
-	}
-	
+
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-	
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
 	}
 	
 	public void setMlNodeService(NodeService mlNodeService) {
@@ -131,7 +71,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     {
     	logger.debug("start migration");
     	Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();	    	
-    	String action = templateArgs.get(PARAM_ACTION);
+
     	String pagination = templateArgs.get(PARAM_PAGINATION);
     	Integer iPagination = (pagination != null && !pagination.isEmpty()) ? Integer.parseInt(pagination) : null;
 		

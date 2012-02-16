@@ -21,7 +21,6 @@ import org.springframework.beans.factory.BeanFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.ProductService;
 
 /**
@@ -39,9 +38,6 @@ public class ApproveActionHandler extends JBPMSpringActionHandler{
 	/** The product service. */
 	private ProductService productService;
 	
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
-	
 	/** The node service. */
 	private NodeService nodeService;
 	
@@ -58,7 +54,6 @@ public class ApproveActionHandler extends JBPMSpringActionHandler{
 	protected void initialiseHandler(BeanFactory factory) {
 		
 		productService = (ProductService) factory.getBean("productService");
-		productDictionaryService = (ProductDictionaryService)factory.getBean("productDictionaryService");
 		nodeService = (NodeService)factory.getBean("nodeService");
 		fileFolderService = (FileFolderService)factory.getBean("fileFolderService");
 		repositoryHelper = (Repository)factory.getBean("repositoryHelper");

@@ -53,8 +53,7 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="repoService" ref="repoService" />
 		<property name="ruleService" ref="ruleService" />
-		<property name="actionService" ref="actionService" />
-		<property name="productDictionaryService" ref="productDictionaryService" />			
+		<property name="actionService" ref="actionService" />		
 	</bean>
 	<bean id="initDemoVisitor" class="fr.becpg.repo.admin.InitDemoVisitorImpl">
 		<property name="personService" ref="personService" />
@@ -391,14 +390,16 @@
 	</bean>
 	
 		   	
-  <!-- Thumbnail service implementation bean -->
-    <bean id="thumbnailService" class="fr.becpg.repo.thumbnail.impl.BeCPGThumbnailServiceImpl">
-    	<property name="nodeService" ref="nodeService"/>
-        <property name="renditionService" ref="renditionService" />
-    	<property name="thumbnailRegistry" ref="thumbnailRegistry" />
+  <!-- Override Thumbnail service implementation bean -->
+    <bean id="thumbnailService" class="fr.becpg.repo.thumbnail.impl.BeCPGThumbnailServiceImpl" init-method="init">
     	<property name="entityService" ref="entityService"/>
     	<property name="dictionaryService" ref="dictionaryService"/>
     	<property name="searchService" ref="searchService"/>
+    	
+    	<property name="nodeService" ref="nodeService"/>
+        <property name="renditionService" ref="renditionService" />
+        <property name="thumbnailRegistry" ref="thumbnailRegistry" />
+        <property name="policyComponent" ref="policyComponent" />
     </bean>
     
     <!-- Cache -->

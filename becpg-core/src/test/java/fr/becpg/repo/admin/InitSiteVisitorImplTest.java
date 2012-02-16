@@ -3,11 +3,6 @@
  */
 package fr.becpg.repo.admin;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
@@ -20,21 +15,13 @@ import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.site.SiteVisibility;
-import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
-import org.alfresco.util.BaseAlfrescoTestCase;
 import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.admin.InitVisitor;
-import fr.becpg.repo.admin.SystemGroup;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDictionaryService;
@@ -51,8 +38,6 @@ public class InitSiteVisitorImplTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(InitSiteVisitorImplTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();	
 	
 	/** The site service. */
 	private SiteService siteService;
@@ -60,11 +45,6 @@ public class InitSiteVisitorImplTest extends RepoBaseTestCase {
 	/** The node service. */
 	private NodeService nodeService;
 	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
-	/** The init repo visitor. */
-	private InitVisitor initRepoVisitor;
 	
 	/** The init site visitor. */
 	private InitVisitor initSiteVisitor;
@@ -95,16 +75,15 @@ public class InitSiteVisitorImplTest extends RepoBaseTestCase {
     	
     	logger.debug("InitSiteVisitorImplTest::setUp");
     	
-    	siteService = (SiteService)appCtx.getBean("siteService");
-    	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)appCtx.getBean("FileFolderService");
-    	initRepoVisitor = (InitVisitor)appCtx.getBean("initRepoVisitor");
-    	initSiteVisitor = (InitVisitor)appCtx.getBean("initSiteVisitor");
-    	repository = (Repository)appCtx.getBean("repositoryHelper");
-    	authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-    	productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
-    	authorityService = (AuthorityService)appCtx.getBean("authorityService");
-    	repoService = (RepoService)appCtx.getBean("repoService");
+    	siteService = (SiteService)ctx.getBean("siteService");
+    	nodeService = (NodeService)ctx.getBean("nodeService");
+    	fileFolderService = (FileFolderService)ctx.getBean("FileFolderService");
+    	initSiteVisitor = (InitVisitor)ctx.getBean("initSiteVisitor");
+    	repository = (Repository)ctx.getBean("repositoryHelper");
+    	authenticationComponent = (AuthenticationComponent)ctx.getBean("authenticationComponent");
+    	productDictionaryService = (ProductDictionaryService)ctx.getBean("productDictionaryService");
+    	authorityService = (AuthorityService)ctx.getBean("authorityService");
+    	repoService = (RepoService)ctx.getBean("repoService");
     	
     	//Authenticate as user
 	    authenticationComponent.setCurrentUser("admin");

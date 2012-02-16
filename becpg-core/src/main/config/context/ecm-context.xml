@@ -22,7 +22,6 @@
     	<property name="dictionaryService" ref="dictionaryService"/>
     	<property name="productDictionaryService" ref="productDictionaryService"/>
     	<property name="repoService" ref="repoService"/>
-    	<property name="associationService" ref="associationService"/>
     	<property name="ecoReportService" ref="ecoReportService"/>		
 	</bean>
 	

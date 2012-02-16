@@ -41,13 +41,14 @@ public class UserImportServiceTest  extends RepoBaseTestCase {
 	private AuthenticationComponent authenticationComponent;
 	private SearchService searchService;
 
-	
 	private static Log logger = LogFactory.getLog(UserImportServiceTest.class);
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		 transactionService = (TransactionService) applicationContext.getBean("transactionService");
+		
+		
+		transactionService = (TransactionService) applicationContext.getBean("transactionService");
      	 searchService = (SearchService)applicationContext.getBean("searchService");
          authenticationComponent = (AuthenticationComponent)applicationContext.getBean("authenticationComponent");
          transactionService = (TransactionService)applicationContext.getBean("transactionComponent");
@@ -102,12 +103,19 @@ public class UserImportServiceTest  extends RepoBaseTestCase {
  			public NodeRef execute() throws Throwable {
  				NodeRef csv  = createCSV();
  				userImporterService.importUser(csv);
-
+ 				//Assert.assertEquals(1, wiser.getMessages().size());
  				return null;
 
  			}},false,true);
  			
 		
+	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		// TODO Auto-generated method stub
+		super.tearDown();
+	    wiser.stop();
 	}
 	
 }

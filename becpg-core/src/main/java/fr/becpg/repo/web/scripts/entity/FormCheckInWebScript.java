@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.util.VersionNumber;
@@ -23,7 +22,6 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.repo.entity.version.EntityCheckOutCheckInService;
-import fr.becpg.repo.entity.version.EntityVersionService;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -5,8 +5,6 @@ package fr.becpg.repo.product.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +12,6 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.apache.cxf.binding.corba.wsdl.Array;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
