@@ -186,7 +186,6 @@
 	<modules>
 		<module>becpg-bootstrap/alfresco-sdk</module>
 		<module>becpg-bootstrap/birt-sdk</module>
-		<module>alfresco-patch</module>
 		<module>becpg-core</module>
 		<module>becpg-share</module>
 		<module>becpg-olap</module>
