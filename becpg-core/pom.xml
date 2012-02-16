@@ -171,11 +171,11 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12</version>
 				<configuration>
-					<excludes>
-						 <exclude>fr/becpg/repo/web/scripts/**/**</exclude>
+					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
+					 <excludes>
+						 <exclude>**/*WebScriptTest.java</exclude> 
 						 <exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
 					</excludes> 
-					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -301,10 +301,12 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12</version>
 				<configuration>
-					<includes>
-						 <include>fr/becpg/repo/web/scripts/**/*Test.java</include>
-					</includes> 
 					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
+					<includes>
+					 <include>**/*WebScriptTest.java</include>
+					</includes>
+					<excludes>              
+                     </excludes>  
 				</configuration>
 			</plugin>
 		   </plugins>
