@@ -106,22 +106,27 @@
 		</dependency>
 
 		<dependency>
+			<groupId>jmock</groupId>
+			<artifactId>jmock</artifactId>
+			<version>1.2.0</version>
+			<scope>test</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-mock</artifactId>
+			<version>2.0.8</version>
+			<scope>test</scope>
+		</dependency>
+		
+
+		<dependency>
 			<groupId>org.alfresco.sdk</groupId>
 			<artifactId>config</artifactId>
 			<version>${alfresco.version}</version>
 			<classifier>community</classifier>
 			<scope>test</scope>
 		</dependency>
-		
-		
-		<dependency>
-			<groupId>org.alfresco.sdk</groupId>
-			<artifactId>config-webscript</artifactId>
-			<version>${alfresco.version}</version>
-			<classifier>community</classifier>
-			<scope>test</scope>
-		</dependency>
-		
 
 
 		<!-- Servlet -->

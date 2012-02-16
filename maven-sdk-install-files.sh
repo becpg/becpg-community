@@ -284,7 +284,6 @@ echo "Additional libs"
 cd $BOOTSTRAP_HOME/alfresco-sdk/lib
 
 mvn install:install-file  -DgroupId=org.alfresco.sdk -DartifactId=config -Dversion=4.0.d -Dclassifier=community  -Dpackaging=jar -Dfile=config.jar
-mvn install:install-file  -DgroupId=org.alfresco.sdk -DartifactId=config-webscript -Dversion=4.0.d -Dclassifier=community  -Dpackaging=jar -Dfile=config-webscript.jar
 cd ..
 mvn install
 

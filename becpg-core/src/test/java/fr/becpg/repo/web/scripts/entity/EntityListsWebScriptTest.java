@@ -21,10 +21,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
@@ -56,9 +54,6 @@ public class EntityListsWebScriptTest extends BaseWebScriptTest{
 	private static final String USER_ADMIN = "admin";
 	
 
-	/** The app ctx. */
-	private  ApplicationContext appCtx = getServer().getApplicationContext();
-	
 	/** The node service. */
 	private NodeService nodeService;
 	
@@ -93,13 +88,13 @@ public class EntityListsWebScriptTest extends BaseWebScriptTest{
 	protected void setUp() throws Exception
 	{
 		super.setUp();
-		nodeService = (NodeService)appCtx.getBean("NodeService");
-		fileFolderService = (FileFolderService)appCtx.getBean("FileFolderService");		
-		authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-		productDAO = (ProductDAO)appCtx.getBean("productDAO");
-		productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
-		transactionService = (TransactionService)appCtx.getBean("transactionService");
-		repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
+		nodeService = (NodeService)getServer().getApplicationContext().getBean("NodeService");
+		fileFolderService = (FileFolderService)getServer().getApplicationContext().getBean("FileFolderService");		
+		authenticationComponent = (AuthenticationComponent)getServer().getApplicationContext().getBean("authenticationComponent");
+		productDAO = (ProductDAO)getServer().getApplicationContext().getBean("productDAO");
+		productDictionaryService = (ProductDictionaryService)getServer().getApplicationContext().getBean("productDictionaryService");
+		transactionService = (TransactionService)getServer().getApplicationContext().getBean("transactionService");
+		repositoryHelper = (Repository)getServer().getApplicationContext().getBean("repositoryHelper");
 		
 	    // Authenticate as user
 	    this.authenticationComponent.setCurrentUser(USER_ADMIN);
