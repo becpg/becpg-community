@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
@@ -114,7 +113,7 @@
 	</pluginRepositories>
 	<build>
 		<plugins>
-			<plugin>
+		<!-- 	<plugin>
 				<artifactId>maven-nosnapshot-plugin</artifactId>
 				<groupId>com.sourcesense.maven</groupId>
 				<version>0.0.6</version>
@@ -127,7 +126,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> 
 		 	<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
@@ -145,7 +144,7 @@
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
 				</configuration>
-			</plugin> 
+			</plugin> -->
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 			   	<version>2.3.2</version>
@@ -157,9 +156,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.11</version>
+				<version>2.12</version>
 				<configuration>
-					<argLine>-Xmx512m -XX:MaxPermSize=128m</argLine>
+					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -187,11 +186,12 @@
 	<modules>
 		<module>becpg-bootstrap/alfresco-sdk</module>
 		<module>becpg-bootstrap/birt-sdk</module>
+		<module>alfresco-patch</module>
 		<module>becpg-core</module>
 		<module>becpg-share</module>
 		<module>becpg-olap</module>
 		<module>distribution</module>
-	</modules>
+  </modules>
 
 	<profiles>
 		<profile>

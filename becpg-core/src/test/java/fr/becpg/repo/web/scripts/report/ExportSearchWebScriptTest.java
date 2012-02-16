@@ -70,7 +70,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 	private static Log logger = LogFactory.getLog(ExportSearchWebScriptTest.class);
 	
 	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
+	private  ApplicationContext appCtx = getServer().getApplicationContext();
 	
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";

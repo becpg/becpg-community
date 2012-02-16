@@ -73,7 +73,7 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
 	private static Log logger = LogFactory.getLog(CompareProductReportWebScriptTest.class);
 	
 	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
+	private  ApplicationContext appCtx = getServer().getApplicationContext();
 	
 	/** The PAT h_ testfolder. */
 	private static String PATH_TESTFOLDER = "TestFolder";

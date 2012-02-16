@@ -8,11 +8,9 @@
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-core</artifactId>
 	<packaging>amp</packaging>
 	<name>beCPG core</name>
-	<version>0.1.4</version>
 	<description>BeCPG repository</description>
 
 	<dependencies>
@@ -35,6 +33,22 @@
 			<scope>provided</scope>
 		</dependency>
 
+		
+		<!-- patch -->
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>alfresco-repository</artifactId>
+			<version>${alfresco.version}</version>
+			<type>jar</type>
+			<exclusions>
+				<exclusion>
+						<groupId>org.alfresco.sdk</groupId>
+						<artifactId>alfresco-repository-${alfresco.version}</artifactId>
+				</exclusion>
+			</exclusions>
+	    </dependency>
+		
+
 
 		<!-- alfresco -->
 		<dependency>
@@ -43,7 +57,20 @@
 			<version>${alfresco.version}</version>
 			<type>pom</type>
 			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+						<groupId>org.alfresco.sdk</groupId>
+						<artifactId>alfresco-repository-${alfresco.version}</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.alfresco.sdk</groupId>
+					<artifactId>rhino-js-1.6R7</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+		
+		
+		
 
 		<!-- Birt 3.7 -->
 		<dependency>
@@ -85,6 +112,16 @@
 			<classifier>community</classifier>
 			<scope>test</scope>
 		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>config-webscript</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>test</scope>
+		</dependency>
+		
 
 
 		<!-- Servlet -->

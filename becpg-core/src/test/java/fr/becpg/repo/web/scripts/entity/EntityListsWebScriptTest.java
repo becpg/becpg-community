@@ -48,14 +48,16 @@ public class EntityListsWebScriptTest extends BaseWebScriptTest{
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityListsWebScriptTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
 	
 	/** The Constant PATH_TEMPFOLDER. */
 	private static final String PATH_TEMPFOLDER = "TempFolder";
 	
 	/** The Constant USER_ADMIN. */
 	private static final String USER_ADMIN = "admin";
+	
+
+	/** The app ctx. */
+	private  ApplicationContext appCtx = getServer().getApplicationContext();
 	
 	/** The node service. */
 	private NodeService nodeService;
@@ -91,7 +93,6 @@ public class EntityListsWebScriptTest extends BaseWebScriptTest{
 	protected void setUp() throws Exception
 	{
 		super.setUp();
-				
 		nodeService = (NodeService)appCtx.getBean("NodeService");
 		fileFolderService = (FileFolderService)appCtx.getBean("FileFolderService");		
 		authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");

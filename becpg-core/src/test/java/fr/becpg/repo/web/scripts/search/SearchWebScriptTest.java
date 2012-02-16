@@ -21,7 +21,7 @@ public class SearchWebScriptTest extends BaseWebScriptTest{
 	private static Log logger = LogFactory.getLog(SearchWebScriptTest.class);
 	
 	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
+	private  ApplicationContext appCtx = getServer().getApplicationContext();
 	
 	
 	

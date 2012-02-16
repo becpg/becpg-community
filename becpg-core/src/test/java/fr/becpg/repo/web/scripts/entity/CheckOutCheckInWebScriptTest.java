@@ -39,7 +39,7 @@ public class CheckOutCheckInWebScriptTest extends BaseWebScriptTest{
 	private static Log logger = LogFactory.getLog(CheckOutCheckInWebScriptTest.class);
 	
 	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
+	private  ApplicationContext appCtx = getServer().getApplicationContext();
 	
 	/** The Constant PATH_TEMPFOLDER. */
 	private static final String PATH_TEMPFOLDER = "TempFolder";

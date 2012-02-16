@@ -34,7 +34,7 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AutoCompleteWebScriptTest.class);
 	
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
+	private  ApplicationContext appCtx = getServer().getApplicationContext();
 	
 	private NodeService nodeService;
 	
