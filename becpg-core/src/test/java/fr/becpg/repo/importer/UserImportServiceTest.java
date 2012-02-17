@@ -13,7 +13,6 @@ import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -32,7 +31,6 @@ public class UserImportServiceTest  extends RepoBaseTestCase {
 
 	/** The node service. */
 	
-	private TransactionService transactionService;
 	private SearchService searchService;
 
 	private static Log logger = LogFactory.getLog(UserImportServiceTest.class);

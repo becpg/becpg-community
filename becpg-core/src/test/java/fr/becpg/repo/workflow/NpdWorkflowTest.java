@@ -73,7 +73,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 	protected static String[] groups = { NPDGroup.MarketingBrief.toString(), NPDGroup.NeedDefinition.toString(),
 			NPDGroup.ValidateNeedDefinition.toString(), NPDGroup.DoPrototype.toString(),
 			NPDGroup.StartProduction.toString(), NPDGroup.ValidateFaisability.toString(),
-			NPDGroup.FaisabilityAssignersGroup.toString() };
+			NPDGroup.FaisabilityAssignersGroup.toString(),SystemGroup.Quality.toString() };
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(NpdWorkflowTest.class);

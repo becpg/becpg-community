@@ -7,7 +7,6 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -59,10 +58,6 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	private DynPropsConstraint dynPropsConstraint;
 	
-	
-	/** The repository helper. */
-	private Repository repositoryHelper;
-
 	/*
 	 * (non-Javadoc)
 	 * 

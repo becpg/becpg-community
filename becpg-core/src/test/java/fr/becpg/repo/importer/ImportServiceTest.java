@@ -159,25 +159,6 @@ public class ImportServiceTest extends RepoBaseTestCase {
         dictionaryDAO.reset();
     }
     
-    
-	/* (non-Javadoc)
-	 * @see fr.becpg.test.RepoBaseTestCase#tearDown()
-	 */
-	@Override
-	public void tearDown() throws Exception
-    {
-		try
-        {
-            authenticationComponent.clearCurrentSecurityContext();
-        }
-        catch (Throwable e)
-        {
-            e.printStackTrace();
-            // Don't let this mask any previous exceptions
-        }
-        super.tearDown();
-
-    }		
 	
 	
 
