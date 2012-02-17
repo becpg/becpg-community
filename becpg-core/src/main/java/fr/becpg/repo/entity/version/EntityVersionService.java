@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.util.VersionNumber;
 
 // TODO: Auto-generated Javadoc
 /**

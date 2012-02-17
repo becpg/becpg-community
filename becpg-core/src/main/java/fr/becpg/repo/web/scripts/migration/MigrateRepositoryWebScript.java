@@ -36,7 +36,6 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
 				
-	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_PAGINATION = "pagination";
 
 	/** The search service. */
@@ -108,13 +107,15 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	
     	logger.info("items to migrate: " + items.size());    	
     	
-    	policyBehaviourFilter.disableAllBehaviours();
-    	        	
-    	try{
-    		int maxCnt = iPagination != null && iPagination < items.size() ? iPagination : items.size();
-    		for(int cnt=0 ; cnt < maxCnt ; cnt++){
-        		
-        		final NodeRef nodeRef = items.get(cnt);        		
+    	int maxCnt = iPagination != null && iPagination < items.size() ? iPagination : items.size();
+		for(int cnt=0 ; cnt < maxCnt ; cnt++){
+    		
+			NodeRef nodeRef = items.get(cnt);
+    		
+	    	policyBehaviourFilter.disableBehaviour(nodeRef);
+	    	        	
+	    	try{
+	    		        		
         		Serializable value = nodeService.getProperty(nodeRef, oldProperty);
         		
         		if(value != null){
@@ -122,11 +123,11 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
         			nodeService.setProperty(nodeRef, newProperty, value);
         			nodeService.removeProperty(nodeRef, oldProperty);
         		}        		   	
-        	}
-    	}
-    	finally{
-    		policyBehaviourFilter.enableAllBehaviours();
-    	}    		      
+	    	}
+	    	finally{
+	    		policyBehaviourFilter.enableBehaviour(nodeRef);
+	    	}
+		}
 	}	
 	
 }

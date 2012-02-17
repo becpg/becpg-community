@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -79,8 +78,6 @@ public class EntityServiceImpl implements EntityService {
 	
 	private EntityVersionService entityVersionService;
 	
-	private BehaviourFilter policyBehaviourFilter;
-	
 	private CopyService copyService;
 	
 	private ContentService contentService;
@@ -89,11 +86,6 @@ public class EntityServiceImpl implements EntityService {
 		this.nodeService = nodeService;
 	}
 	
-	
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
@@ -388,41 +380,31 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	@Override
-	public NodeRef createOrCopyFrom(final NodeRef parentNodeRef, final NodeRef sourceNodeRef, QName entityType, final String entityName) {
+	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, QName entityType,
+			final String entityName) {
 		NodeRef ret = null;
-		Map<QName,Serializable> props = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
 		props.put(ContentModel.PROP_NAME, entityName);
-		
-		if(sourceNodeRef!=null && nodeService.exists(sourceNodeRef)){
+
+		if (sourceNodeRef != null && nodeService.exists(sourceNodeRef)) {
 			logger.debug("Copy existing entity");
-			
-				policyBehaviourFilter.disableAllBehaviours();
-			try {
-				ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
-					@Override
-					public NodeRef doWork() throws Exception {
-						NodeRef ret =
-						 copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS,
-								ContentModel.ASSOC_CHILDREN, true);
-						
-						nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
-						initializeEntity(ret);
-						initializeEntityFolder(ret);
-						return ret;
-					}
-				}, AuthenticationUtil.getSystemUserName());
-			
-			} finally {
-				policyBehaviourFilter.enableAllBehaviours();
-			}
-		
-			 
+
+			ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
+				@Override
+				public NodeRef doWork() throws Exception {
+					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS,
+							ContentModel.ASSOC_CHILDREN, true);
+
+					nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
+					return ret;
+				}
+			}, AuthenticationUtil.getSystemUserName());
+
 		} else {
 			logger.debug("Create new entity");
-			 ret = 
-					nodeService.createNode(parentNodeRef,
-							ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, entityName), entityType, props).getChildRef();		
+			ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, entityName), entityType, props)
+					.getChildRef();
 		}
 		return ret;
 	}

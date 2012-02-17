@@ -7,8 +7,6 @@ import java.util.Date;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.model.BeCPGModel;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class VersionData.

@@ -11,14 +11,11 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.version.Version;
-import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
@@ -56,10 +53,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 	private FileFolderService fileFolderService;	
 	
 	/** The product dao. */
-	private ProductDAO productDAO;
-	
-	/** The version service. */
-	private VersionService versionService;
+	private ProductDAO productDAO;	
 	
 	/** The repository. */
 	private Repository repository;
@@ -86,7 +80,6 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
     	nodeService = (NodeService)appCtx.getBean("nodeService");
     	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
     	productDAO = (ProductDAO)appCtx.getBean("productDAO");
-    	versionService = (VersionService)appCtx.getBean("VersionService");
     	repository = (Repository)appCtx.getBean("repositoryHelper");
     	productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
         entityVersionService = (EntityVersionService)appCtx.getBean("entityVersionService");

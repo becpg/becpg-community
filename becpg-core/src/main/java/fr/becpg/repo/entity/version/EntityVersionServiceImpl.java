@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 
 /**
@@ -230,7 +231,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		Map<QName, Serializable> versionableProperties = new HashMap<QName, Serializable>();
 		versionableProperties.put(BeCPGModel.PROP_VERSION_LABEL, newVersionNumber.toString());
 		nodeService.addAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSIONABLE, versionableProperties);
-
+		
 		// save new version in version history, change name to support several
 		// children
 		return createVersion(versionHistoryRef, nodeRef, newVersionNumber, versionDescription);
@@ -295,8 +296,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private NodeRef createVersion(final NodeRef versionHistoryNodeRef, final NodeRef entityNodeRef,
 			VersionNumber versionNumber, String versionDescription) {
 
-		// disable policy to avoir folder initialization and report generation
-		policyBehaviourFilter.disableAllBehaviours();
+		// disable policy to avoid code, folder initialization and report generation
+		policyBehaviourFilter.disableBehaviour();
 		NodeRef versionNodeRef = null;
 
 		try {
@@ -314,7 +315,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			/*-- Store version properties (version label, version description, frozen properties and entity properties not already stored) --*/
 			Map<QName, Serializable> versionProperties = nodeService.getProperties(versionNodeRef);
-			Map<QName, Serializable> entityProperties = nodeService.getProperties(entityNodeRef);
+			Map<QName, Serializable> entityProperties = nodeService.getProperties(entityNodeRef);						
 
 			String name = entityProperties.get(ContentModel.PROP_NAME) + VERSION_NAME_DELIMITER + versionNumber;
 			versionProperties.put(ContentModel.PROP_NAME, name);
@@ -331,10 +332,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			
 			nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionProperties);
 			
-			updateEffectivity(entityNodeRef, versionNodeRef);
+			updateEffectivity(entityNodeRef, versionNodeRef);					
 			
 		} finally {
-			policyBehaviourFilter.enableAllBehaviours();
+			policyBehaviourFilter.enableBehaviour();
 		}
 
 		return versionNodeRef;
@@ -445,6 +446,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			String tempLabel = (String) nodeService.getProperty(versionAssoc.getChildRef(),
 					BeCPGModel.PROP_VERSION_LABEL);
+			
 			if (tempLabel != null && tempLabel.equals(versionLabel) == true) {
 				boolean headVersion = (i == cnt);
 
