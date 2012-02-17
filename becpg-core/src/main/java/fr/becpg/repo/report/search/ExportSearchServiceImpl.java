@@ -3,13 +3,14 @@
  */
 package fr.becpg.repo.report.search;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -32,12 +33,6 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
-import org.eclipse.birt.report.engine.api.EXCELRenderOption;
-import org.eclipse.birt.report.engine.api.IRenderOption;
-import org.eclipse.birt.report.engine.api.IReportEngine;
-import org.eclipse.birt.report.engine.api.IReportRunnable;
-import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
-import org.eclipse.birt.report.engine.api.RenderOption;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.config.mapping.AttributeMapping;
@@ -50,6 +45,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.PropertyService;
 import fr.becpg.repo.listvalue.EntityListValuePlugin;
+import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.template.ReportFormat;
 
 /**
@@ -118,7 +114,6 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	/** The Constant KEY_IMAGE_NODE_IMG. */
 	public static final String KEY_IMAGE_NODE_IMG = "node%s-%s";
 	
-	private static final String KEY_XML_INPUTSTREAM = "org.eclipse.datatools.enablement.oda.xml.inputStream";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ExportSearchServiceImpl.class);	
@@ -131,7 +126,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	private ContentService contentService;
 	
 	/** The report engine. */
-	private IReportEngine reportEngine;
+	private BeCPGReportEngine beCPGReportEngine;
 	
 	/** The namespace service. */
 	private NamespaceService namespaceService;
@@ -176,15 +171,12 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		this.contentService = contentService;
 	}
 	
-	/**
-	 * Sets the report engine.
-	 *
-	 * @param reportEngine the new report engine
-	 */
-	public void setReportEngine(IReportEngine reportEngine) {
-		this.reportEngine = reportEngine;
-	}
 	
+	
+	public void setBeCPGReportEngine(BeCPGReportEngine beCPGReportEngine) {
+		this.beCPGReportEngine = beCPGReportEngine;
+	}
+
 	/**
 	 * Sets the namespace service.
 	 *
@@ -249,68 +241,34 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	 * @param searchQuery the search query
 	 * @param outputStream the output stream
 	 */
-	@SuppressWarnings("unchecked")
 	private void renderReport(NodeRef templateNodeRef, ExportSearchContext exportSearchCtx, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream){		
 		
-		InputStream inputStream =null;
-		ByteArrayInputStream bais =null;
 		try{
 			
-			ContentReader reader = contentService.getReader(templateNodeRef, ContentModel.PROP_CONTENT);
-			inputStream = reader.getContentInputStream();
-			IReportRunnable design = reportEngine.openReportDesign(inputStream);																					
+																
 			
-			//Create task to run and render the report,
-			logger.debug("Create task to run and render the report");
-			IRunAndRenderTask task = reportEngine.createRunAndRenderTask(design);
+			Map<String,Object> params = new HashMap<String, Object>();
+			params.put(BeCPGReportEngine.PARAM_FORMAT,reportFormat);
 			
-			IRenderOption options = null;
-						
-			if(reportFormat.equals(ReportFormat.PDF)){
-			
-				options = new RenderOption();
-				options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
-			}			
-			else if(reportFormat.equals(ReportFormat.DOC)){
-				
-				options = new RenderOption();
-				options.setOutputFormat(ReportFormat.DOC.toString());
-			}
-			else{
-				// default format excel
-				options = new EXCELRenderOption();
-				options.setOutputFormat(ReportFormat.XLS.toString());
-			}
-								
-			options.setOutputStream(outputStream);				  
-			task.setRenderOption(options);								
+		
 			
 			// Prepare data source
 			logger.debug("Prepare data source");								
 			Document document = DocumentHelper.createDocument();
 			Element exportElt = document.addElement(TAG_EXPORT);
-			task = loadReportData(exportSearchCtx, exportElt, task, searchResults);
+			params = loadReportData(exportSearchCtx, exportElt, params, searchResults);
 			
 			//logger.trace("Xml data: " + exportElt.asXML());
 			
-			// xml data
-			logger.debug("add Xml data");
-			bais = new ByteArrayInputStream( exportElt.asXML().getBytes());
-			task.getAppContext().put(KEY_XML_INPUTSTREAM, bais);
+			beCPGReportEngine.createReport(templateNodeRef, exportElt, outputStream, params);
 			
-			task.run();
-			task.close();
 			
 				
 				
 		}
 		catch(Exception e){
 			logger.error("Failed to run report: ",  e);
-		}	finally {
-			IOUtils.closeQuietly(inputStream);
-			IOUtils.closeQuietly(outputStream);
-			IOUtils.closeQuietly(bais);
-		}
+		}	
 		
 	}
 	
@@ -323,7 +281,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	 * @param nodeRefList the node ref list
 	 * @return the i run and render task
 	 */
-	private IRunAndRenderTask loadReportData(ExportSearchContext exportSearchCtx, Element exportElt, IRunAndRenderTask task, List<NodeRef> nodeRefList){
+	private Map<String,Object>loadReportData(ExportSearchContext exportSearchCtx, Element exportElt, Map<String,Object> params, List<NodeRef> nodeRefList){
 		
 		logger.debug("start loadReportData");		
 		Element nodesElt = exportElt.addElement(TAG_NODES);
@@ -335,10 +293,10 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			nodeElt.addAttribute(ATTR_ID, z_idx.toString());
 			
 			if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_PRODUCT)){
-				task = exportProduct(exportSearchCtx, nodeElt, task, nodeRef);
+				params = exportProduct(exportSearchCtx, nodeElt, params, nodeRef);
 			}
 			else{
-				task = exportNode(exportSearchCtx, nodeElt, task, nodeRef);
+				params = exportNode(exportSearchCtx, nodeElt, params, nodeRef);
 			}
 			
 			z_idx++;
@@ -346,7 +304,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		
 		logger.debug("End loadReportData");
 			
-		return task;
+		return params;
     }
  
 	/**
@@ -358,8 +316,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	 * @param nodeRef the node ref
 	 * @return the i run and render task
 	 */
-	@SuppressWarnings("unchecked")
-	private IRunAndRenderTask exportNode(ExportSearchContext exportSearchCtx, Element nodeElt, IRunAndRenderTask task, NodeRef nodeRef){				
+	private  Map<String,Object> exportNode(ExportSearchContext exportSearchCtx, Element nodeElt,  Map<String,Object> params, NodeRef nodeRef){				
 		
 		
 		// export class attributes
@@ -391,7 +348,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 					if (imageBytes != null){
 											
 						logger.debug("###file content as blob : " + String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId()));
-						task.getAppContext().put(String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId()), imageBytes);				
+						params.put(String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId()), imageBytes);				
 					}
 				}
 				// class attribute
@@ -402,7 +359,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			}
     	}
     	
-    	return task;
+    	return params;
 	}
 		
 	/**
@@ -448,10 +405,10 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	 * @param productNodeRef the product node ref
 	 * @return the i run and render task
 	 */
-	private IRunAndRenderTask exportProduct(ExportSearchContext exportSearchCtx, Element nodeElt, IRunAndRenderTask task, NodeRef productNodeRef){
+	private  Map<String,Object> exportProduct(ExportSearchContext exportSearchCtx, Element nodeElt,  Map<String,Object> params, NodeRef productNodeRef){
 		
 		// export node
-		exportNode(exportSearchCtx, nodeElt, task, productNodeRef);
+		exportNode(exportSearchCtx, nodeElt, params, productNodeRef);
 		
 		// export charact		
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
@@ -468,7 +425,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
     		}
 		}	    				    
 		
-    	return task;
+    	return params;
 	}
 	
 	

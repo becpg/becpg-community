@@ -1,8 +1,5 @@
 package fr.becpg.repo.report.entity.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,23 +8,15 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.eclipse.birt.report.engine.api.IGetParameterDefinitionTask;
-import org.eclipse.birt.report.engine.api.IRenderOption;
-import org.eclipse.birt.report.engine.api.IReportEngine;
-import org.eclipse.birt.report.engine.api.IReportRunnable;
-import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
-import org.eclipse.birt.report.engine.api.RenderOption;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -35,20 +24,20 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 
 public class EntityReportServiceImpl implements EntityReportService{
 
 	
-	private static final String KEY_XML_INPUTSTREAM = "org.eclipse.datatools.enablement.oda.xml.inputStream";
-	
-	private static final String PARAM_VALUE_HIDE_CHAPTER_SUFFIX = "HideChapter";
-		
 	private static final String DEFAULT_EXTRACTOR = "default";
+
+	private static final String PARAM_VALUE_HIDE_CHAPTER_SUFFIX = "HideChapter";
 	
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 	
@@ -63,14 +52,12 @@ public class EntityReportServiceImpl implements EntityReportService{
 	
 	private EntityListDAO entityListDAO;
 	
-	/** The report engine. */
-	private IReportEngine reportEngine;
-	
-	/** The mimetype service. */
-	private MimetypeService mimetypeService;
-	
 	
 	private ReportTplService reportTplService;
+	
+	private BeCPGReportEngine beCPGReportEngine;
+	
+	private MimetypeService mimetypeService;
 	
 	
 	private Map<String, EntityReportExtractor>  entityExtractors = new HashMap<String, EntityReportExtractor>();
@@ -100,6 +87,13 @@ public class EntityReportServiceImpl implements EntityReportService{
 		this.contentService = contentService;
 	}
 	
+	
+	
+	
+	public void setMimetypeService(MimetypeService mimetypeService) {
+		this.mimetypeService = mimetypeService;
+	}
+
 	/**
 	 * Sets the file folder service.
 	 *
@@ -115,23 +109,10 @@ public class EntityReportServiceImpl implements EntityReportService{
 	
 	
 	
-	/**
-	 * Sets the report engine.
-	 *
-	 * @param reportEngine the new report engine
-	 */
-	public void setReportEngine(IReportEngine reportEngine){
-		this.reportEngine = reportEngine;
-	}
 	
-	/**
-	 * Sets the mimetype service.
-	 *
-	 * @param mimetypeService the new mimetype service
-	 */
-	public void setMimetypeService(MimetypeService mimetypeService){
-		this.mimetypeService = mimetypeService;
-	}		
+	public void setBeCPGReportEngine(BeCPGReportEngine beCPGReportEngine) {
+		this.beCPGReportEngine = beCPGReportEngine;
+	}
 
 
 	public void setReportTplService(ReportTplService reportTplService) {
@@ -230,7 +211,8 @@ public class EntityReportServiceImpl implements EntityReportService{
 		
 		return contentWriter;
 	}
-	
+
+		
 
 	/**
 	 * Method that generates reports.
@@ -240,7 +222,6 @@ public class EntityReportServiceImpl implements EntityReportService{
 	 * @param nodeElt the node elt
 	 * @param images the images
 	 */
-	@SuppressWarnings("unchecked")
 	public void generateReports(NodeRef nodeRef, List<NodeRef> tplsNodeRef, Element nodeElt, Map<String, byte[]> images) {
 		
 		if(nodeRef == null){
@@ -261,76 +242,40 @@ public class EntityReportServiceImpl implements EntityReportService{
 		
 		// generate reports
 		for(NodeRef tplNodeRef : tplsNodeRef){        			
-			InputStream in = null;
-			OutputStream out =null;
-			InputStream buffer = null;
-			IRunAndRenderTask task = null;
-			ContentReader reader = null;
+
 			//prepare
-			try{							
-				reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
-				//in = new BufferedInputStream(reader.getContentInputStream());
-				in = reader.getContentInputStream();
-				IReportRunnable design = reportEngine.openReportDesign(in);							
+			try{	
 				
 				//Run report		
 				ContentWriter writer = getDocumentContentWriter(nodeRef, tplNodeRef);
-			
+				String mimetype = mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF);
+				writer.setMimetype(mimetype);
 				if(writer != null){
-				
-					String mimetype = mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF);
-					writer.setMimetype(mimetype);
+					Map<String,Object> params = new HashMap<String, Object>();
+
+					params.put(BeCPGReportEngine.PARAM_IMAGES,images);
+					params.put(BeCPGReportEngine.PARAM_FORMAT,ReportFormat.PDF);
 					
-					//Create task to run and render the report,
-					task = reportEngine.createRunAndRenderTask(design);
 					
-					IRenderOption options = new RenderOption();
-					out = writer.getContentOutputStream();
-					options.setOutputStream(out);							
-					options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
-					task.setRenderOption(options);
-					
-					// xml data
-					buffer = new ByteArrayInputStream( nodeElt.asXML().getBytes());
-					task.getAppContext().put(KEY_XML_INPUTSTREAM, buffer);
-					
-					// images
-					if(images != null){
-						for(Map.Entry<String, byte[]> entry : images.entrySet()){
-							task.getAppContext().put(entry.getKey(), entry.getValue());
-						}
-					}					
-					
-					IGetParameterDefinitionTask paramTask = reportEngine.createGetParameterDefinitionTask(design);											
-					
-					// hide all datalists and display visible ones
-					for(Object key : paramTask.getDefaultValues().keySet()){
-						if(((String)key).endsWith(PARAM_VALUE_HIDE_CHAPTER_SUFFIX)){
-							task.setParameterValue((String)key, Boolean.TRUE);
-						}
-					}							
-					
+//					// hide all datalists and display visible ones
+//					for(Object key : paramTask.getDefaultValues().keySet()){
+//						if(((String)key).endsWith(PARAM_VALUE_HIDE_CHAPTER_SUFFIX)){
+//							params.put((String)key, Boolean.TRUE);
+//						}
+//					}							
+//					
 					for(QName existingList : existingLists){
-						task.setParameterValue(existingList.getLocalName() + PARAM_VALUE_HIDE_CHAPTER_SUFFIX, Boolean.FALSE);
+						params.put(existingList.getLocalName() + PARAM_VALUE_HIDE_CHAPTER_SUFFIX, Boolean.FALSE);
 					}
 					
-					task.run();
+					
+					beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params );
+					
 				}  				
 			}
 			catch(Exception e){
 				logger.error("Failed to execute report for template : "+ tplNodeRef,  e);
-//				if(reader!=null){
-//					logger.error("reader :"+reader.getContentString());
-//				}
-				
-			} finally {
-				IOUtils.closeQuietly(in);
-				IOUtils.closeQuietly(buffer);
-				IOUtils.closeQuietly(out);
-				if(task!=null){
-					task.close();
-				}
-			}
+			} 
 		}
 	}
 	

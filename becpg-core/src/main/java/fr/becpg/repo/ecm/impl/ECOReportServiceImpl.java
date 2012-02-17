@@ -1,28 +1,20 @@
 package fr.becpg.repo.ecm.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.eclipse.birt.report.engine.api.IRenderOption;
-import org.eclipse.birt.report.engine.api.IReportEngine;
-import org.eclipse.birt.report.engine.api.IReportRunnable;
-import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
-import org.eclipse.birt.report.engine.api.RenderOption;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -30,6 +22,8 @@ import fr.becpg.repo.ecm.ECOReportService;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.report.engine.BeCPGReportEngine;
+import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 
@@ -49,15 +43,13 @@ public class ECOReportServiceImpl implements ECOReportService {
 	
 	private static final Integer DEFAULT_PROJECTED_QTY = 1;
 	
-	private static final String KEY_XML_INPUTSTREAM = "org.eclipse.datatools.enablement.oda.xml.inputStream";
-	
 	private static Log logger = LogFactory.getLog(ECOServiceImpl.class);
 	
 	private ReportTplService reportTplService;
 	private NodeService nodeService;
 	private ContentService contentService;
 	private MimetypeService mimetypeService;	
-	private IReportEngine reportEngine;
+	private BeCPGReportEngine beCPGReportEngine;
 	
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
@@ -75,11 +67,10 @@ public class ECOReportServiceImpl implements ECOReportService {
 		this.mimetypeService = mimetypeService;
 	}
 
-	public void setReportEngine(IReportEngine reportEngine) {
-		this.reportEngine = reportEngine;
+	public void setBeCPGReportEngine(BeCPGReportEngine beCPGReportEngine) {
+		this.beCPGReportEngine = beCPGReportEngine;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	//TODO move that to entityReport Service
 	public void generateReport(ChangeOrderData ecoData) {
@@ -92,45 +83,22 @@ public class ECOReportServiceImpl implements ECOReportService {
 			
 			//Prepare data source
 			Element ecoXmlDataElt = extractXml(ecoData);						
-			InputStream in = null;
-			InputStream bais = null;
-			OutputStream out = null;
+			
 			try{
 				
 				ContentWriter contentWriter = contentService.getWriter(ecoData.getNodeRef(), ContentModel.PROP_CONTENT, true);			
 				String mimetype = mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF);
 				contentWriter.setMimetype(mimetype);
-				out = contentWriter.getContentOutputStream();
 				
-				ContentReader reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
-				in = reader.getContentInputStream();
-				IReportRunnable design = reportEngine.openReportDesign(in);
-									
-				//Create task to run and render the report,
-				logger.debug("Create task to run and render the report");
-				IRunAndRenderTask task = reportEngine.createRunAndRenderTask(design);
+				Map<String,Object> params = new HashMap<String, Object>();
+				params.put(BeCPGReportEngine.PARAM_FORMAT,ReportFormat.PDF);
 				
-				//Update data source
-				logger.debug("Update data source");
-			    bais = new ByteArrayInputStream( ecoXmlDataElt.asXML().getBytes());
-				task.getAppContext().put(KEY_XML_INPUTSTREAM, bais);
-								
-				IRenderOption options = new RenderOption();
-				options.setOutputStream(out);							
-				options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
-				task.setRenderOption(options);					
-				task.run();
-				task.close();							
-
+				beCPGReportEngine.createReport(tplNodeRef, ecoXmlDataElt, contentWriter.getContentOutputStream(), params);
 					
 			}
 			catch(Exception e){
 				logger.error("Failed to run comparison report: ",  e);
-			} finally {
-				IOUtils.closeQuietly(in);
-				IOUtils.closeQuietly(bais);
-				IOUtils.closeQuietly(out);
-			}
+			} 
 			
 		}
 		

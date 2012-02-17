@@ -3,8 +3,6 @@
  */
 package fr.becpg.repo.entity.comparison;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -16,26 +14,20 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ContentReader;
-import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.eclipse.birt.report.engine.api.IRenderOption;
-import org.eclipse.birt.report.engine.api.IReportEngine;
-import org.eclipse.birt.report.engine.api.IReportRunnable;
-import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
-import org.eclipse.birt.report.engine.api.RenderOption;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.report.engine.BeCPGReportEngine;
+import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 
@@ -132,19 +124,15 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 	
 	private static final String PARAM_VALUE_HIDE_STRUC_COMP = "StructComparisonHide";
 	
-	private static final String KEY_XML_INPUTSTREAM = "org.eclipse.datatools.enablement.oda.xml.inputStream";
-	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);
 	
 	/** The compare entity service. */
 	private CompareEntityService compareEntityService;
 	
-	/** The content service. */
-	private ContentService contentService;
 	
 	/** The report engine. */
-	private IReportEngine reportEngine;		
+	private BeCPGReportEngine beCPGReportEngine;		
 	
 	private ReportTplService reportTplService;
 	
@@ -164,26 +152,21 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 	}
 	
 	/**
-	 * Sets the content service.
-	 *
-	 * @param contentService the new content service
-	 */
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
-	}
-	
-	/**
 	 * Sets the report engine.
 	 *
 	 * @param reportEngine the new report engine
 	 */
-	public void setReportEngine(IReportEngine reportEngine) {
-		this.reportEngine = reportEngine;
+
+	public void setBeCPGReportEngine(BeCPGReportEngine beCPGReportEngine) {
+		this.beCPGReportEngine = beCPGReportEngine;
 	}
+	
+	
 	
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
 	}
+
 
 	/**
 	 * Sets the node service.
@@ -206,7 +189,6 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.entity.comparison.CompareEntityReportService#getComparisonReport(org.alfresco.service.cmr.repository.NodeRef, java.util.List, java.io.OutputStream)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, OutputStream out){				
 		
@@ -239,41 +221,21 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 			Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
 			entitiesCmpElt.add(renderComparisonAsXmlData(entity1, entities, compareResult));
 			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults, BeCPGModel.ASSOC_COMPOLIST_PRODUCT));			
-			InputStream in = null;
-			InputStream bais = null;
+
 			try{
-				
-				ContentReader reader = contentService.getReader(templateNodeRef, ContentModel.PROP_CONTENT);
-    			in = reader.getContentInputStream();
-				IReportRunnable design = reportEngine.openReportDesign(in);
-									
-				//Create task to run and render the report,
-				logger.debug("Create task to run and render the report");
-				IRunAndRenderTask task = reportEngine.createRunAndRenderTask(design);
-				
-				//Update data source
-				logger.debug("Update data source");
-				bais = new ByteArrayInputStream( entitiesCmpElt.asXML().getBytes());
-				task.getAppContext().put(KEY_XML_INPUTSTREAM, bais);
-				
+				Map<String,Object> params = new HashMap<String, Object>();
+
 				// hide struct comparison
-				task.setParameterValue(PARAM_VALUE_HIDE_STRUC_COMP, hideStructComparison);
+				params.put(PARAM_VALUE_HIDE_STRUC_COMP, hideStructComparison);
+				params.put(BeCPGReportEngine.PARAM_FORMAT,ReportFormat.PDF);
 				
-				IRenderOption options = new RenderOption();
-				options.setOutputStream(out);							
-				options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
-				task.setRenderOption(options);					
-				task.run();
-				task.close();				
+				beCPGReportEngine.createReport(templateNodeRef, entitiesCmpElt, out , params);
+				
 					
 			}
 			catch(Exception e){
 				logger.error("Failed to run comparison report: ",  e);
-			}finally {
-				IOUtils.closeQuietly(in);
-				IOUtils.closeQuietly(bais);
-				IOUtils.closeQuietly(out);
-			}							
+			}						
     	}
 		
 	}

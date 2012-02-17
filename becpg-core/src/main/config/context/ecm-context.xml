@@ -40,7 +40,7 @@
 		<property name="nodeService" ref="nodeService" />		
 		<property name="contentService" ref="contentService"/>
 		<property name="mimetypeService" ref="mimetypeService"/>
-		<property name="reportEngine" ref="reportEngine"/>	
+		<property name="beCPGReportEngine" ref="beCPGReportEngine"/>	
   </bean>
   
   <!-- ChangeOrder Webscript -->

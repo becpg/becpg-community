@@ -1,4 +1,4 @@
-package fr.becpg.repo.report.engine;
+package fr.becpg.report.services;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;

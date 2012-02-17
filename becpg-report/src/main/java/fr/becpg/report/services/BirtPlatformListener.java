@@ -1,7 +1,7 @@
 /*
  * 
  */
-package fr.becpg.repo.report.engine;
+package fr.becpg.report.services;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,17 +29,16 @@ public class BirtPlatformListener {
 	private static Log logger = LogFactory.getLog(BirtPlatformListener.class);
 	
 	/** The engine config. */
-	 private EngineConfig engineConfig;
+    private static EngineConfig engineConfig = new EngineConfig();
   	
 	  /** The report engine. */
-	  private IReportEngine reportEngine;
+    private static IReportEngine reportEngine;
   	
 	  
 	  
 
 	public BirtPlatformListener() {
 		super();
-		engineConfig = new EngineConfig();
 	}
 
 	/**
@@ -89,7 +88,7 @@ public class BirtPlatformListener {
 	   * 
 	   * @return instance of {@link IReportEngine}
 	   */
-	  public IReportEngine getReportEngine() {
+	  public static IReportEngine getReportEngine() {
 	    if (reportEngine == null) {
 	      if (logger.isDebugEnabled()) {
 	        logger.debug("Creating new instance of report engine.");

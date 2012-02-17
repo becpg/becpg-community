@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.entity.policy;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -28,8 +29,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;

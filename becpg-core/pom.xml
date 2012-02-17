@@ -62,25 +62,9 @@
 						<groupId>org.alfresco.sdk</groupId>
 						<artifactId>alfresco-repository-${alfresco.version}</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.alfresco.sdk</groupId>
-					<artifactId>rhino-js-1.6R7</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
-		
-		
-		
-
-		<!-- Birt 3.7 -->
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>birt-sdk</artifactId>
-			<version>3.7.1</version>
-			<type>pom</type>
-		</dependency>
 	
-
 		<!-- mysql -->
 		<dependency>
 			<groupId>mysql</groupId>

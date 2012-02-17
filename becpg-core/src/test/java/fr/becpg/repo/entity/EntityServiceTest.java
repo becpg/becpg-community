@@ -5,6 +5,7 @@ package fr.becpg.repo.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +20,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.ProductDAO;

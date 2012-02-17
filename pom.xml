@@ -190,6 +190,7 @@
 		<module>becpg-share</module>
 		<module>becpg-olap</module>
 		<module>distribution</module>
+    <module>becpg-report</module>
   </modules>
 
 	<profiles>
@@ -206,7 +207,7 @@
 				<!-- OLAP -->
 				<olap.server>/opt/becpg/alfresco-4.0.d</olap.server>
 				<olap.db.host>localhost</olap.db.host>
-				<olap.db.name>becpg_demo</olap.db.name>
+				<olap.db.name>becpg</olap.db.name>
 				<olap.db.username>becpg</olap.db.username>
 				<olap.db.password>becpg</olap.db.password>
 				<!-- Log -->

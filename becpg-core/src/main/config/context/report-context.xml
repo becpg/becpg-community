@@ -3,13 +3,11 @@
 
 <beans>
 
-   	 
-	<bean id="birtPlatformListener" class="fr.becpg.repo.report.engine.BirtPlatformListener"
-		init-method="start" destroy-method="shutdown" />
-	
-	
-	<bean id="reportEngine" factory-bean="birtPlatformListener"
-		factory-method="getReportEngine"/>
+	<bean id="beCPGReportEngine" class="fr.becpg.repo.report.engine.impl.BeCPGReportServerClient">
+	 <property name="nodeService" ref="nodeService"/>
+	 <property name="reportServerUrl" value="${becpg.reportServerUrl}"/>
+	 <property name="contentService" ref="contentService"/>
+	</bean>
 		
 		
    
@@ -39,9 +37,9 @@
 		<property name="contentService" ref="contentService" />		
 		<property name="fileFolderService" ref="fileFolderService"/>		
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="reportEngine" ref="reportEngine" />
-		<property name="mimetypeService" ref="mimetypeService"/>
+		<property name="beCPGReportEngine" ref="beCPGReportEngine" />
 		<property name="reportTplService" ref="reportTplService" />		
+		<property name="mimetypeService" ref="mimetypeService"/>
 	</bean>
 	
 	<bean id="defaultExtractorPlugin" class="fr.becpg.repo.report.entity.ExtractorPlugin" init-method="init">
@@ -55,7 +53,7 @@
 	<bean id="exportSearchService" class="fr.becpg.repo.report.search.ExportSearchServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="contentService" ref="contentService" />
-		<property name="reportEngine" ref="reportEngine" />
+		<property name="beCPGReportEngine" ref="beCPGReportEngine" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="entityListValuePlugin" ref="entityListValuePlugin" />
@@ -69,8 +67,7 @@
    <!-- CompareEntityReportService -->
 	<bean id="compareEntityReportService" class="fr.becpg.repo.entity.comparison.CompareEntityReportServiceImpl">
 		<property name="compareEntityService" ref="compareEntityService" />
-		<property name="contentService" ref="contentService" />
-		<property name="reportEngine" ref="reportEngine" />
+		<property name="beCPGReportEngine" ref="beCPGReportEngine" />
 		<property name="reportTplService" ref="reportTplService" />
 		<property name="nodeService" ref="nodeService" />		
 		<property name="dictionaryService" ref="dictionaryService" />
