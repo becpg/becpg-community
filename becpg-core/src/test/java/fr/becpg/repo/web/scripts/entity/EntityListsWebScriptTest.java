@@ -169,7 +169,7 @@ public class EntityListsWebScriptTest extends BaseWebScriptTest{
 					nutList.add(new NutListDataItem(null, 1f, "kJ/100g", 0f,  0f, "Groupe 1", nut1, false));
 					rawMaterialTpl.setNutList(nutList);		
 					
-					NodeRef rawMaterialTplNodeRef = productDAO.create(productTemplateFolder, rawMaterialTpl, dataLists);
+					productDAO.create(productTemplateFolder, rawMaterialTpl, dataLists);
 					
 					/*-- Create raw material --*/
 					logger.debug("/*-- Create raw material --*/");

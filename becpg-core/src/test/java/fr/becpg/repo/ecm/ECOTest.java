@@ -5,17 +5,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
@@ -27,8 +21,6 @@ import fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem;
 import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
@@ -52,44 +44,17 @@ public class ECOTest extends RepoBaseTestCase  {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ECOTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();	
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;	
-	
 	/** The product service. */
 	private ProductService productService;    
 	
-	/** The product dao. */
-	private ProductDAO productDAO;
-	
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
-	
-	private TransactionService transactionService;
 	
 	private BeCPGDao<ChangeOrderData> changeOrderDAO;	
 	
 	private ECOService ecoService;
-	
-	/** The repository helper. */
-	private Repository repositoryHelper;   
     
     /** The PAT h_ productfolder. */
     private static String PATH_PRODUCTFOLDER = "TestProductFolder";
     
-    /** The GROU p1. */
-    private static String GROUP1 = "Groupe 1";      
-    
-    /** The GROU p2. */
-    private static String GROUP2 = "Groupe 2";
-    
-    /** The GROUPOTHER. */
-    private static String GROUPOTHER = "Autre";
     
     /** The GROU p_ garniture. */
     private static String GROUP_GARNITURE = "Garniture";
@@ -97,8 +62,6 @@ public class ECOTest extends RepoBaseTestCase  {
     /** The GROU p_ pate. */
     private static String GROUP_PATE = "Pâte";
     
-    private static String PACKAGING_PRIMAIRE = "Primaire";
-    private static String PACKAGING_TERTIAIRE = "Tertiaire";
     
     public static final String  FLOAT_FORMAT = "0.0000";
     
@@ -141,21 +104,18 @@ public class ECOTest extends RepoBaseTestCase  {
     /* (non-Javadoc)
      * @see fr.becpg.test.RepoBaseTestCase#setUp()
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
 	protected void setUp() throws Exception {
     	super.setUp();		
    
     	logger.debug("ProductMgrTest:setUp");
     	    	
-    	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
-    	productService = (ProductService)appCtx.getBean("productService");       
-        productDAO = (ProductDAO)appCtx.getBean("productDAO");
-        productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
-        transactionService = (TransactionService)appCtx.getBean("TransactionService");
-        repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-        changeOrderDAO = (BeCPGDao<ChangeOrderData>)appCtx.getBean("changeOrderDAO");
-        ecoService = (ECOService)appCtx.getBean("ecoService");
+    	productService = (ProductService)ctx.getBean("productService");       
+         
+    
+        changeOrderDAO = (BeCPGDao<ChangeOrderData>)ctx.getBean("changeOrderDAO");
+        ecoService = (ECOService)ctx.getBean("ecoService");
         
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			public NodeRef execute() throws Throwable {

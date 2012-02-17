@@ -12,24 +12,16 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -51,23 +43,7 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductDAOTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-	
-	/** The search service. */
-	private SearchService searchService;
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
-	/** The authentication component. */
-	private AuthenticationComponent authenticationComponent;
-	
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
+
 	
 	/** The ml node service impl. */
 	private NodeService mlNodeServiceImpl;
@@ -75,8 +51,6 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 	/** The product dao. */
 	private ProductDAO productDAO;	
 	
-	/** The repository helper. */
-	private Repository repositoryHelper;   
 	
 	private EntityListDAO entityListDAO;
 	
@@ -89,15 +63,10 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 		
     	logger.debug("ProductServiceTest:setUp");
     
-    	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	searchService = (SearchService)appCtx.getBean("searchService");
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
-    	productDAO = (ProductDAO)appCtx.getBean("productDAO");
-    	productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
-        authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-        mlNodeServiceImpl = (NodeService) appCtx.getBean("mlAwareNodeService");
-        repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");  
-        entityListDAO = (EntityListDAO)appCtx.getBean("entityListDAO");
+    	
+    	productDAO = (ProductDAO)ctx.getBean("productDAO");
+        mlNodeServiceImpl = (NodeService) ctx.getBean("mlAwareNodeService");
+        entityListDAO = (EntityListDAO)ctx.getBean("entityListDAO");
         
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override

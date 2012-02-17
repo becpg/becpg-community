@@ -2,10 +2,8 @@ package fr.becpg.repo.web.scripts.search;
 
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.web.scripts.BaseWebScriptTest;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
@@ -19,9 +17,6 @@ public class SearchWebScriptTest extends BaseWebScriptTest{
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(SearchWebScriptTest.class);
-	
-	/** The app ctx. */
-	private  ApplicationContext appCtx = getServer().getApplicationContext();
 	
 	
 	
@@ -42,7 +37,7 @@ public class SearchWebScriptTest extends BaseWebScriptTest{
 		super.setUp();
 				
 		
-		authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
+		authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
 		
 		
 	    // Authenticate as user

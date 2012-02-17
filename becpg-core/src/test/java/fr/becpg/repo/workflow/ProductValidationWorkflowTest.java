@@ -1,7 +1,6 @@
 package fr.becpg.repo.workflow;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,12 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
-import org.alfresco.service.ServiceRegistry;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
@@ -32,23 +28,17 @@ import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
-import org.alfresco.util.BaseAlfrescoTestCase;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.repo.admin.NPDGroup;
 import fr.becpg.repo.admin.SystemGroup;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.test.RepoBaseTestCase;
 
-public class ProductValidationWorkflowTest extends BaseAlfrescoTestCase {
+public class ProductValidationWorkflowTest extends RepoBaseTestCase {
 
-	private static final String PV_URI = "http://www.bcpg.fr/model/workflow/1.0";
-	private static final String PV_PREFIX = "bcpgwf";
 		
 	
 	private static final String USER_ONE = "matthieuWF";
@@ -60,9 +50,6 @@ public class ProductValidationWorkflowTest extends BaseAlfrescoTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductValidationWorkflowTest.class);
 
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-
 	private AuthorityService authorityService;
 
 	private MutableAuthenticationDao authenticationDAO;
@@ -73,11 +60,6 @@ public class ProductValidationWorkflowTest extends BaseAlfrescoTestCase {
 
 	private WorkflowService workflowService;
 	
-	private ProductDAO productDAO;
-	
-	private FileFolderService fileFolderService;
-	
-	private Repository repositoryHelper;
 	
 	private NodeRef folderNodeRef;
 	
@@ -89,22 +71,17 @@ public class ProductValidationWorkflowTest extends BaseAlfrescoTestCase {
 	 * 
 	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		 ServiceRegistry registry = (ServiceRegistry) appCtx.getBean(ServiceRegistry.SERVICE_REGISTRY);
+		workflowService = serviceRegistry.getWorkflowService();
 		
-		workflowService = registry.getWorkflowService();
-		
-		authenticationService =  registry.getAuthenticationService();
-		authenticationDAO = (MutableAuthenticationDao) appCtx.getBean("authenticationDao");
-		authorityService = (AuthorityService) appCtx.getBean("authorityService");
-		personService = (PersonService) appCtx.getBean("PersonService");
-		productDAO = (ProductDAO) appCtx.getBean("productDAO");
-		fileFolderService = (FileFolderService) appCtx.getBean("fileFolderService");
-		repositoryHelper = (Repository) appCtx.getBean("repositoryHelper");
+		authenticationService =  serviceRegistry.getAuthenticationService();
+		authenticationDAO = (MutableAuthenticationDao) ctx.getBean("authenticationDao");
+		authorityService = (AuthorityService) ctx.getBean("authorityService");
+		personService = (PersonService) ctx.getBean("PersonService");
+	
 	}
 
 	private void createUsers() {

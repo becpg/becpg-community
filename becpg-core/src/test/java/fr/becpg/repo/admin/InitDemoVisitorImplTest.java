@@ -3,12 +3,8 @@
  */
 package fr.becpg.repo.admin;
 
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
@@ -39,12 +35,6 @@ public class InitDemoVisitorImplTest extends RepoBaseTestCase {
 	/** The init demo visitor. */
 	private InitVisitor initDemoVisitor;
 	
-	/** The repository. */
-	private Repository repository;
-	
-	/** The authentication component. */
-	private AuthenticationComponent authenticationComponent;
-	
 	
 	/** The person service. */
 	private PersonService personService;
@@ -59,12 +49,9 @@ public class InitDemoVisitorImplTest extends RepoBaseTestCase {
     	logger.debug("InitSiteVisitorImplTest::setUp");
     	
     	siteService = (SiteService)ctx.getBean("siteService");
-    	nodeService = (NodeService)ctx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)ctx.getBean("FileFolderService");
     	initRepoVisitor = (InitVisitor)ctx.getBean("initRepoVisitor");
     	initDemoVisitor = (InitVisitor)ctx.getBean("initDemoVisitor");
-    	repository = (Repository)ctx.getBean("repositoryHelper");
-    	authenticationComponent = (AuthenticationComponent)ctx.getBean("authenticationComponent");
+   
     	personService	 = (PersonService)ctx.getBean("personService");
     	
     	//Authenticate as user
@@ -108,10 +95,10 @@ public class InitDemoVisitorImplTest extends RepoBaseTestCase {
 	private void initRepoAndDemo(){
 		
 		logger.debug("visit repo");
-		initRepoVisitor.visitContainer(repository.getCompanyHome());
+		initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
 		
 		logger.debug("visit demo");
-		initDemoVisitor.visitContainer(repository.getCompanyHome());
+		initDemoVisitor.visitContainer(repositoryHelper.getCompanyHome());
 		
 		/*-- Check sites--*/
 		logger.debug("/*-- Check sites--*/");

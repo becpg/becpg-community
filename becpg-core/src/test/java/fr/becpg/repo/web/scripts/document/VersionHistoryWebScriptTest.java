@@ -12,10 +12,8 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
@@ -33,9 +31,6 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(VersionHistoryWebScriptTest.class);
-	
-	/** The app ctx. */
-	private  ApplicationContext appCtx = getServer().getApplicationContext();
 	
 	/** The Constant PATH_TEMPFOLDER. */
 	private static final String PATH_TEMPFOLDER = "TempFolder";
@@ -64,14 +59,9 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
     /** The product version service. */
     private EntityVersionService entityVersionService;
     
-	/** The temp folder. */
-	private NodeRef tempFolder = null;
-	
 	/** The raw material node ref. */
 	private NodeRef rawMaterialNodeRef = null;
 	
-	/** The working copy node ref. */
-	private NodeRef workingCopyNodeRef = null;
 	
 	/* (non-Javadoc)
 	 * @see org.alfresco.repo.web.scripts.BaseWebScriptTest#setUp()
@@ -81,13 +71,13 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
 	{
 		super.setUp();
 				
-		nodeService = (NodeService)appCtx.getBean("nodeService");
-		fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");		
-		authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-		productDAO = (ProductDAO)appCtx.getBean("productDAO");
-		transactionService = (TransactionService)appCtx.getBean("transactionService");
-		entityVersionService = (EntityVersionService)appCtx.getBean("entityVersionService");
-		repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
+		nodeService = (NodeService) getServer().getApplicationContext().getBean("nodeService");
+		fileFolderService = (FileFolderService) getServer().getApplicationContext().getBean("fileFolderService");		
+		authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
+		productDAO = (ProductDAO) getServer().getApplicationContext().getBean("productDAO");
+		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
+		entityVersionService = (EntityVersionService) getServer().getApplicationContext().getBean("entityVersionService");
+		repositoryHelper = (Repository) getServer().getApplicationContext().getBean("repositoryHelper");
 		
 	    // Authenticate as user
 	    this.authenticationComponent.setCurrentUser(USER_ADMIN);
@@ -147,7 +137,6 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
 		 
 			//Call webscript on raw material to check out
 			String url = "/becpg/document/version-history/node/" + rawMaterialNodeRef.toString().replace(":/", "");
-			String data = "";
 			logger.debug("url : " + url);				
 
 			Response response = sendRequest(new GetRequest(url), 200, "admin");

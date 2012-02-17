@@ -9,17 +9,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.ProductDAO;
@@ -43,23 +37,9 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductListAttributesPolicyTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
-	/** The authentication component. */
-	private AuthenticationComponent authenticationComponent;	
-	
 	/** The product dao. */
 	private ProductDAO productDAO;
 	
-	/** The repository helper. */
-	private Repository repositoryHelper;    
 	
 	/* (non-Javadoc)
 	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
@@ -70,12 +50,9 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 		
     	logger.debug("ProductServiceTest:setUp");
     
-    	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");  
-    	productDAO = (ProductDAO)appCtx.getBean("productDAO");
-        authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-        repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-                        
+    
+    	productDAO = (ProductDAO)ctx.getBean("productDAO");
+                          
     }
     
 	/* (non-Javadoc)

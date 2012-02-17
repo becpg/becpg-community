@@ -9,8 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
-import org.springframework.context.ApplicationContext;
-
 /**
  * The Class ReloadModelsWebScriptTest.
  *
@@ -20,9 +18,7 @@ public class ReloadModelsWebScriptTest extends BaseWebScriptTest{
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ReloadModelsWebScriptTest.class);
-	
-	/** The app ctx. */
-	private  ApplicationContext appCtx = getServer().getApplicationContext();
+
 	/* (non-Javadoc)
 	 * @see org.alfresco.repo.web.scripts.BaseWebScriptTest#setUp()
 	 */
@@ -54,7 +50,7 @@ public class ReloadModelsWebScriptTest extends BaseWebScriptTest{
 		logger.debug("test reload models webscript ");
 		String url = "/becpg/admin/models/reload";
 		Response response = sendRequest(new GetRequest(url), 200, "admin");
-						
+		logger.debug(response.getContentAsString());			
 	}	
 	
 }

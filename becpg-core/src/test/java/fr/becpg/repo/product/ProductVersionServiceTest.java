@@ -4,26 +4,18 @@
 package fr.becpg.repo.product;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -46,30 +38,9 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductVersionServiceTest.class);
-	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
-	/** The authentication component. */
-	private AuthenticationComponent authenticationComponent;
-	
+
 	/** The product dao. */
 	private ProductDAO productDAO;
-	
-	/** The version service. */
-	private VersionService versionService;
-	
-	/** The repository. */
-	private Repository repository;
-	
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
 	
 	/** The product version service. */
 	private EntityVersionService entityVersionService;
@@ -78,10 +49,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 	private CheckOutCheckInService entityCheckOutCheckInService;
 	
 	private EntityListDAO entityListDAO;
-	
-	/** The costs. */
-	private List<NodeRef> costs = new ArrayList<NodeRef>();
-	
+		
 	/* (non-Javadoc)
 	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
 	 */
@@ -91,15 +59,11 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 		
     	logger.debug("ProductServiceTest:setUp");
     
-    	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
-    	productDAO = (ProductDAO)appCtx.getBean("productDAO");
-    	versionService = (VersionService)appCtx.getBean("VersionService");
-    	repository = (Repository)appCtx.getBean("repositoryHelper");
-    	productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
-        entityVersionService = (EntityVersionService)appCtx.getBean("entityVersionService");
-        entityCheckOutCheckInService = (CheckOutCheckInService)appCtx.getBean("entityCheckOutCheckInService");
-        entityListDAO = (EntityListDAO)appCtx.getBean("entityListDAO");
+     	productDAO = (ProductDAO)ctx.getBean("productDAO");
+    
+        entityVersionService = (EntityVersionService)ctx.getBean("entityVersionService");
+        entityCheckOutCheckInService = (CheckOutCheckInService)ctx.getBean("entityCheckOutCheckInService");
+        entityListDAO = (EntityListDAO)ctx.getBean("entityListDAO");
     }
     
     
@@ -132,12 +96,12 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 			public NodeRef execute() throws Throwable {
 			
 				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
 				if(folderNodeRef != null)
 				{
 					fileFolderService.delete(folderNodeRef);    		
 				}			
-				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 								
 				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");
 				
@@ -230,12 +194,12 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				
 				/*-- create folders --*/
 				logger.debug("/*-- create folders --*/");
-				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
 				if(folderNodeRef != null)
 				{
 					fileFolderService.delete(folderNodeRef);    		
 				}			
-				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 					
 		    	
 		    	/*-- Create raw material --*/
@@ -321,12 +285,12 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				
 				/*-- create folders --*/
 				logger.debug("/*-- create folders --*/");
-				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
 				if(folderNodeRef != null)
 				{
 					fileFolderService.delete(folderNodeRef);    		
 				}			
-				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 					
 		    	
 		    	/*-- Create raw material --*/
@@ -370,12 +334,12 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 			public NodeRef execute() throws Throwable {
 			
 				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
 				if(folderNodeRef != null)
 				{
 					fileFolderService.delete(folderNodeRef);    		
 				}			
-				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 								
 				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");										
 				NodeRef vRawMaterialNodeRef = entityVersionService.createVersion(rawMaterialNodeRef, null);

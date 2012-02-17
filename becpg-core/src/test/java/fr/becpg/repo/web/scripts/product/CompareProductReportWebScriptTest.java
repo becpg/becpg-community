@@ -3,12 +3,8 @@
  */
 package fr.becpg.repo.web.scripts.product;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -24,20 +19,13 @@ import org.alfresco.repo.web.scripts.BaseWebScriptTest;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
-import org.alfresco.service.cmr.repository.ContentReader;
-import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
@@ -72,8 +60,6 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CompareProductReportWebScriptTest.class);
 	
-	/** The app ctx. */
-	private  ApplicationContext appCtx = getServer().getApplicationContext();
 	
 	/** The PAT h_ testfolder. */
 	private static String PATH_TESTFOLDER = "TestFolder";
@@ -93,9 +79,6 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
 	/** The file folder service. */
 	private FileFolderService fileFolderService;
 	
-	/** The search service. */
-	private SearchService searchService;
-
     /** The authentication component. */
     private AuthenticationComponent authenticationComponent;
     
@@ -111,11 +94,6 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
     /** The repository. */
     private Repository repositoryHelper;
     
-    /** The content service. */
-    private ContentService contentService;
-    
-    /** The mimetype service. */
-    private MimetypeService mimetypeService;
     
     private RepoService repoService;
     
@@ -142,8 +120,6 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
     /** The raw material4 node ref. */
     private NodeRef  rawMaterial4NodeRef;
     
-    /** The raw material5 node ref. */
-    private NodeRef  rawMaterial5NodeRef;
     
     /** The fp1 node ref. */
     private NodeRef fp1NodeRef;
@@ -166,18 +142,15 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
 	{
 		super.setUp();
 				
-		nodeService = (NodeService)appCtx.getBean("NodeService");
-		fileFolderService = (FileFolderService)appCtx.getBean("FileFolderService");
-		searchService = (SearchService)appCtx.getBean("SearchService");		
-		authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-		productDAO = (ProductDAO)appCtx.getBean("productDAO");
-		productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
-		transactionService = (TransactionService)appCtx.getBean("transactionService");
-		repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-		contentService = (ContentService)appCtx.getBean("contentService");
-		mimetypeService = (MimetypeService)appCtx.getBean("mimetypeService");
-		repoService = (RepoService)appCtx.getBean("repoService");
-		reportTplService = (ReportTplService)appCtx.getBean("reportTplService");
+		nodeService = (NodeService) getServer().getApplicationContext().getBean("NodeService");
+		fileFolderService = (FileFolderService) getServer().getApplicationContext().getBean("FileFolderService");
+			authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
+		productDAO = (ProductDAO) getServer().getApplicationContext().getBean("productDAO");
+		productDictionaryService = (ProductDictionaryService) getServer().getApplicationContext().getBean("productDictionaryService");
+		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
+		repositoryHelper = (Repository) getServer().getApplicationContext().getBean("repositoryHelper");
+			repoService = (RepoService) getServer().getApplicationContext().getBean("repoService");
+		reportTplService = (ReportTplService) getServer().getApplicationContext().getBean("reportTplService");
 		
 	    // Authenticate as user
 	    this.authenticationComponent.setCurrentUser(USER_ADMIN);
@@ -286,7 +259,7 @@ private void initObjects(){
 				RawMaterialData rawMaterial5 = new RawMaterialData();
 				rawMaterial5.setName("Raw material 5");
 				rawMaterial5.setLegalName("Legal Raw material 5");				
-				rawMaterial5NodeRef = productDAO.create(folderNodeRef, rawMaterial5, dataLists);
+				productDAO.create(folderNodeRef, rawMaterial5, dataLists);
 				
 				/*-- Local semi finished product 1 --*/
 				LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
@@ -441,7 +414,7 @@ private void initObjects(){
 				String url = String.format("/becpg/entity/compare/Produit?entity1=%s&entity2=%s", fp1NodeRef, fp2NodeRef);;
 				Response response = sendRequest(new GetRequest(url), 200, "admin");
 				
-				//logger.debug("response: " + response.getContentAsString());
+				logger.debug("response: " + response.getContentAsString());
 			}
 			catch(Exception e){
 				logger.error("Failed to execute webscript", e);

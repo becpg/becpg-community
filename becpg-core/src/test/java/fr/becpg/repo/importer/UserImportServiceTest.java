@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -15,10 +14,8 @@ import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.repo.importer.user.UserImporterService;
@@ -31,14 +28,11 @@ public class UserImportServiceTest  extends RepoBaseTestCase {
 	
 	public static final String COMPANY_HOME_PATH_QUERY = "PATH:\"/app:company_home/.\"";
 	
-	/** The app ctx. */
-	private static ApplicationContext applicationContext = ApplicationContextHelper
-			.getApplicationContext();
+
 
 	/** The node service. */
 	
 	private TransactionService transactionService;
-	private AuthenticationComponent authenticationComponent;
 	private SearchService searchService;
 
 	private static Log logger = LogFactory.getLog(UserImportServiceTest.class);
@@ -48,13 +42,10 @@ public class UserImportServiceTest  extends RepoBaseTestCase {
 		super.setUp();
 		
 		
-		transactionService = (TransactionService) applicationContext.getBean("transactionService");
-     	 searchService = (SearchService)applicationContext.getBean("searchService");
-         authenticationComponent = (AuthenticationComponent)applicationContext.getBean("authenticationComponent");
-         transactionService = (TransactionService)applicationContext.getBean("transactionComponent");
-          // Authenticate as the admin user
-         authenticationComponent.setCurrentUser("admin");
-		userImporterService = (UserImporterService) applicationContext.getBean("userImporterService");
+	   searchService = (SearchService)ctx.getBean("searchService");
+         // Authenticate as the admin user
+        authenticationComponent.setCurrentUser("admin");
+		userImporterService = (UserImporterService) ctx.getBean("userImporterService");
 	}
 	
 	

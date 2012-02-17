@@ -11,10 +11,8 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
@@ -34,7 +32,6 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AutoCompleteWebScriptTest.class);
 	
-	private  ApplicationContext appCtx = getServer().getApplicationContext();
 	
 	private NodeService nodeService;
 	
@@ -52,11 +49,11 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 	@Override
 	protected void setUp() throws Exception
 	{	
-		nodeService = (NodeService)appCtx.getBean("nodeService");
-		productDAO = (ProductDAO) appCtx.getBean("productDAO");
-		fileFolderService = (FileFolderService) appCtx.getBean("fileFolderService");
-		repositoryHelper = (Repository) appCtx.getBean("repositoryHelper");
-		transactionService = (TransactionService)appCtx.getBean("transactionService");
+		nodeService = (NodeService) getServer().getApplicationContext().getBean("nodeService");
+		productDAO = (ProductDAO)  getServer().getApplicationContext().getBean("productDAO");
+		fileFolderService = (FileFolderService)  getServer().getApplicationContext().getBean("fileFolderService");
+		repositoryHelper = (Repository)  getServer().getApplicationContext().getBean("repositoryHelper");
+		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
 		
 		super.setUp();		
 	}

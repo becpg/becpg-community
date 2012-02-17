@@ -3,7 +3,6 @@ package fr.becpg.repo.web.scripts.report;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -21,17 +20,14 @@ import org.alfresco.repo.web.scripts.BaseWebScriptTest;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
-import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -53,7 +49,6 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
-import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
@@ -139,14 +134,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
     /** The raw material4 node ref. */
     private NodeRef  rawMaterial4NodeRef;
     
-    /** The raw material5 node ref. */
-    private NodeRef  rawMaterial5NodeRef;
-    
-    /** The fp1 node ref. */
-    private NodeRef fp1NodeRef;
-    
-    /** The fp2 node ref. */
-    private NodeRef fp2NodeRef;
+
     
     /** The export product report tpl. */
     private NodeRef exportProductReportTpl;
@@ -306,7 +294,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				RawMaterialData rawMaterial5 = new RawMaterialData();
 				rawMaterial5.setName("Raw material 5");
 				rawMaterial5.setLegalName("Legal Raw material 5");				
-				rawMaterial5NodeRef = productDAO.create(folderNodeRef, rawMaterial5, dataLists);
+				 productDAO.create(folderNodeRef, rawMaterial5, dataLists);
 				
 				/*-- Local semi finished product 1 --*/
 				LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
@@ -452,7 +440,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				//compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				fp1.setCompoList(compoList);
 				
-				fp1NodeRef = productDAO.create(folderNodeRef, fp1, dataLists);
+				 productDAO.create(folderNodeRef, fp1, dataLists);
 				
 				logger.debug("create FP 2");
 				
@@ -496,7 +484,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 				
-				fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);
+				productDAO.create(folderNodeRef, fp2, dataLists);
 				
 				/*-- Create images folder --*/					
 				NodeRef imagesNodeRef = fileFolderService.create(folderNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();					
@@ -512,7 +500,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/") + "/Excel.xls?repo=true&term=&query={\"prop_cm_name\"%3A\"\"%2C\"prop_bcpg_legalName\"%3A\"\"%2C\"prop_bcpg_productHierarchy1\"%3A\"\"%2C\"prop_bcpg_productHierarchy2\"%3A\"\"%2C\"prop_bcpg_productState\"%3A\"\"%2C\"prop_bcpg_productCode\"%3A\"\"%2C\"prop_bcpg_eanCode\"%3A\"\"%2C\"assoc_bcpg_supplierAssoc\"%3A\"\"%2C\"assoc_bcpg_supplierAssoc_added\"%3A\"\"%2C\"assoc_bcpg_supplierAssoc_removed\"%3A\"\"%2C\"prop_cm_modified-date-range\"%3A\"2011-04-17T00%3A00%3A00%2B02%3A00|2011-05-23T00%3A00%3A00%2B02%3A00\"%2C\"prop_cm_modifier\"%3A\"\"%2C\"assoc_bcpg_ingListIng\"%3A\"\"%2C\"assoc_bcpg_ingListIng_added\"%3A\"\"%2C\"assoc_bcpg_ingListIng_removed\"%3A\"\"%2C\"assoc_bcpg_ingListGeoOrigin\"%3A\"\"%2C\"assoc_bcpg_ingListGeoOrigin_added\"%3A\"\"%2C\"assoc_bcpg_ingListGeoOrigin_removed\"%3A\"\"%2C\"assoc_bcpg_ingListBioOrigin\"%3A\"\"%2C\"assoc_bcpg_ingListBioOrigin_added\"%3A\"\"%2C\"assoc_bcpg_ingListBioOrigin_removed\"%3A\"\"%2C\"datatype\"%3A\"bcpg%3Aproduct\"}";
 							
 			Response response = sendRequest(new GetRequest(url), 200, "admin");
-			
+			logger.debug("Response: "+response.getContentAsString() );
 		}
 		catch(Exception e){				
 			logger.error("Failed to execute webscript", e);
@@ -525,7 +513,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/") + "/Excel.xls?repo=true&term=&query={\"prop_cm_name\"%3A\"FP\"%2C\"prop_cm_title\"%3A\"\"%2C\"prop_cm_description\"%3A\"\"%2C\"prop_mimetype\"%3A\"\"%2C\"prop_cm_modified-date-range\"%3A\"\"%2C\"prop_cm_modifier\"%3A\"\"%2C\"datatype\"%3A\"cm%3Acontent\"}";				
 							
 			Response response = sendRequest(new GetRequest(url), 200, "admin");
-			
+			logger.debug("Response: "+response.getContentAsString() );
 		}
 		catch(Exception e){				
 			logger.error("Failed to execute webscript", e);

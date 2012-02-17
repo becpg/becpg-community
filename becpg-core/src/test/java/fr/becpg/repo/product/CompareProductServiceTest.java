@@ -11,24 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.dictionary.AssociationDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.dictionary.TypeDefinition;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
-import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -37,8 +27,6 @@ import fr.becpg.repo.entity.comparison.CompareResultDataItem;
 import fr.becpg.repo.entity.comparison.StructCompareOperator;
 import fr.becpg.repo.entity.comparison.StructCompareResultDataItem;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.ProductUnit;
@@ -48,6 +36,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -55,7 +44,7 @@ import fr.becpg.repo.product.data.productList.DeclarationType;
  * 
  * @author querephi
  */
-public class CompareProductServiceTest extends BaseAlfrescoTestCase {
+public class CompareProductServiceTest extends RepoBaseTestCase {
 
 	/** The PAT h_ testfolder. */
 	private static String PATH_TESTFOLDER = "TestFolder";
@@ -69,29 +58,9 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CompareProductServiceTest.class);
 
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-
-	/** The node service. */
-	private NodeService nodeService;
-
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-
-	/** The product dao. */
-	private ProductDAO productDAO;
-
-	/** The repository. */
-	private Repository repository;
-
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
-
 	/** The compare product service. */
 	private CompareEntityService compareEntityService;
 
-	/** The dictionary service. */
-	private DictionaryService dictionaryService;
 
 	/** The folder node ref. */
 	private NodeRef folderNodeRef;
@@ -114,8 +83,6 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 	/** The raw material4 node ref. */
 	private NodeRef rawMaterial4NodeRef;
 
-	/** The raw material5 node ref. */
-	private NodeRef rawMaterial5NodeRef;
 
 	/** The costs. */
 	private List<NodeRef> costs = new ArrayList<NodeRef>();
@@ -134,13 +101,10 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 
 		logger.debug("ProductServiceTest:setUp");
 
-		nodeService = (NodeService) appCtx.getBean("nodeService");
-		fileFolderService = (FileFolderService) appCtx.getBean("fileFolderService");
-		productDAO = (ProductDAO) appCtx.getBean("productDAO");
-		repository = (Repository) appCtx.getBean("repositoryHelper");
-		productDictionaryService = (ProductDictionaryService) appCtx.getBean("productDictionaryService");
-		compareEntityService = (CompareEntityService) appCtx.getBean("compareEntityService");
-		dictionaryService = (DictionaryService) appCtx.getBean("dictionaryService");
+		
+		productDictionaryService = (ProductDictionaryService) ctx.getBean("productDictionaryService");
+		compareEntityService = (CompareEntityService) ctx.getBean("compareEntityService");
+	
 
 		initObjects();
 	}
@@ -171,16 +135,16 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Create test folder --*/
-				folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
 						PATH_TESTFOLDER);
 				if (folderNodeRef != null) {
 					fileFolderService.delete(folderNodeRef);
 				}
-				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER,
+				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER,
 						ContentModel.TYPE_FOLDER).getNodeRef();
 
 				// costs
-				NodeRef systemFolder = nodeService.getChildByName(repository.getCompanyHome(),
+				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
 						ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 				NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
@@ -255,7 +219,7 @@ public class CompareProductServiceTest extends BaseAlfrescoTestCase {
 				RawMaterialData rawMaterial5 = new RawMaterialData();
 				rawMaterial5.setName("Raw material 5");
 				rawMaterial5.setLegalName("Legal Raw material 5");
-				rawMaterial5NodeRef = productDAO.create(folderNodeRef, rawMaterial5, dataLists);
+				productDAO.create(folderNodeRef, rawMaterial5, dataLists);
 
 				/*-- Local semi finished product 1 --*/
 				LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();

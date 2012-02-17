@@ -2,37 +2,24 @@ package fr.becpg.repo.quality;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.AuthorityType;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.BeCPGDao;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.quality.data.ControlPlanData;
 import fr.becpg.repo.quality.data.ControlPointData;
 import fr.becpg.repo.quality.data.QualityControlData;
-import fr.becpg.repo.quality.data.WorkItemAnalysisData;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
@@ -46,27 +33,11 @@ public class QualityControlTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(QualityControlTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
-	/** The product dao. */
-	private ProductDAO productDAO;
-	
+
 	private BeCPGDao<ControlPointData> controlPointDAO;
 	private BeCPGDao<ControlPlanData> controlPlanDAO;
 	private BeCPGDao<QualityControlData>  qualityControlDAO;
-	private BeCPGDao<WorkItemAnalysisData> workItemAnalysisDAO;
-	private AuthorityService authorityService;
-	private QualityControlService qualityControlService;
-	
-	/** The repository helper. */
-	private Repository repositoryHelper;  
+
 	
 	private NodeRef controlStepNodeRef;
 	private NodeRef methodNodeRef;
@@ -77,22 +48,17 @@ public class QualityControlTest extends RepoBaseTestCase {
 	/* (non-Javadoc)
 	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void setUp() throws Exception {		
 		super.setUp();	
 		
     	logger.debug("ProductServiceTest:setUp");
     
-    	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");  
-    	productDAO = (ProductDAO)appCtx.getBean("productDAO");
-    	repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-    	controlPointDAO =(BeCPGDao<ControlPointData>) appCtx.getBean("controlPointDAO");
-    	controlPlanDAO = (BeCPGDao<ControlPlanData>) appCtx.getBean("controlPlanDAO");
-    	qualityControlDAO = (BeCPGDao<QualityControlData>) appCtx.getBean("qualityControlDAO");
-    	workItemAnalysisDAO = (BeCPGDao<WorkItemAnalysisData>) appCtx.getBean("workItemAnalysisDAO");
-    	authorityService = (AuthorityService)appCtx.getBean("authorityService");
-    	qualityControlService = (QualityControlService)appCtx.getBean("qualityControlService");
+    	  controlPointDAO =(BeCPGDao<ControlPointData>) ctx.getBean("controlPointDAO");
+    	controlPlanDAO = (BeCPGDao<ControlPlanData>) ctx.getBean("controlPlanDAO");
+    	qualityControlDAO = (BeCPGDao<QualityControlData>) ctx.getBean("qualityControlDAO");
+    	;
     }
     
 	/* (non-Javadoc)

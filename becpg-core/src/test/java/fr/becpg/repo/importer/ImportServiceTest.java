@@ -17,14 +17,12 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
-import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.MimetypeService;
@@ -40,7 +38,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityTplService;
-import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.ProductData;
@@ -78,14 +75,8 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	/** The import service. */
 	private ImportService importService;
 	
-	/** The repository. */
-	private Repository repository;
-	
 	/** The ml node service impl. */
 	private NodeService mlNodeServiceImpl;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
 	
 	/** The mimetype service. */
 	private MimetypeService mimetypeService;
@@ -98,12 +89,6 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	
 	/** The namespace service. */
 	private NamespaceService namespaceService;
-	
-	/** The content service. */
-	private ContentService contentService;
-	
-	/** The repo service. */
-	private RepoService repoService;
 	
 	private BehaviourFilter policyBehaviourFilter;
 	
@@ -120,29 +105,29 @@ public class ImportServiceTest extends RepoBaseTestCase {
     	
     	importService = (ImportService)ctx.getBean("importService");
         authenticationComponent = (AuthenticationComponent)ctx.getBean("authenticationComponent");
-        repository = (Repository)ctx.getBean("repositoryHelper");
+      
         mlNodeServiceImpl = (NodeService) ctx.getBean("mlAwareNodeService");
         mimetypeService = (MimetypeService)ctx.getBean("mimetypeService");
         fileFolderService = (FileFolderService)ctx.getBean("FileFolderService");
         productDAO = (ProductDAO)ctx.getBean("productDAO");
         searchService = (SearchService)ctx.getBean("searchService");
         namespaceService = (NamespaceService)ctx.getBean("namespaceService");
-        repoService = (RepoService)ctx.getBean("repoService");
+      
         policyBehaviourFilter = (BehaviourFilter)ctx.getBean("policyBehaviourFilter");
         entityTplService = (EntityTplService)ctx.getBean("entityTplService");
         dictionaryDAO = (DictionaryDAO)ctx.getBean("dictionaryDAO");
-        contentService = (ContentService)ctx.getBean("contentService");
+
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override
 			public NodeRef execute() throws Throwable {
 
  				// should not exist...
- 				NodeRef systemFolder = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM);
+ 				NodeRef systemFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
  				if(systemFolder != null){
  					nodeService.deleteNode(systemFolder); 					 					
  				}
  				 				
- 				systemFolder = repoService.createFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+ 				systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
  				
  				// create folderTpl
  				NodeRef folderTplsNodeRef = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_FOLDER_TEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_FOLDER_TEMPLATES));
@@ -157,7 +142,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 				}
 				
 				// remove temp folder				
-				NodeRef tempNodeRef = repoService.getFolderByPath(repository.getCompanyHome(), PATH_TEMP);			
+				NodeRef tempNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), PATH_TEMP);			
  				if(tempNodeRef != null)
  				{
  					logger.debug("delete temp folder");
@@ -213,11 +198,11 @@ public class ImportServiceTest extends RepoBaseTestCase {
  		    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
  		    	properties.put(ContentModel.PROP_NAME, "import.csv");
  		    	
- 		    	NodeRef nodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
+ 		    	NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
  		    	if(nodeRef != null){
  		    		nodeService.deleteNode(nodeRef);   		
  		    	}    	
- 		    	nodeRef = nodeService.createNode(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
+ 		    	nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
  		    	
  		    	ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
  		    	logger.debug("Load import.csv");
@@ -234,7 +219,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 
 		/*-- Check MLText property --*/
 		logger.debug("Check MLText properties");
-		NodeRef systemFolder = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM);
+		NodeRef systemFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
 		assertNotNull("system folder should exist", systemFolder);
 		NodeRef ingsFolder = repoService.getFolderByPath(systemFolder, RepoConsts.PATH_INGS);
 		assertNotNull("ings folder should exist", ingsFolder);
@@ -287,9 +272,9 @@ public class ImportServiceTest extends RepoBaseTestCase {
 					
 		logger.debug("/*-- Add mapping file --*/");
 		
-		NodeRef systemFolder = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM);
+		NodeRef systemFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
 		if(systemFolder == null) 
-			systemFolder = repoService.createFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+			systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 		
 		NodeRef exchangeFolder = repoService.getFolderByPath(systemFolder, RepoConsts.PATH_EXCHANGE);
 		if(exchangeFolder == null) 
@@ -362,7 +347,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  			@Override
 			public NodeRef execute() throws Throwable { 				 				
  				
- 				NodeRef tempNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);			
+ 				NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);			
  				if(tempNodeRef != null)
  				{
  					logger.debug("delete temp folder");
@@ -370,7 +355,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  				} 				
  				
  				// remove products 				
- 				NodeRef productsNodeRef = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_PRODUCTS);			
+ 				NodeRef productsNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS);			
  				if(productsNodeRef != null)
  				{
  					logger.debug("delete products folder");
@@ -378,7 +363,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  				}
  				
 				// remove companies				
-				NodeRef companiesFolder = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_COMPANIES);
+				NodeRef companiesFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_COMPANIES);
 				
 				if(companiesFolder != null){
 					logger.debug("delete companies folder");
@@ -386,7 +371,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 				}
 				
 				// remove site folder
-				List<NodeRef> siteFoldernode = searchService.selectNodes(repository.getCompanyHome(), 
+				List<NodeRef> siteFoldernode = searchService.selectNodes(repositoryHelper.getCompanyHome(), 
 						PATH_SITE_FOLDER, 
 						null, namespaceService, false);
 				
@@ -414,11 +399,11 @@ public class ImportServiceTest extends RepoBaseTestCase {
  		    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
  		    	properties.put(ContentModel.PROP_NAME, "Import-Products.csv");
  		    	
- 		    	NodeRef nodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
+ 		    	NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
  		    	if(nodeRef != null){
  		    		nodeService.deleteNode(nodeRef);   		
  		    	}    	
- 		    	nodeRef = nodeService.createNode(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef(); 		    	
+ 		    	nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef(); 		    	
  		    	
  		    	ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
  		    	logger.debug("Load import.csv");
@@ -438,14 +423,14 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		/*
 		 *  check imported values 
 		 */ 				
-		NodeRef tempNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
+		NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
 		assertNotNull("Temp folder should exist", tempNodeRef);
 		NodeRef importFolderNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, PATH_PRODUCTS);
 		assertNotNull("import folder should exist", importFolderNodeRef);
 		assertEquals("import folder has one the productTpl", (int)1 , fileFolderService.listFiles(importFolderNodeRef).size());
 		
 		// load folder where products have been moved in ./cm:Products/cm:ToValidate/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish 				
-		List<NodeRef> nodes = searchService.selectNodes(repository.getCompanyHome(), 
+		List<NodeRef> nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), 
 													PATH_CLASSIF_FOLDER_RM, 
 													null, namespaceService, false);
 		assertEquals("classif folder should exist", (int)1 , nodes.size());
@@ -616,7 +601,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		* check products import in site, it is not classified
 		*/		
 		
-		List<NodeRef> siteFoldernode = searchService.selectNodes(repository.getCompanyHome(), 
+		List<NodeRef> siteFoldernode = searchService.selectNodes(repositoryHelper.getCompanyHome(), 
 						PATH_SITE_FOLDER, 
 						null, namespaceService, false);
 		assertEquals("classif folder should exist", (int)1 , siteFoldernode.size());
@@ -646,19 +631,19 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 			@Override
 				public NodeRef execute() throws Throwable {
 	 				
-	 				NodeRef tempFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
+	 				NodeRef tempFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
 	 				if(tempFolder != null){
 	 					nodeService.deleteNode(tempFolder); 					 					
 	 				}
 	 				 				 				
-	 				tempFolder = repoService.createFolderByPath(repository.getCompanyHome(), PATH_TEMP, PATH_TEMP);			
+	 				tempFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), PATH_TEMP, PATH_TEMP);			
 	 				
 	 				RawMaterialData rmData = new RawMaterialData();
 	 				rmData.setName("Name");
 	 				rmData.setHierarchy1("ZZZZZZZ");
 	 				
 	 				try{
-	 					 productDAO.create(repository.getCompanyHome(), rmData, null);
+	 					 productDAO.create(repositoryHelper.getCompanyHome(), rmData, null);
 	 				}
 	 				catch(Exception e){
 	 					assertNotNull("Should not be null" ,e);
@@ -684,7 +669,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 				public NodeRef execute() throws Throwable {
 	 				
 	 				/*-- Clean costs --*/ 				
-	 				NodeRef systemFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+	 				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 	 				NodeRef costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
 	 				
 	 				if(costsFolder != null){
@@ -696,11 +681,11 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 		    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
 	 		    	properties.put(ContentModel.PROP_NAME, "Import-with-IntegrityException.csv");
 	 		    	
-	 		    	NodeRef nodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
+	 		    	NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
 	 		    	if(nodeRef != null){
 	 		    		nodeService.deleteNode(nodeRef);   		
 	 		    	}    	
-	 		    	nodeRef = nodeService.createNode(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
+	 		    	nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
 	 		    	
 	 		    	ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true); 		    	
 	 		    	InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/Import-with-IntegrityException.csv");			
@@ -710,7 +695,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 				importService.importText(nodeRef, true, false); 		
 	 				
 	 				/*-- check nothing is imported --*/
-	 				systemFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+	 				systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 	 				costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
 	 				assertNull("costs should not exist", costsFolder);
 	 				
@@ -740,13 +725,13 @@ public class ImportServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
  				
  				/*-- Delete temp, products folder --*/
- 				NodeRef tempNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);			
+ 				NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);			
  				if(tempNodeRef != null)
  				{
  					fileFolderService.delete(tempNodeRef);    		
  				}
  				
- 				NodeRef productsNodeRef = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_PRODUCTS);			
+ 				NodeRef productsNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS);			
  				if(productsNodeRef != null)
  				{
  					fileFolderService.delete(productsNodeRef);    		
@@ -760,11 +745,11 @@ public class ImportServiceTest extends RepoBaseTestCase {
  		    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
  		    	properties.put(ContentModel.PROP_NAME, "Import-Products.csv");
  		    	
- 		    	NodeRef nodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
+ 		    	NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
  		    	if(nodeRef != null){
  		    		nodeService.deleteNode(nodeRef);   		
  		    	}    	
- 		    	nodeRef = nodeService.createNode(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef(); 		    	
+ 		    	nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef(); 		    	
  		    	
  		    	ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
  		    	logger.debug("Load import.csv");
@@ -789,21 +774,21 @@ public class ImportServiceTest extends RepoBaseTestCase {
  		    	
  				
  				/*-- check imported values --*/
- 				tempNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
+ 				tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
  				assertNotNull("Temp folder should exist", tempNodeRef);
  				NodeRef importFolderNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, PATH_PRODUCTS);
  				assertNotNull("import folder should exist", importFolderNodeRef);
  				assertEquals("import folder should be empty", (int)0 , fileFolderService.listFiles(importFolderNodeRef).size());
  				
  				// load folder where products have been moved in ./cm:Products/cm:ToValidate/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish 				
- 				List<NodeRef> nodes = searchService.selectNodes(repository.getCompanyHome(), 
+ 				List<NodeRef> nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), 
 																PATH_CLASSIF_FOLDER_RM, 
 																null, namespaceService, false);
  				assertEquals("classif folder should exist", (int)1 , nodes.size());
  				productsNodeRef = nodes.get(0);
  				assertEquals("3 rm should exist", (int)3 , fileFolderService.listFiles(productsNodeRef).size());
  				
- 				nodes = searchService.selectNodes(repository.getCompanyHome(), 
+ 				nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), 
 						PATH_CLASSIF_FOLDER_FP, 
 						null, namespaceService, false);
 				assertEquals("classif folder should exist", (int)1 , nodes.size());

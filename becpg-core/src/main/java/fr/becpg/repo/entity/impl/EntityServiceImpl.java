@@ -180,8 +180,11 @@ public class EntityServiceImpl implements EntityService {
 			        logger.debug("resultSet.length() : " + resultSet.length());
 			        
 			        if (resultSet.length() > 0){
-			        			        	
-			        	logger.debug("list children has been modified");	        	
+			        	if(logger.isDebugEnabled()){
+			        		logger.debug("list children has been modified");	   
+			        		logger.debug("Date :"+ ISO8601DateFormat.format((Date) nodeService.getProperty(resultSet.getNodeRef(0), ContentModel.PROP_MODIFIED)));
+			        	}
+			        	     	
 			        	return true;
 			        }		        		        
 		        }

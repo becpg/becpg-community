@@ -17,10 +17,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.webscripts.TestWebScriptServer.PostRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
@@ -43,9 +41,6 @@ public class ProductWUsedWebScriptTest extends BaseWebScriptTest{
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductWUsedWebScriptTest.class);
-	
-	/** The app ctx. */
-	private  ApplicationContext appCtx = getServer().getApplicationContext();
 	
 	/** The Constant PATH_TEMPFOLDER. */
 	private static final String PATH_TEMPFOLDER = "TempFolder";
@@ -85,12 +80,12 @@ public class ProductWUsedWebScriptTest extends BaseWebScriptTest{
 	{
 		super.setUp();
 				
-		nodeService = (NodeService)appCtx.getBean("NodeService");
-		fileFolderService = (FileFolderService)appCtx.getBean("FileFolderService");		
-		authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-		productDAO = (ProductDAO)appCtx.getBean("productDAO");
-		transactionService = (TransactionService)appCtx.getBean("transactionService");
-		repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
+		nodeService = (NodeService) getServer().getApplicationContext().getBean("NodeService");
+		fileFolderService = (FileFolderService) getServer().getApplicationContext().getBean("FileFolderService");		
+		authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
+		productDAO = (ProductDAO) getServer().getApplicationContext().getBean("productDAO");
+		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
+		repositoryHelper = (Repository) getServer().getApplicationContext().getBean("repositoryHelper");
 		
 	    // Authenticate as user
 	    this.authenticationComponent.setCurrentUser(USER_ADMIN);

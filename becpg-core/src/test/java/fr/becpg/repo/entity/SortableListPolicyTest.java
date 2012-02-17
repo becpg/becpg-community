@@ -11,27 +11,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.test.RepoBaseTestCase;
 
 /**
@@ -47,29 +38,9 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(SortableListPolicyTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;	
-	
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
-	
-	/** The product dao. */
-	private ProductDAO productDAO;
-	
-	/** The repository helper. */
-	private Repository repositoryHelper;
 	
 	private EntityListDAO entityListDAO;
 	
-	private BeCPGSearchService beCPGSearchService;
-	
-	private DictionaryService dictionaryService;
 	
 	/** The sf node ref. */
 	private NodeRef sfNodeRef;
@@ -83,14 +54,8 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 		
     	logger.debug("ProductServiceTest:setUp");
     
-    	nodeService = (NodeService)appCtx.getBean("nodeService");    	
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
-    	productDAO = (ProductDAO)appCtx.getBean("productDAO");
-    	productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
-    	repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-    	entityListDAO = (EntityListDAO)appCtx.getBean("entityListDAO");
-    	beCPGSearchService = (BeCPGSearchService)appCtx.getBean("beCPGSearchService");
-    	dictionaryService = (DictionaryService)appCtx.getBean("dictionaryService");
+      	entityListDAO = (EntityListDAO)ctx.getBean("entityListDAO");
+    
     	
     	transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override

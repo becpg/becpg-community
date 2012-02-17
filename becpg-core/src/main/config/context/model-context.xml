@@ -19,7 +19,6 @@
 
 		<property name="labels">
 			<list>				
-				<value>alfresco/module/${artifactId}/model/dataTypeAnalyzers</value>
 				<value>alfresco/module/${artifactId}/model/reportModel</value>
 				<value>alfresco/module/${artifactId}/model/becpgModel</value>
 				<value>alfresco/module/${artifactId}/model/qualityModel</value>

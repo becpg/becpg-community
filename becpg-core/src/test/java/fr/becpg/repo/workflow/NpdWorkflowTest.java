@@ -17,13 +17,11 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
-import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchService;
@@ -42,11 +40,9 @@ import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.NPDModel;
@@ -55,7 +51,6 @@ import fr.becpg.repo.admin.SystemGroup;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.ProductUnit;
@@ -67,7 +62,6 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.security.constraint.DynPropsConstraint;
 import fr.becpg.test.RepoBaseTestCase;
 
 public class NpdWorkflowTest extends RepoBaseTestCase {
@@ -81,20 +75,8 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			NPDGroup.StartProduction.toString(), NPDGroup.ValidateFaisability.toString(),
 			NPDGroup.FaisabilityAssignersGroup.toString() };
 
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "NPDTestFolder";
-
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(NpdWorkflowTest.class);
-
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-
-	/** The node service. */
-	private NodeService nodeService;
-
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
 
 	private AuthorityService authorityService;
 
@@ -106,14 +88,10 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 
 	private WorkflowService workflowService;
 
-	private DynPropsConstraint dynPropsConstraint;
-	
-	 private  SearchService searchService;
+	private  SearchService searchService;
 	
 	private NodeRef productNodeRef;
 
-	/** The repository helper. */
-	private Repository repositoryHelper;
 	
 	   /** The PAT h_ productfolder. */
     private static String PATH_PRODUCTFOLDER = "TestProductFolder";
@@ -136,28 +114,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
     /** The folder node ref. */
     private NodeRef folderNodeRef;
     
-    /** The local s f1 node ref. */
-    private NodeRef  localSF1NodeRef;
-    
-    /** The raw material1 node ref. */
-    private NodeRef  rawMaterial1NodeRef;
-    
-    /** The raw material2 node ref. */
-    private NodeRef  rawMaterial2NodeRef;
-    
-    /** The local s f2 node ref. */
-    private NodeRef  localSF2NodeRef;
-    
-    private NodeRef  localSF3NodeRef;
-    
-    /** The raw material3 node ref. */
-    private NodeRef  rawMaterial3NodeRef;
-    
-    /** The raw material4 node ref. */
-    private NodeRef  rawMaterial4NodeRef;
-    
-    /** The raw material5 node ref. */
-    private NodeRef  rawMaterial5NodeRef;
     
     /** The local s f11 node ref. */
     private NodeRef localSF11NodeRef;
@@ -177,9 +133,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
     /** The raw material14 node ref. */
     private NodeRef rawMaterial14NodeRef;
     
-    private NodeRef packagingMaterial1NodeRef;
-    private NodeRef packagingMaterial2NodeRef;
-    private NodeRef packagingMaterial3NodeRef;
     
     /** The cost1. */
     private NodeRef cost1;
@@ -187,9 +140,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
     /** The cost2. */
     private NodeRef cost2;
     
-    private NodeRef pkgCost1;
-    
-    private NodeRef pkgCost2;
     
     /** The nut1. */
     private NodeRef nut1;
@@ -234,12 +184,10 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
     private NodeRef geoOrigin2;
     
     /**
-     * The clien
+     * The client
      */
     private NodeRef client;
 	
-	/** The product service. */
-	private ProductService productService;    
 	
 	private EntityService entityService;
 	
@@ -254,30 +202,25 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 	 * 
 	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		 ServiceRegistry registry = (ServiceRegistry) appCtx.getBean(ServiceRegistry.SERVICE_REGISTRY);
+		fileFolderService = (FileFolderService) ctx.getBean("fileFolderService");
+		repositoryHelper = (Repository) ctx.getBean("repositoryHelper");
 		
-		nodeService =  registry.getNodeService();
-		fileFolderService = (FileFolderService) appCtx.getBean("fileFolderService");
-		repositoryHelper = (Repository) appCtx.getBean("repositoryHelper");
-		
-		entityService = (EntityService) appCtx.getBean("entityService");
-		searchService = registry.getSearchService();
-		workflowService = registry.getWorkflowService();
-		 productDAO = (ProductDAO)appCtx.getBean("productDAO");
-	        productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
+		entityService = (EntityService) ctx.getBean("entityService");
+		searchService = serviceRegistry.getSearchService();
+		workflowService = serviceRegistry.getWorkflowService();
+		 productDAO = (ProductDAO)ctx.getBean("productDAO");
+	        productDictionaryService = (ProductDictionaryService)ctx.getBean("productDictionaryService");
 
-		authenticationService =  registry.getAuthenticationService();
-		authenticationDAO = (MutableAuthenticationDao) appCtx.getBean("authenticationDao");
-		authorityService = (AuthorityService) appCtx.getBean("authorityService");
+		authenticationService =  serviceRegistry.getAuthenticationService();
+		authenticationDAO = (MutableAuthenticationDao) ctx.getBean("authenticationDao");
+		authorityService = (AuthorityService) ctx.getBean("authorityService");
 
-		personService = (PersonService) appCtx.getBean("PersonService");
+		personService = (PersonService) ctx.getBean("PersonService");
 
-		dynPropsConstraint = (DynPropsConstraint) appCtx.getBean("dynPropsConstraint");
 
 
 	}
@@ -358,22 +301,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
-	@Override
-	public void tearDown() throws Exception {
-		try {
-			authenticationComponent.clearCurrentSecurityContext();
-		} catch (Throwable e) {
-			e.printStackTrace();
-			// Don't let this mask any previous exceptions
-		}
-		super.tearDown();
-
-	}
 	
 
 	/**
@@ -402,11 +329,11 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "pkgCost1");			 					 				
 			properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-			pkgCost1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+			nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "pkgCost2");			 					 				
 			properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-			pkgCost2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+			nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
 			//Nuts
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "nut1");
@@ -518,7 +445,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 2f, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial1.setIngList(ingList);
-			rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, dataLists);
+			productDAO.create(folderNodeRef, rawMaterial1, dataLists);
 			
 			/*-- Raw material 2 --*/
 			RawMaterialData rawMaterial2 = new RawMaterialData();
@@ -554,7 +481,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 3f, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial2.setIngList(ingList);			
-			rawMaterial2NodeRef = productDAO.create(folderNodeRef, rawMaterial2, dataLists);
+			productDAO.create(folderNodeRef, rawMaterial2, dataLists);
 			
 			/*-- Raw material 3 --*/
 			RawMaterialData rawMaterial3 = new RawMaterialData();
@@ -586,7 +513,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			geoOrigins.add(geoOrigin2);			
 			ingList.add(new IngListDataItem(null, 4f, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial3.setIngList(ingList);		
-			rawMaterial3NodeRef = productDAO.create(folderNodeRef, rawMaterial3, dataLists);
+			productDAO.create(folderNodeRef, rawMaterial3, dataLists);
 			
 			/*-- Raw material 4 --*/
 			RawMaterialData rawMaterial4 = new RawMaterialData();
@@ -601,7 +528,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			geoOrigins.add(geoOrigin2);			
 			ingList.add(new IngListDataItem(null, 4f, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial4.setIngList(ingList);		
-			rawMaterial4NodeRef = productDAO.create(folderNodeRef, rawMaterial4, dataLists);
+			productDAO.create(folderNodeRef, rawMaterial4, dataLists);
 			
 			/*-- Raw material 5 --*/
 			RawMaterialData rawMaterial5 = new RawMaterialData();
@@ -618,24 +545,24 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			nutList.add(new NutListDataItem(null, 3f, "g/100g", 0f,  0f, "Groupe 1", nut2, false));
 			rawMaterial5.setNutList(nutList);					
 			rawMaterial5.setIngList(ingList);		
-			rawMaterial5NodeRef = productDAO.create(folderNodeRef, rawMaterial5, dataLists);
+			productDAO.create(folderNodeRef, rawMaterial5, dataLists);
 			
 			/*-- Local semi finished product 1 --*/
 			LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
 			localSF1.setName("Local semi finished 1");
 			localSF1.setLegalName("Legal Local semi finished 1");
-			localSF1NodeRef = productDAO.create(folderNodeRef, localSF1, dataLists);
+			productDAO.create(folderNodeRef, localSF1, dataLists);
 			
 			/*-- Local semi finished product 1 --*/
 			LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
 			localSF2.setName("Local semi finished 2");
 			localSF2.setLegalName("Legal Local semi finished 2");							
-			localSF2NodeRef = productDAO.create(folderNodeRef, localSF2, dataLists);
+			productDAO.create(folderNodeRef, localSF2, dataLists);
 			
 			LocalSemiFinishedProduct localSF3 = new LocalSemiFinishedProduct();
 			localSF3.setName("Local semi finished 3");
 			localSF3.setLegalName("Legal Local semi finished 3");							
-			localSF3NodeRef = productDAO.create(folderNodeRef, localSF3, dataLists);			
+			productDAO.create(folderNodeRef, localSF3, dataLists);			
 			
 			logger.debug("/*-- Create raw materials 11 => 14 with ingList only--*/");
 			/*-- Raw material 11 --*/
@@ -917,14 +844,14 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		writer.putContent(in);
 		return nodeRef;
 	}
-
-	private void printExecutionContext(WorkflowPath path) {
-		for (Map.Entry<QName, Serializable> prop : workflowService.getPathProperties(path.getId()).entrySet()) {
-			logger.info(prop.getKey() + " " + prop.getValue());
-
-		}
-
-	}
+//
+//	private void printExecutionContext(WorkflowPath path) {
+//		for (Map.Entry<QName, Serializable> prop : workflowService.getPathProperties(path.getId()).entrySet()) {
+//			logger.info(prop.getKey() + " " + prop.getValue());
+//
+//		}
+//
+//	}
 
 	private void doValidateAnalisys(String workflowInstanceId) {
 		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
@@ -1105,8 +1032,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
 
 		WorkflowPath path = null;
-		
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		
 
 		List<NodeRef> assignees = new ArrayList<NodeRef>();

@@ -10,18 +10,14 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
 import org.alfresco.service.cmr.security.PersonService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
@@ -49,16 +45,6 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(SecurityServiceTest.class);
-
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper
-			.getApplicationContext();
-
-	/** The node service. */
-	private NodeService nodeService;
-
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
 
 	private BeCPGDao<ACLGroupData> aclGroupDao;
 	private SecurityService securityService;
@@ -89,23 +75,20 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 		logger.debug("SecurityServiceTest:setUp");
 
-		nodeService = (NodeService) appCtx.getBean("nodeService");
-		fileFolderService = (FileFolderService) appCtx
-				.getBean("fileFolderService");
-		repositoryHelper = (Repository) appCtx.getBean("repositoryHelper");
-		aclGroupDao = (BeCPGDao<ACLGroupData>) appCtx.getBean("aclGroupDao");
-		securityService = (SecurityService) appCtx.getBean("securityService");
+		
+		aclGroupDao = (BeCPGDao<ACLGroupData>) ctx.getBean("aclGroupDao");
+		securityService = (SecurityService) ctx.getBean("securityService");
 
-		authenticationService = (MutableAuthenticationService) appCtx
+		authenticationService = (MutableAuthenticationService) ctx
 				.getBean("authenticationService");
-		authenticationDAO = (MutableAuthenticationDao) appCtx
+		authenticationDAO = (MutableAuthenticationDao) ctx
 				.getBean("authenticationDao");
-		authorityService = (AuthorityService) appCtx
+		authorityService = (AuthorityService) ctx
 				.getBean("authorityService");
 
-		personService = (PersonService) appCtx.getBean("PersonService");
+		personService = (PersonService) ctx.getBean("PersonService");
 
-		dynPropsConstraint = (DynPropsConstraint) appCtx.getBean("dynPropsConstraint");
+		dynPropsConstraint = (DynPropsConstraint) ctx.getBean("dynPropsConstraint");
 		
 		authenticationComponent.setSystemUserAsCurrentUser();
 		

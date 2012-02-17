@@ -5,10 +5,8 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.repo.olap.data.OlapChart;
 import fr.becpg.repo.olap.data.OlapChartData;
@@ -19,9 +17,6 @@ public class OlapServiceTest extends RepoBaseTestCase {
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(OlapServiceTest.class);
-
-//	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
 
 	/** The repository helper. */
 	private OlapService olapService;
@@ -34,7 +29,7 @@ public class OlapServiceTest extends RepoBaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		olapService = (OlapService) appCtx.getBean("olapService");
+		olapService = (OlapService) ctx.getBean("olapService");
 	}
 
 	public void testOlapService() {

@@ -4,12 +4,8 @@
 package fr.becpg.repo.admin;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
@@ -22,9 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -42,21 +36,10 @@ public class InitSiteVisitorImplTest extends RepoBaseTestCase {
 	/** The site service. */
 	private SiteService siteService;
 	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	
+
 	/** The init site visitor. */
 	private InitVisitor initSiteVisitor;
-	
-	/** The repository. */
-	private Repository repository;
-	
-	/** The authentication component. */
-	private AuthenticationComponent authenticationComponent;
-	
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
+
 	
 	/** The authority service. */
 	private AuthorityService authorityService;
@@ -64,7 +47,6 @@ public class InitSiteVisitorImplTest extends RepoBaseTestCase {
 	/** The site info. */
 	private SiteInfo siteInfo;
 	
-	private RepoService repoService;
 	
 	/* (non-Javadoc)
 	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
@@ -76,15 +58,9 @@ public class InitSiteVisitorImplTest extends RepoBaseTestCase {
     	logger.debug("InitSiteVisitorImplTest::setUp");
     	
     	siteService = (SiteService)ctx.getBean("siteService");
-    	nodeService = (NodeService)ctx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)ctx.getBean("FileFolderService");
     	initSiteVisitor = (InitVisitor)ctx.getBean("initSiteVisitor");
-    	repository = (Repository)ctx.getBean("repositoryHelper");
-    	authenticationComponent = (AuthenticationComponent)ctx.getBean("authenticationComponent");
-    	productDictionaryService = (ProductDictionaryService)ctx.getBean("productDictionaryService");
-    	authorityService = (AuthorityService)ctx.getBean("authorityService");
-    	repoService = (RepoService)ctx.getBean("repoService");
-    	
+        authorityService = (AuthorityService)ctx.getBean("authorityService");
+    		
     	//Authenticate as user
 	    authenticationComponent.setCurrentUser("admin");
     }
@@ -123,26 +99,26 @@ public class InitSiteVisitorImplTest extends RepoBaseTestCase {
 	private void clearRepo(){
 		
 		// Clear system folder	
-		NodeRef systemNodeRef = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM);
+		NodeRef systemNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
 		if(systemNodeRef != null){
 			nodeService.deleteNode(systemNodeRef);
 		}
 		
 		// Clear exchange folder	
-		NodeRef exchangeNodeRef = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_EXCHANGE);
+		NodeRef exchangeNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_EXCHANGE);
 		if(exchangeNodeRef != null){
 			nodeService.deleteNode(exchangeNodeRef);
 		}
 				
 		// Clear products folder	
-		NodeRef productsNodeRef = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_PRODUCTS);
+		NodeRef productsNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS);
 		if(productsNodeRef != null){
 			logger.debug("delete products folder");
 			nodeService.deleteNode(productsNodeRef);				
 		}
 		
 		// Clear company folder
-		NodeRef companysNodeRef = repoService.getFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_COMPANIES);
+		NodeRef companysNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_COMPANIES);
 		if(companysNodeRef != null){
 			logger.debug("delete companies folder");
 			nodeService.deleteNode(companysNodeRef);				
@@ -192,7 +168,7 @@ public class InitSiteVisitorImplTest extends RepoBaseTestCase {
 		assertNotNull(String.format("Folder does not exist. folderName:%s", productsFolderName), productsNodeRef);
 		
 		/*-- Repo Products hierarchy --*/
-		productsNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
+		productsNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
 		productDictionaryService.initializeRepoHierarchy(productsNodeRef);
 		
 		/*-- ToValidate --*/

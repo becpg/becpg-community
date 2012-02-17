@@ -22,36 +22,28 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.dictionary.DictionaryDAO;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ContentReader;
-import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityTplService;
-import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
@@ -88,17 +80,6 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductServiceTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
-	/** The authentication component. */
-	private AuthenticationComponent authenticationComponent;
 	
 	/** The product service. */
 	private ProductService productService;
@@ -109,9 +90,7 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 	/** The mimetype service. */
 	private MimetypeService mimetypeService;
 	
-	/** The repository helper. */
-	private Repository repositoryHelper;    
-	
+
 	/** The permission service. */
 	private PermissionService permissionService;	
 	
@@ -121,11 +100,6 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 	/** The authority dao. */
 	private AuthorityDAO authorityDAO;
 	
-	/** The repo service. */
-	private RepoService repoService; 
-	
-	/** The content service. */
-	private ContentService contentService;
 	
 	private EntityReportService entityReportService;
 	
@@ -151,23 +125,17 @@ public class ProductServiceTest  extends RepoBaseTestCase  {
 		
     	logger.debug("ProductServiceTest:setUp");
     
-    	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
-    	productService = (ProductService)appCtx.getBean("productService");
-    	productDAO = (ProductDAO)appCtx.getBean("productDAO");
-        authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-        mimetypeService = (MimetypeService)appCtx.getBean("mimetypeService");
-        repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-        permissionService = (PermissionService)appCtx.getBean("permissionService");
-        authorityService = (AuthorityService)appCtx.getBean("authorityService");
-        authorityDAO = (AuthorityDAO)appCtx.getBean("authorityDAO");
-        repoService = (RepoService)appCtx.getBean("repoService");
-        contentService = (ContentService)appCtx.getBean("contentService");
-        entityReportService = (EntityReportService)appCtx.getBean("entityReportService");
-        reportTplService = (ReportTplService)appCtx.getBean("reportTplService");
-        dictionaryDAO = (DictionaryDAO)appCtx.getBean("dictionaryDAO");
-        entityTplService = (EntityTplService)appCtx.getBean("entityTplService");
-        dictionaryService = (DictionaryService)appCtx.getBean("dictionaryService");
+     	productService = (ProductService)ctx.getBean("productService");
+    	productDAO = (ProductDAO)ctx.getBean("productDAO");
+            mimetypeService = (MimetypeService)ctx.getBean("mimetypeService");
+         permissionService = (PermissionService)ctx.getBean("permissionService");
+        authorityService = (AuthorityService)ctx.getBean("authorityService");
+        authorityDAO = (AuthorityDAO)ctx.getBean("authorityDAO");
+         entityReportService = (EntityReportService)ctx.getBean("entityReportService");
+        reportTplService = (ReportTplService)ctx.getBean("reportTplService");
+        dictionaryDAO = (DictionaryDAO)ctx.getBean("dictionaryDAO");
+        entityTplService = (EntityTplService)ctx.getBean("entityTplService");
+        dictionaryService = (DictionaryService)ctx.getBean("dictionaryService");
         
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			public NodeRef execute() throws Throwable {

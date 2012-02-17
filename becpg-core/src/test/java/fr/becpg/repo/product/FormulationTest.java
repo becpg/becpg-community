@@ -7,34 +7,22 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -50,13 +38,13 @@ import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
-import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.NullableBoolean;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.test.RepoBaseTestCase;
@@ -72,28 +60,11 @@ public class FormulationTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(FormulationTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();	
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;	
-	
 	/** The product service. */
 	private ProductService productService;    
 	
 	/** The product dao. */
 	private ProductDAO productDAO;
-	
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
-	
-	private TransactionService transactionService;
-	
-	/** The repository helper. */
-	private Repository repositoryHelper;   
     
     /** The PAT h_ productfolder. */
     private static String PATH_PRODUCTFOLDER = "TestProductFolder";
@@ -227,13 +198,10 @@ public class FormulationTest extends RepoBaseTestCase {
    
     	logger.debug("ProductMgrTest:setUp");
     	    	
-    	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
-    	productService = (ProductService)appCtx.getBean("productService");       
-        productDAO = (ProductDAO)appCtx.getBean("productDAO");
-        productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
-        transactionService = (TransactionService)appCtx.getBean("TransactionService");
-        repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
+    
+    	productService = (ProductService)ctx.getBean("productService");       
+        productDAO = (ProductDAO)ctx.getBean("productDAO");
+      
         
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			public NodeRef execute() throws Throwable {
@@ -1301,7 +1269,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					SFProduct1.setNutList(nutList);					
 					NodeRef SFProduct1NodeRef = productDAO.create(folderNodeRef, SFProduct1, dataLists);
 					
-					ProductData dbSF1 = productDAO.find(SFProduct1NodeRef, dataLists);					
+					productDAO.find(SFProduct1NodeRef, dataLists);					
 					
 					//SF2
 					SemiFinishedProductData SFProduct2 = new SemiFinishedProductData();

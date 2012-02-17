@@ -9,8 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
-import org.springframework.context.ApplicationContext;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class AdminModuleWebScriptTest.
@@ -21,9 +19,7 @@ public class AdminModuleWebScriptTest extends BaseWebScriptTest{
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AdminModuleWebScriptTest.class);
-	/** The app ctx. */
-	private  ApplicationContext appCtx = getServer().getApplicationContext();
-	
+
 	/* (non-Javadoc)
 	 * @see org.alfresco.repo.web.scripts.BaseWebScriptTest#setUp()
 	 */
@@ -56,7 +52,7 @@ public class AdminModuleWebScriptTest extends BaseWebScriptTest{
 		logger.debug("test init repo webscript ");
 		String url = "/becpg/admin/repository/init-repo";
 		Response response = sendRequest(new GetRequest(url), 200, "admin");
-						
+		logger.debug(response.getContentAsString());		
 	}	
 	
 }

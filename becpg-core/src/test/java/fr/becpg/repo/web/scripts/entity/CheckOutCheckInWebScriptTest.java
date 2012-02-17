@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.search.impl.NodeSearcher;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.web.scripts.BaseWebScriptTest;
@@ -16,11 +15,9 @@ import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.webscripts.TestWebScriptServer.PostRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
@@ -37,12 +34,6 @@ public class CheckOutCheckInWebScriptTest extends BaseWebScriptTest{
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CheckOutCheckInWebScriptTest.class);
-	
-	/** The app ctx. */
-	private  ApplicationContext appCtx = getServer().getApplicationContext();
-	
-	/** The Constant PATH_TEMPFOLDER. */
-	private static final String PATH_TEMPFOLDER = "TempFolder";
 	
 	/** The Constant USER_ADMIN. */
 	private static final String USER_ADMIN = "admin";
@@ -81,12 +72,12 @@ public class CheckOutCheckInWebScriptTest extends BaseWebScriptTest{
 	{
 		super.setUp();
 	
-		fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");		
-		authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-		productDAO = (ProductDAO)appCtx.getBean("productDAO");
-		transactionService = (TransactionService)appCtx.getBean("transactionService");
-		repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-		nodeService = (NodeService)appCtx.getBean("nodeService");
+		fileFolderService = (FileFolderService) getServer().getApplicationContext().getBean("fileFolderService");		
+		authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
+		productDAO = (ProductDAO) getServer().getApplicationContext().getBean("productDAO");
+		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
+		repositoryHelper = (Repository) getServer().getApplicationContext().getBean("repositoryHelper");
+		nodeService = (NodeService) getServer().getApplicationContext().getBean("nodeService");
 		
 	    // Authenticate as user
 	    this.authenticationComponent.setCurrentUser(USER_ADMIN);

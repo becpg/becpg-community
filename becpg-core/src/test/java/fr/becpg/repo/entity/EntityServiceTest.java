@@ -6,40 +6,27 @@ package fr.becpg.repo.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.extensions.surf.util.I18NUtil;
+
+import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ReportModel;
-import fr.becpg.model.SystemProductType;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
-import fr.becpg.repo.report.entity.EntityReportService;
-import fr.becpg.repo.report.template.ReportTplService;
-import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -56,23 +43,8 @@ public class EntityServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityServiceTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;	
-	
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
-	
 	/** The product dao. */
 	private ProductDAO productDAO;
-	
-	/** The repository helper. */
-	private Repository repositoryHelper;
 	
 	/** The policy behaviour filter. */
 	private BehaviourFilter policyBehaviourFilter;
@@ -92,15 +64,11 @@ public class EntityServiceTest extends RepoBaseTestCase {
 		super.setUp();	
 		
     	logger.debug("ProductServiceTest:setUp");
-    
-    	nodeService = (NodeService)appCtx.getBean("nodeService");    	
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
-    	productDAO = (ProductDAO)appCtx.getBean("productDAO");
-    	productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
-    	repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-    	policyBehaviourFilter = (BehaviourFilter)appCtx.getBean("policyBehaviourFilter");
-    	entityListDAO = (EntityListDAO)appCtx.getBean("entityListDAO");
-    	entityService = (EntityService)appCtx.getBean("entityService");
+    	
+    	productDAO = (ProductDAO)ctx.getBean("productDAO");
+    	policyBehaviourFilter = (BehaviourFilter)ctx.getBean("policyBehaviourFilter");
+    	entityListDAO = (EntityListDAO)ctx.getBean("entityListDAO");
+    	entityService = (EntityService)ctx.getBean("entityService");
     	
     	transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override
@@ -134,8 +102,10 @@ public class EntityServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {												
 				
+				Calendar cal = Calendar.getInstance();
+	
 				policyBehaviourFilter.disableBehaviour(sfNodeRef, ContentModel.ASPECT_AUDITABLE);
-				nodeService.setProperty(sfNodeRef, ContentModel.PROP_MODIFIED, new Date());
+				nodeService.setProperty(sfNodeRef, ContentModel.PROP_MODIFIED, cal.getTime());
 				policyBehaviourFilter.enableBehaviour(sfNodeRef, ContentModel.ASPECT_AUDITABLE);
 				return null;
 				
@@ -153,7 +123,7 @@ public class EntityServiceTest extends RepoBaseTestCase {
 		logger.debug("testHasDataListsModified()");
 		
 		// create product
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+		sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			@Override
 			public NodeRef execute() throws Throwable {
 							   	
@@ -176,9 +146,8 @@ public class EntityServiceTest extends RepoBaseTestCase {
 				sfData.setAllergenList(allergenList);
 				
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
-				sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);				
 				
-				return null;
+				return   productDAO.create(folderNodeRef, sfData, dataLists);
 				
 			}},false,true);	   				
 		
@@ -188,6 +157,7 @@ public class EntityServiceTest extends RepoBaseTestCase {
 		
 		// reset
 		resetModified();
+		
 		
 		assertEquals("datalist has not been modified", false, entityService.hasDataListModified(sfNodeRef));
 		

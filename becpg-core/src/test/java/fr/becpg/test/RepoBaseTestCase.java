@@ -15,17 +15,13 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
-import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 import org.subethamail.wiser.Wiser;
 
 import fr.becpg.model.BeCPGModel;
@@ -33,7 +29,6 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitor;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.EntityReportServiceTest;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -74,13 +69,8 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	private static String VALUE_COST_CURRENCY = "€";
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(EntityReportServiceTest.class);
+	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-	
-	/** The node service. */
-	protected NodeService nodeService;
 	
 	/** The mimetype service. */
 	protected MimetypeService mimetypeService;
@@ -91,9 +81,6 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	/** The repo service. */
 	protected RepoService repoService;
 	
-	/** The content service. */
-	protected ContentService contentService;
-	
 	/** The file folder service. */
 	protected FileFolderService fileFolderService;
 	
@@ -103,7 +90,6 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	/** The product dictionary service. */
 	protected ProductDictionaryService productDictionaryService;
 	
-	private Repository repository;
 	
 	private InitVisitor initRepoVisitor;
 	
@@ -132,23 +118,24 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	 */
 	@Override
 	protected void setUp() throws Exception {		
+		//First start wiser 
+		try {
+			wiser = new Wiser(2500);
+			wiser.start();
+		} catch (Exception e) {
+			logger.warn("cannot open wiser!");
+		}
+		//Then context
 		super.setUp();	
 		
 
-	    wiser = new Wiser(2500);
-	    wiser.start();
-
-		
-		nodeService = (NodeService)appCtx.getBean("nodeService");    	    	
-    	mimetypeService = (MimetypeService)appCtx.getBean("mimetypeService");
-    	repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-    	repoService = (RepoService)appCtx.getBean("repoService");
-    	contentService = (ContentService)appCtx.getBean("contentService");
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
-    	productDAO = (ProductDAO)appCtx.getBean("productDAO");
-        productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
-        repository = (Repository)appCtx.getBean("repositoryHelper");        
-        initRepoVisitor = (InitVisitor)appCtx.getBean("initRepoVisitor");
+    	mimetypeService = (MimetypeService)ctx.getBean("mimetypeService");
+    	repositoryHelper = (Repository)ctx.getBean("repositoryHelper");
+    	repoService = (RepoService)ctx.getBean("repoService");
+    	fileFolderService = (FileFolderService)ctx.getBean("fileFolderService");
+    	productDAO = (ProductDAO)ctx.getBean("productDAO");
+        productDictionaryService = (ProductDictionaryService)ctx.getBean("productDictionaryService");
+        initRepoVisitor = (InitVisitor)ctx.getBean("initRepoVisitor");
     }
     
     
@@ -158,8 +145,14 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	@Override
 	protected void tearDown() throws Exception
     {
+		try {
+			wiser.stop();
+		} catch (Exception e) {
+			logger.warn("cannot stop wiser!");
+		}
+		
         super.tearDown();
-        wiser.stop();
+        
     }
 	
 	/**
@@ -433,10 +426,10 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		
 		logger.debug("initHierarchyLists");
 		
-		initRepoVisitor.visitContainer(repository.getCompanyHome());
+		initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
 		
 		//check init repo
-		NodeRef systemNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+		NodeRef systemNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 		assertNotNull("System folder not found", systemNodeRef);		
 		NodeRef productHierarchyNodeRef = nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_HIERARCHY));
 		assertNotNull("Product hierarchy folder not found", productHierarchyNodeRef);
