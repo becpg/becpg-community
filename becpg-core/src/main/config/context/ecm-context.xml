@@ -15,7 +15,7 @@
     	<property name="changeOrderDAO" ref="changeOrderDAO"/>
     	<property name="wUsedListService" ref="wUsedListService"/>
     	<property name="nodeService" ref="nodeService"/>
-    	<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService"/>
+    	<property name="checkOutCheckInService" ref="checkOutCheckInService"/>
     	<property name="productService" ref="productService"/>
     	<property name="productDAO" ref="productDAO"/>
     	<property name="entityListDAO" ref="entityListDAO"/>

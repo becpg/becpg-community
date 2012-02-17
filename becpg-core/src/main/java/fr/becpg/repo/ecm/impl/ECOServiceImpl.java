@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -32,7 +33,7 @@ import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.entity.version.EntityCheckOutCheckInService;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.entity.wused.WUsedListService;
 import fr.becpg.repo.entity.wused.data.WUsedData;
 import fr.becpg.repo.helper.RepoService;
@@ -64,7 +65,7 @@ public class ECOServiceImpl implements ECOService {
 	private BeCPGDao<ChangeOrderData>changeOrderDAO;
 	private WUsedListService wUsedListService;
 	private NodeService nodeService;
-	private EntityCheckOutCheckInService entityCheckOutCheckInService;
+	private CheckOutCheckInService checkOutCheckInService;
 	private ProductService productService;
 	private ProductDAO productDAO;
 	private EntityListDAO entityListDAO;
@@ -85,8 +86,8 @@ public class ECOServiceImpl implements ECOService {
 		this.nodeService = nodeService;
 	}
 
-	public void setEntityCheckOutCheckInService(EntityCheckOutCheckInService entityCheckOutCheckInService) {
-		this.entityCheckOutCheckInService = entityCheckOutCheckInService;
+	public void setCheckOutCheckInService(CheckOutCheckInService checkOutCheckInService) {
+		this.checkOutCheckInService = checkOutCheckInService;
 	}
 
 	public void setProductService(ProductService productService) {
@@ -530,17 +531,17 @@ public class ECOServiceImpl implements ECOService {
 					versionLabel = versionLabel == null ? VERSION_INITIAL : versionLabel;
 										
 					//Calculate new version
-					VersionNumber versionNumber = entityCheckOutCheckInService.getVersionNumber(versionLabel, majorVersion);
+					VersionNumber versionNumber = getVersionNumber(versionLabel, majorVersion);
 					
 					// checkout
-					NodeRef workingCopyNodeRef = entityCheckOutCheckInService.checkout(sourceItemNodeRef);
+					NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(sourceItemNodeRef);
 					
 					// checkin
 					Map<String, Serializable> properties = new HashMap<String, Serializable>();
 					properties.put(ContentModel.PROP_VERSION_LABEL.toPrefixString(), versionNumber.toString());
 					properties.put(Version.PROP_DESCRIPTION, String.format(VERSION_DESCRIPTION, ecoData.getCode()));	
 					
-					productToFormulateNodeRef = entityCheckOutCheckInService.checkin(workingCopyNodeRef, properties);									
+					productToFormulateNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, properties);									
 					changeUnitDataItem.setTargetItem(productToFormulateNodeRef);
 				}							
 			}
@@ -708,5 +709,26 @@ public class ECOServiceImpl implements ECOService {
 		}
 		
 		return value;
-	}	
+	}
+	
+	/**
+	 * Calculate new version
+	 * @param versionLabel
+	 * @param majorVersion
+	 * @return
+	 */
+	private VersionNumber getVersionNumber(String versionLabel, boolean majorVersion){
+		
+		VersionNumber versionNumber = new VersionNumber(versionLabel);
+		if(majorVersion){
+			int majorNb = versionNumber.getPart(0) + 1;
+			versionNumber = new VersionNumber(majorNb + EntityVersionService.VERSION_DELIMITER + 0);			
+		}
+		else{
+			int minorNb = versionNumber.getPart(1) + 1;
+			versionNumber = new VersionNumber(versionNumber.getPart(0) + EntityVersionService.VERSION_DELIMITER + minorNb);
+		}
+		
+		return versionNumber;
+	}
 }

@@ -60,39 +60,6 @@
    		<property name="productDictionaryService" ref="productDictionaryService"/>
    	</bean>
    	
-   	<!-- Entity checkout -->
-  		<bean id="webscript.fr.becpg.entity.checkout.post" class="fr.becpg.repo.web.scripts.entity.CheckOutWebScript" parent="webscript">   		
-   		<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService" />
-   	</bean>
-   	
-   	<!-- Entity checkin -->
-  		<bean id="webscript.fr.becpg.entity.checkin.post" class="fr.becpg.repo.web.scripts.entity.CheckInWebScript" parent="webscript">   		
-   		<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService" />
-   	</bean>
-   	
-   	<!-- Entity cancel-checkout -->
-  		<bean id="webscript.fr.becpg.entity.cancel-checkout.post" class="fr.becpg.repo.web.scripts.entity.CancelCheckOutWebScript" parent="webscript">   		
-   		<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService" />
-   	</bean>
-   	
-   	<!-- Entity new version form -->
-  		<bean id="webscript.fr.becpg.entity.form-checkin.post" class="fr.becpg.repo.web.scripts.entity.FormCheckInWebScript" parent="webscript">   		
-   		<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService" />
-   	</bean>
-      	
-   	<!-- Document web scripts : override share webscript -->
-  		<bean id="webscript.fr.becpg.document.form-revert-version.post" class="fr.becpg.repo.web.scripts.document.FormRevertVersionWebScript" parent="webscript">   		
-   		<property name="entityVersionService" ref="entityVersionService" />
-   		<property name="entityCheckOutCheckInService" ref="entityCheckOutCheckInService" />
-   	</bean>
-   	<bean id="webscript.fr.becpg.document.version-history.get" class="fr.becpg.repo.web.scripts.document.VersionHistoryWebScript" parent="webscript">   		
-   		<property name="entityVersionService" ref="entityVersionService" />
-   		<property name="nodeService" ref="nodeService" />
-   		<property name="versionService" ref="versionService" />
-   		<property name="personService" ref="personService" />
-   		<property name="dictionaryService" ref="dictionaryService"/>
-   	</bean>
-   	
    	<!-- Compare entities -->
   		<bean id="webscript.fr.becpg.entity.compareEntityReport.get" class="fr.becpg.repo.web.scripts.entity.CompareEntityReportWebScript" parent="webscript">
    		<property name="compareEntityReportService" ref="compareEntityReportService" />

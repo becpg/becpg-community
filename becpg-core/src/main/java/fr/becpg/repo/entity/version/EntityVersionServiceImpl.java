@@ -35,7 +35,6 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 
-// TODO: Auto-generated Javadoc
 /**
  * Store the entity version history in the SpacesStore otherwise we cannot use
  * lucene query and datalists don't work so we cannot get them.
@@ -295,8 +294,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 */
 	private NodeRef createVersion(final NodeRef versionHistoryNodeRef, final NodeRef entityNodeRef,
 			VersionNumber versionNumber, String versionDescription) {
-
-		logger.debug("Aspect of entity: " + nodeService.getAspects(entityNodeRef).toString());
 
 		// disable policy to avoir folder initialization and report generation
 		policyBehaviourFilter.disableAllBehaviours();

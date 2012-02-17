@@ -10,12 +10,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
+import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -25,7 +33,6 @@ import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.test.RepoBaseTestCase;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProductVersionServiceTest.
  *
@@ -38,18 +45,35 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductVersionServiceTest.class);
-
+	
+	/** The app ctx. */
+	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
+	
+	/** The node service. */
+	private NodeService nodeService;
+	
+	/** The file folder service. */
+	private FileFolderService fileFolderService;	
+	
 	/** The product dao. */
 	private ProductDAO productDAO;
+	
+	/** The version service. */
+	private VersionService versionService;
+	
+	/** The repository. */
+	private Repository repository;
+	
+	/** The product dictionary service. */
+	private ProductDictionaryService productDictionaryService;
 	
 	/** The product version service. */
 	private EntityVersionService entityVersionService;
 	
-	/** The product check out check in service. */
-	private CheckOutCheckInService entityCheckOutCheckInService;
-	
 	private EntityListDAO entityListDAO;
-		
+	
+	private CheckOutCheckInService checkOutCheckInService;
+	
 	/* (non-Javadoc)
 	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
 	 */
@@ -59,33 +83,27 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 		
     	logger.debug("ProductServiceTest:setUp");
     
-     	productDAO = (ProductDAO)ctx.getBean("productDAO");
-    
-        entityVersionService = (EntityVersionService)ctx.getBean("entityVersionService");
-        entityCheckOutCheckInService = (CheckOutCheckInService)ctx.getBean("entityCheckOutCheckInService");
-        entityListDAO = (EntityListDAO)ctx.getBean("entityListDAO");
-    }
-    
-    
-	/* (non-Javadoc)
-	 * @see fr.becpg.test.RepoBaseTestCase#tearDown()
-	 */
-	@Override
-    public void tearDown() throws Exception
-    {
-		try
-        {
-            //authenticationComponent.clearCurrentSecurityContext();
-        }
-        catch (Throwable e)
-        {
-            e.printStackTrace();
-            // Don't let this mask any previous exceptions
-        }
-        super.tearDown();
+    	nodeService = (NodeService)appCtx.getBean("nodeService");
+    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
+    	productDAO = (ProductDAO)appCtx.getBean("productDAO");
+    	versionService = (VersionService)appCtx.getBean("VersionService");
+    	repository = (Repository)appCtx.getBean("repositoryHelper");
+    	productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
+        entityVersionService = (EntityVersionService)appCtx.getBean("entityVersionService");
+        entityListDAO = (EntityListDAO)appCtx.getBean("entityListDAO");
+        checkOutCheckInService = (CheckOutCheckInService)appCtx.getBean("checkOutCheckInService");
+        
+        transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+ 			@Override
+			public NodeRef execute() throws Throwable {
 
-    }	
-	
+ 				initCharacteristics();
+ 		        
+ 				return null;
+
+ 			}},false,true); 
+    }
+    	
 	/**
 	 * Test create version.
 	 */
@@ -96,12 +114,12 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 			public NodeRef execute() throws Throwable {
 			
 				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
 				if(folderNodeRef != null)
 				{
 					fileFolderService.delete(folderNodeRef);    		
 				}			
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 								
 				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");
 				
@@ -194,19 +212,19 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				
 				/*-- create folders --*/
 				logger.debug("/*-- create folders --*/");
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
 				if(folderNodeRef != null)
 				{
 					fileFolderService.delete(folderNodeRef);    		
 				}			
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 					
 		    	
 		    	/*-- Create raw material --*/
 				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");
 				
 				//Check out
-				NodeRef workingCopyNodeRef = entityCheckOutCheckInService.checkout(rawMaterialNodeRef);
+				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
 				assertNotNull("Check working copy exists", workingCopyNodeRef);				
 				
 				// Check productCode
@@ -240,7 +258,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				//Check in
 				NodeRef newRawMaterialNodeRef = null;
 				try{
-					newRawMaterialNodeRef = entityCheckOutCheckInService.checkin(workingCopyNodeRef, null);
+					newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, null);
 				}
 				catch(Exception e){
 					logger.error("Failed to checkin", e);
@@ -263,7 +281,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 					CostListDataItem vCostListDataItem = newRawMaterial.getCostList().get(i);
 					
 					assertEquals("Check cost", costListDataItem.getCost(), vCostListDataItem.getCost());
-					assertEquals("Check cost unit", costListDataItem.getUnit(), vCostListDataItem.getUnit());
+					assertEquals("Check cost unit", costListDataItem.getUnit().replace(ProductUnit.kg.toString(), ProductUnit.P.toString()), vCostListDataItem.getUnit());
 					assertEquals("Check cost value", costListDataItem.getValue()  + valueAdded, vCostListDataItem.getValue());
 					assertNotSame("Check cost noderef", costListDataItem.getNodeRef(), vCostListDataItem.getNodeRef());
 				}
@@ -285,19 +303,19 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				
 				/*-- create folders --*/
 				logger.debug("/*-- create folders --*/");
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
 				if(folderNodeRef != null)
 				{
 					fileFolderService.delete(folderNodeRef);    		
 				}			
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 					
 		    	
 		    	/*-- Create raw material --*/
 				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");								
 				
 				//Check out
-				NodeRef workingCopyNodeRef = entityCheckOutCheckInService.checkout(rawMaterialNodeRef);
+				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
 				assertNotNull("Check working copy exists", workingCopyNodeRef);
 				
 				//modify
@@ -313,7 +331,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				assertEquals("Check unit", productUnit2, workingCopyRawMaterial.getUnit());
 								
 				//cancel check out
-				entityCheckOutCheckInService.cancelCheckout(workingCopyNodeRef);
+				checkOutCheckInService.cancelCheckout(workingCopyNodeRef);
 				
 				//Check
 				rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
@@ -334,12 +352,12 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 			public NodeRef execute() throws Throwable {
 			
 				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
 				if(folderNodeRef != null)
 				{
 					fileFolderService.delete(folderNodeRef);    		
 				}			
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 								
 				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");										
 				NodeRef vRawMaterialNodeRef = entityVersionService.createVersion(rawMaterialNodeRef, null);
@@ -362,4 +380,225 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				
 			}},false,true);
 	}
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//	TEST WITH ALFRESCO API AND VERSION STORE
+	// 
+	//  return 
+	//	java.lang.UnsupportedOperationException: This operation is not supported by a version store implementation of the node service.
+	//	at org.alfresco.repo.version.NodeServiceImpl.getChildByName(NodeServiceImpl.java:606)
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+//	/**
+//	 * Test create version.
+//	 */
+//	public void xxtestCreateVersion2(){
+// 		
+// 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+//			@Override
+//			public NodeRef execute() throws Throwable {
+//			
+//				/*-- Create test folder --*/
+//				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+//				if(folderNodeRef != null)
+//				{
+//					fileFolderService.delete(folderNodeRef);    		
+//				}			
+//				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+//								
+//				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");
+//				
+//				Version vRawMaterialNodeRefV1_1 = versionService.createVersion(rawMaterialNodeRef, null);
+//				
+//				String versionLabel = vRawMaterialNodeRefV1_1.getVersionLabel();
+//				logger.debug("version: " + versionLabel);
+//				assertEquals("0.1", versionLabel);
+//				
+//				NodeRef listContainerNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
+//				assertNotNull("Has list container", listContainerNodeRef);
+//				
+//				Collection<QName> dataLists = productDictionaryService.getDataLists();
+//				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);				
+//				ProductData vRawMaterial = productDAO.find(vRawMaterialNodeRefV1_1.getFrozenStateNodeRef(), dataLists);
+//				
+//				logger.info("###rawMaterialNodeRef: " + rawMaterialNodeRef);
+//				logger.info("###vRawMaterialNodeRefV1_1.getVersionedNodeRef(): " + vRawMaterialNodeRefV1_1.getVersionedNodeRef());
+//				logger.info("###vRawMaterialNodeRefV1_1.getFrozenStateNodeRef(): " + vRawMaterialNodeRefV1_1.getFrozenStateNodeRef());
+//				
+//				assertEquals("Check costs size", rawMaterial.getCostList().size(), vRawMaterial.getCostList().size());
+//				
+//				for(int i=0 ; i < rawMaterial.getCostList().size() ; i++){
+//					CostListDataItem costListDataItem = rawMaterial.getCostList().get(i);
+//					CostListDataItem vCostListDataItem = vRawMaterial.getCostList().get(i);
+//					
+//					logger.info("###costListDataItem.getNodeRef(): " + costListDataItem.getNodeRef());
+//					logger.info("###vCostListDataItem.getNodeRef(): " + vCostListDataItem.getNodeRef());
+//					
+//					assertEquals("Check cost", costListDataItem.getCost(), vCostListDataItem.getCost());
+//					assertEquals("Check cost unit", costListDataItem.getUnit(), vCostListDataItem.getUnit());
+//					assertEquals("Check cost value", costListDataItem.getValue(), vCostListDataItem.getValue());
+//					assertNotSame("Check cost noderef", costListDataItem.getNodeRef(), vCostListDataItem.getNodeRef());
+//				}
+//				
+//				Version vRawMaterialNodeRefV1_2 = versionService.createVersion(rawMaterialNodeRef, null);
+//				String versionLabel1_2 = vRawMaterialNodeRefV1_2.getVersionLabel();
+//				logger.debug("version: " + versionLabel1_2);
+//				assertEquals("0.2", versionLabel1_2);
+//				
+//				Map<String, Serializable> properties = new HashMap<String, Serializable>();
+//				properties.put(ContentModel.PROP_VERSION_LABEL.toPrefixString(), "0.4");
+//				Version vRawMaterialNodeRefV1_4 = versionService.createVersion(rawMaterialNodeRef, properties);
+//				String versionLabel1_4 = vRawMaterialNodeRefV1_4.getVersionLabel();
+//				assertEquals("0.4", versionLabel1_4);
+//				
+//				Version vRawMaterialNodeRefV1_3 = null;
+//				Exception exception = null;
+//				properties.clear();				
+//				properties.put(ContentModel.PROP_VERSION_LABEL.toPrefixString(), "0.3");
+//				try{
+//					vRawMaterialNodeRefV1_3 = versionService.createVersion(rawMaterialNodeRef, properties);
+//				}
+//				catch(Exception e){
+//					exception = e;
+//					logger.debug(e.toString());
+//				}
+//				
+//				assertNotNull(exception);
+//				assertNull(vRawMaterialNodeRefV1_3);
+//				
+//				properties.clear();
+//				properties.put(ContentModel.PROP_VERSION_LABEL.toPrefixString(), "2.0");
+//				Version vRawMaterialNodeRefV2_0 = versionService.createVersion(rawMaterialNodeRef, properties);
+//				String versionLabel2_0 = vRawMaterialNodeRefV2_0.getVersionLabel();
+//				assertEquals("2.0", versionLabel2_0);
+//				
+//				Version rawMaterialNodeRefV1_5 = null;
+//				exception = null;
+//				properties.clear();				
+//				properties.put(ContentModel.PROP_VERSION_LABEL.toPrefixString(), "1.5");
+//				try{
+//				rawMaterialNodeRefV1_5 = versionService.createVersion(rawMaterialNodeRef, properties);
+//				}
+//				catch(Exception e){
+//					exception = e;
+//					logger.debug(e.toString());
+//				}
+//				
+//				assertNotNull(exception);
+//				assertNull(rawMaterialNodeRefV1_5);
+//				
+//				return null;
+//				
+//			}},false,true);
+// 		
+// 	}
+//	
+//	/**
+//	 * Test check out check in.
+//	 */
+//	public void xxtestCheckOutCheckIn2(){
+//		
+//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+//			@Override
+//			public NodeRef execute() throws Throwable {
+//				
+//				/*-- create folders --*/
+//				logger.debug("/*-- create folders --*/");
+//				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+//				if(folderNodeRef != null)
+//				{
+//					fileFolderService.delete(folderNodeRef);    		
+//				}			
+//				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+//					
+//		    	
+//		    	/*-- Create raw material --*/
+//				final NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");
+//				
+//				//Check out
+//				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+//				
+//				final NodeRef finalWorkingCopy = workingCopyNodeRef;
+//				AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>(){
+//			         @Override
+//					public Void doWork() throws Exception
+//			         {      
+//			         	entityListDAO.copyDataLists(rawMaterialNodeRef, finalWorkingCopy, true);
+//			         	return null;
+//			         	
+//			         }
+//			     }, AuthenticationUtil.getSystemUserName());
+//				
+//				assertNotNull("Check working copy exists", workingCopyNodeRef);				
+//				
+//				// Check productCode
+//				//assertEquals("productCode should be the same after checkout", nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_CODE), nodeService.getProperty(workingCopyNodeRef, BeCPGModel.PROP_CODE));
+//				
+//				//Check costs on working copy
+//				Collection<QName> dataLists = productDictionaryService.getDataLists();
+//				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);				
+//				ProductData workingCopyRawMaterial = productDAO.find(workingCopyNodeRef, dataLists);
+//				assertEquals("Check costs size", rawMaterial.getCostList().size(), workingCopyRawMaterial.getCostList().size());
+//				
+//				for(int i=0 ; i < rawMaterial.getCostList().size() ; i++){
+//					CostListDataItem costListDataItem = rawMaterial.getCostList().get(i);
+//					CostListDataItem vCostListDataItem = workingCopyRawMaterial.getCostList().get(i);
+//					
+//					assertEquals("Check cost", costListDataItem.getCost(), vCostListDataItem.getCost());
+//					assertEquals("Check cost unit", costListDataItem.getUnit(), vCostListDataItem.getUnit());
+//					assertEquals("Check cost value", costListDataItem.getValue(), vCostListDataItem.getValue());
+//					assertNotSame("Check cost noderef", costListDataItem.getNodeRef(), vCostListDataItem.getNodeRef());
+//				}
+//				
+//				//Modify working copy
+//				int valueAdded = 1;
+//				ProductUnit productUnit = ProductUnit.P;
+//				workingCopyRawMaterial.setUnit(productUnit);
+//				for(CostListDataItem c : workingCopyRawMaterial.getCostList()){
+//					c.setValue(c.getValue() + valueAdded);
+//				}
+//				productDAO.update(workingCopyNodeRef, workingCopyRawMaterial, dataLists);
+//				
+//				//Check in
+//				NodeRef newRawMaterialNodeRef = null;
+//				try{
+//					
+//					NodeRef containerListNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
+//					if(containerListNodeRef != null){
+//						nodeService.deleteNode(containerListNodeRef);
+//					}
+//					
+//					newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, null);
+//				}
+//				catch(Exception e){
+//					logger.error("Failed to checkin", e);
+//					assertNull(e);
+//				}
+//								
+//				assertNotNull("Check new version exists", newRawMaterialNodeRef);
+//				ProductData newRawMaterial = productDAO.find(newRawMaterialNodeRef, dataLists);
+//				//assertEquals("Check version", "1.1", newRawMaterial.getVersionLabel());
+//				assertEquals("Check unit", productUnit, newRawMaterial.getUnit());
+//				
+//				// Check productCode
+//				//assertEquals("productCode should be the same after checkin", nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_CODE), nodeService.getProperty(newRawMaterialNodeRef, BeCPGModel.PROP_CODE));
+//				
+//				//Check costs on new version				
+//				assertEquals("Check costs size", rawMaterial.getCostList().size(), newRawMaterial.getCostList().size());
+//				
+//				for(int i=0 ; i < rawMaterial.getCostList().size() ; i++){
+//					CostListDataItem costListDataItem = rawMaterial.getCostList().get(i);
+//					CostListDataItem vCostListDataItem = newRawMaterial.getCostList().get(i);
+//					
+//					assertEquals("Check cost", costListDataItem.getCost(), vCostListDataItem.getCost());
+//					assertEquals("Check cost unit", costListDataItem.getUnit(), vCostListDataItem.getUnit());
+//					assertEquals("Check cost value", costListDataItem.getValue()  + valueAdded, vCostListDataItem.getValue());
+//					assertNotSame("Check cost noderef", costListDataItem.getNodeRef(), vCostListDataItem.getNodeRef());
+//				}
+//				
+//				assertEquals("Check products are the same", rawMaterialNodeRef, newRawMaterialNodeRef);			
+//			return null;
+//			
+//			}},false,true);
+//	}
 }

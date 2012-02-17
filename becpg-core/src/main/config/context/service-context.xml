@@ -194,19 +194,6 @@
 	   	<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	
-	<!-- EntityCheckOutCheckIn -->
-	<bean id="entityCheckOutCheckInService" class="fr.becpg.repo.entity.version.EntityCheckOutCheckInServiceImpl" parent="checkOutCheckInService">
-		<property name="nodeService" ref="nodeService" />		
-		<property name="lockService" ref="lockService" />		
-		<property name="copyService" ref="copyService" />	
-   	<property name="ruleService" ref="ruleService" />
-   	<property name="entityListDAO" ref="entityListDAO" />
-   	<property name="entityVersionService" ref="entityVersionService" />
-   	<property name="authenticationService" ref="authenticationService" />
-   	<property name="permissionService" ref="permissionService"/>
-   	<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-	</bean>
-	
 	<!-- CompareEntityService -->
 	<bean id="compareEntityService" class="fr.becpg.repo.entity.comparison.CompareEntityServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -251,7 +238,7 @@
 	</bean>
 	<!-- Entity Policies-->
 	<bean id="autoNumService" class="fr.becpg.repo.entity.impl.AutoNumServiceImpl">
-		<property name="searchService" ref="searchService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="repoService" ref="repoService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
@@ -283,6 +270,15 @@
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
+	</bean>
+	<bean id="entityCheckOutCheckInServicePolicy" class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy" init-method="init">
+		<property name="policyComponent" ref="policyComponent" />			
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="authenticationService" ref="authenticationService" />		
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="entityVersionService" ref="entityVersionService" />		
 	</bean>
 	<!-- WUsedList -->
 	<bean id="wUsedListService" class="fr.becpg.repo.entity.wused.WUsedListServiceImpl">

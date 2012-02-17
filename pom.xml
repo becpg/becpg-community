@@ -61,16 +61,16 @@
 
 	<properties>
 	    <!-- Test -->
-		<alfresco.data.location>/home/quere/Documents/beCPG/dev/workspace/becpg/becpg_data</alfresco.data.location>
+		<alfresco.data.location>/opt/becpg/workspace/becpg/becpg_data</alfresco.data.location>
 		<alfresco.db.host>localhost</alfresco.db.host>
-		<alfresco.db.name>becpg_34d_dev</alfresco.db.name>
+		<alfresco.db.name>becpg_40d_dev</alfresco.db.name>
 		<alfresco.db.username>becpg</alfresco.db.username>
 		<alfresco.db.password>becpg</alfresco.db.password>
-		<alfresco.server>/opt/alfresco-4.0.d</alfresco.server>
+		<alfresco.server>/opt/becpg/alfresco-4.0.d</alfresco.server>
 		<!-- OLAP -->
-		<olap.server>/opt/alfresco-4.0.d</olap.server>
+		<olap.server>/opt/becpg/alfresco-4.0.d</olap.server>
 		<olap.db.host>localhost</olap.db.host>
-		<olap.db.name>becpg_34d_demo</olap.db.name>
+		<olap.db.name>becpg_40d_demo</olap.db.name>
 		<olap.db.username>becpg</olap.db.username>
 		<olap.db.password>becpg</olap.db.password>
 		<olap.db.port>3306</olap.db.port>
