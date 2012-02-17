@@ -106,7 +106,7 @@
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">http://localhost:8080/alfresco/service/becpg/report/datasource?nodeRef=workspace://SpacesStore/3590057a-e7bb-4862-992e-0e8ebad0c2ae</property>
+            <property name="FILELIST">http://localhost:8080/alfresco/service/becpg/report/datasource?nodeRef=workspace://SpacesStore/3675d035-705a-4ac4-9978-fe8612b037a7</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -3507,9 +3507,11 @@
                         <list-property name="filter">
                             <structure>
                                 <property name="operator">eq</property>
-                                <expression name="expr" type="javascript">row["nutListGroup"]</expression>
+                                <expression name="expr" type="javascript">if(row["nutListNut"]=="Lipides" || row["nutListNut"]=="Glucides" || row["nutListNut"]=="Protéines"){
+true
+}</expression>
                                 <simple-property-list name="value1">
-                                    <value>"Groupe 1"</value>
+                                    <value>true</value>
                                 </simple-property-list>
                             </structure>
                         </list-property>
