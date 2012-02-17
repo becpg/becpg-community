@@ -1,6 +1,6 @@
 <alfresco-config>
 
-	<config evaluator="string-compare" condition="WebFramework">
+	<config evaluator="string-compare" condition="WebFramework" replace="true">
 		<web-framework>
 			 <defaults>
 	            <theme>becpg</theme>

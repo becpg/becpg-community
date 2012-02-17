@@ -149,7 +149,7 @@
 	 <indicators>
         <!--  
           <indicator id="entity-tovalidate" index="10">
-            <evaluator>evaluator.becpf.doclib.indicator.entity.tovalidate</evaluator>
+            <evaluator>evaluator.becpg.doclib.indicator.entity.tovalidate</evaluator>
          </indicator> 
          <indicator id="entity-valid" index="10">
             <evaluator>evaluator.becpg.doclib.indicator.product.valid</evaluator>
