@@ -46,7 +46,8 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.PropertyService;
 import fr.becpg.repo.listvalue.EntityListValuePlugin;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
-import fr.becpg.repo.report.template.ReportFormat;
+import fr.becpg.report.client.ReportFormat;
+import fr.becpg.report.client.ReportParams;
 
 /**
  * Class used to render the result of a search in a report
@@ -248,7 +249,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 																
 			
 			Map<String,Object> params = new HashMap<String, Object>();
-			params.put(BeCPGReportEngine.PARAM_FORMAT,reportFormat);
+			params.put(ReportParams.PARAM_FORMAT,reportFormat);
 			
 		
 			

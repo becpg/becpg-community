@@ -1,27 +1,28 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>fr.becpg</groupId>
-    <artifactId>becpg-parent</artifactId>
-    <version>0.1.4</version>
-  </parent>
-  <groupId>fr.becpg</groupId>
-  <artifactId>becpg-report</artifactId>
-  <version>0.1.4</version>
-  <packaging>war</packaging>
-  <name>beCPG report Server</name>
-  <dependencies>
-  		
-  		<!-- Servlet -->
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>fr.becpg</groupId>
+		<artifactId>becpg-parent</artifactId>
+		<version>0.1.4</version>
+	</parent>
+	<groupId>fr.becpg</groupId>
+	<artifactId>becpg-report</artifactId>
+	<version>0.1.4</version>
+	<packaging>war</packaging>
+	<name>beCPG report Server</name>
+	<dependencies>
+
+		<!-- Servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
-  		
+
 		<!-- Birt 3.7 -->
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -29,24 +30,66 @@
 			<version>3.7.1</version>
 			<type>pom</type>
 		</dependency>
-		
+
 		<!-- Logs -->
-  
-<dependency>
-	<groupId>commons-logging</groupId>
-	<artifactId>commons-logging</artifactId>
-	<version>1.1.1</version>
-</dependency>
-  
-  
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  <build>
-    <finalName>becpg-report</finalName>
-  </build>
+ 		<dependency>
+	        <groupId>log4j</groupId>
+	        <artifactId>log4j</artifactId>
+	        <version>1.2.16</version>
+      </dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		
+		<!-- Commons -->
+		
+	  <dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.1.1</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>client</classifier>
+							<includes>
+								<include>**/client/**</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+			     <groupId>org.mortbay.jetty</groupId>
+			     <artifactId>maven-jetty-plugin</artifactId>
+			     <version>6.1.10</version>
+			</plugin>
+			<plugin>
+		        <groupId>org.codehaus.mojo</groupId>
+		        <artifactId>tomcat-maven-plugin</artifactId>
+					
+		</plugin>
+		</plugins>
+	</build>
 </project>

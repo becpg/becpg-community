@@ -27,9 +27,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
-import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.report.client.ReportFormat;
+import fr.becpg.report.client.ReportParams;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -227,7 +228,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 
 				// hide struct comparison
 				params.put(PARAM_VALUE_HIDE_STRUC_COMP, hideStructComparison);
-				params.put(BeCPGReportEngine.PARAM_FORMAT,ReportFormat.PDF);
+				params.put(ReportParams.PARAM_FORMAT,ReportFormat.PDF);
 				
 				beCPGReportEngine.createReport(templateNodeRef, entitiesCmpElt, out , params);
 				

@@ -37,15 +37,11 @@ public class BirtPlatformListener {
 	  
 	  
 
-	public BirtPlatformListener() {
-		super();
-	}
-
 	/**
 	   * Must be called before using the BIRT APIs. After retrieving the configuration from
 	   * {@link XReportConfiguration} will start the BIRT {@link Platform}.
 	   */
-	  public void start() {
+	  public static void start() {
 		  if (logger.isDebugEnabled()) {
 			  logger.debug("Starting Eclipse BIRT platform");
 		  }
@@ -67,7 +63,7 @@ public class BirtPlatformListener {
 	   * (hint, look at the destroy-method property of spring beans).
 	   * 
 	   */
-	  public void shutdown() {
+	  public static void shutdown() {
 	    if (logger.isDebugEnabled()) {
 	      logger.debug("Shutting down Eclipse BIRT platform");
 	    }

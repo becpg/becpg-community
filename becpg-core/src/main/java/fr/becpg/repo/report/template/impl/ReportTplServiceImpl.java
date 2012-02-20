@@ -28,10 +28,10 @@ import org.springframework.core.io.ClassPathResource;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
-import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.report.client.ReportFormat;
 
 public class ReportTplServiceImpl implements ReportTplService{
 

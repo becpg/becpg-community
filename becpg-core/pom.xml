@@ -32,6 +32,32 @@
 			<classifier>api</classifier>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-report</artifactId>
+			<version>0.1.4</version>
+			<classifier>client</classifier>
+			<type>jar</type>
+			<exclusions>
+				<exclusion>
+					<groupId>fr.becpg</groupId>
+					<artifactId>birt-sdk</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		
 		<!-- patch -->

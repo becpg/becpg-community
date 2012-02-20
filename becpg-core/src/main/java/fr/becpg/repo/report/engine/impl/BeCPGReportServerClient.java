@@ -1,6 +1,6 @@
 package fr.becpg.repo.report.engine.impl;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.Map;
@@ -10,151 +10,99 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.dom4j.Element;
+import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
+import fr.becpg.report.client.AbstractBeCPGReportClient;
+import fr.becpg.report.client.ReportFormat;
+import fr.becpg.report.client.ReportParams;
 
-
-//TODO close all stream
-public class BeCPGReportServerClient implements BeCPGReportEngine{
-
-	private static Log logger = LogFactory.getLog(BeCPGReportServerClient.class);
-	
-	private String reportServerUrl;
-	
+/**
+ * beCPGReportServerClient used to interact with reporting server
+ * 
+ * @author matthieu
+ * 
+ */
+public class BeCPGReportServerClient extends AbstractBeCPGReportClient
+		implements BeCPGReportEngine {
 
 	private NodeService nodeService;
-	
-	
+
 	private ContentService contentService;
-
-	public void setReportServerUrl(String reportServerUrl) {
-		this.reportServerUrl = reportServerUrl;
-	}
-
-
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
-
-
 	@Override
-	public void createReport(NodeRef tplNodeRef, Element nodeElt,
-			OutputStream out, Map<String, Object> params) {
-		HttpClient httpclient = getHttpClient();
-
-		try {
-			String pingTemplateUrl = reportServerUrl+"/template?nodeRef="+tplNodeRef.toString();
-			
-			logger.debug("Ping beCPG Report"+ pingTemplateUrl);
-			
-			HttpGet httpGet = new HttpGet(pingTemplateUrl);
-			
-			HttpResponse response = httpclient.execute(httpGet);
-			HttpEntity entity = response.getEntity();
-			
-			Date dateModified = (Date) nodeService.getProperty(tplNodeRef,ContentModel.PROP_MODIFIED);
-			//Timestamp or -1
-			Long timeStamp = Long.parseLong(EntityUtils.toString(entity));
-			if(timeStamp<0 || timeStamp<dateModified.getTime()){
-				sendTemplate(httpclient,tplNodeRef );
-			}
-	
-			String reportUrl = getReportUrl(params);
-			
-			logger.debug("Send Report command"+ reportUrl);
-			
-			HttpPost httpPost = new HttpPost(reportUrl);
-			
-			entity =  new StringEntity("xml=" + nodeElt.asXML(),"UTF-8");
-			
-			httpPost.setEntity(entity);
-			response = httpclient.execute(httpPost);
-			//keep that as we should read the response
-			entity = response.getEntity();
-			if (entity != null) {
-			    try {
-			    	entity.writeTo(out);
-			    } finally {
-			       IOUtils.closeQuietly(entity.getContent());
-			    }
-			}
-			
-			
+	public void createReport(final NodeRef tplNodeRef, final Element nodeElt,
+			final OutputStream out, final Map<String, Object> params) {
+		final ReportFormat format = (ReportFormat) params
+				.get(ReportParams.PARAM_FORMAT);
 		
-			
-			
-		} catch (HttpHostConnectException conEx){
-			logger.warn("Report failed : Cannot connect to report server");
-		} catch (Exception e) {
-			logger.error(e,e);
-		} finally {
-			IOUtils.closeQuietly(out);
+		@SuppressWarnings("unchecked")
+		final Map<String,byte[]> images 
+			= (Map<String, byte[]>) params.get(ReportParams.PARAM_IMAGES);
+		
+		if (format == null) {
+			throw new IllegalArgumentException("Format is a mandatory param");
 		}
-		
-		
-	}
+
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
 	
 	
+		executeInSession(new ReportSessionCallBack() {
 
-	private String getReportUrl(Map<String, Object> params) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+			@Override
+			public void doInReportSession(ReportSession reportSession)
+					throws Exception {
 
+				String templateId = tplNodeRef.toString();
 
+				Date dateModified = (Date) nodeService.getProperty(tplNodeRef,
+						ContentModel.PROP_MODIFIED);
+				// Timestamp or -1
+				Long timeStamp = getTemplateTimeStamp(reportSession, templateId);
+				
+				logger.debug("Received timeStamp :"+timeStamp);
+				
+				if (timeStamp < 0 || timeStamp < dateModified.getTime()) {
+					ContentReader reader = contentService.getReader(tplNodeRef,
+							ContentModel.PROP_CONTENT);
+					saveTemplate(reportSession, reader.getContentInputStream());
 
-	private void sendTemplate(HttpClient httpclient, NodeRef tplNodeRef) throws ClientProtocolException, IOException {
-		String sentTemplateUrl = reportServerUrl+"/template?nodeRef="+tplNodeRef.toString();
+				}
+
+				if(images!=null){
+					for(Map.Entry<String, byte[]> entry : images.entrySet()){
+						sendImage( reportSession,entry.getKey(), new ByteArrayInputStream(entry.getValue()));
+					}
+				}
+				
+				generateReport(
+						reportSession,
+						format.toString(),
+						new ByteArrayInputStream(nodeElt.asXML().getBytes()),
+						out);
+			}
+
+		});
 		
-		logger.debug("Send Template command"+ sentTemplateUrl);
+		if (logger.isDebugEnabled()) {
+			watch.stop();
+			logger.debug( " Report generated by server in  "
+					+ watch.getTotalTimeSeconds() + " seconds ");
+		}
 
-		HttpPost httpPost = new HttpPost(sentTemplateUrl);
-
-
-		ContentReader reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
-	
-		
-		HttpEntity entity =  new InputStreamEntity(reader.getContentInputStream(), reader.getSize());
-		
-		httpPost.setEntity(entity);
-		httpclient.execute(httpPost);
-		
-	}
-
-	private HttpClient getHttpClient() {
-//		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(olapUser, olapPassword);
-//		CredentialsProvider credsProvider = new BasicCredentialsProvider();
-//		credsProvider.setCredentials(
-//			    new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), 
-//			    creds);
-//		
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-//		httpclient.setCredentialsProvider(credsProvider);
-		
-		
-		return httpclient;
 	}
 
 }

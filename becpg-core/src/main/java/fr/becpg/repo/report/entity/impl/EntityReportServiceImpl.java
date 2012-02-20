@@ -1,5 +1,7 @@
 package fr.becpg.repo.report.entity.impl;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,9 +30,10 @@ import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
 import fr.becpg.repo.report.entity.EntityReportService;
-import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.report.client.ReportFormat;
+import fr.becpg.report.client.ReportParams;
 
 public class EntityReportServiceImpl implements EntityReportService{
 
@@ -237,8 +240,8 @@ public class EntityReportServiceImpl implements EntityReportService{
 		}		
 		
 		// calculate the visible datalists
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
-		List<QName> existingLists = entityListDAO.getExistingListsQName(listContainerNodeRef);		
+	//	NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
+	//	List<QName> existingLists = entityListDAO.getExistingListsQName(listContainerNodeRef);		
 		
 		// generate reports
 		for(NodeRef tplNodeRef : tplsNodeRef){        			
@@ -248,13 +251,14 @@ public class EntityReportServiceImpl implements EntityReportService{
 				
 				//Run report		
 				ContentWriter writer = getDocumentContentWriter(nodeRef, tplNodeRef);
-				String mimetype = mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF);
-				writer.setMimetype(mimetype);
+						
 				if(writer != null){
+					String mimetype = mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF);
+					writer.setMimetype(mimetype);
 					Map<String,Object> params = new HashMap<String, Object>();
 
-					params.put(BeCPGReportEngine.PARAM_IMAGES,images);
-					params.put(BeCPGReportEngine.PARAM_FORMAT,ReportFormat.PDF);
+					params.put(ReportParams.PARAM_IMAGES,images);
+					params.put(ReportParams.PARAM_FORMAT,ReportFormat.PDF);
 					
 					
 //					// hide all datalists and display visible ones
@@ -263,13 +267,14 @@ public class EntityReportServiceImpl implements EntityReportService{
 //							params.put((String)key, Boolean.TRUE);
 //						}
 //					}							
-//					
-					for(QName existingList : existingLists){
-						params.put(existingList.getLocalName() + PARAM_VALUE_HIDE_CHAPTER_SUFFIX, Boolean.FALSE);
-					}
-					
+////					
+//					for(QName existingList : existingLists){
+//						params.put(existingList.getLocalName() + PARAM_VALUE_HIDE_CHAPTER_SUFFIX, Boolean.FALSE);
+//					}
 					
 					beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params );
+				 
+					
 					
 				}  				
 			}

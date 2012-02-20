@@ -186,11 +186,11 @@
 	<modules>
 		<module>becpg-bootstrap/alfresco-sdk</module>
 		<module>becpg-bootstrap/birt-sdk</module>
+		<module>becpg-report</module>
 		<module>becpg-core</module>
 		<module>becpg-share</module>
 		<module>becpg-olap</module>
 		<module>distribution</module>
-    <module>becpg-report</module>
   </modules>
 
 	<profiles>

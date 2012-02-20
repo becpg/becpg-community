@@ -9,7 +9,7 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.repo.report.template.ReportFormat;
+import fr.becpg.report.client.ReportFormat;
 
 // TODO: Auto-generated Javadoc
 /**

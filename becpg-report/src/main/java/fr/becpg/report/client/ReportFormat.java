@@ -1,4 +1,4 @@
-package fr.becpg.repo.report.template;
+package fr.becpg.report.client;
 
 public enum ReportFormat {
 	

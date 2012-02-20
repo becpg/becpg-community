@@ -53,9 +53,9 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.report.client.ReportFormat;
 
 /**
  * Initialize the folders of the repository (create folder, rules, WF and system

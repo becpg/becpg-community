@@ -23,9 +23,9 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.report.search.ExportSearchService;
-import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.web.scripts.search.AbstractSearchWebSrcipt;
+import fr.becpg.report.client.ReportFormat;
 
 /**
  * Webscript that send the result of a search in a report

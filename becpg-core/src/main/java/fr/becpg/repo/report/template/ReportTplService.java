@@ -6,6 +6,8 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.report.client.ReportFormat;
+
 public interface ReportTplService {
 
 	public static final String PARAM_VALUE_DESIGN_EXTENSION = ".rptdesign";

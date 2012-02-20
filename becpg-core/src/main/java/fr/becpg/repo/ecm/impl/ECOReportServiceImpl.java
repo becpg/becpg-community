@@ -23,9 +23,10 @@ import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
-import fr.becpg.repo.report.template.ReportFormat;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.report.client.ReportFormat;
+import fr.becpg.report.client.ReportParams;
 
 public class ECOReportServiceImpl implements ECOReportService {
 
@@ -91,7 +92,7 @@ public class ECOReportServiceImpl implements ECOReportService {
 				contentWriter.setMimetype(mimetype);
 				
 				Map<String,Object> params = new HashMap<String, Object>();
-				params.put(BeCPGReportEngine.PARAM_FORMAT,ReportFormat.PDF);
+				params.put(ReportParams.PARAM_FORMAT,ReportFormat.PDF);
 				
 				beCPGReportEngine.createReport(tplNodeRef, ecoXmlDataElt, contentWriter.getContentOutputStream(), params);
 					

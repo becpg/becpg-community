@@ -5,6 +5,11 @@
 <web-app>
 	<display-name>beCPG report Server</display-name>
 
+
+	<listener>
+		<listener-class>fr.becpg.report.web.listener.StartupListener</listener-class>
+	</listener>
+
 	<servlet>
 		<servlet-name>report</servlet-name>
 		<servlet-class>fr.becpg.report.web.ReportServlet</servlet-class>
@@ -25,4 +30,26 @@
 		<servlet-name>template</servlet-name>
 		<url-pattern>/template</url-pattern>
 	</servlet-mapping>
+	
+<!-- 	Enable auth
+	<security-constraint>
+			<display-name>beCPG report authentication</display-name>
+			<web-resource-collection>
+				<web-resource-name>Secured urls</web-resource-name>
+				<url-pattern>/*</url-pattern>
+			</web-resource-collection>
+			<auth-constraint>
+				<role-name>report</role-name>
+			</auth-constraint>
+		</security-constraint>
+		<login-config>
+		 <auth-method>BASIC</auth-method>
+		 <realm-name>beCPG report server</realm-name>
+		</login-config>
+		<security-role>
+			<description>Report user</description>
+			<role-name>report</role-name>
+		</security-role>
+ -->
+
 </web-app>

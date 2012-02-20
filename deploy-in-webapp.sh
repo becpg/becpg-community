@@ -59,3 +59,12 @@ echo `pwd`
 ./deploy.sh
 cd $BECPG_OLAP_ROOT/target
 rm -rf becpg-olap-*
+
+
+
+echo "**********************************************************"
+echo "Deploy Report Server"
+echo "**********************************************************"
+
+rm -rf $SERVER/webapps/becpg-report
+cp $BECPG_ROOT/becpg-report/target/becpg-report-$BECPG_VERSION.war $SERVER/webapps/becpg-report.war
