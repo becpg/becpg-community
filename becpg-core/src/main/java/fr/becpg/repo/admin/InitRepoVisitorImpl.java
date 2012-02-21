@@ -343,7 +343,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 							folderNodeRef,
 							ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-									(String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT,
+									QName.createValidLocalName((String) properties.get(ContentModel.PROP_NAME))), ContentModel.TYPE_CONTENT,
 							properties).getChildRef();
 
 					ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);

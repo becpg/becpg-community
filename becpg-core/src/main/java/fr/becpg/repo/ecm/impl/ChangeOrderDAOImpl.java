@@ -71,7 +71,7 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 		properties.put(ECMModel.PROP_ECO_TYPE, ecoData.getEcoType());
 		
 		NodeRef ecoNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, ecoData.getName()), 
+								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(ecoData.getName())), 
 								ECMModel.TYPE_ECO, properties).getChildRef();
 		
 		// calculated characts

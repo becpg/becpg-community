@@ -125,7 +125,7 @@ public abstract class AbstractInitVisitorImpl {
 	    	properties.put(ContentModel.PROP_NAME, folderName);	    		    	
 	    	
 	    	folderNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
-	    											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, folderPath), 
+	    											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(folderPath)), 
 	    											ContentModel.TYPE_FOLDER, properties).getChildRef();
 	    	
 	    	visitRules(folderNodeRef, folderPath);

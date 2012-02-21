@@ -75,7 +75,7 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 				parentNodeRef,
 				ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-						cpData.getName()), SecurityModel.TYPE_ACL_GROUP,
+						QName.createValidLocalName(cpData.getName())), SecurityModel.TYPE_ACL_GROUP,
 				properties).getChildRef();
 
 		// acl entry list
@@ -236,7 +236,7 @@ public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 								.createNode(
 										aclsListNodeRef,
 										ContentModel.ASSOC_CONTAINS,
-										QName.createQName(
+								QName.createQName(
 												NamespaceService.CONTENT_MODEL_1_0_URI,
 												GUID.generate()),
 										SecurityModel.TYPE_ACL_ENTRY,

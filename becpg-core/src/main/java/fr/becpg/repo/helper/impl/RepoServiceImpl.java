@@ -104,7 +104,7 @@ public class RepoServiceImpl implements RepoService {
 	    	properties.put(ContentModel.PROP_NAME, name);	    		    	
 	    	
 	    	folderNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
-	    											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, path), 
+	    											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(path)), 
 	    											ContentModel.TYPE_FOLDER, properties).getChildRef();	    		 
 		}		
 

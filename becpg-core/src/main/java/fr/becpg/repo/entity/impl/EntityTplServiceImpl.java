@@ -91,7 +91,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 					if(documentsFolderNodeRef == null){			
 						nodeService.createNode(entityTplFolderNodeRef, 
 												ContentModel.ASSOC_CONTAINS, 
-												QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, subFolder), 
+												QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(subFolder)), 
 												ContentModel.TYPE_FOLDER, 
 												properties).getChildRef();
 					}								

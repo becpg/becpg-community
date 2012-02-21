@@ -253,7 +253,7 @@ public class AutoNumServiceImpl implements AutoNumService {
     	properties.put(BeCPGModel.PROP_AUTO_NUM_PROPERTY_NAME, propertyName);
     	properties.put(BeCPGModel.PROP_AUTO_NUM_VALUE, autoNumValue);
     	properties.put(BeCPGModel.PROP_AUTO_NUM_PREFIX, autoNumPrefix);
-        NodeRef autoNumNodeRef = nodeService.createNode(autoNumFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), BeCPGModel.TYPE_AUTO_NUM, properties).getChildRef();
+        NodeRef autoNumNodeRef = nodeService.createNode(autoNumFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), BeCPGModel.TYPE_AUTO_NUM, properties).getChildRef();
         
         logger.debug("###created autonum: " + className + " - " + propertyName + " - " + autoNumNodeRef);
         return autoNumValue;

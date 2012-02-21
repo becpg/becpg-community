@@ -62,7 +62,7 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
 		properties.put(QualityModel.PROP_QC_ORDER_ID, qcData.getOrderId());
 		
 		NodeRef qcNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, qcData.getName()), 
+								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(qcData.getName())), 
 								QualityModel.TYPE_QUALITY_CONTROL, properties).getChildRef();
 		
 		associationService.update(qcNodeRef, QualityModel.ASSOC_QC_PRODUCT, qcData.getProduct());

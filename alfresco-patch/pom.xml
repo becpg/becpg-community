@@ -79,6 +79,7 @@
 	                    <exclude>org/alfresco/repo/forms/processor/node/AddChildAssocCommand**</exclude>
 	                    <exclude>org/alfresco/repo/forms/processor/node/RemoveAssocCommand**</exclude>
 	                    <exclude>org/alfresco/repo/forms/processor/node/RemoveChildAssocCommand**</exclude>
+	                    <exclude>org/alfresco/repo/jscript/ScriptNode**</exclude>
 	                  </excludes>
 	                </filter>
                 </filters>

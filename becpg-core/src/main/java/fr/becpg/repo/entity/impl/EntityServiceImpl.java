@@ -403,7 +403,7 @@ public class EntityServiceImpl implements EntityService {
 		} else {
 			logger.debug("Create new entity");
 			ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, entityName), entityType, props)
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props)
 					.getChildRef();
 		}
 		return ret;
