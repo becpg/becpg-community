@@ -1,6 +1,7 @@
 package fr.becpg.repo.report.engine.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.Map;
@@ -10,11 +11,13 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.http.client.ClientProtocolException;
 import org.dom4j.Element;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.report.client.AbstractBeCPGReportClient;
+import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
@@ -41,7 +44,7 @@ public class BeCPGReportServerClient extends AbstractBeCPGReportClient
 
 	@Override
 	public void createReport(final NodeRef tplNodeRef, final Element nodeElt,
-			final OutputStream out, final Map<String, Object> params) {
+			final OutputStream out, final Map<String, Object> params) throws ReportException {
 		final ReportFormat format = (ReportFormat) params
 				.get(ReportParams.PARAM_FORMAT);
 		
@@ -64,7 +67,7 @@ public class BeCPGReportServerClient extends AbstractBeCPGReportClient
 
 			@Override
 			public void doInReportSession(ReportSession reportSession)
-					throws Exception {
+					throws ReportException, ClientProtocolException, IOException {
 
 				String templateId = tplNodeRef.toString();
 

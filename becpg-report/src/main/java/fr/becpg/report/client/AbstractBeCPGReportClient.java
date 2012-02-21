@@ -186,7 +186,7 @@ public abstract class AbstractBeCPGReportClient {
 	 */
 	
 	
-	protected void executeInSession(ReportSessionCallBack callBack){
+	protected void executeInSession(ReportSessionCallBack callBack) throws ReportException{
 		HttpClient httpClient = getHttpClient();
 		
 		ReportSession reportSession = new ReportSession(httpClient);
@@ -195,16 +195,18 @@ public abstract class AbstractBeCPGReportClient {
 			callBack.doInReportSession(reportSession);
 		}  catch (HttpHostConnectException conEx){
 			logger.warn("Report failed : Cannot connect to report server");
-		} catch (Exception e) {
-			logger.error(e,e);
-		}		
+		} catch (ClientProtocolException e) {
+			throw new ReportException(e);
+		} catch (IOException e) {
+			throw new ReportException(e);
+		} 	
 		
 	}
 	
 	
 	protected interface ReportSessionCallBack {
 
-		void doInReportSession(ReportSession reportSession) throws Exception;
+		void doInReportSession(ReportSession reportSession) throws ClientProtocolException, IOException, ReportException;
 
 	}
 	

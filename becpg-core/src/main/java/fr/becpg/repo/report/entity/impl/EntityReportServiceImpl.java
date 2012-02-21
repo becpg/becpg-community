@@ -1,7 +1,5 @@
 package fr.becpg.repo.report.entity.impl;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +30,7 @@ import fr.becpg.repo.report.entity.EntityReportExtractor;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
@@ -278,7 +277,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 					
 				}  				
 			}
-			catch(Exception e){
+			catch(ReportException e){
 				logger.error("Failed to execute report for template : "+ tplNodeRef,  e);
 			} 
 		}

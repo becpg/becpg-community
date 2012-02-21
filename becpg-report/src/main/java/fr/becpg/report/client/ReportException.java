@@ -1,5 +1,6 @@
 package fr.becpg.report.client;
 
+
 public class ReportException extends Exception {
 
 
@@ -12,6 +13,12 @@ public class ReportException extends Exception {
 
 	public ReportException(String message) {
 		super(message);
+	}
+
+
+
+	public ReportException(Exception e) {
+		super(e);
 	}
 
 }
