@@ -126,8 +126,8 @@ public class CheckOutCheckInWebScriptTest extends BaseWebScriptTest{
 				}},false,true);
 		 
 			//Call webscript on raw material to check out
-			String url = "/becpg/entity/checkout/node/" + rawMaterialNodeRef.toString().replace(":/", "");
-			String data = "";
+			String url = "/slingshot/doclib/action/checkout/node/" + rawMaterialNodeRef.toString().replace(":/", "");
+			String data = "{}";
 			logger.debug("url : " + url);				
 
 			Response response = sendRequest(new PostRequest(url, data, "application/json"), 200, "admin");
@@ -153,7 +153,7 @@ public class CheckOutCheckInWebScriptTest extends BaseWebScriptTest{
 			 assertNotNull("working copy should exist", workingCopyNodeRef);
 			 
 			 //Call webscript on raw material to check in
-			 url = "/becpg/entity/checkin/node/" + workingCopyNodeRef.toString().replace(":/", "");			
+			 url = "/slingshot/doclib/action/checkin/node/" + workingCopyNodeRef.toString().replace(":/", "");			
 			 logger.debug("url : " + url);				
 
 			 response = sendRequest(new PostRequest(url, data, "application/json"), 200, "admin");
@@ -188,8 +188,8 @@ public class CheckOutCheckInWebScriptTest extends BaseWebScriptTest{
 				}},false,true);
 		 
 			//Call webscript on raw material to check out
-			String url = "/becpg/entity/checkout/node/" + rawMaterialNodeRef.toString().replace(":/", "");
-			String data = "";
+			String url = "/slingshot/doclib/action/checkout/node/" + rawMaterialNodeRef.toString().replace(":/", "");
+			String data = "{}";
 			logger.debug("url : " + url);				
 
 			Response response = sendRequest(new PostRequest(url, data, "application/json"), 200, "admin");
@@ -216,7 +216,7 @@ public class CheckOutCheckInWebScriptTest extends BaseWebScriptTest{
 			 assertNotNull("working copy should exist", workingCopyNodeRef);
 			
 			 //Call webscript on raw material to cancel check out
-			 url = "/becpg/entity/cancel-checkout/node/" + workingCopyNodeRef.toString().replace(":/", "");			
+			 url = "/slingshot/doclib/action/cancel-checkout/node/" + workingCopyNodeRef.toString().replace(":/", "");			
 			 logger.debug("url : " + url);				
 
 			 response = sendRequest(new PostRequest(url, data, "application/json"), 200, "admin");

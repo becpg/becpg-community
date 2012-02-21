@@ -5,6 +5,7 @@ package fr.becpg.repo.web.scripts.listvalue;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.web.scripts.BaseWebScriptTest;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -43,6 +44,8 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 	
 	private TransactionService transactionService;
 	
+	private AuthenticationComponent authenticationComponent;
+	
 	/* (non-Javadoc)
 	 * @see org.alfresco.repo.web.scripts.BaseWebScriptTest#setUp()
 	 */
@@ -54,6 +57,9 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 		fileFolderService = (FileFolderService)  getServer().getApplicationContext().getBean("fileFolderService");
 		repositoryHelper = (Repository)  getServer().getApplicationContext().getBean("repositoryHelper");
 		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
+		authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
+		
+		authenticationComponent.setCurrentUser("admin");
 		
 		super.setUp();		
 	}

@@ -648,7 +648,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			/* -- The client --*/
 			
 			
-			client = entityService.createOrCopyFrom(folderNodeRef, null, BeCPGModel.TYPE_CLIENT, "Test client");	
+			client = entityService.createOrCopyFrom(null, folderNodeRef, BeCPGModel.TYPE_CLIENT, "Test client");	
 			
 			/*-- The finishProduct --*/
 			

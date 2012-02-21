@@ -132,7 +132,7 @@ public class CreateProduct extends JBPMSpringActionHandler {
 						packagingNodeRef = packagingNode.getNodeRef();
 					}
 
-					NodeRef productNodeRef = entityService.createOrCopyFrom(parentNodeRef, sourceNodeRef, entityType,
+					NodeRef productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, parentNodeRef, entityType,
 							entityName);
 
 					// profitability

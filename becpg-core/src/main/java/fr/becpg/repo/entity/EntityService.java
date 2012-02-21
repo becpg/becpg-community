@@ -56,13 +56,13 @@ public interface EntityService {
 
 	/**
 	 * Create or copy an entity
-	 * @param parentNodeRef
 	 * @param sourceNodeRef
+	 * @param parentNodeRef
 	 * @param entityType
 	 * @param entityName
 	 * @return
 	 */
-	public NodeRef createOrCopyFrom(NodeRef parentNodeRef, NodeRef sourceNodeRef, QName entityType, String entityName);
+	public NodeRef createOrCopyFrom(NodeRef sourceNodeRef, NodeRef parentNodeRef, QName entityType, String entityName);
 
 
 	

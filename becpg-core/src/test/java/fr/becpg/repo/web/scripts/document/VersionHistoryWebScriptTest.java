@@ -8,6 +8,7 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.web.scripts.BaseWebScriptTest;
+import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -59,6 +60,8 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
     /** The product version service. */
     private EntityVersionService entityVersionService;
     
+    private CheckOutCheckInService checkOutCheckInService;
+    
 	/** The raw material node ref. */
 	private NodeRef rawMaterialNodeRef = null;
 	
@@ -78,6 +81,8 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
 		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
 		entityVersionService = (EntityVersionService) getServer().getApplicationContext().getBean("entityVersionService");
 		repositoryHelper = (Repository) getServer().getApplicationContext().getBean("repositoryHelper");
+		checkOutCheckInService = (CheckOutCheckInService) getServer().getApplicationContext().getBean("checkOutCheckInService");
+		
 		
 	    // Authenticate as user
 	    this.authenticationComponent.setCurrentUser(USER_ADMIN);
@@ -127,16 +132,18 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
 	 				rawMaterial.setName("Raw material");
 	 				rawMaterialNodeRef = productDAO.create(tempFolder, rawMaterial, null);	 					
 	 				
-	 				entityVersionService.createVersion(rawMaterialNodeRef, null);						
-					entityVersionService.createVersion(rawMaterialNodeRef, null);
-					
+	 				NodeRef checkedOutNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+	 				NodeRef checkedInNodeRef = checkOutCheckInService.checkin(checkedOutNodeRef, null);
+	 				
+	 				NodeRef checkedOutNodeRef2 = checkOutCheckInService.checkout(checkedInNodeRef);
+	 				checkOutCheckInService.checkin(checkedOutNodeRef2, null);
 	 				
 					return null;
 
 				}},false,true);
 		 
 			//Call webscript on raw material to check out
-			String url = "/becpg/document/version-history/node/" + rawMaterialNodeRef.toString().replace(":/", "");
+			String url = "/api/version?nodeRef=" + rawMaterialNodeRef;
 			logger.debug("url : " + url);				
 
 			Response response = sendRequest(new GetRequest(url), 200, "admin");

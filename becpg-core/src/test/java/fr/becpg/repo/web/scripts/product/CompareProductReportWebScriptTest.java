@@ -144,12 +144,12 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
 				
 		nodeService = (NodeService) getServer().getApplicationContext().getBean("NodeService");
 		fileFolderService = (FileFolderService) getServer().getApplicationContext().getBean("FileFolderService");
-			authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
+		authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
 		productDAO = (ProductDAO) getServer().getApplicationContext().getBean("productDAO");
 		productDictionaryService = (ProductDictionaryService) getServer().getApplicationContext().getBean("productDictionaryService");
 		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
 		repositoryHelper = (Repository) getServer().getApplicationContext().getBean("repositoryHelper");
-			repoService = (RepoService) getServer().getApplicationContext().getBean("repoService");
+		repoService = (RepoService) getServer().getApplicationContext().getBean("repoService");
 		reportTplService = (ReportTplService) getServer().getApplicationContext().getBean("reportTplService");
 		
 	    // Authenticate as user

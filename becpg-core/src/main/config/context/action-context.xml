@@ -14,8 +14,4 @@
      	<property name="nodeService" ref="nodeService" />
     </bean>  
     
-  	<bean id="classify-product" class="fr.becpg.repo.action.executer.ClassifyProductActionExecuter" parent="action-executer">
-      <property name="productService" ref="productService" />      
-    </bean>
-    
 </beans>
