@@ -741,19 +741,11 @@ public class ImportServiceTest extends RepoBaseTestCase {
  		    	/*
  		    	 * Disable product policy to avoid productCode policy
  		    	 */
- 		    	policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_PRODUCT);
- 		    	
- 		    	try{
+ 		    	policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY);
  		    		
- 		    		logger.debug("Start import");
- 	 				importService.importText(nodeRef, true, false);
- 	 				
- 		    	}
- 		    	finally{
- 		    		policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_PRODUCT);
- 		    	}
- 		    	
- 				
+	    		logger.debug("Start import");
+ 				importService.importText(nodeRef, true, false);
+ 	 			
  				/*-- check imported values --*/
  				tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
  				assertNotNull("Temp folder should exist", tempNodeRef);
@@ -767,14 +759,14 @@ public class ImportServiceTest extends RepoBaseTestCase {
 																null, namespaceService, false);
  				assertEquals("classif folder should exist", (int)1 , nodes.size());
  				productsNodeRef = nodes.get(0);
- 				assertEquals("3 rm should exist", (int)3 , fileFolderService.listFiles(productsNodeRef).size());
+ 				assertEquals("3 rm should exist", (int)3 , fileFolderService.listFolders(productsNodeRef).size());
  				
  				nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), 
 						PATH_CLASSIF_FOLDER_FP, 
 						null, namespaceService, false);
 				assertEquals("classif folder should exist", (int)1 , nodes.size());
 				productsNodeRef = nodes.get(0);
-				assertEquals("1 finished product should exist", (int)1 , fileFolderService.listFiles(productsNodeRef).size());
+				assertEquals("1 finished product should exist", (int)1 , fileFolderService.listFolders(productsNodeRef).size());
  				
  				
  				/*
@@ -782,9 +774,12 @@ public class ImportServiceTest extends RepoBaseTestCase {
  				 */
  				
  				NodeRef product1NodeRef = nodeService.getChildByName(productsNodeRef, ContentModel.ASSOC_CONTAINS, "Saumon surgelé 80x20x4");
+ 				if(product1NodeRef != null && nodeService.getType(product1NodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)){
+ 					product1NodeRef = nodeService.getChildByName(product1NodeRef, ContentModel.ASSOC_CONTAINS, "Saumon surgelé 80x20x4");
+ 				}
  				assertNotNull("product 1 should exist", product1NodeRef);
  				List<QName> dataLists = new ArrayList<QName>();
- 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+ 				dataLists.add(BeCPGModel.TYPE_COMPOLIST); 				
  				ProductData productData = productDAO.find(product1NodeRef, dataLists); 				 			
  				
  				/*-- check productLists --*/
