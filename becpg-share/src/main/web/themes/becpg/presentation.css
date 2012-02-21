@@ -458,6 +458,13 @@ span.navigation-separator-alt
 
 /* Share forms */
 
+
+.yui-gb .form-field input[type="text"]
+{
+   width: 15em;
+}
+
+
 .share-form .form-container .form-fields
 {
    border: 1px solid #c2c2c2 !important;
@@ -1195,4 +1202,10 @@ div.theme-bg-color-7
    cursor: pointer;
    margin-left: 2px;
    text-decoration: none;
+}
+
+/** beCPG **/
+
+.footer-com .copyright img {
+   display:none;
 }

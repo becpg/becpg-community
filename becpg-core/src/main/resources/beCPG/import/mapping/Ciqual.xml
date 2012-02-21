@@ -96,9 +96,9 @@
 		</nodeColumnKeys>
 		<columns>
 	
-		<column id="img1Path" attribute="cm:content" path="Images/produit.jpg"
+		<column id="img1Path" attribute="cm:content" path="Images/logo.jpg"
 					type="File" />
-		<column id="img1Title" attribute="cm:title" path="Images/produit.jpg"
+		<column id="img1Title" attribute="cm:title" path="Images/logo.jpg"
 					type="File" />	
 		</columns>
 	</mapping>
@@ -109,9 +109,9 @@
 		</nodeColumnKeys>
 		<columns>
 	
-		<column id="img1Path" attribute="cm:content" path="Images/produit.jpg"
+		<column id="img1Path" attribute="cm:content" path="Images/logo.jpg"
 					type="File" />
-		<column id="img1Title" attribute="cm:title" path="Images/produit.jpg"
+		<column id="img1Title" attribute="cm:title" path="Images/logo.jpg"
 					type="File" />	
 		</columns>
 	</mapping>
