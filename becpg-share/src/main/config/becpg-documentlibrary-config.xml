@@ -239,6 +239,17 @@
 		            <evaluator>evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
 		         </action>
 		         
+		         
+		         <action id="entity-edit-metadata" type="pagelink" label="actions.document.edit-metadata">
+		            <param name="page">edit-metadata?nodeRef={node.nodeRef}</param>
+		            <permissions>
+		               <permission allow="true">Write</permission>
+		            </permissions>
+		            <evaluator>evaluator.becpg.doclib.action.entity</evaluator><!-- 
+		            <evaluator negate="true">evaluator.doclib.action.isLocked</evaluator> -->
+		         </action>
+		         
+		         
 		         <!-- remove existing on entity -->
 
 				<action id="document-change-type">
@@ -289,19 +300,22 @@
 					</evaluator>
 				</action>
 
+				<action id="document-change-type">
+					<evaluator negate="true">evaluator.becpg.doclib.action.entity
+					</evaluator>
+				</action>
 
-	<!-- Change type -->
-	<action id="document-change-type">
-		<evaluator negate="true">evaluator.becpg.doclib.action.entity
-		</evaluator>
-	</action>
-		         
+         <action id="document-edit-properties" >
+         		<evaluator negate="true">evaluator.becpg.doclib.action.entity</evaluator>
+         </action>
+
 		         
 		</actions>
 		
 		<actionGroups>
 			<actionGroup id="document-browse">
 	            <action index="10" id="entity-view-datalist" /> 
+	            <action index="130" id="entity-edit-metadata"/>
 	         </actionGroup>
 
 	         <actionGroup id="document-details">

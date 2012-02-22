@@ -14,7 +14,7 @@
 	/**
 	 * Alfresco Slingshot aliases
 	 */
-	var $html = Alfresco.util.encodeHTML, $combine = Alfresco.util.combinePaths, $userProfile = Alfresco.util.userProfileLink;
+	var $html = Alfresco.util.encodeHTML, $combine = Alfresco.util.combinePaths, $userProfile = Alfresco.util.userProfileLink,$links = Alfresco.util.activateLinks;
 	/**
 	 * BulkEdit constructor.
 	 * 
@@ -558,15 +558,15 @@
 														|| datalistColumn.name == "bcpg:filReqType") {
 													if (data.displayValue == reqTypeForbidden) {
 														html += '<span class="reqTypeForbidden">'
-																+ $html(data.displayValue) + '</span>';
+																+ $links($html(data.displayValue)) + '</span>';
 													} else if (data.displayValue == reqTypeTolerated) {
 														html += '<span class="reqTypeTolerated">'
-																+ $html(data.displayValue) + '</span>';
+																+ $links($html(data.displayValue)) + '</span>';
 													} else if (data.displayValue == reqTypeInfo) {
-														html += '<span class="reqTypeInfo">' + $html(data.displayValue)
+														html += '<span class="reqTypeInfo">' + $links($html(data.displayValue))
 																+ '</span>';
 													} else {
-														html += $html(data.displayValue);
+														html += $links($html(data.displayValue));
 													}
 												} else if (datalistColumn.name == "qa:sdlControlPoint"
 														|| datalistColumn.name == "qa:slControlPoint") {
@@ -575,7 +575,7 @@
 																	+ data.value) + '">' + $html(data.displayValue)
 															+ '</a></span>';
 												} else if (datalistColumn.name == "qa:clCharacts") {
-													html += '<span class="control">' + $html(data.displayValue)
+													html += '<span class="control">' +$links($html(data.displayValue))
 															+ '</span>';
 												} else if (datalistColumn.name == "bcpg:code"
 														|| datalistColumn.name == "cm:name") {
@@ -586,7 +586,7 @@
 												}
 
 												else {
-													html += $html(data.displayValue);
+													html += $links($html(data.displayValue));
 												}
 
 												break;
@@ -649,13 +649,22 @@
 										regexp = column.constraints[i].parameters.expressions;
 										break;
 									case "LIST":
+										var dropdownOptions = [];
+										for(var j in column.constraints[i].parameters.allowedValues){
+											var val = column.constraints[i].parameters.allowedValues[j].split("|");
+											if(val.length>1){
+											  dropdownOptions.push({label:val[1],value:val[0]});
+											} else {
+											  dropdownOptions.push(val[0]);
+											}
+										 }
 										if (column.repeating) {
 											editor = new YAHOO.widget.CheckboxCellEditor({
-												checkboxOptions : column.constraints[i].parameters.allowedValues
+												checkboxOptions : dropdownOptions
 											});
 										} else {
 											editor = new YAHOO.widget.DropdownCellEditor({
-												dropdownOptions : column.constraints[i].parameters.allowedValues
+												dropdownOptions : dropdownOptions
 											});
 										}
 										break;
