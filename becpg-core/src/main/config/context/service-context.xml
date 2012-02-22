@@ -20,7 +20,6 @@
          <list>
          	 <value>alfresco/module/${pom.artifactId}/model/becpgModel</value>
              <value>alfresco/module/${pom.artifactId}/messages/paths</value>
-             <value>alfresco/module/${pom.artifactId}/messages/product-types</value>
              <value>alfresco/module/${pom.artifactId}/messages/states</value>
              <value>alfresco/module/${pom.artifactId}/messages/becpg-messages</value>
              <value>alfresco/module/${pom.artifactId}/messages/groups</value>

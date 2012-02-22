@@ -73,10 +73,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/product/productState.ftl" />
-					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo"/>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:clients" force="true" set="mainInfo">
@@ -185,10 +182,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/product/productState.ftl" />
-					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo"/>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					
 					<!-- categories -->
@@ -283,10 +277,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/product/productState.ftl" />
-					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo"/>
 					<field id="bcpg:productUnit" set="mainInfo"/>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />					
 					<field id="rep:reportTpls" set="mainInfo">
@@ -391,10 +382,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/product/productState.ftl" />
-					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo"/>
 					<field id="bcpg:productUnit" set="mainInfo"/>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
@@ -506,10 +494,7 @@
 					</field>					
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:productState" read-only="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/product/productState.ftl" />
-					</field>	
+					<field id="bcpg:productState" read-only="true" set="mainInfo"/>	
 					<field id="bcpg:productUnit" set="mainInfo"/>
 					<field id="bcpg:suppliers" force="true" set="mainInfo">
 						<control
@@ -620,10 +605,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/product/productState.ftl" />
-					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo"/>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />					
 					<field id="rep:reportTpls" set="mainInfo">
 						<control
@@ -849,10 +831,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo">
-						<control
-							template="/fr/becpg/components/form/controls/product/productState.ftl" />
-					</field>
+					<field id="bcpg:productState" read-only="true" set="mainInfo"/>
 					<field id="bcpg:productUnit" set="mainInfo"/>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />

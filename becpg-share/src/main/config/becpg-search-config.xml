@@ -92,12 +92,7 @@
 					<field id="bcpg:productHierarchy2" set="product-criteria">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:productState" set="product-criteria">
-						<control
-							template="/fr/becpg/components/form/controls/product/productState.ftl">
-							<control-param name="searchMode">true</control-param>
-						</control>
-					</field>
+					<field id="bcpg:productState" set="product-criteria"/>
 					<field id="bcpg:code" set="product-criteria" />
 					<field id="bcpg:erpCode" set="product-criteria" />
 

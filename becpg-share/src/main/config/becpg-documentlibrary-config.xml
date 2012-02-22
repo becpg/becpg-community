@@ -94,7 +94,6 @@
 
 		<types>
 			<type name="cm:content">
-				<subtype name="bcpg:productTemplate" />
 				<subtype name="bcpg:productMicrobioCriteria" />
 				<subtype name="bcpg:productSpecification" />
 

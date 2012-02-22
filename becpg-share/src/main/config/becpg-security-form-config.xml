@@ -46,12 +46,7 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="sec:aclPermission">
-						<control
-							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">read|Lecture seule,write|Lecture et écriture</control-param>
-						</control>
-					</field>
+					<field id="sec:aclPermission"/>
 				</appearance>
 			</form>
 		</forms>
