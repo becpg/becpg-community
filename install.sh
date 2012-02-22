@@ -18,25 +18,25 @@ fct_echo() {
 # Fonction de test de la présence du répertoire d'installation
 fct_exist() {
     if [ -e $1 ] ;
-    then fct_echo "# [OK] Répertoire $1 présent";
-    else fct_echo "# [KO] Répertoire $1 absent";exit 1;
+    then fct_echo "# [OK] Répertoire $1 exist";
+    else fct_echo "# [KO] Répertoire $1 doesn't exist";exit 1;
     fi
 }
 
 # Fonction de test de la présence du répertoire d'installation
 fct_exist_file() {
     if [ -f $1 ] ;
-    then fct_echo "# [OK] Fichier $1 présent";
-    else fct_echo "# [KO] Fichier $1 absent";exit 1;
+    then fct_echo "# [OK] Fichier $1 exist";
+    else fct_echo "# [KO] Fichier $1 doesn't exist";exit 1;
     fi
 }
 
 # Fonction de creation du repertoire d'installation
 fct_create () {
     if [ -e $1 ] ;
-    then fct_echo "# [OK] Répertoire $1 présent";
+    then fct_echo "# [OK] Répertoire $1 exist";
     else
-        fct_echo "# [OK] Répertoire $1 n'existe pas : création du répertoire"
+        fct_echo "# [OK] Répertoire $1 doesn't exist : create folder"
         mkdir $1 >>$FICHIER_LOG 2>1
         fct_test "mkdir $1"
         fct_exist "$1"
