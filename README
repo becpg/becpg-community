@@ -11,17 +11,33 @@ Copy common.sh.sample to common.sh
 and change properties
 
 
-1 - Install Maven artifacts
------------------------------
+1 - Install development project
+-------------------------------
 
 To install becpg artifacts download https://becpg.fr/redmine/attachments/download/2/birt_3.7.1_lib.tar.gz
 and extract jars into "becpg-bootstrap/lib".
- Then run maven-sdk-install-files.sh
+ Then run install.sh
 
  
 2 - Run project
 ----------------
 
-Run Junit test :
+./deploy-in-webapp.sh
 
-mvn clean test
+cd $ALFRESCO
+alfresco.sh start
+
+3 - Test
+---------
+Run Junit tests :
+
+mvn clean test -Dsurefire.useFile=false
+
+Start report server :
+
+cd becpg-report
+mvn tomcat:run
+
+Run specific test
+cd becpg-core 
+mvn clean test -Dsurefire.useFile=false -Dtest=MyTest.java

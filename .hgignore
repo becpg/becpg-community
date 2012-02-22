@@ -1,10 +1,13 @@
 /target$
 /alf_data$
+/logs$
 /bin$
 common.sh
 
 syntax: regexp
 ^alf_data$
+syntax: regexp
+^logs$
 syntax: regexp
 ^becpg-olap/conf/becpg$
 syntax: regexp
