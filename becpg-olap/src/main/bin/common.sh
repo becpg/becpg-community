@@ -1,11 +1,5 @@
 #!/bin/sh
 
-################
-# Environnement
-################
-
-export SERVER=${olap.server}/tomcat
-
 #####################################
 # Paramètres de configuration OLAP
 #####################################

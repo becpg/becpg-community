@@ -1,6 +1,14 @@
 #!/bin/bash
 . ./common.sh
 
+if [ $# -ne 1 ]
+   then
+      echo "Usage: $0 <server path>"
+      exit 0
+fi
+
+export SERVER=$1
+
 echo "**********************************************************"
 echo "Deploy OLAP Cube"
 echo "**********************************************************"
