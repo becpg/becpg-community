@@ -7,14 +7,6 @@
   </formats>
   <fileSets>
     <fileSet>
-      <directory>${basedir}/sql</directory>
-      <outputDirectory>/sql</outputDirectory>
-    </fileSet>
-     <fileSet>
-      <directory>${basedir}/src/main/repository</directory>
-      <outputDirectory>/repository</outputDirectory>
-    </fileSet>
-    <fileSet>
       <directory>${basedir}/_diff</directory>
       <outputDirectory>/dist</outputDirectory>
     </fileSet>

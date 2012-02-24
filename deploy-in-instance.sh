@@ -9,7 +9,6 @@ if [ $# -ne 1 ]
 fi
 
 
-
 export SERVER=$INSTANCE_DIR/$1
 
 echo "**********************************************************"
@@ -37,11 +36,11 @@ echo "**********************************************************"
 
 
 echo "deploy becpg-controls-core-$BECPG_VERSION.amp"
-java -jar  $BECPG_ROOT/tools/alfresco-mmt.jar install becpg-controls-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
+java -jar  $TC_DIR/deploy/alfresco-mmt.jar install becpg-controls-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 echo "deploy becpg-designer-core-$BECPG_VERSION.amp"
-java -jar  $BECPG_ROOT/tools/alfresco-mmt.jar install becpg-designer-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
+java -jar  $TC_DIR/deploy/alfresco-mmt.jar install becpg-designer-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 echo "deploy becpg-core/target/becpg-core-$BECPG_VERSION.amp"
-java -jar  $BECPG_ROOT/tools/alfresco-mmt.jar install becpg-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
+java -jar  $TC_DIR/deploy/alfresco-mmt.jar install becpg-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 
 echo "**********************************************************"
 echo "Deploy share AMP"
@@ -52,12 +51,19 @@ rm $SERVER/webapps/share.war
 rm -rf $SERVER/webapps/share
 cp $SERVER/webapps/share.war.setup $SERVER/webapps/share.war
 echo "deploy  becpg-controls-share-$BECPG_VERSION.amp"
-java -jar  $BECPG_ROOT/tools/alfresco-mmt.jar install becpg-controls-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
+java -jar  $TC_DIR/deploy/alfresco-mmt.jar install becpg-controls-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 echo "deploy  becpg-designer-share-$BECPG_VERSION.amp"
-java -jar  $BECPG_ROOT/tools/alfresco-mmt.jar install becpg-designer-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
+java -jar  $TC_DIR/deploy/alfresco-mmt.jar install becpg-designer-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 echo "deploy becpg-share-$BECPG_VERSION.amp"
-java -jar  $BECPG_ROOT/tools/alfresco-mmt.jar install becpg-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
+java -jar  $TC_DIR/deploy/alfresco-mmt.jar install becpg-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 
+
+echo "**********************************************************"
+echo "Deploy Report Server"
+echo "**********************************************************"
+
+rm -rf $SERVER/webapps/becpg-report
+cp becpg-report-$BECPG_VERSION.war $SERVER/webapps/becpg-report.war
 
 echo "**********************************************************"
 echo "Deploy OLAP Cube"
@@ -71,10 +77,3 @@ cd $BECPG_OLAP_ROOT/target
 rm -rf becpg-olap-*
 
 
-
-echo "**********************************************************"
-echo "Deploy Report Server"
-echo "**********************************************************"
-
-rm -rf $SERVER/webapps/becpg-report
-cp $BECPG_ROOT/becpg-report/target/becpg-report-$BECPG_VERSION.war $SERVER/webapps/becpg-report.war

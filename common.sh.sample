@@ -9,19 +9,14 @@ export BECPG_ROOT=`pwd`
 export BOOTSTRAP_HOME=$BECPG_ROOT/becpg-bootstrap
 
 
-export ALF=/opt/alfresco-4.0.d
-export ALF_SDK=/opt/alfresco-4.0.d/sdk
-export AMPS=/opt/alfresco-4.0.d/amps
-export SERVER=/opt/alfresco-4.0.d/tomcat
-export AMPS_SHARE=/opt/alfresco-4.0.d/amps_share
 export BECPG_VERSION=0.1.4
 export BECPG_OLAP_ROOT=$BECPG_ROOT/becpg-olap
 
-export INSTANCE_DIR=/opt/becpg/tc-server
+export TC_DIR=/opt/becpg-tc-server
+export INSTANCE_DIR=$TC_DIR/instances
 
 
 #profile to use can be :
-#export MVN_PROFILE=-Dolap.server= -Dolap.db.host= -Dolap.db.name= -Dolap.db.username= -Dolap.db.password=
 #or export MVN_PROFILE=-P sva-prod
 export MVN_PROFILE=
 

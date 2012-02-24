@@ -1,5 +1,4 @@
 #!/bin/bash
-. ./common.sh
 
 if [ $# -ne 1 ]
    then

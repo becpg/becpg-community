@@ -53,6 +53,12 @@
 			<type>amp</type>
 			<version>0.1.4</version>
 		</dependency>
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-report</artifactId>
+			<type>war</type>
+			<version>0.1.4</version>
+		</dependency>
 	</dependencies>
 	<build>
 	<plugins>

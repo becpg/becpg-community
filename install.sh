@@ -1,6 +1,16 @@
 #!/bin/bash
 . ./common.sh
 
+
+if [ $# -ne 1 ]
+   then
+      echo "Usage: $0 <instance name>"
+      exit 0
+fi
+
+export SERVER=$INSTANCE_DIR/$1
+
+
 mkdir -p $BECPG_ROOT/logs
 export FICHIER_LOG=$BECPG_ROOT/logs/install.log
 rm -f $FICHIER_LOG
@@ -393,22 +403,6 @@ echo -ne "Installing ... "
 mvn clean install -Dmaven.test.skip=true >>$FICHIER_LOG 2>1 &
 spanner "$!" '/\-'
 echo ""
-fi
-
-read -p "Do you want to setup OLAP ? (y/n)" ans 
-if [ "$ans" = "y" ]; then
-fct_echo "Installing OLAP cube"
-cd $BECPG_OLAP_ROOT
-mvn clean package -Dmaven.test.skip=true  $MVN_PROFILE >>$FICHIER_LOG 2>1 &
-spanner "$!" '/\-'
-cd target 
-tar xvfz becpg-olap-*-distribution.tar.gz >>$FICHIER_LOG 2>1 &
-spanner "$!" '/\-'
-cd becpg-olap-*
-./install.sh >>$FICHIER_LOG 2>1 &
-spanner "$!" '/\-'
-cd $BECPG_OLAP_ROOT/target
-rm -rf becpg-olap-*
 fi
 
 

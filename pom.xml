@@ -67,12 +67,6 @@
 		<alfresco.db.username>becpg</alfresco.db.username>
 		<alfresco.db.password>becpg</alfresco.db.password>
 		<alfresco.server>/opt/becpg/alfresco-4.0.d</alfresco.server>
-		<!-- OLAP -->
-		<olap.db.host>localhost</olap.db.host>
-		<olap.db.name>becpg_40d_demo</olap.db.name>
-		<olap.db.username>becpg</olap.db.username>
-		<olap.db.password>becpg</olap.db.password>
-		<olap.db.port>3306</olap.db.port>
 		<!-- Log -->
 		<webapp.log.dir>/var/log/alfresco</webapp.log.dir>
 		<!-- Module specific build time properties -->
@@ -203,11 +197,6 @@
 				<alfresco.db.username>becpg</alfresco.db.username>
 				<alfresco.db.password>becpg</alfresco.db.password>
 				<alfresco.server>/opt/becpg/alfresco-4.0.d</alfresco.server>
-				<!-- OLAP -->
-				<olap.db.host>localhost</olap.db.host>
-				<olap.db.name>becpg</olap.db.name>
-				<olap.db.username>becpg</olap.db.username>
-				<olap.db.password>becpg</olap.db.password>
 				<!-- Log -->
 				<webapp.log.dir>/tmp</webapp.log.dir>
 			</properties>
@@ -219,11 +208,6 @@
 				<alfresco.db.name>becpg_34d_sva_int</alfresco.db.name>
 				<alfresco.db.username>becpg</alfresco.db.username>
 				<alfresco.db.password>becpg</alfresco.db.password>
-				<!-- OLAP -->
-				<olap.db.host>localhost</olap.db.host>
-				<olap.db.name>becpg_34d_sva_int</olap.db.name>
-				<olap.db.username>becpg</olap.db.username>
-				<olap.db.password>becpg</olap.db.password>
 			</properties>
 		</profile>
 		<profile>
@@ -233,11 +217,6 @@
 				<alfresco.db.name>beCPG</alfresco.db.name>
 				<alfresco.db.username>beCPG</alfresco.db.username>
 				<alfresco.db.password>becpgSVA</alfresco.db.password>
-				<!-- OLAP -->
-				<olap.db.host>localhost</olap.db.host>
-				<olap.db.name>beCPG</olap.db.name>
-				<olap.db.username>beCPG</olap.db.username>
-				<olap.db.password>becpgSVA</olap.db.password>
 			</properties>
 		</profile>
 	</profiles>
