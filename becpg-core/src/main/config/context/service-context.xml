@@ -376,6 +376,13 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="productDAO" ref="productDAO" />
 	</bean>
+	<!-- Product Listeners -->	
+	<bean id="productCheckInListener" class="fr.becpg.repo.product.listener.ProductCheckInListener">
+		<property name="productService" ref="productService" />
+		<property name="repositoryHelper" ref="repositoryHelper" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
 	
 	<!-- Search -->
 	<bean id="advSearchService" class="fr.becpg.repo.search.AdvSearchServiceImpl">

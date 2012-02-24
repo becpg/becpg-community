@@ -362,6 +362,8 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		logger.debug("Create MP");
 		RawMaterialData rawMaterial = new RawMaterialData();
 		rawMaterial.setName(name);
+		rawMaterial.setHierarchy1(HIERARCHY1_FROZEN);
+		rawMaterial.setHierarchy2(HIERARCHY2_FISH);
 		
 		//Allergens		
 		List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();		    		

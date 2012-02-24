@@ -1,6 +1,7 @@
 /target$
 /alf_data$
 /bin$
+.metadata
 common.sh
 
 syntax: regexp

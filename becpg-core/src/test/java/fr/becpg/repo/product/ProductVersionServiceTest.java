@@ -18,7 +18,9 @@ import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
@@ -26,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.data.ProductData;
@@ -79,6 +82,10 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 	
 	private EntityListDAO entityListDAO;
 	
+	private ProductService productService;
+	
+	private NamespaceService namespaceService;
+	
 	/** The costs. */
 	private List<NodeRef> costs = new ArrayList<NodeRef>();
 	
@@ -100,6 +107,8 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
         entityVersionService = (EntityVersionService)appCtx.getBean("entityVersionService");
         entityCheckOutCheckInService = (CheckOutCheckInService)appCtx.getBean("entityCheckOutCheckInService");
         entityListDAO = (EntityListDAO)appCtx.getBean("entityListDAO");
+        productService = (ProductService)appCtx.getBean("productService");
+        namespaceService = (NamespaceService)appCtx.getBean("namespaceService");
     }
     
     
@@ -396,6 +405,54 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				
 				return null;
 				
+			}},false,true);
+	}
+	
+	/**
+	 * Test check out check in.
+	 */
+	public void testCheckOutCheckInValidProduct(){
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			@Override
+			public NodeRef execute() throws Throwable {
+				
+				/*-- create folders and raw material --*/
+				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+				if(folderNodeRef != null)
+				{
+					fileFolderService.delete(folderNodeRef);    		
+				}			
+				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();					
+				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");
+				
+				//Valid it
+				nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Valid);
+				productService.classifyProduct(repository.getCompanyHome(), rawMaterialNodeRef);
+				
+				String path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
+				String expected = "/app:company_home/cm:Products/cm:Valid/cm:RawMaterial/cm:Frozen/cm:Fish/";
+				assertEquals("check path", expected, path.substring(0, expected.length()));
+				
+				//Check out
+				NodeRef workingCopyNodeRef = entityCheckOutCheckInService.checkout(rawMaterialNodeRef);				
+				
+				//Check in
+				NodeRef newRawMaterialNodeRef = null;
+				
+				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+				newRawMaterialNodeRef = entityCheckOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+				
+				assertNotNull("Check new version exists", newRawMaterialNodeRef);
+				assertEquals("Check state new version", SystemState.ToValidate.toString(), nodeService.getProperty(newRawMaterialNodeRef, BeCPGModel.PROP_PRODUCT_STATE));
+				
+				path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
+				expected = "/app:company_home/cm:Products/cm:ToValidate/cm:RawMaterial/cm:Frozen/cm:Fish/";
+				assertEquals("check path", expected, path.substring(0, expected.length()));
+				
+			return null;
+			
 			}},false,true);
 	}
 }

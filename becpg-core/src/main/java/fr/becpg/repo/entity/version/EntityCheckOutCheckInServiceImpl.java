@@ -26,16 +26,23 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.VersionNumber;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.event.CheckInEntityEvent;
 
 /**
  * The Class ProductCheckOutCheckInServiceImpl.
  *
  * @author querephi
  */
-public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl implements EntityCheckOutCheckInService {
+public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl 
+												implements EntityCheckOutCheckInService,
+												ApplicationContextAware{
 
 	/** The Constant MSG_ERR_BAD_COPY. */
 	private static final String MSG_ERR_BAD_COPY = "coci_service.err_bad_copy";
@@ -82,6 +89,8 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
 	private PermissionService permissionService;	
 	
 	private BehaviourFilter policyBehaviourFilter;
+	
+	private ApplicationContext applicationContext;
 			
 	/* (non-Javadoc)
 	 * @see org.alfresco.repo.coci.CheckOutCheckInServiceImpl#setNodeService(org.alfresco.service.cmr.repository.NodeService)
@@ -151,6 +160,13 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
 	
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+	
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		this.applicationContext = applicationContext;
+		
 	}
 
 	/**
@@ -317,6 +333,11 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
                 	
                 }
             }, AuthenticationUtil.getSystemUserName());
+    		
+    		// reset state to ToValid and publish event
+    		// reset state to ToValidate
+    		nodeService.setProperty(finalEntityNodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.ToValidate);    
+    		applicationContext.publishEvent(new CheckInEntityEvent(this, finalEntityNodeRef));
     		    		
     		// Delete the working copy
             this.nodeService.deleteNode(workingCopyNodeRef);
