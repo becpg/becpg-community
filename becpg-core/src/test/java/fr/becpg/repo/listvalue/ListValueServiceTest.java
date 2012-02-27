@@ -170,15 +170,18 @@ public class ListValueServiceTest extends BaseAlfrescoTestCase {
     	NodeRef supplierNodeRef = nodeService.createNode(tempFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
 
     	String[] arrClassNames = {"bcpg:supplier"};
-    	Map<String, String> suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0 , arrClassNames).getResults();
+    	List< ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0 , arrClassNames).getResults();
     	
-    	for(String s : suggestions.keySet()){
-    		logger.debug("supplier: " + nodeService.getProperty(new NodeRef(s), ContentModel.PROP_NAME));
+    	boolean containsSupplier = false;
+    	for(ListValueEntry s : suggestions){
+    		logger.debug("supplier: " + s.getName());
+    		if(s.getValue().equals(supplierNodeRef.toString()) && s.getName().equals("Supplier 1")){
+    			containsSupplier = true;
+    		}
     	}
     	
     	assertEquals("1 suggestion", 1, suggestions.size());
-    	assertTrue("check supplier key", suggestions.containsKey(supplierNodeRef.toString()));
-    	assertTrue("check supplier value", suggestions.containsValue("Supplier 1"));
+    	assertTrue("check supplier key", containsSupplier);
     	
     	// filter by client : no results
     	String [] arrClassNames2 = {"bcpg:client"};
