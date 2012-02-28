@@ -123,6 +123,45 @@ var Evaluator =
          objData.displayValue = obj.displayPath.substring(companyhome.name.length() + 1);
          objData.metadata = "container";
       }
+      //beCPG
+      else if(type == "bcpg:product" || 
+      		type == "bcpg:ing" || 
+      		type == "bcpg:nut" || 
+      		type == "bcpg:allergen" || 
+      		type == "bcpg:organo" || 
+      		type == "bcpg:listValue" || 
+      		type == "bcpg:cost" || 
+      		type == "bcpg:physicoChem"  || 
+      		type == "bcpg:microbio" || 
+      		type == "bcpg:bioOrigin" || 
+      		type == "bcpg:geoOrigin" ||  
+      		type == "bcpg:entity" || 
+      		type == "bcpg:charact" || 
+      		type == "qa:controlPoint" || 
+      		type == "qa:controlStep"  || 
+      		type == "qa:controlMethod" || 
+      		type == "bcpg:entity" || 
+      		type == "ecm:changeUnit" || 
+      		type == "bcpg:supplier" || 
+      		type == "bcpg:client" || 
+      		type == "bcpg:resourceProduct" || 
+      		type == "mpm:processResource" || 
+      		type == "mpm:processStep" || 
+      		type == "var:charact")
+	  {
+		   obj = Evaluator.getContentObject(value);
+         if (obj == null)
+         {
+            return false;
+         }
+         objData.displayValue = obj.properties["cm:name"];
+
+         objData.metadata = obj.typeShort.split(":")[1];
+         if(obj.isSubType("bcpg:product")){
+         	objData.metadata += "-"+ obj.properties["bcpg:productState"];
+         }
+         
+	  }
       else if (type.indexOf(":") > 0 && node.isSubType("cm:cmobject"))
       {
          obj = Evaluator.getContentObject(value);
@@ -133,29 +172,8 @@ var Evaluator =
          objData.displayValue = obj.properties["cm:name"];
          objData.metadata = obj.isContainer ? "container" : "document";
       }
-      else if(type == "bcpg:product")
-	  {
-		 obj = Evaluator.getContentObject(value);
-         if (obj == null)
-         {
-            return false;
-         }
-         objData.displayValue = obj.properties["cm:name"];
-         // the namespace may be different due to inheritance (ie: {http://www.bcpg.fr/model/clientName/1.0}
-         //objData.metadata = obj.type.replace('{http://www.bcpg.fr/model/becpg/1.0}', '');
-         objData.metadata = obj.type.split("}")[1];
-	  }
-	  else if(type == "bcpg:ing" || type == "bcpg:nut" || type == "bcpg:allergen" || type == "bcpg:organo" || type == "bcpg:listValue" || type == "bcpg:cost" || type == "bcpg:physicoChem"  || type == "bcpg:microbio" || type == "bcpg:bioOrigin" || type == "bcpg:geoOrigin" ||  type == "bcpg:entity" || type == "bcpg:charact" || type == "qa:controlPoint" || type == "qa:controlStep"  || type == "qa:controlMethod" || type == "bcpg:entity" || type == "ecm:changeUnit" || type == "bcpg:supplier" || type == "bcpg:client" || type == "bcpg:resourceProduct" || type == "mpm:processResource" || type == "mpm:processStep" || type == "var:charact") // don't forget to modify the file entity-datagrid.js otherwise, we cannont navigate to the object
-	  {
-		 obj = Evaluator.getContentObject(value);
-         if (obj == null)
-         {
-            return false;
-         }
-         objData.displayValue = obj.properties["cm:name"];
-         objData.metadata = "document";
-	  }
-	  else if(type== "cm:authorityContainer")
+    
+	  else if(type == "cm:authorityContainer")
 	  {
 		 obj = Evaluator.getContentObject(value);
          if (obj == null)
@@ -178,6 +196,7 @@ var Evaluator =
 	  }
       return true;
    },
+   
    
     /**
     * Translates a List fieldDefinition
