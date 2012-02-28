@@ -225,8 +225,6 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 				
 				for(NodeRef manualLink : manualLinks){
 					
-					logger.debug("###allergen manualLink nodeRef " + manualLink);
-					
 					AllergenListDataItem allergenListDataItem = productDAO.loadAllergenListItem(manualLink);		    		
 		    		allergenMap.put(allergenListDataItem.getAllergen(), allergenListDataItem);
 				}

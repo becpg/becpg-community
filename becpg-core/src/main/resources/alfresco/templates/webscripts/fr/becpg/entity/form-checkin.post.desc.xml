@@ -1,0 +1,8 @@
+<webscript>
+  <shortname>form-checkin</shortname>
+  <description>Entity Form Action - Check-in entity</description>
+  <url>/becpg/entity/form-checkin</url>
+  <format default="json">argument</format>
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+</webscript>

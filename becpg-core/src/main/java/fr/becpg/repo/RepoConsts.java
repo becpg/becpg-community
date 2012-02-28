@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo;
 
+import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.repository.StoreRef;
 
 /**
@@ -135,6 +137,7 @@ public class RepoConsts {
 	public static final String CONTAINER_DATALISTS = "DataLists";	
 	
 	public static final StoreRef SPACES_STORE =  new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore");
+	public static final StoreRef VERSION_STORE =  new StoreRef(Version2Model.STORE_PROTOCOL, Version2Model.STORE_ID);
 	
 	/*-- Regex --*/	
 	public static final String REGEX_NON_NEGATIVE_INTEGER_FIELD = "^\\d*$";

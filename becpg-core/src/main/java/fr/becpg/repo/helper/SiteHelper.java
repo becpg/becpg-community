@@ -70,4 +70,14 @@ public class SiteHelper {
 		   return ret;
 	}
 	
+	public static boolean isSitePath(String path) {
+		boolean isSitePath = false;
+
+		if (path.startsWith(SITES_SPACE_QNAME_PATH)) {
+			isSitePath = true;
+		}
+
+		return isSitePath;
+	}
+	
 }

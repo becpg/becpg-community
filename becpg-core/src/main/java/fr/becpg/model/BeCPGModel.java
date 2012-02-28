@@ -597,12 +597,15 @@ public interface BeCPGModel {
 	
 	// versionable aspect
 	/** The Constant ASPECT_COMPOSITE_VERSIONABLE. */
+	@Deprecated
 	static final QName ASPECT_COMPOSITE_VERSIONABLE = QName.createQName(BECPG_URI,	"compositeVersionable");
 	
 	/** The Constant PROP_VERSION_LABEL. */
+	@Deprecated
 	static final QName PROP_VERSION_LABEL = QName.createQName(BECPG_URI, "versionLabel");
 	
 	/** The Constant PROP_INITIAL_VERSION. */
+	@Deprecated
 	static final QName PROP_INITIAL_VERSION = QName.createQName(BECPG_URI, "initialVersion");
 	
 	// version aspect
@@ -610,27 +613,35 @@ public interface BeCPGModel {
 	static final QName ASPECT_COMPOSITE_VERSION = QName.createQName(BECPG_URI,	"compositeVersion");
 	
 	/** The Constant PROP_VERSION_DESCRIPTION. */
+	@Deprecated
 	static final QName PROP_VERSION_DESCRIPTION = QName.createQName(BECPG_URI, "versionDescription");
 	
 	/** The Constant PROP_FROZEN_CREATOR. */
+	@Deprecated
 	static final QName PROP_FROZEN_CREATOR = QName.createQName(BECPG_URI, "frozenCreator");
 	
 	/** The Constant PROP_FROZEN_CREATED. */
+	@Deprecated
 	static final QName PROP_FROZEN_CREATED = QName.createQName(BECPG_URI, "frozenCreated");
 	
 	/** The Constant PROP_FROZEN_MODIFIER. */
+	@Deprecated
 	static final QName PROP_FROZEN_MODIFIER = QName.createQName(BECPG_URI, "frozenModifier");
 	
 	/** The Constant PROP_FROZEN_MODIFIED. */
+	@Deprecated
 	static final QName PROP_FROZEN_MODIFIED = QName.createQName(BECPG_URI, "frozenModified");
 	
 	/** The Constant PROP_FROZEN_ACCESSED. */
+	@Deprecated
 	static final QName PROP_FROZEN_ACCESSED = QName.createQName(BECPG_URI, "frozenAccessed");
 	
 	/** The Constant PROP_FROZEN_NODE_REF. */
+	@Deprecated
 	static final QName PROP_FROZEN_NODE_REF = QName.createQName(BECPG_URI, "frozenNodeRef");
 	
 	/** The Constant PROP_FROZEN_NODE_DBID. */
+	@Deprecated
 	static final QName PROP_FROZEN_NODE_DBID = QName.createQName(BECPG_URI, "frozenNodeDbId");
 	
 	// version aspect

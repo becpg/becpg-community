@@ -299,7 +299,8 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
                         				// This won't prevent background processes from
                         				// refiring, though
                         	            policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
-                        	            policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);	
+                        	            policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+                        	            policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
                         	     
                         	            // generate reports
                         	            entityReportService.generateReport(entityNodeRef);		
@@ -309,7 +310,8 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
                         	        }
                         	        finally{
                         	        	policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);		
-                        	        	policyBehaviourFilter.enableBehaviour(entityNodeRef,  ContentModel.ASPECT_AUDITABLE);		
+                        	        	policyBehaviourFilter.enableBehaviour(entityNodeRef,  ContentModel.ASPECT_AUDITABLE);
+                        	        	policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
                         	        }	         
                             	}
             			        

@@ -18,11 +18,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.AutoNumService;
@@ -40,9 +38,6 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CodePolicyTest.class);
-	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
 	
 	/** The node service. */
 	private NodeService nodeService;
@@ -68,11 +63,11 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 		
     	logger.debug("ProductServiceTest:setUp");
     
-    	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");  
-    	authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-        repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-        autoNumService = (AutoNumService)appCtx.getBean("autoNumService"); 
+    	nodeService = (NodeService)ctx.getBean("nodeService");
+    	fileFolderService = (FileFolderService)ctx.getBean("fileFolderService");  
+    	authenticationComponent = (AuthenticationComponent)ctx.getBean("authenticationComponent");
+        repositoryHelper = (Repository)ctx.getBean("repositoryHelper");
+        autoNumService = (AutoNumService)ctx.getBean("autoNumService"); 
                         
     }
     

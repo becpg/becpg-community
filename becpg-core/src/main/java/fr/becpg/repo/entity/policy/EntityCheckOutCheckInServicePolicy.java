@@ -1,7 +1,6 @@
 package fr.becpg.repo.entity.policy;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,10 +19,15 @@ import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ReportModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.entity.event.CheckInEntityEvent;
 
 /**
  * 
@@ -33,7 +37,8 @@ import fr.becpg.repo.entity.version.EntityVersionService;
 public class EntityCheckOutCheckInServicePolicy implements CheckOutCheckInServicePolicies.BeforeCheckOut,
 												CheckOutCheckInServicePolicies.OnCheckOut,
 												CheckOutCheckInServicePolicies.BeforeCheckIn,
-												CheckOutCheckInServicePolicies.OnCheckIn{
+												CheckOutCheckInServicePolicies.OnCheckIn,
+												ApplicationContextAware{
 
 	private static final String MSG_ERR_NOT_AUTHENTICATED = "coci_service.err_not_authenticated";
 	
@@ -44,8 +49,8 @@ public class EntityCheckOutCheckInServicePolicy implements CheckOutCheckInServic
 	private NodeService nodeService;    
     private AuthenticationService authenticationService;
     private EntityListDAO entityListDAO;
-    private PermissionService permissionService;	
-    private EntityVersionService entityVersionService;
+    private PermissionService permissionService;
+    private ApplicationContext applicationContext;
 	
 	public void setPolicyComponent(PolicyComponent policyComponent) {
 		this.policyComponent = policyComponent;
@@ -70,9 +75,11 @@ public class EntityCheckOutCheckInServicePolicy implements CheckOutCheckInServic
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
-
-	public void setEntityVersionService(EntityVersionService entityVersionService) {
-		this.entityVersionService = entityVersionService;
+	
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		
+		this.applicationContext = applicationContext;		
 	}
 
 	/**
@@ -94,12 +101,12 @@ public class EntityCheckOutCheckInServicePolicy implements CheckOutCheckInServic
 		
 		// disable policy to avoid the creation of a new code
         policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_CODE);
-        policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY);
+        policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY);        
 	}
 
 	@Override
 	public void onCheckOut(final NodeRef workingCopy) {
-		
+				
 		// Copy entity datalists (rights are checked by copyService during recursiveCopy)
 		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>(){
 	         @Override
@@ -118,8 +125,7 @@ public class EntityCheckOutCheckInServicePolicy implements CheckOutCheckInServic
 		
 		//enable policies
 		policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_CODE);
-        policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITY);
-		
+        policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITY);        
 	}
 	
 	@Override
@@ -134,19 +140,7 @@ public class EntityCheckOutCheckInServicePolicy implements CheckOutCheckInServic
 		NodeRef containerListNodeRef = entityListDAO.getListContainer(nodeRef);
 		if(containerListNodeRef != null){
 			nodeService.deleteNode(containerListNodeRef);
-		}
-		
-	}
-	
-	@Override
-	public void onCheckIn(NodeRef nodeRef) {
-		
-		Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
-		versionProperties.put(BeCPGModel.PROP_VERSION_LABEL.getLocalName(), nodeService.getProperty(nodeRef, ContentModel.PROP_VERSION_LABEL));
-		
-		//create new version
-        entityVersionService.createVersion(nodeRef, versionProperties);
-		
+		}		
 	}
 	
 	/**
@@ -186,4 +180,15 @@ public class EntityCheckOutCheckInServicePolicy implements CheckOutCheckInServic
         
         return original;
     }
+
+	@Override
+	public void onCheckIn(NodeRef nodeRef) {
+		
+		// reset state to ToValidate
+		nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.ToValidate);
+	
+		// publish checkin entity event
+		applicationContext.publishEvent(new CheckInEntityEvent(this, nodeRef));
+	}
+
 }

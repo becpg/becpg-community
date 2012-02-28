@@ -6,7 +6,6 @@
     <project>becpg-controls-core</project>
     <project>becpg-designer-core</project>
     <project>becpg-report</project>
-    <project>birt-sdk</project>
     <project>alfresco-sdk</project>
   </projects>
   <buildSpec>

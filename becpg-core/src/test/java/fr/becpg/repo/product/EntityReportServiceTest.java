@@ -166,9 +166,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 		   											BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, 
 		   											true, 
 		   											true,
-		   											true);
-			   	
-			   	logger.debug("###tplNodeRef: " + tplNodeRef);
+		   											true);			   	
 			   	
 				return null;
 				

@@ -3,15 +3,11 @@
  */
 package fr.becpg.repo.entity.version;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.version.Version;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface ProductVersionService.
+ * The Interface EntityVersionService.
  *
  * @author querephi
  */
@@ -21,30 +17,21 @@ public interface EntityVersionService {
 	public static final String VERSION_DELIMITER = ".";
 	
 	/**
-	 * Creates the version.
+	 * Creates the entity version with datalists
 	 *
-	 * @param productNodeRef the product node ref
+	 * @param entityNodeRef the entity node ref
 	 * @param properties the properties
 	 * @return the node ref
 	 */
-	public NodeRef createVersion(NodeRef productNodeRef, Map<String, Serializable> properties);	
+	public NodeRef createEntityVersion(NodeRef entityNodeRef, Version version);
 	
 	/**
-	 * Gets the version history.
-	 *
-	 * @param entityNodeRef the entity node ref
-	 * @return the version history
+	 * Get the entity version with datalists
+	 * @param version
+	 * @return
 	 */
-	public List<NodeRef> getVersionHistory(NodeRef entityNodeRef);
+	public NodeRef getEntityVersion(Version version);
 	
-	/**
-	 * Gets the version history with properties.
-	 *
-	 * @param entityNodeRef the entity node ref
-	 * @return the version history with properties
-	 */
-	public List<VersionData> getVersionHistoryWithProperties(NodeRef entityNodeRef);
-
 	/**
 	 * @param entityNodeRef
 	 * delete all version history

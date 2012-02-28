@@ -13,11 +13,9 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.config.format.PropertyFormats;
 
@@ -34,9 +32,6 @@ public class PropertyServiceTest  extends BaseAlfrescoTestCase  {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(PropertyServiceTest.class);
 	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
-	
 	/** The repository helper. */
 	private PropertyService propertyService;   
 	
@@ -51,9 +46,9 @@ public class PropertyServiceTest  extends BaseAlfrescoTestCase  {
 		super.setUp();	
 		
     	logger.debug("ProductServiceTest:setUp");
-    
-    	propertyService = (PropertyService)appCtx.getBean("propertyService");
-    	dictionaryService = (DictionaryService)appCtx.getBean("dictionaryService");
+    	
+    	propertyService = (PropertyService)ctx.getBean("propertyService");
+    	dictionaryService = (DictionaryService)ctx.getBean("dictionaryService");
     	
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override

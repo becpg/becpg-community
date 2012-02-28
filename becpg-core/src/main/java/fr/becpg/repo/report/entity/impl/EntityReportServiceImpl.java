@@ -22,7 +22,6 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
@@ -39,8 +38,6 @@ public class EntityReportServiceImpl implements EntityReportService{
 	
 	private static final String DEFAULT_EXTRACTOR = "default";
 
-	private static final String PARAM_VALUE_HIDE_CHAPTER_SUFFIX = "HideChapter";
-	
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 	
 	/** The node service. */
@@ -50,10 +47,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 	private ContentService contentService;
 	
 	/** The file folder service. */
-	private FileFolderService fileFolderService;	
-	
-	private EntityListDAO entityListDAO;
-	
+	private FileFolderService fileFolderService;		
 	
 	private ReportTplService reportTplService;
 	
@@ -104,31 +98,20 @@ public class EntityReportServiceImpl implements EntityReportService{
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
-	
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-	
-	
-	
-	
+		
 	public void setBeCPGReportEngine(BeCPGReportEngine beCPGReportEngine) {
 		this.beCPGReportEngine = beCPGReportEngine;
 	}
 
-
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
 	}
-	
-	
 
 	@Override
 	public void generateReport(NodeRef entityNodeRef) {
 		List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);			
 		//TODO here plug a template filter base on entityNodeRef
 		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);		
-		
 	
 		if(!tplsNodeRef.isEmpty()){
 			StopWatch watch = null;

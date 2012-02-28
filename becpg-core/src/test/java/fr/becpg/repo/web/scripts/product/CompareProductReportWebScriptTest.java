@@ -15,12 +15,15 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.repo.version.VersionModel;
 import org.alfresco.repo.web.scripts.BaseWebScriptTest;
+import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
@@ -37,6 +40,7 @@ import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -47,7 +51,6 @@ import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.report.client.ReportFormat;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CompareProductReportWebScriptTest.
  *
@@ -99,6 +102,8 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
     
     private ReportTplService reportTplService;
     
+    private CheckOutCheckInService checkOutCheckInService;
+    
 	/** The folder node ref. */
 	private NodeRef folderNodeRef;
 	
@@ -122,11 +127,7 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
     
     
     /** The fp1 node ref. */
-    private NodeRef fp1NodeRef;
-    
-    /** The fp2 node ref. */
-    private NodeRef fp2NodeRef;
-    
+    private NodeRef fpNodeRef;
     
     /** The costs. */
     private List<NodeRef> costs = new ArrayList<NodeRef>();
@@ -151,6 +152,7 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
 		repositoryHelper = (Repository) getServer().getApplicationContext().getBean("repositoryHelper");
 		repoService = (RepoService) getServer().getApplicationContext().getBean("repoService");
 		reportTplService = (ReportTplService) getServer().getApplicationContext().getBean("reportTplService");
+		checkOutCheckInService = (CheckOutCheckInService) getServer().getApplicationContext().getBean("checkOutCheckInService");
 		
 	    // Authenticate as user
 	    this.authenticationComponent.setCurrentUser(USER_ADMIN);
@@ -359,12 +361,21 @@ private void initObjects(){
 					compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
 					fp1.setCompoList(compoList);
 					
-					fp1NodeRef = productDAO.create(folderNodeRef, fp1, dataLists);
+					fpNodeRef = productDAO.create(folderNodeRef, fp1, dataLists);										
 					
-					logger.debug("create FP 2");
+					// CheckOut/CheckIn
+					NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(fpNodeRef);
+					Map<String, Serializable> properties = new HashMap<String, Serializable>();
+					properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+					NodeRef fpv1NodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, properties);
 					
-					FinishedProductData fp2 = new FinishedProductData();
-					fp2.setName("FP 2");			
+					// CheckOut
+					workingCopyNodeRef = checkOutCheckInService.checkout(fpv1NodeRef);
+					
+					logger.debug("update workingCopy");
+					
+					ProductData workingCopy = productDAO.find(workingCopyNodeRef, dataLists); 
+					workingCopy.setName("FP new version");			
 			
 					//Costs
 					costList = new ArrayList<CostListDataItem>();		    		
@@ -373,7 +384,7 @@ private void initObjects(){
 						CostListDataItem costListItemData = new CostListDataItem(null, 12.4f, "$/kg", null, costs.get(j), false);
 						costList.add(costListItemData);
 					}		
-					fp2.setCostList(costList);
+					workingCopy.setCostList(costList);
 						
 					//Allergens
 					allergenList = new ArrayList<AllergenListDataItem>();		    		
@@ -392,7 +403,7 @@ private void initObjects(){
 						
 						allergenList.add(allergenListItemData);
 					}		
-					fp2.setAllergenList(allergenList);
+					workingCopy.setAllergenList(allergenList);
 					
 					compoList = new ArrayList<CompoListDataItem>();
 					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
@@ -401,9 +412,14 @@ private void initObjects(){
 					compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
 					compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
 					compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
-					fp2.setCompoList(compoList);
+					workingCopy.setCompoList(compoList);
 					
-					fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);
+					productDAO.update(workingCopyNodeRef, workingCopy, dataLists);
+					
+					properties = new HashMap<String, Serializable>();
+					properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+					NodeRef fpv2NodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, properties);
+					assertEquals("check version", "2.0", nodeService.getProperty(fpv2NodeRef, ContentModel.PROP_VERSION_LABEL));
 					
 					return null;
 					
@@ -411,7 +427,7 @@ private void initObjects(){
 			
 			try{
 			
-				String url = String.format("/becpg/entity/compare/Produit?entity1=%s&entity2=%s", fp1NodeRef, fp2NodeRef);;
+				String url = String.format("/becpg/entity/compare/%s/%s/Produit", fpNodeRef.toString().replace("://", "/"), "1.0");;
 				Response response = sendRequest(new GetRequest(url), 200, "admin");
 				
 				logger.debug("response: " + response.getContentAsString());
