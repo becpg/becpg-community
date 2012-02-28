@@ -1,5 +1,14 @@
 <alfresco-config>
 
+	<config>
+		<forms>
+			<dependencies>
+				<css src="/components/autocomplete/autocomplete-ext-min.css" />
+			</dependencies>
+		</forms>
+	</config>
+
+
 	<!--___________________________________________________ PRODUITS __________________________________________________ -->
 	
 

@@ -60,7 +60,7 @@
     
 	<bean id="repositoryBean" scope="request" class="org.saiku.web.rest.resources.BasicRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
-		<property name="path" value="file:${saiku.home}/repository"/>
+		<property name="path" value="file:${saiku.home}/saiku-repository"/>
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
  

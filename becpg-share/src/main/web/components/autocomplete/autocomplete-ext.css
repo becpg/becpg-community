@@ -1,0 +1,163 @@
+
+/** Autocomplete **/
+
+
+.yui-ac-container span.finishedProduct-ToValidate {
+	background: url(../images/products/finishedProduct-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.localSemiFinishedProduct-ToValidate {
+	background: url(../images/products/localSemiFinishedProduct-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.packagingKit-ToValidate {
+	background: url(../images/products/packagingKit-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.packagingMaterial-ToValidate {
+	background: url(../images/products/packagingMaterial-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.rawMaterial-ToValidate {
+	background: url(../images/products/rawMaterial-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.semiFinishedProduct-ToValidate {
+	background: url(../images/products/semiFinishedProduct-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.finishedProduct-Valid {
+	background: url(../images/products/valid-16.png), url(../images/products/finishedProduct-16.png) ;
+	background-repeat:  no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.localSemiFinishedProduct-Valid {
+	background: url(../images/products/valid-16.png), url(../images/products/localSemiFinishedProduct-16.png);
+		background-repeat:  no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.packagingKit-Valid {
+	background: url(../images/products/valid-16.png), url(../images/products/packagingKit-16.png);
+	background-repeat:  no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.packagingMaterial-Valid {
+	background: url(../images/products/valid-16.png), url(../images/products/packagingMaterial-16.png);
+	background-repeat:  no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.rawMaterial-Valid {
+	background: url(../images/products/valid-16.png), url(../images/products/rawMaterial-16.png) ;
+	background-repeat:  no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.semiFinishedProduct-Valid {
+	background: url(../images/products/valid-16.png), url(../images/products/semiFinishedProduct-16.png);
+	background-repeat:  no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+
+
+
+
+.yui-ac-container span.listValue {
+	background: url(../images/generic-file-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.client {
+	background: url(../images/filetypes/generic-client-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.supplier {
+	background: url(../images/filetypes/generic-supplier-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.supplier {
+	background: url(../images/filetypes/generic-supplier-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.allergen {
+	background: url(../images/filetypes/generic-allergen-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.bioOrigin {
+	background: url(../images/filetypes/generic-bioOrigin-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+.yui-ac-container span.geoOrigin {
+	background: url(../images/filetypes/generic-geoOrigin-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+.yui-ac-container span.cost {
+	background: url(../images/filetypes/generic-cost-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.geo {
+	background: url(../images/filetypes/generic-geo-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.ing {
+	background: url(../images/filetypes/generic-ing-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.microbio {
+	background: url(../images/filetypes/generic-microbio-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.organo {
+	background: url(../images/filetypes/generic-organo-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.physicoChem {
+	background: url(../images/filetypes/generic-physicoChem-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.nut {
+	background: url(../images/filetypes/generic-nut-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.aclEntry {
+	background: url(../images/filetypes/generic-aclEntry-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.dataList {
+	background: url(../images/list-16.png) no-repeat;
+	padding-left: 20px;
+}
