@@ -1,4 +1,44 @@
 /* Data Types */
+.datagrid span.finishedProduct {
+	background: url(../../components/images/products/finishedProduct-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.localSemiFinishedProduct {
+	background:
+		url(../../components/images/products/localSemiFinishedProduct-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.packagingKit {
+	background: url(../../components/images/products/packagingKit-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.packagingMaterial {
+	background:
+		url(../../components/images/products/packagingMaterial-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.rawMaterial {
+	background: url(../../components/images/products/rawMaterial-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.semiFinishedProduct {
+	background:
+		url(../../components/images/products/semiFinishedProduct-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+/** --- **/
 .datagrid span.finishedProduct-ToValidate {
 	background: url(../../components/images/products/finishedProduct-16.png)
 		no-repeat;
@@ -38,16 +78,16 @@
 	padding-left: 20px;
 }
 
-/**-- */
-	.datagrid span.finishedProduct-Valid {
-		background: url(../../components/images/products/valid-16.png),
-			url(../../components/images/products/finishedProduct-16.png);
-		background-repeat: no-repeat;
-		background-position: 8px 2px, 0 0;
-		padding-left: 20px;
-		background-repeat: no-repeat;
-		background-position: 8px 2px, 0 0;
-	}
+/** --- **/
+.datagrid span.finishedProduct-Valid {
+	background: url(../../components/images/products/valid-16.png),
+		url(../../components/images/products/finishedProduct-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+}
 
 .datagrid span.localSemiFinishedProduct-Valid {
 	background: url(../../components/images/products/valid-16.png),
@@ -71,7 +111,7 @@
 
 .datagrid span.packagingMaterial-Valid {
 	background: url(../../components/images/products/valid-16.png),
-		url(../../components/images/products/packagingMaterial-16.png) ;
+		url(../../components/images/products/packagingMaterial-16.png);
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;

@@ -110,7 +110,6 @@ function getData()
    return (
    {
       fields: fields,
-      luceneQuery: query,
       paging:
       {
          totalRecords: items.length,

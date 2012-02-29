@@ -87,9 +87,17 @@ public abstract class AbstractBeCPGReportClient {
 		
 		HttpResponse response = reportSession.getHttpClient().execute(httpGet);
 		HttpEntity entity = response.getEntity();
+		String ret = EntityUtils.toString(entity);
 		
-		
-		return Long.parseLong(EntityUtils.toString(entity));
+		try {
+			return Long.parseLong(ret);
+		} catch (NumberFormatException e) {
+			logger.error("Unable to parse response",e);
+			if(logger.isDebugEnabled()){
+				logger.debug("Server response :"+ret);
+			}
+			return null;
+		}
 	}
 	
 	

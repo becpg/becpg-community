@@ -76,6 +76,11 @@ public class BeCPGReportServerClient extends AbstractBeCPGReportClient
 				// Timestamp or -1
 				Long timeStamp = getTemplateTimeStamp(reportSession, templateId);
 				
+				if(timeStamp == null){
+					logger.error("Error accessing report server timeStamp is null");
+					return;
+				}
+				
 				logger.debug("Received timeStamp :"+timeStamp);
 				
 				if (timeStamp < 0 || timeStamp < dateModified.getTime()) {

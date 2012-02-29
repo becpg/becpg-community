@@ -1,7 +1,13 @@
+<#assign id = args.htmlid>
+<#assign jsid = args.htmlid?js_string>
 <script type="text/javascript">//<![CDATA[
-   var olapChart = new beCPG.dashlet.OlapChart("${args.htmlid}", "${instance.object.id}");
+   var olapChart = new beCPG.dashlet.OlapChart("${jsid}").setOptions(
+   {
+      siteId: "${page.url.templateArgs.site!""}",
+      regionId: "${args['region-id']?js_string}"
+   }).setMessages(${messages});
  
-   new Alfresco.widget.DashletResizer("${args.htmlid}", "${instance.object.id}");
+   new Alfresco.widget.DashletResizer("${jsid}", "${instance.object.id}");
 
    var saikuAccessEvent = new YAHOO.util.CustomEvent("openSaikuClick");
    saikuAccessEvent.subscribe(olapChart.openSaikuClick, olapChart, true);
