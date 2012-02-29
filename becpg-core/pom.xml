@@ -32,7 +32,7 @@
 			<classifier>api</classifier>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-report</artifactId>
@@ -55,7 +55,7 @@
 			</exclusions>
 		</dependency>
 
-		
+
 		<!-- patch -->
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -64,12 +64,12 @@
 			<type>jar</type>
 			<exclusions>
 				<exclusion>
-						<groupId>org.alfresco.sdk</groupId>
-						<artifactId>alfresco-repository-${alfresco.version}</artifactId>
+					<groupId>org.alfresco.sdk</groupId>
+					<artifactId>alfresco-repository-${alfresco.version}</artifactId>
 				</exclusion>
 			</exclusions>
-	    </dependency>
-		
+		</dependency>
+
 
 
 		<!-- alfresco -->
@@ -81,12 +81,12 @@
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
-						<groupId>org.alfresco.sdk</groupId>
-						<artifactId>alfresco-repository-${alfresco.version}</artifactId>
+					<groupId>org.alfresco.sdk</groupId>
+					<artifactId>alfresco-repository-${alfresco.version}</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-	
+
 		<!-- mysql -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -107,7 +107,7 @@
 			<groupId>org.springframework.extensions.surf</groupId>
 			<artifactId>spring-webscripts</artifactId>
 			<version>1.0.0</version>
- 			<classifier>tests</classifier>
+			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
 
@@ -117,21 +117,17 @@
 			<version>1.2.0</version>
 			<scope>test</scope>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-mock</artifactId>
 			<version>2.0.8</version>
 			<scope>test</scope>
 		</dependency>
-		
-	<!-- 	<dependency>
-			<groupId>org.subethamail</groupId>
-			<artifactId>subethasmtp</artifactId>
-			<version>3.1.3</version>
-			<scope>test</scope>
-		</dependency> -->
-            
+
+		<!-- <dependency> <groupId>org.subethamail</groupId> <artifactId>subethasmtp</artifactId> 
+			<version>3.1.3</version> <scope>test</scope> </dependency> -->
+
 
 
 		<dependency>
@@ -158,15 +154,8 @@
 		</dependency>
 
 
-		<!-- runtime 
-
-		<dependency>
-			<groupId>net.sf.proguard</groupId>
-			<artifactId>proguard</artifactId>
-			<version>4.4</version>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency> -->
+		<!-- runtime <dependency> <groupId>net.sf.proguard</groupId> <artifactId>proguard</artifactId> 
+			<version>4.4</version> <scope>runtime</scope> <optional>true</optional> </dependency> -->
 
 
 		<!-- Don't add here amp dependencies as it will break amp packaging -->
@@ -183,11 +172,11 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12</version>
 				<configuration>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
-					 <excludes>
-<!-- 						 <exclude>**/*WebScriptTest.java</exclude>  -->
-						 <exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
-					</excludes> 
+					<argLine>-Xmx256m -XX:MaxPermSize=128m</argLine>
+					<excludes>
+						<exclude>**/*WebScriptTest.java</exclude>
+						<exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -206,42 +195,25 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--  proguard  
-			 <plugin>
-			    <groupId>com.pyx4me</groupId>
-			    <artifactId>proguard-maven-plugin</artifactId>
-			    <version>2.0.4</version>
-			    <executions>
-			        <execution>
-			            <phase>prepare-package</phase>
-			            <goals>
-			                <goal>proguard</goal>
-			            </goals>
-			        </execution>
-			    </executions>
-			    <configuration>
-			    	<proguardVersion>4.4</proguardVersion>
-			        <obfuscate>true</obfuscate>			        
-                    <injar>classes</injar> 
-			        <options>
-			            <option>-dontoptimize</option>
-			            <option>-renamesourcefileattribute SourceFile</option>
-			            <option>-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod</option>
-			            <option>-keep public class * { public protected *;}</option>
-			            <option>-keepclassmembernames class * {java.lang.Class class$(java.lang.String); java.lang.Class class$(java.lang.String, boolean);}</option>			            
-			            <option>-keepclassmembers enum * {public static **[] values(); public static ** valueOf(java.lang.String);}</option>
-			            <option>-keepclassmembers class * implements java.io.Serializable { static final long serialVersionUID; private static final java.io.ObjectStreamField[] serialPersistentFields; private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream); java.lang.Object writeReplace(); java.lang.Object readResolve();}</option>
-			            <option>-keep @org.springframework.beans.factory.annotation.Service class *</option>
-			            <option>-keep @org.springframework.stereotype.Controller class *</option>
-			            <option>-keepclassmembers class * { @org.springframework.beans.factory.annotation.Autowired *; }</option>
-			        </options>
-			        <libs>
-			            <lib>${java.home}/lib/rt.jar</lib>
-			            <lib>${java.home}/lib/jsse.jar</lib>
-			        </libs>
-			        <addMavenDescriptor>false</addMavenDescriptor>
-			    </configuration>
-			</plugin>    --> 
+			<!-- proguard <plugin> <groupId>com.pyx4me</groupId> <artifactId>proguard-maven-plugin</artifactId> 
+				<version>2.0.4</version> <executions> <execution> <phase>prepare-package</phase> 
+				<goals> <goal>proguard</goal> </goals> </execution> </executions> <configuration> 
+				<proguardVersion>4.4</proguardVersion> <obfuscate>true</obfuscate> <injar>classes</injar> 
+				<options> <option>-dontoptimize</option> <option>-renamesourcefileattribute 
+				SourceFile</option> <option>-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod</option> 
+				<option>-keep public class * { public protected *;}</option> <option>-keepclassmembernames 
+				class * {java.lang.Class class$(java.lang.String); java.lang.Class class$(java.lang.String, 
+				boolean);}</option> <option>-keepclassmembers enum * {public static **[] 
+				values(); public static ** valueOf(java.lang.String);}</option> <option>-keepclassmembers 
+				class * implements java.io.Serializable { static final long serialVersionUID; 
+				private static final java.io.ObjectStreamField[] serialPersistentFields; 
+				private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream); 
+				java.lang.Object writeReplace(); java.lang.Object readResolve();}</option> 
+				<option>-keep @org.springframework.beans.factory.annotation.Service class 
+				*</option> <option>-keep @org.springframework.stereotype.Controller class 
+				*</option> <option>-keepclassmembers class * { @org.springframework.beans.factory.annotation.Autowired 
+				*; }</option> </options> <libs> <lib>${java.home}/lib/rt.jar</lib> <lib>${java.home}/lib/jsse.jar</lib> 
+				</libs> <addMavenDescriptor>false</addMavenDescriptor> </configuration> </plugin> -->
 			<!-- native2ascii -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -305,26 +277,26 @@
 	</build>
 	<profiles>
 		<profile>
-		  <id>test-webscripts</id>
-		  <build>
-		   <plugins>
-		   	<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12</version>
-				<configuration>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
-					<includes>
-					 <include>**/*WebScriptTest.java</include>
-					</includes>
-					<excludes>              
-                     </excludes>  
-				</configuration>
-			</plugin>
-		   </plugins>
-		  </build>
+			<id>test-webscripts</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.12</version>
+						<configuration>
+							<argLine>-Xmx256m -XX:MaxPermSize=128m</argLine>
+							<includes>
+								<include>**/*WebScriptTest.java</include>
+							</includes>
+							<excludes>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
-	
+
 	</profiles>
 
 </project>
