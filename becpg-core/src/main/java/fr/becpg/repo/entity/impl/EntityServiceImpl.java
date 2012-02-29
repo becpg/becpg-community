@@ -39,6 +39,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ExportFormat;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
@@ -407,6 +408,23 @@ public class EntityServiceImpl implements EntityService {
 					.getChildRef();
 		}
 		return ret;
+	}
+
+	/**
+	 * Import / export
+	 */
+	
+	
+	@Override
+	public void exportEntity(NodeRef entityNodeRef, OutputStream out, ExportFormat format) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, ExportFormat format) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 

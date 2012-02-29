@@ -68,7 +68,7 @@ fct_test() {
 # $4 : version
 
 fct_mvn_install(){
-	mvn install:install-file -Dclassifier=$1  -DgroupId=$2 -DartifactId=$3 -Dversion=$4 -Dpackaging=jar -Dfile=$2.jar  >>$FICHIER_LOG 2>1 &
+	mvn install:install-file -Dclassifier=$1  -DgroupId=$2 -DartifactId=$3 -Dversion=$4 -Dpackaging=jar -Dfile=$3.jar  >>$FICHIER_LOG 2>1 &
 	spanner "$!" '/\-'
 }
 
@@ -394,9 +394,8 @@ spanner "$!" '/\-'
 echo ""
 fi
 
-read -p "Do you want to install Alfresco Patch ? (y/n)" ans 
+read -p "Do you want to install locally Alfresco Patch ? (y/n)" ans 
 if [ "$ans" = "y" ]; then
-
 fct_echo "Installing alfresco Patch"
 cd $BECPG_ROOT/alfresco-patch
 echo -ne "Installing ... "
@@ -405,6 +404,15 @@ spanner "$!" '/\-'
 echo ""
 fi
 
+read -p "Do you want to deploy to remote repository Alfresco Patch ? (y/n)" ans 
+if [ "$ans" = "y" ]; then
+fct_echo "Deploying alfresco Patch"
+cd $BECPG_ROOT/alfresco-patch
+echo -ne "Deploying ... "
+mvn clean deploy -Dmaven.test.skip=true >>$FICHIER_LOG 2>1 &
+spanner "$!" '/\-'
+echo ""
+fi
 
 read -p "Launch mysql tunning? (y/n)" ans 
 if [ "$ans" = "y" ]; then

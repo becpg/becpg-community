@@ -1,0 +1,10 @@
+<webscript>
+	<shortname>List Entities</shortname>
+	<description>List corresponding entities</description>
+	<url>/becpg/remote/entity/list?path={path}</url>
+	<url>/becpg/remote/entity/list?query={query}</url>
+	<format default="xml">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readonly" >required</transaction>
+	<lifecycle>public_api</lifecycle>
+</webscript>

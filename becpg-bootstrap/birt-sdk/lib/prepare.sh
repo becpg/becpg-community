@@ -3,7 +3,7 @@ use File::Basename;
 
  
 
-$birt_version="3.7.1";
+$birt_version="3.7.2";
 $groupId="org.eclipse.birt";
 open(OUSH, ">mavenize.sh");
 open(OUDEP, ">pombirt.xml");

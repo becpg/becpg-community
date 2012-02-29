@@ -1,0 +1,11 @@
+<webscript>
+	<shortname>Update Entity</shortname>
+	<description>Update corresponding entity</description>	
+	<url>/becpg/remote/entity?nodeRef={nodeRef}</url>
+	<url>/becpg/remote/entity?path={path}</url>
+	<url>/becpg/remote/entity?query={query}</url>
+	<format default="xml">argument</format>
+	<authentication>admin</authentication>
+	<transaction allow="readwrite" buffersize="0">required</transaction>
+	<lifecycle>public_api</lifecycle>
+</webscript>

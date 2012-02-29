@@ -61,14 +61,11 @@
 
 	<properties>
 	    <!-- Test -->
-		<alfresco.data.location>/opt/becpg/workspace/becpg/becpg_data</alfresco.data.location>
+		<alfresco.data.location>./becpg_data</alfresco.data.location>
 		<alfresco.db.host>localhost</alfresco.db.host>
-		<alfresco.db.name>becpg_40d_dev</alfresco.db.name>
+		<alfresco.db.name>becpg_test</alfresco.db.name>
 		<alfresco.db.username>becpg</alfresco.db.username>
 		<alfresco.db.password>becpg</alfresco.db.password>
-		<alfresco.server>/opt/becpg/alfresco-4.0.d</alfresco.server>
-		<!-- Log -->
-		<webapp.log.dir>/var/log/alfresco</webapp.log.dir>
 		<!-- Module specific build time properties -->
 		<module.log.level>info</module.log.level>
 		<!-- build -->
@@ -76,7 +73,19 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<distributionManagement>
+      <repository>
+          <id>becpg-repo</id>
+          <name>becpg repository</name>
+          <url>scp://becpg.fr/srv/becpg-data/maven</url>
+	    </repository>
+	</distributionManagement>
+
 	 <repositories>
+	 	<repository>
+           <id>becpg-repo</id>
+           <url>https://becpg.fr/maven</url>
+      </repository>
 		<repository>
 			<id>alfresco-public-snapshots</id>
 			<url>http://maven.alfresco.com/nexus/content/groups/public-snapshots</url>
@@ -91,6 +100,10 @@
 		</repository>
 	</repositories>
 	<pluginRepositories>
+		<pluginRepository>
+           <id>becpg-repo</id>
+           <url>https://becpg.fr/maven</url>
+      </pluginRepository>
 		<pluginRepository>
 			<id>alfresco-public</id>
 			<url>http://maven.alfresco.com/nexus/content/groups/public</url>
@@ -196,9 +209,6 @@
 				<alfresco.db.name>becpg_test</alfresco.db.name>
 				<alfresco.db.username>becpg</alfresco.db.username>
 				<alfresco.db.password>becpg</alfresco.db.password>
-				<alfresco.server>/opt/becpg/alfresco-4.0.d</alfresco.server>
-				<!-- Log -->
-				<webapp.log.dir>/tmp</webapp.log.dir>
 			</properties>
 		</profile>
 		<profile>

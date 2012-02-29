@@ -1,7 +1,12 @@
 package fr.becpg.repo.entity;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+
+import fr.becpg.model.ExportFormat;
 
 
 /**
@@ -64,7 +69,23 @@ public interface EntityService {
 	 */
 	public NodeRef createOrCopyFrom(NodeRef sourceNodeRef, NodeRef parentNodeRef, QName entityType, String entityName);
 
-
 	
+	
+	/**
+	 * Export entity to specified format
+	 * @param entityNodeRef
+	 * @param outputStream
+	 */
+	public void exportEntity(NodeRef entityNodeRef, OutputStream out, ExportFormat format);
+
+
+	/**
+	 * Create or update entity from specified format
+	 * @param entityNodeRef
+	 * @param in
+	 * @param format
+	 * @return
+	 */
+	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, ExportFormat format);
     
 }

@@ -1,0 +1,9 @@
+<webscript>
+	<shortname>Create Entity</shortname>
+	<description>Create corresponding entity</description>	
+	<url>/becpg/remote/entity</url>
+	<format default="xml">argument</format>
+	<authentication>admin</authentication>
+	<transaction allow="readwrite" buffersize="0">required</transaction>
+	<lifecycle>public_api</lifecycle>
+</webscript>

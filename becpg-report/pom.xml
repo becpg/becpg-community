@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>birt-sdk</artifactId>
-			<version>3.7.1</version>
+			<version>3.7.2</version>
 			<type>pom</type>
 		</dependency>
 

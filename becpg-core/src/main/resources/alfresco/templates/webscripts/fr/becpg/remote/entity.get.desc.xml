@@ -1,0 +1,11 @@
+<webscript>
+	<shortname>Get Entity</shortname>
+	<description>Get corresponding entity</description>	
+	<url>/becpg/remote/entity?nodeRef={nodeRef}</url>
+	<url>/becpg/remote/entity?path={path}</url>
+	<url>/becpg/remote/entity?query={query}</url>
+	<format default="xml">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readonly" >required</transaction>
+	<lifecycle>public_api</lifecycle>
+</webscript>

@@ -1,0 +1,10 @@
+<webscript>
+	<shortname>Formulate</shortname>
+	<description>Formulate provided composition or entity</description>	
+	<url>/becpg/remote/entity/formulate?nodeRef={nodeRef}</url>
+	<url>/becpg/remote/formulate</url>
+	<format default="xml">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readwrite" buffersize="0">required</transaction>
+	<lifecycle>public_api</lifecycle>
+</webscript>

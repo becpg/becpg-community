@@ -844,12 +844,12 @@
 			<version>${alfresco.version}</version>
 			<classifier>community</classifier>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.alfresco.sdk</groupId>
 			<artifactId>icu4j_3_6_1</artifactId>
 			<version>${alfresco.version}</version>
 			<classifier>community</classifier>
-		</dependency> -->
+		</dependency>
 		<dependency>
 			<groupId>org.alfresco.sdk</groupId>
 			<artifactId>jackson-core-asl-1.8.3</artifactId>
