@@ -193,6 +193,10 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 		    	/*-- Create raw material --*/
 				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");
 				
+				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+				nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+				
 				//Check out
 				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
 				assertNotNull("Check working copy exists", workingCopyNodeRef);				
@@ -201,7 +205,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				assertEquals("productCode should be the same after checkout", nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_CODE), nodeService.getProperty(workingCopyNodeRef, BeCPGModel.PROP_CODE));
 				
 				//Check costs on working copy
-				 Collection<QName> dataLists = productDictionaryService.getDataLists();
+				Collection<QName> dataLists = productDictionaryService.getDataLists();
 				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);				
 				ProductData workingCopyRawMaterial = productDAO.find(workingCopyNodeRef, dataLists);
 				assertEquals("Check costs size", rawMaterial.getCostList().size(), workingCopyRawMaterial.getCostList().size());
@@ -263,10 +267,10 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				//2nd Check out, Check in				
 				workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
 								
-				Map<String, Serializable> properties = new HashMap<String, Serializable>();
-				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-				properties.put(Version.PROP_DESCRIPTION, "description");		
-				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, properties);
+				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+				versionProperties.put(Version.PROP_DESCRIPTION, "description");		
+				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 				
 				newRawMaterial = productDAO.find(newRawMaterialNodeRef, dataLists);
 				assertEquals("Check version", "1.0", newRawMaterial.getVersionLabel());
@@ -388,7 +392,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				productService.classifyProduct(repository.getCompanyHome(), rawMaterialNodeRef);
 				
 				String path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
-				String expected = "/app:company_home/cm:Products/cm:ToValidate/cm:RawMaterial/cm:Frozen/cm:Fish/";
+				String expected = "/app:company_home/cm:Products/cm:Valid/cm:RawMaterial/cm:Frozen/cm:Fish/";
 				assertEquals("check path", expected, path.substring(0, expected.length()));				
 				
 				//Check out

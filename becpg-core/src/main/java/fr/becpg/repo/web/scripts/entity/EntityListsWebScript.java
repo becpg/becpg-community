@@ -33,7 +33,6 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.security.SecurityService;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProductListsWebScript.
  *
