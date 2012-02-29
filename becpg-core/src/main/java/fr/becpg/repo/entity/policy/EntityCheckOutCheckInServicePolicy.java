@@ -24,7 +24,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.event.CheckInEntityEvent;

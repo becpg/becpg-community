@@ -246,12 +246,9 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		
 		try{
 			
-																
-			
 			Map<String,Object> params = new HashMap<String, Object>();
 			params.put(ReportParams.PARAM_FORMAT,reportFormat);
-			
-		
+			params.put(ReportParams.PARAM_IMAGES,new HashMap<String, byte[]>());			
 			
 			// Prepare data source
 			logger.debug("Prepare data source");								
@@ -262,15 +259,11 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			//logger.trace("Xml data: " + exportElt.asXML());
 			
 			beCPGReportEngine.createReport(templateNodeRef, exportElt, outputStream, params);
-			
-			
-				
 				
 		}
 		catch(Exception e){
 			logger.error("Failed to run report: ",  e);
-		}	
-		
+		}			
 	}
 	
 	/**
@@ -347,8 +340,10 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 					
 					byte[] imageBytes = entityService.getImage(tempNodeRef);
 					if (imageBytes != null){
-											
-						params.put(String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId()), imageBytes);				
+								
+						@SuppressWarnings("unchecked")
+						Map<String,byte[]> images = (Map<String, byte[]>) params.get(ReportParams.PARAM_IMAGES);
+						images.put(String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId()), imageBytes);				
 					}
 				}
 				// class attribute

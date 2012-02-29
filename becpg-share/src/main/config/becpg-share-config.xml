@@ -92,9 +92,11 @@
 			<workflow name="jbpm$imwf:invitation-moderated" />
 			<workflow name="activiti$activitiInvitationModerated" />
 			<workflow name="activiti$activitiInvitationNominated" />
-			<!-- beCPG <workflow name="jbpm$wf:adhoc" /> <workflow name="jbpm$wf:reviewpooled" 
-				/> <workflow name="jbpm$wf:parallelgroupreview" /> <workflow name="jbpm$wf:review" 
-				/> <workflow name="jbpm$wf:parallelreview" /> -->
+			<workflow name="jbpm$wf:adhoc" /> 
+			<workflow name="jbpm$wf:reviewpooled"	/> 
+			<workflow name="jbpm$wf:parallelgroupreview" /> 
+			<workflow name="jbpm$wf:review"/> 
+			<workflow name="jbpm$wf:parallelreview" />
 		</hidden-workflows>
 	</config>
 

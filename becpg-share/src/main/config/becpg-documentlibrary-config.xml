@@ -342,11 +342,11 @@
 	<config evaluator="string-compare" condition="DocLibCustom">
 
 		<dependencies>
-			<css src="/modules/entity-version/new-version.css" />
-			<js src="/modules/entity-version/new-version.js" />
+			<css src="/modules/entity-version/new-version-min.css" />
+			<js src="/modules/entity-version/new-version-min.js" />
 			<js src="/components/documentlibrary/becpg/fileIcons-min.js" />
 			<js src="/components/documentlibrary/becpg/metadataRenderers-min.js" />
-			<js src="/components/documentlibrary/becpg/docLibAction.js" />
+			<js src="/components/documentlibrary/becpg/docLibAction-min.js" />
 		</dependencies>
 
 	</config>

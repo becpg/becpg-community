@@ -204,15 +204,6 @@ public class ProductData implements ProductElement {
 	public String getVersionLabel() {
 		return versionLabel;
 	}
-
-	/**
-	 * Sets the version label.
-	 *
-	 * @param versionLabel the new version label
-	 */
-	public void setVersionLabel(String versionLabel) {
-		this.versionLabel = versionLabel;
-	}
 	
 	/**
 	 * Gets the legal name.
@@ -622,7 +613,7 @@ public class ProductData implements ProductElement {
 		
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, this.getName());
-		properties.put(ContentModel.PROP_VERSION_LABEL, this.getVersionLabel());
+		//properties.put(ContentModel.PROP_VERSION_LABEL, this.getVersionLabel()); alfresco system property, don't manage it for edition
 		properties.put(ContentModel.PROP_TITLE, this.getTitle());	
 		properties.put(BeCPGModel.PROP_PRODUCT_LEGALNAME, this.getLegalName());
 		properties.put(BeCPGModel.PROP_PRODUCT_HIERARCHY1, this.getHierarchy1());
@@ -649,7 +640,7 @@ public class ProductData implements ProductElement {
 		this.setHierarchy1((String)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1));
 		this.setHierarchy2((String)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2));
 		this.setName((String)properties.get(ContentModel.PROP_NAME));
-		this.setVersionLabel((String)properties.get(ContentModel.PROP_VERSION_LABEL));
+		this.versionLabel = (String)properties.get(ContentModel.PROP_VERSION_LABEL);
 		this.setLegalName((String)properties.get(BeCPGModel.PROP_PRODUCT_LEGALNAME));
     	this.setTitle((String)properties.get(ContentModel.PROP_TITLE));
     	SystemState systemState = getSystemState((String)properties.get(BeCPGModel.PROP_PRODUCT_STATE));

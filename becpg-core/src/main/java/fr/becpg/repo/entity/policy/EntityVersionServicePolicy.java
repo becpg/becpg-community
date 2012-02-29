@@ -51,19 +51,7 @@ public class EntityVersionServicePolicy implements VersionServicePolicies.AfterC
 		
 		logger.debug("afterCreateVersion: " + nodeRef);
 		
-		// disable policy to avoid the creation of a new code
-        policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_CODE);
-        policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY); 
-		
-        try{
-        	//create new version
-            entityVersionService.createEntityVersion(nodeRef, version);
-        }
-        finally{
-        	//enable policies
-    		policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_CODE);
-            policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITY);	
-        }
-		
+		//create new version
+        entityVersionService.createEntityVersion(nodeRef, version);        		
 	}
 }

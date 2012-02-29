@@ -94,6 +94,9 @@ public class CompareEntityVersionReportWebScript extends AbstractWebScript  {
 		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 		Version version = versionHistory.getVersion(versionLabel);				
 		NodeRef entityVersionNodeRef = entityVersionService.getEntityVersion(version);
+		
+		if (logger.isDebugEnabled())
+			logger.debug("entityNodeRef: " + entityNodeRef + " - versionLabel: " + versionLabel + " - entityVersionNodeRef: " + entityVersionNodeRef);
 				
 		List<NodeRef> entities = new ArrayList<NodeRef>();
 		entities.add(entityVersionNodeRef);

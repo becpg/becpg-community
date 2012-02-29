@@ -361,7 +361,11 @@ private void initObjects(){
 					compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
 					fp1.setCompoList(compoList);
 					
-					fpNodeRef = productDAO.create(folderNodeRef, fp1, dataLists);										
+					fpNodeRef = productDAO.create(folderNodeRef, fp1, dataLists);		
+					
+					Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+					aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+					nodeService.addAspect(fpNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 					
 					// CheckOut/CheckIn
 					NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(fpNodeRef);
