@@ -7,10 +7,14 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -21,53 +25,45 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.comparison.CompareEntityReportService;
+import fr.becpg.repo.entity.version.EntityVersionService;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class CompareEntityReportWebScript.
+ * The Class CompareEntityVersionReportWebScript.
  *
  * @author querephi
  */
-public class CompareEntityReportWebScript extends AbstractWebScript  {
+public class CompareEntityVersionReportWebScript extends AbstractWebScript  {
 	
-	/** The Constant PARAM_ENTITY_1. */
-	private static final String PARAM_ENTITY_1 = "entity1";
+	private static final String PARAM_STORE_TYPE = "store_type";	
+	private static final String PARAM_STORE_ID = "store_id";	
+	private static final String PARAM_ID = "id";	
+	private static final String PARAM_VERSION_LABEL = "versionLabel";
 	
-	/** The Constant PARAM_ENTITY_2. */
-	private static final String PARAM_ENTITY_2 = "entity2";
+	private static Log logger = LogFactory.getLog(CompareEntityVersionReportWebScript.class);
 	
-	/** The Constant PARAM_ENTITY_3. */
-	private static final String PARAM_ENTITY_3 = "entity3";
-	
-	/** The Constant PARAM_ENTITY_4. */
-	private static final String PARAM_ENTITY_4 = "entity4";
-	
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(CompareEntityReportWebScript.class);
-	
-	/** The compare entity report service. */
 	private CompareEntityReportService compareEntityReportService;
 	
-	/** The mimetype service. */
 	private MimetypeService mimetypeService;		
 
-	/**
-	 * Sets the compare entity report service.
-	 *
-	 * @param compareEntityReportService the new compare entity report service
-	 */
+	private VersionService versionService;
+	
+	private EntityVersionService entityVersionService;
+	
 	public void setCompareEntityReportService(
 			CompareEntityReportService compareEntityReportService) {
 		this.compareEntityReportService = compareEntityReportService;
 	}
 	
-	/**
-	 * Sets the mimetype service.
-	 *
-	 * @param mimetypeService the new mimetype service
-	 */
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
+	}
+
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
+	}
+
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
 	}
 
 	/**
@@ -80,34 +76,34 @@ public class CompareEntityReportWebScript extends AbstractWebScript  {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException{
 		
-		logger.debug("CompareWebScript executeImpl()");
+		logger.debug("CompareEntityVersionReportWebScript executeImpl()");
 		
-		String entity1 = req.getParameter(PARAM_ENTITY_1);
-		String entity2 = req.getParameter(PARAM_ENTITY_2);
-		String entity3 = req.getParameter(PARAM_ENTITY_3);
-		String entity4 = req.getParameter(PARAM_ENTITY_4);
+		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
+		String storeType = templateArgs.get(PARAM_STORE_TYPE);
+		String storeId = templateArgs.get(PARAM_STORE_ID);
+		String nodeId = templateArgs.get(PARAM_ID);
+		String versionLabel = templateArgs.get(PARAM_VERSION_LABEL);
 		
-		if(entity1.isEmpty() && entity2.isEmpty()){
-			logger.error("missing parameters. entity1= '' or entity2=''");
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "missing parameters. entity1= '' or entity2=''");
+		NodeRef entityNodeRef = new NodeRef(storeType, storeId, nodeId);
+				
+		if(entityNodeRef != null && versionLabel.isEmpty()){
+			logger.error("missing parameters. entity= '' or versionLabel=''");
+			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "missing parameters. entity= '' or versionLabel=''");
 		}
 		
-		NodeRef entity1NodeRef = new NodeRef(entity1);
+		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+		Version version = versionHistory.getVersion(versionLabel);				
+		NodeRef entityVersionNodeRef = entityVersionService.getEntityVersion(version);
+				
 		List<NodeRef> entities = new ArrayList<NodeRef>();
-		entities.add(new NodeRef(entity2));
-		
-		if(entity3 != null)
-			entities.add(new NodeRef(entity3));
-		if(entity4 != null)
-			entities.add(new NodeRef(entity4));
-		
+		entities.add(entityVersionNodeRef);
 		
 		// get the content and stream directly to the response output stream
         // assuming the repository is capable of streaming in chunks, this should allow large files
         // to be streamed directly to the browser response stream.
         try
         {        	
-        	compareEntityReportService.getComparisonReport(entity1NodeRef, entities, res.getOutputStream());
+        	compareEntityReportService.getComparisonReport(entityNodeRef, entities, res.getOutputStream());
     		
     		// set mimetype for the content and the character encoding + length for the stream
             res.setContentType(mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF));

@@ -18,11 +18,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
-import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.RawMaterialData;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class VersionHistoryWebScriptTest.
  *
@@ -55,10 +53,7 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
     private ProductDAO productDAO;
     
     /** The transaction service. */
-    private TransactionService transactionService;
-    
-    /** The product version service. */
-    private EntityVersionService entityVersionService;
+    private TransactionService transactionService;    
     
     private CheckOutCheckInService checkOutCheckInService;
     
@@ -79,7 +74,6 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
 		authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
 		productDAO = (ProductDAO) getServer().getApplicationContext().getBean("productDAO");
 		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
-		entityVersionService = (EntityVersionService) getServer().getApplicationContext().getBean("entityVersionService");
 		repositoryHelper = (Repository) getServer().getApplicationContext().getBean("repositoryHelper");
 		checkOutCheckInService = (CheckOutCheckInService) getServer().getApplicationContext().getBean("checkOutCheckInService");
 		

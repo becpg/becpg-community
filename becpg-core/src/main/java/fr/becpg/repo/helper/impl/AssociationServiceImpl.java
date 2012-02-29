@@ -30,7 +30,10 @@ public class AssociationServiceImpl implements AssociationService {
 		if(dbAssocNodeRefs != null){
 			//remove from db
     		for(AssociationRef assocRef : dbAssocNodeRefs){
-    			if(!assocNodeRefs.contains(assocRef.getTargetRef()))
+    			if(assocNodeRefs == null){
+    				nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
+    			}
+    			else if(!assocNodeRefs.contains(assocRef.getTargetRef()))
     				nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
     			else
     				assocNodeRefs.remove(assocRef.getTargetRef());//already in db
@@ -62,7 +65,6 @@ public class AssociationServiceImpl implements AssociationService {
 		}
 		
 		if(createAssoc && assocNodeRef != null){
-			logger.debug("###createAssoc: " + qName + "nodeRef: " + nodeRef);
 			nodeService.createAssociation(nodeRef, assocNodeRef, qName);
 		}
 	}

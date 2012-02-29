@@ -16,12 +16,10 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.alfresco.util.BaseAlfrescoTestCase;
 import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
@@ -42,9 +40,6 @@ public class ProductListPoliciesTest  extends BaseAlfrescoTestCase  {
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductListPoliciesTest.class);
-	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
 	
 	/** The node service. */
 	private NodeService nodeService;
@@ -72,12 +67,12 @@ public class ProductListPoliciesTest  extends BaseAlfrescoTestCase  {
 		
     	logger.debug("ProductServiceTest:setUp");
     
-    	nodeService = (NodeService)appCtx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");  
-    	productDAO = (ProductDAO)appCtx.getBean("productDAO");
-        authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-        repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-        entityListDAO = (EntityListDAO)appCtx.getBean("entityListDAO");
+    	nodeService = (NodeService)ctx.getBean("nodeService");
+    	fileFolderService = (FileFolderService)ctx.getBean("fileFolderService");  
+    	productDAO = (ProductDAO)ctx.getBean("productDAO");
+        authenticationComponent = (AuthenticationComponent)ctx.getBean("authenticationComponent");
+        repositoryHelper = (Repository)ctx.getBean("repositoryHelper");
+        entityListDAO = (EntityListDAO)ctx.getBean("entityListDAO");
                         
     }
     

@@ -242,7 +242,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductData formulate(ProductData productData) throws FormulateException {
     	try {  	    
-        	logger.debug("###productData.getProcessList(): " + productData.getProcessList());
         	// do the formulation if the product has a composition, or packaging list or process list defined
         	if(productData.getCompoList() != null || productData.getPackagingList() != null || productData.getProcessList() != null){
         		
@@ -282,7 +281,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public void classifyProduct(NodeRef containerNodeRef, NodeRef productNodeRef){
-    		
+    	
     	NodeRef destionationNodeRef = null;
     	ProductData productData = productDAO.find(productNodeRef, null);
     	

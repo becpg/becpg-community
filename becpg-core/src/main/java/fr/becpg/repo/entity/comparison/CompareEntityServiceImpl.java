@@ -126,7 +126,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	}
 	
 	/* (non-Javadoc)
-	 * @see fr.becpg.repo.entity.comparison.CompareEntitieService#compareStructDatalist(org.alfresco.service.cmr.repository.NodeRef, org.alfresco.service.cmr.repository.NodeRef, org.alfresco.service.namespace.QName, org.alfresco.service.namespace.QName)
+	 * @see fr.becpg.repo.ef, BeCPGModel.PROP_VERSION_LABEL);
+					versionLabel = versionLabel == null ? VERSION_INITIAL : versionLabel;entity.comparison.CompareEntitieService#compareStructDatalist(org.alfresco.service.cmr.repository.NodeRef, org.alfresco.service.cmr.repository.NodeRef, org.alfresco.service.namespace.QName, org.alfresco.service.namespace.QName)
 	 */
 	@Override
 	public List<StructCompareResultDataItem> compareStructDatalist(NodeRef entity1NodeRef, NodeRef entity2NodeRef, QName datalistType, QName pivotProperty) {
@@ -876,15 +877,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				qName.equals(ContentModel.PROP_AUTO_VERSION) ||
 				qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) ||							
 				// do not compare frozen properties and version properties				
-				qName.equals(BeCPGModel.PROP_VERSION_DESCRIPTION) ||
-				qName.equals(BeCPGModel.PROP_VERSION_LABEL) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_NODE_DBID) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_NODE_REF) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_ACCESSED) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_CREATOR) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_CREATED) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_MODIFIER) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_MODIFIED) ||
+				qName.equals(BeCPGModel.PROP_VERSION_DESCRIPTION) ||				
 				//system properties
 				qName.equals(BeCPGModel.ASSOC_COMPOLIST_FATHER)){
 			

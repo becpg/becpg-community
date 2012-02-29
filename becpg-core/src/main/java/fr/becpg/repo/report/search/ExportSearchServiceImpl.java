@@ -348,7 +348,6 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 					byte[] imageBytes = entityService.getImage(tempNodeRef);
 					if (imageBytes != null){
 											
-						logger.debug("###file content as blob : " + String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId()));
 						params.put(String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId()), imageBytes);				
 					}
 				}

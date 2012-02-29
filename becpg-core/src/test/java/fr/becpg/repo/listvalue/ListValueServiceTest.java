@@ -16,11 +16,9 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.RepoService;
@@ -38,9 +36,6 @@ public class ListValueServiceTest extends BaseAlfrescoTestCase {
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ListValueServiceTest.class);
-	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();	
 	
 	/** The list value service. */
 	private EntityListValuePlugin entityListValuePlugin;
@@ -61,10 +56,10 @@ public class ListValueServiceTest extends BaseAlfrescoTestCase {
 	protected void setUp() throws Exception {
     	super.setUp();		
     	
-    	 entityListValuePlugin = (EntityListValuePlugin)appCtx.getBean("entityListValuePlugin");
-    	fileFolderService = (FileFolderService) appCtx.getBean("FileFolderService");
-    	repoService = (RepoService)appCtx.getBean("repoService");
-    	repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
+    	 entityListValuePlugin = (EntityListValuePlugin)ctx.getBean("entityListValuePlugin");
+    	fileFolderService = (FileFolderService) ctx.getBean("FileFolderService");
+    	repoService = (RepoService)ctx.getBean("repoService");
+    	repositoryHelper = (Repository)ctx.getBean("repositoryHelper");
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override

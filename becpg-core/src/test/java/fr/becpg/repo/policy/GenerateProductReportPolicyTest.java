@@ -15,11 +15,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
 import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 
 import fr.becpg.model.BeCPGModel;
 
@@ -36,9 +34,6 @@ public class GenerateProductReportPolicyTest extends BaseAlfrescoTestCase {
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(GenerateProductReportPolicyTest.class);
-	
-	/** The app ctx. */
-	private static ApplicationContext appCtx = ApplicationContextHelper.getApplicationContext();
 	
 	/** The repository helper. */
 	private Repository repositoryHelper;    
@@ -58,9 +53,9 @@ public class GenerateProductReportPolicyTest extends BaseAlfrescoTestCase {
 		
     	logger.debug("GenerateProductReportPolicyTest:setUp");
     
-    	nodeService = (NodeService)appCtx.getBean("nodeService");  
-    	repositoryHelper = (Repository)appCtx.getBean("repositoryHelper");
-    	fileFolderService = (FileFolderService)appCtx.getBean("fileFolderService");
+    	nodeService = (NodeService)ctx.getBean("nodeService");  
+    	repositoryHelper = (Repository)ctx.getBean("repositoryHelper");
+    	fileFolderService = (FileFolderService)ctx.getBean("fileFolderService");
     	                        
     }
     

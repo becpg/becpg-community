@@ -60,14 +60,21 @@
    		<property name="productDictionaryService" ref="productDictionaryService"/>
    	</bean>
    	
-   	<!-- Compare entities -->
-  		<bean id="webscript.fr.becpg.entity.compareEntityReport.get" class="fr.becpg.repo.web.scripts.entity.CompareEntityReportWebScript" parent="webscript">
+   	<!-- Entity new version form -->
+  		<bean id="webscript.fr.becpg.entity.form-checkin.post" class="fr.becpg.repo.web.scripts.entity.FormCheckInWebScript" parent="webscript">   		
+   		<property name="checkOutCheckInService" ref="checkOutCheckInService" />
+   	</bean>
+   	
+   	<!-- Compare entity version -->
+  		<bean id="webscript.fr.becpg.entity.compareEntityVersionReport.get" class="fr.becpg.repo.web.scripts.entity.CompareEntityVersionReportWebScript" parent="webscript">
    		<property name="compareEntityReportService" ref="compareEntityReportService" />
    		<property name="mimetypeService" ref="mimetypeService" />
+   		<property name="versionService" ref="versionService" />
+   		<property name="entityVersionService" ref="entityVersionService" />
    	</bean>
    	
    	<!-- Export search -->
-    <bean id="webscript.fr.becpg.report.exportSearch.get" class="fr.becpg.repo.web.scripts.report.ExportSearchWebScript" parent="webscript">
+    	<bean id="webscript.fr.becpg.report.exportSearch.get" class="fr.becpg.repo.web.scripts.report.ExportSearchWebScript" parent="webscript">
    		<property name="exportSearchService" ref="exportSearchService" />
    		<property name="mimetypeService" ref="mimetypeService" />
    		<property name="advSearchService" ref="advSearchService" />
@@ -75,7 +82,7 @@
    		<property name="reportTplService" ref="reportTplService" />
    	</bean>
     
-    <!-- Search -->
+    	<!-- Search -->
    	<bean id="webscript.fr.becpg.search.search.get" class="fr.becpg.repo.web.scripts.search.SearchWebScript" parent="webscript">
       	    <property name="advSearchService" ref="advSearchService" />      	
 			<property name="namespaceService" ref="namespaceService" />
@@ -84,7 +91,7 @@
    	</bean>
    	
     
-    <bean id="webscript.fr.becpg.report.exportSearchTpls.get" class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript" parent="webscript">
+    	<bean id="webscript.fr.becpg.report.exportSearchTpls.get" class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript" parent="webscript">
    		<property name="namespaceService" ref="namespaceService" />
    		<property name="reportTplService" ref="reportTplService" />
    	</bean>

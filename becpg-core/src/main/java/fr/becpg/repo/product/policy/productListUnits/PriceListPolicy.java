@@ -110,7 +110,6 @@ public class PriceListPolicy implements NodeServicePolicies.OnUpdatePropertiesPo
 		Float value = (Float)nodeService.getProperty(priceListItemNodeRef, BeCPGModel.PROP_PRICELIST_VALUE);
 		
 		NodeRef costNodeRef = null;
-		logger.debug("###priceListNodeRef: " + priceListItemNodeRef);
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(priceListItemNodeRef, BeCPGModel.ASSOC_PRICELIST_COST);
 		if(assocRefs.size() > 0){
 			costNodeRef = assocRefs.get(0).getTargetRef();

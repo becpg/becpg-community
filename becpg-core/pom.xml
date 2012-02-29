@@ -185,7 +185,7 @@
 				<configuration>
 					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
 					 <excludes>
-						 <exclude>**/*WebScriptTest.java</exclude> 
+<!-- 						 <exclude>**/*WebScriptTest.java</exclude>  -->
 						 <exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
 					</excludes> 
 				</configuration>

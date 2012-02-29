@@ -1805,11 +1805,11 @@
 				</property>
 				<property name="bcpg:frozenNodeRef">
 					<type>d:text</type>
-					<mandatory enforced="true">true</mandatory>
+					<mandatory enforced="true">false</mandatory>
 				</property>
 				<property name="bcpg:frozenNodeDbId">
 					<type>d:long</type>
-					<mandatory enforced="true">true</mandatory>
+					<mandatory enforced="true">false</mandatory>
 				</property>
 			</properties>
 		</aspect>

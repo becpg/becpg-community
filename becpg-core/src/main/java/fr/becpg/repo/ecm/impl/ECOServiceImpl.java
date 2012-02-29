@@ -8,14 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.VersionNumber;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -33,7 +34,6 @@ import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.entity.wused.WUsedListService;
 import fr.becpg.repo.entity.wused.data.WUsedData;
 import fr.becpg.repo.helper.RepoService;
@@ -59,7 +59,6 @@ import fr.becpg.repo.product.formulation.FormulateException;
 public class ECOServiceImpl implements ECOService {
 		
 	private static final String VERSION_DESCRIPTION = "Applied by ECO %s";
-	private static final String VERSION_INITIAL = "1.0";
 	private static Log logger = LogFactory.getLog(ECOServiceImpl.class);
 	
 	private BeCPGDao<ChangeOrderData>changeOrderDAO;
@@ -526,19 +525,14 @@ public class ECOServiceImpl implements ECOService {
 				}
 				else{
 					
-					boolean majorVersion = changeUnitDataItem.getRevision().equals(RevisionType.Major) ? true : false;
-					String versionLabel = (String)nodeService.getProperty(sourceItemNodeRef, BeCPGModel.PROP_VERSION_LABEL);
-					versionLabel = versionLabel == null ? VERSION_INITIAL : versionLabel;
-										
-					//Calculate new version
-					VersionNumber versionNumber = getVersionNumber(versionLabel, majorVersion);
+					VersionType versionType = changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR;
 					
 					// checkout
 					NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(sourceItemNodeRef);
 					
 					// checkin
 					Map<String, Serializable> properties = new HashMap<String, Serializable>();
-					properties.put(ContentModel.PROP_VERSION_LABEL.toPrefixString(), versionNumber.toString());
+					properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
 					properties.put(Version.PROP_DESCRIPTION, String.format(VERSION_DESCRIPTION, ecoData.getCode()));	
 					
 					productToFormulateNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, properties);									
@@ -709,26 +703,5 @@ public class ECOServiceImpl implements ECOService {
 		}
 		
 		return value;
-	}
-	
-	/**
-	 * Calculate new version
-	 * @param versionLabel
-	 * @param majorVersion
-	 * @return
-	 */
-	private VersionNumber getVersionNumber(String versionLabel, boolean majorVersion){
-		
-		VersionNumber versionNumber = new VersionNumber(versionLabel);
-		if(majorVersion){
-			int majorNb = versionNumber.getPart(0) + 1;
-			versionNumber = new VersionNumber(majorNb + EntityVersionService.VERSION_DELIMITER + 0);			
-		}
-		else{
-			int minorNb = versionNumber.getPart(1) + 1;
-			versionNumber = new VersionNumber(versionNumber.getPart(0) + EntityVersionService.VERSION_DELIMITER + minorNb);
-		}
-		
-		return versionNumber;
-	}
+	}	
 }

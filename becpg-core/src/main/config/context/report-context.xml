@@ -36,7 +36,6 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="contentService" ref="contentService" />		
 		<property name="fileFolderService" ref="fileFolderService"/>		
-		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="beCPGReportEngine" ref="beCPGReportEngine" />
 		<property name="reportTplService" ref="reportTplService" />		
 		<property name="mimetypeService" ref="mimetypeService"/>

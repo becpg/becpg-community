@@ -1,7 +1,19 @@
  /**
  * Use this script to add sortable aspect on existing nodes
  */
-var data =[ {type:"bcpg:costList"}];
+var data =[ {type:"bcpg:costList"},
+            {type:"bcpg:nutList"},
+            {type:"bcpg:allergenList"},
+            {type:"bcpg:ingList"},
+            {type:"bcpg:physicoChemList"},
+            {type:"bcpg:microbioList"},
+            {type:"bcpg:compoList"},
+            {type:"bcpg:packagingList"},
+            {type:"bcpg:costDetailsList"},
+            {type:"bcpg:priceList"},
+            {type:"bcpg:organoList"},
+            {type:"bcpg:forbiddenIngList"},
+            {type:"bcpg:reqCtrlList"}];
 
 for(row in data){
 	var nodes = search.luceneSearch('+TYPE:"'+data[row].type+'"');	

@@ -188,7 +188,6 @@
 	<bean id="entityVersionService" class="fr.becpg.repo.entity.version.EntityVersionServiceImpl">
 		<property name="nodeService" ref="nodeService" />		
 		<property name="copyService" ref="copyService" />	
-	   	<property name="personService" ref="personService" />
 	   	<property name="searchService" ref="searchService" />
 	   	<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
@@ -275,9 +274,14 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="authenticationService" ref="authenticationService" />		
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="permissionService" ref="permissionService" />
-		<property name="entityVersionService" ref="entityVersionService" />		
+		<property name="permissionService" ref="permissionService" />		
 	</bean>
+	<bean id="entityVersionServicePolicy" class="fr.becpg.repo.entity.policy.EntityVersionServicePolicy" init-method="init">
+		<property name="policyComponent" ref="policyComponent" />			
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="entityVersionService" ref="entityVersionService" />			
+	</bean>
+	
 	<!-- WUsedList -->
 	<bean id="wUsedListService" class="fr.becpg.repo.entity.wused.WUsedListServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -352,7 +356,6 @@
 	</bean>
 	
 	<!-- Product Policies -->	
-
 	<bean id="productListUnits.ProductPolicy" class="fr.becpg.repo.product.policy.productListUnits.ProductPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
@@ -368,6 +371,13 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="productDAO" ref="productDAO" />
+	</bean>
+	<!-- Product Listeners -->	
+	<bean id="productCheckInListener" class="fr.becpg.repo.product.listener.ProductCheckInListener">
+		<property name="productService" ref="productService" />
+		<property name="repositoryHelper" ref="repositoryHelper" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="namespaceService" ref="namespaceService" />
 	</bean>
 	
 	<!-- Search -->

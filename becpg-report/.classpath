@@ -3,8 +3,8 @@
   <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
   <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar" sourcepath="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5-sources.jar"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/com.ibm.icu_4.4.2.v20110208/3.7.1/com.ibm.icu_4.4.2.v20110208-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/com.lowagie.text_2.1.7.v201004222200/3.7.1/com.lowagie.text_2.1.7.v201004222200-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/commons-cli-1.0/3.7.1/commons-cli-1.0-3.7.1.jar"/>
@@ -12,7 +12,21 @@
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/flute/3.7.1/flute-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/javax.wsdl_1.5.1.v201012040544/3.7.1/javax.wsdl_1.5.1.v201012040544-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/js/3.7.1/js-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.batik.bridge_1.6.0.v201011041432/3.7.1/org.apache.batik.bridge_1.6.0.v201011041432-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.batik.css_1.6.0.v201011041432/3.7.1/org.apache.batik.css_1.6.0.v201011041432-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.batik.dom.svg_1.6.0.v201011041432/3.7.1/org.apache.batik.dom.svg_1.6.0.v201011041432-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.batik.dom_1.6.0.v201011041432/3.7.1/org.apache.batik.dom_1.6.0.v201011041432-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.batik.ext.awt_1.6.0.v201011041432/3.7.1/org.apache.batik.ext.awt_1.6.0.v201011041432-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.batik.parser_1.6.0.v201011041432/3.7.1/org.apache.batik.parser_1.6.0.v201011041432-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.batik.pdf_1.6.0.v201105071520/3.7.1/org.apache.batik.pdf_1.6.0.v201105071520-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.batik.svggen_1.6.0.v201011041432/3.7.1/org.apache.batik.svggen_1.6.0.v201011041432-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.batik.transcoder_1.6.0.v201011041432/3.7.1/org.apache.batik.transcoder_1.6.0.v201011041432-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.batik.util.gui_1.6.0.v201011041432/3.7.1/org.apache.batik.util.gui_1.6.0.v201011041432-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.batik.util_1.6.0.v201011041432/3.7.1/org.apache.batik.util_1.6.0.v201011041432-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.batik.xml_1.6.0.v201011041432/3.7.1/org.apache.batik.xml_1.6.0.v201011041432-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.commons.codec_1.3.0.v201101211617/3.7.1/org.apache.commons.codec_1.3.0.v201101211617-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.xerces_2.9.0.v201101211617/3.7.1/org.apache.xerces_2.9.0.v201101211617-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.xml.resolver_1.2.0.v201005080400/3.7.1/org.apache.xml.resolver_1.2.0.v201005080400-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.apache.xml.serializer_2.7.1.v201005080400/3.7.1/org.apache.xml.serializer_2.7.1.v201005080400-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.birt.runtime_3.7.1.v20110913-1734/3.7.1/org.eclipse.birt.runtime_3.7.1.v20110913-1734-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.core.contenttype_3.4.100.v20110423-0524/3.7.1/org.eclipse.core.contenttype_3.4.100.v20110423-0524-3.7.1.jar"/>
@@ -21,6 +35,8 @@
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.core.jobs_3.5.100.v20110404/3.7.1/org.eclipse.core.jobs_3.5.100.v20110404-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.core.resources_3.7.100.v20110510-0712/3.7.1/org.eclipse.core.resources_3.7.100.v20110510-0712-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.core.runtime_3.7.0.v20110110/3.7.1/org.eclipse.core.runtime_3.7.0.v20110110-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.connectivity.apache.derby.dbdefinition_1.0.2.v200906161815/3.7.1/org.eclipse.datatools.connectivity.apache.derby.dbdefinition_1.0.2.v200906161815-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.connectivity.apache.derby_1.0.102.v201107130538/3.7.1/org.eclipse.datatools.connectivity.apache.derby_1.0.102.v201107130538-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.connectivity.console.profile_1.0.0.v200906020553/3.7.1/org.eclipse.datatools.connectivity.console.profile_1.0.0.v200906020553-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.connectivity.db.generic_1.0.1.v200908130547/3.7.1/org.eclipse.datatools.connectivity.db.generic_1.0.1.v200908130547-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC_1.0.1.v200906161815/3.7.1/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC_1.0.1.v200906161815-3.7.1.jar"/>
@@ -31,9 +47,24 @@
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.connectivity.oda_3.3.2.v201105200920/3.7.1/org.eclipse.datatools.connectivity.oda_3.3.2.v201105200920-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.connectivity.sqm.core_1.2.3.v201109022323/3.7.1/org.eclipse.datatools.connectivity.sqm.core_1.2.3.v201109022323-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.connectivity_1.2.3.v201108101135/3.7.1/org.eclipse.datatools.connectivity_1.2.3.v201108101135-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.hsqldb.dbdefinition_1.0.0.v200906161800/3.7.1/org.eclipse.datatools.enablement.hsqldb.dbdefinition_1.0.0.v200906161800-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.hsqldb_1.0.0.v200906020900/3.7.1/org.eclipse.datatools.enablement.hsqldb_1.0.0.v200906020900-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition_1.0.4.v201005211215/3.7.1/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition_1.0.4.v201005211215-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.ibm.db2.luw_1.0.2.v201005211230/3.7.1/org.eclipse.datatools.enablement.ibm.db2.luw_1.0.2.v201005211230-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.ibm.informix.dbdefinition_1.0.4.v201005211230/3.7.1/org.eclipse.datatools.enablement.ibm.informix.dbdefinition_1.0.4.v201005211230-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.ibm.informix_1.0.1.v201005211230/3.7.1/org.eclipse.datatools.enablement.ibm.informix_1.0.1.v201005211230-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition_1.0.0.v201004211630/3.7.1/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition_1.0.0.v201004211630-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.msft.sqlserver_1.0.1.v201001180222/3.7.1/org.eclipse.datatools.enablement.msft.sqlserver_1.0.1.v201001180222-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.mysql.dbdefinition_1.0.4.v200906161800/3.7.1/org.eclipse.datatools.enablement.mysql.dbdefinition_1.0.4.v200906161800-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.mysql_1.0.2.v201109022323/3.7.1/org.eclipse.datatools.enablement.mysql_1.0.2.v201109022323-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.oda.ws_1.2.2.v201106161731/3.7.1/org.eclipse.datatools.enablement.oda.ws_1.2.2.v201106161731-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.oda.xml_1.2.1.v201104121500/3.7.1/org.eclipse.datatools.enablement.oda.xml_1.2.1.v201104121500-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.oracle.dbdefinition_1.0.102.v201101120745/3.7.1/org.eclipse.datatools.enablement.oracle.dbdefinition_1.0.102.v201101120745-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.oracle_1.0.0.v200908130544/3.7.1/org.eclipse.datatools.enablement.oracle_1.0.0.v200908130544-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.postgresql.dbdefinition_1.0.1.v200906161800/3.7.1/org.eclipse.datatools.enablement.postgresql.dbdefinition_1.0.1.v200906161800-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.enablement.postgresql_1.0.1.v200906020900/3.7.1/org.eclipse.datatools.enablement.postgresql_1.0.1.v200906020900-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.modelbase.dbdefinition_1.0.2.v201002130228/3.7.1/org.eclipse.datatools.modelbase.dbdefinition_1.0.2.v201002130228-3.7.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.modelbase.derby_1.0.0.v201002161452/3.7.1/org.eclipse.datatools.modelbase.derby_1.0.0.v201002161452-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.modelbase.sql.query_1.1.1.v201008100700/3.7.1/org.eclipse.datatools.modelbase.sql.query_1.1.1.v201008100700-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.datatools.modelbase.sql_1.0.4.v201002250945/3.7.1/org.eclipse.datatools.modelbase.sql_1.0.4.v201002250945-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.eclipse.emf.common_2.7.0.v20110905-0902/3.7.1/org.eclipse.emf.common_2.7.0.v20110905-0902-3.7.1.jar"/>
@@ -52,9 +83,10 @@
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.w3c.dom.smil_1.0.0.v200806040011/3.7.1/org.w3c.dom.smil_1.0.0.v200806040011-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/org.w3c.dom.svg_1.1.0.v201011041433/3.7.1/org.w3c.dom.svg_1.1.0.v201011041433-3.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/Tidy/3.7.1/Tidy-3.7.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.16/log4j-1.2.16.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.1.1/httpclient-4.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.1/httpcore-4.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.4/commons-codec-1.4.jar" sourcepath="M2_REPO/commons-codec/commons-codec/1.4/commons-codec-1.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.4/commons-codec-1.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
 </classpath>
