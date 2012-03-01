@@ -230,6 +230,7 @@
 		<property name="entityVersionService" ref="entityVersionService"/>
 		<property name="copyService" ref="copyService"/>
 		<property name="contentService" ref="contentService"/>
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">
 	</bean>
@@ -278,7 +279,6 @@
 	</bean>
 	<bean id="entityVersionServicePolicy" class="fr.becpg.repo.entity.policy.EntityVersionServicePolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />			
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="entityVersionService" ref="entityVersionService" />			
 	</bean>
 	

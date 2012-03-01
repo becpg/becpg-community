@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -83,6 +84,8 @@ public class EntityServiceImpl implements EntityService {
 	
 	private ContentService contentService;
 	
+	private BehaviourFilter policyBehaviourFilter;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -115,13 +118,14 @@ public class EntityServiceImpl implements EntityService {
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
-	
-	
 
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
 
 	@Override
 	public boolean hasDataListModified(NodeRef nodeRef) {
@@ -393,11 +397,27 @@ public class EntityServiceImpl implements EntityService {
 			ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
 				@Override
 				public NodeRef doWork() throws Exception {
-					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS,
-							ContentModel.ASSOC_CHILDREN, true);
+					
+					QName type = nodeService.getType(sourceNodeRef);
+					try{
+						// disable policies of entity to avoid :
+						// java.lang.IllegalStateException: Post-copy association has a source that was NOT copied.
+						// at org.alfresco.repo.copy.CopyServiceImpl.copyPendingAssociations(CopyServiceImpl.java:788)
+						policyBehaviourFilter.disableBehaviour(type);
+						NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS,
+								ContentModel.ASSOC_CHILDREN, true);
 
-					nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
-					return ret;
+						nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
+						
+						// call policies of entity
+						initializeEntity(ret);
+						initializeEntityFolder(ret);
+						
+						return ret;
+					}					
+					finally{
+						policyBehaviourFilter.enableBehaviour(type);
+					}					
 				}
 			}, AuthenticationUtil.getSystemUserName());
 

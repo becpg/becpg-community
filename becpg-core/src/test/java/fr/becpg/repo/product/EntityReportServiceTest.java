@@ -158,7 +158,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 			   	NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
 			   	NodeRef productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));		   			   		   
 		   		
-			   	NodeRef tplNodeRef = reportTplService.createTplRptDesign(productReportTplFolder, 
+			   	reportTplService.createTplRptDesign(productReportTplFolder, 
 			   										"report SF", 
 			   										"beCPG/birt/document/product/default/ProductReport.rptdesign", 
 		   											ReportType.Document, 

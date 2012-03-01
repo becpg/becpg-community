@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.PropertyService;
@@ -842,7 +843,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		String strValue1 = propertyService.getStringValue(propertyDef, oValue1, propertyFormats);					
 		String strValue2 = propertyService.getStringValue(propertyDef, oValue2, propertyFormats);
 		String key = String.format("%s-%s-%s", entityList, characteristic, propertyDef.getName());	
-		CompareResultDataItem comparisonDataItem = comparisonMap.get(key);
+		CompareResultDataItem comparisonDataItem = comparisonMap.get(key);				
 				
 		if(comparisonDataItem == null){
 			List<String> values = new ArrayList<String>(nbEntities);
@@ -874,12 +875,15 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				qName.equals(ContentModel.PROP_STORE_NAME) ||
 				qName.equals(ContentModel.PROP_STORE_PROTOCOL) ||
 				qName.equals(ContentModel.PROP_CONTENT) ||
+				qName.equals(ContentModel.PROP_VERSION_LABEL) ||
 				qName.equals(ContentModel.PROP_AUTO_VERSION) ||
-				qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) ||							
-				// do not compare frozen properties and version properties				
-				qName.equals(BeCPGModel.PROP_VERSION_DESCRIPTION) ||				
+				qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) ||
+				qName.equals(ContentModel.ASSOC_ORIGINAL) ||
 				//system properties
-				qName.equals(BeCPGModel.ASSOC_COMPOLIST_FATHER)){
+				qName.equals(BeCPGModel.ASSOC_COMPOLIST_FATHER) ||
+				qName.equals(BeCPGModel.PROP_START_EFFECTIVITY) ||
+				qName.equals(BeCPGModel.PROP_END_EFFECTIVITY) ||
+				qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED)){
 			
 			isCompareable = false;
 		}

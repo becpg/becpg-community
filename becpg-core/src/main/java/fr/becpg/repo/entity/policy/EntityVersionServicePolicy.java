@@ -1,6 +1,5 @@
 package fr.becpg.repo.entity.policy;
 
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.repo.version.VersionServicePolicies;
@@ -22,16 +21,11 @@ public class EntityVersionServicePolicy implements VersionServicePolicies.AfterC
 	private static Log logger = LogFactory.getLog(EntityVersionServicePolicy.class);
 
 	private PolicyComponent policyComponent;
-	private BehaviourFilter policyBehaviourFilter;
 	private EntityVersionService entityVersionService;
 	
 	
 	public void setPolicyComponent(PolicyComponent policyComponent) {
 		this.policyComponent = policyComponent;
-	}
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
