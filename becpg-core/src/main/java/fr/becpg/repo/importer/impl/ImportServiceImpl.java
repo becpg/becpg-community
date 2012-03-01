@@ -241,21 +241,22 @@ public class ImportServiceImpl implements ImportService {
 		
 		logger.debug("start import");
 
-		// open file and load content
 		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-		CSVReader csvReader = null;
-		InputStream is = reader.getContentInputStream();
-		try {
-		
+		InputStream is = null;
+		try{
+			is = reader.getContentInputStream();
+			
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Reading Import File");
+			}
 			Charset charset = ImportHelper.guestCharset(is,reader.getEncoding());
 			if(logger.isDebugEnabled()){
 				logger.debug("reader.getEncoding() : " + reader.getEncoding());
 				logger.debug("finder.getEncoding() : " + charset );
 			}
-			csvReader  = new CSVReader(new InputStreamReader(is, charset), SEPARATOR);
-		
-			// context
-			ImportContext importContext = new ImportContext(nodeRef, csvReader);
+			
+			ImportContext importContext = new ImportContext();
 			importContext.setDoUpdate(doUpdate);
 			importContext.setStopOnFirstError(true);
 			String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH
@@ -263,19 +264,63 @@ public class ImportServiceImpl implements ImportService {
 			importContext.getPropertyFormats().setDateFormat(new SimpleDateFormat(dateFormat));
 			importContext.getPropertyFormats().setDecimalFormat(
 					(DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault()));
-			importContext.setImportFileName((String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+			importContext.setImportFileName((String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
 			importContext.setRequiresNewTransaction(requiresNewTransaction);
-			// import				
-			return importCSV(importContext);				
+			
+			return proccessUpload(is, importContext ,charset);
+			
+		
+			
 		} finally {
 			IOUtils.closeQuietly(is);
+		}
+	}
+	
+	
+	private List<String> proccessUpload(InputStream input, ImportContext importContext, Charset charset) throws ImporterException, ParseException, Exception {
+        if (importContext.getImportFileName() != null && importContext.getImportFileName().length() > 0)
+        {
+            if (importContext.getImportFileName().endsWith(".csv"))
+            {
+            	  return  processCSVUpload(input, importContext ,charset);
+            }
+            if (importContext.getImportFileName().endsWith(".xml"))
+            {
+                return processXMLUpload(input,importContext);
+                
+            }
+          
+        }
+        // If in doubt, assume it's probably a .csv
+        return  processCSVUpload(input, importContext ,charset);
+
+}
+	
+	
+	
+	private List<String> processXMLUpload(InputStream input,ImportContext importContext) {
+		return null;
+		// TODO Auto-generated method stub
+		
+	}
+
+	private List<String> processCSVUpload(InputStream input, ImportContext importContext, Charset charset) throws ImporterException, ParseException, Exception {
+		// open file and load content
+		
+		CSVReader csvReader = new CSVReader(new InputStreamReader(input,charset), SEPARATOR);
+		try {
+			// context
+			importContext.setCsvReader(csvReader);
+			// import				
+			return importCSV(importContext, csvReader);				
+		} finally {
 			if(csvReader!=null){
 				csvReader.close();
 			}
 		}
-		
-	}
 	
+	}
+
 	@Override
 	public void moveImportedFile(NodeRef nodeRef, boolean hasFailed) {			
 				
@@ -328,6 +373,7 @@ public class ImportServiceImpl implements ImportService {
 		
 	/**
 	 * Import text.
+	 * @param csvReader 
 	 *
 	 * @param CSVReader the csv reader
 	 * @param doUpdate the do update
@@ -335,7 +381,7 @@ public class ImportServiceImpl implements ImportService {
 	 * @throws ImporterException the be cpg exception
 	 * @throws ParseException the parse exception
 	 */
-	private List<String> importCSV(ImportContext importContext) throws IOException, ImporterException, ParseException, Exception{
+	private List<String> importCSV(ImportContext importContext, CSVReader csvReader) throws IOException, ImporterException, ParseException, Exception{
 		
 		logger.debug("importFile");				
 			

@@ -13,9 +13,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.model.FileNotFoundException;
@@ -37,64 +40,74 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.xml.sax.SAXException;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ExportFormat;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.entity.extractor.ImportEntityXmlVisitor;
+import fr.becpg.repo.entity.extractor.XmlEntityVisitor;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * Entity Service implementation
+ * 
  * @author querephi
- *
+ * 
  */
 public class EntityServiceImpl implements EntityService {
 
 	/** The Constant QUERY_PRODUCTLIST_ITEMS_OUT_OF_DATE. */
-	private static final String QUERY_PRODUCTLIST_ITEMS_OUT_OF_DATE = "(%s) AND +@cm\\:modified:[%s TO MAX]";	
-	
+	private static final String QUERY_PRODUCTLIST_ITEMS_OUT_OF_DATE = "(%s) AND +@cm\\:modified:[%s TO MAX]";
+
 	/** The Constant QUERY_OPERATOR_OR. */
 	private static final String QUERY_OPERATOR_OR = " OR ";
-	
+
 	/** The Constant QUERY_PARENT. */
 	private static final String QUERY_PARENT = " PARENT:\"%s\"";
-		
+
 	private static Log logger = LogFactory.getLog(EntityServiceImpl.class);
-	
+
 	private NodeService nodeService;
-	
+
+	private NamespaceService namespaceService;
+
+	private DictionaryService dictionaryService;
+
 	private EntityListDAO entityListDAO;
-	
-	private SearchService searchService;
-	
+
+	private BeCPGSearchService beCPGSearchService;
+
 	private FileFolderService fileFolderService;
-	
+
 	private PermissionService permissionService;
-	
+
 	private EntityTplService entityTplService;
-	
+
 	private EntityVersionService entityVersionService;
-	
+
 	private CopyService copyService;
-	
+
 	private ContentService contentService;
-	
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
+
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
 	}
-	
+
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
@@ -102,11 +115,10 @@ public class EntityServiceImpl implements EntityService {
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
-	
+
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
-
 
 	public void setCopyService(CopyService copyService) {
 		this.copyService = copyService;
@@ -115,263 +127,253 @@ public class EntityServiceImpl implements EntityService {
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
-	
-	
+
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
 
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
 
 	@Override
 	public boolean hasDataListModified(NodeRef nodeRef) {
-		
-		Date modified = (Date)nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);				
-		
+
+		Date modified = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
+
 		// check data lists
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
-		
-		if(listContainerNodeRef != null){
-			
+
+		if (listContainerNodeRef != null) {
+
 			String queryParentsSearch = "";
-			
-			for(NodeRef listNodeRef : entityListDAO.getExistingListsNodeRef(listContainerNodeRef)){				
-				
+
+			for (NodeRef listNodeRef : entityListDAO.getExistingListsNodeRef(listContainerNodeRef)) {
+
 				// check list folder modified date
-				Date dataListModified = (Date)nodeService.getProperty(listNodeRef, ContentModel.PROP_MODIFIED);
+				Date dataListModified = (Date) nodeService.getProperty(listNodeRef, ContentModel.PROP_MODIFIED);
 				logger.debug("list modified: " + ISO8601DateFormat.format(dataListModified) + " - modified: " + ISO8601DateFormat.format(modified));
-				if(dataListModified.after(modified)){
+				if (dataListModified.after(modified)) {
 					logger.debug("list folder has been modified");
 					return true;
 				}
-				
-				if(!queryParentsSearch.isEmpty()){
+
+				if (!queryParentsSearch.isEmpty()) {
 					queryParentsSearch += QUERY_OPERATOR_OR;
 				}
-				queryParentsSearch += String.format(QUERY_PARENT, listNodeRef);						
-			}		
-			
-			// check list children modified date
-			if(!queryParentsSearch.isEmpty()){
-				
-				String querySearch = String.format(QUERY_PRODUCTLIST_ITEMS_OUT_OF_DATE, queryParentsSearch, ISO8601DateFormat.format(modified));
-				
-				SearchParameters sp = new SearchParameters();
-		        sp.addStore(RepoConsts.SPACES_STORE);
-		        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-		        sp.setQuery(querySearch);	        
-		        sp.setLimitBy(LimitBy.FINAL_SIZE);
-		        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);        
-		        sp.setMaxItems(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		        
-		        ResultSet resultSet = null;
-		        
-		        try{
-		        	
-		        	logger.debug("queryPath: " + querySearch);	        		
-			        resultSet = searchService.query(sp);		        
-			        logger.debug("resultSet.length() : " + resultSet.length());
-			        
-			        if (resultSet.length() > 0){
-			        	if(logger.isDebugEnabled()){
-			        		logger.debug("list children has been modified");	   
-			        		logger.debug("Date :"+ ISO8601DateFormat.format((Date) nodeService.getProperty(resultSet.getNodeRef(0), ContentModel.PROP_MODIFIED)));
-			        	}
-			        	     	
-			        	return true;
-			        }		        		        
-		        }
-		        finally{
-		        	if(resultSet != null)
-		        		resultSet.close();
-		        }			
+				queryParentsSearch += String.format(QUERY_PARENT, listNodeRef);
 			}
-		}		
-		
+
+			// check list children modified date
+			if (!queryParentsSearch.isEmpty()) {
+
+				String querySearch = String.format(QUERY_PRODUCTLIST_ITEMS_OUT_OF_DATE, queryParentsSearch, ISO8601DateFormat.format(modified));
+
+				logger.debug("queryPath: " + querySearch);
+				List<NodeRef> resultSet = beCPGSearchService.luceneSearch(querySearch, 1);
+				logger.debug("resultSet.length() : " + resultSet.size());
+
+				if (resultSet.size() > 0) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("list children has been modified");
+						logger.debug("Date :" + ISO8601DateFormat.format((Date) nodeService.getProperty(resultSet.get(0), ContentModel.PROP_MODIFIED)));
+					}
+
+					return true;
+				}
+
+			}
+		}
+
 		return false;
 	}
-	
+
 	/**
-     * get the entity folder of the template and copy it for the entity.
-     *
-     * @param entityNodeRef the entity node ref
-     */
+	 * get the entity folder of the template and copy it for the entity.
+	 * 
+	 * @param entityNodeRef
+	 *            the entity node ref
+	 */
 	@Override
 	public void initializeEntityFolder(NodeRef entityNodeRef) {
-		
-		logger.debug("initializeEntityFolder");				
+
+		logger.debug("initializeEntityFolder");
 		QName entityType = nodeService.getType(entityNodeRef);
-		
+
 		// entity => exit
-		if(entityType.isMatch(BeCPGModel.TYPE_ENTITY)){
+		if (entityType.isMatch(BeCPGModel.TYPE_ENTITY)) {
 			return;
 		}
-		
+
 		NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
 		QName parentEntityType = nodeService.getType(parentEntityNodeRef);
-		
+
 		// Actual entity parent is not a entity folder
-		if(!parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)){
-			
+		if (!parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)) {
+
 			// look for folderTpl
 			NodeRef folderTplNodeRef = entityTplService.getFolderTpl(entityType);
-			
-			if(folderTplNodeRef != null && nodeService.exists(folderTplNodeRef)){
-				
-				logger.debug("folderTplNodeRef found");				
+
+			if (folderTplNodeRef != null && nodeService.exists(folderTplNodeRef)) {
+
+				logger.debug("folderTplNodeRef found");
 
 				FileInfo fileInfo = null;
-				try{
-				fileInfo = fileFolderService.copy(folderTplNodeRef, parentEntityNodeRef, GUID.generate());
-				}
-				catch(FileNotFoundException e){
+				try {
+					fileInfo = fileFolderService.copy(folderTplNodeRef, parentEntityNodeRef, GUID.generate());
+				} catch (FileNotFoundException e) {
 					logger.error("initializeEntityFolder : Failed to copy template folder", e);
 				}
-				
-				if(fileInfo != null){
+
+				if (fileInfo != null) {
 					NodeRef entityFolderNodeRef = fileInfo.getNodeRef();
-					
+
 					// remove aspect entityTpl of folder
 					nodeService.removeAspect(entityFolderNodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
-					
+
 					// set inherit parents permissions
 					permissionService.deletePermissions(entityFolderNodeRef);
 					permissionService.setInheritParentPermissions(entityFolderNodeRef, true);
-//					for(FileInfo folder : fileFolderService.listFolders(entityFolderNodeRef)){
-//						NodeRef subFolderNodeRef = folder.getNodeRef();
-//						permissionService.deletePermissions(entityFolderNodeRef);
-//						permissionService.setInheritParentPermissions(subFolderNodeRef, true);
-//					}
-					
-					
-					//move entity in entityfolder and rename entityfolder
+					// for(FileInfo folder :
+					// fileFolderService.listFolders(entityFolderNodeRef)){
+					// NodeRef subFolderNodeRef = folder.getNodeRef();
+					// permissionService.deletePermissions(entityFolderNodeRef);
+					// permissionService.setInheritParentPermissions(subFolderNodeRef,
+					// true);
+					// }
+
+					// move entity in entityfolder and rename entityfolder
 					nodeService.moveNode(entityNodeRef, entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(entityNodeRef));
-					nodeService.setProperty(entityFolderNodeRef, 
-											ContentModel.PROP_NAME, 
-											nodeService.getProperty(entityNodeRef, 
-																	ContentModel.PROP_NAME));
-					
+					nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+
 					// initialize permissions according to template
-					for(FileInfo folder : fileFolderService.listFolders(folderTplNodeRef)){
-						
+					for (FileInfo folder : fileFolderService.listFolders(folderTplNodeRef)) {
+
 						logger.debug("init permissions, folder: " + folder.getName());
 						NodeRef subFolderTplNodeRef = folder.getNodeRef();
 						NodeRef subFolderNodeRef = nodeService.getChildByName(entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName());
-						
-						if(subFolderNodeRef != null){
-							
-							if(nodeService.hasAspect(subFolderTplNodeRef, BeCPGModel.ASPECT_PERMISSIONS_TPL)){
-								
-								QName [] permissionGroupAssociations = {BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS};
-								String [] permissionNames = {RepoConsts.PERMISSION_CONSUMER, RepoConsts.PERMISSION_EDITOR, RepoConsts.PERMISSION_CONTRIBUTOR, RepoConsts.PERMISSION_COLLABORATOR};
 
-								for(int cnt=0 ; cnt < permissionGroupAssociations.length ; cnt++){
-									
+						if (subFolderNodeRef != null) {
+
+							if (nodeService.hasAspect(subFolderTplNodeRef, BeCPGModel.ASPECT_PERMISSIONS_TPL)) {
+
+								QName[] permissionGroupAssociations = { BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS,
+										BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS };
+								String[] permissionNames = { RepoConsts.PERMISSION_CONSUMER, RepoConsts.PERMISSION_EDITOR, RepoConsts.PERMISSION_CONTRIBUTOR,
+										RepoConsts.PERMISSION_COLLABORATOR };
+
+								for (int cnt = 0; cnt < permissionGroupAssociations.length; cnt++) {
+
 									QName permissionGroupAssociation = permissionGroupAssociations[cnt];
 									String permissionName = permissionNames[cnt];
 									List<AssociationRef> groups = nodeService.getTargetAssocs(subFolderTplNodeRef, permissionGroupAssociation);
-									
-									if(groups.size() > 0){
-										for(AssociationRef assocRef : groups){
+
+									if (groups.size() > 0) {
+										for (AssociationRef assocRef : groups) {
 											NodeRef groupNodeRef = assocRef.getTargetRef();
-											String authorityName = (String)nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);
+											String authorityName = (String) nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);
 											logger.debug("add permission, folder: " + folder.getName() + " authority: " + authorityName + " perm: " + permissionName);
 											permissionService.setPermission(subFolderNodeRef, authorityName, permissionName, true);
-											
-											// remove 	association
+
+											// remove association
 											nodeService.removeAssociation(subFolderNodeRef, groupNodeRef, permissionGroupAssociation);
 										}
-									}									
+									}
 								}
-								
-								//TODO
-								// remove aspect when every association has been removed
-								//nodeService.removeAspect(subFolderNodeRef, BeCPGModel.ASPECT_PERMISSIONS_TPL);	
+
+								// TODO
+								// remove aspect when every association has been
+								// removed
+								// nodeService.removeAspect(subFolderNodeRef,
+								// BeCPGModel.ASPECT_PERMISSIONS_TPL);
 							}
 						}
 					}
 				}
 			}
-			
-		}		
+
+		}
 	}
-	
-	
 
 	/**
 	 * Load an image in the folder Images.
-	 *
-	 * @param nodeRef the node ref
-	 * @param imgName the img name
+	 * 
+	 * @param nodeRef
+	 *            the node ref
+	 * @param imgName
+	 *            the img name
 	 * @return the image
 	 */
 	@Override
-	public NodeRef getImage(NodeRef nodeRef, String imgName){		
-		
+	public NodeRef getImage(NodeRef nodeRef, String imgName) {
+
 		NodeRef parentNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
-				
-		NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));		
-		if(imagesFolderNodeRef == null){
+
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		if (imagesFolderNodeRef == null) {
 			logger.debug("Folder 'Images' doesn't exist.");
 			return null;
 		}
-		
-		NodeRef imageNodeRef = null;		
-		List<FileInfo> files = fileFolderService.listFiles(imagesFolderNodeRef);				
-		for(FileInfo file : files){
-			if(file.getName().toLowerCase().startsWith(imgName.toLowerCase())){
+
+		NodeRef imageNodeRef = null;
+		List<FileInfo> files = fileFolderService.listFiles(imagesFolderNodeRef);
+		for (FileInfo file : files) {
+			if (file.getName().toLowerCase().startsWith(imgName.toLowerCase())) {
 				imageNodeRef = file.getNodeRef();
 			}
 		}
-		
-		if(imageNodeRef == null){
+
+		if (imageNodeRef == null) {
 			logger.debug("image not found. imgName: " + imgName);
 			return null;
-		}			
-		
+		}
+
 		return imageNodeRef;
 	}
-	
-	
+
 	/**
 	 * Load the image associated to the node.
-	 *
-	 * @param nodeRef the node ref
+	 * 
+	 * @param nodeRef
+	 *            the node ref
 	 * @return the image
 	 */
 	public byte[] getImage(NodeRef nodeRef) {
 
 		byte[] imageBytes = null;
-		
+
 		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-		
-		if(reader != null){
+
+		if (reader != null) {
 			InputStream in = reader.getContentInputStream();
 			OutputStream out = null;
 			try {
 				Image image = ImageIO.read(in);
-			    out = new ByteArrayOutputStream();
-			   	ImageIO.write((RenderedImage) image, "jpg", out);
-				imageBytes = ((ByteArrayOutputStream)out).toByteArray();
+				out = new ByteArrayOutputStream();
+				ImageIO.write((RenderedImage) image, "jpg", out);
+				imageBytes = ((ByteArrayOutputStream) out).toByteArray();
 			} catch (IOException e) {
 				logger.error("Failed to get the content", e);
 			} finally {
 				IOUtils.closeQuietly(in);
 				IOUtils.closeQuietly(out);
 			}
-		}		
-		
+		}
+
 		return imageBytes;
 	}
-	
 
 	@Override
 	public void initializeEntity(NodeRef entityNodeRef) {
 		logger.debug("initialyze entity");
-		if(entityNodeRef!=null && nodeService.exists(entityNodeRef)){
+		if (entityNodeRef != null && nodeService.exists(entityNodeRef)) {
 			nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
 		}
-		
+
 	}
 
 	@Override
@@ -381,8 +383,7 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	@Override
-	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, QName entityType,
-			final String entityName) {
+	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, QName entityType, final String entityName) {
 		NodeRef ret = null;
 		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
 		props.put(ContentModel.PROP_NAME, entityName);
@@ -393,8 +394,7 @@ public class EntityServiceImpl implements EntityService {
 			ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
 				@Override
 				public NodeRef doWork() throws Exception {
-					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS,
-							ContentModel.ASSOC_CHILDREN, true);
+					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 
 					nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
 					return ret;
@@ -404,28 +404,44 @@ public class EntityServiceImpl implements EntityService {
 		} else {
 			logger.debug("Create new entity");
 			ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props)
-					.getChildRef();
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props).getChildRef();
 		}
 		return ret;
 	}
 
 	/**
 	 * Import / export
+	 * 
+	 * @throws BeCPGException
 	 */
-	
-	
 	@Override
-	public void exportEntity(NodeRef entityNodeRef, OutputStream out, ExportFormat format) {
-		// TODO Auto-generated method stub
-		
+	public void exportEntity(NodeRef entityNodeRef, OutputStream out, ExportFormat format) throws BeCPGException {
+		if (format.equals(ExportFormat.xml)) {
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService);
+			try {
+				xmlEntityVisitor.visit(entityNodeRef, out);
+			} catch (XMLStreamException e) {
+				throw new BeCPGException("Cannot export entity :" + entityNodeRef + " at format " + format, e);
+			}
+		}
+
 	}
 
 	@Override
-	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, ExportFormat format) {
-		// TODO Auto-generated method stub
+	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, ExportFormat format) throws BeCPGException {
+		if (format.equals(ExportFormat.xml)) {
+			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, beCPGSearchService);
+			try {
+			 return	xmlEntityVisitor.visit(entityNodeRef, in);
+			} catch (IOException e) {
+				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+			} catch (SAXException e) {
+				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+			} catch (ParserConfigurationException e) {
+				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+			}
+		}
 		return null;
 	}
-	
 
 }

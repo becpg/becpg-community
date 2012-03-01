@@ -3,6 +3,9 @@
  */
 package fr.becpg.repo.entity;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,8 +23,11 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ExportFormat;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
@@ -234,4 +240,52 @@ public class EntityServiceTest extends RepoBaseTestCase {
 		
 	   
 	}	
+	
+	
+	public void testExportEntity() throws FileNotFoundException{
+		
+		// create product
+				sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+					@Override
+					public NodeRef execute() throws Throwable {
+									   	
+						/*-- Create test folder --*/
+						NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+						if(folderNodeRef != null)
+						{
+							fileFolderService.delete(folderNodeRef);    		
+						}			
+						folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+						
+						// create SF
+						SemiFinishedProductData sfData = new SemiFinishedProductData();
+						sfData.setName("SF");
+						List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
+						allergenList.add(new AllergenListDataItem(null, true, true, null, null, allergens.get(0), false));
+						allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergens.get(1), false));
+						allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergens.get(2), false));
+						allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
+						sfData.setAllergenList(allergenList);
+						
+						Collection<QName> dataLists = productDictionaryService.getDataLists();
+						
+						return   productDAO.create(folderNodeRef, sfData, dataLists);
+						
+					}},false,true);	   	
+				
+				
+			try {
+				
+				
+				entityService.exportEntity(sfNodeRef,new FileOutputStream("/tmp/test.xml"), ExportFormat.xml);
+				entityService.createOrUpdateEntity(sfNodeRef, new FileInputStream("/tmp/test.xml"), ExportFormat.xml);
+				entityService.exportEntity(sfNodeRef,System.out, ExportFormat.xml);
+				
+			} catch (BeCPGException e) {
+				Assert.fail(e.getMessage());
+			}
+		
+	}
+	
+	
 }

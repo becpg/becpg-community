@@ -230,6 +230,8 @@
 		<property name="entityVersionService" ref="entityVersionService"/>
 		<property name="copyService" ref="copyService"/>
 		<property name="contentService" ref="contentService"/>
+		<property name="namespaceService" ref="namespaceService"/>
+		<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>
 	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">
 	</bean>

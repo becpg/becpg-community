@@ -196,5 +196,10 @@ public class ImportHelper{
 		}
 		return charset;
 	}
+
+	public static Serializable loadPropertyValue(StringBuffer currValue, String type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

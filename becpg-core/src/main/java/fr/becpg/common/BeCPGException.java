@@ -3,6 +3,7 @@
  */
 package fr.becpg.common;
 
+
 /**
  * beCPG Exception.
  *
@@ -23,6 +24,21 @@ public class BeCPGException extends Exception {
 	public BeCPGException(String message) {
 		super(message);
 	}
+
+	public BeCPGException() {
+		super();
+	}
+
+	public BeCPGException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public BeCPGException(Throwable cause) {
+		super(cause);
+	}
+
+	
+	
 
 
 }

@@ -27,7 +27,6 @@ public class ImportContext {
 	/** The parent node ref. */
 	private NodeRef parentNodeRef;	
 	
-	private NodeRef importFileNodeRef;	
 
 	/** The type. */
 	private QName type;
@@ -81,13 +80,6 @@ public class ImportContext {
 		this.parentNodeRef = parentNodeRef;
 	}
 	
-	public NodeRef getImportFileNodeRef() {
-		return importFileNodeRef;
-	}
-
-	public void setImportFileNodeRef(NodeRef importFileNodeRef) {
-		this.importFileNodeRef = importFileNodeRef;
-	}
 	
 	/**
 	 * Gets the type.
@@ -255,12 +247,10 @@ public class ImportContext {
 	 * @param csvReader
 	 * @throws IOException
 	 */
-	public ImportContext(NodeRef importFilNodeRef, CSVReader csvReader) throws IOException{
+	public ImportContext() {
 		
 		propertyFormats = new PropertyFormats(true);
-		setImportFileNodeRef(importFilNodeRef);
-		setCsvReader(csvReader);
-		
+
 	}
 	
 	/**

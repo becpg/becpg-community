@@ -3,10 +3,11 @@ package fr.becpg.repo.web.scripts.remote;
 import java.io.IOException;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.model.ExportFormat;
+import fr.becpg.common.BeCPGException;
 
 /**
  * Get entity as XML
@@ -22,9 +23,13 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 		
 		logger.debug("Get entity: "+entityNodeRef);
 		
-		entityService.exportEntity(entityNodeRef,resp.getOutputStream(), ExportFormat.xml);
-		
-		
+		try {
+			entityService.exportEntity(entityNodeRef,resp.getOutputStream(), getFormat(req));
+		} catch (BeCPGException e) {
+			logger.error("Cannot export entity",e);
+			throw new WebScriptException(e.getMessage());
+		}
+
 	}
 
 }

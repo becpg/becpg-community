@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.ExportFormat;
 
 
@@ -75,8 +76,9 @@ public interface EntityService {
 	 * Export entity to specified format
 	 * @param entityNodeRef
 	 * @param outputStream
+	 * @throws BeCPGException 
 	 */
-	public void exportEntity(NodeRef entityNodeRef, OutputStream out, ExportFormat format);
+	public void exportEntity(NodeRef entityNodeRef, OutputStream out, ExportFormat format) throws BeCPGException;
 
 
 	/**
@@ -85,7 +87,8 @@ public interface EntityService {
 	 * @param in
 	 * @param format
 	 * @return
+	 * @throws BeCPGException 
 	 */
-	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, ExportFormat format);
+	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, ExportFormat format) throws BeCPGException;
     
 }

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-  <classpathentry kind="src" path="src/main/resources" excluding="**README-*|**/*.java"/>
-  <classpathentry kind="src" path="src/main/config" excluding="**README-*|**/*.properties|**/*.java"/>
-  <classpathentry kind="src" path="src/main/web" excluding="**README-*|**/*.java"/>
-  <classpathentry kind="src" path="." output="target/becpg-share-0.1.4" including="file-mapping.properties" excluding="**/*.java"/>
-  <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry excluding="**README-*|**/*.properties|**/*.java" kind="src" path="src/main/config"/>
+	<classpathentry excluding="**README-*|**/*.java" kind="src" path="src/main/web"/>
+	<classpathentry excluding="**/*.java" including="file-mapping.properties" kind="src" output="target/becpg-share-0.1.4" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
