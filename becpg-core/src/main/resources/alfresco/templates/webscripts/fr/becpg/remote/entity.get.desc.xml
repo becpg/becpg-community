@@ -5,7 +5,7 @@
 	<url>/becpg/remote/entity?path={path}</url>
 	<url>/becpg/remote/entity?query={query}</url>
 	<format default="xml">argument</format>
-	<authentication>user</authentication>
+	<!-- <authentication>user</authentication> -->
 	<transaction allow="readonly" >required</transaction>
 	<lifecycle>public_api</lifecycle>
 </webscript>

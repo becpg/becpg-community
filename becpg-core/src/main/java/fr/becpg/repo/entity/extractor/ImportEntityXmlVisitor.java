@@ -134,7 +134,7 @@ public class ImportEntityXmlVisitor {
 							if(node == null && entityProviderCallBack!=null){
 								logger.debug("Node not found calling provider");
 								try {
-									entityProviderCallBack.provideNode(new NodeRef(nodeRef));
+								 node = entityProviderCallBack.provideNode(new NodeRef(nodeRef));
 								} catch (BeCPGException e) {
 									throw new SAXException("Cannot call entityProviderCallBack ",e);
 								}
