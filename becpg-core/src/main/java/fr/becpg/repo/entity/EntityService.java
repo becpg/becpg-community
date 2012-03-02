@@ -8,6 +8,7 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.ExportFormat;
+import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 
 
 /**
@@ -82,13 +83,14 @@ public interface EntityService {
 
 
 	/**
-	 * Create or update entity from specified format
+	 * 
 	 * @param entityNodeRef
 	 * @param in
 	 * @param format
+	 * @param callback
 	 * @return
-	 * @throws BeCPGException 
+	 * @throws BeCPGException
 	 */
-	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, ExportFormat format) throws BeCPGException;
+	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, ExportFormat format, EntityProviderCallBack callback) throws BeCPGException;
     
 }

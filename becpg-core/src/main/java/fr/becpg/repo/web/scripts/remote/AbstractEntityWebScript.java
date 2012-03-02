@@ -1,7 +1,12 @@
 package fr.becpg.repo.web.scripts.remote;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -11,8 +16,10 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.ExportFormat;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -36,6 +43,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript{
 	
 	/** The Constant PARAM_NODEREF. */
 	protected static final String PARAM_NODEREF = "nodeRef";
+	
+	/** The Constant PARAM_CALLBACK. */
+	/** http://admin:becpg@localhost:8080/alfresco/services/becpg/remote/entity **/
+	protected static final String PARAM_CALLBACK = "callback";
+	
 
 	/** Services **/
 
@@ -45,7 +57,14 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript{
 	
 	protected BeCPGSearchService beCPGSearchService;
 	
+	protected MimetypeService mimetypeService;
 	
+	
+	public void setMimetypeService(MimetypeService mimetypeService) {
+		this.mimetypeService = mimetypeService;
+	}
+
+
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
 	}
@@ -90,11 +109,44 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript{
 		throw new WebScriptException("No entity node found");
 	}
 	
-	protected void sendOKStatus(NodeRef entityNodeRef, WebScriptResponse resp) {
-		// TODO Auto-generated method stub
-		
+	protected void sendOKStatus(NodeRef entityNodeRef, WebScriptResponse resp) throws IOException {
+		resp.getWriter().write("OK");
+//		Element docEl  = DOMUtils.createDoc("becpg-remote");
+//		DOMUtils.createElementAndText(docEl, "status","ok");
+//		OutputStream out  = resp.getOutputStream();
+//		DOMUtils.serialise(docEl.getOwnerDocument(), out);
+//		IOUtils.closeQuietly(out);
 	}
 	
+
+	protected EntityProviderCallBack getEntityProviderCallback(WebScriptRequest req) {
+		final String callBack = req.getParameter(PARAM_CALLBACK);
+		if(callBack!=null && callBack.length()>0){
+			return new EntityProviderCallBack() {
+				
+				@Override
+				public NodeRef provideNode(NodeRef nodeRef) throws BeCPGException {
+					
+					try {
+						if(nodeRef!=null){
+							logger.debug("EntityProviderCallBack call : "+callBack+"?nodeRef="+nodeRef.toString());
+							URLConnection url = new URL(callBack+"?nodeRef="+nodeRef.toString()).openConnection();
+							return entityService.createOrUpdateEntity(nodeRef, url.getInputStream(), ExportFormat.xml,this);
+						}
+						return null;
+					} catch (MalformedURLException e) {
+						throw new BeCPGException(e);
+					} catch (IOException e) {
+						throw new BeCPGException(e);
+					}
+
+				
+				}
+			};
+		}
+		return null;
+	}
+
 	
 
 	protected ExportFormat getFormat(WebScriptRequest req) {

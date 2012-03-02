@@ -223,7 +223,7 @@
 	<bean id="entityService" class="fr.becpg.repo.entity.impl.EntityServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="searchService" ref="searchService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="permissionService" ref="permissionService" />
 		<property name="entityTplService" ref="entityTplService"/>
@@ -232,6 +232,7 @@
 		<property name="contentService" ref="contentService"/>
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">
 	</bean>
@@ -280,7 +281,6 @@
 	</bean>
 	<bean id="entityVersionServicePolicy" class="fr.becpg.repo.entity.policy.EntityVersionServicePolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />			
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="entityVersionService" ref="entityVersionService" />			
 	</bean>
 	

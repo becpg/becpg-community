@@ -2,6 +2,7 @@ package fr.becpg.repo.entity.extractor;
 
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -21,11 +23,12 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.ISO8601DateFormat;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.DataListModel;
+import fr.becpg.model.ReportModel;
 
 /**
  * 
@@ -112,27 +115,37 @@ public class XmlEntityVisitor {
 
 		for (Map.Entry<QName, AssociationDefinition> entry : assocs.entrySet()) {
 			AssociationDefinition assocDef = entry.getValue();
-			List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
-			xmlw.writeStartElement(assocDef.getName().toPrefixString(namespaceService));
-			xmlw.writeAttribute("type","assoc" );
-			for (ChildAssociationRef assocRef : assocRefs) {
-				if (assocRef.getTypeQName().equals(assocDef.getName())) {
-					NodeRef childRef = assocRef.getChildRef();
-					boolean deap = false;
-					boolean props = false;
-					if (assocDef.getName().equals(BeCPGModel.ASSOC_ENTITYLISTS) || DataListModel.TYPE_DATALIST.equals(nodeService.getType(childRef))) {
-						deap = true;
-					}
-					if (dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true).contains(nodeService.getType(childRef))) {
-						deap = true;
-						props = true;
-					}
 
-					visitNode(childRef, xmlw, deap, props);
+			if(!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
+				&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+				&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL)){
+				xmlw.writeStartElement(assocDef.getName().toPrefixString(namespaceService));
+			
+			
+				if(assocDef.isChild()){
+					xmlw.writeAttribute("type","childAssoc" );
+					List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
+					for (ChildAssociationRef assocRef : assocRefs) {
+						if (assocRef.getTypeQName().equals(assocDef.getName())) {
+							NodeRef childRef = assocRef.getChildRef();
+							visitNode(childRef, xmlw, true, true);
+						}
+					}
+				} else {
+					xmlw.writeAttribute("type","assoc" );
+					List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
+					for (AssociationRef assocRef : assocRefs) {
+							NodeRef childRef = assocRef.getTargetRef();
+							visitNode(childRef, xmlw, false, false);
+					}
 				}
-
+				
+				xmlw.writeEndElement();
 			}
-			xmlw.writeEndElement();
+			
+			
+			
+		
 		}
 
 	}
@@ -143,8 +156,12 @@ public class XmlEntityVisitor {
 		Map<QName, Serializable> props = nodeService.getProperties(nodeRef);
 		if (props != null) {
 			for (Map.Entry<QName, Serializable> entry : props.entrySet()) {
-
-				if (entry.getValue() != null && !entry.getKey().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)) {
+				QName propQName = entry.getKey();
+				if (entry.getValue() != null 
+						&& !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
+						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI)
+						&& !propQName.equals(ContentModel.PROP_CONTENT)) {
 					xmlw.writeStartElement(entry.getKey().toPrefixString(namespaceService));
 					xmlw.writeAttribute("type",dictionaryService.getProperty(entry.getKey()).getDataType().getName().toPrefixString(namespaceService) );
 					visitPropValue(entry.getValue(), xmlw);
@@ -159,6 +176,8 @@ public class XmlEntityVisitor {
 	private void visitPropValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException {
 		if (value instanceof NodeRef) {
 			visitNode((NodeRef) value, xmlw, false, false);
+		} if( value instanceof Date) {
+			xmlw.writeCharacters(ISO8601DateFormat.format((Date)value));
 		} else {
 			xmlw.writeCharacters(value.toString());
 		}

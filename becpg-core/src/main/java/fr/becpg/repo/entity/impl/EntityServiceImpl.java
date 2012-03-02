@@ -17,6 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -28,10 +29,6 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchParameters;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -51,6 +48,7 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.entity.extractor.ImportEntityXmlVisitor;
 import fr.becpg.repo.entity.extractor.XmlEntityVisitor;
+import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -95,7 +93,9 @@ public class EntityServiceImpl implements EntityService {
 	private CopyService copyService;
 
 	private ContentService contentService;
-
+	
+	private BehaviourFilter policyBehaviourFilter;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -138,6 +138,10 @@ public class EntityServiceImpl implements EntityService {
 
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
+	}
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	@Override
@@ -394,17 +398,35 @@ public class EntityServiceImpl implements EntityService {
 			ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
 				@Override
 				public NodeRef doWork() throws Exception {
-					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+					
+					QName type = nodeService.getType(sourceNodeRef);
+					try{
+						// disable policies of entity to avoid :
+						// java.lang.IllegalStateException: Post-copy association has a source that was NOT copied.
+						// at org.alfresco.repo.copy.CopyServiceImpl.copyPendingAssociations(CopyServiceImpl.java:788)
+						policyBehaviourFilter.disableBehaviour(type);
+						NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS,
+								ContentModel.ASSOC_CHILDREN, true);
 
-					nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
-					return ret;
+						nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
+						
+						// call policies of entity
+						initializeEntity(ret);
+						initializeEntityFolder(ret);
+						
+						return ret;
+					}					
+					finally{
+						policyBehaviourFilter.enableBehaviour(type);
+					}					
 				}
 			}, AuthenticationUtil.getSystemUserName());
 
 		} else {
 			logger.debug("Create new entity");
 			ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props).getChildRef();
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props)
+					.getChildRef();
 		}
 		return ret;
 	}
@@ -423,14 +445,16 @@ public class EntityServiceImpl implements EntityService {
 			} catch (XMLStreamException e) {
 				throw new BeCPGException("Cannot export entity :" + entityNodeRef + " at format " + format, e);
 			}
+		} else {
+			throw new BeCPGException("Unknow format "+format.toString());
 		}
-
 	}
 
 	@Override
-	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, ExportFormat format) throws BeCPGException {
+	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, ExportFormat format, EntityProviderCallBack entityProviderCallBack) throws BeCPGException {
 		if (format.equals(ExportFormat.xml)) {
 			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, beCPGSearchService);
+			xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
 			try {
 			 return	xmlEntityVisitor.visit(entityNodeRef, in);
 			} catch (IOException e) {
@@ -441,7 +465,7 @@ public class EntityServiceImpl implements EntityService {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			}
 		}
-		return null;
+		throw new BeCPGException("Unknow format "+format.toString());
 	}
 
 }

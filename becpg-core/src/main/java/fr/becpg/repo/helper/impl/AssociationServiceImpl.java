@@ -12,8 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.repo.helper.AssociationService;
 
 public class AssociationServiceImpl implements AssociationService {
-
-	private static Log logger = LogFactory.getLog(AssociationServiceImpl.class);
 	
 	private NodeService nodeService;
 	

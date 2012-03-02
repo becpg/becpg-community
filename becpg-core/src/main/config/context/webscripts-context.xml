@@ -2,173 +2,202 @@
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
 
 <beans>
-   
-   <!-- CSV -->
-   <bean parent="webscripts.formatmap">
-	      <property name="formats">
-	            <props>
-	                  <prop key="csv">application/vnd.ms-excel</prop>
-	            </props>
-	      </property>
-	</bean>
-   
-   	<!-- Admin -->
-   	<bean id="webscript.fr.becpg.admin.adminModule.get" class="fr.becpg.repo.web.scripts.admin.AdminModuleWebScript" parent="webscript">
-      	<property name="initRepoVisitor" ref="initRepoVisitor" />
-     		<property name="repository" ref="repositoryHelper" />
-      	<property name="siteService" ref="siteService" />
-      	<property name="initSiteVisitor" ref="initSiteVisitor" />
-      	<property name="initDemoVisitor" ref="initDemoVisitor"/>     
-   	</bean>
-   	<bean id="webscript.fr.becpg.admin.reloadModels.get" class="fr.becpg.repo.web.scripts.admin.ReloadModelsWebScript" parent="webscript">
-      	<property name="dictionaryDAO" ref="dictionaryDAO" />
-   	</bean>
-   	
-   	
-	<bean id="webscript.fr.becpg.admin.clearCache.get"
-      class="fr.becpg.repo.web.scripts.admin.CacheServiceWebscript"
-      parent="webscript">
-      <property name="beCPGCacheService" ref="beCPGCacheService" />
-    </bean>
-   	
 
-   	<!-- Entity lists -->
-   	<bean id="webscript.fr.becpg.entity.entityLists.get" class="fr.becpg.repo.web.scripts.entity.EntityListsWebScript" parent="webscript">      	     
-      	<property name="securityService" ref="securityService" />
-      	<property name="nodeService" ref="nodeService" />      	
-      	<property name="entityListDAO" ref="entityListDAO" />
-      	<property name="entityTplService" ref="entityTplService" />
-      	<property name="entityDictionaryService" ref="entityDictionaryService" />   
-      	<property name="namespaceService" ref="namespaceService"/>  
-      	<property name="transactionService" ref="transactionService"/> 	
-  		</bean>
-  	 
-   	<!-- Product formulate -->
-  		<bean id="webscript.fr.becpg.product.productFormulation.get" class="fr.becpg.repo.web.scripts.product.FormulateWebScript" parent="webscript">
-   		<property name="productService" ref="productService" />
-   	</bean>
-   	
-   	<!-- Entity report -->
-   	<bean id="webscript.fr.becpg.entity.entityReport.get" class="fr.becpg.repo.web.scripts.entity.ReportWebScript" parent="webscript">      	
-			<property name="nodeService" ref="nodeService" />
-			<property name="entityService" ref="entityService" />
-   	</bean>
-         
-   	<!-- Entity where used -->
-  		<bean id="webscript.fr.becpg.entity.entityWUsed.post" class="fr.becpg.repo.web.scripts.entity.EntityWUsedWebScript" parent="webscript">
-   		<property name="productService" ref="productService" />
-   		<property name="productDictionaryService" ref="productDictionaryService"/>
-   	</bean>
-   	
-   	<!-- Entity new version form -->
-  		<bean id="webscript.fr.becpg.entity.form-checkin.post" class="fr.becpg.repo.web.scripts.entity.FormCheckInWebScript" parent="webscript">   		
-   		<property name="checkOutCheckInService" ref="checkOutCheckInService" />
-   	</bean>
-   	
-   	<!-- Compare entity version -->
-  		<bean id="webscript.fr.becpg.entity.compareEntityVersionReport.get" class="fr.becpg.repo.web.scripts.entity.CompareEntityVersionReportWebScript" parent="webscript">
-   		<property name="compareEntityReportService" ref="compareEntityReportService" />
-   		<property name="mimetypeService" ref="mimetypeService" />
-   		<property name="versionService" ref="versionService" />
-   		<property name="entityVersionService" ref="entityVersionService" />
-   	</bean>
-   	
-   	<!-- Export search -->
-    	<bean id="webscript.fr.becpg.report.exportSearch.get" class="fr.becpg.repo.web.scripts.report.ExportSearchWebScript" parent="webscript">
-   		<property name="exportSearchService" ref="exportSearchService" />
-   		<property name="mimetypeService" ref="mimetypeService" />
-   		<property name="advSearchService" ref="advSearchService" />
-   		<property name="namespaceService" ref="namespaceService" />
-   		<property name="reportTplService" ref="reportTplService" />
-   	</bean>
-    
-    	<!-- Search -->
-   	<bean id="webscript.fr.becpg.search.search.get" class="fr.becpg.repo.web.scripts.search.SearchWebScript" parent="webscript">
-      	    <property name="advSearchService" ref="advSearchService" />      	
-			<property name="namespaceService" ref="namespaceService" />
-			<property name="serviceRegistry" ref="ServiceRegistry" />
-			<property name="propertyService" ref="propertyService" />
-   	</bean>
-   	
-    
-    	<bean id="webscript.fr.becpg.report.exportSearchTpls.get" class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript" parent="webscript">
-   		<property name="namespaceService" ref="namespaceService" />
-   		<property name="reportTplService" ref="reportTplService" />
-   	</bean>
-   	
-   	<!-- Report  -->
-   	 
-   	 <bean id="webscript.fr.becpg.report.reportDataSource.get" class="fr.becpg.repo.web.scripts.report.ReportDataSourceWebscript" parent="webscript">
-   		<property name="entityReportService" ref="entityReportService" />
-   	</bean>
-   	
-   	<!-- Debug -->
-   	<bean id="webscript.fr.becpg.debug.restoreArchivedNode.get" class="fr.becpg.repo.web.scripts.debug.RestoreArchivedNodeWebScript" parent="webscript">
-      	    <property name="nodeService" ref="nodeService" />      	
-			<property name="searchService" ref="searchService" />
-			<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-   	</bean>
-   	
-   	<!-- Migration -->
-   	<bean id="webscript.fr.becpg.migration.migrateRepository.get" class="fr.becpg.repo.web.scripts.migration.MigrateRepositoryWebScript" parent="webscript">
-			<property name="searchService" ref="searchService" />
-			<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-			<property name="mlNodeService" ref="mlAwareNodeService" />
-   	</bean>
-   	
-  
-   	<!-- NPD -->
-   	
-   	  <!-- Retrieves all npd instances. -->
-    <bean id="webscript.fr.becpg.workflow.npd-instances.get"
-          class="fr.becpg.repo.web.scripts.workflow.NpdInstancesGet"
-          parent="webscript">
-     	 <property name="namespaceService" ref="NamespaceService" />
-        <property name="nodeService" ref="NodeService" />
-        <property name="personService" ref="PersonService" />
-        <property name="dictionaryService" ref="DictionaryService" />
-        <property name="authenticationService" ref="AuthenticationService" />
-        <property name="authorityService" ref="AuthorityService" />
-        <property name="workflowService" ref="WorkflowService" />     
-    </bean>
-    
-    <!-- beCPG Remote API -->
-    
-    	<bean id="webscript.fr.becpg.remote.entity.get" class="fr.becpg.repo.web.scripts.remote.GetEntityWebScript" parent="webscript">
-			<property name="nodeService" ref="nodeService" />
-			<property name="beCPGSearchService" ref="beCPGSearchService" />
-			<property name="entityService" ref="entityService" />
-   	</bean>
-   	
-   	<bean id="webscript.fr.becpg.remote.entity.post" class="fr.becpg.repo.web.scripts.remote.UpdateEntityWebScript" parent="webscript">
-			<property name="nodeService" ref="nodeService" />
-			<property name="beCPGSearchService" ref="beCPGSearchService" />
-			<property name="entityService" ref="entityService" />
-   	</bean>
-   	
-   	<bean id="webscript.fr.becpg.remote.entity.put" class="fr.becpg.repo.web.scripts.remote.CreateEntityWebScript" parent="webscript">
-			<property name="nodeService" ref="nodeService" />
-			<property name="beCPGSearchService" ref="beCPGSearchService" />
-			<property name="entityService" ref="entityService" />
-   	</bean>
-   	
-   	<bean id="webscript.fr.becpg.remote.entity.delete" class="fr.becpg.repo.web.scripts.remote.DeleteEntityWebScript" parent="webscript">
-			<property name="nodeService" ref="nodeService" />
-			<property name="beCPGSearchService" ref="beCPGSearchService" />
-			<property name="entityService" ref="entityService" />
-   	</bean>
-   	
-   	<bean id="webscript.fr.becpg.remote.entities.get" class="fr.becpg.repo.web.scripts.remote.ListEntitiesWebScript" parent="webscript">
-			<property name="nodeService" ref="nodeService" />
-			<property name="beCPGSearchService" ref="beCPGSearchService" />
-			<property name="entityService" ref="entityService" />
-   	</bean>
-   	
-   	<bean id="webscript.fr.becpg.remote.formulate.get" class="fr.becpg.repo.web.scripts.remote.FormulateWebScript" parent="webscript">
-			<property name="nodeService" ref="nodeService" />
-			<property name="beCPGSearchService" ref="beCPGSearchService" />
-			<property name="entityService" ref="entityService" />
-   	</bean>
-   	
+	<!-- CSV -->
+	<bean parent="webscripts.formatmap">
+		<property name="formats">
+			<props>
+				<prop key="csv">application/vnd.ms-excel</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- Admin -->
+	<bean id="webscript.fr.becpg.admin.adminModule.get" class="fr.becpg.repo.web.scripts.admin.AdminModuleWebScript"
+		parent="webscript">
+		<property name="initRepoVisitor" ref="initRepoVisitor" />
+		<property name="repository" ref="repositoryHelper" />
+		<property name="siteService" ref="siteService" />
+		<property name="initSiteVisitor" ref="initSiteVisitor" />
+		<property name="initDemoVisitor" ref="initDemoVisitor" />
+	</bean>
+	<bean id="webscript.fr.becpg.admin.reloadModels.get" class="fr.becpg.repo.web.scripts.admin.ReloadModelsWebScript"
+		parent="webscript">
+		<property name="dictionaryDAO" ref="dictionaryDAO" />
+	</bean>
+
+
+	<bean id="webscript.fr.becpg.admin.clearCache.get" class="fr.becpg.repo.web.scripts.admin.CacheServiceWebscript"
+		parent="webscript">
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
+	</bean>
+
+
+	<!-- Entity lists -->
+	<bean id="webscript.fr.becpg.entity.entityLists.get" class="fr.becpg.repo.web.scripts.entity.EntityListsWebScript"
+		parent="webscript">
+		<property name="securityService" ref="securityService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="entityTplService" ref="entityTplService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="transactionService" ref="transactionService" />
+	</bean>
+
+	<!-- Product formulate -->
+	<bean id="webscript.fr.becpg.product.productFormulation.get"
+		class="fr.becpg.repo.web.scripts.product.FormulateWebScript" parent="webscript">
+		<property name="productService" ref="productService" />
+	</bean>
+
+	<!-- Entity report -->
+	<bean id="webscript.fr.becpg.entity.entityReport.get" class="fr.becpg.repo.web.scripts.entity.ReportWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityService" ref="entityService" />
+	</bean>
+
+	<!-- Entity where used -->
+	<bean id="webscript.fr.becpg.entity.entityWUsed.post" class="fr.becpg.repo.web.scripts.entity.EntityWUsedWebScript"
+		parent="webscript">
+		<property name="productService" ref="productService" />
+		<property name="productDictionaryService" ref="productDictionaryService" />
+	</bean>
+
+	<!-- Entity new version form -->
+	<bean id="webscript.fr.becpg.entity.form-checkin.post" class="fr.becpg.repo.web.scripts.entity.FormCheckInWebScript"
+		parent="webscript">
+		<property name="checkOutCheckInService" ref="checkOutCheckInService" />
+	</bean>
+
+	<!-- Compare entity version -->
+	<bean id="webscript.fr.becpg.entity.compareEntityVersionReport.get"
+		class="fr.becpg.repo.web.scripts.entity.CompareEntityVersionReportWebScript"
+		parent="webscript">
+		<property name="compareEntityReportService" ref="compareEntityReportService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+		<property name="versionService" ref="versionService" />
+		<property name="entityVersionService" ref="entityVersionService" />
+	</bean>
+
+	<!-- Export search -->
+	<bean id="webscript.fr.becpg.report.exportSearch.get" class="fr.becpg.repo.web.scripts.report.ExportSearchWebScript"
+		parent="webscript">
+		<property name="exportSearchService" ref="exportSearchService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+		<property name="advSearchService" ref="advSearchService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="reportTplService" ref="reportTplService" />
+	</bean>
+
+	<!-- Search -->
+	<bean id="webscript.fr.becpg.search.search.get" class="fr.becpg.repo.web.scripts.search.SearchWebScript"
+		parent="webscript">
+		<property name="advSearchService" ref="advSearchService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="propertyService" ref="propertyService" />
+	</bean>
+
+
+	<bean id="webscript.fr.becpg.report.exportSearchTpls.get"
+		class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript"
+		parent="webscript">
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="reportTplService" ref="reportTplService" />
+	</bean>
+
+	<!-- Report -->
+
+	<bean id="webscript.fr.becpg.report.reportDataSource.get"
+		class="fr.becpg.repo.web.scripts.report.ReportDataSourceWebscript"
+		parent="webscript">
+		<property name="entityReportService" ref="entityReportService" />
+	</bean>
+
+	<!-- Debug -->
+	<bean id="webscript.fr.becpg.debug.restoreArchivedNode.get"
+		class="fr.becpg.repo.web.scripts.debug.RestoreArchivedNodeWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="searchService" ref="searchService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+	</bean>
+
+	<!-- Migration -->
+	<bean id="webscript.fr.becpg.migration.migrateRepository.get"
+		class="fr.becpg.repo.web.scripts.migration.MigrateRepositoryWebScript"
+		parent="webscript">
+		<property name="searchService" ref="searchService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="mlNodeService" ref="mlAwareNodeService" />
+	</bean>
+
+
+	<!-- NPD -->
+
+	<!-- Retrieves all npd instances. -->
+	<bean id="webscript.fr.becpg.workflow.npd-instances.get" class="fr.becpg.repo.web.scripts.workflow.NpdInstancesGet"
+		parent="webscript">
+		<property name="namespaceService" ref="NamespaceService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="personService" ref="PersonService" />
+		<property name="dictionaryService" ref="DictionaryService" />
+		<property name="authenticationService" ref="AuthenticationService" />
+		<property name="authorityService" ref="AuthorityService" />
+		<property name="workflowService" ref="WorkflowService" />
+	</bean>
+
+	<!-- beCPG Remote API -->
+
+	<bean id="webscript.fr.becpg.remote.entity.get" class="fr.becpg.repo.web.scripts.remote.GetEntityWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="entityService" ref="entityService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.remote.entity.post" class="fr.becpg.repo.web.scripts.remote.UpdateEntityWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="entityService" ref="entityService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.remote.entity.put" class="fr.becpg.repo.web.scripts.remote.CreateEntityWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="entityService" ref="entityService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.remote.entity.delete" class="fr.becpg.repo.web.scripts.remote.DeleteEntityWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="entityService" ref="entityService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.remote.entities.get" class="fr.becpg.repo.web.scripts.remote.ListEntitiesWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="entityService" ref="entityService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.remote.formulate.get" class="fr.becpg.repo.web.scripts.remote.FormulateWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="entityService" ref="entityService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+	</bean>
+
 
 </beans>

@@ -24,11 +24,12 @@ public class UpdateEntityWebScript extends AbstractEntityWebScript {
 
 		logger.debug("Update entity: " + entityNodeRef);
 		try {
-			entityService.createOrUpdateEntity(null, req.getContent().getInputStream(), getFormat(req));
+			
+			entityService.createOrUpdateEntity(entityNodeRef,req.getContent().getInputStream(), getFormat(req), getEntityProviderCallback(req));
 
 			sendOKStatus(entityNodeRef, resp);
 		} catch (BeCPGException e) {
-			logger.error("Cannot export entity", e);
+			logger.error("Cannot import entity", e);
 			throw new WebScriptException(e.getMessage());
 		}
 

@@ -297,6 +297,12 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 				cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, charactName);							
 				cmpRowElt.addAttribute(ATTR_PROPERTY, propertyTitle);
 				
+				if(logger.isTraceEnabled()){
+					String value1 = c.getValues().get(0);
+					String value2 = c.getValues().get(1);
+					logger.trace("compare prop: " + c.getProperty() + " - value1: " + value1 + " - value2: " + value2);
+				}					
+				
 				if(c.getValues().size() > 0 && c.getValues().get(0) != null)
 					cmpRowElt.addAttribute(ATTR_VALUE_1, c.getValues().get(0));
 				if(c.getValues().size() > 1 && c.getValues().get(1) != null)

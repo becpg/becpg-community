@@ -92,6 +92,11 @@
 			<workflow name="jbpm$imwf:invitation-moderated" />
 			<workflow name="activiti$activitiInvitationModerated" />
 			<workflow name="activiti$activitiInvitationNominated" />
+			<workflow name="activiti$activitiReviewPooled" />
+			<workflow name="activiti$activitiParallelGroupReview" />
+			<workflow name="activiti$activitiParallelReview" />
+			<workflow name="activiti$activitiAdhoc" />
+			<workflow name="activiti$activitiReview" />			
 			<workflow name="jbpm$wf:adhoc" /> 
 			<workflow name="jbpm$wf:reviewpooled"	/> 
 			<workflow name="jbpm$wf:parallelgroupreview" /> 
