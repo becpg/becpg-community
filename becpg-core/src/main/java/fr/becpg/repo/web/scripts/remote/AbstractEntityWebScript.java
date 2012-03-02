@@ -24,134 +24,115 @@ import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * Abstract remote entity webscript
+ * 
  * @author matthieu
- *
+ * 
  */
-public abstract class AbstractEntityWebScript extends AbstractWebScript{
+public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	protected static Log logger = LogFactory.getLog(AbstractEntityWebScript.class);
-	
+
 	/** The Constant PARAM_QUERY. */
 	protected static final String PARAM_QUERY = "query";
-	
+
 	/** The Constant PARAM_PATH. */
 	protected static final String PARAM_PATH = "path";
-	
+
 	/** The Constant PARAM_PATH. */
 	protected static final String PARAM_FORMAT = "format";
-	
-	
+
 	/** The Constant PARAM_NODEREF. */
 	protected static final String PARAM_NODEREF = "nodeRef";
-	
+
 	/** The Constant PARAM_CALLBACK. */
 	/** http://admin:becpg@localhost:8080/alfresco/services/becpg/remote/entity **/
 	protected static final String PARAM_CALLBACK = "callback";
-	
 
 	/** Services **/
 
 	protected NodeService nodeService;
-	
+
 	protected EntityService entityService;
-	
+
 	protected BeCPGSearchService beCPGSearchService;
-	
+
 	protected MimetypeService mimetypeService;
-	
-	
+
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
-
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
 	}
 
-
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
 
-
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
 
 	protected NodeRef findEntity(WebScriptRequest req) {
 		String nodeRef = req.getParameter(PARAM_NODEREF);
-		if(nodeRef!=null && nodeRef.length()>0){
+		if (nodeRef != null && nodeRef.length() > 0) {
 			NodeRef node = new NodeRef(nodeRef);
-			if(nodeService.exists(node)){
+			if (nodeService.exists(node)) {
 				return node;
 			} else {
-				throw new WebScriptException("Node "+nodeRef+" doesn't exist in repository");
+				throw new WebScriptException("Node " + nodeRef + " doesn't exist in repository");
 			}
-			
+
 		}
 		String path = req.getParameter(PARAM_PATH);
-		if(path!=null && path.length()>0){
-		
+		if (path != null && path.length() > 0) {
+
 		}
 		String query = req.getParameter(PARAM_QUERY);
-		if(query !=null && query.length()>0){
-			query+= " +TYPE:\"bcpg:entity\"";
-			List<NodeRef> refs =   beCPGSearchService.luceneSearch(query, 1);
-			if(refs.size()>0){
+		if (query != null && query.length() > 0) {
+			query += " +TYPE:\"bcpg:entity\"";
+			List<NodeRef> refs = beCPGSearchService.luceneSearch(query, 1);
+			if (refs.size() > 0) {
 				return refs.get(0);
 			}
-			throw new WebScriptException("No entity node found for query "+query);
+			throw new WebScriptException("No entity node found for query " + query);
 		}
-		
-		
+
 		throw new WebScriptException("No entity node found");
 	}
-	
+
 	protected void sendOKStatus(NodeRef entityNodeRef, WebScriptResponse resp) throws IOException {
-		resp.getWriter().write("OK");
-//		Element docEl  = DOMUtils.createDoc("becpg-remote");
-//		DOMUtils.createElementAndText(docEl, "status","ok");
-//		OutputStream out  = resp.getOutputStream();
-//		DOMUtils.serialise(docEl.getOwnerDocument(), out);
-//		IOUtils.closeQuietly(out);
+		resp.getWriter().write("IMPORT OK ("+entityNodeRef+")");
 	}
-	
 
 	protected EntityProviderCallBack getEntityProviderCallback(WebScriptRequest req) {
 		final String callBack = req.getParameter(PARAM_CALLBACK);
-		if(callBack!=null && callBack.length()>0){
+		if (callBack != null && callBack.length() > 0) {
 			return new EntityProviderCallBack() {
-				
+
 				@Override
 				public NodeRef provideNode(NodeRef nodeRef) throws BeCPGException {
-					
 					try {
-						if(nodeRef!=null){
-							logger.debug("EntityProviderCallBack call : "+callBack+"?nodeRef="+nodeRef.toString());
-							URLConnection url = new URL(callBack+"?nodeRef="+nodeRef.toString()).openConnection();
-							return entityService.createOrUpdateEntity(nodeRef, url.getInputStream(), ExportFormat.xml,this);
-						}
-						return null;
+						logger.debug("EntityProviderCallBack call : " + callBack + "?nodeRef=" + nodeRef.toString());
+						URLConnection url = new URL(callBack + "?nodeRef=" + nodeRef.toString()).openConnection();
+						return entityService.createOrUpdateEntity(nodeRef, url.getInputStream(), ExportFormat.xml, this);
 					} catch (MalformedURLException e) {
 						throw new BeCPGException(e);
 					} catch (IOException e) {
 						throw new BeCPGException(e);
 					}
 
-				
 				}
 			};
 		}
+		logger.debug("No callback param provided");
 		return null;
 	}
 
-	
-
 	protected ExportFormat getFormat(WebScriptRequest req) {
 		String format = req.getParameter(PARAM_FORMAT);
-		if(format!=null && ExportFormat.csv.toString().equals(format)){
+		if (format != null && ExportFormat.csv.toString().equals(format)) {
 			return ExportFormat.csv;
 		}
 		return ExportFormat.xml;

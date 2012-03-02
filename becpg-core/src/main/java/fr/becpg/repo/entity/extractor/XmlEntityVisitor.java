@@ -80,7 +80,13 @@ public class XmlEntityVisitor {
 
 		xmlw.writeStartElement(nodeType.toPrefixString(namespaceService));
 
-		Path path = nodeService.getPath(nodeService.getPrimaryParent(nodeRef).getParentRef());
+		NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
+		
+		if(nodeService.getType(parentRef).equals(BeCPGModel.TYPE_ENTITY_FOLDER)){
+			 parentRef = nodeService.getPrimaryParent(parentRef).getParentRef();
+		}
+		
+		Path path = nodeService.getPath(parentRef);
 
 		xmlw.writeAttribute("path", path.toPrefixString(namespaceService));
 		xmlw.writeAttribute("type", "node");

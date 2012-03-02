@@ -136,7 +136,7 @@ public class ImportEntityXmlVisitor {
 								try {
 									entityProviderCallBack.provideNode(new NodeRef(nodeRef));
 								} catch (BeCPGException e) {
-									logger.error("Cannot call entityProviderCallBack ",e);
+									throw new SAXException("Cannot call entityProviderCallBack ",e);
 								}
 							}
 							 if (node != null) {
@@ -144,8 +144,7 @@ public class ImportEntityXmlVisitor {
 								nodeService.createAssociation(curNodeRef.peek(), node, currAssoc.peek());
 								curNodeRef.push(node);
 							 } else {
-								curNodeRef.push(curNodeRef.peek());
-								logger.warn("Cannot add node to assoc, node not found : " + name);
+								throw new SAXException("Cannot add node to assoc, node not found : " + name);
 							 }
 						}
 
@@ -207,7 +206,7 @@ public class ImportEntityXmlVisitor {
 		}
 	}
 
-	private NodeRef createNode(String parentPath, QName type, String name) {
+	private NodeRef createNode(String parentPath, QName type, String name) throws SAXException {
 		NodeRef parentNodeRef = findNodeByPath(parentPath);
 		if (parentNodeRef != null) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -215,7 +214,7 @@ public class ImportEntityXmlVisitor {
 
 			return nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, type, properties).getChildRef();
 		}
-		return null;
+		throw new SAXException("Path doesn't exist on repository :"+parentPath);
 	}
 
 	private NodeRef createAssocNode(NodeRef parentNodeRef, QName type, QName assocName, String name) {
