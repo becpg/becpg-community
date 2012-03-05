@@ -1,6 +1,7 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -9,17 +10,19 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.net.util.Base64;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.model.ExportFormat;
-import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
+import fr.becpg.repo.entity.remote.RemoteEntityFormat;
+import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -52,7 +55,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	protected NodeService nodeService;
 
-	protected EntityService entityService;
+	protected RemoteEntityService remoteEntityService;
 
 	protected BeCPGSearchService beCPGSearchService;
 
@@ -66,13 +69,44 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		this.beCPGSearchService = beCPGSearchService;
 	}
 
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
+	
+
+	public void setRemoteEntityService(RemoteEntityService remoteEntityService) {
+		this.remoteEntityService = remoteEntityService;
 	}
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
+	
+	protected List<NodeRef> findEntities(WebScriptRequest req) {
+	
+		
+		String path = req.getParameter(PARAM_PATH);
+		String query = req.getParameter(PARAM_QUERY);
+		String runnedQuery = "+TYPE:\"bcpg:entity\" -TYPE:\"cm:systemfolder\""
+				+ " -@cm\\:lockType:READ_ONLY_LOCK"
+				+ " -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\"";
+		
+		
+		if (path != null && path.length() > 0) {
+			runnedQuery+= " +PATH:\"" + path + "//*\"";
+		}
+		
+		
+		if (query != null && query.length() > 0) {
+			runnedQuery += " "+query;
+		
+		}
+		
+		List<NodeRef> refs = beCPGSearchService.luceneSearch(runnedQuery,250);
+		if (refs.size() > 0) {
+			return refs;
+		}
+		throw new WebScriptException("No entities found for query " + query);
+		
+	}
+	
 
 	protected NodeRef findEntity(WebScriptRequest req) {
 		String nodeRef = req.getParameter(PARAM_NODEREF);
@@ -85,25 +119,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			}
 
 		}
-		String path = req.getParameter(PARAM_PATH);
-		if (path != null && path.length() > 0) {
-
-		}
-		String query = req.getParameter(PARAM_QUERY);
-		if (query != null && query.length() > 0) {
-			query += " +TYPE:\"bcpg:entity\"";
-			List<NodeRef> refs = beCPGSearchService.luceneSearch(query, 1);
-			if (refs.size() > 0) {
-				return refs.get(0);
-			}
-			throw new WebScriptException("No entity node found for query " + query);
-		}
-
-		throw new WebScriptException("No entity node found");
+		
+		return findEntities(req).get(0);
 	}
 
 	protected void sendOKStatus(NodeRef entityNodeRef, WebScriptResponse resp) throws IOException {
-		resp.getWriter().write("IMPORT OK ("+entityNodeRef+")");
+		resp.getWriter().write(entityNodeRef.toString());
 	}
 
 	protected EntityProviderCallBack getEntityProviderCallback(WebScriptRequest req) {
@@ -115,8 +136,43 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				public NodeRef provideNode(NodeRef nodeRef) throws BeCPGException {
 					try {
 						logger.debug("EntityProviderCallBack call : " + callBack + "?nodeRef=" + nodeRef.toString());
-						URLConnection url = new URL(callBack + "?nodeRef=" + nodeRef.toString()).openConnection();
-						return entityService.createOrUpdateEntity(nodeRef, url.getInputStream(), ExportFormat.xml, this);
+						
+						
+						URL entityUrl = null;
+						URL dataUrl = null;
+						if(callBack.contains("@")){
+							entityUrl =  new URL(callBack.split("@")[1] + "?nodeRef=" + nodeRef.toString());
+							dataUrl  =  new URL(callBack.split("@")[1] + "/data?nodeRef=" + nodeRef.toString());
+							URLConnection uc1 = entityUrl.openConnection();
+							URLConnection uc2 = dataUrl.openConnection();
+							String val = (callBack.split("@")[0]).toString();
+							byte[] base = val.getBytes();
+							String authorizationString = "Basic " + new String(new Base64().encode(base));
+							uc1.setRequestProperty ("Authorization", authorizationString);
+							uc2.setRequestProperty ("Authorization", authorizationString);
+						} else {
+							entityUrl =  new URL(callBack + "?nodeRef=" + nodeRef.toString());
+							dataUrl  =  new URL(callBack + "Data?nodeRef=" + nodeRef.toString());
+						}
+						
+						InputStream entityStream = null;
+						InputStream dataStream = null;
+						
+						try {
+							entityStream = entityUrl.openStream();
+							 
+							NodeRef entityNodeRef =  remoteEntityService.createOrUpdateEntity(nodeRef, entityStream, RemoteEntityFormat.xml, this);
+							
+							dataStream = dataUrl.openStream();
+							
+							remoteEntityService.addOrUpdateEntityData(entityNodeRef, dataStream, RemoteEntityFormat.xml);
+							
+							return entityNodeRef;
+							
+						} finally {
+							IOUtils.closeQuietly(entityStream);
+							IOUtils.closeQuietly(dataStream);
+						}
 					} catch (MalformedURLException e) {
 						throw new BeCPGException(e);
 					} catch (IOException e) {
@@ -130,11 +186,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return null;
 	}
 
-	protected ExportFormat getFormat(WebScriptRequest req) {
+	protected RemoteEntityFormat getFormat(WebScriptRequest req) {
 		String format = req.getParameter(PARAM_FORMAT);
-		if (format != null && ExportFormat.csv.toString().equals(format)) {
-			return ExportFormat.csv;
+		if (format != null && RemoteEntityFormat.csv.toString().equals(format)) {
+			return RemoteEntityFormat.csv;
 		}
-		return ExportFormat.xml;
+		return RemoteEntityFormat.xml;
 	}
 }

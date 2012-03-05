@@ -1,11 +1,13 @@
-package fr.becpg.repo.entity.extractor;
+package fr.becpg.repo.entity.remote.extractor;
 
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -23,6 +25,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.net.util.Base64;
 import org.springframework.extensions.surf.util.ISO8601DateFormat;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
@@ -50,13 +53,13 @@ public class XmlEntityVisitor {
 		this.dictionaryService = dictionaryService;
 	}
 
-	public void visit(NodeRef entityNodeRef, OutputStream out) throws XMLStreamException {
+	public void visit(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
 
 		// Create an output factory
 		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
 
 		// Create an XML stream writer
-		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(out);
+		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Indent xml formater ON");
@@ -73,6 +76,95 @@ public class XmlEntityVisitor {
 		xmlw.close();
 
 	}
+	
+	
+
+	public void visit(List<NodeRef> entities, OutputStream result) throws XMLStreamException {
+		// Create an output factory
+		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+
+		// Create an XML stream writer
+		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Indent xml formater ON");
+			xmlw = new IndentingXMLStreamWriter(xmlw);
+		}
+
+		// Write XML prologue
+		xmlw.writeStartDocument();
+		// Visit node
+		xmlw.writeStartElement("becpg:entities");
+		
+		for (Iterator<NodeRef> iterator = entities.iterator(); iterator.hasNext();) {
+			NodeRef nodeRef = (NodeRef) iterator.next();
+			visitNode(nodeRef, xmlw, false, false);
+		}
+		
+		xmlw.writeEndElement();
+		// Write document end. This closes all open structures
+		xmlw.writeEndDocument();
+		// Close the writer to flush the output
+		xmlw.close();
+		
+	}
+	
+
+	public void visit(NodeRef entityNodeRef, Map<String, byte[]> images, OutputStream result) throws XMLStreamException {
+		// Create an output factory
+				XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+
+				// Create an XML stream writer
+				XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Indent xml formater ON");
+					xmlw = new IndentingXMLStreamWriter(xmlw);
+				}
+
+				// Write XML prologue
+				xmlw.writeStartDocument();
+				// Visit node
+				xmlw.writeStartElement("becpg:data");
+				
+				NodeRef parentRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
+				
+				if(nodeService.getType(parentRef).equals(BeCPGModel.TYPE_ENTITY_FOLDER)){
+					 parentRef = nodeService.getPrimaryParent(parentRef).getParentRef();
+				}
+				
+				Path path = nodeService.getPath(parentRef);
+
+				xmlw.writeAttribute("path", path.toPrefixString(namespaceService));
+				xmlw.writeAttribute("type", "node");
+
+				String name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+
+				xmlw.writeAttribute("name", name);
+				xmlw.writeAttribute("nodeRef", entityNodeRef.toString());
+
+				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_CODE)) {
+					xmlw.writeAttribute("code", (String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE));
+				}
+				
+				for (Entry<String, byte[]> image : images.entrySet() ) {
+					xmlw.writeStartElement("becpg:image");
+					xmlw.writeAttribute("name", image.getKey());
+					xmlw.writeCData(Base64.encodeBase64String(image.getValue()));
+					xmlw.writeEndElement();
+				}
+				
+				
+				xmlw.writeEndElement();
+				// Write document end. This closes all open structures
+				xmlw.writeEndDocument();
+				// Close the writer to flush the output
+				xmlw.close();
+		
+	}
+
+	
+	
 
 	private void visitNode(NodeRef nodeRef, XMLStreamWriter xmlw, boolean assocs, boolean props) throws XMLStreamException {
 
@@ -188,5 +280,6 @@ public class XmlEntityVisitor {
 			xmlw.writeCharacters(value.toString());
 		}
 	}
+
 
 }

@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<bcpg:rawMaterial path="/app:company_home/cm:TempFolder" type="node" name="Abricot, nectar, pasteurisé" nodeRef="workspace://SpacesStore/4ae3952f-6851-41e9-9046-daab3b99fa85" code="MP2043">
+  <bcpg:legalName type="d:mltext">Abricot, nectar, pasteurisé</bcpg:legalName>
+  <cm:name type="d:text">Abricot, nectar, pasteurisé</cm:name>
+  <bcpg:productUnit type="d:text">kg</bcpg:productUnit>
+  <bcpg:startEffectivity type="d:datetime">2012-02-27T09:37:52.682+01:00</bcpg:startEffectivity>
+  <cm:owner type="d:text"></cm:owner>
+  <bcpg:productState type="d:text">Valid</bcpg:productState>
+
+  <cm:creator type="d:text">admin</cm:creator>
+  <cm:modifier type="d:text">admin</cm:modifier>
+  <bcpg:code type="d:text">MP2043</bcpg:code>
+  <cm:modified type="d:datetime">2012-02-27T11:48:27.993+01:00</cm:modified>
+  <cm:created type="d:datetime">2012-02-27T09:37:52.669+01:00</cm:created>
+  <bcpg:productMicrobioCriteria type="assoc" />
+  <bcpg:entityLists type="childAssoc">
+    <cm:folder path="/app:company_home/cm:Products/cm:Valid/cm:RawMaterial/cm:Jus_x0020_et_x0020_nectars/cm:Jus_x0020_et_x0020_nectars/cm:fb1e882e-6924-48ee-a456-0737b79684fe/bcpg:rawMaterial" type="node" name="DataLists" nodeRef="workspace://SpacesStore/d45321a9-8d01-43ca-92b6-ec9eae895796">
+      <cm:name type="d:text">DataLists</cm:name>
+
+      <cm:title type="d:mltext">DataLists</cm:title>
+      <cm:modified type="d:datetime">2012-02-27T11:48:48.676+01:00</cm:modified>
+      <cm:created type="d:datetime">2012-02-27T09:37:52.837+01:00</cm:created>
+      <cm:creator type="d:text">admin</cm:creator>
+      <cm:modifier type="d:text">admin</cm:modifier>
+      <cm:contains type="childAssoc">
+
+        <dl:dataList path="/app:company_home/cm:Products/cm:Valid/cm:RawMaterial/cm:Jus_x0020_et_x0020_nectars/cm:Jus_x0020_et_x0020_nectars/cm:fb1e882e-6924-48ee-a456-0737b79684fe/bcpg:rawMaterial/bcpg:entityLists" type="node" name="allergenList" nodeRef="workspace://SpacesStore/4ede44cf-2ff0-4ffd-877b-a6bb3d42a27a">
+          <cm:name type="d:text">allergenList</cm:name>
+          <cm:title type="d:mltext">Allergènes</cm:title>
+          <cm:modified type="d:datetime">2012-02-27T11:48:48.245+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-02-27T11:48:48.245+01:00</cm:created>
+          <cm:description type="d:mltext">Liste des allergènes</cm:description>
+
+          <dl:dataListItemType type="d:text">bcpg:allergenList</dl:dataListItemType>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/cm:Products/cm:Valid/cm:RawMaterial/cm:Jus_x0020_et_x0020_nectars/cm:Jus_x0020_et_x0020_nectars/cm:fb1e882e-6924-48ee-a456-0737b79684fe/bcpg:rawMaterial/bcpg:entityLists" type="node" name="costList" nodeRef="workspace://SpacesStore/a530075d-f3b4-49f8-a893-80b569cd718e">
+          <cm:name type="d:text">costList</cm:name>
+
+          <cm:title type="d:mltext">Coûts</cm:title>
+          <cm:modified type="d:datetime">2012-02-27T11:48:48.308+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-02-27T11:48:48.308+01:00</cm:created>
+          <cm:description type="d:mltext">Liste des coûts</cm:description>
+          <dl:dataListItemType type="d:text">bcpg:costList</dl:dataListItemType>
+          <cm:creator type="d:text">admin</cm:creator>
+
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/cm:Products/cm:Valid/cm:RawMaterial/cm:Jus_x0020_et_x0020_nectars/cm:Jus_x0020_et_x0020_nectars/cm:fb1e882e-6924-48ee-a456-0737b79684fe/bcpg:rawMaterial/bcpg:entityLists" type="node" name="priceList" nodeRef="workspace://SpacesStore/d6a30c98-3c80-431e-9e53-de9b3c4bad4e">
+          <cm:name type="d:text">priceList</cm:name>
+          <cm:title type="d:mltext">Prix d'achat</cm:title>
+          <cm:modified type="d:datetime">2012-02-27T11:48:48.327+01:00</cm:modified>
+
+          <cm:created type="d:datetime">2012-02-27T11:48:48.327+01:00</cm:created>
+          <cm:description type="d:mltext">Liste des prix d'achat</cm:description>
+          <dl:dataListItemType type="d:text">bcpg:priceList</dl:dataListItemType>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/cm:Products/cm:Valid/cm:RawMaterial/cm:Jus_x0020_et_x0020_nectars/cm:Jus_x0020_et_x0020_nectars/cm:fb1e882e-6924-48ee-a456-0737b79684fe/bcpg:rawMaterial/bcpg:entityLists" type="node" name="nutList" nodeRef="workspace://SpacesStore/bab720f5-b6b1-44a4-8d81-ff48fa9b278c">
+          <cm:name type="d:text">nutList</cm:name>
+          <cm:title type="d:mltext">Nutriments</cm:title>
+          <cm:modified type="d:datetime">2012-02-27T11:48:48.350+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-02-27T11:48:48.350+01:00</cm:created>
+          <cm:description type="d:mltext">Liste des nutriments</cm:description>
+
+          <dl:dataListItemType type="d:text">bcpg:nutList</dl:dataListItemType>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/cm:Products/cm:Valid/cm:RawMaterial/cm:Jus_x0020_et_x0020_nectars/cm:Jus_x0020_et_x0020_nectars/cm:fb1e882e-6924-48ee-a456-0737b79684fe/bcpg:rawMaterial/bcpg:entityLists" type="node" name="ingList" nodeRef="workspace://SpacesStore/2da9b4bb-ecab-4a3d-bbcf-ad4ecd7ac86f">
+          <cm:name type="d:text">ingList</cm:name>
+
+          <cm:title type="d:mltext">Ingrédients</cm:title>
+          <cm:modified type="d:datetime">2012-02-27T11:48:48.367+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-02-27T11:48:48.367+01:00</cm:created>
+          <cm:description type="d:mltext">Liste d'ingrédients</cm:description>
+          <dl:dataListItemType type="d:text">bcpg:ingList</dl:dataListItemType>
+          <cm:creator type="d:text">admin</cm:creator>
+
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/cm:Products/cm:Valid/cm:RawMaterial/cm:Jus_x0020_et_x0020_nectars/cm:Jus_x0020_et_x0020_nectars/cm:fb1e882e-6924-48ee-a456-0737b79684fe/bcpg:rawMaterial/bcpg:entityLists" type="node" name="organoList" nodeRef="workspace://SpacesStore/d172c5ab-2c0c-414b-b2d6-d47ef8363754">
+          <cm:name type="d:text">organoList</cm:name>
+          <cm:title type="d:mltext">Organoleptique</cm:title>
+          <cm:modified type="d:datetime">2012-02-27T11:48:48.381+01:00</cm:modified>
+
+          <cm:created type="d:datetime">2012-02-27T11:48:48.381+01:00</cm:created>
+          <cm:description type="d:mltext">Liste des caractéristiques organoleptiques</cm:description>
+          <dl:dataListItemType type="d:text">bcpg:organoList</dl:dataListItemType>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/cm:Products/cm:Valid/cm:RawMaterial/cm:Jus_x0020_et_x0020_nectars/cm:Jus_x0020_et_x0020_nectars/cm:fb1e882e-6924-48ee-a456-0737b79684fe/bcpg:rawMaterial/bcpg:entityLists" type="node" name="physicoChemList" nodeRef="workspace://SpacesStore/24b98d09-7e9e-41b7-8157-e31b04243ab8">
+          <cm:name type="d:text">physicoChemList</cm:name>
+          <cm:title type="d:mltext">Physico-chimiques</cm:title>
+          <cm:modified type="d:datetime">2012-02-27T11:48:48.432+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-02-27T11:48:48.432+01:00</cm:created>
+          <cm:description type="d:mltext">Liste des caractéristiques physico-chimiques</cm:description>
+
+          <dl:dataListItemType type="d:text">bcpg:physicoChemList</dl:dataListItemType>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+      </cm:contains>
+    </cm:folder>
+
+  </bcpg:entityLists>
+</bcpg:rawMaterial>

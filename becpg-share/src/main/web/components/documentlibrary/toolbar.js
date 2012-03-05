@@ -600,7 +600,7 @@
 
             this.fileUpload.uploader.widgets.panel.hideEvent.subscribe(function()
             {
-               balloon.hide()
+               balloon.hide();
             });
          }
       },

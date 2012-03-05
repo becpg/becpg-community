@@ -194,7 +194,7 @@
          compareURL = Alfresco.constants.PROXY_URI + '/becpg/entity/compare/' + this.options.nodeRef.replace(":/", "") + '/' + doc.label + '/' + doc.name,
             html = '';
 
-         html += '<div class="version-panel-left">'
+         html += '<div class="version-panel-left">';
          html += '   <span class="document-version">' + $html(doc.label) + '</span>';
          html += '</div>';
          html += '<div class="version-panel-right">';
@@ -213,7 +213,7 @@
          html += '   </span>';
          html += '   <div class="clear"></div>';
          html += '   <div class="version-details">';
-         html += '      <div class="version-details-left">'
+         html += '      <div class="version-details-left">';
          html += $userAvatar(doc.creator.userName, 32);
          html += '      </div>';
          html += '      <div class="version-details-right">';

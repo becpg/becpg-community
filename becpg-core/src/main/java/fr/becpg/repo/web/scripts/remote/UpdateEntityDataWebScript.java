@@ -15,7 +15,7 @@ import fr.becpg.common.BeCPGException;
  * @author matthieu
  * 
  */
-public class UpdateEntityWebScript extends AbstractEntityWebScript {
+public class UpdateEntityDataWebScript extends AbstractEntityWebScript {
 
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
@@ -25,11 +25,11 @@ public class UpdateEntityWebScript extends AbstractEntityWebScript {
 		logger.debug("Update entity: " + entityNodeRef);
 		try {
 			
-			remoteEntityService.createOrUpdateEntity(entityNodeRef,req.getContent().getInputStream(), getFormat(req), getEntityProviderCallback(req));
+			remoteEntityService.addOrUpdateEntityData(entityNodeRef,req.getContent().getInputStream(), getFormat(req));
 
 			sendOKStatus(entityNodeRef, resp);
 		} catch (BeCPGException e) {
-			logger.error("Cannot import entity", e);
+			logger.error("Cannot import entity data", e);
 			throw new WebScriptException(e.getMessage());
 		}
 

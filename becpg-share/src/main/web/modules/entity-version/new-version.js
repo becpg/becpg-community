@@ -198,7 +198,7 @@
             },
             obj: null,
             scope: this
-         }
+         };
          
          // Submit as an ajax submit (not leave the page), in json format
          form.setAJAXSubmit(true,
@@ -359,4 +359,4 @@ Alfresco.module.getNewEntityVersionInstance = function()
 {
    var instanceId = "alfresco-NewEntityVersion-instance";
    return Alfresco.util.ComponentManager.get(instanceId) || new Alfresco.module.NewEntityVersion(instanceId);
-}
+};

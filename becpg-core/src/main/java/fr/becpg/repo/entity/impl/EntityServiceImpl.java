@@ -7,26 +7,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.CopyService;
+import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -37,18 +37,13 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xml.sax.SAXException;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ExportFormat;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplService;
-import fr.becpg.repo.entity.extractor.ImportEntityXmlVisitor;
-import fr.becpg.repo.entity.extractor.XmlEntityVisitor;
-import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -74,9 +69,7 @@ public class EntityServiceImpl implements EntityService {
 
 	private NodeService nodeService;
 
-	private NamespaceService namespaceService;
-
-	private DictionaryService dictionaryService;
+	private MimetypeService mimetypeService;
 
 	private EntityListDAO entityListDAO;
 
@@ -93,13 +86,18 @@ public class EntityServiceImpl implements EntityService {
 	private CopyService copyService;
 
 	private ContentService contentService;
-	
+
 	private BehaviourFilter policyBehaviourFilter;
-	
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	
+	public void setMimetypeService(MimetypeService mimetypeService) {
+		this.mimetypeService = mimetypeService;
+	}
+	
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
@@ -128,16 +126,8 @@ public class EntityServiceImpl implements EntityService {
 		this.entityVersionService = entityVersionService;
 	}
 
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
-	}
-
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
 	}
 
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
@@ -311,17 +301,12 @@ public class EntityServiceImpl implements EntityService {
 	 * @param imgName
 	 *            the img name
 	 * @return the image
+	 * @throws BeCPGException 
 	 */
 	@Override
-	public NodeRef getImage(NodeRef nodeRef, String imgName) {
+	public NodeRef getImage(NodeRef nodeRef, String imgName) throws BeCPGException {
 
-		NodeRef parentNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
-
-		NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
-		if (imagesFolderNodeRef == null) {
-			logger.debug("Folder 'Images' doesn't exist.");
-			return null;
-		}
+		NodeRef imagesFolderNodeRef = getImageFolder(nodeRef);
 
 		NodeRef imageNodeRef = null;
 		List<FileInfo> files = fileFolderService.listFiles(imagesFolderNodeRef);
@@ -332,11 +317,42 @@ public class EntityServiceImpl implements EntityService {
 		}
 
 		if (imageNodeRef == null) {
-			logger.debug("image not found. imgName: " + imgName);
-			return null;
+			throw new BeCPGException("image not found. imgName: " + imgName);
 		}
 
 		return imageNodeRef;
+	}
+
+	/**
+	 * 
+	 * @param nodeRef
+	 * @param imgName
+	 * @return List of images nodeRefs
+	 * @throws BeCPGException 
+	 */
+	@Override
+	public List<NodeRef> getImages(NodeRef nodeRef) throws BeCPGException {
+
+		NodeRef imagesFolderNodeRef = getImageFolder(nodeRef);
+
+		List<NodeRef> ret = new ArrayList<NodeRef>();
+
+		List<FileInfo> files = fileFolderService.listFiles(imagesFolderNodeRef);
+		for (FileInfo file : files) {
+			ret.add(file.getNodeRef());
+		}
+
+		return ret;
+	}
+
+	private NodeRef getImageFolder(NodeRef nodeRef) throws BeCPGException {
+		NodeRef parentNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
+
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		if (imagesFolderNodeRef == null) {
+			throw new BeCPGException("Folder 'Images' doesn't exist.");
+		}
+		return imagesFolderNodeRef;
 	}
 
 	/**
@@ -398,74 +414,60 @@ public class EntityServiceImpl implements EntityService {
 			ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
 				@Override
 				public NodeRef doWork() throws Exception {
-					
+
 					QName type = nodeService.getType(sourceNodeRef);
-					try{
+					try {
 						// disable policies of entity to avoid :
-						// java.lang.IllegalStateException: Post-copy association has a source that was NOT copied.
-						// at org.alfresco.repo.copy.CopyServiceImpl.copyPendingAssociations(CopyServiceImpl.java:788)
+						// java.lang.IllegalStateException: Post-copy
+						// association has a source that was NOT copied.
+						// at
+						// org.alfresco.repo.copy.CopyServiceImpl.copyPendingAssociations(CopyServiceImpl.java:788)
 						policyBehaviourFilter.disableBehaviour(type);
-						NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS,
-								ContentModel.ASSOC_CHILDREN, true);
+						NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 
 						nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
-						
+
 						// call policies of entity
 						initializeEntity(ret);
 						initializeEntityFolder(ret);
-						
+
 						return ret;
-					}					
-					finally{
+					} finally {
 						policyBehaviourFilter.enableBehaviour(type);
-					}					
+					}
 				}
 			}, AuthenticationUtil.getSystemUserName());
 
 		} else {
 			logger.debug("Create new entity");
 			ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props)
-					.getChildRef();
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props).getChildRef();
 		}
 		return ret;
 	}
 
-	/**
-	 * Import / export
-	 * 
-	 * @throws BeCPGException
-	 */
 	@Override
-	public void exportEntity(NodeRef entityNodeRef, OutputStream out, ExportFormat format) throws BeCPGException {
-		if (format.equals(ExportFormat.xml)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService);
-			try {
-				xmlEntityVisitor.visit(entityNodeRef, out);
-			} catch (XMLStreamException e) {
-				throw new BeCPGException("Cannot export entity :" + entityNodeRef + " at format " + format, e);
-			}
-		} else {
-			throw new BeCPGException("Unknow format "+format.toString());
-		}
-	}
+	public void writeImages(NodeRef nodeRef, Map<String, byte[]> images) throws BeCPGException {
 
-	@Override
-	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, ExportFormat format, EntityProviderCallBack entityProviderCallBack) throws BeCPGException {
-		if (format.equals(ExportFormat.xml)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, beCPGSearchService);
-			xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
-			try {
-			 return	xmlEntityVisitor.visit(entityNodeRef, in);
-			} catch (IOException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-			} catch (SAXException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-			} catch (ParserConfigurationException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+		NodeRef imagesFolderNodeRef = getImageFolder(nodeRef);
+
+		for (Map.Entry<String, byte[]> image : images.entrySet()) {
+			String filename = image.getKey();
+			// create file if it doesn't exist
+			NodeRef fileNodeRef = nodeService.getChildByName(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS, filename);
+			if (fileNodeRef == null) {
+				Map<QName, Serializable> fileProperties = new HashMap<QName, Serializable>();
+				fileProperties.put(ContentModel.PROP_NAME, filename);
+				fileNodeRef = nodeService.createNode(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(filename)), ContentModel.TYPE_CONTENT, fileProperties).getChildRef();
 			}
+
+			String mimetype = mimetypeService.guessMimetype(filename);
+
+			ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
+			writer.setMimetype(mimetype);
+			writer.putContent(new String(image.getValue()));
 		}
-		throw new BeCPGException("Unknow format "+format.toString());
 	}
 
 }

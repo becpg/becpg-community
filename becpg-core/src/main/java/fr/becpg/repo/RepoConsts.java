@@ -4,7 +4,6 @@
 package fr.becpg.repo;
 
 import org.alfresco.repo.version.Version2Model;
-import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.repository.StoreRef;
 
 /**

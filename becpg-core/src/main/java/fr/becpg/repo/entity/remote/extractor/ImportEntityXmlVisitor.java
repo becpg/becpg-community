@@ -1,4 +1,4 @@
-package fr.becpg.repo.entity.extractor;
+package fr.becpg.repo.entity.remote.extractor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +22,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.net.util.Base64;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -41,6 +42,11 @@ public class ImportEntityXmlVisitor {
 	private BeCPGSearchService beCPGSearchService;
 	
 	private EntityProviderCallBack entityProviderCallBack; 
+	
+
+	public void setEntityProviderCallBack(EntityProviderCallBack entityProviderCallBack) {
+		this.entityProviderCallBack = entityProviderCallBack;
+	}
 
 	private static Log logger = LogFactory.getLog(ImportEntityXmlVisitor.class);
 
@@ -66,10 +72,55 @@ public class ImportEntityXmlVisitor {
 		}
 
 	}
+	
 
-	public void setEntityProviderCallBack(EntityProviderCallBack entityProviderCallBack) {
-		this.entityProviderCallBack = entityProviderCallBack;
+	public Map<String, byte[]> visitData( InputStream in) throws IOException, SAXException, ParserConfigurationException {
+		try {
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			SAXParser saxParser = factory.newSAXParser();
+
+			EntityDataXmlHandler handler = new EntityDataXmlHandler();
+			saxParser.parse(in, handler);
+
+			return handler.getDatas();
+		} finally {
+			IOUtils.closeQuietly(in);
+		}
 	}
+	
+	private class EntityDataXmlHandler extends DefaultHandler {
+
+		Map<String,byte[]> datas = new HashMap<String, byte[]>();
+
+		StringBuffer currValue = new StringBuffer();
+		
+		String name;
+
+		public Map<String, byte[]> getDatas() {
+			return datas;
+		}
+		
+		@Override
+		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+			currValue = new StringBuffer();
+			name = attributes.getValue("name");
+		}
+		
+		@Override
+		public void characters(char[] ch, int start, int length) throws SAXException {
+			currValue.append(ch, start, length);
+		}
+
+		@Override
+		public void endElement(String uri, String localName, String qName) throws SAXException {
+			if(qName.equals("becpg:image")){
+				datas.put(name, Base64.decodeBase64(currValue.toString()));
+			}
+		}
+		
+	}
+	
+
 
 	private class EntityXmlHandler extends DefaultHandler {
 
@@ -248,7 +299,7 @@ public class ImportEntityXmlVisitor {
 		}
 
 		if (name != null && name.length() > 0) {
-			runnedQuery += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, name, null);
+			runnedQuery += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, name, code != null && code.length() > 0 ? LuceneHelper.Operator.OR : null);
 		}
 
 		if (type != null) {
@@ -266,4 +317,5 @@ public class ImportEntityXmlVisitor {
 
 		return null;
 	}
+
 }

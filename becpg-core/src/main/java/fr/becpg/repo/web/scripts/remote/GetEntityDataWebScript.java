@@ -17,18 +17,18 @@ import fr.becpg.common.BeCPGException;
  * @author matthieu
  * 
  */
-public class GetEntityWebScript extends AbstractEntityWebScript {
+public class GetEntityDataWebScript extends AbstractEntityWebScript {
 
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
 		NodeRef entityNodeRef = findEntity(req);
 
-		logger.debug("Get entity: " + entityNodeRef);
+		logger.debug("Get entity data: " + entityNodeRef);
 
 		try {
 				
-			remoteEntityService.getEntity(entityNodeRef, resp.getOutputStream(), getFormat(req));
+			remoteEntityService.getEntityData(entityNodeRef, resp.getOutputStream(), getFormat(req));
 
 			// set mimetype for the content and the character encoding + length
 			// for the stream
@@ -37,7 +37,7 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			resp.setHeader("Content-Length", Long.toString(c.getByteCount()));
 
 		} catch (BeCPGException e) {
-			logger.error("Cannot export entity", e);
+			logger.error("Cannot export entity data", e);
 			throw new WebScriptException(e.getMessage());
 		} catch (SocketException e1) {
 

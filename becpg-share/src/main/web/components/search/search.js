@@ -942,16 +942,16 @@
          {
             searchTag = args.searchTag;
          }
-         var searchAllSites = this.searchAllSites;
-         if (args.searchAllSites !== undefined)
-         {
-            searchAllSites = args.searchAllSites;
-         }
-         var searchRepository = this.searchRepository;
-         if (args.searchRepository !== undefined)
-         {
-            searchRepository = args.searchRepository;
-         }
+//         var searchAllSites = this.searchAllSites;
+//         if (args.searchAllSites !== undefined)
+//         {
+//            searchAllSites = args.searchAllSites;
+//         }
+//         var searchRepository = this.searchRepository;
+//         if (args.searchRepository !== undefined)
+//         {
+//            searchRepository = args.searchRepository;
+//         }
          var searchSort = this.searchSort;
          if (args.searchSort !== undefined)
          {
@@ -1173,15 +1173,17 @@
          this.widgets.dataTable.set("MSG_EMPTY", "");
          this.widgets.dataTable.render();
          
+         var scope = this;
+         
          // Success handler
          function successHandler(sRequest, oResponse, oPayload)
          {
             // update current state on success
-            this.searchTerm = searchTerm;
-            this.searchTag = searchTag;
-            this.searchAllSites = searchAllSites;
-            this.searchRepository = searchRepository;
-            this.searchSort = searchSort;
+         	scope.searchTerm = searchTerm;
+         	scope.searchTag = searchTag;
+         	scope.searchAllSites = searchAllSites;
+         	scope.searchRepository = searchRepository;
+         	scope.searchSort = searchSort;
             
             this.widgets.dataTable.onDataReturnInitializeTable.call(this.widgets.dataTable, sRequest, oResponse, oPayload);
             

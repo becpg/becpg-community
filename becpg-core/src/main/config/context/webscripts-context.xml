@@ -155,7 +155,15 @@
 		parent="webscript">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="entityService" ref="entityService" />
+		<property name="remoteEntityService" ref="remoteEntityService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+	</bean>
+	
+	<bean id="webscript.fr.becpg.remote.entityData.get" class="fr.becpg.repo.web.scripts.remote.GetEntityDataWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="remoteEntityService" ref="remoteEntityService" />
 		<property name="mimetypeService" ref="mimetypeService" />
 	</bean>
 
@@ -163,7 +171,15 @@
 		parent="webscript">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="entityService" ref="entityService" />
+		<property name="remoteEntityService" ref="remoteEntityService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+	</bean>
+	
+	<bean id="webscript.fr.becpg.remote.entityData.post" class="fr.becpg.repo.web.scripts.remote.UpdateEntityDataWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="remoteEntityService" ref="remoteEntityService" />
 		<property name="mimetypeService" ref="mimetypeService" />
 	</bean>
 
@@ -171,7 +187,7 @@
 		parent="webscript">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="entityService" ref="entityService" />
+		<property name="remoteEntityService" ref="remoteEntityService" />
 		<property name="mimetypeService" ref="mimetypeService" />
 	</bean>
 
@@ -179,7 +195,7 @@
 		parent="webscript">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="entityService" ref="entityService" />
+		<property name="remoteEntityService" ref="remoteEntityService" />
 		<property name="mimetypeService" ref="mimetypeService" />
 	</bean>
 
@@ -187,7 +203,7 @@
 		parent="webscript">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="entityService" ref="entityService" />
+		<property name="remoteEntityService" ref="remoteEntityService" />
 		<property name="mimetypeService" ref="mimetypeService" />
 	</bean>
 
@@ -195,7 +211,7 @@
 		parent="webscript">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="entityService" ref="entityService" />
+		<property name="remoteEntityService" ref="remoteEntityService" />
 		<property name="mimetypeService" ref="mimetypeService" />
 	</bean>
 

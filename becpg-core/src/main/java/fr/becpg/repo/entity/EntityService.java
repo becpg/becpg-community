@@ -1,14 +1,12 @@
 package fr.becpg.repo.entity;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.model.ExportFormat;
-import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 
 
 /**
@@ -38,8 +36,18 @@ public interface EntityService {
 	 * @param nodeRef the node ref
 	 * @param imgName the img name
 	 * @return the  image
+	 * @throws BeCPGException 
 	 */
-	public NodeRef getImage(NodeRef nodeRef, String imgName);
+	public NodeRef getImage(NodeRef nodeRef, String imgName) throws BeCPGException;
+	
+	
+	/**
+	 * Gets the images defined in the image folder of the entity
+	 * @param nodeRef
+	 * @return
+	 */
+	List<NodeRef> getImages(NodeRef nodeRef) throws BeCPGException;
+	
 	
 	/**
 	 * 
@@ -71,26 +79,16 @@ public interface EntityService {
 	 */
 	public NodeRef createOrCopyFrom(NodeRef sourceNodeRef, NodeRef parentNodeRef, QName entityType, String entityName);
 
-	
-	
 	/**
-	 * Export entity to specified format
-	 * @param entityNodeRef
-	 * @param outputStream
+	 * Write image in the image folder of the entity 
+	 * @param images
 	 * @throws BeCPGException 
 	 */
-	public void exportEntity(NodeRef entityNodeRef, OutputStream out, ExportFormat format) throws BeCPGException;
+	public void writeImages(NodeRef nodeRef, Map<String, byte[]> images) throws BeCPGException;
 
 
-	/**
-	 * 
-	 * @param entityNodeRef
-	 * @param in
-	 * @param format
-	 * @param callback
-	 * @return
-	 * @throws BeCPGException
-	 */
-	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, ExportFormat format, EntityProviderCallBack callback) throws BeCPGException;
+	
+	
+	
     
 }

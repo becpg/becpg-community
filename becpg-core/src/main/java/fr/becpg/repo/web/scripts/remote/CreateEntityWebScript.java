@@ -24,7 +24,7 @@ public class CreateEntityWebScript extends AbstractEntityWebScript {
 		logger.debug("Create entity");
 		try {
 			
-			NodeRef entityNodeRef = entityService.createOrUpdateEntity(null, req.getContent().getInputStream(), getFormat(req), getEntityProviderCallback(req));
+			NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(null, req.getContent().getInputStream(), getFormat(req), getEntityProviderCallback(req));
 			sendOKStatus(entityNodeRef, resp);
 		} catch (BeCPGException e) {
 			logger.error("Cannot import entity", e);

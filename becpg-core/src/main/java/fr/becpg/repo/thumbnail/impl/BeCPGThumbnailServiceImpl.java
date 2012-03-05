@@ -18,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.thumbnail.BeCPGThumbnailService;
@@ -93,10 +94,16 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 				}
 
 				logger.debug("Look for product thumbnail: " + imgName);
-				NodeRef img = entityService.getImage(sourceNodeRef, imgName);
-				if (img != null) {
+				
+				NodeRef img;
+				try {
+					img = entityService.getImage(sourceNodeRef, imgName);
+					if (img != null) {
 					return super.getThumbnailByName(img,
-							ContentModel.PROP_CONTENT, DOC_LIB_THUMBNAIL);
+								ContentModel.PROP_CONTENT, DOC_LIB_THUMBNAIL);
+					}
+				} catch (BeCPGException e) {
+					logger.debug(e,e);
 				}
 				
 			}
