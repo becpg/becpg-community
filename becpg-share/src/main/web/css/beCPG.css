@@ -1,0 +1,16 @@
+/*************************************/
+/**            beCPG               **/
+/************************************/
+
+.footer-becpg .copyright span {
+   display:none;
+}
+
+
+/* Share forms */
+
+
+.yui-gb .form-field input[type="text"]
+{
+   width: 15em;
+}

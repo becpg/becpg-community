@@ -240,9 +240,7 @@ public class XmlEntityVisitor {
 				
 				xmlw.writeEndElement();
 			}
-			
-			
-			
+
 		
 		}
 
@@ -260,6 +258,7 @@ public class XmlEntityVisitor {
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI)
 						&& !propQName.equals(ContentModel.PROP_CONTENT)) {
+					logger.debug("Extract prop : "+entry.getKey());
 					xmlw.writeStartElement(entry.getKey().toPrefixString(namespaceService));
 					xmlw.writeAttribute("type",dictionaryService.getProperty(entry.getKey()).getDataType().getName().toPrefixString(namespaceService) );
 					visitPropValue(entry.getValue(), xmlw);

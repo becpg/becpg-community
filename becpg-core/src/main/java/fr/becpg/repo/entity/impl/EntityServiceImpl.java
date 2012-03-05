@@ -1,7 +1,9 @@
 package fr.becpg.repo.entity.impl;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -452,7 +454,10 @@ public class EntityServiceImpl implements EntityService {
 		NodeRef imagesFolderNodeRef = getImageFolder(nodeRef);
 
 		for (Map.Entry<String, byte[]> image : images.entrySet()) {
+			
 			String filename = image.getKey();
+			
+	
 			// create file if it doesn't exist
 			NodeRef fileNodeRef = nodeService.getChildByName(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS, filename);
 			if (fileNodeRef == null) {
@@ -464,9 +469,23 @@ public class EntityServiceImpl implements EntityService {
 
 			String mimetype = mimetypeService.guessMimetype(filename);
 
-			ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
-			writer.setMimetype(mimetype);
-			writer.putContent(new String(image.getValue()));
+			BufferedImage bufferedImage = null;
+			OutputStream out = null;
+			try {
+				bufferedImage = ImageIO.read(new ByteArrayInputStream(image.getValue()));
+				
+				ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
+				writer.setMimetype(mimetype);
+				out = writer.getContentOutputStream();
+				
+				ImageIO.write(bufferedImage, "jpg",out );
+				logger.debug("Write image "+filename);
+				bufferedImage.flush();
+			} catch (IOException e) {
+				logger.error(e,e);
+			} finally {
+				IOUtils.closeQuietly(out);
+			}
 		}
 	}
 

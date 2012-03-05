@@ -216,7 +216,7 @@
             },
             obj: null,
             scope: this
-         }
+         };
 
          // Submit as an ajax submit (not leave the page), in json format
          form.setAJAXSubmit(true,
@@ -323,7 +323,6 @@
        */
       _applyConfig: function RV__applyConfig()
       {
-         var Dom = YAHOO.util.Dom;
 
          // Set the panel section
          var header = Alfresco.util.message("header.revert", this.name,

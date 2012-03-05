@@ -305,7 +305,7 @@
     	 var workflow = oRecord.getData();
     	 
     	 //var npdComments = workflow.tasks[0].properties.bpm_comment;
-    	 var npdComments;
+    	 var npdComments = null;
     	 
     	 for(i in workflow.tasks){
     		 

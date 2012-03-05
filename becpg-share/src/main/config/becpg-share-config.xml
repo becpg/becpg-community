@@ -1,20 +1,11 @@
 <alfresco-config>
 
-	<config evaluator="string-compare" condition="WebFramework" >
-		<web-framework>
-			 <defaults>
-	            <theme>becpg</theme>
-	         </defaults>
-		</web-framework>
-	</config>
-
-
 	<config evaluator="string-compare" condition="Edition" replace="true">
 		<!-- footer logo and copyright text -->
 		<footer>
-			<logo>logo-small.png</logo>
+			<logo>alfresco-share-logo.png</logo>
 			<alt-text>Alfresco Share</alt-text>
-			<css-class>footer-com</css-class>
+			<css-class>footer-becpg</css-class>
 			<label>beCPG @2010-2012</label>
 		</footer>
 		<about>

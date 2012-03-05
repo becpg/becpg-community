@@ -68,7 +68,6 @@ VALUES;Fromages - Fromages;Fromages;Fromages
 VALUES;Denrées destinées à une alimentation particulière - Denrées destinées à une alimentation particulière;Denrées destinées à une alimentation particulière;Denrées destinées à une alimentation particulière
 ;;;
 ;;;
-;;;
 PATH;/System/ProductHierarchy/FinishedProduct_Hierarchy2;;
 TYPE;bcpg:linkedValue;;
 COLUMNS;cm:name;bcpg:lkvPrevValue;bcpg:lkvValue
@@ -86,4 +85,34 @@ VALUES;Plats composés - Plats à base de légumes ou légumineuses;Plats composés;P
 VALUES;Plats composés - Plats à base de céréales ou pâtes;Plats composés;Plats à base de céréales ou pâtes
 VALUES;Plats composés - Plats à base de fromage;Plats composés;Plats à base de fromage
 VALUES;Plats composés - Pizzas, crêpes et tartes salées;Plats composés;Pizzas, crêpes et tartes salées
+VALUES;Pizzas - Pizzas individuelles;Pizzas;Pizzas individuelles
+VALUES;Pizzas - Pizzas familiales;Pizzas;Pizzas familiales
+VALUES;Pizzas - Mini pizzas;Pizzas;Mini pizzas
 VALUES;Sandwichs - Sandwichs;Sandwichs;Sandwichs
+VALUES;Sandwichs - Sandwichs froids;Sandwichs;Sandwichs froids
+VALUES;Sandwichs - Clubs;Sandwichs;Clubs
+VALUES;Sandwichs - Sandwichs chauds;Sandwichs;Sandwichs chauds
+VALUES;Galettes - Galettes garnies;Galettes;Galettes garnies
+VALUES;Galettes - Galettes nature;Galettes;Galettes nature
+VALUES;Crêpes - Crêpes garnies;Crêpes;Crêpes garnies
+VALUES;Crêpes - Crêpes nature;Crêpes;Crêpes nature
+VALUES;Saucisserie - Andouillette;Saucisserie;Andouillette
+VALUES;Saucisserie - Boudin;Saucisserie;Boudin
+VALUES;Saucisserie - Pâte fine;Saucisserie;Pâte fine
+VALUES;Saucisserie - Saucisse étuvée;Saucisserie;Saucisse étuvée
+VALUES;Quiches - Quiches individuelles;Quiches;Quiches individuelles
+VALUES;Quiches - Quiches familiales;Quiches;Quiches familiales
+VALUES;Quiches - Mini quiches;Quiches;Mini quiches
+VALUES;Produits japonais - Sushi;Produits japonais;Sushi
+VALUES;Produits japonais - Sashimi;Produits japonais;Sashimi
+VALUES;Produits japonais - Brochette;Produits japonais;Brochette
+;;;
+PATH;/System/ProductHierarchy/CondSalesUnit_Hierarchy2;;
+TYPE;bcpg:linkedValue;;
+COLUMNS;cm:name;bcpg:lkvPrevValue;bcpg:lkvValue
+VALUES;Plats cuisinés - Viande + sauce;Plats cuisinés;Viande + sauce
+VALUES;Plats cuisinés - Poisson + sauce;Plats cuisinés;Poisson + sauce
+VALUES;Plats cuisinés - Plats complets (viande + sauce + garniture);Plats cuisinés;Plats complets (viande + sauce + garniture)
+VALUES;Plats cuisinés - Soupes;Plats cuisinés;Soupes
+VALUES;Plats cuisinés - Gratins;Plats cuisinés;Gratins
+VALUES;Menus - kits - Sushis;Menus - kits;Sushis
