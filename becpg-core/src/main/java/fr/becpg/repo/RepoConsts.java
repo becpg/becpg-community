@@ -31,8 +31,9 @@ public class RepoConsts {
 	public static final String QUERY_CHARACT_BY_TYPE_AND_NAME = " +TYPE:\"%s\" +@cm\\:name:\"%s\"";	
 	public static final String QUERY_AUTONUM = " +TYPE:\"bcpg:autoNum\" +@bcpg\\:autoNumClassName:\"%s\" +@bcpg\\:autoNumPropertyName:\"%s\"";
 	public static final String PATH_QUERY_IMPORT_MAPPING = " +PATH:\"/app:company_home/cm:System/cm:Exchange/cm:Import/cm:Mapping/*\" +@cm\\:name:\"%s*xml\"";
-	
 	public static final String PATH_QUERY_THUMBNAIL = " +PATH:\"/app:company_home/cm:System/cm:Icons/*\" +@cm\\:name:\"%s*\"";
+	public static final String PATH_QUERY_IMPORT_TO_DO = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportToDo\"";
+	
 	
 	
 	/*-- Path --*/	
@@ -66,6 +67,7 @@ public class RepoConsts {
 	public static final String PATH_EXCHANGE = "Exchange";
 	public static final String PATH_IMPORT = "Import";
 	public static final String PATH_IMPORT_TO_TREAT	= "ImportToTreat";
+	public static final String PATH_IMPORT_TO_DO	= "ImportToDo";
 	public static final String PATH_IMPORT_SUCCEEDED = "ImportSucceeded";
 	public static final String PATH_IMPORT_FAILED = "ImportFailed";		
 	public static final String PATH_IMPORT_USER = "ImportUser";

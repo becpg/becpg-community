@@ -245,6 +245,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		NodeRef exchangeNodeRef = visitFolder(companyHome, RepoConsts.PATH_EXCHANGE);
 		NodeRef importNodeRef = visitFolder(exchangeNodeRef, RepoConsts.PATH_IMPORT);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_TO_TREAT);
+		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_TO_DO);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_SUCCEEDED);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_FAILED);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_USER);

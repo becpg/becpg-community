@@ -29,6 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -259,6 +260,7 @@ public class ImportEntityXmlVisitor {
 
 	private NodeRef createNode(String parentPath, QName type, String name) throws SAXException {
 		NodeRef parentNodeRef = findNodeByPath(parentPath);
+	
 		if (parentNodeRef != null) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, name);
@@ -281,10 +283,13 @@ public class ImportEntityXmlVisitor {
 		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, 1);
 		if (ret.size() > 0) {
 			logger.debug("Found node for query :" + runnedQuery);
-			return ret.get(0);
+		} else {
+		
+			 ret = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_TO_DO, 1);
 		}
-
-		return null;
+		
+		return ret.get(0);
+		
 	}
 
 	private NodeRef findNode(String nodeRef, String code, String name, QName type) {
@@ -297,15 +302,29 @@ public class ImportEntityXmlVisitor {
 		if (code != null && code.length() > 0) {
 			runnedQuery += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, code, null);
 		}
-
-		if (name != null && name.length() > 0) {
-			runnedQuery += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, name, code != null && code.length() > 0 ? LuceneHelper.Operator.OR : null);
-		}
+		
 
 		if (type != null) {
 			runnedQuery += " +TYPE:\"" + type.toString() + "\" ";
 		}
 
+		
+		//Look for code and type
+		if (runnedQuery.length() > 0) {
+
+			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, 1);
+			if (ret.size() > 0) {
+				logger.debug("Found node for query :" + runnedQuery);
+				return ret.get(0);
+			}
+		}
+		
+
+		if (name != null && name.length() > 0) {
+			runnedQuery += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, name, code != null && code.length() > 0 ? LuceneHelper.Operator.OR : null);
+		}
+
+		//Look also for name
 		if (runnedQuery.length() > 0) {
 
 			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, 1);
