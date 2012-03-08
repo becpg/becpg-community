@@ -1,0 +1,265 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<bcpg:finishedProduct path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits" type="node" name="Sandwitch 1" nodeRef="workspace://SpacesStore/381c3228-4837-4ba2-96ab-a036e680c4a3">
+  <bcpg:initialVersion type="d:boolean">true</bcpg:initialVersion>
+  <bcpg:startEffectivity type="d:datetime">2012-02-27T09:46:07.325+01:00</bcpg:startEffectivity>
+  <bcpg:productUnit type="d:text">kg</bcpg:productUnit>
+  <bcpg:productQty type="d:float">0.3</bcpg:productQty>
+  <bcpg:productState type="d:text">ToValidate</bcpg:productState>
+  <cm:creator type="d:text">admin</cm:creator>
+  <bcpg:code type="d:text">PF1</bcpg:code>
+  <bcpg:productDensity type="d:float">1.0</bcpg:productDensity>
+  <bcpg:unitTotalCost type="d:float">0.0</bcpg:unitTotalCost>
+  <bcpg:productHierarchy1 type="d:text">Sandwichs</bcpg:productHierarchy1>
+  <cm:name type="d:text">Sandwitch 1</cm:name>
+  <cm:modifier type="d:text">admin</cm:modifier>
+  <bcpg:productHierarchy2 type="d:text">Sandwichs</bcpg:productHierarchy2>
+  <bcpg:priceCurrency type="d:text">€</bcpg:priceCurrency>
+  <cm:modified type="d:datetime">2012-03-02T16:07:17.368+01:00</cm:modified>
+  <cm:created type="d:datetime">2012-02-27T09:46:07.303+01:00</cm:created>
+  <bcpg:productSpecification type="assoc" />
+  <bcpg:clients type="assoc" />
+  <bcpg:productMicrobioCriteria type="assoc" />
+  <bcpg:entityLists type="childAssoc">
+    <cm:folder path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct" type="node" name="DataLists" nodeRef="workspace://SpacesStore/065a1f88-2171-4651-a292-80e8db4ae17e">
+      <cm:name type="d:text">DataLists</cm:name>
+      <cm:title type="d:mltext">DataLists</cm:title>
+      <cm:modified type="d:datetime">2012-03-02T17:03:31.001+01:00</cm:modified>
+      <cm:created type="d:datetime">2012-03-02T17:03:31.001+01:00</cm:created>
+      <cm:creator type="d:text">admin</cm:creator>
+      <cm:modifier type="d:text">admin</cm:modifier>
+      <cm:contains type="childAssoc">
+        <dl:dataList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists" type="node" name="compoList" nodeRef="workspace://SpacesStore/d2328842-7cad-4741-9c51-a103c5b6ae8c">
+          <cm:name type="d:text">compoList</cm:name>
+          <cm:title type="d:mltext">Composition</cm:title>
+          <cm:modified type="d:datetime">2012-03-02T17:03:31.030+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-03-02T17:03:31.030+01:00</cm:created>
+          <dl:dataListItemType type="d:text">bcpg:compoList</dl:dataListItemType>
+          <cm:description type="d:mltext">Liste des produits qui entrent dans la composition</cm:description>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc">
+            <bcpg:compoList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists/cm:contains" type="node" name="9683a320-7132-4284-bea9-f63dcb836180" nodeRef="workspace://SpacesStore/e316221e-a2f3-49f6-928b-adf22085ce8b">
+              <cm:name type="d:text">9683a320-7132-4284-bea9-f63dcb836180</cm:name>
+              <bcpg:compoListQtySubFormula type="d:float">0.5</bcpg:compoListQtySubFormula>
+              <bcpg:sort type="d:int">1</bcpg:sort>
+              <bcpg:compoListQty type="d:float">0.5</bcpg:compoListQty>
+              <cm:creator type="d:text">admin</cm:creator>
+              <cm:modifier type="d:text">admin</cm:modifier>
+              <bcpg:compoListDeclGrp type="d:text">Garniture</bcpg:compoListDeclGrp>
+              <bcpg:compoListUnit type="d:text">kg</bcpg:compoListUnit>
+              <cm:modified type="d:datetime">2012-03-02T17:03:31.051+01:00</cm:modified>
+              <cm:created type="d:datetime">2012-03-02T17:03:31.051+01:00</cm:created>
+              <bcpg:compoListDeclType type="d:text">Déclarer</bcpg:compoListDeclType>
+              <bcpg:depthLevel type="d:int">1</bcpg:depthLevel>
+              <bcpg:compoListFather type="assoc" />
+              <bcpg:compoListProduct type="assoc">
+                <bcpg:rawMaterial path="/app:company_home/cm:Products/cm:ToValidate/cm:RawMaterial/cm:Fromages/cm:Fromages_x0020_affinés_x0020_à_x0020_pâte_x0020_dure" type="node" name="Emmental" nodeRef="workspace://SpacesStore/33b702ce-e154-4305-bbdd-1aa0a21edf8b" />
+              </bcpg:compoListProduct>
+            </bcpg:compoList>
+            <bcpg:compoList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists/cm:contains" type="node" name="bec53f91-419d-43bb-abff-cc6c6544b226" nodeRef="workspace://SpacesStore/241cecc1-f3ee-4beb-bf76-604cfa73348b">
+              <cm:name type="d:text">bec53f91-419d-43bb-abff-cc6c6544b226</cm:name>
+              <bcpg:compoListQtySubFormula type="d:float">0.3</bcpg:compoListQtySubFormula>
+              <bcpg:sort type="d:int">2</bcpg:sort>
+              <bcpg:compoListUnit type="d:text">kg</bcpg:compoListUnit>
+              <bcpg:compoListQty type="d:float">0.3</bcpg:compoListQty>
+              <cm:modified type="d:datetime">2012-03-02T17:03:31.264+01:00</cm:modified>
+              <bcpg:compoListDeclType type="d:text">Déclarer</bcpg:compoListDeclType>
+              <cm:created type="d:datetime">2012-03-02T17:03:31.264+01:00</cm:created>
+              <cm:creator type="d:text">admin</cm:creator>
+              <cm:modifier type="d:text">admin</cm:modifier>
+              <bcpg:depthLevel type="d:int">1</bcpg:depthLevel>
+              <bcpg:compoListFather type="assoc" />
+              <bcpg:compoListProduct type="assoc">
+                <bcpg:finishedProduct path="/app:company_home/cm:Products/cm:Valid/cm:FinishedProduct/cm:Boulangerie-viennoiserie/cm:Pains" type="node" name="Pain, baguette courante" nodeRef="workspace://SpacesStore/f9af91c8-e828-44ab-94d7-ab82a947bbcf" />
+              </bcpg:compoListProduct>
+            </bcpg:compoList>
+            <bcpg:compoList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists/cm:contains" type="node" name="00881702-d6f5-4e84-8d24-0ee002f75e5b" nodeRef="workspace://SpacesStore/cef02846-d4d9-4195-8a85-ae8bb14c9362">
+              <cm:name type="d:text">00881702-d6f5-4e84-8d24-0ee002f75e5b</cm:name>
+              <bcpg:compoListQtySubFormula type="d:float">0.2</bcpg:compoListQtySubFormula>
+              <bcpg:sort type="d:int">3</bcpg:sort>
+              <bcpg:compoListQty type="d:float">0.2</bcpg:compoListQty>
+              <cm:creator type="d:text">admin</cm:creator>
+              <cm:modifier type="d:text">admin</cm:modifier>
+              <bcpg:compoListDeclGrp type="d:text">Garniture</bcpg:compoListDeclGrp>
+              <bcpg:compoListUnit type="d:text">kg</bcpg:compoListUnit>
+              <cm:modified type="d:datetime">2012-03-02T17:03:31.326+01:00</cm:modified>
+              <cm:created type="d:datetime">2012-03-02T17:03:31.326+01:00</cm:created>
+              <bcpg:compoListDeclType type="d:text">Déclarer</bcpg:compoListDeclType>
+              <bcpg:depthLevel type="d:int">1</bcpg:depthLevel>
+              <bcpg:compoListFather type="assoc" />
+              <bcpg:compoListProduct type="assoc">
+                <bcpg:rawMaterial path="/app:company_home/cm:Products/cm:ToValidate/cm:RawMaterial/cm:Charcuteries_x0020_et_x0020_salaisons/cm:Charcuteries_x0020_et_x0020_salaisons" type="node" name="Jambon en croûte" nodeRef="workspace://SpacesStore/aabb87fe-0e70-4d58-a91a-ce8e18811223" />
+              </bcpg:compoListProduct>
+            </bcpg:compoList>
+            <bcpg:compoList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists/cm:contains" type="node" name="f8b1c207-1bc7-418a-87d9-131592517cf6" nodeRef="workspace://SpacesStore/a7cd3aa3-6f8e-4528-9be7-f6fc4f8fa665">
+              <cm:name type="d:text">f8b1c207-1bc7-418a-87d9-131592517cf6</cm:name>
+              <bcpg:sort type="d:int">4</bcpg:sort>
+              <bcpg:compoListQtySubFormula type="d:float">10.0</bcpg:compoListQtySubFormula>
+              <bcpg:compoListUnit type="d:text">kg</bcpg:compoListUnit>
+              <cm:modified type="d:datetime">2012-03-02T17:03:31.394+01:00</cm:modified>
+              <bcpg:compoListDeclType type="d:text">Déclarer</bcpg:compoListDeclType>
+              <cm:created type="d:datetime">2012-03-02T17:03:31.394+01:00</cm:created>
+              <cm:creator type="d:text">admin</cm:creator>
+              <cm:modifier type="d:text">admin</cm:modifier>
+              <bcpg:depthLevel type="d:int">3</bcpg:depthLevel>
+              <bcpg:compoListFather type="assoc" />
+              <bcpg:compoListProduct type="assoc">
+                <bcpg:rawMaterial path="/app:company_home/cm:Products/cm:Valid/cm:RawMaterial/cm:Jus_x0020_et_x0020_nectars/cm:Jus_x0020_et_x0020_nectars" type="node" name="Abricot, nectar, pasteurisé" nodeRef="workspace://SpacesStore/4ae3952f-6851-41e9-9046-daab3b99fa85" />
+              </bcpg:compoListProduct>
+            </bcpg:compoList>
+          </cm:contains>
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists" type="node" name="packagingList" nodeRef="workspace://SpacesStore/c19777e4-117d-4727-a339-75cdf4a6eca5">
+          <cm:name type="d:text">packagingList</cm:name>
+          <cm:title type="d:mltext">Emballages</cm:title>
+          <cm:modified type="d:datetime">2012-03-02T17:03:31.448+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-03-02T17:03:31.448+01:00</cm:created>
+          <dl:dataListItemType type="d:text">bcpg:packagingList</dl:dataListItemType>
+          <cm:description type="d:mltext">Liste des emballages et UL</cm:description>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists" type="node" name="processList" nodeRef="workspace://SpacesStore/f1ecf922-7a7e-4603-87f4-2cf98b3b298c">
+          <cm:name type="d:text">processList</cm:name>
+          <cm:title type="d:mltext">Liste des process</cm:title>
+          <cm:modified type="d:datetime">2012-03-02T17:03:31.466+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-03-02T17:03:31.466+01:00</cm:created>
+          <dl:dataListItemType type="d:text">mpm:processList</dl:dataListItemType>
+          <cm:description type="d:mltext">Liste des process mis en oeuvre</cm:description>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists" type="node" name="allergenList" nodeRef="workspace://SpacesStore/18ef7613-1699-498f-b168-c5bcf3aa9121">
+          <cm:name type="d:text">allergenList</cm:name>
+          <cm:title type="d:mltext">Allergènes</cm:title>
+          <cm:modified type="d:datetime">2012-03-02T17:03:31.484+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-03-02T17:03:31.484+01:00</cm:created>
+          <dl:dataListItemType type="d:text">bcpg:allergenList</dl:dataListItemType>
+          <cm:description type="d:mltext">Liste des allergènes</cm:description>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc">
+            <bcpg:allergenList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists/cm:contains" type="node" name="15cf4f67-b851-485e-a88c-1960ffa3d93f" nodeRef="workspace://SpacesStore/4b258dad-e4ff-4991-98c2-6a5aa1403491">
+              <cm:name type="d:text">15cf4f67-b851-485e-a88c-1960ffa3d93f</cm:name>
+              <bcpg:sort type="d:int">1</bcpg:sort>
+              <bcpg:allergenListInVoluntary type="d:boolean">true</bcpg:allergenListInVoluntary>
+              <cm:modified type="d:datetime">2012-03-02T17:03:31.501+01:00</cm:modified>
+              <bcpg:isManualListItem type="d:boolean">false</bcpg:isManualListItem>
+              <cm:created type="d:datetime">2012-03-02T17:03:31.501+01:00</cm:created>
+              <bcpg:allergenListVoluntary type="d:boolean">true</bcpg:allergenListVoluntary>
+              <cm:creator type="d:text">admin</cm:creator>
+              <cm:modifier type="d:text">admin</cm:modifier>
+              <bcpg:allergenListVolSources type="assoc">
+                <bcpg:rawMaterial path="/app:company_home/cm:Products/cm:ToValidate/cm:RawMaterial/cm:Jus_x0020_et_x0020_nectars/cm:Jus_x0020_et_x0020_nectars" type="node" name="Ananas, pur jus, pasteurisé" nodeRef="workspace://SpacesStore/dd9b7a27-7b0a-48fc-b446-d7eb7cd34f91" />
+              </bcpg:allergenListVolSources>
+              <bcpg:allergenListAllergen type="assoc">
+                <bcpg:allergen path="/app:company_home/cm:System/cm:Characts/cm:Allergens" type="node" name="Aiglefin" nodeRef="workspace://SpacesStore/64283da0-83f1-417a-8fbf-8df370172564" />
+              </bcpg:allergenListAllergen>
+              <bcpg:allergenListInVolSources type="assoc">
+                <bcpg:finishedProduct path="/app:company_home/cm:Products/cm:ToValidate/cm:FinishedProduct/cm:Plats_x0020_composés/cm:Plats_x0020_à_x0020_base_x0020_de_x0020_poisson_x0020_ou_x0020_produits_x0020_aquatiques" type="node" name="Accra de morue" nodeRef="workspace://SpacesStore/b08d3c2d-41e1-4fc5-b9c5-20d202a31ec7" />
+              </bcpg:allergenListInVolSources>
+            </bcpg:allergenList>
+          </cm:contains>
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists" type="node" name="costList" nodeRef="workspace://SpacesStore/a788055b-0b42-48db-a9c2-49365727a4dd">
+          <cm:name type="d:text">costList</cm:name>
+          <cm:title type="d:mltext">Coûts</cm:title>
+          <cm:modified type="d:datetime">2012-03-02T17:03:31.592+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-03-02T17:03:31.592+01:00</cm:created>
+          <dl:dataListItemType type="d:text">bcpg:costList</dl:dataListItemType>
+          <cm:description type="d:mltext">Liste des coûts</cm:description>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists" type="node" name="costDetailsList" nodeRef="workspace://SpacesStore/42d1834a-fe92-4920-98ca-18a81c145700">
+          <cm:name type="d:text">costDetailsList</cm:name>
+          <cm:title type="d:mltext">Détails des coûts</cm:title>
+          <cm:modified type="d:datetime">2012-03-02T17:03:31.611+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-03-02T17:03:31.611+01:00</cm:created>
+          <dl:dataListItemType type="d:text">bcpg:costDetailsList</dl:dataListItemType>
+          <cm:description type="d:mltext">Liste détaillant les coûts</cm:description>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists" type="node" name="nutList" nodeRef="workspace://SpacesStore/3df35ff1-45bd-4aa5-a5b9-a3a2fdfa26cf">
+          <cm:name type="d:text">nutList</cm:name>
+          <cm:title type="d:mltext">Nutriments</cm:title>
+          <cm:modified type="d:datetime">2012-03-02T17:03:31.629+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-03-02T17:03:31.629+01:00</cm:created>
+          <dl:dataListItemType type="d:text">bcpg:nutList</dl:dataListItemType>
+          <cm:description type="d:mltext">Liste des nutriments</cm:description>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists" type="node" name="ingList" nodeRef="workspace://SpacesStore/30f402e8-4ddb-4620-956b-dd32e34060d6">
+          <cm:name type="d:text">ingList</cm:name>
+          <cm:title type="d:mltext">Ingrédients</cm:title>
+          <cm:modified type="d:datetime">2012-03-02T17:03:31.646+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-03-02T17:03:31.646+01:00</cm:created>
+          <dl:dataListItemType type="d:text">bcpg:ingList</dl:dataListItemType>
+          <cm:description type="d:mltext">Liste d'ingrédients</cm:description>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists" type="node" name="organoList" nodeRef="workspace://SpacesStore/9056446c-8c51-4b16-a356-7eb150860ca4">
+          <cm:name type="d:text">organoList</cm:name>
+          <cm:title type="d:mltext">Organoleptique</cm:title>
+          <cm:modified type="d:datetime">2012-03-02T17:03:31.663+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-03-02T17:03:31.663+01:00</cm:created>
+          <dl:dataListItemType type="d:text">bcpg:organoList</dl:dataListItemType>
+          <cm:description type="d:mltext">Liste des caractéristiques organoleptiques</cm:description>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists" type="node" name="physicoChemList" nodeRef="workspace://SpacesStore/06bb8c83-ace3-4ead-a86c-69f19ff8d8a9">
+          <cm:name type="d:text">physicoChemList</cm:name>
+          <cm:title type="d:mltext">Physico-chimiques</cm:title>
+          <cm:modified type="d:datetime">2012-03-02T17:03:31.687+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-03-02T17:03:31.687+01:00</cm:created>
+          <dl:dataListItemType type="d:text">bcpg:physicoChemList</dl:dataListItemType>
+          <cm:description type="d:mltext">Liste des caractéristiques physico-chimiques</cm:description>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc" />
+        </dl:dataList>
+        <dl:dataList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists" type="node" name="ingLabelingList" nodeRef="workspace://SpacesStore/0298f0be-9295-4262-b80b-79da4c12ad63">
+          <cm:name type="d:text">ingLabelingList</cm:name>
+          <cm:title type="d:mltext">Etiquetage</cm:title>
+          <cm:modified type="d:datetime">2012-03-02T17:03:31.706+01:00</cm:modified>
+          <cm:created type="d:datetime">2012-03-02T17:03:31.706+01:00</cm:created>
+          <dl:dataListItemType type="d:text">bcpg:ingLabelingList</dl:dataListItemType>
+          <cm:description type="d:mltext">Liste d'étiquetage</cm:description>
+          <cm:creator type="d:text">admin</cm:creator>
+          <cm:modifier type="d:text">admin</cm:modifier>
+          <cm:contains type="childAssoc">
+            <bcpg:ingLabelingList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists/cm:contains" type="node" name="f7169ed4-6547-4cea-adcb-21a0f414427b" nodeRef="workspace://SpacesStore/1e05b55f-4f47-4b8c-8897-906aff48e5e5">
+              <cm:name type="d:text">f7169ed4-6547-4cea-adcb-21a0f414427b</cm:name>
+              <bcpg:illGrp type="d:text">Garniture</bcpg:illGrp>
+              <cm:modified type="d:datetime">2012-03-02T17:03:31.722+01:00</cm:modified>
+              <bcpg:isManualListItem type="d:boolean">false</bcpg:isManualListItem>
+              <cm:created type="d:datetime">2012-03-02T17:03:31.722+01:00</cm:created>
+              <cm:creator type="d:text">admin</cm:creator>
+              <cm:modifier type="d:text">admin</cm:modifier>
+            </bcpg:ingLabelingList>
+            <bcpg:ingLabelingList path="/app:company_home/st:sites/cm:test/cm:documentLibrary/cm:Produits/cm:_x0031_0ed5687-4d59-44be-a463-da5f34da9bd2/bcpg:finishedProduct/bcpg:entityLists/cm:contains" type="node" name="73fd3a5e-06c4-4dc5-9234-18b9091131c7" nodeRef="workspace://SpacesStore/b2d2c804-50fc-4c05-ad40-21d07b9fdfa0">
+              <cm:name type="d:text">73fd3a5e-06c4-4dc5-9234-18b9091131c7</cm:name>
+              <bcpg:illGrp type="d:text">Garniture</bcpg:illGrp>
+              <cm:modified type="d:datetime">2012-03-02T17:03:31.732+01:00</cm:modified>
+              <bcpg:isManualListItem type="d:boolean">false</bcpg:isManualListItem>
+              <cm:created type="d:datetime">2012-03-02T17:03:31.732+01:00</cm:created>
+              <cm:creator type="d:text">admin</cm:creator>
+              <cm:modifier type="d:text">admin</cm:modifier>
+            </bcpg:ingLabelingList>
+          </cm:contains>
+        </dl:dataList>
+      </cm:contains>
+    </cm:folder>
+  </bcpg:entityLists>
+</bcpg:finishedProduct>
