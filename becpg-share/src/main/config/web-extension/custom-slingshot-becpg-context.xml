@@ -32,6 +32,7 @@
             <value>classpath:alfresco/becpg-designer-form-config.xml</value>
             <value>classpath:alfresco/becpg-mpm-form-config.xml</value>
             <value>classpath:alfresco/becpg-var-form-config.xml</value>
+            <value>classpath:alfresco/becpg-gs1-form-config.xml</value>
          </list>
       </property>
    </bean>

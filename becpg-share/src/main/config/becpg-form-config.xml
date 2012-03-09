@@ -63,7 +63,8 @@
 	<!-- bcpg:finishedProduct type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:finishedProduct">
 		<forms>
-			<form>
+			<form> 
+				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 					
 					<!-- mainInfo -->
@@ -118,21 +119,62 @@
 					<show id="cm:modifier" for-mode="view" />
 					<show id="cm:modified" for-mode="view" />
 
+					<!-- GS1 -->
+					
+					<show id="gs1:height" for-mode="edit"/>
+					<show id="gs1:width" for-mode="edit"/>
+					<show id="gs1:depth" for-mode="edit"/>
+					<show id="gs1:weight" for-mode="edit"/>
+					<show id="gs1:isTradeItemABaseUnit" for-mode="edit"/>
+					<show id="gs1:isTradeItemAConsumerUnit" for-mode="edit"/>
+					<show id="gs1:isTradeItemADespatchUnit" for-mode="edit"/>
+					<show id="gs1:isTradeItemAnInvoiceUnit" for-mode="edit"/>
+					<show id="gs1:isTradeItemAnOrderableUnit" for-mode="edit"/>
+					<show id="gs1:isTradeItemAVariableUnit" for-mode="edit"/>
+					<show id="gs1:isTradeItemAFullDisplayStand" for-mode="edit"/>
+					<show id="gs1:isTradeItemAReturnableItem" for-mode="edit"/>
+					<show id="gs1:isTradeItemAService" for-mode="edit"/>
+					<show id="gs1:isTradeItemABulkItem" for-mode="edit"/>
+					<show id="gs1:isTradeItemAModel" for-mode="edit"/>
+					<show id="gs1:isTradeItemADivisibleItem" for-mode="edit"/>
+					<show id="gs1:isTradeItemAPromotionalItem" for-mode="edit"/>
+					<show id="gs1:isTradeItemACutToOrderItem" for-mode="edit"/>
+					<show id="gs1:effectiveDate" for-mode="edit"/>
+					<show id="gs1:startAvailabilityDateTime" for-mode="edit"/>
+					<show id="gs1:lastChangeDateTime" for-mode="edit"/>
+					<show id="gs1:publicationDate" for-mode="edit"/>
+					<show id="gs1:isPackagingMarkedReturnable" for-mode="edit"/>
+					<show id="gs1:packagingTypeCode" for-mode="edit"/>
+					<show id="gs1:palletTypeCode" for-mode="edit"/>
+
 
 				</field-visibility>
 				<appearance>
+					<set id="mainTab"  label="Caractéristiques" />
 					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
 					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
-						template="/fr/becpg/components/form/3-column-set.ftl" />
+						template="/fr/becpg/components/form/3-column-set.ftl" parent="mainTab" />
 					<set id="profitability" appearance="bordered-panel" label="Rentabilité"
-						template="/fr/becpg/components/form/3-column-set.ftl" />
+						template="/fr/becpg/components/form/3-column-set.ftl" parent="mainTab" />
 					<set id="npd" appearance="bordered-panel" label="NPD"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
 					<set id="categories" appearance="bordered-panel" label="Catégories"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
 					<set id="audit" appearance="bordered-panel" label="Audit"
+						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
+					
+					
+					<set id="publicationTab" label="Publication" />
+					<set appearance="bordered-panel" id="mesuresPanel" label="Mesures" parent="publicationTab"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set appearance="bordered-panel" id="indicateursPanel" label="Indicateurs"  parent="publicationTab"
+						template="/fr/becpg/components/form/2-column-set.ftl"/>
+					<set appearance="bordered-panel" id="datesPanel" label="Dates"  parent="publicationTab"
+						template="/fr/becpg/components/form/2-column-set.ftl"/>
+					<set appearance="bordered-panel" id="packagingPanel" label="Emballage/Conditionnement"  parent="publicationTab"
+						template="/fr/becpg/components/form/2-column-set.ftl"/>
+
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -229,6 +271,40 @@
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
 					<field id="cm:modified" set="audit" />
+					
+					<!-- GS1 -->
+					
+					
+					<field id="gs1:height"  set="mesuresPanel"/>
+					<field id="gs1:width"  set="mesuresPanel"/>
+					<field id="gs1:depth"  set="mesuresPanel"/>
+					<field id="gs1:weight"  set="mesuresPanel"/>
+					
+					<field id="gs1:isTradeItemABaseUnit"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemAConsumerUnit"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemADespatchUnit"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemAnInvoiceUnit"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemAnOrderableUnit"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemAVariableUnit"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemAFullDisplayStand"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemAReturnableItem"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemAService"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemABulkItem"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemAModel"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemADivisibleItem"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemAPromotionalItem"  set="indicateursPanel"/>
+					<field id="gs1:isTradeItemACutToOrderItem"  set="indicateursPanel"/>
+					<field id="gs1:isPackagingMarkedReturnable" set="indicateursPanel"/>
+					
+					
+					<field id="gs1:effectiveDate"  set="datesPanel"/>
+					<field id="gs1:startAvailabilityDateTime"  set="datesPanel"/>
+					<field id="gs1:lastChangeDateTime"  set="datesPanel"/>
+					<field id="gs1:publicationDate"  set="datesPanel"/>
+				
+					<field id="gs1:packagingTypeCode"  set="packagingPanel"/>
+					<field id="gs1:palletTypeCode"  set="packagingPanel"/>
+
 				</appearance>
 			</form>
 		</forms>
@@ -1022,7 +1098,6 @@
 					<field id="bcpg:productMicrobioCriteria" set="mainInfo">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
-							<control-param name="style">width:200px</control-param>
 						</control>	
 					</field>				
 

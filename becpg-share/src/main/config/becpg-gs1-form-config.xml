@@ -1,0 +1,37 @@
+<alfresco-config>
+
+	<config condition="gs1:DeliveryChannel" evaluator="node-type">
+		<forms>
+			<form >
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="false" id="gs1:gln" />
+					<show force="false" id="gs1:catalogId" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" mandatory="false" read-only="false" />
+					<field id="gs1:gln" mandatory="false" read-only="false" />
+					<field id="gs1:catalogId" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="gs1:DeliveryChannel" evaluator="model-type">
+		<forms>
+			<form id="create">
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="false" id="gs1:gln" />
+					<show force="false" id="gs1:catalogId" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" mandatory="false" read-only="false" />
+					<field id="gs1:gln" mandatory="false" read-only="false" />
+					<field id="gs1:catalogId" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+
+</alfresco-config>

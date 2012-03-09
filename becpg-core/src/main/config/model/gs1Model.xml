@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="gs1:gs1Model">
+    <description>beCPG GS1 Model</description>
+    <author>Matthieu Laborie</author>
+    <published>2012-03-07</published>
+    <version>1.0</version>
+    <imports>
+        <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+        <import uri="http://www.alfresco.org/model/system/1.0" prefix="sys"/>
+        <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+        <import uri="http://www.alfresco.org/model/publishing/1.0" prefix="pub"/>
+    </imports>
+    <namespaces>
+        <namespace uri="http://www.bcpg.fr/model/gs1/1.0" prefix="gs1"/>
+    </namespaces>
+    <data-types/>
+    <constraints>
+        <constraint name="gs1:packagingTypeCodeConstraint" type="LIST">
+            <parameter name="allowedValues">
+                <list>
+                    <value>BC</value>
+                    <value>BGE</value>
+                    <value>BR</value>
+                    <value>BRI</value>
+                    <value>BU</value>
+                    <value>DJ</value>
+                    <value>DP</value>
+                    <value>DPE</value>
+                    <value>FP</value>
+                    <value>ICA</value>
+                    <value>OPE</value>
+                    <value>PAE</value>
+                    <value>PG</value>
+                    <value>PLP</value>
+                    <value>RCA</value>
+                    <value>SH</value>
+                    <value>STL</value>
+                    <value>TAE</value>
+                    <value>TRE</value>
+                    <value>UUE</value>
+                    <value>UVE</value>
+                    <value>X11</value>
+                    <value>X2</value>
+                    <value>AE</value>
+                    <value>AT</value>
+                    <value>BAG</value>
+                    <value>BBL</value>
+                    <value>BDL</value>
+                    <value>BME</value>
+                    <value>BOT</value>
+                    <value>BOX</value>
+                    <value>BXT</value>
+                    <value>CAG</value>
+                    <value>CAN</value>
+                    <value>CAS</value>
+                    <value>CG</value>
+                    <value>CNT</value>
+                    <value>CRT</value>
+                    <value>CTN</value>
+                    <value>CYL</value>
+                    <value>DRM</value>
+                    <value>ENV</value>
+                    <value>FSK</value>
+                    <value>HPR</value>
+                    <value>HRB</value>
+                    <value>JAR</value>
+                    <value>PA</value>
+                    <value>PKG</value>
+                    <value>PLT</value>
+                    <value>PO</value>
+                    <value>PUN</value>
+                    <value>REL</value>
+                    <value>ROL</value>
+                    <value>SAK</value>
+                    <value>SLP</value>
+                    <value>SRW</value>
+                    <value>TBE</value>
+                    <value>TNK</value>
+                    <value>TRY</value>
+                    <value>TUB</value>
+                    <value>UNP</value>
+                    <value>UVQ</value>
+                    <value>VP</value>
+                </list>
+            </parameter>
+            <parameter name="caseSensitive">
+                <value>true</value>
+            </parameter>
+        </constraint>
+        <constraint name="gs1:palletTypeCodeConstraint" type="LIST">
+            <parameter name="allowedValues">
+                <list>
+                    <value>9</value>
+                    <value>10</value>
+                    <value>11</value>
+                    <value>12</value>
+                    <value>13</value>
+                    <value>14</value>
+                    <value>15</value>
+                    <value>16</value>
+                    <value>17</value>
+                    <value>18</value>
+                    <value>19</value>
+                    <value>20</value>
+                    <value>21</value>
+                    <value>22</value>
+                    <value>23</value>
+                    <value>24</value>
+                    <value>25</value>
+                    <value>CHB</value>
+                    <value>CHC</value>
+                    <value>X9</value>
+                </list>
+            </parameter>
+            <parameter name="caseSensitive">
+                <value>true</value>
+            </parameter>
+        </constraint>
+    </constraints>
+    <types>
+        <type name="gs1:DeliveryChannel">
+            <title>GS1 Delivery Channel</title>
+            <description>Node type used to represent GS1 delivery channels</description>
+            <parent>pub:DeliveryChannel</parent>
+            <properties/>
+            <associations/>
+            <overrides/>
+            <mandatory-aspects>
+                <aspect>gs1:DeliveryChannelAspect</aspect>
+            </mandatory-aspects>
+        </type>
+        <type name="gs1:gs1ParentType">
+            <title>GS1 Type Parent</title>
+            <parent>cm:content</parent>
+            <properties/>
+            <associations/>
+            <overrides/>
+            <mandatory-aspects>
+                <aspect>gs1:gs1Aspect</aspect>
+            </mandatory-aspects>
+        </type>
+    </types>
+    <aspects>
+        <aspect name="gs1:DeliveryChannelAspect">
+            <title>GS1 Delivery Channel</title>
+            <description>Applied to a node that represents a GS1 delivery channel</description>
+            <properties>
+                <property name="gs1:gln">
+                    <title>Global Location Number</title>
+                    <type>d:text</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:catalogId">
+                    <title>Identifiant Catalogue</title>
+                    <type>d:text</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+            </properties>
+            <associations/>
+            <overrides/>
+            <mandatory-aspects/>
+        </aspect>
+        <aspect name="gs1:AssetAspect">
+            <title>GS1 Asset</title>
+            <description>Applied to a node that has been published to GS1</description>
+            <parent>pub:AssetAspect</parent>
+            <properties/>
+            <associations/>
+            <overrides/>
+            <mandatory-aspects/>
+        </aspect>
+        <aspect name="gs1:measuresAspect">
+            <title>GS1 Mesures Aspect</title>
+            <properties>
+                <property name="gs1:height">
+                    <title>Hauteur</title>
+                    <description>Hauteur de l'unité commerciale déclarée. Cela correspond à la distance entre les extrémités "haut" et "bas" de l'unité commerciale.
+Pour une palette :
+- les hauteurs du support palette et des éventuels intercalaires sont incluses dans la hauteur totale de la palette
+- la hauteur de la palette n’est pas toujours égale à la somme des hauteurs des cartons et du support (lorsque les cartons ne sont pas disposés sur la palette sur leur base naturelle)</description>
+                    <type>d:float</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:width">
+                    <title>Largeur</title>
+                    <description>Largeur de l'unité commerciale déclarée :
+- Pour l’unité consommateur, cela correspond à la distance entre les extrémités "gauche" et "droite" de l'unité commerciale telle que théoriquement destinée à être présentée en linéaire.
+- Pour l’unité logistique, cela correspond à sa plus petite dimension horizontale. Par exemple pour une palette 80*120, la largeur est de 800 mm12 et pour une palette 60*80, la largeur est de 600. Il s’agit des dimensions minimales pour une palette sans débord de la charge. En cas de débord de la charge, les dimensions réelles de la charge sont à renseigner dans la fiche produit.</description>
+                    <type>d:float</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:depth">
+                    <title>Profondeur</title>
+                    <description>Profondeur de l'unité commerciale déclarée :
+- Pour l’unité consommateur, cela correspond à la distance entre les extrémités "avant" et "arrière" de l'unité commerciale telle que théoriquement destinée à être présentée en linéaire.
+- Pour l’unité logistique, cela correspond à sa plus grande dimension horizontale (synonyme : longueur). Par exemple pour une palette 80*120, la profondeur est de 1200 mm  et pour une palette 60*80, la profondeur est de 800 mm. Il s’agit des dimensions minimales pour une palette standard 80*120, sans débord de la charge. En cas de débord de la charge, les dimensions réelles de la charge sont à renseigner dans la fiche produit.</description>
+                    <type>d:float</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:weight">
+                    <title>Poids brut</title>
+                    <description>Poids brut de l'unité commerciale déclarée incluant l'emballage / le conditionnement. Pour une palette, les poids du support palette et des éventuels intercalaires sont inclus.
+Exemple : Pour une palette = (poids brut du carton x nombre de carton) + poids du support + poids des intercalaires + poids des sur-emballages.
+Les équipements liés à un mode de transport spécifique (sangles, matelas ou housses de protection, …) sont exclus du calcul du poids brut.</description>
+                    <type>d:float</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+            </properties>
+            <associations/>
+            <overrides/>
+            <mandatory-aspects/>
+        </aspect>
+        <aspect name="gs1:indicatorsAspect">
+            <title>GS1 Indicateurs Aspect</title>
+            <properties>
+                <property name="gs1:isTradeItemABaseUnit">
+                    <title>Unité de base (oui / non)</title>
+                    <description>"Indication que l'unité commerciale déclarée est une unité de base (oui ou non), c'est à dire l'unité de plus bas niveau dans la hiérarchie décrite.
+Par défaut, le type ""unité de base (UB)"" s'applique au même niveau hiérarchique que le type ""unité consommateur (UC)"", c'est à dire au niveau le plus bas. Cependant, il n'existe qu'une seule UB par hiérarchie alors qu'il peut exister plusieurs UC.
+Exemple, un lot consommateur est une UC mais n'est pas une UB. Par contre, les composantes d'un lot consommateur peuvent être à la fois des UB et des UC."</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemAConsumerUnit">
+                    <title>Unité consommateur (oui / non)</title>
+                    <description>Indication que l'unité commerciale déclarée est une unité consommateur (oui ou non).</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemADespatchUnit">
+                    <title>Unité logistique (oui / non)</title>
+                    <description>Indication que l'unité commerciale déclarée est une unité logistique (oui ou non).</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemAnInvoiceUnit">
+                    <title>Unité facturable (oui / non)</title>
+                    <description>Indication que l'unité commerciale déclarée est une unité facturable (oui ou non), c'est à dire que son GTIN peut apparaître dans la ligne d'une facture (segment LIN en EANCOM).</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemAnOrderableUnit">
+                    <title>Unité commandable (oui / non)</title>
+                    <description>Indication que l'unité commerciale déclarée est une unité commandable (oui ou non), c'est à dire que son GTIN peut apparaître dans la ligne d'une commande (segment LIN en EANCOM).</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemAVariableUnit">
+                    <title>Article à mesure variable (oui / non)</title>
+                    <description>Indication que l'unité commerciale déclarée est une unité commerciale à quantité variable telle que par exemple poids, longueur ou volume variable (oui ou non)</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemAFullDisplayStand">
+                    <title>Présentoir garni (oui / non)</title>
+                    <description>Indication que l'unité commerciale déclarée est un présentoir garni (oui ou non). Un présentoir garni est une unité composée d'un support utilisé en magasin pour la présentation des produits, qui a été garnie chez le fournisseur d'un ou plusieurs types d'unités consommateur.</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemAReturnableItem">
+                    <title>Objet consigné (oui / non)</title>
+                    <description>Indication que l'unité commerciale déclarée est un objet consigné (oui ou non). Un objet consigné est un emballage, un conditionnement ou un support de manutention, facturé en sus du prix de la marchandise, et dont la valeur sera remboursée à l'acheteur lorsque celui-ci rendra ledit emballage, conditionnement ou support de manutention.</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemAService">
+                    <title>Service (oui / non)</title>
+                    <description>Indication que l'unité commerciale déclarée est un service (oui ou non). Un service représente tout produit autre que de la marchandise ou de la consignation, annexe à la transaction principale, susceptible d'être commandé et/ou facturé.</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemABulkItem">
+                    <title>Vrac (oui / non)</title>
+                    <description>Indication que l'unité commerciale déclarée est du vrac (oui ou non). Produits pour lesquels la notion de pièce n'existe pas dans la transaction commerciale. (Dictionnaire de l'Académie des Sciences Commerciales) Marchandises vendues non conditionnées et généralement sans marque.</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemACutToOrderItem">
+                    <title>Produit à découper (note : mesure fixe + variable) (oui / non)</title>
+                    <description>Indication que l'unité commerciale déclarée est un produit à découper (oui ou non). Un produit à découper est un produit non constitué en unité consommateur et destiné à être débité, détaillé et/ou conditionné en magasin. En général, le prix de vente au distributeur dépend du poids exact de chaque pièce.</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemAModel">
+                    <title>Modèle (oui / non)</title>
+                    <description>Indication que l'unité commerciale déclarée est un modèle (oui ou non). Un modèle identifie un ensemble d'unités consommateur. Chaque unité consommateur représente une déclinaison. La notion de modèle est principalement utilisée dans le textile.</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemADivisibleItem">
+                    <title>Article sécable (oui / non)</title>
+                    <description>Indique si les composants de l’unité commerciale déclarée (généralement de type lot consommateur) peuvent être séparés, pour être vendus individuellement (Oui = article sécable)</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:isTradeItemAPromotionalItem">
+                    <title>Produit promotion consommateur (oui / non)</title>
+                    <description>Indique si l’unité commerciale déclarée est une promotion consommateur ou un produit standard (Oui = promotion consommateur). Une promotion consommateur est une modification temporaire de l'unité commerciale changeant de façon évidente la présentation du produit. Elle est décidée par le fournisseur au bénéfice du consommateur.</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+            </properties>
+            <associations/>
+            <overrides/>
+            <mandatory-aspects/>
+        </aspect>
+        <aspect name="gs1:datesAspect">
+            <title>GS1 Dates Aspect</title>
+            <properties>
+                <property name="gs1:effectiveDate">
+                    <title>Date de début de validité de la fiche produit</title>
+                    <description>Date à partir de laquelle l'information contenue dans la fiche produit est valide. Cette date s'applique à la création de la fiche produit ou à la modification.</description>
+                    <type>d:date</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:startAvailabilityDateTime">
+                    <title>Date de début de disponibilité à la commande</title>
+                    <description>Date à partir de laquelle l'unité commerciale déclarée est disponible à la commande.</description>
+                    <type>d:date</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:lastChangeDateTime">
+                    <title>Date de dernière mise à jour</title>
+                    <description>Date, générée automatiquement par le catalogue, à laquelle la fiche produit a été mise à jour pour la dernière fois.</description>
+                    <type>d:date</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:publicationDate">
+                    <title>Date de publication</title>
+                    <description>Date à partir de laquelle la fiche produit peut être visualisée et est mise à disposition pour la synchronisation. Cette date est générée automatiquement par le catalogue électronique.</description>
+                    <type>d:date</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+            </properties>
+            <associations/>
+            <overrides/>
+            <mandatory-aspects/>
+        </aspect>
+        <aspect name="gs1:packagingAspect">
+            <title>GS1 Emballage/Conditionnement Aspect</title>
+            <properties>
+                <property name="gs1:isPackagingMarkedReturnable">
+                    <title>Mention "emballage / conditionnement retournable" marquée (oui / non)</title>
+                    <description>Indication que l'emballage / conditionnement de l'unité commerciale déclarée est marqué comme étant retournable (oui ou non).</description>
+                    <type>d:boolean</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:packagingTypeCode">
+                    <title>Type d'emballage / conditionnement (code)</title>
+                    <description>Indication du type de conditionnement / emballage (exemple : bouteille verre, carton, roll, palette, …).</description>
+                    <type>d:text</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                    <constraints>
+                        <constraint ref="gs1:packagingTypeCodeConstraint"/>
+                    </constraints>
+                </property>
+                <property name="gs1:palletTypeCode">
+                    <title>Type de support palette</title>
+                    <description>Indication du type de support palette utilisé.</description>
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                    <constraints>
+                        <constraint ref="gs1:palletTypeCodeConstraint"/>
+                    </constraints>
+                </property>
+            </properties>
+            <associations/>
+            <overrides/>
+            <mandatory-aspects/>
+        </aspect>
+        <aspect name="gs1:gs1Aspect">
+            <title>GS1 Aspect</title>
+            <properties/>
+            <associations/>
+            <overrides/>
+            <mandatory-aspects>
+                <aspect>gs1:measuresAspect</aspect>
+                <aspect>gs1:indicatorsAspect</aspect>
+                <aspect>gs1:datesAspect</aspect>
+                <aspect>gs1:packagingAspect</aspect>
+            </mandatory-aspects>
+        </aspect>
+    </aspects>
+</model>

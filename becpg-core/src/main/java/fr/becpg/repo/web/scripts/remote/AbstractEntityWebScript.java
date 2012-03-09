@@ -2,9 +2,10 @@ package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Authenticator;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.MimetypeService;
@@ -13,7 +14,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.net.util.Base64;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -48,9 +48,17 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected static final String PARAM_NODEREF = "nodeRef";
 
 	/** The Constant PARAM_CALLBACK. */
-	/** http://admin:becpg@localhost:8080/alfresco/services/becpg/remote/entity **/
+	/** http://localhost:8080/alfresco/services/becpg/remote/entity **/
 	protected static final String PARAM_CALLBACK = "callback";
 
+	/**
+	 * Callbach auth 
+	 * admin:becpg
+	 */
+	protected static final String PARAM_CALLBACK_USER = "callbackUser";
+	
+	protected static final String PARAM_CALLBACK_PASSWORD = "callbackPassword";
+	
 	/** Services **/
 
 	protected NodeService nodeService;
@@ -129,6 +137,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	protected EntityProviderCallBack getEntityProviderCallback(WebScriptRequest req) {
 		final String callBack = req.getParameter(PARAM_CALLBACK);
+		final String user = req.getParameter(PARAM_CALLBACK_USER);
+		final String password = req.getParameter(PARAM_CALLBACK_PASSWORD);
+		
 		if (callBack != null && callBack.length() > 0) {
 			return new EntityProviderCallBack() {
 
@@ -136,25 +147,20 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				public NodeRef provideNode(NodeRef nodeRef) throws BeCPGException {
 					try {
 						logger.debug("EntityProviderCallBack call : " + callBack + "?nodeRef=" + nodeRef.toString());
+
+						if (user != null && user.length() > 0
+								&& password != null && password.length() > 0){
+							logger.debug("Set authentication for callback");
+							Authenticator.setDefault (new Authenticator() {
+							    protected PasswordAuthentication getPasswordAuthentication() {
+							        return new PasswordAuthentication (user, password.toCharArray());
+							    }
+							});
+
+						} 
 						
-						
-						URL entityUrl = null;
-						URL dataUrl = null;
-						if(callBack.contains("@")){
-							entityUrl =  new URL(callBack.split("@")[1] + "?nodeRef=" + nodeRef.toString());
-							dataUrl  =  new URL(callBack.split("@")[1] + "/data?nodeRef=" + nodeRef.toString());
-							URLConnection uc1 = entityUrl.openConnection();
-							URLConnection uc2 = dataUrl.openConnection();
-							String val = (callBack.split("@")[0]).toString();
-							byte[] base = val.getBytes();
-							String authorizationString = "Basic " + new String(new Base64().encode(base));
-							uc1.setRequestProperty ("Authorization", authorizationString);
-							uc2.setRequestProperty ("Authorization", authorizationString);
-						} else {
-							entityUrl =  new URL(callBack + "?nodeRef=" + nodeRef.toString());
-							dataUrl  =  new URL(callBack + "Data?nodeRef=" + nodeRef.toString());
-						}
-						
+						URL  entityUrl =  new URL(callBack + "?nodeRef=" + nodeRef.toString());
+						URL  dataUrl  =  new URL(callBack + "/data?nodeRef=" + nodeRef.toString());
 						InputStream entityStream = null;
 						InputStream dataStream = null;
 						

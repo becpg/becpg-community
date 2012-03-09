@@ -1,16 +1,86 @@
 /*************************************/
 /**            beCPG               **/
 /************************************/
-
 .footer-becpg .copyright span {
-   display:none;
+	display: none;
 }
-
 
 /* Share forms */
 
+.yui-navset .set {
+	padding-bottom: 0em;
+}
 
-.yui-gb .form-field input[type="text"]
-{
-   width: 15em;
+.yui-g .form-field input[type="text"] {
+	width: 28em;
+}
+
+.yui-g .form-field textarea {
+	width: 28em;
+}
+
+.yui-g .yui-ac .ac-body {
+	width: 28em;
+}
+
+.yui-navset .form-field input[type="text"] {
+	width: 26em;
+}
+
+.yui-navset .form-field textarea {
+	width: 26em;
+}
+
+.yui-navset .yui-ac .ac-body {
+	width: 26em;
+}
+
+.yui-navset .yui-ac .ac-body .yui-ac-input,
+.yui-g .yui-ac .ac-body .yui-ac-input  {
+	width: 90%;
+}
+
+.yui-gb .yui-ac .ac-body .yui-ac-input  {
+	width: 85%;
+}
+
+.yui-gb .form-field input[type="text"] {
+	width: 16em;
+}
+
+/** Tab **/
+.share-form .form-container .yui-navset .yui-content {
+	background-color: #F5FFF2;
+	border-color: #EEEEEE;
+	margin-bottom: 0.5em;
+	padding-top: 0.5em;
+}
+
+.share-form .form-container .yui-navset .yui-nav .selected a,.yui-skin-default .yui-navset .yui-nav .selected a em
+	{
+	border-color: #EEEEEE;
+	background-color: : #EEEEEE;
+}
+
+.share-form .form-container .yui-navset .yui-nav .selected a,.yui-skin-default .yui-navset .yui-nav .selected a:focus,.yui-skin-default .yui-navset .yui-nav .selected a:hover
+	{
+	background-image: none;
+	background-color: #EEEEEE;
+	color: #000000;
+}
+
+.share-form .form-container .yui-navset .yui-nav a {
+	background-image: none;
+	background-color: #FFFFFF;
+	border-color: #D8D8D8;
+	color: #000000;
+}
+
+.share-form .form-container .yui-navset .yui-nav,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav
+	{
+	border-color: #EEEEEE;
+}
+
+.share-form .form-container  .set-panel-heading {
+	display: none;
 }
