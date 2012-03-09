@@ -12,6 +12,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -250,7 +251,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 * 
 	 * @return the entitys history folder
 	 */
-	private NodeRef getEntitysHistoryFolder() {
+	@Override
+	public NodeRef getEntitysHistoryFolder() {
 		if (entitiesHistoryNodeRef == null) {
 
 			ResultSet resultSet = null;
@@ -323,7 +325,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 		}
 
-		logger.error("Failed to find entity version. version: " + version.getVersionedNodeRef());
+		logger.error("Failed to find entity version. version: " + version.getFrozenStateNodeRef());
 		return null;
 	}
 

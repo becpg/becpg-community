@@ -192,6 +192,17 @@
 	   	<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	
+	<!-- Migrator -->
+	<bean id="beCPGVersionMigrator" class="fr.becpg.repo.entity.version.BeCPGVersionMigrator">
+		<property name="entityVersionService" ref="entityVersionService" />		
+		<property name="nodeService" ref="nodeService" />	
+	   <property name="versionService" ref="versionService" />
+	   <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+	   <property name="dbNodeService">
+      	<ref bean="mtAwareNodeService" />
+      </property>
+	</bean>
+	
 	<!-- CompareEntityService -->
 	<bean id="compareEntityService" class="fr.becpg.repo.entity.comparison.CompareEntityServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -201,9 +212,6 @@
 		<property name="propertyService" ref="propertyService"/>
 		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
-	
-	
-	
 	
 	<!-- Entity -->
 	<bean id="entityListDAO" class="fr.becpg.repo.entity.impl.EntityListDAOImpl">

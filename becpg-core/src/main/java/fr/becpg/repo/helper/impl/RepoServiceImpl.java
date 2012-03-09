@@ -117,6 +117,8 @@ public class RepoServiceImpl implements RepoService {
 		String xPath = path.contains(RepoConsts.MODEL_PREFIX_SEPARATOR) ? 
 						path : String.format(XPATH, NamespaceService.CONTENT_MODEL_PREFIX, ISO9075.encode(path));
 
+		logger.debug("get folder by path: " + xPath);
+		
 		List<NodeRef> nodes = searchService.selectNodes(parentNodeRef, 
 				xPath, null, namespaceService, false);
 		

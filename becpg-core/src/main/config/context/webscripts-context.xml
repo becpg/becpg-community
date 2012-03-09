@@ -132,6 +132,7 @@
 		<property name="searchService" ref="searchService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="mlNodeService" ref="mlAwareNodeService" />
+		<property name="beCPGVersionMigrator" ref="beCPGVersionMigrator" />
 	</bean>
 
 
