@@ -16,6 +16,8 @@ import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.BeCPGException;
@@ -43,6 +45,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private BeCPGSearchService beCPGSearchService;
 
 	private EntityService entityService;
+	
+	private static Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
@@ -148,12 +152,15 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	}
 
-	private Map<String, byte[]> extractData(NodeRef entityNodeRef) throws InvalidNodeRefException, BeCPGException {
+	private Map<String, byte[]> extractData(NodeRef entityNodeRef) throws InvalidNodeRefException {
 		Map<String, byte[]> images = new HashMap<String, byte[]>();
-
-		for (NodeRef imageNodeRef : entityService.getImages(entityNodeRef)) {
-
-			images.put((String) nodeService.getProperty(imageNodeRef, ContentModel.PROP_NAME), entityService.getImage(imageNodeRef));
+		try {
+			for (NodeRef imageNodeRef : entityService.getImages(entityNodeRef)) {
+	
+				images.put((String) nodeService.getProperty(imageNodeRef, ContentModel.PROP_NAME), entityService.getImage(imageNodeRef));
+			}
+		} catch (BeCPGException e) {
+			logger.warn(e.getMessage());
 		}
 
 		return images;

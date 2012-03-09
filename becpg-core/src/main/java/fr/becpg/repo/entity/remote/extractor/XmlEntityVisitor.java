@@ -16,6 +16,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -259,10 +260,16 @@ public class XmlEntityVisitor {
 						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI)
 						&& !propQName.equals(ContentModel.PROP_CONTENT)) {
 					logger.debug("Extract prop : "+entry.getKey());
-					xmlw.writeStartElement(entry.getKey().toPrefixString(namespaceService));
-					xmlw.writeAttribute("type",dictionaryService.getProperty(entry.getKey()).getDataType().getName().toPrefixString(namespaceService) );
-					visitPropValue(entry.getValue(), xmlw);
-					xmlw.writeEndElement();
+					PropertyDefinition propertyDefinition = dictionaryService.getProperty(entry.getKey());
+					if(propertyDefinition!=null){
+						xmlw.writeStartElement(entry.getKey().toPrefixString(namespaceService));
+						xmlw.writeAttribute("type",propertyDefinition.getDataType().getName().toPrefixString(namespaceService) );
+						visitPropValue(entry.getValue(), xmlw);
+						xmlw.writeEndElement();
+					} else {
+						logger.warn("Properties not in dictionnary: "+entry.getKey());
+					}
+					
 				}
 
 			}
