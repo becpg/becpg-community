@@ -100,3 +100,17 @@ VALUES;Plats composés - Plats à base de céréales ou pâtes;Plats composés;Plats à
 VALUES;Plats composés - Plats à base de fromage;Plats composés;Plats à base de fromage
 VALUES;Plats composés - Pizzas, crêpes et tartes salées;Plats composés;Pizzas, crêpes et tartes salées
 VALUES;Sandwichs - Sandwichs;Sandwichs;Sandwichs
+;;;
+;;;
+;;;
+"PATH";"/System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy2"
+TYPE;bcpg:linkedValue;;
+COLUMNS;cm:name;bcpg:lkvPrevValue;bcpg:lkvValue
+VALUES;-;-;-
+;;;
+"PATH";"/System/ProductHierarchy/SemiFinishedProduct_Hierarchy2"
+TYPE;bcpg:linkedValue;;
+COLUMNS;cm:name;bcpg:lkvPrevValue;bcpg:lkvValue
+VALUES;-;-;-
+;;;
+

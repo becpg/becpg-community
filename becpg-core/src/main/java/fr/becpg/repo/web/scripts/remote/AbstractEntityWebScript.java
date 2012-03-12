@@ -157,7 +157,14 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 							    }
 							});
 
-						} 
+						}  else {
+							logger.debug("Set default authentication for callback");
+							Authenticator.setDefault (new Authenticator() {
+							    protected PasswordAuthentication getPasswordAuthentication() {
+							        return new PasswordAuthentication ("admin", "becpg".toCharArray());
+							    }
+							});
+						}
 						
 						URL  entityUrl =  new URL(callBack + "?nodeRef=" + nodeRef.toString());
 						URL  dataUrl  =  new URL(callBack + "/data?nodeRef=" + nodeRef.toString());

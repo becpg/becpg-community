@@ -1,0 +1,27 @@
+PATH;/System/ProductHierarchy/PackagingMaterial_Hierarchy1;;
+TYPE;bcpg:listValue;;
+COLUMNS;cm:name;;
+VALUES;Barquettes;;
+VALUES;Carton;;
+VALUES;Palette;;
+VALUES;Film;;
+VALUES;Boite;;
+VALUES;Pots;;
+VALUES;Opercules;;
+VALUES;Etiquettes;;
+VALUES;Briques;;
+;;;
+PATH;/System/ProductHierarchy/PackagingMaterial_Hierarchy2;;
+TYPE;bcpg:linkedValue;;
+COLUMNS;cm:name;bcpg:lkvPrevValue;bcpg:lkvValue
+VALUES;Barquettes - Barquettes plastiques;Barquettes;Barquettes plastiques
+VALUES;Carton - Recyclable;Carton;Recyclable
+VALUES;Palette - Recyclable;Palette;Recyclable
+VALUES;Film - Thermoformable;Film;Thermoformable
+VALUES;Boite - PF;Boite;PF
+VALUES;Etiquettes - Autocollantes;Etiquettes;Autocollantes
+VALUES;Pots - Plastiques;Pots;Plastiques
+VALUES;Pots - Verres;Pots;Verres
+VALUES;Opercules - Aluminium;Opercules;Opercules 
+VALUES;Briques - Briques cartons;Briques;Briques cartons
+VALUES;Briques - Briques plastiques;Briques;Briques plastiques

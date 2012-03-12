@@ -12,7 +12,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -145,6 +144,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			} catch (ParserConfigurationException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+			} catch (BeCPGException e) {
+				logger.warn(e.getMessage());
 			}
 		} else {
 			throw new BeCPGException("Unknow format " + format.toString());
@@ -152,7 +153,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	}
 
-	private Map<String, byte[]> extractData(NodeRef entityNodeRef) throws InvalidNodeRefException {
+	private Map<String, byte[]> extractData(NodeRef entityNodeRef) {
 		Map<String, byte[]> images = new HashMap<String, byte[]>();
 		try {
 			for (NodeRef imageNodeRef : entityService.getImages(entityNodeRef)) {

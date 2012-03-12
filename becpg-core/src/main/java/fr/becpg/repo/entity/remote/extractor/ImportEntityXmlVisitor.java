@@ -229,7 +229,7 @@ public class ImportEntityXmlVisitor {
 				currAssoc.pop();
 				currAssocType.pop();
 			} else if (type != null && type.length() > 0) {
-				logger.debug("Set property : " + currProp + " value " + currValue);
+				//logger.debug("Set property : " + currProp + " value " + currValue);
 				if (currValue.length() > 0) {
 					nodeService.setProperty(curNodeRef.peek(), currProp, currValue.toString());
 				} else {
@@ -298,10 +298,7 @@ public class ImportEntityXmlVisitor {
 		}
 
 		String runnedQuery = "";
-
-		if (code != null && code.length() > 0) {
-			runnedQuery += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, code, null);
-		}
+		
 		
 
 		if (type != null) {
@@ -309,9 +306,9 @@ public class ImportEntityXmlVisitor {
 		}
 
 		
-		//Look for code and type
-		if (runnedQuery.length() > 0) {
 
+		if (code != null && code.length() > 0) {
+			runnedQuery += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, code, null);
 			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, 1);
 			if (ret.size() > 0) {
 				logger.debug("Found node for query :" + runnedQuery);
@@ -319,20 +316,18 @@ public class ImportEntityXmlVisitor {
 			}
 		}
 		
+		
 
 		if (name != null && name.length() > 0) {
 			runnedQuery += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, name, code != null && code.length() > 0 ? LuceneHelper.Operator.OR : null);
-		}
-
-		//Look also for name
-		if (runnedQuery.length() > 0) {
-
 			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, 1);
 			if (ret.size() > 0) {
 				logger.debug("Found node for query :" + runnedQuery);
 				return ret.get(0);
 			}
 		}
+		
+		
 
 		return null;
 	}

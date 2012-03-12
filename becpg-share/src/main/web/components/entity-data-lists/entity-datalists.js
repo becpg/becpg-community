@@ -293,7 +293,7 @@
                      elLink.title = list.description;
 					 //### beCPG : change url to entity-data-lists and add the nodeRef reference
                      //elLink.href = "data-lists?list=" + $html(list.name);
-					 elLink.href = "entity-data-lists?list=" + $html(list.name) + "&nodeRef=" + $html(this.options.entityNodeRef);
+                     elLink.href = "entity-data-lists?list=" + $html(list.name) + "&nodeRef=" + $html(this.options.entityNodeRef);
                      elText = document.createTextNode(list.title);
 
                      // Build the DOM structure with the new elements                     

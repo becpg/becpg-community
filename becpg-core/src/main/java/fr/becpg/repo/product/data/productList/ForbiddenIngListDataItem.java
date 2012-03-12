@@ -121,7 +121,7 @@ public class ForbiddenIngListDataItem {
 			
 			NullableBoolean nullableBoolean = NullableBoolean.Null;
 			
-			if(!value.isEmpty()){
+			if(value!=null && !value.isEmpty()){
 				if(isTranslated){
 					
 					if(value.equals(TranslateHelper.getTranslatedNullableBoolean(NullableBoolean.True))){
