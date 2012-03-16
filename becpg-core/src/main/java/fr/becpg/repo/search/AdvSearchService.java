@@ -16,19 +16,24 @@ public interface AdvSearchService {
 	/**
 	 * 
 	 * @param query
-	 * @param datatype
-	 * @param term
-	 * @param tag
 	 * @param criteria
 	 * @param sortMap
 	 * @param maxItem
+	 * @return
+	 */
+	public List<NodeRef> queryAdvSearch(String query, String language, QName datatype,
+			Map<String, String> criteria, Map<String, Boolean> sortMap, int maxItem);
+
+	
+	/**
+	 * @param datatype
+	 * @param term
+	 * @param tag
 	 * @param isRepo
 	 * @param siteId
 	 * @param containerId
 	 * @return
-	 * If query is pass only make query search
-	 * 
 	 */
-	public List<NodeRef> queryAdvSearch(String query, QName datatype, String term, String tag,
-			Map<String, String> criteria, boolean isRepo, String siteId, String containerId, Map<String, Boolean> sortMap, int maxItem);
+	public String getSearchQueryByProperties(QName datatype, String term, String tag, boolean isRepo, String siteId, String containerId);
+
 }

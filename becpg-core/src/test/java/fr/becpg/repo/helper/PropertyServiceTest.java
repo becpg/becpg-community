@@ -33,7 +33,7 @@ public class PropertyServiceTest  extends BaseAlfrescoTestCase  {
 	private static Log logger = LogFactory.getLog(PropertyServiceTest.class);
 	
 	/** The repository helper. */
-	private PropertyService propertyService;   
+	private AttributeExtractorService attributeExtractorService;   
 	
 	private DictionaryService dictionaryService;
 	
@@ -47,7 +47,7 @@ public class PropertyServiceTest  extends BaseAlfrescoTestCase  {
 		
     	logger.debug("ProductServiceTest:setUp");
     	
-    	propertyService = (PropertyService)ctx.getBean("propertyService");
+    	attributeExtractorService = (AttributeExtractorService)ctx.getBean("propertyService");
     	dictionaryService = (DictionaryService)ctx.getBean("dictionaryService");
     	
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
@@ -93,7 +93,7 @@ public class PropertyServiceTest  extends BaseAlfrescoTestCase  {
 	   assertNotNull(date);
 	   
 	   PropertyFormats propertyFormats = new PropertyFormats(true);
-	   String stringDate = propertyService.getStringValue(propertyDef, date, propertyFormats);	   
+	   String stringDate = attributeExtractorService.getStringValue(propertyDef, date, propertyFormats);	   
 	   assertEquals("check date", "mer. 7 oct. 2009 00:00:00", stringDate);
    }
    

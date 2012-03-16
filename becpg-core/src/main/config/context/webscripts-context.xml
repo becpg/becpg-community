@@ -44,6 +44,17 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="transactionService" ref="transactionService" />
 	</bean>
+	
+	<bean id="webscript.fr.becpg.entity.datalist.data.post" class="fr.becpg.repo.web.scripts.entity.datalist.EntityDataListWebScript"
+		parent="webscript">
+		<property name="securityService" ref="securityService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="permissionService" ref="permissionService" />
+	</bean>
+	
+	
 
 	<!-- Product formulate -->
 	<bean id="webscript.fr.becpg.product.productFormulation.get"
@@ -97,7 +108,7 @@
 		<property name="advSearchService" ref="advSearchService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
-		<property name="propertyService" ref="propertyService" />
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
 	</bean>
 
 

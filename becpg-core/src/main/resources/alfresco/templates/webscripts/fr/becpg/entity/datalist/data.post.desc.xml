@@ -1,0 +1,9 @@
+<webscript>
+	<shortname>Entity Data List</shortname>
+	<description>Entity Data Lists Component - retrieve data within a given list</description>
+   <url>/becpg/entity/datalists/data/node/{store_type}/{store_id}/{id}</url>
+   <url>/becpg/entity/datalists/data/node</url>
+   <format default="json">argument</format>
+   <authentication>user</authentication>
+   <transaction allow="readwrite" buffersize="0">required</transaction>
+</webscript>

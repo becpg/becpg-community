@@ -10,14 +10,14 @@ import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.DataListModel;
-import fr.becpg.repo.helper.PropertyService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 
 public class DataListDataExtractor extends AbstractNodeDataExtractor  {
 
 
 
-	public DataListDataExtractor(ServiceRegistry services,PropertyService propertyService) {
-		super(services,propertyService);
+	public DataListDataExtractor(ServiceRegistry services,AttributeExtractorService attributeExtractorService) {
+		super(services,attributeExtractorService);
 	}
 
 	@Override
@@ -28,21 +28,21 @@ public class DataListDataExtractor extends AbstractNodeDataExtractor  {
 		 ret.put(PROP_NODEREF, nodeRef.toString());
 
 		 if(itemType.equals(DataListModel.TYPE_DATALIST)){
-			 ret.put(PROP_NAME,  propertyService.getProperty(nodeRef,ContentModel.PROP_NAME));
+			 ret.put(PROP_NAME,  attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_NAME));
 			 ret.put(PROP_TYPE, "datalist");
-			 ret.put(PROP_DISPLAYNAME, propertyService.getProperty(nodeRef,ContentModel.PROP_TITLE)); 
-			 ret.put(PROP_DESCRIPTION, propertyService.getProperty(nodeRef,ContentModel.PROP_DESCRIPTION));
+			 ret.put(PROP_DISPLAYNAME, attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_TITLE)); 
+			 ret.put(PROP_DESCRIPTION, attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_DESCRIPTION));
 		 } else  { //"{http://www.alfresco.org/model/datalist/1.0}dataListItem"
-			 ret.put(PROP_NAME, propertyService.getProperty(getParent(nodeRef),ContentModel.PROP_NAME) );// used to generate link to parent datalist - not ideal
+			 ret.put(PROP_NAME, attributeExtractorService.getProperty(getParent(nodeRef),ContentModel.PROP_NAME) );// used to generate link to parent datalist - not ideal
 			 ret.put(PROP_TYPE, "datalistitem");
-			 ret.put(PROP_DISPLAYNAME, propertyService.getProperty(nodeRef,ContentModel.PROP_NAME)); 
+			 ret.put(PROP_DISPLAYNAME, attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_NAME)); 
 		 }
 		 
-		 ret.put(PROP_MODIFIER,  propertyService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
-		 ret.put(PROP_MODIFIED,  propertyService.getProperty(nodeRef, ContentModel.PROP_MODIFIED));
+		 ret.put(PROP_MODIFIER,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
+		 ret.put(PROP_MODIFIED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIED));
 		
-		 ret.put(PROP_CREATED,  propertyService.getProperty(nodeRef, ContentModel.PROP_CREATED));
-		 ret.put(PROP_CREATOR,  propertyService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
+		 ret.put(PROP_CREATED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATED));
+		 ret.put(PROP_CREATOR,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
 	
 		
 		 ret.put(PROP_SIZE, -1);

@@ -30,7 +30,7 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.helper.PropertyService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -55,7 +55,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	/** The namespace service. */
 	private NamespaceService namespaceService;
 	
-	private PropertyService propertyService;
+	private AttributeExtractorService attributeExtractorService;
 	
 	private EntityListDAO entityListDAO;
 			
@@ -95,9 +95,11 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		this.namespaceService = namespaceService;
 	}
 	
-	public void setPropertyService(PropertyService propertyService) {
-		this.propertyService = propertyService;
+
+	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
+		this.attributeExtractorService = attributeExtractorService;
 	}
+
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -824,8 +826,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 						propertyDef.getDataType().toString().equals(DataTypeDefinition.DATE.toString()) ||
 						propertyDef.getDataType().toString().equals(DataTypeDefinition.DATETIME.toString())){
 			
-					String tempValue1 = propertyService.getStringValue(propertyDef, oValue1, propertyFormats);					
-					String tempValue2 = propertyService.getStringValue(propertyDef, oValue2, propertyFormats);
+					String tempValue1 = attributeExtractorService.getStringValue(propertyDef, oValue1, propertyFormats);					
+					String tempValue2 = attributeExtractorService.getStringValue(propertyDef, oValue2, propertyFormats);
 					
 					if(tempValue1.equals(tempValue2)){
 						return;
@@ -840,8 +842,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			return;
 		}
 		
-		String strValue1 = propertyService.getStringValue(propertyDef, oValue1, propertyFormats);					
-		String strValue2 = propertyService.getStringValue(propertyDef, oValue2, propertyFormats);
+		String strValue1 = attributeExtractorService.getStringValue(propertyDef, oValue1, propertyFormats);					
+		String strValue2 = attributeExtractorService.getStringValue(propertyDef, oValue2, propertyFormats);
 		String key = String.format("%s-%s-%s", entityList, characteristic, propertyDef.getName());	
 		CompareResultDataItem comparisonDataItem = comparisonMap.get(key);				
 				

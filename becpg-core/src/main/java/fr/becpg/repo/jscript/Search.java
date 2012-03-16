@@ -10,6 +10,7 @@ import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,6 +58,19 @@ public final class Search extends BaseScopableProcessorExtension{
 		
 	}
 	
+	/**
+	 * 
+	 * @param query
+	 * @param criteria
+	 * @param sort
+	 * @param maxResults
+	 * @return
+	 */
+	public Scriptable queryAdvSearch(String query, String datatype, Object criteria,  Object sort, int maxResults){
+		return queryAdvSearch(query, datatype, null, null, criteria, true, null, null, sort, maxResults);
+		
+	}
+	
 
 	/**
 	 * Method a do the query for the advanced search
@@ -95,7 +109,6 @@ public final class Search extends BaseScopableProcessorExtension{
 		
 		if(logger.isDebugEnabled()){
 			logger.debug("Start Scriptable queryAdvSearch");
-			logger.debug("queryAdvSearch, criteria: " + criteria +", sort: "+sort);
 			if( datatypeQName!=null){
 				logger.debug("Filter on dataType: "+datatypeQName.toString());
 			}
@@ -104,10 +117,14 @@ public final class Search extends BaseScopableProcessorExtension{
 			logger.debug("queryAdvSearch, sortMap: " + sortMap);
 		}
 		
+		String language = SearchService.LANGUAGE_FTS_ALFRESCO;
+		if(query==null){
+			query = advSearchService.getSearchQueryByProperties(datatypeQName, term, tag, isRepo, siteId, containerId);
+		} else {
+			language = SearchService.LANGUAGE_LUCENE;
+		}
 		
-		
-		
-        List<NodeRef> nodes = advSearchService.queryAdvSearch(query, datatypeQName, term, tag, criteriaMap, isRepo, siteId, containerId, sortMap, maxResults);     
+        List<NodeRef> nodes = advSearchService.queryAdvSearch(query,language , datatypeQName , criteriaMap, sortMap, maxResults);     
         
         if(!nodes.isEmpty()){
         	

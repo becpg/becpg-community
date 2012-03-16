@@ -1,0 +1,196 @@
+package fr.becpg.repo.entity.datalist.data;
+
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ISO9075;
+import org.json.JSONException;
+
+public class DataListFilter {
+
+	
+	
+	private String filterQuery;
+	
+	private NodeRef entityNodeRef;
+	
+	private NodeRef dataListNodeRef;
+	
+	private Map<String, String> criteriaMap;
+	
+	private Map<String, Boolean> sortMap = new HashMap<String, Boolean>();
+	
+	private  QName dataType;
+	
+	
+	public DataListFilter() {
+		super();
+		sortMap.put("@bcpg:sort", true);
+		sortMap.put("@cm:created", true);
+	}
+
+	public String getFilterQuery() {
+		return filterQuery;
+	}
+
+	public NodeRef getEntityNodeRef() {
+		return entityNodeRef;
+	}
+
+	public NodeRef getDataListNodeRef() {
+		return dataListNodeRef;
+	}
+
+	public Map<String, String> getCriteriaMap() {
+		return criteriaMap;
+	}
+
+	public Map<String, Boolean> getSortMap() {
+		return sortMap;
+	}
+
+	public boolean isDepthDefined(){
+		return criteriaMap!=null &&
+				criteriaMap.get("prop_bcpg_depthLevel")!=null;
+	}
+	
+	
+	public int getMaxDepth() {
+		int maxLevel = 1;
+		if(isDepthDefined()){
+			try {
+				maxLevel = Integer.parseInt(criteriaMap.get("prop_bcpg_depthLevel"));
+			} catch (Exception e) {
+				maxLevel = -1;
+			}
+		}
+		return maxLevel;
+	}
+
+	public void setFilterQuery(String filterQuery) {
+		this.filterQuery = filterQuery;
+	}
+
+	public void setEntityNodeRef(NodeRef entityNodeRef) {
+		this.entityNodeRef = entityNodeRef;
+	}
+
+	public void setDataListNodeRef(NodeRef dataListNodeRef) {
+		this.dataListNodeRef = dataListNodeRef;
+	}
+
+	public void setCriteriaMap(Map<String, String> criteriaMap) {
+		this.criteriaMap = criteriaMap;
+	}
+
+	public void setSortMap(Map<String, Boolean> sortMap) {
+		this.sortMap = sortMap;
+	}
+
+	public QName getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(QName dataType) {
+		this.dataType = dataType;
+	}
+	
+	public String getSearchQuery (){
+		return getSearchQuery(this.dataListNodeRef);
+	}
+	
+
+	public String getSearchQuery(NodeRef dataListNodeRef) {
+		return filterQuery + " +PARENT:\"" + dataListNodeRef + "\" ";
+	}
+	
+	public String buildQueryFilter( String filterId, String filterData, String argDays ) throws JSONException {
+
+
+		filterQuery = " +TYPE:\"" + dataType.toString() + "\"";
+
+		// Common types and aspects to filter from the UI
+		String searchQueryDefaults = " -TYPE:\"systemfolder\"" + " -TYPE:\"fm:forums\"" + " -TYPE:\"fm:forum\"" + " -TYPE:\"fm:topic\"" + " -TYPE:\"fm:post\""
+				+ " -TYPE:\"cm:systemfolder\"" + " -@cm\\:lockType:READ_ONLY_LOCK";
+
+		if (filterId != null) {
+
+			if (filterId.equals("recentlyAdded") || filterId.equals("recentlyModified") || filterId.equals("recentlyCreatedByMe") || filterId.equals("recentlyModifiedByMe")) {
+				boolean onlySelf = (filterId.indexOf("ByMe")) > 0 ? true : false;
+				String dateField = (filterId.indexOf("Modified") > 0) ? "modified" : "created";
+				String ownerField = (dateField == "created") ? "creator" : "modifier";
+
+				// Default to 7 days - can be overridden using "days" argument
+				int dayCount = 7;
+				if (argDays != null) {
+					try {
+						dayCount = Integer.parseInt(argDays);
+					} catch (NumberFormatException e) {
+
+					}
+				}
+
+				Calendar date = Calendar.getInstance();
+				String toQuery = date.get(Calendar.YEAR) + "\\-" + (date.get(Calendar.MONTH) + 1) + "\\-" + date.get(Calendar.DAY_OF_MONTH);
+				date.add(Calendar.DATE, -dayCount);
+				String fromQuery = date.get(Calendar.YEAR) + "\\-" + (date.get(Calendar.MONTH) + 1) + "\\-" + date.get(Calendar.DAY_OF_MONTH);
+
+				// if (nodeRef == "alfresco://sites/home")
+				// {
+				// // Special case for "Sites home" pseudo-nodeRef
+				// searchQuery += "/*/cm:dataLists";
+				// }
+				filterQuery += "\"";
+				filterQuery += " +@cm\\:" + dateField + ":[" + fromQuery + "T00\\:00\\:00.000 TO " + toQuery + "T23\\:59\\:59.999]";
+				if (onlySelf) {
+					filterQuery += " +@cm\\:" + ownerField + ":\"" + getUserName() + '"';
+				}
+				filterQuery += " -TYPE:\"folder\"";
+
+				sortMap.put("@cm:" + dateField, false);
+
+			} else if (filterId.equals("createdByMe")) {
+
+				// if (nodeRef == "alfresco://sites/home")
+				// {
+				// // Special case for "Sites home" pseudo-nodeRef
+				// searchQuery += "/*/cm:dataLists";
+				// }
+				filterQuery += "\"";
+				filterQuery += " +@cm\\:creator:\"" + getUserName() + '"';
+				filterQuery += " -TYPE:\"folder\"";
+			} else if (filterId.equals("node")) {
+				filterQuery = "+ID:\"" + dataListNodeRef + "\"";
+			} else if (filterId.equals("tag")) {
+				// Remove any trailing "/" character
+				if (filterData.charAt(filterData.length() - 1) == '/') {
+					filterData = filterData.substring(0, filterData.length() - 2);
+				}
+				filterQuery += "+PATH:\"/cm:taggable/cm:" + ISO9075.encode(filterData) + "/member\"";
+			}
+		}
+
+		return filterQuery += searchQueryDefaults;
+
+	}
+	
+
+	private String getUserName() {
+		return AuthenticationUtil.getFullyAuthenticatedUser();
+	}
+
+	@Override
+	public String toString() {
+		return "DataListFilter [filterQuery=" + filterQuery + ", entityNodeRef=" + entityNodeRef + ", dataListNodeRef=" + dataListNodeRef + ", criteriaMap=" + criteriaMap
+				+ ", sortMap=" + sortMap + ", dataType=" + dataType + "]";
+	}
+
+
+	
+	
+	
+}

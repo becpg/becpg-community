@@ -11,8 +11,7 @@
 		<property name="associationService" ref="associationService" />
 		<property name="authorityDAO" ref="authorityDAO" />
 	</bean>
-	<bean id="securityService" class="fr.becpg.repo.security.impl.SecurityServiceImpl"
-		init-method="init">
+	<bean id="securityService" class="fr.becpg.repo.security.impl.SecurityServiceImpl" >
 		<property name="aclGroupDao" ref="aclGroupDao" />
 		<property name="authorityService" ref="authorityService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />

@@ -9,13 +9,13 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.repo.helper.PropertyService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 
 public class CalendarDataExtractor extends AbstractNodeDataExtractor  {
 
 	
-	public CalendarDataExtractor(ServiceRegistry services,PropertyService propertyService) {
-		super(services,propertyService);
+	public CalendarDataExtractor(ServiceRegistry services,AttributeExtractorService attributeExtractorService) {
+		super(services,attributeExtractorService);
 	}
 
 	/** DataList Model URI. */
@@ -45,20 +45,20 @@ public class CalendarDataExtractor extends AbstractNodeDataExtractor  {
 		Map<String, Object> ret = new HashMap<String, Object>();
 		
 		 ret.put(PROP_NODEREF, nodeRef.toString());
-		 ret.put(PROP_TAGS, propertyService.getTags(nodeRef));
+		 ret.put(PROP_TAGS, attributeExtractorService.getTags(nodeRef));
 		 
-		 String name = (String) propertyService.getProperty(nodeRef,ContentModel.PROP_NAME);
-		 String title = (String) propertyService.getProperty(nodeRef,PROP_WHAT_EVENT);
+		 String name = (String) attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_NAME);
+		 String title = (String) attributeExtractorService.getProperty(nodeRef,PROP_WHAT_EVENT);
 
 		 ret.put(PROP_NAME,  name);
 		 ret.put(PROP_DISPLAYNAME, title);
-		 ret.put(PROP_DESCRIPTION, propertyService.getProperty(nodeRef,PROP_DESCRIPTION_EVENT));
+		 ret.put(PROP_DESCRIPTION, attributeExtractorService.getProperty(nodeRef,PROP_DESCRIPTION_EVENT));
 		
-		 ret.put(PROP_MODIFIER, propertyService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
-		 ret.put(PROP_MODIFIED,  propertyService.getProperty(nodeRef, ContentModel.PROP_MODIFIED));
+		 ret.put(PROP_MODIFIER, attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
+		 ret.put(PROP_MODIFIED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIED));
 		
-		 ret.put(PROP_CREATED,  propertyService.getProperty(nodeRef, ContentModel.PROP_CREATED));
-		 ret.put(PROP_CREATOR,  propertyService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
+		 ret.put(PROP_CREATED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATED));
+		 ret.put(PROP_CREATOR,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
 	
 		 ret.put(PROP_TYPE, "calendarevent");
 		 ret.put(PROP_SIZE, getSize(nodeRef));

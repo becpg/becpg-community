@@ -481,9 +481,15 @@
 				<property name="bcpg:costCurrency">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:currency" />
 					</constraints>
+					
 				</property>
 				<property name="bcpg:costFixed">
 					<type>d:boolean</type>					
@@ -531,6 +537,11 @@
 				<property name="bcpg:nutUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:nutUnit" />
 					</constraints>
@@ -548,6 +559,11 @@
 				<property name="bcpg:physicoChemUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:physicoChemUnit" />
 					</constraints>
@@ -681,6 +697,11 @@
 				<property name="bcpg:compoListUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:compoListUnit" />
 					</constraints>
@@ -752,6 +773,11 @@
 				<property name="bcpg:packagingListUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:packagingListUnit" />
 					</constraints>
@@ -797,10 +823,12 @@
 			<properties>
 				<property name="bcpg:allergenListVoluntary">
 					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 				</property>
 				<property name="bcpg:allergenListInVoluntary">
 					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 				</property>
 				<!-- <property name="bcpg:allergenListPlants"> <type>d:text</type> <mandatory>false</mandatory> 
@@ -857,6 +885,11 @@
 				<property name="bcpg:costListUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:costListUnit" />
 					</constraints>
@@ -894,6 +927,11 @@
 				<property name="bcpg:costDetailsListUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:costListUnit" />
 					</constraints>
@@ -942,6 +980,11 @@
 				<property name="bcpg:priceListUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:costListUnit" />
 					</constraints>
@@ -953,6 +996,11 @@
 				<property name="bcpg:priceListPurchaseUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:productUnit" />
 					</constraints>
@@ -1004,10 +1052,12 @@
 				</property>
 				<property name="bcpg:ingListIsGMO">
 					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 				</property>
 				<property name="bcpg:ingListIsIonized">
 					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 				</property>
 			</properties>
@@ -1071,6 +1121,11 @@
 				</property>
 				<property name="bcpg:mblUnit">
 					<type>d:text</type>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:microbioUnit" />
 					</constraints>
@@ -1111,6 +1166,11 @@
 				<property name="bcpg:nutListUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:nutListUnit" />
 					</constraints>
@@ -1184,6 +1244,11 @@
 				</property>
 				<property name="bcpg:pclUnit">
 					<type>d:text</type>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:physicoChemUnit" />
 					</constraints>
@@ -1462,6 +1527,11 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<default>kg</default>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:productUnit" />
 					</constraints>
@@ -1620,6 +1690,7 @@
 			<properties>
 				<property name="bcpg:isManualListItem">
 					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 				</property>
 			</properties>
@@ -1652,6 +1723,11 @@
 				<property name="bcpg:priceCurrency">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					 <index enabled="true">
+		             <atomic>false</atomic>
+		             <stored>false</stored>
+		             <tokenised>false</tokenised>
+		          </index>
 					<constraints>
 						<constraint ref="bcpg:currency" />
 					</constraints>
@@ -1684,6 +1760,7 @@
 				</property>
 				<property name="bcpg:entityTplEnabled">
 					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
 					<default>true</default>
 				</property>
 			</properties>

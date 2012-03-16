@@ -6,26 +6,27 @@ const REQUEST_MAX = 1000;
 
 /**
  * Copyright (C) 2005-2010 Alfresco Software Limited.
- *
+ * 
  * This file is part of Alfresco
- *
- * Alfresco is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Alfresco is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
+ * 
+ * Alfresco is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ * 
+ * Alfresco is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
- * Main entry point: Return data list with properties being supplied in POSTed arguments
- *
+ * Main entry point: Return data list with properties being supplied in POSTed
+ * arguments
+ * 
  * @method getData
  */
 function getData()
@@ -69,30 +70,44 @@ function getData()
    }
    else
    {
-   var filterParams = Filters.getFilterParams(filter, parsedArgs)
-      query = filterParams.query;
+	   var filterParams = Filters.getFilterParams(filter, parsedArgs)
+	      query = filterParams.query;
+	
+	   var hasWriteAccess = true;
+	   var  entityNodeRef = (args.entityNodeRef !== null) ? args.entityNodeRef : null;
+	   if(entityNodeRef!=null){
+		   hasWriteAccess = beCPGSecurity.hasWriteAccess(search.findNode(entityNodeRef),parsedArgs.listNode.properties["dl:dataListItemType"]);
+	   }
+	   // Query the nodes - passing in default sort and result limit parameters
 
-   var hasWriteAccess = true;
-   var  entityNodeRef = (args.entityNodeRef !== null) ? args.entityNodeRef : null;
-   if(entityNodeRef!=null){
-	   hasWriteAccess = beCPGSecurity.hasWriteAccess(search.findNode(entityNodeRef),parsedArgs.listNode.properties["dl:dataListItemType"]);
-   }
-   // Query the nodes - passing in default sort and result limit parameters
-   if (query !== "")
-   {
-      allNodes = search.query(
-      {
-         query: query,
-         language: filterParams.language,
-         page:
-         {
-            maxItems: (filterParams.limitResults ? parseInt(filterParams.limitResults, 10) : 0)
-         },
-         sort: filterParams.sort,
-         templates: filterParams.templates,
-         namespace: (filterParams.namespace ? filterParams.namespace : null)
-      });
-      }
+	   
+	   
+	   if (query !== "")
+	   {
+	   	
+		   if(filterParams.criteria!=null){
+			   allNodes = bSearch.queryAdvSearch(
+				     query,
+				     args.itemType,
+				     filterParams.criteria,
+					  filterParams.sort, 
+					  (filterParams.limitResults ? parseInt(filterParams.limitResults, 10) : 0));
+		   } else {
+		      allNodes = search.query(
+		      {
+		         query: query,
+		         language: filterParams.language,
+		         page:
+		         {
+		            maxItems: (filterParams.limitResults ? parseInt(filterParams.limitResults, 10) : 0)
+		         },
+		         sort: filterParams.sort,
+		         templates: filterParams.templates,
+		         namespace: (filterParams.namespace ? filterParams.namespace : null)
+		      });
+	      
+		   }
+	    }
    }
       
    if (allNodes.length > 0)

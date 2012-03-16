@@ -43,7 +43,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.helper.PropertyService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.listvalue.EntityListValuePlugin;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.report.client.ReportFormat;
@@ -144,7 +144,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	
 	private EntityService entityService;				
 	
-	private PropertyService propertyService;
+	private AttributeExtractorService attributeExtractorService;
 	
 
 	/**
@@ -209,9 +209,11 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	}
 
 
-	public void setPropertyService(PropertyService propertyService) {
-		this.propertyService = propertyService;
+
+	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
+		this.attributeExtractorService = attributeExtractorService;
 	}
+
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.report.ExportSearchService#getReport(java.lang.String, java.lang.String, java.io.OutputStream)
@@ -372,7 +374,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		if(attribute instanceof PropertyDefinition){
 			
 			Serializable serializable = nodeService.getProperty(nodeRef, attribute.getName());								
-			value = propertyService.getStringValue((PropertyDefinition)attribute, serializable, exportSearchCtx.getPropertyFormats());
+			value = attributeExtractorService.getStringValue((PropertyDefinition)attribute, serializable, exportSearchCtx.getPropertyFormats());
     		
 		}
 		else if(attribute instanceof AssociationDefinition){// associations

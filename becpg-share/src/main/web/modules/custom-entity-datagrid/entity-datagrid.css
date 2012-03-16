@@ -78,6 +78,14 @@
 	padding-left: 20px;
 }
 
+
+.datagrid  span.resourceProduct-ToValidate {
+	background: url(../../components/images/filetypes/generic-resourceProduct-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+
 /** --- **/
 .datagrid span.finishedProduct-Valid {
 	background: url(../../components/images/products/valid-16.png),
@@ -139,6 +147,18 @@
 	background-position: 8px 2px, 0 0;
 }
 
+.datagrid span.resourceProduct-Valid {
+	background: url(../../components/images/products/valid-16.png),
+		url(../../components/images/filetypes/generic-resourceProduct-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+}
+
+
+
 /* Allergens */
 .datagrid .presentAllergen {
 	color: red;
@@ -181,3 +201,78 @@
 		no-repeat;
 	padding-left: 20px;
 }
+
+/* charact */
+
+
+
+
+.datagrid  span.client {
+	background: url(../../components/images/filetypes/generic-client-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid  span.supplier {
+	background: url(../../components/images/filetypes/generic-supplier-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid  span.allergen {
+	background: url(../../components/images/filetypes/generic-allergen-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid  span.bioOrigin {
+	background: url(../../components/images/filetypes/generic-bioOrigin-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+.datagrid  span.geoOrigin {
+	background: url(../../components/images/filetypes/generic-geoOrigin-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+.datagrid  span.cost {
+	background: url(../../components/images/filetypes/generic-cost-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid  span.geo {
+	background: url(../../components/images/filetypes/generic-geo-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid  span.ing {
+	background: url(../../components/images/filetypes/generic-ing-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid  span.microbio {
+	background: url(../../components/images/filetypes/generic-microbio-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid  span.organo {
+	background: url(../../components/images/filetypes/generic-organo-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid  span.physicoChem {
+	background: url(../../components/images/filetypes/generic-physicoChem-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid  span.nut {
+	background: url(../../components/images/filetypes/generic-nut-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid  span.aclEntry {
+	background: url(../../components/images/filetypes/generic-aclEntry-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+

@@ -15,7 +15,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.repo.helper.PropertyService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 
 public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 
@@ -23,8 +23,8 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 	private List<String> metadataFields = new ArrayList<String>();
 	
 
-	public ContentDataExtractor(List<String> metadataFields,ServiceRegistry serviceRegistry,PropertyService propertyService) {
-		super(serviceRegistry,propertyService);
+	public ContentDataExtractor(List<String> metadataFields,ServiceRegistry serviceRegistry,AttributeExtractorService attributeExtractorService) {
+		super(serviceRegistry,attributeExtractorService);
 		this.metadataFields = metadataFields;
 	}
 
@@ -35,7 +35,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 		Map<String, Object> ret = new HashMap<String, Object>();
 		
 		 ret.put(PROP_NODEREF, nodeRef.toString());
-		 ret.put(PROP_TAGS,  propertyService.getTags(nodeRef));
+		 ret.put(PROP_TAGS,  attributeExtractorService.getTags(nodeRef));
 		 
 		 Map<QName,Serializable> props =  nodeService.getProperties(nodeRef);
 		 
@@ -49,7 +49,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 		 ret.put(PROP_CREATED,  formatDate((Date)props.get( ContentModel.PROP_CREATED)));
 		 ret.put(PROP_CREATOR,  props.get( ContentModel.PROP_CREATOR));
 		 if(metadataFields.size()>0){
-			 ret.put(PROP_NODEDATA,  propertyService.extractNodeData(nodeRef,itemType,metadataFields));
+			 ret.put(PROP_NODEDATA,  attributeExtractorService.extractNodeData(nodeRef,itemType,metadataFields,true));
 		 }
 		 
 		 DictionaryService dd = this.services.getDictionaryService();
@@ -73,7 +73,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 
 	private String formatDate(Date date) {
 		if(date!=null){
-			return propertyService.formatDate(date);
+			return attributeExtractorService.formatDate(date);
 		}
 		// TODO Auto-generated method stub
 		return null;

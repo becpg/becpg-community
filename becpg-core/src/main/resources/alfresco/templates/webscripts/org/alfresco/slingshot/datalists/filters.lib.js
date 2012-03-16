@@ -154,7 +154,20 @@ var Filters =
             }
             filterParams.query += "+PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(filterData) + "/member\"";
             break;
-
+         case "filterform":
+         	filterParams.criteria = [];
+         	if (filterData !== null && filterData.length !== 0) {
+      			var formJson = jsonUtils.toObject(filterData);
+      			
+      			for ( var p in formJson) {
+      				var propValue = formJson[p];
+      				if (propValue.length !== 0) {
+      					filterParams.criteria[p] = propValue;
+      				}
+      			}
+      		}
+         	filterParams.query = filterQuery + filterQueryDefaults;
+          	break;
          default:
             filterParams.query = filterQuery + filterQueryDefaults;
             break;

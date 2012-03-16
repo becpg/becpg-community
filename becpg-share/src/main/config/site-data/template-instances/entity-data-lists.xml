@@ -62,6 +62,8 @@
 			<url>/modules/entity-data-lists/entity-datagrid</url>
 			<properties>
 				<pagination>true</pagination>
+				<filter>true</filter>
+				<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
 			</properties>
 		</component>
 

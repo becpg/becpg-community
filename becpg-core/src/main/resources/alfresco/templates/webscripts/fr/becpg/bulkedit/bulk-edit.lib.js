@@ -51,11 +51,11 @@ var BulkEdit =
 			   	   filterParams.params.term, 
 			   	   filterParams.params.tag, 
 			   	   filterParams.criteria,
-				   filterParams.params.repo, 
-				   filterParams.params.siteId,  
-				   filterParams.params.containerId,
-				   filterParams.sort, 
-				   (filterParams.limitResults ? parseInt(filterParams.limitResults, 10) : 0));
+					   filterParams.params.repo, 
+					   filterParams.params.siteId,  
+					   filterParams.params.containerId,
+					   filterParams.sort, 
+					   (filterParams.limitResults ? parseInt(filterParams.limitResults, 10) : 0));
 	
 	
 		var item = null,

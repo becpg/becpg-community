@@ -21,7 +21,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.repo.helper.PropertyService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.web.scripts.search.data.BlogDataExtractor;
 import fr.becpg.repo.web.scripts.search.data.CalendarDataExtractor;
@@ -44,15 +44,17 @@ public class SearchWebScript extends AbstractSearchWebSrcipt {
 
 	private ServiceRegistry serviceRegistry;
 
-	private PropertyService propertyService;
+	private AttributeExtractorService attributeExtractorService;
 
 	
 	/**
-	 * @param propertyService the propertyService to set
+	 * @param attributeExtractorService the propertyService to set
 	 */
-	public void setPropertyService(PropertyService propertyService) {
-		this.propertyService = propertyService;
+
+	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
+		this.attributeExtractorService = attributeExtractorService;
 	}
+
 
 	/**
 	 * @param serviceRegistry
@@ -167,24 +169,6 @@ public class SearchWebScript extends AbstractSearchWebSrcipt {
 
 	}
 
-//	@SuppressWarnings("unchecked")
-//	private JSONObject toJSON(Map<String, Object> datas) throws JSONException {
-//		JSONObject item = new JSONObject();
-//     
-//		for (String key : datas.keySet()) {
-//			Object value = datas.get(key);
-//			if (value != null) {
-//				if (value instanceof Map) {
-//					item.put(key, toJSON((Map<String, Object>) value));
-//				} else {
-//					item.put(key, value);
-//				}
-//			}
-//
-//		}
-//
-//		return item;
-//	}
 
 	private NodeDataExtractor getExtractor(NodeRef nodeRef, List<String> metadataFields) {
 
@@ -193,21 +177,21 @@ public class SearchWebScript extends AbstractSearchWebSrcipt {
 		String container = SiteHelper.extractContainerId(path);
 		if (container != null) {
 			if (container.equals("blog")) {
-				return new BlogDataExtractor(serviceRegistry,propertyService);
+				return new BlogDataExtractor(serviceRegistry,attributeExtractorService);
 			} else if (container.equals("discussions")) {
-				return new ForumDataExtractor(serviceRegistry,propertyService);
+				return new ForumDataExtractor(serviceRegistry,attributeExtractorService);
 			} else if (container.equals("calendar")) {
-				return new CalendarDataExtractor(serviceRegistry,propertyService);
+				return new CalendarDataExtractor(serviceRegistry,attributeExtractorService);
 			} else if (container.equals("wiki")) {
-				return new WikiDataExtractor(serviceRegistry,propertyService);
+				return new WikiDataExtractor(serviceRegistry,attributeExtractorService);
 			} else if (container.equals("links")) {
-				return new LinkDataExtractor(serviceRegistry,propertyService);
+				return new LinkDataExtractor(serviceRegistry,attributeExtractorService);
 			} else if (container.equals("dataLists")) {
-				return new DataListDataExtractor(serviceRegistry,propertyService);
+				return new DataListDataExtractor(serviceRegistry,attributeExtractorService);
 			}
 		}
 
-		return new ContentDataExtractor(metadataFields, serviceRegistry,propertyService);
+		return new ContentDataExtractor(metadataFields, serviceRegistry,attributeExtractorService);
 
 	}
 

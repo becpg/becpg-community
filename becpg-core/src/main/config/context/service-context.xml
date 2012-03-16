@@ -71,7 +71,7 @@
 		<property name="searchService" ref="searchService" />
 		<property name="namespaceService" ref="namespaceService"/>
 	</bean>
-	<bean id="propertyService" class="fr.becpg.repo.helper.impl.PropertyServiceImpl">		
+	<bean id="attributeExtractorService" class="fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl">		
 		<property name="nodeService" ref="nodeService" />
 		<property name="dictionaryService" ref="dictionaryService"/>
 		<property name="beCPGCacheService" ref="beCPGCacheService"/>
@@ -209,7 +209,7 @@
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="namespaceService" ref="namespaceService"/>
-		<property name="propertyService" ref="propertyService"/>
+		<property name="attributeExtractorService" ref="attributeExtractorService"/>
 		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 	
@@ -248,7 +248,45 @@
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>	
-		
+	
+	<!-- DataLists -->
+	
+	<bean id="multiLevelDataListService" class="fr.becpg.repo.entity.datalist.impl.MultiLevelDataListServiceImpl">
+		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="nodeService" ref="nodeService"/>
+		 <property name="advSearchService" ref="advSearchService"/>
+	</bean>
+	
+	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor" >
+		 <property name="attributeExtractorService" ref="attributeExtractorService"/>
+		<property name="nodeService" ref="nodeService"/>
+	   <property name="services" ref="ServiceRegistry"/>
+	   <property name="permissionService" ref="permissionService"/>
+	   <property name="advSearchService" ref="advSearchService"/>
+	   <property name="multiLevelDataListService" ref="multiLevelDataListService"/>
+	</bean>
+	
+	
+	<bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor" >
+	   <property name="attributeExtractorService" ref="attributeExtractorService"/>
+		<property name="nodeService" ref="nodeService"/>
+	   <property name="services" ref="ServiceRegistry"/>
+	   <property name="permissionService" ref="permissionService"/>
+	   <property name="advSearchService" ref="advSearchService"/>
+	</bean>
+	
+	<bean id="wUsedExtractor" class="fr.becpg.repo.entity.datalist.impl.WUsedExtractor" >
+	   <property name="attributeExtractorService" ref="attributeExtractorService"/>
+		<property name="nodeService" ref="nodeService"/>
+	   <property name="productService" ref="productService"/>
+	</bean>
+	
+	<bean id="dataListExtractorFactory"  class="fr.becpg.repo.entity.datalist.impl.DataListExtractorFactoryImpl">
+		<property name="simpleExtractor" ref="simpleExtractor"/>
+		<property name="wUsedExtractor" ref="wUsedExtractor"/>
+		<property name="multiLevelExtractor" ref="multiLevelExtractor"/>
+	</bean>
+	
 	
 	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">
 	</bean>

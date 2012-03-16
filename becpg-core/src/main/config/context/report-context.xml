@@ -23,7 +23,7 @@
 	<bean id="defaultProductReportExtractor" class="fr.becpg.repo.product.report.DefaultProductReportExtractor">
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="nodeService" ref="nodeService" />
-		<property name="propertyService" ref="propertyService" />
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="productDAO" ref="productDAO"/>
 		<property name="productDictionaryService" ref="productDictionaryService"/>
@@ -57,7 +57,7 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="entityListValuePlugin" ref="entityListValuePlugin" />
 		<property name="entityService" ref="entityService" />
-		<property name="propertyService" ref="propertyService"/>		
+		<property name="attributeExtractorService" ref="attributeExtractorService"/>		
 		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 	

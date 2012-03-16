@@ -21,6 +21,12 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.extensions.surf.util.AbstractLifecycleBean;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -38,8 +44,13 @@ import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
  * 
  * @author "Matthieu Laborie <laborima@gmail.com>"
  */
-public class SecurityServiceImpl implements SecurityService {
+@SuppressWarnings("rawtypes")
+public class SecurityServiceImpl implements SecurityService, ApplicationListener, ApplicationContextAware {
 
+
+	 private ProcessorLifecycle lifecycle = new ProcessorLifecycle();
+	
+	
 	/*
 	 * ACL keys / Group List
 	 */
@@ -176,10 +187,32 @@ public class SecurityServiceImpl implements SecurityService {
 		return nodeType.toString() + "_" + propName;
 	}
 
-	public void init() {
-		logger.debug("Init SecurityService");
-		try {
-			RunAsWork<Object> actionRunAs = new RunAsWork<Object>()
+
+	
+
+	@Override
+	public void onApplicationEvent(ApplicationEvent event) {
+		lifecycle.onApplicationEvent(event);
+	}
+	
+	
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
+	{
+	        lifecycle.setApplicationContext(applicationContext);
+	}
+
+	
+	 /**
+     * Hooks into Spring Application Lifecycle
+     */
+    private class ProcessorLifecycle extends AbstractLifecycleBean
+    {
+        @Override
+        protected void onBootstrap(ApplicationEvent event)
+        {
+        	logger.debug("Init SecurityService");
+        	RunAsWork<Object> actionRunAs = new RunAsWork<Object>()
                     {
                         @Override
     					public Object doWork() throws Exception
@@ -199,11 +232,16 @@ public class SecurityServiceImpl implements SecurityService {
                         }
                     };
                     AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
-			
-		} catch(Exception e){
-			logger.error(e,e);
-		}
-	}
+        	
+        }
+    
+        @Override
+        protected void onShutdown(ApplicationEvent event)
+        {
+        }
+    }
+	
+	
 
 	public void computeAcls() {
 		acls.clear();

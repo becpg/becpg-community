@@ -29,6 +29,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.config.format.PropertyFormats;
@@ -36,14 +37,14 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
-import fr.becpg.repo.helper.PropertyService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.security.SecurityService;
 
-public class PropertyServiceImpl implements PropertyService {
+public class AttributeExtractorServiceImpl implements AttributeExtractorService {
 
-	private static Log logger = LogFactory.getLog(PropertyServiceImpl.class);
+	private static Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);
 
 	private static final String PERSON_DISPLAY_CACHE = "fr.becpg.cache.personDisplayCache";
 	// private static final String SEARCH_CACHE = "fr.becpg.cache.searchCache";
@@ -129,6 +130,11 @@ public class PropertyServiceImpl implements PropertyService {
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
+	
+	@Override
+	public PropertyFormats getPropertyFormats() {
+		return propertyFormats;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -152,8 +158,7 @@ public class PropertyServiceImpl implements PropertyService {
 				if (value == null) {
 					value = (String) nodeService.getProperty(categoryNodeRef, ContentModel.PROP_NAME);
 				} else {
-					value += RepoConsts.LABEL_SEPARATOR
-							+ (String) nodeService.getProperty(categoryNodeRef, ContentModel.PROP_NAME);
+					value += RepoConsts.LABEL_SEPARATOR + (String) nodeService.getProperty(categoryNodeRef, ContentModel.PROP_NAME);
 				}
 			}
 		} else if (dataType.equals(DataTypeDefinition.BOOLEAN.toString())) {
@@ -191,15 +196,24 @@ public class PropertyServiceImpl implements PropertyService {
 		} else if (dataType.equals(DataTypeDefinition.MLTEXT.toString())) {
 
 			value = v.toString();
-		} else if (dataType.equals(DataTypeDefinition.DOUBLE.toString())
-				|| dataType.equals(DataTypeDefinition.FLOAT.toString())) {
+		} else if (dataType.equals(DataTypeDefinition.DOUBLE.toString()) || dataType.equals(DataTypeDefinition.FLOAT.toString())) {
 
 			if (propertyFormats.getDecimalFormat() != null) {
 				value = propertyFormats.getDecimalFormat().format(v);
 			} else {
 				value = v.toString();
 			}
-		} else {
+		} else if (dataType.equals(DataTypeDefinition.QNAME.toString())) {
+			if (v.equals(BeCPGModel.TYPE_COMPOLIST)) {
+				value = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_compoList.title");
+			} else if (v.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
+				value = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_packaging.title");
+			} else {
+				value = v.toString();
+			}
+		}
+
+		else {
 			TypeConverter converter = new TypeConverter();
 			value = converter.convert(propertyDef.getDataType(), v).toString();
 		}
@@ -208,7 +222,7 @@ public class PropertyServiceImpl implements PropertyService {
 	}
 
 	@Override
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields) {
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch) {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -219,112 +233,188 @@ public class PropertyServiceImpl implements PropertyService {
 		TypeDefinition typeDef = dictionaryService.getType(itemType);
 		Integer order = 0;
 		for (String field : metadataFields) {
-			QName fieldQname =  QName.createQName(field, namespaceService);
-			
-			
-			
+			QName fieldQname = QName.createQName(field, namespaceService);
+
 			if (hasReadAccess(itemType, field)) {
 
-				Map<String, Object> tmp = new LinkedHashMap<String, Object>();
-				
-				tmp= extractNodeData(nodeRef, fieldQname ,typeDef);
-				
-				if(tmp==null){
-					for(QName aspectName : nodeService.getAspects(nodeRef)){
-						AspectDefinition aspectDefinition  = dictionaryService.getAspect(aspectName);
-						tmp = extractNodeData(nodeRef, fieldQname ,aspectDefinition);
-						if(tmp!=null){
+				ClassAttributeDefinition propDef = getAttributeDef(fieldQname, typeDef);
+
+				if (propDef == null) {
+					for (QName aspectName : nodeService.getAspects(nodeRef)) {
+						AspectDefinition aspectDefinition = dictionaryService.getAspect(aspectName);
+						propDef = getAttributeDef(fieldQname, aspectDefinition);
+						if (propDef != null) {
 							break;
 						}
 					}
 				}
 
-				if(tmp!=null && tmp.size()>0){
-					logger.debug("Extract field : "+field);
-					tmp.put("order", order++);
-					ret.put(field, tmp);
-				} 
+				Object tmp = extractNodeData(nodeRef, propDef, isSearch, order++);
+
+				if (tmp != null) {
+					logger.debug("Extract field : " + field);
+					if (isSearch) {
+						ret.put(field, tmp);
+					} else {
+						String prefix = "prop_";
+						if (isAssoc(propDef)) {
+							prefix = "assoc_";
+						}
+						ret.put(prefix + field.replaceFirst(":", "_"), tmp);
+					}
+				}
 			}
 		}
 		if (logger.isDebugEnabled()) {
 			watch.stop();
-			logger.debug( getClass().getSimpleName()+" extract node data in  "
-					+ watch.getTotalTimeSeconds() );
+			logger.debug(getClass().getSimpleName() + " extract node data in  " + watch.getTotalTimeSeconds());
 		}
 		return ret;
 	}
 
-	private Map<String, Object> extractNodeData(NodeRef nodeRef, QName fieldQname, ClassDefinition typeDef) {
-		if(typeDef!=null){
-				PropertyDefinition propDef = typeDef.getProperties().get(fieldQname);
-				if (propDef != null) {
-		
-					return extractNodeData( nodeRef, propDef);
-		
-				} else {
-						AssociationDefinition assocDef = typeDef.getAssociations().get(fieldQname);
-						if (assocDef != null) {
-			
-							return extractNodeData( nodeRef, assocDef);
-			
-						} 
-				}
-		}
-		return null;
+	private boolean isAssoc(ClassAttributeDefinition propDef) {
+		return propDef instanceof AssociationDefinition;
 	}
 
-	private Map<String, Object> extractNodeData(NodeRef nodeRef, ClassAttributeDefinition attribute) {
+	private ClassAttributeDefinition getAttributeDef(QName fieldQname, ClassDefinition typeDef) {
+		if (typeDef != null) {
+			PropertyDefinition propDef = typeDef.getProperties().get(fieldQname);
+			if (propDef != null) {
+
+				return propDef;
+
+			} else {
+				AssociationDefinition assocDef = typeDef.getAssociations().get(fieldQname);
+				if (assocDef != null) {
+					return assocDef;
+				}
+			}
+		}
+		return null;
+
+	}
+
+	
+	
+	
+	private Object extractNodeData(NodeRef nodeRef, ClassAttributeDefinition attribute, boolean isSearch, int order) {
 		Map<String, Object> tmp = new HashMap<String, Object>();
-		String value = "";
+		if (isSearch) {
+			tmp.put("order", order);
+		}
+		Serializable value = null;
+		String displayName = "";
+		QName type = null;
+
 		// property
 		if (attribute instanceof PropertyDefinition) {
 
-			Serializable serializable = nodeService.getProperty(nodeRef, attribute.getName());
-			value = getStringValue((PropertyDefinition) attribute, serializable, propertyFormats);
-			tmp.put("type", ((PropertyDefinition) attribute).getDataType().getName().getPrefixedQName(namespaceService));
-			tmp.put("value", serializable);
+			value = nodeService.getProperty(nodeRef, attribute.getName());
+			displayName = getStringValue((PropertyDefinition) attribute, value, propertyFormats);
+			type = ((PropertyDefinition) attribute).getDataType().getName().getPrefixedQName(namespaceService);
+
+			if (isSearch) {
+				tmp.put("label", attribute.getTitle());
+				tmp.put("type", type);
+			} else if (type != null) {
+				tmp.put("metadata", extractMetadata(type, nodeRef));
+			}
+			tmp.put("displayValue", displayName);
+			tmp.put("value", value);
+			return tmp;
 
 		} else if (attribute instanceof AssociationDefinition) {// associations
 
 			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, attribute.getName());
+			if (isSearch) {
+				for (AssociationRef assocRef : assocRefs) {
 
-			for (AssociationRef assocRef : assocRefs) {
+					if (!displayName.isEmpty()) {
+						displayName += RepoConsts.LABEL_SEPARATOR;
+					}
 
-				if (!value.isEmpty())
-					value += RepoConsts.LABEL_SEPARATOR;
+					displayName += (String) nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME);
+				}
 
-				value += (String) nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME);
+				tmp.put("type", "subtype");
+				tmp.put("displayValue", displayName);
+				tmp.put("value", displayName);
+				return tmp;
+
+			} else {
+				List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+				for (AssociationRef assocRef : assocRefs) {
+					tmp = new HashMap<String, Object>();
+
+					type = nodeService.getType(assocRef.getTargetRef());
+					if (type != null) {
+						tmp.put("metadata", extractMetadata(type, assocRef.getTargetRef()));
+					}
+					tmp.put("displayValue", (String) nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME));
+					tmp.put("value", assocRef.getTargetRef().toString());
+					ret.add(tmp);
+				}
+				return ret;
 			}
-			tmp.put("type", "subtype");
-
-			tmp.put("value", value);
 
 		}
 
-		tmp.put("label", attribute.getTitle());
-		tmp.put("displayValue", value);
-
-		return tmp;
+		return null;
 	}
 
 	@Override
-	public Serializable getProperty(NodeRef nodeRef, QName propName ) {
-		Serializable value =  this.nodeService.getProperty(nodeRef, propName);
+	public String extractMetadata(QName type, NodeRef nodeRef) {
+		String metadata = "";
+		if (type.equals(ContentModel.TYPE_PERSON)) {
+			metadata = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME);
+		} else if (type.equals(ContentModel.TYPE_FOLDER)) {
+			metadata = "container";
+		} else {
+			metadata = type.toPrefixString(namespaceService).split(":")[1];
+			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
+				metadata += "-" + nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE);
+			}
+		}
+//		 else if (type.indexOf(":") > 0 && node.isSubType("cm:cmobject"))
+//	      {
+//	         obj = Evaluator.getContentObject(value);
+//	         if (obj == null)
+//	         {
+//	            return false;
+//	         }
+//	         objData.displayValue = obj.properties["cm:name"];
+//	         objData.metadata = obj.isContainer ? "container" : "document";
+//	      }
+//	    
+//		  else if(type == "cm:authorityContainer")
+//		  {
+//			 obj = Evaluator.getContentObject(value);
+//	         if (obj == null)
+//	         {
+//	            return false;
+//	         }
+//	         objData.displayValue = obj.properties["cm:authorityDisplayName"];
+//	         objData.metadata = "document";
+//		  }	  
+		
+		return metadata;
+	}
+
+	@Override
+	public Serializable getProperty(NodeRef nodeRef, QName propName) {
+		Serializable value = this.nodeService.getProperty(nodeRef, propName);
 		if (value instanceof Date) {
 			value = formatDate((Date) value);
 
 		}
 		return value;
 	}
-	
-	
 
 	@Override
 	public String formatDate(Date date) {
 		return propertyFormats.getDateFormat().format(date);
 	}
-	
-	
+
 	@Override
 	public String getPersonDisplayName(final String userId) {
 		if (userId == null) {
@@ -333,18 +423,16 @@ public class PropertyServiceImpl implements PropertyService {
 		if (userId.equalsIgnoreCase(AuthenticationUtil.getSystemUserName())) {
 			return AuthenticationUtil.getSystemUserName();
 		}
-		return beCPGCacheService.getFromUserCache(PERSON_DISPLAY_CACHE, userId,
-				new BeCPGCacheDataProviderCallBack<String>() {
-					public String getData() {
-						String displayName = "";
-						NodeRef personNodeRef = personService.getPerson(userId);
-						if (personNodeRef != null) {
-							displayName = nodeService.getProperty(personNodeRef, ContentModel.PROP_FIRSTNAME) + " "
-									+ nodeService.getProperty(personNodeRef, ContentModel.PROP_LASTNAME);
-						}
-						return displayName;
-					}
-				});
+		return beCPGCacheService.getFromUserCache(PERSON_DISPLAY_CACHE, userId, new BeCPGCacheDataProviderCallBack<String>() {
+			public String getData() {
+				String displayName = "";
+				NodeRef personNodeRef = personService.getPerson(userId);
+				if (personNodeRef != null) {
+					displayName = nodeService.getProperty(personNodeRef, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(personNodeRef, ContentModel.PROP_LASTNAME);
+				}
+				return displayName;
+			}
+		});
 
 	}
 
@@ -366,12 +454,10 @@ public class PropertyServiceImpl implements PropertyService {
 		return result;
 	}
 
-	
 	private boolean hasReadAccess(QName nodeType, String propName) {
 
 		return securityService.computeAccessMode(nodeType, propName) != SecurityService.NONE_ACCESS;
 
 	}
-
 
 }

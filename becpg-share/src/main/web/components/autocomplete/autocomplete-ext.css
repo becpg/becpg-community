@@ -168,3 +168,8 @@
 	background: url(../images/list-16.png) no-repeat;
 	padding-left: 20px;
 }
+
+.yui-ac-container span.resourceProduct {
+	background: url(../images/filetypes/generic-resourceProduct-16.png) no-repeat;
+	padding-left: 20px;
+}

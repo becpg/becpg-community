@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.json.JSONException;
@@ -167,11 +168,15 @@ public abstract class AbstractSearchWebSrcipt extends AbstractWebScript {
 			
 		}
 	
-		
+		String language = SearchService.LANGUAGE_FTS_ALFRESCO;
+		if(searchQuery==null){
+			searchQuery = advSearchService.getSearchQueryByProperties(datatype, term, tag, isRepo, siteId, containerId);
+		} else {
+			language = SearchService.LANGUAGE_LUCENE;
+		}
 
 
-		return advSearchService.queryAdvSearch(searchQuery, datatype, term, tag, criteriaMap, isRepo, siteId, containerId,
-				sortMap, maxResults!=null ? maxResults : -1);
+		return advSearchService.queryAdvSearch(searchQuery, language, datatype, criteriaMap, sortMap, maxResults!=null ? maxResults : -1);
 
 	}
 

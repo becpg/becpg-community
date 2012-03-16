@@ -15,7 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.repo.helper.PropertyService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
 
 public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
@@ -24,7 +24,7 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 
 	protected ServiceRegistry services;
 	
-	protected PropertyService propertyService;
+	protected AttributeExtractorService attributeExtractorService;
 
 	protected static final String PROP_NODEREF = "nodeRef";
 	protected static final String PROP_TAGS = "tags";
@@ -48,9 +48,9 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 	protected static final String PROP_SITE = "site";
 	
 
-	public AbstractNodeDataExtractor(ServiceRegistry services,PropertyService propertyService) {
+	public AbstractNodeDataExtractor(ServiceRegistry services,AttributeExtractorService attributeExtractorService) {
 		super();
-		this.propertyService = propertyService;
+		this.attributeExtractorService = attributeExtractorService;
 		this.services = services;
 		this.nodeService = services.getNodeService();
 	}
@@ -69,7 +69,7 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 		try {
 
 					String path = nodeService.getPath(nodeRef).toPrefixString(services.getNamespaceService());
-					String displayPath = propertyService.getDisplayPath(nodeRef);
+					String displayPath = attributeExtractorService.getDisplayPath(nodeRef);
 
 					String siteId = SiteHelper.extractSiteId(path, displayPath);
 					String containerId = SiteHelper.extractContainerId(path);
@@ -87,8 +87,8 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 					Map<String, Object> ret = doExtract(nodeRef, itemType, site);
 					
 					ret.put(PROP_ITEMTYPE, itemType.toPrefixString(services.getNamespaceService()));
-					ret.put(PROP_MODIFIER_DISPLAY, propertyService.getPersonDisplayName((String) ret.get(PROP_MODIFIER)));
-					ret.put(PROP_CREATOR_DISPLAY, propertyService.getPersonDisplayName((String) ret.get(PROP_CREATOR)));
+					ret.put(PROP_MODIFIER_DISPLAY, attributeExtractorService.getPersonDisplayName((String) ret.get(PROP_MODIFIER)));
+					ret.put(PROP_CREATOR_DISPLAY, attributeExtractorService.getPersonDisplayName((String) ret.get(PROP_CREATOR)));
 					if (containerId != null) {
 						ret.put(PROP_CONTAINER, containerId);
 					}

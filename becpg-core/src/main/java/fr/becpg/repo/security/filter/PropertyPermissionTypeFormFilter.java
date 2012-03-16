@@ -30,7 +30,7 @@ public class PropertyPermissionTypeFormFilter  extends AbstractPropertyPermissio
 	@Override
 	public void afterGenerate(TypeDefinition type, List<String> fields,
 			List<String> forcedFields, Form form, Map<String, Object> context) {
-
+		
 		logger.debug("afterGenerate"+form.toString());
 		filterFormFields(type.getName(), form);			
 	

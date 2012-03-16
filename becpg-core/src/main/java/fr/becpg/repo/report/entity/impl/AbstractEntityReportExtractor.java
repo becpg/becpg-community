@@ -28,7 +28,7 @@ import org.springframework.core.io.ClassPathResource;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.helper.PropertyService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
 
 public abstract class AbstractEntityReportExtractor implements EntityReportExtractor {
@@ -56,7 +56,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	
 	protected NamespaceService namespaceService;
 	
-	protected PropertyService propertyService;
+	protected AttributeExtractorService attributeExtractorService;
 
 	protected NodeService nodeService;
 	
@@ -88,11 +88,13 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	}
 
 	/**
-	 * @param propertyService the propertyService to set
+	 * @param attributeExtractorService the propertyService to set
 	 */
-	public void setPropertyService(PropertyService propertyService) {
-		this.propertyService = propertyService;
+
+	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
+		this.attributeExtractorService = attributeExtractorService;
 	}
+
 
 
 	/**
@@ -139,7 +141,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 				String value = VALUE_NULL;				
 				if (property.getValue() != null) {
 					
-					value = propertyService.getStringValue(propertyDef, property.getValue(), propertyFormats);
+					value = attributeExtractorService.getStringValue(propertyDef, property.getValue(), propertyFormats);
 				}			
 				
 				values.put(propertyDef, value);

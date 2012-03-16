@@ -16,7 +16,7 @@ import fr.becpg.config.format.PropertyFormats;
  * @author querephi
  *
  */
-public interface PropertyService {
+public interface AttributeExtractorService {
 
 	/**
 	 * Get the property value formated for UI (share, comparison, etc...)
@@ -49,7 +49,7 @@ public interface PropertyService {
 	 * @param metadataFields
 	 * @return
 	 */
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields);
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch);
 
 	/**
 	 * 
@@ -72,5 +72,20 @@ public interface PropertyService {
 	 * @return
 	 */
 	public String formatDate(Date date);
+
+	/**
+	 * 
+	 * @param type
+	 * @param nodeRef
+	 * @return
+	 */
+	public String extractMetadata(QName type, NodeRef nodeRef);
+
+	/**
+	 * 
+	 * @return
+	 */
+	public PropertyFormats getPropertyFormats();
+
 	
 }

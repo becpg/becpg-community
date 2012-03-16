@@ -9,7 +9,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.repo.helper.PropertyService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 
 public class LinkDataExtractor extends AbstractNodeDataExtractor  {
 
@@ -24,8 +24,8 @@ public class LinkDataExtractor extends AbstractNodeDataExtractor  {
 	static final QName PROP_LINK_TITLE = QName.createQName(MODEL_1_0_URI, "title");
 	
 
-	public LinkDataExtractor(ServiceRegistry services,PropertyService propertyService) {
-		super(services,propertyService);
+	public LinkDataExtractor(ServiceRegistry services,AttributeExtractorService attributeExtractorService) {
+		super(services,attributeExtractorService);
 	}
 
 	@Override
@@ -42,17 +42,17 @@ public class LinkDataExtractor extends AbstractNodeDataExtractor  {
 		Map<String, Object> ret = new HashMap<String, Object>();
 		
 		 ret.put(PROP_NODEREF, nodeRef.toString());
-		 ret.put(PROP_TAGS, propertyService.getTags(nodeRef));
+		 ret.put(PROP_TAGS, attributeExtractorService.getTags(nodeRef));
 
-		 ret.put(PROP_NAME,  propertyService.getProperty(nodeRef,ContentModel.PROP_NAME));
-		 ret.put(PROP_DISPLAYNAME, propertyService.getProperty(nodeRef,PROP_LINK_TITLE));
-		 ret.put(PROP_DESCRIPTION, propertyService.getProperty(nodeRef,ContentModel.PROP_DESCRIPTION));
+		 ret.put(PROP_NAME,  attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_NAME));
+		 ret.put(PROP_DISPLAYNAME, attributeExtractorService.getProperty(nodeRef,PROP_LINK_TITLE));
+		 ret.put(PROP_DESCRIPTION, attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_DESCRIPTION));
 		
-		 ret.put(PROP_MODIFIER,  propertyService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
-		 ret.put(PROP_MODIFIED,  propertyService.getProperty(nodeRef, ContentModel.PROP_MODIFIED));
+		 ret.put(PROP_MODIFIER,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
+		 ret.put(PROP_MODIFIED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIED));
 		
-		 ret.put(PROP_CREATED,  propertyService.getProperty(nodeRef, ContentModel.PROP_CREATED));
-		 ret.put(PROP_CREATOR,  propertyService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
+		 ret.put(PROP_CREATED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATED));
+		 ret.put(PROP_CREATOR,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
 	
 		 ret.put(PROP_TYPE, "link");
 		 ret.put(PROP_SIZE, getSize(nodeRef));
