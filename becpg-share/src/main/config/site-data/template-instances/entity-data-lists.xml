@@ -64,6 +64,7 @@
 				<pagination>true</pagination>
 				<filter>true</filter>
 				<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
+				<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
 			</properties>
 		</component>
 

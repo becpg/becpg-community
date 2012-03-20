@@ -25,3 +25,17 @@ VALUES;Pots - Verres;Pots;Verres
 VALUES;Opercules - Aluminium;Opercules;Opercules 
 VALUES;Briques - Briques cartons;Briques;Briques cartons
 VALUES;Briques - Briques plastiques;Briques;Briques plastiques
+
+
+PATH;/System/ProductHierarchy/PackagingKit_Hierarchy1;;
+TYPE;bcpg:listValue;;
+COLUMNS;cm:name;;
+VALUES;-;-;-
+VALUES;Palettisation;;
+
+PATH;/System/ProductHierarchy/PackagingKit_Hierarchy2;;
+TYPE;bcpg:linkedValue;;
+COLUMNS;cm:name;bcpg:lkvPrevValue;bcpg:lkvValue
+VALUES;-;-;-
+VALUES;Palettisation - -;-;-
+

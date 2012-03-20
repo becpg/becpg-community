@@ -18,6 +18,8 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
 public class MultiLevelExtractor extends SimpleExtractor {
 
+	private static final String PROP_DEPTH = "depth";
+
 	private static Log logger = LogFactory.getLog(MultiLevelExtractor.class);
 
 	MultiLevelDataListService multiLevelDataListService;
@@ -53,7 +55,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			// if(currIndex>=startIndex && currIndex< (startIndex+pageSize)){
 			NodeRef nodeRef = entry.getKey();
 			Map<String, Object> props = new HashMap<String, Object>();
-			props.put("depth", listData.getDepth());
+			props.put(PROP_DEPTH, listData.getDepth()-1);
 			props.put(PROP_ACCESSRIGHT, listData.getDepth()<=1 && hasWriteAccess);
 			ret.getItems().add(extract(nodeRef, metadataFields, props));
 			currIndex++;
@@ -74,7 +76,10 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> depth = (Map<String, Object>) tmp.get("prop_bcpg_depthLevel");
 			if (depth != null) {
-				depth.put("value", (depth.get("value") != null ? (Integer) depth.get("value") : 0) + (Integer) props.get("depth"));
+				Integer value = (depth.get("value") != null ? (Integer) depth.get("value") : 0) + (Integer) props.get(PROP_DEPTH);
+				
+				depth.put("value", value);
+				depth.put("displayValue", value);
 			}
 		}
 

@@ -320,9 +320,16 @@ public class ImportEntityXmlVisitor {
 
 		if (name != null && name.length() > 0) {
 			runnedQuery += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, name, code != null && code.length() > 0 ? LuceneHelper.Operator.OR : null);
-			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, 1);
+			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, 15);
 			if (ret.size() > 0) {
 				logger.debug("Found node for query :" + runnedQuery);
+        		for(NodeRef node : ret){
+        			if(name.equals(nodeService.getProperty(node, ContentModel.PROP_NAME))){
+        				return node;
+        			}
+        		}
+				
+				
 				return ret.get(0);
 			}
 		}

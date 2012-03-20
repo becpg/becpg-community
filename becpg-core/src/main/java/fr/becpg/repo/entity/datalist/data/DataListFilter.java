@@ -12,19 +12,19 @@ import org.json.JSONException;
 
 public class DataListFilter {
 
+	private String filterQuery = null;
 	
+	private NodeRef entityNodeRef= null;
 	
-	private String filterQuery;
+	private NodeRef dataListNodeRef= null;
 	
-	private NodeRef entityNodeRef;
+	private NodeRef nodeRef= null;
 	
-	private NodeRef dataListNodeRef;
-	
-	private Map<String, String> criteriaMap;
+	private Map<String, String> criteriaMap = null;
 	
 	private Map<String, Boolean> sortMap = new HashMap<String, Boolean>();
 	
-	private  QName dataType;
+	private  QName dataType = null;
 	
 	
 	public DataListFilter() {
@@ -103,19 +103,26 @@ public class DataListFilter {
 		return getSearchQuery(this.dataListNodeRef);
 	}
 	
+	
+	public void setNodeRef(NodeRef nodeRef) {
+		this.nodeRef = nodeRef;
+	}
 
 	public String getSearchQuery(NodeRef dataListNodeRef) {
 		return filterQuery + " +PARENT:\"" + dataListNodeRef + "\" ";
 	}
 	
-	public String buildQueryFilter( String filterId, String filterData, String argDays ) throws JSONException {
+	public boolean isSimpleItem() {
+		return nodeRef!=null;
+	}
 
+
+	public void buildQueryFilter( String filterId, String filterData, String argDays ) throws JSONException {
 
 		filterQuery = " +TYPE:\"" + dataType.toString() + "\"";
 
 		// Common types and aspects to filter from the UI
-		String searchQueryDefaults = " -TYPE:\"systemfolder\"" + " -TYPE:\"fm:forums\"" + " -TYPE:\"fm:forum\"" + " -TYPE:\"fm:topic\"" + " -TYPE:\"fm:post\""
-				+ " -TYPE:\"cm:systemfolder\"" + " -@cm\\:lockType:READ_ONLY_LOCK";
+		String searchQueryDefaults = " -TYPE:\"systemfolder\""  + " -@cm\\:lockType:READ_ONLY_LOCK";
 
 		if (filterId != null) {
 
@@ -133,18 +140,11 @@ public class DataListFilter {
 
 					}
 				}
-
 				Calendar date = Calendar.getInstance();
 				String toQuery = date.get(Calendar.YEAR) + "\\-" + (date.get(Calendar.MONTH) + 1) + "\\-" + date.get(Calendar.DAY_OF_MONTH);
 				date.add(Calendar.DATE, -dayCount);
 				String fromQuery = date.get(Calendar.YEAR) + "\\-" + (date.get(Calendar.MONTH) + 1) + "\\-" + date.get(Calendar.DAY_OF_MONTH);
 
-				// if (nodeRef == "alfresco://sites/home")
-				// {
-				// // Special case for "Sites home" pseudo-nodeRef
-				// searchQuery += "/*/cm:dataLists";
-				// }
-				filterQuery += "\"";
 				filterQuery += " +@cm\\:" + dateField + ":[" + fromQuery + "T00\\:00\\:00.000 TO " + toQuery + "T23\\:59\\:59.999]";
 				if (onlySelf) {
 					filterQuery += " +@cm\\:" + ownerField + ":\"" + getUserName() + '"';
@@ -154,17 +154,10 @@ public class DataListFilter {
 				sortMap.put("@cm:" + dateField, false);
 
 			} else if (filterId.equals("createdByMe")) {
-
-				// if (nodeRef == "alfresco://sites/home")
-				// {
-				// // Special case for "Sites home" pseudo-nodeRef
-				// searchQuery += "/*/cm:dataLists";
-				// }
-				filterQuery += "\"";
 				filterQuery += " +@cm\\:creator:\"" + getUserName() + '"';
 				filterQuery += " -TYPE:\"folder\"";
 			} else if (filterId.equals("node")) {
-				filterQuery = "+ID:\"" + dataListNodeRef + "\"";
+				filterQuery = "+ID:\"" + nodeRef + "\"";
 			} else if (filterId.equals("tag")) {
 				// Remove any trailing "/" character
 				if (filterData.charAt(filterData.length() - 1) == '/') {
@@ -174,7 +167,7 @@ public class DataListFilter {
 			}
 		}
 
-		return filterQuery += searchQueryDefaults;
+		 filterQuery += searchQueryDefaults;
 
 	}
 	

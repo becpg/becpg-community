@@ -197,7 +197,7 @@ function main()
 		var formId = "datagrid";
 		if(list == "WUsed")
 		{
-			formId = "datagridWUsed"
+			formId = "datagridWUsed";
 		}
       var formConfig = getFormConfig(itemType, formId);
       

@@ -133,6 +133,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 		DataListPagination pagination = new DataListPagination();
 		DataListFilter dataListFilter = new DataListFilter();
+
 		
 		pagination.setMaxResults(getNumParameter(req, PARAM_MAX_RESULTS));
 		pagination.setPage(getNumParameter(req, PARAM_PAGE));
@@ -150,7 +151,13 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			String storeId = templateArgs.get(PARAM_STORE_ID);
 			String nodeId = templateArgs.get(PARAM_ID);
 			if(storeType!=null && storeId!=null && nodeId!=null){
-				dataListFilter.setDataListNodeRef(new NodeRef(storeType, storeId, nodeId));
+				NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
+				if(req.getServiceMatch().getPath().contains("/item/node")){
+					dataListFilter.setNodeRef(nodeRef);
+					dataListFilter.setDataListNodeRef(nodeService.getPrimaryParent(nodeRef).getParentRef());
+				} else {
+					dataListFilter.setDataListNodeRef(nodeRef);
+				}
 			}
 		}
 		
@@ -177,6 +184,10 @@ public class EntityDataListWebScript extends AbstractWebScript {
 					filterId = "all";
 				}
 			}
+			
+			if(dataListFilter.isSimpleItem()){
+				filterId = "node";
+			}
 
 
 			if (filterId.equals("filterform") && filterData != null) {
@@ -185,7 +196,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			}
 
 			List<String> metadataFields = new LinkedList<String>();
-			if (json.has(PARAM_FIELDS)) {
+			if (json!=null && json.has(PARAM_FIELDS)) {
 				JSONArray jsonFields = (JSONArray) json.get(PARAM_FIELDS);
 
 				for (int i = 0; i < jsonFields.length(); i++) {
@@ -197,7 +208,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			if (entityNodeRef != null) {
 				hasWriteAccess = securityService.computeAccessMode(nodeService.getType(new NodeRef(entityNodeRef)), itemType) == SecurityService.WRITE_ACCESS;
 			}
-
+			
 			dataListFilter.buildQueryFilter(filterId, filterData, argDays);
 
 			if (logger.isDebugEnabled()) {
@@ -207,16 +218,17 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			}
 
 
-			DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListName, dataType);
+			DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter, dataListName);
 
 
 			PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields, pagination, hasWriteAccess);
 
 			JSONObject ret = new JSONObject();
-			ret.put("startIndex", pagination.getPage());
-			ret.put("pageSize", pagination.getPageSize());
-			ret.put("totalRecords", extractedItems.getFullListSize());
-
+			if(!dataListFilter.isSimpleItem()){
+				ret.put("startIndex", pagination.getPage());
+				ret.put("pageSize", pagination.getPageSize());
+				ret.put("totalRecords", extractedItems.getFullListSize());
+			}
 			JSONObject metadata = new JSONObject();
 
 			JSONObject parent = new JSONObject();
@@ -228,7 +240,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			JSONObject userAccess = new JSONObject();
 			
 			
-			userAccess.put("create", (hasWriteAccess && permissionService.hasPermission(dataListFilter.getDataListNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
+			userAccess.put("create", (hasWriteAccess 
+					&& permissionService.hasPermission(dataListFilter.getDataListNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
 			permissions.put("userAccess",userAccess);
 			
 			parent.put("permissions", permissions);
@@ -236,8 +249,11 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			metadata.put("parent", parent);
 
 			ret.put("metadata", metadata);
-
-			ret.put("items", processResults(extractedItems));
+			if(dataListFilter.isSimpleItem()){
+				ret.put("item", new JSONObject(extractedItems.getItems().get(0)));
+			} else {
+				ret.put("items", processResults(extractedItems));
+			}
 
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");

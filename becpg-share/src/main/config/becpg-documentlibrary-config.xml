@@ -164,7 +164,18 @@
 				label.code}{erpCode label.erpCode}{eanCode label.eanCode}</line> <line index="10" 
 				id="bcpg:suppliers" /> <line index="10" id="bcpg:clients"" /> </template> -->
 		</metadata-templates>
-
+      <!--
+         File upload configuration
+      -->
+      <file-upload>
+         <!--
+            Adobe Flash™
+            In certain environments, an HTTP request originating from Flash cannot be authenticated using an existing session.
+            See: http://bugs.adobe.com/jira/browse/FP-4830
+            For these cases, it is useful to disable the Flash-based uploader for Share Document Libraries.
+         -->
+         <adobe-flash-enabled>true</adobe-flash-enabled>
+      </file-upload>
 
 	</config>
 

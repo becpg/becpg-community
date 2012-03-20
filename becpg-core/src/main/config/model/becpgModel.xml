@@ -811,7 +811,8 @@
 			DE CARACT. ________________________________________________________________ -->
 
 		<type name="bcpg:entityListItem">
-			<parent>dl:dataListItem</parent>
+			<!-- <parent>dl:dataListItem</parent> -->
+			<parent>cm:content</parent>
 		</type>
 
 		<type name="bcpg:productListItem">

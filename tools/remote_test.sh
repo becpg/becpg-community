@@ -17,7 +17,7 @@ if [ $# -ne 1 ]
 		do
 		   nodeRef=`cat list.xml | xpath -q -e //*[$count]/@nodeRef | sed s/nodeRef=//g |sed s/\"//g`
 		    
-		   echo "Getting $nodeRef\n"; 
+		   echo "\nGetting $nodeRef"; 
 			wget --quiet --http-user=$USER --http-password=$PASSWORD  --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us -O entity.xml $REMOTE_SERVER?nodeRef=$nodeRef
 			curl --silent -H "Content-Type: application/xml"  -X PUT --data @entity.xml  $LOCAL_SERVER?callback=$REMOTE_SERVER&callbackUser=$USER&callbackPassword=$PASSWORD > nodeRef
 			

@@ -69,12 +69,6 @@
 		<property name="entityService" ref="entityService" />
 	</bean>
 
-	<!-- Entity where used -->
-	<bean id="webscript.fr.becpg.entity.entityWUsed.post" class="fr.becpg.repo.web.scripts.entity.EntityWUsedWebScript"
-		parent="webscript">
-		<property name="productService" ref="productService" />
-		<property name="productDictionaryService" ref="productDictionaryService" />
-	</bean>
 
 	<!-- Entity new version form -->
 	<bean id="webscript.fr.becpg.entity.form-checkin.post" class="fr.becpg.repo.web.scripts.entity.FormCheckInWebScript"

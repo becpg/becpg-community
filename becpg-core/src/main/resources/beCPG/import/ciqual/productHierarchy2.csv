@@ -23,6 +23,7 @@ VALUES;Matières grasses - Beurres et matières grasses laitières;Matières grasses
 VALUES;Matières grasses - Autres matières grasses animales;Matières grasses;Autres matières grasses animales
 VALUES;Matières grasses - Margarines et matières grasses composées;Matières grasses;Margarines et matières grasses composées
 VALUES;Matières grasses - Huiles et graisses végétales;Matières grasses;Huiles et graisses végétales
+VALUES;Produits de la mer - Poissons;Produits de la mer;Poissons
 VALUES;Produits de la mer - Poissons et batraciens non transformés;Produits de la mer;Poissons et batraciens non transformés
 VALUES;Produits de la mer - Produits à base de poissons;Produits de la mer;Produits à base de poissons
 VALUES;Produits de la mer - Crustacés et mollusques non transformés;Produits de la mer;Crustacés et mollusques non transformés
@@ -100,6 +101,11 @@ VALUES;Plats composés - Plats à base de céréales ou pâtes;Plats composés;Plats à
 VALUES;Plats composés - Plats à base de fromage;Plats composés;Plats à base de fromage
 VALUES;Plats composés - Pizzas, crêpes et tartes salées;Plats composés;Pizzas, crêpes et tartes salées
 VALUES;Sandwichs - Sandwichs;Sandwichs;Sandwichs
+VALUES;Produits japonais - Maki;Produits japonais;Maki
+VALUES;Produits japonais - Brochette;Produits japonais;Brochette
+VALUES;Produits japonais - Sushi;Produits japonais;Sushi
+VALUES;Produits japonais - Sashimi;Produits japonais;Sashimi
+VALUES;Menu - kits - Sushis;Menu - kits;Sushis
 ;;;
 ;;;
 ;;;

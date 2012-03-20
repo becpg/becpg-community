@@ -25,26 +25,11 @@ if (beCPG.module.EntityDataGrid) {
 
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	   propertyName : "boolean_bcpg:allergenListVoluntary",
+	   propertyName : ["boolean_bcpg:allergenListVoluntary","boolean_bcpg:allergenListInVoluntary"],
 	   renderer : function(oRecord, data, label, scope) {
 		   var booleanValueTrue = scope.msg("data.boolean.true");
 		   var booleanValueFalse = scope.msg("data.boolean.false");
-		   if (data.displayValue) {
-			   return '<span class="presentAllergen">'
-			         + Alfresco.util.encodeHTML(data.value == true ? booleanValueTrue : booleanValueFalse) + '</span>';
-		   } else {
-			   return Alfresco.util.encodeHTML(data.value == true ? booleanValueTrue : booleanValueFalse);
-		   }
-	   }
-
-	});
-
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	   propertyName : "boolean_bcpg:allergenListInVoluntary",
-	   renderer : function(oRecord, data, label, scope) {
-		   var booleanValueTrue = scope.msg("data.boolean.true");
-		   var booleanValueFalse = scope.msg("data.boolean.false");
-		   if (data.displayValue) {
+		   if (data.value) {
 			   return '<span class="presentAllergen">'
 			         + Alfresco.util.encodeHTML(data.value == true ? booleanValueTrue : booleanValueFalse) + '</span>';
 		   } else {

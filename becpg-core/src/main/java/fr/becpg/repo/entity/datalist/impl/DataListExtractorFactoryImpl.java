@@ -1,10 +1,9 @@
 package fr.becpg.repo.entity.datalist.impl;
 
-import org.alfresco.service.namespace.QName;
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
+import fr.becpg.repo.entity.datalist.data.DataListFilter;
 
 public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 
@@ -32,11 +31,13 @@ public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 
 
 	@Override
-	public DataListExtractor getExtractor(String dataListName,QName dataType) {
-		if(dataListName!=null && dataListName.equals("WUsed")){
-			return wUsedExtractor;
-		} else if(dataType!=null && dataType.equals(BeCPGModel.TYPE_COMPOLIST)){
-			return multiLevelExtractor;
+	public DataListExtractor getExtractor(DataListFilter dataListFilter,String dataListName) {
+		if(!dataListFilter.isSimpleItem()){
+			if(dataListName!=null && dataListName.equals("WUsed")){
+				return wUsedExtractor;
+			} else if(dataListFilter.getDataType()!=null && dataListFilter.getDataType().equals(BeCPGModel.TYPE_COMPOLIST)){
+				return multiLevelExtractor;
+			}
 		}
 		return simpleExtractor;
 	}
