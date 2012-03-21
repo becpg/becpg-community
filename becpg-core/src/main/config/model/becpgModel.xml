@@ -678,6 +678,11 @@
 		<type name="bcpg:approvalNumber">
 			<parent>cm:content</parent>			
 		</type>
+		
+		<!-- Entity Charact View -->
+		
+		
+		
 		<!-- _______________________________________ COMPO ________________________________________________ -->
 		<type name="bcpg:compoList">
 			<parent>bcpg:productListItem</parent>

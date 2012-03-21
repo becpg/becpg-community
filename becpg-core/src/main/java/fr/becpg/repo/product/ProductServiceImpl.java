@@ -3,11 +3,9 @@
  */
 package fr.becpg.repo.product;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -24,15 +22,9 @@ import fr.becpg.model.MPMModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.wused.WUsedListService;
-import fr.becpg.repo.entity.wused.data.WUsedData;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CompoListUnit;
-import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.FormulateException;
 
@@ -45,8 +37,6 @@ import fr.becpg.repo.product.formulation.FormulateException;
 public class ProductServiceImpl implements ProductService {
 
 	
-	private static final int WUSED_LEVEL = 1;	
-
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductServiceImpl.class);	
 	
@@ -86,7 +76,6 @@ public class ProductServiceImpl implements ProductService {
 	/** The ownable service. */
 	private OwnableService ownableService;
 	
-	private WUsedListService wUsedListService;
 	
 	/**
 	 * Sets the node service.
@@ -189,11 +178,6 @@ public class ProductServiceImpl implements ProductService {
 		this.ownableService = ownableService;
 	}	
 	
-	
-
-	public void setwUsedListService(WUsedListService wUsedListService) {
-		this.wUsedListService = wUsedListService;
-	}
 
 	/**
 	 * Formulate the product (update DB)
@@ -373,67 +357,5 @@ public class ProductServiceImpl implements ProductService {
     }
     
     
-	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.product.ProductService#getWUsedProduct(org.alfresco.service.cmr.repository.NodeRef)
-	 */
-	@Override
-	public List<CompoListDataItem> getWUsedCompoList(NodeRef productNodeRef) {
-		
-		logger.debug("getWUsedProduct");
-		
-		List<CompoListDataItem> wUsedList = new ArrayList<CompoListDataItem>();		
-		WUsedData wUsedData = wUsedListService.getWUsedEntity(productNodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT, WUSED_LEVEL);
-		
-		for(Map.Entry<NodeRef, WUsedData> kv : wUsedData.getRootList().entrySet()){
-			
-			Map<QName, Serializable> properties = nodeService.getProperties(kv.getKey());
-
-			CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
-			
-			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), WUSED_LEVEL, 
-										(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), 
-										(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
-										(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), 
-										compoListUnit, 
-										(Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), 
-										(String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), 
-										(String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), 
-										kv.getValue().getEntityNodeRef());
-			
-			wUsedList.add(compoListDataItem);
-		}
-		
-		logger.debug("wUsedList size" + wUsedList.size());
-		
-		return wUsedList;
-	}
-	
-	@Override
-	public List<PackagingListDataItem> getWUsedPackagingList(NodeRef productNodeRef) {
-		
-		logger.debug("getWUsedProduct");
-		
-		List<PackagingListDataItem> wUsedList = new ArrayList<PackagingListDataItem>();
-		WUsedData wUsedData = wUsedListService.getWUsedEntity(productNodeRef, BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT, WUSED_LEVEL);
-		
-		for(Map.Entry<NodeRef, WUsedData> kv : wUsedData.getRootList().entrySet()){
-			
-			Map<QName, Serializable> properties = nodeService.getProperties(kv.getKey());			
-			PackagingListUnit packagingListUnit = PackagingListUnit.valueOf((String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_UNIT));							
-			
-			PackagingListDataItem packagingListDataItem = new PackagingListDataItem(kv.getKey(), 									
-						(Float)properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY), 
-						packagingListUnit, 
-						(String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), 
-						kv.getValue().getEntityNodeRef());
-			
-			wUsedList.add(packagingListDataItem);
-		}
-		
-		logger.debug("wUsedList size" + wUsedList.size());
-		
-		return wUsedList;
-	}
 
 }

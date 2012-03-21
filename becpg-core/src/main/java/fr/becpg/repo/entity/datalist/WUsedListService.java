@@ -1,11 +1,11 @@
-package fr.becpg.repo.entity.wused;
+package fr.becpg.repo.entity.datalist;
 
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.repo.entity.wused.data.WUsedData;
+import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
 public interface WUsedListService {
 
@@ -15,7 +15,7 @@ public interface WUsedListService {
      * @param associationName
      * @param maxDepthLevel
      */
-    public WUsedData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel);
+    public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel);
     
     /**
      * Evaluate the WUsed associations

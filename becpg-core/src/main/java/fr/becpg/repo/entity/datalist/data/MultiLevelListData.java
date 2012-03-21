@@ -2,6 +2,7 @@ package fr.becpg.repo.entity.datalist.data;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -43,6 +44,17 @@ public class MultiLevelListData {
 	@Override
 	public String toString() {
 		return "MultiLevelListData [depth=" + depth + ", tree=" + tree + ", entityNodeRef=" + entityNodeRef + "]";
+	}
+
+	public int getSize() {
+		return getSize(this,0);
+	}
+
+	private int getSize(MultiLevelListData multiLevelListData, int currSize) {
+		for (Entry<NodeRef, MultiLevelListData> entry : multiLevelListData.getTree().entrySet()) {
+			currSize = getSize(entry.getValue(), currSize+1);
+		}
+		return currSize;
 	}
 
 	

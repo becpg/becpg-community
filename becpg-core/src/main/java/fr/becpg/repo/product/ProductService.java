@@ -3,13 +3,9 @@
  */
 package fr.becpg.repo.product;
 
-import java.util.List;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.formulation.FormulateException;
 
 // TODO: Auto-generated Javadoc
@@ -45,19 +41,5 @@ public interface ProductService {
      */
     public void classifyProduct(NodeRef containerNodeRef, NodeRef productNodeRef);    
     
-    /**
-     * Gets the WUsed product of the compoList
-     *
-     * @param productNodeRef the product node ref
-     * @return the WUsed product
-     */
-    public List<CompoListDataItem> getWUsedCompoList(NodeRef productNodeRef);
-    
-    /**
-     * Gets the WUsed product of the packagingList
-     *
-     * @param productNodeRef the product node ref
-     * @return the WUsed product
-     */
-    public List<PackagingListDataItem> getWUsedPackagingList(NodeRef productNodeRef);
+   
 }

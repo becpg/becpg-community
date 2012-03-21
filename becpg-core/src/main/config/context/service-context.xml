@@ -278,7 +278,11 @@
 	<bean id="wUsedExtractor" class="fr.becpg.repo.entity.datalist.impl.WUsedExtractor" >
 	   <property name="attributeExtractorService" ref="attributeExtractorService"/>
 		<property name="nodeService" ref="nodeService"/>
-	   <property name="productService" ref="productService"/>
+	   <property name="services" ref="ServiceRegistry"/>
+	   <property name="permissionService" ref="permissionService"/>
+	   <property name="advSearchService" ref="advSearchService"/>
+	   <property name="wUsedListService" ref="wUsedListService"/>
+	   <property name="namespaceService" ref="namespaceService"/>
 	</bean>
 	
 	<bean id="dataListExtractorFactory"  class="fr.becpg.repo.entity.datalist.impl.DataListExtractorFactoryImpl">
@@ -339,7 +343,7 @@
 	</bean>
 	
 	<!-- WUsedList -->
-	<bean id="wUsedListService" class="fr.becpg.repo.entity.wused.WUsedListServiceImpl">
+	<bean id="wUsedListService" class="fr.becpg.repo.entity.datalist.impl.WUsedListServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 	</bean>
 
@@ -375,7 +379,6 @@
 		<property name="ingsCalculatingVisitor" ref="ingsCalculatingVisitor" />		
 		<property name="repoService" ref="repoService" />
 		<property name="ownableService" ref="ownableService"/>
-		<property name="wUsedListService" ref="wUsedListService" />
 	</bean>
 	
 	<!-- Formulation visitors -->

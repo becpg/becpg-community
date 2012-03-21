@@ -1,4 +1,4 @@
-package fr.becpg.repo.entity.wused;
+package fr.becpg.repo.entity.datalist.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +15,8 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
-import fr.becpg.repo.entity.wused.data.WUsedData;
+import fr.becpg.repo.entity.datalist.WUsedListService;
+import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
 public class WUsedListServiceImpl implements WUsedListService {
 
@@ -28,15 +29,16 @@ public class WUsedListServiceImpl implements WUsedListService {
 	}
 
 	@Override
-	public WUsedData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel) {
+	public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel) {
 		
-		Map<NodeRef, WUsedData> wUsedLoadedList = new HashMap<NodeRef, WUsedData>();
+		Map<NodeRef, MultiLevelListData> wUsedLoadedList = new HashMap<NodeRef, MultiLevelListData>();
 		return getWUsedEntity(entityNodeRef, associationName, 1, maxDepthLevel, wUsedLoadedList);
 	}
 
-	private WUsedData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int depthLevel, int maxDepthLevel, Map<NodeRef, WUsedData> wUsedLoadedList){
+	private MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int depthLevel, int maxDepthLevel, Map<NodeRef, MultiLevelListData> wUsedLoadedList){
 		
-		Map<NodeRef, WUsedData> rootList = new HashMap<NodeRef, WUsedData>();
+		MultiLevelListData ret = new MultiLevelListData(entityNodeRef, depthLevel);
+		
 		List<AssociationRef> associationRefs = nodeService.getSourceAssocs(entityNodeRef, associationName);
 
 		logger.debug("associationRefs size" + associationRefs.size());
@@ -59,30 +61,30 @@ public class WUsedListServiceImpl implements WUsedListService {
 						//we don't display history version and simulation entities
 						if(!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION) && !nodeService.hasAspect(rootNodeRef, ECMModel.ASPECT_SIMULATION_ENTITY)){
 							
-							WUsedData wUsedData = null;
+							MultiLevelListData MultiLevelListData = null;
 							
 							// next level
-							if(depthLevel < maxDepthLevel){
+							if(maxDepthLevel < 0 || depthLevel < maxDepthLevel ){
 																
 								if(wUsedLoadedList.containsKey(rootNodeRef)){
-									wUsedData = wUsedLoadedList.get(rootNodeRef);
+									MultiLevelListData = wUsedLoadedList.get(rootNodeRef);
 								}
 								else{
-									wUsedData = getWUsedEntity(rootNodeRef, associationName, depthLevel+1, maxDepthLevel, wUsedLoadedList);
+									MultiLevelListData = getWUsedEntity(rootNodeRef, associationName, depthLevel+1, maxDepthLevel, wUsedLoadedList);
 								}																
 							}	
 							else{
-								wUsedData = new WUsedData(rootNodeRef, new HashMap<NodeRef, WUsedData>());
+								MultiLevelListData = new MultiLevelListData(rootNodeRef, depthLevel);
 							}
 							
-							rootList.put(nodeRef, wUsedData);
+							ret.getTree().put(nodeRef, MultiLevelListData);
 						}
 					}
 				}
 			}
 		}
 		
-		return new WUsedData(entityNodeRef, rootList);
+		return ret;
 	}
 	
 	@Override

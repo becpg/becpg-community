@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -18,11 +19,16 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
 public class MultiLevelExtractor extends SimpleExtractor {
 
-	private static final String PROP_DEPTH = "depth";
+	public static final String PROP_DEPTH = "depth";
 
+	public static final String PROP_ENTITYNODEREF = "entityNodeRef";
+
+	public static final String PROP_REVERSE_ASSOC = "reverseAssoc";
+	
 	private static Log logger = LogFactory.getLog(MultiLevelExtractor.class);
 
 	MultiLevelDataListService multiLevelDataListService;
+
 
 	public void setMultiLevelDataListService(MultiLevelDataListService multiLevelDataListService) {
 		this.multiLevelDataListService = multiLevelDataListService;
@@ -43,26 +49,30 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		MultiLevelListData listData = multiLevelDataListService
 				.getMultiLevelListData(dataListFilter);
 
-		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, hasWriteAccess);
+		Map<String, Object> props = new HashMap<String, Object>();
+		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
+		
+		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props);
 
+
+		ret.setFullListSize(listData.getSize());
 		return ret;
 	}
 
-	private int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex, int startIndex, int pageSize,
-			boolean hasWriteAccess) {
+	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex, int startIndex, int pageSize,
+			Map<String, Object> props) {
 		logger.debug("appendNextLevel :" + currIndex);
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
-			// if(currIndex>=startIndex && currIndex< (startIndex+pageSize)){
 			NodeRef nodeRef = entry.getKey();
-			Map<String, Object> props = new HashMap<String, Object>();
 			props.put(PROP_DEPTH, listData.getDepth()-1);
-			props.put(PROP_ACCESSRIGHT, listData.getDepth()<=1 && hasWriteAccess);
-			ret.getItems().add(extract(nodeRef, metadataFields, props));
-			currIndex++;
-			appendNextLevel(ret, metadataFields, entry.getValue(), currIndex, startIndex, pageSize, false);
-			// } else {
-			// currIndex++;
-			// }
+			props.put(PROP_ENTITYNODEREF, entry.getValue().getEntityNodeRef());
+			props.put(PROP_ACCESSRIGHT, listData.getDepth()<=1 &&  props.get(PROP_ACCESSRIGHT)!=null? props.get(PROP_ACCESSRIGHT) : null);
+			if(currIndex>=startIndex && currIndex< (startIndex+pageSize)){
+				ret.getItems().add(extract(nodeRef, metadataFields, props));
+			} else if(currIndex >= (startIndex+pageSize)){
+				return currIndex;
+			}
+			currIndex = appendNextLevel(ret, metadataFields, entry.getValue(), currIndex+1, startIndex, pageSize, props);
 		}
 		return currIndex;
 	}
@@ -71,17 +81,38 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<String, Object> props) {
 
 		
+		
+		
+		
 		Map<String, Object> tmp = super.doExtract(nodeRef, itemType, metadataFields, props);
-		if(props.get("depth")!=null){
+		if(props.get(PROP_DEPTH)!=null){
 			@SuppressWarnings("unchecked")
 			Map<String, Object> depth = (Map<String, Object>) tmp.get("prop_bcpg_depthLevel");
-			if (depth != null) {
-				Integer value = (depth.get("value") != null ? (Integer) depth.get("value") : 0) + (Integer) props.get(PROP_DEPTH);
-				
-				depth.put("value", value);
-				depth.put("displayValue", value);
+			if (depth == null) {
+				depth = new HashMap<String, Object>();
 			}
+			
+			Integer value = (depth.get("value") != null ? (Integer) depth.get("value") : 1) + (Integer) props.get(PROP_DEPTH);
+			depth.put("value", value);
+			depth.put("displayValue", value);
+			
+			tmp.put("prop_bcpg_depthLevel", depth);
+			
 		}
+		
+		if(props.get(PROP_ENTITYNODEREF)!=null && props.get(PROP_REVERSE_ASSOC)!=null){
+			NodeRef entityNodeRef  = (NodeRef) props.get(PROP_ENTITYNODEREF);
+			Map<String, Object> entity = new HashMap<String, Object>();
+			entity.put("value",entityNodeRef);
+			entity.put("displayValue",(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+			entity.put("metadata", attributeExtractorService.extractMetadata(nodeService.getType(entityNodeRef), entityNodeRef));
+			String assocName  = (String) props.get(PROP_REVERSE_ASSOC);	
+			
+			
+			tmp.put("assoc_"+assocName.replaceFirst(":", "_"), entity);
+		}
+		
+		
 
 		return tmp;
 	}

@@ -34,8 +34,8 @@ import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.entity.wused.WUsedListService;
-import fr.becpg.repo.entity.wused.data.WUsedData;
+import fr.becpg.repo.entity.datalist.WUsedListService;
+import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
@@ -154,9 +154,9 @@ public class ECOServiceImpl implements ECOService {
 				
 				for(QName associationQName : associationQNames){
 									
-					WUsedData wUsedData = wUsedListService.getWUsedEntity(replacementListDataItem.getSourceItem(), associationQName, RepoConsts.MAX_DEPTH_LEVEL);
+					MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(replacementListDataItem.getSourceItem(), associationQName, RepoConsts.MAX_DEPTH_LEVEL);
 					
-					logger.debug("WUsed of list: " + associationQName + "size: " + wUsedData.getRootList().size());
+					logger.debug("WUsed of list: " + associationQName + "size: " + wUsedData.getTree().size());
 					
 					QName datalistQName = wUsedListService.evaluateListFromAssociation(associationQName);
 					calculateWUsedList(ecoData, replacementListDataItem.getRevision(), wUsedData, datalistQName, 2);
@@ -212,9 +212,9 @@ public class ECOServiceImpl implements ECOService {
 		ecoReportService.generateReport(ecoData);		
 	}
 
-	private void calculateWUsedList(ChangeOrderData ecoData, RevisionType revision, WUsedData wUsedData, QName dataListQName, int level){
+	private void calculateWUsedList(ChangeOrderData ecoData, RevisionType revision, MultiLevelListData wUsedData, QName dataListQName, int level){
 		
-		for(Map.Entry<NodeRef, WUsedData> kv : wUsedData.getRootList().entrySet()){
+		for(Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()){
 			
 			NodeRef sourceItem = kv.getValue().getEntityNodeRef();
 			
