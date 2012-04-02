@@ -188,5 +188,8 @@ public class RepoConsts {
 	 * ISO charset
 	 */
 	public static final String ISO_CHARSET = "ISO-8859-15";
-	
+		
+	//TODO : do generic code
+	// supported languages for formulation and reports
+	public static String[] REPORT_LOCALES = {"fr","en","ru"};
 }

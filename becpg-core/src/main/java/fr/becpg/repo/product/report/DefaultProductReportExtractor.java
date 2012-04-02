@@ -1,13 +1,17 @@
 package fr.becpg.repo.product.report;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -329,19 +333,16 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		// IngLabelingList
 		if (productData.getIngLabelingList() != null) {
 			Element ingListElt = dataListsElt.addElement(TAG_INGLABELINGLIST);
-			String frenchILLGrpName = BeCPGModel.PROP_ILL_GRP.getLocalName() + SUFFIX_LOCALE_FRENCH;
-			String englishILLGrpName = BeCPGModel.PROP_ILL_GRP.getLocalName() + SUFFIX_LOCALE_ENGLISH;
-			String frenchILLValueName = BeCPGModel.PROP_ILL_VALUE.getLocalName() + SUFFIX_LOCALE_FRENCH;
-			String englishILLValueName = BeCPGModel.PROP_ILL_VALUE.getLocalName() + SUFFIX_LOCALE_ENGLISH;
 
 			for (IngLabelingListDataItem dataItem : productData.getIngLabelingList()) {
 
 				Element ingLabelingElt = ingListElt.addElement(TAG_INGLABELING);
-				ingLabelingElt.addAttribute(frenchILLGrpName, dataItem.getGrp());
-				ingLabelingElt.addAttribute(englishILLGrpName, dataItem.getGrp());
-
-				ingLabelingElt.addAttribute(frenchILLValueName, dataItem.getValue().getValue(Locale.FRENCH));
-				ingLabelingElt.addAttribute(englishILLValueName, dataItem.getValue().getValue(Locale.ENGLISH));
+				
+				for(String l : RepoConsts.REPORT_LOCALES){
+					Locale locale = new Locale(l);
+					ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_GRP.getLocalName() + "_" + locale, dataItem.getGrp());
+					ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_VALUE.getLocalName() + "_" + locale, dataItem.getValue().getValue(locale));
+				}
 			}
 		}
 
@@ -378,22 +379,34 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		}
 
 		// MicrobioList
-		if (productData.getMicrobioList() != null) {
+		List<AssociationRef> microbioAssocRefs = nodeService.getTargetAssocs(entityNodeRef,
+				BeCPGModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
+		if(microbioAssocRefs.size()>0){
+			NodeRef productMicrobioCriteriaNodeRef = microbioAssocRefs.get(0).getTargetRef();			
+			
+			if(productMicrobioCriteriaNodeRef != null){
+				Set<QName> pmcdataLists = new HashSet<QName>();
+				pmcdataLists.add(BeCPGModel.TYPE_MICROBIOLIST);
+				ProductData pmcData = productDAO.find(productMicrobioCriteriaNodeRef, pmcdataLists);
+				
+				if (pmcData.getMicrobioList() != null) {
+					
+					Element organoListElt = dataListsElt.addElement(TAG_MICROBIOLIST);
 
-			Element organoListElt = dataListsElt.addElement(TAG_MICROBIOLIST);
+					for (MicrobioListDataItem dataItem : pmcData.getMicrobioList()) {
 
-			for (MicrobioListDataItem dataItem : productData.getMicrobioList()) {
+						String microbio = nodeService.getProperty(dataItem.getMicrobio(), ContentModel.PROP_NAME).toString();
 
-				String microbio = nodeService.getProperty(dataItem.getMicrobio(), ContentModel.PROP_NAME).toString();
-
-				Element microbioElt = organoListElt.addElement(TAG_MICROBIO);
-				microbioElt.addAttribute(BeCPGModel.ASSOC_MICROBIOLIST_MICROBIO.getLocalName(), microbio);
-				microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_VALUE.getLocalName(), dataItem.getValue() == null ? VALUE_NULL : Float.toString(dataItem.getValue()));
-				microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_UNIT.getLocalName(), dataItem.getUnit());
-				microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_MAXI.getLocalName(), dataItem.getMaxi() == null ? VALUE_NULL : Float.toString(dataItem.getMaxi()));
-				microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_TEXT_CRITERIA.getLocalName(), dataItem.getTextCriteria());
+						Element microbioElt = organoListElt.addElement(TAG_MICROBIO);
+						microbioElt.addAttribute(BeCPGModel.ASSOC_MICROBIOLIST_MICROBIO.getLocalName(), microbio);
+						microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_VALUE.getLocalName(), dataItem.getValue() == null ? VALUE_NULL : Float.toString(dataItem.getValue()));
+						microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_UNIT.getLocalName(), dataItem.getUnit());
+						microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_MAXI.getLocalName(), dataItem.getMaxi() == null ? VALUE_NULL : Float.toString(dataItem.getMaxi()));
+						microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_TEXT_CRITERIA.getLocalName(), dataItem.getTextCriteria());
+					}
+				}
 			}
-		}
+		}		
 
 		// PhysicoChemList
 		if (productData.getPhysicoChemList() != null) {

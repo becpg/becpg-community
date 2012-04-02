@@ -106,7 +106,7 @@
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">http://localhost:8080/alfresco/service/becpg/report/datasource?nodeRef=workspace://SpacesStore/3590057a-e7bb-4862-992e-0e8ebad0c2ae</property>
+            <property name="FILELIST">http://localhost:8080/alfresco/service/becpg/report/datasource?nodeRef=workspace://SpacesStore/3675d035-705a-4ac4-9978-fe8612b037a7</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -933,11 +933,11 @@
                 </ex-property>
             </list-property>
         </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="microBioList" id="1004">
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="microbioList" id="1004">
             <list-property name="columnHints">
                 <structure>
-                    <property name="columnName">mblMicroBio</property>
-                    <text-property name="heading">mblMicroBio</text-property>
+                    <property name="columnName">mblMicrobio</property>
+                    <text-property name="heading">mblMicrobio</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">mblValue</property>
@@ -956,7 +956,7 @@
                 <list-property name="resultSet">
                     <structure>
                         <property name="position">1</property>
-                        <property name="name">mblMicroBio</property>
+                        <property name="name">mblMicrobio</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
@@ -980,8 +980,8 @@
             <list-property name="resultSet">
                 <structure>
                     <property name="position">1</property>
-                    <property name="name">mblMicroBio</property>
-                    <property name="nativeName">mblMicroBio</property>
+                    <property name="name">mblMicrobio</property>
+                    <property name="nativeName">mblMicrobio</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
@@ -1007,7 +1007,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/product/dataLists/microbioList/microBio]#:#{mblMicroBio;STRING;/@mblMicroBio},{mblValue;STRING;/@mblValue},{mblUnit;STRING;/@mblUnit},{mblMaxi;STRING;/@mblMaxi}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/product/dataLists/microbioList/microbio]#:#{mblMicrobio;STRING;/@mblMicrobio},{mblValue;STRING;/@mblValue},{mblUnit;STRING;/@mblUnit},{mblMaxi;STRING;/@mblMaxi}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>1.0</Version>
@@ -1016,7 +1016,7 @@
       <design:resultSetColumns>
         <design:resultColumnDefinitions>
           <design:attributes>
-            <design:name>mblMicroBio</design:name>
+            <design:name>mblMicrobio</design:name>
             <design:position>1</design:position>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
@@ -1024,7 +1024,7 @@
             <design:nullability>Unknown</design:nullability>
           </design:attributes>
           <design:usageHints>
-            <design:label>mblMicroBio</design:label>
+            <design:label>mblMicrobio</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -1271,21 +1271,36 @@
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">illGrp_fr</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">illGrp_fr</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">illValue_fr</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">illValue_fr</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">illGrp_en</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">illGrp_en</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">illValue_en</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">illValue_en</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">illGrp_ru</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">illGrp_ru</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">illValue_ru</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">illValue_ru</text-property>
+                </structure>
             </list-property>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -1308,6 +1323,16 @@
                         <property name="name">illValue_en</property>
                         <property name="dataType">string</property>
                     </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">illGrp_ru</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">illValue_ru</property>
+                        <property name="dataType">string</property>
+                    </structure>
                 </list-property>
             </structure>
             <property name="dataSource">DataXml</property>
@@ -1317,27 +1342,45 @@
                     <property name="name">illGrp_fr</property>
                     <property name="nativeName">illGrp_fr</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
                     <property name="name">illValue_fr</property>
                     <property name="nativeName">illValue_fr</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">3</property>
                     <property name="name">illGrp_en</property>
                     <property name="nativeName">illGrp_en</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
                     <property name="name">illValue_en</property>
                     <property name="nativeName">illValue_en</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">illGrp_ru</property>
+                    <property name="nativeName">illGrp_ru</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">illValue_ru</property>
+                    <property name="nativeName">illValue_ru</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/product/dataLists/ingLabelingList/ingLabeling]#:#{illGrp_fr;STRING;/@illGrp_fr},{illValue_fr;STRING;/@illValue_fr},{illGrp_en;STRING;/@illGrp_en},{illValue_en;STRING;/@illValue_en}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/product/dataLists/ingLabelingList/ingLabeling]#:#{illGrp_fr;STRING;/@illGrp_fr},{illValue_fr;STRING;/@illValue_fr},{illGrp_en;STRING;/@illGrp_en},{illValue_en;STRING;/@illValue_en},{illGrp_ru;STRING;/@illGrp_ru},{illValue_ru;STRING;/@illValue_ru}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4105,6 +4148,7 @@ else
                         <property name="marginBottom">0pt</property>
                         <property name="textAlign">center</property>
                         <property name="display">block</property>
+                        <property name="pageBreakBefore">auto</property>
                         <text-property name="text">ÉTIQUETAGE</text-property>
                     </label>
                 </cell>
@@ -4316,6 +4360,125 @@ dataSetRow["illGrp_en"] + " : "
                     <label id="1151"/>
                 </cell>
             </row>
+            <row id="1624">
+                <cell id="1625">
+                    <label id="1626">
+                        <property name="style">Titre2</property>
+                        <property name="color">#339966</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="marginLeft">0pt</property>
+                        <property name="marginBottom">0pt</property>
+                        <text-property name="text">Etiquette en russe</text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="1622">
+                <cell id="1623">
+                    <table id="1627">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">medium</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">medium</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <property name="width">6.875in</property>
+                        <property name="dataSet">ingLabelingList</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">illGrp_fr</property>
+                                <text-property name="displayName">illGrp_fr</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["illGrp_fr"] + " : "</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">illValue_fr</property>
+                                <text-property name="displayName">illValue_fr</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["illValue_fr"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">illGrp_en</property>
+                                <text-property name="displayName">illGrp_en</text-property>
+                                <expression name="expression" type="javascript">if(dataSetRow["illGrp_en"] != "-"){
+dataSetRow["illGrp_en"] + " : "
+}</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">illValue_en</property>
+                                <text-property name="displayName">illValue_en</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["illValue_en"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">illGrp_en_1</property>
+                                <text-property name="displayName">illGrp_en</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["illGrp_en"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">illGrp_fr_1</property>
+                                <text-property name="displayName">illGrp_fr</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["illGrp_fr"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">illGrp_ru</property>
+                                <text-property name="displayName">illGrp_ru</text-property>
+                                <expression name="expression" type="javascript">if(dataSetRow["illGrp_ru"] != "-"){
+dataSetRow["illGrp_ru"] + " : "
+}</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">illValue_ru</property>
+                                <text-property name="displayName">illValue_ru</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["illValue_ru"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <column id="1632"/>
+                        <detail>
+                            <row id="1628">
+                                <cell id="1629">
+                                    <property name="borderBottomColor">#FFFFFF</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">medium</property>
+                                    <property name="borderLeftColor">#FFFFFF</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">medium</property>
+                                    <property name="borderRightColor">#FFFFFF</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">medium</property>
+                                    <property name="borderTopColor">#FFFFFF</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">medium</property>
+                                    <data id="1634">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="resultSetColumn">illGrp_ru</property>
+                                    </data>
+                                    <data id="1635">
+                                        <property name="resultSetColumn">illValue_ru</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                </cell>
+            </row>
+            <row id="1620">
+                <cell id="1621">
+                    <label id="1633"/>
+                </cell>
+            </row>
         </grid>
         <grid id="1411">
             <list-property name="visibility">
@@ -4361,12 +4524,12 @@ dataSetRow["illGrp_en"] + " : "
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">thin</property>
                         <property name="width">6.875in</property>
-                        <property name="dataSet">microBioList</property>
+                        <property name="dataSet">microbioList</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">mblMicroBio</property>
-                                <text-property name="displayName">mblMicroBio</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["mblMicroBio"]</expression>
+                                <property name="name">mblMicrobio</property>
+                                <text-property name="displayName">mblMicrobio</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["mblMicrobio"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
@@ -4462,7 +4625,7 @@ dataSetRow["illGrp_en"] + " : "
                                         <property name="fontWeight">bold</property>
                                         <property name="color">gray</property>
                                         <property name="whiteSpace">nowrap</property>
-                                        <property name="resultSetColumn">mblMicroBio</property>
+                                        <property name="resultSetColumn">mblMicrobio</property>
                                     </data>
                                 </cell>
                                 <cell id="985">

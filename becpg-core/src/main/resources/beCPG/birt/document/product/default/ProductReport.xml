@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <product name="Assortiment 8 sushis" code="1023"
-	store-identifier="SpacesStore" productType="Produit fini"
-	productQty="0.200" productUnit="kg" productState="En développement"
-	productEAN="8001456682" modified="02/12/2010">
+	store-identifier="SpacesStore" productType="Produit fini" productQty="0.200"
+	productUnit="kg" productState="En développement" productEAN="8001456682"
+	modified="02/12/2010">
 
 	<attributes>
 		<attribute set="Set1" name="Nom" value="Assortiment 8 sushis" />
-		<attribute set="Set1" name="Famille" value="Menus"  />
-		<attribute set="Set2" name="Sous-famille" value="Sushis"  />
-		<attribute set="Set2" name="Clients" value="Client1, Client2"  />
-		<attribute set="aSet2" name="integer" value="12"/>
-		<attribute set="aSet2" name="decimal" value="12.36"/>
+		<attribute set="Set1" name="Famille" value="Menus" />
+		<attribute set="Set2" name="Sous-famille" value="Sushis" />
+		<attribute set="Set2" name="Clients" value="Client1, Client2" />
+		<attribute set="aSet2" name="integer" value="12" />
+		<attribute set="aSet2" name="decimal" value="12.36" />
 	</attributes>
 
 	<dataLists>
@@ -27,7 +27,8 @@
 				allergenListVolSources="Blé, Farine, lalalalalaal, lalalalalaal, lalalalalaala, lalalalaal, ffffffff, tttttttttt, ggggggggg" />
 			<allergen allergenListAllergen="Blé" allergenType="Allergène majeur"
 				allergenListInVoluntary="false" allergenListVoluntary="true"
-				allergenListInVolSources="" allergenListVolSources="Blé, Farine, lalalalalaal, lalalalalaal, lalalalalaala, lalalalaal, ffffffff, tttttttttt, ggggggggg" />
+				allergenListInVolSources=""
+				allergenListVolSources="Blé, Farine, lalalalalaal, lalalalalaal, lalalalalaala, lalalalaal, ffffffff, tttttttttt, ggggggggg" />
 			<allergen allergenListAllergen="Poisson" allergenType="Allergène mineur"
 				allergenListInVoluntary="false" allergenListVoluntary="false"
 				allergenListInVolSources="" allergenListVolSources="" />
@@ -37,20 +38,25 @@
 		</allergenList>
 
 		<costList>
-			<cost costListValue="12.212222" costListUnit="€/Kg" costListCost="Coût PMP" />
+			<cost costListValue="12.212222" costListUnit="€/Kg"
+				costListCost="Coût PMP" />
 			<cost costListValue="12.2" costListUnit="€/Kg" costListCost="Coût MP" />
 		</costList>
 
+
 		<ingLabelingList>
-			<ingLabeling illGrp_fr="Sushi"
-				illValue_fr="Riz 80% (Riz 100%), Saumon 20% (Poisson 90%, Agent de saveur 10%)"
-				illGrp_en="English sushis"
-				illValue_en="Rice 80% (Rice 100%), Salmon 20% (Fish 90%, Taste agent 10%)" />
-			<ingLabeling illGrp_fr="Soupe" illValue_fr="Légumes 100%"
-				illGrp_en="Soup" illValue_en="Legums 100%" />
-				
-			<ingLabeling illGrp_fr="-" illValue_fr="Légumes 100%"
-				illGrp_en="Soup" illValue_en="Legums 100%" />
+			<ingLabeling illGrp_fr="Pâte"
+				illValue_fr="Blé farine, Eau, Crème, Sel fin, Ferments lactiques, Ferrocyanure de sodium"
+				illGrp_en="Paste"
+				illValue_en="Wheat flour, Water, Cream, Salt, Lactic, Sodium ferrocyanide"
+				illGrp_ru="вставлять"
+				illValue_ru="Пшеничная мука, вода, сливки, соль End, молочная, натрия ферроцианида" />
+			<ingLabeling illGrp_fr="Garniture"
+				illValue_fr="Lait demi écrémé 33 %, Crème de lait pasteurisée 28 %, Porc poitrine 18,1 %, oeuf frais 14 %, Eau, Poivre, Sel fin, Muscade"
+				illGrp_en="Garnish"
+				illValue_en="Semi-skimmed milk 33 %, Pasteurized cream milk 28 %, Breast pork 18.1 %, Fresh eggs 14 %, Water, Pepper, Salt End, Nutmeg"
+				illGrp_ru="Rарнир"
+				illValue_ru="полу-обезжиренного молока 33 % , пастеризованное цельное молоко 28 %, молочной железы 18,1 % свинины, свежих яиц на 14 %, вода, перец, соль End, мускатный орех" />
 
 		</ingLabelingList>
 
@@ -165,13 +171,13 @@
 		</organoList>
 
 		<microbioList>
-			<microBio mblMicroBio="Salmonelle" mblValue="7" mblUnit="UFC/50g"
+			<microbio mblMicrobio="Salmonelle" mblValue="7" mblUnit="UFC/50g"
 				mblMaxi="9" />
-			<microBio mblMicroBio="Champi" mblValue="0.8" mblUnit="UFC/10g"
+			<microbio mblMicrobio="Champi" mblValue="0.8" mblUnit="UFC/10g"
 				mblMaxi="1" />
-			<microBio mblMicroBio="Arachide" mblValue="7" mblUnit="UFC/g"
+			<microbio mblMicrobio="Arachide" mblValue="7" mblUnit="UFC/g"
 				mblMaxi="9" />
-			<microBio mblMicroBio="Salmonelle" mblValue="1" mblUnit="UFC/10g"
+			<microbio mblMicrobio="Salmonelle" mblValue="1" mblUnit="UFC/10g"
 				mblMaxi="1.9" />
 		</microbioList>
 
