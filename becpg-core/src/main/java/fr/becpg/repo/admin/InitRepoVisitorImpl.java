@@ -49,6 +49,7 @@ import fr.becpg.model.VariantModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
+import fr.becpg.repo.designer.DesignerInitService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -124,6 +125,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	private EntityTplService entityTplService;
 
 	private BeCPGMailService beCPGMailService;
+	
+	
+	private DesignerInitService designerInitService;
 
 	/**
 	 * Sets the product dictionary service.
@@ -177,6 +181,13 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
 		this.beCPGMailService = beCPGMailService;
+	}
+
+	
+	
+	
+	public void setDesignerInitService(DesignerInitService designerInitService) {
+		this.designerInitService = designerInitService;
 	}
 
 	/**
@@ -303,8 +314,13 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(systemImportNodeRef, RepoConsts.PATH_MAPPING);
 
 		visitFolder(systemImportNodeRef, RepoConsts.PATH_IMPORT_SAMPLES);
-
+		
+		//Designer		
+		designerInitService.addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-core/model/becpgModel.xml");
+		designerInitService.addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-core/model/qualityModel.xml");
+		
 	}
+
 
 	/**
 	 * Add resources to folder
@@ -364,7 +380,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		}
 
 	}
-
+	
+	
+	
 	/**
 	 * Initialize the rules of the repository
 	 */

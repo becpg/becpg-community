@@ -46,6 +46,7 @@
 		<property name="dictionaryService" ref="dictionaryService"/>
 		<property name="entityTplService" ref="entityTplService"/>
 		<property name="beCPGMailService" ref="becpgMailService"/>		
+		<property name="designerInitService" ref="designerInitService"/>
 	</bean>
 	<bean id="initSiteVisitor" class="fr.becpg.repo.admin.InitSiteVisitorImpl">
 		<property name="fileFolderService" ref="fileFolderService" />
