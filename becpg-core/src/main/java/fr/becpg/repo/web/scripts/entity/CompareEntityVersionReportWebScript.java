@@ -99,14 +99,14 @@ public class CompareEntityVersionReportWebScript extends AbstractWebScript  {
 			logger.debug("entityNodeRef: " + entityNodeRef + " - versionLabel: " + versionLabel + " - entityVersionNodeRef: " + entityVersionNodeRef);
 				
 		List<NodeRef> entities = new ArrayList<NodeRef>();
-		entities.add(entityVersionNodeRef);
+		entities.add(entityNodeRef);
 		
 		// get the content and stream directly to the response output stream
         // assuming the repository is capable of streaming in chunks, this should allow large files
         // to be streamed directly to the browser response stream.
         try
         {        	
-        	compareEntityReportService.getComparisonReport(entityNodeRef, entities, res.getOutputStream());
+        	compareEntityReportService.getComparisonReport(entityVersionNodeRef, entities, res.getOutputStream());
     		
     		// set mimetype for the content and the character encoding + length for the stream
             res.setContentType(mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF));

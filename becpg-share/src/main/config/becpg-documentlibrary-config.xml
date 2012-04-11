@@ -90,6 +90,7 @@
 				<aspect name="qa:acAspect" />
 				<aspect name="dsg:modelAspect" />
 				<aspect name="dsg:configAspect" />
+				<aspect name="gs1:gs1Aspect" />
 				<aspect name="ext1:customAspect" />
 			</removeable>
 		</aspects>

@@ -73,6 +73,7 @@
 					<value>Gaz</value>
 					<value>Glace</value>
 					<value>Gluconate</value>
+					<value>Glutamate</value>
 					<value>Gomme</value>
 					<value>Gomme à mâcher</value>
 					<value>Gélifiant</value>
@@ -91,7 +92,7 @@
 					<value>Sulfate</value>
 					<value>Tartrate</value>
 					<value>Thiosulfate</value>
-					<value>Triosulfate</value>
+					<value>Triphosphate</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -235,7 +236,13 @@
 			<parameter name="allowedValues">
 				<list>
 					<value>L</value>
+					<value>mL</value>
 					<value>kg</value>
+					<value>g</value>
+					<value>m</value>
+					<value>mm</value>
+					<value>m2</value>
+					<value>m3</value>
 					<value>P</value>
 					<value>%</value>
 					<value>°C</value>

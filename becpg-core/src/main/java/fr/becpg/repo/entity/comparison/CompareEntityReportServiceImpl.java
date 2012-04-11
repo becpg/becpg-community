@@ -347,37 +347,38 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 					String depthLevel = ((Integer)c.getDepthLevel()).toString();
 					
 					String entity1 = "";
+					String properties1 = "";
 					if(c.getCharacteristic1() != null){
 						List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic1(), pivotProperty);
 			    		NodeRef entityNodeRef = (compoAssocRefs.get(0)).getTargetRef();
-			    		entity1 = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);				    		
+			    		entity1 = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+			    		
+			    		// props
+			    		for(QName property : c.getProperties1().keySet()){
+							if(!properties1.isEmpty())
+								properties1 += PROPERTY_SEPARATOR;
+							
+							String value = c.getProperties1().get(property);
+							properties1 += getClassAttributeTitle(property) + PROPERTY_VALUE_SEPARATOR + value;
+						}
 					}
 					
 					String entity2 = "";
+					String properties2 = "";
 					if(c.getCharacteristic2() != null){
 						List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic2(), pivotProperty);
 			    		NodeRef entityNodeRef = (compoAssocRefs.get(0)).getTargetRef();
-			    		entity2 = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);				    		
+			    		entity2 = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+			    		
+			    		// props 
+			    		for(QName property : c.getProperties2().keySet()){
+							if(!properties2.isEmpty())
+								properties2 += PROPERTY_SEPARATOR;
+							
+							String value = c.getProperties2().get(property);
+							properties2 += getClassAttributeTitle(property) + PROPERTY_VALUE_SEPARATOR + value;
+						}
 					}		
-					
-					String properties1 = "";
-					for(QName property : c.getProperties1().keySet()){
-						if(!properties1.isEmpty())
-							properties1 += PROPERTY_SEPARATOR;
-						
-						String value = c.getProperties1().get(property);
-						properties1 += getClassAttributeTitle(property) + PROPERTY_VALUE_SEPARATOR + value;
-					}
-					
-					String properties2 = "";
-					for(QName property : c.getProperties2().keySet()){
-						if(!properties2.isEmpty())
-							properties2 += PROPERTY_SEPARATOR;
-						
-						String value = c.getProperties2().get(property);
-						properties2 += getClassAttributeTitle(property) + PROPERTY_VALUE_SEPARATOR + value;
-					}
-					
 					
 					Element cmpRowElt = structCmpRowsElt.addElement(TAG_STRUCT_COMPARISON_ROW);				
 					cmpRowElt.addAttribute(ATTR_COMPARISON, comparison);

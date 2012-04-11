@@ -157,21 +157,30 @@ public class CompositeIng extends AbstractIng {
 		
 		for(AbstractIng ing : sortedIngList){
 						
-			String qtyPerc = df.format(100 * ing.getQty() / totalQty);
+			String qtyPerc = "";
+			if(ing.getQty() != 0f){
+				qtyPerc = SPACE + df.format(100 * ing.getQty() / totalQty) + SPACE + PERCENTAGE;
+			}
+			
+			String ingName = ing.getName(locale);
+			
+			if(ingName == null){
+				logger.warn("Null locale name: " + ing.getName());
+			}
 			
 			if(!ingredients.isEmpty()){
 				ingredients += RepoConsts.LABEL_SEPARATOR;
 			}
 			if(ing instanceof IngItem){				
-				ingredients += ing.getName(locale) + SPACE +qtyPerc + SPACE + PERCENTAGE;
+				ingredients += ingName + qtyPerc;
 			}
 			else if(ing instanceof CompositeIng){
 				String subIngredients = ((CompositeIng)ing).getIngLabeling(locale);
 				logger.trace("subIngredients: " + subIngredients);
-				ingredients += ing.getName(locale) + SPACE + qtyPerc + SPACE + PERCENTAGE + SPACE + LEFT_PARENTHESES + subIngredients + RIGHT_PARENTHESES;
+				ingredients += ingName + qtyPerc + SPACE + LEFT_PARENTHESES + subIngredients + RIGHT_PARENTHESES;
 			}
 			else{
-				logger.error("Unsupported ing type. Name: " + ing.getName(locale));
+				logger.error("Unsupported ing type. Name: " + ing.getName());
 			}
 		}
 		

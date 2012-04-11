@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductVisitor;
@@ -160,8 +161,11 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 						
 			MLText mlTextILL = new MLText();			
 			mlTextILL.addValue(Locale.getDefault(), compositeIng.getIngLabeling(Locale.getDefault()));
-			mlTextILL.addValue(Locale.ENGLISH, compositeIng.getIngLabeling(Locale.ENGLISH));
-			mlTextILL.addValue(Locale.FRENCH, compositeIng.getIngLabeling(Locale.FRENCH));
+
+			for(String l : RepoConsts.REPORT_LOCALES){
+				Locale locale = new Locale(l);
+				mlTextILL.addValue(locale, compositeIng.getIngLabeling(locale));
+			}
 			ingLabelingList.add(new IngLabelingListDataItem(null, compositeIng.getName(), mlTextILL, Boolean.FALSE));
 		}
 		
@@ -412,8 +416,12 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		List<CompositeIng> compositeIngList = new ArrayList<CompositeIng>();
 		MLText mlName = new MLText();
 		mlName.addValue(Locale.getDefault(), NO_GRP);
-		mlName.addValue(Locale.ENGLISH, NO_GRP);
-		mlName.addValue(Locale.FRENCH, NO_GRP);
+		
+		for(String l : RepoConsts.REPORT_LOCALES){
+			Locale locale = new Locale(l);
+			mlName.addValue(locale, NO_GRP);
+		}
+		
 		CompositeIng defaultCompositeIng = new CompositeIng(NO_GRP, mlName);		
 		
 		if(compoList != null){
@@ -494,8 +502,11 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		//TODO manage mltext in product
 		MLText mlName = new MLText();
 		mlName.addValue(Locale.getDefault(), ingName);
-		mlName.addValue(Locale.ENGLISH, ingName);
-		mlName.addValue(Locale.FRENCH, ingName);
+
+		for(String l : RepoConsts.REPORT_LOCALES){
+			Locale locale = new Locale(l);
+			mlName.addValue(locale, ingName);
+		}
 		
 		CompositeIng compositeIng = new CompositeIng(ingName, mlName);			
 		
@@ -528,7 +539,6 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		DeclarationType declarationType = DeclarationType.parse(compoListDataItem.getDeclType());
 		boolean isDeclared = (declarationType == DeclarationType.DO_NOT_DECLARE) ? false:true;
 		CompositeIng compositeIng = parentIng;
-		logger.trace("part: " + part.getLegalName());
 		
 		//OMIT, DETAIL
 		if(declarationType == DeclarationType.OMIT){
@@ -539,8 +549,11 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			//TODO manage mltext in product
 			MLText mlName = new MLText();
 			mlName.addValue(Locale.getDefault(), part.getLegalName());
-			mlName.addValue(Locale.ENGLISH, part.getLegalName());
-			mlName.addValue(Locale.FRENCH, part.getLegalName());
+
+			for(String l : RepoConsts.REPORT_LOCALES){
+				Locale locale = new Locale(l);
+				mlName.addValue(locale, part.getLegalName());
+			}
 			
 			compositeIng = new CompositeIng(part.getLegalName(), mlName);
 			parentIng.add(compositeIng, isDeclared);			
