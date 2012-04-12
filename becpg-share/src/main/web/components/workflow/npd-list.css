@@ -3,6 +3,10 @@
    clear: both;
 }
 
+.npd-list .alfresco-datatable thead {
+	display : table-header-group;
+}
+
 /* npd-list bar */
 
 .npd-list .npd-list-bar
