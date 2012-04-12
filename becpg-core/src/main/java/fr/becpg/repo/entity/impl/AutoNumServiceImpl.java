@@ -125,7 +125,7 @@ public class AutoNumServiceImpl implements AutoNumService {
         // get value store in db
         if(autoNumNodeRef != null){
         	Long v = (Long)nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
-        	prefix = getPrefix(autoNumNodeRef);
+        	prefix = getPrefix(autoNumNodeRef,DEFAULT_PREFIX);
         	
         	if(v != null){
         		autoNumValue = v;
@@ -161,7 +161,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		// get value store in db
         if(autoNumNodeRef != null){
         	Long v = (Long)nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
-        	prefix = getPrefix(autoNumNodeRef);
+        	prefix = getPrefix(autoNumNodeRef,DEFAULT_PREFIX);
         	if(v != null){
         		autoNumValue = v;
         		autoNumValue--;
@@ -215,7 +215,11 @@ public class AutoNumServiceImpl implements AutoNumService {
 	
 	
 	private String getDefaultPrefix(QName className, QName propertyName) {
-		return I18NUtil.getMessage(PREFIX_MSG_PFX + className.getLocalName()+"."+ propertyName.getLocalName());
+		String ret =  I18NUtil.getMessage(PREFIX_MSG_PFX + className.getLocalName()+"."+ propertyName.getLocalName());
+		if(ret==null || ret.length()<1){
+			return DEFAULT_PREFIX;
+		}
+		return ret;
 	}
 
 	/**
@@ -312,7 +316,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		String prefix = DEFAULT_PREFIX;
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(type, propertyName);
         if(autoNumNodeRef != null){
-        	prefix = getPrefix(autoNumNodeRef);        	
+        	prefix = getPrefix(autoNumNodeRef,DEFAULT_PREFIX);        	
         }
         else{
         	prefix = getDefaultPrefix(type,propertyName);
@@ -326,10 +330,10 @@ public class AutoNumServiceImpl implements AutoNumService {
 		return formatCode(prefix,autoNumValue);
 	}
 	
-	private String getPrefix(NodeRef autoNumNodeRef) {
+	private String getPrefix(NodeRef autoNumNodeRef, String defaultPrefix) {
 		String prefix = (String) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_PREFIX);
-    	if(prefix ==null){
-    		prefix = DEFAULT_PREFIX;
+    	if(prefix == null ){
+    		return defaultPrefix;
     	}
     	return prefix;
 	}
