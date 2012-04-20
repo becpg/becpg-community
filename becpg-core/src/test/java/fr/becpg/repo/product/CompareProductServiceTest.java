@@ -444,50 +444,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 
 				List<CompareResultDataItem> compareResult = compareEntityService.compare(fp1NodeRef, productsNodeRef);
 
-				// for(CompareResultDataItem c : compareResult){
-				//
-				// String productListTitle = "";
-				// if(c.getProductList() != null){
-				// TypeDefinition typeDef =
-				// dictionaryService.getType(c.getProductList());
-				// productListTitle = typeDef.getTitle();
-				// }
-				//
-				// String charactName = c.getCharacteristic() == null ?
-				// "" :
-				// (String)nodeService.getProperty(c.getCharacteristic(),
-				// ContentModel.PROP_NAME);
-				// String propertyTitle = "";
-				// PropertyDefinition propertyDef =
-				// dictionaryService.getProperty(c.getProperty());
-				// if(propertyDef != null){
-				// propertyTitle = propertyDef.getTitle();
-				// }
-				// else{
-				// AssociationDefinition assocDef =
-				// dictionaryService.getAssociation(c.getProperty());
-				// if(assocDef != null)
-				// propertyTitle = assocDef.getTitle();
-				// }
-				//
-				// logger.debug(" - " + productListTitle + " - " +
-				// charactName + " - " + propertyTitle + " - " +
-				// c.getValues().toString());
-				//
-				// //Output for method checkCompareRow
-				// //Uncomment debug line, copy/paste in spreadsheet =>
-				// you will get the test lines
-				// //String productList = c.getProductList() == null ?
-				// "" : c.getProductList().toString();
-				// //logger.debug("-assertTrue(checkCompareRow(compareResult, \""
-				// + productList + "\", \"" + charactName + "\", \"" +
-				// c.getProperty() + "\", \"" + c.getValues().toString()
-				// + "\"));");
-				// }
-
-				// assertEquals("size result", 52,
-				// compareResult.size());
-
+				
 				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
 						"Allergen 9", "{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources",
 						"[null, MP allergen]"));

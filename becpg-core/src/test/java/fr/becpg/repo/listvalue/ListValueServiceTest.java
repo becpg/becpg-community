@@ -117,33 +117,6 @@ public class ListValueServiceTest extends BaseAlfrescoTestCase {
     	}
     	tempFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TEMPFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 
-//    	//Create temp product 1 with allowed constraint
-//    	logger.debug("create temp product 1");
-//    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-//		properties.put(ContentModel.PROP_NAME, "Temp product");
-//		properties.put(FoodModel.PROP_PRODUCT_TYPE, ProductType.RAW_MATERIAL_FR);
-//		properties.put(FoodModel.PROP_PRODUCT_CURRENCY, "dollard");
-//    	NodeRef productNodeRef = nodeService.createNode(tempFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), FoodModel.TYPE_PRODUCT, properties).getChildRef();
-//    	
-//    	//Create temp product 2 with non allowed constraint
-//    	logger.debug("create temp product 2");
-//    	properties = new HashMap<QName, Serializable>();
-//		properties.put(ContentModel.PROP_NAME, "Temp product 2");
-//		properties.put(FoodModel.PROP_PRODUCT_TYPE, ProductType.RAW_MATERIAL_FR);
-//		properties.put(FoodModel.PROP_PRODUCT_CURRENCY, "dollard1");
-//		
-//		try
-//		{
-//			productNodeRef = null;
-//			productNodeRef = nodeService.createNode(tempFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), FoodModel.TYPE_PRODUCT, properties).getChildRef();
-//		}
-//		catch(IntegrityException e)
-//		{
-//			assertNotNull(e);
-//		}
-//		
-//		assertNull(productNodeRef);    	
-
 	}
 	
 	/**

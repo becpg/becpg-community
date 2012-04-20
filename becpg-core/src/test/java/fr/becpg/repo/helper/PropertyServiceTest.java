@@ -47,7 +47,7 @@ public class PropertyServiceTest  extends BaseAlfrescoTestCase  {
 		
     	logger.debug("ProductServiceTest:setUp");
     	
-    	attributeExtractorService = (AttributeExtractorService)ctx.getBean("propertyService");
+    	attributeExtractorService = (AttributeExtractorService)ctx.getBean("attributeExtractorService");
     	dictionaryService = (DictionaryService)ctx.getBean("dictionaryService");
     	
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
