@@ -48,7 +48,7 @@
 		   <@dataGridDashlet 
 		   	dashletId="constraintsList-${id}" 
 		   	dashletTitle=msg("dashlet.constraintsList.title")
-		   	itemType="bcpg:forbiddenIngList"  />
+		   	itemType="bcpg:reqCtrlList"  />
 		   </div>
 		 </div>
  </div>

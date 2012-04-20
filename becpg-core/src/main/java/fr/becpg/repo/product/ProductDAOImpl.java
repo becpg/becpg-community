@@ -890,7 +890,7 @@ public class ProductDAOImpl implements ProductDAO {
 		List<ReqCtrlListDataItem> reqCtrlList = null;
 
 		if (listContainerNodeRef != null) {
-			NodeRef reqCtrlListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
+			NodeRef reqCtrlListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
 
 			if (reqCtrlListNodeRef != null) {
 				reqCtrlList = new ArrayList<ReqCtrlListDataItem>();
@@ -2150,7 +2150,7 @@ public class ProductDAOImpl implements ProductDAO {
 	private void createReqCtrlList(NodeRef listContainerNodeRef, List<ReqCtrlListDataItem> reqCtrlList) throws InvalidTypeException {
 
 		if (listContainerNodeRef != null) {
-			NodeRef reqCtrlListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
+			NodeRef reqCtrlListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
 
 			if (reqCtrlList == null) {
 				// delete existing list
@@ -2160,7 +2160,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 				// reqCtrl list, create if needed
 				if (reqCtrlListNodeRef == null) {
-					reqCtrlListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
+					reqCtrlListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
 				}
 
 				List<NodeRef> listItemNodeRefs = listItems(reqCtrlListNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
