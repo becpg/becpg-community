@@ -270,7 +270,7 @@
 		<aspect name="npdwf:priceInformations">
 			<properties>
 				<property name="npdwf:unitPrice">
-					<type>d:float</type>
+					<type>d:double</type>
 				</property>
 				<property name="npdwf:priceCurrency">
 					<type>d:text</type>

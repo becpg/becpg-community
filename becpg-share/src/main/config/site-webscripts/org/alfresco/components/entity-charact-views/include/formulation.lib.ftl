@@ -1,4 +1,4 @@
-<#include "common.lib.ftl"/>
+<#include "../../../modules/entity-datagrid/include/entity-datagrid.lib.ftl" />
 
 <#macro dataGridDashlet dashletId usePagination=true useFilter=true showCreateButton=false extra...>
 <div id="${dashletId}">

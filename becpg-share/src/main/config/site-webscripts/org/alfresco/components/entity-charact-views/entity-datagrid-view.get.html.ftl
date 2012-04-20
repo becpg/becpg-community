@@ -1,5 +1,4 @@
 <#include "../../modules/entity-datagrid/include/entity-datagrid.lib.ftl" />
-<#include "include/common.lib.ftl" />
 <#assign id = args.htmlid>
 <!--[if IE]>
 <iframe id="yui-history-iframe" src="${url.context}/res/yui/history/assets/blank.html"></iframe> 
