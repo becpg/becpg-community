@@ -17,14 +17,14 @@ public class NutListDataItem implements IManualDataItem{
 	private NodeRef nodeRef;
 	
 	/** The value. */
-	private Float value;
+	private Double value;
 	
 	/** The unit. */
 	private String unit;
 	
-	private Float mini;
+	private Double mini;
 	
-	private Float maxi;
+	private Double maxi;
 	
 	/** The group. */
 	private String group;
@@ -57,7 +57,7 @@ public class NutListDataItem implements IManualDataItem{
 	 *
 	 * @return the value
 	 */
-	public Float getValue() {
+	public Double getValue() {
 		return value;
 	}
 	
@@ -66,7 +66,7 @@ public class NutListDataItem implements IManualDataItem{
 	 *
 	 * @param value the new value
 	 */
-	public void setValue(Float value) {
+	public void setValue(Double value) {
 		this.value = value;
 	}
 	
@@ -88,19 +88,19 @@ public class NutListDataItem implements IManualDataItem{
 		this.unit = unit;
 	}
 	
-	public Float getMini() {
+	public Double getMini() {
 		return mini;
 	}
 
-	public void setMini(Float mini) {
+	public void setMini(Double mini) {
 		this.mini = mini;
 	}
 
-	public Float getMaxi() {
+	public Double getMaxi() {
 		return maxi;
 	}
 
-	public void setMaxi(Float maxi) {
+	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 
@@ -168,7 +168,7 @@ public class NutListDataItem implements IManualDataItem{
 	 * @param group the group
 	 * @param nut the nut
 	 */
-	public NutListDataItem(NodeRef nodeRef,	Float value, String unit, Float mini, Float maxi, String group, NodeRef nut, Boolean isManual)
+	public NutListDataItem(NodeRef nodeRef,	Double value, String unit, Double mini, Double maxi, String group, NodeRef nut, Boolean isManual)
 	{
 		setNodeRef(nodeRef);
 		setValue(value);

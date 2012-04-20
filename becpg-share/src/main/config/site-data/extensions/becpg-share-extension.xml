@@ -6,10 +6,6 @@
 			<auto-deploy>true</auto-deploy>
 			<customizations>
 				<customization>
-					<targetPackageRoot>org.alfresco.modules.entity-datagrid</targetPackageRoot>
-					<sourcePackageRoot>org.alfresco.modules.custom-entity-datagrid</sourcePackageRoot>
-				</customization>
-				<customization>
 					<targetPackageRoot>org.alfresco.components.head</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-resources</sourcePackageRoot>
 				</customization>

@@ -14,13 +14,13 @@ import org.alfresco.service.cmr.repository.MLText;
 public class IngItem extends AbstractIng {
 	
 	/** The qty. */
-	private float qty;	
+	private Double qty;	
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.food.ing.Ing#getQty()
 	 */
 	@Override
-	public float getQty() {
+	public Double getQty() {
 		return qty;
 	}		
 	
@@ -29,7 +29,7 @@ public class IngItem extends AbstractIng {
 	 *
 	 * @param qty the new qty
 	 */
-	public void setQty(float qty) {
+	public void setQty(Double qty) {
 		this.qty = qty;
 	}
 	
@@ -40,7 +40,7 @@ public class IngItem extends AbstractIng {
 	 * @param mlName the ml name
 	 * @param qty the qty
 	 */
-	public IngItem(String name, MLText mlName, Float qty){
+	public IngItem(String name, MLText mlName, Double qty){
 		super(name, mlName);
 		this.qty = qty;
 	}

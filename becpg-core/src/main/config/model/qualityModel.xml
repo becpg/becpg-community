@@ -137,7 +137,7 @@
 					<mandatory>true</mandatory>
 				</property>
 				<property name="qa:ncQuantityNc">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>true</mandatory>
 					
 				</property>
@@ -164,7 +164,7 @@
 					<mandatory>true</mandatory>
 				</property>
 				<property name="qa:ncCost">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>true</mandatory>
 				</property>				
 				<property name="qa:ncCause">
@@ -451,11 +451,11 @@
 					<mandatory>true</mandatory>								
 				</property>
 				<property name="qa:clValue">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>								
 				</property>		
 				<property name="qa:clTarget">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>								
 				</property>	
 				<property name="qa:clUnit">
@@ -578,11 +578,11 @@
 					</constraints>				
 				</property>												
 				<property name="qa:clMini">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>								
 				</property>
 				<property name="qa:clMaxi">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>								
 				</property>				
 				<property name="qa:clRequired">

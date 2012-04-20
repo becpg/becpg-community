@@ -45,7 +45,7 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 public class IngsCalculatingVisitor implements ProductVisitor{
 		
 	/** The Constant DEFAULT_DENSITY. */
-	public static final float DEFAULT_DENSITY = 1f;
+	public static final Double DEFAULT_DENSITY = 1d;
 	
 	/** The Constant NO_GRP. */
 	public static final String  NO_GRP = "-";
@@ -189,7 +189,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		List<CompoListDataItem> compoList = formulatedProduct.getCompoList();
 		Map<NodeRef, IngListDataItem> ingMap = new HashMap<NodeRef, IngListDataItem>();
 		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<NodeRef, ReqCtrlListDataItem>();
-		Map<NodeRef, Float> totalQtyIngMap = new HashMap<NodeRef, Float>();
+		Map<NodeRef, Double> totalQtyIngMap = new HashMap<NodeRef, Double>();
 		
 		if(compoList != null){
 			for(CompoListDataItem compoItem : compoList){
@@ -197,13 +197,13 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			}
 		}		
 				
-		Float totalQty = 0f;
-		for(Float totalQtyIng : totalQtyIngMap.values())
+		Double totalQty = 0d;
+		for(Double totalQtyIng : totalQtyIngMap.values())
 			totalQty += totalQtyIng;
 				
 		if(totalQty != 0){
 			for(IngListDataItem ingListDataItem : ingMap.values()){
-				Float totalQtyIng = totalQtyIngMap.get(ingListDataItem.getIng());
+				Double totalQtyIng = totalQtyIngMap.get(ingListDataItem.getIng());
 				ingListDataItem.setQtyPerc(100 * totalQtyIng / totalQty);				
 			}
 		}
@@ -226,7 +226,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 * @param totalQtyIngMap the total qty ing map
 	 * @throws FormulateException 
 	 */
-	private void visitILOfPart(ProductData productSpecicationData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Float> totalQtyIngMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException{				
+	private void visitILOfPart(ProductData productSpecicationData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Double> totalQtyIngMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException{				
 			
 		Collection<QName> dataLists = new ArrayList<QName>();		
 		dataLists.add(BeCPGModel.TYPE_INGLIST);
@@ -251,7 +251,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 * @param totalQtyIngMap the total qty ing map
 	 * @throws FormulateException 
 	 */
-	private void calculateILOfPart(ProductData productData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Float> totalQtyIngMap) throws FormulateException{
+	private void calculateILOfPart(ProductData productData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Double> totalQtyIngMap) throws FormulateException{
 		
 		//OMIT is not taken in account
 		if(DeclarationType.parse(compoListDataItem.getDeclType()) == DeclarationType.OMIT){
@@ -263,7 +263,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			//Look for ing
 			NodeRef ingNodeRef = ingListDataItem.getIng();
 			IngListDataItem newIngListDataItem = ingMap.get(ingNodeRef);
-			Float totalQtyIng = totalQtyIngMap.get(ingNodeRef);
+			Double totalQtyIng = totalQtyIngMap.get(ingNodeRef);
 			
 			logger.trace("productData: " + productData.getName() + " - ing: " + nodeService.getProperty(ingNodeRef, ContentModel.PROP_NAME));
 			
@@ -273,20 +273,20 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 				newIngListDataItem.setIng(ingNodeRef);				
 				ingMap.put(ingNodeRef, newIngListDataItem);
 				
-				totalQtyIng = 0f;			
+				totalQtyIng = 0d;			
 				totalQtyIngMap.put(ingNodeRef, totalQtyIng);
 			}															
 			
 			//Calculate qty
-			Float qty = FormulationHelper.getQty(compoListDataItem);
-			Float density = (productData.getDensity() != null) ? productData.getDensity():DEFAULT_DENSITY; //density is null => 1
-			Float qtyIng = ingListDataItem.getQtyPerc();
+			Double qty = FormulationHelper.getQty(compoListDataItem);
+			Double density = (productData.getDensity() != null) ? productData.getDensity():DEFAULT_DENSITY; //density is null => 1
+			Double qtyIng = ingListDataItem.getQtyPerc();
 						
 			if(qty != null && qtyIng != null){
 				
 				logger.trace("totalQtyIng before: " + totalQtyIng);
 				
-				Float valueToAdd = density * qty * qtyIng;
+				Double valueToAdd = density * qty * qtyIng;
 				totalQtyIng += valueToAdd;
 				totalQtyIngMap.put(ingNodeRef, totalQtyIng);
 								
@@ -572,20 +572,20 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 				if(ingItem == null){
 					
 					MLText mlName = (MLText)mlNodeService.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
-					ingItem =new IngItem(ingName, mlName, 0f);
+					ingItem =new IngItem(ingName, mlName, 0d);
 					compositeIng.add(ingItem, isDeclared);
 				}															
 				
 				//Calculate qty
-				Float qty = FormulationHelper.getQty(compoListDataItem);
-				Float density = (part.getDensity() != null) ? part.getDensity():DEFAULT_DENSITY; //density is null => 1
-				Float qtyIng = ingListDataItem.getQtyPerc();
+				Double qty = FormulationHelper.getQty(compoListDataItem);
+				Double density = (part.getDensity() != null) ? part.getDensity():DEFAULT_DENSITY; //density is null => 1
+				Double qtyIng = ingListDataItem.getQtyPerc();
 							
 				if(qty != null && qtyIng != null){
 					
-					Float totalQtyIng = ingItem.getQty();
+					Double totalQtyIng = ingItem.getQty();
 					
-					Float valueToAdd = density * qty * qtyIng;
+					Double valueToAdd = density * qty * qtyIng;
 					totalQtyIng += valueToAdd;
 					ingItem.setQty(totalQtyIng);								
 				}

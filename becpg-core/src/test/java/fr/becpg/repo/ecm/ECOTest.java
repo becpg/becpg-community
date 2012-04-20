@@ -63,7 +63,7 @@ public class ECOTest extends RepoBaseTestCase  {
     private static String GROUP_PATE = "Pâte";
     
     
-    public static final String  FLOAT_FORMAT = "0.0000";
+    public static final String  Double_FORMAT = "0.0000";
     
     /** The folder node ref. */
     private NodeRef folderNodeRef;
@@ -183,13 +183,13 @@ public class ECOTest extends RepoBaseTestCase  {
 			rawMaterial1.setLegalName("Legal Raw material 1");
 			//costList
 			List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 3f, "€/kg", null, cost1, false));
-			costList.add(new CostListDataItem(null, 2f, "€/kg", null, cost2, false));
+			costList.add(new CostListDataItem(null, 3d, "€/kg", null, cost1, false));
+			costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false));
 			rawMaterial1.setCostList(costList);
 			//nutList
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f, 0f, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f, 0f, "Groupe 1", nut2, false));
+			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
+			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 			rawMaterial1.setNutList(nutList);			
 			rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, dataLists);
 			
@@ -199,13 +199,13 @@ public class ECOTest extends RepoBaseTestCase  {
 			rawMaterial2.setLegalName("Legal Raw material 2");
 			//costList
 			costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 1f, "€/kg", null, cost1, false));
-			costList.add(new CostListDataItem(null, 2f, "€/kg", null, cost2, false));
+			costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false));
+			costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false));
 			rawMaterial2.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f,  0f, "Groupe 1", nut2, false));
+			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
+			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
 			rawMaterial2.setNutList(nutList);			
 			rawMaterial2NodeRef = productDAO.create(folderNodeRef, rawMaterial2, dataLists);
 			
@@ -215,13 +215,13 @@ public class ECOTest extends RepoBaseTestCase  {
 			rawMaterial3.setLegalName("Legal Raw material 3");
 			//costList
 			costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 1f, "€/kg", null, cost1, false));
-			costList.add(new CostListDataItem(null, 2f, "€/kg", null, cost2, false));
+			costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false));
+			costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false));
 			rawMaterial3.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f,  0f, "Groupe 1", nut2, false));
+			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
+			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
 			rawMaterial3.setNutList(nutList);			
 			rawMaterial3NodeRef = productDAO.create(folderNodeRef, rawMaterial3, dataLists);
 			
@@ -237,13 +237,13 @@ public class ECOTest extends RepoBaseTestCase  {
 			rawMaterial5.setLegalName("Legal Raw material 5");
 			//costList
 			costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 5f, "€/m", null, cost1, false));
-			costList.add(new CostListDataItem(null, 6f, "€/m", null, cost2, false));
+			costList.add(new CostListDataItem(null, 5d, "€/m", null, cost1, false));
+			costList.add(new CostListDataItem(null, 6d, "€/m", null, cost2, false));
 			rawMaterial5.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 3f, "g/100g", 0f,  0f, "Groupe 1", nut2, false));
+			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
+			nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
 			rawMaterial5.setNutList(nutList);						
 			rawMaterial5NodeRef = productDAO.create(folderNodeRef, rawMaterial5, dataLists);
 			
@@ -281,14 +281,14 @@ public class ECOTest extends RepoBaseTestCase  {
 				finishedProduct.setName(finishedProductName);
 				finishedProduct.setLegalName("Legal name");
 				finishedProduct.setUnit(ProductUnit.kg);
-				finishedProduct.setQty(2f);
+				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
 				
@@ -310,11 +310,11 @@ public class ECOTest extends RepoBaseTestCase  {
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
-						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0f, costListDataItem.getValue());
+						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
 					}
 					if(costListDataItem.getCost().equals(cost2)){
-						assertEquals("cost1.getValue() == 6.0, actual values: " + trace, 6.0f, costListDataItem.getValue());
+						assertEquals("cost1.getValue() == 6.0, actual values: " + trace, 6.0d, costListDataItem.getValue());
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
 					}
 				}
@@ -324,10 +324,10 @@ public class ECOTest extends RepoBaseTestCase  {
 					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
-						assertEquals("nut1.getValue() == 3, actual values: " + trace, 3f, nutListDataItem.getValue());
+						assertEquals("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
 					}
 					if(nutListDataItem.getNut().equals(nut2)){
-						assertEquals("nut2.getValue() == 6, actual values: " + trace, 6f, nutListDataItem.getValue());
+						assertEquals("nut2.getValue() == 6, actual values: " + trace, 6d, nutListDataItem.getValue());
 					}
 				}				
 				
@@ -420,26 +420,26 @@ public class ECOTest extends RepoBaseTestCase  {
 						if(sim.getCharact().equals(cost1)){
 						
 							checks++;
-							assertEquals("check cost1 PF1", 4.0f, sim.getSourceValue());
-							assertEquals("check cost1 PF1", 11.5f, sim.getTargetValue());
+							assertEquals("check cost1 PF1", 4.0d, sim.getSourceValue());
+							assertEquals("check cost1 PF1", 11.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(cost2)){
 							
 							checks++;
-							assertEquals("check cost2 PF1", 6.0f, sim.getSourceValue());
-							assertEquals("check cost2 PF1", 15f, sim.getTargetValue());
+							assertEquals("check cost2 PF1", 6.0d, sim.getSourceValue());
+							assertEquals("check cost2 PF1", 15d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut1)){
 							
 							checks++;
-							assertEquals("check nut1 PF1", 3.0f, sim.getSourceValue());
-							assertEquals("check nut1 PF1", 4.5f, sim.getTargetValue());
+							assertEquals("check nut1 PF1", 3.0d, sim.getSourceValue());
+							assertEquals("check nut1 PF1", 4.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut2)){
 							
 							checks++;
-							assertEquals("check nut2 PF1", 6.0f, sim.getSourceValue());
-							assertEquals("check nut2 PF1", 10.5f, sim.getTargetValue());
+							assertEquals("check nut2 PF1", 6.0d, sim.getSourceValue());
+							assertEquals("check nut2 PF1", 10.5d, sim.getTargetValue());
 						}						
 					}
 					else if(sim.getSourceItem().equals(finishedProduct2NodeRef)){
@@ -447,26 +447,26 @@ public class ECOTest extends RepoBaseTestCase  {
 						if(sim.getCharact().equals(cost1)){
 							
 							checks++;
-							assertEquals("check cost1 PF2", 4.0f, sim.getSourceValue());
-							assertEquals("check cost1 PF2", 11.5f, sim.getTargetValue());
+							assertEquals("check cost1 PF2", 4.0d, sim.getSourceValue());
+							assertEquals("check cost1 PF2", 11.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(cost2)){
 							
 							checks++;
-							assertEquals("check cost2 PF2", 6.0f, sim.getSourceValue());
-							assertEquals("check cost2 PF2", 15f, sim.getTargetValue());
+							assertEquals("check cost2 PF2", 6.0d, sim.getSourceValue());
+							assertEquals("check cost2 PF2", 15d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut1)){
 							
 							checks++;
-							assertEquals("check nut1 PF2", 3.0f, sim.getSourceValue());
-							assertEquals("check nut1 PF2", 4.5f, sim.getTargetValue());
+							assertEquals("check nut1 PF2", 3.0d, sim.getSourceValue());
+							assertEquals("check nut1 PF2", 4.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut2)){
 							
 							checks++;
-							assertEquals("check nut2 PF2", 6.0f, sim.getSourceValue());
-							assertEquals("check nut2 PF2", 10.5f, sim.getTargetValue());
+							assertEquals("check nut2 PF2", 6.0d, sim.getSourceValue());
+							assertEquals("check nut2 PF2", 10.5d, sim.getTargetValue());
 						}
 					}					
 				}
@@ -564,26 +564,26 @@ public class ECOTest extends RepoBaseTestCase  {
 						if(sim.getCharact().equals(cost1)){
 						
 							checks++;
-							assertEquals("check cost1 PF1", 4.0f, sim.getSourceValue());
-							assertEquals("check cost1 PF1", 11.5f, sim.getTargetValue());
+							assertEquals("check cost1 PF1", 4.0d, sim.getSourceValue());
+							assertEquals("check cost1 PF1", 11.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(cost2)){
 							
 							checks++;
-							assertEquals("check cost2 PF1", 6.0f, sim.getSourceValue());
-							assertEquals("check cost2 PF1", 15f, sim.getTargetValue());
+							assertEquals("check cost2 PF1", 6.0d, sim.getSourceValue());
+							assertEquals("check cost2 PF1", 15d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut1)){
 							
 							checks++;
-							assertEquals("check nut1 PF1", 3.0f, sim.getSourceValue());
-							assertEquals("check nut1 PF1", 4.5f, sim.getTargetValue());
+							assertEquals("check nut1 PF1", 3.0d, sim.getSourceValue());
+							assertEquals("check nut1 PF1", 4.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut2)){
 							
 							checks++;
-							assertEquals("check nut2 PF1", 6.0f, sim.getSourceValue());
-							assertEquals("check nut2 PF1", 10.5f, sim.getTargetValue());
+							assertEquals("check nut2 PF1", 6.0d, sim.getSourceValue());
+							assertEquals("check nut2 PF1", 10.5d, sim.getTargetValue());
 						}						
 					}
 					else if(sim.getSourceItem().equals(finishedProduct2NodeRef)){
@@ -591,26 +591,26 @@ public class ECOTest extends RepoBaseTestCase  {
 						if(sim.getCharact().equals(cost1)){
 							
 							checks++;
-							assertEquals("check cost1 PF2", 4.0f, sim.getSourceValue());
-							assertEquals("check cost1 PF2", 11.5f, sim.getTargetValue());
+							assertEquals("check cost1 PF2", 4.0d, sim.getSourceValue());
+							assertEquals("check cost1 PF2", 11.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(cost2)){
 							
 							checks++;
-							assertEquals("check cost2 PF2", 6.0f, sim.getSourceValue());
-							assertEquals("check cost2 PF2", 15f, sim.getTargetValue());
+							assertEquals("check cost2 PF2", 6.0d, sim.getSourceValue());
+							assertEquals("check cost2 PF2", 15d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut1)){
 							
 							checks++;
-							assertEquals("check nut1 PF2", 3.0f, sim.getSourceValue());
-							assertEquals("check nut1 PF2", 4.5f, sim.getTargetValue());
+							assertEquals("check nut1 PF2", 3.0d, sim.getSourceValue());
+							assertEquals("check nut1 PF2", 4.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut2)){
 							
 							checks++;
-							assertEquals("check nut2 PF2", 6.0f, sim.getSourceValue());
-							assertEquals("check nut2 PF2", 10.5f, sim.getTargetValue());
+							assertEquals("check nut2 PF2", 6.0d, sim.getSourceValue());
+							assertEquals("check nut2 PF2", 10.5d, sim.getTargetValue());
 						}
 					}					
 				}
@@ -646,10 +646,10 @@ public class ECOTest extends RepoBaseTestCase  {
 				finishedProduct3.setName("PF3");
 				finishedProduct3.setLegalName("Legal name");
 				finishedProduct3.setUnit(ProductUnit.kg);
-				finishedProduct3.setQty(2f);
+				finishedProduct3.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1f, 1f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, finishedProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 2f, 2f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, finishedProduct2NodeRef));				
+				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, finishedProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 2d, 2d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, finishedProduct2NodeRef));				
 				finishedProduct3.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
@@ -676,11 +676,11 @@ public class ECOTest extends RepoBaseTestCase  {
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
-						assertEquals("cost1.getValue() == 6.0, actual values: " + trace, 6.0f, costListDataItem.getValue());
+						assertEquals("cost1.getValue() == 6.0, actual values: " + trace, 6.0d, costListDataItem.getValue());
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
 					}
 					if(costListDataItem.getCost().equals(cost2)){
-						assertEquals("cost1.getValue() == 9.0, actual values: " + trace, 9.0f, costListDataItem.getValue());
+						assertEquals("cost1.getValue() == 9.0, actual values: " + trace, 9.0d, costListDataItem.getValue());
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
 					}
 				}
@@ -690,10 +690,10 @@ public class ECOTest extends RepoBaseTestCase  {
 					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
-						assertEquals("nut1.getValue() == 4.5, actual values: " + trace, 4.5f, nutListDataItem.getValue());
+						assertEquals("nut1.getValue() == 4.5, actual values: " + trace, 4.5d, nutListDataItem.getValue());
 					}
 					if(nutListDataItem.getNut().equals(nut2)){
-						assertEquals("nut2.getValue() == 9, actual values: " + trace, 9f, nutListDataItem.getValue());
+						assertEquals("nut2.getValue() == 9, actual values: " + trace, 9d, nutListDataItem.getValue());
 					}
 				}	
 				
@@ -772,26 +772,26 @@ public class ECOTest extends RepoBaseTestCase  {
 						if(sim.getCharact().equals(cost1)){
 						
 							checks++;
-							assertEquals("check cost1 PF1", 4.0f, sim.getSourceValue());
-							assertEquals("check cost1 PF1", 11.5f, sim.getTargetValue());
+							assertEquals("check cost1 PF1", 4.0d, sim.getSourceValue());
+							assertEquals("check cost1 PF1", 11.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(cost2)){
 							
 							checks++;
-							assertEquals("check cost2 PF1", 6.0f, sim.getSourceValue());
-							assertEquals("check cost2 PF1", 15f, sim.getTargetValue());
+							assertEquals("check cost2 PF1", 6.0d, sim.getSourceValue());
+							assertEquals("check cost2 PF1", 15d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut1)){
 							
 							checks++;
-							assertEquals("check nut1 PF1", 3.0f, sim.getSourceValue());
-							assertEquals("check nut1 PF1", 4.5f, sim.getTargetValue());
+							assertEquals("check nut1 PF1", 3.0d, sim.getSourceValue());
+							assertEquals("check nut1 PF1", 4.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut2)){
 							
 							checks++;
-							assertEquals("check nut2 PF1", 6.0f, sim.getSourceValue());
-							assertEquals("check nut2 PF1", 10.5f, sim.getTargetValue());
+							assertEquals("check nut2 PF1", 6.0d, sim.getSourceValue());
+							assertEquals("check nut2 PF1", 10.5d, sim.getTargetValue());
 						}						
 					}
 					else if(sim.getSourceItem().equals(finishedProduct2NodeRef)){
@@ -799,26 +799,26 @@ public class ECOTest extends RepoBaseTestCase  {
 						if(sim.getCharact().equals(cost1)){
 							
 							checks++;
-							assertEquals("check cost1 PF2", 4.0f, sim.getSourceValue());
-							assertEquals("check cost1 PF2", 11.5f, sim.getTargetValue());
+							assertEquals("check cost1 PF2", 4.0d, sim.getSourceValue());
+							assertEquals("check cost1 PF2", 11.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(cost2)){
 							
 							checks++;
-							assertEquals("check cost2 PF2", 6.0f, sim.getSourceValue());
-							assertEquals("check cost2 PF2", 15f, sim.getTargetValue());
+							assertEquals("check cost2 PF2", 6.0d, sim.getSourceValue());
+							assertEquals("check cost2 PF2", 15d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut1)){
 							
 							checks++;
-							assertEquals("check nut1 PF2", 3.0f, sim.getSourceValue());
-							assertEquals("check nut1 PF2", 4.5f, sim.getTargetValue());
+							assertEquals("check nut1 PF2", 3.0d, sim.getSourceValue());
+							assertEquals("check nut1 PF2", 4.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut2)){
 							
 							checks++;
-							assertEquals("check nut2 PF2", 6.0f, sim.getSourceValue());
-							assertEquals("check nut2 PF2", 10.5f, sim.getTargetValue());
+							assertEquals("check nut2 PF2", 6.0d, sim.getSourceValue());
+							assertEquals("check nut2 PF2", 10.5d, sim.getTargetValue());
 						}
 					}
 					else if(sim.getSourceItem().equals(finishedProduct3NodeRef)){
@@ -830,26 +830,26 @@ public class ECOTest extends RepoBaseTestCase  {
 						if(sim.getCharact().equals(cost1)){
 							
 							checks++;
-							assertEquals("check cost1 PF3", 6.0f, sim.getSourceValue());
-							assertEquals("check cost1 PF3", 17.25f, sim.getTargetValue());
+							assertEquals("check cost1 PF3", 6.0d, sim.getSourceValue());
+							assertEquals("check cost1 PF3", 17.25d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(cost2)){
 							
 							checks++;
-							assertEquals("check cost2 PF3", 9.0f, sim.getSourceValue());
-							assertEquals("check cost2 PF3", 22.5f, sim.getTargetValue());
+							assertEquals("check cost2 PF3", 9.0d, sim.getSourceValue());
+							assertEquals("check cost2 PF3", 22.5d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut1)){
 							
 							checks++;
-							assertEquals("check nut1 PF3", 4.5f, sim.getSourceValue());
-							assertEquals("check nut1 PF3", 6.75f, sim.getTargetValue());
+							assertEquals("check nut1 PF3", 4.5d, sim.getSourceValue());
+							assertEquals("check nut1 PF3", 6.75d, sim.getTargetValue());
 						}
 						else if(sim.getCharact().equals(nut2)){
 							
 							checks++;
-							assertEquals("check nut2 PF3", 9.0f, sim.getSourceValue());
-							assertEquals("check nut2 PF3", 15.75f, sim.getTargetValue());
+							assertEquals("check nut2 PF3", 9.0d, sim.getSourceValue());
+							assertEquals("check nut2 PF3", 15.75d, sim.getTargetValue());
 						}
 					}
 				}

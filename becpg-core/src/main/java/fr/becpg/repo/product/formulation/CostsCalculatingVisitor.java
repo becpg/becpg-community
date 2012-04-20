@@ -44,10 +44,10 @@ import fr.becpg.repo.product.data.productList.RequirementType;
 public class CostsCalculatingVisitor implements ProductVisitor {
 	
 	/** The Constant QTY_FOR_UNIT. */
-	public static final float QTY_FOR_UNIT = 1f;
+	public static final Double QTY_FOR_UNIT = 1d;
 	
 	/** The Constant DEFAULT_DENSITY. */
-	public static final float DEFAULT_DENSITY = 1f;
+	public static final Double DEFAULT_DENSITY = 1d;
 	
 	/** The Constant UNIT_SEPARATOR. */
 	public static final String UNIT_SEPARATOR = "/";
@@ -89,30 +89,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		this.entityListDAO = entityListDAO;
 	}
 
-//	@Override
-//	public FinishedProductData visit(FinishedProductData finishedProductData) {
-//		visitProduct(finishedProductData);		
-//	}
-//
-//	@Override
-//	public RawMaterialData visit(RawMaterialData rawMaterialData) {
-//		//Nothing to do
-//	}
-//
-//	@Override
-//	public PackagingMaterialData visit(PackagingMaterialData packagingMaterialData) {
-//		//Nothing to do
-//	}
-//
-//	@Override
-//	public void visit(SemiFinishedProductData semiFinishedProductData) {
-//		visitProduct(semiFinishedProductData);
-//	}
-//
-//	@Override
-//	public void visit(LocalSemiFinishedProduct localSemiFinishedProductData) {
-//		//Nothing to do		
-//	}
+
 	
 	/* (non-Javadoc)
  * @see fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData)
@@ -138,7 +115,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		 */
 		if(formulatedProduct.getPackagingList() != null){
 			for(PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList()){
-				Float qty = FormulationHelper.getQty(packagingListDataItem);
+				Double qty = FormulationHelper.getQty(packagingListDataItem);
 				visitCostLeaf(packagingListDataItem.getProduct(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());
 			}
 		}
@@ -147,19 +124,19 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		 * Calculate the costs of the processes
 		 */
 		if(formulatedProduct.getProcessList() != null){
-			Float stepDuration = null;
+			Double stepDuration = null;
 			
 			for(ProcessListDataItem processListDataItem : formulatedProduct.getProcessList()){
 				
 				//step : calculate step duration
 				if(processListDataItem.getStep() != null && 
-						processListDataItem.getRateProcess() != null && processListDataItem.getRateProcess() != 0f){
+						processListDataItem.getRateProcess() != null && processListDataItem.getRateProcess() != 0d){
 					stepDuration = processListDataItem.getQty() / processListDataItem.getRateProcess();
 				}
 				
 				if(processListDataItem.getResource() != null && processListDataItem.getQtyResource() != null){
 					
-					Float qty = stepDuration * processListDataItem.getQtyResource();
+					Double qty = stepDuration * processListDataItem.getQtyResource();
 					visitCostLeaf(processListDataItem.getResource(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());										
 				}																
 			}
@@ -167,14 +144,15 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		
 		//Take in account net weight, calculate cost details perc
 		if(formulatedProduct.getUnit() != ProductUnit.P){
-			
-			Float qty = formulatedProduct.getQty();
-			Float density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
-			Float netWeight = qty * density;
+			Double qty = formulatedProduct.getQty();
+			Double density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity() : DEFAULT_DENSITY; //density is null => 1
+			Double netWeight = qty * density;
+
 			
 			for(CostListDataItem c : compositeCosts.getCostMap().values()){		
-				if(c.getValue() != null)
+				if(c.getValue() != null){
 					c.setValue(c.getValue() / netWeight);
+				}
 			}
 			
 			for(CostDetailsListDataItem c : compositeCosts.getCostDetailsMap().values()){		
@@ -189,14 +167,14 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			if(c.getValue() != null){
 			
 				if(compositeCosts.getCostMap().containsKey(c.getCost())){					
-					Float sum = compositeCosts.getCostMap().get(c.getCost()).getValue();				
-					if(sum != null && !sum.equals(0f)){
+					Double sum = compositeCosts.getCostMap().get(c.getCost()).getValue();				
+					if(sum != null && !sum.equals(0d)){
 						c.setPercentage(c.getValue() / sum * 100);
 					}
 				}							
 			}
 			else{
-				c.setPercentage(0f);
+				c.setPercentage(0d);
 			}					
 		}
 		
@@ -245,7 +223,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){					
 			
 			// take in account the loss perc
-			Float lossPerc = component.getData().getLossPerc() != null ? component.getData().getLossPerc() : 0;
+			Double lossPerc = component.getData().getLossPerc() != null ? component.getData().getLossPerc() : 0d;
 			
 			if(component instanceof Composite){
 				
@@ -259,7 +237,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				for(Map.Entry<NodeRef, CostListDataItem> kv : childrenCosts.getCostMap().entrySet()){						
 					
 					// valueToAdd
-					Float valueToAdd = kv.getValue().getValue();					
+					Double valueToAdd = kv.getValue().getValue();					
 					if(valueToAdd != null){
 						valueToAdd = valueToAdd * (1 + lossPerc / 100);
 					}
@@ -267,12 +245,12 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 					CostListDataItem newCostListDataItem = compositeCosts.getCostMap().get(kv.getKey());
 					if(newCostListDataItem == null){
 						newCostListDataItem = kv.getValue();
-						newCostListDataItem.setValue(0f); // initialize
+						newCostListDataItem.setValue(0d); // initialize
 						compositeCosts.getCostMap().put(kv.getKey(), newCostListDataItem);
 					}
 					
 					// calculate newValue
-					Float newValue = newCostListDataItem.getValue();
+					Double newValue = newCostListDataItem.getValue();
 					if(newValue != null){
 						newValue += valueToAdd;
 					}
@@ -289,7 +267,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				for(Map.Entry<String, CostDetailsListDataItem> kv : childrenCosts.getCostDetailsMap().entrySet()){						
 					
 					// valueToAdd
-					Float valueToAdd = kv.getValue().getValue();					
+					Double valueToAdd = kv.getValue().getValue();					
 					if(valueToAdd != null){
 						valueToAdd = valueToAdd * (1 + lossPerc / 100);
 					}
@@ -297,12 +275,12 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 					CostDetailsListDataItem newCostDetailsListDataItem = compositeCosts.getCostDetailsMap().get(kv.getKey());
 					if(newCostDetailsListDataItem == null){
 						newCostDetailsListDataItem = kv.getValue();
-						newCostDetailsListDataItem.setValue(0f); // initialize
+						newCostDetailsListDataItem.setValue(0d); // initialize
 						compositeCosts.getCostDetailsMap().put(kv.getKey(), newCostDetailsListDataItem);
 					}
 					
 					// calculate newValue
-					Float newValue = newCostDetailsListDataItem.getValue();
+					Double newValue = newCostDetailsListDataItem.getValue();
 					if(newValue != null){
 						newValue += valueToAdd;
 					}
@@ -315,7 +293,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			}
 			else{
 				CompoListDataItem compoListDataItem = component.getData();
-				Float qty = FormulationHelper.getQty(compoListDataItem);
+				Double qty = FormulationHelper.getQty(compoListDataItem);
 				qty = qty * (1 + lossPerc / 100);
 				visitCostLeaf(compoListDataItem.getProduct(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());				
 			}			
@@ -332,7 +310,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	 * @param costDetailsMap
 	 * @param leafProductData
 	 */
-	private void visitCostLeaf(NodeRef leafNodeRef, Float qty, ProductUnit productUnit, Map<NodeRef, CostListDataItem> costMap, Map<String, CostDetailsListDataItem> costDetailsMap){
+	private void visitCostLeaf(NodeRef leafNodeRef, Double qty, ProductUnit productUnit, Map<NodeRef, CostListDataItem> costMap, Map<String, CostDetailsListDataItem> costDetailsMap){
 		
 		Collection<QName> dataLists = new ArrayList<QName>();		
 		dataLists.add(BeCPGModel.TYPE_COSTLIST);
@@ -360,22 +338,22 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				
 				String unit = calculateUnit(productUnit, (String)nodeService.getProperty(costNodeRef, BeCPGModel.PROP_COSTCURRENCY));			
 				newCostListDataItem.setUnit(unit);
-				costMap.put(costNodeRef, newCostListDataItem);				
+				costMap.put(costNodeRef, newCostListDataItem);		
 			}				
 			
 			//Calculate value
-			Float costValue = newCostListDataItem.getValue();			
-			Float value = costListDataItem.getValue();
+			Double costValue = newCostListDataItem.getValue();			
+			Double value = costListDataItem.getValue();
+			
 			
 			if(qty != null && value != null){
-				
-				Float valueToAdd = qty * value;
+				Double valueToAdd = qty * value;
 				if(costValue != null){
 					costValue += valueToAdd;
 				}
 				else{
 					costValue = valueToAdd;
-				}					
+				}	
 			}			
 			newCostListDataItem.setValue(costValue);
 		}
@@ -406,12 +384,12 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				}
 				
 				//Calculate value
-				Float costDetailsValue = newCostDetailsListDataItem.getValue();				
-				Float value = costListDataItem.getValue();
+				Double costDetailsValue = newCostDetailsListDataItem.getValue();				
+				Double value = costListDataItem.getValue();
 				
 				if(qty != null && value != null){
 					
-					Float valueToAdd = qty * value;
+					Double valueToAdd = qty * value;
 					
 					if(costDetailsValue != null){
 						costDetailsValue += valueToAdd;
@@ -446,12 +424,12 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				}
 				
 				//Calculate value
-				Float costDetailsValue = newCostDetailsListDataItem.getValue();
-				Float value = costDetailsListDataItem.getValue();
+				Double costDetailsValue = newCostDetailsListDataItem.getValue();
+				Double value = costDetailsListDataItem.getValue();
 				
 				if(qty != null && value != null){
 					
-					Float valueToAdd = qty * value;
+					Double valueToAdd = qty * value;
 					
 					if(costDetailsValue != null){
 						costDetailsValue += valueToAdd;
@@ -509,8 +487,8 @@ public class CostsCalculatingVisitor implements ProductVisitor {
                 int result = costName1.compareTo(costName2);
                 if (result == 0){
                 	
-                    Float value1 = c1.getValue();
-                    Float value2 = c2.getValue();
+                    Double value1 = c1.getValue();
+                    Double value2 = c2.getValue();
                     
                     if (value1 != null && value2 != null){
                     	
@@ -582,8 +560,8 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 	
 	private ProductData calculateProfitability(ProductData formulatedProduct){
 		
-		float unitTotalVariableCost = 0f;
-		float unitTotalFixedCost = 0f;
+		Double unitTotalVariableCost = 0d;
+		Double unitTotalFixedCost = 0d;
 		
 		for(CostListDataItem c : formulatedProduct.getCostList()){
 			
@@ -604,15 +582,15 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		if(formulatedProduct.getUnitPrice() != null && formulatedProduct.getUnitTotalCost() != null){
 			
 			// profitability
-			Float profit = formulatedProduct.getUnitPrice() - formulatedProduct.getUnitTotalCost();
-			Float profitability = 100 * profit / formulatedProduct.getUnitPrice();
+			Double profit = formulatedProduct.getUnitPrice() - formulatedProduct.getUnitTotalCost();
+			Double profitability = 100 * profit / formulatedProduct.getUnitPrice();
 			logger.debug("profitability: " + profitability);
 			formulatedProduct.setProfitability(profitability);
 			
 			// breakEven
 			if(profit > 0){
 				
-				Integer breakEven = Math.round(unitTotalFixedCost / profit);
+				Long breakEven = Math.round(unitTotalFixedCost / profit);
 				formulatedProduct.setBreakEven(breakEven);
 			}
 			else{

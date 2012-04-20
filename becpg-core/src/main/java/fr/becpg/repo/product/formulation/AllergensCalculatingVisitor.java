@@ -27,211 +27,193 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 
 /**
  * The Class AllergensCalculatingVisitor.
- *
+ * 
  * @author querephi
  */
 public class AllergensCalculatingVisitor implements ProductVisitor {
-	
+
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AllergensCalculatingVisitor.class);
-	
+
 	/** The product dao. */
 	private ProductDAO productDAO;
-	
+
 	private EntityListDAO entityListDAO;
-	
+
 	/**
 	 * Sets the product dao.
-	 *
-	 * @param productDAO the new product dao
+	 * 
+	 * @param productDAO
+	 *            the new product dao
 	 */
-	public void setProductDAO(ProductDAO productDAO){
+	public void setProductDAO(ProductDAO productDAO) {
 		this.productDAO = productDAO;
 	}
-	
+
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
-	
-//	@Override
-//	public RawMaterialData visit(RawMaterialData rawMaterialData) {		
-//		return (RawMaterialData)visitProduct(rawMaterialData);		
-//	}
-//
-//	@Override
-//	public PackagingMaterialData visit(PackagingMaterialData packagingMaterialData) {		
-//		//Nothing to do
-//		return packagingMaterialData;
-//	}
-//
-//	@Override
-//	public SemiFinishedProductData visit(SemiFinishedProductData semiFinishedProductData) {		
-//		return (SemiFinishedProductData)visitProduct(semiFinishedProductData);		
-//	}
-//
-//	@Override
-//	public FinishedProductData visit(FinishedProductData finishedProductData) {
-//		//Nothing to do		
-//		return finishedProductData;
-//	}
-//
-//	@Override
-//	public LocalSemiFinishedProduct visit(LocalSemiFinishedProduct localSemiFinishedProductData) {		
-//		//Nothing to do
-//		return localSemiFinishedProductData;
-//	}	
-	
-/* (non-Javadoc)
- * @see fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData)
- */
-@Override
-	public ProductData visit(ProductData formulatedProduct){
-		
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData
+	 * )
+	 */
+	@Override
+	public ProductData visit(ProductData formulatedProduct) {
+
 		logger.debug("Start AllergensCalculatingVisitor");
-		
+
 		// no compo => no formulation
-		if(formulatedProduct.getCompoList() == null){			
+		if (formulatedProduct.getCompoList() == null) {
 			logger.debug("no compo => no formulation");
 			return formulatedProduct;
 		}
-		
+
 		Set<NodeRef> visitedProducts = new HashSet<NodeRef>();
 		Map<NodeRef, AllergenListDataItem> allergenMap = new HashMap<NodeRef, AllergenListDataItem>();
-		
+
 		// compoList
-		if(formulatedProduct.getCompoList() != null){
-			for(CompoListDataItem compoItem : formulatedProduct.getCompoList()){
-				
+		if (formulatedProduct.getCompoList() != null) {
+			for (CompoListDataItem compoItem : formulatedProduct.getCompoList()) {
+
 				NodeRef part = compoItem.getProduct();
-				if(!visitedProducts.contains(part)){				
-					logger.debug("visitPart: " + part);				
+				if (!visitedProducts.contains(part)) {
+					logger.debug("visitPart: " + part);
 					visitPart(part, allergenMap);
 					visitedProducts.add(part);
-				}				
+				}
 			}
 		}
-		
+
 		// process
-		if(formulatedProduct.getProcessList() != null){
-			for(ProcessListDataItem processItem : formulatedProduct.getProcessList()){
-				
+		if (formulatedProduct.getProcessList() != null) {
+			for (ProcessListDataItem processItem : formulatedProduct.getProcessList()) {
+
 				NodeRef resource = processItem.getResource();
-				if(resource != null && !visitedProducts.contains(resource)){				
+				if (resource != null && !visitedProducts.contains(resource)) {
 					logger.debug("visitPart: " + resource);
-					//TODO : resource is not a product => il faudrait déplacer les méthodes loadAllergenList ailleurs que dans ProductDAOImpl
+					// TODO : resource is not a product => il faudrait déplacer
+					// les méthodes loadAllergenList ailleurs que dans
+					// ProductDAOImpl
 					visitPart(resource, allergenMap);
 					visitedProducts.add(resource);
-				}				
+				}
 			}
 		}
-		
-		List<AllergenListDataItem> allergenList = getListToUpdate(formulatedProduct.getNodeRef(), allergenMap);		
+
+		List<AllergenListDataItem> allergenList = getListToUpdate(formulatedProduct.getNodeRef(), allergenMap);
 		formulatedProduct.setAllergenList(allergenList);
-		logger.debug("product Visited, allergens size: " +allergenList.size());
+		logger.debug("product Visited, allergens size: " + allergenList.size());
 		return formulatedProduct;
 	}
 
 	/**
 	 * Visit part.
-	 *
-	 * @param part the part
-	 * @param allergenMap the allergen map
+	 * 
+	 * @param part
+	 *            the part
+	 * @param allergenMap
+	 *            the allergen map
 	 */
-	private void visitPart(NodeRef part, Map<NodeRef, AllergenListDataItem> allergenMap){		
-		
-		Collection<QName> dataLists = new ArrayList<QName>();		
+	private void visitPart(NodeRef part, Map<NodeRef, AllergenListDataItem> allergenMap) {
+
+		Collection<QName> dataLists = new ArrayList<QName>();
 		dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
 		ProductData productData = productDAO.find(part, dataLists);
-		
-		if(productData.getAllergenList() == null){
+
+		if (productData.getAllergenList() == null) {
 			return;
 		}
-		
-		for(AllergenListDataItem allergenListDataItem : productData.getAllergenList()){			
-			
-			//Look for alllergen
-			NodeRef allergenNodeRef = allergenListDataItem.getAllergen();
-			AllergenListDataItem newAllergenListDataItem = allergenMap.get(allergenNodeRef);
-			
-			if(newAllergenListDataItem == null){
-				newAllergenListDataItem =new AllergenListDataItem();
-				newAllergenListDataItem.setAllergen(allergenNodeRef);
-				allergenMap.put(allergenNodeRef, newAllergenListDataItem);
-			}									
 
-			//Define voluntary presence
-			if(allergenListDataItem.getVoluntary()){
-				newAllergenListDataItem.setVoluntary(true);
-			}
-			
-			//Define involuntary
-			if(allergenListDataItem.getInVoluntary()){
-				newAllergenListDataItem.setInVoluntary(true);
-			}
-			
-			//Define voluntary, add it when : not present and vol
-			if(allergenListDataItem.getVoluntary()){
-				//is it raw material ?
-				if(allergenListDataItem.getVoluntarySources().size() == 0){
-					if(!newAllergenListDataItem.getVoluntarySources().contains(part)){
-						newAllergenListDataItem.getVoluntarySources().add(part);
-					}
+		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
+
+			// Look for alllergen
+			NodeRef allergenNodeRef = allergenListDataItem.getAllergen();
+			if (allergenNodeRef != null) {
+				AllergenListDataItem newAllergenListDataItem = allergenMap.get(allergenNodeRef);
+
+				if (newAllergenListDataItem == null) {
+					newAllergenListDataItem = new AllergenListDataItem();
+					newAllergenListDataItem.setAllergen(allergenNodeRef);
+					allergenMap.put(allergenNodeRef, newAllergenListDataItem);
 				}
-				else{
-					for(NodeRef p : allergenListDataItem.getVoluntarySources()){
-						if(!newAllergenListDataItem.getVoluntarySources().contains(p)){
-							newAllergenListDataItem.getVoluntarySources().add(p);
+
+				// Define voluntary presence
+				if (allergenListDataItem.getVoluntary()) {
+					newAllergenListDataItem.setVoluntary(true);
+				}
+
+				// Define involuntary
+				if (allergenListDataItem.getInVoluntary()) {
+					newAllergenListDataItem.setInVoluntary(true);
+				}
+
+				// Define voluntary, add it when : not present and vol
+				if (allergenListDataItem.getVoluntary()) {
+					// is it raw material ?
+					if (allergenListDataItem.getVoluntarySources().size() == 0) {
+						if (!newAllergenListDataItem.getVoluntarySources().contains(part)) {
+							newAllergenListDataItem.getVoluntarySources().add(part);
+						}
+					} else {
+						for (NodeRef p : allergenListDataItem.getVoluntarySources()) {
+							if (!newAllergenListDataItem.getVoluntarySources().contains(p)) {
+								newAllergenListDataItem.getVoluntarySources().add(p);
+							}
 						}
 					}
 				}
-			}
-			
-			//Define invol, add it when : not present and inVol
-			if(allergenListDataItem.getInVoluntary()){
-				//is it raw material ?
-				if(allergenListDataItem.getInVoluntarySources().size() == 0){
-					if(!newAllergenListDataItem.getInVoluntarySources().contains(part)){
-						newAllergenListDataItem.getInVoluntarySources().add(part);
-					}
-				}
-				else{
-					for(NodeRef p : allergenListDataItem.getInVoluntarySources()){
-						if(!newAllergenListDataItem.getInVoluntarySources().contains(p)){
-							newAllergenListDataItem.getInVoluntarySources().add(p);
+
+				// Define invol, add it when : not present and inVol
+				if (allergenListDataItem.getInVoluntary()) {
+					// is it raw material ?
+					if (allergenListDataItem.getInVoluntarySources().size() == 0) {
+						if (!newAllergenListDataItem.getInVoluntarySources().contains(part)) {
+							newAllergenListDataItem.getInVoluntarySources().add(part);
+						}
+					} else {
+						for (NodeRef p : allergenListDataItem.getInVoluntarySources()) {
+							if (!newAllergenListDataItem.getInVoluntarySources().contains(p)) {
+								newAllergenListDataItem.getInVoluntarySources().add(p);
+							}
 						}
 					}
-				}				
+				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Calculate allergens to update (take in account manual list items)
+	 * 
 	 * @param productNodeRef
 	 * @param allergenMap
 	 * @return
 	 */
-	private List<AllergenListDataItem> getListToUpdate(NodeRef productNodeRef, Map<NodeRef, AllergenListDataItem> allergenMap){
-				
+	private List<AllergenListDataItem> getListToUpdate(NodeRef productNodeRef, Map<NodeRef, AllergenListDataItem> allergenMap) {
+
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
-		
-		if(listContainerNodeRef != null){
-			
+
+		if (listContainerNodeRef != null) {
+
 			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
-			
-			if(listNodeRef != null){
-				
+
+			if (listNodeRef != null) {
+
 				List<NodeRef> manualLinks = entityListDAO.getManualLinks(listNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
-				
-				for(NodeRef manualLink : manualLinks){
-					
-					AllergenListDataItem allergenListDataItem = productDAO.loadAllergenListItem(manualLink);		    		
-		    		allergenMap.put(allergenListDataItem.getAllergen(), allergenListDataItem);
+
+				for (NodeRef manualLink : manualLinks) {
+
+					AllergenListDataItem allergenListDataItem = productDAO.loadAllergenListItem(manualLink);
+					allergenMap.put(allergenListDataItem.getAllergen(), allergenListDataItem);
 				}
 			}
 		}
-		
+
 		return new ArrayList<AllergenListDataItem>(allergenMap.values());
 	}
-		
+
 }

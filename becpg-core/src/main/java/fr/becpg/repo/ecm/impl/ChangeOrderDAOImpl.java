@@ -627,8 +627,8 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 		    		SimulationListDataItem simListDataItem = new SimulationListDataItem(nodeRef,
 		    																	sourceNodeRef,
 		    																	charactNodeRef,		    																	
-		    																	(Float)nodeService.getProperty(nodeRef, ECMModel.PROP_CCL_SOURCE_VALUE),
-		    																	(Float)nodeService.getProperty(nodeRef, ECMModel.PROP_CCL_TARGET_VALUE));
+		    																	(Double)nodeService.getProperty(nodeRef, ECMModel.PROP_CCL_SOURCE_VALUE),
+		    																	(Double)nodeService.getProperty(nodeRef, ECMModel.PROP_CCL_TARGET_VALUE));
 		    		simList.add(simListDataItem);
 		    	}
     		}    		

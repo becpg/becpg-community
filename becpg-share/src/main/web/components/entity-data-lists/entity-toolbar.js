@@ -24,19 +24,18 @@
     * @constructor
     */
    beCPG.component.EntityDataListToolbar = function(htmlId)
-   {
-		return beCPG.component.EntityDataListToolbar.superclass.constructor.call(this, htmlId);
+   {  
+   	
+   	beCPG.component.EntityDataListToolbar.superclass.constructor.call(this, "beCPG.component.EntityDataListToolbar", htmlId, ["button", "container"]);
+
+		return this;
    };
    
    /**
-    * Extend from Alfresco.component.DataListToolbar
+    * Extend from Alfresco.component.Base
     */
-   YAHOO.extend(beCPG.component.EntityDataListToolbar, Alfresco.component.DataListToolbar);
+   YAHOO.extend(beCPG.component.EntityDataListToolbar, Alfresco.component.Base);
 
-   /**
-    * Augment prototype with DataListActions module, ensuring overwrite is enabled
-    */
-   YAHOO.lang.augmentProto(beCPG.component.EntityDataListToolbar,Alfresco.service.DataListActions, true);
 
    /**
     * Augment prototype with main class implementation, ensuring overwrite is enabled
@@ -95,20 +94,7 @@
        */
       onReady: function EntityDataListToolbar_onReady()
       {
-         this.widgets.newRowButton = Alfresco.util.createYUIButton(this, "newRowButton", this.onNewRow,
-         {
-            disabled: true,
-            value: "create"
-         });
-
-         // Selected Items menu button
-         this.widgets.selectedItems = Alfresco.util.createYUIButton(this, "selectedItems-button", this.onSelectedItems,
-         {
-            type: "menu", 
-            menu: "selectedItems-menu",
-            lazyloadmenu: false,
-            disabled: true
-         });
+       
 
          this.widgets.printButton = Alfresco.util.createYUIButton(this, "printButton",
          {
@@ -155,113 +141,12 @@
             disabled: false
          });
 
-         // DataList Actions module
-         this.modules.actions = new Alfresco.module.DataListActions();
 
-         // Reference to Data Grid component
-         this.modules.dataGrid = Alfresco.util.ComponentManager.findFirst("beCPG.module.EntityDataGrid");
-
-         // Finally show the component body here to prevent UI artifacts on YUI button decoration
-         Dom.setStyle(this.id + "-body", "visibility", "visible");
+        // Finally show the component body here to prevent UI artifacts on YUI button decoration
+        Dom.setStyle(this.id + "-body", "visibility", "visible");
       },
 
-		/**
-       * New Row button click handler
-       *
-       * @method onNewRow
-       * @param e {object} DomEvent
-       * @param p_obj {object} Object passed back from addListener method
-       */
-      onNewRow: function DataListToolbar_onNewRow(e, p_obj)
-      {
-         var datalistMeta = this.modules.dataGrid.datalistMeta,
-            destination = datalistMeta.nodeRef,
-            itemType = datalistMeta.itemType,
-            scope = this;
-
-         // Intercept before dialog show
-         var doBeforeDialogShow = function DataListToolbar_onNewRow_doBeforeDialogShow(p_form, p_dialog)
-         {
-            Alfresco.util.populateHTML(
-               [ p_dialog.id + "-dialogTitle", this.msg("label.new-row.title") ],
-               [ p_dialog.id + "-dialogHeader", this.msg("label.new-row.header") ]
-            );
-            
-            // Is it a bulk action?
-            if(Dom.get(p_dialog.id  + "-form-bulkAction"))
-            {
-           		Dom.get(p_dialog.id  + "-form-bulkAction").checked = this.bulkEdit;
-           		Dom.get(p_dialog.id  + "-form-bulkAction-msg").innerHTML = this.msg("button.bulk-action-create");
-           	}
-
-         };
-         
-         var templateUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true",
-         {
-            itemKind: "type",
-            itemId: itemType,
-            destination: destination,
-            mode: "create",
-            submitType: "json",
-            entityNodeRef : this.options.entityNodeRef
-         });
-
-         
-         // Using Forms Service, so always create new instance
-         var createRow = new Alfresco.module.SimpleDialog(this.id + "-createRow");
-         createRow.bulkEdit = false;
-         createRow.setOptions(
-         {
-        	width: "33em",
-            templateUrl: templateUrl,
-            actionUrl: null,
-            destroyOnHide: false,
-            doBeforeDialogShow:
-            {
-               fn: doBeforeDialogShow,
-               scope: this
-            },
-            onSuccess:
-            {
-            	 fn: function DataListToolbar_onNewRow_success(response)
-           		 {
-               YAHOO.Bubbling.fire("dataItemCreated",
-               {
-                  nodeRef: response.json.persistedObject							
-               });
-
-               Alfresco.util.PopupManager.displayMessage(
-               {
-                  text: this.msg("message.new-row.success")
-               });
-						
-               //recall edit for next item
-               var checkBoxEl =  Dom.get(this.id + "-createRow" + "-form-bulkAction");
-               
-	           	if ( checkBoxEl && checkBoxEl.checked)
-	  		    {
-	           		this.bulkEdit = true;
-					scope.onNewRow();
-	             } else {
-	            	 this.bulkEdit = false;
-	             }
 	
-            },
-            scope: this
-            },
-            onFailure:
-            {
-            	fn: function DataListToolbar_onNewRow_failure(response)
-            	{
-		               Alfresco.util.PopupManager.displayMessage(
-		               {
-		                  text: this.msg("message.new-row.failure")
-		               });
-		         },
-		        scope: this
-            }
-         }).show();
-		},
 	  /**
        * Formulate button click handler
        *
@@ -288,6 +173,8 @@
                   {
                      text: this.msg("message.formulate.success")
                   });
+                  
+                  YAHOO.Bubbling.fire("refreshDataGrids");
                   
                },               
                scope: this

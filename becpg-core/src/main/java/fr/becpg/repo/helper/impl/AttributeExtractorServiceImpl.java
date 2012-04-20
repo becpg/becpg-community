@@ -161,7 +161,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					value += RepoConsts.LABEL_SEPARATOR + (String) nodeService.getProperty(categoryNodeRef, ContentModel.PROP_NAME);
 				}
 			}
-		} else if (dataType.equals(DataTypeDefinition.BOOLEAN.toString())) {
+		} else if (dataType.equals(DataTypeDefinition.BOOLEAN.toString())
+				|| (dataType.equals(DataTypeDefinition.ANY.toString())
+				&& (v instanceof Boolean))) {
 
 			Boolean b = (Boolean) v;
 
@@ -196,7 +198,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		} else if (dataType.equals(DataTypeDefinition.MLTEXT.toString())) {
 
 			value = v.toString();
-		} else if (dataType.equals(DataTypeDefinition.DOUBLE.toString()) || dataType.equals(DataTypeDefinition.FLOAT.toString())) {
+		} else if (dataType.equals(DataTypeDefinition.DOUBLE.toString()) || dataType.equals(DataTypeDefinition.FLOAT.toString())
+				|| (dataType.equals(DataTypeDefinition.ANY.toString())
+						&& (v instanceof Double || v instanceof Float))) {
 
 			if (propertyFormats.getDecimalFormat() != null) {
 				value = propertyFormats.getDecimalFormat().format(v);
@@ -211,7 +215,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			} else {
 				value = v.toString();
 			}
-		}
+		} 
 
 		else {
 			TypeConverter converter = new TypeConverter();
@@ -374,29 +378,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
 				metadata += "-" + nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE);
 			}
-		}
-//		 else if (type.indexOf(":") > 0 && node.isSubType("cm:cmobject"))
-//	      {
-//	         obj = Evaluator.getContentObject(value);
-//	         if (obj == null)
-//	         {
-//	            return false;
-//	         }
-//	         objData.displayValue = obj.properties["cm:name"];
-//	         objData.metadata = obj.isContainer ? "container" : "document";
-//	      }
-//	    
-//		  else if(type == "cm:authorityContainer")
-//		  {
-//			 obj = Evaluator.getContentObject(value);
-//	         if (obj == null)
-//	         {
-//	            return false;
-//	         }
-//	         objData.displayValue = obj.properties["cm:authorityDisplayName"];
-//	         objData.metadata = "document";
-//		  }	  
-		
+		}		
 		return metadata;
 	}
 

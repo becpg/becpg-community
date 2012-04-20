@@ -6,49 +6,49 @@
 		<container>dataLists</container>
 	</properties>
 	<components>
-      <!-- Title -->
-      <component>
-         <region-id>title</region-id>
-         <sub-components>
-            <sub-component id="default">
-               <evaluations>
-                  <!-- if in site: Site title -->
-                  <evaluation id="site">
-                     <evaluators>
-                        <evaluator type="site.component.evaluator"/>
-                     </evaluators>
-                     <url>/components/title/collaboration-title</url>
-                  </evaluation>
-                  <!-- otherwise: Repository title -->
-                  <evaluation id="repo">
-                     <url>/components/title/simple-title</url>
-                     <properties>
-                        <title>title.repository</title>
-                        <subtitle>title.browser</subtitle>
-                     </properties>
-                  </evaluation>
-               </evaluations>
-            </sub-component>
-         </sub-components>
-      </component>
+		<!-- Title -->
+		<component>
+			<region-id>title</region-id>
+			<sub-components>
+				<sub-component id="default">
+					<evaluations>
+						<!-- if in site: Site title -->
+						<evaluation id="site">
+							<evaluators>
+								<evaluator type="site.component.evaluator" />
+							</evaluators>
+							<url>/components/title/collaboration-title</url>
+						</evaluation>
+						<!-- otherwise: Repository title -->
+						<evaluation id="repo">
+							<url>/components/title/simple-title</url>
+							<properties>
+								<title>title.repository</title>
+								<subtitle>title.browser</subtitle>
+							</properties>
+						</evaluation>
+					</evaluations>
+				</sub-component>
+			</sub-components>
+		</component>
 
-      <!-- Site Navigation -->
-      <component>
-         <region-id>navigation</region-id>
-         <sub-components>
-            <sub-component id="default">
-               <evaluations>
-                  <!-- if in site: Site navigation -->
-                  <evaluation id="site">
-                     <evaluators>
-                        <evaluator type="site.component.evaluator"/>
-                     </evaluators>
-                     <url>/components/navigation/collaboration-navigation</url>
-                  </evaluation>
-               </evaluations>
-            </sub-component>
-         </sub-components>
-      </component>
+		<!-- Site Navigation -->
+		<component>
+			<region-id>navigation</region-id>
+			<sub-components>
+				<sub-component id="default">
+					<evaluations>
+						<!-- if in site: Site navigation -->
+						<evaluation id="site">
+							<evaluators>
+								<evaluator type="site.component.evaluator" />
+							</evaluators>
+							<url>/components/navigation/collaboration-navigation</url>
+						</evaluation>
+					</evaluations>
+				</sub-component>
+			</sub-components>
+		</component>
 
 		<!-- Toolbar -->
 		<component>
@@ -59,13 +59,36 @@
 		<!-- Datagrid -->
 		<component>
 			<region-id>datagrid</region-id>
-			<url>/modules/entity-data-lists/entity-datagrid</url>
-			<properties>
-				<pagination>true</pagination>
-				<filter>true</filter>
-				<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
-				<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
-			</properties>
+			<sub-components>
+				<sub-component id="default">
+					<evaluations>
+						<!-- if view selected -->
+						<evaluation id="formulate">
+							<evaluators>
+								<evaluator type="evaluator.component.becpg.params.equal">
+									<params>
+										<list>compoList</list>
+									</params>
+								</evaluator>
+							</evaluators>
+							<url>/components/entity-charact-views/formulation-view</url>
+							<properties>
+								<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
+								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
+							</properties>
+						</evaluation>
+						<evaluation id="datagrid">
+							<url>/components/entity-charact-views/entity-datagrid-view</url>
+							<properties>
+								<pagination>true</pagination>
+								<filter>true</filter>
+								<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
+								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
+							</properties>
+						</evaluation>
+					</evaluations>
+				</sub-component>
+			</sub-components>
 		</component>
 
 		<!-- Datalist -->

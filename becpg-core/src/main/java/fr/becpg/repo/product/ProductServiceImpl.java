@@ -69,6 +69,9 @@ public class ProductServiceImpl implements ProductService {
 	/** The ings calculating visitor. */
 	private ProductVisitor ingsCalculatingVisitor;
 	
+	/**  The formula visitor */
+	private ProductVisitor formulaVisitor;
+	
 	/** The repo service. */
 	private RepoService repoService;
 	
@@ -160,6 +163,14 @@ public class ProductServiceImpl implements ProductService {
     }	
 	
 	/**
+	 * Sets the formula calculating visitor.
+	 * @param formulaVisitor
+	 */
+	public void setFormulaVisitor(ProductVisitor formulaVisitor) {
+		this.formulaVisitor = formulaVisitor;
+	}
+	
+	/**
 	 * Sets the repo service.
 	 *
 	 * @param repoService the new repo service
@@ -168,7 +179,7 @@ public class ProductServiceImpl implements ProductService {
 		this.repoService = repoService;
 	}
 	
-	
+
 	/**
 	 * Sets the ownable service.
 	 *
@@ -194,6 +205,7 @@ public class ProductServiceImpl implements ProductService {
     		dataLists.add(MPMModel.TYPE_PROCESSLIST);
     		dataLists.add(BeCPGModel.TYPE_NUTLIST); // TODO keep min/max
     		dataLists.add(BeCPGModel.TYPE_COSTLIST); // TODO keep max
+    		dataLists.add(BeCPGModel.TYPE_DYNAMICCHARCATLIST); 
         	ProductData productData = productDAO.find(productNodeRef, dataLists);     	    
         	
         	// do the formulation if the product has a composition, or packaging list defined
@@ -238,6 +250,7 @@ public class ProductServiceImpl implements ProductService {
     	    	productData = nutsCalculatingVisitor.visit(productData);
     	    	productData = costsCalculatingVisitor.visit(productData);
     	    	productData = ingsCalculatingVisitor.visit(productData);  
+    	    	productData = formulaVisitor.visit(productData);
     	    	
     	    	if(productData.getReqCtrlList().isEmpty()){
     	    		productData.setReqCtrlList(null);

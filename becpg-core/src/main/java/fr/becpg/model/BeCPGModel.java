@@ -415,6 +415,20 @@ public interface BeCPGModel {
 	static final QName ASSOC_RCL_SOURCES = QName.createQName(BECPG_URI,
 			"rclSources");
 	
+
+	public static final QName TYPE_DYNAMICCHARCATLIST = QName.createQName(BECPG_URI,
+			"dynamicCharachList");
+	
+	public static final QName PROP_DYNAMICCHARCAT_TITLE = QName.createQName(BECPG_URI,
+			"dynamicCharachTitle");
+	
+	public static final QName PROP_DYNAMICCHARCAT_FORMULA = QName.createQName(BECPG_URI,
+			"dynamicCharachFormula");
+	
+	public static final QName PROP_DYNAMICCHARCAT_VALUE = QName.createQName(BECPG_URI,
+			"dynamicCharachValue");
+	
+	
 	// contactList
 	static final QName TYPE_CONTACTLIST = QName.createQName(BECPG_URI,
 			"contactList");
@@ -737,4 +751,5 @@ public interface BeCPGModel {
 	 */
 	public static final QName ASPECT_LEGAL_NAME = QName.createQName(BECPG_URI, "legalNameAspect");
 	static final QName PROP_LEGAL_NAME = QName.createQName(BECPG_URI, "legalName");
+
 }

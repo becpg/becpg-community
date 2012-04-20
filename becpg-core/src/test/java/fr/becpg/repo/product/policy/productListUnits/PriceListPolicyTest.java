@@ -107,13 +107,13 @@ public class PriceListPolicyTest  extends RepoBaseTestCase  {
 					nodeService.setProperty(cost2, BeCPGModel.PROP_COSTCURRENCY, "$");
 										
 					List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-					costList.add(new CostListDataItem(null, 12f, "", null, cost1, false));
-					costList.add(new CostListDataItem(null, 11f, "", null, cost2, false));
+					costList.add(new CostListDataItem(null, 12d, "", null, cost1, false));
+					costList.add(new CostListDataItem(null, 11d, "", null, cost2, false));
 					rawMaterialData.setCostList(costList);
 					
 					List<PriceListDataItem> priceList = new ArrayList<PriceListDataItem>();
-					priceList.add(new PriceListDataItem(null, 22f, "€/kg", 1000f, "kg", 1, null, null, cost1, null));
-					priceList.add(new PriceListDataItem(null, 23f, "€/kg", 1000f, "kg", 2, null, null, cost1, null));
+					priceList.add(new PriceListDataItem(null, 22d, "€/kg", 1000d, "kg", 1, null, null, cost1, null));
+					priceList.add(new PriceListDataItem(null, 23d, "€/kg", 1000d, "kg", 2, null, null, cost1, null));
 					rawMaterialData.setPriceList(priceList);
 					
 					NodeRef rawMaterialNodeRef = productDAO.create(folderNodeRef, rawMaterialData, dataLists);											
@@ -135,12 +135,12 @@ public class PriceListPolicyTest  extends RepoBaseTestCase  {
 						logger.debug("costList unit: " + c.getUnit());
 						if(c.getCost().equals(cost1)){
 							assertEquals("Check 1st costList", "€/kg", c.getUnit());
-							assertEquals("Check 1st costList", 22f, c.getValue());
+							assertEquals("Check 1st costList", 22d, c.getValue());
 							checks++;
 						}
 						else if(c.getCost().equals(cost2)){
 							assertEquals("Check 2nd costList", "$/kg", c.getUnit());
-							assertEquals("Check 2nd costList", 11f, c.getValue());
+							assertEquals("Check 2nd costList", 11d, c.getValue());
 							checks++;
 						}
 						else{
@@ -156,10 +156,10 @@ public class PriceListPolicyTest  extends RepoBaseTestCase  {
 					 */
 					for(PriceListDataItem p : rawMaterialDBData.getPriceList()){
 						
-						if(p.getValue().equals(23f)){
+						if(p.getValue().equals(23d)){
 							p.setPrefRank(1);
 						}
-						else if(p.getValue().equals(22f)){
+						else if(p.getValue().equals(22d)){
 								
 							p.setPrefRank(2);
 						}
@@ -185,7 +185,7 @@ public class PriceListPolicyTest  extends RepoBaseTestCase  {
 						logger.debug("costList unit: " + c.getUnit());
 						if(c.getCost().equals(cost1)){
 							assertEquals("Check 1st costList", "€/kg", c.getUnit());
-							assertEquals("Check 1st costList", 23f, c.getValue());
+							assertEquals("Check 1st costList", 23d, c.getValue());
 						}
 						else if(c.getCost().equals(cost2)){
 							assertEquals("Check 2nd costList", "$/kg", c.getUnit());
@@ -200,10 +200,10 @@ public class PriceListPolicyTest  extends RepoBaseTestCase  {
 					 */
 					for(PriceListDataItem p : rawMaterialDBData.getPriceList()){
 						
-						if(p.getValue().equals(23f)){
-							p.setValue(40f);
+						if(p.getValue().equals(23d)){
+							p.setValue(40d);
 						}
-						else if(p.getValue().equals(22f)){
+						else if(p.getValue().equals(22d)){
 								
 						}
 						else{
@@ -224,7 +224,7 @@ public class PriceListPolicyTest  extends RepoBaseTestCase  {
 				logger.debug("costList unit: " + c.getUnit());
 				if(c.getCost().equals(cost1)){
 					assertEquals("Check 1st costList", "€/kg", c.getUnit());
-					assertEquals("Check 1st costList", 40f, c.getValue());
+					assertEquals("Check 1st costList", 40d, c.getValue());
 				}
 				else if(c.getCost().equals(cost2)){
 					assertEquals("Check 2nd costList", "$/kg", c.getUnit());

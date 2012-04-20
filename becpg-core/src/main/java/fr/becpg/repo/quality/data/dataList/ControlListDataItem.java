@@ -9,12 +9,12 @@ public class ControlListDataItem {
 
 	NodeRef nodeRef;
 	String type;
-	Float mini;
-	Float maxi;
+	Double mini;
+	Double maxi;
 	Boolean required;
 	String sampleId;
-	Float value;
-	Float target;
+	Double value;
+	Double target;
 	String unit;
 	String state;		
 	NodeRef method;
@@ -36,19 +36,19 @@ public class ControlListDataItem {
 		this.type = type;
 	}
 
-	public Float getMini() {
+	public Double getMini() {
 		return mini;
 	}
 
-	public void setMini(Float mini) {
+	public void setMini(Double mini) {
 		this.mini = mini;
 	}
 
-	public Float getMaxi() {
+	public Double getMaxi() {
 		return maxi;
 	}
 
-	public void setMaxi(Float maxi) {
+	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 
@@ -68,19 +68,19 @@ public class ControlListDataItem {
 		this.sampleId = sampleId;
 	}
 
-	public Float getValue() {
+	public Double getValue() {
 		return value;
 	}
 
-	public void setValue(Float value) {
+	public void setValue(Double value) {
 		this.value = value;
 	}
 
-	public Float getTarget() {
+	public Double getTarget() {
 		return target;
 	}
 
-	public void setTarget(Float target) {
+	public void setTarget(Double target) {
 		this.target = target;
 	}
 
@@ -116,7 +116,7 @@ public class ControlListDataItem {
 		this.characts = characts;
 	}
 
-	public ControlListDataItem(NodeRef nodeRef, String type, Float mini, Float maxi, Boolean required, String sampleId, Float value, Float target, String unit, String state,  NodeRef method, List<NodeRef> characts){
+	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit, String state,  NodeRef method, List<NodeRef> characts){
 		
 		setNodeRef(nodeRef);
 		setType(type);
@@ -132,7 +132,7 @@ public class ControlListDataItem {
 		setCharacts(characts);
 	}
 	
-	public ControlListDataItem(NodeRef nodeRef, String sampleId, Float value, Float target, String unit, String state, ControlDefListDataItem controlDefListDataItem){
+	public ControlListDataItem(NodeRef nodeRef, String sampleId, Double value, Double target, String unit, String state, ControlDefListDataItem controlDefListDataItem){
 		
 		setNodeRef(nodeRef);
 		setSampleId(sampleId);

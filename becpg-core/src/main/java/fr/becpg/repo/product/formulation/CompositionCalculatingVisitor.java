@@ -15,8 +15,8 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 
 public class CompositionCalculatingVisitor implements ProductVisitor {
 
-	public static final float DEFAULT_DENSITY = 1f;
-	public static final float DEFAULT_QUANTITY = 0f;
+	public static final Double DEFAULT_DENSITY = 1d;
+	public static final Double DEFAULT_QUANTITY = 0d;
 	
 	private static Log logger = LogFactory.getLog(CompositionCalculatingVisitor.class);
 	
@@ -38,13 +38,13 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 		}
 		
 		//Take in account net weight
-		Float netWeight;
+		Double netWeight;
 		if(formulatedProduct.getUnit() == ProductUnit.P){
 			netWeight = formulatedProduct.getDensity();
 		}
 		else{
-			Float qty = (formulatedProduct.getQty()!=null) ? formulatedProduct.getQty() : DEFAULT_QUANTITY;
-			Float density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
+			Double qty = (formulatedProduct.getQty()!=null) ? formulatedProduct.getQty() : DEFAULT_QUANTITY;
+			Double density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
 			netWeight = qty * density;
 		}
 		
@@ -54,17 +54,17 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 		return formulatedProduct;
 	}
 	
-	private void visitChildren(Float parentQty, Float qtyAfterProcess, Composite<CompoListDataItem> composite) throws FormulateException{				
+	private void visitChildren(Double parentQty, Double qtyAfterProcess, Composite<CompoListDataItem> composite) throws FormulateException{				
 		
 		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){					
 			
 			// qty and sub formula qty are defined and not equal to 0
-			if(parentQty != null && qtyAfterProcess != null && !qtyAfterProcess.equals(0f)){
+			if(parentQty != null && qtyAfterProcess != null && !qtyAfterProcess.equals(0d)){
 				
-				Float qtySubFormula = component.getData().getQtySubFormula();
+				Double qtySubFormula = component.getData().getQtySubFormula();
 				if(qtySubFormula != null){
 					
-					Float qty = qtySubFormula * parentQty / qtyAfterProcess;
+					Double qty = qtySubFormula * parentQty / qtyAfterProcess;
 					component.getData().setQty(qty);
 				}
 			}	
@@ -73,7 +73,7 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 				
 				// calculate children
 				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
-				Float afterProcess = c.getData().getQtyAfterProcess() != null ? c.getData().getQtyAfterProcess() : c.getData().getQtySubFormula();
+				Double afterProcess = c.getData().getQtyAfterProcess() != null ? c.getData().getQtyAfterProcess() : c.getData().getQtySubFormula();
 				visitChildren(c.getData().getQty(), afterProcess, c);
 				
 				// Yield				
@@ -82,22 +82,22 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 		}
 	}
 	
-	private Float calculateYield(Composite<CompoListDataItem> composite) throws FormulateException{
+	private Double calculateYield(Composite<CompoListDataItem> composite) throws FormulateException{
 		
-		Float yieldPerc = 100f;
+		Double yieldPerc = 100d;
 		
 		// qty Used in the sub formula
-		Float qtyUsed = 0f;				
+		Double qtyUsed = 0d;				
 		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){
 			
-			Float qty = getQtyInKg(component.getData());
+			Double qty = getQtyInKg(component.getData());
 			if(qty != null){
 				qtyUsed += qty;
 			}
 		}
 		
 		// qty after process
-		Float qtyAfterProcess = FormulationHelper.getQty(composite.getData());
+		Double qtyAfterProcess = FormulationHelper.getQty(composite.getData());
 		if(qtyAfterProcess != 0 && qtyUsed != 0){
 			yieldPerc = qtyAfterProcess / qtyUsed * 100;
 		}
@@ -105,15 +105,15 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 		return yieldPerc;
 	}	
 	
-	private Float getQtyInKg(CompoListDataItem compoListDataItem) throws FormulateException{
+	private Double getQtyInKg(CompoListDataItem compoListDataItem) throws FormulateException{
 	
-		Float qty = FormulationHelper.getQty(compoListDataItem);
+		Double qty = FormulationHelper.getQty(compoListDataItem);
 		
 		if(compoListDataItem.getCompoListUnit() != null && 
 				(!compoListDataItem.getCompoListUnit().equals(CompoListUnit.kg) || 
 				!compoListDataItem.getCompoListUnit().equals(CompoListUnit.g))){
 			
-			Float density = (Float)nodeService.getProperty(compoListDataItem.getProduct(), BeCPGModel.PROP_PRODUCT_DENSITY);
+			Double density = (Double)nodeService.getProperty(compoListDataItem.getProduct(), BeCPGModel.PROP_PRODUCT_DENSITY);
 			if(density != null){
 				qty = qty * density;
 			}

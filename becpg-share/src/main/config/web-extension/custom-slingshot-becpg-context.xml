@@ -38,7 +38,12 @@
    </bean>
 
   <!-- evaluators -->
-	
+  
+  
+ <bean id="evaluator.component.becpg.params.equal" class="fr.becpg.web.extensibility.UrlParamsEvaluator" />
+  
+  
+
   <bean id="evaluator.becpg.doclib.action.entity" parent="evaluator.doclib.action.hasAspect">
       <property name="aspects">
          <list>

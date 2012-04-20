@@ -225,9 +225,9 @@ public class QualityControlServiceImpl implements QualityControlService {
 				
 				for(NodeRef n : cdl.getCharacts()){
 				
-					Float target = null;
-					Float mini = null;
-					Float maxi = null;
+					Double target = null;
+					Double mini = null;
+					Double maxi = null;
 					String unit = null;
 					
 					// TODO : générique			

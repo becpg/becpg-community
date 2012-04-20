@@ -20,7 +20,7 @@ public class IngListDataItem implements Comparable<IngListDataItem>, IManualData
 	private NodeRef nodeRef;
 	
 	/** The qty perc. */
-	private Float qtyPerc = 0f;
+	private Double qtyPerc = 0d;
 	
 	/** The geo origin. */
 	private List<NodeRef> geoOrigin = new ArrayList<NodeRef>();
@@ -62,7 +62,7 @@ public class IngListDataItem implements Comparable<IngListDataItem>, IManualData
 	 *
 	 * @return the qty perc
 	 */
-	public Float getQtyPerc() {
+	public Double getQtyPerc() {
 		return qtyPerc;
 	}
 	
@@ -71,7 +71,7 @@ public class IngListDataItem implements Comparable<IngListDataItem>, IManualData
 	 *
 	 * @param qtyPerc the new qty perc
 	 */
-	public void setQtyPerc(Float qtyPerc) {
+	public void setQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
 	}
 	
@@ -195,7 +195,7 @@ public class IngListDataItem implements Comparable<IngListDataItem>, IManualData
 	 * @param isIonized the is ionized
 	 * @param ing the ing
 	 */
-	public IngListDataItem(NodeRef nodeRef,	Float qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, NodeRef ing, Boolean isManual)
+	public IngListDataItem(NodeRef nodeRef,	Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, NodeRef ing, Boolean isManual)
 	{
 		setNodeRef(nodeRef);
 		setQtyPerc(qtyPerc);

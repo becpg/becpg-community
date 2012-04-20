@@ -13,12 +13,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 public class ProcessListDataItem{
 	
 	private NodeRef nodeRef;		
-	private Float qty = 0f;	
-	private Float qtyResource = 0f;
-	private Float rateResource = 0f;
-	private Float yield = 0f;
-	private Float rateProcess = 0f;
-	private Float rateProduct = 0f;
+	private Double qty = 0d;	
+	private Double qtyResource = 0d;
+	private Double rateResource = 0d;
+	private Double yield = 0d;
+	private Double rateProcess = 0d;
+	private Double rateProduct = 0d;
 	
 	private NodeRef step;	
 	private NodeRef product;
@@ -33,51 +33,51 @@ public class ProcessListDataItem{
 		this.nodeRef = nodeRef;
 	}
 
-	public Float getQty() {
+	public Double getQty() {
 		return qty;
 	}
 
-	public void setQty(Float qty) {
+	public void setQty(Double qty) {
 		this.qty = qty;
 	}
 
-	public Float getQtyResource() {
+	public Double getQtyResource() {
 		return qtyResource;
 	}
 
-	public void setQtyResource(Float qtyResource) {
+	public void setQtyResource(Double qtyResource) {
 		this.qtyResource = qtyResource;
 	}
 
-	public Float getRateResource() {
+	public Double getRateResource() {
 		return rateResource;
 	}
 
-	public void setRateResource(Float rateResource) {
+	public void setRateResource(Double rateResource) {
 		this.rateResource = rateResource;
 	}
 
-	public Float getYield() {
+	public Double getYield() {
 		return yield;
 	}
 
-	public void setYield(Float yield) {
+	public void setYield(Double yield) {
 		this.yield = yield;
 	}
 
-	public Float getRateProcess() {
+	public Double getRateProcess() {
 		return rateProcess;
 	}
 
-	public void setRateProcess(Float rateProcess) {
+	public void setRateProcess(Double rateProcess) {
 		this.rateProcess = rateProcess;
 	}
 
-	public Float getRateProduct() {
+	public Double getRateProduct() {
 		return rateProduct;
 	}
 
-	public void setRateProduct(Float rateProduct) {
+	public void setRateProduct(Double rateProduct) {
 		this.rateProduct = rateProduct;
 	}
 
@@ -125,7 +125,7 @@ public class ProcessListDataItem{
 	 * @param product
 	 * @param resource
 	 */
-	public ProcessListDataItem(NodeRef nodeRef, Float qty, Float qtyResource, Float rateResource, Float yield, Float rateProcess, Float rateProduct, NodeRef step, NodeRef product, NodeRef resource){
+	public ProcessListDataItem(NodeRef nodeRef, Double qty, Double qtyResource, Double rateResource, Double yield, Double rateProcess, Double rateProduct, NodeRef step, NodeRef product, NodeRef resource){
 		
 		setNodeRef(nodeRef);
 		setQty(qty);

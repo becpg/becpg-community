@@ -15,7 +15,7 @@ public class ForbiddenIngListDataItem {
 	
 	String reqMessage;
 	
-	Float qtyPercMaxi;
+	Double qtyPercMaxi;
 	
 	NullableBoolean isGMO;
 	
@@ -51,11 +51,11 @@ public class ForbiddenIngListDataItem {
 		this.reqMessage = reqMessage;
 	}
 
-	public Float getQtyPercMaxi() {
+	public Double getQtyPercMaxi() {
 		return qtyPercMaxi;
 	}
 
-	public void setQtyPercMaxi(Float qtyPercMaxi) {
+	public void setQtyPercMaxi(Double qtyPercMaxi) {
 		this.qtyPercMaxi = qtyPercMaxi;
 	}
 
@@ -99,7 +99,7 @@ public class ForbiddenIngListDataItem {
 		this.bioOrigins = bioOrigins;
 	}
 	
-	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, Float qtyPercMaxi, NullableBoolean isGMO, NullableBoolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
+	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, Double qtyPercMaxi, NullableBoolean isGMO, NullableBoolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
 	{
 		setNodeRef(nodeRef);
 		setReqType(reqType);

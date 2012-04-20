@@ -134,7 +134,7 @@ public class ControlPointDAOImpl implements BeCPGDao<ControlPointData> {
 					}
 
 					ControlDefListDataItem controlDefListDataItem = new ControlDefListDataItem(nodeRef, (String) nodeService.getProperty(nodeRef, QualityModel.PROP_CDL_TYPE),
-							(Float) nodeService.getProperty(nodeRef, QualityModel.PROP_CDL_MINI), (Float) nodeService.getProperty(nodeRef, QualityModel.PROP_CDL_MAXI),
+							(Double) nodeService.getProperty(nodeRef, QualityModel.PROP_CDL_MINI), (Double) nodeService.getProperty(nodeRef, QualityModel.PROP_CDL_MAXI),
 							(Boolean) nodeService.getProperty(nodeRef, QualityModel.PROP_CDL_REQUIRED), methodNodeRef, charactsNodeRef);
 
 					controlDefList.add(controlDefListDataItem);

@@ -46,7 +46,7 @@
 		<property name="dictionaryService" ref="dictionaryService"/>
 		<property name="entityTplService" ref="entityTplService"/>
 		<property name="beCPGMailService" ref="becpgMailService"/>		
-		<property name="designerInitService" ref="designerInitService"/>
+		<property name="designerInitService" ref="designerInitService"/> 
 	</bean>
 	<bean id="initSiteVisitor" class="fr.becpg.repo.admin.InitSiteVisitorImpl">
 		<property name="fileFolderService" ref="fileFolderService" />
@@ -378,11 +378,14 @@
 		<property name="nutsCalculatingVisitor" ref="nutsCalculatingVisitor" />
 		<property name="costsCalculatingVisitor" ref="costsCalculatingVisitor" />
 		<property name="ingsCalculatingVisitor" ref="ingsCalculatingVisitor" />		
+		<property name="formulaVisitor" ref="formulaVisitor"/>
 		<property name="repoService" ref="repoService" />
 		<property name="ownableService" ref="ownableService"/>
 	</bean>
 	
 	<!-- Formulation visitors -->
+	<bean id="formulaVisitor" class="fr.becpg.repo.product.formulation.FormulaVisitor"/>
+	
 	<bean id="compositionCalculatingVisitor"
 		class="fr.becpg.repo.product.formulation.CompositionCalculatingVisitor">
 		<property name="nodeService" ref="nodeService" />

@@ -18,11 +18,11 @@ public class PriceListDataItem{
 		
 	private NodeRef nodeRef;
 		
-	private Float value = 0f;
+	private Double value = 0d;
 	
 	private String unit;
 	
-	private Float purchaseValue = 0f;
+	private Double purchaseValue = 0d;
 		
 	private String purchaseUnit;
 	
@@ -44,11 +44,11 @@ public class PriceListDataItem{
 		this.nodeRef = nodeRef;
 	}
 
-	public Float getValue() {
+	public Double getValue() {
 		return value;
 	}
 
-	public void setValue(Float value) {
+	public void setValue(Double value) {
 		this.value = value;
 	}
 
@@ -60,11 +60,11 @@ public class PriceListDataItem{
 		this.unit = unit;
 	}
 
-	public Float getPurchaseValue() {
+	public Double getPurchaseValue() {
 		return purchaseValue;
 	}
 
-	public void setPurchaseValue(Float purchaseValue) {
+	public void setPurchaseValue(Double purchaseValue) {
 		this.purchaseValue = purchaseValue;
 	}
 
@@ -136,7 +136,7 @@ public class PriceListDataItem{
 	 * @param cost
 	 * @param suppliers
 	 */
-	public PriceListDataItem(NodeRef nodeRef, Float value, String unit, Float purchaseValue, String purchaseUnit, Integer prefRank, Date startEffectivity, Date endEffectivity, NodeRef cost, List<NodeRef> suppliers){
+	public PriceListDataItem(NodeRef nodeRef, Double value, String unit, Double purchaseValue, String purchaseUnit, Integer prefRank, Date startEffectivity, Date endEffectivity, NodeRef cost, List<NodeRef> suppliers){
 		
 		setNodeRef(nodeRef);		
 		setValue(value);

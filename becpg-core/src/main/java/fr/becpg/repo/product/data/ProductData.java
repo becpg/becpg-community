@@ -20,6 +20,7 @@ import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.DynamicCharachListItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -71,16 +72,16 @@ public class ProductData implements ProductElement {
 	/*
 	 * Transformable properties
 	 */
-	private Float qty;
-	private Float density;
+	private Double qty;
+	private Double density;
 	
 	/*
 	 * Profitability properties
 	 */
-	private Float unitTotalCost;	
-	private Float unitPrice;	
-	private Float profitability;	
-	private Integer breakEven;
+	private Double unitTotalCost;	
+	private Double unitPrice;	
+	private Double profitability;	
+	private Long breakEven;
 	
 	/** The lists container. */
 	private NodeRef listsContainer;
@@ -90,6 +91,9 @@ public class ProductData implements ProductElement {
 	
 	/** The compo list. */
 	private List<CompoListDataItem> compoList;
+
+	/** The dynamicCharachList*/
+	private List<DynamicCharachListItem> dynamicCharachList;
 	
 	/** The cost list. */
 	private List<CostListDataItem> costList;
@@ -282,7 +286,7 @@ public class ProductData implements ProductElement {
 	 *
 	 * @return the qty
 	 */
-	public Float getQty() {
+	public Double getQty() {
 		return qty;
 	}
 	
@@ -291,7 +295,7 @@ public class ProductData implements ProductElement {
 	 *
 	 * @param qty the new qty
 	 */
-	public void setQty(Float qty) {
+	public void setQty(Double qty) {
 		this.qty = qty;
 	}
 	
@@ -300,7 +304,7 @@ public class ProductData implements ProductElement {
 	 *
 	 * @return the density
 	 */
-	public Float getDensity() {
+	public Double getDensity() {
 		return density;
 	}
 	
@@ -309,39 +313,39 @@ public class ProductData implements ProductElement {
 	 *
 	 * @param density the new density
 	 */
-	public void setDensity(Float density) {
+	public void setDensity(Double density) {
 		this.density = density;
 	}
 	
-	public Float getUnitTotalCost() {
+	public Double getUnitTotalCost() {
 		return unitTotalCost;
 	}
 
-	public void setUnitTotalCost(Float unitTotalCost) {
+	public void setUnitTotalCost(Double unitTotalCost) {
 		this.unitTotalCost = unitTotalCost;
 	}
 
-	public Float getUnitPrice() {
+	public Double getUnitPrice() {
 		return unitPrice;
 	}
 
-	public void setUnitPrice(Float unitPrice) {
+	public void setUnitPrice(Double unitPrice) {
 		this.unitPrice = unitPrice;
 	}
 
-	public Float getProfitability() {
+	public Double getProfitability() {
 		return profitability;
 	}
 
-	public void setProfitability(Float profitability) {
+	public void setProfitability(Double profitability) {
 		this.profitability = profitability;
 	}
 
-	public Integer getBreakEven() {
+	public Long getBreakEven() {
 		return breakEven;
 	}
 
-	public void setBreakEven(Integer breakEven) {
+	public void setBreakEven(Long breakEven) {
 		this.breakEven = breakEven;
 	}
 	
@@ -573,6 +577,15 @@ public class ProductData implements ProductElement {
 		this.processList = processList;
 	}
 
+
+	public List<DynamicCharachListItem> getDynamicCharachList() {
+		return dynamicCharachList;
+	}
+
+	public void setDynamicCharachList(List<DynamicCharachListItem> dynamicCharachList) {
+		this.dynamicCharachList = dynamicCharachList;
+	}
+
 	/**
 	 * Instantiates a new product data.
 	 */
@@ -647,12 +660,12 @@ public class ProductData implements ProductElement {
     	this.setState(systemState);    	
     	String strProductUnit = (String)properties.get(BeCPGModel.PROP_PRODUCT_UNIT);  
     	this.setUnit(ProductUnit.getUnit(strProductUnit));    	    	
-    	this.setQty((Float)properties.get(BeCPGModel.PROP_PRODUCT_QTY));
-    	this.setDensity((Float)properties.get(BeCPGModel.PROP_PRODUCT_DENSITY));    	
-    	this.setUnitTotalCost((Float)properties.get(BeCPGModel.PROP_UNIT_TOTAL_COST));
-    	this.setUnitPrice((Float)properties.get(BeCPGModel.PROP_UNIT_PRICE));
-    	this.setProfitability((Float)properties.get(BeCPGModel.PROP_PROFITABILITY));
-    	this.setBreakEven((Integer)properties.get(BeCPGModel.PROP_BREAK_EVEN));	
+    	this.setQty((Double)properties.get(BeCPGModel.PROP_PRODUCT_QTY));
+    	this.setDensity((Double)properties.get(BeCPGModel.PROP_PRODUCT_DENSITY));    	
+    	this.setUnitTotalCost((Double)properties.get(BeCPGModel.PROP_UNIT_TOTAL_COST));
+    	this.setUnitPrice((Double)properties.get(BeCPGModel.PROP_UNIT_PRICE));
+    	this.setProfitability((Double)properties.get(BeCPGModel.PROP_PROFITABILITY));
+    	this.setBreakEven((Long)properties.get(BeCPGModel.PROP_BREAK_EVEN));	
 	}
 	
 	/**
@@ -675,6 +688,14 @@ public class ProductData implements ProductElement {
 				compoList.add(new CompoListDataItem(c));
 			}
 		}
+		
+		if(productData.getDynamicCharachList() != null){
+			dynamicCharachList = new ArrayList<DynamicCharachListItem>(productData.getDynamicCharachList());
+			for(DynamicCharachListItem c : productData.getDynamicCharachList()){
+				dynamicCharachList.add(new DynamicCharachListItem(c));
+			}
+		}
+		
 		
 		if(productData.getCostList() != null){
 			costList = new ArrayList<CostListDataItem>(productData.getCostList());

@@ -409,7 +409,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();		    		
 				for(int j=0 ; j<costs.size() ; j++)
 				{		    			
-					CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "€/kg", null, costs.get(j), false);
+					CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "€/kg", null, costs.get(j), false);
 					costList.add(costListItemData);
 				}		
 				fp1.setCostList(costList);
@@ -432,12 +432,12 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				fp1.setAllergenList(allergenList);
 					
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				//compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				//compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				fp1.setCompoList(compoList);
 				
 				 productDAO.create(folderNodeRef, fp1, dataLists);
@@ -451,7 +451,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				costList = new ArrayList<CostListDataItem>();		    		
 				for(int j=0 ; j<costs.size() ; j++)
 				{		    			
-					CostListDataItem costListItemData = new CostListDataItem(null, 12.4f, "$/kg", null, costs.get(j), false);
+					CostListDataItem costListItemData = new CostListDataItem(null, 12.4d, "$/kg", null, costs.get(j), false);
 					costList.add(costListItemData);
 				}		
 				fp2.setCostList(costList);
@@ -476,12 +476,12 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				fp2.setAllergenList(allergenList);
 				
 				compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 				
 				productDAO.create(folderNodeRef, fp2, dataLists);

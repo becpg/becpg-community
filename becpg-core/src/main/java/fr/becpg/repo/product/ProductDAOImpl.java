@@ -48,6 +48,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.DynamicCharachListItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.NullableBoolean;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
@@ -309,10 +310,11 @@ public class ProductDAOImpl implements ProductDAO {
 					productData.setReqCtrlList(loadReqCtrlList(listsContainerNodeRef));
 				} else if (dataList.equals(MPMModel.TYPE_PROCESSLIST)) {
 					productData.setProcessList(loadProcessList(listsContainerNodeRef));
+				} else if (dataList.equals(BeCPGModel.TYPE_DYNAMICCHARCATLIST)){
+					productData.setDynamicCharachList(loadDynamicCharachList(listsContainerNodeRef));
 				} else {
-					// specific TODO
-					// logger.trace(String.format("DataList '%s' is not loaded since it is not implemented.",
-					// dataList));
+					logger.debug(String.format("DataList '%s' is not loaded since it is not implemented.",
+					 dataList));
 				}
 			}
 		}
@@ -321,6 +323,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 	}
 
+	
 	/**
 	 * Load allergen list.
 	 * 
@@ -348,7 +351,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 		return allergenList;
 	}
-
+	
 	@Override
 	public AllergenListDataItem loadAllergenListItem(NodeRef listItemNodeRef) {
 		List<AssociationRef> allergenAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_ALLERGEN);
@@ -371,6 +374,33 @@ public class ProductDAOImpl implements ProductDAO {
 				(Boolean) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
 	}
 
+	@Override
+	public List<DynamicCharachListItem> loadDynamicCharachList(NodeRef listContainerNodeRef) {
+		 List<DynamicCharachListItem> dynamicCharachList =  new ArrayList<DynamicCharachListItem>();
+		 if(listContainerNodeRef!=null){
+			 NodeRef dynamicCharachListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+			 if (dynamicCharachListNodeRef != null) {
+					List<NodeRef> listItemNodeRefs = listItems(dynamicCharachListNodeRef, BeCPGModel.TYPE_DYNAMICCHARCATLIST);
+					for (NodeRef listItemNodeRef : listItemNodeRefs) {
+						dynamicCharachList.add(loadDynamicCharachListItem(listItemNodeRef));
+					}
+				}
+		 }
+		 
+		return dynamicCharachList;
+	}
+
+	
+	@Override
+	public DynamicCharachListItem loadDynamicCharachListItem(NodeRef listItemNodeRef) {
+		Map<QName,Serializable> properties = nodeService.getProperties(listItemNodeRef);
+		
+		return new DynamicCharachListItem(listItemNodeRef, (String)properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE)
+				, (String)properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_FORMULA),
+				properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE));
+	}
+
+	
 	/**
 	 * Load compo list.
 	 * 
@@ -397,9 +427,9 @@ public class ProductDAOImpl implements ProductDAO {
 					CompoListUnit compoListUnit = CompoListUnit.valueOf((String) properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 
 					CompoListDataItem compoListDataItem = new CompoListDataItem(listItemNodeRef, (Integer) properties.get(BeCPGModel.PROP_DEPTH_LEVEL),
-							(Float) properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Float) properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA),
-							(Float) properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Float) properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC),
-							(Float) properties.get(BeCPGModel.PROP_COMPOLIST_YIELD_PERC), (String) properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP),
+							(Double) properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Double) properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA),
+							(Double) properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Double) properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC),
+							(Double) properties.get(BeCPGModel.PROP_COMPOLIST_YIELD_PERC), (String) properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP),
 							(String) properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), part);
 					compoList.add(compoListDataItem);
 				}
@@ -442,9 +472,9 @@ public class ProductDAOImpl implements ProductDAO {
 
 		List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
 		NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
-
-		return new CostListDataItem(listItemNodeRef, (Float) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_VALUE), (String) nodeService.getProperty(
-				listItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT), (Float) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_MAXI), costNodeRef,
+		
+		return new CostListDataItem(listItemNodeRef, (Double) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_VALUE), (String) nodeService.getProperty(
+				listItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT), (Double) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_MAXI), costNodeRef,
 				(Boolean) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
 	}
 
@@ -474,8 +504,8 @@ public class ProductDAOImpl implements ProductDAO {
 					List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COSTDETAILSLIST_SOURCE);
 					NodeRef sourceNodeRef = (sourceAssocRefs.get(0)).getTargetRef();
 
-					CostDetailsListDataItem costDetailsListDataItem = new CostDetailsListDataItem(listItemNodeRef, (Float) properties.get(BeCPGModel.PROP_COSTDETAILSLIST_VALUE),
-							(String) properties.get(BeCPGModel.PROP_COSTDETAILSLIST_UNIT), (Float) properties.get(BeCPGModel.PROP_COSTDETAILSLIST_PERC), costNodeRef, sourceNodeRef);
+					CostDetailsListDataItem costDetailsListDataItem = new CostDetailsListDataItem(listItemNodeRef, (Double) properties.get(BeCPGModel.PROP_COSTDETAILSLIST_VALUE),
+							(String) properties.get(BeCPGModel.PROP_COSTDETAILSLIST_UNIT), (Double) properties.get(BeCPGModel.PROP_COSTDETAILSLIST_PERC), costNodeRef, sourceNodeRef);
 					costDetailsList.add(costDetailsListDataItem);
 				}
 			}
@@ -513,8 +543,8 @@ public class ProductDAOImpl implements ProductDAO {
 						suppliersNodeRef.add(assocRef.getTargetRef());
 					}
 
-					PriceListDataItem priceListDataItem = new PriceListDataItem(listItemNodeRef, (Float) properties.get(BeCPGModel.PROP_PRICELIST_VALUE),
-							(String) properties.get(BeCPGModel.PROP_PRICELIST_UNIT), (Float) properties.get(BeCPGModel.PROP_PRICELIST_PURCHASE_VALUE),
+					PriceListDataItem priceListDataItem = new PriceListDataItem(listItemNodeRef, (Double) properties.get(BeCPGModel.PROP_PRICELIST_VALUE),
+							(String) properties.get(BeCPGModel.PROP_PRICELIST_UNIT), (Double) properties.get(BeCPGModel.PROP_PRICELIST_PURCHASE_VALUE),
 							(String) properties.get(BeCPGModel.PROP_PRICELIST_PURCHASE_UNIT), (Integer) properties.get(BeCPGModel.PROP_PRICELIST_PREF_RANK),
 							(Date) properties.get(BeCPGModel.PROP_START_EFFECTIVITY), (Date) properties.get(BeCPGModel.PROP_END_EFFECTIVITY), costNodeRef, suppliersNodeRef);
 					priceList.add(priceListDataItem);
@@ -571,7 +601,7 @@ public class ProductDAOImpl implements ProductDAO {
 			bioOrigins.add(assocRef.getTargetRef());
 		}
 
-		return new IngListDataItem(listItemNodeRef, (Float) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_INGLIST_QTY_PERC), geoOrigins, bioOrigins,
+		return new IngListDataItem(listItemNodeRef, (Double) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_INGLIST_QTY_PERC), geoOrigins, bioOrigins,
 				(Boolean) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_INGLIST_IS_GMO), (Boolean) nodeService.getProperty(listItemNodeRef,
 						BeCPGModel.PROP_INGLIST_IS_IONIZED), ingNodeRef, (Boolean) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
 	}
@@ -609,8 +639,8 @@ public class ProductDAOImpl implements ProductDAO {
 
 		List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
 		NodeRef nutNodeRef = (nutAssocRefs.get(0)).getTargetRef();
-		return new NutListDataItem(listItemNodeRef, (Float) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_NUTLIST_VALUE), (String) nodeService.getProperty(
-				listItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT), (Float) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_NUTLIST_MINI), (Float) nodeService.getProperty(
+		return new NutListDataItem(listItemNodeRef, (Double) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_NUTLIST_VALUE), (String) nodeService.getProperty(
+				listItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT), (Double) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_NUTLIST_MINI), (Double) nodeService.getProperty(
 				listItemNodeRef, BeCPGModel.PROP_NUTLIST_MAXI), (String) nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_NUTGROUP), nutNodeRef,
 				(Boolean) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
 
@@ -710,8 +740,8 @@ public class ProductDAOImpl implements ProductDAO {
 
 					List<AssociationRef> microbioAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_MICROBIOLIST_MICROBIO);
 					NodeRef organoNodeRef = (microbioAssocRefs.get(0)).getTargetRef();
-					MicrobioListDataItem microbioListDataItem = new MicrobioListDataItem(listItemNodeRef, (Float) properties.get(BeCPGModel.PROP_MICROBIOLIST_VALUE),
-							(String) properties.get(BeCPGModel.PROP_MICROBIOLIST_UNIT), (Float) properties.get(BeCPGModel.PROP_MICROBIOLIST_MAXI),
+					MicrobioListDataItem microbioListDataItem = new MicrobioListDataItem(listItemNodeRef, (Double) properties.get(BeCPGModel.PROP_MICROBIOLIST_VALUE),
+							(String) properties.get(BeCPGModel.PROP_MICROBIOLIST_UNIT), (Double) properties.get(BeCPGModel.PROP_MICROBIOLIST_MAXI),
 							(String) properties.get(BeCPGModel.PROP_MICROBIOLIST_TEXT_CRITERIA), organoNodeRef);
 					microbioList.add(microbioListDataItem);
 				}
@@ -744,9 +774,9 @@ public class ProductDAOImpl implements ProductDAO {
 
 					List<AssociationRef> physicoChemAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM);
 					NodeRef physicoChemNodeRef = (physicoChemAssocRefs.get(0)).getTargetRef();
-					PhysicoChemListDataItem physicoChemListDataItem = new PhysicoChemListDataItem(listItemNodeRef, (Float) properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_VALUE),
-							(String) properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_UNIT), (Float) properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_MINI),
-							(Float) properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_MAXI), physicoChemNodeRef);
+					PhysicoChemListDataItem physicoChemListDataItem = new PhysicoChemListDataItem(listItemNodeRef, (Double) properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_VALUE),
+							(String) properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_UNIT), (Double) properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_MINI),
+							(Double) properties.get(BeCPGModel.PROP_PHYSICOCHEMLIST_MAXI), physicoChemNodeRef);
 					physicoChemList.add(physicoChemListDataItem);
 				}
 			}
@@ -780,7 +810,7 @@ public class ProductDAOImpl implements ProductDAO {
 					NodeRef productNodeRef = (productAssocRefs.get(0)).getTargetRef();
 					PackagingListUnit packagingListUnit = PackagingListUnit.valueOf((String) properties.get(BeCPGModel.PROP_PACKAGINGLIST_UNIT));
 
-					PackagingListDataItem packagingListDataItem = new PackagingListDataItem(listItemNodeRef, (Float) properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY),
+					PackagingListDataItem packagingListDataItem = new PackagingListDataItem(listItemNodeRef, (Double) properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY),
 							packagingListUnit, (String) properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), productNodeRef);
 					packagingList.add(packagingListDataItem);
 				}
@@ -838,7 +868,7 @@ public class ProductDAOImpl implements ProductDAO {
 					}
 
 					ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(listItemNodeRef, reqType,
-							(String) properties.get(BeCPGModel.PROP_FIL_REQ_MESSAGE), (Float) properties.get(BeCPGModel.PROP_FIL_QTY_PERC_MAXI), isGMO, isIonized, ings,
+							(String) properties.get(BeCPGModel.PROP_FIL_REQ_MESSAGE), (Double) properties.get(BeCPGModel.PROP_FIL_QTY_PERC_MAXI), isGMO, isIonized, ings,
 							geoOrigins, bioOrigins);
 
 					forbiddenIngList.add(forbiddenIngListDataItem);
@@ -920,10 +950,10 @@ public class ProductDAOImpl implements ProductDAO {
 					List<AssociationRef> resourceAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, MPMModel.ASSOC_PL_RESOURCE);
 					NodeRef resourceNodeRef = resourceAssocRefs.size() > 0 ? (resourceAssocRefs.get(0)).getTargetRef() : null;
 
-					ProcessListDataItem processListDataItem = new ProcessListDataItem(listItemNodeRef, (Float) properties.get(MPMModel.PROP_PL_QTY),
-							(Float) properties.get(MPMModel.PROP_PL_QTY_RESOURCE), (Float) properties.get(MPMModel.PROP_PL_RATE_RESOURCE),
-							(Float) properties.get(MPMModel.PROP_PL_YIELD), (Float) properties.get(MPMModel.PROP_PL_RATE_PROCESS),
-							(Float) properties.get(MPMModel.PROP_PL_RATE_PRODUCT), stepNodeRef, productNodeRef, resourceNodeRef);
+					ProcessListDataItem processListDataItem = new ProcessListDataItem(listItemNodeRef, (Double) properties.get(MPMModel.PROP_PL_QTY),
+							(Double) properties.get(MPMModel.PROP_PL_QTY_RESOURCE), (Double) properties.get(MPMModel.PROP_PL_RATE_RESOURCE),
+							(Double) properties.get(MPMModel.PROP_PL_YIELD), (Double) properties.get(MPMModel.PROP_PL_RATE_PROCESS),
+							(Double) properties.get(MPMModel.PROP_PL_RATE_PRODUCT), stepNodeRef, productNodeRef, resourceNodeRef);
 
 					processList.add(processListDataItem);
 				}
@@ -947,42 +977,6 @@ public class ProductDAOImpl implements ProductDAO {
 	 * @param dataLists
 	 *            the data lists
 	 */
-
-	// private NodeRef saveProduct(NodeRef parentNodeRef, FinishedProductData p,
-	// Set<ProductDataList> dataLists){
-	// return saveProduct(parentNodeRef, p, FoodModel.TYPE_FINISHEDPRODUCT,
-	// dataLists);
-	// }
-	//
-	// private NodeRef saveProduct(NodeRef parentNodeRef,
-	// LocalSemiFinishedProduct p, Set<ProductDataList> dataLists){
-	// return saveProduct(parentNodeRef, p,
-	// FoodModel.TYPE_LOCALSEMIFINISHEDPRODUCT, dataLists);
-	// }
-	//
-	// private NodeRef saveProduct(NodeRef parentNodeRef, PackagingKitData p,
-	// Set<ProductDataList> dataLists){
-	// return saveProduct(parentNodeRef, p, FoodModel.TYPE_PACKAGINGKIT,
-	// dataLists);
-	// }
-	//
-	// private NodeRef saveProduct(NodeRef parentNodeRef, PackagingMaterialData
-	// p, Set<ProductDataList> dataLists){
-	// return saveProduct(parentNodeRef, p, FoodModel.TYPE_PACKAGINGMATERIAL,
-	// dataLists);
-	// }
-	//
-	// private NodeRef saveProduct(NodeRef parentNodeRef, RawMaterialData p,
-	// Set<ProductDataList> dataLists){
-	// return saveProduct(parentNodeRef, p, FoodModel.TYPE_RAWMATERIAL,
-	// dataLists);
-	// }
-	//
-	// private NodeRef saveProduct(NodeRef parentNodeRef,
-	// SemiFinishedProductData p, Set<ProductDataList> dataLists){
-	// return saveProduct(parentNodeRef, p, FoodModel.TYPE_SEMIFINISHEDPRODUCT,
-	// dataLists);
-	// }
 
 	private void createDataLists(NodeRef productNodeRef, ProductData productData, Collection<QName> dataLists) {
 		// Container
@@ -1029,10 +1023,11 @@ public class ProductDAOImpl implements ProductDAO {
 						createReqCtrlList(containerNodeRef, productData.getReqCtrlList());
 					} else if (dataList.equals(MPMModel.TYPE_PROCESSLIST)) {
 						createProcessList(containerNodeRef, productData.getProcessList());
+					}	else if (dataList.equals(BeCPGModel.TYPE_DYNAMICCHARCATLIST)){
+						createDynamicCharachList(containerNodeRef,productData.getDynamicCharachList());
 					} else {
-						// specific
-						// logger.trace(String.format("DataList '%s' is not created since it is not implemented.",
-						// dataList));
+						 logger.debug(String.format("DataList '%s' is not created since it is not implemented.",
+						 dataList));
 					}
 				}
 			}
@@ -1040,6 +1035,7 @@ public class ProductDAOImpl implements ProductDAO {
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 		}
 	}
+
 
 	/**
 	 * Creates the allergen list.
@@ -1125,6 +1121,74 @@ public class ProductDAOImpl implements ProductDAO {
 		}
 	}
 
+
+	private void createDynamicCharachList(NodeRef listContainerNodeRef, List<DynamicCharachListItem> dynamicCharachList) {
+		if (listContainerNodeRef != null) {
+			NodeRef dynamicCharachListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+
+			if (dynamicCharachList == null) {
+				// delete existing list
+				if (dynamicCharachListNodeRef != null){
+					nodeService.deleteNode(dynamicCharachListNodeRef);
+				}
+			} else {
+
+				// dynamicCharach list, create if needed
+				if (dynamicCharachListNodeRef == null) {
+					dynamicCharachListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+				}
+
+				List<NodeRef> listItemNodeRefs = listItems(dynamicCharachListNodeRef, BeCPGModel.TYPE_DYNAMICCHARCATLIST);
+
+				// create temp list
+				List<NodeRef> dynamicCharachListToTreat = new ArrayList<NodeRef>();
+				for (DynamicCharachListItem dynamicCharachListDataItem : dynamicCharachList) {
+					if(dynamicCharachListDataItem.getNodeRef()!=null){
+						dynamicCharachListToTreat.add(dynamicCharachListDataItem.getNodeRef());
+					}
+				}
+				List<NodeRef> filesToUpdate  = new ArrayList<NodeRef>();
+				// remove deleted nodes
+				for (NodeRef listItemNodeRef : listItemNodeRefs) {
+
+					if (!dynamicCharachListToTreat.contains(listItemNodeRef)) {
+						// delete
+						nodeService.deleteNode(listItemNodeRef);
+					} else {
+						filesToUpdate.add(listItemNodeRef);
+					}
+				}
+
+				// update or create nodes
+				int sortIndex = 1;
+				for (DynamicCharachListItem dynamicCharachListDataItem : dynamicCharachList) {
+					NodeRef linkNodeRef = dynamicCharachListDataItem.getNodeRef();
+					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE, dynamicCharachListDataItem.getDynamicCharachTitle());
+					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_FORMULA, dynamicCharachListDataItem.getDynamicCharachFormula());
+					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE, (Serializable) dynamicCharachListDataItem.getDynamicCharachValue());
+
+					properties.put(BeCPGModel.PROP_SORT, sortIndex);
+					sortIndex++;
+
+					if (filesToUpdate.contains(linkNodeRef)) {
+						// update
+						nodeService.setProperties(linkNodeRef, properties);
+					} else {
+						// create
+						ChildAssociationRef childAssocRef = nodeService.createNode(dynamicCharachListNodeRef, ContentModel.ASSOC_CONTAINS,
+								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(dynamicCharachListDataItem.getDynamicCharachTitle()))
+								, BeCPGModel.TYPE_DYNAMICCHARCATLIST, properties);
+						linkNodeRef = childAssocRef.getChildRef();
+					}
+
+				}
+			}
+		}
+		
+	}
+	
+	
 	/**
 	 * Create/Update composition.
 	 * 

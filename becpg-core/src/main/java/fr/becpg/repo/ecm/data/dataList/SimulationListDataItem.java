@@ -7,8 +7,8 @@ public class SimulationListDataItem {
 	private NodeRef nodeRef;
 	private NodeRef sourceItem;
 	private NodeRef charact;
-	private Float sourceValue;
-	private Float targetValue;
+	private Double sourceValue;
+	private Double targetValue;
 	
 	public NodeRef getNodeRef() {
 		return nodeRef;
@@ -29,20 +29,20 @@ public class SimulationListDataItem {
 	public void setCharact(NodeRef charact) {
 		this.charact = charact;
 	}
-	public Float getSourceValue() {
+	public Double getSourceValue() {
 		return sourceValue;
 	}
-	public void setSourceValue(Float sourceValue) {
+	public void setSourceValue(Double sourceValue) {
 		this.sourceValue = sourceValue;
 	}
-	public Float getTargetValue() {
+	public Double getTargetValue() {
 		return targetValue;
 	}
-	public void setTargetValue(Float targetValue) {
+	public void setTargetValue(Double targetValue) {
 		this.targetValue = targetValue;
 	}
 	
-	public SimulationListDataItem(NodeRef nodeRef, NodeRef sourceItem, NodeRef charact, Float sourceValue, Float targetValue){
+	public SimulationListDataItem(NodeRef nodeRef, NodeRef sourceItem, NodeRef charact, Double sourceValue, Double targetValue){
 		setNodeRef(nodeRef);
 		setSourceItem(sourceItem);
 		setCharact(charact);

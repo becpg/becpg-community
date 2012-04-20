@@ -249,10 +249,10 @@
 			<parent>bcpg:entityListItem</parent>			
 			<properties>
 				<property name="ecm:cclSourceValue">
-					<type>d:float</type>					
+					<type>d:double</type>					
 				</property>
 				<property name="ecm:cclTargetValue">
-					<type>d:float</type>			
+					<type>d:double</type>			
 				</property>			
 			</properties>
 			<associations>

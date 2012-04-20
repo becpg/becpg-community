@@ -607,8 +607,8 @@ public class ECOServiceImpl implements ECOService {
 		
 		for(NodeRef charactNodeRef : ecoData.getCalculatedCharacts()){
 			
-			Float sourceValue = getCharactValue(charactNodeRef, sourceData);
-			Float targetValue = getCharactValue(charactNodeRef, targetData);
+			Double sourceValue = getCharactValue(charactNodeRef, sourceData);
+			Double targetValue = getCharactValue(charactNodeRef, targetData);
 			
 			logger.debug("calculated charact: " + charactNodeRef + " - sourceValue: " + sourceValue + " - targetValue: " + targetValue);
 			ecoData.getSimulationList().add(new SimulationListDataItem(null, sourceData.getNodeRef(), charactNodeRef, sourceValue, targetValue));
@@ -662,9 +662,9 @@ public class ECOServiceImpl implements ECOService {
 		}
 	}
 	
-	private Float getCharactValue(NodeRef charactNodeRef, ProductData productData){
+	private Double getCharactValue(NodeRef charactNodeRef, ProductData productData){
 		
-		Float value = null;
+		Double value = null;
 		QName charactType = nodeService.getType(charactNodeRef);
 		
 		//TODO not generic

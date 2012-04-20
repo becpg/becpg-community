@@ -418,13 +418,13 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			rawMaterial1.setLegalName("Legal Raw material 1");
 			//costList
 			List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 3f, "€/kg", null, cost1, false));
-			costList.add(new CostListDataItem(null, 2f, "€/kg", null, cost2, false));
+			costList.add(new CostListDataItem(null, 3d, "€/kg", null, cost1, false));
+			costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false));
 			rawMaterial1.setCostList(costList);
 			//nutList
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f, 0f, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f, 0f, "Groupe 1", nut2, false));
+			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
+			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 			rawMaterial1.setNutList(nutList);
 			//allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
@@ -439,11 +439,11 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			bioOrigins.add(bioOrigin1);
 			List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin1);			
-			ingList.add(new IngListDataItem(null, 1f, geoOrigins, bioOrigins, false, false, ing1, false));
+			ingList.add(new IngListDataItem(null, 1d, geoOrigins, bioOrigins, false, false, ing1, false));
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin1);
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 2f, geoOrigins, bioOrigins, false, false, ing2, false));
+			ingList.add(new IngListDataItem(null, 2d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial1.setIngList(ingList);
 			productDAO.create(folderNodeRef, rawMaterial1, dataLists);
 			
@@ -453,13 +453,13 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			rawMaterial2.setLegalName("Legal Raw material 2");
 			//costList
 			costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 1f, "€/kg", null, cost1, false));
-			costList.add(new CostListDataItem(null, 2f, "€/kg", null, cost1, false));
+			costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false));
+			costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost1, false));
 			rawMaterial2.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f,  0f, "Groupe 1", nut2, false));
+			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
+			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
 			rawMaterial2.setNutList(nutList);
 			//allergenList
 			allergenList = new ArrayList<AllergenListDataItem>();
@@ -474,12 +474,12 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			bioOrigins.add(bioOrigin1);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin1);			
-			ingList.add(new IngListDataItem(null, 1f, geoOrigins, bioOrigins, true, true, ing1, false));
+			ingList.add(new IngListDataItem(null, 1d, geoOrigins, bioOrigins, true, true, ing1, false));
 			bioOrigins = new ArrayList<NodeRef>();
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 3f, geoOrigins, bioOrigins, false, false, ing2, false));
+			ingList.add(new IngListDataItem(null, 3d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial2.setIngList(ingList);			
 			productDAO.create(folderNodeRef, rawMaterial2, dataLists);
 			
@@ -489,13 +489,13 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			rawMaterial3.setLegalName("Legal Raw material 3");
 			//costList
 			costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 1f, "€/kg", null, cost1, false));
-			costList.add(new CostListDataItem(null, 2f, "€/kg", null, cost1, false));
+			costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false));
+			costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost1, false));
 			rawMaterial3.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2f, "g/100g", 0f,  0f, "Groupe 1", nut2, false));
+			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
+			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
 			rawMaterial3.setNutList(nutList);
 			//allergenList
 			allergenList = new ArrayList<AllergenListDataItem>();
@@ -511,7 +511,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);			
-			ingList.add(new IngListDataItem(null, 4f, geoOrigins, bioOrigins, true, true, ing3, false));			
+			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial3.setIngList(ingList);		
 			productDAO.create(folderNodeRef, rawMaterial3, dataLists);
 			
@@ -526,7 +526,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);			
-			ingList.add(new IngListDataItem(null, 4f, geoOrigins, bioOrigins, true, true, ing3, false));			
+			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial4.setIngList(ingList);		
 			productDAO.create(folderNodeRef, rawMaterial4, dataLists);
 			
@@ -536,13 +536,13 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			rawMaterial5.setLegalName("Legal Raw material 5");
 			//costList
 			costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 5f, "€/m", null, cost1, false));
-			costList.add(new CostListDataItem(null, 6f, "€/m", null, cost1, false));
+			costList.add(new CostListDataItem(null, 5d, "€/m", null, cost1, false));
+			costList.add(new CostListDataItem(null, 6d, "€/m", null, cost1, false));
 			rawMaterial5.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1f, "g/100g", 0f,  0f, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 3f, "g/100g", 0f,  0f, "Groupe 1", nut2, false));
+			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
+			nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
 			rawMaterial5.setNutList(nutList);					
 			rawMaterial5.setIngList(ingList);		
 			productDAO.create(folderNodeRef, rawMaterial5, dataLists);
@@ -575,11 +575,11 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			bioOrigins.add(bioOrigin1);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin1);			
-			ingList.add(new IngListDataItem(null, 1f, geoOrigins, bioOrigins, false, false, ing1, false));
+			ingList.add(new IngListDataItem(null, 1d, geoOrigins, bioOrigins, false, false, ing1, false));
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin1);
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 2f, geoOrigins, bioOrigins, false, false, ing2, false));
+			ingList.add(new IngListDataItem(null, 2d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial11.setIngList(ingList);
 			rawMaterial11NodeRef = productDAO.create(folderNodeRef, rawMaterial11, dataLists);
 			
@@ -593,12 +593,12 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			bioOrigins.add(bioOrigin1);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin1);			
-			ingList.add(new IngListDataItem(null, 1f, geoOrigins, bioOrigins, true, true, ing1, false));
+			ingList.add(new IngListDataItem(null, 1d, geoOrigins, bioOrigins, true, true, ing1, false));
 			bioOrigins = new ArrayList<NodeRef>();
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 3f, geoOrigins, bioOrigins, false, false, ing2, false));
+			ingList.add(new IngListDataItem(null, 3d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial12.setIngList(ingList);			
 			rawMaterial12NodeRef = productDAO.create(folderNodeRef, rawMaterial12, dataLists);
 			
@@ -613,7 +613,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);			
-			ingList.add(new IngListDataItem(null, 4f, geoOrigins, bioOrigins, true, true, ing3, false));			
+			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial13.setIngList(ingList);		
 			rawMaterial13NodeRef = productDAO.create(folderNodeRef, rawMaterial13, dataLists);
 			
@@ -628,8 +628,8 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);			
-			ingList.add(new IngListDataItem(null, 4f, geoOrigins, bioOrigins, true, true, ing3, false));
-			ingList.add(new IngListDataItem(null, 2f, geoOrigins, bioOrigins, true, true, ing4, false));
+			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));
+			ingList.add(new IngListDataItem(null, 2d, geoOrigins, bioOrigins, true, true, ing4, false));
 			rawMaterial14.setIngList(ingList);		
 			rawMaterial14NodeRef = productDAO.create(folderNodeRef, rawMaterial14, dataLists);
 			
@@ -655,15 +655,15 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Finished product 1");
 			finishedProduct1.setLegalName("Legal Finished product 1");
-			finishedProduct1.setQty(2f);
+			finishedProduct1.setQty(2d);
 			finishedProduct1.setUnit(ProductUnit.kg);				
 			List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
-			compoList1.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE, DeclarationType.DETAIL_FR, localSF11NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 1f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial11NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DETAIL_FR, rawMaterial12NodeRef));
-			compoList1.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f,  GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF12NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial13NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.DECLARE_FR, rawMaterial14NodeRef));
+			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF11NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial11NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial12NodeRef));
+			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d,  GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF12NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial13NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial14NodeRef));
 			finishedProduct1.setCompoList(compoList1);
 			 dataLists = productDictionaryService.getDataLists();
 			 productNodeRef = productDAO.create(folderNodeRef, finishedProduct1, dataLists);
@@ -764,7 +764,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		properties.put(NPDModel.PROP_CFT_LAUNCH_DATE_DESIRED, new Date());
 		properties.put(NPDModel.PROP_CFT_RESPONSE_DATE_DESIRED, new Date());
 		properties.put(NPDModel.PROP_CFT_REPONSE_DATEREALIZED, new Date());
-		properties.put(NPDModel.PROP_UNIT_PRICE, new Float(10));
+		properties.put(NPDModel.PROP_UNIT_PRICE, 10d);
 		assocs.put(NPDModel.ASSOC_CFT_CLIENT, getClientsNodeRef());
 		
 
@@ -947,29 +947,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
     }
 	
 
-//	private WorkflowPath doMarketingBriefStep(String workflowInstanceId) {
-//
-//		WorkflowTask task = getNextTaskForWorkflow(workflowInstanceId);
-//		logger.info("Set marketing brief information " + task.getName());
-//		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-//		properties.put(NPDModel.PROP_CFT_TRANSMITTER, "matthieu");
-//		properties.put(NPDModel.PROP_CFT_COMPANY, "cftCompany");
-//		properties.put(NPDModel.PROP_CFT_OPENING_DATE, new Date());
-//		properties.put(NPDModel.PROP_CFT_SAMPLING_DATE, new Date());
-//		properties.put(NPDModel.PROP_CFT_LAUNCH_DATE_DESIRED, new Date());
-//		properties.put(NPDModel.PROP_CFT_RESPONSE_DATE_DESIRED, new Date());
-//		properties.put(NPDModel.PROP_CFT_REPONSE_DATEREALIZED, new Date());
-//		properties.put(NPDModel.PROP_UNIT_PRICE, new Float(10));
-//		java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-//		assocs.put(NPDModel.ASSOC_CFT_CLIENT, getClientsNodeRef());
-//
-//		workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
-//		logger.debug("End task"+task.getName());
-//		task = workflowService.endTask(task.getId(), "submit");
-//
-//		return task.getPath();
-//
-//	}
 
 
 	private WorkflowPath doNeedDefinition(String workflowInstanceId) {

@@ -16,12 +16,12 @@ public class CostDetailsListDataItem{
 	private NodeRef nodeRef;
 	
 	/** The value. */
-	private Float value = 0f;
+	private Double value = 0d;
 	
 	/** The unit. */
 	private String unit;	
 	
-	private Float percentage;
+	private Double percentage;
 	
 	/** The cost. */
 	private NodeRef cost;
@@ -51,7 +51,7 @@ public class CostDetailsListDataItem{
 	 *
 	 * @return the value
 	 */
-	public Float getValue() {
+	public Double getValue() {
 		return value;
 	}
 	
@@ -60,7 +60,7 @@ public class CostDetailsListDataItem{
 	 *
 	 * @param value the new value
 	 */
-	public void setValue(Float value) {
+	public void setValue(Double value) {
 		this.value = value;
 	}
 	
@@ -82,11 +82,11 @@ public class CostDetailsListDataItem{
 		this.unit = unit;
 	}
 	
-	public Float getPercentage() {
+	public Double getPercentage() {
 		return percentage;
 	}
 
-	public void setPercentage(Float percentage) {
+	public void setPercentage(Double percentage) {
 		this.percentage = percentage;
 	}
 
@@ -131,7 +131,7 @@ public class CostDetailsListDataItem{
 	 * @param unit the unit
 	 * @param cost the cost
 	 */
-	public CostDetailsListDataItem(NodeRef nodeRef, Float value, String unit, Float percentage, NodeRef cost, NodeRef source){
+	public CostDetailsListDataItem(NodeRef nodeRef, Double value, String unit, Double percentage, NodeRef cost, NodeRef source){
 		
 		setNodeRef(nodeRef);		
 		setValue(value);

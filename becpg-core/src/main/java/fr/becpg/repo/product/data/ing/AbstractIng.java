@@ -85,6 +85,6 @@ public abstract class AbstractIng implements Ing, Comparable<Ing> {
 	@Override
 	public int compareTo(Ing ing) {
 		
-		return Float.compare(ing.getQty(), this.getQty());
+		return Double.compare(ing.getQty(), this.getQty());
 	}
 }

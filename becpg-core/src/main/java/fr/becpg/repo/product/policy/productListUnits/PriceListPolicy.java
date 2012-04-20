@@ -79,8 +79,8 @@ public class PriceListPolicy implements NodeServicePolicies.OnUpdatePropertiesPo
 		
 		Integer beforePrefRank = (Integer)before.get(BeCPGModel.PROP_PRICELIST_PREF_RANK);
 		Integer afterPrefRank = (Integer)after.get(BeCPGModel.PROP_PRICELIST_PREF_RANK);
-		Float beforeValue = (Float)before.get(BeCPGModel.PROP_PRICELIST_VALUE);
-		Float afterValue = (Float)after.get(BeCPGModel.PROP_PRICELIST_VALUE);
+		Double beforeValue = (Double)before.get(BeCPGModel.PROP_PRICELIST_VALUE);
+		Double afterValue = (Double)after.get(BeCPGModel.PROP_PRICELIST_VALUE);
 		boolean doUpdate = false;
 		
 		logger.debug("onUpdateProperties, prefRank before: " + beforePrefRank + "after: " + afterPrefRank);
@@ -107,7 +107,7 @@ public class PriceListPolicy implements NodeServicePolicies.OnUpdatePropertiesPo
 		NodeRef priceListNodeRef = nodeService.getPrimaryParent(priceListItemNodeRef).getParentRef();
 		NodeRef listContainerNodeRef = nodeService.getPrimaryParent(priceListNodeRef).getParentRef();		
 		NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
-		Float value = (Float)nodeService.getProperty(priceListItemNodeRef, BeCPGModel.PROP_PRICELIST_VALUE);
+		Double value = (Double)nodeService.getProperty(priceListItemNodeRef, BeCPGModel.PROP_PRICELIST_VALUE);
 		
 		NodeRef costNodeRef = null;
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(priceListItemNodeRef, BeCPGModel.ASSOC_PRICELIST_COST);

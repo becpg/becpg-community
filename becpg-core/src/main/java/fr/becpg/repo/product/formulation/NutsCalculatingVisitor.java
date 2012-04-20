@@ -40,13 +40,13 @@ import fr.becpg.repo.product.data.productList.RequirementType;
 public class NutsCalculatingVisitor implements ProductVisitor {
 	
 	/** The Constant QTY_FOR_PIECE. */
-	public static final float QTY_FOR_PIECE = 1f;
+	public static final Double QTY_FOR_PIECE = 1d;
 	
 	/** The Constant DEFAULT_DENSITY. */
-	public static final float DEFAULT_DENSITY = 1f;
+	public static final Double DEFAULT_DENSITY = 1d;
 	
 	/** The Constant DEFAULT_QUANTITY. */
-	public static final float DEFAULT_QUANTITY = 0f;
+	public static final Double DEFAULT_QUANTITY = 0d;
 	
 	/** The Constant UNIT_PER100G. */
 	public static final String UNIT_PER100G = "/100g";
@@ -89,31 +89,6 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		this.entityListDAO = entityListDAO;
 	}
 	
-//	@Override
-//	public FinishedProductData visit(FinishedProductData finishedProductData) {
-//		visitProduct(finishedProductData);		
-//	}
-//
-//	@Override
-//	public RawMaterialData visit(RawMaterialData rawMaterialData) {
-//		//Nothing to do
-//	}
-//
-//	@Override
-//	public PackagingMaterialData visit(PackagingMaterialData packagingMaterialData) {
-//		//Nothing to do
-//	}
-//
-//	@Override
-//	public void visit(SemiFinishedProductData semiFinishedProductData) {
-//		visitProduct(semiFinishedProductData);
-//	}
-//
-//	@Override
-//	public void visit(LocalSemiFinishedProduct localSemiFinishedProductData) {
-//		//Nothing to do		
-//	}
-
 /* (non-Javadoc)
  * @see fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData)
  */
@@ -132,7 +107,7 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		if(formulatedProduct.getNutList() != null){			
 			for(NutListDataItem nl : formulatedProduct.getNutList()){
 				// reset value
-				nl.setValue(0f);
+				nl.setValue(0d);
 				nutMap.put(nl.getNut(), nl);
 			}
 		}
@@ -142,12 +117,12 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		}				
 		
 		//Take in account net weight
-		Float qty = (formulatedProduct.getUnit() != ProductUnit.P) ? formulatedProduct.getQty():QTY_FOR_PIECE; //unit => qty == 1
+		Double qty = (formulatedProduct.getUnit() != ProductUnit.P) ? formulatedProduct.getQty():QTY_FOR_PIECE; //unit => qty == 1
 		if(qty==null){
 			qty = DEFAULT_QUANTITY;
 		}
-		Float density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
-		Float netWeight = qty * density;
+		Double density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
+		Double netWeight = qty * density;
 		for(NutListDataItem n : nutMap.values()){
 			
 			if(n.getValue() != null)
@@ -204,14 +179,14 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 			}									
 			
 			//Calculate value
-			Float newValue = newNutListDataItem.getValue();
-			Float qty = FormulationHelper.getQty(compoListDataItem);
-			Float density = (productData.getDensity() != null) ? productData.getDensity():DEFAULT_DENSITY; //density is null => 1
-			Float value = nutListDataItem.getValue();
+			Double newValue = newNutListDataItem.getValue();
+			Double qty = FormulationHelper.getQty(compoListDataItem);
+			Double density = (productData.getDensity() != null) ? productData.getDensity():DEFAULT_DENSITY; //density is null => 1
+			Double value = nutListDataItem.getValue();
 			
 			if(qty != null && value != null){
 				
-				Float valueToAdd = density * qty * value;
+				Double valueToAdd = density * qty * value;
 				if(newValue != null){
 					newValue += valueToAdd;
 				}

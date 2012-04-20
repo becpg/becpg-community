@@ -23,7 +23,7 @@ public class ProcessCalculatingVisitor implements ProductVisitor {
 		}
 		
 		// visit resources and steps from the end to the beginning
-		Float minRateProcess = null;
+		Double minRateProcess = null;
 		for(int z_idx=formulatedProduct.getProcessList().size()-1 ; z_idx>=0 ; z_idx--){
 			
 			ProcessListDataItem p = formulatedProduct.getProcessList().get(z_idx);
@@ -31,7 +31,7 @@ public class ProcessCalculatingVisitor implements ProductVisitor {
 			if(p.getResource() != null && p.getRateResource() != null && p.getQtyResource() != null){
 				
 				// rateProcess
-				Float rateProcess = p.getQtyResource() * p.getRateResource(); 
+				Double rateProcess = p.getQtyResource() * p.getRateResource(); 
 				p.setRateProcess(rateProcess);
 				
 				// minRateProcess
@@ -48,8 +48,8 @@ public class ProcessCalculatingVisitor implements ProductVisitor {
 				p.setRateProcess(minRateProcess);				
 				
 				// rateProduct
-				if(minRateProcess != null && minRateProcess != 0f && p.getQty() != null){
-					Float rateProduct = minRateProcess / p.getQty();
+				if(minRateProcess != null && minRateProcess != 0d && p.getQty() != null){
+					Double rateProduct = minRateProcess / p.getQty();
 					p.setRateProduct(rateProduct);
 				}				
 				

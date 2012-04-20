@@ -56,5 +56,5 @@ public interface Ing {
 	 *
 	 * @return the qty
 	 */
-	public float getQty();
+	public Double getQty();
 }

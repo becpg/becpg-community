@@ -350,7 +350,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// Costs €
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
 				for (int j = 0; j < 10; j++) {
-					CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "", null, costs.get(j), false);
+					CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "", null, costs.get(j), false);
 					costList.add(costListItemData);
 				}
 				fp1.setCostList(costList);
@@ -373,18 +373,18 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				fp1.setAllergenList(allergenList);
 
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE,
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE,
 						DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1f, 0f, 0f, CompoListUnit.kg, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "",
 						DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "",
 						DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE,
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE,
 						DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "",
 						DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				// compoList.add(new CompoListDataItem(null, 2, 3f, 0f,
-				// 0f, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
+				// compoList.add(new CompoListDataItem(null, 2, 3d, 0d,
+				// 0d, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
 				// rawMaterial4NodeRef));
 				fp1.setCompoList(compoList);
 
@@ -399,7 +399,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// Costs $
 				costList = new ArrayList<CostListDataItem>();
 				for (int j = 0; j < 10; j++) {
-					CostListDataItem costListItemData = new CostListDataItem(null, 12.4f, "", null, costs.get(j), false);
+					CostListDataItem costListItemData = new CostListDataItem(null, 12.4d, "", null, costs.get(j), false);
 					costList.add(costListItemData);
 				}
 				fp2.setCostList(costList);
@@ -424,17 +424,17 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				fp2.setAllergenList(allergenList);
 
 				compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE,
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE,
 						DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "",
 						DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "",
 						DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE,
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE,
 						DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.P, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, "",
 						DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "",
 						DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 
@@ -626,18 +626,18 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				fp1.setName("FP 1");
 
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE,
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE,
 						DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1f, 0f, 0f, CompoListUnit.kg, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "",
 						DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "",
 						DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE,
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE,
 						DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "",
 						DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				// compoList.add(new CompoListDataItem(null, 2, 3f, 0f,
-				// 0f, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
+				// compoList.add(new CompoListDataItem(null, 2, 3d, 0d,
+				// 0d, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
 				// rawMaterial4NodeRef));
 				fp1.setCompoList(compoList);
 
@@ -649,17 +649,17 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				fp2.setName("FP 2");
 
 				compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_PATE,
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE,
 						DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "",
 						DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.kg, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "",
 						DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1f, 0f, 0f, CompoListUnit.kg, 0f, GROUP_GARNITURE,
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE,
 						DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2f, 0f, 0f, CompoListUnit.P, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, "",
 						DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3f, 0f, 0f, CompoListUnit.kg, 0f, "",
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "",
 						DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 

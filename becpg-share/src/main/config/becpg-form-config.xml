@@ -3289,6 +3289,59 @@
 			</form>
 		</forms>
 	</config>
+	
+	
+	
+		<!-- bcpg:dynamicCharachList type -->
+	<config evaluator="model-type" condition="bcpg:dynamicCharachList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:dynamicCharachTitle" />
+					<show id="bcpg:dynamicCharachFormula" />
+					<show id="bcpg:dynamicCharachValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:dynamicCharachFormula" >
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:dynamicCharachTitle" />
+					<show id="bcpg:dynamicCharachValue" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:dynamicCharachList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:dynamicCharachList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:dynamicCharachTitle" />
+					<show id="bcpg:dynamicCharachFormula" />
+					<show id="bcpg:dynamicCharachValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:dynamicCharachFormula" >
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
 
 	<!-- ________________________________________________________________ AUTOCOMP 
 		________________________________________________________________ -->

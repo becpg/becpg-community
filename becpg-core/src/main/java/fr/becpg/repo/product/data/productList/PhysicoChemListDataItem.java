@@ -17,16 +17,16 @@ public class PhysicoChemListDataItem {
 	private NodeRef nodeRef;			
 	
 	/** The value. */
-	private Float value;
+	private Double value;
 	
 	/** The unit. */
 	private String unit;
 	
 	/** The mini. */
-	private Float mini;
+	private Double mini;
 	
 	/** The maxi. */
-	private Float maxi;
+	private Double maxi;
 	
 	/** The physico chem. */
 	private NodeRef physicoChem;
@@ -54,7 +54,7 @@ public class PhysicoChemListDataItem {
 	 *
 	 * @return the value
 	 */
-	public Float getValue() {
+	public Double getValue() {
 		return value;
 	}
 	
@@ -63,7 +63,7 @@ public class PhysicoChemListDataItem {
 	 *
 	 * @param value the new value
 	 */
-	public void setValue(Float value) {
+	public void setValue(Double value) {
 		this.value = value;
 	}
 	
@@ -90,7 +90,7 @@ public class PhysicoChemListDataItem {
 	 *
 	 * @return the mini
 	 */
-	public Float getMini() {
+	public Double getMini() {
 		return mini;
 	}
 	
@@ -99,7 +99,7 @@ public class PhysicoChemListDataItem {
 	 *
 	 * @param mini the new mini
 	 */
-	public void setMini(Float mini) {
+	public void setMini(Double mini) {
 		this.mini = mini;
 	}
 	
@@ -108,7 +108,7 @@ public class PhysicoChemListDataItem {
 	 *
 	 * @return the maxi
 	 */
-	public Float getMaxi() {
+	public Double getMaxi() {
 		return maxi;
 	}
 	
@@ -117,7 +117,7 @@ public class PhysicoChemListDataItem {
 	 *
 	 * @param maxi the new maxi
 	 */
-	public void setMaxi(Float maxi) {
+	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 	
@@ -156,7 +156,7 @@ public class PhysicoChemListDataItem {
 	 * @param maxi the maxi
 	 * @param physicoChem the physico chem
 	 */
-	public PhysicoChemListDataItem(NodeRef nodeRef, Float value, String unit, Float mini, Float maxi, NodeRef physicoChem){
+	public PhysicoChemListDataItem(NodeRef nodeRef, Double value, String unit, Double mini, Double maxi, NodeRef physicoChem){
 		this.nodeRef = nodeRef;
 		this.value = value;
 		this.unit = unit;

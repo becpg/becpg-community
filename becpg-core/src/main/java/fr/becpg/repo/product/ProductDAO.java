@@ -13,6 +13,7 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.DynamicCharachListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
@@ -73,4 +74,6 @@ public interface ProductDAO {
 	public NutListDataItem loadNutListItem(NodeRef listItemNodeRef);
 	public List<IngLabelingListDataItem> loadIngLabelingList(NodeRef listContainerNodeRef);
 	public IngLabelingListDataItem loadIngLabelingListItem(NodeRef listItemNodeRef);
+	public List<DynamicCharachListItem> loadDynamicCharachList(NodeRef listContainerNodeRef);
+	public DynamicCharachListItem loadDynamicCharachListItem(NodeRef listItemNodeRef);
 }

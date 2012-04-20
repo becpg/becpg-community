@@ -695,15 +695,15 @@
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:compoListQty">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:compoListQtySubFormula">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>true</mandatory>
 				</property>
 				<property name="bcpg:compoListQtyAfterProcess">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:compoListUnit">
@@ -719,11 +719,11 @@
 					</constraints>
 				</property>
 				<property name="bcpg:compoListLossPerc">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:compoListYieldPerc">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:compoListDeclGrp">
@@ -779,7 +779,7 @@
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:packagingListQty">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:packagingListUnit">
@@ -892,7 +892,7 @@
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:costListValue">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:costListUnit">
@@ -908,7 +908,7 @@
 					</constraints>
 				</property>
 				<property name="bcpg:costListMaxi">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 			</properties>
@@ -934,7 +934,7 @@
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:costDetailsListValue">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>				
 				<property name="bcpg:costDetailsListUnit">
@@ -950,7 +950,7 @@
 					</constraints>
 				</property>
 				<property name="bcpg:costDetailsListPerc">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 			</properties>
@@ -987,7 +987,7 @@
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:priceListValue">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:priceListUnit">
@@ -1003,7 +1003,7 @@
 					</constraints>
 				</property>
 				<property name="bcpg:priceListPurchaseQty">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>					
 				</property>
 				<property name="bcpg:priceListPurchaseUnit">
@@ -1060,7 +1060,7 @@
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:ingListQtyPerc">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:ingListIsGMO">
@@ -1129,7 +1129,7 @@
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:mblValue">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:mblUnit">
@@ -1144,7 +1144,7 @@
 					</constraints>
 				</property>
 				<property name="bcpg:mblMaxi">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:mblTextCriteria">
@@ -1173,7 +1173,7 @@
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:nutListValue">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:nutListUnit">
@@ -1189,11 +1189,11 @@
 					</constraints>
 				</property>
 				<property name="bcpg:nutListMini">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:nutListMaxi">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:nutListGroup">
@@ -1252,7 +1252,7 @@
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:pclValue">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:pclUnit">
@@ -1267,11 +1267,11 @@
 					</constraints>
 				</property>
 				<property name="bcpg:pclMini">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:pclMaxi">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 			</properties>
@@ -1309,7 +1309,7 @@
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:filQtyPercMaxi">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:filIsGMO">
@@ -1448,6 +1448,27 @@
          </properties>
       </type>
 		
+		<!-- Dynamic charact list -->
+		
+		<type name="bcpg:dynamicCharachList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:dynamicCharachTitle">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="bcpg:dynamicCharachFormula">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="bcpg:dynamicCharachValue">
+					<type>d:any</type>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
 		<!-- ________________________________________________________________ AUTO 
 			COMP ________________________________________________________________ -->
 
@@ -1555,11 +1576,11 @@
 		<aspect name="bcpg:transformationAspect">
 			<properties>
 				<property name="bcpg:productQty">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>true</mandatory>
 				</property>
 				<property name="bcpg:productDensity">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>true</mandatory>
 					<default>1</default>
 				</property>
@@ -1730,7 +1751,7 @@
 		<aspect name="bcpg:profitabilityAspect">
 			<properties>
 				<property name="bcpg:unitPrice">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:priceCurrency">
@@ -1746,19 +1767,19 @@
 					</constraints>
 				</property>
 				<property name="bcpg:breakEven">
-					<type>d:int</type>
+					<type>d:long</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:projectedQty">
-					<type>d:int</type>
+					<type>d:long</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:unitTotalCost">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:profitability">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 			</properties>

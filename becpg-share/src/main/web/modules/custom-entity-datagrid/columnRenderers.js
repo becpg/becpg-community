@@ -1,4 +1,4 @@
-if (beCPG.module.EntityDataGrid) {
+if (beCPG.module.EntityDataGridRenderers) {
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	   propertyName : ["bcpg:product","bcpg:supplier", "bcpg:client", "bcpg:entity",

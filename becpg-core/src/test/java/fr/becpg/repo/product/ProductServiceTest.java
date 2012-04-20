@@ -192,34 +192,34 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		}
 
 		// Hierarchy1
-		NodeRef rawMaterialHierarchy1Folder = nodeService.getChildByName(hierarchyFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY1);
-		if (rawMaterialHierarchy1Folder == null) {
-			rawMaterialHierarchy1Folder = fileFolderService.create(hierarchyFolder, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY1, ContentModel.TYPE_FOLDER).getNodeRef();
+		NodeRef rawMaterialHierarchy1dolder = nodeService.getChildByName(hierarchyFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY1);
+		if (rawMaterialHierarchy1dolder == null) {
+			rawMaterialHierarchy1dolder = fileFolderService.create(hierarchyFolder, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY1, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 
-		NodeRef value1NodeRef = nodeService.getChildByName(rawMaterialHierarchy1Folder, ContentModel.ASSOC_CONTAINS, HIERARCHY1_VALUE1);
+		NodeRef value1NodeRef = nodeService.getChildByName(rawMaterialHierarchy1dolder, ContentModel.ASSOC_CONTAINS, HIERARCHY1_VALUE1);
 		if (value1NodeRef == null) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, HIERARCHY1_VALUE1);
-			nodeService.createNode(rawMaterialHierarchy1Folder, ContentModel.ASSOC_CONTAINS,
+			nodeService.createNode(rawMaterialHierarchy1dolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
 
 		// Hierarchy2
-		NodeRef rawMaterialHierarchy2Folder = nodeService.getChildByName(hierarchyFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2);
-		if (rawMaterialHierarchy2Folder == null) {
-			rawMaterialHierarchy2Folder = fileFolderService.create(hierarchyFolder, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2, ContentModel.TYPE_FOLDER).getNodeRef();
+		NodeRef rawMaterialHierarchy2dolder = nodeService.getChildByName(hierarchyFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2);
+		if (rawMaterialHierarchy2dolder == null) {
+			rawMaterialHierarchy2dolder = fileFolderService.create(hierarchyFolder, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 
 		String name = String.format("%s - %s", HIERARCHY1_VALUE1, HIERARCHY2_VALUE1_1);
-		NodeRef value1_1NodeRef = nodeService.getChildByName(rawMaterialHierarchy2Folder, ContentModel.ASSOC_CONTAINS, name);
+		NodeRef value1_1NodeRef = nodeService.getChildByName(rawMaterialHierarchy2dolder, ContentModel.ASSOC_CONTAINS, name);
 		if (value1_1NodeRef == null) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, name);
 			properties.put(BeCPGModel.PROP_LINKED_VALUE_PREV_VALUE, HIERARCHY1_VALUE1);
 			properties.put(BeCPGModel.PROP_LINKED_VALUE_VALUE, HIERARCHY2_VALUE1_1);
-			nodeService.createNode(rawMaterialHierarchy2Folder, ContentModel.ASSOC_CONTAINS,
+			nodeService.createNode(rawMaterialHierarchy2dolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties);
 		}
 	}
@@ -636,9 +636,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Finished Product");
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1f, 1f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, lSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1f, 4f, 0f, CompoListUnit.P, 0f, "", DeclarationType.DECLARE_FR, lSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, 3f, 0f, 0f, CompoListUnit.kg, 0f, "", DeclarationType.OMIT_FR, rawMaterialNodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.P, 0d, "", DeclarationType.DECLARE_FR, lSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 4d, 0d, CompoListUnit.P, 0d, "", DeclarationType.DECLARE_FR, lSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterialNodeRef));
 				finishedProduct.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
@@ -659,8 +659,8 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 				assertEquals("check PF", finishedProductNodeRef, wUsed0.getProduct());
 				assertEquals("check PF level", new Integer(1), wUsed0.getDepthLevel());
-				assertEquals("check PF qty", 3f, wUsed0.getQty());
-				assertEquals("check PF qty sub formula", 0f, wUsed0.getQtySubFormula());
+				assertEquals("check PF qty", 3d, wUsed0.getQty());
+				assertEquals("check PF qty sub formula", 0d, wUsed0.getQtySubFormula());
 				assertEquals("check PF unit", CompoListUnit.kg, wUsed0.getCompoListUnit());
 				assertEquals("check PF declaration", DeclarationType.OMIT_FR, wUsed0.getDeclType());
 				logger.debug("end");
@@ -687,11 +687,11 @@ public class ProductServiceTest extends RepoBaseTestCase {
 			CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 			
 			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), WUSED_LEVEL, 
-										(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), 
-										(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
-										(Float)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), 
+										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), 
+										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
+										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), 
 										compoListUnit, 
-										(Float)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), 
+										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), 
 										(String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), 
 										(String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), 
 										kv.getValue().getEntityNodeRef());
@@ -737,14 +737,14 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				FinishedProductData finishedProduct1 = new FinishedProductData();
 				finishedProduct1.setName("Finished Product 1");
 				List<PackagingListDataItem> packagingList1 = new ArrayList<PackagingListDataItem>();
-				packagingList1.add(new PackagingListDataItem(null, 1f, PackagingListUnit.P, "Primaire", packagingMaterialNodeRef));
+				packagingList1.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, "Primaire", packagingMaterialNodeRef));
 				finishedProduct1.setPackagingList(packagingList1);
 				NodeRef finishedProductNodeRef1 = productDAO.create(testFolder, finishedProduct1, dataLists);
 
 				FinishedProductData finishedProduct2 = new FinishedProductData();
 				finishedProduct2.setName("Finished Product");
 				List<PackagingListDataItem> packagingList2 = new ArrayList<PackagingListDataItem>();
-				packagingList2.add(new PackagingListDataItem(null, 8f, PackagingListUnit.PP, "Secondaire", packagingMaterialNodeRef));
+				packagingList2.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, "Secondaire", packagingMaterialNodeRef));
 				finishedProduct2.setPackagingList(packagingList2);
 				NodeRef finishedProductNodeRef2 = productDAO.create(testFolder, finishedProduct2, dataLists);
 
@@ -755,11 +755,11 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				for (PackagingListDataItem packagingListDataItem : wUsedProducts) {
 
 					if (packagingListDataItem.getProduct().equals(finishedProductNodeRef1)) {
-						assertEquals("check qty", 1f, packagingListDataItem.getQty());
+						assertEquals("check qty", 1d, packagingListDataItem.getQty());
 						assertEquals("check qty", PackagingListUnit.P, packagingListDataItem.getPackagingListUnit());
 						assertEquals("check qty", "Primaire", packagingListDataItem.getPkgLevel());
 					} else if (packagingListDataItem.getProduct().equals(finishedProductNodeRef2)) {
-						assertEquals("check qty", 8f, packagingListDataItem.getQty());
+						assertEquals("check qty", 8d, packagingListDataItem.getQty());
 						assertEquals("check qty", PackagingListUnit.PP, packagingListDataItem.getPackagingListUnit());
 						assertEquals("check qty", "Secondaire", packagingListDataItem.getPkgLevel());
 					}
@@ -785,7 +785,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 			PackagingListUnit packagingListUnit = PackagingListUnit.valueOf((String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_UNIT));							
 			
 			PackagingListDataItem packagingListDataItem = new PackagingListDataItem(kv.getKey(), 									
-						(Float)properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY), 
+						(Double)properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY), 
 						packagingListUnit, 
 						(String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), 
 						kv.getValue().getEntityNodeRef());

@@ -16,7 +16,7 @@ public class PackagingListDataItem{
 	private NodeRef nodeRef;
 	
 	/** The qty. */
-	private Float qty = 0f;
+	private Double qty = 0d;
 	
 	private PackagingListUnit packagingListUnit = PackagingListUnit.Unknown;
 	
@@ -35,11 +35,11 @@ public class PackagingListDataItem{
 		this.nodeRef = nodeRef;
 	}
 
-	public Float getQty() {
+	public Double getQty() {
 		return qty;
 	}
 
-	public void setQty(Float qty) {
+	public void setQty(Double qty) {
 		this.qty = qty;
 	}
 
@@ -92,7 +92,7 @@ public class PackagingListDataItem{
 	 * @param pkgLevel
 	 * @param product
 	 */
-	public PackagingListDataItem(NodeRef nodeRef, Float qty, PackagingListUnit packagingListUnit, String pkgLevel, NodeRef product){
+	public PackagingListDataItem(NodeRef nodeRef, Double qty, PackagingListUnit packagingListUnit, String pkgLevel, NodeRef product){
 		
 		setNodeRef(nodeRef);
 		setQty(qty);

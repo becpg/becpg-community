@@ -234,7 +234,7 @@ public class OlapServiceImpl implements OlapService {
 			return Long.parseLong(value);
 		} catch (NumberFormatException e) {
 			try {
-				return Float.parseFloat(value.replace(",","."));
+				return Double.parseDouble(value.replace(",","."));
 			} catch (NumberFormatException e2) {
 			}
 		}

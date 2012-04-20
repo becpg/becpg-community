@@ -379,7 +379,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		List<CostListDataItem> costList = new ArrayList<CostListDataItem>();		    		
 		for(int j=0 ; j<costs.size() ; j++)
 		{		    			
-			CostListDataItem costListItemData = new CostListDataItem(null, 12.2f, "€/kg", null, costs.get(j), false);
+			CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "€/kg", null, costs.get(j), false);
 			costList.add(costListItemData);
 		}		
 		rawMaterial.setCostList(costList);
@@ -388,7 +388,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();		    		
 		for(int j=0 ; j<ings.size() ; j++)
 		{		    			
-			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2f, null, null, false, false, ings.get(j), false);
+			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false, ings.get(j), false);
 			ingList.add(ingListItemData);
 		}		
 		rawMaterial.setIngList(ingList);
@@ -397,7 +397,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();		    		
 		for(int j=0 ; j<nuts.size() ; j++)
 		{		    			
-			NutListDataItem nutListItemData = new NutListDataItem(null, 2f, "kJ/100g", 0f, 0f, "Groupe 1", nuts.get(j), false);
+			NutListDataItem nutListItemData = new NutListDataItem(null, 2d, "kJ/100g", 0d, 0d, "Groupe 1", nuts.get(j), false);
 			nutList.add(nutListItemData);
 		}		
 		rawMaterial.setNutList(nutList);

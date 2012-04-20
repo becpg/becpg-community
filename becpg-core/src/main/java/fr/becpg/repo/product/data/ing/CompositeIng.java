@@ -54,8 +54,8 @@ public class CompositeIng extends AbstractIng {
 	 * @see fr.becpg.repo.food.ing.Ing#getQty()
 	 */
 	@Override
-	public float getQty() {
-		float qty = 0f;
+	public Double getQty() {
+		Double qty = 0d;
 		
 		for(Ing ing : ingList.values())
 			qty += ing.getQty();
@@ -149,7 +149,7 @@ public class CompositeIng extends AbstractIng {
 		logger.debug("getIngLabeling(), ing name: " + this.getName() + "- ing list size: " + ingList.values().size());
 		
 		String ingredients = "";
-		float totalQty = getQty();				
+		Double totalQty = getQty();				
 		List<AbstractIng> sortedIngList = new ArrayList<AbstractIng>(ingList.values());
 		Collections.sort(sortedIngList);
 		DecimalFormat df = (DecimalFormat) NumberFormat.getInstance(locale);
@@ -158,7 +158,7 @@ public class CompositeIng extends AbstractIng {
 		for(AbstractIng ing : sortedIngList){
 						
 			String qtyPerc = "";
-			if(ing.getQty() != 0f){
+			if(ing.getQty() != 0d){
 				qtyPerc = SPACE + df.format(100 * ing.getQty() / totalQty) + SPACE + PERCENTAGE;
 			}
 			

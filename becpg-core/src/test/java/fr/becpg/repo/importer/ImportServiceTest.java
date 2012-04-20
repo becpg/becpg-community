@@ -474,9 +474,9 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		assertEquals("costs should exist", (int)3, productData.getCostList().size());
 		assertEquals("nuts should exist", (int)3, productData.getNutList().size());
 		String [] costNames = {"Coût MP","Coût prév MP", "Coût Emb"};
-		float [] costValues = {1.0f, 2.0f, 3.1f};
+		double [] costValues = {1.0d, 2.0d, 3.1d};
 		String [] nutNames = {"Protéines","Lipides", "Glucides"};
-		float [] nutValues = {2.5f, 3.6f, 5.6f};
+		double [] nutValues = {2.5d, 3.6d, 5.6d};
 		
 		// check costs
 		int costChecked=0;
@@ -785,7 +785,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  				/*-- check productLists --*/
  				assertEquals("compoList should exist", (int)3, productData.getCompoList().size()); 				
  				String [] rmNames = {"MP1","MP2", "MP3"};
- 				float [] qtyValues = {1.0f, 2.0f, 3.2f};
+ 				double [] qtyValues = {1.0d, 2.0d, 3.2d};
  				String [] unitValues = {"g","kg", "g"};
  				
  				// check MP

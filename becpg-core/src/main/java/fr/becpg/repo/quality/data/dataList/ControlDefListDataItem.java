@@ -9,8 +9,8 @@ public class ControlDefListDataItem {
 
 	NodeRef nodeRef;
 	String type;
-	Float mini;
-	Float maxi;
+	Double mini;
+	Double maxi;
 	Boolean required;
 	NodeRef method;
 	List<NodeRef> characts = new ArrayList<NodeRef>();
@@ -27,16 +27,16 @@ public class ControlDefListDataItem {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public Float getMini() {
+	public Double getMini() {
 		return mini;
 	}
-	public void setMini(Float mini) {
+	public void setMini(Double mini) {
 		this.mini = mini;
 	}
-	public Float getMaxi() {
+	public Double getMaxi() {
 		return maxi;
 	}
-	public void setMaxi(Float maxi) {
+	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 	public Boolean getRequired() {
@@ -58,7 +58,7 @@ public class ControlDefListDataItem {
 		this.characts = characts;
 	}
 	
-	public ControlDefListDataItem(NodeRef nodeRef, String type, Float mini, Float maxi, Boolean required, NodeRef method, List<NodeRef> characts){
+	public ControlDefListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, NodeRef method, List<NodeRef> characts){
 		setNodeRef(nodeRef);
 		setType(type);
 		setMini(mini);

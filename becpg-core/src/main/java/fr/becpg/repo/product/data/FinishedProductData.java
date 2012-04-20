@@ -28,13 +28,6 @@ public class FinishedProductData extends ProductData implements ProductElement {
 	@Override
 	public void accept(ProductVisitor productVisitor) throws FormulateException {
 		
-//		for(CompoListDataItem compoItem : this.getCompoList()){
-//			ProductData part = compoItem.getProduct();
-//			
-//			if(part instanceof ProductElement){
-//				((ProductElement)part).accept(productVisitor);
-//			}
-//		}
 		
 		productVisitor.visit(this);		
 	}

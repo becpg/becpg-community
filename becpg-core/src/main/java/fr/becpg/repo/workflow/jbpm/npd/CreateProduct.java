@@ -136,7 +136,7 @@ public class CreateProduct extends JBPMSpringActionHandler {
 							entityName);
 
 					// profitability
-					Float unitPrice = (Float) executionContext.getContextInstance().getVariable(
+					Double unitPrice = (Double) executionContext.getContextInstance().getVariable(
 							"npdwf_unitPrice");
 					String priceCurrency= (String) executionContext.getContextInstance().getVariable(
 							"npdwf_priceCurrency");
