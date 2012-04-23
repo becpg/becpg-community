@@ -51,6 +51,12 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 		Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList());		
 		visitChildren(netWeight, netWeight, composite);
 		
+		// Yield
+		Double qtyUsed = calculateQtyUsedBeforeProcess(composite);
+		if(qtyUsed != null && qtyUsed != 0d){
+			formulatedProduct.setYield(100 * netWeight / qtyUsed);
+		}			
+		
 		return formulatedProduct;
 	}
 	
@@ -116,6 +122,25 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 			Double density = (Double)nodeService.getProperty(compoListDataItem.getProduct(), BeCPGModel.PROP_PRODUCT_DENSITY);
 			if(density != null){
 				qty = qty * density;
+			}
+		}
+		
+		return qty;
+	}
+	
+	private Double calculateQtyUsedBeforeProcess(Composite<CompoListDataItem> composite) throws FormulateException{				
+		
+		Double qty = 0d;
+		
+		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){						
+			
+			if(component instanceof Composite){
+				
+				// calculate children
+				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
+				qty += calculateQtyUsedBeforeProcess(c);
+			}else{
+				qty += component.getData().getQty();
 			}
 		}
 		

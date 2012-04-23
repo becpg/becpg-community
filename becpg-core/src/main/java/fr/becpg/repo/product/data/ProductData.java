@@ -74,6 +74,7 @@ public class ProductData implements ProductElement {
 	 */
 	private Double qty;
 	private Double density;
+	private Double yield;
 	
 	/*
 	 * Profitability properties
@@ -317,6 +318,14 @@ public class ProductData implements ProductElement {
 		this.density = density;
 	}
 	
+	public Double getYield() {
+		return yield;
+	}
+
+	public void setYield(Double yield) {
+		this.yield = yield;
+	}
+
 	public Double getUnitTotalCost() {
 		return unitTotalCost;
 	}
