@@ -98,6 +98,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
 	private static final String PRODUCT_REPORT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
+	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
 	private static final String ECO_REPORT_PATH = "beCPG/birt/system/ecm/ECOReport.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
@@ -837,6 +838,21 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				logger.error("Failed to create product report tpl. SystemProductType: " + productType, e);
 			}
 
+		}
+		
+		// quality report templates
+		NodeRef qualityReportTplsNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_QUALITY_REPORTTEMPLATES);
+
+		// nc
+		try {
+
+			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_NC);
+			NodeRef qualityFolderNodeRef = repoService.createFolderByPath(qualityReportTplsNodeRef,
+					classDef.getTitle(), classDef.getTitle());
+			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(),
+					NC_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_NC, true, true, false);
+		} catch (Exception e) {
+			logger.error("Failed to create nc report tpl. SystemProductType: " + QualityModel.TYPE_NC, e);
 		}
 
 		// compare report

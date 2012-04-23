@@ -124,6 +124,7 @@ public class RepoConsts {
 	// reports
 	public static final String PATH_REPORTS	= "Reports";
 	public static final String PATH_PRODUCT_REPORTTEMPLATES = "ProductReportTemplates";
+	public static final String PATH_QUALITY_REPORTTEMPLATES = "QualityReportTemplates";
 	public static final String PATH_REPORTS_COMPARE_PRODUCTS = "CompareProducts";
 	public static final String PATH_REPORTS_EXPORT_SEARCH = "ExportSearch";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PRODUCTS = "ExportProducts";

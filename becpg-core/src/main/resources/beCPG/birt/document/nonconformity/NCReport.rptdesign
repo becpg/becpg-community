@@ -7,374 +7,10 @@
     <property name="imageDPI">131</property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="7">
-            <property name="FILELIST">/home/quere/Documents/beCPG/dev/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/document/nonconformity/NCReport.xml</property>
+            <property name="FILELIST">http://localhost:8080/alfresco/service/becpg/report/datasource?nodeRef=workspace://SpacesStore/6f574e1d-78fb-4874-8dca-d04c47fe3ff9</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="nc" id="8">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">name</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">name</text-property>
-                    <property name="analysisColumn">name</property>
-                </structure>
-                <structure>
-                    <property name="columnName">code</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">code</text-property>
-                    <property name="analysisColumn">code</property>
-                </structure>
-                <structure>
-                    <property name="columnName">created</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">created</text-property>
-                    <property name="analysisColumn">created</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncType</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncType</text-property>
-                    <property name="analysisColumn">ncType</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncCreated</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncCreated</text-property>
-                    <property name="analysisColumn">ncCreated</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncQuantityNc</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncQuantityNc</text-property>
-                    <property name="analysisColumn">ncQuantityNc</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncQuantityNcUnit</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncQuantityNcUnit</text-property>
-                    <property name="analysisColumn">ncQuantityNcUnit</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncService</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncService</text-property>
-                    <property name="analysisColumn">ncService</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncSeverity</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncSeverity</text-property>
-                    <property name="analysisColumn">ncSeverity</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncDetected</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncDetected</text-property>
-                    <property name="analysisColumn">ncDetected</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncCost</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncCost</text-property>
-                    <property name="analysisColumn">ncCost</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncCause</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncCause</text-property>
-                    <property name="analysisColumn">ncCause</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncCreationStep</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncCreationStep</text-property>
-                    <property name="analysisColumn">ncCreationStep</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncDetectionStep</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncDetectionStep</text-property>
-                    <property name="analysisColumn">ncDetectionStep</property>
-                </structure>
-                <structure>
-                    <property name="columnName">description</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">description</text-property>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">name</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">code</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">created</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">ncType</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">ncCreated</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">6</property>
-                        <property name="name">ncQuantityNc</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">7</property>
-                        <property name="name">ncQuantityNcUnit</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">8</property>
-                        <property name="name">ncService</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">9</property>
-                        <property name="name">ncSeverity</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">10</property>
-                        <property name="name">ncDetected</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">11</property>
-                        <property name="name">ncCost</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">12</property>
-                        <property name="name">ncCause</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">13</property>
-                        <property name="name">ncCreationStep</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">14</property>
-                        <property name="name">ncDetectionStep</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">15</property>
-                        <property name="name">description</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">name</property>
-                    <property name="nativeName">name</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">code</property>
-                    <property name="nativeName">code</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">created</property>
-                    <property name="nativeName">created</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">ncType</property>
-                    <property name="nativeName">ncType</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">ncCreated</property>
-                    <property name="nativeName">ncCreated</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">6</property>
-                    <property name="name">ncQuantityNc</property>
-                    <property name="nativeName">ncQuantityNc</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">7</property>
-                    <property name="name">ncQuantityNcUnit</property>
-                    <property name="nativeName">ncQuantityNcUnit</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">8</property>
-                    <property name="name">ncService</property>
-                    <property name="nativeName">ncService</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">9</property>
-                    <property name="name">ncSeverity</property>
-                    <property name="nativeName">ncSeverity</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">10</property>
-                    <property name="name">ncDetected</property>
-                    <property name="nativeName">ncDetected</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">11</property>
-                    <property name="name">ncCost</property>
-                    <property name="nativeName">ncCost</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">12</property>
-                    <property name="name">ncCause</property>
-                    <property name="nativeName">ncCause</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">13</property>
-                    <property name="name">ncCreationStep</property>
-                    <property name="nativeName">ncCreationStep</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">14</property>
-                    <property name="name">ncDetectionStep</property>
-                    <property name="nativeName">ncDetectionStep</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">15</property>
-                    <property name="name">description</property>
-                    <property name="nativeName">description</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/nonconformity]#:#{name;STRING;/@name},{code;STRING;/@code},{created;STRING;/@created},{ncType;STRING;/@ncType},{ncCreated;STRING;/@ncCreated},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncService;STRING;/@ncService},{ncSeverity;STRING;/@ncSeverity},{ncDetected;STRING;/@ncDetected},{ncCost;STRING;/@ncCost},{ncCause;STRING;/@ncCause},{ncCreationStep;STRING;/@ncCreationStep},{ncDetectionStep;STRING;/@ncDetectionStep},{description;STRING;/@description}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>name</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>name</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>code</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>code</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>created</design:name>
-              <design:position>3</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>created</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="ncAction" id="1577">
             <list-property name="columnHints">
                 <structure>
@@ -823,6 +459,1193 @@
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="nc" id="1656">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ncCreated</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncCreated</text-property>
+                    <property name="analysisColumn">ncCreated</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncCost</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncCost</text-property>
+                    <property name="analysisColumn">ncCost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncQuantityNc</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncQuantityNc</text-property>
+                    <property name="analysisColumn">ncQuantityNc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncQuantityNcUnit</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncQuantityNcUnit</text-property>
+                    <property name="analysisColumn">ncQuantityNcUnit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncCause</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncCause</text-property>
+                    <property name="analysisColumn">ncCause</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncCreationStep</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncCreationStep</text-property>
+                    <property name="analysisColumn">ncCreationStep</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncDetectionStep</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncDetectionStep</text-property>
+                    <property name="analysisColumn">ncDetectionStep</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncSeverity</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncSeverity</text-property>
+                    <property name="analysisColumn">ncSeverity</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncType</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncType</text-property>
+                    <property name="analysisColumn">ncType</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncService</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncService</text-property>
+                    <property name="analysisColumn">ncService</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncDetected</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncDetected</text-property>
+                    <property name="analysisColumn">ncDetected</property>
+                </structure>
+                <structure>
+                    <property name="columnName">acEfficiency</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">acEfficiency</text-property>
+                    <property name="analysisColumn">acEfficiency</property>
+                </structure>
+                <structure>
+                    <property name="columnName">acType</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">acType</text-property>
+                    <property name="analysisColumn">acType</property>
+                </structure>
+                <structure>
+                    <property name="columnName">acCheckDate</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">acCheckDate</text-property>
+                    <property name="analysisColumn">acCheckDate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">acExpectedDate</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">acExpectedDate</text-property>
+                    <property name="analysisColumn">acExpectedDate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">acComments</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">acComments</text-property>
+                    <property name="analysisColumn">acComments</property>
+                </structure>
+                <structure>
+                    <property name="columnName">acAssignedTo</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">acAssignedTo</text-property>
+                    <property name="analysisColumn">acAssignedTo</property>
+                </structure>
+                <structure>
+                    <property name="columnName">acEffectiveDate</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">acEffectiveDate</text-property>
+                    <property name="analysisColumn">acEffectiveDate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">acDescription</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">acDescription</text-property>
+                    <property name="analysisColumn">acDescription</property>
+                </structure>
+                <structure>
+                    <property name="columnName">acChecker</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">acChecker</text-property>
+                    <property name="analysisColumn">acChecker</property>
+                </structure>
+                <structure>
+                    <property name="columnName">clients</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">clients</text-property>
+                    <property name="analysisColumn">clients</property>
+                </structure>
+                <structure>
+                    <property name="columnName">modifier</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">modifier</text-property>
+                    <property name="analysisColumn">modifier</property>
+                </structure>
+                <structure>
+                    <property name="columnName">modified</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">modified</text-property>
+                    <property name="analysisColumn">modified</property>
+                </structure>
+                <structure>
+                    <property name="columnName">batchId</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">batchId</text-property>
+                    <property name="analysisColumn">batchId</property>
+                </structure>
+                <structure>
+                    <property name="columnName">code</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">code</text-property>
+                    <property name="analysisColumn">code</property>
+                </structure>
+                <structure>
+                    <property name="columnName">orderId</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">orderId</text-property>
+                    <property name="analysisColumn">orderId</property>
+                </structure>
+                <structure>
+                    <property name="columnName">locale</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">locale</text-property>
+                    <property name="analysisColumn">locale</property>
+                </structure>
+                <structure>
+                    <property name="columnName">name</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">name</text-property>
+                    <property name="analysisColumn">name</property>
+                </structure>
+                <structure>
+                    <property name="columnName">created</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">created</text-property>
+                    <property name="analysisColumn">created</property>
+                </structure>
+                <structure>
+                    <property name="columnName">creator</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">creator</text-property>
+                    <property name="analysisColumn">creator</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">description</text-property>
+                    <property name="analysisColumn">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">batchComments</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">batchComments</text-property>
+                    <property name="analysisColumn">batchComments</property>
+                </structure>
+                <structure>
+                    <property name="columnName">suppliers</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">suppliers</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">product</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">product</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ncCreated</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ncCost</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ncQuantityNc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ncQuantityNcUnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">ncCause</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">ncCreationStep</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">ncDetectionStep</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">ncSeverity</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">ncType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">ncService</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">ncDetected</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">acEfficiency</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">acType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">acCheckDate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">acExpectedDate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">acComments</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">acAssignedTo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">acEffectiveDate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">acDescription</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">acChecker</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">clients</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">modifier</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">modified</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">batchId</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">code</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">orderId</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">locale</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">28</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">29</property>
+                        <property name="name">created</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">30</property>
+                        <property name="name">creator</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">31</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">32</property>
+                        <property name="name">batchComments</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">33</property>
+                        <property name="name">suppliers</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">34</property>
+                        <property name="name">product</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ncCreated</property>
+                    <property name="nativeName">ncCreated</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ncCost</property>
+                    <property name="nativeName">ncCost</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ncQuantityNc</property>
+                    <property name="nativeName">ncQuantityNc</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ncQuantityNcUnit</property>
+                    <property name="nativeName">ncQuantityNcUnit</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">ncCause</property>
+                    <property name="nativeName">ncCause</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">ncCreationStep</property>
+                    <property name="nativeName">ncCreationStep</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ncDetectionStep</property>
+                    <property name="nativeName">ncDetectionStep</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">ncSeverity</property>
+                    <property name="nativeName">ncSeverity</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">ncType</property>
+                    <property name="nativeName">ncType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">ncService</property>
+                    <property name="nativeName">ncService</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">ncDetected</property>
+                    <property name="nativeName">ncDetected</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">acEfficiency</property>
+                    <property name="nativeName">acEfficiency</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">acType</property>
+                    <property name="nativeName">acType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">acCheckDate</property>
+                    <property name="nativeName">acCheckDate</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">acExpectedDate</property>
+                    <property name="nativeName">acExpectedDate</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">acComments</property>
+                    <property name="nativeName">acComments</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">acAssignedTo</property>
+                    <property name="nativeName">acAssignedTo</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">acEffectiveDate</property>
+                    <property name="nativeName">acEffectiveDate</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">acDescription</property>
+                    <property name="nativeName">acDescription</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">acChecker</property>
+                    <property name="nativeName">acChecker</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">clients</property>
+                    <property name="nativeName">clients</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">modifier</property>
+                    <property name="nativeName">modifier</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">modified</property>
+                    <property name="nativeName">modified</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">batchId</property>
+                    <property name="nativeName">batchId</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">code</property>
+                    <property name="nativeName">code</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
+                    <property name="name">orderId</property>
+                    <property name="nativeName">orderId</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">27</property>
+                    <property name="name">locale</property>
+                    <property name="nativeName">locale</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">28</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">29</property>
+                    <property name="name">created</property>
+                    <property name="nativeName">created</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">30</property>
+                    <property name="name">creator</property>
+                    <property name="nativeName">creator</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">31</property>
+                    <property name="name">description</property>
+                    <property name="nativeName">description</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">32</property>
+                    <property name="name">batchComments</property>
+                    <property name="nativeName">batchComments</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">33</property>
+                    <property name="name">suppliers</property>
+                    <property name="nativeName">suppliers</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">34</property>
+                    <property name="name">product</property>
+                    <property name="nativeName">product</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/product]#:#{ncCreated;STRING;/@ncCreated},{ncCost;STRING;/@ncCost},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncCause;STRING;/@ncCause},{ncCreationStep;STRING;/@ncCreationStep},{ncDetectionStep;STRING;/@ncDetectionStep},{ncSeverity;STRING;/@ncSeverity},{ncType;STRING;/@ncType},{ncService;STRING;/@ncService},{ncDetected;STRING;/@ncDetected},{acEfficiency;STRING;/@acEfficiency},{acType;STRING;/@acType},{acCheckDate;STRING;/@acCheckDate},{acExpectedDate;STRING;/@acExpectedDate},{acComments;STRING;/@acComments},{acAssignedTo;STRING;/@acAssignedTo},{acEffectiveDate;STRING;/@acEffectiveDate},{acDescription;STRING;/@acDescription},{acChecker;STRING;/@acChecker},{clients;STRING;/@clients},{modifier;STRING;/@modifier},{modified;STRING;/@modified},{batchId;STRING;/@batchId},{code;STRING;/@code},{orderId;STRING;/@orderId},{locale;STRING;/@locale},{name;STRING;/@name},{created;STRING;/@created},{creator;STRING;/@creator},{description;STRING;/@description},{batchComments;STRING;/@batchComments},{suppliers;STRING;/@suppliers},{product;STRING;/@product}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ncCreated</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ncCreated</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ncCost</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ncCost</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acEfficiency</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acEfficiency</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>clients</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>clients</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>modifier</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>modifier</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>modified</design:name>
+              <design:position>6</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>modified</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ncQuantityNc</design:name>
+              <design:position>7</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ncQuantityNc</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ncCause</design:name>
+              <design:position>8</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ncCause</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>batchId</design:name>
+              <design:position>9</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>batchId</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acCheckDate</design:name>
+              <design:position>10</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acCheckDate</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acType</design:name>
+              <design:position>11</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acType</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ncQuantityNcUnit</design:name>
+              <design:position>12</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ncQuantityNcUnit</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>code</design:name>
+              <design:position>13</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>code</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acExpectedDate</design:name>
+              <design:position>14</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acExpectedDate</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ncCreationStep</design:name>
+              <design:position>15</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ncCreationStep</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>orderId</design:name>
+              <design:position>16</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>orderId</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acComments</design:name>
+              <design:position>17</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acComments</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acAssignedTo</design:name>
+              <design:position>18</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acAssignedTo</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ncType</design:name>
+              <design:position>19</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ncType</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acEffectiveDate</design:name>
+              <design:position>20</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acEffectiveDate</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>locale</design:name>
+              <design:position>21</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>locale</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ncDetected</design:name>
+              <design:position>22</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ncDetected</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>23</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>name</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acDescription</design:name>
+              <design:position>24</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acDescription</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ncDetectionStep</design:name>
+              <design:position>25</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ncDetectionStep</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>created</design:name>
+              <design:position>26</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>created</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>creator</design:name>
+              <design:position>27</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>creator</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ncService</design:name>
+              <design:position>28</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ncService</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>description</design:name>
+              <design:position>29</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>description</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>batchComments</design:name>
+              <design:position>30</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>batchComments</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>acChecker</design:name>
+              <design:position>31</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>acChecker</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ncSeverity</design:name>
+              <design:position>32</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ncSeverity</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="4">
@@ -962,20 +1785,6 @@
                                 <property name="textAlign">center</property>
                                 <text-property name="text">Non conformité</text-property>
                             </label>
-                            <data id="1526">
-                                <property name="fontWeight">bold</property>
-                                <property name="color">#339966</property>
-                                <property name="dataSet">nc</property>
-                                <list-property name="boundDataColumns">
-                                    <structure>
-                                        <property name="name">name</property>
-                                        <text-property name="displayName">name</text-property>
-                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                </list-property>
-                                <property name="resultSetColumn">name</property>
-                            </data>
                         </cell>
                         <cell id="776">
                             <property name="borderBottomColor">#FFFFFF</property>
@@ -1030,7 +1839,7 @@
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
-                                        <data id="1654">
+                                        <data id="1657">
                                             <property name="dataSet">nc</property>
                                             <list-property name="boundDataColumns">
                                                 <structure>
@@ -1075,8 +1884,7 @@
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
-                                        <data id="1523">
-                                            <property name="whiteSpace">nowrap</property>
+                                        <data id="1658">
                                             <property name="dataSet">nc</property>
                                             <list-property name="boundDataColumns">
                                                 <structure>
@@ -1163,103 +1971,643 @@
             <property name="fontSize">14pt</property>
             <property name="fontWeight">bold</property>
             <property name="textAlign">center</property>
-            <text-property name="text">MÉTADONNÉES</text-property>
+            <text-property name="text">Identification de la non-conformité</text-property>
         </label>
-        <table id="1484">
+        <label id="1786"/>
+        <grid id="1659">
             <property name="style">becpg-table</property>
-            <property name="dataSet">attributes</property>
-            <list-property name="boundDataColumns">
-                <structure>
-                    <property name="name">set</property>
-                    <text-property name="displayName">set</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["set"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">name</property>
-                    <text-property name="displayName">name</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["name"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">value</property>
-                    <text-property name="displayName">value</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-            </list-property>
-            <property name="sortByGroups">false</property>
-            <column id="1494"/>
-            <column id="1495">
+            <property name="height">1.9465648854961832in</property>
+            <column id="1712">
+                <property name="fontWeight">bold</property>
+            </column>
+            <column id="1661">
                 <property name="style">becpg-col-border</property>
             </column>
-            <header>
-                <row id="1485">
-                    <cell id="1486">
-                        <label id="1496">
-                            <property name="style">becpg-col-header</property>
-                            <text-property name="text">Nom</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1487">
-                        <label id="1498">
-                            <property name="style">becpg-col-header</property>
-                            <text-property name="text">Valeur</text-property>
-                        </label>
-                    </cell>
-                </row>
-            </header>
-            <group id="1645">
-                <property name="groupName">Set</property>
-                <expression name="keyExpr" type="javascript">row["set"]</expression>
-                <structure name="toc">
-                    <expression name="expressionValue" type="javascript">row["set"]</expression>
-                </structure>
-                <property name="hideDetail">false</property>
-                <header>
-                    <row id="1646">
-                        <cell id="1647">
-                            <property name="colSpan">2</property>
-                            <property name="rowSpan">1</property>
-                            <data id="1608">
-                                <property name="style">becpg-group-header</property>
-                                <property name="resultSetColumn">set</property>
-                            </data>
-                        </cell>
-                    </row>
-                </header>
-                <footer>
-                    <row id="1648">
-                        <cell id="1649"/>
-                        <cell id="1650"/>
-                    </row>
-                </footer>
-            </group>
-            <detail>
-                <row id="1488">
-                    <property name="style">becpg-row-border</property>
-                    <cell id="1489">
-                        <data id="1651">
-                            <property name="style">becpg-row-header</property>
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">name</property>
-                        </data>
-                    </cell>
-                    <cell id="1490">
-                        <data id="1652">
-                            <property name="whiteSpace">nowrap</property>
-                            <property name="resultSetColumn">value</property>
-                        </data>
-                    </cell>
-                </row>
-            </detail>
-            <footer>
-                <row id="1491">
-                    <cell id="1492"/>
-                    <cell id="1493"/>
-                </row>
-            </footer>
-        </table>
+            <column id="1721">
+                <property name="style">becpg-col-border</property>
+                <property name="fontWeight">bold</property>
+            </column>
+            <column id="1662">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <row id="1663">
+                <cell id="1704">
+                    <label id="1691">
+                        <text-property name="text">Type</text-property>
+                    </label>
+                </cell>
+                <cell id="1665">
+                    <data id="1671">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ncType</property>
+                                <text-property name="displayName">ncType</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ncType"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">ncType</property>
+                    </data>
+                </cell>
+                <cell id="1713">
+                    <label id="1692">
+                        <text-property name="text">Gravité</text-property>
+                    </label>
+                </cell>
+                <cell id="1666">
+                    <data id="1672">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ncSeverity</property>
+                                <text-property name="displayName">ncSeverity</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ncSeverity"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">ncSeverity</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1667">
+                <property name="style">becpg-row-border</property>
+                <cell id="1705">
+                    <label id="1693">
+                        <text-property name="text">Etape de création</text-property>
+                    </label>
+                </cell>
+                <cell id="1669">
+                    <data id="1701">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ncCreationStep</property>
+                                <text-property name="displayName">ncCreationStep</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ncCreationStep"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">ncCreationStep</property>
+                    </data>
+                </cell>
+                <cell id="1714">
+                    <label id="1696">
+                        <text-property name="text">Heure de création</text-property>
+                    </label>
+                </cell>
+                <cell id="1670">
+                    <data id="1703">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ncCreated</property>
+                                <text-property name="displayName">ncCreated</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ncCreated"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">ncCreated</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1676">
+                <property name="style">becpg-row-border</property>
+                <cell id="1706">
+                    <label id="1694">
+                        <text-property name="text">Etape de détection</text-property>
+                    </label>
+                </cell>
+                <cell id="1677">
+                    <data id="1700">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ncDetectionStep</property>
+                                <text-property name="displayName">ncDetectionStep</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ncDetectionStep"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">ncDetectionStep</property>
+                    </data>
+                </cell>
+                <cell id="1715">
+                    <label id="1697">
+                        <text-property name="text">Heure de détection</text-property>
+                    </label>
+                </cell>
+                <cell id="1678">
+                    <data id="1702">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ncDetected</property>
+                                <text-property name="displayName">ncDetected</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ncDetected"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">ncDetected</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1673">
+                <property name="style">becpg-row-border</property>
+                <cell id="1707">
+                    <label id="1695">
+                        <text-property name="text">Quantité non conforme</text-property>
+                    </label>
+                </cell>
+                <cell id="1674">
+                    <data id="1727">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ncQuantityNc</property>
+                                <text-property name="displayName">ncQuantityNc</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ncQuantityNc"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">ncQuantityNc</property>
+                    </data>
+                </cell>
+                <cell id="1716">
+                    <label id="1698">
+                        <text-property name="text">Unité</text-property>
+                    </label>
+                </cell>
+                <cell id="1675">
+                    <data id="1728">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ncQuantityNcUnit</property>
+                                <text-property name="displayName">ncQuantityNcUnit</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ncQuantityNcUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">ncQuantityNcUnit</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1688">
+                <property name="style">becpg-row-border</property>
+                <cell id="1708">
+                    <label id="1722">
+                        <text-property name="text">Montant (€)</text-property>
+                    </label>
+                </cell>
+                <cell id="1689">
+                    <data id="1732">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ncCost</property>
+                                <text-property name="displayName">ncCost</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ncCost"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">ncCost</property>
+                    </data>
+                </cell>
+                <cell id="1717">
+                    <label id="1724">
+                        <text-property name="text">Service concerné</text-property>
+                    </label>
+                </cell>
+                <cell id="1690">
+                    <data id="1729">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ncService</property>
+                                <text-property name="displayName">ncService</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ncService"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">ncService</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1685">
+                <property name="height">0.2824427480916031in</property>
+                <property name="style">becpg-row-border</property>
+                <cell id="1709">
+                    <label id="1723">
+                        <text-property name="text">Description</text-property>
+                    </label>
+                </cell>
+                <cell id="1686">
+                    <property name="colSpan">3</property>
+                    <property name="rowSpan">1</property>
+                    <data id="1731">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">description</property>
+                                <text-property name="displayName">description</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">description</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1682">
+                <property name="height">0.32061068702290074in</property>
+                <property name="style">becpg-row-border</property>
+                <cell id="1710">
+                    <label id="1726">
+                        <text-property name="text">Cause de l'anomalie</text-property>
+                    </label>
+                </cell>
+                <cell id="1683">
+                    <property name="colSpan">3</property>
+                    <property name="rowSpan">1</property>
+                    <data id="1730">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ncCause</property>
+                                <text-property name="displayName">ncCause</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ncCause"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">ncCause</property>
+                    </data>
+                </cell>
+            </row>
+        </grid>
+        <label id="1787"/>
+        <label id="1733">
+            <property name="style">becpg-chapter-header</property>
+            <property name="backgroundColor">#F2ECD2</property>
+            <property name="fontSize">14pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="textAlign">center</property>
+            <text-property name="text">Lot</text-property>
+        </label>
+        <label id="1789"/>
+        <grid id="1746">
+            <property name="style">becpg-table</property>
+            <column id="1747">
+                <property name="fontWeight">bold</property>
+            </column>
+            <column id="1748">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="1749">
+                <property name="style">becpg-col-border</property>
+                <property name="fontWeight">bold</property>
+            </column>
+            <column id="1750">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <row id="1751">
+                <cell id="1752">
+                    <label id="1744">
+                        <text-property name="text">Produit</text-property>
+                    </label>
+                </cell>
+                <cell id="1753">
+                    <data id="1783">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">product</property>
+                                <text-property name="displayName">product</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["product"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">product</property>
+                    </data>
+                </cell>
+                <cell id="1754">
+                    <label id="1745">
+                        <text-property name="text">Lot</text-property>
+                    </label>
+                </cell>
+                <cell id="1755">
+                    <data id="1781">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">batchId</property>
+                                <text-property name="displayName">batchId</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["batchId"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">batchId</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1756">
+                <property name="style">becpg-row-border</property>
+                <cell id="1757">
+                    <label id="1776">
+                        <text-property name="text">N° commande</text-property>
+                    </label>
+                </cell>
+                <cell id="1758">
+                    <data id="1782">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">orderId</property>
+                                <text-property name="displayName">orderId</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["orderId"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">orderId</property>
+                    </data>
+                </cell>
+                <cell id="1759">
+                    <label id="1777">
+                        <text-property name="text">Client / Fournisseur</text-property>
+                    </label>
+                </cell>
+                <cell id="1760">
+                    <data id="1784">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">clients</property>
+                                <text-property name="displayName">clients</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["clients"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">clients</property>
+                    </data>
+                    <data id="1785">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">suppliers</property>
+                                <text-property name="displayName">suppliers</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["suppliers"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">suppliers</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1761">
+                <property name="style">becpg-row-border</property>
+                <cell id="1762">
+                    <label id="1778">
+                        <text-property name="text">Observation</text-property>
+                    </label>
+                </cell>
+                <cell id="1763">
+                    <property name="colSpan">3</property>
+                    <property name="rowSpan">1</property>
+                    <data id="1780">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">batchComments</property>
+                                <text-property name="displayName">batchComments</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["batchComments"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">batchComments</property>
+                    </data>
+                </cell>
+            </row>
+        </grid>
+        <label id="1790"/>
+        <label id="1791">
+            <property name="style">becpg-chapter-header</property>
+            <property name="backgroundColor">#F2ECD2</property>
+            <property name="fontSize">14pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="textAlign">center</property>
+            <text-property name="text">Action</text-property>
+        </label>
+        <label id="1792"/>
+        <grid id="1793">
+            <property name="style">becpg-table</property>
+            <column id="1794">
+                <property name="fontWeight">bold</property>
+            </column>
+            <column id="1795">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="1796">
+                <property name="style">becpg-col-border</property>
+                <property name="fontWeight">bold</property>
+            </column>
+            <column id="1797">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <row id="1798">
+                <cell id="1799">
+                    <label id="1823">
+                        <text-property name="text">Type d'action</text-property>
+                    </label>
+                </cell>
+                <cell id="1800">
+                    <data id="1826">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">acType</property>
+                                <text-property name="displayName">acType</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["acType"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">acType</property>
+                    </data>
+                </cell>
+                <cell id="1801"/>
+                <cell id="1802"/>
+            </row>
+            <row id="1834">
+                <property name="style">becpg-row-border</property>
+                <cell id="1835">
+                    <label id="1828">
+                        <text-property name="text">Description</text-property>
+                    </label>
+                </cell>
+                <cell id="1836">
+                    <property name="colSpan">3</property>
+                    <property name="rowSpan">1</property>
+                    <data id="1827">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">acDescription</property>
+                                <text-property name="displayName">acDescription</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["acDescription"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">acDescription</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1803">
+                <property name="style">becpg-row-border</property>
+                <cell id="1804">
+                    <label id="1824">
+                        <text-property name="text">Date prévisionnelle</text-property>
+                    </label>
+                </cell>
+                <cell id="1805">
+                    <data id="1841">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">acExpectedDate</property>
+                                <text-property name="displayName">acExpectedDate</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["acExpectedDate"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">acExpectedDate</property>
+                    </data>
+                </cell>
+                <cell id="1806">
+                    <label id="1829">
+                        <text-property name="text">Intervenant</text-property>
+                    </label>
+                </cell>
+                <cell id="1807">
+                    <data id="1843">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">acAssignedTo</property>
+                                <text-property name="displayName">acAssignedTo</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["acAssignedTo"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">acAssignedTo</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1808">
+                <property name="style">becpg-row-border</property>
+                <cell id="1809">
+                    <label id="1825">
+                        <text-property name="text">Date de réalisation</text-property>
+                    </label>
+                </cell>
+                <cell id="1810">
+                    <data id="1840">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">acEffectiveDate</property>
+                                <text-property name="displayName">acEffectiveDate</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["acEffectiveDate"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">acEffectiveDate</property>
+                    </data>
+                </cell>
+                <cell id="1811">
+                    <label id="1830">
+                        <text-property name="text">Efficacité</text-property>
+                    </label>
+                </cell>
+                <cell id="1812">
+                    <data id="1844">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">acEfficiency</property>
+                                <text-property name="displayName">acEfficiency</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["acEfficiency"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">acEfficiency</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1813">
+                <property name="style">becpg-row-border</property>
+                <cell id="1814">
+                    <label id="1831">
+                        <text-property name="text">Date de vérification</text-property>
+                    </label>
+                </cell>
+                <cell id="1815">
+                    <data id="1842">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">acCheckDate</property>
+                                <text-property name="displayName">acCheckDate</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["acCheckDate"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">acCheckDate</property>
+                    </data>
+                </cell>
+                <cell id="1816">
+                    <label id="1832">
+                        <text-property name="text">Vérificateur</text-property>
+                    </label>
+                </cell>
+                <cell id="1817">
+                    <data id="1839">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">acChecker</property>
+                                <text-property name="displayName">acChecker</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["acChecker"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">acChecker</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1818">
+                <property name="style">becpg-row-border</property>
+                <cell id="1819">
+                    <label id="1833">
+                        <text-property name="text">Observation</text-property>
+                    </label>
+                </cell>
+                <cell id="1820">
+                    <data id="1845">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">acComments</property>
+                                <text-property name="displayName">acComments</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["acComments"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">acComments</property>
+                    </data>
+                </cell>
+                <cell id="1821"/>
+                <cell id="1822"/>
+            </row>
+        </grid>
     </body>
     <list-property name="images">
         <structure>
