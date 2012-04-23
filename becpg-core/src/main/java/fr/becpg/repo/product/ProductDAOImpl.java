@@ -2154,8 +2154,8 @@ public class ProductDAOImpl implements ProductDAO {
 
 			if (reqCtrlList == null) {
 				// delete existing list
-				if (reqCtrlListNodeRef != null)
-					nodeService.deleteNode(reqCtrlListNodeRef);
+//				if (reqCtrlListNodeRef != null)
+//					nodeService.deleteNode(reqCtrlListNodeRef);
 			} else {
 
 				// reqCtrl list, create if needed
