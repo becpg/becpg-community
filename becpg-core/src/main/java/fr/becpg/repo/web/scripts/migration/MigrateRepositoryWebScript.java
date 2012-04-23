@@ -35,6 +35,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 {	
 	private static final String ACTION_MIGRATE_PROPERTY = "property";
 	private static final String ACTION_MIGRATE_VERSION = "version";
+	private static final String ACTION_DELETE_MODEL = "deleteModel";
+	private static final String PARAM_NODEREF = "nodeRef";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
@@ -91,6 +93,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	else if(ACTION_MIGRATE_VERSION.equals(action)){
     		
     		migrationVersion();
+    	}
+    	else if(ACTION_DELETE_MODEL.equals(action)){
+    		NodeRef modelNodeRef = new NodeRef( req.getParameter(PARAM_NODEREF));
+    		deleteModel(modelNodeRef);
     	}
     	else{
     		logger.error("Unknown action" + action);
@@ -154,4 +160,17 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 		beCPGVersionMigrator.migrateVersionHistory();
 	}
 	
+	private void deleteModel(NodeRef modelNodeRef){
+
+		logger.info("deleteModel");		
+    	policyBehaviourFilter.disableBehaviour(modelNodeRef);
+    	        	
+    	try{
+    		        		
+    		mlNodeService.deleteNode(modelNodeRef);      		   	
+    	}
+    	finally{
+    		policyBehaviourFilter.enableBehaviour(modelNodeRef);
+    	}
+	}
 }
