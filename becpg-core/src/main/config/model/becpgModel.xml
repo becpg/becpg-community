@@ -1464,6 +1464,10 @@
 				<property name="bcpg:dynamicCharachValue">
 					<type>d:any</type>
 				</property>
+			   <property name="bcpg:dynamicCharachGroupColor">
+					<type>d:text</type>
+					<default>000000</default>
+				</property>
 			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>

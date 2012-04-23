@@ -95,5 +95,31 @@ if (beCPG.module.EntityDataGridRenderers) {
 	   }
 
 	});
+	
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	   propertyName : "bcpg:dynamicCharachValue",
+	   renderer : function(oRecord, data, label, scope) {
+	   	 var color =   oRecord.getData("itemData")["prop_bcpg_dynamicCharachGroupColor"].value ;
+	   	 if(!color){
+	   		color = "000000"; 
+	   	 }
+	   	return '<span style="color:#' +  color + ';">'+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+	   	 
+	   }
+
+	});
+	
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	   propertyName : "bcpg:dynamicCharachGroupColor",
+	   renderer : function(oRecord, data, label, scope) {
+	   	 var color =   oRecord.getData("itemData")["prop_bcpg_dynamicCharachGroupColor"].value ;
+	   	 if(!color){
+	   		color = "000000"; 
+	   	 }
+	   	return '<div style="background-color:#' +  color + ';width:20px;height:20px;border: 1px solid;"></div>';
+	   }
+	});
 
 }

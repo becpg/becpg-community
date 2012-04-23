@@ -397,7 +397,7 @@ public class ProductDAOImpl implements ProductDAO {
 		
 		return new DynamicCharachListItem(listItemNodeRef, (String)properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE)
 				, (String)properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_FORMULA),
-				properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE));
+				properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE),(String) properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_GROUP_COLOR));
 	}
 
 	
@@ -1167,7 +1167,7 @@ public class ProductDAOImpl implements ProductDAO {
 					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE, dynamicCharachListDataItem.getDynamicCharachTitle());
 					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_FORMULA, dynamicCharachListDataItem.getDynamicCharachFormula());
 					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE, (Serializable) dynamicCharachListDataItem.getDynamicCharachValue());
-
+					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_GROUP_COLOR,  dynamicCharachListDataItem.getDynamicCharachGroupColor());
 					properties.put(BeCPGModel.PROP_SORT, sortIndex);
 					sortIndex++;
 

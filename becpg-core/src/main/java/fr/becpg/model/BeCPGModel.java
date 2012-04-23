@@ -428,6 +428,9 @@ public interface BeCPGModel {
 	public static final QName PROP_DYNAMICCHARCAT_VALUE = QName.createQName(BECPG_URI,
 			"dynamicCharachValue");
 	
+
+	public static final QName PROP_DYNAMICCHARCAT_GROUP_COLOR = QName.createQName(BECPG_URI,
+			"dynamicCharachGroupColor");
 	
 	// contactList
 	static final QName TYPE_CONTACTLIST = QName.createQName(BECPG_URI,
@@ -751,5 +754,6 @@ public interface BeCPGModel {
 	 */
 	public static final QName ASPECT_LEGAL_NAME = QName.createQName(BECPG_URI, "legalNameAspect");
 	static final QName PROP_LEGAL_NAME = QName.createQName(BECPG_URI, "legalName");
+
 
 }

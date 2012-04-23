@@ -12,6 +12,8 @@ public class DynamicCharachListItem {
 	private String dynamicCharachFormula;
    
 	private Object dynamicCharachValue;
+	
+	private String dynamicCharachGroupColor;
 
 	public NodeRef getNodeRef() {
 		return nodeRef;
@@ -47,16 +49,26 @@ public class DynamicCharachListItem {
 
 	
 	
+	
+	public String getDynamicCharachGroupColor() {
+		return dynamicCharachGroupColor;
+	}
+
+	public void setDynamicCharachGroupColor(String dynamicCharachGroupColor) {
+		this.dynamicCharachGroupColor = dynamicCharachGroupColor;
+	}
+
 	public DynamicCharachListItem() {
 		super();
 	}
 
-	public DynamicCharachListItem(NodeRef nodeRef, String dynamicCharachTitle, String dynamicCharachFormula, Object dynamicCharachValue) {
+	public DynamicCharachListItem(NodeRef nodeRef, String dynamicCharachTitle, String dynamicCharachFormula, Object dynamicCharachValue, String dynamicCharachGroupColor) {
 		super();
 		this.nodeRef = nodeRef;
 		this.dynamicCharachTitle = dynamicCharachTitle;
 		this.dynamicCharachFormula = dynamicCharachFormula;
 		this.dynamicCharachValue = dynamicCharachValue;
+		this.dynamicCharachGroupColor = dynamicCharachGroupColor;
 	}
 	
 	
@@ -71,6 +83,7 @@ public class DynamicCharachListItem {
 		this.dynamicCharachTitle = copy.dynamicCharachTitle;
 		this.dynamicCharachFormula = copy.dynamicCharachFormula;
 		this.dynamicCharachValue = copy.dynamicCharachValue;
+		this.dynamicCharachGroupColor = copy.dynamicCharachGroupColor;
 	}
 	
 	

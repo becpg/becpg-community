@@ -3300,7 +3300,7 @@
 				<field-visibility>
 					<show id="bcpg:dynamicCharachTitle" />
 					<show id="bcpg:dynamicCharachFormula" />
-					<show id="bcpg:dynamicCharachValue" />
+					<show id="bcpg:dynamicCharachGroupColor" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharachFormula" >
@@ -3308,16 +3308,35 @@
 							<control-param name="rows">10</control-param>
 						</control>
 					</field>
+					<field id="bcpg:dynamicCharachGroupColor" >
+						<control template="/fr/becpg/components/form/controls/colorpicker.ftl"/>
+					</field>
 				</appearance>
 			</form>
 
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:dynamicCharachGroupColor" />
 					<show id="bcpg:dynamicCharachTitle" />
 					<show id="bcpg:dynamicCharachValue" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:dynamicCharachGroupColor" label="Grp"/>
+				</appearance>
 			</form>
+			
+			<form id="filter">
+					<field-visibility>
+					<show id="bcpg:dynamicCharachGroupColor" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:dynamicCharachGroupColor" >
+						<control template="/fr/becpg/components/form/controls/selectcolorpicker.ftl"/>
+					</field>
+				</appearance>
+			</form>
+			
 		</forms>
 	</config>
 	<!-- bcpg:dynamicCharachList type (existing nodes) -->
@@ -3328,13 +3347,16 @@
 				<field-visibility>
 					<show id="bcpg:dynamicCharachTitle" />
 					<show id="bcpg:dynamicCharachFormula" />
-					<show id="bcpg:dynamicCharachValue" />
+					<show id="bcpg:dynamicCharachGroupColor" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharachFormula" >
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
 							<control-param name="rows">10</control-param>
 						</control>
+					</field>
+					<field id="bcpg:dynamicCharachGroupColor" >
+						<control template="/fr/becpg/components/form/controls/selectcolorpicker.ftl"/>
 					</field>
 				</appearance>
 			</form>
