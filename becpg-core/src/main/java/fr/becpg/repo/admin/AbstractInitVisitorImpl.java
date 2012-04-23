@@ -114,19 +114,13 @@ public abstract class AbstractInitVisitorImpl {
 		if(folderName == null){
 			folderName = folderPath;
 		}				
-		
-		NodeRef folderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, folderName);
+		NodeRef folderNodeRef = repoService.getFolderByPath(parentNodeRef, folderPath);		
 	    if(folderNodeRef == null){
 
 	    	logger.debug("Create folder, path: " + folderPath + " - translatedName: " + folderName);	    		    	
 	    	//logger.debug("QName: " + QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, folderPath));
 	    	
-	    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-	    	properties.put(ContentModel.PROP_NAME, folderName);	    		    	
-	    	
-	    	folderNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
-	    											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(folderPath)), 
-	    											ContentModel.TYPE_FOLDER, properties).getChildRef();
+	    	folderNodeRef = repoService.createFolderByPath(parentNodeRef, folderPath, folderName);
 	    	
 	    	visitRules(folderNodeRef, folderPath);
 	    	visitWF(folderNodeRef, folderPath);	    	
