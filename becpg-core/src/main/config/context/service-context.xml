@@ -86,10 +86,21 @@
 		<property name="nodeService" ref="nodeService" />
 	</bean>	
 	
-	<!-- List Values -->
+	<!-- List values plugins -->
 	
 	<bean id="entityListValuePlugin" parent="baseListValuePlugin"  init-method="init"
 			 class="fr.becpg.repo.listvalue.EntityListValuePlugin">
+		<property name="autoNumService" ref="autoNumService" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="dictionaryDAO" ref="dictionaryDAO" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="reportTplService" ref="reportTplService" />
+	</bean>
+	
+	<bean id="spelEditorListValuePlugin" parent="baseListValuePlugin"  init-method="init"
+			 class="fr.becpg.repo.listvalue.SpelEditorListValuePlugin">
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />

@@ -149,7 +149,6 @@ public class RepoConsts {
 	
 	public static final int MAX_RESULTS_NO_LIMIT = 256;
 	public static final int MAX_SUGGESTIONS = 100;
-	public static final int SUGGEST_PAGE_SIZE = 10;
 	
 	
 	

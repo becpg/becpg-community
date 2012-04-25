@@ -3,7 +3,13 @@
 	<config>
 		<forms>
 			<dependencies>
-				<css src="/components/autocomplete/autocomplete-ext-min.css" />
+				<css src="/modules/autocomplete/autocomplete-ext-min.css" />
+				<css src="/modules/spel-editor/spel-editor.css" />
+				<css src="/modules/spel-editor/shThemeDefault.css" />
+				<js src="/modules/spel-editor/spel-editor.js" />
+				<js src="/modules/spel-editor/shCore.js" />
+				<js src="/modules/spel-editor/shBrushJScript.js" />
+				<js src="/yui/editor/editor-min.js" />
 			</dependencies>
 		</forms>
 	</config>
@@ -3304,12 +3310,12 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharachFormula" >
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
 						</control>
 					</field>
 					<field id="bcpg:dynamicCharachGroupColor" >
-						<control template="/fr/becpg/components/form/controls/colorpicker.ftl"/>
+						<control template="/org/alfresco/components/form/controls/selectcolorpicker.ftl"/>
 					</field>
 				</appearance>
 			</form>
@@ -3332,7 +3338,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharachGroupColor" >
-						<control template="/fr/becpg/components/form/controls/selectcolorpicker.ftl"/>
+						<control template="/org/alfresco/components/form/controls/selectcolorpicker.ftl"/>
 					</field>
 				</appearance>
 			</form>
@@ -3351,12 +3357,12 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharachFormula" >
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
 						</control>
 					</field>
 					<field id="bcpg:dynamicCharachGroupColor" >
-						<control template="/fr/becpg/components/form/controls/selectcolorpicker.ftl"/>
+						<control template="/org/alfresco/components/form/controls/selectcolorpicker.ftl"/>
 					</field>
 				</appearance>
 			</form>

@@ -1,0 +1,343 @@
+
+.spel-editor  .yui-toolbar-container .yui-push-button a, .yui-skin-default .yui-toolbar-container .yui-color-button a, .yui-skin-default .yui-toolbar-container .yui-menu-button a {
+    color: #000000;
+    display: block;
+    font-size: 12px;
+    height: 20px;
+    line-height: 2;
+    overflow: hidden;
+    padding-left: 0;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+
+.spel-editor-list
+{
+   display: block;
+   min-height: 2em;
+   max-height: 17.4em;
+   overflow-x: hidden;
+   overflow-y: scroll;
+   margin-bottom: 0.5em;
+}
+
+div.current-formula
+{
+   width: 30em;
+   border: 1px solid #C5D6E2;
+   margin-bottom:5px;
+}
+
+.current-formula td {
+	padding: 5px;
+	
+}
+
+.spel-editor .inlineable div
+{
+   display: inline-block;
+   float: none;
+   padding: 4px;
+}
+
+.yui-panel .spel-editor .current-formula.spel-editor-item
+{
+   max-height: 8em;
+   overflow-y: auto;
+}
+
+.spel-editor .current-formula
+{
+   margin-bottom: 4px;
+}
+
+
+.spel-editor .show-editor
+{
+   clear: left;
+}
+
+.spel-editor .editor
+{
+   display: none;
+   margin-left: 2em;
+   margin-top: 0.3em;
+   width: 60em;
+}
+
+.spel-editor .bd
+{
+   border: 2px solid #aaa;
+   padding: 0.5em;
+}
+
+.spel-editor .bdft
+{
+   margin-top: 1em;
+   text-align: center;
+}
+
+.spel-editor .editor-header
+{
+   height: 2em;
+   padding: 0.5em;
+}
+
+.spel-editor .editor-header div
+{
+   float: left;
+}
+
+
+.spel-editor .editor-header .navigator span.wait
+{
+   background-image: url(../form/images/ajax_anim.gif);
+   background-repeat: no-repeat;
+   padding: 1px 0 2px 16px;
+}
+
+.spel-editor .editor-header .navigator button span.item-icon img
+{
+   padding-right: 0.3em;
+   vertical-align: middle;
+}
+
+.spel-editor .editor-header .navigator button span.item-name
+{
+   white-space: nowrap;
+}
+
+.spel-editor .editor-header .navigator .navigator-items-list .yuimenuitemlabel
+{
+   padding: 0.2em 12px;
+}
+
+.spel-editor .editor-header .navigator .navigator-items-list span.item-icon img
+{
+   padding-right: 0.3em;
+   vertical-align: middle;
+}
+
+.spel-editor .editor-header .navigator .navigator-items-list span.item-name
+{
+}
+
+.spel-editor .editor-header .search .search-input
+{
+   float: left;
+   width: 20em;
+   padding: 0.3em 1em 0.4em 0.5em;
+}
+
+.spel-editor .editor-header .search .search-button
+{
+}
+
+.spel-editor .editor-items
+{
+   border: 2px solid #aaa;
+   height: 20em;
+   overflow-x: auto;
+   overflow-y: scroll;
+   position: relative;
+}
+
+.spel-editor .editor-items h3
+{
+   font-weight: normal;
+}
+
+.spel-editor input.create-new-input
+{
+   width: 100%;
+}
+
+.spel-editor .editor-items .icon16
+{
+   display: block;
+   min-height: 16px;
+   position: relative;
+}
+
+.spel-editor .editor-items .icon32
+{
+   display: block;
+   min-height: 32px;
+   position: relative;
+}
+
+.spel-editor .editor-items .icon16 span.new-item-overlay
+{
+   background: url(../form/images/new-overlay-16.png) no-repeat;
+   display: block;
+   height: 16px;
+   width: 16px;
+   position: absolute;
+}
+
+.spel-editor .editor-items .icon32 span.new-item-overlay
+{
+   background: url(../form/images/new-overlay-32.png) no-repeat;
+   display: block;
+   height: 32px;
+   width: 32px;
+   position: absolute;
+}
+
+.spel-editor .editor-items a.add-item:hover,
+.spel-editor .editor-items a.remove-item:hover,
+.spel-editor .editor-items a.create-new-item:hover
+{
+   text-decoration: none;
+}
+
+.spel-editor .editor-items .addIcon
+{
+	background: transparent url(../form/images/add-icon-16.png) no-repeat center center;
+	padding: 8px;
+}
+
+.spel-editor .editor-items .removeIcon
+{
+   background: transparent url(../form/images/remove-icon-16.png) no-repeat center center;
+   padding: 8px;
+}
+
+.spel-editor .editor-items .createNewIcon
+{
+   background: transparent url(../form/images/create-new-16.png) no-repeat center center;
+   padding: 8px;
+}
+
+
+.spel-editor .editor-items table
+{
+   border: medium none;
+   width: 100%;
+}
+
+.spel-editor .editor-items thead
+{
+   display: none;
+}
+
+.spel-editor .editor-items tbody
+{
+   outline: none;
+}
+
+.spel-editor .editor-items tr.create-new-row
+{
+   background-color: #ffffe0;
+}
+
+.spel-editor .editor-items.yui-dt .yui-dt-message td
+{
+   border: medium none;
+}
+
+.spel-editor .editor-items.yui-dt .yui-dt-data td
+{
+   border-bottom: 1px dashed #d9d9d9;
+   border-right: medium none;
+   vertical-align: middle;
+}
+
+.spel-editor .panel-left,
+.spel-editor .panel-right
+{
+}
+
+.spel-editor .panel-left .editor-items
+{
+   clear: left;
+   margin-left: 0.5em;
+   margin-right: 6px;
+}
+
+.spel-editor .panel-right .editor-items
+{
+   clear: left;
+   margin-right: 0.5em;
+}
+
+/* Compact Mode */
+.spel-editor.compact
+{
+   width: 50em;
+}
+
+.spel-editor.compact .editor-items
+{
+   border: 1px solid #aaa;
+}
+
+.spel-editor.compact .editor-items h3
+{
+   font-size: 100%;
+}
+
+
+
+
+/* DataList */
+
+
+.spel-editor span.allergen {
+	background: url(../../components/images/filetypes/generic-allergen-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.spel-editor span.bioOrigin {
+	background: url(../../components/images/filetypes/generic-bioOrigin-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+.spel-editor span.geoOrigin {
+	background: url(../../components/images/filetypes/generic-geoOrigin-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+.spel-editor span.cost {
+	background: url(../../components/images/filetypes/generic-cost-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.spel-editor span.geo {
+	background: url(../../components/images/filetypes/generic-geo-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.spel-editor span.ing {
+	background: url(../../components/images/filetypes/generic-ing-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.spel-editor span.microbio {
+	background: url(../../components/images/filetypes/generic-microbio-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.spel-editor span.organo {
+	background: url(../../components/images/filetypes/generic-organo-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.spel-editor span.physicoChem {
+	background: url(../../components/images/filetypes/generic-physicoChem-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.spel-editor span.nut {
+	background: url(../../components/images/filetypes/generic-nut-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+
+

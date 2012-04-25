@@ -82,7 +82,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	
 
 	/** The namespace service. */
-	private NamespaceService namespaceService;
+	protected NamespaceService namespaceService;
 	
 	/** The product report service. */
 	private ReportTplService reportTplService;
@@ -152,7 +152,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	}
 
 	
-	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Map<String, Serializable> props) {
+	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		String path = (String) props.get(ListValueService.PROP_PATH);
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
@@ -164,22 +164,22 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		if(sourceType.equals(SOURCE_TYPE_TARGET_ASSOC)){
 			QName type = QName.createQName(className, namespaceService);
-			return suggestTargetAssoc(type, query,pageNum, arrClassNames);
+			return suggestTargetAssoc(type, query,pageNum,pageSize, arrClassNames);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_PRODUCT)){
 			
-			return suggestProduct(query,pageNum, arrClassNames);
+			return suggestProduct(query,pageNum,pageSize, arrClassNames);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_LINKED_VALUE)){
-			return suggestLinkedValue(path, parent, query,pageNum);
+			return suggestLinkedValue(path, parent, query,pageNum, pageSize);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_LIST_VALUE)){
-			return suggestListValue(path, query, pageNum);
+			return suggestListValue(path, query, pageNum, pageSize);
 		}
 		else if(sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)){			
 			
 			QName productTypeQName = QName.createQName(productType, namespaceService);
-			return suggestProductReportTemplates(productTypeQName, query,pageNum);
+			return suggestProductReportTemplates(productTypeQName, query,pageNum, pageSize);
 
 		}
 		
@@ -199,7 +199,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 * @return the map
 	 */
     
-	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, String[] arrClassNames){			
+	protected ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames){			
         
     	logger.debug("suggestTargetAssoc");
     	
@@ -223,7 +223,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME));
         
-        return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
+        return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
        
 	}
     
@@ -243,7 +243,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
      * @return the map
      */
     
-	public ListValuePage suggestLinkedValue(String path, String parent, String query, Integer pageNum){			
+	protected ListValuePage suggestLinkedValue(String path, String parent, String query, Integer pageNum, Integer pageSize){			
         
     	logger.debug("suggestLinkedValue");  
     	
@@ -258,7 +258,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
     	
         List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(BeCPGModel.PROP_LINKED_VALUE_VALUE));
         
-        return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(BeCPGModel.PROP_LINKED_VALUE_VALUE,nodeService));
+        return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LINKED_VALUE_VALUE,nodeService));
  
 	}
     
@@ -273,7 +273,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
      * @return the map
      */
     
-	public ListValuePage suggestListValue(String path, String query, Integer pageNum){			
+	protected ListValuePage suggestListValue(String path, String query, Integer pageNum, Integer pageSize){			
         
     	logger.debug("suggestListValue");  
     	
@@ -288,7 +288,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
     	
         List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME));
        
-        return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
+        return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
       
 	}
     
@@ -303,7 +303,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
      * @return the map
      */
     
-	public ListValuePage suggestProduct(String query, Integer pageNum, String[] arrClassNames){			
+	protected ListValuePage suggestProduct(String query, Integer pageNum, Integer pageSize, String[] arrClassNames){			
         
     	logger.debug("suggestProduct");  
     	String queryPath = "";    	
@@ -325,7 +325,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 					
 		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME));
 	       
-		 return new ListValuePage(ret, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new ProductValueExtractor(ContentModel.PROP_NAME,nodeService,namespaceService));
+		 return new ListValuePage(ret, pageNum, pageSize, new ProductValueExtractor(ContentModel.PROP_NAME,nodeService,namespaceService));
 	  
 	}
     
@@ -406,12 +406,12 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 * @return the map
 	 */
 	
-	public ListValuePage suggestProductReportTemplates(QName nodeType, String query, Integer pageNum) {
+    protected ListValuePage suggestProductReportTemplates(QName nodeType, String query, Integer pageNum, Integer pageSize) {
 		
 		query = prepareQuery(query);
 		List<NodeRef> tplsNodeRef = reportTplService.suggestUserReportTemplates(ReportType.Document, nodeType, query);		
 		
-		 return new ListValuePage(tplsNodeRef, pageNum, RepoConsts.SUGGEST_PAGE_SIZE, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
+		 return new ListValuePage(tplsNodeRef, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
 	}
 	
 	/**
