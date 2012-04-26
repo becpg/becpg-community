@@ -6,6 +6,7 @@
 		  	<div  class="title"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"/>&nbsp;(<span id="${dashletId}-description"/>)</#if></div>
 			<div  class="toolbar datagrid-bar flat-button">
 			      <div class="left">
+					  <@dataGridToolbarNewRow toolbarId=dashletId />
 			         <div class="item-select">
 			            <button id="${dashletId}-itemSelect-button" name="datagrid-itemSelect-button">${msg("menu.select")}</button>
 			            <div id="${dashletId}-itemSelect-menu" class="yuimenu">
@@ -18,7 +19,7 @@
 			               </div>
 			            </div>
 			         </div>
-			         <@dataGridToolbar toolbarId=dashletId />
+			         <@dataGridToolbarSelectedItem toolbarId=dashletId />
 			         <div class="filter-form" >
 							<button id="${dashletId}-filterform-button">${msg("filterform.header")}</button>
 							<div id="${dashletId}-filterform-panel"  class="yuimenu" >

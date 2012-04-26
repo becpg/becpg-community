@@ -32,13 +32,13 @@ public class FormulaVisitor implements ProductVisitor {
 		if (productData.getDynamicCharachList() != null) {
 			for (DynamicCharachListItem dynamicCharachListItem : productData.getDynamicCharachList()) {
 				try {
-					logger.debug("Parse formula : " + dynamicCharachListItem.getDynamicCharachFormula() + " (" + dynamicCharachListItem.getDynamicCharachTitle() + ")");
-					Expression exp = parser.parseExpression(dynamicCharachListItem.getDynamicCharachFormula());
-					dynamicCharachListItem.setDynamicCharachValue(exp.getValue(context));		
-					logger.debug("Value :" + dynamicCharachListItem.getDynamicCharachValue());
+					logger.debug("Parse formula : " + dynamicCharachListItem.getFormula() + " (" + dynamicCharachListItem.getName() + ")");
+					Expression exp = parser.parseExpression(dynamicCharachListItem.getFormula());
+					dynamicCharachListItem.setValue(exp.getValue(context));		
+					logger.debug("Value :" + dynamicCharachListItem.getValue());
 				} catch (Exception e) {
-					dynamicCharachListItem.setDynamicCharachValue("#Error");
-					logger.warn("Error in formula :" + dynamicCharachListItem.getDynamicCharachFormula() + " (" + dynamicCharachListItem.getDynamicCharachTitle() + ")", e);
+					dynamicCharachListItem.setValue("#Error");
+					logger.warn("Error in formula :" + dynamicCharachListItem.getFormula() + " (" + dynamicCharachListItem.getName() + ")", e);
 				}
 			}
 		}

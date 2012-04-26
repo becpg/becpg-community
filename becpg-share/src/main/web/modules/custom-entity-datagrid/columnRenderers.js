@@ -118,7 +118,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	   	 if(!color){
 	   		color = "000000"; 
 	   	 }
-	   	return '<div style="background-color:#' +  color + ';width:20px;height:20px;border: 1px solid;"></div>';
+	   	return '<div style="background-color:#' +  color + ';width:15px;height:15px;border: 1px solid; border-radius: 5px;margin-left:15px;"></div></div>';
 	   }
 	});
 

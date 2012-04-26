@@ -1164,10 +1164,10 @@ public class ProductDAOImpl implements ProductDAO {
 				for (DynamicCharachListItem dynamicCharachListDataItem : dynamicCharachList) {
 					NodeRef linkNodeRef = dynamicCharachListDataItem.getNodeRef();
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE, dynamicCharachListDataItem.getDynamicCharachTitle());
-					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_FORMULA, dynamicCharachListDataItem.getDynamicCharachFormula());
-					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE, (Serializable) dynamicCharachListDataItem.getDynamicCharachValue());
-					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_GROUP_COLOR,  dynamicCharachListDataItem.getDynamicCharachGroupColor());
+					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE, dynamicCharachListDataItem.getName());
+					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_FORMULA, dynamicCharachListDataItem.getFormula());
+					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE, (Serializable) dynamicCharachListDataItem.getValue());
+					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_GROUP_COLOR,  dynamicCharachListDataItem.getGroupColor());
 					properties.put(BeCPGModel.PROP_SORT, sortIndex);
 					sortIndex++;
 
@@ -1177,7 +1177,7 @@ public class ProductDAOImpl implements ProductDAO {
 					} else {
 						// create
 						ChildAssociationRef childAssocRef = nodeService.createNode(dynamicCharachListNodeRef, ContentModel.ASSOC_CONTAINS,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(dynamicCharachListDataItem.getDynamicCharachTitle()))
+								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(dynamicCharachListDataItem.getName()))
 								, BeCPGModel.TYPE_DYNAMICCHARCATLIST, properties);
 						linkNodeRef = childAssocRef.getChildRef();
 					}

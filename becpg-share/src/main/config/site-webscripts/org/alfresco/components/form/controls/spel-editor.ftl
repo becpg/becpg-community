@@ -13,6 +13,9 @@
    <#if field.mandatory??>
       mandatory: ${field.mandatory?string},
     </#if>
+    <#if args.entityNodeRef??>
+      entityNodeRef : "${args.entityNodeRef}",
+    </#if>
       currentValue: "${field.value?js_string}",
    }).setMessages(
       ${messages}
@@ -37,6 +40,7 @@
       <div id="${controlId}" class="spel-editor-control">
          
          <div id="${controlId}-currentValueDisplay" class="current-formula"></div>
+         <input type="hidden"  name="${field.name}" id="${fieldHtmlId}" value="${field.value?html}" />
          
          <#if field.disabled == false>
             <div id="${controlId}-showEditorAction" class="show-editor"></div>
@@ -47,9 +51,7 @@
 					
 					   <div id="${editorId}-body" class="bd">
 					      <div class="editor-textarea yui-b">
-					      	 <textarea id="${fieldHtmlId}" name="${field.name}" rows="${rows}" tabindex="0"
-			                <#if field.description??>title="${field.description}"</#if>
-			                <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>>${field.value?html}</textarea>
+					      	 <textarea id="${editorId}-textarea" rows="${rows}" name="-"> </textarea>
 					      </div>
 					      <div class="editor-header">
 					          <div id="${editorId}-itemTypeContainer" class="navigator">	

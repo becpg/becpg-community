@@ -78,7 +78,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private static final String PARAM_VALUES_SEPARATOR = ",";
 
 	/** The node service. */
-	private NodeService nodeService;
+	protected NodeService nodeService;
 	
 
 	/** The namespace service. */
@@ -88,7 +88,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private ReportTplService reportTplService;
 	
 	
-	private BeCPGSearchService beCPGSearchService;
+	protected BeCPGSearchService beCPGSearchService;
 	
 	private DictionaryService dictionaryService;
 	
@@ -329,7 +329,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	  
 	}
     
-    private String prepareQueryCode(String query, QName type) {
+    protected String prepareQueryCode(String query, QName type) {
     	if(Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD,query)){
     		
     		if(BeCPGModel.TYPE_PRODUCT.equals(type)){
@@ -349,7 +349,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		return query;
 	}
 
-	private boolean isQueryCode(String query, QName type) {
+	protected boolean isQueryCode(String query, QName type) {
     	return Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD,query)
     			|| Pattern.matches(autoNumService.getAutoNumMatchPattern(type, BeCPGModel.PROP_CODE),query);
 	}
@@ -421,7 +421,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 * @return the string
 	 * @throws IOException 
 	 */
-	private String prepareQuery(String query){
+	protected String prepareQuery(String query){
 		
 		logger.debug("Query before prepare:"+query);
 		if(query!=null && !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE) || query.endsWith(SUFFIX_SIMPLE_QUOTE))){
@@ -494,7 +494,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	}
 
 
-	private Map<String, Boolean> getSort(QName field){
+	protected Map<String, Boolean> getSort(QName field){
 		
 		Map<String, Boolean> sort = new HashMap<String, Boolean>();
 		sort.put("@" + field, true);
@@ -526,7 +526,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 
 
-	private boolean isAllQuery(String query) {
+	protected boolean isAllQuery(String query) {
 		return query!=null && query.trim().equals(SUFFIX_ALL);
 	}
 	

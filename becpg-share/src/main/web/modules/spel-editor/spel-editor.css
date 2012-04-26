@@ -30,30 +30,6 @@ div.current-formula
    margin-bottom:5px;
 }
 
-.current-formula td {
-	padding: 5px;
-	
-}
-
-.spel-editor .inlineable div
-{
-   display: inline-block;
-   float: none;
-   padding: 4px;
-}
-
-.yui-panel .spel-editor .current-formula.spel-editor-item
-{
-   max-height: 8em;
-   overflow-y: auto;
-}
-
-.spel-editor .current-formula
-{
-   margin-bottom: 4px;
-}
-
-
 .spel-editor .show-editor
 {
    clear: left;
@@ -168,49 +144,6 @@ div.current-formula
    position: relative;
 }
 
-.spel-editor .editor-items .icon16 span.new-item-overlay
-{
-   background: url(../form/images/new-overlay-16.png) no-repeat;
-   display: block;
-   height: 16px;
-   width: 16px;
-   position: absolute;
-}
-
-.spel-editor .editor-items .icon32 span.new-item-overlay
-{
-   background: url(../form/images/new-overlay-32.png) no-repeat;
-   display: block;
-   height: 32px;
-   width: 32px;
-   position: absolute;
-}
-
-.spel-editor .editor-items a.add-item:hover,
-.spel-editor .editor-items a.remove-item:hover,
-.spel-editor .editor-items a.create-new-item:hover
-{
-   text-decoration: none;
-}
-
-.spel-editor .editor-items .addIcon
-{
-	background: transparent url(../form/images/add-icon-16.png) no-repeat center center;
-	padding: 8px;
-}
-
-.spel-editor .editor-items .removeIcon
-{
-   background: transparent url(../form/images/remove-icon-16.png) no-repeat center center;
-   padding: 8px;
-}
-
-.spel-editor .editor-items .createNewIcon
-{
-   background: transparent url(../form/images/create-new-16.png) no-repeat center center;
-   padding: 8px;
-}
-
 
 .spel-editor .editor-items table
 {
@@ -263,29 +196,13 @@ div.current-formula
    margin-right: 0.5em;
 }
 
-/* Compact Mode */
-.spel-editor.compact
-{
-   width: 50em;
-}
-
-.spel-editor.compact .editor-items
-{
-   border: 1px solid #aaa;
-}
-
-.spel-editor.compact .editor-items h3
-{
-   font-size: 100%;
-}
-
-
-
 
 /* DataList */
 
 
-.spel-editor span.allergen {
+.spel-editor span.allergen, 
+.spel-editor span.allergenList
+ {
 	background: url(../../components/images/filetypes/generic-allergen-16.png) no-repeat;
 	padding-left: 20px;
 }
@@ -301,8 +218,8 @@ div.current-formula
 	padding-left: 20px;
 }
 
-
-.spel-editor span.cost {
+.spel-editor span.cost,
+.spel-editor span.costList  {
 	background: url(../../components/images/filetypes/generic-cost-16.png) no-repeat;
 	padding-left: 20px;
 }
@@ -312,30 +229,69 @@ div.current-formula
 	padding-left: 20px;
 }
 
-.spel-editor span.ing {
+.spel-editor span.ing,
+.spel-editor span.ingList {
 	background: url(../../components/images/filetypes/generic-ing-16.png) no-repeat;
 	padding-left: 20px;
 }
 
-.spel-editor span.microbio {
+.spel-editor span.microbio,
+.spel-editor span.microbioList {
 	background: url(../../components/images/filetypes/generic-microbio-16.png) no-repeat;
 	padding-left: 20px;
 }
 
-.spel-editor span.organo {
+.spel-editor span.organo,
+.spel-editor span.organoList {
 	background: url(../../components/images/filetypes/generic-organo-16.png) no-repeat;
 	padding-left: 20px;
 }
 
-.spel-editor span.physicoChem {
+
+.spel-editor span.product {
+	background: url(../../components/images/products/finishedProduct-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+.spel-editor span.packagingList {
+	background: url(../../components/images/products/packagingKit-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.spel-editor span.processList {
+	background: url(../../components/images/products/packagingKit-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+.spel-editor span.variables,
+.spel-editor span.String,
+.spel-editor span.Double,
+.spel-editor span.NodeRef {
+	background: url(../../components/images/generic-file-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+
+.spel-editor span.physicoChem,
+.spel-editor span.physicoChemList {
 	background: url(../../components/images/filetypes/generic-physicoChem-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.spel-editor span.nut {
+.spel-editor span.nut,
+.spel-editor span.nutList  {
 	background: url(../../components/images/filetypes/generic-nut-16.png) no-repeat;
 	padding-left: 20px;
+}
+
+.spel-editor-nodeRef {
+	display: inline;
+	background-color: #EDF5FF;
+	border: 1px dashed #D9D9D9;
 }
 
 
