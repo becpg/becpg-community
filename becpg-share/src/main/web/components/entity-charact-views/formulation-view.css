@@ -1,7 +1,3 @@
-.datagrid.dashlet {
-	   margin: 10px 0;
-}
-
 
 .yui-g.formulation .yui-u {
     width: 49.5%;
@@ -13,13 +9,13 @@
    height: 260px;
 }
 
-
-
 .datagrid {
-	 visibility: visible;
 	 padding:0px;
 }
 
+.datagrid.dashlet {
+	   margin: 10px 0;
+}
 
 .dashlet.datagrid  .toolbar {
     min-height: 28px;
@@ -76,5 +72,15 @@
 {
    display: none;
    visibility: hidden;
+}
+
+/* Hide New Item */
+
+.constraintsList .datagrid .datagrid-bar .new-row {
+	display:none;
+}
+
+.yui-skin-default .yui-button {
+	margin:0px;
 }
 

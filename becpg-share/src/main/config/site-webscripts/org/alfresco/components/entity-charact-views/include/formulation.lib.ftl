@@ -2,7 +2,7 @@
 
 <#macro dataGridDashlet dashletId usePagination=true useFilter=true showCreateButton=false extra...>
 <div id="${dashletId}">
-	<div class="dashlet datagrid" >
+	<div class="dashlet datagrid" id="${dashletId}-body" >
 		  	<div  class="title"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"/>&nbsp;(<span id="${dashletId}-description"/>)</#if></div>
 			<div  class="toolbar datagrid-bar flat-button">
 			      <div class="left">
@@ -41,7 +41,7 @@
 			      </div>
 			      <div class="clear"></div>
 			</div>
-			<div id="${dashletId}-body" class="body scrollableList" >
+			<div  class="body scrollableList" >
 		  	
 			   <div id="${dashletId}-grid" class="grid"></div>
 			

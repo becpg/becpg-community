@@ -6,6 +6,7 @@ package fr.becpg.repo.entity.comparison;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -396,12 +397,24 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			return; // nothing to do
 		}			
 		
+		//TODO crappy!
+		if(BeCPGModel.ASSOC_COMPOLIST_PRODUCT.equals(pivotProperty)){
+			Iterator<FileInfo> it = dataListItems.iterator();
+			while(it.hasNext()){
+				if(!BeCPGModel.TYPE_COMPOLIST.equals(it.next().getType())){
+					it.remove();
+				}
+			}
+		
+		}
+		
+		
 		while(cnt < dataListItems.size()){
 			
 			NodeRef nodeRef = dataListItems.get(cnt).getNodeRef();
-			int l = (Integer)nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);						
+			Integer l = (Integer)nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);						
 			
-			if(depthLevel == l){					
+			if(l!=null && depthLevel == l){					
 				
 				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, pivotProperty);
 	    		String pivot = (assocRefs.get(0)).getTargetRef().toString();
@@ -411,7 +424,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				if(cnt+1 < dataListItems.size()){
 					
 					NodeRef nextNodeRef = dataListItems.get(cnt + 1).getNodeRef();
-					int nextDepthLevel = (Integer)nodeService.getProperty(nextNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
+					Integer nextDepthLevel = (Integer)nodeService.getProperty(nextNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
 					
 					if(depthLevel < nextDepthLevel)						
 						isComposite = true;

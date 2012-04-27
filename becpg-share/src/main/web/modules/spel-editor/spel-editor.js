@@ -34,7 +34,6 @@
 		 * Decoupled event listeners
 		 */
 		this.eventGroup = htmlId;
-		YAHOO.Bubbling.on("renderCurrentValue", this.onRenderCurrentValue, this);
 		YAHOO.Bubbling.on("parentTypeChanged", this.onParentTypeChanged, this);
 		YAHOO.Bubbling.on("formContainerDestroyed", this.onFormContainerDestroyed, this);
 		YAHOO.Bubbling.on("refreshItemList", this.onRefreshItemList, this);
@@ -203,11 +202,13 @@
 			               Dom.addClass(this.editorId, "spel-editor");
 
 
+			               this._renderFormula(true);
+
 			               this.widgets.editor = new YAHOO.widget.SimpleEditor(this.id+"-editor-textarea", {
 			                  width : '100%',
 			                  animate : false,
 			                  dompath : false,
-			                  focusAtStart : true,
+			                  focusAtStart : false,
 			                  toolbar : {
 			                     titlebar : this.msg("form.control.spel-editor.editor.title"),
 			                     buttons : [ {
@@ -322,7 +323,6 @@
 			               this.widgets.editor.render();
 		               }
 
-		               this._renderFormula();
 	               },
 
 	               /**
@@ -332,7 +332,6 @@
 						 */
 	               destroy : function SpelEditor_destroy() {
 		               try {
-			               YAHOO.Bubbling.unsubscribe("renderCurrentValue", this.onRenderCurrentValue, this);
 			               YAHOO.Bubbling.unsubscribe("parentTypeChanged", this.onParentTypeChanged, this);
 			               YAHOO.Bubbling.unsubscribe("formContainerDestroyed", this.onFormContainerDestroyed, this);
 			               YAHOO.Bubbling.unsubscribe("refreshItemList", this.onRefreshItemList, this);
@@ -367,8 +366,9 @@
 			               });
 		               }
 		               this.widgets.escapeListener.enable();
-
+		               this.widgets.editor.focus();
 		               this.widgets.dialog.show();
+		              
 		               this._createResizer();
 		               this._fireRefreshEvent();
 
@@ -398,20 +398,15 @@
 
 		               this.options.currentValue =  this._cleanHtml(Dom.get(this.id + "-editor-textarea").value);
 		               Dom.get(this.currentValueHtmlId).value = this.options.currentValue;
+		            	YAHOO.Bubbling.fire("mandatoryControlValueUpdated", Dom.get(this.currentValueHtmlId));
 		               
 		               
-		               YAHOO.Bubbling.fire("renderCurrentValue", {
-			               eventGroup : this
-		               });
+		              this._renderFormula(false);
 	               },
 	               
 	               _cleanHtml : function(html){
 
-	              
-	               	
-		          //     var cleanRegExp = new RegExp('<div id=.(workspace://SpacesStore/[a-z0-9A-Z\-]*). class=.spel-editor-nodeRef. >(.*)</div>',"g");
-		               
-		              return html.replace(new RegExp("<div id=\"","g"),"").replace(new RegExp("\" class=.*</div>","g"),"");
+		              return html.replace(new RegExp("<div id=\"","g"),"").replace(new RegExp("\" class=.*?</div>","g"),"");
 		               
 	               },
 	               
@@ -491,68 +486,7 @@
 						 * notification
 						 */
 
-	               /**
-						 * Renders current value in reponse to an event
-						 * 
-						 * @method onRenderCurrentValue
-						 * @param layer
-						 *           {object} Event fired (unused)
-						 * @param args
-						 *           {array} Event parameters
-						 */
-	               onRenderCurrentValue : function SpelEditor_onRenderCurrentValue(layer, args) {
-		               // Check the event is directed towards this instance
-		               if ($hasEventInterest(this, args)) {
-
-			               SyntaxHighlighter.config.stripBrs = true;
-
-			               var items = [], instance = this, regexp = new RegExp("(workspace://SpacesStore/[a-z0-9A-Z\-]*)","gi"), value = "<br/>\n\n"
-			                     + instance.options.currentValue + "\n", brush = new SyntaxHighlighter.brushes.JScript();
-			               brush.init({
-				               toolbar : false
-			               });
-
-			               items = value.match(regexp);
-			               
-			               function itemsCallBack(response){
-			                  var items = null;
-			                  if(response!=null){
-			                  	items = response.json.data.items;
-			                  }
-		                     Dom.get(instance.id + "-currentValueDisplay").innerHTML = brush.getHtml(instance._createBrush(instance.options.currentValue,items));
-		                     Dom.get(instance.id + "-editor-textarea").value = instance._createHtml(instance.options.currentValue, items);
-			               }
-
-			               if (items != null && items.length > 0) {
-
-				               Alfresco.util.Ajax.jsonRequest({
-				                  url : Alfresco.constants.PROXY_URI + "api/forms/picker/items",
-				                  method : "POST",
-				                  dataObj : {
-					                  items : items
-				                  },
-				                  successCallback : {
-				                     fn : itemsCallBack,
-				                     scope : this
-				                  },
-				                  failureCallback : {
-				                     fn : function(response) {
-
-					                     Alfresco.util.PopupManager.displayMessage({
-						                     text : this.msg("message.spel-editor.failure")
-					                     });
-				                     },
-				                     scope : this
-				                  }
-				               });
-
-			               } else {
-			               	itemsCallBack();
-			               }
-
-			               this._enableActions();
-		               }
-	               },
+	             
 
 	               /**
 						 * Parent changed event handler
@@ -614,11 +548,56 @@
 						 * @method _renderFormula
 						 * @private
 						 */
-	               _renderFormula : function SpelEditor__renderFormula(useOptions) {
+	               _renderFormula : function SpelEditor__renderFormula(updateTextArea) {
 
-		               YAHOO.Bubbling.fire("renderCurrentValue", {
-			               eventGroup : this
-		               });
+	               	  SyntaxHighlighter.config.stripBrs = true;
+
+			               var items = [], instance = this, regexp = new RegExp("(workspace://SpacesStore/[a-z0-9A-Z\-]*)","gi"), brush = new SyntaxHighlighter.brushes.JScript();
+			               brush.init({
+				               toolbar : false
+			               });
+
+			               items = this.options.currentValue.match(regexp);
+			               
+			               function itemsCallBack(response){
+			                  var items = null;
+			                  if(response!=null){
+			                  	items = response.json.data.items;
+			                  }
+		                    Dom.get(instance.id + "-currentValueDisplay").innerHTML = brush.getHtml(instance._createBrush(instance.options.currentValue,items));
+		                    if(updateTextArea){
+		                  	  Dom.get(instance.id + "-editor-textarea").value = instance._createHtml(instance.options.currentValue, items);
+		                    }
+			               }
+
+			               if (items != null && items.length > 0) {
+
+				               Alfresco.util.Ajax.jsonRequest({
+				                  url : Alfresco.constants.PROXY_URI + "api/forms/picker/items",
+				                  method : "POST",
+				                  dataObj : {
+					                  items : items
+				                  },
+				                  successCallback : {
+				                     fn : itemsCallBack,
+				                     scope : this
+				                  },
+				                  failureCallback : {
+				                     fn : function(response) {
+
+					                     Alfresco.util.PopupManager.displayMessage({
+						                     text : this.msg("message.spel-editor.failure")
+					                     });
+				                     },
+				                     scope : this
+				                  }
+				               });
+
+			               } else {
+			               	itemsCallBack();
+			               }
+
+			               this._enableActions();
 
 	               },
 
@@ -680,12 +659,6 @@
 		                        type : "fr.becpg.repo.product.data.ProductData",
 		                        template : "{item1}"
 		                     },
-//		                     {
-//		                        name : "compoList",
-//		                        type : "bcpg:product",
-//		                        subType : "fr.becpg.repo.product.data.productList.CompoListDataItem",
-//		                        template : "costList.?[cost.toString() == '{item1}' ][0].{item2}"
-//		                     },
 		                     {
 		                        name : "costList",
 		                        type : "bcpg:cost",
@@ -724,19 +697,10 @@
 		                     },
 		                     {
 		                        name : "microbioList",
-		                        type : "bcpg:microBio",
+		                        type : "bcpg:microbio",
 		                        subType : "fr.becpg.repo.product.data.productList.MicrobioListDataItem",
-		                        template : "microBioList.?[microBio.toString() == '{item1}' ][0].{item2}"
+		                        template : "microbioList.?[microBio.toString() == '{item1}' ][0].{item2}"
 		                     },
-		                     // {
-		                     // name : "packagingList",
-		                     // type : "bcpg:packaging",
-		                     // subType :
-									// "fr.becpg.repo.product.data.productList.PackagingListDataItem",
-		                     // template : "packagingList.?[packaging == <div
-									// id='{item1}' class='spel-editor-nodeRef'
-									// >{item1Name}</div> ][0].{item2}"
-		                     // },
 		                     {
 		                        name : "processList",
 		                        type : "bcpg:resourceProduct",
@@ -939,8 +903,6 @@
 				               eventGroup : this
 			               });
 
-			               // focus ready for a search
-			               searchTermInput.focus();
 		               }
 	               },
 	               /**
