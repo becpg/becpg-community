@@ -99,7 +99,8 @@
 				    itemUrl : Alfresco.constants.PROXY_URI + "${(args.itemUrl!"slingshot/datalists/data/item/")}",
 			       usePagination: "${usePagination?string}",
 			       useFilter: "${useFilter?string}",
-			       showCreateButton : "${showCreateButton?string}"
+			       showCreateButton : "${showCreateButton?string}",
+			       sortable : true
 			       <#if extra["itemType"]??>
 			       	,itemType : "${extra["itemType"]?string}"
 			       </#if>
