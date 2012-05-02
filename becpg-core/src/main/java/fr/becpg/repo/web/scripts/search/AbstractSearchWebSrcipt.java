@@ -51,7 +51,6 @@ public abstract class AbstractSearchWebSrcipt extends AbstractWebScript {
 
 	protected static final String PARAM_PAGE_SIZE = "pageSize";
 
-
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
 
 	/** Fields **/
@@ -88,8 +87,8 @@ public abstract class AbstractSearchWebSrcipt extends AbstractWebScript {
 			boolean asc = true;
 			int separator = sort.indexOf("|");
 			if (separator != -1) {
-				sort = sort.substring(0, separator);
 				asc = (sort.substring(separator + 1) == "true");
+				sort = sort.substring(0, separator);
 			}
 			String column;
 			if (sort.charAt(0) == '.') {
