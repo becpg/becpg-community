@@ -1,7 +1,7 @@
 package fr.becpg.repo.entity.datalist.data;
 
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -22,7 +22,7 @@ public class DataListFilter {
 	
 	private Map<String, String> criteriaMap = null;
 	
-	private Map<String, Boolean> sortMap = new HashMap<String, Boolean>();
+	private Map<String, Boolean> sortMap = new LinkedHashMap<String, Boolean>();
 	
 	private  QName dataType = null;
 	

@@ -1,0 +1,7 @@
+<webscript>
+	<shortname>Sort Entity Data List</shortname>
+	<description>Sort Entity Data List - switch order between two nodeRef</description>
+   <url>/becpg/entity/datalists/sort/node/{store_type}/{store_id}/{id}?destNodeRef={destNodeRef}</url>
+   <authentication>user</authentication>
+   <transaction allow="readwrite" buffersize="0">required</transaction>
+</webscript>

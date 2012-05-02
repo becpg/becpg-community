@@ -125,6 +125,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		sp.excludeDataInTheCurrentTransaction(false);
 		if (sort != null) {
 			for(Map.Entry<String, Boolean> kv : sort.entrySet()){
+				logger.debug("Add sort :"+kv.getKey()+" "+ kv.getValue());
 				sp.addSort(kv.getKey(), kv.getValue());
 			}
 		} 

@@ -17,6 +17,8 @@
 	      useFilter: ${(args.filter!false)?string},
 		   entityNodeRef: "${page.url.args.nodeRef!""}",
 		   list: "${page.url.args.list!""}",
+		   sortable : true,
+			sortUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/sort/node",
 		   dataUrl : Alfresco.constants.PROXY_URI + "${(args.dataUrl!"slingshot/datalists/data/node/")}",
 		   itemUrl : Alfresco.constants.PROXY_URI + "${(args.itemUrl!"slingshot/datalists/data/item/")}"
 	   }).setMessages(${messages});
