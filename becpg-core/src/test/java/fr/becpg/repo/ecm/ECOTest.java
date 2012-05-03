@@ -300,10 +300,11 @@ public class ECOTest extends RepoBaseTestCase  {
 				
 				/*-- Verify formulation --*/
 				logger.debug("/*-- Verify formulation --*/");
-				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+
+				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, dataLists);
 				
 				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
-				
+				logger.debug("Finish product: "+formulatedProduct.toString());
 				//costs
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){

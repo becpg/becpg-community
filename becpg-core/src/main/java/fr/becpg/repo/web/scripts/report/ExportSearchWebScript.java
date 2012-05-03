@@ -24,7 +24,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.template.ReportTplService;
-import fr.becpg.repo.web.scripts.search.AbstractSearchWebSrcipt;
+import fr.becpg.repo.web.scripts.search.AbstractSearchWebScript;
 import fr.becpg.report.client.ReportFormat;
 
 /**
@@ -32,7 +32,7 @@ import fr.becpg.report.client.ReportFormat;
  *
  * @author querephi
  */
-public class ExportSearchWebScript extends AbstractSearchWebSrcipt  {
+public class ExportSearchWebScript extends AbstractSearchWebScript  {
 	
 	
 

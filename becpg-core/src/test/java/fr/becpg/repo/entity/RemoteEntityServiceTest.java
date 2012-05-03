@@ -29,9 +29,9 @@ import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class ProductReportServiceTest.
+ * The Class RemoteEntityServiceTest.
  * 
- * @author querephi
+ * @author matthieu
  */
 public class RemoteEntityServiceTest extends RepoBaseTestCase {
 

@@ -37,7 +37,7 @@ import fr.becpg.repo.web.scripts.search.data.WikiDataExtractor;
  * 
  * @author matthieu
  */
-public class SearchWebScript extends AbstractSearchWebSrcipt {
+public class SearchWebScript extends AbstractSearchWebScript {
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(SearchWebScript.class);

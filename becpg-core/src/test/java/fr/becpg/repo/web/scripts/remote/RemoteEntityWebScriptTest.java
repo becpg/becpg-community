@@ -130,6 +130,10 @@ public class RemoteEntityWebScriptTest extends BaseWebScriptTest {
 		NodeRef imageNodeRef = null;
 		for(FileInfo fi: fileFolderService.list(tempFolder)){
 			logger.error("Create Image Folder : "+fi.getName()+" "+fi.getType());
+			imageNodeRef = nodeService.getChildByName(fi.getNodeRef(), ContentModel.ASSOC_CONTAINS, "Images");
+			if(imageNodeRef != null){
+				fileFolderService.delete(imageNodeRef);    		
+			}
 			imageNodeRef = fileFolderService.create(fi.getNodeRef(), "Images", ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 		

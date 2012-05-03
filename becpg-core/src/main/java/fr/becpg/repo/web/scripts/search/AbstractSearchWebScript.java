@@ -17,7 +17,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.repo.search.AdvSearchService;
 
-public abstract class AbstractSearchWebSrcipt extends AbstractWebScript {
+public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 	/** The Constant PARAM_QUERY. */
 	protected static final String PARAM_QUERY = "query";

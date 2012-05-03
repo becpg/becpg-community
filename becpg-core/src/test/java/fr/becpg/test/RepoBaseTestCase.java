@@ -109,7 +109,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
     protected List<NodeRef> organos = new ArrayList<NodeRef>();
     
 	
-	protected Wiser wiser;
+	protected Wiser wiser = new Wiser(2500);
 
 	    
 	
@@ -120,7 +120,6 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	protected void setUp() throws Exception {		
 		//First start wiser 
 		try {
-			wiser = new Wiser(2500);
 			wiser.start();
 		} catch (Exception e) {
 			logger.warn("cannot open wiser!");

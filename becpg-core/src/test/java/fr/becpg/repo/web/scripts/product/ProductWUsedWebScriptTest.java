@@ -149,7 +149,7 @@ public class ProductWUsedWebScriptTest extends BaseWebScriptTest{
 				}},false,true);
 		 
 			//Call webscript on raw material
-			String url = "/becpg/entity/wused/node/" + rawMaterialNodeRef.toString().replace(":/", "");
+			String url = "/becpg/entity/datalists/data/node?entityNodeRef="+rawMaterialNodeRef.toString()+"&itemType=bcpg%3AcompoList&dataListName=WUsed";
 			String data = "{\"fields\":[\"bcpg_costListCost\",\"bcpg_costListValue\",\"bcpg_costListUnit\"],\"filter\":{\"filterId\":\"all\",\"filterData\":\"\"}}";
 			logger.debug("url : " + url);				
 
