@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.search.AdvSearchService;
@@ -126,6 +127,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			userAccess.put("delete", accessRight && (permissionService.hasPermission(nodeRef, "Delete") == AccessStatus.ALLOWED));
 			userAccess.put("create", accessRight && (permissionService.hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
 			userAccess.put("edit", accessRight && (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED));
+			userAccess.put("sort", accessRight &&  nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SORTABLE_LIST));
 			
 			ret.put(PROP_PERMISSIONS, permissions);
 			

@@ -246,6 +246,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			
 			userAccess.put("create", (hasWriteAccess 
 					&& permissionService.hasPermission(dataListFilter.getDataListNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
+			
+			
 			permissions.put("userAccess",userAccess);
 			
 			parent.put("permissions", permissions);

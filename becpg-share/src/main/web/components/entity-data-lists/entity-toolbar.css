@@ -28,3 +28,13 @@
    padding-left: 24px;
 }
 
+
+.datalist-toolbar .onActionUp
+{
+   background-image: url(../images/up-arrow-16.png);
+}
+
+.datalist-toolbar .onActionDown
+{
+   background-image: url(../images/down-arrow-16.png);
+}
