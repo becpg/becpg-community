@@ -310,11 +310,10 @@ public class ProductDAOImpl implements ProductDAO {
 					productData.setReqCtrlList(loadReqCtrlList(listsContainerNodeRef));
 				} else if (dataList.equals(MPMModel.TYPE_PROCESSLIST)) {
 					productData.setProcessList(loadProcessList(listsContainerNodeRef));
-				} else if (dataList.equals(BeCPGModel.TYPE_DYNAMICCHARCATLIST)){
+				} else if (dataList.equals(BeCPGModel.TYPE_DYNAMICCHARCATLIST)) {
 					productData.setDynamicCharachList(loadDynamicCharachList(listsContainerNodeRef));
 				} else {
-					logger.debug(String.format("DataList '%s' is not loaded since it is not implemented.",
-					 dataList));
+					logger.debug(String.format("DataList '%s' is not loaded since it is not implemented.", dataList));
 				}
 			}
 		}
@@ -323,7 +322,6 @@ public class ProductDAOImpl implements ProductDAO {
 
 	}
 
-	
 	/**
 	 * Load allergen list.
 	 * 
@@ -351,7 +349,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 		return allergenList;
 	}
-	
+
 	@Override
 	public AllergenListDataItem loadAllergenListItem(NodeRef listItemNodeRef) {
 		List<AssociationRef> allergenAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.PROP_ALLERGENLIST_ALLERGEN);
@@ -376,31 +374,29 @@ public class ProductDAOImpl implements ProductDAO {
 
 	@Override
 	public List<DynamicCharachListItem> loadDynamicCharachList(NodeRef listContainerNodeRef) {
-		 List<DynamicCharachListItem> dynamicCharachList =  new ArrayList<DynamicCharachListItem>();
-		 if(listContainerNodeRef!=null){
-			 NodeRef dynamicCharachListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
-			 if (dynamicCharachListNodeRef != null) {
-					List<NodeRef> listItemNodeRefs = listItems(dynamicCharachListNodeRef, BeCPGModel.TYPE_DYNAMICCHARCATLIST);
-					for (NodeRef listItemNodeRef : listItemNodeRefs) {
-						dynamicCharachList.add(loadDynamicCharachListItem(listItemNodeRef));
-					}
+		List<DynamicCharachListItem> dynamicCharachList = new ArrayList<DynamicCharachListItem>();
+		if (listContainerNodeRef != null) {
+			NodeRef dynamicCharachListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+			if (dynamicCharachListNodeRef != null) {
+				List<NodeRef> listItemNodeRefs = listItems(dynamicCharachListNodeRef, BeCPGModel.TYPE_DYNAMICCHARCATLIST);
+				for (NodeRef listItemNodeRef : listItemNodeRefs) {
+					dynamicCharachList.add(loadDynamicCharachListItem(listItemNodeRef));
 				}
-		 }
-		 
+			}
+		}
+
 		return dynamicCharachList;
 	}
 
-	
 	@Override
 	public DynamicCharachListItem loadDynamicCharachListItem(NodeRef listItemNodeRef) {
-		Map<QName,Serializable> properties = nodeService.getProperties(listItemNodeRef);
-		
-		return new DynamicCharachListItem(listItemNodeRef, (String)properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE)
-				, (String)properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_FORMULA),
-				properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE),(String) properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_GROUP_COLOR));
+		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
+
+		return new DynamicCharachListItem(listItemNodeRef, (String) properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE),
+				(String) properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_FORMULA), properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE),
+				(String) properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_GROUP_COLOR));
 	}
 
-	
 	/**
 	 * Load compo list.
 	 * 
@@ -472,7 +468,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 		List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
 		NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
-		
+
 		return new CostListDataItem(listItemNodeRef, (Double) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_VALUE), (String) nodeService.getProperty(
 				listItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT), (Double) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_COSTLIST_MAXI), costNodeRef,
 				(Boolean) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
@@ -505,7 +501,8 @@ public class ProductDAOImpl implements ProductDAO {
 					NodeRef sourceNodeRef = (sourceAssocRefs.get(0)).getTargetRef();
 
 					CostDetailsListDataItem costDetailsListDataItem = new CostDetailsListDataItem(listItemNodeRef, (Double) properties.get(BeCPGModel.PROP_COSTDETAILSLIST_VALUE),
-							(String) properties.get(BeCPGModel.PROP_COSTDETAILSLIST_UNIT), (Double) properties.get(BeCPGModel.PROP_COSTDETAILSLIST_PERC), costNodeRef, sourceNodeRef);
+							(String) properties.get(BeCPGModel.PROP_COSTDETAILSLIST_UNIT), (Double) properties.get(BeCPGModel.PROP_COSTDETAILSLIST_PERC), costNodeRef,
+							sourceNodeRef);
 					costDetailsList.add(costDetailsListDataItem);
 				}
 			}
@@ -1023,11 +1020,10 @@ public class ProductDAOImpl implements ProductDAO {
 						createReqCtrlList(containerNodeRef, productData.getReqCtrlList());
 					} else if (dataList.equals(MPMModel.TYPE_PROCESSLIST)) {
 						createProcessList(containerNodeRef, productData.getProcessList());
-					}	else if (dataList.equals(BeCPGModel.TYPE_DYNAMICCHARCATLIST)){
-						createDynamicCharachList(containerNodeRef,productData.getDynamicCharachList());
+					} else if (dataList.equals(BeCPGModel.TYPE_DYNAMICCHARCATLIST)) {
+						createDynamicCharachList(containerNodeRef, productData.getDynamicCharachList());
 					} else {
-						 logger.debug(String.format("DataList '%s' is not created since it is not implemented.",
-						 dataList));
+						logger.debug(String.format("DataList '%s' is not created since it is not implemented.", dataList));
 					}
 				}
 			}
@@ -1035,7 +1031,6 @@ public class ProductDAOImpl implements ProductDAO {
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 		}
 	}
-
 
 	/**
 	 * Creates the allergen list.
@@ -1121,74 +1116,68 @@ public class ProductDAOImpl implements ProductDAO {
 		}
 	}
 
-
 	private void createDynamicCharachList(NodeRef listContainerNodeRef, List<DynamicCharachListItem> dynamicCharachList) {
 		if (listContainerNodeRef != null) {
 			NodeRef dynamicCharachListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
 
 			if (dynamicCharachList == null) {
-				// delete existing list
-				if (dynamicCharachListNodeRef != null){
-					nodeService.deleteNode(dynamicCharachListNodeRef);
-				}
-			} else {
+				dynamicCharachList = new ArrayList<DynamicCharachListItem>();
+			}
 
-				// dynamicCharach list, create if needed
-				if (dynamicCharachListNodeRef == null) {
-					dynamicCharachListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
-				}
+			// dynamicCharach list, create if needed
+			if (dynamicCharachListNodeRef == null) {
+				dynamicCharachListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+			}
 
-				List<NodeRef> listItemNodeRefs = listItems(dynamicCharachListNodeRef, BeCPGModel.TYPE_DYNAMICCHARCATLIST);
+			List<NodeRef> listItemNodeRefs = listItems(dynamicCharachListNodeRef, BeCPGModel.TYPE_DYNAMICCHARCATLIST);
 
-				// create temp list
-				List<NodeRef> dynamicCharachListToTreat = new ArrayList<NodeRef>();
-				for (DynamicCharachListItem dynamicCharachListDataItem : dynamicCharachList) {
-					if(dynamicCharachListDataItem.getNodeRef()!=null){
-						dynamicCharachListToTreat.add(dynamicCharachListDataItem.getNodeRef());
-					}
-				}
-				List<NodeRef> filesToUpdate  = new ArrayList<NodeRef>();
-				// remove deleted nodes
-				for (NodeRef listItemNodeRef : listItemNodeRefs) {
-
-					if (!dynamicCharachListToTreat.contains(listItemNodeRef)) {
-						// delete
-						nodeService.deleteNode(listItemNodeRef);
-					} else {
-						filesToUpdate.add(listItemNodeRef);
-					}
-				}
-
-				// update or create nodes
-				int sortIndex = 1;
-				for (DynamicCharachListItem dynamicCharachListDataItem : dynamicCharachList) {
-					NodeRef linkNodeRef = dynamicCharachListDataItem.getNodeRef();
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE, dynamicCharachListDataItem.getName());
-					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_FORMULA, dynamicCharachListDataItem.getFormula());
-					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE, (Serializable) dynamicCharachListDataItem.getValue());
-					properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_GROUP_COLOR,  dynamicCharachListDataItem.getGroupColor());
-					properties.put(BeCPGModel.PROP_SORT, sortIndex);
-					sortIndex++;
-
-					if (filesToUpdate.contains(linkNodeRef)) {
-						// update
-						nodeService.setProperties(linkNodeRef, properties);
-					} else {
-						// create
-						ChildAssociationRef childAssocRef = nodeService.createNode(dynamicCharachListNodeRef, ContentModel.ASSOC_CONTAINS,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(dynamicCharachListDataItem.getName()))
-								, BeCPGModel.TYPE_DYNAMICCHARCATLIST, properties);
-						linkNodeRef = childAssocRef.getChildRef();
-					}
-
+			// create temp list
+			List<NodeRef> dynamicCharachListToTreat = new ArrayList<NodeRef>();
+			for (DynamicCharachListItem dynamicCharachListDataItem : dynamicCharachList) {
+				if (dynamicCharachListDataItem.getNodeRef() != null) {
+					dynamicCharachListToTreat.add(dynamicCharachListDataItem.getNodeRef());
 				}
 			}
+			List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
+			// remove deleted nodes
+			for (NodeRef listItemNodeRef : listItemNodeRefs) {
+
+				if (!dynamicCharachListToTreat.contains(listItemNodeRef)) {
+					// delete
+					nodeService.deleteNode(listItemNodeRef);
+				} else {
+					filesToUpdate.add(listItemNodeRef);
+				}
+			}
+
+			// update or create nodes
+			int sortIndex = 1;
+			for (DynamicCharachListItem dynamicCharachListDataItem : dynamicCharachList) {
+				NodeRef linkNodeRef = dynamicCharachListDataItem.getNodeRef();
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE, dynamicCharachListDataItem.getName());
+				properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_FORMULA, dynamicCharachListDataItem.getFormula());
+				properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE, (Serializable) dynamicCharachListDataItem.getValue());
+				properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_GROUP_COLOR, dynamicCharachListDataItem.getGroupColor());
+				properties.put(BeCPGModel.PROP_SORT, sortIndex);
+				sortIndex++;
+
+				if (filesToUpdate.contains(linkNodeRef)) {
+					// update
+					nodeService.setProperties(linkNodeRef, properties);
+				} else {
+					// create
+					ChildAssociationRef childAssocRef = nodeService.createNode(dynamicCharachListNodeRef, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(dynamicCharachListDataItem.getName())),
+							BeCPGModel.TYPE_DYNAMICCHARCATLIST, properties);
+					linkNodeRef = childAssocRef.getChildRef();
+				}
+
+			}
 		}
-		
+
 	}
-	
-	
+
 	/**
 	 * Create/Update composition.
 	 * 
@@ -2150,61 +2139,59 @@ public class ProductDAOImpl implements ProductDAO {
 	private void createReqCtrlList(NodeRef listContainerNodeRef, List<ReqCtrlListDataItem> reqCtrlList) throws InvalidTypeException {
 
 		if (listContainerNodeRef != null) {
-			NodeRef reqCtrlListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
 
 			if (reqCtrlList == null) {
-				// delete existing list
-//				if (reqCtrlListNodeRef != null)
-//					nodeService.deleteNode(reqCtrlListNodeRef);
-			} else {
+				reqCtrlList = new ArrayList<ReqCtrlListDataItem>();
+			}
 
-				// reqCtrl list, create if needed
-				if (reqCtrlListNodeRef == null) {
-					reqCtrlListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+			NodeRef reqCtrlListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+
+			// reqCtrl list, create if needed
+			if (reqCtrlListNodeRef == null) {
+				reqCtrlListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+			}
+
+			List<NodeRef> listItemNodeRefs = listItems(reqCtrlListNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
+
+			// create temp list
+			List<NodeRef> reqCtrlListToTreat = new ArrayList<NodeRef>();
+			for (ReqCtrlListDataItem reqCtrlListDataItem : reqCtrlList) {
+				reqCtrlListToTreat.add(reqCtrlListDataItem.getNodeRef());
+			}
+
+			// remove deleted nodes
+			List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
+			for (NodeRef listItemNodeRef : listItemNodeRefs) {
+
+				if (!reqCtrlListToTreat.contains(listItemNodeRef)) {
+					// delete
+					nodeService.deleteNode(listItemNodeRef);
+				} else {
+					filesToUpdate.add(listItemNodeRef);
+				}
+			}
+
+			// update or create nodes
+			NodeRef linkNodeRef = null;
+			for (ReqCtrlListDataItem reqCtrlListDataItem : reqCtrlList) {
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(BeCPGModel.PROP_RCL_REQ_TYPE, reqCtrlListDataItem.getReqType());
+				properties.put(BeCPGModel.PROP_RCL_REQ_MESSAGE, reqCtrlListDataItem.getReqMessage());
+
+				if (filesToUpdate.contains(reqCtrlListDataItem.getNodeRef())) {
+					// update
+					linkNodeRef = reqCtrlListDataItem.getNodeRef();
+					nodeService.setProperties(linkNodeRef, properties);
+				} else {
+					// create
+					ChildAssociationRef childAssocRef = nodeService.createNode(reqCtrlListNodeRef, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), BeCPGModel.TYPE_REQCTRLLIST, properties);
+					linkNodeRef = childAssocRef.getChildRef();
+					reqCtrlListDataItem.setNodeRef(childAssocRef.getChildRef());
 				}
 
-				List<NodeRef> listItemNodeRefs = listItems(reqCtrlListNodeRef, BeCPGModel.TYPE_REQCTRLLIST);
-
-				// create temp list
-				List<NodeRef> reqCtrlListToTreat = new ArrayList<NodeRef>();
-				for (ReqCtrlListDataItem reqCtrlListDataItem : reqCtrlList) {
-					reqCtrlListToTreat.add(reqCtrlListDataItem.getNodeRef());
-				}
-
-				// remove deleted nodes
-				List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
-				for (NodeRef listItemNodeRef : listItemNodeRefs) {
-
-					if (!reqCtrlListToTreat.contains(listItemNodeRef)) {
-						// delete
-						nodeService.deleteNode(listItemNodeRef);
-					} else {
-						filesToUpdate.add(listItemNodeRef);
-					}
-				}
-
-				// update or create nodes
-				NodeRef linkNodeRef = null;
-				for (ReqCtrlListDataItem reqCtrlListDataItem : reqCtrlList) {
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-					properties.put(BeCPGModel.PROP_RCL_REQ_TYPE, reqCtrlListDataItem.getReqType());
-					properties.put(BeCPGModel.PROP_RCL_REQ_MESSAGE, reqCtrlListDataItem.getReqMessage());
-
-					if (filesToUpdate.contains(reqCtrlListDataItem.getNodeRef())) {
-						// update
-						linkNodeRef = reqCtrlListDataItem.getNodeRef();
-						nodeService.setProperties(linkNodeRef, properties);
-					} else {
-						// create
-						ChildAssociationRef childAssocRef = nodeService.createNode(reqCtrlListNodeRef, ContentModel.ASSOC_CONTAINS,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), BeCPGModel.TYPE_REQCTRLLIST, properties);
-						linkNodeRef = childAssocRef.getChildRef();
-						reqCtrlListDataItem.setNodeRef(childAssocRef.getChildRef());
-					}
-
-					// sources
-					associationService.update(linkNodeRef, BeCPGModel.ASSOC_RCL_SOURCES, reqCtrlListDataItem.getSources());
-				}
+				// sources
+				associationService.update(linkNodeRef, BeCPGModel.ASSOC_RCL_SOURCES, reqCtrlListDataItem.getSources());
 			}
 		}
 	}

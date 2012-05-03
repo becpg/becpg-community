@@ -201,128 +201,130 @@
 			               this.widgets.dialog.hideEvent.subscribe(this.onCancel, null, this);
 			               Dom.addClass(this.editorId, "spel-editor");
 
+			               var instance = this;
+			               
+			               this._renderFormula(true, function() {
 
-			               this._renderFormula(true);
+			               	instance.widgets.editor = new YAHOO.widget.SimpleEditor(instance.id + "-editor-textarea", {
+				                  width : '100%',
+				                  animate : false,
+				                  dompath : false,
+				                  focusAtStart : false,
+				                  toolbar : {
+				                     titlebar : instance.msg("form.control.spel-editor.editor.title"),
+				                     buttons : [ {
+				                        group : 'operators',
+				                        label : instance.msg("form.control.spel-editor.editor.operators"),
+				                        buttons : [ {
+				                           type : 'push',
+				                           label : '+',
+				                           value : 'operator'
+				                        }, {
+				                           type : 'push',
+				                           label : '-',
+				                           value : 'operator'
+				                        }, {
+				                           type : 'push',
+				                           label : '/',
+				                           value : 'operator'
+				                        }, {
+				                           type : 'push',
+				                           label : '*',
+				                           value : 'operator'
+				                        }, {
+				                           type : 'push',
+				                           label : '%',
+				                           value : 'operator'
+				                        }, {
+				                           type : 'push',
+				                           label : '>',
+				                           value : 'operator'
+				                        }, {
+				                           type : 'push',
+				                           label : '<',
+				                           value : 'operator'
+				                        }, {
+				                           type : 'push',
+				                           label : '==',
+				                           value : 'operator'
+				                        }, {
+				                           type : 'push',
+				                           label : '!=',
+				                           value : 'operator'
+				                        }, {
+				                           type : 'push',
+				                           label : 'and',
+				                           value : 'operator'
+				                        }, {
+				                           type : 'push',
+				                           label : 'or',
+				                           value : 'operator'
+				                        }, {
+				                           type : 'push',
+				                           label : '=',
+				                           value : 'operator'
+				                        }
 
-			               this.widgets.editor = new YAHOO.widget.SimpleEditor(this.id+"-editor-textarea", {
-			                  width : '100%',
-			                  animate : false,
-			                  dompath : false,
-			                  focusAtStart : false,
-			                  toolbar : {
-			                     titlebar : this.msg("form.control.spel-editor.editor.title"),
-			                     buttons : [ {
-			                        group : 'operators',
-			                        label : this.msg("form.control.spel-editor.editor.operators"),
-			                        buttons : [ {
-			                           type : 'push',
-			                           label : '+',
-			                           value : 'operator'
-			                        }, {
-			                           type : 'push',
-			                           label : '-',
-			                           value : 'operator'
-			                        }, {
-			                           type : 'push',
-			                           label : '/',
-			                           value : 'operator'
-			                        }, {
-			                           type : 'push',
-			                           label : '*',
-			                           value : 'operator'
-			                        }, {
-			                           type : 'push',
-			                           label : '%',
-			                           value : 'operator'
-			                        }, {
-			                           type : 'push',
-			                           label : '>',
-			                           value : 'operator'
-			                        }, {
-			                           type : 'push',
-			                           label : '<',
-			                           value : 'operator'
-			                        }, {
-			                           type : 'push',
-			                           label : '==',
-			                           value : 'operator'
-			                        }, {
-			                           type : 'push',
-			                           label : '!=',
-			                           value : 'operator'
-			                        }, {
-			                           type : 'push',
-			                           label : 'and',
-			                           value : 'operator'
-			                        }, {
-			                           type : 'push',
-			                           label : 'or',
-			                           value : 'operator'
-			                        }, {
-			                           type : 'push',
-			                           label : '=',
-			                           value : 'operator'
-			                        }
+				                        ]
+				                     }, {
+					                     type : 'separator'
+				                     }, {
+				                        group : 'functions',
+				                        label : instance.msg("form.control.spel-editor.editor.functions"),
+				                        buttons : [
 
-			                        ]
-			                     }, {
-				                     type : 'separator'
-			                     }, {
-			                        group : 'functions',
-			                        label : this.msg("form.control.spel-editor.editor.functions"),
-			                        buttons : [
+				                        {
+				                           type : 'select',
+				                           label : instance.msg("form.control.spel-editor.editor.choose"),
+				                           value : 'function',
+				                           menu : [ {
+					                           text : '$Value instanceof T($Type)'
+				                           }, {
+					                           text : '$String matches "$Regexp"'
+				                           }, {
+					                           text : 'T($type)'
+				                           }, {
+					                           text : '$false ? $trueExp : $falseExp'
+				                           }, {
+					                           text : '$list.?[$property == $value]'
+				                           }, {
+					                           text : '$list.![$property]'
+				                           } ]
+				                        }
 
-			                        {
-			                           type : 'select',
-			                           label : this.msg("form.control.spel-editor.editor.choose"),
-			                           value : 'function',
-			                           menu : [ {
-				                           text : '$Value instanceof T($Type)'
-			                           }, {
-				                           text : '$String matches "$Regexp"'
-			                           }, {
-				                           text : 'T($type)'
-			                           }, {
-				                           text : '$false ? $trueExp : $falseExp'
-			                           }, {
-				                           text : '$list.?[$property == $value]'
-			                           }, {
-				                           text : '$list.![$property]'
-			                           } ]
-			                        }
+				                        ]
 
-			                        ]
+				                     } ]
+				                  }
+				               });
 
-			                     } ]
-			                  }
+			               	instance.widgets.editor.on('toolbarLoaded', function() {
+
+					               var me = this;
+					               this.toolbar.on('operatorClick', function(o) {
+						               me.execCommand('inserthtml', " " + o.button.label + " ");
+
+					               });
+
+					               this.toolbar.on('functionClick', function(o) {
+						               me.execCommand('inserthtml', " " + o.button.value + " ");
+					               });
+
+				               }, instance.widgets.editor, true);
+
+			               	instance.widgets.editor.on('editorContentLoaded', function() {
+					               var link = this._getDoc().createElement('link');
+					               link.rel = "stylesheet";
+					               link.type = "text/css";
+					               link.href = Alfresco.constants.URL_RESCONTEXT + "/modules/spel-editor/spel-editor.css";
+					               this._getDoc().getElementsByTagName('head')[0].appendChild(link);
+				               }, instance.widgets.editor, true);
+
+			               	instance.widgets.editor.render();
+
+			               	instance._enableActions();
 			               });
-
-			               this.widgets.editor.on('toolbarLoaded', function() {
-
-				               var me = this;
-				               this.toolbar.on('operatorClick', function(o) {
-					               me.execCommand('inserthtml', " " + o.button.label + " ");
-
-				               });
-
-				               this.toolbar.on('functionClick', function(o) {
-					               me.execCommand('inserthtml', " " + o.button.value + " ");
-				               });
-
-			               }, this.widgets.editor, true);
-
-			               this.widgets.editor.on('editorContentLoaded', function() {
-				               var link = this._getDoc().createElement('link');
-				               link.rel = "stylesheet";
-				               link.type = "text/css";
-				               link.href = Alfresco.constants.URL_RESCONTEXT + "/modules/spel-editor/spel-editor.css";
-				               this._getDoc().getElementsByTagName('head')[0].appendChild(link);
-			               }, this.widgets.editor, true);
-
-			              
-			               this.widgets.editor.render();
 		               }
-
 	               },
 
 	               /**
@@ -368,7 +370,7 @@
 		               this.widgets.escapeListener.enable();
 		               this.widgets.editor.focus();
 		               this.widgets.dialog.show();
-		              
+
 		               this._createResizer();
 		               this._fireRefreshEvent();
 
@@ -396,52 +398,52 @@
 
 		               this.widgets.editor.saveHTML();
 
-		               this.options.currentValue =  this._cleanHtml(Dom.get(this.id + "-editor-textarea").value);
+		               this.options.currentValue = this._cleanHtml(Dom.get(this.id + "-editor-textarea").value);
 		               Dom.get(this.currentValueHtmlId).value = this.options.currentValue;
-		            	YAHOO.Bubbling.fire("mandatoryControlValueUpdated", Dom.get(this.currentValueHtmlId));
-		               
-		               
-		              this._renderFormula(false);
-	               },
-	               
-	               _cleanHtml : function(html){
+		               YAHOO.Bubbling.fire("mandatoryControlValueUpdated", Dom.get(this.currentValueHtmlId));
 
-		              return html.replace(new RegExp("<div id=\"","g"),"").replace(new RegExp("\" class=.*?</div>","g"),"");
-		               
+		               this._renderFormula(false);
 	               },
-	               
-	               _createHtml : function(text,items){
 
-	               	var item;
-	               	if(items!=null && text.indexOf("workspace://")>0){
-	                     for ( var i = 0, il = items.length; i < il; i++) {
-		                     item = items[i];
-		                     text = text.replace(item.nodeRef, "<div id='"+item.nodeRef+"' class='spel-editor-nodeRef' >"+item.name+"</div>");
-	
-	                     }
+	               _cleanHtml : function(html) {
+
+		               return html.replace(new RegExp("<div id=\"", "g"), "").replace(
+		                     new RegExp("\" class=.*?</div>", "g"), "");
+
+	               },
+
+	               _createHtml : function(text, items) {
+
+		               var item;
+		               if (items != null && text.indexOf("workspace://") > 0) {
+			               for ( var i = 0, il = items.length; i < il; i++) {
+				               item = items[i];
+				               text = text.replace(item.nodeRef, "<div id='" + item.nodeRef
+				                     + "' class='spel-editor-nodeRef' >" + item.name + "</div>");
+
+			               }
 		               }
-	               	
-                     return text;
-                     
-	               },
-	               _createBrush : function(text,items){
 
-	               	var item;
-	               	if(items!=null){
-	                     for ( var i = 0, il = items.length; i < il; i++) {
-		                     item = items[i];
-		                     text = text.replace(item.nodeRef, item.name);
-	
-	                     }
-	               	}
-                     
-                     for(var i = 0; i <text.length ;i+=50 ){
-                     	text+="<br/>\n";
-                     }
-                     
-                     return "<br/>\n"+text;
+		               return text;
+
 	               },
-	               
+	               _createBrush : function(text, items) {
+
+		               var item;
+		               if (items != null) {
+			               for ( var i = 0, il = items.length; i < il; i++) {
+				               item = items[i];
+				               text = text.replace(item.nodeRef, item.name);
+
+			               }
+		               }
+
+		               for ( var i = 0; i < text.length; i += 50) {
+			               text += "<br/>\n";
+		               }
+
+		               return "<br/>\n" + text;
+	               },
 
 	               /**
 						 * Editor Cancel button click handler
@@ -485,8 +487,6 @@
 						 * Disconnected event handlers for inter-component event
 						 * notification
 						 */
-
-	             
 
 	               /**
 						 * Parent changed event handler
@@ -548,56 +548,61 @@
 						 * @method _renderFormula
 						 * @private
 						 */
-	               _renderFormula : function SpelEditor__renderFormula(updateTextArea) {
+	               _renderFormula : function SpelEditor__renderFormula(updateTextArea, callback) {
 
-	               	  SyntaxHighlighter.config.stripBrs = true;
+		               SyntaxHighlighter.config.stripBrs = true;
 
-			               var items = [], instance = this, regexp = new RegExp("(workspace://SpacesStore/[a-z0-9A-Z\-]*)","gi"), brush = new SyntaxHighlighter.brushes.JScript();
-			               brush.init({
-				               toolbar : false
+		               var items = [], instance = this, regexp = new RegExp("(workspace://SpacesStore/[a-z0-9A-Z\-]*)",
+		                     "gi"), brush = new SyntaxHighlighter.brushes.JScript();
+		               brush.init({
+			               toolbar : false
+		               });
+
+		               items = this.options.currentValue.match(regexp);
+
+		               function itemsCallBack(response) {
+			               var items = null;
+			               if (response != null) {
+				               items = response.json.data.items;
+			               }
+			               Dom.get(instance.id + "-currentValueDisplay").innerHTML = brush.getHtml(instance._createBrush(
+			                     instance.options.currentValue, items));
+			               if (updateTextArea) {
+				               Dom.get(instance.id + "-editor-textarea").value = instance._createHtml(
+				                     instance.options.currentValue, items);
+			               }
+			               if (callback) {
+				               callback.call();
+			               }
+
+		               }
+
+		               if (items != null && items.length > 0) {
+
+			               Alfresco.util.Ajax.jsonRequest({
+			                  url : Alfresco.constants.PROXY_URI + "api/forms/picker/items",
+			                  method : "POST",
+			                  dataObj : {
+				                  items : items
+			                  },
+			                  successCallback : {
+			                     fn : itemsCallBack,
+			                     scope : this
+			                  },
+			                  failureCallback : {
+			                     fn : function(response) {
+
+				                     Alfresco.util.PopupManager.displayMessage({
+					                     text : this.msg("message.spel-editor.failure")
+				                     });
+			                     },
+			                     scope : this
+			                  }
 			               });
 
-			               items = this.options.currentValue.match(regexp);
-			               
-			               function itemsCallBack(response){
-			                  var items = null;
-			                  if(response!=null){
-			                  	items = response.json.data.items;
-			                  }
-		                    Dom.get(instance.id + "-currentValueDisplay").innerHTML = brush.getHtml(instance._createBrush(instance.options.currentValue,items));
-		                    if(updateTextArea){
-		                  	  Dom.get(instance.id + "-editor-textarea").value = instance._createHtml(instance.options.currentValue, items);
-		                    }
-			               }
-
-			               if (items != null && items.length > 0) {
-
-				               Alfresco.util.Ajax.jsonRequest({
-				                  url : Alfresco.constants.PROXY_URI + "api/forms/picker/items",
-				                  method : "POST",
-				                  dataObj : {
-					                  items : items
-				                  },
-				                  successCallback : {
-				                     fn : itemsCallBack,
-				                     scope : this
-				                  },
-				                  failureCallback : {
-				                     fn : function(response) {
-
-					                     Alfresco.util.PopupManager.displayMessage({
-						                     text : this.msg("message.spel-editor.failure")
-					                     });
-				                     },
-				                     scope : this
-				                  }
-				               });
-
-			               } else {
-			               	itemsCallBack();
-			               }
-
-			               this._enableActions();
+		               } else {
+			               itemsCallBack();
+		               }
 
 	               },
 
@@ -653,65 +658,55 @@
 		                  correctScope : true
 		               }, "keydown").enable();
 
-		               var parentTypes = [
-		                     {
-		                        name : "product",
-		                        type : "fr.becpg.repo.product.data.ProductData",
-		                        template : "{item1}"
-		                     },
-		                     {
-		                        name : "costList",
-		                        type : "bcpg:cost",
-		                        subType : "fr.becpg.repo.product.data.productList.CostListDataItem",
-		                        template : "costList.?[cost.toString() == '{item1}' ][0].{item2}"
-		                     },
-		                     {
-		                        name : "nutList",
-		                        type : "bcpg:nut",
-		                        subType : "fr.becpg.repo.product.data.productList.NutListDataItem",
-		                        template : "nutList.?[nut.toString() == '{item1}' ][0].{item2}"
-		                     },
-		                     {
-		                        name : "allergenList",
-		                        type : "bcpg:allergen",
-		                        subType : "fr.becpg.repo.product.data.productList.AllergenListDataItem",
-		                        template : "allergenList.?[allergen.toString() == '{item1}' ][0].{item2}"
-		                     },
-		                     {
-		                        name : "ingList",
-		                        type : "bcpg:ing",
-		                        subType : "fr.becpg.repo.product.data.productList.IngListDataItem",
-		                        template : "ingList.?[ing.toString() == '{item1}' ][0].{item2}"
-		                     },
-		                     {
-		                        name : "organoList",
-		                        type : "bcpg:organo",
-		                        subType : "fr.becpg.repo.product.data.productList.OrganoListDataItem",
-		                        template : "organoList.?[organo.toString() == '{item1}' ][0].{item2}"
-		                     },
-		                     {
-		                        name : "physicoChemList",
-		                        type : "bcpg:physicoChem",
-		                        subType : "fr.becpg.repo.product.data.productList.PhysicoChemListDataItem",
-		                        template : "physicoChemList.?[physicoChem.toString() == '{item1}' ][0].{item2}"
-		                     },
-		                     {
-		                        name : "microbioList",
-		                        type : "bcpg:microbio",
-		                        subType : "fr.becpg.repo.product.data.productList.MicrobioListDataItem",
-		                        template : "microbioList.?[microBio.toString() == '{item1}' ][0].{item2}"
-		                     },
-		                     {
-		                        name : "processList",
-		                        type : "bcpg:resourceProduct",
-		                        subType : "fr.becpg.repo.product.data.productList.ProcessListDataItem",
-		                        template : "processList.?[plResource.toString() == '{item1}' ][0].{item2}"
-		                     },
-		                     {
-		                        name : "variables",
-		                        type : "bcpg:dynamicCharachList",
-		                        template : "dynamicCharachList.?[nodeRef.toString() == '{item1}' ][0].value"
-		                     } ];
+		               var parentTypes = [ {
+		                  name : "product",
+		                  type : "fr.becpg.repo.product.data.ProductData",
+		                  template : "{item1}"
+		               }, {
+		                  name : "costList",
+		                  type : "bcpg:cost",
+		                  subType : "fr.becpg.repo.product.data.productList.CostListDataItem",
+		                  template : "costList.?[cost.toString() == '{item1}' ][0].{item2}"
+		               }, {
+		                  name : "nutList",
+		                  type : "bcpg:nut",
+		                  subType : "fr.becpg.repo.product.data.productList.NutListDataItem",
+		                  template : "nutList.?[nut.toString() == '{item1}' ][0].{item2}"
+		               }, {
+		                  name : "allergenList",
+		                  type : "bcpg:allergen",
+		                  subType : "fr.becpg.repo.product.data.productList.AllergenListDataItem",
+		                  template : "allergenList.?[allergen.toString() == '{item1}' ][0].{item2}"
+		               }, {
+		                  name : "ingList",
+		                  type : "bcpg:ing",
+		                  subType : "fr.becpg.repo.product.data.productList.IngListDataItem",
+		                  template : "ingList.?[ing.toString() == '{item1}' ][0].{item2}"
+		               }, {
+		                  name : "organoList",
+		                  type : "bcpg:organo",
+		                  subType : "fr.becpg.repo.product.data.productList.OrganoListDataItem",
+		                  template : "organoList.?[organo.toString() == '{item1}' ][0].{item2}"
+		               }, {
+		                  name : "physicoChemList",
+		                  type : "bcpg:physicoChem",
+		                  subType : "fr.becpg.repo.product.data.productList.PhysicoChemListDataItem",
+		                  template : "physicoChemList.?[physicoChem.toString() == '{item1}' ][0].{item2}"
+		               }, {
+		                  name : "microbioList",
+		                  type : "bcpg:microbio",
+		                  subType : "fr.becpg.repo.product.data.productList.MicrobioListDataItem",
+		                  template : "microbioList.?[microBio.toString() == '{item1}' ][0].{item2}"
+		               }, {
+		                  name : "processList",
+		                  type : "bcpg:resourceProduct",
+		                  subType : "fr.becpg.repo.product.data.productList.ProcessListDataItem",
+		                  template : "processList.?[plResource.toString() == '{item1}' ][0].{item2}"
+		               }, {
+		                  name : "variables",
+		                  type : "bcpg:dynamicCharachList",
+		                  template : "dynamicCharachList.?[nodeRef.toString() == '{item1}' ][0].value"
+		               } ];
 
 		               var menuItem, item, label;
 		               for ( var i = 0; i < parentTypes.length; i++) {
@@ -810,15 +805,16 @@
 						               request : me._buildParamUrl(me.options.selectedParentType.subType)
 					               });
 				               } else {
-				               	
-				                  var text = Lang.substitute(
-					                     me.options.selectedParentType.template, {
-					                        item1 : data.value
-					                     });
-					               
-					               
-					               me.widgets.editor.execCommand('inserthtml', " "+me._createHtml(text,[{name : me.options.currentItem.name,nodeRef :  me.options.currentItem.value } ]));
-				               	
+
+					               var text = Lang.substitute(me.options.selectedParentType.template, {
+						               item1 : data.value
+					               });
+
+					               me.widgets.editor.execCommand('inserthtml', " " + me._createHtml(text, [ {
+					                  name : me.options.currentItem.name,
+					                  nodeRef : me.options.currentItem.value
+					               } ]));
+
 				               }
 			               });
 
@@ -829,15 +825,16 @@
 				               me.widgets.dataTable2.onEventSelectRow(oArgs);
 
 				               var data = oRecord.getData();
-				               
-				               var text = Lang.substitute(
-				                     me.options.selectedParentType.template, {
-				                        item1 : me.options.currentItem.value,
-				                        item2 : data.value
-				                     });
-				               
-				               
-				               me.widgets.editor.execCommand('inserthtml', " "+me._createHtml(text,[{name : me.options.currentItem.name,nodeRef :  me.options.currentItem.value } ]));
+
+				               var text = Lang.substitute(me.options.selectedParentType.template, {
+				                  item1 : me.options.currentItem.value,
+				                  item2 : data.value
+				               });
+
+				               me.widgets.editor.execCommand('inserthtml', " " + me._createHtml(text, [ {
+				                  name : me.options.currentItem.name,
+				                  nodeRef : me.options.currentItem.value
+				               } ]));
 
 			               });
 

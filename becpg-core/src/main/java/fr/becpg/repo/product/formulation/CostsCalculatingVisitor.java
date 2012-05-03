@@ -104,7 +104,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		 * Calculate the costs of the compoList
 		 */
 		
-		if(formulatedProduct.getCompoList() != null){						
+		if(formulatedProduct.getCompoList() != null && formulatedProduct.getCompoList().size()>0){						
 		
 			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList());		
 			compositeCosts = visitCompoListChildren(formulatedProduct, composite);
@@ -113,7 +113,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		/*
 		 * Calculate the costs of the packaging
 		 */
-		if(formulatedProduct.getPackagingList() != null){
+		if(formulatedProduct.getPackagingList() != null && formulatedProduct.getPackagingList().size()>0){
 			for(PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList()){
 				Double qty = FormulationHelper.getQty(packagingListDataItem);
 				visitCostLeaf(packagingListDataItem.getProduct(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());
@@ -123,7 +123,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		/*
 		 * Calculate the costs of the processes
 		 */
-		if(formulatedProduct.getProcessList() != null){
+		if(formulatedProduct.getProcessList() != null && formulatedProduct.getProcessList().size()>0){
 			Double stepDuration = null;
 			
 			for(ProcessListDataItem processListDataItem : formulatedProduct.getProcessList()){
@@ -144,7 +144,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		
 		//Take in account net weight, calculate cost details perc
 		if(formulatedProduct.getUnit() != ProductUnit.P){
-			Double qty = formulatedProduct.getQty();
+			Double qty = formulatedProduct.getQty()!=null ? formulatedProduct.getQty() : 0d;
 			Double density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity() : DEFAULT_DENSITY; //density is null => 1
 			Double netWeight = qty * density;
 

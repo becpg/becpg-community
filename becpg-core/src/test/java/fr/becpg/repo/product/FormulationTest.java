@@ -906,7 +906,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				}
 				//ing: ing2 - qty: 19.512196 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
 				if(ingListDataItem.getIng().equals(ing2)){
-					assertEquals("ing2.getQtyPerc() == 34.782608, actual values: " + trace, df.format(19.512196), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals("ing2.getQtyPerc() == 34.782608, actual values: " + trace, df.format(19.512195), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing2.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing2.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing2.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -916,7 +916,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				}
 				//ing: ing3 - qty: 58.536587 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 				if(ingListDataItem.getIng().equals(ing3)){
-					assertEquals("ing3.getQtyPerc() == 52.173912, actual values: " + trace, df.format(58.536587), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals("ing3.getQtyPerc() == 58.536585, actual values: " + trace, df.format(58.53658536585366), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -924,9 +924,9 @@ public class FormulationTest extends RepoBaseTestCase {
 					assertEquals("ing3.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.isGMO().booleanValue());
 					assertEquals("ing3.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.isIonized().booleanValue());
 				}
-				//ing: ing4 - qty: 14.634147 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
+				//ing: ing4 - qty: 14.634146 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 				if(ingListDataItem.getIng().equals(ing4)){
-					assertEquals("ing3.getQtyPerc() == 52.173912, actual values: " + trace, df.format(14.634147), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals("ing3.getQtyPerc() == 14.634146, actual values: " + trace, df.format(14.634146), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -1014,9 +1014,9 @@ public class FormulationTest extends RepoBaseTestCase {
 					assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.isGMO().booleanValue() == true);
 					assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.isIonized().booleanValue() == true);
 				}
-				//ing: ing2 - qty: 19.512196 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
+				//ing: ing2 - qty: 19.512195 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
 				if(ingListDataItem.getIng().equals(ing2)){
-					assertEquals("ing2.getQtyPerc() == 34.782608, actual values: " + trace, df.format(19.512196), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals("ing2.getQtyPerc() == 19.512195, actual values: " + trace, df.format(19.512195), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing2.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing2.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing2.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -1024,9 +1024,9 @@ public class FormulationTest extends RepoBaseTestCase {
 					assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false, ingListDataItem.isGMO().booleanValue());
 					assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false, ingListDataItem.isIonized().booleanValue());
 				}
-				//ing: ing3 - qty: 58.536587 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
+				//ing: ing3 - qty: 58.536585 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 				if(ingListDataItem.getIng().equals(ing3)){
-					assertEquals("ing3.getQtyPerc() == 52.173912, actual values: " + trace, df.format(58.536587), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals("ing3.getQtyPerc() == 58.536585, actual values: " + trace, df.format(58.536585), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -1036,7 +1036,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				}
 				//ing: ing4 - qty: 14.634147 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 				if(ingListDataItem.getIng().equals(ing4)){
-					assertEquals("ing3.getQtyPerc() == 52.173912, actual values: " + trace, df.format(14.634147), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals("ing3.getQtyPerc() == 14.634147, actual values: " + trace, df.format(14.634147), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -1577,7 +1577,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					assertEquals("check allergenList", 4, rmData1.getAllergenList().size());
 					assertNotNull("check ingList", rmData1.getIngList());
 					assertEquals("check ingList", 2, rmData1.getIngList().size());
-					assertNull("check compo list", rmData1.getCompoList());
+					assertEquals("check compo list", 0 ,rmData1.getCompoList().size());
 					
 					// formulation
 					productService.formulate(rawMaterial1NodeRef);
@@ -1644,7 +1644,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
-						assertEquals("cost1.getValue() == 4.7425003, actual values: " + trace, 4.7425003d, costListDataItem.getValue());
+						assertEquals("cost1.getValue() == 4.7425003, actual values: " + trace, 4.7425d, costListDataItem.getValue());
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
 					}
 					if(costListDataItem.getCost().equals(cost2)){
@@ -1744,9 +1744,9 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.isGMO().booleanValue() == true);
 						assertEquals("ing1.isIonized().booleanValue() is false, actual values: " + trace, true, ingListDataItem.isIonized().booleanValue() == true);
 					}
-					//ing2 - qty: 34.782608 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
+					//ing2 - qty: 34.782609 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
 					if(ingListDataItem.getIng().equals(ing2)){
-						assertEquals("ing2.getQtyPerc() == 34.782608, actual values: " + trace, df.format(34.782608), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals("ing2.getQtyPerc() == 34.782609, actual values: " + trace, df.format(34.782609), df.format(ingListDataItem.getQtyPerc()));
 						assertEquals("ing2.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 						assertEquals("ing2.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 						assertEquals("ing2.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -1754,9 +1754,9 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false, ingListDataItem.isGMO().booleanValue());
 						assertEquals("ing2.isIonized().booleanValue() is false, actual values: " + trace, false, ingListDataItem.isIonized().booleanValue());
 					}
-					//ing3 - qty: 52.173912 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
+					//ing3 - qty: 52.173913 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 					if(ingListDataItem.getIng().equals(ing3)){
-						assertEquals("ing3.getQtyPerc() == 52.173912, actual values: " + trace, df.format(52.173912), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals("ing3.getQtyPerc() == 52.173913, actual values: " + trace, df.format(52.173913), df.format(ingListDataItem.getQtyPerc()));
 						assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 						assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 						assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					

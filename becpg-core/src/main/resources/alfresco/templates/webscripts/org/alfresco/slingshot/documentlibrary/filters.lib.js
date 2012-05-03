@@ -21,7 +21,7 @@ var Filters =
       "fm:forum",
       "fm:topic",
       "fm:post",
-      "dl:dataListItem" //beCPG
+      "bcpg:entityListItem" //beCPG
    ],
 
    /**
