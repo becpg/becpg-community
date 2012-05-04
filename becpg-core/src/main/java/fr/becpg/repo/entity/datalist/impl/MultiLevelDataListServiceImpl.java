@@ -39,7 +39,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
+
 	public void setAdvSearchService(AdvSearchService advSearchService) {
 		this.advSearchService = advSearchService;
 	}
@@ -77,7 +77,13 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 					for (NodeRef childRef : childRefs) {
 						entityNodeRef = getEntityNodeRef(childRef);
 						if (entityNodeRef != null) {
-							MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef, currDepth + 1, maxDepthLevel);
+							Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
+							if (logger.isDebugEnabled()) {
+								logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
+										+ nodeService.getProperty(entityNodeRef, org.alfresco.model.ContentModel.PROP_NAME));
+							}
+
+							MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef, currDepth + (depthLevel != null ? depthLevel : 1), maxDepthLevel);
 							ret.getTree().put(childRef, tmp);
 						}
 					}
