@@ -1,13 +1,6 @@
-function main()
-{
-   // nodeRef input
-   var storeType = url.templateArgs.store_type,
-      storeId = url.templateArgs.store_id,
-      id = url.templateArgs.id,
-      nodeRef = storeType + "://" + storeId + "/" + id;
-   
-   destNodeRef = args.destNodeRef;
-   
+
+function swap(nodeRef,destNodeRef){
+	 
    var node1 = search.findNode(nodeRef);
    if (node1 === null)
    {
@@ -31,6 +24,31 @@ function main()
    	node1.properties["bcpg:sort"] = model.destSort; 
    	node2.save();
    	node1.save();
+   }
+	
+}
+
+
+
+function main()
+{
+   // nodeRef input
+   var storeType = url.templateArgs.store_type,
+      storeId = url.templateArgs.store_id,
+      id = url.templateArgs.id,
+      nodeRef = storeType + "://" + storeId + "/" + id;
+   
+   var dir = args.dir!=null ?args.dir : "up"
+   
+   var destNodeRefs = args.destNodeRef.split(",");
+   
+   
+   if(dir!="up"){
+   	destNodeRefs.reverse();
+   }
+   
+   for(var i = 0; i< destNodeRefs.length;i++){
+   	swap(nodeRef,destNodeRefs[i]);
    }
    
 }

@@ -13,6 +13,7 @@ VALUES;Produits laitiers et entremets - Fromages blancs ultrafrais;Produits lait
 VALUES;Produits laitiers et entremets - Desserts lactés frais ou UHT;Produits laitiers et entremets;Desserts lactés frais ou UHT
 VALUES;Produits laitiers et entremets - Entremets et glaces;Produits laitiers et entremets;Entremets et glaces
 VALUES;Produits laitiers et entremets - Succédanés du lait;Produits laitiers et entremets;Succédanés du lait
+VALUES;Produits laitiers et entremets - Produits laitiers;Produits laitiers et entremets;Produits laitiers
 VALUES;Fromages - Fromages affinés à pâte molle;Fromages;Fromages affinés à pâte molle
 VALUES;Fromages - Fromages affinés à pâte persillée;Fromages;Fromages affinés à pâte persillée
 VALUES;Fromages - Fromages affinés à pâte ferme;Fromages;Fromages affinés à pâte ferme
@@ -56,6 +57,9 @@ VALUES;Viandes - Viandes;Viandes;Viandes
 VALUES;Volailles - Volailles;Volailles;Volailles
 VALUES;Abats - Abats;Abats;Abats
 VALUES;Charcuteries et salaisons - Charcuteries et salaisons;Charcuteries et salaisons;Charcuteries et salaisons
+VALUES;Charcuteries et salaisons - Charcuteries de porc;Charcuteries et salaisons;Charcuteries de porc
+VALUES;Charcuteries et salaisons - Charcuteries de poulet;Charcuteries et salaisons;Charcuteries de poulet
+VALUES;Charcuteries et salaisons - Charcuteries de dinde;Charcuteries et salaisons;Charcuteries de dinde
 VALUES;Fruits, Légumes - Légumes;Fruits, Légumes;Légumes
 VALUES;Fruits, Légumes - Légumes secs;Fruits, Légumes;Légumes secs
 VALUES;Fruits, Légumes - Pommes de terre et apparentés;Fruits, Légumes;Pommes de terre et apparentés
@@ -106,6 +110,8 @@ VALUES;Produits japonais - Brochette;Produits japonais;Brochette
 VALUES;Produits japonais - Sushi;Produits japonais;Sushi
 VALUES;Produits japonais - Sashimi;Produits japonais;Sashimi
 VALUES;Menu - kits - Sushis;Menu - kits;Sushis
+VALUES;Quiches - Quiches individuelles;Quiches;Quiches individuelles
+
 ;;;
 ;;;
 ;;;
