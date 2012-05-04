@@ -2527,13 +2527,24 @@
 				<appearance>
 					<field id="bcpg:allergenListAllergen">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
-						</control>
-					</field>
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>			
 					<field id="bcpg:allergenListVoluntary" />
 					<field id="bcpg:allergenListInVoluntary" />
-					<field id="bcpg:allergenListVolSources" />
-					<field id="bcpg:allergenListInVolSources" />
+					<field id="bcpg:allergenListVolSources" >
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:content?classNames=bcpg:product,bcpg:ing
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:allergenListInVolSources" >
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:content?classNames=bcpg:product,bcpg:ing
+							</control-param>
+						</control>
+					</field>
 					<!-- <field id="bcpg:allergenListPlants"/> -->
 				</appearance>
 			</form>
@@ -2568,14 +2579,26 @@
 				</field-visibility>
 				
 				<appearance>
-					<field id="bcpg:allergenListAllergen">
+					<field id="bcpg:allergenListAllergen" >
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:allergenListVoluntary" />
 					<field id="bcpg:allergenListInVoluntary" />
-					<field id="bcpg:allergenListVolSources" />
-					<field id="bcpg:allergenListInVolSources" />
+					<field id="bcpg:allergenListVolSources" >
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:content?classNames=bcpg:product,bcpg:ing
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:allergenListInVolSources" >
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:content?classNames=bcpg:product,bcpg:ing
+							</control-param>
+						</control>
+					</field>
 					<!-- <field id="bcpg:allergenListPlants"/> -->
 				</appearance>
 			</form>
