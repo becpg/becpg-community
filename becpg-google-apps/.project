@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-  <name>becpg-core</name>
-  <comment>BeCPG repository. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
-  <projects>
-    <project>becpg-controls-core</project>
-    <project>becpg-designer-core</project>
-    <project>becpg-report</project>
-  </projects>
+  <name>becpg-google-apps</name>
+  <comment>beCPG google apps integration. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+  <projects/>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
