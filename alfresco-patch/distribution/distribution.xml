@@ -13,15 +13,15 @@
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
-   <fileSets>
-    <fileSet>
+  <fileSets>
+   <fileSet>
       <directory>${basedir}/src/main/bin</directory>
       <outputDirectory>/</outputDirectory>
       <fileMode>0755</fileMode>
       <filtered>true</filtered>
     </fileSet>
-     <fileSet>
-      <directory>../alfresco-patch/_diff</directory>
+    <fileSet>
+      <directory>../_diff</directory>
       <outputDirectory>/dist</outputDirectory>
     </fileSet>
   </fileSets>

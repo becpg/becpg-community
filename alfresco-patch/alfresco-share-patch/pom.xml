@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>fr.becpg</groupId>
+		<artifactId>alfresco-patch</artifactId>
+		<version>1.4.0</version>
+		<relativePath>../</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>fr.becpg</groupId>
+	<artifactId>alfresco-share-patch</artifactId>
+	<packaging>amp</packaging>
+	<name>Alfresco share patch</name>
+	<version>1.4.0</version>
+	<description>beCPG AMP patch for share UI</description>
+	<build>
+		<plugins>
+			<!-- native2ascii -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>native2ascii-maven-plugin</artifactId>
+				<version>1.0-alpha-1</version>
+				<inherited>true</inherited>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>native2ascii</goal>
+						</goals>
+						<configuration>
+							<encoding>8859_1</encoding>
+							<dest>target/classes/alfresco/module/${project.artifactId}/config</dest>
+							<src>src/main/config</src>
+							<includes>
+								**/*.properties
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- YUI Compressor -->
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>yuicompressor-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compress</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<jswarn>false</jswarn>
+					<excludes>
+						<exclude>**/*.get.js</exclude>
+						<exclude>**/*.lib.js</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+
+		</plugins>
+		<!-- Copies and filters resources in build folder so maven-amp-plugin can 
+			pick them up -->
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>**README-*</exclude>
+				</excludes>
+			</resource>
+			<!-- Copies and filters AMP config in the proper package 'alfresco/module/becpg.becpg-share' 
+				so to enforce full module naming single sourcing from POM properties -->
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/config</directory>
+				<targetPath>alfresco/module/${project.artifactId}/config</targetPath>
+				<excludes>
+					<exclude>**README-*</exclude>
+					<exclude>**/*.properties</exclude>
+				</excludes>
+			</resource>
+
+			<!-- Copies web files -->
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/web</directory>
+				<targetPath>alfresco/module/${project.artifactId}/web</targetPath>
+				<excludes>
+					<exclude>**README-*</exclude>
+				</excludes>
+			</resource>
+			<!-- The file-mapping.properties is simply ignored by the plugin when 
+				assembling the AMP file -->
+			<resource>
+				<filtering>true</filtering>
+				<directory>${basedir}</directory>
+				<includes>
+					<include>file-mapping.properties</include>
+				</includes>
+				<targetPath>../${project.artifactId}-${project.version}/</targetPath><!-- 
+					hack TODO bug here make amp include all target -->
+			</resource>
+		</resources>
+	</build>
+</project>

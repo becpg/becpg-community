@@ -1,92 +1,25 @@
-<?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>fr.becpg</groupId>
-    <artifactId>becpg-parent</artifactId>
-    <version>0.1.4</version>
-    <relativePath>../</relativePath>
-  </parent>
-  <artifactId>alfresco-repository</artifactId>
-  <version>${alfresco.version}</version>
-  <name>alfresco-patch-repository</name>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-  <dependencies>
-     <!-- alfresco -->
-     <dependency>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<artifactId>alfresco-sdk</artifactId>
-		<version>${alfresco.version}</version>
-		<type>pom</type>
-		<scope>provided</scope>
-		<exclusions>
-			<exclusion>
-					<groupId>org.alfresco.sdk</groupId>
-					<artifactId>alfresco-repository-${alfresco.version}</artifactId>
-			</exclusion>
-		</exclusions>
-	</dependency>
-     
-     
-    <dependency>
-		<groupId>org.alfresco.sdk</groupId>
-		<artifactId>alfresco-repository-${alfresco.version}</artifactId>
-		<version>${alfresco.version}</version>
-		<classifier>community</classifier>
-	</dependency>
+		<version>1.4.0</version>
+		<relativePath>../</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>fr.becpg</groupId>
+	<artifactId>alfresco-patch</artifactId>
+	<packaging>pom</packaging>
+	<name>Alfresco patches</name>
+	<version>1.4.0</version>
+	<description>beCPG patches for Alfresco</description>
+	
+	<modules>
+	      <module>alfresco-repository-patch</module> 
+	      <module>alfresco-core-patch</module>	
+	      <module>alfresco-share-patch</module>	
+	      <module>distribution</module>
+	</modules>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  <build>
-   <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>1.5</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-          <!--   <finalName>alfresco-repository-${alfresco.version}</finalName>
-            <shadedArtifactAttached>true</shadedArtifactAttached> -->
-            <!--   <shadedArtifactId>alfresco-repository</shadedArtifactId> -->
-            
-              <artifactSet>
-                <includes>
-                	<include>org.alfresco.sdk:alfresco-repository-${alfresco.version}</include>
-                </includes>
-              </artifactSet>
-              <filters>
-	              <filter>
-	              
-	                  <artifact>org.alfresco.sdk:*</artifact>
-	                  <excludes>
-	                    <exclude>org/alfresco/repo/node/db/DbNodeServiceImpl**</exclude>
-	                    <exclude>org/alfresco/repo/forms/processor/node/ContentModelFormProcessor**</exclude>
-	                    <exclude>org/alfresco/repo/forms/processor/node/AbstractAssocCommand**</exclude>
-	                    <exclude>org/alfresco/repo/forms/processor/node/AddAssocCommand**</exclude>
-	                    <exclude>org/alfresco/repo/forms/processor/node/AddChildAssocCommand**</exclude>
-	                    <exclude>org/alfresco/repo/forms/processor/node/RemoveAssocCommand**</exclude>
-	                    <exclude>org/alfresco/repo/forms/processor/node/RemoveChildAssocCommand**</exclude>
-	                    <exclude>org/alfresco/repo/jscript/ScriptNode**</exclude>
-	                  </excludes>
-	                </filter>
-                </filters>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>      
-    </plugins>
-    </build>
 </project>

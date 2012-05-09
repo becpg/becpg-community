@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>alfresco-patch</artifactId>
+		<groupId>fr.becpg</groupId>
+		<version>1.4.0</version>
+		<relativePath>../</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>alfresco-core-patch</artifactId>
+	<packaging>amp</packaging>
+	<name>Alfresco core Patch</name>
+	<description>AMP patch for Alfresco core</description>
+	<dependencies>
+
+		<!-- patch -->
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>alfresco-repository</artifactId>
+			<version>${alfresco.version}</version>
+			<type>jar</type>
+			<exclusions>
+				<exclusion>
+					<groupId>org.alfresco.sdk</groupId>
+					<artifactId>alfresco-repository-${alfresco.version}</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- alfresco -->
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>alfresco-sdk</artifactId>
+			<version>${alfresco.version}</version>
+			<type>pom</type>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.alfresco.sdk</groupId>
+					<artifactId>alfresco-repository-${alfresco.version}</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<!-- native2ascii -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>native2ascii-maven-plugin</artifactId>
+				<version>1.0-alpha-1</version>
+				<inherited>true</inherited>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>native2ascii</goal>
+						</goals>
+						<configuration>
+							<encoding>8859_1</encoding>
+							<dest>target/classes/alfresco/module/${project.artifactId}</dest>
+							<src>src/main/config</src>
+							<includes>
+								**/*.properties
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+	</build>
+
+
+	<groupId>fr.becpg</groupId>
+	<version>1.4.0</version>
+</project>

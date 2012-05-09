@@ -125,8 +125,7 @@
 					<show id="cm:modifier" for-mode="view" />
 					<show id="cm:modified" for-mode="view" />
 
-					<!-- GS1 -->
-					
+					<!-- GS1 -->				
 					<show id="gs1:height" for-mode="edit"/>
 					<show id="gs1:width" for-mode="edit"/>
 					<show id="gs1:depth" for-mode="edit"/>

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. ./common.sh
+. ../common.sh
 
 if [ $# -ne 1 ]
    then
@@ -23,20 +23,8 @@ echo "Deploy becpg"
 echo "**********************************************************"
 
 cd $BECPG_ROOT/distribution/target
-tar xvfz becpg-*-distribution.tar.gz
-cd becpg-*
+tar xvfz alfresco-patch-*-distribution.tar.gz
+cd alfresco-patch-*
 ./deploy.sh $SERVER
 
-read -p "Deploy olap server? (y/n)" ans 
-if [ "$ans" = "y" ]; then
-	echo "**********************************************************"
-	echo "Deploy OLAP Cube"
-	echo "**********************************************************"
-	cd $BECPG_OLAP_ROOT/target
-	tar xvfz becpg-olap-*-distribution.tar.gz
-	cd becpg-olap-*
-	./deploy.sh $SERVER
-	cd $BECPG_OLAP_ROOT/target
-	rm -rf becpg-olap-*
-fi
 

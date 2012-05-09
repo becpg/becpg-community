@@ -2,17 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
 		<version>1.4.0</version>
 		<relativePath>../</relativePath>
+		<artifactId>alfresco-patch</artifactId>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<version>1.4.0</version>
 	<groupId>fr.becpg</groupId>
-	<artifactId>distribution</artifactId>
+	<artifactId>alfresco-patch-distribution</artifactId>
 	<packaging>pom</packaging>
-	<name>beCPG distribution</name>
+	<name>alfresco patch distribution</name>
+	<version>1.4.0</version>
 	<properties>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 	</properties>
@@ -29,54 +29,6 @@
 			<type>amp</type>
 			<version>1.4.0</version>
 		</dependency>
-	   <dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-controls-core</artifactId>
-			<type>amp</type>
-			<version>1.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-controls-core</artifactId>
-			<type>amp</type>
-			<version>1.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-controls-share</artifactId>
-			<type>amp</type>
-			<version>1.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-designer-core</artifactId>
-			<type>amp</type>
-			<version>1.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-designer-share</artifactId>
-			<type>amp</type>
-			<version>1.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-core</artifactId>
-			<type>amp</type>
-			<version>1.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-share</artifactId>
-			<type>amp</type>
-			<version>1.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-report</artifactId>
-			<type>war</type>
-			<version>1.4.0</version>
-		</dependency>
 	</dependencies>
 	<build>
 	<plugins>
@@ -91,7 +43,7 @@
 	            <goal>single</goal>
 	          </goals>
 	          <configuration>
-	            <finalName>becpg-${maven.build.timestamp}</finalName>
+	            <finalName>alfresco-patch-${maven.build.timestamp}</finalName>
 	            <descriptors>
 	              <descriptor>distribution.xml</descriptor>
 	            </descriptors>
@@ -101,4 +53,5 @@
 	    </plugin>
     </plugins>
 	</build>
+	
 </project>

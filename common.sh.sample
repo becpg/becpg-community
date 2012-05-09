@@ -9,7 +9,7 @@ export BECPG_ROOT=`pwd`
 export BOOTSTRAP_HOME=$BECPG_ROOT/becpg-bootstrap
 
 
-export BECPG_VERSION=0.1.4
+export BECPG_VERSION=1.4.0
 export BECPG_OLAP_ROOT=$BECPG_ROOT/becpg-olap
 
 export TC_DIR=/opt/becpg-tc-server
