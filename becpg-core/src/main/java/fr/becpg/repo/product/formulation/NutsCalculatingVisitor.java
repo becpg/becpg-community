@@ -123,10 +123,11 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		}
 		Double density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
 		Double netWeight = qty * density;
+		
 		for(NutListDataItem n : nutMap.values()){
 			
-			if(n.getValue() != null)
-				n.setValue(n.getValue() / netWeight);			
+			if(n.getValue() != null && netWeight != 0.0d)
+				n.setValue(n.getValue() / netWeight);	
 		}
 		
 		// manual listItem
