@@ -866,7 +866,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:product</class>
+						<class>cm:content</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -877,7 +877,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:product</class>
+						<class>cm:content</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
