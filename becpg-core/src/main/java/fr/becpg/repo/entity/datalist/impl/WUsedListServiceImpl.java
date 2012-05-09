@@ -1,9 +1,7 @@
 package fr.becpg.repo.entity.datalist.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -31,11 +29,10 @@ public class WUsedListServiceImpl implements WUsedListService {
 	@Override
 	public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel) {
 		
-		Map<NodeRef, MultiLevelListData> wUsedLoadedList = new HashMap<NodeRef, MultiLevelListData>();
-		return getWUsedEntity(entityNodeRef, associationName, 1, maxDepthLevel, wUsedLoadedList);
+		return getWUsedEntity(entityNodeRef, associationName, 0, maxDepthLevel);
 	}
 
-	private MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int depthLevel, int maxDepthLevel, Map<NodeRef, MultiLevelListData> wUsedLoadedList){
+	private MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int depthLevel, int maxDepthLevel){
 		
 		MultiLevelListData ret = new MultiLevelListData(entityNodeRef, depthLevel);
 		
@@ -61,23 +58,15 @@ public class WUsedListServiceImpl implements WUsedListService {
 						//we don't display history version and simulation entities
 						if(!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION) && !nodeService.hasAspect(rootNodeRef, ECMModel.ASPECT_SIMULATION_ENTITY)){
 							
-							MultiLevelListData MultiLevelListData = null;
-							
+							MultiLevelListData multiLevelListData = null;						
 							// next level
-							if(maxDepthLevel < 0 || depthLevel < maxDepthLevel ){
-																
-								if(wUsedLoadedList.containsKey(rootNodeRef)){
-									MultiLevelListData = wUsedLoadedList.get(rootNodeRef);
-								}
-								else{
-									MultiLevelListData = getWUsedEntity(rootNodeRef, associationName, depthLevel+1, maxDepthLevel, wUsedLoadedList);
-								}																
+							if(maxDepthLevel < 0 || depthLevel+1 < maxDepthLevel ){
+								multiLevelListData = getWUsedEntity(rootNodeRef, associationName, depthLevel+1, maxDepthLevel);																
 							}	
 							else{
-								MultiLevelListData = new MultiLevelListData(rootNodeRef, depthLevel);
+								multiLevelListData = new MultiLevelListData(rootNodeRef, depthLevel+1);
 							}
-							
-							ret.getTree().put(nodeRef, MultiLevelListData);
+							ret.getTree().put(nodeRef, multiLevelListData);
 						}
 					}
 				}
