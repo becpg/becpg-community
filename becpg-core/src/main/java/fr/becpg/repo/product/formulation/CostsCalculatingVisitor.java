@@ -150,8 +150,9 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 
 			
 			for(CostListDataItem c : compositeCosts.getCostMap().values()){		
-				if(c.getValue() != null){
+				if(netWeight != 0.0d){
 					c.setValue(c.getValue() / netWeight);
+					c.setMaxi(c.getMaxi() / netWeight);
 				}
 			}
 			
@@ -176,17 +177,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			else{
 				c.setPercentage(0d);
 			}					
-		}
-		
-		//keep maxi
-		if(formulatedProduct.getCostList() != null){
-			for(CostListDataItem c : formulatedProduct.getCostList()){
-				CostListDataItem cToUpdate = compositeCosts.getCostMap().get(c.getCost());
-				if(cToUpdate != null){
-					cToUpdate.setMaxi(c.getMaxi());
-				}
-			}
-		}
+		}			
 		
 		//manual listItem
 		List<CostListDataItem> costList = getListToUpdate(formulatedProduct.getNodeRef(), compositeCosts.getCostMap());
@@ -200,10 +191,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		formulatedProduct.setCostDetailsList(costDetailsListSorted);	
 		
 		//profitability		
-		formulatedProduct = calculateProfitability(formulatedProduct);		
-		
-		// check requirements
-		formulatedProduct = checkReqCtrl(formulatedProduct);
+		formulatedProduct = calculateProfitability(formulatedProduct);				
 		
 		return formulatedProduct;
 	}
@@ -234,31 +222,46 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				/*
 				 *  costs
 				 */
-				for(Map.Entry<NodeRef, CostListDataItem> kv : childrenCosts.getCostMap().entrySet()){						
+				for(Map.Entry<NodeRef, CostListDataItem> kv : childrenCosts.getCostMap().entrySet()){																
 					
-					// valueToAdd
-					Double valueToAdd = kv.getValue().getValue();					
+					CostListDataItem newCostListDataItem = compositeCosts.getCostMap().get(kv.getKey());
+					if(newCostListDataItem == null){
+												
+						newCostListDataItem = new CostListDataItem(kv.getValue());
+						newCostListDataItem.setValue(0d); // initialize
+						newCostListDataItem.setMaxi(0d); // initialize
+						compositeCosts.getCostMap().put(kv.getKey(), newCostListDataItem);
+					}
+					
+					// calculate value
+					Double newValue = newCostListDataItem.getValue();
+					Double valueToAdd = kv.getValue().getValue();	
+					
 					if(valueToAdd != null){
 						valueToAdd = valueToAdd * (1 + lossPerc / 100);
 					}
 					
-					CostListDataItem newCostListDataItem = compositeCosts.getCostMap().get(kv.getKey());
-					if(newCostListDataItem == null){
-						newCostListDataItem = kv.getValue();
-						newCostListDataItem.setValue(0d); // initialize
-						compositeCosts.getCostMap().put(kv.getKey(), newCostListDataItem);
-					}
-					
-					// calculate newValue
-					Double newValue = newCostListDataItem.getValue();
 					if(newValue != null){
 						newValue += valueToAdd;
 					}
 					else{
 						newValue = valueToAdd;
-					}
+					}					
+					newCostListDataItem.setValue(newValue);										
 					
-					newCostListDataItem.setValue(newValue);
+					// calculate maxi
+					Double maxi = newCostListDataItem.getMaxi();
+					Double maxiToAdd = kv.getValue().getMaxi();					
+					if(maxiToAdd != null){
+						maxiToAdd = maxiToAdd * (1 + lossPerc / 100);
+					}
+					if(maxi != null){
+						maxi += maxiToAdd;
+					}
+					else{
+						maxi = maxiToAdd;
+					}					
+					newCostListDataItem.setMaxi(maxi);					
 				}
 				
 				/*
@@ -295,7 +298,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 				CompoListDataItem compoListDataItem = component.getData();
 				Double qty = FormulationHelper.getQty(compoListDataItem);
 				qty = qty * (1 + lossPerc / 100);
-				visitCostLeaf(compoListDataItem.getProduct(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());				
+				visitCostLeaf(compoListDataItem.getProduct(), qty, formulatedProduct.getUnit(), compositeCosts.getCostMap(), compositeCosts.getCostDetailsMap());
 			}			
 		}	
 		
@@ -342,20 +345,39 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			}				
 			
 			//Calculate value
-			Double costValue = newCostListDataItem.getValue();			
-			Double value = costListDataItem.getValue();
-			
-			
-			if(qty != null && value != null){
-				Double valueToAdd = qty * value;
-				if(costValue != null){
-					costValue += valueToAdd;
-				}
-				else{
-					costValue = valueToAdd;
-				}	
-			}			
-			newCostListDataItem.setValue(costValue);
+			if(qty != null){
+				
+				//value
+				Double newValue = newCostListDataItem.getValue();			
+				Double value = costListDataItem.getValue();
+				
+				
+				if(qty != null && value != null){
+					Double valueToAdd = qty * value;
+					if(newValue != null){
+						newValue += valueToAdd;
+					}
+					else{
+						newValue = valueToAdd;
+					}	
+				}			
+				newCostListDataItem.setValue(newValue);				
+				
+				//maxi
+				Double newMaxi = newCostListDataItem.getMaxi();			
+				Double maxi = costListDataItem.getMaxi() != null ? costListDataItem.getMaxi() : costListDataItem.getValue();
+				
+				if(qty != null && maxi != null){
+					Double maxiToAdd = qty * maxi;
+					if(newMaxi != null){
+						newMaxi += maxiToAdd;
+					}
+					else{
+						newMaxi = maxiToAdd;
+					}	
+				}			
+				newCostListDataItem.setMaxi(newMaxi);
+			}
 		}
 		
 		/*
@@ -604,24 +626,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 		
 		return formulatedProduct;
 	}
-	
-	private ProductData checkReqCtrl(ProductData formulatedProduct){
 		
-		for(CostListDataItem c : formulatedProduct.getCostList()){
-			
-			if(c.getValue() != null && c.getMaxi() != null && c.getValue() > c.getMaxi()){
-				
-				String msg = I18NUtil.getMessage(MSG_REQ_NOT_RESPECTED, 
-						nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME),
-						c.getValue(),
-						c.getMaxi());
-				formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, msg, null));
-			}
-		}
-		
-		return formulatedProduct;
-	}
-	
 	private class CompositeCosts{
 		
 		private Map<NodeRef, CostListDataItem> costMap = new HashMap<NodeRef, CostListDataItem>(); 
