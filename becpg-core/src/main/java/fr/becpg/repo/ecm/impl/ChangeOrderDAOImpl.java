@@ -392,9 +392,7 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 		    						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), 
 		    						ECMModel.TYPE_CHANGEUNITLIST, 
 		    						properties).getChildRef();		    					    					    			
-		    		}			    			
-		    		
-		    		logger.debug("###cul, sourceItem: " + nodeService.getProperty(changeUnitListDataItem.getSourceItem(), ContentModel.PROP_NAME));
+		    		}			    					    		
 		    		
 		    		associationService.update(changeUnitNodeRef, ECMModel.ASSOC_CUL_SOURCE_ITEM, changeUnitListDataItem.getSourceItem());
 		    		associationService.update(changeUnitNodeRef, ECMModel.ASSOC_CUL_TARGET_ITEM, changeUnitListDataItem.getTargetItem());

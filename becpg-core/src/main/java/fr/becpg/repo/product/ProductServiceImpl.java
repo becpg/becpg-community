@@ -206,11 +206,13 @@ public class ProductServiceImpl implements ProductService {
     		dataLists.add(BeCPGModel.TYPE_NUTLIST); // TODO keep min/max
     		dataLists.add(BeCPGModel.TYPE_COSTLIST); // TODO keep max
     		dataLists.add(BeCPGModel.TYPE_DYNAMICCHARCATLIST); 
-        	ProductData productData = productDAO.find(productNodeRef, dataLists);     	    
-        	
+        	ProductData productData = productDAO.find(productNodeRef, dataLists); 
+        	        	
         	// do the formulation if the product has a composition, or packaging list defined
-        	if(productData.getCompoList() != null || productData.getPackagingList() != null || productData.getProcessList() != null){
-        		
+        	if((productData.getCompoList() != null && productData.getCompoList().size() != 0) || 
+        			(productData.getPackagingList() != null && productData.getPackagingList().size() != 0) || 
+        			(productData.getProcessList() != null && productData.getProcessList().size() != 0)){
+        	
         		productData = formulate(productData);
     	    	    	
     	    	dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
@@ -239,7 +241,9 @@ public class ProductServiceImpl implements ProductService {
     public ProductData formulate(ProductData productData) throws FormulateException {
     	try {  	    
         	// do the formulation if the product has a composition, or packaging list or process list defined
-        	if(productData.getCompoList() != null || productData.getPackagingList() != null || productData.getProcessList() != null){
+    		if((productData.getCompoList() != null && productData.getCompoList().size() != 0) || 
+        			(productData.getPackagingList() != null && productData.getPackagingList().size() != 0) || 
+        			(productData.getProcessList() != null && productData.getProcessList().size() != 0)){
         		
         		productData.setReqCtrlList(new ArrayList<ReqCtrlListDataItem>());
         		

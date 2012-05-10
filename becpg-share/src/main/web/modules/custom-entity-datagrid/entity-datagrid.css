@@ -109,7 +109,7 @@
 
 .datagrid span.packagingKit-Valid {
 	background: url(../../components/images/products/valid-16.png),
-		url(../ ../ components/ images/ products/ packagingKit-16.png);
+		url(../../components/images/products/packagingKit-16.png);
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;

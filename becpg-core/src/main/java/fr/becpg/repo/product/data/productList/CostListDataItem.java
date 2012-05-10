@@ -158,5 +158,11 @@ public class CostListDataItem implements IManualDataItem{
 		setCost(c.getCost());
 		setIsManual(c.getIsManual());
 	}
+
+	@Override
+	public String toString() {
+		return "CostListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", maxi=" + maxi
+				+ ", cost=" + cost + ", isManual=" + isManual + "]";
+	}
 }
 

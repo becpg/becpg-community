@@ -355,13 +355,13 @@ public class FormulationTest extends RepoBaseTestCase {
 			rawMaterial1.setLegalName("Legal Raw material 1");
 			//costList
 			List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 3d, "€/kg", null, cost1, false));
-			costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false));
+			costList.add(new CostListDataItem(null, 3d, "€/kg", 3.1d, cost1, false));
+			costList.add(new CostListDataItem(null, 2d, "€/kg", 2.1d, cost2, false));
 			rawMaterial1.setCostList(costList);
 			//nutList
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
+			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut1, false));
+			nutList.add(new NutListDataItem(null, 2d, "g/100g", 1.5d, 2.2d, "Groupe 1", nut2, false));
 			rawMaterial1.setNutList(nutList);
 			//allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
@@ -390,13 +390,13 @@ public class FormulationTest extends RepoBaseTestCase {
 			rawMaterial2.setLegalName("Legal Raw material 2");
 			//costList
 			costList = new ArrayList<CostListDataItem>();
-			costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false));
-			costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false));
+			costList.add(new CostListDataItem(null, 1d, "€/kg", 2.1d, cost1, false));
+			costList.add(new CostListDataItem(null, 2d, "€/kg", 2.2d, cost2, false));
 			rawMaterial2.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
+			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.8d, 1.1d, "Groupe 1", nut1, false));
+			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut2, false));
 			rawMaterial2.setNutList(nutList);
 			//allergenList
 			allergenList = new ArrayList<AllergenListDataItem>();
@@ -431,8 +431,8 @@ public class FormulationTest extends RepoBaseTestCase {
 			rawMaterial3.setCostList(costList);
 			//nutList
 			nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
+			nutList.add(new NutListDataItem(null, 1d, "g/100g", null, null, "Groupe 1", nut1, false));
+			nutList.add(new NutListDataItem(null, 2d, "g/100g", null, null, "Groupe 1", nut2, false));
 			rawMaterial3.setNutList(nutList);
 			//allergenList
 			allergenList = new ArrayList<AllergenListDataItem>();
@@ -999,10 +999,11 @@ public class FormulationTest extends RepoBaseTestCase {
 				for(NodeRef bioOrigin : ingListDataItem.getBioOrigin())
 					bioOriginsText += nodeService.getProperty(bioOrigin, ContentModel.PROP_NAME) + ", ";
 				
-				String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.isGMO().booleanValue() + " is ionized: " + ingListDataItem.isIonized().booleanValue();
+				DecimalFormat df = new DecimalFormat("0.000000");
+				String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + df.format(ingListDataItem.getQtyPerc()) + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.isGMO().booleanValue() + " is ionized: " + ingListDataItem.isIonized().booleanValue();
 				logger.debug(trace);
 				
-				DecimalFormat df = new DecimalFormat("0.000000");
+				
 				
 				//ing: ing1 - qty: 7.3170733 - geo origins: geoOrigin1,  - bio origins: bioOrigin1,  is gmo: true
 				if(ingListDataItem.getIng().equals(ing1)){
@@ -1036,7 +1037,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				}
 				//ing: ing4 - qty: 14.634147 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 				if(ingListDataItem.getIng().equals(ing4)){
-					assertEquals("ing3.getQtyPerc() == 14.634147, actual values: " + trace, df.format(14.634147), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals("ing3.getQtyPerc() == 14.634147, actual values: " + trace, df.format(14.63414634), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -1368,8 +1369,8 @@ public class FormulationTest extends RepoBaseTestCase {
 				SFProduct1.setUnit(ProductUnit.kg);
 				SFProduct1.setQty(1d);
 				List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
-				compoList1.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList1.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));					
+				compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList1.add(new CompoListDataItem(null, 1, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));					
 				SFProduct1.setCompoList(compoList1);
 				NodeRef SFProduct1NodeRef = productDAO.create(folderNodeRef, SFProduct1, dataLists);
 				
@@ -1380,8 +1381,8 @@ public class FormulationTest extends RepoBaseTestCase {
 				SFProduct2.setUnit(ProductUnit.kg);
 				SFProduct2.setQty(1d);
 				List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-				compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));					
+				compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));					
 				SFProduct2.setCompoList(compoList2);
 				NodeRef SFProduct2NodeRef = productDAO.create(folderNodeRef, SFProduct2, dataLists);
 						
@@ -1592,7 +1593,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					assertEquals("check allergenList", 4, rmData1.getAllergenList().size());
 					assertNotNull("check ingList", rmData1.getIngList());
 					assertEquals("check ingList", 2, rmData1.getIngList().size());
-					assertNull("check compo list", rmData1.getCompoList());
+					assertEquals("check compo list", 0, rmData1.getCompoList().size());
 					
 					return null;
 
@@ -2101,11 +2102,11 @@ public class FormulationTest extends RepoBaseTestCase {
 	   }
 	
 	/**
-	 * Test formulate product, that has cost and nut requirements defined
+	 * Test formulate product, that has cost and nut mini/maxi defined
 	 *
 	 * @throws Exception the exception
 	 */
-	public void testFormulationWithCostAndNutRequirements() throws Exception{
+	public void testFormulationWithCostAndNutMiniMaxi() throws Exception{
 		   
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
@@ -2135,101 +2136,191 @@ public class FormulationTest extends RepoBaseTestCase {
 				
 				/*-- Verify formulation --*/
 				logger.debug("/*-- Verify formulation --*/");
+				DecimalFormat df = new DecimalFormat("0.####");
 				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
 				
 				//costs
+				int checks = 0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - maxi: " + costListDataItem.getMaxi() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
+						assertEquals("cost1.getMaxi() == 5.15, actual values: " + trace, 5.15d, costListDataItem.getMaxi());
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+						checks++;
 					}
 					if(costListDataItem.getCost().equals(cost2)){
 						assertEquals("cost1.getValue() == 6.0, actual values: " + trace, 6.0d, costListDataItem.getValue());
+						assertEquals("cost1.getMaxi() == 6.25, actual values: " + trace, 6.25d, costListDataItem.getMaxi());
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+						checks++;
 					}
-				}				
+				}							
+				assertEquals(2, checks);
+				
 				//nuts
+				checks = 0;
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - mini: " + nutListDataItem.getMini() + " - maxi: " + nutListDataItem.getMaxi() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
 						assertEquals("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
+						assertEquals("nut1.getMini() == 2.7, actual values: " + trace, 2.7d, nutListDataItem.getMini());
+						assertEquals("nut1.getMaxi() == 3.65, actual values: " + trace, df.format(3.65d), df.format(nutListDataItem.getMaxi()));
 						assertEquals("nut1.getUnit() == kJ/100g, actual values: " + trace, "kJ/100g", nutListDataItem.getUnit());
 						assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
+						checks++;
 					}
 					if(nutListDataItem.getNut().equals(nut2)){
 						assertEquals("nut2.getValue() == 6, actual values: " + trace, 6d, nutListDataItem.getValue());
+						assertEquals("nut1.getMini() == 4.55, actual values: " + trace, 4.55d, nutListDataItem.getMini());
+						assertEquals("nut1.getMaxi() == 6.2, actual values: " + trace, 6.2d, nutListDataItem.getMaxi());
 						assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g", nutListDataItem.getUnit());
 						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
-					}
-				}
-				
-				/*
-				 * Add requirements 				
-				 */
-				
-				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					
-					if(costListDataItem.getCost().equals(cost1)){
-						costListDataItem.setMaxi(3d);
-					}
-				}				
-				//nuts
-				assertNotNull("NutList is null", formulatedProduct.getNutList());
-				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-					if(nutListDataItem.getNut().equals(nut1)){
-						nutListDataItem.setMini(3.1d);
-					}
-					if(nutListDataItem.getNut().equals(nut2)){
-						nutListDataItem.setMaxi(5d);
-					}
-				}
-				
-				productDAO.update(finishedProductNodeRef, formulatedProduct, productDictionaryService.getDataLists());
-				
-				productService.formulate(finishedProductNodeRef);
-				
-				/*
-				 * Checks requirements
-				 */
-								
-				formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
-				
-				int checks = 0;
-				for(ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()){
-					
-					logger.debug("reqCtrlList.getReqMessage(): " + reqCtrlList.getReqMessage());
-					if(reqCtrlList.getReqMessage().equals("Exigence non respectée sur le coût 'cost1'. Valeur:'4' - Max:'3'")){
-						
-						assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());						
 						checks++;
 					}
-					else if(reqCtrlList.getReqMessage().equals("Exigence non respectée sur le nutriment 'nut1'. Valeur:'3' - Min:'3,1' - Max:'null'")){
-						
-						assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
-						checks++;
-					}
-					else if(reqCtrlList.getReqMessage().equals("Exigence non respectée sur le nutriment 'nut2'. Valeur:'6' - Min:'null' - Max:'5'")){
-						
-						assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
-						checks++;
-					}
-					else{
-						checks++;
-					}
-				}				
-					
-				assertEquals(3, checks);
+				}					
+				assertEquals(2, checks);
 				
 				return null;
 
 			}},false,true);
 		   
 	   }
+	
+//	/**
+//	 * Test formulate product, that has requirements
+//	 *
+//	 * @throws Exception the exception
+//	 */
+//	public void testFormulationWithRequirements() throws Exception{
+//		   
+//	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+//			public NodeRef execute() throws Throwable {					   							
+//					
+//				Collection<QName> dataLists = productDictionaryService.getDataLists();								
+//				
+//				/*-- Create finished product --*/
+//				logger.debug("/*-- Create finished product --*/");				 
+//				FinishedProductData finishedProduct = new FinishedProductData();
+//				finishedProduct.setName("Produit fini 1");
+//				finishedProduct.setLegalName("Legal Produit fini 1");
+//				finishedProduct.setUnit(ProductUnit.kg);
+//				finishedProduct.setQty(2d);
+//				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+//				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
+//				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+//				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+//				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
+//				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+//				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+//				finishedProduct.setCompoList(compoList);
+//				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+//				
+//				/*-- Formulate product --*/
+//				logger.debug("/*-- Formulate product --*/");
+//				productService.formulate(finishedProductNodeRef);
+//				
+//				/*-- Verify formulation --*/
+//				logger.debug("/*-- Verify formulation --*/");
+//				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+//				
+//				//costs
+//				assertNotNull("CostList is null", formulatedProduct.getCostList());
+//				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
+//					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+//					logger.debug(trace);
+//					if(costListDataItem.getCost().equals(cost1)){
+//						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
+//						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+//					}
+//					if(costListDataItem.getCost().equals(cost2)){
+//						assertEquals("cost1.getValue() == 6.0, actual values: " + trace, 6.0d, costListDataItem.getValue());
+//						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+//					}
+//				}				
+//				//nuts
+//				assertNotNull("NutList is null", formulatedProduct.getNutList());
+//				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
+//					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+//					logger.debug(trace);
+//					if(nutListDataItem.getNut().equals(nut1)){
+//						assertEquals("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
+//						assertEquals("nut1.getUnit() == kJ/100g, actual values: " + trace, "kJ/100g", nutListDataItem.getUnit());
+//						assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
+//					}
+//					if(nutListDataItem.getNut().equals(nut2)){
+//						assertEquals("nut2.getValue() == 6, actual values: " + trace, 6d, nutListDataItem.getValue());
+//						assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g", nutListDataItem.getUnit());
+//						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
+//					}
+//				}
+//				
+//				/*
+//				 * Add requirements 				
+//				 */
+//				
+//				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
+//					
+//					if(costListDataItem.getCost().equals(cost1)){
+//						costListDataItem.setMaxi(3d);
+//					}
+//				}				
+//				//nuts
+//				assertNotNull("NutList is null", formulatedProduct.getNutList());
+//				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
+//					if(nutListDataItem.getNut().equals(nut1)){
+//						nutListDataItem.setMini(3.1d);
+//					}
+//					if(nutListDataItem.getNut().equals(nut2)){
+//						nutListDataItem.setMaxi(5d);
+//					}
+//				}
+//				
+//				productDAO.update(finishedProductNodeRef, formulatedProduct, productDictionaryService.getDataLists());
+//				
+//				productService.formulate(finishedProductNodeRef);
+//				
+//				/*
+//				 * Checks requirements
+//				 */
+//								
+//				formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+//				
+//				int checks = 0;
+//				for(ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()){
+//					
+//					logger.debug("reqCtrlList.getReqMessage(): " + reqCtrlList.getReqMessage());
+//					if(reqCtrlList.getReqMessage().equals("Exigence non respectée sur le coût 'cost1'. Valeur:'4' - Max:'3'")){
+//						
+//						assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());						
+//						checks++;
+//					}
+//					else if(reqCtrlList.getReqMessage().equals("Exigence non respectée sur le nutriment 'nut1'. Valeur:'3' - Min:'3,1' - Max:'null'")){
+//						
+//						assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
+//						checks++;
+//					}
+//					else if(reqCtrlList.getReqMessage().equals("Exigence non respectée sur le nutriment 'nut2'. Valeur:'6' - Min:'null' - Max:'5'")){
+//						
+//						assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
+//						checks++;
+//					}
+//					else{
+//						checks++;
+//					}
+//				}				
+//					
+//				assertEquals(3, checks);
+//				
+//				return null;
+//
+//			}},false,true);
+//		   
+//	   }
 	
 	/**
 	 * Test formulate product and check cost details

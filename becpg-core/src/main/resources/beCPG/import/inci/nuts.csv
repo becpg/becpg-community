@@ -1,0 +1,9 @@
+"PATH";"/System/Characts/Nuts";;;;;;
+"TYPE";"bcpg:nut";;;;;;
+"COLUMNS";"cm:name";"bcpg:nutUnit";"bcpg:nutType";"bcpg:nutGroup";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en"
+"VALUES";"acide laurique";"g";"Nutriment";"Autre";"acide laurique";"acide laurique";"lauric acid"
+"VALUES";"acide myristique";"g";"Nutriment";"Autre";"acide myristique";"acide myristique";"myristic acid"
+"VALUES";"acide palmitique";"g";"Nutriment";"Autre";"acide palmitique";"acide palmitique";"palmitic acid"
+"VALUES";"acide caprylique";"g";"Nutriment";"Autre";"acide caprylique";"acide caprylique";"caprylic acid"
+"VALUES";"acide caprique";"g";"Nutriment";"Autre";"acide caprique";"acide caprique";"capric acid"
+"VALUES";"acide oléique";"g";"Nutriment";"Autre";"acide oléique";"acide oléique";"oleic acid"

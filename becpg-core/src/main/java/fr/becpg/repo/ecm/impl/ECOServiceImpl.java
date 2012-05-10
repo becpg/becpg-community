@@ -145,7 +145,6 @@ public class ECOServiceImpl implements ECOService {
 					ecoData.setChangeUnitMap(new LinkedHashMap<NodeRef, ChangeUnitDataItem>());
 				}
 				
-				logger.debug("###Add cul, sourceItem: " + nodeService.getProperty(replacementListDataItem.getSourceItem(), ContentModel.PROP_NAME));
 				ecoData.getChangeUnitMap().put(replacementListDataItem.getSourceItem(), changeUnitDataItem);
 				ecoData.getWUsedList().add(new WUsedListDataItem(null, 1, null, true, null, replacementListDataItem.getSourceItem()));
 				
@@ -222,7 +221,6 @@ public class ECOServiceImpl implements ECOService {
 			
 			if(changeUnitDataItem == null){
 				
-				logger.debug("###Add cul, sourceItem: " + nodeService.getProperty(sourceItem, ContentModel.PROP_NAME));
 				changeUnitDataItem = new ChangeUnitDataItem(null, revision, null, null, Boolean.FALSE, sourceItem, null, null);
 				ecoData.getChangeUnitMap().put(sourceItem, changeUnitDataItem);
 			}

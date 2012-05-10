@@ -182,8 +182,6 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	 */
 	private void compareEntities(NodeRef entity1NodeRef, NodeRef entity2NodeRef, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap){
 		
-		logger.info("### entity1NodeRef: " + entity1NodeRef + "entity2NodeRef: " + entity2NodeRef);
-		
 		//compare entity properties		
 		compareNode(null, null, null, entity1NodeRef, entity2NodeRef, nbEntities, comparisonPosition, false, comparisonMap);
 		

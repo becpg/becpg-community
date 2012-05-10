@@ -123,10 +123,15 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		}
 		Double density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
 		Double netWeight = qty * density;
+		
 		for(NutListDataItem n : nutMap.values()){
 			
-			if(n.getValue() != null)
-				n.setValue(n.getValue() / netWeight);			
+			if(netWeight != 0.0d){
+				n.setValue(n.getValue() / netWeight);
+				n.setMini(n.getMini() / netWeight);
+				n.setMaxi(n.getMaxi() / netWeight);
+			}
+					
 		}
 		
 		// manual listItem
@@ -135,10 +140,7 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		//sort		
 		List<NutListDataItem> nutListSorted = sort(nutList); 
 
-		formulatedProduct.setNutList(nutListSorted);		
-		
-		// check requirements
-		formulatedProduct = checkReqCtrl(formulatedProduct);
+		formulatedProduct.setNutList(nutListSorted);
 				
 		return formulatedProduct;
 	}
@@ -178,27 +180,61 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 				nutMap.put(nutNodeRef, newNutListDataItem);
 			}									
 			
-			//Calculate value
-			Double newValue = newNutListDataItem.getValue();
+			//Calculate values
 			Double qty = FormulationHelper.getQty(compoListDataItem);
 			Double density = (productData.getDensity() != null) ? productData.getDensity():DEFAULT_DENSITY; //density is null => 1
-			Double value = nutListDataItem.getValue();
 			
-			if(qty != null && value != null){
-				
-				Double valueToAdd = density * qty * value;
-				if(newValue != null){
-					newValue += valueToAdd;
-				}
-				else{
-					newValue = valueToAdd;
-				}
-				
-				//logger.debug(String.format("calcul: '%s' - qty: '%f' -nutValue: '%f - valueToAdd: '%f'", productData.getName(), qty, value, valueToAdd));
-			}			
 			
-			//logger.debug(String.format("productData: '%s' - Nut: '%s' - oldValue: '%f - newValue: '%f'", productData.getName(), (String)nodeService.getProperty(nutNodeRef, ContentModel.PROP_NAME), value, newValue));
-			newNutListDataItem.setValue(newValue);
+			if(qty != null){
+				
+				// value
+				Double newValue = newNutListDataItem.getValue();
+				Double value = nutListDataItem.getValue();
+				
+				if(value != null){
+				
+					Double valueToAdd = density * qty * value;
+					if(newValue != null){
+						newValue += valueToAdd;
+					}
+					else{
+						newValue = valueToAdd;
+					}
+					newNutListDataItem.setValue(newValue);
+				}
+				
+				//mini
+				Double newMini = newNutListDataItem.getMini();
+				Double mini = nutListDataItem.getMini() != null ? nutListDataItem.getMini() : nutListDataItem.getValue();
+				
+				if(mini != null){
+				
+					Double valueToAdd = density * qty * mini;
+					if(newMini != null){
+						newMini += valueToAdd;
+					}
+					else{
+						newMini = valueToAdd;
+					}
+					newNutListDataItem.setMini(newMini);
+				}
+				
+				//maxi
+				Double newMaxi = newNutListDataItem.getMaxi();
+				Double maxi = nutListDataItem.getMaxi() != null ? nutListDataItem.getMaxi() : nutListDataItem.getValue();
+				
+				if(maxi != null){
+				
+					Double valueToAdd = density * qty * maxi;
+					if(newMaxi != null){
+						newMaxi += valueToAdd;
+					}
+					else{
+						newMaxi = valueToAdd;
+					}
+					newNutListDataItem.setMaxi(newMaxi);
+				}
+			}						
 		}
 	}
 			
@@ -303,23 +339,5 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		}
 		
 		return new ArrayList<NutListDataItem>(nutMap.values());
-	}
-	
-	private ProductData checkReqCtrl(ProductData formulatedProduct){
-		
-		for(NutListDataItem n : formulatedProduct.getNutList()){
-			
-			if(n.getValue() != null && (n.getMaxi() != null && n.getValue() > n.getMaxi() || n.getMini() != null && n.getValue() < n.getMini())){
-				
-				String msg = I18NUtil.getMessage(MSG_REQ_NOT_RESPECTED, 
-						nodeService.getProperty(n.getNut(), ContentModel.PROP_NAME),
-						n.getValue(),
-						n.getMini(),
-						n.getMaxi());
-				formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, msg, null));
-			}						
-		}
-		
-		return formulatedProduct;
-	}
+	}	
 }

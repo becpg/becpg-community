@@ -49,51 +49,65 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:ingType" type="LIST">
-			<parameter name="allowedValues">
+<!-- 		<constraint name="bcpg:ingType" type="LIST"> -->
+<!-- 			<parameter name="allowedValues"> -->
+<!-- 				<list> -->
+<!-- 					<value>Adipate</value> -->
+<!-- 					<value>Alginate</value> -->
+<!-- 					<value>Antibiotique</value> -->
+<!-- 					<value>Antioxidant</value> -->
+<!-- 					<value>Autre additif</value> -->
+<!-- 					<value>Carbonate</value> -->
+<!-- 					<value>Chlorure</value> -->
+<!-- 					<value>Cire et hydrocarbure</value> -->
+<!-- 					<value>Citrate</value> -->
+<!-- 					<value>Colorant alimentaire</value> -->
+<!-- 					<value>Conservateur</value> -->
+<!-- 					<value>Dérivé cellulosique</value> -->
+<!-- 					<value>Dérivé d'acide gras alimentaire</value> -->
+<!-- 					<value>Diphosphate</value> -->
+<!-- 					<value>Edulcorant</value> -->
+<!-- 					<value>Epaississant</value> -->
+<!-- 					<value>Exhausteur</value> -->
+<!-- 					<value>Ferrocyanure</value> -->
+<!-- 					<value>Gaz</value> -->
+<!-- 					<value>Glace</value> -->
+<!-- 					<value>Gluconate</value> -->
+<!-- 					<value>Glutamate</value> -->
+<!-- 					<value>Gomme</value> -->
+<!-- 					<value>Gomme à mâcher</value> -->
+<!-- 					<value>Gélifiant</value> -->
+<!-- 					<value>Guanylate</value> -->
+<!-- 					<value>Hydroxyde</value> -->
+<!-- 					<value>Ingrédient</value> -->
+<!-- 					<value>Inosinate</value> -->
+<!-- 					<value>Lactate</value> -->
+<!-- 					<value>Lécithine</value> -->
+<!-- 					<value>Malate</value> -->
+<!-- 					<value>Orthophosphate</value> -->
+<!-- 					<value>Phosphate</value> -->
+<!-- 					<value>Silicate</value> -->
+<!-- 					<value>Stabilisant</value> -->
+<!-- 					<value>Stearate</value> -->
+<!-- 					<value>Sulfate</value> -->
+<!-- 					<value>Tartrate</value> -->
+<!-- 					<value>Thiosulfate</value> -->
+<!-- 					<value>Triphosphate</value> -->
+<!-- 				</list> -->
+<!-- 			</parameter> -->
+<!-- 		</constraint> -->
+		<constraint name="bcpg:ingType"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-					<value>Adipate</value>
-					<value>Alginate</value>
-					<value>Antibiotique</value>
-					<value>Antioxidant</value>
-					<value>Autre additif</value>
-					<value>Carbonate</value>
-					<value>Chlorure</value>
-					<value>Cire et hydrocarbure</value>
-					<value>Citrate</value>
-					<value>Colorant alimentaire</value>
-					<value>Conservateur</value>
-					<value>Dérivé cellulosique</value>
-					<value>Dérivé d'acide gras alimentaire</value>
-					<value>Diphosphate</value>
-					<value>Edulcorant</value>
-					<value>Epaississant</value>
-					<value>Exhausteur</value>
-					<value>Ferrocyanure</value>
-					<value>Gaz</value>
-					<value>Glace</value>
-					<value>Gluconate</value>
-					<value>Glutamate</value>
-					<value>Gomme</value>
-					<value>Gomme à mâcher</value>
-					<value>Gélifiant</value>
-					<value>Guanylate</value>
-					<value>Hydroxyde</value>
-					<value>Ingrédient</value>
-					<value>Inosinate</value>
-					<value>Lactate</value>
-					<value>Lécithine</value>
-					<value>Malate</value>
-					<value>Orthophosphate</value>
-					<value>Phosphate</value>
-					<value>Silicate</value>
-					<value>Stabilisant</value>
-					<value>Stearate</value>
-					<value>Sulfate</value>
-					<value>Tartrate</value>
-					<value>Thiosulfate</value>
-					<value>Triphosphate</value>
+					<value>/System/Lists/IngTypes</value>
 				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
 			</parameter>
 		</constraint>
 		<constraint name="bcpg:nutGroup" type="LIST">
@@ -866,7 +880,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:product</class>
+						<class>cm:content</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -877,7 +891,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:product</class>
+						<class>cm:content</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
