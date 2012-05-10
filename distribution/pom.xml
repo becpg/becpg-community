@@ -91,7 +91,7 @@
 	            <goal>single</goal>
 	          </goals>
 	          <configuration>
-	            <finalName>becpg-${maven.build.timestamp}</finalName>
+	            <finalName>becpg-${maven.version}-${maven.build.timestamp}</finalName>
 	            <descriptors>
 	              <descriptor>distribution.xml</descriptor>
 	            </descriptors>

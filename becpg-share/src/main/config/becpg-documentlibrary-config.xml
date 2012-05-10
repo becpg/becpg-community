@@ -272,82 +272,60 @@
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 			</action>
 
-
-			<!-- remove existing on entity -->
-
-			<action id="document-change-type">
-				<evaluator negate="true">
-					evaluator.becpg.doclib.action.entity
-				</evaluator>
-			</action>
-
-			<action id="document-edit-offline">
-				<evaluator negate="true">
-					evaluator.becpg.doclib.action.entity
-				</evaluator>
-			</action>
-
-			<action id="document-cancel-editing">
-				<evaluator negate="true">
-					evaluator.becpg.doclib.action.entity
-				</evaluator>
-			</action>
-
-			<action id="document-upload-new-version">
-				<evaluator negate="true">
-					evaluator.becpg.doclib.action.entity
-				</evaluator>
-			</action>
-
-			<action id="document-download">
-				<evaluator negate="true">
-					evaluator.becpg.doclib.action.entity
-				</evaluator>
-			</action>
-
-			<action id="document-view-content">
-				<evaluator negate="true">
-					evaluator.becpg.doclib.action.entity
-				</evaluator>
-			</action>
-
-			<action id="document-manage-site-permissions">
-				<evaluator negate="true">
-					evaluator.becpg.doclib.action.entity
-				</evaluator>
-			</action>
-
-			<action id="document-manage-repo-permissions">
-				<evaluator negate="true">
-					evaluator.becpg.doclib.action.entity
-				</evaluator>
-			</action>
-
-			<action id="document-change-type">
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity
-				</evaluator>
-			</action>
-
-			<action id="document-edit-properties">
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity
-				</evaluator>
-			</action>
-
-
 		</actions>
 
-		<actionGroups>
-			<actionGroup id="document-browse">
-				<action index="10" id="entity-view-datalist" />
-				<action index="130" id="entity-edit-metadata" />
-			</actionGroup>
+ <!--
+         Action Group resolver - decides which action group id to use for a node
+      -->
+      <actionGroupResolver>becpg.resolver.doclib.actionGroup</actionGroupResolver>
 
-			<actionGroup id="document-details">
+		<actionGroups>
+		
+			<actionGroup id="entity-browse">
+				<action index="10" id="entity-view-datalist" />
+            <action index="110" id="document-view-content" />
+            <action index="120" id="document-locate" />
+            <action index="130" id="entity-edit-metadata" />
+            <action index="150" id="document-view-original" />
+            <action index="160" id="document-view-working-copy" />
+            <action index="170" id="document-approve" />
+            <action index="180" id="document-reject" />
+            <action index="200" id="document-edit-online" />
+            <action index="220" id="document-view-googledoc" />
+            <action index="230" id="document-checkout-to-googledocs" />
+            <action index="240" id="document-checkin-from-googledocs" />
+            <action index="250" id="document-copy-to" />
+            <action index="260" id="document-move-to" />
+            <action index="270" id="document-delete" />
+            <action index="280" id="document-assign-workflow" />
+            <action index="300" id="document-publish" />
+            <action index="310" id="document-view-googlemaps" />
+            <action index="320" id="document-view-in-source-repository" />
+         </actionGroup>
+
+         <actionGroup id="entity-details">
 				<action index="10" id="entity-view-datalist" />
 				<action index="101" id="entity-checkin" />
 				<action index="102" id="entity-checkout" />
 				<action index="103" id="entity-cancel-editing" />
-			</actionGroup>
+            <action index="120" id="document-edit-metadata" />
+            <action index="140" id="document-view-original" />
+            <action index="150" id="document-view-working-copy" />
+            <action index="160" id="document-approve" />
+            <action index="170" id="document-reject" />
+            <action index="190" id="document-edit-online" />
+            <action index="210" id="document-view-googledoc" />
+            <action index="220" id="document-checkout-to-googledocs" />
+            <action index="230" id="document-checkin-from-googledocs" />
+            <action index="240" id="document-copy-to" />
+            <action index="250" id="document-move-to" />
+            <action index="260" id="document-delete" />
+            <action index="270" id="document-assign-workflow" />
+            <action index="310" id="document-manage-aspects" />
+            <action index="330" id="document-view-in-source-repository" />
+            <action index="340" id="document-publish" />
+            <action index="350" id="document-view-googlemaps" />
+         </actionGroup>
 
 		</actionGroups>
 

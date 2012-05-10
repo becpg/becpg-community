@@ -167,6 +167,22 @@
 			<classifier>community</classifier>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- JSON -->
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>json-simple-1.1</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>json</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
 
 	</dependencies>
 	<build>

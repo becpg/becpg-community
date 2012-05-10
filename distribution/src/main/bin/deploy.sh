@@ -19,7 +19,6 @@ install_share_amp(){
 	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/share.war -force
 }
 
-
 rm -rf $SERVER/webapps/*.bak
 
 echo "**********************************************************"
@@ -62,5 +61,5 @@ echo "Deploy Report Server"
 echo "**********************************************************"
 
 rm -rf $SERVER/webapps/becpg-report
-cp becpg-report-*.war $SERVER/webapps/becpg-report.war
+cp amps/becpg-report-*.war $SERVER/webapps/becpg-report.war
 fi

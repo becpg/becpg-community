@@ -38,6 +38,15 @@
       </property>
    </bean>
 
+	<!-- Action group resolver -->
+
+   <bean id="slingshot.scriptprocessor.resolverHelper" parent="baseScriptExtension" class="fr.becpg.web.resolver.scripts.ResolverHelper">
+      <property name="extensionName" value="resolverHelper"/>
+   </bean>
+
+
+   <bean id="becpg.resolver.doclib.actionGroup" class="fr.becpg.web.resolver.doclib.DefaultDoclistActionGroupResolver" />
+
   <!-- evaluators -->
   
   
