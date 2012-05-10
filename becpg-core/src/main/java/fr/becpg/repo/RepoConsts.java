@@ -42,9 +42,10 @@ public class RepoConsts {
 	public static final String PATH_SYSTEM = "System";
 	public static final String PATH_CHARACTS = "Characts";
 	public static final String PATH_LISTS = "Lists";
+	public static final String PATH_ING_TYPES = "IngTypes";
 	public static final String PATH_LINKED_LISTS 	= "LinkedLists";
 	public static final String PATH_NUTS = "Nuts";
-	public static final String PATH_INGS = "Ings";
+	public static final String PATH_INGS = "Ings";	
 	public static final String PATH_ORGANOS = "Organos";
 	public static final String PATH_ALLERGENS = "Allergens";
 	public static final String PATH_COSTS = "Costs";

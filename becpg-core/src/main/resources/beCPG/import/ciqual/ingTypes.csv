@@ -1,0 +1,44 @@
+PATH;/System/Lists/IngTypes
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Adipate
+VALUES;Alginate
+VALUES;Antibiotique
+VALUES;Antioxidant
+VALUES;Autre additif
+VALUES;Carbonate
+VALUES;Chlorure
+VALUES;Cire et hydrocarbure
+VALUES;Citrate
+VALUES;Colorant alimentaire
+VALUES;Conservateur
+VALUES;Dérivé cellulosique
+VALUES;Dérivé d'acide gras alimentaire
+VALUES;Diphosphate
+VALUES;Edulcorant
+VALUES;Epaississant
+VALUES;Exhausteur
+VALUES;Ferrocyanure
+VALUES;Gaz
+VALUES;Glace
+VALUES;Gluconate
+VALUES;Glutamate
+VALUES;Gomme
+VALUES;Gomme à mâcher
+VALUES;Gélifiant
+VALUES;Guanylate
+VALUES;Hydroxyde
+VALUES;Ingrédient
+VALUES;Inosinate
+VALUES;Lactate
+VALUES;Lécithine
+VALUES;Malate
+VALUES;Orthophosphate
+VALUES;Phosphate
+VALUES;Silicate
+VALUES;Stabilisant
+VALUES;Stearate
+VALUES;Sulfate
+VALUES;Tartrate
+VALUES;Thiosulfate
+VALUES;Triphosphate

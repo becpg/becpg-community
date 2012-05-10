@@ -215,7 +215,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		// Lists of characteristics
 		NodeRef charactsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_CHARACTS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_LISTS);
+		NodeRef listsNodeRef = visitFolder(charactsNodeRef, RepoConsts.PATH_LISTS);
+		visitFolder(listsNodeRef, RepoConsts.PATH_ING_TYPES);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_LINKED_LISTS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_NUTS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_INGS);
