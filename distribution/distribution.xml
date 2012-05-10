@@ -5,7 +5,7 @@
   <formats>
     <format>tar.gz</format>
   </formats>
-  <includeBaseDirectory>false</includeBaseDirectory>
+  <includeBaseDirectory>true</includeBaseDirectory>
   <dependencySets>
     <dependencySet>
       <outputDirectory>/amps</outputDirectory>
@@ -20,15 +20,9 @@
       <fileMode>0755</fileMode>
       <filtered>true</filtered>
     </fileSet>
+     <fileSet>
+      <directory>../alfresco-patch/_diff</directory>
+      <outputDirectory>/dist</outputDirectory>
+    </fileSet>
   </fileSets>
-  <!-- <files>
-    <file>
-      <source>INSTALL</source>
-      <outputDirectory>/</outputDirectory>
-    </file>
-    <file>
-      <source>README</source>
-      <outputDirectory>/</outputDirectory>
-    </file>
-  </files> -->
 </assembly>

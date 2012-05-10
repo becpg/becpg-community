@@ -5,34 +5,34 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>0.1.4</version>
+		<version>1.4.0</version>
 		<relativePath>../</relativePath>
 	</parent>
-	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-olap</artifactId>
 	<packaging>jar</packaging>
 	<name>beCPG OLAP</name>
-	<version>0.1.4</version>
+	<version>1.4.0</version>
 	<build>
-	<plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2.1</version>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/distribution.xml</descriptor>
-          </descriptors>
-        </configuration>
-         <executions>
-          <execution>
-            <id>make-assembly</id> 
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      </plugins>
-      </build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<finalName>becpg-olap-${maven.version}-${maven.build.timestamp}</finalName>
+					<descriptors>
+						<descriptor>src/main/assembly/distribution.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

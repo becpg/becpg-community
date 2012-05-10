@@ -6,11 +6,9 @@
 	<parent>
 		<groupId>fr.becpg</groupId>
 		<artifactId>becpg-parent</artifactId>
-		<version>0.1.4</version>
+		<version>1.4.0</version>
 	</parent>
-	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-report</artifactId>
-	<version>0.1.4</version>
 	<packaging>war</packaging>
 	<name>beCPG report Server</name>
 	<dependencies>

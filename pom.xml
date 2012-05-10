@@ -5,7 +5,7 @@
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>beCPG</name>
-	<version>0.1.4</version>
+	<version>1.4.0</version>
 	<description>BeCPG Parent Project</description>
 
 	<organization>
@@ -188,10 +188,8 @@
 			
 		</plugins>
 	</build>
-	
+
 	<modules>
-		<module>becpg-bootstrap/alfresco-sdk</module>
-		<module>becpg-bootstrap/birt-sdk</module>
 		<module>becpg-report</module>
 		<module>becpg-core</module>
 		<module>becpg-share</module>

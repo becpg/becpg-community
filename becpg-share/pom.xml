@@ -4,15 +4,13 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>0.1.4</version>
+		<version>1.4.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-share</artifactId>
 	<packaging>amp</packaging>
 	<name>beCPG vault share</name>
-	<version>0.1.4</version>
 	<description>beCPG Share designer ui</description>
 	<dependencies>
 		<!-- Servlet -->
@@ -165,6 +163,22 @@
 		<dependency>
 			<groupId>org.alfresco.sdk</groupId>
 			<artifactId>spring-webscripts-api-1.0.0</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- JSON -->
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>json-simple-1.1</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>json</artifactId>
 			<version>${alfresco.version}</version>
 			<classifier>community</classifier>
 			<scope>provided</scope>

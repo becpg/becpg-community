@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ApplicationManifest xmlns="http://schemas.google.com/ApplicationManifest/2009">
+
+  <!-- Support info to show in the marketplace & control panel -->
+  <Support>
+    <!-- URL for application setup as an optional redirect during the install -->
+    <Link rel="setup" href="http://www.example.com/google/setup.php?domain=${DOMAIN_NAME}" />
+
+    <!-- URL for application configuration, accessed from the app settings page in the control panel -->
+    <Link rel="manage" href="http://www.example.com/google/admin.php?domain=${DOMAIN_NAME}" />
+
+    <!-- URL explaining how customers get support. -->
+    <Link rel="support" href="http://www.example.com/google/support.php" />
+
+    <!-- URL that is displayed to admins during the deletion process, to specify policies such as data retention, how to claim accounts, etc. -->
+    <Link rel="deletion-policy" href="http://www.example.com/google/deletion-policy.php" />
+    
+    <!-- URL that is displayed to customers so that they may purchase additional seats. -->
+    <Link rel="add-seats" href="http://www.example.com/purchase"/>
+  </Support>
+
+  <!-- Name and description pulled from message bundles -->
+  <Name>AppTest</Name>
+  <Description>A simple application for testing the marketplace</Description>
+
+  <!-- Show this link in Google's universal navigation for all users -->
+  <Extension id="navLink" type="link">
+    <Name>AppTest</Name>
+    <Url>http://www.example.com/home.php?from=google&amp;domain=${DOMAIN_NAME}</Url>
+    <!-- This app also uses the Calendar API -->
+    <Scope ref="calendarFeed"/>
+  </Extension>
+
+  <!-- Declare our OpenID realm so our app is white listed -->
+  <Extension id="realm" type="openIdRealm">
+    <Url>http://www.example.com</Url>
+  </Extension>
+
+  <!-- Need access to the Calendar feed -->
+  <Scope id="calendarFeed">
+    <Url>http://www.google.com/calendar/feeds/</Url>
+    <Reason>This application shows the next Calendar event.</Reason>
+  </Scope>
+
+</ApplicationManifest>

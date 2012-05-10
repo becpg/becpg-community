@@ -64,7 +64,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		logger.debug("appendNextLevel :" + currIndex);
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef nodeRef = entry.getKey();
-			props.put(PROP_DEPTH, entry.getValue().getDepth()-1);
+			props.put(PROP_DEPTH, entry.getValue().getDepth());
 			props.put(PROP_ENTITYNODEREF, entry.getValue().getEntityNodeRef());
 			props.put(PROP_ACCESSRIGHT, false);
 			if(currIndex>=startIndex && currIndex< (startIndex+pageSize)){

@@ -62,7 +62,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	}
 
 	public MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter, NodeRef entityNodeRef, int currDepth, int maxDepthLevel) {
-		MultiLevelListData ret = new MultiLevelListData(entityNodeRef, currDepth + 1);
+		MultiLevelListData ret = new MultiLevelListData(entityNodeRef, currDepth);
 		if (maxDepthLevel < 0 || currDepth < maxDepthLevel) {
 			logger.debug("getMultiLevelListData depth :" + currDepth + " max " + maxDepthLevel);
 			NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);

@@ -1,54 +1,58 @@
 #!/bin/sh
 
-. ../common.sh
-
 if [ $# -ne 1 ]
    then
-      echo "Usage: $0 <instance>"
+      echo "Usage: $0 <server path>"
       exit 0
 fi
 
+export SERVER=$1
+export DEPLOY_ROOT=$SERVER/../../deploy
 
+install_core_amp(){
+	echo "deploy $1"
+	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/alfresco.war -force
+}
 
-export SERVER=$INSTANCE_DIR/$1
-export DEPLOY_ROOT=$TC_DIR/deploy
+install_share_amp(){
+	echo "deploy $1"
+	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/share.war -force
+}
 
-cd amps
-
-
-#becpg-amp
-rm $SERVER/webapps/alfresco.war
-rm -rf $SERVER/webapps/alfresco
 rm -rf $SERVER/webapps/*.bak
-cp $SERVER/webapps/alfresco.war.setup $SERVER/webapps/alfresco.war
 
 echo "**********************************************************"
 echo "Deploy core AMP"
 echo "**********************************************************"
 
+rm $SERVER/webapps/alfresco.war
+rm -rf $SERVER/webapps/alfresco
+cp $SERVER/webapps/alfresco.war.setup $SERVER/webapps/alfresco.war
 
-echo "deploy becpg-controls-core-$BECPG_VERSION.amp"
-java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install becpg-controls-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
-echo "deploy becpg-designer-core-$BECPG_VERSION.amp"
-java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install becpg-designer-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
-echo "deploy becpg-core/target/becpg-core-$BECPG_VERSION.amp"
-java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install becpg-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
+install_core_amp alfresco-core-patch-*.amp
+install_core_amp becpg-controls-core-*.amp 
+install_core_amp becpg-designer-core-*.amp
+install_core_amp becpg-core-*.amp
 
 echo "**********************************************************"
 echo "Deploy share AMP"
 echo "**********************************************************"
 
-#becpg-share-amp
 rm $SERVER/webapps/share.war
 rm -rf $SERVER/webapps/share
 cp $SERVER/webapps/share.war.setup $SERVER/webapps/share.war
-echo "deploy  becpg-controls-share-$BECPG_VERSION.amp"
-java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install becpg-controls-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
-echo "deploy  becpg-designer-share-$BECPG_VERSION.amp"
-java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install becpg-designer-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
-echo "deploy becpg-share-$BECPG_VERSION.amp"
-java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install becpg-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 
+install_share_amp alfresco-share-patch-*.amp
+install_share_amp becpg-controls-share-*.amp
+install_share_amp becpg-designer-share-*.amp
+install_share_amp becpg-share-*.amp
+
+echo "**********************************************************"
+echo "Deploy patch "
+echo "**********************************************************"
+
+jar ufv $SERVER/webapps/share.war -C dist/share .
+jar ufv $SERVER/webapps/alfresco.war -C dist/alfresco .
 
 read -p "Deploy report server? (y/n)" ans 
 if [ "$ans" = "y" ]; then
@@ -57,5 +61,5 @@ echo "Deploy Report Server"
 echo "**********************************************************"
 
 rm -rf $SERVER/webapps/becpg-report
-cp becpg-report-$BECPG_VERSION.war $SERVER/webapps/becpg-report.war
+cp amps/becpg-report-*.war $SERVER/webapps/becpg-report.war
 fi
