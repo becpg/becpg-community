@@ -1,0 +1,56 @@
+PATH;/System/Lists/IngTypes
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;-
+VALUES;Acide
+VALUES;Acide gras
+VALUES;Actif
+VALUES;Additif
+VALUES;Ajusteur de ph
+VALUES;Alcool
+VALUES;Alcool gras
+VALUES;Alcool gras, stérol
+VALUES;Anti-oxydant
+VALUES;Charge
+VALUES;Chelatant
+VALUES;Chélatant
+VALUES;Cire minérale
+VALUES;Cire végétale
+VALUES;Colorant
+VALUES;Complexe
+VALUES;Complexe quaternaire
+VALUES;Conservateur
+VALUES;Conservateur, agent anti-statique, tensio-actif
+VALUES;Conservateur, mp parfum
+VALUES;Conservateur, mp parfumée
+VALUES;Corps gras
+VALUES;Corps gras animal
+VALUES;Corps gras végétal
+VALUES;Dérivé protéiné
+VALUES;Ester
+VALUES;Ester gras
+VALUES;Ether
+VALUES;Extrait naturel
+VALUES;Extrait végétal
+VALUES;Filtre uv
+VALUES;Gaz propulseur
+VALUES;Gélifiant
+VALUES;Huile essentielle
+VALUES;Huile minérale
+VALUES;Huile végétale
+VALUES;Humectant
+VALUES;Humectant, solvant
+VALUES;Mélange
+VALUES;Mp parfumée
+VALUES;Parfum
+VALUES;Polymer
+VALUES;Produits éthoxylés
+VALUES;Protéine
+VALUES;Savon
+VALUES;Sel
+VALUES;Silicone
+VALUES;Solvant
+VALUES;Solvant, excipient
+VALUES;Sucre
+VALUES;Tensio-actif
+VALUES;Vecteur d'actif
