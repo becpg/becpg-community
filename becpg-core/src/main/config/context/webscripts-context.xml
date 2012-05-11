@@ -21,6 +21,16 @@
 		<property name="initSiteVisitor" ref="initSiteVisitor" />
 		<property name="initDemoVisitor" ref="initDemoVisitor" />
 	</bean>
+	
+	<bean id="webscript.fr.becpg.admin.adminTenant.get" class="fr.becpg.repo.web.scripts.admin.AdminTenantWebScript"
+		parent="webscript">
+		<property name="tenantService" ref="tenantService"/>
+		<property name="tenantAdminService" ref="tenantAdminService"/>
+		<property name="authenticationService" ref="authenticationService"/>
+		<property name="authorityService" ref="authorityService"/>
+	</bean>
+	
+	
 	<bean id="webscript.fr.becpg.admin.reloadModels.get" class="fr.becpg.repo.web.scripts.admin.ReloadModelsWebScript"
 		parent="webscript">
 		<property name="dictionaryDAO" ref="dictionaryDAO" />

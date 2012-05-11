@@ -1,7 +1,7 @@
 <webscript>
-	<shortname>ReloadAcls</shortname>
-	<description>Reload the models</description>	
-	<url>/becpg/admin/security/acl/reload</url>
+	<shortname>Admin tenant</shortname>
+	<description>Admin tenant - allow to manage tenant</description>	
+	<url>/becpg/admin/tenant/{action}</url>
 	<format default="json">argument</format>
 	<authentication>admin</authentication>
 	<transaction allow="readwrite" buffersize="0">required</transaction>

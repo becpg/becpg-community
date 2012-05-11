@@ -12,6 +12,7 @@
   <classpathentry kind="src" path="/becpg-controls-core"/>
   <classpathentry kind="src" path="/becpg-designer-core"/>
   <classpathentry kind="src" path="/becpg-report"/>
+  <classpathentry kind="var" path="M2_REPO/fr/becpg/alfresco-repository/4.0.d/alfresco-repository-4.0.d.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/abdera-client-0.4.0-incubating/4.0.d/abdera-client-0.4.0-incubating-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/abdera-core-0.4.0-incubating/4.0.d/abdera-core-0.4.0-incubating-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/abdera-extensions-json-0.4.0-incubating/4.0.d/abdera-extensions-json-0.4.0-incubating-4.0.d-community.jar"/>

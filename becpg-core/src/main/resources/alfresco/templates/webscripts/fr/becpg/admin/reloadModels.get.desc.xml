@@ -3,6 +3,6 @@
 	<description>Reload the models</description>	
 	<url>/becpg/admin/models/reload</url>
 	<format default="json">argument</format>
-	<authentication>user</authentication>
+	<authentication>admin</authentication>
 	<transaction allow="readwrite" buffersize="0">required</transaction>
 </webscript>
