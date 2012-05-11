@@ -208,6 +208,9 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			}
 		}
 		
+		//check formulated product
+		checkILOfFormulatedProduct(ingMap.values(), productSpecicationData, reqCtrlMap);
+		
 		// manual listItem
 		List<IngListDataItem> ingList = getILToUpdate(formulatedProduct.getNodeRef(), ingMap);
 		
@@ -284,14 +287,9 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 						
 			if(qty != null && qtyIng != null){
 				
-				logger.trace("totalQtyIng before: " + totalQtyIng);
-				
 				Double valueToAdd = density * qty * qtyIng;
 				totalQtyIng += valueToAdd;
-				totalQtyIngMap.put(ingNodeRef, totalQtyIng);
-								
-				logger.trace("valueToAdd = density: " + density + " - qty: " + qty + " - qtyIng: " + qtyIng);
-				logger.trace("ing: " + nodeService.getProperty(ingNodeRef, ContentModel.PROP_NAME) + " - value to add: " + valueToAdd + " - totalQtyIng: " + totalQtyIng);
+				totalQtyIngMap.put(ingNodeRef, totalQtyIng);				
 			}
 			
 			//Calculate geo origins
@@ -354,7 +352,10 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 					// Ings
 					if(fil.getIngs().size() > 0){
 						if(!fil.getIngs().contains(ingListDataItem.getIng())){
-							continue; // check next rule
+							continue; // check next rule																			
+						}
+						else if(fil.getQtyPercMaxi() != null){
+							continue; // check next rule (we will check in checkILOfFormulatedProduct)
 						}
 					}
 					
@@ -396,6 +397,37 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 					if(!reqCtrl.getSources().contains(productData.getNodeRef())){
 						reqCtrl.getSources().add(productData.getNodeRef());
 					}					
+				}
+			}
+		}		
+	}
+	
+	/**
+	 * check the ingredients of the part according to the specification
+	 *
+	 */
+	private void checkILOfFormulatedProduct(Collection<IngListDataItem> ingList, ProductData productSpecicationData, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){
+		
+		if(productSpecicationData != null && productSpecicationData.getForbiddenIngList() != null){
+		
+			for(IngListDataItem ingListDataItem : ingList){										
+				
+				for(ForbiddenIngListDataItem fil : productSpecicationData.getForbiddenIngList()){										
+					
+					// Ings
+					if(fil.getIngs().size() > 0){
+						if(fil.getIngs().contains(ingListDataItem.getIng())){							
+							if(fil.getQtyPercMaxi() != null && fil.getQtyPercMaxi() <= ingListDataItem.getQtyPerc()){
+							
+								// req not respected
+								ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
+								if(reqCtrl == null){
+									reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), new ArrayList<NodeRef>());
+									reqCtrlMap.put(fil.getNodeRef(), reqCtrl);						
+								}
+							}	
+						}
+					}													
 				}
 			}
 		}		

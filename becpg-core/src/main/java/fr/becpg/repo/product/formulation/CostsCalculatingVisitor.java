@@ -148,18 +148,20 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			Double density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity() : DEFAULT_DENSITY; //density is null => 1
 			Double netWeight = qty * density;
 
+			if(netWeight != 0.0d){
 			
-			for(CostListDataItem c : compositeCosts.getCostMap().values()){		
-				if(netWeight != 0.0d){
-					c.setValue(c.getValue() / netWeight);
-					c.setMaxi(c.getMaxi() / netWeight);
+				for(CostListDataItem c : compositeCosts.getCostMap().values()){					
+					if(c.getValue() != null)
+						c.setValue(c.getValue() / netWeight);
+					if(c.getMaxi() != null)
+						c.setMaxi(c.getMaxi() / netWeight);				
 				}
-			}
-			
-			for(CostDetailsListDataItem c : compositeCosts.getCostDetailsMap().values()){		
-				if(c.getValue() != null)
-					c.setValue(c.getValue() / netWeight);															
-			}			
+				
+				for(CostDetailsListDataItem c : compositeCosts.getCostDetailsMap().values()){		
+					if(c.getValue() != null)
+						c.setValue(c.getValue() / netWeight);															
+				}
+			}				
 		}
 		
 		// cost details perc
@@ -228,40 +230,33 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 					if(newCostListDataItem == null){
 												
 						newCostListDataItem = new CostListDataItem(kv.getValue());
-						newCostListDataItem.setValue(0d); // initialize
-						newCostListDataItem.setMaxi(0d); // initialize
+						newCostListDataItem.setValue(null); // initialize
+						newCostListDataItem.setMaxi(null); // initialize
 						compositeCosts.getCostMap().put(kv.getKey(), newCostListDataItem);
 					}
 					
 					// calculate value
-					Double newValue = newCostListDataItem.getValue();
-					Double valueToAdd = kv.getValue().getValue();	
+					Double origValue = newCostListDataItem.getValue() != null ? newCostListDataItem.getValue() : 0d;
+					Double newValue = origValue;
+					Double value = kv.getValue().getValue();	
 					
-					if(valueToAdd != null){
-						valueToAdd = valueToAdd * (1 + lossPerc / 100);
-					}
-					
-					if(newValue != null){
-						newValue += valueToAdd;
-					}
+					if(value != null){
+						value = value * (1 + lossPerc / 100);
+						newValue += value;				
+						newCostListDataItem.setValue(newValue);
+					}				
 					else{
-						newValue = valueToAdd;
-					}					
-					newCostListDataItem.setValue(newValue);										
+						value = 0d;
+					}
 					
 					// calculate maxi
-					Double maxi = newCostListDataItem.getMaxi();
-					Double maxiToAdd = kv.getValue().getMaxi();					
-					if(maxiToAdd != null){
-						maxiToAdd = maxiToAdd * (1 + lossPerc / 100);
-					}
-					if(maxi != null){
-						maxi += maxiToAdd;
-					}
-					else{
-						maxi = maxiToAdd;
-					}					
-					newCostListDataItem.setMaxi(maxi);					
+					Double newMaxi = newCostListDataItem.getMaxi() != null ? newCostListDataItem.getMaxi() : origValue;
+					Double maxi = kv.getValue().getMaxi() != null ? kv.getValue().getMaxi() : value;					
+					if(maxi > value || newMaxi > origValue){
+						maxi = maxi * (1 + lossPerc / 100);																	
+						newMaxi += maxi;
+						newCostListDataItem.setMaxi(newMaxi);
+					}									
 				}
 				
 				/*
@@ -348,35 +343,28 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			if(qty != null){
 				
 				//value
-				Double newValue = newCostListDataItem.getValue();			
+				Double origValue = newCostListDataItem.getValue() != null ? newCostListDataItem.getValue() : 0d;
+				Double newValue = origValue;
 				Double value = costListDataItem.getValue();
 				
-				
-				if(qty != null && value != null){
+				if(value != null){
 					Double valueToAdd = qty * value;
-					if(newValue != null){
-						newValue += valueToAdd;
-					}
-					else{
-						newValue = valueToAdd;
-					}	
-				}			
-				newCostListDataItem.setValue(newValue);				
+					newValue += valueToAdd;
+					newCostListDataItem.setValue(newValue);
+				}	
+				else{
+					value = 0d;
+				}
 				
 				//maxi
-				Double newMaxi = newCostListDataItem.getMaxi();			
-				Double maxi = costListDataItem.getMaxi() != null ? costListDataItem.getMaxi() : costListDataItem.getValue();
+				Double newMaxi = newCostListDataItem.getMaxi() != null ? newCostListDataItem.getMaxi() : origValue;
+				Double maxi = costListDataItem.getMaxi() != null ? costListDataItem.getMaxi() : value;
 				
-				if(qty != null && maxi != null){
-					Double maxiToAdd = qty * maxi;
-					if(newMaxi != null){
-						newMaxi += maxiToAdd;
-					}
-					else{
-						newMaxi = maxiToAdd;
-					}	
-				}			
-				newCostListDataItem.setMaxi(newMaxi);
+				if(maxi > value || newMaxi > origValue){
+					Double valueToAdd = qty * maxi;					
+					newMaxi += valueToAdd;
+					newCostListDataItem.setMaxi(newMaxi);
+				}							
 			}
 		}
 		
