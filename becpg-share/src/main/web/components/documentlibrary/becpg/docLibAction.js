@@ -15,7 +15,7 @@
 		   	var displayName = asset.displayName,
            	nodeRef = new Alfresco.util.NodeRef(asset.nodeRef);
 		   	
-		   	var progressPopup = Alfresco.util.PopupManager.displayMessage(
+		    Alfresco.util.PopupManager.displayMessage(
             {
                displayTime: 0,
                effect: null,

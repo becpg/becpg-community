@@ -34,6 +34,11 @@ import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
+/**
+ * 
+ * @author matthieu
+ *
+ */
 public class ImportEntityXmlVisitor {
 
 	private NodeService nodeService;
@@ -41,9 +46,8 @@ public class ImportEntityXmlVisitor {
 	private NamespaceService namespaceService;
 
 	private BeCPGSearchService beCPGSearchService;
-	
-	private EntityProviderCallBack entityProviderCallBack; 
-	
+
+	private EntityProviderCallBack entityProviderCallBack;
 
 	public void setEntityProviderCallBack(EntityProviderCallBack entityProviderCallBack) {
 		this.entityProviderCallBack = entityProviderCallBack;
@@ -73,9 +77,8 @@ public class ImportEntityXmlVisitor {
 		}
 
 	}
-	
 
-	public Map<String, byte[]> visitData( InputStream in) throws IOException, SAXException, ParserConfigurationException {
+	public Map<String, byte[]> visitData(InputStream in) throws IOException, SAXException, ParserConfigurationException {
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
@@ -88,25 +91,25 @@ public class ImportEntityXmlVisitor {
 			IOUtils.closeQuietly(in);
 		}
 	}
-	
+
 	private class EntityDataXmlHandler extends DefaultHandler {
 
-		Map<String,byte[]> datas = new HashMap<String, byte[]>();
+		Map<String, byte[]> datas = new HashMap<String, byte[]>();
 
 		StringBuffer currValue = new StringBuffer();
-		
+
 		String name;
 
 		public Map<String, byte[]> getDatas() {
 			return datas;
 		}
-		
+
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			currValue = new StringBuffer();
 			name = attributes.getValue("name");
 		}
-		
+
 		@Override
 		public void characters(char[] ch, int start, int length) throws SAXException {
 			currValue.append(ch, start, length);
@@ -114,14 +117,12 @@ public class ImportEntityXmlVisitor {
 
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
-			if(qName.equals("becpg:image")){
+			if (qName.equals("becpg:image")) {
 				datas.put(name, Base64.decodeBase64(currValue.toString()));
 			}
 		}
-		
-	}
-	
 
+	}
 
 	private class EntityXmlHandler extends DefaultHandler {
 
@@ -183,21 +184,21 @@ public class ImportEntityXmlVisitor {
 
 							curNodeRef.push(createAssocNode(curNodeRef.peek(), nodeType, currAssoc.peek(), name));
 						} else {
-							if(node == null && entityProviderCallBack!=null){
+							if (node == null && entityProviderCallBack != null) {
 								logger.debug("Node not found calling provider");
 								try {
-								 node = entityProviderCallBack.provideNode(new NodeRef(nodeRef));
+									node = entityProviderCallBack.provideNode(new NodeRef(nodeRef));
 								} catch (BeCPGException e) {
-									throw new SAXException("Cannot call entityProviderCallBack ",e);
+									throw new SAXException("Cannot call entityProviderCallBack ", e);
 								}
 							}
-							 if (node != null) {
+							if (node != null) {
 								logger.debug("Node found creating assoc: " + currAssoc.peek());
 								nodeService.createAssociation(curNodeRef.peek(), node, currAssoc.peek());
 								curNodeRef.push(node);
-							 } else {
+							} else {
 								throw new SAXException("Cannot add node to assoc, node not found : " + name);
-							 }
+							}
 						}
 
 					} else {
@@ -229,7 +230,8 @@ public class ImportEntityXmlVisitor {
 				currAssoc.pop();
 				currAssocType.pop();
 			} else if (type != null && type.length() > 0) {
-				//logger.debug("Set property : " + currProp + " value " + currValue);
+				// logger.debug("Set property : " + currProp + " value " +
+				// currValue);
 				if (currValue.length() > 0) {
 					nodeService.setProperty(curNodeRef.peek(), currProp, currValue.toString());
 				} else {
@@ -260,22 +262,21 @@ public class ImportEntityXmlVisitor {
 
 	private NodeRef createNode(String parentPath, QName type, String name) throws SAXException {
 		NodeRef parentNodeRef = findNodeByPath(parentPath);
-	
+
 		if (parentNodeRef != null) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, name);
 
 			return nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, type, properties).getChildRef();
 		}
-		throw new SAXException("Path doesn't exist on repository :"+parentPath);
+		throw new SAXException("Path doesn't exist on repository :" + parentPath);
 	}
 
 	private NodeRef createAssocNode(NodeRef parentNodeRef, QName type, QName assocName, String name) {
 		logger.debug("Creating child assoc: " + assocName + " add type :" + type);
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, name);
-		return nodeService.createNode(parentNodeRef, assocName,
-				assocName, type, properties).getChildRef();
+		return nodeService.createNode(parentNodeRef, assocName, assocName, type, properties).getChildRef();
 	}
 
 	private NodeRef findNodeByPath(String parentPath) {
@@ -284,12 +285,12 @@ public class ImportEntityXmlVisitor {
 		if (ret.size() > 0) {
 			logger.debug("Found node for query :" + runnedQuery);
 		} else {
-		
-			 ret = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_TO_DO, 1);
+
+			ret = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_TO_DO, 1);
 		}
-		
+
 		return ret.get(0);
-		
+
 	}
 
 	private NodeRef findNode(String nodeRef, String code, String name, QName type) {
@@ -298,14 +299,10 @@ public class ImportEntityXmlVisitor {
 		}
 
 		String runnedQuery = "";
-		
-		
 
 		if (type != null) {
 			runnedQuery += " +TYPE:\"" + type.toString() + "\" ";
 		}
-
-		
 
 		if (code != null && code.length() > 0) {
 			runnedQuery += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, code, null);
@@ -315,26 +312,21 @@ public class ImportEntityXmlVisitor {
 				return ret.get(0);
 			}
 		}
-		
-		
 
 		if (name != null && name.length() > 0) {
 			runnedQuery += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, name, code != null && code.length() > 0 ? LuceneHelper.Operator.OR : null);
 			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, 15);
 			if (ret.size() > 0) {
 				logger.debug("Found node for query :" + runnedQuery);
-        		for(NodeRef node : ret){
-        			if(name.equals(nodeService.getProperty(node, ContentModel.PROP_NAME))){
-        				return node;
-        			}
-        		}
-				
-				
+				for (NodeRef node : ret) {
+					if (name.equals(nodeService.getProperty(node, ContentModel.PROP_NAME))) {
+						return node;
+					}
+				}
+
 				return ret.get(0);
 			}
 		}
-		
-		
 
 		return null;
 	}

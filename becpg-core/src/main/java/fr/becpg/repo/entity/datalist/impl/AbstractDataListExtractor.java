@@ -133,7 +133,9 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			
 			ret.put(PROP_TAGS, attributeExtractorService.getTags(nodeRef));
 			ret.put(PROP_ACTIONLABELS, new HashMap<String, Object>());
+			
 			ret.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields, props));
+		
 
 			return ret;
 

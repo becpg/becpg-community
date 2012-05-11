@@ -23,6 +23,12 @@ var Filters =
       "fm:post",
       "bcpg:entityListItem" //beCPG
    ],
+   
+   IGNORED_ASPECTS:
+   [
+      "bcpg:compositeVersion" //beCPG
+   ],
+
 
    /**
     * Encode a path with ISO9075 encoding
@@ -100,7 +106,7 @@ var Filters =
          filterQuery = "";
 
       // Common types and aspects to filter from the UI - known subtypes of cm:content and cm:folder
-      var filterQueryDefaults = ' -TYPE:"' + Filters.IGNORED_TYPES.join('" -TYPE:"') + '"';
+      var filterQueryDefaults = ' -TYPE:"' + Filters.IGNORED_TYPES.join('" -TYPE:"') + '" -ASPECT:"' + Filters.IGNORED_ASPECTS.join('" -ASPECT:"') + '"';
 
       switch (String(filter))
       {
@@ -210,7 +216,7 @@ var Filters =
             }
             
             filterQuery = this.constructPathQuery(parsedArgs);
-            filterParams.query = filterQuery + " +PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(filterData) + "/member\"";
+            filterParams.query = filterQuery + " +PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(filterData) + "/member\" "+ filterQueryDefaults;;
             break;
 
          case "category":
@@ -220,7 +226,7 @@ var Filters =
                filterData = filterData.slice(0, -1);
             }
             filterQuery = this.constructPathQuery(parsedArgs);
-            filterParams.query = filterQuery + " +PATH:\"/cm:generalclassifiable" + Filters.iso9075EncodePath(filterData) + "/member\"";
+            filterParams.query = filterQuery + " +PATH:\"/cm:generalclassifiable" + Filters.iso9075EncodePath(filterData) + "/member\" " + filterQueryDefaults;;
             break;
 
          case "aspect":
