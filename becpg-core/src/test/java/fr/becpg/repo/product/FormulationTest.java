@@ -16,6 +16,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -303,7 +304,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing1 english");
 			mlName.addValue(Locale.FRENCH, "ing1 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
+//			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "ing2");
@@ -312,7 +313,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing2 english");
 			mlName.addValue(Locale.FRENCH, "ing2 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
+//			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "ing3");
@@ -321,7 +322,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing3 english");
 			mlName.addValue(Locale.FRENCH, "ing3 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
+//			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.put(ContentModel.PROP_NAME, "ing4");
 			mlName = new MLText();
@@ -329,7 +330,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing4 english");
 			mlName.addValue(Locale.FRENCH, "ing4 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
+//			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			//Geo origins
 			properties.clear();
@@ -2003,6 +2004,11 @@ public class FormulationTest extends RepoBaseTestCase {
 				
 				ings = new ArrayList<NodeRef>();
 				geoOrigins = new ArrayList<NodeRef>();
+				ings.add(ing3);				
+				forbiddenIngList.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing3 < 40%", 0.4d, NullableBoolean.Null, NullableBoolean.Null, ings, geoOrigins, bioOrigins));
+				
+				ings = new ArrayList<NodeRef>();
+				geoOrigins = new ArrayList<NodeRef>();
 				ings.add(ing1);
 				ings.add(ing4);
 				geoOrigins.clear();
@@ -2076,6 +2082,12 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertTrue(false);
 						assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					}
+					else if(reqCtrlList.getReqMessage().equals("Ing3 < 40%")){
+						
+						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+						assertEquals(0, reqCtrlList.getSources().size());						
+						checks++;
+					}
 					else if(reqCtrlList.getReqMessage().equals("Ing1 et ing4 interdits")){
 						
 						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
@@ -2093,7 +2105,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					}										
 				}				
 					
-				assertEquals(4, checks);
+				assertEquals(5, checks);
 				
 				return null;
 

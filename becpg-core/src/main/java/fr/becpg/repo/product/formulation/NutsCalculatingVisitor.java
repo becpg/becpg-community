@@ -127,9 +127,12 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		for(NutListDataItem n : nutMap.values()){
 			
 			if(netWeight != 0.0d){
-				n.setValue(n.getValue() / netWeight);
-				n.setMini(n.getMini() / netWeight);
-				n.setMaxi(n.getMaxi() / netWeight);
+				if(n.getValue() != null)
+					n.setValue(n.getValue() / netWeight);
+				if(n.getMini() != null)
+					n.setMini(n.getMini() / netWeight);
+				if(n.getMaxi() != null)
+					n.setMaxi(n.getMaxi() / netWeight);
 			}
 					
 		}
@@ -188,50 +191,39 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 			if(qty != null){
 				
 				// value
-				Double newValue = newNutListDataItem.getValue();
+				Double origValue = newNutListDataItem.getValue() != null ? newNutListDataItem.getValue() : 0d;
+				Double newValue = origValue;
 				Double value = nutListDataItem.getValue();
 				
 				if(value != null){
 				
 					Double valueToAdd = density * qty * value;
-					if(newValue != null){
-						newValue += valueToAdd;
-					}
-					else{
-						newValue = valueToAdd;
-					}
+					newValue += valueToAdd;
 					newNutListDataItem.setValue(newValue);
+				}
+				else{
+					value = 0d;
 				}
 				
 				//mini
-				Double newMini = newNutListDataItem.getMini();
-				Double mini = nutListDataItem.getMini() != null ? nutListDataItem.getMini() : nutListDataItem.getValue();
+				Double newMini = newNutListDataItem.getMini() != null ? newNutListDataItem.getMini() : origValue;
+				Double mini = nutListDataItem.getMini() != null ? nutListDataItem.getMini() : value;
 				
-				if(mini != null){
+				if(mini < value || newMini < origValue){
 				
-					Double valueToAdd = density * qty * mini;
-					if(newMini != null){
-						newMini += valueToAdd;
-					}
-					else{
-						newMini = valueToAdd;
-					}
+					Double valueToAdd = density * qty * mini;										
+					newMini += valueToAdd;
 					newNutListDataItem.setMini(newMini);
 				}
 				
 				//maxi
-				Double newMaxi = newNutListDataItem.getMaxi();
-				Double maxi = nutListDataItem.getMaxi() != null ? nutListDataItem.getMaxi() : nutListDataItem.getValue();
+				Double newMaxi = newNutListDataItem.getMaxi() != null ? newNutListDataItem.getMaxi() : origValue;
+				Double maxi = nutListDataItem.getMaxi() != null ? nutListDataItem.getMaxi() : value;
 				
-				if(maxi != null){
+				if(maxi > value || newMaxi > origValue){
 				
-					Double valueToAdd = density * qty * maxi;
-					if(newMaxi != null){
-						newMaxi += valueToAdd;
-					}
-					else{
-						newMaxi = valueToAdd;
-					}
+					Double valueToAdd = density * qty * maxi;					
+					newMaxi += valueToAdd;
 					newNutListDataItem.setMaxi(newMaxi);
 				}
 			}						
