@@ -189,7 +189,7 @@
       getDocumentVersionMarkup: function DocumentVersions_getDocumentVersionMarkup(doc)
       {
          var downloadURL = Alfresco.constants.PROXY_URI + '/api/node/content/' + doc.nodeRef.replace(":/", "") + '/' + doc.name + '?a=true',
-         compareURL = Alfresco.constants.PROXY_URI + '/becpg/entity/compare/' + this.options.nodeRef.replace(":/", "") + '/' + doc.label + '/' + doc.name,
+         compareURL = Alfresco.constants.PROXY_URI + '/becpg/entity/compare/' + this.options.nodeRef.replace(":/", "") + '/' + doc.label + '/' + doc.name + ".pdf",
             html = '';
 
          html += '<div class="version-panel-left">';
