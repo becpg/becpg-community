@@ -5,12 +5,12 @@ var Filters =
     * NOTE: "documents" filter also returns folders to show UI hint about hidden folders.
     */
    TYPE_MAP:
-   {		
+   {
       "documents": '+(TYPE:"content" OR TYPE:"app:filelink" OR TYPE:"folder")',
       "folders": '+(TYPE:"folder" OR TYPE:"app:folderlink")',
       "images": '+@cm\\:content.mimetype:image/*'
    },
-
+   
    /**
     * Types that we want to suppress from the resultset
     */
@@ -23,6 +23,12 @@ var Filters =
       "fm:post",
       "bcpg:entityListItem" //beCPG
    ],
+   
+   IGNORED_ASPECTS:
+   [
+      "bcpg:compositeVersion" //beCPG
+   ],
+
 
    /**
     * Encode a path with ISO9075 encoding
@@ -63,7 +69,8 @@ var Filters =
          }],
          language: "lucene",
          templates: null,
-         variablePath: true
+         variablePath: true,
+         ignoreTypes: Filters.IGNORED_TYPES
       };
 
       optional = optional || {};
@@ -93,13 +100,13 @@ var Filters =
       {
          favourites = [];
       }
-
+      
       // Create query based on passed-in arguments
       var filterData = String(args.filterData),
          filterQuery = "";
 
       // Common types and aspects to filter from the UI - known subtypes of cm:content and cm:folder
-      var filterQueryDefaults = ' -TYPE:"' + Filters.IGNORED_TYPES.join('" -TYPE:"') + '"';
+      var filterQueryDefaults = ' -TYPE:"' + Filters.IGNORED_TYPES.join('" -TYPE:"') + '" -ASPECT:"' + Filters.IGNORED_ASPECTS.join('" -ASPECT:"') + '"';
 
       switch (String(filter))
       {
@@ -207,8 +214,9 @@ var Filters =
             {
                filterData = filterData.slice(0, -1);
             }
+            
             filterQuery = this.constructPathQuery(parsedArgs);
-            filterParams.query = filterQuery + " +PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(filterData) + "/member\"";
+            filterParams.query = filterQuery + " +PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(filterData) + "/member\" "+ filterQueryDefaults;;
             break;
 
          case "category":
@@ -217,7 +225,14 @@ var Filters =
             {
                filterData = filterData.slice(0, -1);
             }
-            filterParams.query = "+PATH:\"/cm:generalclassifiable" + Filters.iso9075EncodePath(filterData) + "/member\"";
+            filterQuery = this.constructPathQuery(parsedArgs);
+            filterParams.query = filterQuery + " +PATH:\"/cm:generalclassifiable" + Filters.iso9075EncodePath(filterData) + "/member\" " + filterQueryDefaults;;
+            break;
+
+         case "aspect":
+            filterQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath + "//*\"";
+            filterQuery += "+ASPECT:\"" + args.filterData + "\"";
+            filterParams.query = filterQuery;
             break;
 
          default: // "path"
