@@ -11,6 +11,7 @@
 		<property name="locations">
 			<list>
 				<value>classpath:alfresco/module/${pom.artifactId}/beCPG.properties</value>
+				<value>classpath*:beCPG.properties</value>
 			</list>
 		</property>
 	</bean>

@@ -38,6 +38,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.security.SecurityService;
@@ -356,6 +357,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					}
 					tmp.put("displayValue", (String) nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME));
 					tmp.put("value", assocRef.getTargetRef().toString());
+					
+					String path = nodeService.getPath(assocRef.getTargetRef()).toPrefixString(namespaceService);
+					if(SiteHelper.isSitePath(path)){
+						String siteId = SiteHelper.extractSiteId(path, getDisplayPath(nodeRef));
+						
+						if(siteId!=null){
+							tmp.put("siteId", siteId);
+						}
+					}
+					
 					ret.add(tmp);
 				}
 				return ret;
@@ -403,7 +414,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			return "";
 		}
 		if (userId.equalsIgnoreCase(AuthenticationUtil.getSystemUserName())) {
-			return AuthenticationUtil.getSystemUserName();
+			return userId;
 		}
 		return beCPGCacheService.getFromUserCache(PERSON_DISPLAY_CACHE, userId, new BeCPGCacheDataProviderCallBack<String>() {
 			public String getData() {
