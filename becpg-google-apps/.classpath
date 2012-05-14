@@ -23,6 +23,7 @@
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/alfresco-mbeans-4.0.d/4.0.d/alfresco-mbeans-4.0.d-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/alfresco-opencmis-extension-0.2/4.0.d/alfresco-opencmis-extension-0.2-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/alfresco-remote-api-4.0.d/4.0.d/alfresco-remote-api-4.0.d-4.0.d-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/alfresco-repository-4.0.d/4.0.d/alfresco-repository-4.0.d-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/alfresco-wdr-deployment/4.0.d/alfresco-wdr-deployment-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/alfresco-web-client-4.0.d/4.0.d/alfresco-web-client-4.0.d-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/alfresco-web-framework-commons-4.0.d/4.0.d/alfresco-web-framework-commons-4.0.d-4.0.d-community.jar"/>

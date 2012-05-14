@@ -3,38 +3,12 @@
 
 <beans>
 
-<!--   <security:openid-login
-    login-page="/krams/auth/login"
-    authentication-failure-url="/krams/auth/login?error=true"
-    default-target-url="/krams/main/common"/>
-    
-    https://www.google.com/accounts/o8/id
-
-  <security:user name="https://www.google.com/accounts/o8/id?id=AItxxioJSDLFJLjxcksdfjOpAASDFosSSoJ0E"
-          password="" authorities="ROLE_USER, ROLE_ADMIN" />
-          
-   	HTTP security configurations
-    <security:http auto-config="false" use-expressions="true"   >
-   
-         <security:openid-login 
-          user-service-ref="userDetailsService" 
-         default-target-url="/index.jsp" 
-         always-use-default-target="true" >
-		    <security:attribute-exchange>
-		      <security:openid-attribute name="email" type="http://axschema.org/contact/email" required="true" />
-		      <security:openid-attribute name="firstName" type="http://axschema.org/namePerson/first" required="true"  />
-		      <security:openid-attribute name="lastName" type="http://axschema.org/namePerson/last" required="true"  />
-		    </security:attribute-exchange>
-		  </security:openid-login  >
-    </security:http> -->
-          
-
    <!-- The authentication component.                                      -->
 
    <!-- Use the passthru authentication component to authenticate using    -->
    <!-- user accounts on one or more Windows servers.                      -->
 
-   <bean id="authenticationComponent" class="org.alfresco.repo.security.authentication.openid.OpenIDAuthenticationComponentImpl"
+   <bean id="authenticationComponent" class="fr.becpg.repo.security.authentication.openid.OpenIDAuthenticationComponentImpl"
       parent="authenticationComponentBase">
       <property name="personService">
          <ref bean="personService" />
@@ -45,12 +19,6 @@
       <property name="transactionService">
          <ref bean="transactionComponent" />
       </property>
-      <property name="guestAccess">
-         <value>${openid.authentication.guestAccess}</value>
-      </property>
-      <property name="defaultAdministratorUserNameList">
-         <value>${openid.authentication.defaultAdministratorUserNames}</value>
-      </property>
    </bean>
 
    <!-- Wrapped version to be used within subsystem -->
@@ -58,7 +26,7 @@
       <property name="proxyInterfaces">
          <list>
             <value>org.alfresco.repo.security.authentication.AuthenticationComponent</value>
-            <value>org.alfresco.repo.security.authentication.openid.OpenIdAuthenticator</value>
+            <value>fr.becpg.repo.security.authentication.openid.OpenIdAuthenticator</value>
          </list>
       </property>
       <property name="transactionManager">

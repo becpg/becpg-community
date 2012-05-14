@@ -9,6 +9,8 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>alfresco-core-patch</artifactId>
+	<groupId>fr.becpg</groupId>
+	<version>1.4.0</version>
 	<packaging>amp</packaging>
 	<name>Alfresco core Patch</name>
 	<description>AMP patch for Alfresco core</description>
@@ -49,7 +51,7 @@
 		<plugins>
 
 			<!-- native2ascii -->
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>native2ascii-maven-plugin</artifactId>
 				<version>1.0-alpha-1</version>
@@ -70,12 +72,27 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> -->
 		</plugins>
-
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>**README-*</exclude>
+				</excludes>
+			</resource>
+			<!-- Copies and filters AMP config in the proper package 'alfresco/module/becpg.becpg-core' 
+				so to enforce full module naming single sourcing from POM properties -->
+		<!-- 	<resource>
+				<filtering>true</filtering>
+				<directory>src/main/config</directory>
+				<targetPath>alfresco/module/${project.artifactId}</targetPath>
+				<excludes>
+					<exclude>**README-*</exclude>
+					<exclude>**/*.properties</exclude>
+				</excludes>
+			</resource> -->
+		</resources>
 	</build>
-
-
-	<groupId>fr.becpg</groupId>
-	<version>1.4.0</version>
 </project>

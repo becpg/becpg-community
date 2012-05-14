@@ -24,12 +24,6 @@
 			<version>${alfresco.version}</version>
 			<type>pom</type>
 			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.alfresco.sdk</groupId>
-					<artifactId>alfresco-repository-${alfresco.version}</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<!-- OpenID -->
@@ -38,6 +32,40 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-openid</artifactId>
 			<version>3.1.0.RELEASE</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-context</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-beans</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-aop</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>httpclient</artifactId>
+					<groupId>org.apache.httpcomponents</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-security-web</artifactId>
+					<groupId>org.springframework.security</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-security-core</artifactId>
+					<groupId>org.springframework.security</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-web</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-core</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<!-- Servlet -->

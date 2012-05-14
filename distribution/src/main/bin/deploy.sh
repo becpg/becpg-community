@@ -19,7 +19,6 @@ install_share_amp(){
 	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/share.war -force
 }
 
-rm -rf $SERVER/webapps/*.bak
 
 echo "**********************************************************"
 echo "Deploy core AMP"
@@ -47,12 +46,16 @@ install_share_amp becpg-controls-share-*.amp
 install_share_amp becpg-designer-share-*.amp
 install_share_amp becpg-share-*.amp
 
+#clean dir
+rm -rf $SERVER/webapps/*.bak
+
 echo "**********************************************************"
 echo "Deploy patch "
 echo "**********************************************************"
 
 jar ufv $SERVER/webapps/share.war -C dist/share .
 jar ufv $SERVER/webapps/alfresco.war -C dist/alfresco .
+
 
 read -p "Deploy report server? (y/n)" ans 
 if [ "$ans" = "y" ]; then
