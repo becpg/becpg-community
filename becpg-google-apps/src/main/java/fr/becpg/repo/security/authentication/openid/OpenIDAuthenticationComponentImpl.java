@@ -11,11 +11,10 @@ import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.PersonService;
+import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.openid.OpenIDAttribute;
 import org.springframework.security.openid.OpenIDAuthenticationStatus;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
@@ -25,14 +24,19 @@ import org.springframework.security.openid.OpenIDAuthenticationToken;
  * @author matthieu
  * 
  */
-public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationComponent implements OpenIdAuthenticator, InitializingBean {
+public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationComponent implements OpenIdAuthenticator {
 
 	private static Log logger = LogFactory.getLog(OpenIDAuthenticationComponentImpl.class);
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
 
+    /** The authority service. */
+    private AuthorityService authorityService;
+    
+    
+	public void setAuthorityService(AuthorityService authorityService) {
+		this.authorityService = authorityService;
 	}
+
 
 	@Override
 	protected boolean implementationAllowsGuestLogin() {
@@ -61,14 +65,16 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 	@Override
 	public Authentication authenticate(org.springframework.security.core.Authentication auth) throws AuthenticationException {
 
-		if (logger.isDebugEnabled())
-			logger.debug("Authenticate " + auth + " via token");
-
+		
 		// Check if the token is for openId authentication
 
 		if (auth instanceof OpenIDAuthenticationToken) {
 
 			OpenIDAuthenticationToken response = (OpenIDAuthenticationToken) auth;
+			
+			if (logger.isDebugEnabled())
+				logger.debug("Authenticate " + OpenIdUtils.getUserName(response) + " via token");
+
 
 			OpenIDAuthenticationStatus status = response.getStatus();
 
@@ -147,7 +153,7 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 
 		public Authentication execute() throws Throwable {
 			try {
-				final String userName = getUserName();
+				final String userName = OpenIdUtils.getUserName(token);
 				return setCurrentUser(AuthenticationUtil.runAs(new RunAsWork<String>() {
 					public String doWork() throws Exception {
 
@@ -178,9 +184,8 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 
 		protected boolean createMissingPerson() {
 			PropertyMap personProps = new PropertyMap();
-
-			personProps.put(ContentModel.PROP_USERNAME, getUserName());
 			
+			personProps.put(ContentModel.PROP_USERNAME, OpenIdUtils.getUserName(token));
 			for (OpenIDAttribute attribute : token.getAttributes()) {
 		            if (attribute.getName().equals("email")) {
 		            	personProps.put(ContentModel.PROP_EMAIL, attribute.getValues().get(0));
@@ -193,19 +198,18 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 		            }
 		        }
 			
+			
+			
 			if(logger.isDebugEnabled()){
-				logger.debug("Create openId user :"+getUserName());
+				logger.debug("Create openId user :"+OpenIdUtils.getUserName(token));
 				logger.debug("With details : "+personProps.toString());
 			}
 			
 			NodeRef person = getPersonService().createPerson(personProps);
 
+			//authorityService.addAuthority( AuthorityType.GROUP_EVERYONE, personProps.get(ContentModel.PROP_USERNAME));
+			
 			return person != null;
-		}
-
-		protected String getUserName() {
-
-			return token.getIdentityUrl();
 		}
 
 	}

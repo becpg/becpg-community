@@ -35,6 +35,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import fr.becpg.repo.security.authentication.openid.OpenIdAuthenticator;
+import fr.becpg.repo.security.authentication.openid.OpenIdUtils;
 
 /**
  * 
@@ -204,8 +205,8 @@ ActivateableBean, InitializingBean {
         Authentication authentication = openIdAuthenticator.authenticate(token);
 
         if (authentication.isAuthenticated()) {        
-             createUserEnvironment(request.getSession(), token.getIdentityUrl(), authenticationService.getCurrentTicket(), false);
-             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+             createUserEnvironment(request.getSession(), OpenIdUtils.getUserName(token));
+           //  response.setStatus(HttpServletResponse.SC_NO_CONTENT);
              return true;
         }
 
