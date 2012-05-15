@@ -19,6 +19,7 @@
       <property name="transactionService">
          <ref bean="transactionComponent" />
       </property>
+      <property name="authorityService" ref="authorityService"/>
    </bean>
 
    <!-- Wrapped version to be used within subsystem -->
