@@ -245,7 +245,7 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 			if (readNodeRefs != null) {
 				for (NodeRef nodeRef : readNodeRefs) {					
 					
-					Runnable runnable = new ProductReportGenerator(nodeRef);
+					Runnable runnable = new ProductReportGenerator(nodeRef, AuthenticationUtil.getAdminUserName());
 					threadExecuter.execute(runnable);
 					
 				}
@@ -263,14 +263,16 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 		
 		/** The product node ref. */
 		private NodeRef entityNodeRef;
+		private String runAsUser;
 
 		/**
 		 * Instantiates a new product report generator.
 		 *
 		 * @param entityNodeRef the product node ref
 		 */
-		private ProductReportGenerator(NodeRef entityNodeRef) {
+		private ProductReportGenerator(NodeRef entityNodeRef, String runAsUser) {
 			this.entityNodeRef = entityNodeRef;
+			this.runAsUser = runAsUser;
 		}
 		
 		/* (non-Javadoc)
@@ -321,7 +323,7 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
                         return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
                     }
                 };
-                AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());
+                AuthenticationUtil.runAs(actionRunAs, runAsUser);
             }
             catch (InvalidNodeRefException e) {
 				
