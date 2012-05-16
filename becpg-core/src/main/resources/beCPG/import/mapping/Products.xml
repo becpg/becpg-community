@@ -17,16 +17,10 @@
 			<!-- costs -->
 			<column id="coutMP" dataListQName="bcpg:costList"
 				charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
-				charactNodeRef="" charactName="Coût MP" type="Characteristic" />
-			<column id="coutMPPrev" dataListQName="bcpg:costList"
-				charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
-				charactNodeRef="" charactName="Coût prév MP" type="Characteristic" />
+				charactNodeRef="" charactName="Coût MP" type="Characteristic" />			
 			<column id="coutEmb" dataListQName="bcpg:costList"
 				charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
 				charactNodeRef="" charactName="Coût Emb" type="Characteristic" />
-			<column id="coutEmbPrev" dataListQName="bcpg:costList"
-				charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
-				charactNodeRef="" charactName="Coût prév Emb" type="Characteristic" />
 
 			<!-- nuts -->
 			<column id="nutProteines" dataListQName="bcpg:nutList"

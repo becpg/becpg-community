@@ -1,10 +1,10 @@
 "PATH";"/System/Characts/Nuts";;;;;;
 "TYPE";"bcpg:nut";;;;;;
 "COLUMNS";"cm:name";"bcpg:nutUnit";"bcpg:nutType";"bcpg:nutGroup";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en"
-"VALUES";"Energie selon Directive étiquetage 2008/100/CE";"kJ";"Valeur énergétique";"Groupe 1";"Energie selon Directive étiquetage 2008/100/CE";"Energie selon Directive étiquetage 2008/100/CE";"Energy, Directive 2008/100/CE for labelling"
-"VALUES";"Energie selon Directive étiquetage 2008/100/CE";"kcal";"Valeur énergétique";"Groupe 1";"Energie selon Directive étiquetage 2008/100/CE";"Energie selon Directive étiquetage 2008/100/CE";"Energy, Directive 2008/100/CE for labelling"
-"VALUES";"Energie, N x facteur Jones, avec fibres";"kJ";"Valeur énergétique";"Groupe 1";"Energie, N x facteur Jones, avec fibres";"Energie, N x facteur Jones, avec fibres";"Energy, N x Jones' factor, with fibres"
-"VALUES";"Energie, N x facteur Jones, avec fibres";"kcal";"Valeur énergétique";"Groupe 1";"Energie, N x facteur Jones, avec fibres";"Energie, N x facteur Jones, avec fibres";"Energy, N x Jones' factor, with fibres"
+"VALUES";"Energie kJ selon Directive étiquetage 2008/100/CE";"kJ";"Valeur énergétique";"Groupe 1";"Energie selon Directive étiquetage 2008/100/CE";"Energie selon Directive étiquetage 2008/100/CE";"Energy, Directive 2008/100/CE for labelling"
+"VALUES";"Energie kcal selon Directive étiquetage 2008/100/CE";"kcal";"Valeur énergétique";"Groupe 1";"Energie selon Directive étiquetage 2008/100/CE";"Energie selon Directive étiquetage 2008/100/CE";"Energy, Directive 2008/100/CE for labelling"
+"VALUES";"Energie kJ, N x facteur Jones, avec fibres";"kJ";"Valeur énergétique";"Groupe 1";"Energie, N x facteur Jones, avec fibres";"Energie, N x facteur Jones, avec fibres";"Energy, N x Jones' factor, with fibres"
+"VALUES";"Energie kcal, N x facteur Jones, avec fibres";"kcal";"Valeur énergétique";"Groupe 1";"Energie, N x facteur Jones, avec fibres";"Energie, N x facteur Jones, avec fibres";"Energy, N x Jones' factor, with fibres"
 "VALUES";"Eau";"g";"Nutriment";"Autre";"Eau";"Eau";"Water"
 "VALUES";"Sodium";"mg";"Minéraux";"Autre";"Sodium";"Sodium";"Sodium"
 "VALUES";"Magnésium";"mg";"Minéraux";"Autre";"Magnésium";"Magnésium";"Magnesium"
