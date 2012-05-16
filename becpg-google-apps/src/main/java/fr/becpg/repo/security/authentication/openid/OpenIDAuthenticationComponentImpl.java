@@ -1,5 +1,8 @@
 package fr.becpg.repo.security.authentication.openid;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sf.acegisecurity.Authentication;
 
 import org.alfresco.model.ContentModel;
@@ -12,6 +15,7 @@ import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,19 +32,24 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 
 	private static Log logger = LogFactory.getLog(OpenIDAuthenticationComponentImpl.class);
 
-
+	/** Allow to define groups for new users **/
+	private List<String> defaultGroupNames = new ArrayList<String>();
+	
     /** The authority service. */
     private AuthorityService authorityService;
-    
     
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
 
+	public void setDefaultGroupNames(List<String> defaultGroupNames) {
+		this.defaultGroupNames = defaultGroupNames;
+	}
+
 
 	@Override
 	protected boolean implementationAllowsGuestLogin() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -72,17 +81,17 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 
 			OpenIDAuthenticationToken response = (OpenIDAuthenticationToken) auth;
 			
-			if (logger.isDebugEnabled())
-				logger.debug("Authenticate " + OpenIdUtils.getUserName(response) + " via token");
-
 
 			OpenIDAuthenticationStatus status = response.getStatus();
 
 			// handle the various possibilities
 			if (status == OpenIDAuthenticationStatus.SUCCESS) {
 
+			  if (logger.isDebugEnabled())
+				  logger.debug("Authenticate " + OpenIdUtils.getUserName(response) + " via token");
+				
 				clearCurrentSecurityContext();
-				return setCurrentUser(response);
+			    setCurrentUser(response);
 
 			} else if (status == OpenIDAuthenticationStatus.CANCELLED) {
 
@@ -110,10 +119,10 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 
 		} else {
 			// Unsupported authentication token
-
 			throw new AuthenticationException("Unsupported authentication token type");
 		}
-
+		
+		return getCurrentAuthentication();
 	}
 
 	private Authentication setCurrentUser(OpenIDAuthenticationToken token) {
@@ -207,8 +216,14 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 			
 			NodeRef person = getPersonService().createPerson(personProps);
 
-			//authorityService.addAuthority( AuthorityType.GROUP_EVERYONE, personProps.get(ContentModel.PROP_USERNAME));
-			
+			for(String group : defaultGroupNames){
+				String authorityName = authorityService.getName(AuthorityType.GROUP, group);
+				if(authorityService.authorityExists(authorityName)){
+					authorityService.addAuthority( authorityName, (String)personProps.get(ContentModel.PROP_USERNAME));
+				} else {
+					logger.warn("Autority doesn't exist:"+authorityName);
+				}
+			}
 			return person != null;
 		}
 
