@@ -71,8 +71,7 @@
 								<filter>
 
 									<artifact>org.alfresco.sdk:*</artifact>
-									<excludes>
-										<exclude>org/alfresco/repo/node/db/DbNodeServiceImpl**</exclude>
+									<excludes>																	
 										<exclude>org/alfresco/repo/forms/processor/node/ContentModelFormProcessor**</exclude>
 										<exclude>org/alfresco/repo/forms/processor/node/AbstractAssocCommand**</exclude>
 										<exclude>org/alfresco/repo/forms/processor/node/AddAssocCommand**</exclude>
@@ -80,6 +79,9 @@
 										<exclude>org/alfresco/repo/forms/processor/node/RemoveAssocCommand**</exclude>
 										<exclude>org/alfresco/repo/forms/processor/node/RemoveChildAssocCommand**</exclude>
 										<exclude>org/alfresco/repo/jscript/ScriptNode**</exclude>
+										<exclude>org/alfresco/repo/model/Repository**</exclude>
+										<exclude>org/alfresco/repo/node/db/DbNodeServiceImpl**</exclude>
+										<exclude>org/alfresco/repo/thumbnail/ThumbnailRegistry**</exclude>
 									</excludes>
 								</filter>
 							</filters>
