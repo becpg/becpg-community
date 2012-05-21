@@ -15,28 +15,28 @@
 			<div class="formulate">
 	         <span id="${id}-formulateButton" class="yui-button yui-push-button">
 	            <span class="first-child">
-	               <button type="button">${msg('button.formulate')}</button>
+	               <button type="button" title="${msg('button.formulate.description')}">${msg('button.formulate')}</button>
 	            </span>
 	         </span>
 	      </div>
 	      <div class="eco-calculate-wused">
 	         <span id="${id}-ecoCalculateWUsedButton" class="yui-button yui-push-button">
 	            <span class="first-child">
-	               <button type="button">${msg('button.eco-calculate-wused')}</button>
+	               <button type="button" title="${msg('button.eco-calculate-wused.description')}">${msg('button.eco-calculate-wused')}</button>
 	            </span>
 	         </span>
 	      </div>
 	      <div class="eco-do-simulation">
 	         <span id="${id}-ecoDoSimulationButton" class="yui-button yui-push-button">
 	            <span class="first-child">
-	               <button type="button">${msg('button.eco-do-simulation')}</button>
+	               <button type="button" title="${msg('button.eco-do-simulation.description')}">${msg('button.eco-do-simulation')}</button>
 	            </span>
 	         </span>
 	      </div>
 	      <div class="eco-apply">
 	         <span id="${id}-ecoApplyButton" class="yui-button yui-push-button">
 	            <span class="first-child">
-	               <button type="button">${msg('button.eco-apply')}</button>
+	               <button type="button" title="${msg('button.eco-apply.description')}">${msg('button.eco-apply')}</button>
 	            </span>
 	         </span>
 	      </div>
@@ -44,7 +44,7 @@
 		 	<div class="finish">
             <span id="${id}-finishButton" class="yui-button yui-push-button">
                <span class="first-child">
-                  <button type="button">${msg('button.finish')}</button>
+                  <button type="button" title="${msg('button.finish.description')}">${msg('button.finish')}</button>
                </span>
             </span>
          </div>

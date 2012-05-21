@@ -83,7 +83,11 @@
 		            cssClass: "help",
 		            bubbleOnClick:
 		            {
-		               message: "${msg("dashlet.help")?js_string}"
+		              	<#if extra["itemType"]??>
+		               	message: "${msg("dashlet.help." + extra["itemType"]?replace(":", "_"))?js_string}"
+							<#else>
+		               	message: "${msg("dashlet.help.composition")?js_string}"
+							</#if>
 		            },
 		            tooltip: "${msg("dashlet.help.tooltip")?js_string}"
 		         }
