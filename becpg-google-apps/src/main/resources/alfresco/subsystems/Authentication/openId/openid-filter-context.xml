@@ -9,7 +9,7 @@
 		</property>
 	</bean>
 
-	<bean id="openIdConsumer" class="org.springframework.security.openid.OpenID4JavaConsumer">
+	<bean id="openIdConsumer" class="fr.becpg.repo.security.authentication.openid.OpenID4JavaConsumer">
 		<constructor-arg index="0">
 			<list>
 				<bean class="org.springframework.security.openid.OpenIDAttribute">
@@ -32,8 +32,18 @@
 				</bean>
 			</list>
 		</constructor-arg>
+		<property name="sysAdminParams" ref="sysAdminParams"/>
 	</bean>
-
+<!-- 
+	  <bean id="RemoteUserMapper" class="org.alfresco.web.app.servlet.DefaultRemoteUserMapper">
+      <property name="active">
+         <value>${openid.authentication.sso.enabled}</value>
+      </property>
+      <property name="personService">
+         <ref bean="PersonService" />
+      </property>
+   </bean>
+ -->
 
 	<bean id="globalAuthenticationFilter" class="fr.becpg.web.app.servlet.OpenIdAuthenticationFilter">
 		<property name="active">
@@ -58,6 +68,12 @@
 			<value>${openid.authentication.server}</value>
 		</property>
 		<property name="consumer" ref="openIdConsumer" />
+		<property name="configService">
+         <ref bean="webClientConfigService" />
+      </property>
+       <property name="sysAdminParams">
+      	<ref bean="sysAdminParams"/>
+      </property>
 	</bean>
 
 	
@@ -83,7 +99,7 @@
       </property>
       <property name="container">
          <ref bean="webscripts.container" />
-      </property>
+      </property> 
    </bean>
 
 </beans>
