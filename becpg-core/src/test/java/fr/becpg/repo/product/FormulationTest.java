@@ -117,6 +117,8 @@ public class FormulationTest extends RepoBaseTestCase {
     /** The raw material5 node ref. */
     private NodeRef  rawMaterial5NodeRef;
     
+    private NodeRef rawMaterial6NodeRef;
+    
     /** The local s f11 node ref. */
     private NodeRef localSF11NodeRef;
     
@@ -485,6 +487,44 @@ public class FormulationTest extends RepoBaseTestCase {
 			rawMaterial5.setNutList(nutList);					
 			rawMaterial5.setIngList(ingList);		
 			rawMaterial5NodeRef = productDAO.create(folderNodeRef, rawMaterial5, dataLists);
+			
+			/*-- Raw material 6 --*/
+			RawMaterialData rawMaterial6 = new RawMaterialData();
+			rawMaterial6.setName("Raw material 6");
+			rawMaterial6.setLegalName("Legal Raw material 6");
+			rawMaterial6.setUnit(ProductUnit.L);
+			rawMaterial6.setDensity(0.7d);
+			//costList
+			costList = new ArrayList<CostListDataItem>();
+			costList.add(new CostListDataItem(null, 1d, "€/L", 2.1d, cost1, false));
+			costList.add(new CostListDataItem(null, 2d, "€/L", 2.2d, cost2, false));
+			rawMaterial6.setCostList(costList);
+			//nutList
+			nutList = new ArrayList<NutListDataItem>();
+			nutList.add(new NutListDataItem(null, 1d, "g/100mL", 0.8d, 1.1d, "Groupe 1", nut1, false));
+			nutList.add(new NutListDataItem(null, 2d, "g/100mL", 0.8d, 2.1d, "Groupe 1", nut2, false));
+			rawMaterial6.setNutList(nutList);
+			//allergenList
+			allergenList = new ArrayList<AllergenListDataItem>();
+			allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergen1, false));
+			allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergen2, false));
+			allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergen3, false));
+			allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergen4, false));
+			rawMaterial6.setAllergenList(allergenList);
+			//ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
+			ingList = new ArrayList<IngListDataItem>();
+			bioOrigins = new ArrayList<NodeRef>();
+			bioOrigins.add(bioOrigin1);
+			geoOrigins = new ArrayList<NodeRef>();
+			geoOrigins.add(geoOrigin1);			
+			ingList.add(new IngListDataItem(null, 80d, geoOrigins, bioOrigins, true, true, ing1, false));
+			bioOrigins = new ArrayList<NodeRef>();
+			bioOrigins.add(bioOrigin2);
+			geoOrigins = new ArrayList<NodeRef>();
+			geoOrigins.add(geoOrigin2);
+			ingList.add(new IngListDataItem(null, 20d, geoOrigins, bioOrigins, false, false, ing2, false));
+			rawMaterial6.setIngList(ingList);			
+			rawMaterial6NodeRef = productDAO.create(folderNodeRef, rawMaterial6, dataLists);
 			
 			/*-- Local semi finished product 1 --*/
 			LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
@@ -1218,6 +1258,65 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
 					}
 				}				
+				
+				return null;
+
+				}},false,true);
+		   
+	   }
+	
+	/**
+	 * Test the formulation with density (kg and L)
+	 *
+	 * @throws Exception the exception
+	 */
+	public void testFormulateWithDensity() throws Exception{
+		   
+		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+				public NodeRef execute() throws Throwable {					   				
+								
+				/*-- Create finished product --*/
+				logger.debug("/*-- Create finished product --*/");
+				 Collection<QName> dataLists = productDictionaryService.getDataLists();
+				FinishedProductData finishedProduct = new FinishedProductData();
+				finishedProduct.setName("Produit fini 1");
+				finishedProduct.setLegalName("Legal Produit fini 1");
+				finishedProduct.setQty(2.5d);
+				finishedProduct.setUnit(ProductUnit.kg);
+				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();				
+				compoList.add(new CompoListDataItem(null, 1, 0d, 1d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));				
+				compoList.add(new CompoListDataItem(null, 1, 0d, 2d, 0d, CompoListUnit.L, 0d, "", DeclarationType.DECLARE_FR, rawMaterial6NodeRef));
+				finishedProduct.setCompoList(compoList);
+				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
+				
+				/*-- Formulate product --*/
+				logger.debug("/*-- Formulate product --*/");
+				productService.formulate(finishedProductNodeRef);
+				
+				/*-- Verify formulation --*/
+				logger.debug("/*-- Verify formulation --*/");
+				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+			
+				DecimalFormat df = new DecimalFormat("0.000");
+				int checks = 0;
+				assertNotNull("IngList is null", formulatedProduct.getIngList());
+				for(IngListDataItem ingListDataItem : formulatedProduct.getIngList()){									
+					
+					String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + df.format(ingListDataItem.getQtyPerc());
+					logger.debug(trace);
+										
+					if(ingListDataItem.getIng().equals(ing1)){
+						assertEquals("ing1.getQtyPerc() == 79.02098, actual values: " + trace,  df.format(79.02098), df.format(ingListDataItem.getQtyPerc()));
+						checks++;
+					}
+					//ing: ing2 - qty: 19.512195 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
+					if(ingListDataItem.getIng().equals(ing2)){
+						assertEquals("ing2.getQtyPerc() == 20.97902, actual values: " + trace, df.format(20.97902), df.format(ingListDataItem.getQtyPerc()));
+						checks++;
+					}					
+				}
+				
+				assertEquals(2, checks);	
 				
 				return null;
 
