@@ -1037,6 +1037,7 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
+					<show id="bcpg:productDensity" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
@@ -1097,6 +1098,7 @@
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:productState" read-only="true" set="mainInfo"/>	
 					<field id="bcpg:productUnit" set="mainInfo"/>
+					<field id="bcpg:productDensity" set="mainInfo"/>
 					<field id="bcpg:suppliers" set="mainInfo"/>						
 					<field id="rep:reportTpls" set="mainInfo"/>
 											
@@ -1149,6 +1151,7 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
+					<show id="bcpg:productDensity" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
@@ -1201,6 +1204,7 @@
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:productState" read-only="true" set="mainInfo"/>	
 					<field id="bcpg:productUnit" set="mainInfo"/>
+					<field id="bcpg:productDensity" set="mainInfo"/>
 					<field id="bcpg:suppliers" set="mainInfo"/>						
 					<field id="rep:reportTpls" set="mainInfo"/>									
 					<field id="bcpg:productMicrobioCriteria" set="mainInfo">

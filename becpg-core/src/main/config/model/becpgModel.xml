@@ -1588,6 +1588,11 @@
 						<constraint ref="bcpg:productUnit" />
 					</constraints>
 				</property>
+				<property name="bcpg:productDensity">
+					<type>d:double</type>
+					<mandatory>true</mandatory>
+					<default>1</default>
+				</property>
 			</properties>			
 		</aspect>
 
@@ -1596,12 +1601,7 @@
 				<property name="bcpg:productQty">
 					<type>d:double</type>
 					<mandatory>true</mandatory>
-				</property>
-				<property name="bcpg:productDensity">
-					<type>d:double</type>
-					<mandatory>true</mandatory>
-					<default>1</default>
-				</property>
+				</property>				
 			</properties>
 			<associations>
 				<association name="bcpg:productSpecification">
