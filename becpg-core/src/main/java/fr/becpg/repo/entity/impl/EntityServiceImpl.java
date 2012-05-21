@@ -376,8 +376,10 @@ public class EntityServiceImpl implements EntityService {
 			try {
 				Image image = ImageIO.read(in);
 				out = new ByteArrayOutputStream();
-				ImageIO.write((RenderedImage) image, "jpg", out);
-				imageBytes = ((ByteArrayOutputStream) out).toByteArray();
+				if(image!= null){				
+					ImageIO.write((RenderedImage) image, "jpg", out);
+					imageBytes = ((ByteArrayOutputStream) out).toByteArray();
+				}				
 			} catch (IOException e) {
 				logger.error("Failed to get the content", e);
 			} finally {
