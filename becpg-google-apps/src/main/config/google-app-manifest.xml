@@ -3,11 +3,8 @@
 
   <!-- Support info to show in the marketplace & control panel -->
   <Support>
-    <!-- URL for application setup as an optional redirect during the install -->
-    <Link rel="setup" href="https://www.becpg.fr/google/setup?domain=${DOMAIN_NAME}" />
-
-	<!--  URL for application configuration, accessed from the app settings page in the control panel -->
-    <Link rel="manage" href="https://www.becpg.fr/google/admin.php?from=google&amp;domain=${DOMAIN_NAME}" />
+    <!--  URL for application configuration, accessed from the app settings page in the control panel -->
+    <Link rel="manage" href="https://www.becpg.fr/googleApps.php?admin=true&amp;from=google&amp;domain=${DOMAIN_NAME}" />
 
     <!-- URL explaining how customers get support. -->
     <Link rel="support" href="https://www.becpg.fr/google/support" />
@@ -15,8 +12,6 @@
     <!-- URL that is displayed to admins during the deletion process, to specify policies such as data retention, how to claim accounts, etc. -->
     <Link rel="deletion-policy" href="https://www.becpg.fr/google/deletion-policy" />
 
-    <!-- URL that is displayed to customers so that they may purchase additional seats. -->
-    <Link rel="add-seats" href="https://www.becpg.fr/google/purchase"/>
   </Support>
 
   <!-- Name and description pulled from message bundles -->
@@ -27,12 +22,12 @@
   <!-- Show this link in Google's universal navigation for all users -->
   <Extension id="navLink" type="link">
     <Name>beCPG PLM</Name>
-    <Url>https://www.becpg.fr/google/access.php?from=google&amp;domain=${DOMAIN_NAME}</Url>
+    <Url>https://www.becpg.fr/googleApps.php?from=google&amp;domain=${DOMAIN_NAME}</Url>
   </Extension>
 
   <!-- Declare our OpenID realm so our app is white listed -->
   <Extension id="realm" type="openIdRealm">
-    <Url>http://nas.leslaborie.org:8080</Url>
+    <Url>https://*.becpg.fr</Url>
   </Extension>
-
+  
 </ApplicationManifest>
