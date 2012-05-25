@@ -23,11 +23,26 @@
   <Extension id="navLink" type="link">
     <Name>beCPG PLM</Name>
     <Url>https://www.becpg.fr/googleApps.php?from=google&amp;domain=${DOMAIN_NAME}</Url>
+    <Scope ref="docsFeed"/>
+    <Scope ref="spreadsheetsFeed"/>
   </Extension>
 
   <!-- Declare our OpenID realm so our app is white listed -->
   <Extension id="realm" type="openIdRealm">
     <Url>https://*.becpg.fr</Url>
   </Extension>
+  
+   
+  
+   <!-- Need access to the Documents feed -->
+  <Scope id="docsFeed">
+    <Url>http://docs.google.com/feeds/</Url>
+    <Reason>This application allow inline edit of documents files.</Reason>
+  </Scope>
+  
+  <Scope id="spreadsheetsFeed">
+    <Url>http://spreadsheets.google.com/feeds/</Url>
+    <Reason>This application allow inline edit of spreadsheets files.</Reason>
+  </Scope>
   
 </ApplicationManifest>

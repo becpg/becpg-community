@@ -9,7 +9,8 @@
 		</property>
 	</bean>
 
-	<bean id="openIdConsumer" class="fr.becpg.repo.security.authentication.openid.OpenID4JavaConsumer">
+	<bean id="openIdConsumer"
+		class="fr.becpg.repo.security.authentication.openid.OpenID4JavaConsumer">
 		<constructor-arg index="0">
 			<list>
 				<bean class="org.springframework.security.openid.OpenIDAttribute">
@@ -32,18 +33,13 @@
 				</bean>
 			</list>
 		</constructor-arg>
-		<property name="sysAdminParams" ref="sysAdminParams"/>
+		<property name="sysAdminParams" ref="sysAdminParams" />
+		<property name="oauthScopes" value="${openid.authentication.oauthScopes}" />
 	</bean>
-<!-- 
-	  <bean id="RemoteUserMapper" class="org.alfresco.web.app.servlet.DefaultRemoteUserMapper">
-      <property name="active">
-         <value>${openid.authentication.sso.enabled}</value>
-      </property>
-      <property name="personService">
-         <ref bean="PersonService" />
-      </property>
-   </bean>
- -->
+	<!-- <bean id="RemoteUserMapper" class="org.alfresco.web.app.servlet.DefaultRemoteUserMapper"> 
+		<property name="active"> <value>${openid.authentication.sso.enabled}</value> 
+		</property> <property name="personService"> <ref bean="PersonService" /> 
+		</property> </bean> -->
 
 	<bean id="globalAuthenticationFilter" class="fr.becpg.web.app.servlet.OpenIdAuthenticationFilter">
 		<property name="active">
@@ -69,37 +65,41 @@
 		</property>
 		<property name="consumer" ref="openIdConsumer" />
 		<property name="configService">
-         <ref bean="webClientConfigService" />
-      </property>
-       <property name="sysAdminParams">
-      	<ref bean="sysAdminParams"/>
-      </property>
+			<ref bean="webClientConfigService" />
+		</property>
+		<property name="sysAdminParams">
+			<ref bean="sysAdminParams" />
+		</property>
+		<property name="oauthCertFile" value="${oauth.cert.path}" />
+		<property name="oauthConsumerKey" value="${oauth.consumer.secret}" />
 	</bean>
 
-	
-   <!-- Enable cookie-based handling of webscript logins. We must assume cookie based client authentication when external auth is in the chain. -->
-   <bean id="webscriptAuthenticationFilter" class="org.alfresco.web.app.servlet.WebScriptSSOAuthenticationFilter">
-      <property name="active">
-         <value>true</value>
-      </property>
-      <property name="authenticationService">
-         <ref bean="AuthenticationService" />
-      </property>
-      <property name="authenticationComponent">
-         <ref bean="AuthenticationComponent" />
-      </property>
-      <property name="personService">
-         <ref bean="personService" />
-      </property>
-      <property name="nodeService">
-         <ref bean="NodeService" />
-      </property>
-      <property name="transactionService">
-         <ref bean="TransactionService" />
-      </property>
-      <property name="container">
-         <ref bean="webscripts.container" />
-      </property> 
-   </bean>
+
+	<!-- Enable cookie-based handling of webscript logins. We must assume cookie 
+		based client authentication when external auth is in the chain. -->
+	<bean id="webscriptAuthenticationFilter"
+		class="org.alfresco.web.app.servlet.WebScriptSSOAuthenticationFilter">
+		<property name="active">
+			<value>true</value>
+		</property>
+		<property name="authenticationService">
+			<ref bean="AuthenticationService" />
+		</property>
+		<property name="authenticationComponent">
+			<ref bean="AuthenticationComponent" />
+		</property>
+		<property name="personService">
+			<ref bean="personService" />
+		</property>
+		<property name="nodeService">
+			<ref bean="NodeService" />
+		</property>
+		<property name="transactionService">
+			<ref bean="TransactionService" />
+		</property>
+		<property name="container">
+			<ref bean="webscripts.container" />
+		</property>
+	</bean>
 
 </beans>
