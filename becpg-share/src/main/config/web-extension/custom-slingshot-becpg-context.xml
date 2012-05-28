@@ -9,6 +9,7 @@
             <value>alfresco.messages.becpg-model</value>
             <value>alfresco.messages.becpg-pages</value>
             <value>alfresco.messages.becpg-controls</value>
+            <value>alfresco.messages.becpg-forms</value>
          </list>
       </property>
    </bean>

@@ -75,11 +75,11 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="product-criteria" appearance="bordered-panel" label="Critères sur le produit" />
-					<set id="npd" appearance="bordered-panel" label="NPD"
+					<set id="product-criteria" appearance="bordered-panel" label-id="becpg.forms.set.product-criteria.label" />
+					<set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 					<set id="ings-criteria" appearance="bordered-panel"
-						label="Critères sur les ingrédients" />					
+						label-id="becpg.forms.set.ings-criteria.label" />					
 
 					<field id="cm:name" set="product-criteria" />
 					<field id="cm:description" set="product-criteria" />

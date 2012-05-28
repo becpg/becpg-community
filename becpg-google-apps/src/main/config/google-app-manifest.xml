@@ -24,6 +24,7 @@
     <Name>beCPG PLM</Name>
     <Url>https://www.becpg.fr/googleApps.php?from=google&amp;domain=${DOMAIN_NAME}</Url>
     <Scope ref="docsFeed"/>
+    <Scope ref="userDocsFeed"/>
     <Scope ref="spreadsheetsFeed"/>
   </Extension>
 
@@ -44,5 +45,13 @@
     <Url>http://spreadsheets.google.com/feeds/</Url>
     <Reason>This application allow inline edit of spreadsheets files.</Reason>
   </Scope>
+  
+  <Scope id="userDocsFeed">
+    <Url>https://docs.googleusercontent.com/</Url>
+    <Reason>This application allow inline edit of documents files.</Reason>
+  </Scope>
+  
+  
+  
   
 </ApplicationManifest>

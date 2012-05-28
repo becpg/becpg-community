@@ -71,7 +71,8 @@
 			<ref bean="sysAdminParams" />
 		</property>
 		<property name="oauthCertFile" value="${oauth.cert.path}" />
-		<property name="oauthConsumerKey" value="${oauth.consumer.secret}" />
+		<property name="oauthConsumerKey" value="${oauth.consumer.key}" />
+		<property name="oauthConsumerKeySecret" value="${oauth.consumer.secret}" />
 	</bean>
 
 

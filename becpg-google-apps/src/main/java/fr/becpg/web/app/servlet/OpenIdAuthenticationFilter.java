@@ -86,6 +86,7 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 	private OpenIDConsumer consumer;
 	private String oauthCertFile;
 	private String oauthConsumerKey;
+	private String oauthConsumerKeySecret;
 	private String claimedIdentityFieldName = DEFAULT_CLAIMED_IDENTITY_FIELD;
 	private Map<String, String> realmMapping = Collections.emptyMap();
 	private Set<String> returnToUrlParameters = Collections.emptySet();
@@ -107,6 +108,12 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 
 	public void setOauthConsumerKey(String oauthConsumerKey) {
 		this.oauthConsumerKey = oauthConsumerKey;
+	}
+
+	
+
+	public void setOauthConsumerKeySecret(String oauthConsumerKeySecret) {
+		this.oauthConsumerKeySecret = oauthConsumerKeySecret;
 	}
 
 
@@ -152,8 +159,8 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 			
 			// Parse access token
 			GoogleOAuthParameters oauthParameters = new GoogleOAuthParameters();
-			oauthParameters.setOAuthConsumerKey(sysAdminParams.getShareHost());
-			oauthParameters.setOAuthConsumerSecret(oauthConsumerKey);
+			oauthParameters.setOAuthConsumerKey(oauthConsumerKey);
+			oauthParameters.setOAuthConsumerSecret(oauthConsumerKeySecret);
 			oauthParameters.setOAuthToken(authorizedtoken);
 	
 	        GoogleOAuthHelper oauthHelper = new GoogleOAuthHelper(OAuthTokenUtils.getRSASigner());
