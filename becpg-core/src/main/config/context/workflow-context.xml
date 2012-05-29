@@ -24,18 +24,26 @@
 					<prop key="mimetype">text/xml</prop>
 					<prop key="redeploy">false</prop>
 				</props>
+				<props>
+					<prop key="engineId">activiti</prop>
+					<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-process.bpmn20.xml</prop>
+					<prop key="mimetype">text/xml</prop>
+					<prop key="redeploy">true</prop>
+				</props>
 			</list>
 		</property>
 		<property name="labels">
 			<list>
 				<value>alfresco/module/${pom.artifactId}/workflow/workflow-messages</value>
 				<value>alfresco/module/${pom.artifactId}/workflow/npd/npd-messages</value>
+				<value>alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-messages</value>				
 			</list>
 		</property>
 		<property name="models">
 			<list>
 				<value>alfresco/module/${pom.artifactId}/workflow/workflowModel.xml</value>
 				<value>alfresco/module/${pom.artifactId}/workflow/npd/npdModel.xml</value>
+				<value>alfresco/module/${pom.artifactId}/workflow/quality/nonConformityModel.xml</value>
 			</list>
 		</property>
 	</bean>
