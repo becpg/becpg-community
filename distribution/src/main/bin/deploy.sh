@@ -33,6 +33,11 @@ install_core_amp becpg-controls-core-*.amp
 install_core_amp becpg-designer-core-*.amp
 install_core_amp becpg-core-*.amp
 
+read -p "Deploy OpenID? (y/n)" ansopenid 
+if [ "$ansopenid" = "y" ]; then
+install_core_amp becpg-google-apps-*.amp
+fi
+
 echo "**********************************************************"
 echo "Deploy share AMP"
 echo "**********************************************************"
@@ -55,6 +60,10 @@ echo "**********************************************************"
 
 jar ufv $SERVER/webapps/share.war -C dist/share .
 jar ufv $SERVER/webapps/alfresco.war -C dist/alfresco .
+if [ "$ansopenid" = "y" ]; then
+jar ufv $SERVER/webapps/share.war -C dist/share_openid .
+fi
+
 
 
 read -p "Deploy report server? (y/n)" ans 

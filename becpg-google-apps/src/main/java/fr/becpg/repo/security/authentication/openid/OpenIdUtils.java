@@ -48,5 +48,9 @@ public class OpenIdUtils {
 				&& request.getParameter((String)request.getSession().getAttribute(SHARE_AUTH_SESSION_PARAM))!=null;
 	}
 
+	public static String getOAuthToken(OpenIDAuthenticationToken token) {
+		return token.getMessage();
+	}
+
 	
 }

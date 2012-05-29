@@ -27,7 +27,6 @@
 		</dependency>
 
 		<!-- OpenID -->
-
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-openid</artifactId>

@@ -53,7 +53,7 @@
 					
 				</field-visibility>
 				<appearance>					
-					<set id="npd" appearance="bordered-panel" label="NPD"
+					<set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 						
 					<!-- NPD -->

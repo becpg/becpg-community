@@ -38,6 +38,7 @@ import org.alfresco.web.config.ClientConfigElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openid4java.consumer.ConsumerException;
+import org.openid4java.message.MessageException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.extensions.config.ConfigService;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
@@ -46,9 +47,13 @@ import org.springframework.security.openid.OpenIDConsumerException;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import com.google.gdata.client.authn.oauth.GoogleOAuthHelper;
+import com.google.gdata.client.authn.oauth.GoogleOAuthParameters;
+
 import fr.becpg.repo.security.authentication.openid.OpenID4JavaConsumer;
 import fr.becpg.repo.security.authentication.openid.OpenIdAuthenticator;
 import fr.becpg.repo.security.authentication.openid.OpenIdUtils;
+import fr.becpg.repo.security.authentication.openid.oauth.OAuthTokenUtils;
 
 /**
  * 
@@ -71,12 +76,17 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 
 	public static final String DEFAULT_CLAIMED_IDENTITY_FIELD = "openid_identifier";
 
+	public static final String OAUHT_SESSION_TOKEN = "oauth_session_token";
+
 	// ~ Instance fields
 	// ================================================================================================
 
 	private SysAdminParams sysAdminParams;
 	private ConfigService configService;
 	private OpenIDConsumer consumer;
+	private String oauthCertFile;
+	private String oauthConsumerKey;
+	private String oauthConsumerKeySecret;
 	private String claimedIdentityFieldName = DEFAULT_CLAIMED_IDENTITY_FIELD;
 	private Map<String, String> realmMapping = Collections.emptyMap();
 	private Set<String> returnToUrlParameters = Collections.emptySet();
@@ -89,6 +99,23 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+
+	
+	public void setOauthCertFile(String oauthCertFile) {
+		this.oauthCertFile = oauthCertFile;
+	}
+
+
+	public void setOauthConsumerKey(String oauthConsumerKey) {
+		this.oauthConsumerKey = oauthConsumerKey;
+	}
+
+	
+
+	public void setOauthConsumerKeySecret(String oauthConsumerKeySecret) {
+		this.oauthConsumerKeySecret = oauthConsumerKeySecret;
+	}
+
 
 	@Override
 	public boolean isActive() {
@@ -111,6 +138,8 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 			logger.debug("Request auth for:" + ((HttpServletRequest) request).getRequestURL());
 		}
 
+		OAuthTokenUtils.setCurrentOAuthToken(getOAuthSessionToken((HttpServletRequest) request));
+
 		if (request.getAttribute(NO_AUTH_REQUIRED) != null) {
 			if (getLogger().isDebugEnabled())
 				getLogger().debug("Authentication not required (filter), chaining ...");
@@ -119,6 +148,36 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 			chain.doFilter(request, response);
 		}
 
+	}
+
+	private GoogleOAuthParameters getOAuthSessionToken(HttpServletRequest request) {
+		return (GoogleOAuthParameters) request.getSession().getAttribute(OAUHT_SESSION_TOKEN);
+	}
+
+	private void setOAuthSessionToken(HttpServletRequest request, String authorizedtoken) {
+		try {
+			
+			// Parse access token
+			GoogleOAuthParameters oauthParameters = new GoogleOAuthParameters();
+			oauthParameters.setOAuthConsumerKey(oauthConsumerKey);
+			oauthParameters.setOAuthConsumerSecret(oauthConsumerKeySecret);
+			oauthParameters.setOAuthToken(authorizedtoken);
+	
+	        GoogleOAuthHelper oauthHelper = new GoogleOAuthHelper(OAuthTokenUtils.getRSASigner());
+	        String accessToken =  oauthHelper.getAccessToken(oauthParameters);
+	        if(logger.isDebugEnabled()){
+	        	logger.debug("Getting access token form authorized token : "+authorizedtoken);
+	        	logger.debug("Access token is :"+accessToken);
+	        }
+	        //Set access token
+	        oauthParameters.setOAuthToken(accessToken);
+	        request.getSession().setAttribute(OAUHT_SESSION_TOKEN, oauthParameters);
+			OAuthTokenUtils.setCurrentOAuthToken(oauthParameters);
+		
+		} catch (Exception e) {
+			logger.error("Cannot get oauth accessToken",e);
+		}
+		
 	}
 
 	// Check if guest is in url then skip auth for openId
@@ -147,6 +206,8 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 					((OpenID4JavaConsumer) consumer).setSysAdminParams(sysAdminParams);
 				} catch (ConsumerException e) {
 					throw new IllegalArgumentException("Failed to initialize OpenID", e);
+				} catch (MessageException e) {
+					throw new IllegalArgumentException("Failed to initialize OpenID", e);
 				}
 			}
 
@@ -158,6 +219,9 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 			}
 			this.openIdAuthenticator = (OpenIdAuthenticator) this.authenticationComponent;
 
+			OAuthTokenUtils.initPrivateKey(oauthCertFile);
+			
+			
 			ClientConfigElement clientConfig = (ClientConfigElement) configService.getGlobalConfig().getConfigElement(ClientConfigElement.CONFIG_ELEMENT_ID);
 			if (clientConfig != null) {
 				setLoginPage(clientConfig.getLoginPage());
@@ -193,7 +257,7 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 		if (user != null) {
 
 			// Filter validate hook
-			onValidate(context, request, response);
+			onValidate(context, request, response, null);
 
 			if (getLogger().isDebugEnabled())
 				getLogger().debug("Authentication not required (user), chaining ...");
@@ -220,7 +284,7 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 				authenticationService.authenticateAsGuest();
 				user = createUserEnvironment(request.getSession(), authenticationService.getCurrentUserName(), authenticationService.getCurrentTicket(), true);
 
-				onValidate(context, request, response);
+				onValidate(context, request, response, null);
 
 				return true;
 			} catch (AuthenticationException ex) {
@@ -244,6 +308,7 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 				claimedIdentity = obtainUsername(request);
 			}
 			try {
+
 				String returnToUrl = buildReturnToUrl(request);
 				String realm = lookupRealm(returnToUrl);
 				String openIdUrl = consumer.beginConsumption(request, claimedIdentity, returnToUrl, realm);
@@ -296,7 +361,7 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 				if (authentication.isAuthenticated()) {
 					user = createUserEnvironment(request.getSession(), authenticationService.getCurrentUserName(), authenticationService.getCurrentTicket(), true);
 
-					onValidate(context, request, response);
+					onValidate(context, request, response, token);
 
 					if (request.getHeader(OpenIdUtils.HEADER_SHARE_AUTH) != null) {
 
@@ -489,10 +554,13 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 	 * javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest,
 	 * javax.servlet.http.HttpServletResponse)
 	 */
-	protected void onValidate(ServletContext sc, HttpServletRequest req, HttpServletResponse res) {
+	protected void onValidate(ServletContext sc, HttpServletRequest req, HttpServletResponse res, OpenIDAuthenticationToken token) {
 		// Set the locale using the session
 		AuthenticationHelper.setupThread(sc, req, res, !req.getServletPath().equals("/wcs") && !req.getServletPath().equals("/wcservice"));
-
+		if (token != null) {
+			// Set the oauth token
+			setOAuthSessionToken(req, OpenIdUtils.getOAuthToken(token));
+		}
 	}
 
 	/*

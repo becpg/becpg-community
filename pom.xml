@@ -192,6 +192,7 @@
 	<modules>
 		<module>becpg-report</module>
 		<module>becpg-core</module>
+		<module>becpg-google-apps</module>
 		<module>becpg-share</module>
 		<module>becpg-olap</module>
 		<module>distribution</module>

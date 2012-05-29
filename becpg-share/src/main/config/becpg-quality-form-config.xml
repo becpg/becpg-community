@@ -52,9 +52,8 @@
 					
 				</field-visibility>
 				<appearance>
-					<!-- TODO i18n label-id -->
 					<set id="mainInfo" template="/fr/becpg/components/form/2-column-set.ftl"
-						appearance="bordered-panel" label="Info non conformité" />					
+						appearance="bordered-panel" label-id="becpg.forms.set.nc-info.label" />					
 					<field id="cm:name" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="qa:ncType" set="mainInfo" />
@@ -77,17 +76,17 @@
 					</field>				
 					
 					<set id="dates"
-						appearance="bordered-panel" label="Dates" />
+						appearance="bordered-panel" label-id="becpg.forms.set.dates.label" />
 					<field id="qa:ncDetected" set="dates" >
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>											
 						
-					<set id="product-info" appearance="bordered-panel" label="Information produit" />
+					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
 					<field id="qa:product" set="product-info" />
 					<field id="qa:productHierarchy1" set="product-info" />
 					<field id="qa:productHierarchy2" set="product-info" />					
 
-					<set id="batch-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label="Identification du lot" />
+					<set id="batch-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="qa:batchId" set="batch-info" />
 					<field id="qa:orderId" set="batch-info" />
 					<field id="bcpg:clients" force="true" set="batch-info" />
@@ -99,7 +98,7 @@
 					</field>
 
 					<!-- Action corrective -->
-					<set id="ac-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label="Action corrective" />					
+					<set id="ac-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.ac-info.label" />					
 					<field id="qa:acType" set="ac-info" />
 					<field id="qa:acAssignedTo" set="ac-info" />
 					<field id="qa:acExpectedDate" set="ac-info" />
@@ -165,9 +164,8 @@
 					
 				</field-visibility>
 				<appearance>
-					<!-- TODO i18n label-id -->
 					<set id="mainInfo" template="/fr/becpg/components/form/2-column-set.ftl"
-						appearance="bordered-panel" label="Info non conformité" />					
+						appearance="bordered-panel" label-id="becpg.forms.set.nc-info.label" />					
 					<field id="cm:name" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="qa:ncType" set="mainInfo" />
@@ -191,12 +189,12 @@
 						</control>
 					</field>															
 						
-					<set id="product-info" appearance="bordered-panel" label="Information produit" />
+					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
 					<field id="qa:product" set="product-info" />
 					<field id="qa:productHierarchy1" set="product-info" />
 					<field id="qa:productHierarchy2" set="product-info" />					
 
-					<set id="batch-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label="Identification du lot" />
+					<set id="batch-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="qa:batchId" set="batch-info" />
 					<field id="qa:orderId" set="batch-info" />
 					<field id="bcpg:clients" force="true" set="batch-info" />
@@ -208,7 +206,7 @@
 					</field>
 
 					<!-- Action corrective -->
-					<set id="ac-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label="Action corrective" />					
+					<set id="ac-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.ac-info.label" />					
 					<field id="qa:acType" set="ac-info" />
 					<field id="qa:acAssignedTo" set="ac-info" />
 					<field id="qa:acExpectedDate" set="ac-info" />
@@ -281,9 +279,8 @@
 					
 				</field-visibility>
 				<appearance>
-					<!-- TODO i18n label-id -->
 					<set id="mainInfo" template="/fr/becpg/components/form/2-column-set.ftl"
-						appearance="bordered-panel" label="Info non conformité" />					
+						appearance="bordered-panel" label-id="becpg.forms.set.nc-info.label" />					
 					<field id="cm:name" set="mainInfo" />
 					<field id="bcpg:code" set="mainInfo" />
 					<field id="qa:ncType" set="mainInfo" />
@@ -307,12 +304,12 @@
 						</control>
 					</field>														
 						
-					<set id="product-info" appearance="bordered-panel" label="Information produit" />
+					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
 					<field id="qa:product" set="product-info" />
 					<field id="qa:productHierarchy1" set="product-info" />
 					<field id="qa:productHierarchy2" set="product-info" />					
 
-					<set id="batch-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label="Identification du lot" />
+					<set id="batch-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="qa:batchId" set="batch-info" />
 					<field id="qa:orderId" set="batch-info" />
 					<field id="bcpg:clients" force="true" set="batch-info" />
@@ -324,7 +321,7 @@
 					</field>
 
 					<!-- Action corrective -->
-					<set id="ac-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label="Action corrective" />					
+					<set id="ac-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.ac-info.label" />					
 					<field id="qa:acType" set="ac-info" />
 					<field id="qa:acAssignedTo" set="ac-info" />
 					<field id="qa:acExpectedDate" set="ac-info" />
@@ -439,7 +436,7 @@
 										
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation" />
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label" />
 					<field id="cm:name" set="mainInfo" />
 					<field id="cm:titled" set="mainInfo" />
 					<field id="cm:description" set="mainInfo" />
@@ -448,12 +445,12 @@
 					<field id="qa:qcSamplesCounter" read-only="true" set="mainInfo"/>					
 					<field id="qa:qcControlPlans" set="mainInfo"/>
 
-					<set id="product-info" appearance="bordered-panel" label="Informations produit" />
+					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
 					<field id="qa:product" set="product-info" />
 					<field id="qa:productHierarchy1" set="product-info" />
 					<field id="qa:productHierarchy2" set="product-info" />					
 
-					<set id="batch-info" appearance="bordered-panel" label="Identification du lot" />
+					<set id="batch-info" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="qa:batchId" set="batch-info" />
 					<field id="qa:orderId" set="batch-info" />
 					<field id="qa:batchStart" set="batch-info" />
@@ -467,7 +464,7 @@
 					</field>
 					
 					<!-- audit -->
-					<set id="audit" appearance="bordered-panel" label="Audit" />
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" />
 					<field id="cm:creator" set="audit" />
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
@@ -512,7 +509,7 @@
 										
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation" />
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label" />
 					<field id="cm:name" set="mainInfo" />
 					<field id="cm:titled" set="mainInfo" />
 					<field id="cm:description" set="mainInfo" />
@@ -521,12 +518,12 @@
 					<field id="qa:qcSamplesCounter" read-only="true" set="mainInfo"/>					
 					<field id="qa:qcControlPlans" set="mainInfo"/>
 
-					<set id="product-info" appearance="bordered-panel" label="Informations produit" />
+					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
 					<field id="qa:product" set="product-info" />
 					<field id="qa:productHierarchy1" set="product-info" />
 					<field id="qa:productHierarchy2" set="product-info" />					
 
-					<set id="batch-info" appearance="bordered-panel" label="Identification du lot" />
+					<set id="batch-info" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="qa:batchId" set="batch-info" />
 					<field id="qa:orderId" set="batch-info" />
 					<field id="qa:batchStart" set="batch-info" />
@@ -540,7 +537,7 @@
 					</field>
 					
 					<!-- audit -->
-					<set id="audit" appearance="bordered-panel" label="Audit" />
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" />
 					<field id="cm:creator" set="audit" />
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
@@ -799,7 +796,7 @@
 				</field-visibility>
 				
 				<appearance>					
-					<set id="reqInfo" appearance="bordered-panel" label="Exigences" />					
+					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" />					
 					<field id="qa:clSampleId" set="reqInfo" />
 					<field id="qa:clType" set="reqInfo" />
 					<field id="qa:clMethod" set="reqInfo" />
@@ -810,7 +807,7 @@
 					<field id="qa:clCharacts" set="reqInfo" />						
 					<field id="qa:clRequired" set="reqInfo" />
 					
-					<set id="fillInfo" appearance="bordered-panel" label="A renseigner" />
+					<set id="fillInfo" appearance="bordered-panel" label-id="becpg.forms.set.fill-info.label" />
 					<field id="qa:clValue" set="fillInfo" />
 					<field id="qa:clState" set="fillInfo" />
 				</appearance>
@@ -850,7 +847,7 @@
 				</field-visibility>
 				
 				<appearance>
-					<set id="reqInfo" appearance="bordered-panel" label="Exigences" />					
+					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" />					
 					<field id="qa:clSampleId" read-only="true" set="reqInfo" />
 					<field id="qa:clType" read-only="true" set="reqInfo" />
 					<field id="qa:clMethod" read-only="true" set="reqInfo" >
@@ -865,7 +862,7 @@
 					</field>						
 					<field id="qa:clRequired" read-only="true" set="reqInfo" />
 					
-					<set id="fillInfo" appearance="bordered-panel" label="A renseigner" />
+					<set id="fillInfo" appearance="bordered-panel" label-id="becpg.forms.set.fill-info.label" />
 					<field id="qa:clValue" set="fillInfo" />
 					<field id="qa:clState" set="fillInfo" />
 					

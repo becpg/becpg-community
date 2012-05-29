@@ -46,10 +46,10 @@
 					<!-- Demande d'étude -->
 					<set id="info" appearance="title"
 						template="/org/alfresco/components/form/2-column-set.ftl"
-						label-id="Demande d'étude" />					
-					<field id="npdwf:npdProductName" set="info" label="Désignation commercial" />
-					<field id="npdwf:npdType" set="info" label="Type" />
-					<field id="npdwf:npdStatus" set="info" label="Statut">
+						label-id="becpg.forms.set.npd-wf.label" />					
+					<field id="npdwf:npdProductName" set="info" label-id="becpg.forms.set.product-name.label" />
+					<field id="npdwf:npdType" set="info" label-id="becpg.forms.set.npd-type.label" />
+					<field id="npdwf:npdStatus" set="info" label-id="becpg.forms.set.npd-status.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:workflowDueDate" label-id="workflow.field.due"
@@ -61,43 +61,43 @@
 					</field>
 					
 					<!-- Appel d'offre -->
-					<set id="cft" appearance="title" label="Appel d'offre"
+					<set id="cft" appearance="title" label-id="becpg.forms.set.cft.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 					<set id="requirements" appearance="" />
 					<set id="price" appearance="title"
-						template="/org/alfresco/components/form/2-column-set.ftl" label="Information de prix" />
-					<set id="volume" appearance="title" label="Volumes prévitionnels" />
+						template="/org/alfresco/components/form/2-column-set.ftl" label-id="becpg.forms.set.price-info.label" />
+					<set id="volume" appearance="title" label-id="becpg.forms.set.volume-forecast.label" />
 					<set id="description" appearance="title" label-id="workflow.set.task.info" />
 
-					<field id="npdwf:cftTransmitter" set="cft" label="Emetteur" />
-					<field id="npdwf:cftCompany" set="cft" label="Société" />
-					<field id="npdwf:cftOpeningDate" set="cft" label="Date d'ouverture" />
-					<field id="npdwf:cftSamplingDate" set="cft" label="Date échantillonnage" />
+					<field id="npdwf:cftTransmitter" set="cft" label-id="becpg.forms.set.transmitter.label" />
+					<field id="npdwf:cftCompany" set="cft" label-id="becpg.forms.set.company.label" />
+					<field id="npdwf:cftOpeningDate" set="cft" label-id="becpg.forms.set.opening-date.label" />
+					<field id="npdwf:cftSamplingDate" set="cft" label-id="becpg.forms.set.sampling-date.label" />
 					<field id="npdwf:cftLaunchDateDesired" set="cft"
-						label="Date de lancement souhaité" />
+						label-id="becpg.forms.set.launch-dateDesired.label" />
 					<field id="npdwf:cftResponseDateDesired" set="cft"
-						label="Date de réponse au client souhaitée" />
+						label-id="becpg.forms.set.response-dateDesired.label" />
 					<field id="npdwf:cftResponseDateRealized" set="cft"
-						label="Date de réponse au client réalisée" />
-					<field id="npdwf:cftNotify" set="cft" label="Notifier à j-7 et j-1" />
-					<field id="npdwf:cftSubsidiary" set="cft" label="Filiale">
+						label-id="becpg.forms.set.response-dateRealized.label" />
+					<field id="npdwf:cftNotify" set="cft" label-id="becpg.forms.set.npd-notify.label" />
+					<field id="npdwf:cftSubsidiary" set="cft" label-id="becpg.forms.set.subsidiary.label">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="npdwf:cftClient" set="cft" label="Client">
+					<field id="npdwf:cftClient" set="cft" label-id="becpg.forms.set.client.label">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="npdwf:cftRequirements" set="requirements"
-						label="Exigences particulières">
+						label-id="becpg.forms.set.npd-requirement.label">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="style">width: 95%</control-param>
 							<control-param name="rows">4</control-param>
 						</control>
 					</field>
-					<field id="npdwf:unitPrice" set="price" label="Prix unitaire" />
-					<field id="npdwf:priceCurrency" set="price" label="Unité" />
-					<field id="npdwf:volumeForecast" set="volume" label="Volumes">
+					<field id="npdwf:unitPrice" set="price" label-id="becpg.forms.set.unit-price.label" />
+					<field id="npdwf:priceCurrency" set="price" label-id="becpg.forms.set.price-currency.label" />
+					<field id="npdwf:volumeForecast" set="volume" label-id="becpg.forms.set.volume-forecast.label">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="style">width: 95%</control-param>
 							<control-param name="rows">4</control-param>
@@ -105,13 +105,13 @@
 					</field>
 					
 					<!-- Documents -->
-					<set id="items" appearance="title" label-id="Documents" />					
-					<field id="npdwf:npdFolder" set="items" label="Dossier de destination" >
+					<set id="items" appearance="title" label-id="becpg.forms.set.documents.label" />					
+					<field id="npdwf:npdFolder" set="items" label-id="becpg.forms.set.npd-folder.label" >
 						<control template="/org/alfresco/components/form/controls/association.ftl">
 							<control-param name="startLocation">{siteshome}</control-param>
 						</control>
 					</field>
-					<field id="packageItems" set="items" label="Documents du brief" >
+					<field id="packageItems" set="items" label-id="becpg.forms.set.brief-documents.label" >
 						<control template="/org/alfresco/components/form/controls/workflow/packageitems.ftl">
 							<control-param name="startLocation">{siteshome}</control-param>
 						</control>
@@ -138,12 +138,12 @@
 					<set id="info" appearance=""
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="items" appearance="title" label-id="workflow.set.items" />
-					<field id="npdwf:npdProductName" set="info" label="Désignation commercial" />
-					<field id="npdwf:npdType" set="info" label="Type" />
-					<field id="npdwf:npdStatus" set="info" label="Statut">
+					<field id="npdwf:npdProductName" set="info" label-id="becpg.forms.set.product-name.label" />
+					<field id="npdwf:npdType" set="info" label-id="becpg.forms.set.npd-type.label" />
+					<field id="npdwf:npdStatus" set="info" label-id="becpg.forms.set.npd-status.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="npdwf:npdFolder" set="items" label="Dossier de destination">
+					<field id="npdwf:npdFolder" set="items" label-id="becpg.forms.set.npd-folder.label">
 						<control template="/org/alfresco/components/form/controls/association.ftl">
 							<control-param name="startLocation">{siteshome}</control-param>
 						</control>
@@ -187,13 +187,13 @@
 				</field-visibility>
 				<appearance>
 					<!-- Appel d'offre -->
-					<set id="cft" appearance="title" label="Appel d'offre"
+					<set id="cft" appearance="title" label-id="becpg.forms.set.cft.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />	
 						
-					<field id="npdwf:npdProductName" set="cft" label="Désignation commercial">
+					<field id="npdwf:npdProductName" set="cft" label-id="becpg.forms.set.product-name.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="npdwf:npdNumber" set="cft" label="Numéro demande">
+					<field id="npdwf:npdNumber" set="cft" label-id="becpg.forms.set.npd-number.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="cft" read-only="true">
@@ -203,74 +203,74 @@
 					<field id="bpm:dueDate" set="cft" label-id="workflow.field.due">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>				
-					<field id="npdwf:cftSubsidiary" set="cft" label="Filiale" read-only="true">
+					<field id="npdwf:cftSubsidiary" set="cft" label-id="becpg.forms.set.subsidiary.label" read-only="true">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="npdwf:cftClient" set="cft" label="Client" read-only="true">
+					<field id="npdwf:cftClient" set="cft" label-id="becpg.forms.set.client.label" read-only="true">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>					
-					<field id="npdwf:unitPrice" set="cft" label="Prix unitaire" read-only="true">
+					<field id="npdwf:unitPrice" set="cft" label-id="becpg.forms.set.unit-price.label" read-only="true">
 						<control template="/fr/becpg/components/form/controls/number.ftl" />
 					</field>
-					<field id="npdwf:priceCurrency" set="cft" label="Unité">
+					<field id="npdwf:priceCurrency" set="cft" label-id="becpg.forms.set.price-currency.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="npdwf:volumeForecast" set="cft" label="Volumes"  read-only="true">
+					<field id="npdwf:volumeForecast" set="cft" label-id="becpg.forms.set.volume-forecast.label"  read-only="true">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					
-					<set id="product" appearance="title" label="Produit" />
-					<set id="packagingKit" appearance="title" label="Packaging" />
-					<set id="recipe" appearance="title" label="Recette" />
-					<set id="assignees" appearance="title" label="Assignations" />
+					<set id="product" appearance="title" label-id="becpg.forms.set.product.label" />
+					<set id="packagingKit" appearance="title" label-id="becpg.forms.set.packaging.label" />
+					<set id="recipe" appearance="title" label-id="becpg.forms.set.recipe.label" />
+					<set id="assignees" appearance="title" label-id="becpg.forms.set.assignees.label" />
 					<set id="progress" appearance="title" label-id="workflow.set.task.progress" />
 					<set id="items" appearance="title" label-id="workflow.set.items" />
 
 					<field id="npdwf:productDescription" set="product"
-						label="Description du produit">
+						label-id="becpg.forms.set.product-description.label">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="style">width: 95%</control-param>
 						</control>
 					</field>
 					<field id="npdwf:needDefinitionProduct" set="product"
-						label="Produit existant">
+						label-id="becpg.forms.set.existing-product.label">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 					<field id="npdwf:packagingDescription" set="packagingKit"
-						label="Description du packaging">
+						label-id="becpg.forms.set.packaging-description.label">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="style">width: 95%</control-param>
 						</control>
 					</field>
 					<field id="npdwf:needDefinitionPackagingKit" set="packagingKit"
-						label="Packaging existant">
+						label-id="becpg.forms.set.existing-packaging.label">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 					<field id="npdwf:recipeDescription" set="recipe"
-						label="Description de la recette">
+						label-id="becpg.forms.set.recipe-description.label">
 
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="style">width: 95%</control-param>
 						</control>
 					</field>
 					<field id="npdwf:needDefinitionRecipeProduct" set="recipe"
-						label="Recette existante">
+						label-id="becpg.forms.set.existing-recipe.label">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 					<field id="bpm:groupAssignees" set="assignees"
-						label="Services assignés à l'analyse de faisabilité" />
+						label-id="becpg.forms.set.npd-groupAssignees.label" />
 
 
 					<set id="items" appearance="title" label-id="workflow.set.items" />
-					<field id="packageItems" set="items" label="Documents du brief" />
+					<field id="packageItems" set="items" label-id="becpg.forms.set.brief-documents.label" />
 
 					<field id="bpm:comment" label-id="workflow.field.comment"
 						set="progress">
@@ -316,13 +316,13 @@
 				<appearance>
 										
 					<!-- Appel d'offre -->
-					<set id="cft" appearance="title" label="Appel d'offre"
+					<set id="cft" appearance="title" label-id="becpg.forms.set.cft.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />	
 						
-					<field id="npdwf:npdProductName" set="cft" label="Désignation commercial">
+					<field id="npdwf:npdProductName" set="cft" label-id="becpg.forms.set.product-name.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="npdwf:npdNumber" set="cft" label="Numéro demande">
+					<field id="npdwf:npdNumber" set="cft" label-id="becpg.forms.set.npd-number.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="cft" read-only="true">
@@ -332,65 +332,65 @@
 					<field id="bpm:dueDate" set="cft" label-id="workflow.field.due">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>				
-					<field id="npdwf:cftSubsidiary" set="cft" label="Filiale" read-only="true">
+					<field id="npdwf:cftSubsidiary" set="cft" label-id="becpg.forms.set.subsidiary.label" read-only="true">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="npdwf:cftClient" set="cft" label="Client" read-only="true">
+					<field id="npdwf:cftClient" set="cft" label-id="becpg.forms.set.client.label" read-only="true">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>					
-					<field id="npdwf:unitPrice" set="cft" label="Prix unitaire" read-only="true">
+					<field id="npdwf:unitPrice" set="cft" label-id="becpg.forms.set.unit-price.label" read-only="true">
 						<control template="/fr/becpg/components/form/controls/number.ftl" />
 					</field>
-					<field id="npdwf:priceCurrency" set="cft" label="Unité">
+					<field id="npdwf:priceCurrency" set="cft" label-id="becpg.forms.set.price-currency.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="npdwf:volumeForecast" set="cft" label="Volumes"  read-only="true">
+					<field id="npdwf:volumeForecast" set="cft" label-id="becpg.forms.set.volume-forecast.label"  read-only="true">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					
 					<!-- Need def -->
-					<set id="needDefinition" appearance="title" label="Analyse du besoin" 
+					<set id="needDefinition" appearance="title" label-id="becpg.forms.set.need-definition.label" 
 						template="/fr/becpg/components/form/2-column-set.ftl"/>
 						
 					<field id="npdwf:productDescription" set="needDefinition"
-						label="Description du produit">
+						label-id="becpg.forms.set.product-description.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="npdwf:needDefinitionProduct" set="needDefinition"
-						read-only="true" label="Produit existant">
+						read-only="true" label-id="becpg.forms.set.existing-product.label">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 					<field id="npdwf:packagingDescription" set="needDefinition"
-						label="Description du packaging">
+						label-id="becpg.forms.set.packaging-description.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="npdwf:needDefinitionPackagingKit" set="needDefinition"
-						read-only="true" label="Packaging existant">
+						read-only="true" label-id="becpg.forms.set.existing-packaging.label">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 					<field id="npdwf:recipeDescription" set="needDefinition"
-						label="Description de la recette">
+						label-id="becpg.forms.set.recipe-description.label">
 
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="npdwf:needDefinitionRecipeProduct" set="needDefinition"
-						read-only="true" label="Recette existante">
+						read-only="true" label-id="becpg.forms.set.existing-recipe.label">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					
 					<field id="bpm:groupAssignees" set="needDefinition"
-						label="Services assignés à l'analyse de faisabilité" read-only="true" />		
+						label-id="becpg.forms.set.npd-groupAssignees.label" read-only="true" />		
 
 					<!-- Items -->					
 					<set id="items" appearance="title" label-id="workflow.set.items" />
-					<field id="packageItems" set="items" label="Documents du brief" />
+					<field id="packageItems" set="items" label-id="becpg.forms.set.brief-documents.label" />
 					
 					<set id="progress" appearance="title" label-id="workflow.set.task.progress" />
 					<field id="bpm:comment" label-id="workflow.field.comment"
@@ -426,13 +426,13 @@
 				<appearance>
 					
 					<!-- Appel d'offre -->
-					<set id="cft" appearance="title" label="Appel d'offre"
+					<set id="cft" appearance="title" label-id="becpg.forms.set.cft.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />	
 						
-					<field id="npdwf:npdProductName" set="cft" label="Désignation commercial">
+					<field id="npdwf:npdProductName" set="cft" label-id="becpg.forms.set.product-name.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="npdwf:npdNumber" set="cft" label="Numéro demande">
+					<field id="npdwf:npdNumber" set="cft" label-id="becpg.forms.set.npd-number.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="cft" read-only="true">
@@ -442,30 +442,30 @@
 					<field id="bpm:dueDate" set="cft" label-id="workflow.field.due">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>				
-					<field id="npdwf:cftSubsidiary" set="cft" label="Filiale" read-only="true">
+					<field id="npdwf:cftSubsidiary" set="cft" label-id="becpg.forms.set.subsidiary.label" read-only="true">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="npdwf:cftClient" set="cft" label="Client" read-only="true">
+					<field id="npdwf:cftClient" set="cft" label-id="becpg.forms.set.client.label" read-only="true">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>					
-					<field id="npdwf:unitPrice" set="cft" label="Prix unitaire" read-only="true">
+					<field id="npdwf:unitPrice" set="cft" label-id="becpg.forms.set.unit-price.label" read-only="true">
 						<control template="/fr/becpg/components/form/controls/number.ftl" />
 					</field>
-					<field id="npdwf:priceCurrency" set="cft" label="Unité">
+					<field id="npdwf:priceCurrency" set="cft" label-id="becpg.forms.set.price-currency.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="npdwf:volumeForecast" set="cft" label="Volumes"  read-only="true">
+					<field id="npdwf:volumeForecast" set="cft" label-id="becpg.forms.set.volume-forecast.label"  read-only="true">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					
 					<!-- Items -->					
 					<set id="items" appearance="title" label-id="workflow.set.items" />
-					<field id="packageItems" set="items" label="Produit" />
+					<field id="packageItems" set="items" label-id="becpg.forms.set.product.label" />
 					
 					<set id="info" appearance="" />
-					<field id="bpm:assignees"  set="info"  label="Réassigner à" />
+					<field id="bpm:assignees"  set="info"  label-id="becpg.forms.set.reasign.label" />
 					<field id="bpm:comment" set="info"  label-id="workflow.field.comment">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
@@ -497,13 +497,13 @@
 				</field-visibility>
 				<appearance>
 					<!-- Appel d'offre -->
-					<set id="cft" appearance="title" label="Appel d'offre"
+					<set id="cft" appearance="title" label-id="becpg.forms.set.cft.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />	
 						
-					<field id="npdwf:npdProductName" set="cft" label="Désignation commercial">
+					<field id="npdwf:npdProductName" set="cft" label-id="becpg.forms.set.product-name.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="npdwf:npdNumber" set="cft" label="Numéro demande">
+					<field id="npdwf:npdNumber" set="cft" label-id="becpg.forms.set.npd-number.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="cft" read-only="true">
@@ -513,27 +513,27 @@
 					<field id="bpm:dueDate" set="cft" label-id="workflow.field.due">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>				
-					<field id="npdwf:cftSubsidiary" set="cft" label="Filiale" read-only="true">
+					<field id="npdwf:cftSubsidiary" set="cft" label-id="becpg.forms.set.subsidiary.label" read-only="true">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="npdwf:cftClient" set="cft" label="Client" read-only="true">
+					<field id="npdwf:cftClient" set="cft" label-id="becpg.forms.set.client.label" read-only="true">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>					
-					<field id="npdwf:unitPrice" set="cft" label="Prix unitaire" read-only="true">
+					<field id="npdwf:unitPrice" set="cft" label-id="becpg.forms.set.unit-price.label" read-only="true">
 						<control template="/fr/becpg/components/form/controls/number.ftl" />
 					</field>
-					<field id="npdwf:priceCurrency" set="cft" label="Unité">
+					<field id="npdwf:priceCurrency" set="cft" label-id="becpg.forms.set.price-currency.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="npdwf:volumeForecast" set="cft" label="Volumes"  read-only="true">
+					<field id="npdwf:volumeForecast" set="cft" label-id="becpg.forms.set.volume-forecast.label"  read-only="true">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					
 					<!-- Items -->					
 					<set id="items" appearance="title" label-id="workflow.set.items" />
-					<field id="packageItems" set="items" label="Produit" />
+					<field id="packageItems" set="items" label-id="becpg.forms.set.product.label" />
 					
 					<set id="info" appearance="" />					
 					<field id="bpm:comment" label-id="workflow.field.comment"
@@ -619,13 +619,13 @@
 				<appearance>
 				
 					<!-- Appel d'offre -->
-					<set id="cft" appearance="title" label="Appel d'offre"
+					<set id="cft" appearance="title" label-id="becpg.forms.set.cft.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />	
 						
-					<field id="npdwf:npdProductName" set="cft" label="Désignation commercial">
+					<field id="npdwf:npdProductName" set="cft" label-id="becpg.forms.set.product-name.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="npdwf:npdNumber" set="cft" label="Numéro demande">
+					<field id="npdwf:npdNumber" set="cft" label-id="becpg.forms.set.npd-number.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="cft" read-only="true">
@@ -635,21 +635,21 @@
 					<field id="bpm:dueDate" set="cft" label-id="workflow.field.due">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>				
-					<field id="npdwf:cftSubsidiary" set="cft" label="Filiale" read-only="true">
+					<field id="npdwf:cftSubsidiary" set="cft" label-id="becpg.forms.set.subsidiary.label" read-only="true">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="npdwf:cftClient" set="cft" label="Client" read-only="true">
+					<field id="npdwf:cftClient" set="cft" label-id="becpg.forms.set.client.label" read-only="true">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>					
-					<field id="npdwf:unitPrice" set="cft" label="Prix unitaire" read-only="true">
+					<field id="npdwf:unitPrice" set="cft" label-id="becpg.forms.set.unit-price.label" read-only="true">
 						<control template="/fr/becpg/components/form/controls/number.ftl" />
 					</field>
-					<field id="npdwf:priceCurrency" set="cft" label="Unité">
+					<field id="npdwf:priceCurrency" set="cft" label-id="becpg.forms.set.price-currency.label">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="npdwf:volumeForecast" set="cft" label="Volumes"  read-only="true">
+					<field id="npdwf:volumeForecast" set="cft" label-id="becpg.forms.set.volume-forecast.label"  read-only="true">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					
@@ -660,7 +660,7 @@
 					<!-- Response -->
 					<set id="response" appearance="title" label-id="workflow.set.response" />
 					<field id="bpm:groupAssignees" set="response"
-						label="Services assignés à l'analyse de faisabilité" />					
+						label-id="becpg.forms.set.npd-groupAssignees.label" />					
 					<field id="bpm:comment" label-id="workflow.field.comment"
 						set="response">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd ">
+    
+    <bean id="googledocs_dictionaryBootstrap" parent="dictionaryModelBootstrap" depends-on="dictionaryBootstrap">
+        <property name="models">
+            <list>
+                <value>alfresco/subsystems/googledocs/default/googledocs-model.xml</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="googleDocsService" class="fr.becpg.repo.googledocs.OAuthGoogleDocsServiceImpl">
+        <property name="nodeService" ref="NodeService"/>
+        <property name="contentService" ref="ContentService"/>
+        <property name="mimetypeService" ref="mimetypeService"/>
+        <property name="dictionaryService" ref="DictionaryService"/>  
+        <property name="enabled" value="${googledocs.googleeditable.enabled}"/>     
+        <property name="url" value="${googledocs.url}"/>
+        <property name="downloadUrl" value="${googledocs.downloadurl}"/> 
+        <property name="spreadsheetDownloadUrl" value="${googledocs.spreadsheet.downloadurl}"/>
+        <property name="applicationName" value="${googledocs.application.name}"/>
+        <property name="spreadSheetServiceName" value="${googledocs.spreadsheet.service.name}"/>         
+    </bean>
+    
+    <bean id="googleEditableAspect" class="org.alfresco.repo.googledocs.GoogleEditableAspect" init-method="init">
+    	<property name="policyComponent" ref="policyComponent"/>
+    	<property name="googleDocsService" ref="googleDocsService"/>
+    	<property name="nodeService" ref="NodeService"/>
+      <property name="contentService" ref="ContentService"/>
+      <property name="dictionaryService" ref="DictionaryService"/>  	
+    </bean>
+</beans>

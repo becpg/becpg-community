@@ -34,6 +34,10 @@ import org.springframework.security.openid.OpenIDConsumer;
 import org.springframework.security.openid.OpenIDConsumerException;
 import org.springframework.util.StringUtils;
 
+import fr.becpg.repo.security.authentication.openid.oauth.OAuthMessage;
+import fr.becpg.repo.security.authentication.openid.oauth.OAuthRequest;
+import fr.becpg.repo.security.authentication.openid.oauth.OAuthResponse;
+
 /**
  * @author Ray Krueger
  * @author Luke Taylor
@@ -58,30 +62,45 @@ public class OpenID4JavaConsumer implements OpenIDConsumer {
 	private final AxFetchListFactory attributesToFetchFactory;
 
 	private SysAdminParams sysAdminParams;
+	
+
+	private String oauthScopes = null;
+	
 
 	// ~ Constructors
 	// ===================================================================================================
 
-	public OpenID4JavaConsumer() throws ConsumerException {
+	public OpenID4JavaConsumer() throws ConsumerException, MessageException {
 		this(new ConsumerManager(), new NullAxFetchListFactory());
+	}
+
+	public void setOauthScopes(String oauthScopes) {
+		this.oauthScopes = oauthScopes;
 	}
 
 	public void setSysAdminParams(SysAdminParams sysAdminParams) {
 		this.sysAdminParams = sysAdminParams;
 	}
 
-	public OpenID4JavaConsumer(List<OpenIDAttribute> attributes) throws ConsumerException {
+	public OpenID4JavaConsumer(List<OpenIDAttribute> attributes) throws ConsumerException, MessageException {
 
 		this(new ConsumerManager(), attributes);
 
 	}
 
+	public OpenID4JavaConsumer(ConsumerManager consumerManager, AxFetchListFactory attributesToFetchFactory) throws ConsumerException, MessageException {
+
+		// Register OAuthMessage as MessageExtensionFactory (do once)
+		Message.addExtensionFactory(OAuthMessage.class);
+		this.consumerManager = consumerManager;
+		this.attributesToFetchFactory = attributesToFetchFactory;
+	}
+	
 	public OpenID4JavaConsumer(ConsumerManager consumerManager, final List<OpenIDAttribute> attributes)
 
-	throws ConsumerException {
+	throws ConsumerException, MessageException {
 
-		this.consumerManager = consumerManager;
-		this.attributesToFetchFactory = new AxFetchListFactory() {
+		this(consumerManager, new AxFetchListFactory() {
 			private final List<OpenIDAttribute> fetchAttrs = Collections.unmodifiableList(attributes);
 
 			public List<OpenIDAttribute> createAttributeList(String identifier) {
@@ -90,19 +109,18 @@ public class OpenID4JavaConsumer implements OpenIDConsumer {
 
 			}
 
-		};
+		});
 
 	}
 
-	public OpenID4JavaConsumer(AxFetchListFactory attributesToFetchFactory) throws ConsumerException {
+	public OpenID4JavaConsumer(AxFetchListFactory attributesToFetchFactory) throws ConsumerException, MessageException {
 		this(new ConsumerManager(), attributesToFetchFactory);
 	}
 
-	public OpenID4JavaConsumer(ConsumerManager consumerManager, AxFetchListFactory attributesToFetchFactory) throws ConsumerException {
-		this.consumerManager = consumerManager;
-		this.attributesToFetchFactory = attributesToFetchFactory;
-	}
 
+	
+	
+	
 	// ~ Methods
 	// ========================================================================================================
 
@@ -122,11 +140,13 @@ public class OpenID4JavaConsumer implements OpenIDConsumer {
 		DiscoveryInformation information = consumerManager.associate(discoveries);
 		req.getSession().setAttribute(DISCOVERY_INFO_KEY, information);
 
+	
 		AuthRequest authReq;
 
 		try {
 
 			authReq = consumerManager.authenticate(information, returnToUrl, realm);
+
 			logger.debug("Looking up attribute fetch list for identifier: " + identityUrl);
 			List<OpenIDAttribute> attributesToFetch = attributesToFetchFactory.createAttributeList(identityUrl);
 
@@ -146,6 +166,14 @@ public class OpenID4JavaConsumer implements OpenIDConsumer {
 				authReq.addExtension(fetchRequest);
 
 			}
+
+			if(oauthScopes!=null ){
+				OAuthRequest oauthRequest = OAuthRequest.createOAuthRequest();
+				oauthRequest.setScopes(oauthScopes);
+				oauthRequest.setConsumer(sysAdminParams.getShareHost());
+				authReq.addExtension(oauthRequest);
+			}
+			
 
 		} catch (MessageException e) {
 			throw new OpenIDConsumerException("Error processing ConsumerManager authentication", e);
@@ -216,10 +244,37 @@ public class OpenID4JavaConsumer implements OpenIDConsumer {
 					+ verification.getStatusMsg() + "]", Collections.<OpenIDAttribute> emptyList());
 		}
 
-		List<OpenIDAttribute> attributes = fetchAxAttributes(verification.getAuthResponse(), attributesToFetch);
+		Message authSuccess = verification.getAuthResponse();
+		
+		List<OpenIDAttribute> attributes = fetchAxAttributes(authSuccess, attributesToFetch);
+		
+		String oAuthToken = fetchOAuthToken(authSuccess);
+		
 
-		return new OpenIDAuthenticationToken(OpenIDAuthenticationStatus.SUCCESS, verified.getIdentifier(), "some message", attributes);
+		return new OpenIDAuthenticationToken(OpenIDAuthenticationStatus.SUCCESS, verified.getIdentifier(), oAuthToken, attributes);
 
+	}
+
+	private String fetchOAuthToken(Message authSuccess) throws OpenIDConsumerException {
+		try {
+			// Extract OAuth params from request
+			if (authSuccess.hasExtension(OAuthMessage.OPENID_NS_OAUTH)) {
+				OAuthResponse oauthRes = (OAuthResponse) authSuccess
+						.getExtension(OAuthMessage.OPENID_NS_OAUTH);
+	
+				if(logger.isDebugEnabled()){
+					logger.debug("Return oauth token : "+oauthRes.getRequestToken());
+				}
+				
+				// Use a OAuth library to exchange this request-token (without
+				// secret and verifier) with an access-token/secret pair
+				return oauthRes.getRequestToken();
+			}
+		
+			return null;
+		} catch (MessageException e) {
+			throw new OpenIDConsumerException("Oauth requestToken retrieval failed", e);
+		}
 	}
 
 	List<OpenIDAttribute> fetchAxAttributes(Message authSuccess, List<OpenIDAttribute> attributesToFetch) throws OpenIDConsumerException {

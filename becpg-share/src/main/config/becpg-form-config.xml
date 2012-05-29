@@ -155,29 +155,29 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainTab"  label="Caractéristiques" />
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainTab"  label-id="becpg.forms.set.characteristics.label" />
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
-					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
+					<set id="formulation" appearance="bordered-panel" label-id="becpg.forms.set.formulation-quality.label"
 						template="/fr/becpg/components/form/3-column-set.ftl" parent="mainTab" />
-					<set id="profitability" appearance="bordered-panel" label="Rentabilité"
+					<set id="profitability" appearance="bordered-panel" label-id="becpg.forms.set.rentability.label"
 						template="/fr/becpg/components/form/3-column-set.ftl" parent="mainTab" />
-					<set id="npd" appearance="bordered-panel" label="NPD"
+					<set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
-					<set id="audit" appearance="bordered-panel" label="Audit"
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
 					
 					
-					<set id="publicationTab" label="Publication" />
-					<set appearance="bordered-panel" id="mesuresPanel" label="Mesures" parent="publicationTab"
+					<set id="publicationTab" label-id="becpg.forms.set.publication.label" />
+					<set appearance="bordered-panel" id="mesuresPanel" label-id="becpg.forms.set.measures.label" parent="publicationTab"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set appearance="bordered-panel" id="indicateursPanel" label="Indicateurs"  parent="publicationTab"
+					<set appearance="bordered-panel" id="indicateursPanel" label-id="becpg.forms.set.indicators.label"  parent="publicationTab"
 						template="/fr/becpg/components/form/2-column-set.ftl"/>
-					<set appearance="bordered-panel" id="datesPanel" label="Dates"  parent="publicationTab"
+					<set appearance="bordered-panel" id="datesPanel" label-id="becpg.forms.set.dates.label"  parent="publicationTab"
 						template="/fr/becpg/components/form/2-column-set.ftl"/>
-					<set appearance="bordered-panel" id="packagingPanel" label="Emballage/Conditionnement"  parent="publicationTab"
+					<set appearance="bordered-panel" id="packagingPanel" label-id="becpg.forms.set.packaging.label"  parent="publicationTab"
 						template="/fr/becpg/components/form/2-column-set.ftl"/>
 
 
@@ -361,15 +361,15 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
+					<set id="formulation" appearance="bordered-panel" label-id="becpg.forms.set.formulation-quality.label"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
-					<set id="profitability" appearance="bordered-panel" label="Rentabilité"
+					<set id="profitability" appearance="bordered-panel" label-id="becpg.forms.set.rentability.label"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="audit" appearance="bordered-panel" label="Audit"
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
@@ -488,11 +488,11 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="audit" appearance="bordered-panel" label="Audit"
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
@@ -577,9 +577,9 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
@@ -668,11 +668,11 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="audit" appearance="bordered-panel" label="Audit"
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
@@ -762,11 +762,11 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="audit" appearance="bordered-panel" label="Audit"
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
@@ -859,11 +859,11 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="audit" appearance="bordered-panel" label="Audit"
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
@@ -958,9 +958,9 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
@@ -1057,11 +1057,11 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="audit" appearance="bordered-panel" label="Audit"
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
@@ -1165,9 +1165,9 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
@@ -1273,13 +1273,13 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
+					<set id="formulation" appearance="bordered-panel" label-id="becpg.forms.set.formulation-quality.label"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="audit" appearance="bordered-panel" label="Audit"
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
@@ -1392,11 +1392,11 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="formulation" appearance="bordered-panel" label="Formulation - qualité"
+					<set id="formulation" appearance="bordered-panel" label-id="becpg.forms.set.formulation-quality.label"
 						template="/fr/becpg/components/form/3-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					
@@ -1505,11 +1505,11 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="audit" appearance="bordered-panel" label="Audit"
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
@@ -1602,11 +1602,11 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="bordered-panel" label="Désignation"
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="categories" appearance="bordered-panel" label="Catégories"
+					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
-					<set id="audit" appearance="bordered-panel" label="Audit"
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
@@ -3355,7 +3355,7 @@
 					<show id="bcpg:dynamicCharachValue" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:dynamicCharachGroupColor" label="Grp"/>
+					<field id="bcpg:dynamicCharachGroupColor" label-id="becpg.forms.set.grp.label"/>
 				</appearance>
 			</form>
 			

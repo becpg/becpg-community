@@ -34,10 +34,10 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 
 	/** Allow to define groups for new users **/
 	private List<String> defaultGroupNames = new ArrayList<String>();
-	
-    /** The authority service. */
-    private AuthorityService authorityService;
-    
+
+	/** The authority service. */
+	private AuthorityService authorityService;
+
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
@@ -45,7 +45,6 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 	public void setDefaultGroupNames(List<String> defaultGroupNames) {
 		this.defaultGroupNames = defaultGroupNames;
 	}
-
 
 	@Override
 	protected boolean implementationAllowsGuestLogin() {
@@ -74,24 +73,22 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 	@Override
 	public Authentication authenticate(org.springframework.security.core.Authentication auth) throws AuthenticationException {
 
-		
 		// Check if the token is for openId authentication
 
 		if (auth instanceof OpenIDAuthenticationToken) {
 
 			OpenIDAuthenticationToken response = (OpenIDAuthenticationToken) auth;
-			
 
 			OpenIDAuthenticationStatus status = response.getStatus();
 
 			// handle the various possibilities
 			if (status == OpenIDAuthenticationStatus.SUCCESS) {
 
-			  if (logger.isDebugEnabled())
-				  logger.debug("Authenticate " + OpenIdUtils.getUserName(response) + " via token");
-				
+				if (logger.isDebugEnabled())
+					logger.debug("Authenticate " + OpenIdUtils.getUserName(response) + " via token");
+
 				clearCurrentSecurityContext();
-			    setCurrentUser(response);
+				setCurrentUser(response);
 
 			} else if (status == OpenIDAuthenticationStatus.CANCELLED) {
 
@@ -121,7 +118,7 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 			// Unsupported authentication token
 			throw new AuthenticationException("Unsupported authentication token type");
 		}
-		
+
 		return getCurrentAuthentication();
 	}
 
@@ -146,14 +143,11 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 
 			authentication = getTransactionService().getRetryingTransactionHelper().doInTransaction(openIDUserCallback, false, requiresNew);
 		}
-		if ((authentication == null) || (openIDUserCallback.ae != null)) {
-			throw openIDUserCallback.ae;
-		}
 		return authentication;
 	}
 
 	class OpenIDUserCallback implements RetryingTransactionCallback<Authentication> {
-		AuthenticationException ae = null;
+
 		OpenIDAuthenticationToken token = null;
 
 		OpenIDUserCallback(OpenIDAuthenticationToken token) {
@@ -161,67 +155,61 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 		}
 
 		public Authentication execute() throws Throwable {
-			try {
 				final String userName = OpenIdUtils.getUserName(token);
 				return setCurrentUser(AuthenticationUtil.runAs(new RunAsWork<String>() {
-					public String doWork() throws Exception {
+				public String doWork() throws Exception {
+					String userName = OpenIdUtils.getUserName(token);
 
-						if (!getPersonService().personExists(userName)) {
-							if (logger.isDebugEnabled()) {
-								logger.debug("User \"" + userName + "\" does not exist in Alfresco. Attempting to create the user.");
-							}
-							if (!createMissingPerson()) {
-								if (logger.isDebugEnabled()) {
-									logger.debug("Failed to create user \"" + userName + '"');
-								}
-								throw new AuthenticationException("User \"" + userName + "\" does not exist in Alfresco");
-							}
+					if (!getPersonService().personExists(userName)) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("User \"" + userName + "\" does not exist in Alfresco. Attempting to create the user.");
 						}
-						NodeRef userNode = getPersonService().getPerson(userName);
-						// Get the person name and use that as the current user
-						// to
-						// line up with permission
-						// checks
-						return (String) getNodeService().getProperty(userNode, ContentModel.PROP_USERNAME);
+						if (!createMissingPerson()) {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Failed to create user \"" + userName + '"');
+							}
+							throw new AuthenticationException("User \"" + userName + "\" does not exist in Alfresco");
+						}
 					}
+					NodeRef userNode = getPersonService().getPerson(userName);
+					// Get the person name and use that as the current user
+					// to
+					// line up with permission
+					// checks
+					return (String) getNodeService().getProperty(userNode, ContentModel.PROP_USERNAME);
+				}
 				}, getSystemUserName(getUserDomain(userName))), UserNameValidationMode.NONE);
-			} catch (AuthenticationException ae) {
-				this.ae = ae;
-				return null;
-			}
 		}
 
 		protected boolean createMissingPerson() {
 			PropertyMap personProps = new PropertyMap();
-			
+
 			personProps.put(ContentModel.PROP_USERNAME, OpenIdUtils.getUserName(token));
 			for (OpenIDAttribute attribute : token.getAttributes()) {
-		            if (attribute.getName().equals("email")) {
-		            	personProps.put(ContentModel.PROP_EMAIL, attribute.getValues().get(0));
-		            }
-		            if (attribute.getName().equals("firstName")) {
-		            	personProps.put(ContentModel.PROP_FIRSTNAME, attribute.getValues().get(0));
-		            }
-		            if (attribute.getName().equals("lastName")) {
-		            	personProps.put(ContentModel.PROP_LASTNAME, attribute.getValues().get(0));
-		            }
-		        }
-			
-			
-			
-			if(logger.isDebugEnabled()){
-				logger.debug("Create openId user :"+OpenIdUtils.getUserName(token));
-				logger.debug("With details : "+personProps.toString());
+				if (attribute.getName().equals("email")) {
+					personProps.put(ContentModel.PROP_EMAIL, attribute.getValues().get(0));
+				}
+				if (attribute.getName().equals("firstName")) {
+					personProps.put(ContentModel.PROP_FIRSTNAME, attribute.getValues().get(0));
+				}
+				if (attribute.getName().equals("lastName")) {
+					personProps.put(ContentModel.PROP_LASTNAME, attribute.getValues().get(0));
+				}
 			}
-			
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Create openId user :" + OpenIdUtils.getUserName(token));
+				logger.debug("With details : " + personProps.toString());
+			}
+
 			NodeRef person = getPersonService().createPerson(personProps);
 
-			for(String group : defaultGroupNames){
+			for (String group : defaultGroupNames) {
 				String authorityName = authorityService.getName(AuthorityType.GROUP, group);
-				if(authorityService.authorityExists(authorityName)){
-					authorityService.addAuthority( authorityName, (String)personProps.get(ContentModel.PROP_USERNAME));
+				if (authorityService.authorityExists(authorityName)) {
+					authorityService.addAuthority(authorityName, (String) personProps.get(ContentModel.PROP_USERNAME));
 				} else {
-					logger.warn("Autority doesn't exist:"+authorityName);
+					logger.warn("Autority doesn't exist:" + authorityName);
 				}
 			}
 			return person != null;
