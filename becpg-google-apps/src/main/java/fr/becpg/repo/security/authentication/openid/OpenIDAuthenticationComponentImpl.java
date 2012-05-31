@@ -1,9 +1,13 @@
 package fr.becpg.repo.security.authentication.openid;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import net.sf.acegisecurity.Authentication;
+import net.sf.acegisecurity.UserDetails;
+import net.sf.acegisecurity.context.ContextHolder;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationComponent;
@@ -55,12 +59,13 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 	protected void authenticateImpl(String userName, char[] password) {
 
 		// Debug
-
 		if (logger.isDebugEnabled())
 			logger.debug("Authenticate user=" + userName + " via local credentials");
 
 		throw new AuthenticationException("Unsupported authentication token type");
 	}
+	
+	
 
 	/**
 	 * Authenticate using a token
@@ -216,5 +221,53 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 		}
 
 	}
+	
+	
+	  /**
+     * We actually have an acegi object so override the default method.
+     */
+    @Override
+    protected UserDetails getUserDetails(String userName)
+    {
+        if (AuthenticationUtil.isMtEnabled())
+        {
+            // ALF-9403 - "manual" runAs to avoid clearing ticket, eg. when called via "validate" (->setCurrentUser->CheckCurrentUser)
+            Authentication originalFullAuthentication = AuthenticationUtil.getFullAuthentication();
+            try
+            {
+                if (originalFullAuthentication == null)
+                {
+                	String systemUserName = getSystemUserName(getUserDomain(userName));
+                	if(logger.isDebugEnabled()){
+                		logger.debug("Set System user:"+systemUserName+" for "+userName);
+                	}
+                    AuthenticationUtil.setFullyAuthenticatedUser(systemUserName);
+                }
+                return super.getUserDetails(userName);
+            }
+            finally
+            {
+                if (originalFullAuthentication == null)
+                {
+                    ContextHolder.setContext(null); // note: does not clear ticket (unlike AuthenticationUtil.clearCurrentSecurityContext())
+                }
+            }
+        }
+        else
+        {
+        	return super.getUserDetails(userName);
+        }
+    }
 
+
+    /*
+     * (non-Javadoc)
+     * @see org.alfresco.repo.security.authentication.AuthenticationComponent#getDefaultAdministratorUserNames()
+     */
+    @Override
+    public Set<String> getDefaultAdministratorUserNames()
+    {
+        return Collections.singleton(AuthenticationUtil.getAdminUserName());
+    }
+    
 }

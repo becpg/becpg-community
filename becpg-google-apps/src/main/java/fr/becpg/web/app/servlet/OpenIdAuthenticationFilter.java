@@ -1,6 +1,7 @@
 package fr.becpg.web.app.servlet;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
@@ -22,6 +23,7 @@ import net.sf.acegisecurity.Authentication;
 import org.alfresco.repo.SessionUser;
 import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.management.subsystems.ActivateableBean;
+import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.alfresco.repo.security.authentication.AuthenticationException;
 import org.alfresco.repo.web.filter.beans.DependencyInjectedFilter;
 import org.alfresco.repo.webdav.auth.BaseAuthenticationFilter;
@@ -100,22 +102,17 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 		this.isActive = isActive;
 	}
 
-	
 	public void setOauthCertFile(String oauthCertFile) {
 		this.oauthCertFile = oauthCertFile;
 	}
-
 
 	public void setOauthConsumerKey(String oauthConsumerKey) {
 		this.oauthConsumerKey = oauthConsumerKey;
 	}
 
-	
-
 	public void setOauthConsumerKeySecret(String oauthConsumerKeySecret) {
 		this.oauthConsumerKeySecret = oauthConsumerKeySecret;
 	}
-
 
 	@Override
 	public boolean isActive() {
@@ -140,9 +137,27 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 
 		OAuthTokenUtils.setCurrentOAuthToken(getOAuthSessionToken((HttpServletRequest) request));
 
+		
 		if (request.getAttribute(NO_AUTH_REQUIRED) != null) {
 			if (getLogger().isDebugEnabled())
 				getLogger().debug("Authentication not required (filter), chaining ...");
+			
+			//No auth need tenant anyway
+			// Check if the user is already authenticated
+			SessionUser user = getSessionUser(context,  (HttpServletRequest)request, (HttpServletResponse)response, true);
+			
+			// If the user has been validated then continue to
+			// the next filter
+			if (user != null) {
+
+				// Filter validate hook
+				onValidate(context, (HttpServletRequest)request, (HttpServletResponse)response, null);
+
+				if (getLogger().isDebugEnabled())
+					getLogger().debug("Authentication not required (user), chaining ...");
+
+			}
+			
 			chain.doFilter(request, response);
 		} else if (authenticateRequest(context, (HttpServletRequest) request, (HttpServletResponse) response)) {
 			chain.doFilter(request, response);
@@ -156,28 +171,28 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 
 	private void setOAuthSessionToken(HttpServletRequest request, String authorizedtoken) {
 		try {
-			
+
 			// Parse access token
 			GoogleOAuthParameters oauthParameters = new GoogleOAuthParameters();
 			oauthParameters.setOAuthConsumerKey(oauthConsumerKey);
 			oauthParameters.setOAuthConsumerSecret(oauthConsumerKeySecret);
 			oauthParameters.setOAuthToken(authorizedtoken);
-	
-	        GoogleOAuthHelper oauthHelper = new GoogleOAuthHelper(OAuthTokenUtils.getRSASigner());
-	        String accessToken =  oauthHelper.getAccessToken(oauthParameters);
-	        if(logger.isDebugEnabled()){
-	        	logger.debug("Getting access token form authorized token : "+authorizedtoken);
-	        	logger.debug("Access token is :"+accessToken);
-	        }
-	        //Set access token
-	        oauthParameters.setOAuthToken(accessToken);
-	        request.getSession().setAttribute(OAUHT_SESSION_TOKEN, oauthParameters);
+
+			GoogleOAuthHelper oauthHelper = new GoogleOAuthHelper(OAuthTokenUtils.getRSASigner());
+			String accessToken = oauthHelper.getAccessToken(oauthParameters);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Getting access token form authorized token : " + authorizedtoken);
+				logger.debug("Access token is :" + accessToken);
+			}
+			// Set access token
+			oauthParameters.setOAuthToken(accessToken);
+			request.getSession().setAttribute(OAUHT_SESSION_TOKEN, oauthParameters);
 			OAuthTokenUtils.setCurrentOAuthToken(oauthParameters);
-		
+
 		} catch (Exception e) {
-			logger.error("Cannot get oauth accessToken",e);
+			logger.error("Cannot get oauth accessToken", e);
 		}
-		
+
 	}
 
 	// Check if guest is in url then skip auth for openId
@@ -220,8 +235,7 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 			this.openIdAuthenticator = (OpenIdAuthenticator) this.authenticationComponent;
 
 			OAuthTokenUtils.initPrivateKey(oauthCertFile);
-			
-			
+
 			ClientConfigElement clientConfig = (ClientConfigElement) configService.getGlobalConfig().getConfigElement(ClientConfigElement.CONFIG_ELEMENT_ID);
 			if (clientConfig != null) {
 				setLoginPage(clientConfig.getLoginPage());
@@ -277,22 +291,19 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 		}
 
 		if (isGuestAccess(request)) {
-			if (logger.isDebugEnabled())
-				logger.debug("Authenticating as Guest");
-
-			try {
-				authenticationService.authenticateAsGuest();
-				user = createUserEnvironment(request.getSession(), authenticationService.getCurrentUserName(), authenticationService.getCurrentTicket(), true);
-
-				onValidate(context, request, response, null);
-
-				return true;
-			} catch (AuthenticationException ex) {
-				if (logger.isDebugEnabled())
-					logger.debug("Guest auth failed", ex);
+			if (logger.isDebugEnabled()){
+				logger.debug("Authenticating as Guest not supported ");
 			}
-
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			Writer writer = response.getWriter();
+			try {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				writer.write(AbstractAuthenticationService.GUEST_AUTHENTICATION_NOT_SUPPORTED);
+			} finally {
+				if (writer != null) {
+					writer.flush();
+					writer.close();
+				}
+			}
 			return false;
 
 		}
@@ -555,6 +566,7 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 	 * javax.servlet.http.HttpServletResponse)
 	 */
 	protected void onValidate(ServletContext sc, HttpServletRequest req, HttpServletResponse res, OpenIDAuthenticationToken token) {
+
 		// Set the locale using the session
 		AuthenticationHelper.setupThread(sc, req, res, !req.getServletPath().equals("/wcs") && !req.getServletPath().equals("/wcservice"));
 		if (token != null) {

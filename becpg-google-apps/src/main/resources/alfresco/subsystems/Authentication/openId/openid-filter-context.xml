@@ -79,9 +79,9 @@
 	<!-- Enable cookie-based handling of webscript logins. We must assume cookie 
 		based client authentication when external auth is in the chain. -->
 	<bean id="webscriptAuthenticationFilter"
-		class="org.alfresco.web.app.servlet.WebScriptSSOAuthenticationFilter">
+		class="fr.becpg.web.app.servlet.WebScriptSSOAuthenticationFilter">
 		<property name="active">
-			<value>true</value>
+			<value>${openid.authentication.sso.enabled}</value>
 		</property>
 		<property name="authenticationService">
 			<ref bean="AuthenticationService" />
