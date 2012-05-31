@@ -127,6 +127,7 @@
 
 				<subtype name="dsg:config" />
 				<subtype name="cm:dictionaryModel" />
+				<subtype name="bpm:workflowDefinition" />
 			</type>
 
 			<type name="cm:folder">

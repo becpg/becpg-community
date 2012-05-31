@@ -22,6 +22,8 @@ public interface QualityModel {
 	/** non conformity **/
 	static final QName TYPE_NC = QName.createQName(QUALITY_URI,
 	"nc");
+	static final QName PROP_NC_DETECTED = QName.createQName(QUALITY_URI,
+	"ncDetected");	
 		
 	/** Control plan **/
 	static final QName TYPE_CONTROL_PLAN = QName.createQName(QUALITY_URI,
@@ -46,6 +48,18 @@ public interface QualityModel {
 	"product");
 	static final QName ASSOC_QC_CONTROL_PLANS = QName.createQName(QUALITY_URI,
 	"qcControlPlans");
+	
+	/** Corrective action **/
+	static final QName ASPECT_CORRECTIVE_ACTION = QName.createQName(QUALITY_URI,
+			"acAspect");
+	static final QName PROP_AC_EXPECTED_DATE = QName.createQName(QUALITY_URI,
+			"acExpectedDate");
+	static final QName PROP_AC_EFFECTIVE_DATE = QName.createQName(QUALITY_URI,
+			"acEffectiveDate");
+	static final QName PROP_AC_ASSIGNED_TO = QName.createQName(QUALITY_URI,
+			"acAssignedTo");
+	static final QName PROP_AC_CHECKER = QName.createQName(QUALITY_URI,
+			"acChecker");
 	
 	
 	/** Work item analysis **/

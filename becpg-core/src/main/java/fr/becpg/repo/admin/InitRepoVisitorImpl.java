@@ -808,6 +808,11 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
 		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, false, null);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, true, dataLists);
+		
+		// visit NC
+		subFolders = new HashSet<String>();		
+		subFolders.add(RepoConsts.PATH_DOCUMENTS);		
+		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_NC, true, subFolders);
 	}
 
 	/**

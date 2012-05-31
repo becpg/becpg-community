@@ -1,0 +1,81 @@
+"#";"http://www.pharmaboutique.net";;
+"PATH";"/System/ProductHierarchy/FinishedProduct_Hierarchy2";;
+"TYPE";"bcpg:linkedValue";;
+"COLUMNS";"cm:name";"bcpg:lkvPrevValue";"bcpg:lkvValue"
+"VALUES";"Beauté et soins - Anti-âges ";"Beauté et soins";"Anti-âges "
+"VALUES";"Beauté et soins - Soins des cheveux ";"Beauté et soins";"Soins des cheveux "
+"VALUES";"Beauté et soins - Soins du corps";"Beauté et soins";"Soins du corps"
+"VALUES";"Beauté et soins - Soins du visage";"Beauté et soins";"Soins du visage"
+"VALUES";"Beauté et soins - Soins pour hommes";"Beauté et soins";"Soins pour hommes"
+"VALUES";"Beauté et soins - Solaire";"Beauté et soins";"Solaire"
+"VALUES";"Bien-être - Aromathérapie";"Bien-être";"Aromathérapie"
+"VALUES";"Bien-être - Homéopathie";"Bien-être";"Homéopathie"
+"VALUES";"Bien-être - Nutripuncture";"Bien-être";"Nutripuncture"
+"VALUES";"Bien-être - Huiles de massage";"Bien-être";"Huiles de massage"
+"VALUES";"Compléments alimentaires - Condiments Naturels";"Compléments alimentaires";"Condiments Naturels"
+"VALUES";"Compléments alimentaires - Energisant";"Compléments alimentaires";"Energisant"
+"VALUES";"Compléments alimentaires - Vitamines et minéraux";"Compléments alimentaires";"Vitamines et minéraux"
+"VALUES";"Hygiène - Acné";"Hygiène";"Acné"
+"VALUES";"Hygiène - Déodorants";"Hygiène";"Déodorants"
+"VALUES";"Hygiène - Auriculaires et nasales";"Hygiène";"Auriculaires et nasales"
+"VALUES";"Ligne et minceur - Cures et régimes";"Ligne et minceur";"Cures et régimes"
+"VALUES";"Ligne et minceur - Musculation";"Ligne et minceur";"Musculation"
+"VALUES";"Ligne et minceur - Régulateur d appétit";"Ligne et minceur";"Régulateur d appétit"
+;;;
+"#";"http://www.aroma-zone.com/aroma/emulsifiants.asp";;
+"PATH";"/System/ProductHierarchy/RawMaterial_Hierarchy2";;
+"TYPE";"bcpg:linkedValue";;
+"COLUMNS";"cm:name";"bcpg:lkvPrevValue";"bcpg:lkvValue"
+"VALUES";"Ingrédients de base - Cires et gommes";"Ingrédients de base";"Cires et gommes"
+"VALUES";"Ingrédients de base - Emulsifiants";"Ingrédients de base";"Emulsifiants"
+"VALUES";"Ingrédients de base - Argiles";"Ingrédients de base";"Argiles"
+"VALUES";"Ingrédients de base - Sels";"Ingrédients de base";"Sels"
+"VALUES";"Ingrédients de base - Tensioactifs";"Ingrédients de base";"Tensioactifs"
+"VALUES";"Ingrédients de base - Bases savon glycérinées";"Ingrédients de base";"Bases savon glycérinées"
+"VALUES";"Ingrédients de base - Agents de textures, Emollients, Supports et Correcteurs de pH";"Ingrédients de base";"Agents de textures, Emollients, Supports et Correcteurs de pH"
+"VALUES";"Ingrédients de base - Conservateurs et anti-oxydants";"Ingrédients de base";"Conservateurs et anti-oxydants"
+"VALUES";"Ingrédients de base - Dispersants";"Ingrédients de base";"Dispersants"
+"VALUES";"Ingrédients de base - Divers";"Ingrédients de base";"Divers"
+"VALUES";"Huiles Essentielles - Fleuries";"Huiles Essentielles";"Fleuries"
+"VALUES";"Huiles Essentielles - D'herbes aromatiques";"Huiles Essentielles";"D'herbes aromatiques"
+"VALUES";"Huiles Essentielles - Fraîches";"Huiles Essentielles";"Fraîches"
+"VALUES";"Huiles Essentielles - Fruitées";"Huiles Essentielles";"Fruitées"
+"VALUES";"Huiles Essentielles - Boisées";"Huiles Essentielles";"Boisées"
+"VALUES";"Huiles Essentielles - Épicées";"Huiles Essentielles";"Épicées"
+"VALUES";"Huiles Essentielles - Rares et précieuses";"Huiles Essentielles";"Rares et précieuses"
+"VALUES";"Huiles Essentielles - Les BIO";"Huiles Essentielles";"Les BIO"
+"VALUES";"Huiles/beurres végétaux - Huiles végétales";"Huiles/beurres végétaux";"Huiles végétales"
+"VALUES";"Huiles/beurres végétaux - Macérâts huileux";"Huiles/beurres végétaux";"Macérâts huileux"
+"VALUES";"Huiles/beurres végétaux - Beurres végétaux";"Huiles/beurres végétaux";"Beurres végétaux"
+"VALUES";"Extraits de plantes - Extraits de plantes secs et alcooliques";"Extraits de plantes";"Extraits de plantes secs et alcooliques"
+"VALUES";"Extraits de plantes - Extraits de plantes hydroglycérinés";"Extraits de plantes";"Extraits de plantes hydroglycérinés"
+"VALUES";"Extraits de plantes - Colorations et shampooings capillaires végétaux";"Extraits de plantes";"Colorations et shampooings capillaires végétaux"
+"VALUES";"Extraits de plantes - Extraits de Fruits";"Extraits de plantes";"Extraits de Fruits"
+"VALUES";"Actifs cosmétiques - Liste complète";"Actifs cosmétiques";"Liste complète"
+"VALUES";"Actifs cosmétiques - Actifs anti-âge, anti-rides et antioxydants";"Actifs cosmétiques";"Actifs anti-âge, anti-rides et antioxydants"
+"VALUES";"Actifs cosmétiques - Actifs hydratants et relipidants";"Actifs cosmétiques";"Actifs hydratants et relipidants"
+"VALUES";"Actifs cosmétiques - Actifs purifiants et éclat du teint";"Actifs cosmétiques";"Actifs purifiants et éclat du teint"
+"VALUES";"Actifs cosmétiques - Actifs apaisants et nutritifs";"Actifs cosmétiques";"Actifs apaisants et nutritifs"
+"VALUES";"Actifs cosmétiques - Actifs Minceur, circulatoires, déodorants";"Actifs cosmétiques";"Actifs Minceur, circulatoires, déodorants"
+"VALUES";"Actifs cosmétiques - Actifs Cheveux";"Actifs cosmétiques";"Actifs Cheveux"
+"VALUES";"Actifs cosmétiques - Actifs Maquillage et Toucher doux";"Actifs cosmétiques";"Actifs Maquillage et Toucher doux"
+"VALUES";"Les plus - Exfoliants végétaux";"Les plus";"Exfoliants végétaux"
+"VALUES";"Les plus - Extraits aromatiques fruités et gourmands";"Les plus";"Extraits aromatiques fruités et gourmands"
+"VALUES";"Les plus - Fragrances cosmétiques";"Les plus";"Fragrances cosmétiques"
+"VALUES";"Les plus - Colorants naturels";"Les plus";"Colorants naturels"
+;;;
+;;;
+"PATH";"/System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy2";;
+"TYPE";"bcpg:linkedValue";;
+"COLUMNS";"cm:name";"bcpg:lkvPrevValue";"bcpg:lkvValue"
+"VALUES";"Modes opératoires - Phases";"Modes opératoires";"Phases"
+;;;
+;;;
+"PATH";"/System/ProductHierarchy/SemiFinishedProduct_Hierarchy2";;
+"TYPE";"bcpg:linkedValue";;
+"COLUMNS";"cm:name";"bcpg:lkvPrevValue";"bcpg:lkvValue"
+"VALUES";"Bases - Savons";"Bases";"Savons"
+"VALUES";"Bases - Bases broyages";"Bases";"Bases broyages"
+"VALUES";"Bases - Préparations";"Bases";"Préparations"
+"VALUES";"Savons - Durs";"Savons";"Durs"
+"VALUES";"Savons - Gras";"Savons";"Gras"
