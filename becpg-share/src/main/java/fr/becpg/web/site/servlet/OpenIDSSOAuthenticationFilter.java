@@ -143,17 +143,23 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 
 		// Login page or login submission
 
-		String pathInfo;
-		if (PAGE_SERVLET_PATH.equals(req.getServletPath())
-				&& (LOGIN_PATH_INFORMATION.equals(pathInfo = req.getPathInfo()) || pathInfo == null && LOGIN_PARAMETER.equals(req.getParameter("pt")))) {
-			if (debug)
-				logger.debug("Login page requested, chaining ...");
+	      
+        // Login page or login submission
+        String pathInfo;
+        if (PAGE_SERVLET_PATH.equals(req.getServletPath())
+                && ((LOGIN_PATH_INFORMATION.equals(pathInfo = req.getPathInfo()) || pathInfo == null
+                        && LOGIN_PARAMETER.equals(req.getParameter("pt")))
+                        || "/type/login".equals(pathInfo)))
+        {
+            if (debug)
+                logger.debug("Login page requested, chaining ...");
 
-			// Chain to the next filter
-			chain.doFilter(sreq, sresp);
-			return;
-		}
-
+            // Chain to the next filter
+            chain.doFilter(sreq, sresp);
+            return;
+        }
+        
+        
 		// initialize a new request context
 		RequestContext context = null;
 		try {
@@ -175,12 +181,15 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 			return;
 		}
 
+
+
 		// Check the authorization header
 		if (debug) {
 			if (!AuthenticationUtil.isAuthenticated(req)) {
 				logger.debug("New auth request from " + req.getRemoteHost() + " (" + req.getRemoteAddr() + ":" + req.getRemotePort() + ")");
 			}
 		}
+		
 		openIdAuth(chain, req, res, session);
 
 	}

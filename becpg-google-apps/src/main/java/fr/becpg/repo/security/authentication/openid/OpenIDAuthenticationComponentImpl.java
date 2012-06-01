@@ -1,9 +1,7 @@
 package fr.becpg.repo.security.authentication.openid;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import net.sf.acegisecurity.Authentication;
 import net.sf.acegisecurity.UserDetails;
@@ -52,11 +50,11 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 
 	@Override
 	protected boolean implementationAllowsGuestLogin() {
-		return true;
+		return false;
 	}
 
 	@Override
-	protected void authenticateImpl(String userName, char[] password) {
+	public void authenticate(String userName, char[] password) {
 
 		// Debug
 		if (logger.isDebugEnabled())
@@ -80,6 +78,9 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 
 		// Check if the token is for openId authentication
 
+		   // clear context - to avoid MT concurrency issue (causing domain mismatch) - see also 'validate' below
+        clearCurrentSecurityContext();
+		
 		if (auth instanceof OpenIDAuthenticationToken) {
 
 			OpenIDAuthenticationToken response = (OpenIDAuthenticationToken) auth;
@@ -92,7 +93,9 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 				if (logger.isDebugEnabled())
 					logger.debug("Authenticate " + OpenIdUtils.getUserName(response) + " via token");
 
-				clearCurrentSecurityContext();
+			         
+				//TODO preAuthenticationCheck(OpenIdUtils.getUserName(response));
+			  
 				setCurrentUser(response);
 
 			} else if (status == OpenIDAuthenticationStatus.CANCELLED) {
@@ -259,15 +262,25 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
         }
     }
 
-
-    /*
-     * (non-Javadoc)
-     * @see org.alfresco.repo.security.authentication.AuthenticationComponent#getDefaultAdministratorUserNames()
-     */
-    @Override
-    public Set<String> getDefaultAdministratorUserNames()
-    {
-        return Collections.singleton(AuthenticationUtil.getAdminUserName());
-    }
     
+//    public void preAuthenticationCheck(String userName) throws AuthenticationException
+//    {
+//        if (sysAdminParams != null)
+//        {
+//            List<String> allowedUsers = sysAdminParams.getAllowedUserList();
+//
+//            if ((allowedUsers != null) && (!allowedUsers.contains(userName)))
+//            {
+//                throw new AuthenticationDisallowedException("Username not allowed: " + userName);
+//            }
+//
+//            Integer maxUsers = (Integer) sysAdminParams.getMaxUsers();
+//
+//            if ((maxUsers != null) && (maxUsers != -1) && (getUsersWithTickets(true).size() >= maxUsers))
+//            {
+//                throw new AuthenticationMaxUsersException("Max users exceeded: " + maxUsers);
+//            }
+//        }
+//    }
+
 }

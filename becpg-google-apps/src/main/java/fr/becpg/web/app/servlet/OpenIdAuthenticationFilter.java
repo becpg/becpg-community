@@ -1,7 +1,6 @@
 package fr.becpg.web.app.servlet;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
@@ -23,7 +22,6 @@ import net.sf.acegisecurity.Authentication;
 import org.alfresco.repo.SessionUser;
 import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.management.subsystems.ActivateableBean;
-import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.alfresco.repo.security.authentication.AuthenticationException;
 import org.alfresco.repo.web.filter.beans.DependencyInjectedFilter;
 import org.alfresco.repo.webdav.auth.BaseAuthenticationFilter;
@@ -290,24 +288,45 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 			return true;
 		}
 
+//		if (isGuestAccess(request)) {
+//			if (logger.isDebugEnabled()){
+//				logger.debug("Authenticating as Guest not supported ");
+//			}
+//			Writer writer = response.getWriter();
+//			try {
+//				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//				writer.write(AbstractAuthenticationService.GUEST_AUTHENTICATION_NOT_SUPPORTED);
+//			} finally {
+//				if (writer != null) {
+//					writer.flush();
+//					writer.close();
+//				}
+//			}
+//			return false;
+//
+//		}
+		
 		if (isGuestAccess(request)) {
-			if (logger.isDebugEnabled()){
-				logger.debug("Authenticating as Guest not supported ");
-			}
-			Writer writer = response.getWriter();
+			if (logger.isDebugEnabled())
+				logger.debug("Authenticating as Guest");
+
 			try {
-				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				writer.write(AbstractAuthenticationService.GUEST_AUTHENTICATION_NOT_SUPPORTED);
-			} finally {
-				if (writer != null) {
-					writer.flush();
-					writer.close();
-				}
+				authenticationService.authenticateAsGuest();
+				user = createUserEnvironment(request.getSession(), authenticationService.getCurrentUserName(), authenticationService.getCurrentTicket(), true);
+
+				onValidate(context, request, response, null);
+
+				return true;
+			} catch (AuthenticationException ex) {
+				if (logger.isDebugEnabled())
+					logger.debug("Guest auth failed", ex);
 			}
+
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return false;
 
 		}
-
+		
 		OpenIDAuthenticationToken token;
 
 		String identity = request.getParameter("openid.identity");
@@ -403,6 +422,11 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 		if (mapping == null) {
 			try {
 				URL url = new URL(returnToUrl);
+				
+				if(returnToUrl.contains("becpg.fr")){
+					return "https://*.becpg.fr";
+				}
+				
 				int port = url.getPort();
 
 				StringBuilder realmBuffer = new StringBuilder(returnToUrl.length()).append(url.getProtocol()).append("://").append(url.getHost());
