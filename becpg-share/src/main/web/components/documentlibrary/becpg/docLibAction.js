@@ -131,11 +131,10 @@
    	
    	YAHOO.Bubbling.fire("registerAction",
 	{
-   		actionName: "onActionGenerateReport",
-   		fn: function onActionGenerateReport(asset)
+   		actionName: "onActionRefreshReport",
+   		fn: function onActionRefreshReport(asset)
    		{       		   	
-   		  {     
-   			  Alfresco.util.PopupManager.displayMessage(
+			  Alfresco.util.PopupManager.displayMessage(
 	         {
 	            text: this.msg("message.generate-report.please-wait")
 	         });
@@ -166,8 +165,7 @@
 	               scope: this
 	            }
 	         });   			
-   		  }
-   		}
+	  }
    });
    
 })();
