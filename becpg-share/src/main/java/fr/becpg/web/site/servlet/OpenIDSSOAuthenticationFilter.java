@@ -49,7 +49,6 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 	private static Log logger = LogFactory.getLog(OpenIDSSOAuthenticationFilter.class);
 
 	// Authentication request/response headers
-	private static final String HEADER_AUTHORIZATION = "Authorization";
 	private static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
 
 	private static final String PAGE_SERVLET_PATH = "/page";
@@ -61,15 +60,14 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 	private static final String HEADER_OPENID_CALLBACK = "OpenIdCallBack";
 
 	private static final String HEADER_OPENID_REDIRECT = "OpenIdRedirect";
-	
-	private static final String HEADER_OPENID_AUTH_SUCCESS  = "OpenIdAuthSuccess";
+
+	private static final String HEADER_OPENID_AUTH_SUCCESS = "OpenIdAuthSuccess";
+
 
 	private ConnectorService connectorService;
 	private String endpoint;
 	private ServletContext servletContext;
 
-	
-	
 	/**
 	 * Initialize the filter
 	 */
@@ -109,8 +107,6 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 			logger.info("OpenID SSOAuthenticationFilter initialised.");
 	}
 
-	
-
 	/**
 	 * Run the filter
 	 * 
@@ -128,7 +124,6 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 
 		final boolean debug = logger.isDebugEnabled();
 
-
 		// Bypass the filter if we don't have an endpoint with openId auth
 		// enabled
 		if (this.endpoint == null) {
@@ -141,21 +136,30 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 		HttpServletResponse res = (HttpServletResponse) sresp;
 		HttpSession session = req.getSession();
 
-		if (debug)
+		if (debug){
 			logger.debug("Processing request " + req.getRequestURI() + " SID:" + session.getId());
-
-		// Login page or login submission
-		String pathInfo;
-		if (PAGE_SERVLET_PATH.equals(req.getServletPath())
-				&& (LOGIN_PATH_INFORMATION.equals(pathInfo = req.getPathInfo()) || pathInfo == null && LOGIN_PARAMETER.equals(req.getParameter("pt")))) {
-			if (debug)
-				logger.debug("Login page requested, chaining ...");
-
-			// Chain to the next filter
-			chain.doFilter(sreq, sresp);
-			return;
+			logger.debug("Current user:"+AuthenticationUtil.getUserId(req));
 		}
 
+		// Login page or login submission
+
+	      
+        // Login page or login submission
+        String pathInfo;
+        if (PAGE_SERVLET_PATH.equals(req.getServletPath())
+                && ((LOGIN_PATH_INFORMATION.equals(pathInfo = req.getPathInfo()) || pathInfo == null
+                        && LOGIN_PARAMETER.equals(req.getParameter("pt")))
+                        || "/type/login".equals(pathInfo)))
+        {
+            if (debug)
+                logger.debug("Login page requested, chaining ...");
+
+            // Chain to the next filter
+            chain.doFilter(sreq, sresp);
+            return;
+        }
+        
+        
 		// initialize a new request context
 		RequestContext context = null;
 		try {
@@ -177,34 +181,29 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 			return;
 		}
 
-		// Check if there is an authorization header with a challenge response
-		String authHdr = req.getHeader(HEADER_AUTHORIZATION);
 
 
 		// Check the authorization header
-		if (authHdr == null || AuthenticationUtil.isAuthenticated(req)) {
-			if (debug) {
-				if(!AuthenticationUtil.isAuthenticated(req)){
-					logger.debug("New auth request from " + req.getRemoteHost() + " (" + req.getRemoteAddr() + ":" + req.getRemotePort() + ")");
-				}
+		if (debug) {
+			if (!AuthenticationUtil.isAuthenticated(req)) {
+				logger.debug("New auth request from " + req.getRemoteHost() + " (" + req.getRemoteAddr() + ":" + req.getRemotePort() + ")");
 			}
-			openIdAuth(chain, req, res, session);
-			return;
-		} else {
-				// possibly establish a new session or bring up the login page
-				chain.doFilter(req, res);
 		}
+		
+		openIdAuth(chain, req, res, session);
+
 	}
 
-	private void openIdAuth(FilterChain chain, HttpServletRequest req, HttpServletResponse res, HttpSession session) throws IOException, ServletException {
+	private void openIdAuth(FilterChain chain, HttpServletRequest req, HttpServletResponse res,HttpSession session) throws IOException, ServletException {
 		try {
-		
+			
+			
 			Connector conn = connectorService.getConnector(this.endpoint, session);
 
-			Map<String,String> headers = new HashMap<String,String>();
+			Map<String, String> headers = new HashMap<String, String>();
 
 			// We are comming from share
-			//Share openID marker
+			// Share openID marker
 			headers.put(HEADER_SHARE_AUTH, Boolean.TRUE.toString());
 
 			// ALF-10785: We must pass through the language header to set up the
@@ -213,18 +212,32 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 				headers.put(HEADER_ACCEPT_LANGUAGE, req.getHeader(HEADER_ACCEPT_LANGUAGE));
 			}
 
+			headers.put("user-agent", "");
+			if (conn.getConnectorSession().getCookie("JSESSIONID") == null) {
+				// Ensure we do not proxy over the Session ID from the browser
+				// request:
+				// If Alfresco and SURF app are deployed into the same
+				// app-server and user is
+				// user same browser instance to access both apps then we could
+				// get wrong session ID!
+				headers.put("Cookie", null);
+			}
+			// ALF-12278: Prevent the copying over of headers specific to a POST
+			// request on to the touch GET request
+			headers.put("Content-Type", null);
+			headers.put("Content-Length", null);
+
 			String forwardRequest = "/touch";
 
 			String identity = req.getParameter("openid.identity");
-			//Step 2
+			// Step 2
 			if (StringUtils.hasText(identity)) {
 				forwardRequest += buildForwardParams(req);
 				logger.debug("Running OpenID Step 2 : forward openID params to alfresco");
 				logger.debug("Forward Request = " + forwardRequest);
 				headers.put(HEADER_OPENID_CALLBACK, Boolean.TRUE.toString());
-			} 
-		
-			
+			}
+
 			ConnectorContext ctx = new ConnectorContext(null, headers);
 			Response remoteRes = conn.call(forwardRequest, ctx);
 
@@ -236,28 +249,26 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 			if (remoteRes.getStatus().getHeaders().containsKey(HEADER_OPENID_REDIRECT)) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Running OpenID Step 1 : redirect to openId provider");
-					logger.debug("Redirect Request = "+remoteRes.getResponse());
+					logger.debug("Redirect Request = " + remoteRes.getResponse());
 				}
 				res.sendRedirect(remoteRes.getResponse());
 
 				return;
-			} else if(remoteRes.getStatus().getHeaders().containsKey(HEADER_OPENID_AUTH_SUCCESS)){
+			} else if (remoteRes.getStatus().getHeaders().containsKey(HEADER_OPENID_AUTH_SUCCESS)) {
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Running OpenID Step 3 : authentication on share side");
 				}
-				
-				// Create User ID in session so the web-framework dispatcher knows we have logged in
-                session.setAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID, remoteRes.getResponse());
-                
-                // Set the external auth flag so the UI knows we are using SSO etc.
-                session.setAttribute(UserFactory.SESSION_ATTRIBUTE_EXTERNAL_AUTH, Boolean.TRUE);
-                
-                chain.doFilter(req, res);
+
+				String userId = remoteRes.getResponse();
+
+				doLogin(req,res, session,userId);
+
+				chain.doFilter(req, res);
 				return;
-			
-			}	else if (Status.STATUS_UNAUTHORIZED == remoteRes.getStatus().getCode()) {
-			
+
+			} else if (Status.STATUS_UNAUTHORIZED == remoteRes.getStatus().getCode()) {
+
 				if (logger.isDebugEnabled()) {
 					logger.debug("Repository session timed out - restarting auth process...");
 				}
@@ -268,7 +279,7 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 
 				return;
 			} else {
-								
+				
 				// we have local auth in the session and the repo session is
 				// also valid
 				// this means we do not need to perform any further auth
@@ -276,7 +287,6 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Authentication not required, chaining ...");
 				}
-				
 
 				chain.doFilter(req, res);
 				return;
@@ -284,6 +294,23 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 		} catch (ConnectorServiceException cse) {
 			throw new PlatformRuntimeException("Incorrectly configured endpoint ID: " + this.endpoint);
 		}
+	}
+
+	private void doLogin(HttpServletRequest req, HttpServletResponse res,HttpSession session, String userId) {
+		if(logger.isDebugEnabled()){
+			logger.debug("Log user : "+userId);
+		}
+		
+		
+		// Create User ID in session so the web-framework dispatcher
+		// knows we have logged in
+		session.setAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID, userId);
+
+		// Set the external auth flag so the UI knows we are using SSO
+		// etc.
+		session.setAttribute(UserFactory.SESSION_ATTRIBUTE_EXTERNAL_AUTH, Boolean.TRUE);
+
+		
 	}
 
 	protected String buildForwardParams(HttpServletRequest request) {

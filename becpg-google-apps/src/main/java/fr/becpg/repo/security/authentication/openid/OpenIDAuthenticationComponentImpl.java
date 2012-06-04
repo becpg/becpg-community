@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.acegisecurity.Authentication;
+import net.sf.acegisecurity.UserDetails;
+import net.sf.acegisecurity.context.ContextHolder;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationComponent;
@@ -48,19 +50,20 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 
 	@Override
 	protected boolean implementationAllowsGuestLogin() {
-		return true;
+		return false;
 	}
 
 	@Override
-	protected void authenticateImpl(String userName, char[] password) {
+	public void authenticate(String userName, char[] password) {
 
 		// Debug
-
 		if (logger.isDebugEnabled())
 			logger.debug("Authenticate user=" + userName + " via local credentials");
 
 		throw new AuthenticationException("Unsupported authentication token type");
 	}
+	
+	
 
 	/**
 	 * Authenticate using a token
@@ -75,6 +78,9 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 
 		// Check if the token is for openId authentication
 
+		   // clear context - to avoid MT concurrency issue (causing domain mismatch) - see also 'validate' below
+        clearCurrentSecurityContext();
+		
 		if (auth instanceof OpenIDAuthenticationToken) {
 
 			OpenIDAuthenticationToken response = (OpenIDAuthenticationToken) auth;
@@ -87,7 +93,9 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 				if (logger.isDebugEnabled())
 					logger.debug("Authenticate " + OpenIdUtils.getUserName(response) + " via token");
 
-				clearCurrentSecurityContext();
+			         
+				//TODO preAuthenticationCheck(OpenIdUtils.getUserName(response));
+			  
 				setCurrentUser(response);
 
 			} else if (status == OpenIDAuthenticationStatus.CANCELLED) {
@@ -216,5 +224,63 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 		}
 
 	}
+	
+	
+	  /**
+     * We actually have an acegi object so override the default method.
+     */
+    @Override
+    protected UserDetails getUserDetails(String userName)
+    {
+        if (AuthenticationUtil.isMtEnabled())
+        {
+            // ALF-9403 - "manual" runAs to avoid clearing ticket, eg. when called via "validate" (->setCurrentUser->CheckCurrentUser)
+            Authentication originalFullAuthentication = AuthenticationUtil.getFullAuthentication();
+            try
+            {
+                if (originalFullAuthentication == null)
+                {
+                	String systemUserName = getSystemUserName(getUserDomain(userName));
+                	if(logger.isDebugEnabled()){
+                		logger.debug("Set System user:"+systemUserName+" for "+userName);
+                	}
+                    AuthenticationUtil.setFullyAuthenticatedUser(systemUserName);
+                }
+                return super.getUserDetails(userName);
+            }
+            finally
+            {
+                if (originalFullAuthentication == null)
+                {
+                    ContextHolder.setContext(null); // note: does not clear ticket (unlike AuthenticationUtil.clearCurrentSecurityContext())
+                }
+            }
+        }
+        else
+        {
+        	return super.getUserDetails(userName);
+        }
+    }
+
+    
+//    public void preAuthenticationCheck(String userName) throws AuthenticationException
+//    {
+//        if (sysAdminParams != null)
+//        {
+//            List<String> allowedUsers = sysAdminParams.getAllowedUserList();
+//
+//            if ((allowedUsers != null) && (!allowedUsers.contains(userName)))
+//            {
+//                throw new AuthenticationDisallowedException("Username not allowed: " + userName);
+//            }
+//
+//            Integer maxUsers = (Integer) sysAdminParams.getMaxUsers();
+//
+//            if ((maxUsers != null) && (maxUsers != -1) && (getUsersWithTickets(true).size() >= maxUsers))
+//            {
+//                throw new AuthenticationMaxUsersException("Max users exceeded: " + maxUsers);
+//            }
+//        }
+//    }
 
 }

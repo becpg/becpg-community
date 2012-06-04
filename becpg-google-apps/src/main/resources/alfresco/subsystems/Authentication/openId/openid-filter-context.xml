@@ -81,7 +81,7 @@
 	<bean id="webscriptAuthenticationFilter"
 		class="org.alfresco.web.app.servlet.WebScriptSSOAuthenticationFilter">
 		<property name="active">
-			<value>true</value>
+			<value>${openid.authentication.sso.enabled}</value>
 		</property>
 		<property name="authenticationService">
 			<ref bean="AuthenticationService" />

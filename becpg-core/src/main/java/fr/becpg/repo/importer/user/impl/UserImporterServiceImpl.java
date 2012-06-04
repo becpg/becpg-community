@@ -354,7 +354,8 @@ public class UserImporterServiceImpl implements UserImporterService {
 					            		logger.debug("Site "+siteName+" doesn't exist.");
 					            		
 					            		SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, cleanSiteName(siteName), siteName, "", SiteVisibility.PUBLIC);
-					            		//ISSUE ALF-4771
+					            		//ISSUE ALF-4771 
+					            		//TODO http://ecmstuff.blogspot.fr/2012/03/creating-alfresco-share-sites-with.html
 					            		try {
 					            			logger.debug("Due to issue ALF-4771 we should call Share webscript to enable site");
 					            			//TODO externalyze password
