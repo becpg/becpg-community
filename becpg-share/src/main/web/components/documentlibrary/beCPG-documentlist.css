@@ -18,3 +18,7 @@
    background-image: url(images/cancel-editing-16.png);
 }
 
+.doclist .onActionRefreshReport a
+{
+   background-image: url(images/refresh-report-16.png);
+}

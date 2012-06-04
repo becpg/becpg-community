@@ -140,6 +140,47 @@
           window.location = this.getActionUrls(this.assetData).documentDetailsUrl;
        });
     }
+    
+    /**
+     * Refresh the report
+     *
+     * @method onActionRefreshReport
+     * @param complete {object} Object literal containing details of successful and failed uploads
+     */
+    Alfresco.DocumentActions.prototype.onActionRefreshReport = function DocumentActions_onActionRefreshReport(asset)
+    {
+    	Alfresco.util.PopupManager.displayMessage(
+         {
+            text: this.msg("message.generate-report.please-wait")
+         });
+
+         Alfresco.util.Ajax.request(
+         {
+            method: Alfresco.util.Ajax.GET,
+            url: Alfresco.constants.PROXY_URI + "becpg/entity/generate-report/node/" + asset.nodeRef.replace(":/", "") + "/force",				
+            successCallback:
+            {
+               fn: function EntityDataListToolbar_onFinish_success(response)
+               {	                 
+            	   this.assetData.nodeRef = asset.nodeRef;
+            	   window.location = this.getActionUrls(this.assetData).documentDetailsUrl;
+                  
+               },               
+               scope: this
+            },
+            failureCallback:
+            {
+               fn: function EntityDataListToolbar_onFinish_failure(response)
+               {
+                  Alfresco.util.PopupManager.displayMessage(
+                  {
+                     text: this.msg("message.generate-report.failure")
+                  });
+               },
+               scope: this
+            }
+         });  
+    }
    
    
 })();

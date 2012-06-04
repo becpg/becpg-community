@@ -49,9 +49,9 @@
    	</bean>
    	
    	<!-- Entity report -->
-   	<bean id="webscript.fr.becpg.entity.entityReport.get" class="fr.becpg.repo.web.scripts.entity.ReportWebScript" parent="webscript">      	
-			<property name="nodeService" ref="nodeService" />
+   	<bean id="webscript.fr.becpg.entity.entityReport.get" class="fr.becpg.repo.web.scripts.entity.ReportWebScript" parent="webscript">      				
 			<property name="entityService" ref="entityService" />
+			<property name="entityReportService" ref="entityReportService" />
    	</bean>
          
    	<!-- Entity where used -->

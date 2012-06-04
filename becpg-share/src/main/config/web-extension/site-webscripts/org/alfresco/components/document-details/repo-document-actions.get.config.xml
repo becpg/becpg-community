@@ -108,7 +108,8 @@
          <action type="action-link" id="onActionDelete" permission="delete" label="actions.document.delete" />
          <action type="action-link" id="onActionAssignWorkflow" label="actions.document.assign-workflow" />
          <action type="simple-link" id="onActionDownload" href="{downloadUrl}" label="actions.document.download" />         
-         <action type="action-link" id="onActionCheckOutEntity" permission="edit" label="actions.document.checkout-entity" />         
+         <action type="action-link" id="onActionCheckOutEntity" permission="edit" label="actions.document.checkout-entity" />   
+         <action type="action-link" id="onActionRefreshReport" permission="edit" label="actions.document.refreshReport" />      
          <action type="action-link" id="onActionManageAspects" permission="edit" label="actions.document.manage-aspects" />
       </actionSet>      
       
@@ -138,6 +139,7 @@
          <action type="action-link" id="onActionAssignWorkflow" label="actions.document.assign-workflow" />
          <action type="action-link" id="onActionCheckInEntity" permission="edit" label="actions.document.checkin-entity" />
          <action type="action-link" id="onActionCancelCheckOutEntity" permission="edit" label="actions.document.cancel-checkout-entity" />
+         <action type="action-link" id="onActionRefreshReport" permission="edit" label="actions.document.refreshReport" />
       </actionSet>
       
       <actionSet id="transferredEntity">

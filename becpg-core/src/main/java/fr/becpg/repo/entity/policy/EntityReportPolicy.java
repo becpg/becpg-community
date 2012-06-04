@@ -65,10 +65,7 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 	private TransactionListener transactionListener;	
 	
 	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The policy behaviour filter. */
-	private BehaviourFilter policyBehaviourFilter;
+	private NodeService nodeService;	
 	
 	/** The Lock Service **/
 	private LockService lockService;
@@ -104,15 +101,6 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 		this.threadExecuter = threadExecuter;
 	}
 
-	/**
-	 * Sets the policy behaviour filter.
-	 *
-	 * @param policyBehaviourFilter the new policy behaviour filter
-	 */
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}	
-	
 	/**
 	 * 
 	 * @param lockService
@@ -294,24 +282,9 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
                             {                                   
 
                             	if(nodeService.exists(entityNodeRef) && lockService.getLockStatus(entityNodeRef) == LockStatus.NO_LOCK){
-                            		try{
-                                		// Ensure that the policy doesn't refire for this node
-                        				// on this thread
-                        				// This won't prevent background processes from
-                        				// refiring, though
-                        	            policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
-                        	            policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);	
-                        	     
-                        	            // generate reports
-                        	            entityReportService.generateReport(entityNodeRef);		
-                        	            
-                        	        	// set reportNodeGenerated property to now
-                    			        nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, Calendar.getInstance().getTime());
-                        	        }
-                        	        finally{
-                        	        	policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);		
-                        	        	policyBehaviourFilter.enableBehaviour(entityNodeRef,  ContentModel.ASPECT_AUDITABLE);		
-                        	        }	         
+                            		
+                            		entityReportService.generateReport(entityNodeRef);
+                            		
                             	}
             			        
                                 return null;
