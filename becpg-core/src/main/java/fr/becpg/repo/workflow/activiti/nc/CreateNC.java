@@ -9,8 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.DelegateTask;
+import org.activiti.engine.delegate.JavaDelegate;
 import org.activiti.engine.delegate.TaskListener;
+import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.impl.context.Context;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
@@ -27,12 +31,11 @@ import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.sun.syndication.feed.rss.Guid;
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.quality.NonConformityService;
 
 /**
  * Create the NC based on NC WF data
@@ -40,24 +43,41 @@ import fr.becpg.repo.helper.TranslateHelper;
  * @author "Philippe QUÉRÉ <philippe.quere@becpg.fr>"
  * 
  */
-public class CreateNC extends ActivitiScriptBase implements TaskListener {
+public class CreateNC extends ActivitiScriptBase implements JavaDelegate {
+
+	private static String BEAN_NON_CONFORMITY_SERVICE = "nonConformityService";
 
 	private static Log logger = LogFactory.getLog(CreateNC.class);
 
-	/** The node service. */
 	private NodeService nodeService;
-
-	/** The file folder service. */
 	private FileFolderService fileFolderService;
+	private NonConformityService nonConformityService;
 
 	private static final String CM_URL = NamespaceService.CONTENT_MODEL_1_0_URI;
 
-	@Override
-	public void notify(final DelegateTask task) {
+	protected Object getService(String key) {
+        ProcessEngineConfigurationImpl config = Context.getProcessEngineConfiguration();
+        if (config != null) {
+            // Fetch the registry that is injected in the activiti spring-configuration
+        	Object service = config.getBeans().get(key);
+            if (service == null) {
+                throw new RuntimeException(
+                            "Service not present in ProcessEngineConfiguration beans, expected ServiceRegistry with key" +
+                            		key);
+            }
+            return service;
+        }
+        throw new IllegalStateException("No ProcessEngineCOnfiguration found in active context");
+    }
 
+	@Override
+	public void execute(final DelegateExecution task) throws Exception {
+		
 		this.nodeService = getServiceRegistry().getNodeService();
 		this.fileFolderService = getServiceRegistry().getFileFolderService();
-
+		//this.nonConformityService = (NonConformityService)ApplicationContextHelper.getApplicationContext().getBean(BEAN_NON_CONFORMITY_SERVICE);
+		this.nonConformityService = (NonConformityService)getService(BEAN_NON_CONFORMITY_SERVICE);
+		
 		final NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
 
 		RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
@@ -65,21 +85,26 @@ public class CreateNC extends ActivitiScriptBase implements TaskListener {
 			public Object doWork() throws Exception {
 				try {
 
-					ActivitiScriptNode destinationNode = (ActivitiScriptNode) task.getVariable("ncwf_ncFolder");
-					NodeRef parentNodeRef = destinationNode.getNodeRef();
+					// product
+					NodeRef productNodeRef = null;
+					ActivitiScriptNode node = (ActivitiScriptNode) task.getVariable("ncwf_product");
+					if (node != null) {
+						productNodeRef = node.getNodeRef();
+					}										
+
+					NodeRef parentNodeRef = nonConformityService.getStorageFolder(productNodeRef);
 
 					// create nc
 					String ncName = GUID.generate();
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, ncName);
-					properties.put(QualityModel.PROP_NC_DETECTED, Calendar.getInstance().getTime());
 					properties.put(ContentModel.PROP_DESCRIPTION, (String) task.getVariable("bpm_workflowDescription"));
-					
+					properties.put(QualityModel.PROP_NC_PRIORITY, (Integer) task.getVariable("bpm_priority"));
+
 					// batchId
 					String batchId = (String) task.getVariable("ncwf_batchId");
 					if (batchId != null && !batchId.isEmpty()) {
-						logger.debug("Product node exist");
-						properties.put(QualityModel.PROP_QC_BATCH_ID, batchId);
+						properties.put(QualityModel.PROP_BATCH_ID, batchId);
 					}
 
 					NodeRef ncNodeRef = nodeService.createNode(
@@ -89,17 +114,18 @@ public class CreateNC extends ActivitiScriptBase implements TaskListener {
 									QName.createValidLocalName(ncName)), QualityModel.TYPE_NC, properties)
 							.getChildRef();
 
-					logger.debug("ncNodeRef: " + ncNodeRef);
-
-					// force name YYYY-NCCode
-					nodeService.setProperty(ncNodeRef, ContentModel.PROP_NAME, Calendar.getInstance()
-							.get(Calendar.YEAR) + "-" + nodeService.getProperty(ncNodeRef, BeCPGModel.PROP_CODE));
+					// force name YYYY-NCCode, is there a better way ?
+					ncName = Calendar.getInstance().get(Calendar.YEAR) + "-"
+							+ nodeService.getProperty(ncNodeRef, BeCPGModel.PROP_CODE);
+					nodeService.setProperty(ncNodeRef, ContentModel.PROP_NAME, ncName);
+					NodeRef entityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
+					if (nodeService.getType(entityFolderNodeRef).equals(BeCPGModel.TYPE_ENTITY_FOLDER)) {
+						nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, ncName);
+					}
 
 					// product
-					ActivitiScriptNode node = (ActivitiScriptNode) task.getVariable("ncwf_product");
-					if (node != null) {
-						logger.debug("Product node exist");
-						nodeService.createAssociation(ncNodeRef, node.getNodeRef(), QualityModel.ASSOC_QC_PRODUCT);
+					if (productNodeRef != null) {
+						nodeService.createAssociation(ncNodeRef, productNodeRef, QualityModel.ASSOC_PRODUCT);
 					}
 
 					// supplier
@@ -158,6 +184,5 @@ public class CreateNC extends ActivitiScriptBase implements TaskListener {
 
 		};
 		AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
-
-	}
+	}   
 }

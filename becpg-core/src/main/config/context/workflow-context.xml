@@ -26,10 +26,16 @@
 				</props>
 				<props>
 					<prop key="engineId">activiti</prop>
-					<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-process.bpmn20.xml</prop>
+					<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-adhoc.bpmn</prop>
 					<prop key="mimetype">text/xml</prop>
 					<prop key="redeploy">true</prop>
 				</props>
+				<props>
+					<prop key="engineId">activiti</prop>
+					<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-process.bpmn</prop>
+					<prop key="mimetype">text/xml</prop>
+					<prop key="redeploy">true</prop>
+				</props>				
 			</list>
 		</property>
 		<property name="labels">

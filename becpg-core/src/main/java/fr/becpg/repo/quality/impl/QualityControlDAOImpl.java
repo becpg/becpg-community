@@ -56,16 +56,16 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
 		properties.put(ContentModel.PROP_NAME, qcData.getName());
 		properties.put(QualityModel.PROP_QC_SAMPLES_COUNTER, qcData.getSamplesCounter());
 		properties.put(QualityModel.PROP_QC_STATE, qcData.getState());
-		properties.put(QualityModel.PROP_QC_BATCH_START, qcData.getBatchStart());
-		properties.put(QualityModel.PROP_QC_BATCH_DURATION, qcData.getBatchDuration());					
-		properties.put(QualityModel.PROP_QC_BATCH_ID, qcData.getBatchId());
-		properties.put(QualityModel.PROP_QC_ORDER_ID, qcData.getOrderId());
+		properties.put(QualityModel.PROP_BATCH_START, qcData.getBatchStart());
+		properties.put(QualityModel.PROP_BATCH_DURATION, qcData.getBatchDuration());					
+		properties.put(QualityModel.PROP_BATCH_ID, qcData.getBatchId());
+		properties.put(QualityModel.PROP_ORDER_ID, qcData.getOrderId());
 		
 		NodeRef qcNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(qcData.getName())), 
 								QualityModel.TYPE_QUALITY_CONTROL, properties).getChildRef();
 		
-		associationService.update(qcNodeRef, QualityModel.ASSOC_QC_PRODUCT, qcData.getProduct());
+		associationService.update(qcNodeRef, QualityModel.ASSOC_PRODUCT, qcData.getProduct());
 		associationService.update(qcNodeRef, QualityModel.ASSOC_QC_CONTROL_PLANS, qcData.getControlPlans());
 		
 		// sampling list
@@ -84,12 +84,12 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
 		nodeService.setProperty(qcNodeRef, ContentModel.PROP_NAME, qcData.getName());
 		nodeService.setProperty(qcNodeRef, QualityModel.PROP_QC_SAMPLES_COUNTER, qcData.getSamplesCounter());
 		nodeService.setProperty(qcNodeRef, QualityModel.PROP_QC_STATE, qcData.getState());
-		nodeService.setProperty(qcNodeRef, QualityModel.PROP_QC_BATCH_START, qcData.getBatchStart());
-		nodeService.setProperty(qcNodeRef, QualityModel.PROP_QC_BATCH_DURATION, qcData.getBatchDuration());					
-		nodeService.setProperty(qcNodeRef, QualityModel.PROP_QC_BATCH_ID, qcData.getBatchId());
-		nodeService.setProperty(qcNodeRef, QualityModel.PROP_QC_ORDER_ID, qcData.getOrderId());
+		nodeService.setProperty(qcNodeRef, QualityModel.PROP_BATCH_START, qcData.getBatchStart());
+		nodeService.setProperty(qcNodeRef, QualityModel.PROP_BATCH_DURATION, qcData.getBatchDuration());					
+		nodeService.setProperty(qcNodeRef, QualityModel.PROP_BATCH_ID, qcData.getBatchId());
+		nodeService.setProperty(qcNodeRef, QualityModel.PROP_ORDER_ID, qcData.getOrderId());
 		
-		associationService.update(qcNodeRef, QualityModel.ASSOC_QC_PRODUCT, qcData.getProduct());
+		associationService.update(qcNodeRef, QualityModel.ASSOC_PRODUCT, qcData.getProduct());
 		associationService.update(qcNodeRef, QualityModel.ASSOC_QC_CONTROL_PLANS, qcData.getControlPlans());
 		
 		// sampling list
@@ -109,10 +109,10 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
 		qcData.setName((String)nodeService.getProperty(qcNodeRef, ContentModel.PROP_NAME));
 		qcData.setSamplesCounter((Integer)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_SAMPLES_COUNTER));
 		qcData.setState((String)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_STATE));
-		qcData.setBatchStart((Date)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_BATCH_START));
-		qcData.setBatchDuration((Integer)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_BATCH_DURATION));
-		qcData.setBatchId((String)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_BATCH_ID));
-		qcData.setOrderId((String)nodeService.getProperty(qcNodeRef, QualityModel.PROP_QC_ORDER_ID));
+		qcData.setBatchStart((Date)nodeService.getProperty(qcNodeRef, QualityModel.PROP_BATCH_START));
+		qcData.setBatchDuration((Integer)nodeService.getProperty(qcNodeRef, QualityModel.PROP_BATCH_DURATION));
+		qcData.setBatchId((String)nodeService.getProperty(qcNodeRef, QualityModel.PROP_BATCH_ID));
+		qcData.setOrderId((String)nodeService.getProperty(qcNodeRef, QualityModel.PROP_ORDER_ID));
 		
 		// control plans
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(qcNodeRef, QualityModel.ASSOC_QC_CONTROL_PLANS);
@@ -121,7 +121,7 @@ public class QualityControlDAOImpl implements BeCPGDao<QualityControlData> {
 		}
 		
 		// product
-		assocRefs = nodeService.getTargetAssocs(qcNodeRef, QualityModel.ASSOC_QC_PRODUCT);
+		assocRefs = nodeService.getTargetAssocs(qcNodeRef, QualityModel.ASSOC_PRODUCT);
 		if(!assocRefs.isEmpty()){
 			qcData.setProduct(assocRefs.get(0).getTargetRef());
 		}		

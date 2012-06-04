@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="nonConformityProcess" name="Non-conformity Process">
+    <documentation>Place documentation for the 'non-conformity-process' process here.</documentation>
+    <startEvent id="startevent1" name="Start" activiti:formKey="ncwf:startTask"></startEvent>
+    <userTask id="analysisTask" name="Analyse" activiti:candidateGroups="GROUP_QualityUser" activiti:formKey="ncwf:analysisTask">
+      <extensionElements>
+        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>execution.setVariable('ncwf_needPrevAction', task.getVariable('ncwf_needPrevAction'));
+execution.setVariable('ncwf_corrActionActor', task.getVariable('ncwf_corrActionActor'));
+execution.setVariable('ncwf_checkActor', task.getVariable('ncwf_checkActor'));
+
+for (var i = 0; i &lt; bpm_package.children.length; i++)
+{
+var nc = bpm_package.children[i];
+nc.properties["qa:ncState"] = task.getVariable('ncwf_ncState');
+nc.properties["qa:ncComment"] = task.getVariable('bpm_comment');
+nc.save();
+}</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
+{
+var nc = bpm_package.children[i];
+task.setVariable('ncwf_ncState', nc.properties["qa:ncState"]);
+}</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <userTask id="corrActionTask" name="Action corrective" activiti:assignee="${ncwf_corrActionActor.properties.userName}" activiti:formKey="ncwf:corrActionTask">
+      <extensionElements>
+        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
+{
+var nc = bpm_package.children[i];
+nc.properties["qa:ncState"] = task.getVariable('ncwf_ncState');
+nc.properties["qa:ncComment"] = task.getVariable('bpm_comment');
+nc.save();
+}</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
+{
+var nc = bpm_package.children[i];
+task.setVariable('ncwf_ncState', nc.properties["qa:ncState"]);
+}</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <userTask id="checkTask" name="Vérification interne" activiti:assignee="${ncwf_checkActor.properties.userName}" activiti:formKey="ncwf:checkTask">
+      <extensionElements>
+        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
+{
+var nc = bpm_package.children[i];
+nc.properties["qa:ncState"] = task.getVariable('ncwf_ncState');
+nc.properties["qa:ncComment"] = task.getVariable('bpm_comment');
+nc.save();
+}
+
+execution.setVariable('ncwf_ncState', task.getVariable('ncwf_ncState'));</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
+{
+var nc = bpm_package.children[i];
+task.setVariable('ncwf_ncState', nc.properties["qa:ncState"]);
+}</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <userTask id="notificationTask" name="Notification" activiti:assignee="${initiator.properties.userName}" activiti:formKey="ncwf:notificationTask">
+      <extensionElements>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
+{
+var nc = bpm_package.children[i];
+task.setVariable('ncwf_ncState', nc.properties["qa:ncState"]);
+}</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <userTask id="prevActionTask" name="Action préventive" activiti:candidateGroups="GROUP_QualityMgr" activiti:formKey="ncwf:prevActionTask"></userTask>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <parallelGateway id="parallelgateway1" name="Parallel Gateway"></parallelGateway>
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+    <parallelGateway id="parallelgateway2" name="Parallel Gateway"></parallelGateway>
+    <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
+    <exclusiveGateway id="exclusivegateway3" name="Exclusive Gateway"></exclusiveGateway>
+    <serviceTask id="initialiseNCTask" name="Initialisation NC" activiti:class="fr.becpg.repo.workflow.activiti.nc.CreateNC"></serviceTask>
+    <sequenceFlow id="flow23" name="" sourceRef="corrActionTask" targetRef="checkTask"></sequenceFlow>
+    <sequenceFlow id="flow32" name="" sourceRef="parallelgateway1" targetRef="exclusivegateway1"></sequenceFlow>
+    <sequenceFlow id="flow33" name="" sourceRef="parallelgateway1" targetRef="corrActionTask"></sequenceFlow>
+    <sequenceFlow id="flow34" name="" sourceRef="analysisTask" targetRef="parallelgateway1"></sequenceFlow>
+    <sequenceFlow id="flow35" name="" sourceRef="exclusivegateway1" targetRef="prevActionTask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_needPrevAction == true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow36" name="" sourceRef="notificationTask" targetRef="parallelgateway2"></sequenceFlow>
+    <sequenceFlow id="flow39" name="" sourceRef="parallelgateway2" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow40" name="" sourceRef="exclusivegateway1" targetRef="exclusivegateway2"></sequenceFlow>
+    <sequenceFlow id="flow41" name="" sourceRef="prevActionTask" targetRef="exclusivegateway2"></sequenceFlow>
+    <sequenceFlow id="flow42" name="" sourceRef="exclusivegateway2" targetRef="parallelgateway2"></sequenceFlow>
+    <sequenceFlow id="flow43" name="" sourceRef="checkTask" targetRef="exclusivegateway3"></sequenceFlow>
+    <sequenceFlow id="flow44" name="" sourceRef="exclusivegateway3" targetRef="notificationTask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_ncState == 'Résolu' || ncwf_ncState == 'Fermé' }]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow45" name="" sourceRef="exclusivegateway3" targetRef="corrActionTask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_ncState != 'Résolu' && ncwf_ncState != 'Fermé' }]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow46" name="" sourceRef="startevent1" targetRef="initialiseNCTask"></sequenceFlow>
+    <sequenceFlow id="flow47" name="" sourceRef="initialiseNCTask" targetRef="analysisTask"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_nonConformityProcess">
+    <bpmndi:BPMNPlane bpmnElement="nonConformityProcess" id="BPMNPlane_nonConformityProcess">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35" width="35" x="10" y="329"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="analysisTask" id="BPMNShape_analysisTask">
+        <omgdc:Bounds height="55" width="105" x="220" y="319"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="corrActionTask" id="BPMNShape_corrActionTask">
+        <omgdc:Bounds height="55" width="105" x="410" y="230"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="checkTask" id="BPMNShape_checkTask">
+        <omgdc:Bounds height="55" width="105" x="572" y="230"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="notificationTask" id="BPMNShape_notificationTask">
+        <omgdc:Bounds height="55" width="105" x="830" y="230"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="prevActionTask" id="BPMNShape_prevActionTask">
+        <omgdc:Bounds height="55" width="105" x="572" y="480"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35" width="35" x="1075" y="329"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="parallelgateway1" id="BPMNShape_parallelgateway1">
+        <omgdc:Bounds height="40" width="40" x="340" y="326"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40" width="40" x="442" y="410"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="parallelgateway2" id="BPMNShape_parallelgateway2">
+        <omgdc:Bounds height="40" width="40" x="970" y="326"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40" width="40" x="900" y="410"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway3" id="BPMNShape_exclusivegateway3">
+        <omgdc:Bounds height="40" width="40" x="740" y="237"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="initialiseNCTask" id="BPMNShape_initialiseNCTask">
+        <omgdc:Bounds height="55" width="105" x="80" y="319"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow23" id="BPMNEdge_flow23">
+        <omgdi:waypoint x="515" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="572" y="257"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow32" id="BPMNEdge_flow32">
+        <omgdi:waypoint x="360" y="366"></omgdi:waypoint>
+        <omgdi:waypoint x="360" y="430"></omgdi:waypoint>
+        <omgdi:waypoint x="442" y="430"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow33" id="BPMNEdge_flow33">
+        <omgdi:waypoint x="360" y="326"></omgdi:waypoint>
+        <omgdi:waypoint x="360" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="410" y="257"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow34" id="BPMNEdge_flow34">
+        <omgdi:waypoint x="325" y="346"></omgdi:waypoint>
+        <omgdi:waypoint x="340" y="346"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow35" id="BPMNEdge_flow35">
+        <omgdi:waypoint x="462" y="450"></omgdi:waypoint>
+        <omgdi:waypoint x="462" y="507"></omgdi:waypoint>
+        <omgdi:waypoint x="572" y="507"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow36" id="BPMNEdge_flow36">
+        <omgdi:waypoint x="935" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="990" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="990" y="326"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow39" id="BPMNEdge_flow39">
+        <omgdi:waypoint x="1010" y="346"></omgdi:waypoint>
+        <omgdi:waypoint x="1075" y="346"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow40" id="BPMNEdge_flow40">
+        <omgdi:waypoint x="482" y="430"></omgdi:waypoint>
+        <omgdi:waypoint x="900" y="430"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow41" id="BPMNEdge_flow41">
+        <omgdi:waypoint x="677" y="507"></omgdi:waypoint>
+        <omgdi:waypoint x="920" y="507"></omgdi:waypoint>
+        <omgdi:waypoint x="920" y="450"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow42" id="BPMNEdge_flow42">
+        <omgdi:waypoint x="940" y="430"></omgdi:waypoint>
+        <omgdi:waypoint x="990" y="430"></omgdi:waypoint>
+        <omgdi:waypoint x="990" y="366"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow43" id="BPMNEdge_flow43">
+        <omgdi:waypoint x="677" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="740" y="257"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow44" id="BPMNEdge_flow44">
+        <omgdi:waypoint x="780" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="830" y="257"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow45" id="BPMNEdge_flow45">
+        <omgdi:waypoint x="760" y="237"></omgdi:waypoint>
+        <omgdi:waypoint x="760" y="170"></omgdi:waypoint>
+        <omgdi:waypoint x="462" y="170"></omgdi:waypoint>
+        <omgdi:waypoint x="462" y="230"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow46" id="BPMNEdge_flow46">
+        <omgdi:waypoint x="45" y="346"></omgdi:waypoint>
+        <omgdi:waypoint x="80" y="346"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow47" id="BPMNEdge_flow47">
+        <omgdi:waypoint x="185" y="346"></omgdi:waypoint>
+        <omgdi:waypoint x="220" y="346"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

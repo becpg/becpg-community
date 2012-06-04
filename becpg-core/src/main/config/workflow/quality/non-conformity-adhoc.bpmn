@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="nonConformityAdhoc" name="nonConformityAdhoc">
+    <userTask id="workTask" name="Travail NC" activiti:formKey="ncwf:workTask">
+      <extensionElements>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>if(execution.getVariable('ncwf_assignee') != null){
+task.setAssignee(execution.getVariable('ncwf_assignee').properties.userName);
+execution.removeVariable('ncwf_assignee');
+}
+else{
+task.addCandidateGroup('GROUP_QualityUser');
+}
+
+if(execution.getVariable('bpm_comment') != null){
+task.setVariable('ncwf_previousComment', execution.getVariable('bpm_comment'));
+execution.removeVariable('bpm_comment');
+}
+
+if (bpm_sendEMailNotifications)
+{
+var usersToNotify = new Array();
+
+if(execution.getVariable('ncwf_assignee') != null)
+{
+ usersToNotify.push(execution.getVariable('ncwf_assignee'));
+}
+else
+{
+ for each (user in people.getMembers(people.getGroup('GROUP_QualityUser'), false))
+ {
+  usersToNotify.push(user);
+ }
+}
+
+var templateModel = new Array();
+templateModel['nc'] = bpm_package.children[0];
+
+for each (user in usersToNotify)
+{
+ var mail = actions.create("mail");
+ mail.parameters.to = user.properties.email;
+ mail.parameters.subject = "beCPG NC : " + bpm_workflowDescription;
+ mail.parameters.from = initiator.properties.email;
+ mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/app:workflow/cm:non-conformity-notify-task-email.ftl")[0];
+ mail.parameters.text = "Vous êtes assigné à une non-conformité";
+ mail.parameters.template_model = templateModel;
+ mail.execute(bpm_package);
+}
+
+}</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
+{
+var nc = bpm_package.children[i];
+nc.properties["qa:ncState"] = task.getVariable('ncwf_ncState');
+nc.properties["qa:ncComment"] = task.getVariable('bpm_comment');
+nc.save();
+}
+
+execution.setVariable('ncwf_ncState', task.getVariable('ncwf_ncState'));
+execution.setVariable('ncwf_assignee', task.getVariable('ncwf_assignee'));
+execution.setVariable('bpm_comment', task.getVariable('bpm_comment'));
+
+if (bpm_sendEMailNotifications)
+{
+var usersToNotify = new Array();
+
+if(execution.getVariable('ncwf_assignee') != null)
+{
+ usersToNotify.push(execution.getVariable('ncwf_assignee'));
+}
+else
+{
+ for each (user in people.getMembers(people.getGroup('GROUP_QualityUser'), false))
+ {
+  usersToNotify.push(user);
+ }
+}
+
+var templateModel = new Array();
+templateModel['nc'] = bpm_package.children[0];
+templateModel['ncComment'] = task.getVariable('bpm_comment'); // not stored in nc but stored in worklog (difficult to retrieve)
+
+for each (user in usersToNotify)
+{
+ var mail = actions.create("mail");
+ mail.parameters.to = user.properties.email;
+ mail.parameters.subject = "beCPG NC : " + bpm_workflowDescription;
+ mail.parameters.from = initiator.properties.email;
+ mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/app:workflow/cm:non-conformity-state-changed-email.ftl")[0];
+ mail.parameters.text = "Vous êtes assigné à une non-conformité";
+ mail.parameters.template_model = templateModel;
+ mail.execute(bpm_package);
+}
+
+}</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <startEvent id="startevent1" name="Start" activiti:formKey="ncwf:startTask"></startEvent>
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway" default="flow4"></exclusiveGateway>
+    <serviceTask id="initialiseNCTask" name="Initialisation NC" activiti:class="fr.becpg.repo.workflow.activiti.nc.CreateNC"></serviceTask>
+    <sequenceFlow id="flow3" name="" sourceRef="workTask" targetRef="exclusivegateway1"></sequenceFlow>
+    <sequenceFlow id="flow4" name="" sourceRef="exclusivegateway1" targetRef="workTask"></sequenceFlow>
+    <sequenceFlow id="flow5" name="" sourceRef="exclusivegateway1" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_ncState == 'Fermé' }]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow6" name="" sourceRef="startevent1" targetRef="initialiseNCTask"></sequenceFlow>
+    <sequenceFlow id="flow7" name="" sourceRef="initialiseNCTask" targetRef="workTask"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_nonConformityAdhoc">
+    <bpmndi:BPMNPlane bpmnElement="nonConformityAdhoc" id="BPMNPlane_nonConformityAdhoc">
+      <bpmndi:BPMNShape bpmnElement="workTask" id="BPMNShape_workTask">
+        <omgdc:Bounds height="55" width="105" x="560" y="490"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35" width="35" x="790" y="500"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35" width="35" x="320" y="500"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40" width="40" x="710" y="497"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="initialiseNCTask" id="BPMNShape_initialiseNCTask">
+        <omgdc:Bounds height="55" width="105" x="410" y="490"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="665" y="517"></omgdi:waypoint>
+        <omgdi:waypoint x="710" y="517"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="730" y="497"></omgdi:waypoint>
+        <omgdi:waypoint x="730" y="445"></omgdi:waypoint>
+        <omgdi:waypoint x="612" y="445"></omgdi:waypoint>
+        <omgdi:waypoint x="612" y="490"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="750" y="517"></omgdi:waypoint>
+        <omgdi:waypoint x="790" y="517"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="355" y="517"></omgdi:waypoint>
+        <omgdi:waypoint x="410" y="517"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="515" y="517"></omgdi:waypoint>
+        <omgdi:waypoint x="560" y="517"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

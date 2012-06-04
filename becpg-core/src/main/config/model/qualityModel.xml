@@ -23,25 +23,23 @@
 	</namespaces>
 	
 	<constraints>
-		<constraint name="qa:acType" type="LIST">
+		<constraint name="qa:ncStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value>Correction</value>
-					<value>Déclassement</value>
-					<value>Destruction</value>
-					<value>Blocage produit</value>
+					<value>Nouveau</value>
+					<value>En cours</value>
+					<value>À analyser</value>
+					<value>À corrigé</value>					
+					<value>À déclasser</value>
+					<value>Déclassé</value>
+					<value>À détruire</value>
+					<value>Détruit</value>		
+					<value>Résolu</value>
+					<value>Fermé</value>
+					<value>Ouvert</value>			
 				</list>
 			</parameter>
-		</constraint>
-		<constraint name="qa:acEfficiency" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value>Satisfaisante</value>
-					<value>Partielle</value>
-					<value>Non satisfaisante</value>
-				</list>
-			</parameter>
-		</constraint>
+		</constraint>		
 		<constraint name="qa:ncType" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -59,13 +57,12 @@
 				</list>
 			</parameter>
 		</constraint>		
-		<constraint name="qa:ncSeverity" type="LIST">
+		<constraint name="qa:ncPriority" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value></value>
-					<value>Faible</value>
-					<value>Élevé</value>
-					<value>Critique</value>
+					<value>1</value>
+					<value>2</value>
+					<value>3</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -107,7 +104,7 @@
 					<value>Sensorielle</value>					
 				</list>
 			</parameter>
-		</constraint>		
+		</constraint>
 		<constraint name="qa:states" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -116,7 +113,7 @@
 					<value>Non conforme</value>
 				</list>
 			</parameter>
-		</constraint>		
+		</constraint>					
 	</constraints>
 
 	<types>
@@ -124,7 +121,7 @@
 		<!-- Non conformité -->
 
 		<type name="qa:nc">
-			<parent>cm:content</parent>
+			<parent>bcpg:entity</parent>
 			<properties>
 				<property name="qa:ncType">
 					<type>d:text</type>
@@ -132,46 +129,35 @@
 					<constraints>						
 						<constraint ref="qa:ncType" />
 					</constraints>
-				</property>				
-				<property name="qa:ncCreated">
-					<type>d:datetime</type>
+				</property>			
+				<property name="qa:ncPriority">
+					<type>d:int</type>
 					<mandatory>true</mandatory>
-				</property>
+					<constraints>
+						<constraint ref="qa:ncPriority" />
+					</constraints>
+				</property>		
+				<property name="qa:ncState">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="qa:ncStates" />
+					</constraints>
+				</property>			
 				<property name="qa:ncQuantityNc">
-					<type>d:double</type>
-					<mandatory>true</mandatory>
-					
+					<type>d:double</type>					
 				</property>
 				<property name="qa:ncQuantityNcUnit">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
 					<constraints>
 						<constraint ref="qa:ncQuantityNcUnit" />
 					</constraints>
-				</property>
-				<property name="qa:ncService">
-					<type>d:text</type>
-					<mandatory>true</mandatory>
-				</property>
-				<property name="qa:ncSeverity">
-					<type>d:text</type>
-					<mandatory>true</mandatory>
-					<constraints>
-						<constraint ref="qa:ncSeverity" />
-					</constraints>
-				</property>				
-				<property name="qa:ncDetected">
-					<type>d:datetime</type>
-					<mandatory>true</mandatory>
-				</property>
+				</property>						
 				<property name="qa:ncCost">
 					<type>d:double</type>
-					<mandatory>true</mandatory>
 				</property>				
-				<property name="qa:ncCause">
+				<property name="qa:ncComment">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
-				</property>				
+				</property>							
 			</properties>
 			<associations>				
 				<association name="qa:ncCreationStep">
@@ -310,6 +296,23 @@
 		<!-- qa:qualityListItem -->
 		<type name="qa:qualityListItem">
 			<parent>bcpg:entityListItem</parent>
+		</type>
+		
+		<!-- Work log -->
+		<type name="qa:workLog">
+			<parent>qa:qualityListItem</parent>
+			<properties>				
+				<property name="qa:wlState">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="qa:ncStates" />
+					</constraints>					
+				</property>
+				<property name="qa:wlComment">
+					<type>d:text</type>
+					<mandatory>true</mandatory>					
+				</property>															
+			</properties>			
 		</type>
 		
 		<!-- Sampling definition list -->
@@ -497,23 +500,9 @@
 					<type>d:int</type>
 					<mandatory>false</mandatory>					
 				</property>
-				<property name="qa:batchComments">
+				<property name="qa:batchComment">
 					<type>d:text</type>
-				</property>
-				<property name="qa:productHierarchy1">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<constraints>
-						<constraint ref="bcpg:productHierarchy1" />
-					</constraints>
-				</property>
-				<property name="qa:productHierarchy2">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<constraints>
-						<constraint ref="bcpg:productHierarchy2" />
-					</constraints>
-				</property>
+				</property>				
 			</properties>
 			<associations>
 				<association name="qa:product">
@@ -530,45 +519,6 @@
 			</associations>
 		</aspect>
 
-		<!-- Action corrective -->
-		<aspect name="qa:acAspect">
-			<properties>
-				<property name="qa:acType">
-					<type>d:text</type>
-					<constraints>
-						<constraint ref="qa:acType" />
-					</constraints>
-				</property>
-				<property name="qa:acExpectedDate">
-					<type>d:datetime</type>
-				</property>
-				<property name="qa:acEffectiveDate">
-					<type>d:datetime</type>
-				</property>
-				<property name="qa:acCheckDate">
-					<type>d:datetime</type>
-				</property>
-				<property name="qa:acDescription">
-					<type>d:text</type>
-				</property>
-				<property name="qa:acAssignedTo">
-					<type>d:text</type>
-				</property>
-				<property name="qa:acEfficiency">
-					<type>d:text</type>
-					<constraints>
-						<constraint ref="qa:acEfficiency" />
-					</constraints>
-				</property>
-				<property name="qa:acChecker">
-					<type>d:text</type>
-				</property>
-				<property name="qa:acComments">
-					<type>d:text</type>
-				</property>
-			</properties>
-		</aspect>	
-	
 		<!-- Control List Aspect -->		
 		<aspect name="qa:controlListAspect">
 			<properties>

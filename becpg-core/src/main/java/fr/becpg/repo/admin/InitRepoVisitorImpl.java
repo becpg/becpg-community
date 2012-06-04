@@ -811,8 +811,11 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		// visit NC
 		subFolders = new HashSet<String>();		
-		subFolders.add(RepoConsts.PATH_DOCUMENTS);		
+		subFolders.add(RepoConsts.PATH_DOCUMENTS);
+		dataLists.clear();
+		dataLists.add(QualityModel.TYPE_WORK_LOG);
 		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_NC, true, subFolders);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_NC, true, dataLists);
 	}
 
 	/**

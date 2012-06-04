@@ -104,8 +104,8 @@
                     <text-property name="heading">ncService</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">ncComments</property>
-                    <text-property name="heading">ncComments</text-property>
+                    <property name="columnName">ncComment</property>
+                    <text-property name="heading">ncComment</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">ncCause</property>
@@ -120,8 +120,8 @@
                     <text-property name="heading">ncOrderNb</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">ncBatchComments</property>
-                    <text-property name="heading">ncBatchComments</text-property>
+                    <property name="columnName">ncBatchComment</property>
+                    <text-property name="heading">ncBatchComment</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">clients</property>
@@ -168,8 +168,8 @@
                     <text-property name="heading">acChecker</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">acComments</property>
-                    <text-property name="heading">acComments</text-property>
+                    <property name="columnName">acComment</property>
+                    <text-property name="heading">acComment</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">creator</property>
@@ -257,7 +257,7 @@
                     </structure>
                     <structure>
                         <property name="position">14</property>
-                        <property name="name">ncComments</property>
+                        <property name="name">ncComment</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
@@ -277,7 +277,7 @@
                     </structure>
                     <structure>
                         <property name="position">18</property>
-                        <property name="name">ncBatchComments</property>
+                        <property name="name">ncBatchComment</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
@@ -337,7 +337,7 @@
                     </structure>
                     <structure>
                         <property name="position">30</property>
-                        <property name="name">acComments</property>
+                        <property name="name">acComment</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
@@ -444,8 +444,8 @@
                 </structure>
                 <structure>
                     <property name="position">14</property>
-                    <property name="name">ncComments</property>
-                    <property name="nativeName">ncComments</property>
+                    <property name="name">ncComment</property>
+                    <property name="nativeName">ncComment</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -468,8 +468,8 @@
                 </structure>
                 <structure>
                     <property name="position">18</property>
-                    <property name="name">ncBatchComments</property>
-                    <property name="nativeName">ncBatchComments</property>
+                    <property name="name">ncBatchComment</property>
+                    <property name="nativeName">ncBatchComment</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -540,8 +540,8 @@
                 </structure>
                 <structure>
                     <property name="position">30</property>
-                    <property name="name">acComments</property>
-                    <property name="nativeName">acComments</property>
+                    <property name="name">acComment</property>
+                    <property name="nativeName">acComment</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -569,7 +569,7 @@
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/export/nodes/node]#:#{id;STRING;/@id},{code;STRING;/@code},{ncType;STRING;/@ncType},{name;STRING;/@name},{description;STRING;/@description},{ncCreationStep;STRING;/@ncCreationStep},{ncCreated;STRING;/@ncCreated},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncDetectionStep;STRING;/@ncDetectionStep},{ncDetected;STRING;/@ncDetected},{ncCost;STRING;/@ncCost},{ncService;STRING;/@ncService},{ncComments;STRING;/@ncComments},{ncCause;STRING;/@ncCause},{ncBatchNumber;STRING;/@ncBatchNumber},{ncOrderNb;STRING;/@ncOrderNb},{ncBatchComments;STRING;/@ncBatchComments},{clients;STRING;/@clients},{ncProductFamilly;STRING;/@ncProductFamilly},{ncProduct;STRING;/@ncProduct},{acType;STRING;/@acType},{acExpectedDate;STRING;/@acExpectedDate},{acEffectiveDate;STRING;/@acEffectiveDate},{acCheckDate;STRING;/@acCheckDate},{acDescription;STRING;/@acDescription},{acEfficiency;STRING;/@acEfficiency},{acAssignedTo;STRING;/@acAssignedTo},{acChecker;STRING;/@acChecker},{acComments;STRING;/@acComments},{creator;STRING;/@creator},{modified;STRING;/@modified},{suppliers;STRING;/@suppliers},{ncCostUnit;STRING;/@ncCostUnit}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/export/nodes/node]#:#{id;STRING;/@id},{code;STRING;/@code},{ncType;STRING;/@ncType},{name;STRING;/@name},{description;STRING;/@description},{ncCreationStep;STRING;/@ncCreationStep},{ncCreated;STRING;/@ncCreated},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncDetectionStep;STRING;/@ncDetectionStep},{ncDetected;STRING;/@ncDetected},{ncCost;STRING;/@ncCost},{ncService;STRING;/@ncService},{ncComment;STRING;/@ncComment},{ncCause;STRING;/@ncCause},{ncBatchNumber;STRING;/@ncBatchNumber},{ncOrderNb;STRING;/@ncOrderNb},{ncBatchComment;STRING;/@ncBatchComment},{clients;STRING;/@clients},{ncProductFamilly;STRING;/@ncProductFamilly},{ncProduct;STRING;/@ncProduct},{acType;STRING;/@acType},{acExpectedDate;STRING;/@acExpectedDate},{acEffectiveDate;STRING;/@acEffectiveDate},{acCheckDate;STRING;/@acCheckDate},{acDescription;STRING;/@acDescription},{acEfficiency;STRING;/@acEfficiency},{acAssignedTo;STRING;/@acAssignedTo},{acChecker;STRING;/@acChecker},{acComment;STRING;/@acComment},{creator;STRING;/@creator},{modified;STRING;/@modified},{suppliers;STRING;/@suppliers},{ncCostUnit;STRING;/@ncCostUnit}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -803,7 +803,7 @@
         <design:resultColumnDefinitions>
           <design:attributes>
             <design:identifier>
-              <design:name>ncComments</design:name>
+              <design:name>ncComment</design:name>
               <design:position>15</design:position>
             </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
@@ -812,7 +812,7 @@
             <design:nullability>Unknown</design:nullability>
           </design:attributes>
           <design:usageHints>
-            <design:label>ncComments</design:label>
+            <design:label>ncComment</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -867,7 +867,7 @@
         <design:resultColumnDefinitions>
           <design:attributes>
             <design:identifier>
-              <design:name>ncBatchComments</design:name>
+              <design:name>ncBatchComment</design:name>
               <design:position>19</design:position>
             </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
@@ -876,7 +876,7 @@
             <design:nullability>Unknown</design:nullability>
           </design:attributes>
           <design:usageHints>
-            <design:label>ncBatchComments</design:label>
+            <design:label>ncBatchComment</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -1059,7 +1059,7 @@
         <design:resultColumnDefinitions>
           <design:attributes>
             <design:identifier>
-              <design:name>acComments</design:name>
+              <design:name>acComment</design:name>
               <design:position>31</design:position>
             </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
@@ -1068,7 +1068,7 @@
             <design:nullability>Unknown</design:nullability>
           </design:attributes>
           <design:usageHints>
-            <design:label>acComments</design:label>
+            <design:label>acComment</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -2176,8 +2176,8 @@
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">ncComments</property>
-                                <expression name="expression" type="javascript">dataSetRow["ncComments"]</expression>
+                                <property name="name">ncComment</property>
+                                <expression name="expression" type="javascript">dataSetRow["ncComment"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
@@ -2196,8 +2196,8 @@
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">ncBatchComments</property>
-                                <expression name="expression" type="javascript">dataSetRow["ncBatchComments"]</expression>
+                                <property name="name">ncBatchComment</property>
+                                <expression name="expression" type="javascript">dataSetRow["ncBatchComment"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
@@ -2256,8 +2256,8 @@
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">acComments</property>
-                                <expression name="expression" type="javascript">dataSetRow["acComments"]</expression>
+                                <property name="name">acComment</property>
+                                <expression name="expression" type="javascript">dataSetRow["acComment"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
@@ -3228,8 +3228,8 @@
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">ncComments</property>
-                                <expression name="expression" type="javascript">dataSetRow["ncComments"]</expression>
+                                <property name="name">ncComment</property>
+                                <expression name="expression" type="javascript">dataSetRow["ncComment"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
@@ -3248,8 +3248,8 @@
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">ncBatchComments</property>
-                                <expression name="expression" type="javascript">dataSetRow["ncBatchComments"]</expression>
+                                <property name="name">ncBatchComment</property>
+                                <expression name="expression" type="javascript">dataSetRow["ncBatchComment"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
@@ -3308,8 +3308,8 @@
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">acComments</property>
-                                <expression name="expression" type="javascript">dataSetRow["acComments"]</expression>
+                                <property name="name">acComment</property>
+                                <expression name="expression" type="javascript">dataSetRow["acComment"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
@@ -4525,8 +4525,8 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">ncComments</property>
-                    <expression name="expression" type="javascript">dataSetRow["ncComments"]</expression>
+                    <property name="name">ncComment</property>
+                    <expression name="expression" type="javascript">dataSetRow["ncComment"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -4545,8 +4545,8 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">ncBatchComments</property>
-                    <expression name="expression" type="javascript">dataSetRow["ncBatchComments"]</expression>
+                    <property name="name">ncBatchComment</property>
+                    <expression name="expression" type="javascript">dataSetRow["ncBatchComment"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -4605,8 +4605,8 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">acComments</property>
-                    <expression name="expression" type="javascript">dataSetRow["acComments"]</expression>
+                    <property name="name">acComment</property>
+                    <expression name="expression" type="javascript">dataSetRow["acComment"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -5801,8 +5801,8 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">ncComments</property>
-                    <expression name="expression" type="javascript">dataSetRow["ncComments"]</expression>
+                    <property name="name">ncComment</property>
+                    <expression name="expression" type="javascript">dataSetRow["ncComment"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -5821,8 +5821,8 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">ncBatchComments</property>
-                    <expression name="expression" type="javascript">dataSetRow["ncBatchComments"]</expression>
+                    <property name="name">ncBatchComment</property>
+                    <expression name="expression" type="javascript">dataSetRow["ncBatchComment"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -5881,8 +5881,8 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">acComments</property>
-                    <expression name="expression" type="javascript">dataSetRow["acComments"]</expression>
+                    <property name="name">acComment</property>
+                    <expression name="expression" type="javascript">dataSetRow["acComment"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>

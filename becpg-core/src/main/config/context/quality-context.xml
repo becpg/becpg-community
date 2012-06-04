@@ -41,5 +41,20 @@
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="qualityControlService" ref="qualityControlService" />		
 	</bean>
+	<bean id="nonConformityDAO" class="fr.becpg.repo.quality.impl.NonConformityDAOImpl">
+    	<property name="nodeService" ref="nodeService"/>
+    	<property name="fileFolderService" ref="fileFolderService"/>
+    	<property name="entityListDAO" ref="entityListDAO"/>
+    </bean>
+    <bean id="nonConformityService" class="fr.becpg.repo.quality.impl.NonConformityServiceImpl">
+		<property name="repoService" ref="repoService" />		
+		<property name="nodeService" ref="nodeService" />		
+		<property name="repositoryHelper" ref="repositoryHelper" />				
+	</bean>
+    <bean id="nonConformityPolicies" class="fr.becpg.repo.quality.policy.NonConformityPolicies" init-method="init">
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="nonConformityDAO" ref="nonConformityDAO" />
+		<property name="nonConformityService" ref="nonConformityService" />					
+	</bean>	
    
 </beans>

@@ -1,9 +1,5 @@
 <alfresco-config>
 
-
-
-
-
 	<!-- ______________________________________________ Non conformity_________________________________________ -->
 	<!-- qa:nc type (creating nodes nodes) -->
 	<config evaluator="model-type" condition="qa:nc">
@@ -15,40 +11,33 @@
 					<show id="cm:name" />
 					<show id="bcpg:code" />
 					<show id="qa:ncType" />
-					<show id="qa:ncSeverity" />
-					<show id="qa:ncCreationStep" />
-					<show id="qa:ncDetectionStep" />
-					<show id="qa:ncCreated" />
-					<show id="qa:ncDetected" />
+					<show id="qa:ncPriority" />
+					<show id="cm:description" />
+					<show id="qa:ncCost" />
 					<show id="qa:ncQuantityNc" />
 					<show id="qa:ncQuantityNcUnit" />
-					<show id="qa:ncCost" />
-					<show id="qa:ncService" />					
-					<show id="cm:description" />
-					<show id="qa:ncCause" />													
+					<show id="qa:ncCreationStep" />
+					<show id="qa:ncDetectionStep" />
+					<show id="qa:ncState" />
+					<show id="qa:ncComment" />
 					
 					<!-- batch -->
 					<show id="qa:batchId" />
 					<show id="qa:orderId" />
 					<show id="bcpg:clients"  force="true"/>
 					<show id="bcpg:suppliers"  force="true"/>
-					<show id="qa:batchComments" />
+					<show id="qaommentomment" />
 					
 					<!-- Product -->
 					<show id="qa:product"  force="true"/>
 					<show id="qa:productHierarchy1" for-mode="view"/>
 					<show id="qa:productHierarchy2" for-mode="view"/>
 					
-					<!-- Action corrective -->
-					<show id="qa:acType" />
-					<show id="qa:acAssignedTo" />
-					<show id="qa:acExpectedDate" />
-					<show id="qa:acDescription" />					
-					<show id="qa:acEffectiveDate" />
-					<show id="qa:acEfficiency" />					
-					<show id="qa:acCheckDate" />
-					<show id="qa:acChecker" />					
-					<show id="qa:acComments" />					
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
 					
 				</field-visibility>
 				<appearance>
@@ -57,29 +46,25 @@
 					<field id="cm:name" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="qa:ncType" set="mainInfo" />
-					<field id="qa:ncSeverity" set="mainInfo" />
+					<field id="qa:ncPriority" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/workflow/priority.ftl"/>
+					</field>
+					<field id="qa:ncState" set="mainInfo" />
 					<field id="qa:ncCreationStep" set="mainInfo" />
 					<field id="qa:ncDetectionStep" set="mainInfo" />					
 					<field id="qa:ncQuantityNc" set="mainInfo" />
 					<field id="qa:ncQuantityNcUnit" set="mainInfo" />
 					<field id="qa:ncCost" set="mainInfo" />			
-					<field id="qa:ncService" set="mainInfo" />
 					<field id="cm:description" set="mainInfo" >
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
-					<field id="qa:ncCause" set="mainInfo" >
+					<field id="qa:ncComment" set="mainInfo" >
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
-					</field>				
-					
-					<set id="dates"
-						appearance="bordered-panel" label-id="becpg.forms.set.dates.label" />
-					<field id="qa:ncDetected" set="dates" >
-						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
-					</field>											
+					</field>																						
 						
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
 					<field id="qa:product" set="product-info" />
@@ -91,31 +76,19 @@
 					<field id="qa:orderId" set="batch-info" />
 					<field id="bcpg:clients" force="true" set="batch-info" />
 					<field id="bcpg:suppliers" force="true" set="batch-info" />
-					<field id="qa:batchComments" set="batch-info">
+					<field id="qa:batchComment" set="batch-info">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
 
-					<!-- Action corrective -->
-					<set id="ac-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.ac-info.label" />					
-					<field id="qa:acType" set="ac-info" />
-					<field id="qa:acAssignedTo" set="ac-info" />
-					<field id="qa:acExpectedDate" set="ac-info" />
-					<field id="qa:acDescription" set="ac-info">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>				
-					<field id="qa:acEffectiveDate" set="ac-info" />
-					<field id="qa:acEfficiency" set="ac-info" />					
-					<field id="qa:acCheckDate" set="ac-info" />
-					<field id="qa:acChecker" set="ac-info" />					
-					<field id="qa:acComments" set="ac-info">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>
+					<!-- audit -->
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+						template="/fr/becpg/components/form/2-column-set.ftl" />					
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />			
 					
 				</appearance>
 			</form>
@@ -127,40 +100,33 @@
 					<show id="cm:name" />
 					<show id="bcpg:code" />
 					<show id="qa:ncType" />
-					<show id="qa:ncSeverity" />
-					<show id="qa:ncCreationStep" />
-					<show id="qa:ncDetectionStep" />
-					<show id="qa:ncCreated" />
-					<show id="qa:ncDetected" />
+					<show id="qa:ncPriority" />
+					<show id="cm:description" />
+					<show id="qa:ncCost" />
 					<show id="qa:ncQuantityNc" />
 					<show id="qa:ncQuantityNcUnit" />
-					<show id="qa:ncCost" />
-					<show id="qa:ncService" />					
-					<show id="cm:description" />
-					<show id="qa:ncCause" />													
+					<show id="qa:ncCreationStep" />
+					<show id="qa:ncDetectionStep" />
+					<show id="qa:ncState" />
+					<show id="qa:ncComment" />							
 					
 					<!-- batch -->
 					<show id="qa:batchId" />
 					<show id="qa:orderId" />
 					<show id="bcpg:clients" />
 					<show id="bcpg:suppliers" />
-					<show id="qa:batchComments" />
+					<show id="qa:batchComment" />
 					
 					<!-- Product -->
 					<show id="qa:product" />
 					<show id="qa:productHierarchy1" for-mode="view"/>
-					<show id="qa:productHierarchy2" for-mode="view"/>
+					<show id="qa:productHierarchy2" for-mode="view"/>				
 					
-					<!-- Action corrective -->
-					<show id="qa:acType" />
-					<show id="qa:acAssignedTo" />
-					<show id="qa:acExpectedDate" />
-					<show id="qa:acDescription" />					
-					<show id="qa:acEffectiveDate" />
-					<show id="qa:acEfficiency" />					
-					<show id="qa:acCheckDate" />
-					<show id="qa:acChecker" />					
-					<show id="qa:acComments" />					
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />					
 					
 				</field-visibility>
 				<appearance>
@@ -169,21 +135,21 @@
 					<field id="cm:name" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="qa:ncType" set="mainInfo" />
-					<field id="qa:ncSeverity" set="mainInfo" />
+					<field id="qa:ncState" set="mainInfo" />
+					<field id="qa:ncPriority" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/workflow/priority.ftl"/>
+					</field>
 					<field id="qa:ncCreationStep" set="mainInfo" />
-					<field id="qa:ncDetectionStep" set="mainInfo" />
-					<field id="qa:ncCreated" set="mainInfo" />
-					<field id="qa:ncDetected" set="mainInfo" />
+					<field id="qa:ncDetectionStep" set="mainInfo" />					
 					<field id="qa:ncQuantityNc" set="mainInfo" />
 					<field id="qa:ncQuantityNcUnit" set="mainInfo" />
 					<field id="qa:ncCost" set="mainInfo" />			
-					<field id="qa:ncService" set="mainInfo" />
 					<field id="cm:description" set="mainInfo" >
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
-					<field id="qa:ncCause" set="mainInfo" >
+					<field id="qa:ncComment" set="mainInfo" >
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
@@ -199,31 +165,19 @@
 					<field id="qa:orderId" set="batch-info" />
 					<field id="bcpg:clients" force="true" set="batch-info" />
 					<field id="bcpg:suppliers" force="true" set="batch-info" />
-					<field id="qa:batchComments" set="batch-info">
+					<field id="qa:batchComment" set="batch-info">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
-
-					<!-- Action corrective -->
-					<set id="ac-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.ac-info.label" />					
-					<field id="qa:acType" set="ac-info" />
-					<field id="qa:acAssignedTo" set="ac-info" />
-					<field id="qa:acExpectedDate" set="ac-info" />
-					<field id="qa:acDescription" set="ac-info">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>				
-					<field id="qa:acEffectiveDate" set="ac-info" />
-					<field id="qa:acEfficiency" set="ac-info" />					
-					<field id="qa:acCheckDate" set="ac-info" />
-					<field id="qa:acChecker" set="ac-info" />					
-					<field id="qa:acComments" set="ac-info">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>
+					
+					<!-- audit -->
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+						template="/fr/becpg/components/form/2-column-set.ftl"/>					
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
 					
 				</appearance>
 			</form>
@@ -241,41 +195,33 @@
 					<show id="cm:name" />
 					<show id="bcpg:code" />
 					<show id="qa:ncType" />
-					<show id="qa:ncSeverity" />
-					<show id="qa:ncCreationStep" />
-					<show id="qa:ncDetectionStep" />
-					<show id="qa:ncCreated" />
-					<show id="qa:ncDetected" />
+					<show id="qa:ncPriority" />
+					<show id="cm:description" />
+					<show id="qa:ncCost" />
 					<show id="qa:ncQuantityNc" />
 					<show id="qa:ncQuantityNcUnit" />
-					<show id="qa:ncCost" />
-					<show id="qa:ncService" />					
-					<show id="cm:description" />
-					<show id="qa:ncCause" />					
-					
+					<show id="qa:ncCreationStep" />
+					<show id="qa:ncDetectionStep" />
+					<show id="qa:ncState" />
+					<show id="qa:ncComment" />
 					
 					<!-- batch -->
 					<show id="qa:batchId" />
 					<show id="qa:orderId" />
 					<show id="bcpg:clients" />
 					<show id="bcpg:suppliers" />
-					<show id="qa:batchComments" />
+					<show id="qa:batchComment" />
 					
 					<!-- Product -->
 					<show id="qa:product" />
 					<show id="qa:productHierarchy1" for-mode="view"/>
 					<show id="qa:productHierarchy2" for-mode="view"/>
 					
-					<!-- Action corrective -->
-					<show id="qa:acType" />
-					<show id="qa:acAssignedTo" />
-					<show id="qa:acExpectedDate" />
-					<show id="qa:acDescription" />					
-					<show id="qa:acEffectiveDate" />
-					<show id="qa:acEfficiency" />					
-					<show id="qa:acCheckDate" />
-					<show id="qa:acChecker" />					
-					<show id="qa:acComments" />					
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
 					
 				</field-visibility>
 				<appearance>
@@ -284,25 +230,25 @@
 					<field id="cm:name" set="mainInfo" />
 					<field id="bcpg:code" set="mainInfo" />
 					<field id="qa:ncType" set="mainInfo" />
-					<field id="qa:ncSeverity" set="mainInfo" />
+					<field id="qa:ncState" set="mainInfo" />
+					<field id="qa:ncPriority" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/workflow/priority.ftl"/>
+					</field>
 					<field id="qa:ncCreationStep" set="mainInfo" />
 					<field id="qa:ncDetectionStep" set="mainInfo" />
-					<field id="qa:ncCreated" set="mainInfo" />
-					<field id="qa:ncDetected" set="mainInfo" />
 					<field id="qa:ncQuantityNc" set="mainInfo" />
 					<field id="qa:ncQuantityNcUnit" set="mainInfo" />
-					<field id="qa:ncCost" set="mainInfo" />
-					<field id="qa:ncService" set="mainInfo" />					
+					<field id="qa:ncCost" set="mainInfo" />					
 					<field id="cm:description" set="mainInfo" >
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
-					<field id="qa:ncCause" set="mainInfo" >
+					<field id="qa:ncComment" set="mainInfo" >
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
-					</field>														
+					</field>
 						
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
 					<field id="qa:product" set="product-info" />
@@ -314,32 +260,19 @@
 					<field id="qa:orderId" set="batch-info" />
 					<field id="bcpg:clients" force="true" set="batch-info" />
 					<field id="bcpg:suppliers" force="true" set="batch-info" />
-					<field id="qa:batchComments" set="batch-info">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>
-
-					<!-- Action corrective -->
-					<set id="ac-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.ac-info.label" />					
-					<field id="qa:acType" set="ac-info" />
-					<field id="qa:acAssignedTo" set="ac-info" />
-					<field id="qa:acExpectedDate" set="ac-info" />
-					<field id="qa:acDescription" set="ac-info">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>
-					<field id="qa:acEffectiveDate" set="ac-info" />
-					<field id="qa:acEfficiency" set="ac-info" />					
-					<field id="qa:acCheckDate" set="ac-info" />
-					<field id="qa:acChecker" set="ac-info" />					
-					<field id="qa:acComments" set="ac-info">
+					<field id="qa:batchComment" set="batch-info">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
 					
+					<!-- audit -->
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+						template="/fr/becpg/components/form/2-column-set.ftl"/>					
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
 		</forms>
@@ -421,7 +354,7 @@
 					<show id="qa:batchDuration" />
 					<show id="bcpg:clients" />
 					<show id="bcpg:suppliers" />
-					<show id="qa:batchComments" />
+					<show id="qa:batchComment" />
 					
 					<!-- Product -->
 					<show id="qa:product" />
@@ -457,7 +390,7 @@
 					<field id="qa:batchDuration" set="batch-info" />
 					<field id="bcpg:clients" set="batch-info"/>
 					<field id="bcpg:suppliers" set="batch-info" />
-					<field id="qa:batchComments" set="batch-info">
+					<field id="qa:batchComment" set="batch-info">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
@@ -494,7 +427,7 @@
 					<show id="qa:batchDuration" />
 					<show id="bcpg:clients" />
 					<show id="bcpg:suppliers" />
-					<show id="qa:batchComments" />
+					<show id="qa:batchComment" />
 					
 					<!-- Product -->
 					<show id="qa:product" />
@@ -530,7 +463,7 @@
 					<field id="qa:batchDuration" set="batch-info" />
 					<field id="bcpg:clients" set="batch-info"/>
 					<field id="bcpg:suppliers" set="batch-info" />
-					<field id="qa:batchComments" set="batch-info">
+					<field id="qa:batchComment" set="batch-info">
 						<control template="/fr/becpg/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
@@ -682,6 +615,53 @@
 		</forms>
 	</config>	
 	
+	<!-- qa:workLog type (existing nodes) -->
+	<config evaluator="node-type" condition="qa:workLog">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="qa:wlState" />
+					<show id="qa:wlComment" />									
+				</field-visibility>				
+				<appearance>	
+					<field id="qa:wlComment">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>				
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<!-- qa:samplingList type type (creating nodes nodes) -->
+	<config evaluator="model-type" condition="qa:workLog">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="qa:wlState" />
+					<show id="qa:wlComment" />									
+				</field-visibility>				
+				<appearance>			
+					<field id="qa:wlComment">
+						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>		
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="qa:wlState" />
+					<show id="qa:wlComment" />
+					<show id="cm:created" />
+					<show id="cm:creator" />								
+				</field-visibility>
+			</form>
+		</forms>
+	</config>	
 	
 	<!-- qa:samplingList type (existing nodes) -->
 	<config evaluator="node-type" condition="qa:samplingList">

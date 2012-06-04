@@ -46,8 +46,8 @@
                     <text-property name="heading">acChecker</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">acComments</property>
-                    <text-property name="heading">acComments</text-property>
+                    <property name="columnName">acComment</property>
+                    <text-property name="heading">acComment</text-property>
                 </structure>
             </list-property>
             <structure name="cachedMetaData">
@@ -94,7 +94,7 @@
                     </structure>
                     <structure>
                         <property name="position">9</property>
-                        <property name="name">acComments</property>
+                        <property name="name">acComment</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -159,13 +159,13 @@
                 </structure>
                 <structure>
                     <property name="position">9</property>
-                    <property name="name">acComments</property>
-                    <property name="nativeName">acComments</property>
+                    <property name="name">acComment</property>
+                    <property name="nativeName">acComment</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/nonconformity]#:#{acType;STRING;/@acType},{acExpectedDate;STRING;/@acExpectedDate},{acEffectiveDate;STRING;/@acEffectiveDate},{acCheckDate;STRING;/@acCheckDate},{acDescription;STRING;/@acDescription},{acAssignedTo;STRING;/@acAssignedTo},{acEfficiency;STRING;/@acEfficiency},{acChecker;STRING;/@acChecker},{acComments;STRING;/@acComments}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/nonconformity]#:#{acType;STRING;/@acType},{acExpectedDate;STRING;/@acExpectedDate},{acEffectiveDate;STRING;/@acEffectiveDate},{acCheckDate;STRING;/@acCheckDate},{acDescription;STRING;/@acDescription},{acAssignedTo;STRING;/@acAssignedTo},{acEfficiency;STRING;/@acEfficiency},{acChecker;STRING;/@acChecker},{acComment;STRING;/@acComment}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -303,7 +303,7 @@
         <design:resultColumnDefinitions>
           <design:attributes>
             <design:identifier>
-              <design:name>acComments</design:name>
+              <design:name>acComment</design:name>
               <design:position>9</design:position>
             </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
@@ -312,7 +312,7 @@
             <design:nullability>Unknown</design:nullability>
           </design:attributes>
           <design:usageHints>
-            <design:label>acComments</design:label>
+            <design:label>acComment</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -511,11 +511,11 @@
                     <property name="analysisColumn">ncDetectionStep</property>
                 </structure>
                 <structure>
-                    <property name="columnName">ncSeverity</property>
+                    <property name="columnName">ncPriority</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncSeverity</text-property>
-                    <property name="analysisColumn">ncSeverity</property>
+                    <text-property name="heading">ncPriority</text-property>
+                    <property name="analysisColumn">ncPriority</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncType</property>
@@ -567,11 +567,11 @@
                     <property name="analysisColumn">acExpectedDate</property>
                 </structure>
                 <structure>
-                    <property name="columnName">acComments</property>
+                    <property name="columnName">acComment</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
-                    <text-property name="heading">acComments</text-property>
-                    <property name="analysisColumn">acComments</property>
+                    <text-property name="heading">acComment</text-property>
+                    <property name="analysisColumn">acComment</property>
                 </structure>
                 <structure>
                     <property name="columnName">acAssignedTo</property>
@@ -679,11 +679,11 @@
                     <property name="analysisColumn">description</property>
                 </structure>
                 <structure>
-                    <property name="columnName">batchComments</property>
+                    <property name="columnName">batchComment</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
-                    <text-property name="heading">batchComments</text-property>
-                    <property name="analysisColumn">batchComments</property>
+                    <text-property name="heading">batchComment</text-property>
+                    <property name="analysisColumn">batchComment</property>
                 </structure>
                 <structure>
                     <property name="columnName">suppliers</property>
@@ -736,7 +736,7 @@
                     </structure>
                     <structure>
                         <property name="position">8</property>
-                        <property name="name">ncSeverity</property>
+                        <property name="name">ncPriority</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
@@ -776,7 +776,7 @@
                     </structure>
                     <structure>
                         <property name="position">16</property>
-                        <property name="name">acComments</property>
+                        <property name="name">acComment</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
@@ -856,7 +856,7 @@
                     </structure>
                     <structure>
                         <property name="position">32</property>
-                        <property name="name">batchComments</property>
+                        <property name="name">batchComment</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
@@ -924,8 +924,8 @@
                 </structure>
                 <structure>
                     <property name="position">8</property>
-                    <property name="name">ncSeverity</property>
-                    <property name="nativeName">ncSeverity</property>
+                    <property name="name">ncPriority</property>
+                    <property name="nativeName">ncPriority</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
@@ -980,8 +980,8 @@
                 </structure>
                 <structure>
                     <property name="position">16</property>
-                    <property name="name">acComments</property>
-                    <property name="nativeName">acComments</property>
+                    <property name="name">acComment</property>
+                    <property name="nativeName">acComment</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
@@ -1092,8 +1092,8 @@
                 </structure>
                 <structure>
                     <property name="position">32</property>
-                    <property name="name">batchComments</property>
-                    <property name="nativeName">batchComments</property>
+                    <property name="name">batchComment</property>
+                    <property name="nativeName">batchComment</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
@@ -1112,7 +1112,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/product]#:#{ncCreated;STRING;/@ncCreated},{ncCost;STRING;/@ncCost},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncCause;STRING;/@ncCause},{ncCreationStep;STRING;/@ncCreationStep},{ncDetectionStep;STRING;/@ncDetectionStep},{ncSeverity;STRING;/@ncSeverity},{ncType;STRING;/@ncType},{ncService;STRING;/@ncService},{ncDetected;STRING;/@ncDetected},{acEfficiency;STRING;/@acEfficiency},{acType;STRING;/@acType},{acCheckDate;STRING;/@acCheckDate},{acExpectedDate;STRING;/@acExpectedDate},{acComments;STRING;/@acComments},{acAssignedTo;STRING;/@acAssignedTo},{acEffectiveDate;STRING;/@acEffectiveDate},{acDescription;STRING;/@acDescription},{acChecker;STRING;/@acChecker},{clients;STRING;/@clients},{modifier;STRING;/@modifier},{modified;STRING;/@modified},{batchId;STRING;/@batchId},{code;STRING;/@code},{orderId;STRING;/@orderId},{locale;STRING;/@locale},{name;STRING;/@name},{created;STRING;/@created},{creator;STRING;/@creator},{description;STRING;/@description},{batchComments;STRING;/@batchComments},{suppliers;STRING;/@suppliers},{product;STRING;/@product}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/product]#:#{ncCreated;STRING;/@ncCreated},{ncCost;STRING;/@ncCost},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncCause;STRING;/@ncCause},{ncCreationStep;STRING;/@ncCreationStep},{ncDetectionStep;STRING;/@ncDetectionStep},{ncPriority;STRING;/@ncPriority},{ncType;STRING;/@ncType},{ncService;STRING;/@ncService},{ncDetected;STRING;/@ncDetected},{acEfficiency;STRING;/@acEfficiency},{acType;STRING;/@acType},{acCheckDate;STRING;/@acCheckDate},{acExpectedDate;STRING;/@acExpectedDate},{acComment;STRING;/@acComment},{acAssignedTo;STRING;/@acAssignedTo},{acEffectiveDate;STRING;/@acEffectiveDate},{acDescription;STRING;/@acDescription},{acChecker;STRING;/@acChecker},{clients;STRING;/@clients},{modifier;STRING;/@modifier},{modified;STRING;/@modified},{batchId;STRING;/@batchId},{code;STRING;/@code},{orderId;STRING;/@orderId},{locale;STRING;/@locale},{name;STRING;/@name},{created;STRING;/@created},{creator;STRING;/@creator},{description;STRING;/@description},{batchComment;STRING;/@batchComment},{suppliers;STRING;/@suppliers},{product;STRING;/@product}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1378,7 +1378,7 @@
         <design:resultColumnDefinitions>
           <design:attributes>
             <design:identifier>
-              <design:name>acComments</design:name>
+              <design:name>acComment</design:name>
               <design:position>17</design:position>
             </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
@@ -1387,7 +1387,7 @@
             <design:nullability>Unknown</design:nullability>
           </design:attributes>
           <design:usageHints>
-            <design:label>acComments</design:label>
+            <design:label>acComment</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -1586,7 +1586,7 @@
         <design:resultColumnDefinitions>
           <design:attributes>
             <design:identifier>
-              <design:name>batchComments</design:name>
+              <design:name>batchComment</design:name>
               <design:position>30</design:position>
             </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
@@ -1595,7 +1595,7 @@
             <design:nullability>Unknown</design:nullability>
           </design:attributes>
           <design:usageHints>
-            <design:label>batchComments</design:label>
+            <design:label>batchComment</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -1618,7 +1618,7 @@
         <design:resultColumnDefinitions>
           <design:attributes>
             <design:identifier>
-              <design:name>ncSeverity</design:name>
+              <design:name>ncPriority</design:name>
               <design:position>32</design:position>
             </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
@@ -1627,7 +1627,7 @@
             <design:nullability>Unknown</design:nullability>
           </design:attributes>
           <design:usageHints>
-            <design:label>ncSeverity</design:label>
+            <design:label>ncPriority</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -2020,13 +2020,13 @@
                         <property name="dataSet">nc</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">ncSeverity</property>
-                                <text-property name="displayName">ncSeverity</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["ncSeverity"]</expression>
+                                <property name="name">ncPriority</property>
+                                <text-property name="displayName">ncPriority</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ncPriority"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
-                        <property name="resultSetColumn">ncSeverity</property>
+                        <property name="resultSetColumn">ncPriority</property>
                     </data>
                 </cell>
             </row>
@@ -2377,13 +2377,13 @@
                         <property name="dataSet">nc</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">batchComments</property>
-                                <text-property name="displayName">batchComments</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["batchComments"]</expression>
+                                <property name="name">batchComment</property>
+                                <text-property name="displayName">batchComment</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["batchComment"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
-                        <property name="resultSetColumn">batchComments</property>
+                        <property name="resultSetColumn">batchComment</property>
                     </data>
                 </cell>
             </row>
@@ -2595,13 +2595,13 @@
                         <property name="dataSet">nc</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">acComments</property>
-                                <text-property name="displayName">acComments</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["acComments"]</expression>
+                                <property name="name">acComment</property>
+                                <text-property name="displayName">acComment</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["acComment"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
-                        <property name="resultSetColumn">acComments</property>
+                        <property name="resultSetColumn">acComment</property>
                     </data>
                 </cell>
                 <cell id="1821"/>

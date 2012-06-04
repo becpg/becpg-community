@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
+
+<beans>
+    
+	<!-- -->
+   <!-- Activiti Process Engine -->
+	<!-- Redefine bean to get nonConformityService bean -->
+   <!-- -->
+  	<bean id="activitiProcessEngineConfiguration"
+        class="org.alfresco.repo.workflow.activiti.AlfrescoProcessEngineConfiguration">
+        <property name="dataSource" ref="wrappedDataSource" />
+        <property name="transactionManager" ref="transactionManager" />
+        <property name="databaseSchemaUpdate" value="none" />
+        <property name="history" value="full" />
+
+        <!-- Job-executor will be enabled once the SchemaAvailableEvent has 
+            been fired -->
+        <property name="jobExecutorActivate" value="false" />
+
+        <!-- Limit the visible beans in expressions -->
+        <property name="beans">
+			    <map>
+			        <entry key="services" value-ref="ServiceRegistry" />
+			        <entry key="nonConformityService" value-ref="nonConformityService" />
+			    </map>    
+			</property>
+
+
+        <property name="customTypes">
+            <list>
+                <ref bean="activitiScriptNodeType" />
+                <ref bean="activitiScriptNodeListType" />
+            </list>
+        </property>
+        <property name="customPreBPMNParseListeners">
+            <list>
+                <ref bean="activitiParseListener" />
+            </list>
+        </property>
+    </bean>
+   
+</beans>

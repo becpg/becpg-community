@@ -1,0 +1,99 @@
+package fr.becpg.repo.quality.policy;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Map;
+
+import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.repo.policy.PolicyComponent;
+import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import fr.becpg.model.QualityModel;
+import fr.becpg.repo.BeCPGDao;
+import fr.becpg.repo.quality.NonConformityService;
+import fr.becpg.repo.quality.data.NonConformityData;
+import fr.becpg.repo.quality.data.dataList.WorkLogDataItem;
+
+public class NonConformityPolicies implements NodeServicePolicies.OnUpdatePropertiesPolicy,
+		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy {
+
+	private static Log logger = LogFactory.getLog(NonConformityPolicies.class);
+
+	private PolicyComponent policyComponent;
+	private BeCPGDao<NonConformityData> nonConformityDAO;
+	private NonConformityService nonConformityService;
+
+	public void setPolicyComponent(PolicyComponent policyComponent) {
+		this.policyComponent = policyComponent;
+	}
+
+	public void setNonConformityDAO(BeCPGDao<NonConformityData> nonConformityDAO) {
+		this.nonConformityDAO = nonConformityDAO;
+	}
+
+	public void setNonConformityService(NonConformityService nonConformityService) {
+		this.nonConformityService = nonConformityService;
+	}
+
+	public void init() {
+
+		logger.debug("Init NonConformityPolicies...");
+
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, QualityModel.TYPE_NC,
+				new JavaBehaviour(this, "onUpdateProperties"));
+
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
+				QualityModel.TYPE_NC, new JavaBehaviour(this, "onCreateAssociation"));
+
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME,
+				QualityModel.TYPE_NC, new JavaBehaviour(this, "onDeleteAssociation"));
+	}
+
+	@Override
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+
+		String beforeState = (String) before.get(QualityModel.PROP_NC_STATE);
+		String afterState = (String) after.get(QualityModel.PROP_NC_STATE);
+
+		if (afterState != null && !afterState.isEmpty() && !afterState.equals(beforeState)) {
+
+			NonConformityData ncData = nonConformityDAO.find(nodeRef);
+
+			if (ncData.getWorkLog() == null) {
+				ncData.setWorkLog(new ArrayList<WorkLogDataItem>(1));
+			}
+
+			// add a work log
+			ncData.getWorkLog().add(
+					new WorkLogDataItem(null, afterState, (String) after.get(QualityModel.PROP_NC_COMMENT)));
+			// reset comment
+			ncData.setComment(null);
+
+			nonConformityDAO.update(nodeRef, ncData);
+		}
+
+	}
+
+	@Override
+	public void onCreateAssociation(AssociationRef assocRef) {
+
+		logger.debug("NC onCreateAssociation");
+		if (assocRef.getTypeQName().equals(QualityModel.ASSOC_PRODUCT)) {
+			nonConformityService.classifyNC(assocRef.getSourceRef(), assocRef.getTargetRef());
+		}
+	}
+
+	@Override
+	public void onDeleteAssociation(AssociationRef assocRef) {
+
+		logger.debug("NC onDeleteAssociation");
+		if (assocRef.getTypeQName().equals(QualityModel.ASSOC_PRODUCT)) {
+			nonConformityService.classifyNC(assocRef.getSourceRef(), null);
+		}
+	}
+}

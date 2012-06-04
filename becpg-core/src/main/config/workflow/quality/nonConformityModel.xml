@@ -7,6 +7,7 @@
         <import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm"/>
         <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
         <import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+        <import uri="http://www.bcpg.fr/model/quality/1.0" prefix="qa" />
     </imports>
     <namespaces>
         <namespace uri="http://www.bcpg.fr/model/nc-workflow/1.0" prefix="ncwf"/>
@@ -21,18 +22,7 @@
 						<type>d:text</type>
 					</property>
             </properties>
-            <associations>            	
-            	<association name="ncwf:ncFolder">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>cm:folder</class>
-							<mandatory>true</mandatory>
-							<many>false</many>
-						</target>
-					</association>
+            <associations>            	            	
 					<association name="ncwf:product">
 						<source>
 							<mandatory>false</mandatory>
@@ -77,7 +67,7 @@
                     <mandatory/>
                     <default>edit_package_item_actions</default>
                     <constraints/>
-                </property>
+                </property>                          
             </overrides>
         </type>
         <type name="ncwf:analysisTask">
@@ -125,30 +115,19 @@
         </type>
         <type name="ncwf:checkTask">
             <parent>bpm:workflowTask</parent>
-            <properties>
-            	<property name="ncwf:acEfficiency">
-						<type>d:text</type>
-<!-- 						<constraints> -->
-<!-- 							<constraint name="ncwf:acEfficiencyList" type="LIST"> -->
-<!-- 								<parameter name="allowedValues"> -->
-<!-- 									<list> -->
-<!-- 										<value>Satisfaisante</value> -->
-<!-- 										<value>Partielle</value> -->
-<!-- 										<value>Non satisfaisante</value> -->
-<!-- 									</list> -->
-<!-- 								</parameter> -->
-<!-- 							</constraint> -->
-<!-- 						</constraints> -->
-					</property>
-            </properties>
+            <properties/>
             <associations/>           
-            <mandatory-aspects/>
+            <mandatory-aspects>
+            	<aspect>ncwf:correctiveAction</aspect>
+            </mandatory-aspects>
         </type>
         <type name="ncwf:notificationTask">
             <parent>bpm:workflowTask</parent>
             <properties/>
             <associations/>            
-            <mandatory-aspects/>
+            <mandatory-aspects>
+            	<aspect>ncwf:correctiveAction</aspect>
+            </mandatory-aspects>
         </type>
         <type name="ncwf:prevActionTask">
             <parent>bpm:workflowTask</parent>
@@ -156,27 +135,39 @@
             <associations/>            
             <mandatory-aspects/>
         </type>
+        <type name="ncwf:workTask">
+            <parent>bpm:workflowTask</parent>
+            <properties>
+            	<property name="ncwf:previousComment">
+						<type>d:text</type>
+					</property>
+            </properties>
+            <associations>
+                <association name="ncwf:assignee">
+                    <source>
+                        <mandatory>false</mandatory>
+                        <many>false</many>
+                    </source>
+                    <target>
+                        <class>cm:person</class>
+                        <mandatory>false</mandatory>
+                        <many>false</many>
+                    </target>
+                </association>
+            </associations>            
+            <mandatory-aspects>            	
+            	<aspect>ncwf:correctiveAction</aspect>            	
+            </mandatory-aspects>
+        </type>
     </types>
     <aspects>
     	<aspect name="ncwf:correctiveAction">
 			<properties>
-				<property name="ncwf:acType">
+				<property name="ncwf:ncState">
 						<type>d:text</type>
-<!-- 						<constraints> -->
-<!-- 							<constraint name="ncwf:acTypes" type="LIST"> -->
-<!-- 								<parameter name="allowedValues"> -->
-<!-- 									<list> -->
-<!-- 										<value>Correction</value> -->
-<!-- 										<value>Déclassement</value> -->
-<!-- 										<value>Destruction</value> -->
-<!-- 										<value>Blocage produit</value> -->
-<!-- 									</list> -->
-<!-- 								</parameter> -->
-<!-- 							</constraint>		 -->
-<!-- 						</constraints> -->
-					</property>					
-					<property name="ncwf:acDescription">
-						<type>d:text</type>
+						<constraints>
+							<constraint ref="qa:ncStates" />
+						</constraints>
 					</property>
 			</properties>
 		</aspect>

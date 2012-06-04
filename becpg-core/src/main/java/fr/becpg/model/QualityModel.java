@@ -22,8 +22,12 @@ public interface QualityModel {
 	/** non conformity **/
 	static final QName TYPE_NC = QName.createQName(QUALITY_URI,
 	"nc");
-	static final QName PROP_NC_DETECTED = QName.createQName(QUALITY_URI,
-	"ncDetected");	
+	static final QName PROP_NC_STATE = QName.createQName(QUALITY_URI,
+	"ncState");
+	static final QName PROP_NC_COMMENT = QName.createQName(QUALITY_URI,
+	"ncComment");
+	static final QName PROP_NC_PRIORITY = QName.createQName(QUALITY_URI,
+	"ncPriority");
 		
 	/** Control plan **/
 	static final QName TYPE_CONTROL_PLAN = QName.createQName(QUALITY_URI,
@@ -32,35 +36,13 @@ public interface QualityModel {
 	/** Quality control **/
 	static final QName TYPE_QUALITY_CONTROL = QName.createQName(QUALITY_URI,
 	"qualityControl");
-	static final QName PROP_QC_BATCH_START = QName.createQName(QUALITY_URI,
-	"batchStart");
-	static final QName PROP_QC_BATCH_DURATION = QName.createQName(QUALITY_URI,
-	"batchDuration");
+	
 	static final QName PROP_QC_SAMPLES_COUNTER = QName.createQName(QUALITY_URI,
 	"qcSamplesCounter");
 	static final QName PROP_QC_STATE = QName.createQName(QUALITY_URI,
-	"qcState");
-	static final QName PROP_QC_BATCH_ID = QName.createQName(QUALITY_URI,
-	"batchId");
-	static final QName PROP_QC_ORDER_ID = QName.createQName(QUALITY_URI,
-	"orderId");	
-	static final QName ASSOC_QC_PRODUCT = QName.createQName(QUALITY_URI,
-	"product");
+	"qcState");	
 	static final QName ASSOC_QC_CONTROL_PLANS = QName.createQName(QUALITY_URI,
-	"qcControlPlans");
-	
-	/** Corrective action **/
-	static final QName ASPECT_CORRECTIVE_ACTION = QName.createQName(QUALITY_URI,
-			"acAspect");
-	static final QName PROP_AC_EXPECTED_DATE = QName.createQName(QUALITY_URI,
-			"acExpectedDate");
-	static final QName PROP_AC_EFFECTIVE_DATE = QName.createQName(QUALITY_URI,
-			"acEffectiveDate");
-	static final QName PROP_AC_ASSIGNED_TO = QName.createQName(QUALITY_URI,
-			"acAssignedTo");
-	static final QName PROP_AC_CHECKER = QName.createQName(QUALITY_URI,
-			"acChecker");
-	
+	"qcControlPlans");	
 	
 	/** Work item analysis **/
 	static final QName TYPE_WORK_ITEM_ANALYSIS = QName.createQName(QUALITY_URI,
@@ -82,6 +64,14 @@ public interface QualityModel {
 	static final QName TYPE_QUALITYLIST_ITEM = QName.createQName(QUALITY_URI,
 	"qualityListItem");
 	
+	/** Work Log **/
+	static final QName TYPE_WORK_LOG = QName.createQName(QUALITY_URI,
+	"workLog");
+	static final QName PROP_WL_STATE = QName.createQName(QUALITY_URI,
+	"wlState");
+	static final QName PROP_WL_COMMENT = QName.createQName(QUALITY_URI,
+	"wlComment");
+			
 	/** controlDefList **/
 	static final QName TYPE_CONTROLDEF_LIST = QName.createQName(QUALITY_URI,
 	"controlDefList");
@@ -152,5 +142,18 @@ public interface QualityModel {
 	static final QName ASSOC_SL_CONTROL_POINT = QName.createQName(QUALITY_URI,
 	"slControlPoint");
 	static final QName ASSOC_SL_CONTROL_STEP = QName.createQName(QUALITY_URI,
-	"slControlStep");		
+	"slControlStep");	
+	
+	static final QName ASPECT_BATCH = QName.createQName(QUALITY_URI,
+	"batchAspect");
+	static final QName PROP_BATCH_ID = QName.createQName(QUALITY_URI,
+	"batchId");
+	static final QName PROP_ORDER_ID = QName.createQName(QUALITY_URI,
+	"orderId");	
+	static final QName PROP_BATCH_START = QName.createQName(QUALITY_URI,
+	"batchStart");
+	static final QName PROP_BATCH_DURATION = QName.createQName(QUALITY_URI,
+	"batchDuration");
+	static final QName ASSOC_PRODUCT = QName.createQName(QUALITY_URI,
+	"product");
 }
