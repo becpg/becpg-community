@@ -374,7 +374,7 @@
          Alfresco.util.Ajax.request(
          {
             method: Alfresco.util.Ajax.GET,
-            url: Alfresco.constants.PROXY_URI + "becpg/entity/generate-report/node/" + this.options.entityNodeRef.replace(":/", ""),				
+            url: Alfresco.constants.PROXY_URI + "becpg/entity/generate-report/node/" + this.options.entityNodeRef.replace(":/", "") + "/check-datalists",				
             successCallback:
             {
                fn: function EntityDataListToolbar_onFinish_success(response)

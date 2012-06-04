@@ -3,15 +3,12 @@
  */
 package fr.becpg.repo.entity.policy;
 
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -34,7 +31,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.report.entity.EntityReportService;
 
-// TODO: Auto-generated Javadoc
 /**
  * Generate documents when product properties are updated.
  *
@@ -66,9 +62,6 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 	/** The node service. */
 	private NodeService nodeService;
 	
-	/** The policy behaviour filter. */
-	private BehaviourFilter policyBehaviourFilter;
-	
 	/** The Lock Service **/
 	private LockService lockService;
 	
@@ -93,9 +86,6 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 		this.transactionService = transactionService;
 	}
 	
-	
-	
-	
 	/**
 	 * @param threadExecuter the threadExecuter to set
 	 */
@@ -103,15 +93,6 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 		this.threadExecuter = threadExecuter;
 	}
 
-	/**
-	 * Sets the policy behaviour filter.
-	 *
-	 * @param policyBehaviourFilter the new policy behaviour filter
-	 */
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}	
-	
 	/**
 	 * 
 	 * @param lockService
@@ -295,26 +276,8 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
                             {                                   
 
                             	if(nodeService.exists(entityNodeRef) && lockService.getLockStatus(entityNodeRef) == LockStatus.NO_LOCK){
-                            		try{
-                                		// Ensure that the policy doesn't refire for this node
-                        				// on this thread
-                        				// This won't prevent background processes from
-                        				// refiring, though
-                        	            policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
-                        	            policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-                        	            policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
-                        	     
-                        	            // generate reports
-                        	            entityReportService.generateReport(entityNodeRef);		
-                        	            
-                        	        	// set reportNodeGenerated property to now
-                    			        nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, Calendar.getInstance().getTime());
-                        	        }
-                        	        finally{
-                        	        	policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);		
-                        	        	policyBehaviourFilter.enableBehaviour(entityNodeRef,  ContentModel.ASPECT_AUDITABLE);
-                        	        	policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
-                        	        }	         
+                            		
+                            		entityReportService.generateReport(entityNodeRef);
                             	}
             			        
                                 return null;

@@ -127,6 +127,47 @@
 //  	   		       });
 //  	   			  
 //  	   		  }
-//   });   	
+//   });   
+   	
+   	YAHOO.Bubbling.fire("registerAction",
+	{
+   		actionName: "onActionGenerateReport",
+   		fn: function onActionGenerateReport(asset)
+   		{       		   	
+   		  {     
+   			  Alfresco.util.PopupManager.displayMessage(
+	         {
+	            text: this.msg("message.generate-report.please-wait")
+	         });
+	
+	         Alfresco.util.Ajax.request(
+	         {
+	            method: Alfresco.util.Ajax.GET,
+	            url: Alfresco.constants.PROXY_URI + "becpg/entity/generate-report/node/" + asset.nodeRef.replace(":/", "") + "/force",				
+	            successCallback:
+	            {
+	               fn: function EntityDataListToolbar_onFinish_success(response)
+	               {	                 
+	                  this.recordData.jsNode.setNodeRef(asset.nodeRef);
+	                  window.location = this.getActionUrls(this.recordData).documentDetailsUrl;
+	                  
+	               },               
+	               scope: this
+	            },
+	            failureCallback:
+	            {
+	               fn: function EntityDataListToolbar_onFinish_failure(response)
+	               {
+	                  Alfresco.util.PopupManager.displayMessage(
+	                  {
+	                     text: this.msg("message.generate-report.failure")
+	                  });
+	               },
+	               scope: this
+	            }
+	         });   			
+   		  }
+   		}
+   });
    
 })();

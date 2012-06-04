@@ -232,6 +232,16 @@
 				<!-- aspect check bcpg:entityListsAspect -->
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 			</action>
+			
+			<action id="entity-refresh-report" type="javascript"
+				label="actions.document.refreshReport">
+				<param name="function">onActionGenerateReport</param>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+				<!-- aspect check rep:reportEntityAspect -->
+				<evaluator>evaluator.becpg.doclib.action.generateReport</evaluator>
+			</action>
 
 			<action id="entity-checkin" type="javascript"
 				label="actions.document.checkin-entity">
@@ -305,10 +315,10 @@
          </actionGroup>
 
          <actionGroup id="entity-details">
-				<action index="10" id="entity-view-datalist" />
-				<action index="101" id="entity-checkin" />
-				<action index="102" id="entity-checkout" />
-				<action index="103" id="entity-cancel-editing" />
+				<action index="10" id="entity-view-datalist" />			
+				<action index="111" id="entity-checkin" />
+				<action index="112" id="entity-checkout" />
+				<action index="113" id="entity-cancel-editing" />
             <action index="120" id="document-edit-metadata" />
             <action index="140" id="document-view-original" />
             <action index="150" id="document-view-working-copy" />
@@ -318,9 +328,10 @@
             <action index="210" id="document-view-googledoc" />
             <action index="220" id="document-checkout-to-googledocs" />
             <action index="230" id="document-checkin-from-googledocs" />
-            <action index="240" id="document-copy-to" />
-            <action index="250" id="document-move-to" />
-            <action index="260" id="document-delete" />
+            <action index="240" id="entity-refresh-report" />
+            <action index="250" id="document-copy-to" />
+            <action index="260" id="document-move-to" />
+            <action index="270" id="document-delete" />
             <action index="270" id="document-assign-workflow" />
             <action index="310" id="document-manage-aspects" />
             <action index="330" id="document-view-in-source-repository" />
