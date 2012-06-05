@@ -365,6 +365,7 @@
                <show id="bpm:priority" />
                <show id="bpm:dueDate" />
                <show id="bpm:taskId" />
+               <show id="ncwf:previousComment" />               
                <show id="bpm:status" />
                <show id="packageItems" />
                <show id="ncwf:ncState" />
@@ -391,6 +392,9 @@
                   <control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
                </field>
                <field id="bpm:dueDate" set="info" label-id="workflow.field.due">
+                  <control template="/org/alfresco/components/form/controls/info.ftl" />
+               </field>   
+               <field id="ncwf:previousComment" set="ac-info">
                   <control template="/org/alfresco/components/form/controls/info.ftl" />
                </field>               
                
