@@ -188,7 +188,7 @@ public class OpenIDAuthenticationComponentImpl extends AbstractAuthenticationCom
 				}
 				}, getSystemUserName(getUserDomain(userName))), UserNameValidationMode.NONE);
 		}
-
+		
 		protected boolean createMissingPerson() {
 			PropertyMap personProps = new PropertyMap();
 

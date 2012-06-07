@@ -28,6 +28,7 @@ public class OAuthTokenUtils {
 
 	private static final  ThreadLocal<GoogleOAuthParameters> token = new ThreadLocal<GoogleOAuthParameters>();
 	private static String  oauthCertFile =null;
+	private static boolean is2LeggedOAuth = false;
 	
 	public static GoogleOAuthParameters getCurrentOAuthToken(){
 		return token.get();
@@ -65,6 +66,14 @@ public class OAuthTokenUtils {
 
 	public static void initPrivateKey(String oauthCertFile) {
 		OAuthTokenUtils.oauthCertFile = oauthCertFile;
+	}
+	
+	public static void initIs2LeggedOauth(boolean is2LeggedOAuth) {
+		OAuthTokenUtils.is2LeggedOAuth = is2LeggedOAuth;
+	}
+
+	public static boolean is2LeggedOAuth() {
+		return is2LeggedOAuth;
 	}
 	
 	

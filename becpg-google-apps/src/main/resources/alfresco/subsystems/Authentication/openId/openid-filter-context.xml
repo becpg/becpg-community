@@ -35,6 +35,8 @@
 		</constructor-arg>
 		<property name="sysAdminParams" ref="sysAdminParams" />
 		<property name="oauthScopes" value="${openid.authentication.oauthScopes}" />
+		<property name="consumerKey" value="${oauth.consumer.key}"/>
+		<property name="is2LeggedOauth" value="${oauth.is2Legged}"/>
 	</bean>
 	<!-- <bean id="RemoteUserMapper" class="org.alfresco.web.app.servlet.DefaultRemoteUserMapper"> 
 		<property name="active"> <value>${openid.authentication.sso.enabled}</value> 

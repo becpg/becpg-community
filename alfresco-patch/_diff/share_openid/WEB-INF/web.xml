@@ -48,6 +48,10 @@
          <param-name>endpoint</param-name>
          <param-value>alfresco</param-value>
       </init-param>
+       <init-param>
+         <param-name>ignoredHostsRegexp</param-name>
+         <param-value>(localhost|inst.*\.becpg\.fr)</param-value>
+      </init-param>
    </filter>
    
    <filter-mapping>

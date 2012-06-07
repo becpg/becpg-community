@@ -174,16 +174,19 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 			GoogleOAuthParameters oauthParameters = new GoogleOAuthParameters();
 			oauthParameters.setOAuthConsumerKey(oauthConsumerKey);
 			oauthParameters.setOAuthConsumerSecret(oauthConsumerKeySecret);
-			oauthParameters.setOAuthToken(authorizedtoken);
-
-			GoogleOAuthHelper oauthHelper = new GoogleOAuthHelper(OAuthTokenUtils.getRSASigner());
-			String accessToken = oauthHelper.getAccessToken(oauthParameters);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Getting access token form authorized token : " + authorizedtoken);
-				logger.debug("Access token is :" + accessToken);
+			//Case not 2legs oauth
+			if(authorizedtoken!=null){
+				oauthParameters.setOAuthToken(authorizedtoken);
+			
+				GoogleOAuthHelper oauthHelper = new GoogleOAuthHelper(OAuthTokenUtils.getRSASigner());
+				String accessToken = oauthHelper.getAccessToken(oauthParameters);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Getting access token form authorized token : " + authorizedtoken);
+					logger.debug("Access token is :" + accessToken);
+				}
+				// Set access token
+				oauthParameters.setOAuthToken(accessToken);
 			}
-			// Set access token
-			oauthParameters.setOAuthToken(accessToken);
 			request.getSession().setAttribute(OAUHT_SESSION_TOKEN, oauthParameters);
 			OAuthTokenUtils.setCurrentOAuthToken(oauthParameters);
 
@@ -277,10 +280,12 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 			// Chain to the next filter
 			return true;
 		}
-
+		
 		// Check if the login page is being accessed, do not intercept the login
 		// page
-		if (hasLoginPage() && request.getRequestURI().endsWith(getLoginPage()) == true) {
+		if ((hasLoginPage() && request.getRequestURI().endsWith(getLoginPage()) == true)
+				|| request.getRequestURI().contains("wcs/remoteadm")
+				|| request.getRequestURI().contains("wcs/remoteavm")) {
 			if (getLogger().isDebugEnabled())
 				getLogger().debug("Login page requested, chaining ...");
 

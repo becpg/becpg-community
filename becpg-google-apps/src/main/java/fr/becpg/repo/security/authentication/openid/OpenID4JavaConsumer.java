@@ -25,6 +25,7 @@ import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.ax.FetchResponse;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.openid.AxFetchListFactory;
 import org.springframework.security.openid.NullAxFetchListFactory;
 import org.springframework.security.openid.OpenIDAttribute;
@@ -37,6 +38,7 @@ import org.springframework.util.StringUtils;
 import fr.becpg.repo.security.authentication.openid.oauth.OAuthMessage;
 import fr.becpg.repo.security.authentication.openid.oauth.OAuthRequest;
 import fr.becpg.repo.security.authentication.openid.oauth.OAuthResponse;
+import fr.becpg.repo.security.authentication.openid.oauth.OAuthTokenUtils;
 
 /**
  * @author Ray Krueger
@@ -45,7 +47,7 @@ import fr.becpg.repo.security.authentication.openid.oauth.OAuthResponse;
  */
 
 @SuppressWarnings("unchecked")
-public class OpenID4JavaConsumer implements OpenIDConsumer {
+public class OpenID4JavaConsumer implements OpenIDConsumer, InitializingBean {
 
 	private static final String DISCOVERY_INFO_KEY = DiscoveryInformation.class.getName();
 
@@ -63,8 +65,11 @@ public class OpenID4JavaConsumer implements OpenIDConsumer {
 
 	private SysAdminParams sysAdminParams;
 	
+	private String consumerKey;
 
 	private String oauthScopes = null;
+	
+	private boolean is2LeggedOauth= false;
 	
 
 	// ~ Constructors
@@ -72,6 +77,15 @@ public class OpenID4JavaConsumer implements OpenIDConsumer {
 
 	public OpenID4JavaConsumer() throws ConsumerException, MessageException {
 		this(new ConsumerManager(), new NullAxFetchListFactory());
+	}
+
+	
+	public void setIs2LeggedOauth(boolean is2LeggedOauth) {
+		this.is2LeggedOauth = is2LeggedOauth;
+	}
+
+	public void setConsumerKey(String consumerKey) {
+		this.consumerKey = consumerKey;
 	}
 
 	public void setOauthScopes(String oauthScopes) {
@@ -167,10 +181,14 @@ public class OpenID4JavaConsumer implements OpenIDConsumer {
 
 			}
 
-			if(oauthScopes!=null ){
+			if(oauthScopes!=null && !is2LeggedOauth){
 				OAuthRequest oauthRequest = OAuthRequest.createOAuthRequest();
 				oauthRequest.setScopes(oauthScopes);
-				oauthRequest.setConsumer(sysAdminParams.getShareHost());
+				if(consumerKey!=null){
+					oauthRequest.setConsumer(consumerKey);
+				} else {
+					oauthRequest.setConsumer(sysAdminParams.getShareHost());
+				}
 				authReq.addExtension(oauthRequest);
 			}
 			
@@ -313,6 +331,12 @@ public class OpenID4JavaConsumer implements OpenIDConsumer {
 
 		return attributes;
 
+	}
+
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		OAuthTokenUtils.initIs2LeggedOauth(this.is2LeggedOauth);	
 	}
 
 }

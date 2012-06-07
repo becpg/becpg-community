@@ -7,6 +7,7 @@ import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.util.PropertyCheck;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +28,13 @@ public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, 
 
 	private CacheManager cacheManager;
 	private Resource configLocation;
+	private TenantService tenantService;
+
+
+	
+	public void setTenantService(TenantService tenantService) {
+		this.tenantService = tenantService;
+	}
 
 	public void setConfigLocation(Resource configLocation) {
 		this.configLocation = configLocation;
@@ -43,9 +51,11 @@ public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, 
 	public <T> T getFromUserCache(String cacheName, String cacheKey,
 			BeCPGCacheDataProviderCallBack<T> sigedCacheDataProviderCallBack) {
 		
+		cacheKey = computeCacheKey(cacheKey);
 		Cache cache = getCache(cacheName);
 		T ret = null;
 		try {
+			
 			Element el = cache.get(cacheKey);
 			if (el != null) {
 				logger.debug("Getting values from " + cacheKey);
@@ -62,6 +72,10 @@ public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, 
 		}
 
 		return ret;
+	}
+
+	private String computeCacheKey(String cacheKey) {
+		return cacheKey+"@"+tenantService.getCurrentUserDomain();
 	}
 
 	private Cache getCache(String cacheName) {

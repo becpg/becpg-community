@@ -19,6 +19,8 @@ install_share_amp(){
 	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/share.war -force
 }
 
+read -p "Deploy OpenID? (y/n)" ansopenid 
+read -p "Deploy report server? (y/n)" ansreport
 
 echo "**********************************************************"
 echo "Deploy core AMP"
@@ -33,7 +35,7 @@ install_core_amp becpg-controls-core-*.amp
 install_core_amp becpg-designer-core-*.amp
 install_core_amp becpg-core-*.amp
 
-read -p "Deploy OpenID? (y/n)" ansopenid 
+
 if [ "$ansopenid" = "y" ]; then
 install_core_amp becpg-google-apps-*.amp
 fi
@@ -66,8 +68,8 @@ fi
 
 
 
-read -p "Deploy report server? (y/n)" ans 
-if [ "$ans" = "y" ]; then
+
+if [ "$ansreport" = "y" ]; then
 echo "**********************************************************"
 echo "Deploy Report Server"
 echo "**********************************************************"
