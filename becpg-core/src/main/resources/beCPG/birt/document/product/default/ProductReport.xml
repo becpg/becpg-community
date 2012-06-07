@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<product name="Assortiment 8 sushis" code="1023"
+<entity name="Assortiment 8 sushis" code="1023"
 	store-identifier="SpacesStore" productType="Produit fini" productQty="0.200"
 	productUnit="kg" productState="En développement" productEAN="8001456682"
 	modified="02/12/2010">

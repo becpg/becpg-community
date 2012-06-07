@@ -38,18 +38,9 @@ import fr.becpg.repo.report.entity.impl.AbstractEntityReportExtractor;
 public class DefaultProductReportExtractor extends AbstractEntityReportExtractor {
 
 	/** The Constant KEY_PRODUCT_IMAGE. */
-	private static final String KEY_PRODUCT_IMAGE = "productImage";
+	protected static final String KEY_PRODUCT_IMAGE = "productImage";
 
-	/** The Constant TAG_PRODUCT. */
-	protected static final String TAG_PRODUCT = "product";
-
-	/** The Constant TAG_DATALISTS. */
-	protected static final String TAG_DATALISTS = "dataLists";
-	protected static final String TAG_ATTRIBUTES = "attributes";
-	protected static final String TAG_ATTRIBUTE = "attribute";
-	protected static final String ATTR_SET = "set";
-	protected static final String ATTR_NAME = "name";
-	protected static final String ATTR_VALUE = "value";
+	
 
 	/** The Constant TAG_ALLERGENLIST. */
 	protected static final String TAG_ALLERGENLIST = "allergenList";
@@ -108,8 +99,6 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	/** The Constant SUFFIX_LOCALE_ENGLISH. */
 	protected static final String SUFFIX_LOCALE_ENGLISH = "_en";
 
-	protected static final String REPORT_FORM_CONFIG_PATH = "beCPG/birt/document/becpg-report-form-config.xml";
-
 	protected ProductDAO productDAO;
 
 	protected ProductDictionaryService productDictionaryService;
@@ -131,64 +120,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	}
 
 	@Override
-	public EntityReportData extract(NodeRef entityNodeRef) {
-
-		EntityReportData ret = new EntityReportData();
-
-		Document document = DocumentHelper.createDocument();
-		Element entityElt = document.addElement(TAG_PRODUCT);
-
-		Element attributesElt = entityElt.addElement(TAG_ATTRIBUTES);
-
-		// add attributes at <product/> tag
-		Map<ClassAttributeDefinition, String> attributes = loadNodeAttributes(entityNodeRef);
-
-		for (Map.Entry<ClassAttributeDefinition, String> attrKV : attributes.entrySet()) {
-
-			entityElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
-		}
-
-		// add attributes at <product><attributes/></product> and group them by
-		// set
-		Map<String, List<String>> fieldsBySets = getFieldsBySets(entityNodeRef, REPORT_FORM_CONFIG_PATH);
-
-		// set
-		for (Map.Entry<String, List<String>> kv : fieldsBySets.entrySet()) {
-
-			// field
-			for (String fieldId : kv.getValue()) {
-
-				// look for value
-				Map.Entry<ClassAttributeDefinition, String> attrKV = null;
-				for (Map.Entry<ClassAttributeDefinition, String> a : attributes.entrySet()) {
-
-					if (a.getKey().getName().getPrefixString().equals(fieldId)) {
-						attrKV = a;
-						break;
-					}
-				}
-
-				if (attrKV != null) {
-
-					Element attributeElt = attributesElt.addElement(TAG_ATTRIBUTE);
-					attributeElt.addAttribute(ATTR_SET, kv.getKey());
-					attributeElt.addAttribute(ATTR_NAME, attrKV.getKey().getTitle());
-					attributeElt.addAttribute(ATTR_VALUE, attrKV.getValue());
-				}
-			}
-		}
-
-		// render data lists
-		Element dataListsElt = entityElt.addElement(TAG_DATALISTS);
-		dataListsElt = loadDataLists(entityNodeRef, dataListsElt);
-
-		ret.setXmlDataSource(entityElt);
-		ret.setDataObjects(extractImages(entityNodeRef));
-
-		return ret;
-	}
-
-	private Map<String, byte[]> extractImages(NodeRef entityNodeRef) {
+	protected Map<String, byte[]> extractImages(NodeRef entityNodeRef) {
 		Map<String, byte[]> images = new HashMap<String, byte[]>();
 		/*
 		 * get the product image
@@ -220,6 +152,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	 *            the data lists elt
 	 * @return the element
 	 */
+	@Override
 	protected Element loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
 
 		// TODO make it more generic!!!!
@@ -268,7 +201,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 				String partName = (String) nodeService.getProperty(dataItem.getProduct(), ContentModel.PROP_NAME);
 
-				Element partElt = compoListElt.addElement(TAG_PRODUCT);
+				Element partElt = compoListElt.addElement(TAG_ENTITY);
 				partElt.addAttribute(BeCPGModel.ASSOC_COMPOLIST_PRODUCT.getLocalName(), partName);
 				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), Integer.toString(dataItem.getDepthLevel()));
 				partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_QTY.getLocalName(), dataItem.getQty() == null ? VALUE_NULL : Double.toString(dataItem.getQty()));

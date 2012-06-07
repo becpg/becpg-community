@@ -21,6 +21,7 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.core.io.ClassPathResource;
@@ -29,6 +30,7 @@ import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
 
 public abstract class AbstractEntityReportExtractor implements EntityReportExtractor {
@@ -36,7 +38,16 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 
 	private static Log logger = LogFactory.getLog(AbstractEntityReportExtractor.class);
 	
-	
+	/** The Constant TAG_ENTITY. */
+	protected static final String TAG_ENTITY = "entity";
+
+	/** The Constant TAG_DATALISTS. */
+	protected static final String TAG_DATALISTS = "dataLists";
+	protected static final String TAG_ATTRIBUTES = "attributes";
+	protected static final String TAG_ATTRIBUTE = "attribute";
+	protected static final String ATTR_SET = "set";
+	protected static final String ATTR_NAME = "name";
+	protected static final String ATTR_VALUE = "value";
 
 	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
@@ -50,7 +61,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	private static final String QUERY_ATTR_GET_LABEL = "@label";
 	private static final String SET_DEFAULT = "";
 	
-
+	protected static final String REPORT_FORM_CONFIG_PATH = "beCPG/birt/document/becpg-report-form-config.xml";
 
 	protected DictionaryService dictionaryService;
 	
@@ -104,7 +115,72 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		this.entityService = entityService;
 	}
 
+	@Override
+	public EntityReportData extract(NodeRef entityNodeRef) {
+
+		EntityReportData ret = new EntityReportData();
+
+		Document document = DocumentHelper.createDocument();
+		Element entityElt = document.addElement(TAG_ENTITY);
+
+		Element attributesElt = entityElt.addElement(TAG_ATTRIBUTES);
+
+		// add attributes at <product/> tag
+		Map<ClassAttributeDefinition, String> attributes = loadNodeAttributes(entityNodeRef);
+
+		for (Map.Entry<ClassAttributeDefinition, String> attrKV : attributes.entrySet()) {
+
+			entityElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
+		}
+
+		// add attributes at <product><attributes/></product> and group them by
+		// set
+		Map<String, List<String>> fieldsBySets = getFieldsBySets(entityNodeRef, REPORT_FORM_CONFIG_PATH);
+
+		// set
+		for (Map.Entry<String, List<String>> kv : fieldsBySets.entrySet()) {
+
+			// field
+			for (String fieldId : kv.getValue()) {
+
+				// look for value
+				Map.Entry<ClassAttributeDefinition, String> attrKV = null;
+				for (Map.Entry<ClassAttributeDefinition, String> a : attributes.entrySet()) {
+
+					if (a.getKey().getName().getPrefixString().equals(fieldId)) {
+						attrKV = a;
+						break;
+					}
+				}
+
+				if (attrKV != null) {
+
+					Element attributeElt = attributesElt.addElement(TAG_ATTRIBUTE);
+					attributeElt.addAttribute(ATTR_SET, kv.getKey());
+					attributeElt.addAttribute(ATTR_NAME, attrKV.getKey().getTitle());
+					attributeElt.addAttribute(ATTR_VALUE, attrKV.getValue());
+				}
+			}
+		}
+
+		// render data lists
+		Element dataListsElt = entityElt.addElement(TAG_DATALISTS);
+		dataListsElt = loadDataLists(entityNodeRef, dataListsElt);
+
+		ret.setXmlDataSource(entityElt);
+		ret.setDataObjects(extractImages(entityNodeRef));
+
+		return ret;
+	}
 	
+	protected Map<String, byte[]> extractImages(NodeRef entityNodeRef) {
+		return null;
+	}
+	
+	
+	protected Element loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
+		return null;
+	}
 	
 	/**
 	 * Load node attributes.

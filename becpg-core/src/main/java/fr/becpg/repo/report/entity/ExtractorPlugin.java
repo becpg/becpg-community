@@ -1,6 +1,11 @@
 package fr.becpg.repo.report.entity;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class ExtractorPlugin {
+	
+	private static Log logger = LogFactory.getLog(ExtractorPlugin.class);
 	
 	EntityReportExtractor extractor;
 	
@@ -31,6 +36,7 @@ public class ExtractorPlugin {
 	
 	
 	public void init(){
+		logger.info("registerExtractor, typeName: " + typeName + " - extractor: " + extractor);
 		entityReportService.registerExtractor(typeName, extractor);
 	}
 	

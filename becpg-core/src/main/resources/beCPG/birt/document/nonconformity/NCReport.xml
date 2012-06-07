@@ -11,4 +11,10 @@
 		<attribute set="aSet2" name="decimal" value="12.36"/>
 	</attributes>
 	
+	<dataLists>
+		<workLog>
+			
+		</workLog>
+	</dataLists>
+	
 </nonconformity>

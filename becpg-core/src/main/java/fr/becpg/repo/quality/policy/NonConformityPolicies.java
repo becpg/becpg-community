@@ -70,7 +70,7 @@ public class NonConformityPolicies implements NodeServicePolicies.OnUpdateProper
 
 			// add a work log
 			ncData.getWorkLog().add(
-					new WorkLogDataItem(null, afterState, (String) after.get(QualityModel.PROP_NC_COMMENT)));
+					new WorkLogDataItem(null, afterState, (String) after.get(QualityModel.PROP_NC_COMMENT), null, null));
 			// reset comment
 			ncData.setComment(null);
 

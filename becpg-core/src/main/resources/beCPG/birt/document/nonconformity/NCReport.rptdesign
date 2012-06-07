@@ -7,345 +7,29 @@
     <property name="imageDPI">131</property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="7">
-            <property name="FILELIST">http://localhost:8080/alfresco/service/becpg/report/datasource?nodeRef=workspace://SpacesStore/6f574e1d-78fb-4874-8dca-d04c47fe3ff9</property>
+            <property name="FILELIST">http://localhost:8080/alfresco/service/becpg/report/datasource?nodeRef=workspace://SpacesStore/2d1faac9-ea78-4bc7-bcec-60c653518251</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="ncAction" id="1577">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">acType</property>
-                    <text-property name="heading">acType</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acExpectedDate</property>
-                    <text-property name="heading">acExpectedDate</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acEffectiveDate</property>
-                    <text-property name="heading">acEffectiveDate</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acCheckDate</property>
-                    <text-property name="heading">acCheckDate</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acDescription</property>
-                    <text-property name="heading">acDescription</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acAssignedTo</property>
-                    <text-property name="heading">acAssignedTo</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acEfficiency</property>
-                    <text-property name="heading">acEfficiency</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acChecker</property>
-                    <text-property name="heading">acChecker</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acComment</property>
-                    <text-property name="heading">acComment</text-property>
-                </structure>
-            </list-property>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">acType</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">acExpectedDate</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">acEffectiveDate</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">acCheckDate</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">acDescription</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">6</property>
-                        <property name="name">acAssignedTo</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">7</property>
-                        <property name="name">acEfficiency</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">8</property>
-                        <property name="name">acChecker</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">9</property>
-                        <property name="name">acComment</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">acType</property>
-                    <property name="nativeName">acType</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">acExpectedDate</property>
-                    <property name="nativeName">acExpectedDate</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">acEffectiveDate</property>
-                    <property name="nativeName">acEffectiveDate</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">acCheckDate</property>
-                    <property name="nativeName">acCheckDate</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">acDescription</property>
-                    <property name="nativeName">acDescription</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">6</property>
-                    <property name="name">acAssignedTo</property>
-                    <property name="nativeName">acAssignedTo</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">7</property>
-                    <property name="name">acEfficiency</property>
-                    <property name="nativeName">acEfficiency</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">8</property>
-                    <property name="name">acChecker</property>
-                    <property name="nativeName">acChecker</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">9</property>
-                    <property name="name">acComment</property>
-                    <property name="nativeName">acComment</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/nonconformity]#:#{acType;STRING;/@acType},{acExpectedDate;STRING;/@acExpectedDate},{acEffectiveDate;STRING;/@acEffectiveDate},{acCheckDate;STRING;/@acCheckDate},{acDescription;STRING;/@acDescription},{acAssignedTo;STRING;/@acAssignedTo},{acEfficiency;STRING;/@acEfficiency},{acChecker;STRING;/@acChecker},{acComment;STRING;/@acComment}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>acType</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>acType</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>acExpectedDate</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>acExpectedDate</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>acEffectiveDate</design:name>
-              <design:position>3</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>acEffectiveDate</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>acCheckDate</design:name>
-              <design:position>4</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>acCheckDate</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>acDescription</design:name>
-              <design:position>5</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>acDescription</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>acAssignedTo</design:name>
-              <design:position>6</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>acAssignedTo</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>acEfficiency</design:name>
-              <design:position>7</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>acEfficiency</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>acChecker</design:name>
-              <design:position>8</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>acChecker</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>acComment</design:name>
-              <design:position>9</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>acComment</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="attributes" id="1653">
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">set</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">set</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">name</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">name</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">value</property>
+                    <property name="analysis">attribute</property>
                     <text-property name="heading">value</text-property>
                 </structure>
             </list-property>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -389,7 +73,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/nonconformity/attributes/attribute]#:#{set;STRING;/@set},{name;STRING;/@name},{value;STRING;/@value}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/document/attributes/attribute]#:#{set;STRING;/@set},{name;STRING;/@name},{value;STRING;/@value}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -546,62 +230,6 @@
                     <property name="analysisColumn">acEfficiency</property>
                 </structure>
                 <structure>
-                    <property name="columnName">acType</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">acType</text-property>
-                    <property name="analysisColumn">acType</property>
-                </structure>
-                <structure>
-                    <property name="columnName">acCheckDate</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">acCheckDate</text-property>
-                    <property name="analysisColumn">acCheckDate</property>
-                </structure>
-                <structure>
-                    <property name="columnName">acExpectedDate</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">acExpectedDate</text-property>
-                    <property name="analysisColumn">acExpectedDate</property>
-                </structure>
-                <structure>
-                    <property name="columnName">acComment</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">acComment</text-property>
-                    <property name="analysisColumn">acComment</property>
-                </structure>
-                <structure>
-                    <property name="columnName">acAssignedTo</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">acAssignedTo</text-property>
-                    <property name="analysisColumn">acAssignedTo</property>
-                </structure>
-                <structure>
-                    <property name="columnName">acEffectiveDate</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">acEffectiveDate</text-property>
-                    <property name="analysisColumn">acEffectiveDate</property>
-                </structure>
-                <structure>
-                    <property name="columnName">acDescription</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">acDescription</text-property>
-                    <property name="analysisColumn">acDescription</property>
-                </structure>
-                <structure>
-                    <property name="columnName">acChecker</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">acChecker</text-property>
-                    <property name="analysisColumn">acChecker</property>
-                </structure>
-                <structure>
                     <property name="columnName">clients</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
@@ -688,12 +316,23 @@
                 <structure>
                     <property name="columnName">suppliers</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">suppliers</text-property>
+                    <property name="analysisColumn">suppliers</property>
                 </structure>
                 <structure>
                     <property name="columnName">product</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">product</text-property>
+                    <property name="analysisColumn">product</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ncState</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ncState</text-property>
+                    <property name="analysisColumn">ncState</property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -761,112 +400,77 @@
                     </structure>
                     <structure>
                         <property name="position">13</property>
-                        <property name="name">acType</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">14</property>
-                        <property name="name">acCheckDate</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">15</property>
-                        <property name="name">acExpectedDate</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">16</property>
-                        <property name="name">acComment</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">17</property>
-                        <property name="name">acAssignedTo</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">18</property>
-                        <property name="name">acEffectiveDate</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">19</property>
-                        <property name="name">acDescription</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">20</property>
-                        <property name="name">acChecker</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">21</property>
                         <property name="name">clients</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">22</property>
+                        <property name="position">14</property>
                         <property name="name">modifier</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">23</property>
+                        <property name="position">15</property>
                         <property name="name">modified</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">24</property>
+                        <property name="position">16</property>
                         <property name="name">batchId</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">25</property>
+                        <property name="position">17</property>
                         <property name="name">code</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">26</property>
+                        <property name="position">18</property>
                         <property name="name">orderId</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">27</property>
+                        <property name="position">19</property>
                         <property name="name">locale</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">28</property>
+                        <property name="position">20</property>
                         <property name="name">name</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">29</property>
+                        <property name="position">21</property>
                         <property name="name">created</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">30</property>
+                        <property name="position">22</property>
                         <property name="name">creator</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">31</property>
+                        <property name="position">23</property>
                         <property name="name">description</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">32</property>
+                        <property name="position">24</property>
                         <property name="name">batchComment</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">33</property>
+                        <property name="position">25</property>
                         <property name="name">suppliers</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">34</property>
+                        <property name="position">26</property>
                         <property name="name">product</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">ncState</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -959,160 +563,111 @@
                 </structure>
                 <structure>
                     <property name="position">13</property>
-                    <property name="name">acType</property>
-                    <property name="nativeName">acType</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">14</property>
-                    <property name="name">acCheckDate</property>
-                    <property name="nativeName">acCheckDate</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">15</property>
-                    <property name="name">acExpectedDate</property>
-                    <property name="nativeName">acExpectedDate</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">16</property>
-                    <property name="name">acComment</property>
-                    <property name="nativeName">acComment</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">17</property>
-                    <property name="name">acAssignedTo</property>
-                    <property name="nativeName">acAssignedTo</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">18</property>
-                    <property name="name">acEffectiveDate</property>
-                    <property name="nativeName">acEffectiveDate</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">19</property>
-                    <property name="name">acDescription</property>
-                    <property name="nativeName">acDescription</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">20</property>
-                    <property name="name">acChecker</property>
-                    <property name="nativeName">acChecker</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">21</property>
                     <property name="name">clients</property>
                     <property name="nativeName">clients</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">22</property>
+                    <property name="position">14</property>
                     <property name="name">modifier</property>
                     <property name="nativeName">modifier</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">23</property>
+                    <property name="position">15</property>
                     <property name="name">modified</property>
                     <property name="nativeName">modified</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">24</property>
+                    <property name="position">16</property>
                     <property name="name">batchId</property>
                     <property name="nativeName">batchId</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">25</property>
+                    <property name="position">17</property>
                     <property name="name">code</property>
                     <property name="nativeName">code</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">26</property>
+                    <property name="position">18</property>
                     <property name="name">orderId</property>
                     <property name="nativeName">orderId</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">27</property>
+                    <property name="position">19</property>
                     <property name="name">locale</property>
                     <property name="nativeName">locale</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">28</property>
+                    <property name="position">20</property>
                     <property name="name">name</property>
                     <property name="nativeName">name</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">29</property>
+                    <property name="position">21</property>
                     <property name="name">created</property>
                     <property name="nativeName">created</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">30</property>
+                    <property name="position">22</property>
                     <property name="name">creator</property>
                     <property name="nativeName">creator</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">31</property>
+                    <property name="position">23</property>
                     <property name="name">description</property>
                     <property name="nativeName">description</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">32</property>
+                    <property name="position">24</property>
                     <property name="name">batchComment</property>
                     <property name="nativeName">batchComment</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">33</property>
+                    <property name="position">25</property>
                     <property name="name">suppliers</property>
                     <property name="nativeName">suppliers</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">34</property>
+                    <property name="position">26</property>
                     <property name="name">product</property>
                     <property name="nativeName">product</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">27</property>
+                    <property name="name">ncState</property>
+                    <property name="nativeName">ncState</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/product]#:#{ncCreated;STRING;/@ncCreated},{ncCost;STRING;/@ncCost},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncCause;STRING;/@ncCause},{ncCreationStep;STRING;/@ncCreationStep},{ncDetectionStep;STRING;/@ncDetectionStep},{ncPriority;STRING;/@ncPriority},{ncType;STRING;/@ncType},{ncService;STRING;/@ncService},{ncDetected;STRING;/@ncDetected},{acEfficiency;STRING;/@acEfficiency},{acType;STRING;/@acType},{acCheckDate;STRING;/@acCheckDate},{acExpectedDate;STRING;/@acExpectedDate},{acComment;STRING;/@acComment},{acAssignedTo;STRING;/@acAssignedTo},{acEffectiveDate;STRING;/@acEffectiveDate},{acDescription;STRING;/@acDescription},{acChecker;STRING;/@acChecker},{clients;STRING;/@clients},{modifier;STRING;/@modifier},{modified;STRING;/@modified},{batchId;STRING;/@batchId},{code;STRING;/@code},{orderId;STRING;/@orderId},{locale;STRING;/@locale},{name;STRING;/@name},{created;STRING;/@created},{creator;STRING;/@creator},{description;STRING;/@description},{batchComment;STRING;/@batchComment},{suppliers;STRING;/@suppliers},{product;STRING;/@product}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{ncCreated;STRING;/@ncCreated},{ncCost;STRING;/@ncCost},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncCause;STRING;/@ncCause},{ncCreationStep;STRING;/@ncCreationStep},{ncDetectionStep;STRING;/@ncDetectionStep},{ncPriority;STRING;/@ncPriority},{ncType;STRING;/@ncType},{ncService;STRING;/@ncService},{ncDetected;STRING;/@ncDetected},{acEfficiency;STRING;/@acEfficiency},{clients;STRING;/@clients},{modifier;STRING;/@modifier},{modified;STRING;/@modified},{batchId;STRING;/@batchId},{code;STRING;/@code},{orderId;STRING;/@orderId},{locale;STRING;/@locale},{name;STRING;/@name},{created;STRING;/@created},{creator;STRING;/@creator},{description;STRING;/@description},{batchComment;STRING;/@batchComment},{suppliers;STRING;/@suppliers},{product;STRING;/@product},{ncState;STRING;/@ncState}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1646,6 +1201,166 @@
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="workLog" id="1868">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">wlState</property>
+                    <text-property name="heading">wlState</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">wlComment</property>
+                    <text-property name="heading">wlComment</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">creator</property>
+                    <text-property name="heading">creator</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">created</property>
+                    <text-property name="heading">created</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">wlState</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">wlComment</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">creator</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">created</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">wlState</property>
+                    <property name="nativeName">wlState</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">wlComment</property>
+                    <property name="nativeName">wlComment</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">creator</property>
+                    <property name="nativeName">creator</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">created</property>
+                    <property name="nativeName">created</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/workLog/work]#:#{wlState;STRING;/@wlState},{wlComment;STRING;/@wlComment},{creator;STRING;/@creator},{created;STRING;/@created}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>wlState</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>wlState</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>wlComment</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>wlComment</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>creator</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>creator</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>created</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>created</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="4">
@@ -1839,17 +1554,17 @@
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
-                                        <data id="1657">
+                                        <data id="1877">
                                             <property name="dataSet">nc</property>
                                             <list-property name="boundDataColumns">
                                                 <structure>
-                                                    <property name="name">ncCreated</property>
-                                                    <text-property name="displayName">ncCreated</text-property>
-                                                    <expression name="expression" type="javascript">dataSetRow["ncCreated"]</expression>
+                                                    <property name="name">created</property>
+                                                    <text-property name="displayName">created</text-property>
+                                                    <expression name="expression" type="javascript">dataSetRow["created"]</expression>
                                                     <property name="dataType">string</property>
                                                 </structure>
                                             </list-property>
-                                            <property name="resultSetColumn">ncCreated</property>
+                                            <property name="resultSetColumn">created</property>
                                         </data>
                                     </cell>
                                 </row>
@@ -1993,6 +1708,7 @@
             <row id="1663">
                 <cell id="1704">
                     <label id="1691">
+                        <property name="style">becpg-row-header</property>
                         <text-property name="text">Type</text-property>
                     </label>
                 </cell>
@@ -2012,7 +1728,8 @@
                 </cell>
                 <cell id="1713">
                     <label id="1692">
-                        <text-property name="text">Gravité</text-property>
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Priorité</text-property>
                     </label>
                 </cell>
                 <cell id="1666">
@@ -2034,6 +1751,7 @@
                 <property name="style">becpg-row-border</property>
                 <cell id="1705">
                     <label id="1693">
+                        <property name="style">becpg-row-header</property>
                         <text-property name="text">Etape de création</text-property>
                     </label>
                 </cell>
@@ -2052,33 +1770,12 @@
                     </data>
                 </cell>
                 <cell id="1714">
-                    <label id="1696">
-                        <text-property name="text">Heure de création</text-property>
-                    </label>
-                </cell>
-                <cell id="1670">
-                    <data id="1703">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">ncCreated</property>
-                                <text-property name="displayName">ncCreated</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["ncCreated"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">ncCreated</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="1676">
-                <property name="style">becpg-row-border</property>
-                <cell id="1706">
                     <label id="1694">
+                        <property name="style">becpg-row-header</property>
                         <text-property name="text">Etape de détection</text-property>
                     </label>
                 </cell>
-                <cell id="1677">
+                <cell id="1670">
                     <data id="1700">
                         <property name="dataSet">nc</property>
                         <list-property name="boundDataColumns">
@@ -2092,23 +1789,47 @@
                         <property name="resultSetColumn">ncDetectionStep</property>
                     </data>
                 </cell>
-                <cell id="1715">
-                    <label id="1697">
-                        <text-property name="text">Heure de détection</text-property>
+            </row>
+            <row id="1676">
+                <property name="style">becpg-row-border</property>
+                <cell id="1706">
+                    <label id="1696">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Création</text-property>
                     </label>
                 </cell>
-                <cell id="1678">
-                    <data id="1702">
+                <cell id="1677">
+                    <data id="1846">
                         <property name="dataSet">nc</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">ncDetected</property>
-                                <text-property name="displayName">ncDetected</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["ncDetected"]</expression>
+                                <property name="name">created</property>
+                                <text-property name="displayName">created</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["created"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
-                        <property name="resultSetColumn">ncDetected</property>
+                        <property name="resultSetColumn">created</property>
+                    </data>
+                </cell>
+                <cell id="1715">
+                    <label id="1697">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Modification</text-property>
+                    </label>
+                </cell>
+                <cell id="1678">
+                    <data id="1847">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">modified</property>
+                                <text-property name="displayName">modified</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">modified</property>
                     </data>
                 </cell>
             </row>
@@ -2116,6 +1837,7 @@
                 <property name="style">becpg-row-border</property>
                 <cell id="1707">
                     <label id="1695">
+                        <property name="style">becpg-row-header</property>
                         <text-property name="text">Quantité non conforme</text-property>
                     </label>
                 </cell>
@@ -2135,6 +1857,7 @@
                 </cell>
                 <cell id="1716">
                     <label id="1698">
+                        <property name="style">becpg-row-header</property>
                         <text-property name="text">Unité</text-property>
                     </label>
                 </cell>
@@ -2157,6 +1880,7 @@
                 <property name="style">becpg-row-border</property>
                 <cell id="1708">
                     <label id="1722">
+                        <property name="style">becpg-row-header</property>
                         <text-property name="text">Montant (€)</text-property>
                     </label>
                 </cell>
@@ -2174,31 +1898,15 @@
                         <property name="resultSetColumn">ncCost</property>
                     </data>
                 </cell>
-                <cell id="1717">
-                    <label id="1724">
-                        <text-property name="text">Service concerné</text-property>
-                    </label>
-                </cell>
-                <cell id="1690">
-                    <data id="1729">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">ncService</property>
-                                <text-property name="displayName">ncService</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["ncService"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">ncService</property>
-                    </data>
-                </cell>
+                <cell id="1717"/>
+                <cell id="1690"/>
             </row>
             <row id="1685">
                 <property name="height">0.2824427480916031in</property>
                 <property name="style">becpg-row-border</property>
                 <cell id="1709">
                     <label id="1723">
+                        <property name="style">becpg-row-header</property>
                         <text-property name="text">Description</text-property>
                     </label>
                 </cell>
@@ -2216,31 +1924,6 @@
                             </structure>
                         </list-property>
                         <property name="resultSetColumn">description</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="1682">
-                <property name="height">0.32061068702290074in</property>
-                <property name="style">becpg-row-border</property>
-                <cell id="1710">
-                    <label id="1726">
-                        <text-property name="text">Cause de l'anomalie</text-property>
-                    </label>
-                </cell>
-                <cell id="1683">
-                    <property name="colSpan">3</property>
-                    <property name="rowSpan">1</property>
-                    <data id="1730">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">ncCause</property>
-                                <text-property name="displayName">ncCause</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["ncCause"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">ncCause</property>
                     </data>
                 </cell>
             </row>
@@ -2273,6 +1956,7 @@
             <row id="1751">
                 <cell id="1752">
                     <label id="1744">
+                        <property name="style">becpg-row-header</property>
                         <text-property name="text">Produit</text-property>
                     </label>
                 </cell>
@@ -2292,6 +1976,7 @@
                 </cell>
                 <cell id="1754">
                     <label id="1745">
+                        <property name="style">becpg-row-header</property>
                         <text-property name="text">Lot</text-property>
                     </label>
                 </cell>
@@ -2314,6 +1999,7 @@
                 <property name="style">becpg-row-border</property>
                 <cell id="1757">
                     <label id="1776">
+                        <property name="style">becpg-row-header</property>
                         <text-property name="text">N° commande</text-property>
                     </label>
                 </cell>
@@ -2333,6 +2019,7 @@
                 </cell>
                 <cell id="1759">
                     <label id="1777">
+                        <property name="style">becpg-row-header</property>
                         <text-property name="text">Client / Fournisseur</text-property>
                     </label>
                 </cell>
@@ -2367,6 +2054,7 @@
                 <property name="style">becpg-row-border</property>
                 <cell id="1762">
                     <label id="1778">
+                        <property name="style">becpg-row-header</property>
                         <text-property name="text">Observation</text-property>
                     </label>
                 </cell>
@@ -2398,216 +2086,114 @@
             <text-property name="text">Action</text-property>
         </label>
         <label id="1792"/>
-        <grid id="1793">
+        <table id="1848">
             <property name="style">becpg-table</property>
-            <column id="1794">
-                <property name="fontWeight">bold</property>
+            <property name="width">7.969465648854962in</property>
+            <property name="dataSet">workLog</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">wlState</property>
+                    <text-property name="displayName">wlState</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wlState"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wlComment</property>
+                    <text-property name="displayName">wlComment</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wlComment"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">creator</property>
+                    <text-property name="displayName">creator</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["creator"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">created</property>
+                    <text-property name="displayName">created</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["created"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="1864">
+                <property name="width">1.4045801526717556in</property>
             </column>
-            <column id="1795">
+            <column id="1865">
+                <property name="width">2.5801526717557253in</property>
                 <property name="style">becpg-col-border</property>
             </column>
-            <column id="1796">
-                <property name="style">becpg-col-border</property>
-                <property name="fontWeight">bold</property>
-            </column>
-            <column id="1797">
+            <column id="1866">
+                <property name="width">1.9923664122137406in</property>
                 <property name="style">becpg-col-border</property>
             </column>
-            <row id="1798">
-                <cell id="1799">
-                    <label id="1823">
-                        <text-property name="text">Type d'action</text-property>
-                    </label>
-                </cell>
-                <cell id="1800">
-                    <data id="1826">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">acType</property>
-                                <text-property name="displayName">acType</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["acType"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">acType</property>
-                    </data>
-                </cell>
-                <cell id="1801"/>
-                <cell id="1802"/>
-            </row>
-            <row id="1834">
-                <property name="style">becpg-row-border</property>
-                <cell id="1835">
-                    <label id="1828">
-                        <text-property name="text">Description</text-property>
-                    </label>
-                </cell>
-                <cell id="1836">
-                    <property name="colSpan">3</property>
-                    <property name="rowSpan">1</property>
-                    <data id="1827">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">acDescription</property>
-                                <text-property name="displayName">acDescription</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["acDescription"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">acDescription</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="1803">
-                <property name="style">becpg-row-border</property>
-                <cell id="1804">
-                    <label id="1824">
-                        <text-property name="text">Date prévisionnelle</text-property>
-                    </label>
-                </cell>
-                <cell id="1805">
-                    <data id="1841">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">acExpectedDate</property>
-                                <text-property name="displayName">acExpectedDate</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["acExpectedDate"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">acExpectedDate</property>
-                    </data>
-                </cell>
-                <cell id="1806">
-                    <label id="1829">
-                        <text-property name="text">Intervenant</text-property>
-                    </label>
-                </cell>
-                <cell id="1807">
-                    <data id="1843">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">acAssignedTo</property>
-                                <text-property name="displayName">acAssignedTo</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["acAssignedTo"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">acAssignedTo</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="1808">
-                <property name="style">becpg-row-border</property>
-                <cell id="1809">
-                    <label id="1825">
-                        <text-property name="text">Date de réalisation</text-property>
-                    </label>
-                </cell>
-                <cell id="1810">
-                    <data id="1840">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">acEffectiveDate</property>
-                                <text-property name="displayName">acEffectiveDate</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["acEffectiveDate"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">acEffectiveDate</property>
-                    </data>
-                </cell>
-                <cell id="1811">
-                    <label id="1830">
-                        <text-property name="text">Efficacité</text-property>
-                    </label>
-                </cell>
-                <cell id="1812">
-                    <data id="1844">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">acEfficiency</property>
-                                <text-property name="displayName">acEfficiency</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["acEfficiency"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">acEfficiency</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="1813">
-                <property name="style">becpg-row-border</property>
-                <cell id="1814">
-                    <label id="1831">
-                        <text-property name="text">Date de vérification</text-property>
-                    </label>
-                </cell>
-                <cell id="1815">
-                    <data id="1842">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">acCheckDate</property>
-                                <text-property name="displayName">acCheckDate</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["acCheckDate"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">acCheckDate</property>
-                    </data>
-                </cell>
-                <cell id="1816">
-                    <label id="1832">
-                        <text-property name="text">Vérificateur</text-property>
-                    </label>
-                </cell>
-                <cell id="1817">
-                    <data id="1839">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">acChecker</property>
-                                <text-property name="displayName">acChecker</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["acChecker"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">acChecker</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="1818">
-                <property name="style">becpg-row-border</property>
-                <cell id="1819">
-                    <label id="1833">
-                        <text-property name="text">Observation</text-property>
-                    </label>
-                </cell>
-                <cell id="1820">
-                    <data id="1845">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">acComment</property>
-                                <text-property name="displayName">acComment</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["acComment"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">acComment</property>
-                    </data>
-                </cell>
-                <cell id="1821"/>
-                <cell id="1822"/>
-            </row>
-        </grid>
+            <column id="1867">
+                <property name="width">1.9923664122137406in</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <header>
+                <row id="1849">
+                    <property name="style">becpg-row-border</property>
+                    <cell id="1850">
+                        <label id="1869">
+                            <property name="style">becpg-col-header</property>
+                            <text-property name="text">Etat</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1851">
+                        <label id="1871">
+                            <property name="style">becpg-col-header</property>
+                            <text-property name="text">Commentaire</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1852">
+                        <label id="1873">
+                            <property name="style">becpg-col-header</property>
+                            <text-property name="text">Createur</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1853">
+                        <label id="1875">
+                            <property name="style">becpg-col-header</property>
+                            <text-property name="text">Création</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="1854">
+                    <property name="style">becpg-row-border</property>
+                    <cell id="1855">
+                        <data id="1870">
+                            <property name="resultSetColumn">wlState</property>
+                        </data>
+                    </cell>
+                    <cell id="1856">
+                        <data id="1872">
+                            <property name="resultSetColumn">wlComment</property>
+                        </data>
+                    </cell>
+                    <cell id="1857">
+                        <data id="1874">
+                            <property name="resultSetColumn">creator</property>
+                        </data>
+                    </cell>
+                    <cell id="1858">
+                        <data id="1876">
+                            <property name="resultSetColumn">created</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="1859">
+                    <cell id="1860"/>
+                    <cell id="1861"/>
+                    <cell id="1862"/>
+                    <cell id="1863"/>
+                </row>
+            </footer>
+        </table>
     </body>
     <list-property name="images">
         <structure>

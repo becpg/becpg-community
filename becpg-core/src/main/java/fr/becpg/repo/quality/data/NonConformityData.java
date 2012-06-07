@@ -9,7 +9,7 @@ import fr.becpg.repo.quality.data.dataList.WorkLogDataItem;
 public class NonConformityData extends BeCPGDataObject {
 
 	private String state;
-	private String comment;
+	private String comment;	
 	
 	List<WorkLogDataItem> workLog = new ArrayList<WorkLogDataItem>();
 	
@@ -28,7 +28,7 @@ public class NonConformityData extends BeCPGDataObject {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-
+	
 	public List<WorkLogDataItem> getWorkLog() {
 		return workLog;
 	}
