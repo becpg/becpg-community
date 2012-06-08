@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 2.6.2.r262_v20110209 Build &lt;2.6.2.v20110214-1523></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
     <property name="units">in</property>
     <property name="iconFile">/templates/sidebyside_chart_listing.gif</property>
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.sidebysidechartlisting</property>
@@ -8,7 +8,7 @@
     <property name="imageDPI">96</property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="NC Data Source" id="68">
-            <property name="FILELIST">/home/querephi/Documents/beCPG/dev/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/NonConformity/NonConformity.xml</property>
+            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/exportsearch/nonconformity/ExportSearchQuery.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -58,13 +58,6 @@
                     <property name="analysisColumn">ncCreationStep</property>
                 </structure>
                 <structure>
-                    <property name="columnName">ncCreated</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncCreated</text-property>
-                    <property name="analysisColumn">ncCreated</property>
-                </structure>
-                <structure>
                     <property name="columnName">ncQuantityNc</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
@@ -86,13 +79,6 @@
                     <property name="analysisColumn">ncDetectionStep</property>
                 </structure>
                 <structure>
-                    <property name="columnName">ncDetected</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncDetected</text-property>
-                    <property name="analysisColumn">ncDetected</property>
-                </structure>
-                <structure>
                     <property name="columnName">ncCost</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
@@ -101,93 +87,104 @@
                 </structure>
                 <structure>
                     <property name="columnName">ncService</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncService</text-property>
+                    <property name="analysisColumn">ncService</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncComment</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncComment</text-property>
+                    <property name="analysisColumn">ncComment</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncCause</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncCause</text-property>
+                    <property name="analysisColumn">ncCause</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncBatchNumber</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncBatchNumber</text-property>
+                    <property name="analysisColumn">ncBatchNumber</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncOrderNb</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncOrderNb</text-property>
+                    <property name="analysisColumn">ncOrderNb</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncBatchComment</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncBatchComment</text-property>
+                    <property name="analysisColumn">ncBatchComment</property>
                 </structure>
                 <structure>
                     <property name="columnName">clients</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">clients</text-property>
+                    <property name="analysisColumn">clients</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncProductFamilly</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncProductFamilly</text-property>
+                    <property name="analysisColumn">ncProductFamilly</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncProduct</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncProduct</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acType</property>
-                    <text-property name="heading">acType</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acExpectedDate</property>
-                    <text-property name="heading">acExpectedDate</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acEffectiveDate</property>
-                    <text-property name="heading">acEffectiveDate</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acCheckDate</property>
-                    <text-property name="heading">acCheckDate</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acDescription</property>
-                    <text-property name="heading">acDescription</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acEfficiency</property>
-                    <text-property name="heading">acEfficiency</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acAssignedTo</property>
-                    <text-property name="heading">acAssignedTo</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acChecker</property>
-                    <text-property name="heading">acChecker</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">acComment</property>
-                    <text-property name="heading">acComment</text-property>
+                    <property name="analysisColumn">ncProduct</property>
                 </structure>
                 <structure>
                     <property name="columnName">creator</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">creator</text-property>
+                    <property name="analysisColumn">creator</property>
                 </structure>
                 <structure>
                     <property name="columnName">modified</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">modified</text-property>
+                    <property name="analysisColumn">modified</property>
                 </structure>
                 <structure>
                     <property name="columnName">suppliers</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">suppliers</text-property>
+                    <property name="analysisColumn">suppliers</property>
                 </structure>
                 <structure>
                     <property name="columnName">ncCostUnit</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ncCostUnit</text-property>
+                    <property name="analysisColumn">ncCostUnit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">created</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">created</text-property>
+                    <property name="analysisColumn">created</property>
                 </structure>
             </list-property>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -222,142 +219,92 @@
                     </structure>
                     <structure>
                         <property name="position">7</property>
-                        <property name="name">ncCreated</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">8</property>
                         <property name="name">ncQuantityNc</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">9</property>
+                        <property name="position">8</property>
                         <property name="name">ncQuantityNcUnit</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">10</property>
+                        <property name="position">9</property>
                         <property name="name">ncDetectionStep</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">11</property>
-                        <property name="name">ncDetected</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">12</property>
+                        <property name="position">10</property>
                         <property name="name">ncCost</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">13</property>
+                        <property name="position">11</property>
                         <property name="name">ncService</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">14</property>
+                        <property name="position">12</property>
                         <property name="name">ncComment</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">15</property>
+                        <property name="position">13</property>
                         <property name="name">ncCause</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">16</property>
+                        <property name="position">14</property>
                         <property name="name">ncBatchNumber</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">17</property>
+                        <property name="position">15</property>
                         <property name="name">ncOrderNb</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">18</property>
+                        <property name="position">16</property>
                         <property name="name">ncBatchComment</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">19</property>
+                        <property name="position">17</property>
                         <property name="name">clients</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">20</property>
+                        <property name="position">18</property>
                         <property name="name">ncProductFamilly</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">21</property>
+                        <property name="position">19</property>
                         <property name="name">ncProduct</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">22</property>
-                        <property name="name">acType</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">23</property>
-                        <property name="name">acExpectedDate</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">24</property>
-                        <property name="name">acEffectiveDate</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">25</property>
-                        <property name="name">acCheckDate</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">26</property>
-                        <property name="name">acDescription</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">27</property>
-                        <property name="name">acEfficiency</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">28</property>
-                        <property name="name">acAssignedTo</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">29</property>
-                        <property name="name">acChecker</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">30</property>
-                        <property name="name">acComment</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">31</property>
+                        <property name="position">20</property>
                         <property name="name">creator</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">32</property>
+                        <property name="position">21</property>
                         <property name="name">modified</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">33</property>
+                        <property name="position">22</property>
                         <property name="name">suppliers</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">34</property>
+                        <property name="position">23</property>
                         <property name="name">ncCostUnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">created</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -369,207 +316,171 @@
                     <property name="name">id</property>
                     <property name="nativeName">id</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
                     <property name="name">code</property>
                     <property name="nativeName">code</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">3</property>
                     <property name="name">ncType</property>
                     <property name="nativeName">ncType</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
                     <property name="name">name</property>
                     <property name="nativeName">name</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
                     <property name="name">description</property>
                     <property name="nativeName">description</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">6</property>
                     <property name="name">ncCreationStep</property>
                     <property name="nativeName">ncCreationStep</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">7</property>
-                    <property name="name">ncCreated</property>
-                    <property name="nativeName">ncCreated</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">8</property>
                     <property name="name">ncQuantityNc</property>
                     <property name="nativeName">ncQuantityNc</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">9</property>
+                    <property name="position">8</property>
                     <property name="name">ncQuantityNcUnit</property>
                     <property name="nativeName">ncQuantityNcUnit</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">10</property>
+                    <property name="position">9</property>
                     <property name="name">ncDetectionStep</property>
                     <property name="nativeName">ncDetectionStep</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">11</property>
-                    <property name="name">ncDetected</property>
-                    <property name="nativeName">ncDetected</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">12</property>
+                    <property name="position">10</property>
                     <property name="name">ncCost</property>
                     <property name="nativeName">ncCost</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">13</property>
+                    <property name="position">11</property>
                     <property name="name">ncService</property>
                     <property name="nativeName">ncService</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">14</property>
+                    <property name="position">12</property>
                     <property name="name">ncComment</property>
                     <property name="nativeName">ncComment</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">15</property>
+                    <property name="position">13</property>
                     <property name="name">ncCause</property>
                     <property name="nativeName">ncCause</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">16</property>
+                    <property name="position">14</property>
                     <property name="name">ncBatchNumber</property>
                     <property name="nativeName">ncBatchNumber</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">17</property>
+                    <property name="position">15</property>
                     <property name="name">ncOrderNb</property>
                     <property name="nativeName">ncOrderNb</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">18</property>
+                    <property name="position">16</property>
                     <property name="name">ncBatchComment</property>
                     <property name="nativeName">ncBatchComment</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">19</property>
+                    <property name="position">17</property>
                     <property name="name">clients</property>
                     <property name="nativeName">clients</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">20</property>
+                    <property name="position">18</property>
                     <property name="name">ncProductFamilly</property>
                     <property name="nativeName">ncProductFamilly</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">21</property>
+                    <property name="position">19</property>
                     <property name="name">ncProduct</property>
                     <property name="nativeName">ncProduct</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">22</property>
-                    <property name="name">acType</property>
-                    <property name="nativeName">acType</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">23</property>
-                    <property name="name">acExpectedDate</property>
-                    <property name="nativeName">acExpectedDate</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">24</property>
-                    <property name="name">acEffectiveDate</property>
-                    <property name="nativeName">acEffectiveDate</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">25</property>
-                    <property name="name">acCheckDate</property>
-                    <property name="nativeName">acCheckDate</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">26</property>
-                    <property name="name">acDescription</property>
-                    <property name="nativeName">acDescription</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">27</property>
-                    <property name="name">acEfficiency</property>
-                    <property name="nativeName">acEfficiency</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">28</property>
-                    <property name="name">acAssignedTo</property>
-                    <property name="nativeName">acAssignedTo</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">29</property>
-                    <property name="name">acChecker</property>
-                    <property name="nativeName">acChecker</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">30</property>
-                    <property name="name">acComment</property>
-                    <property name="nativeName">acComment</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">31</property>
+                    <property name="position">20</property>
                     <property name="name">creator</property>
                     <property name="nativeName">creator</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">32</property>
+                    <property name="position">21</property>
                     <property name="name">modified</property>
                     <property name="nativeName">modified</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">33</property>
+                    <property name="position">22</property>
                     <property name="name">suppliers</property>
                     <property name="nativeName">suppliers</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">34</property>
+                    <property name="position">23</property>
                     <property name="name">ncCostUnit</property>
                     <property name="nativeName">ncCostUnit</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">created</property>
+                    <property name="nativeName">created</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/export/nodes/node]#:#{id;STRING;/@id},{code;STRING;/@code},{ncType;STRING;/@ncType},{name;STRING;/@name},{description;STRING;/@description},{ncCreationStep;STRING;/@ncCreationStep},{ncCreated;STRING;/@ncCreated},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncDetectionStep;STRING;/@ncDetectionStep},{ncDetected;STRING;/@ncDetected},{ncCost;STRING;/@ncCost},{ncService;STRING;/@ncService},{ncComment;STRING;/@ncComment},{ncCause;STRING;/@ncCause},{ncBatchNumber;STRING;/@ncBatchNumber},{ncOrderNb;STRING;/@ncOrderNb},{ncBatchComment;STRING;/@ncBatchComment},{clients;STRING;/@clients},{ncProductFamilly;STRING;/@ncProductFamilly},{ncProduct;STRING;/@ncProduct},{acType;STRING;/@acType},{acExpectedDate;STRING;/@acExpectedDate},{acEffectiveDate;STRING;/@acEffectiveDate},{acCheckDate;STRING;/@acCheckDate},{acDescription;STRING;/@acDescription},{acEfficiency;STRING;/@acEfficiency},{acAssignedTo;STRING;/@acAssignedTo},{acChecker;STRING;/@acChecker},{acComment;STRING;/@acComment},{creator;STRING;/@creator},{modified;STRING;/@modified},{suppliers;STRING;/@suppliers},{ncCostUnit;STRING;/@ncCostUnit}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/export/nodes/node]#:#{id;STRING;/@id},{code;STRING;/@code},{ncType;STRING;/@ncType},{name;STRING;/@name},{description;STRING;/@description},{ncCreationStep;STRING;/@ncCreationStep},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncDetectionStep;STRING;/@ncDetectionStep},{ncCost;STRING;/@ncCost},{ncService;STRING;/@ncService},{ncComment;STRING;/@ncComment},{ncCause;STRING;/@ncCause},{ncBatchNumber;STRING;/@ncBatchNumber},{ncOrderNb;STRING;/@ncOrderNb},{ncBatchComment;STRING;/@ncBatchComment},{clients;STRING;/@clients},{ncProductFamilly;STRING;/@ncProductFamilly},{ncProduct;STRING;/@ncProduct},{creator;STRING;/@creator},{modified;STRING;/@modified},{suppliers;STRING;/@suppliers},{ncCostUnit;STRING;/@ncCostUnit},{created;STRING;/@created}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2091,15 +2002,6 @@
 </model:ChartWithoutAxes>
 ]]></xml-property>
                         <property name="outputFormat">JPG</property>
-                        <list-property name="filter">
-                            <structure>
-                                <property name="operator">not-like</property>
-                                <expression name="expr" type="javascript">row["clients"]</expression>
-                                <simple-property-list name="value1">
-                                    <value>""</value>
-                                </simple-property-list>
-                            </structure>
-                        </list-property>
                         <property name="inheritColumns">true</property>
                         <property name="dataSet">Data Set</property>
                         <property name="height">3.3392857142857144in</property>
@@ -2136,11 +2038,6 @@
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">ncCreated</property>
-                                <expression name="expression" type="javascript">dataSetRow["ncCreated"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
                                 <property name="name">ncQuantityNc</property>
                                 <expression name="expression" type="javascript">dataSetRow["ncQuantityNc"]</expression>
                                 <property name="dataType">string</property>
@@ -2156,18 +2053,8 @@
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">ncDetected</property>
-                                <expression name="expression" type="javascript">dataSetRow["ncDetected"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
                                 <property name="name">ncCost</property>
                                 <expression name="expression" type="javascript">dataSetRow["ncCost"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">ncCostUnit</property>
-                                <expression name="expression" type="javascript">dataSetRow["ncCostUnit"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
@@ -2216,51 +2103,6 @@
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">acType</property>
-                                <expression name="expression" type="javascript">dataSetRow["acType"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acExpectedDate</property>
-                                <expression name="expression" type="javascript">dataSetRow["acExpectedDate"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acEffectiveDate</property>
-                                <expression name="expression" type="javascript">dataSetRow["acEffectiveDate"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acCheckDate</property>
-                                <expression name="expression" type="javascript">dataSetRow["acCheckDate"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acDescription</property>
-                                <expression name="expression" type="javascript">dataSetRow["acDescription"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acEfficiency</property>
-                                <expression name="expression" type="javascript">dataSetRow["acEfficiency"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acAssignedTo</property>
-                                <expression name="expression" type="javascript">dataSetRow["acAssignedTo"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acChecker</property>
-                                <expression name="expression" type="javascript">dataSetRow["acChecker"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acComment</property>
-                                <expression name="expression" type="javascript">dataSetRow["acComment"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
                                 <property name="name">creator</property>
                                 <expression name="expression" type="javascript">dataSetRow["creator"]</expression>
                                 <property name="dataType">string</property>
@@ -2273,6 +2115,16 @@
                             <structure>
                                 <property name="name">suppliers</property>
                                 <expression name="expression" type="javascript">dataSetRow["suppliers"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ncCostUnit</property>
+                                <expression name="expression" type="javascript">dataSetRow["ncCostUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">created</property>
+                                <expression name="expression" type="javascript">dataSetRow["created"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
@@ -3142,15 +2994,6 @@
 </model:ChartWithoutAxes>
 ]]></xml-property>
                         <property name="outputFormat">JPG</property>
-                        <list-property name="filter">
-                            <structure>
-                                <property name="operator">not-like</property>
-                                <expression name="expr" type="javascript">row["suppliers"]</expression>
-                                <simple-property-list name="value1">
-                                    <value>""</value>
-                                </simple-property-list>
-                            </structure>
-                        </list-property>
                         <property name="inheritColumns">true</property>
                         <property name="pageBreakBefore">auto</property>
                         <property name="dataSet">Data Set</property>
@@ -3188,11 +3031,6 @@
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">ncCreated</property>
-                                <expression name="expression" type="javascript">dataSetRow["ncCreated"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
                                 <property name="name">ncQuantityNc</property>
                                 <expression name="expression" type="javascript">dataSetRow["ncQuantityNc"]</expression>
                                 <property name="dataType">string</property>
@@ -3208,18 +3046,8 @@
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">ncDetected</property>
-                                <expression name="expression" type="javascript">dataSetRow["ncDetected"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
                                 <property name="name">ncCost</property>
                                 <expression name="expression" type="javascript">dataSetRow["ncCost"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">ncCostUnit</property>
-                                <expression name="expression" type="javascript">dataSetRow["ncCostUnit"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
@@ -3268,51 +3096,6 @@
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">acType</property>
-                                <expression name="expression" type="javascript">dataSetRow["acType"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acExpectedDate</property>
-                                <expression name="expression" type="javascript">dataSetRow["acExpectedDate"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acEffectiveDate</property>
-                                <expression name="expression" type="javascript">dataSetRow["acEffectiveDate"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acCheckDate</property>
-                                <expression name="expression" type="javascript">dataSetRow["acCheckDate"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acDescription</property>
-                                <expression name="expression" type="javascript">dataSetRow["acDescription"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acEfficiency</property>
-                                <expression name="expression" type="javascript">dataSetRow["acEfficiency"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acAssignedTo</property>
-                                <expression name="expression" type="javascript">dataSetRow["acAssignedTo"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acChecker</property>
-                                <expression name="expression" type="javascript">dataSetRow["acChecker"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">acComment</property>
-                                <expression name="expression" type="javascript">dataSetRow["acComment"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
                                 <property name="name">creator</property>
                                 <expression name="expression" type="javascript">dataSetRow["creator"]</expression>
                                 <property name="dataType">string</property>
@@ -3325,6 +3108,16 @@
                             <structure>
                                 <property name="name">suppliers</property>
                                 <expression name="expression" type="javascript">dataSetRow["suppliers"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ncCostUnit</property>
+                                <expression name="expression" type="javascript">dataSetRow["ncCostUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">created</property>
+                                <expression name="expression" type="javascript">dataSetRow["created"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
@@ -4323,7 +4116,7 @@
           <Visible>false</Visible>
         </Label>
         <DataDefinition>
-          <Definition>BirtDateTime.week(row[&quot;ncDetected&quot;])</Definition>
+          <Definition>BirtDateTime.week(row[&quot;created&quot;])</Definition>
         </DataDefinition>
         <SeriesIdentifier></SeriesIdentifier>
         <DataPoint>
@@ -4485,11 +4278,6 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">ncCreated</property>
-                    <expression name="expression" type="javascript">dataSetRow["ncCreated"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
                     <property name="name">ncQuantityNc</property>
                     <expression name="expression" type="javascript">dataSetRow["ncQuantityNc"]</expression>
                     <property name="dataType">string</property>
@@ -4505,18 +4293,8 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">ncDetected</property>
-                    <expression name="expression" type="javascript">dataSetRow["ncDetected"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
                     <property name="name">ncCost</property>
                     <expression name="expression" type="javascript">dataSetRow["ncCost"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">ncCostUnit</property>
-                    <expression name="expression" type="javascript">dataSetRow["ncCostUnit"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -4565,51 +4343,6 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">acType</property>
-                    <expression name="expression" type="javascript">dataSetRow["acType"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acExpectedDate</property>
-                    <expression name="expression" type="javascript">dataSetRow["acExpectedDate"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acEffectiveDate</property>
-                    <expression name="expression" type="javascript">dataSetRow["acEffectiveDate"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acCheckDate</property>
-                    <expression name="expression" type="javascript">dataSetRow["acCheckDate"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acDescription</property>
-                    <expression name="expression" type="javascript">dataSetRow["acDescription"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acEfficiency</property>
-                    <expression name="expression" type="javascript">dataSetRow["acEfficiency"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acAssignedTo</property>
-                    <expression name="expression" type="javascript">dataSetRow["acAssignedTo"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acChecker</property>
-                    <expression name="expression" type="javascript">dataSetRow["acChecker"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acComment</property>
-                    <expression name="expression" type="javascript">dataSetRow["acComment"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
                     <property name="name">creator</property>
                     <expression name="expression" type="javascript">dataSetRow["creator"]</expression>
                     <property name="dataType">string</property>
@@ -4622,6 +4355,16 @@
                 <structure>
                     <property name="name">suppliers</property>
                     <expression name="expression" type="javascript">dataSetRow["suppliers"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ncCostUnit</property>
+                    <expression name="expression" type="javascript">dataSetRow["ncCostUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">created</property>
+                    <expression name="expression" type="javascript">dataSetRow["created"]</expression>
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
@@ -5598,7 +5341,7 @@
           <Visible>false</Visible>
         </Label>
         <DataDefinition>
-          <Definition>BirtDateTime.week(row[&quot;ncDetected&quot;])</Definition>
+          <Definition>BirtDateTime.week(row[&quot;created&quot;])</Definition>
         </DataDefinition>
         <SeriesIdentifier></SeriesIdentifier>
         <DataPoint>
@@ -5615,7 +5358,9 @@
         <GroupType>Text</GroupType>
         <AggregateExpression>Sum</AggregateExpression>
       </Grouping>
-      <SortKey/>
+      <SortKey>
+        <Definition>BirtDateTime.week(row[&quot;created&quot;])</Definition>
+      </SortKey>
     </SeriesDefinitions>
     <Orientation>Horizontal</Orientation>
     <LineAttributes>
@@ -5761,11 +5506,6 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">ncCreated</property>
-                    <expression name="expression" type="javascript">dataSetRow["ncCreated"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
                     <property name="name">ncQuantityNc</property>
                     <expression name="expression" type="javascript">dataSetRow["ncQuantityNc"]</expression>
                     <property name="dataType">string</property>
@@ -5781,18 +5521,8 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">ncDetected</property>
-                    <expression name="expression" type="javascript">dataSetRow["ncDetected"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
                     <property name="name">ncCost</property>
                     <expression name="expression" type="javascript">dataSetRow["ncCost"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">ncCostUnit</property>
-                    <expression name="expression" type="javascript">dataSetRow["ncCostUnit"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -5841,51 +5571,6 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">acType</property>
-                    <expression name="expression" type="javascript">dataSetRow["acType"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acExpectedDate</property>
-                    <expression name="expression" type="javascript">dataSetRow["acExpectedDate"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acEffectiveDate</property>
-                    <expression name="expression" type="javascript">dataSetRow["acEffectiveDate"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acCheckDate</property>
-                    <expression name="expression" type="javascript">dataSetRow["acCheckDate"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acDescription</property>
-                    <expression name="expression" type="javascript">dataSetRow["acDescription"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acEfficiency</property>
-                    <expression name="expression" type="javascript">dataSetRow["acEfficiency"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acAssignedTo</property>
-                    <expression name="expression" type="javascript">dataSetRow["acAssignedTo"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acChecker</property>
-                    <expression name="expression" type="javascript">dataSetRow["acChecker"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">acComment</property>
-                    <expression name="expression" type="javascript">dataSetRow["acComment"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
                     <property name="name">creator</property>
                     <expression name="expression" type="javascript">dataSetRow["creator"]</expression>
                     <property name="dataType">string</property>
@@ -5898,6 +5583,16 @@
                 <structure>
                     <property name="name">suppliers</property>
                     <expression name="expression" type="javascript">dataSetRow["suppliers"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ncCostUnit</property>
+                    <expression name="expression" type="javascript">dataSetRow["ncCostUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">created</property>
+                    <expression name="expression" type="javascript">dataSetRow["created"]</expression>
                     <property name="dataType">string</property>
                 </structure>
             </list-property>

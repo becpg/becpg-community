@@ -59,8 +59,20 @@ public class NonConformityPolicies implements NodeServicePolicies.OnUpdateProper
 
 		String beforeState = (String) before.get(QualityModel.PROP_NC_STATE);
 		String afterState = (String) after.get(QualityModel.PROP_NC_STATE);
-
+		
+		String beforeComment = (String) before.get(QualityModel.PROP_NC_COMMENT);
+		String afterComment = (String) after.get(QualityModel.PROP_NC_COMMENT);
+		
+		boolean addWorkLog = false;
+		
 		if (afterState != null && !afterState.isEmpty() && !afterState.equals(beforeState)) {
+			addWorkLog = true;
+		}
+		else if (afterComment != null && !afterComment.isEmpty() && !afterComment.equals(beforeComment)) {
+			addWorkLog = true;
+		}
+		
+		if(addWorkLog){
 
 			NonConformityData ncData = nonConformityDAO.find(nodeRef);
 

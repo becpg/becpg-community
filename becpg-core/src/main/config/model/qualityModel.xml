@@ -26,6 +26,7 @@
 		<constraint name="qa:ncStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>Nouveau</value>
 					<value>En cours</value>
 					<value>À analyser</value>

@@ -30,14 +30,10 @@
 					
 					<!-- Product -->
 					<show id="qa:product"  force="true"/>
-					<show id="qa:productHierarchy1" for-mode="view"/>
-					<show id="qa:productHierarchy2" for-mode="view"/>
 					
 					<!-- auditable -->
-					<show id="cm:creator" for-mode="view" />
-					<show id="cm:created" for-mode="view" />
-					<show id="cm:modifier" for-mode="view" />
-					<show id="cm:modified" for-mode="view" />
+					<show id="cm:created"/>
+					<show id="cm:modified"/>
 					
 				</field-visibility>
 				<appearance>
@@ -47,7 +43,10 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="qa:ncType" set="mainInfo" />
 					<field id="qa:ncPriority" set="mainInfo" >
-						<control template="/org/alfresco/components/form/controls/workflow/priority.ftl"/>
+						<control
+							template="/fr/becpg/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,1|priority.high,2|priority.medium,3|priority.low</control-param>
+						</control>
 					</field>
 					<field id="qa:ncState" set="mainInfo" />
 					<field id="qa:ncCreationStep" set="mainInfo" />
@@ -83,12 +82,13 @@
 					</field>
 
 					<!-- audit -->
-					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />					
-					<field id="cm:creator" set="audit" />
-					<field id="cm:created" set="audit" />
-					<field id="cm:modifier" set="audit" />
-					<field id="cm:modified" set="audit" />			
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"/>
+					<field id="cm:created" set="audit">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
+					<field id="cm:modified" set="audit">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
 					
 				</appearance>
 			</form>
