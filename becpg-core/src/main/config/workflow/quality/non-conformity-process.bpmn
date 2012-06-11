@@ -101,7 +101,7 @@ task.setVariable('ncwf_ncState', nc.properties["qa:ncState"]);
     <parallelGateway id="parallelgateway2" name="Parallel Gateway"></parallelGateway>
     <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
     <exclusiveGateway id="exclusivegateway3" name="Exclusive Gateway"></exclusiveGateway>
-    <serviceTask id="initialiseNCTask" name="Initialisation NC" activiti:class="fr.becpg.repo.workflow.activiti.nc.CreateNC"></serviceTask>
+    <serviceTask id="initialiseNCTask" name="Initialisation NC" activiti:delegateExpression="${CreateNC}"></serviceTask>
     <sequenceFlow id="flow23" name="" sourceRef="corrActionTask" targetRef="checkTask"></sequenceFlow>
     <sequenceFlow id="flow32" name="" sourceRef="parallelgateway1" targetRef="exclusivegateway1"></sequenceFlow>
     <sequenceFlow id="flow33" name="" sourceRef="parallelgateway1" targetRef="corrActionTask"></sequenceFlow>

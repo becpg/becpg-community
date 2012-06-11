@@ -462,23 +462,26 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 		 */
 		NodeRef nonConformityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
 		NodeRef nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(nonConformityFolderNodeRef).getParentRef();
+		NodeRef productFolderNodeRef = nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
 		NodeRef rawMaterial1FolderNodeRef = nodeService.getPrimaryParent(rawMaterial1NodeRef).getParentRef();
-		assertEquals("Check NC moved in product", rawMaterial1FolderNodeRef, nonConformitiesFolderNodeRef);
+		assertEquals("Check NC moved in product", rawMaterial1FolderNodeRef, productFolderNodeRef);
 
 		// remove assoc
 		nodeService.removeAssociation(ncNodeRef, rawMaterial1NodeRef, QualityModel.ASSOC_PRODUCT);
 
 		nonConformityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
+		nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(nonConformityFolderNodeRef).getParentRef();
 		assertEquals(
 				"/{http://www.alfresco.org/model/application/1.0}company_home/{http://www.alfresco.org/model/content/1.0}Quality/{http://www.alfresco.org/model/content/1.0}NonConformities",
-				nodeService.getPath(nonConformityFolderNodeRef).toString());
+				nodeService.getPath(nonConformitiesFolderNodeRef).toString());
 
 		// create assoc rawMaterial 2
 		nodeService.createAssociation(ncNodeRef, rawMaterial2NodeRef, QualityModel.ASSOC_PRODUCT);
 
 		nonConformityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
 		nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(nonConformityFolderNodeRef).getParentRef();
+		productFolderNodeRef = nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
 		NodeRef rawMaterial2FolderNodeRef = nodeService.getPrimaryParent(rawMaterial2NodeRef).getParentRef();
-		assertEquals("Check NC moved in product", rawMaterial2FolderNodeRef, nonConformitiesFolderNodeRef);
+		assertEquals("Check NC moved in product", rawMaterial2FolderNodeRef, productFolderNodeRef);
 	}
 }

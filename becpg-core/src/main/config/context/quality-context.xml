@@ -70,4 +70,11 @@
 		<property name="extractor" ref="defaultNonConformityReportExtractor"/>
 		<property name="typeName" value="nc"/>
 	</bean>
+	
+	<!-- Workflow -->
+	<bean id="CreateNC" parent="baseJavaDelegate" class="fr.becpg.repo.workflow.activiti.nc.CreateNC">
+		<property name="nodeService" ref="nodeService"/>
+    	<property name="fileFolderService" ref="fileFolderService"/>
+    	<property name="nonConformityService" ref="nonConformityService"/>
+    </bean>
 </beans>

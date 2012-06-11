@@ -106,7 +106,7 @@ for each (user in usersToNotify)
     <endEvent id="endevent1" name="End"></endEvent>
     <startEvent id="startevent1" name="Start" activiti:formKey="ncwf:startTask"></startEvent>
     <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway" default="flow4"></exclusiveGateway>
-    <serviceTask id="initialiseNCTask" name="Initialisation NC" activiti:class="fr.becpg.repo.workflow.activiti.nc.CreateNC"></serviceTask>
+    <serviceTask id="initialiseNCTask" name="Initialisation NC" activiti:delegateExpression="${CreateNC}"></serviceTask>
     <sequenceFlow id="flow3" name="" sourceRef="workTask" targetRef="exclusivegateway1"></sequenceFlow>
     <sequenceFlow id="flow4" name="" sourceRef="exclusivegateway1" targetRef="workTask"></sequenceFlow>
     <sequenceFlow id="flow5" name="" sourceRef="exclusivegateway1" targetRef="endevent1">

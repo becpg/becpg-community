@@ -10,17 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.delegate.DelegateExecution;
-import org.activiti.engine.delegate.DelegateTask;
-import org.activiti.engine.delegate.JavaDelegate;
-import org.activiti.engine.delegate.TaskListener;
-import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
-import org.activiti.engine.impl.context.Context;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
-import org.alfresco.repo.workflow.activiti.script.ActivitiScriptBase;
+import org.alfresco.repo.workflow.activiti.BaseJavaDelegate;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -43,41 +38,31 @@ import fr.becpg.repo.quality.NonConformityService;
  * @author "Philippe QUÉRÉ <philippe.quere@becpg.fr>"
  * 
  */
-public class CreateNC extends ActivitiScriptBase implements JavaDelegate {
-
-	private static String BEAN_NON_CONFORMITY_SERVICE = "nonConformityService";
+public class CreateNC extends BaseJavaDelegate {
 
 	private static Log logger = LogFactory.getLog(CreateNC.class);
+
+	private static final String CM_URL = NamespaceService.CONTENT_MODEL_1_0_URI;
 
 	private NodeService nodeService;
 	private FileFolderService fileFolderService;
 	private NonConformityService nonConformityService;
 
-	private static final String CM_URL = NamespaceService.CONTENT_MODEL_1_0_URI;
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
 
-	protected Object getService(String key) {
-        ProcessEngineConfigurationImpl config = Context.getProcessEngineConfiguration();
-        if (config != null) {
-            // Fetch the registry that is injected in the activiti spring-configuration
-        	Object service = config.getBeans().get(key);
-            if (service == null) {
-                throw new RuntimeException(
-                            "Service not present in ProcessEngineConfiguration beans, expected ServiceRegistry with key" +
-                            		key);
-            }
-            return service;
-        }
-        throw new IllegalStateException("No ProcessEngineCOnfiguration found in active context");
-    }
+	public void setFileFolderService(FileFolderService fileFolderService) {
+		this.fileFolderService = fileFolderService;
+	}
+
+	public void setNonConformityService(NonConformityService nonConformityService) {
+		this.nonConformityService = nonConformityService;
+	}
 
 	@Override
 	public void execute(final DelegateExecution task) throws Exception {
-		
-		this.nodeService = getServiceRegistry().getNodeService();
-		this.fileFolderService = getServiceRegistry().getFileFolderService();
-		//this.nonConformityService = (NonConformityService)ApplicationContextHelper.getApplicationContext().getBean(BEAN_NON_CONFORMITY_SERVICE);
-		this.nonConformityService = (NonConformityService)getService(BEAN_NON_CONFORMITY_SERVICE);
-		
+
 		final NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
 
 		RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
@@ -90,7 +75,7 @@ public class CreateNC extends ActivitiScriptBase implements JavaDelegate {
 					ActivitiScriptNode node = (ActivitiScriptNode) task.getVariable("ncwf_product");
 					if (node != null) {
 						productNodeRef = node.getNodeRef();
-					}										
+					}
 
 					NodeRef parentNodeRef = nonConformityService.getStorageFolder(productNodeRef);
 
@@ -184,5 +169,5 @@ public class CreateNC extends ActivitiScriptBase implements JavaDelegate {
 
 		};
 		AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
-	}   
+	}
 }
