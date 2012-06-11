@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductVisitor;
@@ -162,11 +161,10 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			MLText mlTextILL = new MLText();			
 			mlTextILL.addValue(Locale.getDefault(), compositeIng.getIngLabeling(Locale.getDefault()));
 
-			for(String l : RepoConsts.REPORT_LOCALES){
-				Locale locale = new Locale(l);
+			for(Locale locale : compositeIng.getLocales()){
 				mlTextILL.addValue(locale, compositeIng.getIngLabeling(locale));
 			}
-			ingLabelingList.add(new IngLabelingListDataItem(null, compositeIng.getName(), mlTextILL, Boolean.FALSE));
+			ingLabelingList.add(new IngLabelingListDataItem(null, compositeIng.getIng(), mlTextILL, Boolean.FALSE));
 		}
 		
 		// manual listItem
@@ -446,15 +444,8 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		
 		List<CompoListDataItem> compoList = productData.getCompoList();
 		List<CompositeIng> compositeIngList = new ArrayList<CompositeIng>();
-		MLText mlName = new MLText();
-		mlName.addValue(Locale.getDefault(), NO_GRP);
-		
-		for(String l : RepoConsts.REPORT_LOCALES){
-			Locale locale = new Locale(l);
-			mlName.addValue(locale, NO_GRP);
-		}
-		
-		CompositeIng defaultCompositeIng = new CompositeIng(NO_GRP, mlName);		
+				
+		CompositeIng defaultCompositeIng = new CompositeIng(null, null);		
 		
 		if(compoList != null){
 			
@@ -483,7 +474,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 					}				
 					index = lastChild;
 				}
-				else if(declarationType == DeclarationType.DECLARE && compoListDataItem.getDeclGrp() != null && !compoListDataItem.getDeclGrp().isEmpty()){
+				else if(declarationType == DeclarationType.DECLARE && compoListDataItem.getDeclGrp() != null && compoListDataItem.getDeclGrp() != null){
 					int parentIndex = index;
 					//int lastChild = index + 1;
 					int lastChild = index;
@@ -499,7 +490,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 					defaultCompositeIng = calculateILLOfCompositeIng(defaultCompositeIng, compoListDataItem);
 				}
 				else if(declarationType == DeclarationType.DECLARE){
-					logger.trace(String.format("calculateILL - DECLARE : defaultCompositeIng: %s - current product: %s", defaultCompositeIng.getName(), nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME)));
+					logger.trace("calculateILL - DECLARE : defaultCompositeIng: " +  defaultCompositeIng.getIng() + " - current product: " + nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
 					defaultCompositeIng = calculateILLOfCompositeIng(defaultCompositeIng, compoListDataItem);
 				}		
 			}
@@ -523,24 +514,15 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	private CompositeIng calculateILLOfCompositeIng(List<CompoListDataItem> compoList, int parentIndex, int lastChild) throws FormulateException{
 		
 		CompoListDataItem compoListDataItem =  compoList.get(parentIndex);
-		String ingName = null;
-		if(compoListDataItem.getDeclGrp().isEmpty()){
-			ingName = (String)nodeService.getProperty(compoListDataItem.getProduct(), BeCPGModel.PROP_PRODUCT_LEGALNAME);
+		NodeRef grpNodeRef = null;
+		if(compoListDataItem.getDeclGrp() != null){
+			grpNodeRef = compoListDataItem.getDeclGrp();
 		}
 		else{
-			ingName = compoListDataItem.getDeclGrp();
+			grpNodeRef = compoListDataItem.getProduct();			
 		}
 		
-		//TODO manage mltext in product
-		MLText mlName = new MLText();
-		mlName.addValue(Locale.getDefault(), ingName);
-
-		for(String l : RepoConsts.REPORT_LOCALES){
-			Locale locale = new Locale(l);
-			mlName.addValue(locale, ingName);
-		}
-		
-		CompositeIng compositeIng = new CompositeIng(ingName, mlName);			
+		CompositeIng compositeIng = new CompositeIng(grpNodeRef, (MLText)mlNodeService.getProperty(grpNodeRef, BeCPGModel.PROP_PRODUCT_LEGALNAME));			
 		
 		int startIndex = parentIndex;
 		//localSemiFinished
@@ -578,16 +560,8 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		}
 		else if(declarationType == DeclarationType.DETAIL){
 			
-			//TODO manage mltext in product
-			MLText mlName = new MLText();
-			mlName.addValue(Locale.getDefault(), part.getLegalName());
-
-			for(String l : RepoConsts.REPORT_LOCALES){
-				Locale locale = new Locale(l);
-				mlName.addValue(locale, part.getLegalName());
-			}
-			
-			compositeIng = new CompositeIng(part.getLegalName(), mlName);
+			MLText mlText =  (MLText)mlNodeService.getProperty(part.getNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
+			compositeIng = new CompositeIng(part.getNodeRef(), mlText);
 			parentIng.add(compositeIng, isDeclared);			
 		}
 		
@@ -596,15 +570,14 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			for(IngListDataItem ingListDataItem : part.getIngList()){						
 				
 				//Look for ing
-				NodeRef ingNodeRef = ingListDataItem.getIng();
-				String ingName =  (String)nodeService.getProperty(ingNodeRef, ContentModel.PROP_NAME);			
+				NodeRef ingNodeRef = ingListDataItem.getIng();			
 							
-				IngItem ingItem = (compositeIng.get(ingName, isDeclared)  instanceof IngItem) ? (IngItem)compositeIng.get(ingName, isDeclared) : null;						
+				IngItem ingItem = (compositeIng.get(ingNodeRef, isDeclared)  instanceof IngItem) ? (IngItem)compositeIng.get(ingNodeRef, isDeclared) : null;						
 				
 				if(ingItem == null){
 					
 					MLText mlName = (MLText)mlNodeService.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
-					ingItem =new IngItem(ingName, mlName, 0d);
+					ingItem =new IngItem(ingNodeRef, mlName, 0d);
 					compositeIng.add(ingItem, isDeclared);
 				}															
 				
@@ -664,7 +637,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 * @return
 	 */
 	private List<IngListDataItem> getILToUpdate(NodeRef productNodeRef, Map<NodeRef, IngListDataItem> ingMap){
-				
+		
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
 		
 		if(listContainerNodeRef != null){

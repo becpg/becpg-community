@@ -106,7 +106,7 @@
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">http://localhost:8080/alfresco/service/becpg/report/datasource?nodeRef=workspace://SpacesStore/3675d035-705a-4ac4-9978-fe8612b037a7</property>
+            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -1267,173 +1267,6 @@
                 </ex-property>
             </list-property>
         </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="ingLabelingList" id="1053">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">illGrp_fr</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">illGrp_fr</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">illValue_fr</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">illValue_fr</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">illGrp_en</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">illGrp_en</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">illValue_en</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">illValue_en</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">illGrp_ru</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">illGrp_ru</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">illValue_ru</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">illValue_ru</text-property>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">illGrp_fr</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">illValue_fr</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">illGrp_en</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">illValue_en</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">illGrp_ru</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">6</property>
-                        <property name="name">illValue_ru</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">illGrp_fr</property>
-                    <property name="nativeName">illGrp_fr</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">illValue_fr</property>
-                    <property name="nativeName">illValue_fr</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">illGrp_en</property>
-                    <property name="nativeName">illGrp_en</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">illValue_en</property>
-                    <property name="nativeName">illValue_en</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">illGrp_ru</property>
-                    <property name="nativeName">illGrp_ru</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">6</property>
-                    <property name="name">illValue_ru</property>
-                    <property name="nativeName">illValue_ru</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLabelingList/ingLabeling]#:#{illGrp_fr;STRING;/@illGrp_fr},{illValue_fr;STRING;/@illValue_fr},{illGrp_en;STRING;/@illGrp_en},{illValue_en;STRING;/@illValue_en},{illGrp_ru;STRING;/@illGrp_ru},{illValue_ru;STRING;/@illValue_ru}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>illGrp_fr</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>illGrp_fr</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>illValue_fr</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>illValue_fr</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="CostList" id="1254">
             <list-property name="columnHints">
                 <structure>
@@ -1724,6 +1557,138 @@
           </design:attributes>
           <design:usageHints>
             <design:label>dateTimeValue</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="ingLabelingList" id="1656">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">language</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">language</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">illGrp</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">illGrp</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">illValue</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">illValue</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">language</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">illGrp</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">illValue</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">language</property>
+                    <property name="nativeName">language</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">illGrp</property>
+                    <property name="nativeName">illGrp</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">illValue</property>
+                    <property name="nativeName">illValue</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLabelingList/ingLabeling]#:#{language;STRING;/@language},{illGrp;STRING;/@illGrp},{illValue;STRING;/@illValue}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>language</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>language</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>illGrp</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>illGrp</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>illValue</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>illValue</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -2619,979 +2584,6 @@
                     <label id="1433"/>
                 </cell>
             </row>
-            <row id="1369">
-                <cell id="1370">
-                    <extended-item extensionName="Chart" id="762">
-                        <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithoutAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
-  <Version>2.5.1</Version>
-  <Type>Pie Chart</Type>
-  <SubType>Standard</SubType>
-  <Description>
-    <Value></Value>
-    <Font>
-      <Alignment/>
-    </Font>
-  </Description>
-  <Block>
-    <Children xsi:type="layout:TitleBlock">
-      <Bounds>
-        <Left>0.0</Left>
-        <Top>0.0</Top>
-        <Width>0.0</Width>
-        <Height>0.0</Height>
-      </Bounds>
-      <Insets>
-        <Top>3.0</Top>
-        <Left>3.0</Left>
-        <Bottom>3.0</Bottom>
-        <Right>3.0</Right>
-      </Insets>
-      <Row>-1</Row>
-      <Column>-1</Column>
-      <Rowspan>-1</Rowspan>
-      <Columnspan>-1</Columnspan>
-      <Outline>
-        <Style>Solid</Style>
-        <Thickness>1</Thickness>
-        <Color>
-          <Transparency>255</Transparency>
-          <Red>0</Red>
-          <Green>0</Green>
-          <Blue>0</Blue>
-        </Color>
-        <Visible>false</Visible>
-      </Outline>
-      <Background xsi:type="attribute:ColorDefinition">
-        <Transparency>0</Transparency>
-        <Red>255</Red>
-        <Green>255</Green>
-        <Blue>255</Blue>
-      </Background>
-      <Visible>true</Visible>
-      <Label>
-        <Caption>
-          <Value>Equilibre calorique</Value>
-          <Font>
-            <Size>16.0</Size>
-            <Bold>true</Bold>
-            <Alignment>
-              <horizontalAlignment>Center</horizontalAlignment>
-              <verticalAlignment>Center</verticalAlignment>
-            </Alignment>
-          </Font>
-        </Caption>
-        <Background xsi:type="attribute:ColorDefinition">
-          <Transparency>0</Transparency>
-          <Red>255</Red>
-          <Green>255</Green>
-          <Blue>255</Blue>
-        </Background>
-        <Outline>
-          <Style>Solid</Style>
-          <Thickness>1</Thickness>
-          <Color>
-            <Transparency>255</Transparency>
-            <Red>0</Red>
-            <Green>0</Green>
-            <Blue>0</Blue>
-          </Color>
-        </Outline>
-        <Insets>
-          <Top>0.0</Top>
-          <Left>2.0</Left>
-          <Bottom>0.0</Bottom>
-          <Right>3.0</Right>
-        </Insets>
-        <Visible>true</Visible>
-      </Label>
-    </Children>
-    <Children xsi:type="layout:Plot">
-      <Bounds>
-        <Left>0.0</Left>
-        <Top>0.0</Top>
-        <Width>0.0</Width>
-        <Height>0.0</Height>
-      </Bounds>
-      <Stretch>Horizontal</Stretch>
-      <Insets>
-        <Top>3.0</Top>
-        <Left>3.0</Left>
-        <Bottom>3.0</Bottom>
-        <Right>3.0</Right>
-      </Insets>
-      <Row>-1</Row>
-      <Column>-1</Column>
-      <Rowspan>-1</Rowspan>
-      <Columnspan>-1</Columnspan>
-      <Outline>
-        <Style>Solid</Style>
-        <Thickness>1</Thickness>
-        <Color>
-          <Transparency>255</Transparency>
-          <Red>0</Red>
-          <Green>0</Green>
-          <Blue>0</Blue>
-        </Color>
-        <Visible>false</Visible>
-      </Outline>
-      <Visible>true</Visible>
-      <HorizontalSpacing>5</HorizontalSpacing>
-      <VerticalSpacing>5</VerticalSpacing>
-      <ClientArea>
-        <Outline>
-          <Style>Solid</Style>
-          <Thickness>0</Thickness>
-          <Color>
-            <Transparency>255</Transparency>
-            <Red>0</Red>
-            <Green>0</Green>
-            <Blue>0</Blue>
-          </Color>
-          <Visible>false</Visible>
-        </Outline>
-        <Insets>
-          <Top>0.0</Top>
-          <Left>0.0</Left>
-          <Bottom>0.0</Bottom>
-          <Right>0.0</Right>
-        </Insets>
-      </ClientArea>
-    </Children>
-    <Children xsi:type="layout:Legend">
-      <Bounds>
-        <Left>0.0</Left>
-        <Top>0.0</Top>
-        <Width>0.0</Width>
-        <Height>0.0</Height>
-      </Bounds>
-      <Insets>
-        <Top>3.0</Top>
-        <Left>3.0</Left>
-        <Bottom>3.0</Bottom>
-        <Right>3.0</Right>
-      </Insets>
-      <Row>-1</Row>
-      <Column>-1</Column>
-      <Rowspan>-1</Rowspan>
-      <Columnspan>-1</Columnspan>
-      <Outline>
-        <Style>Solid</Style>
-        <Thickness>1</Thickness>
-        <Color>
-          <Transparency>255</Transparency>
-          <Red>0</Red>
-          <Green>0</Green>
-          <Blue>0</Blue>
-        </Color>
-        <Visible>false</Visible>
-      </Outline>
-      <Visible>false</Visible>
-      <ClientArea>
-        <Outline>
-          <Style>Solid</Style>
-          <Thickness>0</Thickness>
-          <Color>
-            <Transparency>255</Transparency>
-            <Red>0</Red>
-            <Green>0</Green>
-            <Blue>0</Blue>
-          </Color>
-          <Visible>false</Visible>
-        </Outline>
-        <Insets>
-          <Top>2.0</Top>
-          <Left>2.0</Left>
-          <Bottom>2.0</Bottom>
-          <Right>2.0</Right>
-        </Insets>
-      </ClientArea>
-      <Text>
-        <Value></Value>
-        <Font>
-          <Alignment/>
-        </Font>
-      </Text>
-      <Orientation>Vertical</Orientation>
-      <Direction>Top_Bottom</Direction>
-      <Separator>
-        <Style>Solid</Style>
-        <Thickness>1</Thickness>
-        <Color>
-          <Transparency>255</Transparency>
-          <Red>0</Red>
-          <Green>0</Green>
-          <Blue>0</Blue>
-        </Color>
-        <Visible>true</Visible>
-      </Separator>
-      <Position>Right</Position>
-      <ItemType>Categories</ItemType>
-      <Title>
-        <Caption>
-          <Value></Value>
-          <Font>
-            <Alignment/>
-          </Font>
-        </Caption>
-        <Background xsi:type="attribute:ColorDefinition">
-          <Transparency>0</Transparency>
-          <Red>255</Red>
-          <Green>255</Green>
-          <Blue>255</Blue>
-        </Background>
-        <Outline>
-          <Style>Solid</Style>
-          <Thickness>1</Thickness>
-          <Color>
-            <Transparency>255</Transparency>
-            <Red>0</Red>
-            <Green>0</Green>
-            <Blue>0</Blue>
-          </Color>
-          <Visible>false</Visible>
-        </Outline>
-        <Insets>
-          <Top>0.0</Top>
-          <Left>2.0</Left>
-          <Bottom>0.0</Bottom>
-          <Right>3.0</Right>
-        </Insets>
-        <Visible>false</Visible>
-      </Title>
-      <TitlePosition>Above</TitlePosition>
-    </Children>
-    <Bounds>
-      <Left>0.0</Left>
-      <Top>0.0</Top>
-      <Width>424.0</Width>
-      <Height>160.0</Height>
-    </Bounds>
-    <Insets>
-      <Top>3.0</Top>
-      <Left>3.0</Left>
-      <Bottom>3.0</Bottom>
-      <Right>3.0</Right>
-    </Insets>
-    <Row>-1</Row>
-    <Column>-1</Column>
-    <Rowspan>-1</Rowspan>
-    <Columnspan>-1</Columnspan>
-    <Outline>
-      <Style>Solid</Style>
-      <Thickness>1</Thickness>
-      <Color>
-        <Transparency>255</Transparency>
-        <Red>0</Red>
-        <Green>0</Green>
-        <Blue>0</Blue>
-      </Color>
-      <Visible>false</Visible>
-    </Outline>
-    <Visible>true</Visible>
-  </Block>
-  <Dimension>Two_Dimensional</Dimension>
-  <Units>Points</Units>
-  <SeriesThickness>10.0</SeriesThickness>
-  <GridColumnCount>0</GridColumnCount>
-  <ExtendedProperties>
-    <Name>enable.area.alt</Name>
-    <Value>false</Value>
-  </ExtendedProperties>
-  <SampleData>
-    <BaseSampleData>
-      <DataSetRepresentation>'A','B','C','D','E'</DataSetRepresentation>
-    </BaseSampleData>
-    <OrthogonalSampleData>
-      <DataSetRepresentation>6,4,12,8,10</DataSetRepresentation>
-      <SeriesDefinitionIndex>0</SeriesDefinitionIndex>
-    </OrthogonalSampleData>
-  </SampleData>
-  <Interactivity>
-    <Enable>true</Enable>
-    <LegendBehavior>None</LegendBehavior>
-  </Interactivity>
-  <EmptyMessage>
-    <Caption>
-      <Value>This chart contains no data.</Value>
-      <Font>
-        <Alignment>
-          <horizontalAlignment>Center</horizontalAlignment>
-          <verticalAlignment>Center</verticalAlignment>
-        </Alignment>
-      </Font>
-    </Caption>
-    <Background xsi:type="attribute:ColorDefinition">
-      <Transparency>64</Transparency>
-      <Red>127</Red>
-      <Green>127</Green>
-      <Blue>127</Blue>
-    </Background>
-    <Outline>
-      <Color>
-        <Transparency>128</Transparency>
-        <Red>127</Red>
-        <Green>127</Green>
-        <Blue>127</Blue>
-      </Color>
-      <Visible>true</Visible>
-    </Outline>
-    <Insets>
-      <Top>10.0</Top>
-      <Left>10.0</Left>
-      <Bottom>10.0</Bottom>
-      <Right>10.0</Right>
-    </Insets>
-    <Visible>false</Visible>
-  </EmptyMessage>
-  <SeriesDefinitions>
-    <Query>
-      <Definition></Definition>
-    </Query>
-    <SeriesPalette>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>80</Red>
-        <Green>166</Green>
-        <Blue>218</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>242</Red>
-        <Green>88</Green>
-        <Blue>106</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>232</Red>
-        <Green>172</Green>
-        <Blue>57</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>128</Red>
-        <Green>255</Green>
-        <Blue>128</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>64</Red>
-        <Green>128</Green>
-        <Blue>128</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>128</Red>
-        <Green>128</Green>
-        <Blue>192</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>170</Red>
-        <Green>85</Green>
-        <Blue>85</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>128</Red>
-        <Green>128</Green>
-        <Blue>0</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>192</Red>
-        <Green>192</Green>
-        <Blue>192</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>255</Red>
-        <Green>255</Green>
-        <Blue>128</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>128</Red>
-        <Green>192</Green>
-        <Blue>128</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>7</Red>
-        <Green>146</Green>
-        <Blue>94</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>0</Red>
-        <Green>128</Green>
-        <Blue>255</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>255</Red>
-        <Green>128</Green>
-        <Blue>192</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>0</Red>
-        <Green>255</Green>
-        <Blue>255</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>255</Red>
-        <Green>128</Green>
-        <Blue>128</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>0</Red>
-        <Green>128</Green>
-        <Blue>192</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>128</Red>
-        <Green>128</Green>
-        <Blue>192</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>255</Red>
-        <Green>0</Green>
-        <Blue>255</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>128</Red>
-        <Green>64</Green>
-        <Blue>64</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>255</Red>
-        <Green>128</Green>
-        <Blue>64</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>80</Red>
-        <Green>240</Green>
-        <Blue>120</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>0</Red>
-        <Green>64</Green>
-        <Blue>128</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>128</Red>
-        <Green>0</Green>
-        <Blue>64</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>255</Red>
-        <Green>0</Green>
-        <Blue>128</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>128</Red>
-        <Green>128</Green>
-        <Blue>64</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>128</Red>
-        <Green>128</Green>
-        <Blue>128</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>255</Red>
-        <Green>128</Green>
-        <Blue>255</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>0</Red>
-        <Green>64</Green>
-        <Blue>0</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>0</Red>
-        <Green>0</Green>
-        <Blue>0</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>255</Red>
-        <Green>255</Green>
-        <Blue>255</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>255</Red>
-        <Green>128</Green>
-        <Blue>0</Blue>
-      </Entries>
-      <Entries xsi:type="attribute:ColorDefinition">
-        <Transparency>255</Transparency>
-        <Red>255</Red>
-        <Green>255</Green>
-        <Blue>255</Blue>
-      </Entries>
-    </SeriesPalette>
-    <SeriesDefinitions>
-      <Query>
-        <Definition></Definition>
-        <Grouping>
-          <GroupType>Text</GroupType>
-        </Grouping>
-      </Query>
-      <SeriesPalette>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>80</Red>
-          <Green>166</Green>
-          <Blue>218</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>242</Red>
-          <Green>88</Green>
-          <Blue>106</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>232</Red>
-          <Green>172</Green>
-          <Blue>57</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>128</Red>
-          <Green>255</Green>
-          <Blue>128</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>64</Red>
-          <Green>128</Green>
-          <Blue>128</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>128</Red>
-          <Green>128</Green>
-          <Blue>192</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>170</Red>
-          <Green>85</Green>
-          <Blue>85</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>128</Red>
-          <Green>128</Green>
-          <Blue>0</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>192</Red>
-          <Green>192</Green>
-          <Blue>192</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>255</Red>
-          <Green>255</Green>
-          <Blue>128</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>128</Red>
-          <Green>192</Green>
-          <Blue>128</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>7</Red>
-          <Green>146</Green>
-          <Blue>94</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>0</Red>
-          <Green>128</Green>
-          <Blue>255</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>255</Red>
-          <Green>128</Green>
-          <Blue>192</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>0</Red>
-          <Green>255</Green>
-          <Blue>255</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>255</Red>
-          <Green>128</Green>
-          <Blue>128</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>0</Red>
-          <Green>128</Green>
-          <Blue>192</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>128</Red>
-          <Green>128</Green>
-          <Blue>192</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>255</Red>
-          <Green>0</Green>
-          <Blue>255</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>128</Red>
-          <Green>64</Green>
-          <Blue>64</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>255</Red>
-          <Green>128</Green>
-          <Blue>64</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>80</Red>
-          <Green>240</Green>
-          <Blue>120</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>0</Red>
-          <Green>64</Green>
-          <Blue>128</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>128</Red>
-          <Green>0</Green>
-          <Blue>64</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>255</Red>
-          <Green>0</Green>
-          <Blue>128</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>128</Red>
-          <Green>128</Green>
-          <Blue>64</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>128</Red>
-          <Green>128</Green>
-          <Blue>128</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>255</Red>
-          <Green>128</Green>
-          <Blue>255</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>0</Red>
-          <Green>64</Green>
-          <Blue>0</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>0</Red>
-          <Green>0</Green>
-          <Blue>0</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>255</Red>
-          <Green>255</Green>
-          <Blue>255</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>255</Red>
-          <Green>128</Green>
-          <Blue>0</Blue>
-        </Entries>
-        <Entries xsi:type="attribute:ColorDefinition">
-          <Transparency>255</Transparency>
-          <Red>255</Red>
-          <Green>255</Green>
-          <Blue>255</Blue>
-        </Entries>
-      </SeriesPalette>
-      <Series xsi:type="type:PieSeries">
-        <Visible>true</Visible>
-        <Label>
-          <Caption>
-            <Value></Value>
-            <Font>
-              <Size>9.0</Size>
-              <Alignment/>
-            </Font>
-            <Color>
-              <Transparency>255</Transparency>
-              <Red>0</Red>
-              <Green>0</Green>
-              <Blue>0</Blue>
-            </Color>
-          </Caption>
-          <Background xsi:type="attribute:ColorDefinition">
-            <Transparency>0</Transparency>
-            <Red>255</Red>
-            <Green>255</Green>
-            <Blue>255</Blue>
-          </Background>
-          <Outline>
-            <Style>Solid</Style>
-            <Thickness>1</Thickness>
-            <Color>
-              <Transparency>255</Transparency>
-              <Red>0</Red>
-              <Green>0</Green>
-              <Blue>0</Blue>
-            </Color>
-            <Visible>false</Visible>
-          </Outline>
-          <Insets>
-            <Top>0.0</Top>
-            <Left>2.0</Left>
-            <Bottom>0.0</Bottom>
-            <Right>3.0</Right>
-          </Insets>
-          <Visible>true</Visible>
-        </Label>
-        <DataDefinition>
-          <Definition>row[&quot;nutListValue&quot;]</Definition>
-          <Grouping>
-            <GroupType>Text</GroupType>
-            <AggregateExpression>Sum</AggregateExpression>
-          </Grouping>
-        </DataDefinition>
-        <SeriesIdentifier>En % de l'apport calorique</SeriesIdentifier>
-        <DataPoint>
-          <Components>
-            <Type>Base_Value</Type>
-          </Components>
-          <Components>
-            <Type>Percentile_Orthogonal_Value</Type>
-            <FormatSpecifier xsi:type="attribute:JavaNumberFormatSpecifier">
-              <Pattern>##.##%</Pattern>
-            </FormatSpecifier>
-          </Components>
-          <Prefix></Prefix>
-          <Suffix></Suffix>
-          <Separator> : </Separator>
-        </DataPoint>
-        <LabelPosition>Inside</LabelPosition>
-        <Stacked>false</Stacked>
-        <Explosion>2</Explosion>
-        <Title>
-          <Caption>
-            <Value></Value>
-            <Font>
-              <Size>10.0</Size>
-              <Alignment/>
-            </Font>
-            <Color>
-              <Transparency>255</Transparency>
-              <Red>128</Red>
-              <Green>128</Green>
-              <Blue>128</Blue>
-            </Color>
-          </Caption>
-          <Background xsi:type="attribute:ColorDefinition">
-            <Transparency>0</Transparency>
-            <Red>255</Red>
-            <Green>255</Green>
-            <Blue>255</Blue>
-          </Background>
-          <Outline>
-            <Style>Solid</Style>
-            <Thickness>1</Thickness>
-            <Color>
-              <Transparency>255</Transparency>
-              <Red>0</Red>
-              <Green>0</Green>
-              <Blue>0</Blue>
-            </Color>
-            <Visible>false</Visible>
-          </Outline>
-          <ShadowColor>
-            <Transparency>0</Transparency>
-            <Red>255</Red>
-            <Green>255</Green>
-            <Blue>255</Blue>
-          </ShadowColor>
-          <Insets>
-            <Top>0.0</Top>
-            <Left>2.0</Left>
-            <Bottom>0.0</Bottom>
-            <Right>10.0</Right>
-          </Insets>
-          <Visible>true</Visible>
-        </Title>
-        <TitlePosition>Right</TitlePosition>
-        <LeaderLineAttributes>
-          <Style>Solid</Style>
-          <Thickness>1</Thickness>
-          <Visible>true</Visible>
-        </LeaderLineAttributes>
-        <LeaderLineStyle>Fixed_Length</LeaderLineStyle>
-        <LeaderLineLength>10.0</LeaderLineLength>
-        <SliceOutline>
-          <Transparency>0</Transparency>
-          <Red>255</Red>
-          <Green>255</Green>
-          <Blue>255</Blue>
-        </SliceOutline>
-        <Ratio>1.0</Ratio>
-        <Rotation>0.0</Rotation>
-        <Clockwise>false</Clockwise>
-      </Series>
-      <Grouping>
-        <GroupType>Text</GroupType>
-        <AggregateExpression>Sum</AggregateExpression>
-      </Grouping>
-    </SeriesDefinitions>
-    <Series>
-      <Visible>true</Visible>
-      <Label>
-        <Caption>
-          <Value></Value>
-          <Font>
-            <Alignment/>
-          </Font>
-        </Caption>
-        <Background xsi:type="attribute:ColorDefinition">
-          <Transparency>0</Transparency>
-          <Red>255</Red>
-          <Green>255</Green>
-          <Blue>255</Blue>
-        </Background>
-        <Outline>
-          <Style>Solid</Style>
-          <Thickness>1</Thickness>
-          <Color>
-            <Transparency>255</Transparency>
-            <Red>0</Red>
-            <Green>0</Green>
-            <Blue>0</Blue>
-          </Color>
-          <Visible>false</Visible>
-        </Outline>
-        <Insets>
-          <Top>0.0</Top>
-          <Left>2.0</Left>
-          <Bottom>0.0</Bottom>
-          <Right>3.0</Right>
-        </Insets>
-        <Visible>false</Visible>
-      </Label>
-      <DataDefinition>
-        <Definition>row[&quot;nutListNut&quot;]</Definition>
-      </DataDefinition>
-      <SeriesIdentifier>Nut</SeriesIdentifier>
-      <DataPoint>
-        <Components>
-          <Type>Orthogonal_Value</Type>
-        </Components>
-        <Separator>, </Separator>
-      </DataPoint>
-      <LabelPosition>Outside</LabelPosition>
-      <Stacked>false</Stacked>
-    </Series>
-    <Grouping>
-      <Enabled>true</Enabled>
-      <GroupType>Text</GroupType>
-      <AggregateExpression>Sum</AggregateExpression>
-    </Grouping>
-  </SeriesDefinitions>
-  <MinSlice>0.0</MinSlice>
-  <MinSlicePercent>false</MinSlicePercent>
-  <Coverage>1.0</Coverage>
-</model:ChartWithoutAxes>
-]]></xml-property>
-                        <property name="outputFormat">JPG</property>
-                        <list-property name="filter">
-                            <structure>
-                                <property name="operator">eq</property>
-                                <expression name="expr" type="javascript">row["nutListGroup"]</expression>
-                                <simple-property-list name="value1">
-                                    <value>"Groupe 1"</value>
-                                </simple-property-list>
-                            </structure>
-                        </list-property>
-                        <property name="inheritColumns">false</property>
-                        <property name="marginTop">15pt</property>
-                        <structure name="toc"/>
-                        <property name="dataSet">NutList</property>
-                        <property name="height">160pt</property>
-                        <property name="width">424pt</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">nutListValue</property>
-                                <expression name="expression" type="javascript">dataSetRow["nutListValue"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">nutListUnit</property>
-                                <expression name="expression" type="javascript">dataSetRow["nutListUnit"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">nutListGroup</property>
-                                <expression name="expression" type="javascript">dataSetRow["nutListGroup"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">nutListNut</property>
-                                <expression name="expression" type="javascript">dataSetRow["nutListNut"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                    </extended-item>
-                </cell>
-            </row>
-            <row id="1381">
-                <cell id="1382">
-                    <label id="1434"/>
-                </cell>
-            </row>
         </grid>
         <grid id="1371">
             <list-property name="visibility">
@@ -4128,358 +3120,79 @@ else
                 </cell>
             </row>
         </grid>
-        <grid id="1393">
-            <list-property name="visibility">
+        <table id="1692">
+            <property name="borderBottomColor">#FFFFFF</property>
+            <property name="borderLeftColor">#FFFFFF</property>
+            <property name="borderRightColor">#FFFFFF</property>
+            <property name="borderTopColor">#FFFFFF</property>
+            <property name="verticalAlign">top</property>
+            <property name="dataSet">ingLabelingList</property>
+            <list-property name="boundDataColumns">
                 <structure>
-                    <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">params["ingLabelingListHideChapter"].value</expression>
+                    <property name="name">language</property>
+                    <text-property name="displayName">language</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["language"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">illGrp</property>
+                    <text-property name="displayName">illGrp</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["illGrp"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">illValue</property>
+                    <text-property name="displayName">illValue</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["illValue"]</expression>
+                    <property name="dataType">string</property>
                 </structure>
             </list-property>
-            <column id="1394"/>
-            <row id="1395">
-                <cell id="1396">
-                    <label id="1049">
-                        <property name="style">becpg-chapter-header</property>
-                        <property name="backgroundColor">#F2ECD2</property>
-                        <property name="fontSize">14pt</property>
-                        <property name="fontWeight">bold</property>
-                        <property name="color">#339966</property>
-                        <property name="marginTop">0pt</property>
-                        <property name="marginBottom">0pt</property>
-                        <property name="textAlign">center</property>
-                        <property name="display">block</property>
-                        <property name="pageBreakBefore">auto</property>
-                        <text-property name="text">ÉTIQUETAGE</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="1397">
-                <cell id="1398">
-                    <label id="1148"/>
-                </cell>
-            </row>
-            <row id="1399">
-                <cell id="1400">
-                    <label id="1070">
-                        <property name="style">Titre2</property>
-                        <property name="color">#339966</property>
-                        <property name="marginTop">0pt</property>
-                        <property name="marginLeft">0pt</property>
-                        <property name="marginBottom">0pt</property>
-                        <text-property name="text">Etiquette en français</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="1401">
-                <cell id="1402">
-                    <table id="1073">
-                        <property name="borderBottomColor">#000000</property>
-                        <property name="borderBottomStyle">solid</property>
-                        <property name="borderBottomWidth">medium</property>
-                        <property name="borderLeftColor">#000000</property>
-                        <property name="borderLeftStyle">solid</property>
-                        <property name="borderLeftWidth">medium</property>
-                        <property name="borderRightColor">#000000</property>
-                        <property name="borderRightStyle">solid</property>
-                        <property name="borderRightWidth">medium</property>
-                        <property name="borderTopColor">#000000</property>
-                        <property name="borderTopStyle">solid</property>
-                        <property name="borderTopWidth">medium</property>
-                        <property name="width">6.875in</property>
-                        <property name="dataSet">ingLabelingList</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">illGrp_fr</property>
-                                <text-property name="displayName">illGrp_fr</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["illGrp_fr"] != "-"){
-dataSetRow["illGrp_fr"] + " : "
-}</expression>
-                                <property name="dataType">string</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illValue_fr</property>
-                                <text-property name="displayName">illValue_fr</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illValue_fr"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illGrp_en</property>
-                                <text-property name="displayName">illGrp_en</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illGrp_en"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illValue_en</property>
-                                <text-property name="displayName">illValue_en</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illValue_en"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illGrp_fr_1</property>
-                                <text-property name="displayName">illGrp_fr</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illGrp_fr"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <column id="1078"/>
-                        <detail>
-                            <row id="1074">
-                                <cell id="1075">
-                                    <property name="borderBottomColor">#FFFFFF</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">medium</property>
-                                    <property name="borderLeftColor">#FFFFFF</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">medium</property>
-                                    <property name="borderRightColor">#FFFFFF</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">medium</property>
-                                    <property name="borderTopColor">#FFFFFF</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">medium</property>
-                                    <data id="1618">
-                                        <property name="fontWeight">bold</property>
-                                        <property name="whiteSpace">nowrap</property>
-                                        <property name="resultSetColumn">illGrp_fr</property>
-                                    </data>
-                                    <data id="1082">
-                                        <property name="whiteSpace">normal</property>
-                                        <property name="display">block</property>
-                                        <property name="resultSetColumn">illValue_fr</property>
-                                    </data>
-                                </cell>
-                            </row>
-                        </detail>
-                    </table>
-                </cell>
-            </row>
-            <row id="1403">
-                <cell id="1404">
-                    <label id="1150"/>
-                </cell>
-            </row>
-            <row id="1405">
-                <cell id="1406">
-                    <label id="1071">
-                        <property name="style">Titre2</property>
-                        <property name="color">#339966</property>
-                        <property name="marginTop">0pt</property>
-                        <property name="marginLeft">0pt</property>
-                        <property name="marginBottom">0pt</property>
-                        <text-property name="text">Etiquette en anglais</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="1407">
-                <cell id="1408">
-                    <table id="1083">
-                        <property name="borderBottomColor">#000000</property>
-                        <property name="borderBottomStyle">solid</property>
-                        <property name="borderBottomWidth">medium</property>
-                        <property name="borderLeftColor">#000000</property>
-                        <property name="borderLeftStyle">solid</property>
-                        <property name="borderLeftWidth">medium</property>
-                        <property name="borderRightColor">#000000</property>
-                        <property name="borderRightStyle">solid</property>
-                        <property name="borderRightWidth">medium</property>
-                        <property name="borderTopColor">#000000</property>
-                        <property name="borderTopStyle">solid</property>
-                        <property name="borderTopWidth">medium</property>
-                        <property name="width">6.875in</property>
-                        <property name="dataSet">ingLabelingList</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">illGrp_fr</property>
-                                <text-property name="displayName">illGrp_fr</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illGrp_fr"] + " : "</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illValue_fr</property>
-                                <text-property name="displayName">illValue_fr</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illValue_fr"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illGrp_en</property>
-                                <text-property name="displayName">illGrp_en</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["illGrp_en"] != "-"){
-dataSetRow["illGrp_en"] + " : "
-}</expression>
-                                <property name="dataType">string</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illValue_en</property>
-                                <text-property name="displayName">illValue_en</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illValue_en"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illGrp_en_1</property>
-                                <text-property name="displayName">illGrp_en</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illGrp_en"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <column id="1088"/>
-                        <detail>
-                            <row id="1084">
-                                <cell id="1085">
-                                    <property name="borderBottomColor">#FFFFFF</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">medium</property>
-                                    <property name="borderLeftColor">#FFFFFF</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">medium</property>
-                                    <property name="borderRightColor">#FFFFFF</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">medium</property>
-                                    <property name="borderTopColor">#FFFFFF</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">medium</property>
-                                    <data id="1619">
-                                        <property name="fontWeight">bold</property>
-                                        <property name="whiteSpace">nowrap</property>
-                                        <property name="resultSetColumn">illGrp_en</property>
-                                    </data>
-                                    <data id="1091">
-                                        <property name="whiteSpace">normal</property>
-                                        <property name="display">block</property>
-                                        <property name="resultSetColumn">illValue_en</property>
-                                    </data>
-                                </cell>
-                            </row>
-                        </detail>
-                    </table>
-                </cell>
-            </row>
-            <row id="1409">
-                <cell id="1410">
-                    <label id="1151"/>
-                </cell>
-            </row>
-            <row id="1624">
-                <cell id="1625">
-                    <label id="1626">
-                        <property name="style">Titre2</property>
-                        <property name="color">#339966</property>
-                        <property name="marginTop">0pt</property>
-                        <property name="marginLeft">0pt</property>
-                        <property name="marginBottom">0pt</property>
-                        <text-property name="text">Etiquette en russe</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="1622">
-                <cell id="1623">
-                    <table id="1627">
-                        <property name="borderBottomColor">#000000</property>
-                        <property name="borderBottomStyle">solid</property>
-                        <property name="borderBottomWidth">medium</property>
-                        <property name="borderLeftColor">#000000</property>
-                        <property name="borderLeftStyle">solid</property>
-                        <property name="borderLeftWidth">medium</property>
-                        <property name="borderRightColor">#000000</property>
-                        <property name="borderRightStyle">solid</property>
-                        <property name="borderRightWidth">medium</property>
-                        <property name="borderTopColor">#000000</property>
-                        <property name="borderTopStyle">solid</property>
-                        <property name="borderTopWidth">medium</property>
-                        <property name="width">6.875in</property>
-                        <property name="dataSet">ingLabelingList</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">illGrp_fr</property>
-                                <text-property name="displayName">illGrp_fr</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illGrp_fr"] + " : "</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illValue_fr</property>
-                                <text-property name="displayName">illValue_fr</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illValue_fr"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illGrp_en</property>
-                                <text-property name="displayName">illGrp_en</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["illGrp_en"] != "-"){
-dataSetRow["illGrp_en"] + " : "
-}</expression>
-                                <property name="dataType">string</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illValue_en</property>
-                                <text-property name="displayName">illValue_en</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illValue_en"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illGrp_en_1</property>
-                                <text-property name="displayName">illGrp_en</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illGrp_en"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illGrp_fr_1</property>
-                                <text-property name="displayName">illGrp_fr</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illGrp_fr"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illGrp_ru</property>
-                                <text-property name="displayName">illGrp_ru</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["illGrp_ru"] != "-"){
-dataSetRow["illGrp_ru"] + " : "
-}</expression>
-                                <property name="dataType">string</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                            <structure>
-                                <property name="name">illValue_ru</property>
-                                <text-property name="displayName">illValue_ru</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["illValue_ru"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <column id="1632"/>
-                        <detail>
-                            <row id="1628">
-                                <cell id="1629">
-                                    <property name="borderBottomColor">#FFFFFF</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">medium</property>
-                                    <property name="borderLeftColor">#FFFFFF</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">medium</property>
-                                    <property name="borderRightColor">#FFFFFF</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">medium</property>
-                                    <property name="borderTopColor">#FFFFFF</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">medium</property>
-                                    <data id="1634">
-                                        <property name="fontWeight">bold</property>
-                                        <property name="resultSetColumn">illGrp_ru</property>
-                                    </data>
-                                    <data id="1635">
-                                        <property name="resultSetColumn">illValue_ru</property>
-                                    </data>
-                                </cell>
-                            </row>
-                        </detail>
-                    </table>
-                </cell>
-            </row>
-            <row id="1620">
-                <cell id="1621">
-                    <label id="1633"/>
-                </cell>
-            </row>
-        </grid>
+            <column id="1706"/>
+            <header>
+                <row id="1693">
+                    <cell id="1695"/>
+                </row>
+            </header>
+            <group id="1714">
+                <property name="groupName">NewTableGroup1</property>
+                <expression name="keyExpr" type="javascript">row["language"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["language"]</expression>
+                </structure>
+                <property name="hideDetail">false</property>
+                <header>
+                    <row id="1715">
+                        <cell id="1717">
+                            <data id="1723">
+                                <property name="fontSize">14pt</property>
+                                <property name="fontWeight">bold</property>
+                                <property name="fontStyle">italic</property>
+                                <property name="color">#339966</property>
+                                <property name="resultSetColumn">language</property>
+                            </data>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="1719">
+                        <cell id="1721"/>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="1697">
+                    <cell id="1699">
+                        <data id="1711">
+                            <property name="fontWeight">bold</property>
+                            <property name="resultSetColumn">illGrp</property>
+                        </data>
+                        <data id="1713">
+                            <property name="resultSetColumn">illValue</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
         <grid id="1411">
             <list-property name="visibility">
                 <structure>

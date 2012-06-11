@@ -46,6 +46,7 @@ public class RepoConsts {
 	public static final String PATH_LINKED_LISTS 	= "LinkedLists";
 	public static final String PATH_NUTS = "Nuts";
 	public static final String PATH_INGS = "Ings";	
+	public static final String PATH_DECL_GROUPS = "DeclGroups";
 	public static final String PATH_ORGANOS = "Organos";
 	public static final String PATH_ALLERGENS = "Allergens";
 	public static final String PATH_COSTS = "Costs";
@@ -189,8 +190,4 @@ public class RepoConsts {
 	 * ISO charset
 	 */
 	public static final String ISO_CHARSET = "ISO-8859-15";
-		
-	//TODO : do generic code
-	// supported languages for formulation and reports
-	public static String[] REPORT_LOCALES = {"fr","en","ru"};
 }

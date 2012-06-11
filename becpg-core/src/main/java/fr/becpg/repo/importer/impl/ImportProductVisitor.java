@@ -4,7 +4,6 @@
 package fr.becpg.repo.importer.impl;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +13,6 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -24,7 +21,6 @@ import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
-import fr.becpg.repo.product.ProductService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -43,40 +39,11 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	protected static final String MSG_ERROR_PRODUCTSTATE_EMPTY = "import_service.error.err_productstate_empty";
 	protected static final String MSG_ERROR_OVERRIDE_EXISTING_ONE = "import_service.error.err_override_existing_one";
 	
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(ImportProductVisitor.class);
-	
-	/** The product service. */
-	private ProductService productService;
-	
 	/** The repository helper. */
 	private Repository repositoryHelper;				
 	
-	public void setProductService(ProductService productService) {
-		this.productService = productService;
-	}
-
 	public void setRepositoryHelper(Repository repositoryHelper) {
 		this.repositoryHelper = repositoryHelper;
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.importer.AbstractImportVisitor#importNode(fr.becpg.repo.importer.ImportContext, java.util.List)
-	 */
-	@Override
-	public NodeRef importNode(ImportContext importContext, List<String> values) throws ParseException, ImporterException{		
-		
-		// create product node
-		NodeRef productNodeRef = super.importNode(importContext, values);					
-		
-		// classify if product is not imported in a site
-		if(!importContext.isSiteDocLib()){
-			logger.debug("classify product");
-			productService.classifyProduct(repositoryHelper.getCompanyHome(), productNodeRef);
-		}		
-		
-		logger.debug("product imported");
-		return productNodeRef;
 	}
 	
 	/**

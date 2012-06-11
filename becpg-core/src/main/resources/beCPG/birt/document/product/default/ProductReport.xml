@@ -42,21 +42,20 @@
 				costListCost="Coût PMP" />
 			<cost costListValue="12.2" costListUnit="€/Kg" costListCost="Coût MP" />
 		</costList>
-
-
+		
 		<ingLabelingList>
-			<ingLabeling illGrp_fr="Pâte"
-				illValue_fr="Blé farine, Eau, Crème, Sel fin, Ferments lactiques, Ferrocyanure de sodium"
-				illGrp_en="Paste"
-				illValue_en="Wheat flour, Water, Cream, Salt, Lactic, Sodium ferrocyanide"
-				illGrp_ru="вставлять"
-				illValue_ru="Пшеничная мука, вода, сливки, соль End, молочная, натрия ферроцианида" />
-			<ingLabeling illGrp_fr="Garniture"
-				illValue_fr="Lait demi écrémé 33 %, Crème de lait pasteurisée 28 %, Porc poitrine 18,1 %, oeuf frais 14 %, Eau, Poivre, Sel fin, Muscade"
-				illGrp_en="Garnish"
-				illValue_en="Semi-skimmed milk 33 %, Pasteurized cream milk 28 %, Breast pork 18.1 %, Fresh eggs 14 %, Water, Pepper, Salt End, Nutmeg"
-				illGrp_ru="Rарнир"
-				illValue_ru="полу-обезжиренного молока 33 % , пастеризованное цельное молоко 28 %, молочной железы 18,1 % свинины, свежих яиц на 14 %, вода, перец, соль End, мускатный орех" />
+			<ingLabeling language="fr" illGrp="Pâte"
+				illValue="Blé farine, Eau, Crème, Sel fin, Ferments lactiques, Ferrocyanure de sodium"/>
+			<ingLabeling language="en" illGrp="Paste"
+				illValue="Wheat flour, Water, Cream, Salt, Lactic, Sodium ferrocyanide"/>
+			<ingLabeling language="ru" illGrp="вставлять"
+				illValue="Пшеничная мука, вода, сливки, соль End, молочная, натрия ферроцианида" />
+			<ingLabeling language="fr" illGrp="Garniture"
+				illValue="Lait demi écrémé 33 %, Crème de lait pasteurisée 28 %, Porc poitrine 18,1 %, oeuf frais 14 %, Eau, Poivre, Sel fin, Muscade"/>
+			<ingLabeling language="en" illGrp="Garnish"
+				illValue="Semi-skimmed milk 33 %, Pasteurized cream milk 28 %, Breast pork 18.1 %, Fresh eggs 14 %, Water, Pepper, Salt End, Nutmeg"/>
+			<ingLabeling language="ru" illGrp="Rарнир"
+				illValue="полу-обезжиренного молока 33 % , пастеризованное цельное молоко 28 %, молочной железы 18,1 % свинины, свежих яиц на 14 %, вода, перец, соль End, мускатный орех" />
 
 		</ingLabelingList>
 
@@ -196,4 +195,4 @@
 
 
 	</dataLists>
-</product>
+</entity>

@@ -18,7 +18,7 @@ public class IngLabelingListDataItem implements IManualDataItem{
 	private NodeRef nodeRef;	
 	
 	/** The grp. */
-	private String grp;
+	private NodeRef grp;
 	
 	/** The value. */
 	private MLText value;
@@ -48,7 +48,7 @@ public class IngLabelingListDataItem implements IManualDataItem{
 	 *
 	 * @return the grp
 	 */
-	public String getGrp() {
+	public NodeRef getGrp() {
 		return grp;
 	}
 
@@ -57,7 +57,7 @@ public class IngLabelingListDataItem implements IManualDataItem{
 	 *
 	 * @param grp the new grp
 	 */
-	public void setGrp(String grp) {
+	public void setGrp(NodeRef grp) {
 		this.grp = grp;
 	}
 
@@ -105,7 +105,7 @@ public class IngLabelingListDataItem implements IManualDataItem{
 	 * @param grp the grp
 	 * @param value the value
 	 */
-	public IngLabelingListDataItem(NodeRef nodeRef, String grp, MLText value, Boolean isManual){
+	public IngLabelingListDataItem(NodeRef nodeRef, NodeRef grp, MLText value, Boolean isManual){
 		setNodeRef(nodeRef);
 		setGrp(grp);
 		setValue(value);		

@@ -147,7 +147,6 @@
 		<property name="contentService" ref="contentService" />
 		<property name="mimetypeService" ref="mimetypeService"/>		
 		<property name="namespaceService" ref="namespaceService"/>
-		<property name="productService" ref="productService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
 	</bean>
 	<bean id="importEntityListAspectVisitor" class="fr.becpg.repo.importer.impl.ImportEntityListAspectVisitor">
@@ -446,6 +445,13 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="productDAO" ref="productDAO" />
+	</bean>
+	<bean id="productPolicies" class="fr.becpg.repo.product.policy.ProductPolicies" init-method="init">
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="productService" ref="productService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="namespaceService" ref="namespaceService" />	
+		<property name="repositoryHelper" ref="repositoryHelper" />
 	</bean>
 	<!-- Product Listeners -->	
 	<bean id="productCheckInListener" class="fr.becpg.repo.product.listener.ProductCheckInListener">

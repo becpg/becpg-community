@@ -8,12 +8,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import fr.becpg.common.BeCPGException;
@@ -32,7 +31,6 @@ import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
-import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.impl.AbstractEntityReportExtractor;
 
 public class DefaultProductReportExtractor extends AbstractEntityReportExtractor {
@@ -93,15 +91,13 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	/** The Constant TAG_PHYSICOCHEM. */
 	protected static final String TAG_PHYSICOCHEM = "physicoChem";
 
-	/** The Constant SUFFIX_LOCALE_FRENCH. */
-	protected static final String SUFFIX_LOCALE_FRENCH = "_fr";
-
-	/** The Constant SUFFIX_LOCALE_ENGLISH. */
-	protected static final String SUFFIX_LOCALE_ENGLISH = "_en";
+	protected static final String ATTR_LANGUAGE = "language";
 
 	protected ProductDAO productDAO;
 
 	protected ProductDictionaryService productDictionaryService;
+	
+	private NodeService mlNodeService;
 
 	/**
 	 * @param productDAO
@@ -117,6 +113,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	 */
 	public void setProductDictionaryService(ProductDictionaryService productDictionaryService) {
 		this.productDictionaryService = productDictionaryService;
+	}
+
+	public void setMlNodeService(NodeService mlNodeService) {
+		this.mlNodeService = mlNodeService;
 	}
 
 	@Override
@@ -271,10 +271,13 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 				Element ingLabelingElt = ingListElt.addElement(TAG_INGLABELING);
 				
-				for(String l : RepoConsts.REPORT_LOCALES){
-					Locale locale = new Locale(l);
-					ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_GRP.getLocalName() + "_" + locale, dataItem.getGrp());
-					ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_VALUE.getLocalName() + "_" + locale, dataItem.getValue().getValue(locale));
+				for(Locale locale : dataItem.getValue().getLocales()){
+					
+					ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
+					
+					MLText grpMLText = (MLText)mlNodeService.getProperty(dataItem.getGrp(), BeCPGModel.PROP_LEGAL_NAME);					
+					ingLabelingElt.addAttribute(BeCPGModel.ASSOC_ILL_GRP.getLocalName(), grpMLText.getValue(locale));
+					ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_VALUE.getLocalName(), dataItem.getValue().getValue(locale));
 				}
 			}
 		}

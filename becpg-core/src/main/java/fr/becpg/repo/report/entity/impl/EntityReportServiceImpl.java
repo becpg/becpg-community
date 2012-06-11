@@ -150,6 +150,9 @@ public class EntityReportServiceImpl implements EntityReportService{
     						+ watch.getTotalTimeSeconds() + " seconds");
     			}
         	}
+    		else{
+    			logger.debug("No report tpls found");
+    		}
             
         	// set reportNodeGenerated property to now
 	        nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, Calendar.getInstance().getTime());

@@ -76,11 +76,10 @@ public class ImportEntityListAspectVisitor extends AbstractImportVisitor impleme
 				 
 				 if(column instanceof PropertyDefinition){
 					 Serializable value = ImportHelper.loadPropertyValue(importContext, values, z_idx);					 
-					 logger.trace("import characteristic: " + charactMapping.getId() + " - value: " + value);
+					 logger.debug("import characteristic: " + charactMapping.getId() + " - value: " + value);
 					 
 					 if(value != null){						 
 						 
-						 // TODO : eviter les rechargement multiple ou vérifier que le mécanisme de cache le gère bien
 						 NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, charactMapping.getDataListQName());
 						 NodeRef linkNodeRef = null;
 						 

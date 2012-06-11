@@ -440,7 +440,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		// check Props : Saumon surgelé 80x20x4		saumon sugelé	Sea food	Fish	ToValidate					Thu Mar 17 17:44:13 CET 2011	admin	Mon Mar 21 22:44:26 CET 2011	admin		0.0	0.0	0.0	0.0	0.0	0.0	/home/querephi/Documents/beCPG/projets/demo/jeu de données/Sushi/sushi saumon/produit.jpg
 		assertEquals("Saumon surgelé 80x20x4", productData.getName());
 		assertEquals(SystemState.ToValidate, productData.getState());
-		assertEquals("saumon sugelé", productData.getLegalName());
+		assertEquals("saumon sugelé", productData.getLegalName().getDefaultValue());
 		assertEquals("Sea food", productData.getHierarchy1());
 		assertEquals("Fish", productData.getHierarchy2());
 		
@@ -471,10 +471,10 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		assertEquals("check supplier name", "1000014", supplier2Code);
 		
 		/*-- check productLists --*/
-		assertEquals("costs should exist", (int)3, productData.getCostList().size());
+		assertEquals("costs should exist", (int)2, productData.getCostList().size());
 		assertEquals("nuts should exist", (int)3, productData.getNutList().size());
-		String [] costNames = {"Coût MP","Coût prév MP", "Coût Emb"};
-		double [] costValues = {1.0d, 2.0d, 3.1d};
+		String [] costNames = {"Coût MP", "Coût Emb"};
+		double [] costValues = {1.0d, 3.1d};
 		String [] nutNames = {"Protéines","Lipides", "Glucides"};
 		double [] nutValues = {2.5d, 3.6d, 5.6d};
 		
@@ -493,7 +493,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 			}
 			z_idx++;
 		}
-		assertEquals("3 costs have been checked", (int)3, costChecked); 				 				
+		assertEquals("2 costs have been checked", (int)2, costChecked); 				 				
 		
 		// check nuts
 		int nutChecked=0;
@@ -513,12 +513,12 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		assertEquals("3 nuts have been checked", (int)3, nutChecked);
 		
 		// check that file Images/produit.jpg has been imported and check title
-		NodeRef parentNodeRef = nodeService.getPrimaryParent(product1NodeRef).getParentRef(); 				
+		NodeRef parentNodeRef = nodeService.getPrimaryParent(product2NodeRef).getParentRef(); 				
 		NodeRef imagesNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, "Images");
 		assertNotNull("check Images exits", imagesNodeRef);
 		NodeRef imgNodeRef = nodeService.getChildByName(imagesNodeRef, ContentModel.ASSOC_CONTAINS, "produit.jpg");
 		assertNotNull("check produit.jpg exits", imgNodeRef);
-		assertEquals("Check title on image", "saumon", nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
+		assertEquals("Check title on image", "sushi saumon", nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
 		
 		
 		/*
@@ -540,7 +540,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		ProductData productTplData = productDAO.find(product1NodeRef, dataLists);
 		
 		/*-- check productLists of productTpl --*/
-		assertEquals("costs should exist", (int)3, productData.getCostList().size());
+		assertEquals("costs should exist", (int)2, productData.getCostList().size());
 		assertEquals("nuts should exist", (int)3, productData.getNutList().size());
 		
 		// check costs
@@ -558,7 +558,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 			}
 			z_idx++;
 		}
-		assertEquals("3 costs have been checked", (int)3, costChecked); 				 				
+		assertEquals("2 costs have been checked", (int)2, costChecked); 				 				
 		
 		// check nuts
 		nutChecked=0;

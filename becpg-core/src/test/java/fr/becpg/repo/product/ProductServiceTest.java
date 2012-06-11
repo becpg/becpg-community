@@ -321,7 +321,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 			}
 		}, false, true);
-
 	}
 
 	/**
@@ -636,9 +635,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Finished Product");
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.P, 0d, "", DeclarationType.DECLARE_FR, lSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 4d, 0d, CompoListUnit.P, 0d, "", DeclarationType.DECLARE_FR, lSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterialNodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.P, 0d, null, DeclarationType.DECLARE_FR, lSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.DECLARE_FR, lSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterialNodeRef));
 				finishedProduct.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
@@ -686,13 +685,14 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 			CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 			
+			
 			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), WUSED_LEVEL, 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), 
 										compoListUnit, 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), 
-										(String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP), 
+										null, 
 										(String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), 
 										kv.getValue().getEntityNodeRef());
 			

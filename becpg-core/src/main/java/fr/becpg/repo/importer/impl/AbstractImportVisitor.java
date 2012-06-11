@@ -281,13 +281,17 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		 
 		if(nodeRef == null){
 			String name = (String)properties.get(ContentModel.PROP_NAME);
-			logger.debug("create node. Type: " + importContext.getType() + " - Properties: " + properties);
+			if(logger.isDebugEnabled()){
+				logger.debug("create node. Type: " + importContext.getType() + " - Properties: " + properties);
+			}				
 			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), importContext.getType(), properties).getChildRef();			 
 		}
 		else if(importContext.isDoUpdate()){
-			 
-			logger.debug("update node. Properties: " + properties);
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("update node. Properties: " + properties);
+			}				
 			nodeService.setType(nodeRef, importContext.getType());
 			 
 			for(Map.Entry<QName, Serializable> entry : properties.entrySet()){
@@ -897,7 +901,8 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			 }						 						 												 
 		 }
 		 
-		 logger.debug("assoc, name: " + assocDef.getName() + " - value: " + value + "- targetRefs: " + targetRefs);
+		 if(logger.isDebugEnabled())
+			 logger.debug("assoc, name: " + assocDef.getName() + " - value: " + value + "- targetRefs: " + targetRefs);
 		 return targetRefs;
 	}
 	

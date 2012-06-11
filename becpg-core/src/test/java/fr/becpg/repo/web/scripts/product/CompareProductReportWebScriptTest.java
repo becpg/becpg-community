@@ -67,12 +67,6 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
 	/** The PAT h_ testfolder. */
 	private static String PATH_TESTFOLDER = "TestFolder";
 	
-	/** The GROU p_ garniture. */
-	private static String GROUP_GARNITURE = "Garniture";
-	
-	/** The GROU p_ pate. */
-	private static String GROUP_PATE = "Pâte";
-	
 	/** The Constant USER_ADMIN. */
 	private static final String USER_ADMIN = "admin";
 	
@@ -134,6 +128,8 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
 	
 	/** The allergens. */
 	private List<NodeRef> allergens = new ArrayList<NodeRef>();
+	
+	protected List<NodeRef> declGroups = new ArrayList<NodeRef>();
 	
 	/* (non-Javadoc)
 	 * @see org.alfresco.repo.web.scripts.BaseWebScriptTest#setUp()
@@ -227,6 +223,27 @@ private void initObjects(){
 				else{
 					for(FileInfo fileInfo : allergensFileInfo){
 						allergens.add(fileInfo.getNodeRef());
+					}
+				}
+				
+				//declGroups
+				NodeRef declGroupFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_DECL_GROUPS));
+				if(declGroupFolder == null){
+					declGroupFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_DECL_GROUPS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_DECL_GROUPS));
+				}
+				List<FileInfo> declGroupsFileInfo = fileFolderService.listFiles(declGroupFolder);
+				if(declGroupsFileInfo.size() == 0){
+					for(int i=0 ; i<10 ; i++)
+			    	{    		
+			    		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			    		properties.put(ContentModel.PROP_NAME, "DeclGrp " + i);
+			    		ChildAssociationRef childAssocRef = nodeService.createNode(declGroupFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_DECL_GROUP, properties);
+			    		declGroups.add(childAssocRef.getChildRef());
+			    	}
+				}
+				else{
+					for(FileInfo fileInfo : declGroupsFileInfo){
+						declGroups.add(fileInfo.getNodeRef());
 					}
 				}
 			
@@ -354,11 +371,11 @@ private void initObjects(){
 					fp1.setAllergenList(allergenList);
 						
 					List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, declGroups.get(0), DeclarationType.DETAIL_FR, localSF1NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, declGroups.get(2), DeclarationType.DETAIL_FR, localSF2NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
 					fp1.setCompoList(compoList);
 					
 					fpNodeRef = productDAO.create(folderNodeRef, fp1, dataLists);		
@@ -410,12 +427,12 @@ private void initObjects(){
 					workingCopy.setAllergenList(allergenList);
 					
 					compoList = new ArrayList<CompoListDataItem>();
-					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
+					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, declGroups.get(0), DeclarationType.DETAIL_FR, localSF1NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, declGroups.get(0), DeclarationType.DETAIL_FR, localSF2NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+					compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
 					workingCopy.setCompoList(compoList);
 					
 					productDAO.update(workingCopyNodeRef, workingCopy, dataLists);

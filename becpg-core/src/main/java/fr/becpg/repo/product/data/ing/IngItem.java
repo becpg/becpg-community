@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.data.ing;
 
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -36,12 +37,12 @@ public class IngItem extends AbstractIng {
 	/**
 	 * Instantiates a new ing item.
 	 *
-	 * @param name the name
+	 * @param ing
 	 * @param mlName the ml name
 	 * @param qty the qty
 	 */
-	public IngItem(String name, MLText mlName, Double qty){
-		super(name, mlName);
+	public IngItem(NodeRef ing, MLText mlName, Double qty){
+		super(ing, mlName);
 		this.qty = qty;
 	}
 }

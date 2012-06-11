@@ -6,6 +6,7 @@ package fr.becpg.repo.product.data.ing;
 import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -15,19 +16,10 @@ import org.alfresco.service.cmr.repository.MLText;
  */
 public interface Ing {
 	
-	/**
-	 * Gets the name.
-	 *
-	 * @return the name
-	 */
-	public String getName();
-	
-	/**
-	 * Sets the name.
-	 *
-	 * @param name the new name
-	 */
-	public void setName(String name);
+
+	public NodeRef getIng();
+
+	public void setIng(NodeRef name);
 	
 	/**
 	 * Gets the mL name.

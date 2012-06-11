@@ -80,12 +80,6 @@ public class FormulationTest extends RepoBaseTestCase {
     /** The GROUPOTHER. */
     private static String GROUPOTHER = "Autre";
     
-    /** The GROU p_ garniture. */
-    private static String GROUP_GARNITURE = "Garniture";
-    
-    /** The GROU p_ pate. */
-    private static String GROUP_PATE = "Pâte";
-    
     private static String PACKAGING_PRIMAIRE = "Primaire";
     private static String PACKAGING_TERTIAIRE = "Tertiaire";
     
@@ -192,6 +186,10 @@ public class FormulationTest extends RepoBaseTestCase {
     
     /** The geo origin2. */
     private NodeRef geoOrigin2;
+    
+    private NodeRef grpGarniture;
+    
+    private NodeRef grpPate;
     
     /* (non-Javadoc)
      * @see fr.becpg.test.RepoBaseTestCase#setUp()
@@ -306,7 +304,6 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing1 english");
 			mlName.addValue(Locale.FRENCH, "ing1 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-//			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "ing2");
@@ -315,7 +312,6 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing2 english");
 			mlName.addValue(Locale.FRENCH, "ing2 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-//			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "ing3");
@@ -324,7 +320,6 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing3 english");
 			mlName.addValue(Locale.FRENCH, "ing3 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-//			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.put(ContentModel.PROP_NAME, "ing4");
 			mlName = new MLText();
@@ -332,7 +327,6 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing4 english");
 			mlName.addValue(Locale.FRENCH, "ing4 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-//			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			//Geo origins
 			properties.clear();
@@ -349,13 +343,35 @@ public class FormulationTest extends RepoBaseTestCase {
 			properties.put(ContentModel.PROP_NAME, "bioOrigin2");
 			bioOrigin2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_BIO_ORIGIN, properties).getChildRef();
 			
+			//Groupes
+			properties.clear();
+			properties.put(ContentModel.PROP_NAME, "grpGarniture");
+			mlName = new MLText();
+			mlName.addValue(Locale.getDefault(), "Garniture default");
+			mlName.addValue(Locale.ENGLISH, "Garniture english");
+			mlName.addValue(Locale.FRENCH, "Garniture french");	
+			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
+			grpGarniture = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_DECL_GROUP, properties).getChildRef();
+			
+			properties.clear();
+			properties.put(ContentModel.PROP_NAME, "grpPâte");
+			mlName = new MLText();
+			mlName.addValue(Locale.getDefault(), "Pâte default");
+			mlName.addValue(Locale.ENGLISH, "Pâte english");
+			mlName.addValue(Locale.FRENCH, "Pâte french");	
+			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
+			grpPate = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_DECL_GROUP, properties).getChildRef();
+			
 			/*-- Create raw materials --*/
 			logger.debug("/*-- Create raw materials --*/");
 			 Collection<QName> dataLists = productDictionaryService.getDataLists();
 			/*-- Raw material 1 --*/
 			RawMaterialData rawMaterial1 = new RawMaterialData();
 			rawMaterial1.setName("Raw material 1");
-			rawMaterial1.setLegalName("Legal Raw material 1");
+			MLText legalName = new MLText("Legal Raw material 1");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material 1");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material 1");
+			rawMaterial1.setLegalName(legalName);
 			//costList
 			List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
 			costList.add(new CostListDataItem(null, 3d, "€/kg", 3.1d, cost1, false));
@@ -390,7 +406,10 @@ public class FormulationTest extends RepoBaseTestCase {
 			/*-- Raw material 2 --*/
 			RawMaterialData rawMaterial2 = new RawMaterialData();
 			rawMaterial2.setName("Raw material 2");
-			rawMaterial2.setLegalName("Legal Raw material 2");
+			legalName = new MLText("Legal Raw material 2");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material 2");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material 2");
+			rawMaterial2.setLegalName(legalName);
 			//costList
 			costList = new ArrayList<CostListDataItem>();
 			costList.add(new CostListDataItem(null, 1d, "€/kg", 2.1d, cost1, false));
@@ -426,7 +445,10 @@ public class FormulationTest extends RepoBaseTestCase {
 			/*-- Raw material 3 --*/
 			RawMaterialData rawMaterial3 = new RawMaterialData();
 			rawMaterial3.setName("Raw material 3");
-			rawMaterial3.setLegalName("Legal Raw material 3");
+			legalName = new MLText("Legal Raw material 3");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material 3");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material 3");
+			rawMaterial3.setLegalName(legalName);
 			//costList
 			costList = new ArrayList<CostListDataItem>();
 			costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false));
@@ -458,7 +480,10 @@ public class FormulationTest extends RepoBaseTestCase {
 			/*-- Raw material 4 --*/
 			RawMaterialData rawMaterial4 = new RawMaterialData();
 			rawMaterial4.setName("Raw material 4");
-			rawMaterial4.setLegalName("Legal Raw material 4");	
+			legalName = new MLText("Legal Raw material 4");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material 4");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material 4");
+			rawMaterial4.setLegalName(legalName);
 			//ingList : 4 ing3 ; bio1|bio2 ; geo2
 			ingList = new ArrayList<IngListDataItem>();
 			bioOrigins = new ArrayList<NodeRef>();
@@ -473,7 +498,10 @@ public class FormulationTest extends RepoBaseTestCase {
 			/*-- Raw material 5 --*/
 			RawMaterialData rawMaterial5 = new RawMaterialData();
 			rawMaterial5.setName("Raw material 5");
-			rawMaterial5.setLegalName("Legal Raw material 5");
+			legalName = new MLText("Legal Raw material 5");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material 5");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material 5");
+			rawMaterial5.setLegalName(legalName);
 			rawMaterial5.setDensity(0.1d);
 			//costList
 			costList = new ArrayList<CostListDataItem>();
@@ -491,7 +519,10 @@ public class FormulationTest extends RepoBaseTestCase {
 			/*-- Raw material 6 --*/
 			RawMaterialData rawMaterial6 = new RawMaterialData();
 			rawMaterial6.setName("Raw material 6");
-			rawMaterial6.setLegalName("Legal Raw material 6");
+			legalName = new MLText("Legal Raw material 6");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material 6");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material 6");
+			rawMaterial6.setLegalName(legalName);
 			rawMaterial6.setUnit(ProductUnit.L);
 			rawMaterial6.setDensity(0.7d);
 			//costList
@@ -547,7 +578,10 @@ public class FormulationTest extends RepoBaseTestCase {
 			/*-- Raw material 11 --*/
 			RawMaterialData rawMaterial11 = new RawMaterialData();
 			rawMaterial11.setName("Raw material 11");
-			rawMaterial11.setLegalName("Legal Raw material 11");
+			legalName = new MLText("Legal Raw material 11");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material 11");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material 11");
+			rawMaterial11.setLegalName(legalName);
 			//ingList : 1 ing1 ; bio1 ; geo1 // 2 ing2 ; bio1 ; geo1|geo2 
 			ingList = new ArrayList<IngListDataItem>();
 			bioOrigins = new ArrayList<NodeRef>();
@@ -565,7 +599,10 @@ public class FormulationTest extends RepoBaseTestCase {
 			/*-- Raw material 12 --*/
 			RawMaterialData rawMaterial12 = new RawMaterialData();
 			rawMaterial12.setName("Raw material 12");
-			rawMaterial12.setLegalName("Legal Raw material 12");
+			legalName = new MLText("Legal Raw material 12");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material 12");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material 12");
+			rawMaterial12.setLegalName(legalName);
 			//ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
 			ingList = new ArrayList<IngListDataItem>();
 			bioOrigins = new ArrayList<NodeRef>();
@@ -584,7 +621,10 @@ public class FormulationTest extends RepoBaseTestCase {
 			/*-- Raw material 13 --*/
 			RawMaterialData rawMaterial13 = new RawMaterialData();
 			rawMaterial13.setName("Raw material 13");
-			rawMaterial13.setLegalName("Legal Raw material 13");	
+			legalName = new MLText("Legal Raw material 13");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material 13");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material 13");
+			rawMaterial13.setLegalName(legalName);
 			//ingList : 4 ing3 ; bio1|bio2 ; geo2
 			ingList = new ArrayList<IngListDataItem>();
 			bioOrigins = new ArrayList<NodeRef>();
@@ -599,7 +639,10 @@ public class FormulationTest extends RepoBaseTestCase {
 			/*-- Raw material 14 --*/
 			RawMaterialData rawMaterial14 = new RawMaterialData();
 			rawMaterial14.setName("Raw material 14");
-			rawMaterial14.setLegalName("Legal Raw material 14");
+			legalName = new MLText("Legal Raw material 14");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material 14");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material 14");
+			rawMaterial14.setLegalName(legalName);
 			//ingList : 4 ing3 ; bio1|bio2 ; geo2
 			ingList = new ArrayList<IngListDataItem>();
 			bioOrigins = new ArrayList<NodeRef>();
@@ -656,12 +699,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnitPrice(12.4d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 4000d, "€", null, fixedCost, true));
@@ -855,11 +898,11 @@ public class FormulationTest extends RepoBaseTestCase {
 					logger.debug(trace);	
 					
 					//Garniture 52,17 % (ing3 100,00 %), Pâte 47,83 % (Legal Raw material 2 72,73 % (ing2 75,00 %, ing1 25,00 %), ing2 18,18 %, ing1 9,09 %)
-					if(illDataItem.getGrp().equals("-")){		
+					if(illDataItem.getGrp() == null){		
 						trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
-						assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check: " + trace,  "Garniture 52,17 % (ing3 french 100,00 %), Pâte 47,83 % (Legal Raw material 2 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
+						assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check: " + trace,  "Garniture french 52,17 % (ing3 french 100,00 %), Pâte french 47,83 % (Legal Raw material 2 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
 						trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH);
-						assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check: " + trace,  "Garniture 52.17 % (ing3 english 100.00 %), Pâte 47.83 % (Legal Raw material 2 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));						
+						assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check: " + trace,  "Garniture english 52.17 % (ing3 english 100.00 %), Pâte english 47.83 % (Legal Raw material 2 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));						
 					}
 				}
 				
@@ -894,12 +937,12 @@ public class FormulationTest extends RepoBaseTestCase {
 			finishedProduct1.setQty(2d);
 			finishedProduct1.setUnit(ProductUnit.kg);				
 			List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
-			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF11NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial11NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial12NodeRef));
-			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d,  GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF12NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial13NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial14NodeRef));
+			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF11NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial11NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial12NodeRef));
+			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d,  grpGarniture, DeclarationType.DETAIL_FR, localSF12NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial13NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial14NodeRef));
 			finishedProduct1.setCompoList(compoList1);
 			 Collection<QName> dataLists = productDictionaryService.getDataLists();
 			NodeRef finishedProductNodeRef1 = productDAO.create(folderNodeRef, finishedProduct1, dataLists);
@@ -985,11 +1028,11 @@ public class FormulationTest extends RepoBaseTestCase {
 				logger.debug(trace);			
 				
 				//Garniture 73,17 % (ing3 80,00 %, ing4 20,00 %), Pâte 26,83 % (Legal Raw material 12 72,73 % (ing2 75,00 %, ing1 25,00 %), ing2 18,18 %, ing1 9,09 %)
-				if(illDataItem.getGrp().equals("-")){
+				if(illDataItem.getGrp() == null){
 					trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
-					assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check: " + trace,  "Garniture 73,17 % (ing3 french 80,00 %, ing4 french 20,00 %), Pâte 26,83 % (Legal Raw material 12 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
+					assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check: " + trace,  "Garniture french 73,17 % (ing3 french 80,00 %, ing4 french 20,00 %), Pâte french 26,83 % (Legal Raw material 12 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
 					trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH);
-					assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check: " + trace,  "Garniture 73.17 % (ing3 english 80.00 %, ing4 english 20.00 %), Pâte 26.83 % (Legal Raw material 12 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));						
+					assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check: " + trace,  "Garniture english 73.17 % (ing3 english 80.00 %, ing4 english 20.00 %), Pâte english 26.83 % (Legal Raw material 12 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));						
 				}
 			}
 			
@@ -1005,12 +1048,12 @@ public class FormulationTest extends RepoBaseTestCase {
 			finishedProduct2.setQty(2d);
 			finishedProduct2.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-			compoList2.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF11NodeRef));
-			compoList2.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d,  "", DeclarationType.DECLARE_FR, rawMaterial11NodeRef));
-			compoList2.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial12NodeRef));
-			compoList2.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF12NodeRef));
-			compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial13NodeRef));
-			compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DO_NOT_DECLARE_FR, rawMaterial14NodeRef));
+			compoList2.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF11NodeRef));
+			compoList2.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d,  null, DeclarationType.DECLARE_FR, rawMaterial11NodeRef));
+			compoList2.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial12NodeRef));
+			compoList2.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF12NodeRef));
+			compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial13NodeRef));
+			compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DO_NOT_DECLARE_FR, rawMaterial14NodeRef));
 			finishedProduct2.setCompoList(compoList2);
 			NodeRef finishedProductNodeRef2 = productDAO.create(folderNodeRef, finishedProduct2, dataLists);			
 			
@@ -1096,11 +1139,11 @@ public class FormulationTest extends RepoBaseTestCase {
 				logger.debug(trace);			
 				
 				//Garniture 73,17 % (ing3 40,00 %), Pâte 26,83 % (Legal Raw material 12 72,73 % (ing2 75,00 %, ing1 25,00 %), ing2 18,18 %, ing1 9,09 %)
-				if(illDataItem.getGrp().equals("-")){
+				if(illDataItem.getGrp() == null){
 					trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
-					assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check: " + trace,  "Garniture 73,17 % (ing3 french 40,00 %), Pâte 26,83 % (Legal Raw material 12 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
+					assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check: " + trace,  "Garniture french 73,17 % (ing3 french 40,00 %), Pâte french 26,83 % (Legal Raw material 12 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
 					trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH);
-					assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check: " + trace,  "Garniture 73.17 % (ing3 english 40.00 %), Pâte 26.83 % (Legal Raw material 12 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));						
+					assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check: " + trace,  "Garniture english 73.17 % (ing3 english 40.00 %), Pâte english 26.83 % (Legal Raw material 12 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));						
 				}
 			}
 			
@@ -1129,12 +1172,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.g, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.g, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
 				
@@ -1207,12 +1250,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.P);
 				finishedProduct.setDensity(0.1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.P, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 40d, 0d, 0d, CompoListUnit.g, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.mL, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.P, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 30d, 0d, 0d, CompoListUnit.g, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 0.05d, 0d, 0d, CompoListUnit.P, 0d, "", DeclarationType.OMIT_FR, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.P, 0d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 40d, 0d, 0d, CompoListUnit.g, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.mL, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.P, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 30d, 0d, 0d, CompoListUnit.g, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 0.05d, 0d, 0d, CompoListUnit.P, 0d, null, DeclarationType.OMIT_FR, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
 				
@@ -1284,8 +1327,8 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setQty(2.5d);
 				finishedProduct.setUnit(ProductUnit.kg);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();				
-				compoList.add(new CompoListDataItem(null, 1, 0d, 1d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));				
-				compoList.add(new CompoListDataItem(null, 1, 0d, 2d, 0d, CompoListUnit.L, 0d, "", DeclarationType.DECLARE_FR, rawMaterial6NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 0d, 1d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));				
+				compoList.add(new CompoListDataItem(null, 1, 0d, 2d, 0d, CompoListUnit.L, 0d, null, DeclarationType.DECLARE_FR, rawMaterial6NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
 				
@@ -1412,7 +1455,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					SFProduct2.setUnit(ProductUnit.kg);
 					SFProduct2.setQty(1d);
 					List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-					compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, SFProduct1NodeRef));			
+					compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, SFProduct1NodeRef));			
 					SFProduct2.setCompoList(compoList2);
 					NodeRef SFProduct2NodeRef = productDAO.create(folderNodeRef, SFProduct2, dataLists);
 					
@@ -1469,8 +1512,8 @@ public class FormulationTest extends RepoBaseTestCase {
 				SFProduct1.setUnit(ProductUnit.kg);
 				SFProduct1.setQty(1d);
 				List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
-				compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList1.add(new CompoListDataItem(null, 1, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));					
+				compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList1.add(new CompoListDataItem(null, 1, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));					
 				SFProduct1.setCompoList(compoList1);
 				NodeRef SFProduct1NodeRef = productDAO.create(folderNodeRef, SFProduct1, dataLists);
 				
@@ -1481,8 +1524,8 @@ public class FormulationTest extends RepoBaseTestCase {
 				SFProduct2.setUnit(ProductUnit.kg);
 				SFProduct2.setQty(1d);
 				List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-				compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));					
+				compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));					
 				SFProduct2.setCompoList(compoList2);
 				NodeRef SFProduct2NodeRef = productDAO.create(folderNodeRef, SFProduct2, dataLists);
 						
@@ -1493,8 +1536,8 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, SFProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, SFProduct2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, SFProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, SFProduct2NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 				
@@ -1720,12 +1763,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 10d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 5d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 10d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 20d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 5d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 10d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 20d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 				
@@ -1875,11 +1918,11 @@ public class FormulationTest extends RepoBaseTestCase {
 					logger.debug(trace);	
 					
 					//Garniture 52,17 % (ing3 100,00 %), Pâte 47,83 % (Legal Raw material 2 72,73 % (ing2 75,00 %, ing1 25,00 %), ing2 18,18 %, ing1 9,09 %)
-					if(illDataItem.getGrp().equals("-")){		
+					if(illDataItem.getGrp() == null){		
 						trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
-						assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check: " + trace,  "Garniture 52,17 % (ing3 french 100,00 %), Pâte 47,83 % (Legal Raw material 2 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
+						assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check: " + trace,  "Garniture french 52,17 % (ing3 french 100,00 %), Pâte french 47,83 % (Legal Raw material 2 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
 						trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH);
-						assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check: " + trace,  "Garniture 52.17 % (ing3 english 100.00 %), Pâte 47.83 % (Legal Raw material 2 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));						
+						assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check: " + trace,  "Garniture english 52.17 % (ing3 english 100.00 %), Pâte english 47.83 % (Legal Raw material 2 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));						
 					}
 				}
 								
@@ -1908,14 +1951,14 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, null, 3d, 2d, CompoListUnit.kg, 10d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, null, 1d, 100d, CompoListUnit.kg, 10d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.kg, 5d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 30d, null, CompoListUnit.kg, 10d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 1d, 200d, CompoListUnit.kg, 20d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF3NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 170d, null, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, "", DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, null, 3d, 2d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, null, 1d, 100d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.kg, 5d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 30d, null, CompoListUnit.kg, 10d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 1d, 200d, CompoListUnit.kg, 20d, grpGarniture, DeclarationType.DETAIL_FR, localSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 170d, null, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, null, DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 				
@@ -2130,14 +2173,14 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, null, 3d, 2d, CompoListUnit.kg, 10d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, null, 1d, 100d, CompoListUnit.kg, 10d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.kg, 5d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 30d, null, CompoListUnit.kg, 10d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 1d, 200d, CompoListUnit.kg, 20d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF3NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 170d, null, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, "", DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, null, 3d, 2d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, null, 1d, 100d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.kg, 5d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 30d, null, CompoListUnit.kg, 10d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 1d, 200d, CompoListUnit.kg, 20d, grpGarniture, DeclarationType.DETAIL_FR, localSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 170d, null, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, null, DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);	
 				
@@ -2232,12 +2275,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 				
@@ -2322,12 +2365,12 @@ public class FormulationTest extends RepoBaseTestCase {
 //				finishedProduct.setUnit(ProductUnit.kg);
 //				finishedProduct.setQty(2d);
 //				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-//				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-//				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-//				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-//				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-//				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-//				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+//				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
+//				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+//				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+//				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
+//				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+//				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 //				finishedProduct.setCompoList(compoList);
 //				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 //				
@@ -2499,12 +2542,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				 */
 				
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 10d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 5d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 10d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 20d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 5d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 10d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 20d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 				
@@ -2673,14 +2716,14 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, null, 3d, 2d, CompoListUnit.kg, 10d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, null, 1d, 100d, CompoListUnit.kg, 10d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.kg, 5d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 30d, null, CompoListUnit.kg, 10d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 1d, 200d, CompoListUnit.kg, 20d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF3NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 170d, null, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, "", DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, null, 3d, 2d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, null, 1d, 100d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.kg, 5d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 30d, null, CompoListUnit.kg, 10d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 1d, 200d, CompoListUnit.kg, 20d, grpGarniture, DeclarationType.DETAIL_FR, localSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 170d, null, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, null, DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 				
@@ -2742,12 +2785,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
 				

@@ -102,13 +102,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
     /** The GROU p2. */
     private static String GROUP2 = "Groupe 2";
     
-    
-    /** The GROU p_ garniture. */
-    private static String GROUP_GARNITURE = "Garniture";
-    
-    /** The GROU p_ pate. */
-    private static String GROUP_PATE = "Pâte";
-    
     public static final String  FLOAT_FORMAT = "0.0000";
     
     /** The folder node ref. */
@@ -366,7 +359,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing1 english");
 			mlName.addValue(Locale.FRENCH, "ing1 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "ing2");
@@ -375,7 +367,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing2 english");
 			mlName.addValue(Locale.FRENCH, "ing2 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "ing3");
@@ -384,7 +375,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing3 english");
 			mlName.addValue(Locale.FRENCH, "ing3 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.put(ContentModel.PROP_NAME, "ing4");
 			mlName = new MLText();
@@ -392,7 +382,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing4 english");
 			mlName.addValue(Locale.FRENCH, "ing4 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			properties.put(BeCPGModel.PROP_ING_TYPE, "Ingrédient");
 			ing4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			//Geo origins
 			properties.clear();
@@ -658,12 +647,12 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			finishedProduct1.setQty(2d);
 			finishedProduct1.setUnit(ProductUnit.kg);				
 			List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
-			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF11NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial11NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial12NodeRef));
-			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d,  GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF12NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial13NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial14NodeRef));
+			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, localSF11NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial11NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial12NodeRef));
+			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, localSF12NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial13NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial14NodeRef));
 			finishedProduct1.setCompoList(compoList1);
 			 dataLists = productDictionaryService.getDataLists();
 			 productNodeRef = productDAO.create(folderNodeRef, finishedProduct1, dataLists);

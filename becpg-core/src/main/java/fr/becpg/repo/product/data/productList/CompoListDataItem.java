@@ -38,7 +38,7 @@ public class CompoListDataItem{
 	private Double yieldPerc = null;
 	
 	/** The decl grp. */
-	private String declGrp;
+	private NodeRef declGrp;
 	
 	/** The decl type. */
 	private String declType;			
@@ -155,7 +155,7 @@ public class CompoListDataItem{
 	 *
 	 * @return the decl grp
 	 */
-	public String getDeclGrp() {
+	public NodeRef getDeclGrp() {
 		return declGrp;
 	}
 	
@@ -164,7 +164,7 @@ public class CompoListDataItem{
 	 *
 	 * @param declGrp the new decl grp
 	 */
-	public void setDeclGrp(String declGrp) {
+	public void setDeclGrp(NodeRef declGrp) {
 		this.declGrp = declGrp;
 	}
 	
@@ -225,7 +225,7 @@ public class CompoListDataItem{
 	 * @param declType
 	 * @param product
 	 */
-	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, Double yieldPerc, String declGrp, String declType, NodeRef product){
+	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, Double yieldPerc, NodeRef declGrp, String declType, NodeRef product){
 		
 		setNodeRef(nodeRef);
 		setDepthLevel(depthLevel);
@@ -252,7 +252,7 @@ public class CompoListDataItem{
 	 * @param declType
 	 * @param product
 	 */
-	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, String declGrp, String declType, NodeRef product){
+	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, NodeRef declGrp, String declType, NodeRef product){
 		
 		setNodeRef(nodeRef);
 		setDepthLevel(depthLevel);

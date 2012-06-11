@@ -226,7 +226,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(charactsNodeRef, RepoConsts.PATH_PHYSICO_CHEM);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_MICROBIOS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_GEO_ORIGINS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_BIO_ORIGINS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_BIO_ORIGINS);		
 		visitFolder(charactsNodeRef, RepoConsts.PATH_SUBSIDIARIES);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_TRADEMARKS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_PLANTS);
@@ -234,6 +234,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(charactsNodeRef, RepoConsts.PATH_APPROVALNUMBERS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_PROCESSSTEPS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_VARIANT_CHARACTS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_DECL_GROUPS);
 
 		// Hierarchy
 		NodeRef hierarchyNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
@@ -264,8 +265,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_USER);
 
 		// Products
-		NodeRef productsNodeRef = visitFolder(companyHome, RepoConsts.PATH_PRODUCTS);
-		productDictionaryService.initializeRepoHierarchy(productsNodeRef);
+		visitFolder(companyHome, RepoConsts.PATH_PRODUCTS);
 
 		// Quality
 		NodeRef qualityNodeRef = visitFolder(companyHome, RepoConsts.PATH_QUALITY);

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -15,6 +16,7 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -108,6 +110,7 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
     /** The organos. */
     protected List<NodeRef> organos = new ArrayList<NodeRef>();
     
+    protected List<NodeRef> declGroups = new ArrayList<NodeRef>();
 	
 	protected Wiser wiser = new Wiser(2500);
 
@@ -224,6 +227,12 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 			NodeRef organoFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ORGANOS));
 			if(organoFolder != null){
 				nodeService.deleteNode(organoFolder);
+			}
+			
+			//declGroups
+			NodeRef declGroupFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_DECL_GROUPS));
+			if(declGroupFolder != null){
+				nodeService.deleteNode(declGroupFolder);
 			}
 		}		
 	}	
@@ -345,7 +354,28 @@ public class RepoBaseTestCase extends BaseAlfrescoTestCase {
 			for(FileInfo fileInfo : organosFileInfo){
 				organos.add(fileInfo.getNodeRef());
 			}
-		}			
+		}		
+		
+		//declGroups
+		NodeRef declGroupFolder = nodeService.getChildByName(charactsFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_DECL_GROUPS));
+		if(declGroupFolder == null){
+			declGroupFolder = repoService.createFolderByPath(charactsFolder, RepoConsts.PATH_DECL_GROUPS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_DECL_GROUPS));
+		}
+		List<FileInfo> declGroupsFileInfo = fileFolderService.listFiles(declGroupFolder);
+		if(declGroupsFileInfo.size() == 0){
+			for(int i=0 ; i<10 ; i++)
+	    	{    		
+	    		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+	    		properties.put(ContentModel.PROP_NAME, "DeclGrp " + i);
+	    		ChildAssociationRef childAssocRef = nodeService.createNode(declGroupFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_DECL_GROUP, properties);
+	    		declGroups.add(childAssocRef.getChildRef());
+	    	}
+		}
+		else{
+			for(FileInfo fileInfo : declGroupsFileInfo){
+				declGroups.add(fileInfo.getNodeRef());
+			}
+		}
 	}	
 	
 	/**

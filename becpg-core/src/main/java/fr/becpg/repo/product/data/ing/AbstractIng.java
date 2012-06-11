@@ -6,8 +6,8 @@ package fr.becpg.repo.product.data.ing;
 import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractIng.
  *
@@ -16,7 +16,7 @@ import org.alfresco.service.cmr.repository.MLText;
 public abstract class AbstractIng implements Ing, Comparable<Ing> {
 
 	/** The name. */
-	protected String name;
+	protected NodeRef ing;
 	
 	/** The ml name. */
 	protected MLText mlName;
@@ -25,16 +25,16 @@ public abstract class AbstractIng implements Ing, Comparable<Ing> {
 	 * @see fr.becpg.repo.food.ing.Ing#getName()
 	 */
 	@Override
-	public String getName() {
-		return name;
+	public NodeRef getIng() {
+		return ing;
 	}
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.food.ing.Ing#setName(java.lang.String)
 	 */
 	@Override
-	public void setName(String name) {
-		this.name = name;
+	public void setIng(NodeRef ing) {
+		this.ing = ing;
 	}
 	
 	/* (non-Javadoc)
@@ -61,7 +61,7 @@ public abstract class AbstractIng implements Ing, Comparable<Ing> {
 		if(mlName!=null){
 			return mlName.getValue(locale);
 		}
-		return getName();
+		return "";
 	}
 	
 	/**
@@ -70,8 +70,8 @@ public abstract class AbstractIng implements Ing, Comparable<Ing> {
 	 * @param name the name
 	 * @param mlName the ml name
 	 */
-	public AbstractIng(String name, MLText mlName){
-		this.name = name;
+	public AbstractIng(NodeRef ing, MLText mlName){
+		this.ing = ing;
 		this.mlName = mlName;
 	}
 	

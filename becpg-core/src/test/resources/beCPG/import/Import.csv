@@ -46,14 +46,14 @@
 ;;;;;;
 "PATH";"/System/Ings";;;;;
 "TYPE";"bcpg:ing";;;;;
-"COLUMNS";"cm:name";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en";"bcpg:ingType";"bcpg:ingCEECode"
-"VALUES";"Abricot";"Abricot default";"Abricot french";"Abricot english";"Ingrédient";
-"VALUES";"Acerola";"Acerola default";"Acerola french";"Acerola english";"Ingrédient";
+"COLUMNS";"cm:name";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en";"bcpg:ingCEECode"
+"VALUES";"Abricot";"Abricot default";"Abricot french";"Abricot english";
+"VALUES";"Acerola";"Acerola default";"Acerola french";"Acerola english";
 
 ;;;;;;
 "PATH";"/System/Ings";;;;;
 "TYPE";"bcpg:ing";;;;;
-"COLUMNS";"cm:name";"bcpg:ingType";"bcpg:ingCEECode";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en"
-"VALUES";"Abricot1";"Ingrédient";;"Abricot1 default";"Abricot1 french";"Abricot1 english"
-"VALUES";"Acerola1";"Ingrédient";;"Acerola1 default";"Acerola1 french";"Acerola1 english"
-"VALUES";"E341(i) - orthophosphate monocalcique, régulateur de l'acidité, agent de traitement des farines, affermissant, agent de texture, agent levant, antiagglomérant, agent de rétention d'eau/d'humidité, stabilisant";"Orthophosphate";"E341(i)";"E341(i) - orthophosphate monocalcique, régulateur de l'acidité, agent de traitement des farines, affermissant, agent de texture, agent levant, antiagglomérant, agent de rétention d'eau/d'humidité, stabilisant";"E341(i) - orthophosphate monocalcique, régulateur de l'acidité, agent de traitement des farines, affermissant, agent de texture, agent levant, antiagglomérant, agent de rétention d'eau/d'humidité, stabilisant";"E341 (i) - monocalcium orthophosphate, acidity regulator, flour treatment agent, firming agent, texturizing agent, raising agent, anticaking agent retention of water / moisture, stabilizing"
+"COLUMNS";"cm:name";"bcpg:ingCEECode";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en"
+"VALUES";"Abricot1";;"Abricot1 default";"Abricot1 french";"Abricot1 english"
+"VALUES";"Acerola1";;"Acerola1 default";"Acerola1 french";"Acerola1 english"
+"VALUES";"E341(i) - orthophosphate monocalcique, régulateur de l'acidité, agent de traitement des farines, affermissant, agent de texture, agent levant, antiagglomérant, agent de rétention d'eau/d'humidité, stabilisant";"E341(i)";"E341(i) - orthophosphate monocalcique, régulateur de l'acidité, agent de traitement des farines, affermissant, agent de texture, agent levant, antiagglomérant, agent de rétention d'eau/d'humidité, stabilisant";"E341(i) - orthophosphate monocalcique, régulateur de l'acidité, agent de traitement des farines, affermissant, agent de texture, agent levant, antiagglomérant, agent de rétention d'eau/d'humidité, stabilisant";"E341 (i) - monocalcium orthophosphate, acidity regulator, flour treatment agent, firming agent, texturizing agent, raising agent, anticaking agent retention of water / moisture, stabilizing"

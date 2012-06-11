@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -58,7 +59,7 @@ public class ProductData implements ProductElement {
 	private String name;
 	
 	/** The legal name. */
-	private String legalName;
+	private MLText legalName;
 	
 	/** The title. */
 	private String title;	
@@ -215,7 +216,7 @@ public class ProductData implements ProductElement {
 	 *
 	 * @return the legal name
 	 */
-	public String getLegalName() {
+	public MLText getLegalName() {
 		return legalName;
 	}
 	
@@ -224,8 +225,12 @@ public class ProductData implements ProductElement {
 	 *
 	 * @param legalName the new legal name
 	 */
-	public void setLegalName(String legalName) {
+	public void setLegalName(MLText legalName) {
 		this.legalName = legalName;
+	}
+	
+	public void setLegalName(String legalName) {
+		this.legalName = new MLText(legalName);
 	}
 	
 	/**
@@ -663,6 +668,7 @@ public class ProductData implements ProductElement {
 		this.setHierarchy2((String)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2));
 		this.setName((String)properties.get(ContentModel.PROP_NAME));
 		this.versionLabel = (String)properties.get(ContentModel.PROP_VERSION_LABEL);
+		// need to call mlNodeService if we want MLText
 		this.setLegalName((String)properties.get(BeCPGModel.PROP_PRODUCT_LEGALNAME));
     	this.setTitle((String)properties.get(ContentModel.PROP_TITLE));
     	SystemState systemState = getSystemState((String)properties.get(BeCPGModel.PROP_PRODUCT_STATE));

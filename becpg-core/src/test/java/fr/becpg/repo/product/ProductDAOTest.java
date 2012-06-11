@@ -250,7 +250,6 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 				mlTextILL.addValue(Locale.FRENCH, "French value");					
 				
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-	    		properties.put(BeCPGModel.PROP_ILL_GRP, "-");
 	    		properties.put(BeCPGModel.PROP_ILL_VALUE, mlTextILL);
 	    									
 				NodeRef illNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_INGLABELINGLIST, properties).getChildRef();

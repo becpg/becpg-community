@@ -27,6 +27,8 @@ import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sun.syndication.feed.rss.Guid;
+
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.SystemProductType;
@@ -273,6 +275,7 @@ public class ProductDAOImpl implements ProductDAO {
 		// set properties
 		productData.setNodeRef(productNodeRef);
 		productData.setProperties(properties);
+		productData.setLegalName((MLText)mlNodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_LEGALNAME));
 
 		// load datalists
 		NodeRef listsContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
@@ -420,12 +423,14 @@ public class ProductDAOImpl implements ProductDAO {
 
 					List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
 					NodeRef part = compoAssocRefs.size() > 0 ? (compoAssocRefs.get(0)).getTargetRef() : null;
+					List<AssociationRef> grpAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COMPOLIST_DECL_GRP);
+					NodeRef grpNodeRef = grpAssocRefs.size() > 0 ? (grpAssocRefs.get(0)).getTargetRef() : null;
 					CompoListUnit compoListUnit = CompoListUnit.valueOf((String) properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 
 					CompoListDataItem compoListDataItem = new CompoListDataItem(listItemNodeRef, (Integer) properties.get(BeCPGModel.PROP_DEPTH_LEVEL),
 							(Double) properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Double) properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA),
 							(Double) properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Double) properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC),
-							(Double) properties.get(BeCPGModel.PROP_COMPOLIST_YIELD_PERC), (String) properties.get(BeCPGModel.PROP_COMPOLIST_DECL_GRP),
+							(Double) properties.get(BeCPGModel.PROP_COMPOLIST_YIELD_PERC), grpNodeRef,
 							(String) properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), part);
 					compoList.add(compoListDataItem);
 				}
@@ -707,11 +712,12 @@ public class ProductDAOImpl implements ProductDAO {
 	public IngLabelingListDataItem loadIngLabelingListItem(NodeRef listItemNodeRef) {
 
 		// Grp
-		String grp = (String) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_GRP);
+		List<AssociationRef> grpAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_ILL_GRP);
+		NodeRef grpNodeRef = grpAssocRefs.size() > 0 ? (grpAssocRefs.get(0)).getTargetRef() : null;
 
 		// illValue
 		MLText illValue = (MLText) mlNodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_VALUE);
-		return new IngLabelingListDataItem(listItemNodeRef, grp, illValue, (Boolean) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
+		return new IngLabelingListDataItem(listItemNodeRef, grpNodeRef, illValue, (Boolean) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
 	}
 
 	/**
@@ -1244,7 +1250,6 @@ public class ProductDAOImpl implements ProductDAO {
 			properties.put(BeCPGModel.PROP_COMPOLIST_UNIT, compoListDataItem.getCompoListUnit() == CompoListUnit.Unknown ? "" : compoListDataItem.getCompoListUnit().toString());
 			properties.put(BeCPGModel.PROP_COMPOLIST_LOSS_PERC, compoListDataItem.getLossPerc());
 			properties.put(BeCPGModel.PROP_COMPOLIST_YIELD_PERC, compoListDataItem.getYieldPerc());
-			properties.put(BeCPGModel.PROP_COMPOLIST_DECL_GRP, compoListDataItem.getDeclGrp());
 			properties.put(BeCPGModel.PROP_COMPOLIST_DECL_TYPE, compoListDataItem.getDeclType());
 
 			properties.put(BeCPGModel.PROP_SORT, sortIndex);
@@ -1261,21 +1266,17 @@ public class ProductDAOImpl implements ProductDAO {
 			}
 
 			// Update product
-			List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-			if (compoAssocRefs.size() > 0) {
-				NodeRef part = (compoAssocRefs.get(0)).getTargetRef();
-				if (part != compoListDataItem.getProduct()) {
-					nodeService.removeAssociation(compoListDataItem.getNodeRef(), part, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-				}
-			}
-			nodeService.createAssociation(compoListDataItem.getNodeRef(), compoListDataItem.getProduct(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-
+			associationService.update(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT, compoListDataItem.getProduct());
+			
+			// Update grp
+			associationService.update(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_DECL_GRP, compoListDataItem.getDeclGrp());
+			
 			// store father if level > 1
 			if (compoListDataItem.getDepthLevel() > 1) {
 
 				CompoListDataItem compositeCompoListDataItem = composite.getData();
 				boolean createFather = true;
-				compoAssocRefs = nodeService.getTargetAssocs(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_FATHER);
+				List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_FATHER);
 				if (compoAssocRefs.size() > 0) {
 					NodeRef fatherNodeRef = (compoAssocRefs.get(0)).getTargetRef();
 
@@ -1790,41 +1791,45 @@ public class ProductDAOImpl implements ProductDAO {
 				List<NodeRef> listItemNodeRefs = listItems(illNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
 
 				// create temp list
-				List<String> illToTreat = new ArrayList<String>();
+				List<NodeRef> illToTreat = new ArrayList<NodeRef>();
 				for (IngLabelingListDataItem illDataItem : ingLabelingList) {
 					illToTreat.add(illDataItem.getGrp());
 				}
 
 				// remove deleted nodes
-				Map<String, NodeRef> filesToUpdate = new HashMap<String, NodeRef>();
+				Map<NodeRef, NodeRef> filesToUpdate = new HashMap<NodeRef, NodeRef>();
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
 
-					String grp = (String) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_ILL_GRP);
+					List<AssociationRef> grpAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_ILL_GRP);
+					NodeRef grpNodeRef = grpAssocRefs.isEmpty() ? null : (grpAssocRefs.get(0)).getTargetRef();
 
-					if (!illToTreat.contains(grp)) {
+					if (!illToTreat.contains(grpNodeRef)) {
 						// delete
 						nodeService.deleteNode(listItemNodeRef);
 					} else {
-						filesToUpdate.put(grp, listItemNodeRef);
+						filesToUpdate.put(grpNodeRef, listItemNodeRef);
 					}
 				}
 
 				// update or create nodes
 				for (IngLabelingListDataItem illDataItem : ingLabelingList) {
-					String grp = illDataItem.getGrp();
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-					properties.put(BeCPGModel.PROP_ILL_GRP, illDataItem.getGrp());
+					NodeRef grpNodeRef = illDataItem.getGrp();
 					properties.put(BeCPGModel.PROP_ILL_VALUE, illDataItem.getValue());
 					properties.put(BeCPGModel.PROP_IS_MANUAL_LISTITEM, illDataItem.getIsManual());
 
-					if (filesToUpdate.containsKey(grp)) {
+					if (filesToUpdate.containsKey(grpNodeRef)) {
 						// update
-						nodeService.setProperties(filesToUpdate.get(grp), properties);
+						nodeService.setProperties(filesToUpdate.get(grpNodeRef), properties);
 					} else {
 						// create
-						nodeService.createNode(illNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, illDataItem.getGrp()),
+						ChildAssociationRef childAssocRef = nodeService.createNode(illNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()),
 								BeCPGModel.TYPE_INGLABELINGLIST, properties);
+						illDataItem.setNodeRef(childAssocRef.getChildRef());
 					}
+					
+					if(illDataItem.getGrp() != null)
+						associationService.update(illDataItem.getNodeRef(), BeCPGModel.ASSOC_ILL_GRP, illDataItem.getGrp());
 				}
 			}
 		}

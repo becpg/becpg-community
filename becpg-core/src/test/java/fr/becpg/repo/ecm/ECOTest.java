@@ -55,14 +55,6 @@ public class ECOTest extends RepoBaseTestCase  {
     /** The PAT h_ productfolder. */
     private static String PATH_PRODUCTFOLDER = "TestProductFolder";
     
-    
-    /** The GROU p_ garniture. */
-    private static String GROUP_GARNITURE = "Garniture";
-    
-    /** The GROU p_ pate. */
-    private static String GROUP_PATE = "Pâte";
-    
-    
     public static final String  Double_FORMAT = "0.0000";
     
     /** The folder node ref. */
@@ -101,6 +93,10 @@ public class ECOTest extends RepoBaseTestCase  {
     /** The nut2. */
     private NodeRef nut2;
     
+    private NodeRef declGroup1;
+    
+    private NodeRef declGroup2;
+    
     /* (non-Javadoc)
      * @see fr.becpg.test.RepoBaseTestCase#setUp()
      */
@@ -129,6 +125,9 @@ public class ECOTest extends RepoBaseTestCase  {
  				
  				nut1 = nuts.get(0);
  				nut2 = nuts.get(1);
+ 				
+ 				declGroup1 = declGroups.get(0);
+ 				declGroup2 = declGroups.get(1);
  				
  				return null;
 
@@ -283,12 +282,12 @@ public class ECOTest extends RepoBaseTestCase  {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_PATE, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, GROUP_GARNITURE, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, declGroup1, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, declGroup2, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
 				
@@ -649,8 +648,8 @@ public class ECOTest extends RepoBaseTestCase  {
 				finishedProduct3.setUnit(ProductUnit.kg);
 				finishedProduct3.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, finishedProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 2d, 2d, 0d, CompoListUnit.kg, 0d, "", DeclarationType.DECLARE_FR, finishedProduct2NodeRef));				
+				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, finishedProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 2d, 2d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, finishedProduct2NodeRef));				
 				finishedProduct3.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
