@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.gdata.client.authn.oauth.GoogleOAuthParameters;
+import com.google.gdata.client.authn.oauth.OAuthHmacSha1Signer;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.media.MediaService;
 import com.google.gdata.data.IEntry;
@@ -153,8 +154,13 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 
 		try {
 
+			if(OAuthTokenUtils.is2LeggedOAuth()){
+				service.setOAuthCredentials(oauthtoken, new OAuthHmacSha1Signer());
+			} else {
+				service.setOAuthCredentials(oauthtoken, OAuthTokenUtils.getRSASigner());
+			}
 			// Valid access token
-			service.setOAuthCredentials(oauthtoken, OAuthTokenUtils.getRSASigner());
+			
 
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -525,12 +531,14 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 
 					if (docType.equals(TYPE_DOCUMENT) || docType.equals(TYPE_PRESENTATION)) {
 						StringBuffer buffer = new StringBuffer(this.downloadUrl);
-						buffer.append("/").append(docType).append("s").append("/Export?docId=").append(document.getDocId()).append("&exportFormat=").append(fileExtension);
+						buffer.append("/").append(docType).append("s").append("/Export?docId=").append(document.getDocId()).append("&exportFormat=")
+						.append(fileExtension);
 
 						downloadUrl = buffer.toString();
 					} else if (docType.equals(TYPE_SPREADSHEET)) {
 						StringBuffer buffer = new StringBuffer(spreadsheetDownloadUrl);
-						buffer.append("/").append(docType).append("s").append("/Export?key=").append(document.getDocId()).append("&exportFormat=").append(fileExtension);
+						buffer.append("/").append(docType).append("s").append("/Export?key=").append(document.getDocId()).append("&exportFormat=")
+						.append(fileExtension);
 
 						// If exporting to .csv or .tsv, add the gid parameter
 						// to specify which sheet to export
@@ -678,7 +686,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 			}
 
 			// Parent folder url
-			String parentFolderUrl = url;
+			String parentFolderUrl = url+"?xoauth_requestor_id="+AuthenticationUtil.getFullyAuthenticatedUser();
 			if (parentFolder != null) {
 				parentFolderUrl = ((MediaContent) parentFolder.getContent()).getUri();
 				if (logger.isDebugEnabled() == true) {
@@ -802,7 +810,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 			}
 
 			// Parent folder url
-			String parentFolderUrl = url;
+			String parentFolderUrl = url+"?xoauth_requestor_id="+AuthenticationUtil.getFullyAuthenticatedUser();
 			if (parentFolder != null) {
 				parentFolderUrl = ((MediaContent) parentFolder.getContent()).getUri();
 			}
@@ -972,7 +980,11 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 				try {
 					DocumentListEntry entry = getDocumentListEntry(resourceId);
 					if (entry != null) {
-						getDocumentService().delete(new URL(entry.getEditLink().getHref() + "?delete=true"), entry.getEtag());
+						URL url = new URL(entry.getEditLink().getHref() + "?delete=true");
+						if (logger.isDebugEnabled() == true) {
+							logger.debug("Delete resource " + resourceId + " during commit. with url : "+url.toString());
+						}
+						getDocumentService().delete(url, entry.getEtag());
 					} else {
 						if (logger.isDebugEnabled() == true) {
 							logger.debug("Unable to delete resource " + resourceId + " during commit.");

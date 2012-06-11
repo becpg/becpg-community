@@ -32,6 +32,8 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.BeCPGDao;
+import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl;
 import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.data.ACLGroupData;
@@ -70,6 +72,7 @@ public class SecurityServiceImpl implements SecurityService, ApplicationListener
 	
 	private TransactionService transactionService;
 	
+	//TODO private BeCPGCacheService beCPGCacheService;
 	
 
 	public void setTransactionService(TransactionService transactionService) {
@@ -96,6 +99,11 @@ public class SecurityServiceImpl implements SecurityService, ApplicationListener
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
 	}
+	
+
+//	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
+//		this.beCPGCacheService = beCPGCacheService;
+//	}
 
 	@Override
 	/**

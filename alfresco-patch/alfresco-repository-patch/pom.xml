@@ -69,7 +69,6 @@
 							</artifactSet>
 							<filters>
 								<filter>
-
 									<artifact>org.alfresco.sdk:*</artifact>
 									<excludes>																	
 										<exclude>org/alfresco/repo/forms/processor/node/ContentModelFormProcessor**</exclude>
@@ -82,6 +81,9 @@
 										<exclude>org/alfresco/repo/model/Repository**</exclude>
 										<exclude>org/alfresco/repo/node/db/DbNodeServiceImpl**</exclude>
 										<exclude>org/alfresco/repo/thumbnail/ThumbnailRegistry**</exclude>
+										<exclude>org/alfresco/repo/workflow/jbpm/JBPMEngine**</exclude>
+										<exclude>org/alfresco/repo/security/authentication/RepositoryAuthenticationDao**</exclude>
+										<exclude>org/alfresco/repo/security/authority/AuthorityDAOImpl**</exclude>
 									</excludes>
 								</filter>
 							</filters>

@@ -67,6 +67,8 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 	private ConnectorService connectorService;
 	private String endpoint;
 	private ServletContext servletContext;
+	private String ignoredHostsRegexp;
+	
 
 	/**
 	 * Initialize the filter
@@ -93,6 +95,9 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 		if (endpoint == null) {
 			return;
 		}
+		
+		ignoredHostsRegexp = args.getInitParameter("ignoredHostsRegexp");
+		
 
 		// Get the endpoint descriptor and check if external auth is enabled
 		EndpointDescriptor endpointDescriptor = remoteConfig.getEndpointDescriptor(endpoint);
@@ -144,12 +149,12 @@ public class OpenIDSSOAuthenticationFilter implements Filter {
 		// Login page or login submission
 
 	      
-        // Login page or login submission
+        // Login page or login submission or ignored hosts
         String pathInfo;
-        if (PAGE_SERVLET_PATH.equals(req.getServletPath())
+        if ((PAGE_SERVLET_PATH.equals(req.getServletPath())
                 && ((LOGIN_PATH_INFORMATION.equals(pathInfo = req.getPathInfo()) || pathInfo == null
                         && LOGIN_PARAMETER.equals(req.getParameter("pt")))
-                        || "/type/login".equals(pathInfo)))
+                        || "/type/login".equals(pathInfo))) || req.getServerName().matches(ignoredHostsRegexp) )
         {
             if (debug)
                 logger.debug("Login page requested, chaining ...");

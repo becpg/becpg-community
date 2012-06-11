@@ -31,6 +31,8 @@
   <!-- Declare our OpenID realm so our app is white listed -->
   <Extension id="realm" type="openIdRealm">
     <Url>https://*.becpg.fr</Url>
+<!--     <Url>https://becpg.fr</Url>
+    <Url>https://www.becpg.fr</Url> -->
   </Extension>
   
    
