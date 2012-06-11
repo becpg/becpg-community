@@ -44,7 +44,6 @@
 		<property name="reportTplService" ref="reportTplService"/>		
 		<property name="contentService" ref="contentService" />
 		<property name="mimetypeService" ref="mimetypeService"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
 		<property name="entityTplService" ref="entityTplService"/>
 		<property name="beCPGMailService" ref="becpgMailService"/>		
 		<property name="designerInitService" ref="designerInitService"/> 

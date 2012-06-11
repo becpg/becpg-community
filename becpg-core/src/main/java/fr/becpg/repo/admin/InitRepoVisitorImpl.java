@@ -106,9 +106,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
 	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/nonconformity/ExportSearchQuery.xml";
 
-	/** The product dictionary service. */
-	private ProductDictionaryService productDictionaryService;
-
 	/** The authority service. */
 	private AuthorityService authorityService;
 
@@ -129,16 +126,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	
 	
 	private DesignerInitService designerInitService;
-
-	/**
-	 * Sets the product dictionary service.
-	 * 
-	 * @param productDictionaryService
-	 *            the new product dictionary service
-	 */
-	public void setProductDictionaryService(ProductDictionaryService productDictionaryService) {
-		this.productDictionaryService = productDictionaryService;
-	}
 
 	/**
 	 * Sets the authority service.

@@ -48,13 +48,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 
 	/** The PAT h_ testfolder. */
 	private static String PATH_TESTFOLDER = "TestFolder";
-
-	/** The GROU p_ garniture. */
-	private static String GROUP_GARNITURE = "Garniture";
-
-	/** The GROU p_ pate. */
-	private static String GROUP_PATE = "Pâte";
-
+	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CompareProductServiceTest.class);
 

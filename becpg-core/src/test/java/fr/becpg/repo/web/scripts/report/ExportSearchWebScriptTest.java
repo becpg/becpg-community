@@ -73,12 +73,6 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 	/** The PAT h_ testfolder. */
 	private static String PATH_TESTFOLDER = "TestFolder";
 	
-	/** The GROU p_ garniture. */
-	private static String GROUP_GARNITURE = "Garniture";
-	
-	/** The GROU p_ pate. */
-	private static String GROUP_PATE = "Pâte";
-	
 	/** The Constant USER_ADMIN. */
 	private static final String USER_ADMIN = "admin";
 	
