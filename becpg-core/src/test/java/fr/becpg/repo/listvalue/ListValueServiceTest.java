@@ -26,139 +26,139 @@ import fr.becpg.repo.helper.RepoService;
 // TODO: Auto-generated Javadoc
 /**
  * The Class ListValueServiceTest.
- *
+ * 
  * @author querephi
  */
 public class ListValueServiceTest extends BaseAlfrescoTestCase {
 
 	/** The Constant PATH_TEMPFOLDER. */
 	private static final String PATH_TEMPFOLDER = "TempFolder";
-	
+
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ListValueServiceTest.class);
-	
+
 	/** The list value service. */
 	private EntityListValuePlugin entityListValuePlugin;
-	
+
 	/** The file folder service. */
 	private FileFolderService fileFolderService;
-	
+
 	/** The repo service. */
 	private RepoService repoService;
-	
+
 	/** The repository helper. */
 	private Repository repositoryHelper;
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
 	 */
 	@Override
 	protected void setUp() throws Exception {
-    	super.setUp();		
-    	
-    	 entityListValuePlugin = (EntityListValuePlugin)ctx.getBean("entityListValuePlugin");
-    	fileFolderService = (FileFolderService) ctx.getBean("FileFolderService");
-    	repoService = (RepoService)ctx.getBean("repoService");
-    	repositoryHelper = (Repository)ctx.getBean("repositoryHelper");
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
- 			@Override
-			public NodeRef execute() throws Throwable {
- 				
- 				logger.debug("create dollard");
- 				
- 				//create dollard currency
- 				List<String> paths = new ArrayList<String>();
- 				paths.add("System");
- 				paths.add("Lists");
- 				paths.add("Currencies"); 				
- 				NodeRef currencyFolder = repoService.createFolderByPaths(repositoryHelper.getCompanyHome(), paths);
- 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
- 				properties.put(ContentModel.PROP_NAME, "dollard");
- 				NodeRef dollardNodeRef = nodeService.getChildByName(currencyFolder, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));
- 				if(dollardNodeRef == null){ 					 				
- 					nodeService.createNode(currencyFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();    	
- 				}
- 				
- 				return null;
+		super.setUp();
 
- 			}},false,true);
+		entityListValuePlugin = (EntityListValuePlugin) ctx.getBean("entityListValuePlugin");
+		fileFolderService = (FileFolderService) ctx.getBean("FileFolderService");
+		repoService = (RepoService) ctx.getBean("repoService");
+		repositoryHelper = (Repository) ctx.getBean("repositoryHelper");
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				logger.debug("create dollard");
+
+				// create dollard currency
+				List<String> paths = new ArrayList<String>();
+				paths.add("System");
+				paths.add("Lists");
+				paths.add("Currencies");
+				NodeRef currencyFolder = repoService.createFolderByPaths(repositoryHelper.getCompanyHome(), paths);
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(ContentModel.PROP_NAME, "dollard");
+				NodeRef dollardNodeRef = nodeService.getChildByName(currencyFolder, ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
+				if (dollardNodeRef == null) {
+					nodeService.createNode(currencyFolder, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties)
+							.getChildRef();
+				}
+
+				return null;
+
+			}
+		}, false, true);
 	}
-    
-    
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
 	 */
 	@Override
-	protected void tearDown() throws Exception
-    {
-		try
-        {
-            authenticationComponent.clearCurrentSecurityContext();
-        }
-        catch (Throwable e)
-        {
-            e.printStackTrace();
-            // Don't let this mask any previous exceptions
-        }
-        super.tearDown();
+	protected void tearDown() throws Exception {
+		try {
+			authenticationComponent.clearCurrentSecurityContext();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// Don't let this mask any previous exceptions
+		}
+		super.tearDown();
 
-    }	
-	
+	}
+
 	/**
 	 * Test product creation.
 	 */
-	public void testProductCreation(){
-		
+	public void testProductCreation() {
+
 		logger.debug("look for temp folder");
-		NodeRef tempFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMPFOLDER);    	
-    	if(tempFolder != null){
-    		fileFolderService.delete(tempFolder);    		
-    	}
-    	tempFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TEMPFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+		NodeRef tempFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMPFOLDER);
+		if (tempFolder != null) {
+			fileFolderService.delete(tempFolder);
+		}
+		tempFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TEMPFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 
 	}
-	
+
 	/**
 	 * Test suggest supplier.
 	 */
-	public void testSuggestSupplier(){
-		
+	public void testSuggestSupplier() {
+
 		logger.debug("look for temp folder");
-		NodeRef tempFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMPFOLDER);    	
-    	if(tempFolder != null){
-    		fileFolderService.delete(tempFolder);    		
-    	}
-    	tempFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TEMPFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+		NodeRef tempFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMPFOLDER);
+		if (tempFolder != null) {
+			fileFolderService.delete(tempFolder);
+		}
+		tempFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TEMPFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 
-    	//Create supplier 1 with allowed constraint
-    	logger.debug("create temp supplier 1");
-    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, "Supplier 1");		
-    	NodeRef supplierNodeRef = nodeService.createNode(tempFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+		// Create supplier 1 with allowed constraint
+		logger.debug("create temp supplier 1");
+		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		properties.put(ContentModel.PROP_NAME, "Supplier 1");
+		NodeRef supplierNodeRef = nodeService.createNode(tempFolder, ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
 
-    	String[] arrClassNames = {"bcpg:supplier"};
-    	List< ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0 , 10, arrClassNames).getResults();
-    	
-    	boolean containsSupplier = false;
-    	for(ListValueEntry s : suggestions){
-    		logger.debug("supplier: " + s.getName());
-    		if(s.getValue().equals(supplierNodeRef.toString()) && s.getName().equals("Supplier 1")){
-    			containsSupplier = true;
-    		}
-    	}
-    	
-    	assertEquals("1 suggestion", 1, suggestions.size());
-    	assertTrue("check supplier key", containsSupplier);
-    	
-    	// filter by client : no results
-    	String [] arrClassNames2 = {"bcpg:client"};
-    	suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0 , 10, arrClassNames2).getResults();
-    	
-    	assertEquals("0 suggestion", 0, suggestions.size());
+		String[] arrClassNames = { "bcpg:supplier" };
+		List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10, arrClassNames).getResults();
+
+		boolean containsSupplier = false;
+		for (ListValueEntry s : suggestions) {
+			logger.debug("supplier: " + s.getName());
+			if (s.getValue().equals(supplierNodeRef.toString()) && s.getName().equals("Supplier 1")) {
+				containsSupplier = true;
+			}
+		}
+
+		assertEquals("1 suggestion", 1, suggestions.size());
+		assertTrue("check supplier key", containsSupplier);
+
+		// filter by client : no results
+		String[] arrClassNames2 = { "bcpg:client" };
+		suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10, arrClassNames2).getResults();
+
+		assertEquals("0 suggestion", 0, suggestions.size());
 	}
-	
-	
-	
-	
+
 }

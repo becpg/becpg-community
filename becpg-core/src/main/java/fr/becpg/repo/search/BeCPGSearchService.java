@@ -19,4 +19,6 @@ public interface BeCPGSearchService {
 	List<NodeRef> search(String searchQuery, Map<String, Boolean> sortMap, int maxResults,
 			String searchLanguage);
 
+	List<NodeRef> searchByPath(NodeRef parentNodeRef, String xPath);
+
 }

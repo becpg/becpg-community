@@ -2,7 +2,6 @@
 	<shortname>Admin module</shortname>
 	<description>Admin module - beCPG administration</description>	
 	<url>/becpg/admin/repository/{action}</url>
-	<url>/becpg/admin/site/{site}/{action}</url>
 	<format default="json">argument</format>
 	<authentication>admin</authentication>
 	<transaction allow="readwrite" buffersize="0">required</transaction>

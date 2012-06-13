@@ -274,10 +274,11 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				for(Locale locale : dataItem.getValue().getLocales()){
 					
 					ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
-					
-					MLText grpMLText = (MLText)mlNodeService.getProperty(dataItem.getGrp(), BeCPGModel.PROP_LEGAL_NAME);					
-					ingLabelingElt.addAttribute(BeCPGModel.ASSOC_ILL_GRP.getLocalName(), grpMLText.getValue(locale));
-					ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_VALUE.getLocalName(), dataItem.getValue().getValue(locale));
+					if(dataItem.getGrp()!=null){
+						MLText grpMLText = (MLText)mlNodeService.getProperty(dataItem.getGrp(), BeCPGModel.PROP_LEGAL_NAME);					
+						ingLabelingElt.addAttribute(BeCPGModel.ASSOC_ILL_GRP.getLocalName(), grpMLText.getValue(locale));
+						ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_VALUE.getLocalName(), dataItem.getValue().getValue(locale));
+					}
 				}
 			}
 		}

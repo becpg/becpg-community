@@ -1,4 +1,4 @@
-"PATH";"/System/Characts/Allergens";;;;;;
+"PATH";"/System/Characts/bcpg:entityLists/Allergens";;;;;;
 "TYPE";"bcpg:allergen";;;;;;
 "MAPPING";"Ciqual";;;;;;;
 "COLUMNS";"bcpg:allergenCode";"cm:name";"bcpg:allergenType";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en";"bcpg:allergenSubset"

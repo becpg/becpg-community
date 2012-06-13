@@ -67,17 +67,7 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
     	productDAO = (ProductDAO)ctx.getBean("productDAO");
         mlNodeServiceImpl = (NodeService) ctx.getBean("mlAwareNodeService");
         entityListDAO = (EntityListDAO)ctx.getBean("entityListDAO");
-        
-        transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
- 			@Override
-			public NodeRef execute() throws Throwable {
 
- 				deleteCharacteristics();
- 				initCharacteristics();
- 		        
- 				return null;
-
- 			}},false,true);  
                         
     }
     

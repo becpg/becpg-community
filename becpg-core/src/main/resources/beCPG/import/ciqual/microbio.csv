@@ -1,4 +1,4 @@
-"PATH";"/System/Characts/Microbios";
+"PATH";"/System/Characts/bcpg:entityLists/Microbios";
 "TYPE";"bcpg:microbio";
 "COLUMNS";"cm:name";"cm:description"
 "VALUES";"Flore Aérobie Mésophile 30°C";

@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
-import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
@@ -75,20 +74,11 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	/** The PAT h_ testfolder. */
 	private static String PATH_TESTFOLDER = "TestFolder";
 
-	/** The HIERARCH y1_ valu e1. */
-	private static String HIERARCHY1_VALUE1 = "Value1";
-
-	/** The HIERARCH y2_ valu e1_1. */
-	private static String HIERARCHY2_VALUE1_1 = "Value1_1";
-
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductServiceTest.class);
 
 	/** The product service. */
 	private ProductService productService;
-
-	/** The product dao. */
-	private ProductDAO productDAO;
 
 	/** The mimetype service. */
 	private MimetypeService mimetypeService;
@@ -105,8 +95,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	private EntityReportService entityReportService;
 
 	private ReportTplService reportTplService;
-
-	private DictionaryDAO dictionaryDAO;
 
 	private EntityTplService entityTplService;
 
@@ -129,32 +117,15 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		logger.debug("ProductServiceTest:setUp");
 
 		productService = (ProductService) ctx.getBean("productService");
-		productDAO = (ProductDAO) ctx.getBean("productDAO");
 		mimetypeService = (MimetypeService) ctx.getBean("mimetypeService");
 		permissionService = (PermissionService) ctx.getBean("permissionService");
 		authorityService = (AuthorityService) ctx.getBean("authorityService");
 		authorityDAO = (AuthorityDAO) ctx.getBean("authorityDAO");
 		entityReportService = (EntityReportService) ctx.getBean("entityReportService");
 		reportTplService = (ReportTplService) ctx.getBean("reportTplService");
-		dictionaryDAO = (DictionaryDAO) ctx.getBean("dictionaryDAO");
 		entityTplService = (EntityTplService) ctx.getBean("entityTplService");
 		dictionaryService = (DictionaryService) ctx.getBean("dictionaryService");
 		wUsedListService = (WUsedListService) ctx.getBean("wUsedListService");
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				// deleteCharacteristics();
-				initCharacteristics();
-				initHierarchy();
-
-				// reset dictionary to reload constraints on hierarchy
-				dictionaryDAO.reset();
-
-				return null;
-
-			}
-		}, false, true);
 
 	}
 
@@ -175,55 +146,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 	}
 
-	/**
-	 * Inits the hierarchy.
-	 */
-	private void initHierarchy() {
-
-		NodeRef systemFolder = nodeService
-				.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-
-		/*-- Add hierarchy --*/
-
-		// Hierarchy
-		NodeRef hierarchyFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_HIERARCHY));
-		if (hierarchyFolder == null) {
-			hierarchyFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_HIERARCHY), ContentModel.TYPE_FOLDER).getNodeRef();
-		}
-
-		// Hierarchy1
-		NodeRef rawMaterialHierarchy1dolder = nodeService.getChildByName(hierarchyFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY1);
-		if (rawMaterialHierarchy1dolder == null) {
-			rawMaterialHierarchy1dolder = fileFolderService.create(hierarchyFolder, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY1, ContentModel.TYPE_FOLDER).getNodeRef();
-		}
-
-		NodeRef value1NodeRef = nodeService.getChildByName(rawMaterialHierarchy1dolder, ContentModel.ASSOC_CONTAINS, HIERARCHY1_VALUE1);
-		if (value1NodeRef == null) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, HIERARCHY1_VALUE1);
-			nodeService.createNode(rawMaterialHierarchy1dolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
-		}
-
-		// Hierarchy2
-		NodeRef rawMaterialHierarchy2dolder = nodeService.getChildByName(hierarchyFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2);
-		if (rawMaterialHierarchy2dolder == null) {
-			rawMaterialHierarchy2dolder = fileFolderService.create(hierarchyFolder, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2, ContentModel.TYPE_FOLDER).getNodeRef();
-		}
-
-		String name = String.format("%s - %s", HIERARCHY1_VALUE1, HIERARCHY2_VALUE1_1);
-		NodeRef value1_1NodeRef = nodeService.getChildByName(rawMaterialHierarchy2dolder, ContentModel.ASSOC_CONTAINS, name);
-		if (value1_1NodeRef == null) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, name);
-			properties.put(BeCPGModel.PROP_LINKED_VALUE_PREV_VALUE, HIERARCHY1_VALUE1);
-			properties.put(BeCPGModel.PROP_LINKED_VALUE_VALUE, HIERARCHY2_VALUE1_1);
-			nodeService.createNode(rawMaterialHierarchy2dolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties);
-		}
-	}
-
+	
 	/**
 	 * Test create product.
 	 */
@@ -517,8 +440,8 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial = new RawMaterialData();
 				rawMaterial.setName("Raw material");
-				rawMaterial.setHierarchy1(HIERARCHY1_VALUE1);
-				rawMaterial.setHierarchy2(HIERARCHY2_VALUE1_1);
+				rawMaterial.setHierarchy1(HIERARCHY1_FROZEN_REF);
+				rawMaterial.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				rawMaterial.setState(SystemState.Valid);
 				NodeRef rawMaterialNodeRef = productDAO.create(testFolder, rawMaterial, null);
 				// productService.initializeProductFolder(rawMaterialNodeRef);
@@ -539,8 +462,8 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
 				assertEquals("4th Path should be 'Validés'", "Validés", arrDisplayPaths[3]);
 				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[4]);
-				assertEquals("6th Path should be 'Value1'", "Value1", arrDisplayPaths[5]);
-				assertEquals("7th Path should be 'Value1_1'", "Value1_1", arrDisplayPaths[6]);
+				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[5]);
+				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[6]);
 				assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
 
 				/*-- classify twice --*/
@@ -559,16 +482,16 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
 				assertEquals("4th Path should be 'Validés'", "Validés", arrDisplayPaths[3]);
 				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[4]);
-				assertEquals("6th Path should be 'Value1'", "Value1", arrDisplayPaths[5]);
-				assertEquals("7th Path should be 'Value1_1'", "Value1_1", arrDisplayPaths[6]);
+				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[5]);
+				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[6]);
 				assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
 
 				/*-- Create raw material 2 --*/
 				// logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material");
-				rawMaterial2.setHierarchy1(HIERARCHY1_VALUE1);
-				rawMaterial2.setHierarchy2(HIERARCHY2_VALUE1_1);
+				rawMaterial2.setHierarchy1(HIERARCHY1_FROZEN_REF);
+				rawMaterial2.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				rawMaterial2.setState(SystemState.Valid);
 				NodeRef rawMaterial2NodeRef = productDAO.create(testFolder, rawMaterial2, null);
 				// productService.initializeProductFolder(rawMaterial2NodeRef);
@@ -589,9 +512,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
 				assertEquals("4th Path should be 'Validés'", "Validés", arrDisplayPaths[3]);
 				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[4]);
-				assertEquals("6th Path should be 'Value1'", "Value1", arrDisplayPaths[5]);
-				assertEquals("7th Path should be 'Value1_1'", "Value1_1", arrDisplayPaths[6]);
-				assertEquals("check name", "Raw material (1)", nodeService.getProperty(rawMaterial2NodeRef, ContentModel.PROP_NAME));
+				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[5]);
+				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[6]);
+				assertEquals("8th Path should be 'Raw material (1)'", "Raw material (1)", arrDisplayPaths[7]);
 
 				return null;
 

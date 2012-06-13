@@ -86,8 +86,6 @@ public interface EntityService {
 	 */
 	public void writeImages(NodeRef nodeRef, Map<String, byte[]> images) throws BeCPGException;
 
-
-	
 	
 	
     

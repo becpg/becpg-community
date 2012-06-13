@@ -5,11 +5,8 @@ package fr.becpg.repo.product;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.OwnableService;
@@ -22,6 +19,7 @@ import fr.becpg.model.MPMModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.HierarchyHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
@@ -283,7 +281,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void classifyProduct(NodeRef containerNodeRef, NodeRef productNodeRef){
     	
-    	NodeRef destionationNodeRef = null;
+    	NodeRef destinationNodeRef = null;
     	ProductData productData = productDAO.find(productNodeRef, null);
     	
     	// products
@@ -301,15 +299,18 @@ public class ProductServiceImpl implements ProductService {
 		
 		// hierarchy 1
 		if(productData.getHierarchy1() != null){
-			NodeRef hierarchy1NodeRef = repoService.createFolderByPath(productTypeNodeRef, productData.getHierarchy1(), productData.getHierarchy1());
+			
+			String name = HierarchyHelper.getHierachyName(productData.getHierarchy1(), nodeService);
+			NodeRef hierarchy1NodeRef = repoService.createFolderByPath(productTypeNodeRef,name, name);
 		
 			// hierarchy 2
 			if(productData.getHierarchy2() != null){
-				destionationNodeRef = repoService.createFolderByPath(hierarchy1NodeRef, productData.getHierarchy2(), productData.getHierarchy2());
+				name = HierarchyHelper.getHierachyName(productData.getHierarchy2(), nodeService);
+				destinationNodeRef = repoService.createFolderByPath(hierarchy1NodeRef,name, name);
     		}
 		}		
 		
-		if(destionationNodeRef != null){
+		if(destinationNodeRef != null){
 			
 			//Product has a product folder ? yes, we move the product folder - no, we move the product
 			NodeRef nodeRefToMove = productNodeRef;
@@ -321,13 +322,13 @@ public class ProductServiceImpl implements ProductService {
 			}				    	
 			
 			// classify product
-			repoService.moveNode(nodeRefToMove, destionationNodeRef);
+			repoService.moveNode(nodeRefToMove, destinationNodeRef);
 			
 			// productNodeRef : remove all owner related rights 
             ownableService.setOwner(productNodeRef, OwnableService.NO_OWNER);    			
 		}
     }
-    
+
     
 
 }

@@ -50,10 +50,10 @@ public class ProductData implements ProductElement {
 	private String versionLabel;
 	
 	/** The hierarchy1. */
-	private String hierarchy1;
+	private NodeRef hierarchy1;
 	
 	/** The hierarchy2. */
-	private String hierarchy2;
+	private NodeRef hierarchy2;
 	
 	/** The name. */
 	private String name;
@@ -153,7 +153,7 @@ public class ProductData implements ProductElement {
 	 *
 	 * @return the hierarchy1
 	 */
-	public String getHierarchy1() {
+	public NodeRef getHierarchy1() {
 		return hierarchy1;
 	}
 	
@@ -162,7 +162,7 @@ public class ProductData implements ProductElement {
 	 *
 	 * @param hierarchy1 the new hierarchy1
 	 */
-	public void setHierarchy1(String hierarchy1) {
+	public void setHierarchy1(NodeRef hierarchy1) {
 		this.hierarchy1 = hierarchy1;
 	}
 	
@@ -171,7 +171,7 @@ public class ProductData implements ProductElement {
 	 *
 	 * @return the hierarchy2
 	 */
-	public String getHierarchy2() {
+	public NodeRef getHierarchy2() {
 		return hierarchy2;
 	}
 	
@@ -180,7 +180,7 @@ public class ProductData implements ProductElement {
 	 *
 	 * @param hierarchy2 the new hierarchy2
 	 */
-	public void setHierarchy2(String hierarchy2) {
+	public void setHierarchy2(NodeRef hierarchy2) {
 		this.hierarchy2 = hierarchy2;
 	}
 	
@@ -664,8 +664,8 @@ public class ProductData implements ProductElement {
 	 */
 	public void setProperties(Map<QName, Serializable> properties){
 		
-		this.setHierarchy1((String)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1));
-		this.setHierarchy2((String)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2));
+		this.setHierarchy1((NodeRef)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1));
+		this.setHierarchy2((NodeRef)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2));
 		this.setName((String)properties.get(ContentModel.PROP_NAME));
 		this.versionLabel = (String)properties.get(ContentModel.PROP_VERSION_LABEL);
 		// need to call mlNodeService if we want MLText

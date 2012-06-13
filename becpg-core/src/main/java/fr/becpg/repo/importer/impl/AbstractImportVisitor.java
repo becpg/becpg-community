@@ -33,11 +33,6 @@ import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchParameters;
-import org.alfresco.service.cmr.search.SearchParameters.Operator;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.IOUtils;
@@ -64,6 +59,7 @@ import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
 import fr.becpg.repo.listvalue.EntityListValuePlugin;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -148,7 +144,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 	protected EntityListValuePlugin entityListValuePlugin;
 	
 	/** The search service. */
-	protected SearchService searchService;
+	protected BeCPGSearchService beCPGSearchService;
 	
 	/** The dictionary service. */
 	protected DictionaryService dictionaryService;
@@ -193,7 +189,6 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 	}
 	
 	
-	
 	/**
 	 * @param entityListValuePlugin the entityListValuePlugin to set
 	 */
@@ -202,16 +197,15 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 	}
 
 
-
 	/**
-	 * Sets the search service.
-	 *
-	 * @param searchService the new search service
+	 * @param beCPGSearchService
 	 */
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
 	}
-	
+
+
+
 	/**
 	 * Sets the dictionary service.
 	 *
@@ -321,8 +315,9 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 	 * @param values
 	 * @return
 	 * @throws ParseException
+	 * @throws ImporterException 
 	 */
-	protected Map<QName, Serializable> getNodePropertiesToImport(ImportContext importContext, List<String> values) throws ParseException{
+	protected Map<QName, Serializable> getNodePropertiesToImport(ImportContext importContext, List<String> values) throws ParseException, ImporterException{
 		
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
 		
@@ -333,8 +328,15 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			 if(attributeMapping instanceof AttributeMapping){
 				 ClassAttributeDefinition column = attributeMapping.getAttribute();
 				 				 
-				 if(column instanceof PropertyDefinition){					 
-					 Serializable value = ImportHelper.loadPropertyValue(importContext, values, z_idx);					 					 
+				 if(column instanceof PropertyDefinition){	
+					 PropertyDefinition propDef = (PropertyDefinition)column;
+					 Serializable value = null;
+					 QName dataType = propDef.getDataType().getName();
+					 if(dataType.isMatch(DataTypeDefinition.NODE_REF)){
+						 value = findTargetNodeByValue(importContext, propDef, values.get(z_idx), properties);
+					 } else {
+						 value = ImportHelper.loadPropertyValue(importContext, values, z_idx);			
+					 }
 					 
 					 if(value != null){
 						 properties.put(column.getName(), value);
@@ -345,6 +347,8 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		
 		return properties;
 	}
+
+
 
 	/**
 	 * Import the associations of the node
@@ -832,23 +836,12 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			
 		if(doQuery){
 			logger.debug(queryPath);
-			
-			SearchParameters sp = new SearchParameters();
-			//sp.addLocale(repoConfig.getSystemLocale());
-	        sp.addStore(RepoConsts.SPACES_STORE);
-	        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-	        sp.setQuery(queryPath.toString());	        
-	        sp.setLimitBy(LimitBy.FINAL_SIZE);
-	        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-	        
-	        ResultSet resultSet =null;
-	        
-	        try{
-		        resultSet = searchService.query(sp);
+
+			List<NodeRef> resultSet = beCPGSearchService.luceneSearch(queryPath.toString(), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 				
-		        logger.debug("resultSet.length() : " + resultSet.length());
-		        if (resultSet.length() != 0){
-		        	nodeRef = resultSet.getNodeRef(0);
+		        logger.debug("resultSet.length() : " + resultSet.size());
+		        if (resultSet.size() != 0){
+		        	nodeRef = resultSet.get(0);
 		        	
 		        	// check node exist
 		        	if(!nodeService.exists(nodeRef)){
@@ -856,11 +849,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		        		logger.warn("Node found by lucene query but it doesn't exist. NodeRef: " + nodeRef);
 		        	}
 		        }		        
-	        }
-	        finally{
-	        	if(resultSet != null)
-	        		resultSet.close();
-	        }
+
 		}		
 				
 		return nodeRef;	
@@ -905,6 +894,33 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			 logger.debug("assoc, name: " + assocDef.getName() + " - value: " + value + "- targetRefs: " + targetRefs);
 		 return targetRefs;
 	}
+	
+	
+
+	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, String value, Map<QName, Serializable> properties) throws ImporterException {
+		QName propName = propDef.getName();
+		
+		if (propName.equals(BeCPGModel.PROP_FATHER)) {
+
+
+			String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, LuceneHelper.encodePath(importContext.getPath()),
+						value);
+
+			List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+
+			logger.debug("resultSet.length() : " + ret.size()+" for "+queryPath);
+			if (ret.size() != 0) {
+				return ret.get(0);
+			}
+			logger.error(" linked value parent : "+queryPath+" not found ");
+			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, properties));
+
+		}
+		
+		return findTargetNodeByValue(importContext, propDef.getDataType().getName(),value);
+	}
+
+	
 	
 	/**
 	 * find the node by value, according to :
@@ -960,12 +976,14 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 				else{
 					
 					// look for codeAspect
-					for(AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()){
-						if(aspectDef.getName().equals(BeCPGModel.ASPECT_CODE)){
-							// +@cm\\:localName:%s
-							queryPath.append(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, value, LuceneHelper.Operator.AND));
-							doQuery = true;
-							break;
+					if(dictionaryService.getType(type).getDefaultAspects()!=null){
+						for(AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()){
+							if(aspectDef.getName().equals(BeCPGModel.ASPECT_CODE)){
+								// +@cm\\:localName:%s
+								queryPath.append(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, value, LuceneHelper.Operator.AND));
+								doQuery = true;
+								break;
+							}
 						}
 					}
 					
@@ -983,22 +1001,11 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 				
 				logger.debug(queryPath);
 				
-				SearchParameters sp = new SearchParameters();
-				//sp.addLocale(repoConfig.getSystemLocale());
-		        sp.addStore(RepoConsts.SPACES_STORE);
-		        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-		        sp.setQuery(queryPath.toString());	   
-		        sp.setDefaultOperator(Operator.AND);
-		        sp.setLimitBy(LimitBy.FINAL_SIZE);
-		        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		        
-		        ResultSet resultSet =null;
-		        
-		        try{
-			        resultSet = searchService.query(sp);
+				List<NodeRef> resultSet = beCPGSearchService.luceneSearch(queryPath.toString(), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+
 					
-			        logger.debug("resultSet.length() : " + resultSet.length());
-			        if (resultSet.length() == 0){
+			        logger.debug("resultSet.length() : " + resultSet.size());
+			        if (resultSet.size() == 0){
 			        	
 			        	String typeTitle = type.toString();
 			        	TypeDefinition typeDef = dictionaryService.getType(type);
@@ -1008,14 +1015,14 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			        	
 			        	throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));			        	
 			        }		        
-			        else if(resultSet.length() == 1){
-			        	nodeRef = resultSet.getNodeRef(0); 
+			        else if(resultSet.size() == 1){
+			        	nodeRef = resultSet.get(0); 
 			        }
 			        else{			        				        	
 			        	if(searchByName){
 			        		boolean found = false;
 			        		
-			        		for(NodeRef n : resultSet.getNodeRefs()){
+			        		for(NodeRef n : resultSet){
 			        			if(value.equals(nodeService.getProperty(n, ContentModel.PROP_NAME))){
 			        				
 			        				// we found, but we continue to iterate to check how many match
@@ -1049,11 +1056,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 				        	}
 			        	}			        				        	
 			        }
-		        }
-		        finally{
-		        	if(resultSet != null)
-		        		resultSet.close();
-		        }
+		        
 			}
 			// list value => by name
 			else if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)){

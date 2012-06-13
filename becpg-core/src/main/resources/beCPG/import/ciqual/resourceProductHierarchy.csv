@@ -1,36 +1,36 @@
-"PATH";"/System/ProductHierarchy/ResourceProduct_Hierarchy1";;
-"TYPE";"bcpg:listValue";;
-"COLUMNS";"cm:name";;
-"VALUES";"Vêtements et Sécurité";;
-"VALUES";"Produits ménagers";;
-"VALUES";"Produits pharmaceutiques";;
-"VALUES";"Outillage";;
-"VALUES";"Machines";;
-"VALUES";"Personnes";;
-;;;
-;;;
-;;;
-"PATH";"/System/ProductHierarchy/ResourceProduct_Hierarchy2";;
-"TYPE";"bcpg:linkedValue";;
-"COLUMNS";"cm:name";"bcpg:lkvPrevValue";"bcpg:lkvValue"
-"VALUES";"Vêtements et Sécurité - Peau";"Vêtements et Sécurité";"Peau"
-"VALUES";"Vêtements et Sécurité -  Tête ";"Vêtements et Sécurité";" Tête "
-"VALUES";"Vêtements et Sécurité - Corps";"Vêtements et Sécurité";"Corps"
-"VALUES";"Vêtements et Sécurité -  Chaussure";"Vêtements et Sécurité";" Chaussure"
-"VALUES";"Vêtements et Sécurité -  Mains";"Vêtements et Sécurité";" Mains"
-"VALUES";"Produits ménagers - Outillage de nettoyage";"Produits ménagers";"Outillage de nettoyage"
-"VALUES";"Produits ménagers -  Produits ménagers";"Produits ménagers";" Produits ménagers"
-"VALUES";"Produits ménagers -  Produits lessiviels";"Produits ménagers";" Produits lessiviels"
-"VALUES";"Produits pharmaceutiques - -";"Produits pharmaceutiques";-0
-"VALUES";"Outillage - Autre";"Outillage";"Autre"
-"VALUES";"Outillage - Bac";"Outillage";"Bac"
-"VALUES";"Outillage - Coutellerie";"Outillage";"Coutellerie"
-"VALUES";"Outillage - Marquage";"Outillage";"Marquage"
-"VALUES";"Machines - Produit cru";"Machines";"Produit cru"
-"VALUES";"Machines - Produit cuit";"Machines";"Produit cuit"
-"VALUES";"Machines - Emballage";"Machines";"Emballage"
-"VALUES";"Machines - Nettoyage";"Machines";"Nettoyage"
-"VALUES";"Machines - Lignes";"Machines";"Lignes"
-"VALUES";"Personnes - Opérateur";"Personnes";"Opérateur"
-"VALUES";"Personnes - Supervision";"Personnes";"Supervision"
-"VALUES";"Personnes - Maintenance";"Personnes";"Maintenance"
+PATH;/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;cm:name;
+VALUES;Vêtements et Sécurité;
+VALUES;Produits ménagers;
+VALUES;Produits pharmaceutiques;
+VALUES;Outillage;
+VALUES;Machines;
+VALUES;Personnes;
+;;
+;;
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:father;cm:name
+VALUES;Vêtements et Sécurité;Peau
+VALUES;Vêtements et Sécurité; Tête 
+VALUES;Vêtements et Sécurité;Corps
+VALUES;Vêtements et Sécurité; Chaussure
+VALUES;Vêtements et Sécurité; Mains
+VALUES;Produits ménagers;Outillage de nettoyage
+VALUES;Produits ménagers; Produits ménagers
+VALUES;Produits ménagers; Produits lessiviels
+VALUES;Produits pharmaceutiques;0
+VALUES;Outillage;Autre
+VALUES;Outillage;Bac
+VALUES;Outillage;Coutellerie
+VALUES;Outillage;Marquage
+VALUES;Machines;Produit cru
+VALUES;Machines;Produit cuit
+VALUES;Machines;Emballage
+VALUES;Machines;Nettoyage
+VALUES;Machines;Lignes
+VALUES;Personnes;Opérateur
+VALUES;Personnes;Supervision
+VALUES;Personnes;Maintenance

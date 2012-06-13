@@ -9,66 +9,108 @@ public interface EntityListDAO {
 
 	/**
 	 * Get the data list container.
-	 *
+	 * 
 	 * @param nodeRef
 	 * @return the list container
 	 */
 	public NodeRef getListContainer(NodeRef nodeRef);
-	
+
+	/**
+	 * Get dataList with specified name and type
+	 * 
+	 * @param listContainerNodeRef
+	 * @param name
+	 * @return
+	 */
+	public NodeRef getList(NodeRef listContainerNodeRef, String name);
+
+	/**
+	 * Create dataList with specified name and type
+	 * 
+	 * @param listContainerNodeRef
+	 * @param name
+	 * @param type
+	 */
+	public NodeRef createList(NodeRef listContainerNodeRef, String name, QName type);
+
 	/**
 	 * Get the data list NodeRef.
-	 *
-	 * @param listContainerNodeRef the list container node ref
-	 * @param dataListQName : type of the data list
+	 * 
+	 * @param listContainerNodeRef
+	 *            the list container node ref
+	 * @param dataListQName
+	 *            : type of the data list
 	 * @return the list
 	 */
-	public NodeRef getList(NodeRef listContainerNodeRef, QName dataListQName);	
-		
+	public NodeRef getList(NodeRef listContainerNodeRef, QName dataListQName);
+
 	/**
 	 * Create the data list container.
-	 *
-	 * @param dataNodeRef the data node ref
+	 * 
+	 * @param dataNodeRef
+	 *            the data node ref
 	 * @return the node ref
 	 */
 	public NodeRef createListContainer(NodeRef dataNodeRef);
-	
+
 	/**
 	 * Create the data list NodeRef.
-	 *
-	 * @param listContainerNodeRef the list container node ref
-	 * @param dataListQName : type of the data list
+	 * 
+	 * @param listContainerNodeRef
+	 *            the list container node ref
+	 * @param dataListQName
+	 *            : type of the data list
 	 * @return the node ref
 	 */
 	public NodeRef createList(NodeRef listContainerNodeRef, QName dataListQName);
-	
+
 	/**
-	 * Get the link node of a data list that has the nodeRef stored in the propertyQName.
-	 *
-	 * @param listNodeRef the list node ref
-	 * @param propertyQName the property q name
-	 * @param nodeRef the node ref
+	 * Get the link node of a data list that has the nodeRef stored in the
+	 * propertyQName.
+	 * 
+	 * @param listNodeRef
+	 *            the list node ref
+	 * @param propertyQName
+	 *            the property q name
+	 * @param nodeRef
+	 *            the node ref
 	 * @return the link
 	 */
 	public NodeRef getLink(NodeRef listNodeRef, QName propertyQName, NodeRef nodeRef);
-	
-	public List<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef);
-	
-	public List<QName> getExistingListsQName(NodeRef listContainerNodeRef);
-	
+
 	/**
-     * Copy data lists.
-     *
-     * @param sourceNodeRef the source node ref
-     * @param targetNodeRef the target node ref
-     * @param override the override
-     */
-    public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override);
-    
-    /**
-     * Get the manual links
-     * @param listContainerNodeRef
-     * @param listQName
-     * @return
-     */
-    public List<NodeRef> getManualLinks(NodeRef listNodeRef, QName listQName);
+	 * 
+	 * @param listContainerNodeRef
+	 * @return
+	 */
+	public List<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef);
+
+	/**
+	 * 
+	 * @param listContainerNodeRef
+	 * @return
+	 */
+	public List<QName> getExistingListsQName(NodeRef listContainerNodeRef);
+
+	/**
+	 * Copy data lists.
+	 * 
+	 * @param sourceNodeRef
+	 *            the source node ref
+	 * @param targetNodeRef
+	 *            the target node ref
+	 * @param override
+	 *            the override
+	 */
+	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override);
+
+	/**
+	 * Get the manual links
+	 * 
+	 * @param listContainerNodeRef
+	 * @param listQName
+	 * @return
+	 */
+	public List<NodeRef> getManualLinks(NodeRef listNodeRef, QName listQName);
+
 }

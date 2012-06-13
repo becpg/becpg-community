@@ -83,8 +83,6 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 				@Override
 				public NodeRef execute() throws Throwable {
 				
-					deleteCharacteristics();
-					initCharacteristics();
 					
 					/*-- Create test folder --*/
 					NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			

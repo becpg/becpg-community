@@ -49,11 +49,12 @@
 				</list>
 			</parameter>
 		</constraint>
+
 		<constraint name="bcpg:ingType"
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>/System/Lists/IngTypes</value>
+					<value>/System/Lists/bcpg:entityLists/IngTypes</value>
 				</list>
 			</parameter>
 			<parameter name="constraintType">
@@ -224,46 +225,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:productHierarchy1"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-			<parameter name="path">
-				<list>
-					<value>System/ProductHierarchy/RawMaterial_Hierarchy1</value>
-					<value>System/ProductHierarchy/PackagingMaterial_Hierarchy1</value>
-					<value>System/ProductHierarchy/SemiFinishedProduct_Hierarchy1</value>
-					<value>System/ProductHierarchy/FinishedProduct_Hierarchy1</value>
-					<value>System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy1</value>
-					<value>System/ProductHierarchy/PackagingKit_Hierarchy1</value>
-					<value>System/ProductHierarchy/CondSalesUnit_Hierarchy1</value>
-				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>cm:name</value>
-			</parameter>
-		</constraint>
-		<constraint name="bcpg:productHierarchy2"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-			<parameter name="path">
-				<list>
-					<value>System/ProductHierarchy/RawMaterial_Hierarchy2</value>
-					<value>System/ProductHierarchy/PackagingMaterial_Hierarchy2</value>
-					<value>System/ProductHierarchy/SemiFinishedProduct_Hierarchy2</value>
-					<value>System/ProductHierarchy/FinishedProduct_Hierarchy2</value>
-					<value>System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy2</value>
-					<value>System/ProductHierarchy/PackagingKit_Hierarchy2</value>
-					<value>System/ProductHierarchy/CondSalesUnit_Hierarchy2</value>
-				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:linkedValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lkvValue</value>
-			</parameter>
-		</constraint>
+	
 		<!-- <constraint name="bcpg:plant" type="fr.becpg.repo.dictionary.constraint.DynListConstraint"> 
 			<parameter name="path"> <list> <value>System/Plants</value> </list> </parameter> 
 			<parameter name="constraintType"> <value>bcpg:plant</value> </parameter> 
@@ -399,7 +361,7 @@
 
 
 		<type name="bcpg:charact">
-			<parent>cm:content</parent>
+			<parent>bcpg:entityListItem</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:legalNameAspect</aspect>
 			</mandatory-aspects>
@@ -627,19 +589,19 @@
 		</type>
 		<!-- ______________________________________ SUBSIDIARY ______________________________________ -->
 		<type name="bcpg:subsidiary">
-			<parent>cm:content</parent>			
+			<parent>bcpg:entityListItem</parent>			
 		</type>
 		<!-- ______________________________________ TRADEMARK ______________________________________ -->								
 		<type name="bcpg:trademark">
-			<parent>cm:content</parent>			
+			<parent>bcpg:entityListItem</parent>			
 		</type>
 		<!-- ______________________________________ CERTIFICATION ______________________________________ -->								
 		<type name="bcpg:certification">
-			<parent>cm:content</parent>			
+			<parent>bcpg:entityListItem</parent>			
 		</type>
 		<!-- ______________________________________ APPROVAL NUMBER ______________________________________ -->								
 		<type name="bcpg:approvalNumber">
-			<parent>cm:content</parent>			
+			<parent>bcpg:entityListItem</parent>			
 		</type>
 		
 		<!-- Entity Charact View -->
@@ -1425,21 +1387,20 @@
 		<!-- ________________________________________________________________ AUTO 
 			COMP ________________________________________________________________ -->
 
-		<type name="bcpg:linkedValue">
-			<parent>cm:content</parent>
-			<properties>
-				<property name="bcpg:lkvPrevValue">
-					<type>d:text</type>
-				</property>
-				<property name="bcpg:lkvValue">
-					<type>d:text</type>
-				</property>
-			</properties>
+		<type name="bcpg:listValue">
+			<parent>bcpg:entityListItem</parent>
 		</type>
 
-		<type name="bcpg:listValue">
-			<parent>cm:content</parent>
+
+		<type name="bcpg:linkedValue">
+			<parent>bcpg:entityListItem</parent>
+			 <mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			 	<aspect>bcpg:depthLevelAspect</aspect> 
+			</mandatory-aspects> 
 		</type>
+
+		
 
 		<type name="bcpg:entityFolder">
 			<parent>cm:folder</parent>
@@ -1448,6 +1409,12 @@
 		<type name="bcpg:entity">
 			<parent>cm:content</parent>			
 		</type>
+		
+		
+		<type name="bcpg:systemEntity">
+			<parent>bcpg:entity</parent>			
+		</type>
+		
 
 		<type name="bcpg:autoNum">
 			<parent>cm:content</parent>
@@ -1490,18 +1457,12 @@
 					<type>d:text</type>
 				</property>
 				<property name="bcpg:productHierarchy1">
-					<type>d:text</type>
-					<mandatory>true</mandatory>
-					<constraints>
-						<constraint ref="bcpg:productHierarchy1" />
-					</constraints>
+					<type>d:noderef</type>
+					<mandatory enforced="true">true</mandatory>
 				</property>
 				<property name="bcpg:productHierarchy2">
-					<type>d:text</type>
-					<mandatory>true</mandatory>
-					<constraints>
-						<constraint ref="bcpg:productHierarchy2" />
-					</constraints>
+					<type>d:noderef</type>
+					<mandatory enforced="true">true</mandatory>
 				</property>
 				<property name="bcpg:productState">
 					<type>d:text</type>

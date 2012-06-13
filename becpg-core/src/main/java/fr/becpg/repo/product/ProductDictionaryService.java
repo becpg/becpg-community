@@ -57,13 +57,13 @@ public interface ProductDictionaryService {
 	 * @return the folder name
 	 */
 	public String getFolderName(SystemProductType systemProductType);	
-	
-	/**
-	 * Initialize repo hierarchy.
-	 *
-	 * @param containerNodeRef the container node ref
-	 */
-	public void initializeRepoHierarchy(NodeRef containerNodeRef);
+//	
+//	/**
+//	 * Initialize repo hierarchy.
+//	 *
+//	 * @param containerNodeRef the container node ref
+//	 */
+//	public void initializeRepoHierarchy(NodeRef containerNodeRef);
 	
 	public QName getWUsedList(NodeRef childNodeRef);
 }

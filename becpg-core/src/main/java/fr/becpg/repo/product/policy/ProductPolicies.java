@@ -65,19 +65,19 @@ public class ProductPolicies implements NodeServicePolicies.OnUpdatePropertiesPo
 		String beforeState = (String) before.get(BeCPGModel.PROP_PRODUCT_STATE);
 		String afterState = (String) after.get(BeCPGModel.PROP_PRODUCT_STATE);
 
-		String beforeHierarchy1 = (String) before.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1);
-		String afterHierarchy1 = (String) after.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1);
+		NodeRef beforeHierarchy1 = (NodeRef) before.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1);
+		NodeRef afterHierarchy1 = (NodeRef) after.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1);
 
-		String beforeHierarchy2 = (String) before.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);
-		String afterHierarchy2 = (String) after.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);
+		NodeRef beforeHierarchy2 = (NodeRef) before.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);
+		NodeRef afterHierarchy2 = (NodeRef) after.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);
 
 		boolean classify = false;
 
 		if (afterState != null && !afterState.isEmpty() && !afterState.equals(beforeState)) {
 			classify = true;
-		} else if (afterHierarchy1 != null && !afterHierarchy1.isEmpty() && !afterHierarchy1.equals(beforeHierarchy1)) {
+		} else if (afterHierarchy1 != null  && !afterHierarchy1.equals(beforeHierarchy1)) {
 			classify = true;
-		} else if (afterHierarchy2 != null && !afterHierarchy2.isEmpty() && !afterHierarchy2.equals(beforeHierarchy2)) {
+		} else if (afterHierarchy2 != null  && !afterHierarchy2.equals(beforeHierarchy2)) {
 			classify = true;
 		}
 

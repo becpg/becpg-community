@@ -1,61 +1,60 @@
-"PATH";"/System/ProductHierarchy/RawMaterial_Hierarchy1"
-"TYPE";"bcpg:listValue"
-"COLUMNS";"cm:name"
-"VALUES";"Céréales et pâtes"
-"VALUES";"Pâtisseries et biscuits"
-"VALUES";"Produits laitiers et entremets"
-"VALUES";"Fromages"
-"VALUES";"Oeufs et dérivés"
-"VALUES";"Matières grasses"
-"VALUES";"Viandes"
-"VALUES";"Volailles"
-"VALUES";"Abats"
-"VALUES";"Charcuteries et salaisons"
-"VALUES";"Produits de la mer"
-"VALUES";"Fruits, Légumes"
-"VALUES";"Fruits"
-"VALUES";"Jus et nectars"
-"VALUES";"Graines oléagineuses et châtaignes"
-"VALUES";"Sucres et confiseries"
-"VALUES";"Boissons sans alcool"
-"VALUES";"Boissons alcoolisées"
-"VALUES";"Salades composées et crudités"
-"VALUES";"Soupes et bouillons"
-"VALUES";"Assaisonnements et sauces"
-"VALUES";"Denrées destinées à une alimentation particulière"
-"VALUES";"Ingrédients divers"
-"VALUES";"Compléments alimentaires"
-"VALUES";"Epicerie"
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;cm:name
+VALUES;Céréales et pâtes
+VALUES;Pâtisseries et biscuits
+VALUES;Produits laitiers et entremets
+VALUES;Fromages
+VALUES;Oeufs et dérivés
+VALUES;Matières grasses
+VALUES;Viandes
+VALUES;Volailles
+VALUES;Abats
+VALUES;Charcuteries et salaisons
+VALUES;Produits de la mer
+VALUES;Fruits, Légumes
+VALUES;Fruits
+VALUES;Jus et nectars
+VALUES;Graines oléagineuses et châtaignes
+VALUES;Sucres et confiseries
+VALUES;Boissons sans alcool
+VALUES;Boissons alcoolisées
+VALUES;Salades composées et crudités
+VALUES;Soupes et bouillons
+VALUES;Assaisonnements et sauces
+VALUES;Denrées destinées à une alimentation particulière
+VALUES;Ingrédients divers
+VALUES;Compléments alimentaires
+VALUES;Epicerie
 ;
-"PATH";"/System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy1"
-"TYPE";"bcpg:listValue"
-"COLUMNS";"cm:name"
-"VALUES";"Sauce"
-"VALUES";"Façonné"
-"VALUES";"Braisé - bruni"
-"VALUES";"Tranché"
-"VALUES";"Mélange - garniture"
-"VALUES";"Pâtisserie"
+PATH;/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;cm:name
+VALUES;Sauce
+VALUES;Façonné
+VALUES;Braisé - bruni
+VALUES;Tranché
+VALUES;Mélange - garniture
+VALUES;Pâtisserie
 ;
-"PATH";"/System/ProductHierarchy/SemiFinishedProduct_Hierarchy1"
-"TYPE";"bcpg:listValue"
-"COLUMNS";"cm:name"
-"VALUES";"Sauce"
-"VALUES";"Façonné"
-"VALUES";"Braisé - bruni"
-"VALUES";"Tranché"
-"VALUES";"Mélange - garniture"
-"VALUES";"Pâtisserie"
+PATH;/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;cm:name
+VALUES;Sauce
+VALUES;Façonné
+VALUES;Braisé - bruni
+VALUES;Tranché
+VALUES;Mélange - garniture
+VALUES;Pâtisserie
 ;
-"PATH";"/System/ProductHierarchy/FinishedProduct_Hierarchy1"
-"TYPE";"bcpg:listValue"
-"COLUMNS";"cm:name"
-"VALUES";"Boulangerie-viennoiserie"
-"VALUES";"Pâtisseries et biscuits"
-"VALUES";"Céréales petit déjeuner et barres céréalières"
-"VALUES";"Plats composés"
-"VALUES";"Sandwichs"
-"VALUES";"Produits japonais"
-"VALUES";"Quiches"
-"VALUES";"Menus - kits"
-
+PATH;/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;cm:name
+VALUES;Boulangerie-viennoiserie
+VALUES;Pâtisseries et biscuits
+VALUES;Céréales petit déjeuner et barres céréalières
+VALUES;Plats composés
+VALUES;Sandwichs
+VALUES;Produits japonais
+VALUES;Quiches
+VALUES;Menus - kits

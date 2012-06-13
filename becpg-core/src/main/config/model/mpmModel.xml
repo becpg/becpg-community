@@ -37,7 +37,7 @@
 	<types>
 		
 		<type name="mpm:processStep">
-			<parent>cm:content</parent>					
+			<parent>bcpg:entityListItem</parent>					
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>

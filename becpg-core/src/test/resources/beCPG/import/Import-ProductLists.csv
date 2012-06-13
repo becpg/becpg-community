@@ -1,4 +1,4 @@
-"PATH";"/System/Costs";;;;;;
+"PATH";"/System/Characts/bcpg:entityLists/Costs";;;;;;
 "TYPE";"bcpg:cost";;;;;;
 "COLUMNS";"cm:name";"bcpg:costCurrency";;;;;
 "VALUES";"Coût MP";"€";;;;;
@@ -6,7 +6,7 @@
 "VALUES";"Coût Emb";"€";;;;;
 "VALUES";"Coût prév Emb";"€";;;;;
 ;;;;;;;
-"PATH";"/System/Nuts";;;;;;
+"PATH";"/System/Characts/bcpg:entityLists/Nuts";;;;;;
 "TYPE";"bcpg:nut";;;;;;
 "COLUMNS";"cm:name";"bcpg:nutUnit";"bcpg:nutType";"bcpg:nutGroup";;;
 "VALUES";"Energie (kJoules)";"kJ";"Valeur énergétique";"Groupe 1";;;
@@ -26,7 +26,7 @@
 "PATH";"/Temp/Products";;;;;;
 "TYPE";"bcpg:finishedProduct";;;;;;
 "COLUMNS";"bcpg:code";"cm:name";"cm:description";"bcpg:legalName";"bcpg:productHierarchy1";"bcpg:productHierarchy2";"bcpg:productState"
-"VALUES";1000012012;"Saumon surgelé 80x20x4";;"saumon sugelé";"Sea food";"Fish";"ToValidate"
+"VALUES";1000012012;"Saumon surgelé 80x20x4";;"saumon sugelé";"Frozen";"Pizza";"ToValidate"
 ;;;;;;;
 "PATH";"/Temp/Products";;;;;;
 "TYPE";"bcpg:rawMaterial";;;;;;

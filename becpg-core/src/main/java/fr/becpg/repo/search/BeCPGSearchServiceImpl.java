@@ -12,6 +12,7 @@ import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchParameters.Operator;
 import org.alfresco.service.cmr.search.SearchService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
@@ -33,6 +34,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	
 	private SearchService searchService;
 	private SearchService unProtSearchService;
+	private NamespaceService namespaceService;
 
 
 	public void setSearchService(SearchService searchService) {
@@ -43,6 +45,11 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		this.unProtSearchService = unProtSearchService;
 	}
 	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+
+
 
 	private static Log logger = LogFactory.getLog(BeCPGSearchServiceImpl.class);
 
@@ -263,6 +270,14 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 			}
 			
 			return nodes;
+	}
+
+	@Override
+	public List<NodeRef> searchByPath(NodeRef parentNodeRef, String xPath) {
+
+		return searchService.selectNodes(parentNodeRef, 
+				xPath, null, namespaceService, false);
+		
 	}
 
 	

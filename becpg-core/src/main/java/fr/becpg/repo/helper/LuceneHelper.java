@@ -1,7 +1,10 @@
 package fr.becpg.repo.helper;
 
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ISO9075;
 import org.alfresco.web.bean.repository.Repository;
+
+import fr.becpg.repo.RepoConsts;
 
 /**
  * Helper for lucene queries
@@ -50,4 +53,28 @@ public class LuceneHelper {
 		AND,
 		OR		
 	}
+	
+	/**
+     * Encode path.
+     *
+     * @param path the path
+     * @return the string
+     */
+	public static  String encodePath(String path){
+    	
+    	StringBuilder pathBuffer = new StringBuilder(64);
+    	String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);
+    	
+    	for(String folder : arrPath){
+    		if(!folder.contains("bcpg:")){
+	    		pathBuffer.append("/cm:");
+	    		pathBuffer.append(ISO9075.encode(folder)); 
+    		} else {
+    			pathBuffer.append("/"+folder);
+    		}
+    	}
+    	
+    	//remove 1st character '/'
+    	return pathBuffer.substring(1);
+    }
 }

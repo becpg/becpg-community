@@ -24,39 +24,40 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * 
  * @author querephi
- *
+ * 
  */
-public class EntityListDAOImpl implements EntityListDAO{	
-	
+public class EntityListDAOImpl implements EntityListDAO {
+
 	private static final String QUERY_PARENT = " +PARENT:\"%s\" +TYPE:\"%s\" +@bcpg\\:isManualListItem:true";
-	
+
 	private static Log logger = LogFactory.getLog(EntityListDAOImpl.class);
-	
+
 	private NodeService nodeService;
-	
+
 	private DictionaryService dictionaryService;
-	
+
 	private FileFolderService fileFolderService;
-	
+
 	private NamespaceService namespaceService;
-	
+
 	private CopyService copyService;
-	
+
 	private BeCPGSearchService beCPGSearchService;
-	
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
+
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
-	
+
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
@@ -64,7 +65,7 @@ public class EntityListDAOImpl implements EntityListDAO{
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
-	
+
 	public void setCopyService(CopyService copyService) {
 		this.copyService = copyService;
 	}
@@ -72,183 +73,207 @@ public class EntityListDAOImpl implements EntityListDAO{
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
 	}
-	
+
 	@Override
 	public NodeRef getListContainer(NodeRef nodeRef) {
-				
+
 		return nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
 	}
 
 	@Override
+	public NodeRef getList(NodeRef listContainerNodeRef, String name) {
+
+		NodeRef listNodeRef = null;
+		if (listContainerNodeRef != null) {
+			listNodeRef = nodeService.getChildByName(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, QName.createValidLocalName(name));
+		}
+		return listNodeRef;
+	}
+
+	@Override
 	public NodeRef getList(NodeRef listContainerNodeRef, QName listQName) {
-		
-		if(listQName== null){
+		if (listQName == null) {
 			return null;
 		}
-			
-		NodeRef listNodeRef = null;		
-		if(listContainerNodeRef != null){
-			listNodeRef = nodeService.getChildByName(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, listQName.getLocalName());		
-		}
-		return listNodeRef;	
+
+		return getList(listContainerNodeRef, listQName.getLocalName());
 	}
 
 	@Override
 	public NodeRef createListContainer(NodeRef nodeRef) {
-		
+
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);
 		properties.put(ContentModel.PROP_TITLE, RepoConsts.CONTAINER_DATALISTS);
-		return nodeService.createNode(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, 
-				BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.TYPE_FOLDER, properties).getChildRef();
+		return nodeService.createNode(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.TYPE_FOLDER, properties).getChildRef();
 	}
-	
+
 	@Override
 	public NodeRef createList(NodeRef listContainerNodeRef, QName listQName) {
-		
+
 		ClassDefinition classDef = dictionaryService.getClass(listQName);
-		
+
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, listQName.getLocalName());
 		properties.put(ContentModel.PROP_TITLE, classDef.getTitle());
 		properties.put(ContentModel.PROP_DESCRIPTION, classDef.getDescription());
 		properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
-		return nodeService.createNode(listContainerNodeRef, 
-									ContentModel.ASSOC_CONTAINS, listQName, 
-									DataListModel.TYPE_DATALIST, 
-									properties).getChildRef();
+
+		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, listQName, DataListModel.TYPE_DATALIST, properties).getChildRef();
+		
 	}
-	
+
+	@Override
+	public NodeRef createList(NodeRef listContainerNodeRef, String name, QName listQName) {
+
+		String entityTitle = TranslateHelper.getTranslatedPath(name);
+		if (entityTitle == null) {
+			entityTitle = name;
+		}
+
+		QName assocQname = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Create data list with name:" + name + " of type " + listQName.getLocalName() + " title " + entityTitle + " with assocQname : "
+					+ assocQname.toPrefixString(namespaceService));
+		}
+
+		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		properties.put(ContentModel.PROP_NAME, name);
+		properties.put(ContentModel.PROP_TITLE, entityTitle);
+		properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
+
+		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, assocQname, DataListModel.TYPE_DATALIST, properties).getChildRef();
+
+	}
+
 	@Override
 	public List<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef) {
-		
+
 		List<NodeRef> existingLists = new ArrayList<NodeRef>();
-		
-		if(listContainerNodeRef != null){
+
+		if (listContainerNodeRef != null) {
 			List<FileInfo> nodes = fileFolderService.listFolders(listContainerNodeRef);
-		
-			for(FileInfo node : nodes){
-				
+
+			for (FileInfo node : nodes) {
+
 				NodeRef listNodeRef = node.getNodeRef();
-				String dataListType = (String)nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-				
-				if(dataListType != null && !dataListType.isEmpty()){
-					
+				String dataListType = (String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+
+				if (dataListType != null && !dataListType.isEmpty()) {
+
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
-					
-					if(dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)){
-						
+
+					if (dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+
 						existingLists.add(listNodeRef);
 					}
 				}
-				
-			}								
+
+			}
 		}
 		return existingLists;
 	}
 
 	@Override
 	public List<QName> getExistingListsQName(NodeRef listContainerNodeRef) {
-		
+
 		List<QName> existingLists = new ArrayList<QName>();
-		
-		if(listContainerNodeRef != null){
+
+		if (listContainerNodeRef != null) {
 			List<FileInfo> nodes = fileFolderService.listFolders(listContainerNodeRef);
-			
-			for(FileInfo node : nodes){
-				
+
+			for (FileInfo node : nodes) {
+
 				NodeRef listNodeRef = node.getNodeRef();
-				String dataListType = (String)nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-				
-				if(dataListType != null && !dataListType.isEmpty()){
-					
-					existingLists.add(QName.createQName(dataListType, namespaceService));					
+				String dataListType = (String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+
+				if (dataListType != null && !dataListType.isEmpty()) {
+
+					existingLists.add(QName.createQName(dataListType, namespaceService));
 				}
-			}								
+			}
 		}
-		return existingLists;				
+		return existingLists;
 	}
 
 	@Override
 	public NodeRef getLink(NodeRef listContainerNodeRef, QName assocQName, NodeRef nodeRef) {
-		
-		if(listContainerNodeRef != null && assocQName != null && nodeRef != null){
-			
+
+		if (listContainerNodeRef != null && assocQName != null && nodeRef != null) {
+
 			List<FileInfo> fileInfos = fileFolderService.listFiles(listContainerNodeRef);
-    		
-    		for(FileInfo fileInfo : fileInfos){
-    			
-    			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(fileInfo.getNodeRef(), assocQName);
-    			if(assocRefs.size() > 0 && nodeRef.equals(assocRefs.get(0).getTargetRef())){
-    				return fileInfo.getNodeRef();
-    			}
-	    		
-	    	}
+
+			for (FileInfo fileInfo : fileInfos) {
+
+				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(fileInfo.getNodeRef(), assocQName);
+				if (assocRefs.size() > 0 && nodeRef.equals(assocRefs.get(0).getTargetRef())) {
+					return fileInfo.getNodeRef();
+				}
+
+			}
 		}
 		return null;
 	}
-	
-    @Override
+
+	@Override
 	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override) {
-		
-    	//do not initialize entity version
-    	if(nodeService.hasAspect(targetNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
-    		return;
-    	}
-    	
-        if(sourceNodeRef != null){
-        	
-        	/*-- copy source datalists--*/
-        	logger.debug("/*-- copy source datalists--*/");        	
-        	NodeRef sourceListContainerNodeRef = getListContainer(sourceNodeRef);
-        	NodeRef targetListContainerNodeRef = getListContainer(targetNodeRef);
-        		        	
-        	if(sourceListContainerNodeRef != null){
-        			        		    	        			
+
+		// do not initialize entity version
+		if (nodeService.hasAspect(targetNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+			return;
+		}
+
+		if (sourceNodeRef != null) {
+
+			/*-- copy source datalists--*/
+			logger.debug("/*-- copy source datalists--*/");
+			NodeRef sourceListContainerNodeRef = getListContainer(sourceNodeRef);
+			NodeRef targetListContainerNodeRef = getListContainer(targetNodeRef);
+
+			if (sourceListContainerNodeRef != null) {
+
 				List<NodeRef> sourceListsNodeRef = getExistingListsNodeRef(sourceListContainerNodeRef);
-				for(NodeRef sourceListNodeRef : sourceListsNodeRef){
-					
+				for (NodeRef sourceListNodeRef : sourceListsNodeRef) {
+
 					// create container if needed
-					if(targetListContainerNodeRef == null){
-						
-						targetListContainerNodeRef = createListContainer(targetNodeRef);						
+					if (targetListContainerNodeRef == null) {
+
+						targetListContainerNodeRef = createListContainer(targetNodeRef);
 					}
-					
-					String dataListType = (String)nodeService.getProperty(sourceListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-					QName listQName = QName.createQName(dataListType, namespaceService);						        				
-					
+
+					String dataListType = (String) nodeService.getProperty(sourceListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+					QName listQName = QName.createQName(dataListType, namespaceService);
+
 					NodeRef existingListNodeRef = getList(targetListContainerNodeRef, listQName);
 					boolean copy = true;
-					if(existingListNodeRef != null){
-						if(override){
+					if (existingListNodeRef != null) {
+						if (override) {
 							nodeService.deleteNode(existingListNodeRef);
-						}
-						else{
+						} else {
 							copy = false;
 						}
 					}
-					
-					if(copy){	        						        										
-						NodeRef newDLNodeRef = copyService.copy (sourceListNodeRef, 
-																targetListContainerNodeRef, 
-																ContentModel.ASSOC_CONTAINS, 
-																DataListModel.TYPE_DATALIST, 
-																true);						
+
+					if (copy) {
+						NodeRef newDLNodeRef = copyService.copy(sourceListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST, true);
 						nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, listQName.getLocalName());
 					}
 				}
-        	}
-        }    	
+			}
+		}
 	}
-    
+
 	/**
 	 * Get the manual links
+	 * 
 	 * @param listNodeRef
 	 * @return
 	 */
-    @Override
-	public List<NodeRef> getManualLinks(NodeRef listNodeRef, QName listQName){
-		
+	@Override
+	public List<NodeRef> getManualLinks(NodeRef listNodeRef, QName listQName) {
+
 		return beCPGSearchService.unProtLuceneSearch(String.format(QUERY_PARENT, listNodeRef, listQName));
 	}
+
 }

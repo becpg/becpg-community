@@ -21,6 +21,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.ecm.ECOReportService;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
+import fr.becpg.repo.helper.HierarchyHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -128,8 +129,8 @@ public class ECOReportServiceImpl implements ECOReportService {
 				projectedQty = DEFAULT_PROJECTED_QTY;
 			}
 			
-			calculatedCharactElt.addAttribute(ATTR_SOURCEITEM_HIERARCHY1, (String)nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_PRODUCT_HIERARCHY1));
-			calculatedCharactElt.addAttribute(ATTR_SOURCEITEM_HIERARCHY2, (String)nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_PRODUCT_HIERARCHY2));
+			calculatedCharactElt.addAttribute(ATTR_SOURCEITEM_HIERARCHY1, HierarchyHelper.getHierachyName((NodeRef)nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_PRODUCT_HIERARCHY1),nodeService));
+			calculatedCharactElt.addAttribute(ATTR_SOURCEITEM_HIERARCHY2, HierarchyHelper.getHierachyName((NodeRef)nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_PRODUCT_HIERARCHY2),nodeService));
 			calculatedCharactElt.addAttribute(ATTR_SOURCEITEM_CODE, (String)nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_CODE));
 			calculatedCharactElt.addAttribute(ATTR_SOURCEITEM_NAME, (String)nodeService.getProperty(sl.getSourceItem(), ContentModel.PROP_NAME));
 			calculatedCharactElt.addAttribute(ATTR_CHARACT_NAME, (String)nodeService.getProperty(sl.getCharact(), ContentModel.PROP_NAME));

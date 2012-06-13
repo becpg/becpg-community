@@ -1,5 +1,5 @@
 "#";"http://www.saveursdumonde.net/";
-"PATH";"/System/Characts/BioOrigins";
+"PATH";"/System/Characts/bcpg:entityLists/BioOrigins";
 "TYPE";"bcpg:bioOrigin";
 "COLUMNS";"cm:name";"bcpg:bioOriginType"
 "VALUES";"Abricot";"Fruit et noix"

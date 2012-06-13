@@ -17,9 +17,10 @@
 		parent="webscript">
 		<property name="initRepoVisitor" ref="initRepoVisitor" />
 		<property name="repository" ref="repositoryHelper" />
-		<property name="siteService" ref="siteService" />
-		<property name="initSiteVisitor" ref="initSiteVisitor" />
-		<property name="initDemoVisitor" ref="initDemoVisitor" />
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
+		<property name="securityService" ref="securityService" />
+		<property name="dictionaryDAO" ref="dictionaryDAO" />
+		<property name="entitySystemService" ref="entitySystemService"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.admin.adminTenant.get" class="fr.becpg.repo.web.scripts.admin.AdminTenantWebScript"
@@ -30,17 +31,7 @@
 		<property name="authorityService" ref="authorityService"/>
 	</bean>
 	
-	
-	<bean id="webscript.fr.becpg.admin.reloadModels.get" class="fr.becpg.repo.web.scripts.admin.ReloadModelsWebScript"
-		parent="webscript">
-		<property name="dictionaryDAO" ref="dictionaryDAO" />
-	</bean>
 
-
-	<bean id="webscript.fr.becpg.admin.clearCache.get" class="fr.becpg.repo.web.scripts.admin.CacheServiceWebscript"
-		parent="webscript">
-		<property name="beCPGCacheService" ref="beCPGCacheService" />
-	</bean>
 
 
 	<!-- Entity lists -->
@@ -148,6 +139,7 @@
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="mlNodeService" ref="mlAwareNodeService" />
 		<property name="beCPGVersionMigrator" ref="beCPGVersionMigrator" />
+		<property name="beCPGSystemFolderMigrator" ref="beCPGSystemFolderMigrator"/>
 	</bean>
 
 

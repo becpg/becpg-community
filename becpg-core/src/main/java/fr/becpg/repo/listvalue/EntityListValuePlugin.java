@@ -17,7 +17,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
@@ -28,6 +27,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin;
 import fr.becpg.repo.listvalue.impl.ListValueServiceImpl;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
@@ -228,9 +228,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	}
     
 
-
-
-
 	/**
      * Suggest linked value according to query
      * 
@@ -248,17 +245,26 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
     	logger.debug("suggestLinkedValue");  
     	
     	String queryPath = "";
-    	path = encodePath(path);    
+    	path = LuceneHelper.encodePath(path);    
 		if(!isAllQuery(query)){ 
 	    	query = prepareQuery(query);    	    	
-	        queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, path, parent, query);    			
+	        if(parent==null || parent.isEmpty()){
+	            queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, path,query);
+	        } else {
+	        	queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, path, parent, query);    
+	        }
 		} else {
-			queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ALL, path, parent);    
+			if(parent==null || parent.isEmpty()){
+	            queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ALL_ROOT, path);
+	        } else {
+	        	queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ALL, path, parent);      
+	        }
+			
 		}
     	
-        List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(BeCPGModel.PROP_LINKED_VALUE_VALUE));
+        List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(ContentModel.PROP_NAME));
         
-        return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LINKED_VALUE_VALUE,nodeService));
+        return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME,nodeService));
  
 	}
     
@@ -272,13 +278,12 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
      * @param query the query
      * @return the map
      */
-    
 	protected ListValuePage suggestListValue(String path, String query, Integer pageNum, Integer pageSize){			
         
     	logger.debug("suggestListValue");  
     	
     	String queryPath = "";
-    	path = encodePath(path);    
+    	path = LuceneHelper.encodePath(path);    
 		if(!isAllQuery(query)){ 
 	    	query = prepareQuery(query);
 	        queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE, path, query);
@@ -302,7 +307,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
      * @param query the query
      * @return the map
      */
-    
 	protected ListValuePage suggestProduct(String query, Integer pageNum, Integer pageSize, String[] arrClassNames){			
         
     	logger.debug("suggestProduct");  
@@ -378,25 +382,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	
 	}
 	
-    /**
-     * Encode path.
-     *
-     * @param path the path
-     * @return the string
-     */
-    private String encodePath(String path){
-    	
-    	StringBuilder pathBuffer = new StringBuilder(64);
-    	String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);
-    	
-    	for(String folder : arrPath){
-    		pathBuffer.append("/cm:");
-    		pathBuffer.append(ISO9075.encode(folder));    		 
-    	}
-    	
-    	//remove 1st character '/'
-    	return pathBuffer.substring(1);
-    }
 	
 	/**
 	 * Get the report templates of the product type that user can choose from UI.

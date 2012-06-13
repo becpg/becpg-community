@@ -1,5 +1,5 @@
 "#";"http://www.iso.org/iso/fr/english_country_names_and_code_elements";;;;
-"PATH";"/System/Characts/GeoOrigins";;;;
+"PATH";"/System/Characts/bcpg:entityLists/GeoOrigins";;;;
 "TYPE";"bcpg:geoOrigin";;;;
 "COLUMNS";"cm:name";"bcpg:geoOriginISOCode";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en"
 "VALUES";"Afghanistan";"AF";"Afghanistan";"Afghanistan";"Afghanistan"

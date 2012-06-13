@@ -27,79 +27,73 @@ import fr.becpg.test.RepoBaseTestCase;
 
 public class QualityControlTest extends RepoBaseTestCase {
 
-	private static String PATH_TESTFOLDER = "QualTestFolder";       
-	private static final long HOUR = 3600*1000; // in milli-seconds.
-	
+	private static String PATH_TESTFOLDER = "QualTestFolder";
+	private static final long HOUR = 3600 * 1000; // in milli-seconds.
+
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(QualityControlTest.class);
-	
 
 	private BeCPGDao<ControlPointData> controlPointDAO;
 	private BeCPGDao<ControlPlanData> controlPlanDAO;
-	private BeCPGDao<QualityControlData>  qualityControlDAO;
+	private BeCPGDao<QualityControlData> qualityControlDAO;
 
-	
 	private NodeRef controlStepNodeRef;
 	private NodeRef methodNodeRef;
 	private NodeRef controlPointNodeRef;
 	private NodeRef qualityControlNodeRef;
 	private NodeRef controlPlanNodeRef;
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void setUp() throws Exception {		
-		super.setUp();	
-		
-    	logger.debug("ProductServiceTest:setUp");
-    
-    	  controlPointDAO =(BeCPGDao<ControlPointData>) ctx.getBean("controlPointDAO");
-    	controlPlanDAO = (BeCPGDao<ControlPlanData>) ctx.getBean("controlPlanDAO");
-    	qualityControlDAO = (BeCPGDao<QualityControlData>) ctx.getBean("qualityControlDAO");
-    	;
-    }
-    
-	/* (non-Javadoc)
+	protected void setUp() throws Exception {
+		super.setUp();
+
+		logger.debug("ProductServiceTest:setUp");
+
+		controlPointDAO = (BeCPGDao<ControlPointData>) ctx.getBean("controlPointDAO");
+		controlPlanDAO = (BeCPGDao<ControlPlanData>) ctx.getBean("controlPlanDAO");
+		qualityControlDAO = (BeCPGDao<QualityControlData>) ctx.getBean("qualityControlDAO");
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
 	 */
 	@Override
-    public void tearDown() throws Exception
-    {
-		try
-        {
-            authenticationComponent.clearCurrentSecurityContext();
-        }
-        catch (Throwable e)
-        {
-            e.printStackTrace();
-            // Don't let this mask any previous exceptions
-        }
-        super.tearDown();
+	public void tearDown() throws Exception {
+		try {
+			authenticationComponent.clearCurrentSecurityContext();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// Don't let this mask any previous exceptions
+		}
+		super.tearDown();
 
-    }
-	
-	private void createControlPlan(NodeRef folderNodeRef){
-		
-		// create method		
+	}
+
+	private void createControlPlan(NodeRef folderNodeRef) {
+
+		// create method
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		String name = "Method";
 		properties.put(ContentModel.PROP_NAME, name);
-		methodNodeRef = nodeService.createNode(folderNodeRef, 
-									ContentModel.ASSOC_CONTAINS, 
-									QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), 
-									QualityModel.TYPE_CONTROL_METHOD, properties).getChildRef();								
-		
+		methodNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
+				QualityModel.TYPE_CONTROL_METHOD, properties).getChildRef();
+
 		// create control step
 		properties.clear();
 		name = "Step";
 		properties.put(ContentModel.PROP_NAME, name);
-		controlStepNodeRef = nodeService.createNode(folderNodeRef, 
-									ContentModel.ASSOC_CONTAINS, 
-									QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), 
-									QualityModel.TYPE_CONTROL_STEP, properties).getChildRef();
-		
+		controlStepNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
+				QualityModel.TYPE_CONTROL_STEP, properties).getChildRef();
+
 		// create control point
 		ControlPointData controlPointData = new ControlPointData();
 		controlPointData.setName("Control point");
@@ -107,31 +101,33 @@ public class QualityControlTest extends RepoBaseTestCase {
 		controlDefList.add(new ControlDefListDataItem(null, "Nutritionnelle", null, null, true, methodNodeRef, nuts));
 		controlPointData.setControlDefList(controlDefList);
 		controlPointNodeRef = controlPointDAO.create(folderNodeRef, controlPointData);
-		
-//		// create group
-//		Set<String> zones = new HashSet<String>();
-//		zones.add(AuthorityService.ZONE_APP_DEFAULT);
-//		zones.add(AuthorityService.ZONE_APP_SHARE);
-//		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
-//		String group = "groupQual";			
-//		
-//		if(!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)){
-//			logger.debug("create group: " + group);				
-//			authorityService.createAuthority(AuthorityType.GROUP, group, group, zones);				
-//		}
-//		NodeRef controlingGroup = authorityService.getA
-				
+
+		// // create group
+		// Set<String> zones = new HashSet<String>();
+		// zones.add(AuthorityService.ZONE_APP_DEFAULT);
+		// zones.add(AuthorityService.ZONE_APP_SHARE);
+		// zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
+		// String group = "groupQual";
+		//
+		// if(!authorityService.authorityExists(PermissionService.GROUP_PREFIX +
+		// group)){
+		// logger.debug("create group: " + group);
+		// authorityService.createAuthority(AuthorityType.GROUP, group, group,
+		// zones);
+		// }
+		// NodeRef controlingGroup = authorityService.getA
+
 		// create control plan
 		ControlPlanData controlPlanData = new ControlPlanData();
 		controlPlanData.setName("Control plan");
 		List<SamplingDefListDataItem> samplingDefList = new ArrayList<SamplingDefListDataItem>();
 		samplingDefList.add(new SamplingDefListDataItem(null, 2, 1, "/4heures", controlPointNodeRef, controlStepNodeRef, null));
 		controlPlanData.setSamplingDefList(samplingDefList);
-		controlPlanNodeRef = controlPlanDAO.create(folderNodeRef, controlPlanData); 
+		controlPlanNodeRef = controlPlanDAO.create(folderNodeRef, controlPlanData);
 	}
-	
-	private void createQualityControl(NodeRef folderNodeRef, List<NodeRef> controlPlansNodeRef, NodeRef productNodeRef){
-		
+
+	private void createQualityControl(NodeRef folderNodeRef, List<NodeRef> controlPlansNodeRef, NodeRef productNodeRef) {
+
 		QualityControlData qualityControlData = new QualityControlData();
 		qualityControlData.setName("Quality control");
 		qualityControlData.setBatchStart(new Date());
@@ -139,73 +135,71 @@ public class QualityControlTest extends RepoBaseTestCase {
 		qualityControlData.setBatchId("12247904");
 		qualityControlData.setOrderId("2394744");
 		qualityControlData.setProduct(productNodeRef);
-		qualityControlData.setControlPlans(controlPlansNodeRef);		
-		
+		qualityControlData.setControlPlans(controlPlansNodeRef);
+
 		qualityControlNodeRef = qualityControlDAO.create(folderNodeRef, qualityControlData);
-		
-		//TODO : add a policy...
-		//qualityControlService.createSamplingList(qualityControlNodeRef, controlPlansNodeRef.get(0));
-		
+
+		// TODO : add a policy...
+		// qualityControlService.createSamplingList(qualityControlNodeRef,
+		// controlPlansNodeRef.get(0));
+
 	}
-	
-	public void testCreateQualityControl(){
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+
+	public void testCreateQualityControl() {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-				
+
 				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
-				if(folderNodeRef != null)
-				{
-					fileFolderService.delete(folderNodeRef);    		
-				}			
+				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
+				if (folderNodeRef != null) {
+					fileFolderService.delete(folderNodeRef);
+				}
 				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-				
+
 				createControlPlan(folderNodeRef);
 				List<NodeRef> controlPlansNodeRef = new ArrayList<NodeRef>();
 				controlPlansNodeRef.add(controlPlanNodeRef);
-				
+
 				NodeRef productNodeRef = createRawMaterial(folderNodeRef, "Raw material");
-				
+
 				createQualityControl(folderNodeRef, controlPlansNodeRef, productNodeRef);
-				
+
 				return null;
 
-			}},false,true);
-		
+			}
+		}, false, true);
+
 		// checks
 		QualityControlData qualityControlData = qualityControlDAO.find(qualityControlNodeRef);
 		assertNotNull("Check QC exists", qualityControlData);
 		assertNotNull("Check Sample list", qualityControlData.getSamplingList());
 		assertEquals("6 samples", 6, qualityControlData.getSamplingList().size());
 		assertSame("6 samples", 6, qualityControlData.getSamplesCounter());
-		int checks=0;
-						
-		for(SamplingListDataItem sl : qualityControlData.getSamplingList()){
-			
-			if(sl.getSampleId().equals("12247904/1")){
+		int checks = 0;
+
+		for (SamplingListDataItem sl : qualityControlData.getSamplingList()) {
+
+			if (sl.getSampleId().equals("12247904/1")) {
 				assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
 				assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 				assertEquals("check state", null, sl.getSampleState());
 				assertEquals("check date", qualityControlData.getBatchStart(), sl.getDateTime());
 				checks++;
-			}
-			else if(sl.getSampleId().equals("12247904/2")){
+			} else if (sl.getSampleId().equals("12247904/2")) {
 				assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
 				assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 				assertEquals("check state", null, sl.getSampleState());
 				assertEquals("check date", qualityControlData.getBatchStart(), sl.getDateTime());
 				checks++;
-			}
-			else if(sl.getSampleId().equals("12247904/3")){
+			} else if (sl.getSampleId().equals("12247904/3")) {
 				assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
 				assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 				assertEquals("check state", null, sl.getSampleState());
 				assertEquals("check date", new Date(qualityControlData.getBatchStart().getTime() + 4 * HOUR), sl.getDateTime());
 				checks++;
-			}
-			else if(sl.getSampleId().equals("12247904/4")){
+			} else if (sl.getSampleId().equals("12247904/4")) {
 				assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
 				assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 				assertEquals("check state", null, sl.getSampleState());
@@ -213,7 +207,7 @@ public class QualityControlTest extends RepoBaseTestCase {
 				checks++;
 			}
 		}
-		
+
 		assertEquals(4, checks);
 	}
 }

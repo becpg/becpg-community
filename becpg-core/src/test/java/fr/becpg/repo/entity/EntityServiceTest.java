@@ -71,18 +71,6 @@ public class EntityServiceTest extends RepoBaseTestCase {
 		entityListDAO = (EntityListDAO) ctx.getBean("entityListDAO");
 		entityService = (EntityService) ctx.getBean("entityService");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				deleteReportTpls();
-				deleteCharacteristics();
-				initCharacteristics();
-
-				return null;
-
-			}
-		}, false, true);
 	}
 
 	/*

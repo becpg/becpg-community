@@ -95,11 +95,10 @@ public class EntityServiceImpl implements EntityService {
 		this.nodeService = nodeService;
 	}
 
-	
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
-	
+
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
@@ -135,6 +134,7 @@ public class EntityServiceImpl implements EntityService {
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
+
 
 	@Override
 	public boolean hasDataListModified(NodeRef nodeRef) {
@@ -303,7 +303,7 @@ public class EntityServiceImpl implements EntityService {
 	 * @param imgName
 	 *            the img name
 	 * @return the image
-	 * @throws BeCPGException 
+	 * @throws BeCPGException
 	 */
 	@Override
 	public NodeRef getImage(NodeRef nodeRef, String imgName) throws BeCPGException {
@@ -330,7 +330,7 @@ public class EntityServiceImpl implements EntityService {
 	 * @param nodeRef
 	 * @param imgName
 	 * @return List of images nodeRefs
-	 * @throws BeCPGException 
+	 * @throws BeCPGException
 	 */
 	@Override
 	public List<NodeRef> getImages(NodeRef nodeRef) throws BeCPGException {
@@ -376,10 +376,10 @@ public class EntityServiceImpl implements EntityService {
 			try {
 				Image image = ImageIO.read(in);
 				out = new ByteArrayOutputStream();
-				if(image!= null){				
+				if (image != null) {
 					ImageIO.write((RenderedImage) image, "jpg", out);
 					imageBytes = ((ByteArrayOutputStream) out).toByteArray();
-				}				
+				}
 			} catch (IOException e) {
 				logger.error("Failed to get the content", e);
 			} finally {
@@ -456,10 +456,9 @@ public class EntityServiceImpl implements EntityService {
 		NodeRef imagesFolderNodeRef = getImageFolder(nodeRef);
 
 		for (Map.Entry<String, byte[]> image : images.entrySet()) {
-			
+
 			String filename = image.getKey();
-			
-	
+
 			// create file if it doesn't exist
 			NodeRef fileNodeRef = nodeService.getChildByName(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS, filename);
 			if (fileNodeRef == null) {
@@ -475,16 +474,16 @@ public class EntityServiceImpl implements EntityService {
 			OutputStream out = null;
 			try {
 				bufferedImage = ImageIO.read(new ByteArrayInputStream(image.getValue()));
-				
+
 				ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
 				writer.setMimetype(mimetype);
 				out = writer.getContentOutputStream();
-				
-				ImageIO.write(bufferedImage, "jpg",out );
-				logger.debug("Write image "+filename);
+
+				ImageIO.write(bufferedImage, "jpg", out);
+				logger.debug("Write image " + filename);
 				bufferedImage.flush();
 			} catch (IOException e) {
-				logger.error(e,e);
+				logger.error(e, e);
 			} finally {
 				IOUtils.closeQuietly(out);
 			}

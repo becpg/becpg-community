@@ -57,6 +57,8 @@ public class ImportContext {
 	
 	private List<String> log = new ArrayList<String>();
 	
+	private String path;
+	
 	private boolean requiresNewTransaction = false;
 	
 	/** indicate the the import is in a site document library **/
@@ -283,4 +285,14 @@ public class ImportContext {
 	public int goToNextLine(){
 		return importIndex++;
 	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	
 }

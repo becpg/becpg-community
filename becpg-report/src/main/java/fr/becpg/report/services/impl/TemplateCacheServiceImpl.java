@@ -22,7 +22,7 @@ import fr.becpg.report.services.TemplateCacheService;
  */
 public class TemplateCacheServiceImpl implements TemplateCacheService {
 
-	private static int NUMBER_IN_MEMORY = 100;
+	private static int NUMBER_IN_MEMORY = 10000;
 	
 	private static Log logger = LogFactory.getLog(TemplateCacheServiceImpl.class);
 	

@@ -1,4 +1,4 @@
-PATH;/System/Characts/Lists/IngTypes
+PATH;/System/Lists/bcpg:entityLists/IngTypes
 TYPE;bcpg:listValue
 COLUMNS;cm:name
 VALUES;Adipate

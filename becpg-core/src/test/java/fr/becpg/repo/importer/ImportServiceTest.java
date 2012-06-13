@@ -16,7 +16,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -37,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.helper.HierarchyHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.ProductData;
@@ -92,9 +91,6 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	
 	private BehaviourFilter policyBehaviourFilter;
 	
-	private EntityTplService entityTplService;
-	
-	private DictionaryDAO dictionaryDAO;
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
@@ -114,49 +110,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
         namespaceService = (NamespaceService)ctx.getBean("namespaceService");
       
         policyBehaviourFilter = (BehaviourFilter)ctx.getBean("policyBehaviourFilter");
-        entityTplService = (EntityTplService)ctx.getBean("entityTplService");
-        dictionaryDAO = (DictionaryDAO)ctx.getBean("dictionaryDAO");
 
-        transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
- 			@Override
-			public NodeRef execute() throws Throwable {
-
- 				// should not exist...
- 				NodeRef systemFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
- 				if(systemFolder != null){
- 					nodeService.deleteNode(systemFolder); 					 					
- 				}
- 				 				
- 				systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
- 				
- 				// create folderTpl
- 				NodeRef folderTplsNodeRef = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_FOLDER_TEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_FOLDER_TEMPLATES));
- 				NodeRef productTplsNodeRef = repoService.createFolderByPath(folderTplsNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_TEMPLATES));
- 				entityTplService.createFolderTpl(productTplsNodeRef, BeCPGModel.TYPE_RAWMATERIAL, true, null);
- 				
- 				// remove ings 				
- 				NodeRef ingsFolder = repoService.getFolderByPath(systemFolder, RepoConsts.PATH_INGS);
-					
-				if(ingsFolder != null){
-					nodeService.deleteNode(ingsFolder);
-				}
-				
-				// remove temp folder				
-				NodeRef tempNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), PATH_TEMP);			
- 				if(tempNodeRef != null)
- 				{
- 					logger.debug("delete temp folder");
- 					fileFolderService.delete(tempNodeRef);    		
- 				}
- 				
- 				// create hierarchy
-				initRepoAndHierarchyLists();
- 				
- 				return null;
-
- 			}},false,true);
-        
-        dictionaryDAO.reset();
     }
     
 	
@@ -202,7 +156,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		logger.debug("Check MLText properties");
 		NodeRef systemFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
 		assertNotNull("system folder should exist", systemFolder);
-		NodeRef ingsFolder = repoService.getFolderByPath(systemFolder, RepoConsts.PATH_INGS);
+		NodeRef ingsFolder = entitySystemService.getSystemEntityDataList(systemFolder, RepoConsts.PATH_CHARACTS, RepoConsts.PATH_INGS);
 		assertNotNull("ings folder should exist", ingsFolder);
 		
 		// Abricot 				 				 				
@@ -441,8 +395,8 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		assertEquals("Saumon surgelé 80x20x4", productData.getName());
 		assertEquals(SystemState.ToValidate, productData.getState());
 		assertEquals("saumon sugelé", productData.getLegalName().getDefaultValue());
-		assertEquals("Sea food", productData.getHierarchy1());
-		assertEquals("Fish", productData.getHierarchy2());
+		assertEquals("Sea food",  HierarchyHelper.getHierachyName(productData.getHierarchy1(),nodeService));
+		assertEquals("Fish", HierarchyHelper.getHierachyName(productData.getHierarchy2(),nodeService));
 		
 		/*-- check associations --*/
 		List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(product1NodeRef, BeCPGModel.ASSOC_SUPPLIERS);
@@ -621,7 +575,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 				
 	 				RawMaterialData rmData = new RawMaterialData();
 	 				rmData.setName("Name");
-	 				rmData.setHierarchy1("ZZZZZZZ");
+	 				rmData.setHierarchy1(null);
 	 				
 	 				try{
 	 					 productDAO.create(repositoryHelper.getCompanyHome(), rmData, null);

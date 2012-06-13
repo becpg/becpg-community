@@ -50,7 +50,9 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.designer.DesignerInitService;
+import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.helper.HierarchyHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -105,6 +107,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
 	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/nonconformity/ExportSearchQuery.xml";
 
+
 	/** The authority service. */
 	private AuthorityService authorityService;
 
@@ -123,8 +126,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 	private BeCPGMailService beCPGMailService;
 	
-	
 	private DesignerInitService designerInitService;
+	
+	private EntitySystemService entitySystemService;
 
 	/**
 	 * Sets the authority service.
@@ -169,10 +173,11 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
 		this.beCPGMailService = beCPGMailService;
 	}
+	
+	public void setEntitySystemService(EntitySystemService entitySystemService) {
+		this.entitySystemService = entitySystemService;
+	}
 
-	
-	
-	
 	public void setDesignerInitService(DesignerInitService designerInitService) {
 		this.designerInitService = designerInitService;
 	}
@@ -198,48 +203,15 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		logger.debug("Visit folders");
 		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM);
 		
-		
 		// Lists of characteristics
-		NodeRef charactsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_CHARACTS);
-		NodeRef listsNodeRef = visitFolder(charactsNodeRef, RepoConsts.PATH_LISTS);
-		visitFolder(listsNodeRef, RepoConsts.PATH_ING_TYPES);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_LINKED_LISTS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_NUTS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_INGS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_ORGANOS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_ALLERGENS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_COSTS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_PHYSICO_CHEM);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_MICROBIOS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_GEO_ORIGINS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_BIO_ORIGINS);		
-		visitFolder(charactsNodeRef, RepoConsts.PATH_SUBSIDIARIES);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_TRADEMARKS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_PLANTS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_CERTIFICATIONS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_APPROVALNUMBERS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_PROCESSSTEPS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_VARIANT_CHARACTS);
-		visitFolder(charactsNodeRef, RepoConsts.PATH_DECL_GROUPS);
+		visitSystemCharactsEntity(systemNodeRef, RepoConsts.PATH_CHARACTS);
+		
+		//Dynamic constraints
+		visitSystemListValuesEntity(systemNodeRef, RepoConsts.PATH_LISTS);
 
 		// Hierarchy
-		NodeRef hierarchyNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY1);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGMATERIAL_HIERARCHY1);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_SEMIFINISHEDPRODUCT_HIERARCHY1);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY1);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY1);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY1);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY1);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_RESOURCEPRODUCT_HIERARCHY1);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGMATERIAL_HIERARCHY2);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_SEMIFINISHEDPRODUCT_HIERARCHY2);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY2);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY2);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY2);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY2);
-		visitFolder(hierarchyNodeRef, RepoConsts.PATH_HIERARCHY_RESOURCEPRODUCT_HIERARCHY2);
+		visitSystemHierachiesEntity(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
+		
 		
 		// Exchange
 		NodeRef exchangeNodeRef = visitFolder(companyHome, RepoConsts.PATH_EXCHANGE);
@@ -251,7 +223,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_USER);
 
 		// Products
-		visitFolder(companyHome, RepoConsts.PATH_PRODUCTS);
+		 visitFolder(companyHome, RepoConsts.PATH_PRODUCTS);
 
 		// Quality
 		NodeRef qualityNodeRef = visitFolder(companyHome, RepoConsts.PATH_QUALITY);
@@ -308,6 +280,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		designerInitService.addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-core/model/qualityModel.xml");
 		
 	}
+
+
 
 
 	/**
@@ -380,50 +354,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		QName specialiseType = null;
 		boolean applyToChildren = false;
 
-		if (folderName == RepoConsts.PATH_LISTS) {
-			specialiseType = BeCPGModel.TYPE_LIST_VALUE;
-			applyToChildren = true;
-		} else if (folderName == RepoConsts.PATH_LINKED_LISTS) {
-			specialiseType = BeCPGModel.TYPE_LINKED_VALUE;
-			applyToChildren = true;
-		} else if (folderName == RepoConsts.PATH_NUTS) {
-			specialiseType = BeCPGModel.TYPE_NUT;
-		} else if (folderName == RepoConsts.PATH_INGS) {
-			specialiseType = BeCPGModel.TYPE_ING;
-		} else if (folderName == RepoConsts.PATH_ORGANOS) {
-			specialiseType = BeCPGModel.TYPE_ORGANO;
-		} else if (folderName == RepoConsts.PATH_ALLERGENS) {
-			specialiseType = BeCPGModel.TYPE_ALLERGEN;
-		} else if (folderName == RepoConsts.PATH_COSTS) {
-			specialiseType = BeCPGModel.TYPE_COST;
-		} else if (folderName == RepoConsts.PATH_PHYSICO_CHEM) {
-			specialiseType = BeCPGModel.TYPE_PHYSICO_CHEM;
-		} else if (folderName == RepoConsts.PATH_MICROBIOS) {
-			specialiseType = BeCPGModel.TYPE_MICROBIO;
-		} else if (folderName == RepoConsts.PATH_GEO_ORIGINS) {
-			specialiseType = BeCPGModel.TYPE_GEO_ORIGIN;
-		} else if (folderName == RepoConsts.PATH_BIO_ORIGINS) {
-			specialiseType = BeCPGModel.TYPE_BIO_ORIGIN;
-		} else if (folderName == RepoConsts.PATH_SUBSIDIARIES) {
-			specialiseType = BeCPGModel.TYPE_SUBSIDIARY;
-		} else if (folderName == RepoConsts.PATH_TRADEMARKS) {
-			specialiseType = BeCPGModel.TYPE_TRADEMARK;
-		} else if (folderName == RepoConsts.PATH_PLANTS) {
-			specialiseType = BeCPGModel.TYPE_PLANT;
-		} else if (folderName == RepoConsts.PATH_CERTIFICATIONS) {
-			specialiseType = BeCPGModel.TYPE_CERTIFICATION;
-		} else if (folderName == RepoConsts.PATH_APPROVALNUMBERS) {
-			specialiseType = BeCPGModel.TYPE_APPROVAL_NUMBER;
-		} else if (folderName == RepoConsts.PATH_PROCESSSTEPS) {
-			specialiseType = MPMModel.TYPE_PROCESSSTEP;
-		} else if (folderName == RepoConsts.PATH_VARIANT_CHARACTS) {
-			specialiseType = VariantModel.TYPE_CHARACT;
-		} else if (folderName == RepoConsts.PATH_ENTITY_TEMPLATES) {
+		if (folderName == RepoConsts.PATH_ENTITY_TEMPLATES) {
 			specialiseType = BeCPGModel.TYPE_ENTITY;
-		} else if (folderName.endsWith(RepoConsts.PATH_HIERARCHY_SFX_HIERARCHY1)) {
-			specialiseType = BeCPGModel.TYPE_LIST_VALUE;
-		} else if (folderName.endsWith(RepoConsts.PATH_HIERARCHY_SFX_HIERARCHY2)) {
-			specialiseType = BeCPGModel.TYPE_LINKED_VALUE;
 		} else if (folderName == RepoConsts.PATH_REPORTS) {
 
 			// Action : apply type
@@ -651,6 +583,73 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitQuality(folderTplsNodeRef, entityTplsNodeRef);
 	}
 
+	
+	
+	/** 
+	 * Create system charact file
+	 * @param systemNodeRef
+	 * @param pathCharacts
+	 * @return
+	 */
+	private NodeRef visitSystemCharactsEntity(NodeRef parentNodeRef, String path) {
+		
+		Map<String,QName> entityLists = new HashMap<String,QName>();
+		
+		entityLists.put(RepoConsts.PATH_NUTS, BeCPGModel.TYPE_NUT);
+		entityLists.put(RepoConsts.PATH_INGS, BeCPGModel.TYPE_ING);
+		entityLists.put(RepoConsts.PATH_ORGANOS,BeCPGModel.TYPE_ORGANO);
+		entityLists.put(RepoConsts.PATH_ALLERGENS,BeCPGModel.TYPE_ALLERGEN);
+		entityLists.put(RepoConsts.PATH_COSTS,BeCPGModel.TYPE_COST);
+		entityLists.put(RepoConsts.PATH_PHYSICO_CHEM,BeCPGModel.TYPE_PHYSICO_CHEM);
+		entityLists.put(RepoConsts.PATH_MICROBIOS,BeCPGModel.TYPE_MICROBIO);
+		entityLists.put(RepoConsts.PATH_GEO_ORIGINS,BeCPGModel.TYPE_GEO_ORIGIN);
+		entityLists.put(RepoConsts.PATH_BIO_ORIGINS,BeCPGModel.TYPE_BIO_ORIGIN);
+		entityLists.put(RepoConsts.PATH_SUBSIDIARIES,BeCPGModel.TYPE_SUBSIDIARY);
+		entityLists.put(RepoConsts.PATH_TRADEMARKS,BeCPGModel.TYPE_TRADEMARK);
+		entityLists.put(RepoConsts.PATH_PLANTS,BeCPGModel.TYPE_PLANT);
+		entityLists.put(RepoConsts.PATH_CERTIFICATIONS,BeCPGModel.TYPE_CERTIFICATION);
+		entityLists.put(RepoConsts.PATH_APPROVALNUMBERS,BeCPGModel.TYPE_APPROVAL_NUMBER);
+		entityLists.put(RepoConsts.PATH_PROCESSSTEPS,MPMModel.TYPE_PROCESSSTEP);
+		entityLists.put(RepoConsts.PATH_VARIANT_CHARACTS,VariantModel.TYPE_CHARACT);
+		entityLists.put(RepoConsts.PATH_DECL_GROUPS,BeCPGModel.TYPE_DECL_GROUP);
+
+		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
+	}
+	
+	
+
+	private NodeRef visitSystemHierachiesEntity(NodeRef parentNodeRef, String path) {
+		
+       Map<String,QName> entityLists = new HashMap<String,QName>();
+		
+		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_RAWMATERIAL), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_PACKAGINGMATERIAL), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_FINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_PACKAGINGKIT), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_RESOURCEPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
+		
+		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
+		
+	}
+	
+	/**
+	 * Create dyn List values
+	 * @param parentNodeRef
+	 * @param path
+	 * @return
+	 */
+	private NodeRef visitSystemListValuesEntity(NodeRef parentNodeRef, String path) {
+		
+		Map<String,QName> entityLists = new HashMap<String,QName>();
+		
+		entityLists.put(RepoConsts.PATH_ING_TYPES,BeCPGModel.TYPE_LIST_VALUE);
+	
+		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
+	}
+
+	
 	/**
 	 * Create product tpls
 	 * 

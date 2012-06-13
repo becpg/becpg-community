@@ -1,4 +1,4 @@
-"PATH";"/System/Characts/PhysicoChems";
+"PATH";"/System/Characts/bcpg:entityLists/PhysicoChems";
 "TYPE";"bcpg:physicoChem";
 "COLUMNS";"cm:name";"bcpg:physicoChemUnit"
 "VALUES";"Conductivité";"-"

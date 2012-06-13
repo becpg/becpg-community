@@ -35,12 +35,6 @@
 		<property name="namespacePrefixResolver" ref="namespaceService" />
 	</bean>
     
-    <!-- Webscripts -->
-    
-       	
-   	<bean id="webscript.fr.becpg.admin.reloadAcls.get" class="fr.becpg.repo.web.scripts.admin.ReloadAclsWebScript" parent="webscript">
-      	<property name="securityService" ref="securityService" />
-   	</bean>
    	
    	<!-- Constraints -->
    	

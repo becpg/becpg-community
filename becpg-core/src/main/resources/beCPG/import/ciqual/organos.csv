@@ -1,4 +1,4 @@
-"PATH";"/System/Characts/Organos";
+"PATH";"/System/Characts/bcpg:entityLists/Organos";
 "TYPE";"bcpg:organo";
 "COLUMNS";"cm:name";"cm:description"
 "VALUES";"Couleur";

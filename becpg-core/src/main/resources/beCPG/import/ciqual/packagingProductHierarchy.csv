@@ -1,5 +1,5 @@
-PATH;/System/ProductHierarchy/PackagingMaterial_Hierarchy1;;
-TYPE;bcpg:listValue;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy;;
+TYPE;bcpg:linkedValue;;
 COLUMNS;cm:name;;
 VALUES;Barquettes;;
 VALUES;Carton;;
@@ -11,31 +11,30 @@ VALUES;Opercules;;
 VALUES;Etiquettes;;
 VALUES;Briques;;
 ;;;
-PATH;/System/ProductHierarchy/PackagingMaterial_Hierarchy2;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy;;
 TYPE;bcpg:linkedValue;;
-COLUMNS;cm:name;bcpg:lkvPrevValue;bcpg:lkvValue
-VALUES;Barquettes - Barquettes plastiques;Barquettes;Barquettes plastiques
-VALUES;Carton - Recyclable;Carton;Recyclable
-VALUES;Palette - Recyclable;Palette;Recyclable
-VALUES;Film - Thermoformable;Film;Thermoformable
-VALUES;Boite - PF;Boite;PF
-VALUES;Etiquettes - Autocollantes;Etiquettes;Autocollantes
-VALUES;Pots - Plastiques;Pots;Plastiques
-VALUES;Pots - Verres;Pots;Verres
-VALUES;Opercules - Aluminium;Opercules;Opercules 
-VALUES;Briques - Briques cartons;Briques;Briques cartons
-VALUES;Briques - Briques plastiques;Briques;Briques plastiques
-
-
-PATH;/System/ProductHierarchy/PackagingKit_Hierarchy1;;
-TYPE;bcpg:listValue;;
+COLUMNS;bcpg:father;cm:name;
+VALUES;Barquettes;Barquettes plastiques;
+VALUES;Carton;Recyclable;
+VALUES;Palette;Recyclable;
+VALUES;Film;Thermoformable;
+VALUES;Boite;PF;
+VALUES;Etiquettes;Autocollantes;
+VALUES;Pots;Plastiques;
+VALUES;Pots;Verres;
+VALUES;Opercules;Opercules ;
+VALUES;Briques;Briques cartons;
+VALUES;Briques;Briques plastiques;
+;;;
+;;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy;;
+TYPE;bcpg:linkedValue;;
 COLUMNS;cm:name;;
-VALUES;-;-;-
+VALUES;0;0;0
 VALUES;Palettisation;;
-
-PATH;/System/ProductHierarchy/PackagingKit_Hierarchy2;;
+;;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy;;
 TYPE;bcpg:linkedValue;;
-COLUMNS;cm:name;bcpg:lkvPrevValue;bcpg:lkvValue
-VALUES;-;-;-
-VALUES;Palettisation - -;-;-
-
+COLUMNS;bcpg:father;cm:name;
+VALUES;0;0;
+VALUES;Palettisation;0;

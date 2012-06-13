@@ -61,7 +61,7 @@
 			},
 
 			onShow : function onShow() {
-				parent.widgets.userData.focus();
+				
 			}
 		});
 		new FormPanelHandler();
@@ -113,7 +113,7 @@
 			this.widgets.reloadModelButton.set("disabled", true);
 
 			Alfresco.util.Ajax.request({
-				url : Alfresco.constants.PROXY_URI + "becpg/admin/models/reload",
+				url : Alfresco.constants.PROXY_URI + "/becpg/admin/repository/reload-model",
 				method : Alfresco.util.Ajax.GET,
 				responseContentType : Alfresco.util.Ajax.JSON,
 				successCallback : {
@@ -297,7 +297,7 @@
 			this.widgets.initAclButton.set("disabled", true);
 
 			Alfresco.util.Ajax.request({
-				url : Alfresco.constants.PROXY_URI + "/becpg/admin/security/acl/reload",
+				url : Alfresco.constants.PROXY_URI + "/becpg/admin/repository/reload-acl",
 				method : Alfresco.util.Ajax.GET,
 				responseContentType : Alfresco.util.Ajax.JSON,
 				successCallback : {
@@ -358,7 +358,7 @@
 			this.widgets.emptyCacheButton.set("disabled", true);
 
 			Alfresco.util.Ajax.request({
-				url : Alfresco.constants.PROXY_URI + "becpg/admin/clearCache",
+				url : Alfresco.constants.PROXY_URI + "/becpg/admin/repository/reload-cache",
 				method : Alfresco.util.Ajax.GET,
 				responseContentType : Alfresco.util.Ajax.JSON,
 				successCallback : {

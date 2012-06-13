@@ -65,18 +65,6 @@ public class RemoteEntityServiceTest extends RepoBaseTestCase {
 		productDAO = (ProductDAO) ctx.getBean("productDAO");
 		remoteEntityService = (RemoteEntityService) ctx.getBean("remoteEntityService");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				deleteReportTpls();
-				deleteCharacteristics();
-				initCharacteristics();
-
-				return null;
-
-			}
-		}, false, true);
 	}
 
 	/*

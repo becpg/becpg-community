@@ -9,8 +9,18 @@
 
 <div id="${el}-body" class="becpg-admin-console">
 	<div id="${el}-form">
+		<div class="header-bar">
+         <div class="title">${msg("label.characts")}</div>
+      </div>      
+      <div class="section">
+      <#list systemEntities as item>
+	     		 <div class="action">				
+	     		 	<a href="${page.url.context}/page/entity-data-lists?nodeRef=${item.nodeRef}">,${item.name}</a>
+		    	</div>
+		</#list>
+		</div>
      	<div class="header-bar">
-         <div class="title"><label for="${el}-repository">${msg("label.repository")}</label></div>
+         <div class="title">${msg("label.repository")}</div>
       </div>      
       <div class="section">
 			<div class="action">				

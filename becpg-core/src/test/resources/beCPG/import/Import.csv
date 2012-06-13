@@ -1,4 +1,4 @@
-"PATH";"/System/Nuts";;;;;
+"PATH";"/System/Characts/bcpg:entityLists/Nuts";;;;;
 "TYPE";"bcpg:nut";;;;;
 "COLUMNS";"cm:name";"bcpg:nutUnit";"bcpg:nutType";"bcpg:nutGroup";;
 "VALUES";"Energie (kJoules)";"kJ";"Valeur énergétique";"Groupe 1";;
@@ -44,14 +44,14 @@
 "VALUES";"Omega 6";"g";"Nutriment";"Autre";;
 "VALUES";"Rapport Omega 6 - Omega 3";"-";"Nutriment";"Autre";;
 ;;;;;;
-"PATH";"/System/Ings";;;;;
+"PATH";"/System/Characts/bcpg:entityLists/Ings";;;;;
 "TYPE";"bcpg:ing";;;;;
 "COLUMNS";"cm:name";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en";"bcpg:ingCEECode"
 "VALUES";"Abricot";"Abricot default";"Abricot french";"Abricot english";
 "VALUES";"Acerola";"Acerola default";"Acerola french";"Acerola english";
 
 ;;;;;;
-"PATH";"/System/Ings";;;;;
+"PATH";"/System/Characts/bcpg:entityLists/Ings";;;;;
 "TYPE";"bcpg:ing";;;;;
 "COLUMNS";"cm:name";"bcpg:ingCEECode";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en"
 "VALUES";"Abricot1";;"Abricot1 default";"Abricot1 french";"Abricot1 english"

@@ -1,4 +1,4 @@
-"PATH";"/System/Allergens";
+"PATH";"/System/Characts/bcpg:entityLists/Allergens";
 "TYPE";"bcpg:allergen";
 "COLUMNS";"cm:name";"bcpg:allergenType"
 "VALUES";"Abricot";"Allergène informatif"

@@ -94,16 +94,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
         entityVersionService = (EntityVersionService)ctx.getBean("entityVersionService");
         productService = (ProductService)ctx.getBean("productService");
         namespaceService = (NamespaceService)ctx.getBean("namespaceService");
-        
-        transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
- 			@Override
-			public NodeRef execute() throws Throwable {
-
- 				initCharacteristics();
- 		        
- 				return null;
-
- 			}},false,true); 
+       
     }
     	
 	/**

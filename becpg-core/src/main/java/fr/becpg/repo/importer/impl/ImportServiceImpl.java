@@ -406,6 +406,8 @@ public class ImportServiceImpl implements ImportService {
 				importContext.setParentNodeRef(null);
 				
 				String pathValue = arrStr[COLUMN_PATH];
+				importContext.setPath(cleanPath(pathValue));
+				
 				if(pathValue.isEmpty())
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_PATH, importContext.getCSVLine()));
 				
@@ -448,7 +450,7 @@ public class ImportServiceImpl implements ImportService {
 				if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)){
 					importContext.setImportType(ImportType.Product);
 				}
-				else if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)){
+				else if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && importContext.getClassMappings().get(type)!=null){
 					importContext.setImportType(ImportType.EntityListItem);
 				}
 				else{
@@ -577,6 +579,13 @@ public class ImportServiceImpl implements ImportService {
 		return importContext.getLog();
     }
 	
+	private String cleanPath(String pathValue) {
+		if(pathValue.startsWith("/")){
+			return pathValue.substring(1);
+		}
+		return pathValue;
+	}
+
 	/**
 	 * Import a batch of values
 	 * @param importContext

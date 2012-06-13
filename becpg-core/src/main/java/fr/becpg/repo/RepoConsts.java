@@ -16,8 +16,10 @@ public class RepoConsts {
 	/*-- Path query --*/			
 	public static final String PATH_QUERY_SUGGEST_VALUE = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:listValue\" +@cm\\:name:(%s) ";
 	public static final String PATH_QUERY_SUGGEST_VALUE_ALL  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:listValue\" ";
-	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ALL  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:lkvPrevValue:\"%s\" ";
-	public static final String PATH_QUERY_SUGGEST_LKV_VALUE = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:lkvPrevValue:\"%s\"  +@bcpg\\:lkvValue:(%s) ";
+	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ALL  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:parent:\"%s\" ";
+	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ALL_ROOT  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" ISNULL:bcpg\\:parent  ";
+	public static final String PATH_QUERY_SUGGEST_LKV_VALUE = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:parent:\"%s\"  +@cm\\:name:(%s) ";
+	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ROOT = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" ISNULL:bcpg\\:parent  +@cm\\:name:(\"%s\") ";
 	public static final String QUERY_SUGGEST_PRODUCT_BY_NAME = " +TYPE:\"bcpg:product\" +@cm\\:name:(%s) -@cm\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	public static final String QUERY_SUGGEST_PRODUCT_BY_CODE = " +TYPE:\"bcpg:product\" +@bcpg\\:code:%s -@cm\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	public static final String QUERY_SUGGEST_PRODUCT_ALL = " +TYPE:\"bcpg:product\" -@cm\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
@@ -95,24 +97,7 @@ public class RepoConsts {
 	
 	//Hierarchy
 	public static final String PATH_PRODUCT_HIERARCHY = "ProductHierarchy";
-	public static final String PATH_HIERARCHY_SFX_HIERARCHY1 = "Hierarchy1";
-	public static final String PATH_HIERARCHY_SFX_HIERARCHY2 = "Hierarchy2";
-	public static final String PATH_HIERARCHY_RAWMATERIAL_HIERARCHY1 = "RawMaterial_Hierarchy1";
-	public static final String PATH_HIERARCHY_PACKAGINGMATERIAL_HIERARCHY1 = "PackagingMaterial_Hierarchy1";
-	public static final String PATH_HIERARCHY_SEMIFINISHEDPRODUCT_HIERARCHY1 = "SemiFinishedProduct_Hierarchy1";
-	public static final String PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY1 = "FinishedProduct_Hierarchy1";
-	public static final String PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY1 = "LocalSemiFinishedProduct_Hierarchy1";
-	public static final String PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY1 = "PackagingKit_Hierarchy1";
-	public static final String PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY1 = "CondSalesUnit_Hierarchy1";
-	public static final String PATH_HIERARCHY_RESOURCEPRODUCT_HIERARCHY1 = "ResourceProduct_Hierarchy1";
-	public static final String PATH_HIERARCHY_RAWMATERIAL_HIERARCHY2 = "RawMaterial_Hierarchy2";
-	public static final String PATH_HIERARCHY_PACKAGINGMATERIAL_HIERARCHY2 = "PackagingMaterial_Hierarchy2";
-	public static final String PATH_HIERARCHY_SEMIFINISHEDPRODUCT_HIERARCHY2 = "SemiFinishedProduct_Hierarchy2";
-	public static final String PATH_HIERARCHY_FINISHEDPRODUCT_HIERARCHY2 = "FinishedProduct_Hierarchy2";
-	public static final String PATH_HIERARCHY_LOCASEMIFINISHEDPRODUCT_HIERARCHY2 = "LocalSemiFinishedProduct_Hierarchy2";
-	public static final String PATH_HIERARCHY_PACKAGINGKIT_HIERARCHY2 = "PackagingKit_Hierarchy2";
-	public static final String PATH_HIERARCHY_CONDSALESUNIT_HIERARCHY2 = "CondSalesUnit_Hierarchy2";
-	public static final String PATH_HIERARCHY_RESOURCEPRODUCT_HIERARCHY2 = "ResourceProduct_Hierarchy2";
+
 	// Product folder
 	public static final String PATH_IMAGES = "Images";
 	public static final String PATH_DOCUMENTS = "Documents";

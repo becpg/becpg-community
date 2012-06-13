@@ -1,4 +1,4 @@
-"PATH";"/System/Characts/Ings";;;;;
+"PATH";"/System/Characts/bcpg:entityLists/Ings";;;;;
 "TYPE";"bcpg:ing";;;;;
 "COLUMNS";"cm:name";"bcpg:ingType";"bcpg:ingCEECode";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en"
 "#";"http://fr.wikipedia.org/wiki/Liste_des_additifs_alimentaires";;;;;

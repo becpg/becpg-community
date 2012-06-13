@@ -1,4 +1,4 @@
-"PATH";"/System/Characts/Nuts";;;;;;
+"PATH";"/System/Characts/bcpg:entityLists/Nuts";;;;;;
 "TYPE";"bcpg:nut";;;;;;
 "COLUMNS";"cm:name";"bcpg:nutUnit";"bcpg:nutType";"bcpg:nutGroup";"bcpg:legalName";"bcpg:legalName_fr";"bcpg:legalName_en"
 "VALUES";"Energie kJ selon Directive étiquetage 2008-100-CE";"kJ";"Valeur énergétique";"Groupe 1";"Energie selon Directive étiquetage 2008-100-CE";"Energie selon Directive étiquetage 2008-100-CE";"Energy, Directive 2008-100-CE for labelling"

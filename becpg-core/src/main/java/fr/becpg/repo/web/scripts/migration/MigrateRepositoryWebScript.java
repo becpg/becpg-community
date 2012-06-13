@@ -25,6 +25,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.BeCPGVersionMigrator;
+import fr.becpg.repo.migration.BeCPGSystemFolderMigrator;
 
 /**
  * The Class MigrateRepositoryWebScript.
@@ -33,6 +34,8 @@ import fr.becpg.repo.entity.version.BeCPGVersionMigrator;
  */
 public class MigrateRepositoryWebScript extends AbstractWebScript
 {	
+	
+	private static final String ACTION_MIGRATE_SYSTEM_FOLDER = "systemFolder";
 	private static final String ACTION_MIGRATE_PROPERTY = "property";
 	private static final String ACTION_MIGRATE_VERSION = "version";
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
@@ -54,6 +57,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 		   					
 	private BeCPGVersionMigrator beCPGVersionMigrator;
 	
+	private BeCPGSystemFolderMigrator beCPGSystemFolderMigrator;
+	
 	/**
 	 * Sets the search service.
 	 *
@@ -73,6 +78,11 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	
 	public void setBeCPGVersionMigrator(BeCPGVersionMigrator beCPGVersionMigrator) {
 		this.beCPGVersionMigrator = beCPGVersionMigrator;
+	}
+	
+
+	public void setBeCPGSystemFolderMigrator(BeCPGSystemFolderMigrator beCPGSystemFolderMigrator) {
+		this.beCPGSystemFolderMigrator = beCPGSystemFolderMigrator;
 	}
 
 	@Override
@@ -97,6 +107,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	else if(ACTION_DELETE_MODEL.equals(action)){
     		NodeRef modelNodeRef = new NodeRef( req.getParameter(PARAM_NODEREF));
     		deleteModel(modelNodeRef);
+    	} else if(ACTION_MIGRATE_SYSTEM_FOLDER.equals(action)){
+    		beCPGSystemFolderMigrator.migrate();
     	}
     	else{
     		logger.error("Unknown action" + action);

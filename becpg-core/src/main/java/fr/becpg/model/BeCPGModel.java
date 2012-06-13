@@ -505,13 +505,7 @@ public interface BeCPGModel {
 	static final QName TYPE_LINKED_VALUE = QName.createQName(BECPG_URI,
 			"linkedValue");
 	
-	/** The Constant PROP_LINKED_VALUE_PREV_VALUE. */
-	static final QName PROP_LINKED_VALUE_PREV_VALUE = QName.createQName(
-			BECPG_URI, "lkvPrevValue");
 	
-	/** The Constant PROP_LINKED_VALUE_VALUE. */
-	static final QName PROP_LINKED_VALUE_VALUE = QName.createQName(BECPG_URI,
-			"lkvValue");
 
 	// listValue
 	/** The Constant TYPE_LIST_VALUE. */
@@ -526,6 +520,10 @@ public interface BeCPGModel {
 	static final QName TYPE_ENTITY = QName.createQName(BECPG_URI,
 	"entity");
 
+
+	public static final QName TYPE_SYSTEM_ENTITY = QName.createQName(BECPG_URI,
+			"systemEntity");
+	
 	// autoNum
 	/** The Constant TYPE_AUTO_NUM. */
 	static final QName TYPE_AUTO_NUM = QName.createQName(BECPG_URI,
@@ -608,6 +606,8 @@ public interface BeCPGModel {
 	// depthLevel aspect
 	static final QName ASPECT_SORTABLE_LIST = QName.createQName(BECPG_URI,	"sortableListAspect");
 	static final QName PROP_SORT = QName.createQName(BECPG_URI, "sort");
+	
+
 	
 	// manual aspect
 	static final QName ASPECT_IS_MANUAL_LISTITEM = QName.createQName(BECPG_URI,	"isManualListItemAspect");
@@ -755,6 +755,8 @@ public interface BeCPGModel {
 	 */
 	public static final QName ASPECT_LEGAL_NAME = QName.createQName(BECPG_URI, "legalNameAspect");
 	static final QName PROP_LEGAL_NAME = QName.createQName(BECPG_URI, "legalName");
+
+
 
 
 }

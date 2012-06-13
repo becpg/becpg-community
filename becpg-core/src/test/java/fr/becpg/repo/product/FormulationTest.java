@@ -202,27 +202,10 @@ public class FormulationTest extends RepoBaseTestCase {
     
     	productService = (ProductService)ctx.getBean("productService");       
         productDAO = (ProductDAO)ctx.getBean("productDAO");
-      
-        
-        transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
- 			public NodeRef execute() throws Throwable {
 
- 				// delete report tpls to avoid report generation
- 				deleteReportTpls();
- 				
- 				return null;
-
- 			}},false,true);
-        
-        transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
- 			public NodeRef execute() throws Throwable {
- 				
- 				//create RM and lSF
- 				initParts();
- 		        
- 				return null;
-
- 			}},false,true); 
+ 		//create RM and lSF
+ 		initParts();
+ 		       
         
     }
     

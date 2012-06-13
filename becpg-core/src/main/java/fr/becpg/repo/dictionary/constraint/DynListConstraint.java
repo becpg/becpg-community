@@ -4,7 +4,9 @@
 package fr.becpg.repo.dictionary.constraint;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -52,6 +54,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	/** The constraint prop. */
 	private String constraintProp = null;
 	
+	/** The level in multi level case */
+	private String level = null;
+	
+	/** The level prop in multi level case */
+	private String levelProp = null;
+	
     /**
      * Set the paths where are stored allowed values by the constraint.
      *  
@@ -98,6 +106,23 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		this.constraintProp = constraintProp;
 	}	
 	
+	
+	/**
+	 * 
+	 * @param level
+	 */
+	public void setLevel(String level) {
+		this.level = level;
+	}
+
+	/**
+	 * 
+	 * @param levelProp
+	 */
+	public void setLevelProp(String levelProp) {
+		this.levelProp = levelProp;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint#initialize()
 	 */
@@ -107,6 +132,9 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		checkPropertyNotNull("paths", paths);
 		checkPropertyNotNull("constraintType", constraintType);
 		checkPropertyNotNull("constraintProp", constraintProp);
+		if(level!=null){
+			checkPropertyNotNull("levelProp", levelProp);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -176,7 +204,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		        	                NodeRef nodeRef = row.getNodeRef();
 		        	                if(serviceRegistry.getNodeService().exists(nodeRef)){
 			        	                String value = (String)serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
-			        	                if(!allowedValues.contains(value) && value!=null){
+			        	                if(!allowedValues.contains(value) && value!=null  && checkLevel(nodeRef)){
 			        	                	allowedValues.add(value);
 			        	                }
 		        	                } else {
@@ -195,6 +223,33 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		        				resultSet.close();
 		        		}
 		            }
+
+					private boolean checkLevel(NodeRef nodeRef) {
+						if(level!=null){
+							try {
+								int l = Integer.parseInt(level); 
+								
+								return l == computeLevel(nodeRef, QName.createQName(levelProp, serviceRegistry.getNamespaceService()));
+								
+							} catch (Exception e) {
+								logger.warn("Cannot check level",e);
+							}
+						}
+						
+						return true;
+					}
+
+					private int computeLevel(NodeRef nodeRef, QName createQName) {
+						Set<QName> qnames = new HashSet<QName>();
+						qnames.add(createQName);
+						
+						NodeRef parentNode = (NodeRef) serviceRegistry.getNodeService().getProperty(nodeRef, createQName); 
+						if(parentNode!=null ){
+							return 1 + computeLevel(parentNode,createQName);
+						}
+						
+						return 0;
+					}
 		        }, AuthenticationUtil.getSystemUserName());		
 	}
 	
