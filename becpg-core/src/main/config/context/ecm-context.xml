@@ -7,7 +7,7 @@
 	<bean id="changeOrderDAO" class="fr.becpg.repo.ecm.impl.ChangeOrderDAOImpl">
     	<property name="nodeService" ref="nodeService"/>
     	<property name="entityListDAO" ref="entityListDAO"/>
-    	<property name="associationService" ref="associationService"/>		
+    	<property name="associationService" ref="associationService"/>	    	
 	</bean>
 	
 	<!-- ecoService -->	

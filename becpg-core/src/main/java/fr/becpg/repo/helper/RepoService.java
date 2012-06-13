@@ -42,4 +42,12 @@ public interface RepoService {
 	 */
 	public NodeRef getFolderByPath(NodeRef parentNodeRef, String path);
 	
+	/**
+	 * Move the node in the destination folder, rename the node with (1) if a node with same name already exists
+	 * @param nodeRefToMove
+	 * @param destionationNodeRef
+	 * @param name
+	 */
+	void moveNode(NodeRef nodeRefToMove, NodeRef destionationNodeRef);
+	
 }

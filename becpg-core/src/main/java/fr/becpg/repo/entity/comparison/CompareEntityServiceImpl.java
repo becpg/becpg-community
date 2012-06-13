@@ -895,7 +895,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) ||
 				qName.equals(ContentModel.ASSOC_ORIGINAL) ||
 				//system properties
-				qName.equals(BeCPGModel.ASSOC_COMPOLIST_FATHER) ||
+				qName.equals(BeCPGModel.PROP_FATHER) ||
 				qName.equals(BeCPGModel.PROP_START_EFFECTIVITY) ||
 				qName.equals(BeCPGModel.PROP_END_EFFECTIVITY) ||
 				qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED)){

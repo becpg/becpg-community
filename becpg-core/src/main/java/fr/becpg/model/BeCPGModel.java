@@ -175,11 +175,7 @@ public interface BeCPGModel {
 	
 	/** The Constant PROP_COMPOLIST_DECL_TYPE. */
 	static final QName PROP_COMPOLIST_DECL_TYPE = QName.createQName(
-			BECPG_URI, "compoListDeclType");
-	
-	/** The Constant ASSOC_COMPOLIST_FATHER. */
-	static final QName ASSOC_COMPOLIST_FATHER = QName.createQName(BECPG_URI,
-			"compoListFather");
+			BECPG_URI, "compoListDeclType");	
 	
 	// packagingList
 	static final QName TYPE_PACKAGINGLIST = QName.createQName(BECPG_URI,
@@ -605,6 +601,9 @@ public interface BeCPGModel {
 	
 	/** The Constant PROP_DEPTH_LEVEL. */
 	static final QName PROP_DEPTH_LEVEL = QName.createQName(BECPG_URI, "depthLevel");
+	
+	static final QName PROP_FATHER = QName.createQName(BECPG_URI,
+			"father");
 	
 	// depthLevel aspect
 	static final QName ASPECT_SORTABLE_LIST = QName.createQName(BECPG_URI,	"sortableListAspect");

@@ -598,6 +598,8 @@ public class ProductServiceTest extends RepoBaseTestCase {
 			}
 		}, false, true);
 	}
+	
+	
 
 	/**
 	 * Test get WUsed of the compoList
@@ -669,8 +671,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 			}
 		}, false, true);
 	}
-	
-
 	
 	private List<CompoListDataItem> getWUsedCompoList(NodeRef productNodeRef) {
 		

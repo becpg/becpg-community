@@ -1272,20 +1272,8 @@ public class ProductDAOImpl implements ProductDAO {
 			// store father if level > 1
 			if (compoListDataItem.getDepthLevel() > 1) {
 
-				CompoListDataItem compositeCompoListDataItem = composite.getData();
-				boolean createFather = true;
-				List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_FATHER);
-				if (compoAssocRefs.size() > 0) {
-					NodeRef fatherNodeRef = (compoAssocRefs.get(0)).getTargetRef();
-
-					if (fatherNodeRef != null && fatherNodeRef == compositeCompoListDataItem.getNodeRef()) {
-						createFather = false;
-					} else {
-						nodeService.removeAssociation(compoListDataItem.getNodeRef(), fatherNodeRef, BeCPGModel.ASSOC_COMPOLIST_FATHER);
-					}
-				}
-				if (createFather)
-					nodeService.createAssociation(compoListDataItem.getNodeRef(), compositeCompoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_FATHER);
+				CompoListDataItem compositeCompoListDataItem = composite.getData();				
+				nodeService.setProperty(compoListDataItem.getNodeRef(), BeCPGModel.PROP_FATHER, compositeCompoListDataItem.getNodeRef());
 			}
 
 			if (component instanceof Composite) {

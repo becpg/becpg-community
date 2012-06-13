@@ -49,53 +49,6 @@
 				</list>
 			</parameter>
 		</constraint>
-<!-- 		<constraint name="bcpg:ingType" type="LIST"> -->
-<!-- 			<parameter name="allowedValues"> -->
-<!-- 				<list> -->
-<!-- 					<value>Adipate</value> -->
-<!-- 					<value>Alginate</value> -->
-<!-- 					<value>Antibiotique</value> -->
-<!-- 					<value>Antioxidant</value> -->
-<!-- 					<value>Autre additif</value> -->
-<!-- 					<value>Carbonate</value> -->
-<!-- 					<value>Chlorure</value> -->
-<!-- 					<value>Cire et hydrocarbure</value> -->
-<!-- 					<value>Citrate</value> -->
-<!-- 					<value>Colorant alimentaire</value> -->
-<!-- 					<value>Conservateur</value> -->
-<!-- 					<value>Dérivé cellulosique</value> -->
-<!-- 					<value>Dérivé d'acide gras alimentaire</value> -->
-<!-- 					<value>Diphosphate</value> -->
-<!-- 					<value>Edulcorant</value> -->
-<!-- 					<value>Epaississant</value> -->
-<!-- 					<value>Exhausteur</value> -->
-<!-- 					<value>Ferrocyanure</value> -->
-<!-- 					<value>Gaz</value> -->
-<!-- 					<value>Glace</value> -->
-<!-- 					<value>Gluconate</value> -->
-<!-- 					<value>Glutamate</value> -->
-<!-- 					<value>Gomme</value> -->
-<!-- 					<value>Gomme à mâcher</value> -->
-<!-- 					<value>Gélifiant</value> -->
-<!-- 					<value>Guanylate</value> -->
-<!-- 					<value>Hydroxyde</value> -->
-<!-- 					<value>Ingrédient</value> -->
-<!-- 					<value>Inosinate</value> -->
-<!-- 					<value>Lactate</value> -->
-<!-- 					<value>Lécithine</value> -->
-<!-- 					<value>Malate</value> -->
-<!-- 					<value>Orthophosphate</value> -->
-<!-- 					<value>Phosphate</value> -->
-<!-- 					<value>Silicate</value> -->
-<!-- 					<value>Stabilisant</value> -->
-<!-- 					<value>Stearate</value> -->
-<!-- 					<value>Sulfate</value> -->
-<!-- 					<value>Tartrate</value> -->
-<!-- 					<value>Thiosulfate</value> -->
-<!-- 					<value>Triphosphate</value> -->
-<!-- 				</list> -->
-<!-- 			</parameter> -->
-<!-- 		</constraint> -->
 		<constraint name="bcpg:ingType"
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -734,24 +687,12 @@
 					<constraints>
 						<constraint ref="bcpg:declarationTypes" />
 					</constraints>
-				</property>
+				</property>				
 				<!-- <property name="bcpg:compoListPlants"> <type>d:text</type> <mandatory>false</mandatory> 
 					<multiple>true</multiple> <constraints> <constraint ref="bcpg:plant" /> </constraints> 
 					</property> -->
 			</properties>
-			<associations>
-				<!-- assoc used to store the direct father node (multi-leve recipe)l -->
-				<association name="bcpg:compoListFather">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:compoList</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
+			<associations>							
 				<!-- assoc used to store the product -->
 				<association name="bcpg:compoListProduct">
 					<source>
@@ -777,8 +718,8 @@
 				</association>				
 			</associations>
 			<mandatory-aspects>
-				<aspect>bcpg:depthLevelAspect</aspect>
 				<aspect>bcpg:sortableListAspect</aspect>
+				<aspect>bcpg:depthLevelAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -1720,6 +1661,10 @@
 					<type>d:int</type>
 					<mandatory>true</mandatory>
 				</property>
+				<!-- used to store the direct father node (multi-leve recipe)l -->
+				<property name="bcpg:father">
+					<type>d:noderef</type>					
+				</property>	
 			</properties>
 		</aspect>
 		

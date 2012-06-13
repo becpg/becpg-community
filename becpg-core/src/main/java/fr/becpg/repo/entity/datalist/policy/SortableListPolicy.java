@@ -1,7 +1,7 @@
 /*
  * 
  */
-package fr.becpg.repo.entity.policy;
+package fr.becpg.repo.entity.datalist.policy;
 
 import java.util.HashMap;
 import java.util.List;
@@ -73,62 +73,6 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 		//policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_SORTABLE_LIST, new JavaBehaviour(this, "onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_SORTABLE_LIST, new JavaBehaviour(this, "onAddAspect"));
 	}
-
-// SHOULD BE DONE BY UI
-//	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before,
-//			Map<QName, Serializable> after) {
-//		
-//		logger.debug("onUpdateProperties");
-//		
-//		NodeRef parentNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
-//		Integer beforeSort = (Integer)before.get(BeCPGModel.PROP_SORT);
-//		Integer afterSort = (Integer)after.get(BeCPGModel.PROP_SORT);
-//		
-//		logger.debug("onUpdateProperties, sort beforeSort: " + beforeSort + "afterSort: " + afterSort);
-//		
-//		if(beforeSort != null && afterSort != null && !beforeSort.equals(afterSort)){						
-//						
-//			int min;
-//			int max;
-//			int sortIndex;						
-//			
-//			if(afterSort < beforeSort){
-//				min = afterSort;
-//				max = beforeSort;
-//				sortIndex = min+1;
-//			}
-//			else{
-//				min = beforeSort;
-//				max = afterSort;
-//				sortIndex = min;
-//			}
-//						
-//			String query = String.format(QUERY_LIST_ITEMS_BY_SORT, parentNodeRef, min, max);
-//			Map<String, Boolean> sort = new HashMap<String, Boolean>();
-//			sort.put("@" + BeCPGModel.PROP_SORT, true);
-//			int size = max - min;
-//			List<NodeRef> listItems = beCPGSearchService.unProtLuceneSearch(query, sort, size);			
-//			
-//			try
-//	        {
-//	            policyBehaviourFilter.disableBehaviour(BeCPGModel.PROP_SORT);
-//	            
-//	            for(int z_idx=0 ; z_idx<listItems.size() ; z_idx++){					
-//					
-//					if(!nodeRef.equals(listItems.get(z_idx))){
-//					
-//						nodeService.setProperty(listItems.get(z_idx), BeCPGModel.PROP_SORT, sortIndex);
-//						sortIndex++;
-//					}				
-//				}
-//	        }
-//	        finally
-//	        {
-//	        	policyBehaviourFilter.enableBehaviour(BeCPGModel.PROP_SORT);
-//	        }
-//		}
-//		
-//	}
 
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspect) {

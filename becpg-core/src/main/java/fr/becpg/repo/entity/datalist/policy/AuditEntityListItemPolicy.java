@@ -1,7 +1,7 @@
 /*
  * 
  */
-package fr.becpg.repo.entity.policy;
+package fr.becpg.repo.entity.datalist.policy;
 
 import java.util.Date;
 

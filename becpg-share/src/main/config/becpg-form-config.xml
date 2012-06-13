@@ -2278,7 +2278,6 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:compoListQtySubFormula" />
 					<show id="bcpg:compoListQtyAfterProcess" />
@@ -2286,6 +2285,7 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />
+					<show id="bcpg:father" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 				
@@ -2295,6 +2295,16 @@
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct
 							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:father">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/compoListFather
+							</control-param>
+							<control-param name="urlParamsToPass">entityNodeRef
+							</control-param>
+							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -2358,7 +2368,6 @@
 			<!-- Data List pop-up edit form -->
 			<form>
 				<field-visibility>
-					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:compoListQtySubFormula" />
 					<show id="bcpg:compoListQtyAfterProcess" />
@@ -2366,6 +2375,7 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />
+					<show id="bcpg:father" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 				
@@ -2375,6 +2385,16 @@
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct
 							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:father">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/compoListFather
+							</control-param>
+							<control-param name="urlParamsToPass">entityNodeRef
+							</control-param>
+							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
 				</appearance>
