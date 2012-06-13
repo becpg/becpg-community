@@ -83,12 +83,7 @@ public class NonConformityServiceImpl implements NonConformityService {
 
 		NodeRef destFolderNodeRef = getStorageFolder(productNodeRef);
 
-		nodeService.moveNode(
-				nodeToMoveNodeRef,
-				destFolderNodeRef,
-				ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-						(String) nodeService.getProperty(ncNodeRef, ContentModel.PROP_NAME)));
+		repoService.moveNode(nodeToMoveNodeRef, destFolderNodeRef);				
 	}
 
 }

@@ -320,53 +320,8 @@ public class ProductServiceImpl implements ProductService {
 				nodeRefToMove = parentProductNodeRef;							
 			}				    	
 			
-			// check the product is not already classified !
-			NodeRef parentOfNodeRefToMove = nodeService.getPrimaryParent(nodeRefToMove).getParentRef();
-			if(destionationNodeRef.equals(parentOfNodeRefToMove)){
-				// nothing to do...
-				logger.debug("product already classified, nothing to do...");
-				return;
-			}
-			
-			//Check there is not a node with the same name, then rename node
-			String name = (String)nodeService.getProperty(nodeRefToMove, ContentModel.PROP_NAME);
-			List<FileInfo> fileInfos = fileFolderService.list(destionationNodeRef);
-			if(fileInfos.size() > 0){
-				boolean fileAlreadyExists = false;
-				int count = 0;
-				for(FileInfo fileInfo : fileInfos){						
-					if(fileInfo.getName().toLowerCase().equals(name.toLowerCase())){
-						fileAlreadyExists = true;							
-					}
-				}
-				
-				while(fileAlreadyExists){
-					count++;
-					String nameWithCounter = String.format("%s (%d)", name, count);
-					fileAlreadyExists = false;
-					for(FileInfo fileInfo : fileInfos){						
-						if(fileInfo.getName().toLowerCase().equals(nameWithCounter.toLowerCase())){
-							fileAlreadyExists = true;							
-						}
-					}
-				}
-				
-				if(count > 0){
-					name = String.format("%s (%d)", name, count);
-					//nodeService.setProperty(nodeRefToMove, ContentModel.PROP_NAME, name);
-				}
-			}
-			
-			if(logger.isDebugEnabled()){
-				logger.debug(String.format("Classify product '%s' in folder '%s'", name, destionationNodeRef));
-			}			
-
-			try{
-				nodeRefToMove = fileFolderService.move(nodeRefToMove, destionationNodeRef, name).getNodeRef();
-			}
-			catch(Exception e){
-				logger.error("classifyProduct : Failed to move product", e);
-			}
+			// classify product
+			repoService.moveNode(nodeRefToMove, destionationNodeRef);
 			
 			// productNodeRef : remove all owner related rights 
             ownableService.setOwner(productNodeRef, OwnableService.NO_OWNER);    			
