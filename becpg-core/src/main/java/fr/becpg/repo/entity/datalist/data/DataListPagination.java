@@ -2,6 +2,8 @@ package fr.becpg.repo.entity.datalist.data;
 
 import java.util.List;
 
+import fr.becpg.repo.RepoConsts;
+
 /**
  * DataList Pagination container
  * 
@@ -35,7 +37,7 @@ public class DataListPagination {
 
 	public void setPageSize(Integer pageSize) {
 		if (pageSize == null) {
-			pageSize = 25;
+			pageSize = RepoConsts.DATA_LISTS_PAGESIZE;
 		}
 		this.pageSize = pageSize;
 	}

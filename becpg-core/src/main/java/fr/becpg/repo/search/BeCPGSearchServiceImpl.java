@@ -70,8 +70,14 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		sp.addStore(RepoConsts.SPACES_STORE);
 		sp.setLanguage(SearchService.LANGUAGE_LUCENE);
 		sp.setQuery(runnedQuery);
-		sp.setLimit(searchLimit);
-		sp.setLimitBy(LimitBy.FINAL_SIZE);
+		if(searchLimit == SIZE_UNLIMITED){
+			sp.setLimitBy(LimitBy.UNLIMITED);
+		}
+		else{
+			sp.setLimit(searchLimit);
+			sp.setMaxItems(searchLimit);
+			sp.setLimitBy(LimitBy.FINAL_SIZE);			
+		}
 		sp.addLocale(Locale.getDefault());
 		sp.setPermissionEvaluation(PermissionEvaluationMode.EAGER);
 		sp.excludeDataInTheCurrentTransaction(false);

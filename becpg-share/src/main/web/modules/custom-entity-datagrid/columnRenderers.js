@@ -22,6 +22,19 @@ if (beCPG.module.EntityDataGridRenderers) {
 	   }
 
 	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	   propertyName : "text_cm:name",
+	   renderer : function(oRecord, data, label, scope) {
+		   if(oRecord.getData("itemData")["prop_bcpg_depthLevel"]!=null){
+		      var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+			   return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;">'+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+		   }
+		   return Alfresco.util.encodeHTML(data.displayValue);
+		
+	   }
+
+	});
 
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {

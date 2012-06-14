@@ -175,4 +175,6 @@ public class RepoConsts {
 	 * ISO charset
 	 */
 	public static final String ISO_CHARSET = "ISO-8859-15";
+	
+	public static final Integer DATA_LISTS_PAGESIZE = 25;
 }

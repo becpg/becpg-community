@@ -4,10 +4,10 @@
 package fr.becpg.repo.entity.datalist.policy;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
@@ -87,9 +87,14 @@ NodeServicePolicies.OnDeleteNodePolicy {
 
 		NodeRef beforeFather = (NodeRef) before.get(BeCPGModel.PROP_FATHER);
 		NodeRef afterFather = (NodeRef) after.get(BeCPGModel.PROP_FATHER);
-		
-		logger.debug("before father: " + beforeFather);
-		logger.debug("after father: " + afterFather);
+		if(logger.isDebugEnabled()){
+			if(beforeFather!=null){
+				logger.debug("before father: " + beforeFather+" name "+nodeService.getProperty(beforeFather, ContentModel.PROP_NAME));
+			}
+			if(afterFather!=null){
+				logger.debug("after father: " + afterFather+" name "+nodeService.getProperty(afterFather, ContentModel.PROP_NAME));
+			}
+		}
 
 		// has changed
 		Integer level = null;
@@ -126,12 +131,19 @@ NodeServicePolicies.OnDeleteNodePolicy {
 	
 	private void propagateLevel(NodeRef father, int level){
 		
+		if(level>20){
+			logger.error("Cyclic father level");
+			return; 
+		}
+		
 		List<NodeRef> listItems = getChildren(father);
 		logger.debug("propagateLevel level: " + level + "listItems: " + listItems);
 		
 		for(NodeRef nodeRef : listItems){
-			nodeService.setProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL, level);
-			propagateLevel(nodeRef, level+1);
+			if(!nodeRef.equals(father)){
+				nodeService.setProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL, level);
+				propagateLevel(nodeRef, level+1);
+			}
 		}
 	}
 
