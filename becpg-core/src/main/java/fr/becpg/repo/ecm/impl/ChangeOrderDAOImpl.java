@@ -24,6 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
 import fr.becpg.repo.BeCPGDao;
+import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
+import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.ecm.ECOState;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.ecm.data.ChangeOrderType;
@@ -288,39 +290,61 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 	    		
 	    		logger.debug("createWUsed, size: " + wUsedList.size());
 	    		
-	    		//update or create nodes	  
-	    		int sortIndex = 1;
-	    		for(WUsedListDataItem wUsedListDataItem : wUsedList)
-	    		{    				    				    			
-	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		    		properties.put(BeCPGModel.PROP_DEPTH_LEVEL, wUsedListDataItem.getDepthLevel());
-		    		properties.put(ECMModel.PROP_WUL_IS_WUSED_IMPACTED, wUsedListDataItem.getIsWUsedImpacted());
-		    		properties.put(ECMModel.PROP_WUL_IMPACTED_DATALIST, wUsedListDataItem.getImpactedDataList());
-		    		
-		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
-		    		sortIndex++;
-		    		
-		    		if(filesToUpdate.contains(wUsedListDataItem.getNodeRef())){
-		    			//update
-		    			nodeService.setProperties(wUsedListDataItem.getNodeRef(), properties);		    			
-		    		}
-		    		else{
-		    			//create
-		    			ChildAssociationRef childAssocRef = nodeService.createNode(wUsedListNodeRef, 
-		    						ContentModel.ASSOC_CONTAINS, 
-		    						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), 
-		    						ECMModel.TYPE_WUSEDLIST, 
-		    						properties);
-		    			
-		    			if(wUsedListDataItem.getLink() != null){
-		    				nodeService.createAssociation(childAssocRef.getChildRef(), wUsedListDataItem.getLink(), ECMModel.ASSOC_WUL_LINK);
-		    			}		    			
-		    			nodeService.createAssociation(childAssocRef.getChildRef(), wUsedListDataItem.getSourceItem(), ECMModel.ASSOC_WUL_SOURCE_ITEM);		    			
-		    		}			    					    				    		
-	    		}
+	    		Composite<WUsedListDataItem> composite = WUsedListDataItem.getHierarchicalCompoList(wUsedList);
+				int sortIndex = 1;
+				createCompositeWUsedListItem(wUsedListNodeRef, composite, filesToUpdate, sortIndex);	    			    		
 			}
 		}
 	} 
+	
+	//TODO : SAME CODE FOR COMPOLISTDATAITEM !!!	
+	private int createCompositeWUsedListItem(NodeRef wUsedListNodeRef, Composite<WUsedListDataItem> composite, List<NodeRef> filesToUpdate, int sortIndex) {
+
+		for(AbstractComponent<WUsedListDataItem> component : composite.getChildren()){
+			
+			WUsedListDataItem wUsedListDataItem = component.getData();
+			
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+    		properties.put(BeCPGModel.PROP_DEPTH_LEVEL, wUsedListDataItem.getDepthLevel());
+    		properties.put(ECMModel.PROP_WUL_IS_WUSED_IMPACTED, wUsedListDataItem.getIsWUsedImpacted());
+    		properties.put(ECMModel.PROP_WUL_IMPACTED_DATALIST, wUsedListDataItem.getImpactedDataList());
+    		
+    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
+    		sortIndex++;
+    		
+    		if(filesToUpdate.contains(wUsedListDataItem.getNodeRef())){
+    			//update
+    			nodeService.setProperties(wUsedListDataItem.getNodeRef(), properties);		    			
+    		}
+    		else{
+				//create
+				ChildAssociationRef childAssocRef = nodeService.createNode(wUsedListNodeRef, 
+							ContentModel.ASSOC_CONTAINS, 
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), 
+							ECMModel.TYPE_WUSEDLIST, 
+							properties);
+				
+				wUsedListDataItem.setNodeRef(childAssocRef.getChildRef());
+    		}
+    		
+    		associationService.update(wUsedListDataItem.getNodeRef(), ECMModel.ASSOC_WUL_LINK, wUsedListDataItem.getLink());
+    		associationService.update(wUsedListDataItem.getNodeRef(), ECMModel.ASSOC_WUL_SOURCE_ITEM, wUsedListDataItem.getSourceItem());		    			
+			
+    		// store father if level > 1
+			if (wUsedListDataItem.getDepthLevel() > 1) {
+	
+				WUsedListDataItem compositeCompoListDataItem = composite.getData();				
+				nodeService.setProperty(wUsedListDataItem.getNodeRef(), BeCPGModel.PROP_FATHER, compositeCompoListDataItem.getNodeRef());
+			}
+
+			if (component instanceof Composite) {
+
+				sortIndex = createCompositeWUsedListItem(wUsedListNodeRef, (Composite<WUsedListDataItem>) component, filesToUpdate, sortIndex);
+			}
+		}
+
+		return sortIndex;
+	}
 	
 	/**
 	 * Create/Update ChangeUnit items.

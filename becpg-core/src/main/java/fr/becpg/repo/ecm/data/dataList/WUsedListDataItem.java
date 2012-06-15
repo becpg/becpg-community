@@ -1,7 +1,12 @@
 package fr.becpg.repo.ecm.data.dataList;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+
+import fr.becpg.repo.data.hierarchicalList.Composite;
+import fr.becpg.repo.data.hierarchicalList.Leaf;
 
 public class WUsedListDataItem {
 
@@ -57,5 +62,52 @@ public class WUsedListDataItem {
 		setIsWUsedImpacted(isWUsedImpacted);
 		setLink(link);
 		setSourceItem(sourceItem);
+	}
+	
+	//TODO : SAME CODE FOR COMPOLISTDATAITEM !!!
+	public static Composite<WUsedListDataItem> getHierarchicalCompoList(List<WUsedListDataItem> items){
+		
+		Composite<WUsedListDataItem> composite = new Composite<WUsedListDataItem>();
+		loadChildren(composite, 1, 0, items);
+		return composite;
+	}
+	
+	private static int loadChildren(Composite<WUsedListDataItem> composite, int level, int startPos, List<WUsedListDataItem> items){
+		
+		int z_idx = startPos; 
+		
+		for( ; z_idx<items.size() ; z_idx++){
+			
+			WUsedListDataItem compoListDataItem = items.get(z_idx);
+			
+			if(compoListDataItem.getDepthLevel() == level){				
+				
+				// is composite ?
+				boolean isComposite = false;
+				if((z_idx+1) < items.size()){
+				
+					WUsedListDataItem nextComponent = items.get(z_idx+1);
+					if(nextComponent.getDepthLevel() > compoListDataItem.getDepthLevel()){
+						isComposite = true;
+					}
+				}
+				
+				if(isComposite){
+					Composite<WUsedListDataItem> c = new Composite<WUsedListDataItem>(compoListDataItem);
+					composite.addChild(c);
+					z_idx = loadChildren(c, level+1, z_idx+1, items);
+				}
+				else{
+					Leaf<WUsedListDataItem> leaf = new Leaf<WUsedListDataItem>(compoListDataItem);
+					composite.addChild(leaf);
+				}				
+			}
+			else if(compoListDataItem.getDepthLevel() < level){
+				z_idx--;
+				break;				
+			}
+		}
+		
+		return z_idx;
 	}
 }
