@@ -9,15 +9,7 @@
           <activiti:field name="script">
             <activiti:string>execution.setVariable('ncwf_needPrevAction', task.getVariable('ncwf_needPrevAction'));
 execution.setVariable('ncwf_corrActionActor', task.getVariable('ncwf_corrActionActor'));
-execution.setVariable('ncwf_checkActor', task.getVariable('ncwf_checkActor'));
-
-for (var i = 0; i &lt; bpm_package.children.length; i++)
-{
-var nc = bpm_package.children[i];
-nc.properties["qa:ncState"] = task.getVariable('ncwf_ncState');
-nc.properties["qa:ncComment"] = task.getVariable('bpm_comment');
-nc.save();
-}</activiti:string>
+execution.setVariable('ncwf_checkActor', task.getVariable('ncwf_checkActor'));</activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -29,21 +21,12 @@ task.setVariable('ncwf_ncState', nc.properties["qa:ncState"]);
 }</activiti:string>
           </activiti:field>
         </activiti:taskListener>
+        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <userTask id="corrActionTask" name="Action corrective" activiti:assignee="${ncwf_corrActionActor.properties.userName}" activiti:formKey="ncwf:corrActionTask">
       <extensionElements>
-        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
-{
-var nc = bpm_package.children[i];
-nc.properties["qa:ncState"] = task.getVariable('ncwf_ncState');
-nc.properties["qa:ncComment"] = task.getVariable('bpm_comment');
-nc.save();
-}</activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
+        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
@@ -59,15 +42,7 @@ task.setVariable('ncwf_ncState', nc.properties["qa:ncState"]);
       <extensionElements>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
-{
-var nc = bpm_package.children[i];
-nc.properties["qa:ncState"] = task.getVariable('ncwf_ncState');
-nc.properties["qa:ncComment"] = task.getVariable('bpm_comment');
-nc.save();
-}
-
-execution.setVariable('ncwf_ncState', task.getVariable('ncwf_ncState'));</activiti:string>
+            <activiti:string>execution.setVariable('ncwf_ncState', task.getVariable('ncwf_ncState'));</activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -79,6 +54,7 @@ task.setVariable('ncwf_ncState', nc.properties["qa:ncState"]);
 }</activiti:string>
           </activiti:field>
         </activiti:taskListener>
+        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <userTask id="notificationTask" name="Notification" activiti:assignee="${initiator.properties.userName}" activiti:formKey="ncwf:notificationTask">

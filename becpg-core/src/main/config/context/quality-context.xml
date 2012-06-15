@@ -76,5 +76,5 @@
 		<property name="nodeService" ref="nodeService"/>
     	<property name="fileFolderService" ref="fileFolderService"/>
     	<property name="nonConformityService" ref="nonConformityService"/>
-    </bean>
+    </bean>    
 </beans>

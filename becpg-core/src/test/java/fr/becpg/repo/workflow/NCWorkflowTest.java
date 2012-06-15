@@ -34,6 +34,7 @@ import fr.becpg.model.QualityModel;
 import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.admin.SystemGroup;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.quality.NonConformityService;
 import fr.becpg.repo.quality.data.NonConformityData;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -73,6 +74,8 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 	private NodeRef rawMaterial2NodeRef;
 
 	private BeCPGDao<NonConformityData> nonConformityDAO;
+	
+	private NonConformityService nonConformityService;
 
 	/*
 	 * (non-Javadoc)
@@ -91,6 +94,7 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 		authorityService = (AuthorityService) ctx.getBean("authorityService");
 		personService = (PersonService) ctx.getBean("PersonService");
 		nonConformityDAO = (BeCPGDao<NonConformityData>) ctx.getBean("nonConformityDAO");
+		nonConformityService = (NonConformityService) ctx.getBean("nonConformityService");
 	}
 
 	private void createUsers() {
@@ -193,7 +197,12 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 				rawMaterial2.setName("Raw material 2");
 
 				rawMaterial2NodeRef = productDAO.create(folderNodeRef, rawMaterial2, null);
-
+				
+				// clean default storage folder
+				NodeRef folderNodeRef = nonConformityService.getStorageFolder(null);
+				for(FileInfo fileInfo : fileFolderService.list(folderNodeRef)){
+					nodeService.deleteNode(fileInfo.getNodeRef());
+				}
 				return null;
 
 			}
