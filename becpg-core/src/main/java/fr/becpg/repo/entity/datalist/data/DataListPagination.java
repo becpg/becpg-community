@@ -18,7 +18,7 @@ public class DataListPagination {
 
 	private int fullListSize;
 
-	private int page;
+	private int page = 1;
 
 	public int getMaxResults() {
 		return maxResults;

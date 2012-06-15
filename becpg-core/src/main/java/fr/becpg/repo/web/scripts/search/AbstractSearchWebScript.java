@@ -144,7 +144,7 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 		if(nodeRef!=null && !nodeRef.isEmpty()){
 			searchQuery += " -TYPE:\"cm:systemfolder\""
 					+ " -@cm\\:lockType:READ_ONLY_LOCK"
-					+ " -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\"";
+					+ " -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" -TYPE:\"bcpg:entityListItem\"";
 			searchQuery += " +PATH:\"" + getPath(nodeRef) + "//*\"";
 			if (itemType != null && !itemType.isEmpty()) {
 				searchQuery += " +TYPE:\"" + itemType + "\"";

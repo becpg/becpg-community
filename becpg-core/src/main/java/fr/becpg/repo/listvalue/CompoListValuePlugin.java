@@ -32,6 +32,7 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 		return new String[] { SOURCE_TYPE_COMPOLIST_PARENT_LEVEL };
 	}
 
+
 	public void setMultiLevelDataListService(MultiLevelDataListService multiLevelDataListService) {
 		this.multiLevelDataListService = multiLevelDataListService;
 	}

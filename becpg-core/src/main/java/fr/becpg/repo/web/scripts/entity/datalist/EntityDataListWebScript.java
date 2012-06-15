@@ -133,10 +133,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 		DataListPagination pagination = new DataListPagination();
 		DataListFilter dataListFilter = new DataListFilter();
-
-		
 		pagination.setMaxResults(getNumParameter(req, PARAM_MAX_RESULTS));
-		pagination.setPage(getNumParameter(req, PARAM_PAGE));
 		pagination.setPageSize(getNumParameter(req, PARAM_PAGE_SIZE));
 	
 		String itemType = req.getParameter(PARAM_ITEMTYPE);
@@ -185,8 +182,17 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				}
 			}
 			
+		
+			
 			if(dataListFilter.isSimpleItem()){
 				filterId = "node";
+			} else {
+				Integer page = getNumParameter(req, PARAM_PAGE);
+			
+				if(page==null && json != null && json.has("page")) {
+					page = (Integer) json.get("page");
+				}
+				pagination.setPage(page);
 			}
 
 

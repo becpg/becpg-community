@@ -17,9 +17,9 @@ public class RepoConsts {
 	public static final String PATH_QUERY_SUGGEST_VALUE = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:listValue\" +@cm\\:name:(%s) ";
 	public static final String PATH_QUERY_SUGGEST_VALUE_ALL  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:listValue\" ";
 	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ALL  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:parentLevel:\"%s\" ";
-	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ALL_ROOT  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" ISNULL:bcpg\\:parentLevel  ";
+	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ALL_ROOT  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +ISNULL:bcpg\\:parentLevel  ";
 	public static final String PATH_QUERY_SUGGEST_LKV_VALUE = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:parentLevel:\"%s\"  +@cm\\:name:\"%s\" ";
-	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ROOT = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" ISNULL:bcpg\\:parentLevel  +@cm\\:name:\"%s\" ";
+	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ROOT = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +ISNULL:bcpg\\:parentLevel  +@cm\\:name:\"%s\" ";
 	public static final String QUERY_SUGGEST_PRODUCT_BY_NAME = " +TYPE:\"bcpg:product\" +@cm\\:name:(%s) -@cm\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	public static final String QUERY_SUGGEST_PRODUCT_BY_CODE = " +TYPE:\"bcpg:product\" +@bcpg\\:code:%s -@cm\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	public static final String QUERY_SUGGEST_PRODUCT_ALL = " +TYPE:\"bcpg:product\" -@cm\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";

@@ -81,7 +81,7 @@ public class LuceneHelper {
     	String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);
     	
     	for(String folder : arrPath){
-    		if(!folder.contains("bcpg:")){
+    		if(!folder.contains("bcpg:") && !folder.contains("cm:")){
 	    		pathBuffer.append("/cm:");
 	    		pathBuffer.append(ISO9075.encode(folder)); 
     		} else {

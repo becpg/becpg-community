@@ -96,7 +96,7 @@ public class HierarchyServiceImpl implements HierarchyService{
 
 		logger.debug("resultSet.length() : " + ret.size()+" for "+queryPath);
 		if (ret.size() == 1) {
-			ret.get(0);
+			return	ret.get(0);
 		} else if(ret.size()>1){
 			for (NodeRef n : ret) {
 				if (value.equals(nodeService.getProperty(n, ContentModel.PROP_NAME))) {

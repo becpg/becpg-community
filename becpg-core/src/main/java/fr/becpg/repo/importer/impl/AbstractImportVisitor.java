@@ -902,22 +902,28 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		
 		if (propName.equals(BeCPGModel.PROP_PARENT_LEVEL)) {
 
+			String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, LuceneHelper.encodePath(importContext.getPath()), value);
 
-			String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, LuceneHelper.encodePath(importContext.getPath()),
-						value);
+			List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_NO_LIMIT);
 
-			List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+			logger.debug("resultSet.length() : " + ret.size() + " for " + queryPath);
 
-			logger.debug("resultSet.length() : " + ret.size()+" for "+queryPath);
-			if (ret.size() != 0) {
-				return ret.get(0);
+			if (ret.size() == 1) {
+				return	ret.get(0);
+			} else if(ret.size()>1){
+				for (NodeRef n : ret) {
+					if (value.equals(nodeService.getProperty(n, ContentModel.PROP_NAME))) {
+						return n;
+					}
+				}
 			}
-			logger.error(" linked value parent : "+queryPath+" not found ");
+
+			logger.error(" linked value parent : " + queryPath + " not found ");
 			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, properties));
 
 		}
-		
-		return findTargetNodeByValue(importContext, propDef.getDataType().getName(),value);
+
+		return findTargetNodeByValue(importContext, propDef.getDataType().getName(), value);
 	}
 
 	
