@@ -32,7 +32,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitor;
 import fr.becpg.repo.entity.EntitySystemService;
-import fr.becpg.repo.helper.HierarchyHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
@@ -43,6 +42,7 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
+import fr.becpg.repo.product.hierarchy.HierarchyHelper;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -452,14 +452,14 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		properties.clear();
 		properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, HIERARCHY2_FISH);
-		properties.put(BeCPGModel.PROP_FATHER, HIERARCHY1_SEA_FOOD_REF);
+		properties.put(BeCPGModel.PROP_PARENT_LEVEL, HIERARCHY1_SEA_FOOD_REF);
 		HIERARCHY2_FISH_REF = nodeService.createNode(rawMaterialHierarchyNodeRef, ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
 		// Sea food - Crustacean
 		properties.clear();
 		properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, HIERARCHY2_CRUSTACEAN);
-		properties.put(BeCPGModel.PROP_FATHER, HIERARCHY1_SEA_FOOD_REF);
+		properties.put(BeCPGModel.PROP_PARENT_LEVEL, HIERARCHY1_SEA_FOOD_REF);
 		HIERARCHY2_CRUSTACEAN_REF = nodeService.createNode(rawMaterialHierarchyNodeRef, ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
 		properties.clear();
@@ -476,7 +476,7 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		properties.clear();
 		properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, HIERARCHY2_PIZZA);
-		properties.put(BeCPGModel.PROP_FATHER, HIERARCHY1_FROZEN_REF);
+		properties.put(BeCPGModel.PROP_PARENT_LEVEL, HIERARCHY1_FROZEN_REF);
 		HIERARCHY2_PIZZA_REF = nodeService.createNode(finishedProductHierarchyNodeRef, ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
 		// Frozen - Quiche
@@ -484,7 +484,7 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, HIERARCHY2_QUICHE);
 
-		properties.put(BeCPGModel.PROP_FATHER, HIERARCHY1_FROZEN_REF);
+		properties.put(BeCPGModel.PROP_PARENT_LEVEL, HIERARCHY1_FROZEN_REF);
 		HIERARCHY2_QUICHE_REF = nodeService.createNode(finishedProductHierarchyNodeRef, ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
 	}

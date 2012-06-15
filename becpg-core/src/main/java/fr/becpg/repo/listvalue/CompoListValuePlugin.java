@@ -8,7 +8,6 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -22,21 +21,15 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 
 	private static Log logger = LogFactory.getLog(CompoListValuePlugin.class);
 
-	private static final String SOURCE_TYPE_COMPOLIST_FATHER = "compoListFather";
+	private static final String SOURCE_TYPE_COMPOLIST_PARENT_LEVEL = "compoListParentLevel";
 	private static final String SUFFIX_ALL = "*";
 	
-	private NamespaceService namespaceService;
 	private MultiLevelDataListService multiLevelDataListService;
 	private NodeService nodeService;
-	private ProductValueExtractor productValueExtractor;
 
 	@Override
 	public String[] getHandleSourceTypes() {
-		return new String[] { SOURCE_TYPE_COMPOLIST_FATHER };
-	}
-
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
+		return new String[] { SOURCE_TYPE_COMPOLIST_PARENT_LEVEL };
 	}
 
 	public void setMultiLevelDataListService(MultiLevelDataListService multiLevelDataListService) {
@@ -54,7 +47,7 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 		NodeRef entityNodeRef = new NodeRef((String)props.get(ListValueService.PROP_NODEREF));
 		logger.debug("CompoListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
 		
-		if(sourceType.equals(SOURCE_TYPE_COMPOLIST_FATHER)){
+		if(sourceType.equals(SOURCE_TYPE_COMPOLIST_PARENT_LEVEL)){
 			
 			DataListFilter dataListFilter = new DataListFilter();
 			dataListFilter.setDataType(BeCPGModel.TYPE_COMPOLIST);
@@ -62,14 +55,14 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 			
 			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
 			
-			List<ListValueEntry> result = getFathers(mlld, query);			
+			List<ListValueEntry> result = getParentsLevel(mlld, query);			
 			
 			return new ListValuePage(result, pageNum, pageSize, null);			
 		}
 		return null;
 	}
 
-	private List<ListValueEntry> getFathers(MultiLevelListData mlld, String query) {
+	private List<ListValueEntry> getParentsLevel(MultiLevelListData mlld, String query) {
 
 		List<ListValueEntry> result = new ArrayList<ListValueEntry>();
 
@@ -110,7 +103,7 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 				}
 
 				if (kv.getValue() != null) {
-					result.addAll(getFathers(kv.getValue(), query));
+					result.addAll(getParentsLevel(kv.getValue(), query));
 				}
 			}
 		}

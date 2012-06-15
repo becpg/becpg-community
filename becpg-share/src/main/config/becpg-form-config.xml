@@ -2910,6 +2910,7 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />
+					<show id="bcpg:parentLevel" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 
@@ -2921,6 +2922,16 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:parentLevel">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete.ftl">
+ 							<control-param name="ds">becpg/autocomplete/compoListParentLevel
+ 							</control-param>
+							<control-param name="urlParamsToPass">entityNodeRef
+							</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+ 					</field> 
 				</appearance>
 			</form>
 
@@ -2989,6 +3000,7 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />
+					<show id="bcpg:parentLevel" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 
@@ -3000,6 +3012,16 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:parentLevel">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete.ftl">
+ 							<control-param name="ds">becpg/autocomplete/compoListParentLevel
+ 							</control-param>
+							<control-param name="urlParamsToPass">entityNodeRef
+							</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+ 					</field> 
 				</appearance>
 			</form>
 		</forms>
@@ -4028,7 +4050,8 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="bcpg:father" />
+					<show id="bcpg:parentLevel" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -4040,7 +4063,8 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="bcpg:father" />
+					<show id="bcpg:parentLevel" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 
@@ -4048,7 +4072,8 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="bcpg:father" />
+					<show id="bcpg:parentLevel" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 
@@ -4056,7 +4081,8 @@
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
 					<show id="cm:name" />
-					<show id="bcpg:father" />
+					<show id="bcpg:parentLevel" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -4068,6 +4094,7 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -4079,6 +4106,7 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 
@@ -4086,12 +4114,14 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>

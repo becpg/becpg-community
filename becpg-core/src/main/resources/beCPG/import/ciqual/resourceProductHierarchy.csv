@@ -12,7 +12,7 @@ VALUES;Personnes;
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:father;cm:name
+COLUMNS;bcpg:parentLevel;cm:name
 VALUES;Vêtements et Sécurité;Peau
 VALUES;Vêtements et Sécurité; Tête 
 VALUES;Vêtements et Sécurité;Corps

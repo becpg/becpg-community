@@ -19,13 +19,12 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.HierarchyHelper;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
+import fr.becpg.repo.product.hierarchy.HierarchyHelper;
+import fr.becpg.repo.product.hierarchy.HierarchyService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -49,6 +48,8 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	private Repository repositoryHelper;
 
 	private SearchService searchService;
+	
+	private HierarchyService hierarchyService;
 
 	public void setRepositoryHelper(Repository repositoryHelper) {
 		this.repositoryHelper = repositoryHelper;
@@ -56,6 +57,10 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 
 	public void setSearchService(SearchService searchService) {
 		this.searchService = searchService;
+	}
+
+	public void setHierarchyService(HierarchyService hierarchyService) {
+		this.hierarchyService = hierarchyService;
 	}
 
 	/**
@@ -176,34 +181,26 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, String value, Map<QName, Serializable> properties) throws ImporterException {
 		QName propName = propDef.getName();
 
-	
-
 		if (propName.equals(BeCPGModel.PROP_PRODUCT_HIERARCHY1) || propName.equals(BeCPGModel.PROP_PRODUCT_HIERARCHY2)) {
 
-			String queryPath; 
+			NodeRef hierarchyNodeRef = null;
 			if (propName.equals(BeCPGModel.PROP_PRODUCT_HIERARCHY2)) {
+				// nodeRef found before (hierarchy1 must be before hierarchy2 in import file)
 				NodeRef hierachy1NodeRef = (NodeRef) properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1);
-				if (hierachy1NodeRef != null) {
-					 queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(importContext.getType(),namespaceService)), hierachy1NodeRef.toString(),
-							value);
+				if (hierachy1NodeRef != null) {					 
+					hierarchyNodeRef = hierarchyService.getHierarchy2(importContext.getType(), hierachy1NodeRef, value);
 		
 				} else {
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
 				}
 			} else {
-				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(importContext.getType(),namespaceService)),
-						value);
-			}
+				hierarchyNodeRef = hierarchyService.getHierarchy1(importContext.getType(), value);
+			}			
 
-			List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-
-			logger.debug("resultSet.length() : " + ret.size()+" for "+queryPath);
-			if (ret.size() != 0) {
-				return ret.get(0);
-			}
-			logger.error(" Hierachy : "+queryPath+" not found ");
-			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
-
+			if(hierarchyNodeRef == null){
+				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
+			}			
+			return hierarchyNodeRef;
 		}
 		return super.findTargetNodeByValue(importContext, propDef, value, properties);
 	}

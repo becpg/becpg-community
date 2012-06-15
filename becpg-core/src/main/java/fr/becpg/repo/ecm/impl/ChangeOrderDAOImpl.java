@@ -330,11 +330,11 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
     		associationService.update(wUsedListDataItem.getNodeRef(), ECMModel.ASSOC_WUL_LINK, wUsedListDataItem.getLink());
     		associationService.update(wUsedListDataItem.getNodeRef(), ECMModel.ASSOC_WUL_SOURCE_ITEM, wUsedListDataItem.getSourceItem());		    			
 			
-    		// store father if level > 1
+    		// store parentLevel if level > 1
 			if (wUsedListDataItem.getDepthLevel() > 1) {
 	
 				WUsedListDataItem compositeCompoListDataItem = composite.getData();				
-				nodeService.setProperty(wUsedListDataItem.getNodeRef(), BeCPGModel.PROP_FATHER, compositeCompoListDataItem.getNodeRef());
+				nodeService.setProperty(wUsedListDataItem.getNodeRef(), BeCPGModel.PROP_PARENT_LEVEL, compositeCompoListDataItem.getNodeRef());
 			}
 
 			if (component instanceof Composite) {

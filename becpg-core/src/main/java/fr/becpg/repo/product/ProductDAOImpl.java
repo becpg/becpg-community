@@ -1269,11 +1269,11 @@ public class ProductDAOImpl implements ProductDAO {
 			// Update grp
 			associationService.update(compoListDataItem.getNodeRef(), BeCPGModel.ASSOC_COMPOLIST_DECL_GRP, compoListDataItem.getDeclGrp());
 			
-			// store father if level > 1
+			// store parentLevel if level > 1
 			if (compoListDataItem.getDepthLevel() > 1) {
 
 				CompoListDataItem compositeCompoListDataItem = composite.getData();				
-				nodeService.setProperty(compoListDataItem.getNodeRef(), BeCPGModel.PROP_FATHER, compositeCompoListDataItem.getNodeRef());
+				nodeService.setProperty(compoListDataItem.getNodeRef(), BeCPGModel.PROP_PARENT_LEVEL, compositeCompoListDataItem.getNodeRef());
 			}
 
 			if (component instanceof Composite) {

@@ -19,12 +19,12 @@ import fr.becpg.model.MPMModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.HierarchyHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.FormulateException;
+import fr.becpg.repo.product.hierarchy.HierarchyHelper;
 
 // TODO: Auto-generated Javadoc
 /**

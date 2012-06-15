@@ -1,4 +1,4 @@
-package fr.becpg.repo.helper;
+package fr.becpg.repo.product.hierarchy;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -32,5 +32,4 @@ public class HierarchyHelper {
 		}
 		return null;
 	}
-	
 }

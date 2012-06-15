@@ -101,7 +101,6 @@
 	</bean>
 	<bean id="compoListValuePlugin" parent="baseListValuePlugin"  init-method="init"
 			 class="fr.becpg.repo.listvalue.CompoListValuePlugin">
-		<property name="namespaceService" ref="namespaceService" />
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
 		<property name="nodeService" ref="nodeService" />
 	</bean>
@@ -144,6 +143,7 @@
 		<property name="mimetypeService" ref="mimetypeService"/>		
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="repositoryHelper" ref="repositoryHelper" />
+		<property name="hierarchyService" ref="hierarchyService" />
 	</bean>
 	<bean id="importEntityListAspectVisitor" class="fr.becpg.repo.importer.impl.ImportEntityListAspectVisitor">
 		<property name="nodeService" ref="nodeService" />		
@@ -224,7 +224,9 @@
       <property name="versionService" ref="versionService" />
       <property name="dbNodeService">
             <ref bean="mtAwareNodeService" />
-        </property>
+        </property>        
+        <property name="dictionaryService" ref="dictionaryService" />
+        <property name="hierarchyService" ref="hierarchyService" />
 	</bean>
 	
 	<!-- CompareEntityService -->
@@ -484,6 +486,12 @@
 		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+	
+	<bean id="hierarchyService" class="fr.becpg.repo.product.hierarchy.impl.HierarchyServiceImpl">
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService"/>
+		<property name="nodeService" ref="nodeService" />
 	</bean>
 	
 	<!-- Search -->

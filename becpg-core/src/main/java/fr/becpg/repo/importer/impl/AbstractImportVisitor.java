@@ -900,7 +900,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, String value, Map<QName, Serializable> properties) throws ImporterException {
 		QName propName = propDef.getName();
 		
-		if (propName.equals(BeCPGModel.PROP_FATHER)) {
+		if (propName.equals(BeCPGModel.PROP_PARENT_LEVEL)) {
 
 
 			String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, LuceneHelper.encodePath(importContext.getPath()),

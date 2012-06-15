@@ -386,7 +386,7 @@ public class SecurityServiceImpl implements SecurityService, ApplicationListener
 				qName.equals(BeCPGModel.PROP_FROZEN_MODIFIER) ||
 				qName.equals(BeCPGModel.PROP_FROZEN_MODIFIED) ||
 				//system properties
-				qName.equals(BeCPGModel.PROP_FATHER)||
+				qName.equals(BeCPGModel.PROP_PARENT_LEVEL)||
 				qName.equals(ContentModel.PROP_NAME) ||
 				qName.equals(ContentModel.PROP_CREATOR) ||
 				qName.equals(ContentModel.PROP_CREATED) ||

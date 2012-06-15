@@ -162,7 +162,7 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 		props.put(ListValueService.PROP_NODEREF, finishedProductNodeRef.toString());
 		props.put(ListValueService.PROP_CLASS_NAME, "bcpg:compoList");
 
-		ListValuePage listValuePage = compoListValuePlugin.suggest("compoListFather", "", null, new Integer(
+		ListValuePage listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, new Integer(
 				ListValueService.SUGGEST_PAGE_SIZE), props);
 
 		for (ListValueEntry listValueEntry : listValuePage.getResults()) {

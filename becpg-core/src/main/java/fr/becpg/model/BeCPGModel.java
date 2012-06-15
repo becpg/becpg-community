@@ -114,7 +114,6 @@ public interface BeCPGModel {
 	static final QName TYPE_CHARACT = QName.createQName(BECPG_URI,
 			"charact");
 	
-	
 	// allergenList
 	/** The Constant TYPE_ALLERGENLIST. */
 	static final QName TYPE_ALLERGENLIST = QName.createQName(BECPG_URI,
@@ -600,8 +599,8 @@ public interface BeCPGModel {
 	/** The Constant PROP_DEPTH_LEVEL. */
 	static final QName PROP_DEPTH_LEVEL = QName.createQName(BECPG_URI, "depthLevel");
 	
-	static final QName PROP_FATHER = QName.createQName(BECPG_URI,
-			"father");
+	static final QName PROP_PARENT_LEVEL = QName.createQName(BECPG_URI,
+			"parentLevel");
 	
 	// depthLevel aspect
 	static final QName ASPECT_SORTABLE_LIST = QName.createQName(BECPG_URI,	"sortableListAspect");
@@ -753,10 +752,12 @@ public interface BeCPGModel {
 	/**
 	 * legalName aspect
 	 */
-	public static final QName ASPECT_LEGAL_NAME = QName.createQName(BECPG_URI, "legalNameAspect");
+	static final QName ASPECT_LEGAL_NAME = QName.createQName(BECPG_URI, "legalNameAspect");
 	static final QName PROP_LEGAL_NAME = QName.createQName(BECPG_URI, "legalName");
 
-
+	static final QName ASPECT_DELETED = QName.createQName(BECPG_URI, "isDeletedAspect");
+	static final QName PROP_IS_DELETED = QName.createQName(
+			BECPG_URI, "isDeleted");
 
 
 }

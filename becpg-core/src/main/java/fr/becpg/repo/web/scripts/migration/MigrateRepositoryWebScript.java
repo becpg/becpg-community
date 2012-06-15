@@ -36,6 +36,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 {	
 	
 	private static final String ACTION_MIGRATE_SYSTEM_FOLDER = "systemFolder";
+	private static final String ACTION_MIGRATE_FIX_PRODUCT_HIERARCHY = "fixProductHierarchy";
 	private static final String ACTION_MIGRATE_PROPERTY = "property";
 	private static final String ACTION_MIGRATE_VERSION = "version";
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
@@ -109,6 +110,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     		deleteModel(modelNodeRef);
     	} else if(ACTION_MIGRATE_SYSTEM_FOLDER.equals(action)){
     		beCPGSystemFolderMigrator.migrate();
+    	} else if(ACTION_MIGRATE_FIX_PRODUCT_HIERARCHY.equals(action)){
+    		beCPGSystemFolderMigrator.fixDeletedHierarchies();
     	}
     	else{
     		logger.error("Unknown action" + action);

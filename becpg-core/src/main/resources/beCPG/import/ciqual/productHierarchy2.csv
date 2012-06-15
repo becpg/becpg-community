@@ -1,6 +1,6 @@
 PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:father;cm:name
+COLUMNS;bcpg:parentLevel;cm:name
 VALUES;Céréales et pâtes;Farines et amidons
 VALUES;Céréales et pâtes;Riz et autres graines
 VALUES;Céréales et pâtes;Pâtes et semoules
@@ -89,7 +89,7 @@ VALUES;Epicerie;Epicerie autres
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:father;cm:name
+COLUMNS;bcpg:parentLevel;cm:name
 VALUES;Boulangerie-viennoiserie;Pains
 VALUES;Boulangerie-viennoiserie;Biscottes et pains non levés
 VALUES;Boulangerie-viennoiserie;Viennoiseries et brioches
@@ -117,10 +117,10 @@ VALUES;Quiches;Quiches individuelles
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:father;cm:name
+COLUMNS;bcpg:parentLevel;cm:name
 VALUES;0;0
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:father;cm:name
+COLUMNS;bcpg:parentLevel;cm:name
 VALUES;0;0

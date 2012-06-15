@@ -52,7 +52,7 @@ public class ProductPolicies implements NodeServicePolicies.OnUpdatePropertiesPo
 
 		logger.debug("Init ProductPolicies...");
 
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_PRODUCT,
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_PRODUCT,
 				new JavaBehaviour(this, "onUpdateProperties"));
 	}
 

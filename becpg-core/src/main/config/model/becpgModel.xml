@@ -361,9 +361,10 @@
 
 
 		<type name="bcpg:charact">
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:entityListItem</parent>			
 			<mandatory-aspects>
 				<aspect>bcpg:legalNameAspect</aspect>
+				<aspect>bcpg:isDeletedAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -1399,18 +1400,19 @@
 
 		<type name="bcpg:listValue">
 			<parent>bcpg:entityListItem</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:isDeletedAspect</aspect>
+			</mandatory-aspects>
 		</type>
-
 
 		<type name="bcpg:linkedValue">
 			<parent>bcpg:entityListItem</parent>
 			 <mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>
 			 	<aspect>bcpg:depthLevelAspect</aspect> 
+			 	<aspect>bcpg:isDeletedAspect</aspect>
 			</mandatory-aspects> 
 		</type>
-
-		
 
 		<type name="bcpg:entityFolder">
 			<parent>cm:folder</parent>
@@ -1420,11 +1422,9 @@
 			<parent>cm:content</parent>			
 		</type>
 		
-		
 		<type name="bcpg:systemEntity">
 			<parent>cm:content</parent>			
 		</type>
-		
 
 		<type name="bcpg:autoNum">
 			<parent>cm:content</parent>
@@ -1632,8 +1632,8 @@
 					<type>d:int</type>
 					<mandatory>true</mandatory>
 				</property>
-				<!-- used to store the direct father node (multi-leve recipe)l -->
-				<property name="bcpg:father">
+				<!-- used to store the direct parentLevel node (multi-leve recipe)l -->
+				<property name="bcpg:parentLevel">
 					<type>d:noderef</type>					
 				</property>	
 			</properties>
@@ -1922,6 +1922,15 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:isDeletedAspect">
+			<properties>
+				<property name="bcpg:isDeleted">
+					<type>d:boolean</type>					
+				</property>
+			</properties>
+		</aspect>
+		
 
 	</aspects>
 </model>

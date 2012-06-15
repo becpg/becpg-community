@@ -10,6 +10,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.PolicyComponent;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileExistsException;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -35,6 +36,8 @@ import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.product.hierarchy.HierarchyHelper;
+import fr.becpg.repo.product.hierarchy.HierarchyService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 public class BeCPGSystemFolderMigrator {
@@ -78,7 +81,11 @@ public class BeCPGSystemFolderMigrator {
 	
 	private VersionService versionService;
 	
-	protected NodeService dbNodeService;
+	private NodeService dbNodeService;
+	
+	private DictionaryService dictionaryService;
+	
+	private HierarchyService hierarchyService;
 	
 	public void setRepository(Repository repository) {
 		this.repository = repository;
@@ -124,6 +131,14 @@ public class BeCPGSystemFolderMigrator {
 		this.dbNodeService = dbNodeService;
 	}
 
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+
+	public void setHierarchyService(HierarchyService hierarchyService) {
+		this.hierarchyService = hierarchyService;
+	}
+
 	public void migrate()  {
 		logger.info("start migration");
 		
@@ -135,7 +150,7 @@ public class BeCPGSystemFolderMigrator {
 			try {
 				fileFolderService.move(caractNodeRef, systemNodeRef, "TODELETE_Characteristics");
 				
-				fileFolderService.move(productHierarchyNodeRef, systemNodeRef, "TODELETE_ProductHierachy");
+				fileFolderService.move(productHierarchyNodeRef, systemNodeRef, "TODELETE_Producthierarchy");
 	
 				logger.info("Start init repo");
 				initRepoVisitor.visitContainer(repository.getCompanyHome());
@@ -161,7 +176,7 @@ public class BeCPGSystemFolderMigrator {
 	
 				migratePath(getCharactDataList(getSystemListValuesEntity(systemNodeRef), RepoConsts.PATH_ING_TYPES), listNodeRef, RepoConsts.PATH_ING_TYPES);
 	
-				recreateExistingHierachy(getSystemHierachiesEntity(systemNodeRef));
+				recreateExistinghierarchy(getSystemHierachiesEntity(systemNodeRef));
 			
 			} catch (FileExistsException e) {
 				logger.error(e,e);
@@ -171,8 +186,8 @@ public class BeCPGSystemFolderMigrator {
 
 
 	}
-
-	private void recreateExistingHierachy(NodeRef hierachyNodeRef) {
+	
+	private void recreateExistinghierarchy(NodeRef hierarchiesNodeRef) {
 		Map<String, QName> entityLists = new HashMap<String, QName>();
 
 		entityLists.put(PATH_HIERARCHY_RAWMATERIAL_HIERARCHY, BeCPGModel.TYPE_RAWMATERIAL);
@@ -185,25 +200,24 @@ public class BeCPGSystemFolderMigrator {
 
 		for (Map.Entry<String, QName> entry : entityLists.entrySet()) {
 			List<String> hierachies1 = getExistingHierachies1(entry.getKey());
-			NodeRef dataListNodeRef = getCharactDataList(hierachyNodeRef, entry.getKey());
-			for (String hierachy1 : hierachies1) {
-				NodeRef hierachy1NodeRef = createHierachy1(dataListNodeRef, hierachy1);
-				List<String> hierachies2 = getExistingHierachies2(entry.getKey(), hierachy1);
-				for (String hierachy2 : hierachies2) {
-					NodeRef hierachy2NodeRef  = createHierachy2(dataListNodeRef, hierachy1NodeRef, hierachy2);
-					migrateProduct(entry.getValue(),hierachy1,hierachy2,hierachy1NodeRef,hierachy2NodeRef);
+			NodeRef dataListNodeRef = getCharactDataList(hierarchiesNodeRef, entry.getKey());
+			for (String hierarchy1 : hierachies1) {
+				NodeRef hierarchy1NodeRef = hierarchyService.createHierarchy1(dataListNodeRef, hierarchy1);
+				List<String> hierachies2 = getExistingHierachies2(entry.getKey(), hierarchy1);
+				for (String hierarchy2 : hierachies2) {
+					NodeRef hierarchy2NodeRef  = hierarchyService.createHierarchy2(dataListNodeRef, hierarchy1NodeRef, hierarchy2);
+					migrateProduct(hierarchiesNodeRef, entry.getValue(),hierarchy1,hierarchy2,hierarchy1NodeRef,hierarchy2NodeRef);
 				}
 			}
 		}
 	}
 
-
-	private void migrateProduct(QName type, String hierachy1, String hierachy2, NodeRef hierachy1NodeRef, NodeRef hierachy2NodeRef) {
-		logger.info("Migrate all products of type: "+type.getLocalName()+" hierachy1 :"+hierachy1+" hierachy2 :"+hierachy2);
+	private void migrateProduct(NodeRef hierarchiesNodeRef, QName type, String hierarchy1, String hierarchy2, NodeRef hierarchy1NodeRef, NodeRef hierarchy2NodeRef) {
+		logger.info("Migrate all products of type: "+type.getLocalName()+" hierarchy1 :"+hierarchy1+" hierarchy2 :"+hierarchy2);
 
 		String QUERY_SUGGEST_PRODUCT_BY_NAME = " +TYPE:\"%s\" +@bcpg\\:productHierarchy1:(%s) +@bcpg\\:productHierarchy2:(%s)";
 		
-		String queryPath = String.format(QUERY_SUGGEST_PRODUCT_BY_NAME,type.toPrefixString(namespaceService), hierachy1, hierachy2  );
+		String queryPath = String.format(QUERY_SUGGEST_PRODUCT_BY_NAME,type.toPrefixString(namespaceService), hierarchy1, hierarchy2  );
 
 		logger.debug("search products, queryPath: " + queryPath);
 		List<NodeRef> ret = beCPGSearchService.unProtLuceneSearch(queryPath, getSort(ContentModel.PROP_NAME),-1);
@@ -216,41 +230,138 @@ public class BeCPGSystemFolderMigrator {
 				
 				try{
 					//disable policy to classify on product
+					policyBehaviourFilter.disableBehaviour(nodeRef, BeCPGModel.ASPECT_PRODUCT);
 					policyBehaviourFilter.disableBehaviour(nodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-					policyBehaviourFilter.disableBehaviour(nodeRef, type);
+					policyBehaviourFilter.disableBehaviour(nodeRef, ContentModel.ASPECT_VERSIONABLE);
 					
 					nodeService.removeProperty(nodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
-					nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1, hierachy1NodeRef);
+					nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1, hierarchy1NodeRef);
 					nodeService.removeProperty(nodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
-					nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2, hierachy2NodeRef);
+					nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2, hierarchy2NodeRef);
 				}			
 		        finally{
-		        	policyBehaviourFilter.enableBehaviour(nodeRef, ReportModel.ASPECT_REPORT_ENTITY);		
-		        	policyBehaviourFilter.enableBehaviour(nodeRef, type);		
+		        	policyBehaviourFilter.disableBehaviour(nodeRef, BeCPGModel.ASPECT_PRODUCT);
+		        	policyBehaviourFilter.enableBehaviour(nodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
+		        	policyBehaviourFilter.enableBehaviour(nodeRef, ContentModel.ASPECT_VERSIONABLE);
 		        }	
 								
-				// update version history
-				VersionHistory versionHistory = versionService.getVersionHistory(nodeRef);								
-				
-				if(versionHistory != null){
-					for(Version version : versionHistory.getAllVersions()){
-						
-						// workaround to work on node with dbNodeService (before: versionStore://version2Store/81ad3333-ec94-4b39-a2cb-00528df1b572, after: workspace://version2Store/81ad3333-ec94-4b39-a2cb-00528df1b572)
-						NodeRef beforeVersionNodeRef = version.getFrozenStateNodeRef();
-						NodeRef afterVersionNodeRef = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, "version2Store", beforeVersionNodeRef.getId());
-						logger.debug("Update version history: " + afterVersionNodeRef);
-						
-						if(dbNodeService.exists(afterVersionNodeRef)){
-							
-							dbNodeService.removeProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
-							dbNodeService.setProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1, hierachy1NodeRef);
-							dbNodeService.removeProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
-							dbNodeService.setProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2, hierachy2NodeRef);
-						}						
-					}
-				}				
+				migrateHistory(hierarchiesNodeRef, type, nodeRef, hierarchy1, hierarchy1NodeRef, hierarchy2, hierarchy2NodeRef);
 			}			
 		}		
+	}
+	
+	private void migrateHistory(NodeRef hierarchiesNodeRef, QName productType, NodeRef nodeRef, String hierarchy1, NodeRef hierarchy1NodeRef, String hierarchy2, NodeRef hierarchy2NodeRef){
+		
+		// update version history
+		VersionHistory versionHistory = versionService.getVersionHistory(nodeRef);								
+		
+		if(versionHistory != null){
+			for(Version version : versionHistory.getAllVersions()){
+				
+				// workaround to work on node with dbNodeService (before: versionStore://version2Store/81ad3333-ec94-4b39-a2cb-00528df1b572, after: workspace://version2Store/81ad3333-ec94-4b39-a2cb-00528df1b572)
+				NodeRef beforeVersionNodeRef = version.getFrozenStateNodeRef();
+				NodeRef afterVersionNodeRef = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, "version2Store", beforeVersionNodeRef.getId());
+				logger.debug("Update version history: " + afterVersionNodeRef);
+				
+				if(dbNodeService.exists(afterVersionNodeRef)){
+					
+					// check
+					String versionHierarchy1 = (String)nodeService.getProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
+					if(versionHierarchy1 != null){
+						
+						if(versionHierarchy1.equals(hierarchy1)){
+							hierarchy1NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, null, versionHierarchy1);
+						}						
+					}
+					else{
+						hierarchy1NodeRef = null;
+					}
+					String versionHierarchy2 = (String)nodeService.getProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
+					if(versionHierarchy2 != null){
+						
+						if(!versionHierarchy2.equals(hierarchy2)){
+							hierarchy2NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, hierarchy1NodeRef, versionHierarchy2);
+						}						
+					}
+					else{
+						hierarchy2NodeRef = null;
+					}
+					
+					dbNodeService.removeProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
+					dbNodeService.setProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1, hierarchy1NodeRef);					
+					dbNodeService.removeProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
+					dbNodeService.setProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2, hierarchy2NodeRef);
+				}						
+			}
+		}	
+	}
+	
+	/**
+	 * Fix the deleted hierarchies
+	 */
+	public void fixDeletedHierarchies(){
+				
+		logger.debug("Start fixDeletedHierarchies");
+		NodeRef systemNodeRef = getFolder(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM);
+		NodeRef hierarchiesNodeRef = getSystemHierachiesEntity(systemNodeRef);
+		
+		for(QName productType : dictionaryService.getSubTypes(BeCPGModel.TYPE_PRODUCT, false)){
+			
+			logger.debug("fix product type: " + productType);
+			
+			String QUERY_PRODUCT_TO_FIX = "+TYPE:\"bcpg:product\" -@bcpg\\:productHierarchy1:\"workspace:\"  -@bcpg\\:productHierarchy2:\"workspace:\"";
+			
+			List<NodeRef> productNodeRefs = beCPGSearchService.unProtLuceneSearch(QUERY_PRODUCT_TO_FIX);
+			
+			for(NodeRef productNodeRef : productNodeRefs){
+				
+				logger.debug("fix product: " + productNodeRef);
+				
+				//hierarchy1
+				NodeRef hierarchy1NodeRef = null;
+				String hierarchy1 = (String)nodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
+				if(!hierarchy1.contains("/")){
+					
+					hierarchy1NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, null, hierarchy1);
+					
+				}
+				else{
+					hierarchy1NodeRef = new NodeRef(hierarchy1);
+				}
+				
+				//hierarchy2
+				NodeRef hierarchy2NodeRef = null;
+				String hierarchy2 = (String)nodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
+				if(!hierarchy2.contains("/")){
+					
+					hierarchy2NodeRef = hierarchy1NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, hierarchy1NodeRef, hierarchy2);
+				}
+				
+				try{
+					//disable policy to classify on product
+					policyBehaviourFilter.disableBehaviour(productNodeRef, BeCPGModel.ASPECT_PRODUCT);
+					policyBehaviourFilter.disableBehaviour(productNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+					policyBehaviourFilter.disableBehaviour(productNodeRef, ContentModel.ASPECT_VERSIONABLE);					
+					
+					logger.debug("set hierarchy1: " + hierarchy1 + " - " + hierarchy1NodeRef);
+					logger.debug("set hierarchy2: " + hierarchy2 + " - " + hierarchy2NodeRef);
+					nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1, hierarchy1NodeRef);				
+					nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2, hierarchy2NodeRef);
+					
+				}			
+		        finally{
+		        	policyBehaviourFilter.enableBehaviour(productNodeRef, BeCPGModel.ASPECT_PRODUCT);
+		        	policyBehaviourFilter.enableBehaviour(productNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
+		        	policyBehaviourFilter.enableBehaviour(productNodeRef, ContentModel.ASPECT_VERSIONABLE);
+		        }	
+				
+				
+				
+				migrateHistory(hierarchiesNodeRef, productType, productNodeRef, hierarchy1, hierarchy1NodeRef, hierarchy2, hierarchy2NodeRef);
+			}
+					
+			
+		}
 	}
 	
 //	//debug method : reset hierarchies with product ones
@@ -301,26 +412,26 @@ public class BeCPGSystemFolderMigrator {
 
 	private List<String> getExistingHierachies1(String path) {
 
-		String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE_ALL, LuceneHelper.encodePath(getHierachy1Path(path)));
+		String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE_ALL, LuceneHelper.encodePath(gethierarchy1Path(path)));
 
 		List<NodeRef> ret = beCPGSearchService.unProtLuceneSearch(queryPath, getSort(ContentModel.PROP_NAME),-1);
-		logger.info("Found "+ret.size()+" hierachy to migrate under "+queryPath);
+		logger.info("Found "+ret.size()+" hierarchy to migrate under "+queryPath);
 		return extract(ret, ContentModel.PROP_NAME);
 	}
 
-	private String getHierachy1Path(String path) {
-		return RepoConsts.PATH_SYSTEM+"/"+"TODELETE_ProductHierachy" + "/" + path + "1";
+	private String gethierarchy1Path(String path) {
+		return RepoConsts.PATH_SYSTEM+"/"+"TODELETE_Producthierarchy" + "/" + path + "1";
 	}
 
-	private String getHierachy2Path(String path) {
-		return RepoConsts.PATH_SYSTEM+"/"+"TODELETE_ProductHierachy" + "/" + path + "2";
+	private String gethierarchy2Path(String path) {
+		return RepoConsts.PATH_SYSTEM+"/"+"TODELETE_Producthierarchy" + "/" + path + "2";
 	}
 
-	private List<String> getExistingHierachies2(String path, String hierachy1) {
-		String queryPath = String.format(PATH_QUERY_SUGGEST_LKV_VALUE_ALL, LuceneHelper.encodePath(getHierachy2Path(path)), hierachy1);
+	private List<String> getExistingHierachies2(String path, String hierarchy1) {
+		String queryPath = String.format(PATH_QUERY_SUGGEST_LKV_VALUE_ALL, LuceneHelper.encodePath(gethierarchy2Path(path)), hierarchy1);
 
 		List<NodeRef> ret = beCPGSearchService.unProtLuceneSearch(queryPath, getSort(ContentModel.PROP_NAME),-1);
-		logger.info("Found "+ret.size()+" hierachy to migrate under "+queryPath);
+		logger.info("Found "+ret.size()+" hierarchy to migrate under "+queryPath);
 		
 		return extract(ret, PROP_LINKED_VALUE_VALUE);
 	}
@@ -331,31 +442,7 @@ public class BeCPGSystemFolderMigrator {
 			ret.add((String) nodeService.getProperty(nodeRef, prop));
 		}
 		return ret;
-	}
-
-	private NodeRef createHierachy1(NodeRef dataListNodeRef, String hierachy1) {
-		return createHierachy2(dataListNodeRef, null, hierachy1);
-
-	}
-
-	private NodeRef createHierachy2(NodeRef dataListNodeRef, NodeRef hierachy1NodeRef, String hierachy2) {
-		logger.info("Migrate hierachy: " + hierachy2);
-
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, hierachy2);
-		if (hierachy1NodeRef != null) {
-			properties.put(BeCPGModel.PROP_FATHER, hierachy1NodeRef);
-		}
-
-		NodeRef entityNodeRef = nodeService.getChildByName(dataListNodeRef, ContentModel.ASSOC_CONTAINS, hierachy2);
-
-		if (entityNodeRef == null) {
-			entityNodeRef = nodeService.createNode(dataListNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(hierachy2)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
-		}
-
-		return entityNodeRef;
-	}
+	}	
 
 	private void migratePath(NodeRef destRef, NodeRef sourceRef, String path) throws FileExistsException, InvalidNodeRefException, FileNotFoundException {
 		logger.info("Migrate path : " + path);
@@ -399,6 +486,41 @@ public class BeCPGSystemFolderMigrator {
 		sort.put("@" + field, true);
 
 		return sort;
+	}
+	
+	/**
+	 * Look for the hierarchy, if it doesn't exist, create a deleted hierarchy
+	 * @param hierarchiesNodeRef
+	 * @param productType
+	 * @param hierarchy1NodeRef
+	 * @param hierarchy
+	 * @return
+	 */
+	private NodeRef getOrcreateDeletedHierarchy(NodeRef hierarchiesNodeRef, QName productType, NodeRef hierarchy1NodeRef, String hierarchy){
+		
+		NodeRef dataListNodeRef = getCharactDataList(hierarchiesNodeRef, productType.getLocalName() + HierarchyHelper.HIERARCHY_SUFFIX);
+		NodeRef hierarchyNodeRef = null;
+		
+		if(hierarchy1NodeRef == null){
+			hierarchyNodeRef = hierarchyService.getHierarchy1(productType, hierarchy);			
+		}
+		else{
+			hierarchyNodeRef = hierarchyService.getHierarchy2(productType, hierarchy1NodeRef, hierarchy);			
+		}
+		
+		// create deleted hierarchy
+		if(hierarchyNodeRef == null){
+			
+			if(hierarchy1NodeRef == null){
+				hierarchyNodeRef = hierarchyService.createHierarchy1(dataListNodeRef, hierarchy);
+			}
+			else{
+				hierarchyNodeRef = hierarchyService.createHierarchy2(dataListNodeRef, hierarchy1NodeRef, hierarchy);
+			}			
+			nodeService.setProperty(hierarchyNodeRef, BeCPGModel.PROP_IS_DELETED, true);
+		}
+		
+		return hierarchy1NodeRef;
 	}
 	
 }
