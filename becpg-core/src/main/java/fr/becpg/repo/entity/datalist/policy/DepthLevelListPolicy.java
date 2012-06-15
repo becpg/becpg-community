@@ -20,6 +20,8 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.LuceneHelper;
+import fr.becpg.repo.helper.LuceneHelper.Operator;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -32,7 +34,9 @@ NodeServicePolicies.OnAddAspectPolicy,
 NodeServicePolicies.OnDeleteNodePolicy {
 
 	private static int DEFAULT_LEVEL = 1;
-	private static final String QUERY_LIST_ITEMS_BY_FATHER = "+TYPE:\"%s\" +@bcpg\\:father:\"%s\"";
+	private static int MAX_LEVEL = 25;
+	private static final String QUERY_LIST_ITEMS = "+PARENT:\"%s\"";
+	private static final String QUERY_LIST_ITEMS_BY_SORT = "+PARENT:\"%s\" AND +@bcpg\\:sort:[%s TO MAX]";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(DepthLevelListPolicy.class);
@@ -87,12 +91,14 @@ NodeServicePolicies.OnDeleteNodePolicy {
 
 		NodeRef beforeFather = (NodeRef) before.get(BeCPGModel.PROP_FATHER);
 		NodeRef afterFather = (NodeRef) after.get(BeCPGModel.PROP_FATHER);
+		
 		if(logger.isDebugEnabled()){
+			logger.debug("nodeRef: " + nodeRef + " name " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
 			if(beforeFather!=null){
-				logger.debug("before father: " + beforeFather+" name "+nodeService.getProperty(beforeFather, ContentModel.PROP_NAME));
+				logger.debug("before father: " + beforeFather + " name " + nodeService.getProperty(beforeFather, ContentModel.PROP_NAME));
 			}
 			if(afterFather!=null){
-				logger.debug("after father: " + afterFather+" name "+nodeService.getProperty(afterFather, ContentModel.PROP_NAME));
+				logger.debug("after father: " + afterFather+" name " + nodeService.getProperty(afterFather, ContentModel.PROP_NAME));
 			}
 		}
 
@@ -108,11 +114,34 @@ NodeServicePolicies.OnDeleteNodePolicy {
 			hasChanged = true;
 		}
 		
-		if(hasChanged){			
+		if(hasChanged){	
+			
+			NodeRef listContainer = nodeService.getPrimaryParent(nodeRef).getParentRef();			
 			level = level == null ? DEFAULT_LEVEL : level+1;
-			logger.debug("set property level: " + level);
+			logger.debug("set property level: " + level + " - node: " + nodeRef);
 			nodeService.setProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL, level);
-			propagateLevel(nodeRef, level+1);
+			propagateLevel(listContainer, nodeRef, level+1);
+			
+			// sort sibling nodes			
+			List<NodeRef> listItems = getSiblingNodes(listContainer, afterFather, nodeRef);
+			logger.debug("listItems.size(): " + listItems.size() + " - " + listItems);
+			
+			if(listItems.size()>0){
+				
+				Integer sort = (Integer)nodeService.getProperty(listItems.get(0), BeCPGModel.PROP_SORT);
+				logger.debug("sort: " + sort + " - name " + nodeService.getProperty(listItems.get(0), ContentModel.PROP_NAME));				
+				listItems = getChildrenBySort(listContainer, sort);
+				
+				// update sort of currentNodeRef
+				sort++;
+				nodeService.setProperty(nodeRef, BeCPGModel.PROP_SORT, sort);
+				
+				// update nodes after currentNodeRef
+				for(NodeRef listItem : listItems){					
+					sort++;
+					nodeService.setProperty(listItem, BeCPGModel.PROP_SORT, sort);
+				}
+			}		
 		}		
 	}
 
@@ -129,20 +158,20 @@ NodeServicePolicies.OnDeleteNodePolicy {
 		}	
 	}
 	
-	private void propagateLevel(NodeRef father, int level){
+	private void propagateLevel(NodeRef listContainer, NodeRef father, int level){
 		
-		if(level>20){
+		if(level>MAX_LEVEL){
 			logger.error("Cyclic father level");
 			return; 
 		}
 		
-		List<NodeRef> listItems = getChildren(father);
+		List<NodeRef> listItems = getChildren(listContainer, father);
 		logger.debug("propagateLevel level: " + level + "listItems: " + listItems);
 		
 		for(NodeRef nodeRef : listItems){
 			if(!nodeRef.equals(father)){
 				nodeService.setProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL, level);
-				propagateLevel(nodeRef, level+1);
+				propagateLevel(listContainer, nodeRef, level+1);
 			}
 		}
 	}
@@ -151,17 +180,41 @@ NodeServicePolicies.OnDeleteNodePolicy {
 	public void onDeleteNode(ChildAssociationRef childRef, boolean isNodeArchived) {
 		
 		logger.debug("onDeleteNode: " + childRef.getChildRef());
-		List<NodeRef> listItems = getChildren(childRef.getChildRef());
+		List<NodeRef> listItems = getChildren(childRef.getParentRef(), childRef.getChildRef());
 		
 		for(NodeRef nodeRef : listItems){			
 			nodeService.deleteNode(nodeRef);
 		}
 	}
 	
-	private List<NodeRef> getChildren(NodeRef father){
+	private List<NodeRef> getChildren(NodeRef listContainer, NodeRef father){
+						
+		return beCPGSearchService.unProtLuceneSearch(getQueryByFather(listContainer, father), null, RepoConsts.MAX_RESULTS_NO_LIMIT);
+	}
+	
+	private String getQueryByFather(NodeRef listContainer, NodeRef father){
 		
-		String query = String.format(QUERY_LIST_ITEMS_BY_FATHER, BeCPGModel.TYPE_ENTITYLIST_ITEM, father);				
+		String query = String.format(QUERY_LIST_ITEMS, listContainer);
+		if(father == null){
+			query += LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_FATHER, Operator.AND);
+		}
+		else{
+			query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_FATHER, father.toString(), Operator.AND);
+		}
+		
+		return query;
+	}
+
+	private List<NodeRef> getSiblingNodes(NodeRef listContainer, NodeRef father, NodeRef nodeRef){
+		
+		String query = getQueryByFather(listContainer, father);
+		query += LuceneHelper.getCondEqualID(nodeRef, Operator.NOT);
 		return beCPGSearchService.unProtLuceneSearch(query, null, RepoConsts.MAX_RESULTS_NO_LIMIT);
 	}
 
+	private List<NodeRef> getChildrenBySort(NodeRef listContainer, Integer sort){
+		
+		String query = String.format(QUERY_LIST_ITEMS_BY_SORT, listContainer, sort);
+		return beCPGSearchService.unProtLuceneSearch(query, null, RepoConsts.MAX_RESULTS_NO_LIMIT);
+	}
 }

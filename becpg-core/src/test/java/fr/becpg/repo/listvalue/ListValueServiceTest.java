@@ -4,14 +4,12 @@
 package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -21,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.helper.RepoService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -43,9 +40,6 @@ public class ListValueServiceTest extends BaseAlfrescoTestCase {
 	/** The file folder service. */
 	private FileFolderService fileFolderService;
 
-	/** The repo service. */
-	private RepoService repoService;
-
 	/** The repository helper. */
 	private Repository repositoryHelper;
 
@@ -60,34 +54,8 @@ public class ListValueServiceTest extends BaseAlfrescoTestCase {
 
 		entityListValuePlugin = (EntityListValuePlugin) ctx.getBean("entityListValuePlugin");
 		fileFolderService = (FileFolderService) ctx.getBean("FileFolderService");
-		repoService = (RepoService) ctx.getBean("repoService");
 		repositoryHelper = (Repository) ctx.getBean("repositoryHelper");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				logger.debug("create dollard");
-
-				// create dollard currency
-				List<String> paths = new ArrayList<String>();
-				paths.add("System");
-				paths.add("Lists");
-				paths.add("Currencies");
-				NodeRef currencyFolder = repoService.createFolderByPaths(repositoryHelper.getCompanyHome(), paths);
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(ContentModel.PROP_NAME, "dollard");
-				NodeRef dollardNodeRef = nodeService.getChildByName(currencyFolder, ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
-				if (dollardNodeRef == null) {
-					nodeService.createNode(currencyFolder, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties)
-							.getChildRef();
-				}
-
-				return null;
-
-			}
-		}, false, true);
 	}
 
 	/*
@@ -104,20 +72,6 @@ public class ListValueServiceTest extends BaseAlfrescoTestCase {
 			// Don't let this mask any previous exceptions
 		}
 		super.tearDown();
-
-	}
-
-	/**
-	 * Test product creation.
-	 */
-	public void testProductCreation() {
-
-		logger.debug("look for temp folder");
-		NodeRef tempFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMPFOLDER);
-		if (tempFolder != null) {
-			fileFolderService.delete(tempFolder);
-		}
-		tempFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TEMPFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 
 	}
 

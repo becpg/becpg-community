@@ -111,6 +111,7 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 				}
 				
 				if(sortIndex != null){
+					logger.debug("set property sort: " + sortIndex + " - node: " + nodeRef);
 					nodeService.setProperty(nodeRef, BeCPGModel.PROP_SORT, sortIndex);
 				}				
 			}

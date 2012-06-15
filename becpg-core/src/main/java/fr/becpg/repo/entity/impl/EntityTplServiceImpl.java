@@ -2,6 +2,7 @@ package fr.becpg.repo.entity.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,9 +11,6 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -20,25 +18,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 public class EntityTplServiceImpl implements EntityTplService {
 
 	private static final String QUERY_ENTITY_TEMPLATE = " +TYPE:\"bcpg:entity\" +@bcpg\\:entityTplClassName:\"%s\" +@bcpg\\:entityTplEnabled:true";
 	private static final String QUERY_ENTITY_FOLDER_TEMPLATE = " +TYPE:\"bcpg:entityFolder\" +@bcpg\\:entityTplClassName:\"%s\" +@bcpg\\:entityTplEnabled:true";
 	
-	private static Log logger = LogFactory.getLog(EntityServiceImpl.class);
-	
 	private NodeService nodeService;
 	
 	private EntityListDAO entityListDAO;
 	
-	private SearchService searchService;
-	
 	private DictionaryService dictionaryService;
+	
+	private BeCPGSearchService beCPGSearchService;
 	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -48,14 +44,14 @@ public class EntityTplServiceImpl implements EntityTplService {
 		this.entityListDAO = entityListDAO;
 	}
 
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
-	}
-	
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 	
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
+	}
+
 	/**
 	 * Create the entity folderTpl
 	 * @param entityTplsNodeRef
@@ -174,8 +170,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 	 */
 	private NodeRef getTpl(boolean isContainer, QName nodeType){
 		
-		NodeRef tplNodeRef = null;
-		
 		if(nodeType == null){
 			return null;
 		}		
@@ -189,31 +183,8 @@ public class EntityTplServiceImpl implements EntityTplService {
     		query = String.format(QUERY_ENTITY_TEMPLATE, nodeType);
     	}
 		
-							
-		logger.debug(query);
-		
-		SearchParameters sp = new SearchParameters();
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(query);	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-        sp.setMaxItems(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		List<NodeRef> tplsNodeRef = beCPGSearchService.unProtLuceneSearch(query);
         
-        ResultSet resultSet =null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-			
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        if(resultSet.length() > 0)
-	        	tplNodeRef = resultSet.getNodeRefs().get(0);
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
-        
-        return tplNodeRef;
+        return tplsNodeRef.size() > 0 ? tplsNodeRef.get(0) : null;
 	}
 }

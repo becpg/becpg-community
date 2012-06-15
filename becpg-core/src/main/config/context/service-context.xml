@@ -177,8 +177,8 @@
 		<property name="personService" ref="personService"/>
 		<property name="siteService" ref="siteService"/>
 		<property name="authorityService" ref="authorityService"/>
-	    <property name="beCPGMailService" ref="becpgMailService"/>
-	    <property name="namespacePrefixResolver" ref="namespaceService" />
+		<property name="beCPGMailService" ref="becpgMailService"/>
+	   <property name="namespacePrefixResolver" ref="namespaceService" />
 	</bean>
 	
 	<!-- Mail service -->
@@ -196,8 +196,8 @@
 	<bean id="entityVersionService" class="fr.becpg.repo.entity.version.EntityVersionServiceImpl">
 		<property name="nodeService" ref="nodeService" />		
 		<property name="copyService" ref="copyService" />	
-	   	<property name="searchService" ref="searchService" />
-	   	<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+	   <property name="searchService" ref="searchService" />
+	   <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	
 	<!-- Migrator -->
@@ -207,7 +207,7 @@
 	   <property name="versionService" ref="versionService" />
 	   <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	   <property name="dbNodeService">
-      	<ref bean="mtAwareNodeService" />
+      <ref bean="mtAwareNodeService" />
       </property>
 	</bean>
 	
@@ -220,6 +220,11 @@
       <property name="repoService" ref="repoService" />
       <property name="repository" ref="repositoryHelper" />
       <property name="namespaceService" ref="namespaceService"/>
+      <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+      <property name="versionService" ref="versionService" />
+      <property name="dbNodeService">
+            <ref bean="mtAwareNodeService" />
+        </property>
 	</bean>
 	
 	<!-- CompareEntityService -->
@@ -244,8 +249,8 @@
 	<bean id="entityTplService" class="fr.becpg.repo.entity.impl.EntityTplServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="searchService" ref="searchService" />
 		<property name="dictionaryService" ref="dictionaryService" />		
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
 	<bean id="entityService" class="fr.becpg.repo.entity.impl.EntityServiceImpl">
 		<property name="nodeService" ref="nodeService" />
