@@ -11,6 +11,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -27,8 +28,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * @author querephi
  */
 public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy{
-			
-	//private static final String QUERY_LIST_ITEMS_BY_SORT = "+PARENT:\"%s\" AND +@bcpg\\:sort:[%s TO %s]";
+	
 	private static final String QUERY_LIST_ITEMS = "+PARENT:\"%s\"";
 	
 	/** The logger. */
@@ -77,6 +77,15 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspect) {
 		
+		// depthLevel manage sort
+		if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)){
+			return;
+		}
+		
+		if(logger.isDebugEnabled()){
+			logger.debug("###Sortable onAddAspect " + tryGetName(nodeRef));
+		}
+		
 		if(aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST)){
 			
 			Integer sortIndex = (Integer)nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
@@ -92,7 +101,7 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 				List<NodeRef> listItems = beCPGSearchService.unProtLuceneSearch(query, sort, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 				
 				if(listItems.isEmpty()){
-					sortIndex = 1;
+					sortIndex = RepoConsts.SORT_DEFAULT_STEP;
 				}
 				else if(listItems.size() == 1){
 					
@@ -100,7 +109,7 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 					sortIndex = (Integer)nodeService.getProperty(lastIndexNodeRef, BeCPGModel.PROP_SORT);
 
 					if(sortIndex != null){
-						sortIndex++;
+						sortIndex = sortIndex + RepoConsts.SORT_DEFAULT_STEP;
 					}
 					else{
 						fixSortableList(parentNodeRef);
@@ -130,10 +139,19 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 		for(NodeRef listItem : listItems){
 		
 			sortIndex++;
+			logger.debug("set property sort: " + sortIndex + " - node: " + listItem);
 			nodeService.setProperty(listItem, BeCPGModel.PROP_SORT, sortIndex);			
 		}
 		
 		logger.info("FixSortableList. parentNodeRef: " + parentNodeRef + ", last sortIndex: " + sortIndex);		
 	}
 	
+	//debug
+	private String tryGetName(NodeRef nodeRef){
+		
+		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+		NodeRef part = compoAssocRefs.size() > 0 ? (compoAssocRefs.get(0)).getTargetRef() : null;
+		
+		return part != null ? (String)nodeService.getProperty(part, ContentModel.PROP_NAME) : (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+	}
 }
