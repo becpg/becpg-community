@@ -37,7 +37,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
 /**
  * 
  * @author matthieu
- *
+ * 
  */
 public class ImportEntityXmlVisitor {
 
@@ -166,7 +166,7 @@ public class ImportEntityXmlVisitor {
 
 				NodeRef node = null;
 				if (currAssocType.isEmpty() || !currAssocType.peek().equals("childAssoc")) {
-					node = findNode(nodeRef, code, name, nodeType);
+					node = findNode(nodeRef, code, name, path, nodeType, currProp);
 				}
 				// Entity node
 				if (curNodeRef.isEmpty()) {
@@ -179,30 +179,33 @@ public class ImportEntityXmlVisitor {
 					}
 					curNodeRef.push(node);
 				} else {
-					if (!currAssoc.isEmpty() && !currAssocType.isEmpty()) {
-						if (currAssocType.peek().equals("childAssoc")) {
 
-							curNodeRef.push(createAssocNode(curNodeRef.peek(), nodeType, currAssoc.peek(), name));
-						} else {
-							if (node == null && entityProviderCallBack != null) {
-								logger.debug("Node not found calling provider");
-								try {
-									node = entityProviderCallBack.provideNode(new NodeRef(nodeRef));
-								} catch (BeCPGException e) {
-									throw new SAXException("Cannot call entityProviderCallBack ", e);
-								}
-							}
-							if (node != null) {
-								logger.debug("Node found creating assoc: " + currAssoc.peek());
-								nodeService.createAssociation(curNodeRef.peek(), node, currAssoc.peek());
-								curNodeRef.push(node);
-							} else {
-								throw new SAXException("Cannot add node to assoc, node not found : " + name);
+					if (!currAssocType.isEmpty() && currAssocType.peek().equals("childAssoc")) {
+						curNodeRef.push(createAssocNode(curNodeRef.peek(), nodeType, currAssoc.peek(), name));
+					} else {
+
+						if (node == null && entityProviderCallBack != null) {
+							logger.debug("Node not found calling provider");
+							try {
+								node = entityProviderCallBack.provideNode(new NodeRef(nodeRef));
+							} catch (BeCPGException e) {
+								throw new SAXException("Cannot call entityProviderCallBack ", e);
 							}
 						}
+						if (node == null) {
+							throw new SAXException("Cannot add node to assoc, node not found : " + name);
+						}
 
-					} else {
-						logger.error("Not in current assoc node");
+						if (!currAssoc.isEmpty()) {
+							logger.debug("Node found creating assoc: " + currAssoc.peek());
+							nodeService.createAssociation(curNodeRef.peek(), node, currAssoc.peek());
+							curNodeRef.push(node);
+
+						} else {
+							// Case d:nodeRef
+							nodeService.setProperty(curNodeRef.peek(), currProp, node);
+							curNodeRef.push(node);
+						}
 					}
 				}
 			} else if (type != null && (type.equals("assoc") || type.equals("childAssoc"))) {
@@ -229,9 +232,8 @@ public class ImportEntityXmlVisitor {
 			} else if (type != null && (type.equals("assoc") || type.equals("childAssoc"))) {
 				currAssoc.pop();
 				currAssocType.pop();
-			} else if (type != null && type.length() > 0) {
-				// logger.debug("Set property : " + currProp + " value " +
-				// currValue);
+			} else if (type != null && type.length() > 0 && !type.equals("d:noderef") ) {
+				 logger.debug("Set property : " + currProp + " value " + currValue+" for type "+type);
 				if (currValue.length() > 0) {
 					nodeService.setProperty(curNodeRef.peek(), currProp, currValue.toString());
 				} else {
@@ -264,10 +266,21 @@ public class ImportEntityXmlVisitor {
 		NodeRef parentNodeRef = findNodeByPath(parentPath);
 
 		if (parentNodeRef != null) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, name);
-
-			return nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, type, properties).getChildRef();
+			
+			NodeRef ret = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
+			
+			if(ret==null){
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(ContentModel.PROP_NAME, name);
+	
+				ret =  nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, type, properties).getChildRef();
+			} else {
+				if(!nodeService.getType(ret).equals(type)){
+					logger.error("Found node with same name: "+name+" but incorrect type :"+nodeService.getType(ret)+"/"+type+" under: "+parentPath);
+				}
+			}
+			
+			return ret;
 		}
 		throw new SAXException("Path doesn't exist on repository :" + parentPath);
 	}
@@ -281,19 +294,18 @@ public class ImportEntityXmlVisitor {
 
 	private NodeRef findNodeByPath(String parentPath) {
 		String runnedQuery = "+PATH:\"" + parentPath + "\"";
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, 1);
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 		if (ret.size() > 0) {
 			logger.debug("Found node for query :" + runnedQuery);
 		} else {
-
-			ret = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_TO_DO, 1);
+			ret = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_TO_DO, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 		}
 
 		return ret.get(0);
 
 	}
 
-	private NodeRef findNode(String nodeRef, String code, String name, QName type) {
+	private NodeRef findNode(String nodeRef, String code, String name, String path, QName type, QName currProp) {
 		if (nodeRef != null && nodeService.exists(new NodeRef(nodeRef))) {
 			return new NodeRef(nodeRef);
 		}
@@ -304,9 +316,13 @@ public class ImportEntityXmlVisitor {
 			runnedQuery += " +TYPE:\"" + type.toString() + "\" ";
 		}
 
+		if (path != null) {
+			runnedQuery += " +PATH:\"" + path + "\" ";
+		}
+
 		if (code != null && code.length() > 0) {
 			runnedQuery += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, code, null);
-			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, 1);
+			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 			if (ret.size() > 0) {
 				logger.debug("Found node for query :" + runnedQuery);
 				return ret.get(0);
@@ -314,8 +330,8 @@ public class ImportEntityXmlVisitor {
 		}
 
 		if (name != null && name.length() > 0) {
-			runnedQuery += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, name, code != null && code.length() > 0 ? LuceneHelper.Operator.OR : null);
-			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, 15);
+			runnedQuery += LuceneHelper.getCondEqualValue(RemoteHelper.getPropName(type), name, code != null && code.length() > 0 ? LuceneHelper.Operator.OR : null);
+			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery,  RepoConsts.MAX_RESULTS_NO_LIMIT);
 			if (ret.size() > 0) {
 				logger.debug("Found node for query :" + runnedQuery);
 				for (NodeRef node : ret) {
@@ -328,7 +344,13 @@ public class ImportEntityXmlVisitor {
 			}
 		}
 
+		if (path != null) {
+			logger.debug("Retrying findNode without path for previous query : "+runnedQuery);
+			return findNode(nodeRef, code, name, null, type,currProp);
+		}
+
 		return null;
 	}
+
 
 }

@@ -1,6 +1,5 @@
 package fr.becpg.repo.product.hierarchy;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -28,7 +27,7 @@ public class HierarchyHelper {
 
 	public static String getHierachyName(NodeRef hierarchyNodeRef, NodeService nodeService) {
 		if(hierarchyNodeRef!=null){
-			return (String)nodeService.getProperty(hierarchyNodeRef, ContentModel.PROP_NAME);
+			return (String)nodeService.getProperty(hierarchyNodeRef, BeCPGModel.PROP_LNK_VALUE);
 		}
 		return null;
 	}

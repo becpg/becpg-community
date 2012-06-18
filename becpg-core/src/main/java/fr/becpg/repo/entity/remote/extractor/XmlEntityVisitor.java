@@ -184,7 +184,7 @@ public class XmlEntityVisitor {
 		xmlw.writeAttribute("path", path.toPrefixString(namespaceService));
 		xmlw.writeAttribute("type", "node");
 
-		String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType));
 
 		xmlw.writeAttribute("name", name);
 		xmlw.writeAttribute("nodeRef", nodeRef.toString());
@@ -286,6 +286,6 @@ public class XmlEntityVisitor {
 			xmlw.writeCharacters(value.toString());
 		}
 	}
-
+	
 
 }

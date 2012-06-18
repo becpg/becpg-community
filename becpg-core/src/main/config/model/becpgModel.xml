@@ -1407,10 +1407,17 @@
 
 		<type name="bcpg:linkedValue">
 			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:lnkValue">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
 			 <mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>
 			 	<aspect>bcpg:depthLevelAspect</aspect> 
 			 	<aspect>bcpg:isDeletedAspect</aspect>
+			 	<aspect>bcpg:codeAspect</aspect>
 			</mandatory-aspects> 
 		</type>
 

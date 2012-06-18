@@ -1,6 +1,6 @@
 PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 TYPE;bcpg:linkedValue
-COLUMNS;cm:name
+COLUMNS;bcpg:lnkValue
 VALUES;Céréales et pâtes
 VALUES;Pâtisseries et biscuits
 VALUES;Produits laitiers et entremets
@@ -29,7 +29,7 @@ VALUES;Epicerie
 ;
 PATH;/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
 TYPE;bcpg:linkedValue
-COLUMNS;cm:name
+COLUMNS;bcpg:lnkValue
 VALUES;Sauce
 VALUES;Façonné
 VALUES;Braisé - bruni
@@ -39,7 +39,7 @@ VALUES;Pâtisserie
 ;
 PATH;/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 TYPE;bcpg:linkedValue
-COLUMNS;cm:name
+COLUMNS;bcpg:lnkValue
 VALUES;Sauce
 VALUES;Façonné
 VALUES;Braisé - bruni
@@ -49,7 +49,7 @@ VALUES;Pâtisserie
 ;
 PATH;/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 TYPE;bcpg:linkedValue
-COLUMNS;cm:name
+COLUMNS;bcpg:lnkValue
 VALUES;Boulangerie-viennoiserie
 VALUES;Pâtisseries et biscuits
 VALUES;Céréales petit déjeuner et barres céréalières

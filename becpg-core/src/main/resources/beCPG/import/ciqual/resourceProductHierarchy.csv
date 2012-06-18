@@ -1,6 +1,6 @@
 PATH;/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;cm:name;
+COLUMNS;bcpg:lnkValue;
 VALUES;Vêtements et Sécurité;
 VALUES;Produits ménagers;
 VALUES;Produits pharmaceutiques;
@@ -12,7 +12,7 @@ VALUES;Personnes;
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:parentLevel;cm:name
+COLUMNS;bcpg:parentLevel;bcpg:lnkValue
 VALUES;Vêtements et Sécurité;Peau
 VALUES;Vêtements et Sécurité; Tête 
 VALUES;Vêtements et Sécurité;Corps

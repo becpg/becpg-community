@@ -504,6 +504,11 @@ public interface BeCPGModel {
 	static final QName TYPE_LINKED_VALUE = QName.createQName(BECPG_URI,
 			"linkedValue");
 	
+	// lnkValue
+	/** The Constant PROP_LNK_VALUE. */
+	static final QName PROP_LNK_VALUE = QName.createQName(BECPG_URI,
+			"lnkValue");
+	
 	
 
 	// listValue
