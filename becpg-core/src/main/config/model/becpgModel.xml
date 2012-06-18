@@ -130,6 +130,7 @@
 				<list>
 					<value>Déclarer</value>
 					<value>Détailler</value>
+					<value>Regrouper</value>
 					<value>Omettre</value>
 					<value>Ne pas déclarer</value>
 				</list>
@@ -434,10 +435,6 @@
 				</property>				
 			</properties>
 		</type>
-		
-		<type name="bcpg:declGroup">
-			<parent>bcpg:charact</parent>
-		</type>
 
 		<type name="bcpg:microbio">
 			<parent>bcpg:charact</parent>
@@ -667,22 +664,11 @@
 						<mandatory>true</mandatory>
 						<many>false</many>
 					</target>
-				</association>
-				<association name="bcpg:compoListDeclGrp">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:declGroup</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>				
+				</association>						
 			</associations>
 			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
 				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>bcpg:sortableListAspect</aspect>				
 			</mandatory-aspects>
 		</type>
 
@@ -970,7 +956,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:declGroup</class>
+						<class>bcpg:product</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>

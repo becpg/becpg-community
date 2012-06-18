@@ -369,17 +369,17 @@
 		<property name="nodeService" ref="nodeService" />		
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="authenticationService" ref="authenticationService" />
-	</bean>	
-	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" init-method="init">
-		<property name="policyComponent" ref="policyComponent" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
 	<bean id="depthLevelListPolicy" class="fr.becpg.repo.entity.datalist.policy.DepthLevelListPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
-	</bean>
+	</bean>	
+	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" init-method="init">
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+	</bean>	
 	
 	<!-- WUsedList -->
 	<bean id="wUsedListService" class="fr.becpg.repo.entity.datalist.impl.WUsedListServiceImpl">
@@ -400,7 +400,6 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="mlNodeService" ref="mlAwareNodeService" />
 		<property name="entityListDAO" ref="entityListDAO"/>
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="associationService" ref="associationService" />		
 	</bean>
 

@@ -47,8 +47,7 @@ public class RepoConsts {
 	public static final String PATH_ING_TYPES = "IngTypes";
 	public static final String PATH_LINKED_LISTS 	= "LinkedLists";
 	public static final String PATH_NUTS = "Nuts";
-	public static final String PATH_INGS = "Ings";	
-	public static final String PATH_DECL_GROUPS = "DeclGroups";
+	public static final String PATH_INGS = "Ings";
 	public static final String PATH_ORGANOS = "Organos";
 	public static final String PATH_ALLERGENS = "Allergens";
 	public static final String PATH_COSTS = "Costs";
@@ -177,4 +176,8 @@ public class RepoConsts {
 	public static final String ISO_CHARSET = "ISO-8859-15";
 	
 	public static final Integer DATA_LISTS_PAGESIZE = 25;
+	
+	// Sort
+	public static int SORT_DEFAULT_STEP = 100;
+	public static int SORT_INSERTING_STEP = 1;
 }

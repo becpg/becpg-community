@@ -37,9 +37,6 @@ public class CompoListDataItem{
 	
 	private Double yieldPerc = null;
 	
-	/** The decl grp. */
-	private NodeRef declGrp;
-	
 	/** The decl type. */
 	private String declType;			
 	
@@ -151,24 +148,6 @@ public class CompoListDataItem{
 	}
 
 	/**
-	 * Gets the decl grp.
-	 *
-	 * @return the decl grp
-	 */
-	public NodeRef getDeclGrp() {
-		return declGrp;
-	}
-	
-	/**
-	 * Sets the decl grp.
-	 *
-	 * @param declGrp the new decl grp
-	 */
-	public void setDeclGrp(NodeRef declGrp) {
-		this.declGrp = declGrp;
-	}
-	
-	/**
 	 * Gets the decl type.
 	 *
 	 * @return the decl type
@@ -221,11 +200,10 @@ public class CompoListDataItem{
 	 * @param compoListUnit
 	 * @param lossPerc
 	 * @param yieldPerc
-	 * @param declGrp
 	 * @param declType
 	 * @param product
 	 */
-	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, Double yieldPerc, NodeRef declGrp, String declType, NodeRef product){
+	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, Double yieldPerc, String declType, NodeRef product){
 		
 		setNodeRef(nodeRef);
 		setDepthLevel(depthLevel);
@@ -235,7 +213,6 @@ public class CompoListDataItem{
 		setCompoListUnit(compoListUnit);
 		setLossPerc(lossPerc);
 		setYieldPerc(yieldPerc);
-		setDeclGrp(declGrp);
 		setDeclType(declType);
 		setProduct(product);
 	}
@@ -248,11 +225,10 @@ public class CompoListDataItem{
 	 * @param qtySubFormula
 	 * @param compoListUnit
 	 * @param qtyLossPerc
-	 * @param declGrp
 	 * @param declType
 	 * @param product
 	 */
-	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, NodeRef declGrp, String declType, NodeRef product){
+	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, String declType, NodeRef product){
 		
 		setNodeRef(nodeRef);
 		setDepthLevel(depthLevel);
@@ -261,7 +237,6 @@ public class CompoListDataItem{
 		setQtyAfterProcess(qtyAfterProcess);
 		setCompoListUnit(compoListUnit);
 		setLossPerc(lossPerc);
-		setDeclGrp(declGrp);
 		setDeclType(declType);
 		setProduct(product);
 	}
@@ -278,7 +253,6 @@ public class CompoListDataItem{
 		setQtyAfterProcess(c.getQtyAfterProcess());
 		setCompoListUnit(c.getCompoListUnit());
 		setLossPerc(c.getLossPerc());
-		setDeclGrp(c.getDeclGrp());
 		setDeclType(c.getDeclType());
 		setProduct(new NodeRef(c.getProduct().toString()));
 	}

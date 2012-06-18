@@ -129,8 +129,6 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	/** The organos. */
 	protected List<NodeRef> organos = new ArrayList<NodeRef>();
 
-	protected List<NodeRef> declGroups = new ArrayList<NodeRef>();
-
 	protected Wiser wiser = new Wiser(2500);
 
 	/*
@@ -328,23 +326,6 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		} else {
 			for (FileInfo fileInfo : organosFileInfo) {
 				organos.add(fileInfo.getNodeRef());
-			}
-		}
-
-		// declGroups
-		NodeRef declGroupFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_DECL_GROUPS);
-		List<FileInfo> declGroupsFileInfo = fileFolderService.listFiles(declGroupFolder);
-		if (declGroupsFileInfo.size() == 0) {
-			for (int i = 0; i < 10; i++) {
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(ContentModel.PROP_NAME, "DeclGrp " + i);
-				ChildAssociationRef childAssocRef = nodeService.createNode(declGroupFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_DECL_GROUP, properties);
-				declGroups.add(childAssocRef.getChildRef());
-			}
-		} else {
-			for (FileInfo fileInfo : declGroupsFileInfo) {
-				declGroups.add(fileInfo.getNodeRef());
 			}
 		}
 	}

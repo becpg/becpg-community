@@ -168,10 +168,6 @@ public interface BeCPGModel {
 	static final QName PROP_COMPOLIST_YIELD_PERC = QName.createQName(BECPG_URI,
 			"compoListYieldPerc");
 	
-	/** The Constant PROP_COMPOLIST_DECL_GRP. */
-	static final QName ASSOC_COMPOLIST_DECL_GRP = QName.createQName(BECPG_URI,
-			"compoListDeclGrp");
-	
 	/** The Constant PROP_COMPOLIST_DECL_TYPE. */
 	static final QName PROP_COMPOLIST_DECL_TYPE = QName.createQName(
 			BECPG_URI, "compoListDeclType");	
@@ -449,8 +445,6 @@ public interface BeCPGModel {
 	// ing
 	/** The Constant TYPE_ING. */
 	static final QName TYPE_ING = QName.createQName(BECPG_URI, "ing");
-	
-	static final QName TYPE_DECL_GROUP = QName.createQName(BECPG_URI, "declGroup");	
 	
 	/** The Constant PROP_ING_CEECODE. */
 	static final QName PROP_ING_CEECODE = QName.createQName(BECPG_URI,

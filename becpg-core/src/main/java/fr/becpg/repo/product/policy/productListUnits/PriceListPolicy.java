@@ -123,7 +123,7 @@ public class PriceListPolicy implements NodeServicePolicies.OnUpdatePropertiesPo
 		else{
 			
 			costListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
-			productDAO.createCostListItem(costListNodeRef, new CostListDataItem(null, value, null, null, costNodeRef, false), null, null);
+			productDAO.createCostListItem(costListNodeRef, new CostListDataItem(null, value, null, null, costNodeRef, false), null);
 		}
 	}
 

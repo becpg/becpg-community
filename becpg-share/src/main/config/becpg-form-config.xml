@@ -2874,25 +2874,17 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:compoListQtySubFormula" />
 					<show id="bcpg:compoListQtyAfterProcess" />
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListLossPerc" />
-					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:parentLevel" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:parentLevel" >
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/compoListParentLevel</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
 					<field id="bcpg:compoListProduct">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
@@ -2905,6 +2897,8 @@
 							template="/fr/becpg/components/form/controls/autocomplete.ftl">
  							<control-param name="ds">becpg/autocomplete/compoListParentLevel
  							</control-param>
+							<control-param name="urlParamsToPass">entityNodeRef
+							</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
  					</field> 
@@ -2943,8 +2937,8 @@
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
-					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />
+					<show id="bcpg:sort" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 			</form>
@@ -2956,7 +2950,6 @@
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
-					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />
 				</field-visibility>
 			</form>
@@ -2968,25 +2961,17 @@
 			<!-- Data List pop-up edit form -->
 			<form>
 				<field-visibility>
-					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:compoListQtySubFormula" />
 					<show id="bcpg:compoListQtyAfterProcess" />
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListLossPerc" />
-					<show id="bcpg:compoListDeclGrp" />
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:parentLevel" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 
-				<appearance>
-					<field id="bcpg:parentLevel" >
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/compoListFather</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
+				<appearance>					
 					<field id="bcpg:compoListProduct">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">

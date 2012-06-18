@@ -1,6 +1,6 @@
 package fr.becpg.repo.data.hierarchicalList;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class Composite<T> extends AbstractComponent<T> {
 
-	private List<AbstractComponent<T>> children = new ArrayList<AbstractComponent<T>>();
+	private List<AbstractComponent<T>> children = new LinkedList<AbstractComponent<T>>();
 	
 	public List<AbstractComponent<T>> getChildren() {
 		return children;

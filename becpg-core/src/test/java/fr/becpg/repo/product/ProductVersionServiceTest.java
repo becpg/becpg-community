@@ -106,6 +106,8 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 			@Override
 			public NodeRef execute() throws Throwable {
 			
+				logger.info("testCreateVersion");
+				
 				/*-- Create test folder --*/
 				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
 				if(folderNodeRef != null)

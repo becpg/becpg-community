@@ -62,7 +62,7 @@ public interface ProductDAO {
 	public void delete(NodeRef productNodeRef);
 	
 	public void createCostList(NodeRef listContainerNodeRef, List<CostListDataItem> costList);
-	public void createCostListItem(NodeRef listNodeRef, CostListDataItem costListDataItem, Map<NodeRef, NodeRef> filesToUpdate, Integer sortIndex);
+	public void createCostListItem(NodeRef listNodeRef, CostListDataItem costListDataItem, Map<NodeRef, NodeRef> filesToUpdate);
 	
 	public List<AllergenListDataItem> loadAllergenList(NodeRef listContainerNodeRef);
 	public AllergenListDataItem loadAllergenListItem(NodeRef listItemNodeRef);

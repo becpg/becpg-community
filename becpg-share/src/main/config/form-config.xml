@@ -58,8 +58,7 @@
 			<type name="association:qa:controlStep" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 			<type name="association:qa:controlMethod" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 			<type name="association:qa:controlPlan" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:rep:reportTpl" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:bcpg:declGroup" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
+			<type name="association:rep:reportTpl" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
          
             <type name="transitions" template="/org/alfresco/components/form/controls/workflow/transitions.ftl" />
             <type name="taskOwner" template="/org/alfresco/components/form/controls/workflow/taskowner.ftl" />

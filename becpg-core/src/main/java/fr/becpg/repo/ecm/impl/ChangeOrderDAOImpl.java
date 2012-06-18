@@ -211,15 +211,11 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 	    			}
 	    		}
 	    		
-	    		//update or create nodes	  
-	    		int sortIndex = 1;
+	    		//update or create nodes
 	    		for(ReplacementListDataItem replacementListDataItem : replacementList)
 	    		{    			
 	    			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		    		properties.put(ECMModel.PROP_REVISION, replacementListDataItem.getRevision());
-		    		
-		    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
-		    		sortIndex++;
 		    		
 		    		if(filesToUpdate.contains(replacementListDataItem.getNodeRef())){
 		    			//update
@@ -291,14 +287,13 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 	    		logger.debug("createWUsed, size: " + wUsedList.size());
 	    		
 	    		Composite<WUsedListDataItem> composite = WUsedListDataItem.getHierarchicalCompoList(wUsedList);
-				int sortIndex = 1;
-				createCompositeWUsedListItem(wUsedListNodeRef, composite, filesToUpdate, sortIndex);	    			    		
+				createCompositeWUsedListItem(wUsedListNodeRef, composite, filesToUpdate);	    			    		
 			}
 		}
 	} 
 	
 	//TODO : SAME CODE FOR COMPOLISTDATAITEM !!!	
-	private int createCompositeWUsedListItem(NodeRef wUsedListNodeRef, Composite<WUsedListDataItem> composite, List<NodeRef> filesToUpdate, int sortIndex) {
+	private void createCompositeWUsedListItem(NodeRef wUsedListNodeRef, Composite<WUsedListDataItem> composite, List<NodeRef> filesToUpdate) {
 
 		for(AbstractComponent<WUsedListDataItem> component : composite.getChildren()){
 			
@@ -308,9 +303,6 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
     		properties.put(BeCPGModel.PROP_DEPTH_LEVEL, wUsedListDataItem.getDepthLevel());
     		properties.put(ECMModel.PROP_WUL_IS_WUSED_IMPACTED, wUsedListDataItem.getIsWUsedImpacted());
     		properties.put(ECMModel.PROP_WUL_IMPACTED_DATALIST, wUsedListDataItem.getImpactedDataList());
-    		
-    		properties.put(BeCPGModel.PROP_SORT, sortIndex);
-    		sortIndex++;
     		
     		if(filesToUpdate.contains(wUsedListDataItem.getNodeRef())){
     			//update
@@ -339,11 +331,9 @@ public class ChangeOrderDAOImpl implements BeCPGDao<ChangeOrderData>{
 
 			if (component instanceof Composite) {
 
-				sortIndex = createCompositeWUsedListItem(wUsedListNodeRef, (Composite<WUsedListDataItem>) component, filesToUpdate, sortIndex);
+				createCompositeWUsedListItem(wUsedListNodeRef, (Composite<WUsedListDataItem>) component, filesToUpdate);
 			}
 		}
-
-		return sortIndex;
 	}
 	
 	/**

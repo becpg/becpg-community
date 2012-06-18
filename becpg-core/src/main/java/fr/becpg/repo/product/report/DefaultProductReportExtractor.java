@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.report;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,8 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
 import fr.becpg.common.BeCPGException;
@@ -38,7 +41,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	/** The Constant KEY_PRODUCT_IMAGE. */
 	protected static final String KEY_PRODUCT_IMAGE = "productImage";
 
-	
+	private static Log logger = LogFactory.getLog(DefaultProductReportExtractor.class);
 
 	/** The Constant TAG_ALLERGENLIST. */
 	protected static final String TAG_ALLERGENLIST = "allergenList";
@@ -267,19 +270,29 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		if (productData.getIngLabelingList() != null) {
 			Element ingListElt = dataListsElt.addElement(TAG_INGLABELINGLIST);
 
-			for (IngLabelingListDataItem dataItem : productData.getIngLabelingList()) {
-
-				Element ingLabelingElt = ingListElt.addElement(TAG_INGLABELING);
+			for (IngLabelingListDataItem dataItem : productData.getIngLabelingList()) {								
 				
-				for(Locale locale : dataItem.getValue().getLocales()){
+				List<String> locales = new ArrayList<String>();
+				for(Locale locale : dataItem.getValue().getLocales()){			
 					
-					ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
-					if(dataItem.getGrp()!=null){
-						MLText grpMLText = (MLText)mlNodeService.getProperty(dataItem.getGrp(), BeCPGModel.PROP_LEGAL_NAME);					
-						ingLabelingElt.addAttribute(BeCPGModel.ASSOC_ILL_GRP.getLocalName(), grpMLText.getValue(locale));
+					logger.debug("ill, locale: " + locale);							
+					MLText grpMLText =  dataItem.getGrp()!=null ? (MLText)mlNodeService.getProperty(dataItem.getGrp(), BeCPGModel.PROP_LEGAL_NAME) : null;	
+
+					if(!locales.contains(locale.getLanguage())){
+					
+						locales.add(locale.getLanguage());						
+						String groupName = grpMLText!=null ? grpMLText.getValue(locale) : VALUE_NULL;						
+						
+						Element ingLabelingElt = ingListElt.addElement(TAG_INGLABELING);
+						ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());					
+						ingLabelingElt.addAttribute(BeCPGModel.ASSOC_ILL_GRP.getLocalName(), groupName);
 						ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_VALUE.getLocalName(), dataItem.getValue().getValue(locale));
-					}
-				}
+						
+						if(logger.isDebugEnabled()){
+							logger.debug("ill, locale: " + locale + " - group: " + groupName + " - value: " + dataItem.getValue().getValue(locale));							
+						}
+					}					
+				}				
 			}
 		}
 

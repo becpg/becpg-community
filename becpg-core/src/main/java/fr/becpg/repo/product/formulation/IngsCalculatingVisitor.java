@@ -474,7 +474,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 					}				
 					index = lastChild;
 				}
-				else if(declarationType == DeclarationType.DECLARE && compoListDataItem.getDeclGrp() != null && compoListDataItem.getDeclGrp() != null){
+				else if(declarationType == DeclarationType.GROUP){
 					int parentIndex = index;
 					//int lastChild = index + 1;
 					int lastChild = index;
@@ -514,14 +514,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	private CompositeIng calculateILLOfCompositeIng(List<CompoListDataItem> compoList, int parentIndex, int lastChild) throws FormulateException{
 		
 		CompoListDataItem compoListDataItem =  compoList.get(parentIndex);
-		NodeRef grpNodeRef = null;
-		if(compoListDataItem.getDeclGrp() != null){
-			grpNodeRef = compoListDataItem.getDeclGrp();
-		}
-		else{
-			grpNodeRef = compoListDataItem.getProduct();			
-		}
-		
+		NodeRef grpNodeRef = compoListDataItem.getProduct();		
 		CompositeIng compositeIng = new CompositeIng(grpNodeRef, (MLText)mlNodeService.getProperty(grpNodeRef, BeCPGModel.PROP_PRODUCT_LEGALNAME));			
 		
 		int startIndex = parentIndex;

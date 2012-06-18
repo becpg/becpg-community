@@ -184,11 +184,7 @@ public class FormulationTest extends RepoBaseTestCase {
     private NodeRef geoOrigin1;
     
     /** The geo origin2. */
-    private NodeRef geoOrigin2;
-    
-    private NodeRef grpGarniture;
-    
-    private NodeRef grpPate;
+    private NodeRef geoOrigin2;    
     
     /* (non-Javadoc)
      * @see fr.becpg.test.RepoBaseTestCase#setUp()
@@ -324,26 +320,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "bioOrigin2");
 			bioOrigin2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_BIO_ORIGIN, properties).getChildRef();
-			
-			//Groupes
-			properties.clear();
-			properties.put(ContentModel.PROP_NAME, "grpGarniture");
-			mlName = new MLText();
-			mlName.addValue(Locale.getDefault(), "Garniture default");
-			mlName.addValue(Locale.ENGLISH, "Garniture english");
-			mlName.addValue(Locale.FRENCH, "Garniture french");	
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			grpGarniture = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_DECL_GROUP, properties).getChildRef();
-			
-			properties.clear();
-			properties.put(ContentModel.PROP_NAME, "grpPâte");
-			mlName = new MLText();
-			mlName.addValue(Locale.getDefault(), "Pâte default");
-			mlName.addValue(Locale.ENGLISH, "Pâte english");
-			mlName.addValue(Locale.FRENCH, "Pâte french");	
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			grpPate = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_DECL_GROUP, properties).getChildRef();
-			
+						
 			/*-- Create raw materials --*/
 			logger.debug("/*-- Create raw materials --*/");
 			 Collection<QName> dataLists = productDictionaryService.getDataLists();
@@ -542,13 +519,21 @@ public class FormulationTest extends RepoBaseTestCase {
 			/*-- Local semi finished product 1 --*/
 			LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
 			localSF1.setName("Local semi finished 1");
-			localSF1.setLegalName("Legal Local semi finished 1");
+			mlName = new MLText();
+			mlName.addValue(Locale.getDefault(), "Pâte default");
+			mlName.addValue(Locale.ENGLISH, "Pâte english");
+			mlName.addValue(Locale.FRENCH, "Pâte french");				
+			localSF1.setLegalName(mlName);
 			localSF1NodeRef = productDAO.create(folderNodeRef, localSF1, dataLists);
 			
 			/*-- Local semi finished product 1 --*/
 			LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
 			localSF2.setName("Local semi finished 2");
-			localSF2.setLegalName("Legal Local semi finished 2");							
+			mlName = new MLText();
+			mlName.addValue(Locale.getDefault(), "Garniture default");
+			mlName.addValue(Locale.ENGLISH, "Garniture english");
+			mlName.addValue(Locale.FRENCH, "Garniture french");
+			localSF2.setLegalName(mlName);							
 			localSF2NodeRef = productDAO.create(folderNodeRef, localSF2, dataLists);
 			
 			LocalSemiFinishedProduct localSF3 = new LocalSemiFinishedProduct();
@@ -640,13 +625,21 @@ public class FormulationTest extends RepoBaseTestCase {
 			/*-- Local semi finished product 11 --*/
 			LocalSemiFinishedProduct localSF11 = new LocalSemiFinishedProduct();
 			localSF11.setName("Local semi finished 11");
-			localSF11.setLegalName("Legal Local semi finished 11");			
+			mlName = new MLText();
+			mlName.addValue(Locale.getDefault(), "Pâte default");
+			mlName.addValue(Locale.ENGLISH, "Pâte english");
+			mlName.addValue(Locale.FRENCH, "Pâte french");
+			localSF11.setLegalName(mlName);			
 			localSF11NodeRef = productDAO.create(folderNodeRef, localSF11, dataLists);
 			
 			/*-- Local semi finished product 12 --*/
 			LocalSemiFinishedProduct localSF12 = new LocalSemiFinishedProduct();
 			localSF12.setName("Local semi finished 12");
-			localSF12.setLegalName("Legal Local semi finished 12");					
+			mlName = new MLText();
+			mlName.addValue(Locale.getDefault(), "Garniture default");
+			mlName.addValue(Locale.ENGLISH, "Garniture english");
+			mlName.addValue(Locale.FRENCH, "Garniture french");
+			localSF12.setLegalName(mlName);					
 			localSF12NodeRef = productDAO.create(folderNodeRef, localSF12, dataLists);
 			
 			return null;
@@ -661,6 +654,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testFormulateProduct() throws Exception{
 		   
+		logger.info("testFormulateProduct");
+		
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
 				
@@ -681,12 +676,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnitPrice(12.4d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 4000d, "€", null, fixedCost, true));
@@ -737,6 +732,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
 				
 				//costs
+				int checks=0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
@@ -744,12 +740,15 @@ public class FormulationTest extends RepoBaseTestCase {
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+						checks++;
 					}
 					if(costListDataItem.getCost().equals(cost2)){
 						assertEquals("cost1.getValue() == 6.0, actual values: " + trace, 6.0d, costListDataItem.getValue());
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+						checks++;
 					}
 				}
+				assertEquals(2, checks);
 				
 				// profitability
 				DecimalFormat df = new DecimalFormat("0.00");
@@ -759,6 +758,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				assertEquals("check breakEven", (Long)1667L, formulatedProduct.getBreakEven());				
 				
 				//nuts
+				checks=0;
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
 					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
@@ -768,14 +768,19 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertEquals("nut1.getValue() == 4 (Formula), actual values: " + trace, 4d, nutListDataItem.getValue());
 						assertEquals("nut1.getUnit() == kJ/100g, actual values: " + trace, "kJ/100g", nutListDataItem.getUnit());
 						assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
+						checks++;
 					}
 					if(nutListDataItem.getNut().equals(nut2)){
 						assertEquals("nut2.getValue() == 6, actual values: " + trace, 6d, nutListDataItem.getValue());
 						assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g", nutListDataItem.getUnit());
 						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
+						checks++;
 					}
 				}
-				//allergens			
+				assertEquals(2, checks);
+				
+				//allergens		
+				checks=0;
 				assertNotNull("AllergenList is null", formulatedProduct.getAllergenList());
 				for(AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()){
 					String voluntarySources = "";
@@ -796,6 +801,7 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertEquals("allergen1.getVoluntarySources() contains Raw material 1, actual values: " + trace, true, allergenListDataItem.getVoluntarySources().contains(rawMaterial1NodeRef));
 						assertEquals("allergen1.getVoluntarySources() contains Raw material 2, actual values: " + trace, true, allergenListDataItem.getVoluntarySources().contains(rawMaterial2NodeRef));		
 						assertEquals("allergen1.getInVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getInVoluntarySources().size());
+						checks++;
 					}
 					//allergen2 - voluntary: false - involuntary: true - voluntary sources: - involuntary sources:Raw material 2,
 					if(allergenListDataItem.getAllergen().equals(allergen2)){
@@ -803,6 +809,7 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertEquals("allergen2.getInVoluntary().booleanValue() == true, actual values: " + trace, true, allergenListDataItem.getInVoluntary().booleanValue());					
 						assertEquals("allergen2.getInVoluntarySources() contains Raw material 2, actual values: " + trace, true, allergenListDataItem.getInVoluntarySources().contains(rawMaterial2NodeRef));				
 						assertEquals("allergen2.getVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getVoluntarySources().size());
+						checks++;
 					}
 					//allergen: allergen3 - voluntary: true - involuntary: true - voluntary sources:Raw material 3,  - involuntary sources:Raw material 3,
 					if(allergenListDataItem.getAllergen().equals(allergen3)){
@@ -810,6 +817,7 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertEquals("allergen3.getInVoluntary().booleanValue() == true, actual values: " + trace, true, allergenListDataItem.getInVoluntary().booleanValue());
 						assertEquals("allergen3.getVoluntarySources() contains Raw material 3, actual values: " + trace, true, allergenListDataItem.getVoluntarySources().contains(rawMaterial3NodeRef));				
 						assertEquals("allergen3.getInVoluntarySources() contains Raw material 3, actual values: " + trace, true, allergenListDataItem.getInVoluntarySources().contains(rawMaterial3NodeRef));
+						checks++;
 					}
 					//allergen4 - voluntary: false - involuntary: false - voluntary sources: - involuntary sources:
 					if(allergenListDataItem.getAllergen().equals(allergen4)){
@@ -817,13 +825,17 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertEquals("allergen4.getInVoluntary().booleanValue() == false, actual values: " + trace, false, allergenListDataItem.getInVoluntary().booleanValue());
 						assertEquals("allergen4.getVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getVoluntarySources().size());
 						assertEquals("allergen4.getInVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getInVoluntarySources().size());
+						checks++;
 					}				
 				}
+				assertEquals(4, checks);
+				
 				//verify IngList
 				// 1 * RM1				, ingList : 		1 ing1 ; bio1 ; geo1		// 2 ing2 ; bio1 ; geo1|geo2	//
 				// 2 * RM2				, ingList : 		1 ing1 ; bio1 ; geo1		// 3 ing2 ; bio2 ; geo1|geo2	//
 				// 3 * RM3				, ingList : 											//											//	4 ing3 ; bio1|bio2 ; geo2
 				// 3 * RM4 [OMIT]	, ingList : 											//											//	4 ing3 ; bio1|bio2 ; geo2
+				checks=0;
 				assertNotNull("IngList is null", formulatedProduct.getIngList());
 				for(IngListDataItem ingListDataItem : formulatedProduct.getIngList()){
 				
@@ -849,6 +861,7 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertEquals("ing1.getBioOrigin() doesn't contain bio2, actual values: " + trace, false, ingListDataItem.getBioOrigin().contains(bioOrigin2));
 						assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.isGMO().booleanValue() == true);
 						assertEquals("ing1.isIonized().booleanValue() is false, actual values: " + trace, true, ingListDataItem.isIonized().booleanValue() == true);
+						checks++;
 					}
 					//ing2 - qty: 34.782608 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
 					if(ingListDataItem.getIng().equals(ing2)){
@@ -859,6 +872,7 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertEquals("ing2.getBioOrigin() contains bio2, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin2));
 						assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false, ingListDataItem.isGMO().booleanValue());
 						assertEquals("ing2.isIonized().booleanValue() is false, actual values: " + trace, false, ingListDataItem.isIonized().booleanValue());
+						checks++;
 					}
 					//ing3 - qty: 52.173912 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 					if(ingListDataItem.getIng().equals(ing3)){
@@ -869,24 +883,29 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin2));
 						assertEquals("ing3.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.isGMO().booleanValue());
 						assertEquals("ing3.isIonized().booleanValue() is false, actual values: " + trace, true, ingListDataItem.isIonized().booleanValue());
+						checks++;
 					}
 				}
+				assertEquals(3, checks);
 				
 				//verify IngLabelingList
+				checks=0;
 				assertNotNull("IngLabelingList is null", formulatedProduct.getIngLabelingList());
 				for(IngLabelingListDataItem illDataItem : formulatedProduct.getIngLabelingList()){				
 					
-					String trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
-					logger.debug(trace);	
+					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH));
+					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH));
+					
+					logger.debug("###locales: " + illDataItem.getValue().getLocales());
 					
 					//Garniture 52,17 % (ing3 100,00 %), Pâte 47,83 % (Legal Raw material 2 72,73 % (ing2 75,00 %, ing1 25,00 %), ing2 18,18 %, ing1 9,09 %)
 					if(illDataItem.getGrp() == null){		
-						trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
-						assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check: " + trace,  "Garniture french 52,17 % (ing3 french 100,00 %), Pâte french 47,83 % (Legal Raw material 2 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
-						trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH);
-						assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check: " + trace,  "Garniture english 52.17 % (ing3 english 100.00 %), Pâte english 47.83 % (Legal Raw material 2 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));						
+						assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check.",  "Garniture french 52,17 % (ing3 french 100,00 %), Pâte french 47,83 % (Legal Raw material 2 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
+						assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check.",  "Garniture english 52.17 % (ing3 english 100.00 %), Pâte english 47.83 % (Legal Raw material 2 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));
+						checks++;
 					}
 				}
+				assertEquals(1, checks);
 				
 				return null;
 
@@ -901,7 +920,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 * @throws Exception the exception
 	 */
 	public void testIngredientsCalculating() throws Exception{
-		   		
+		
+		logger.info("testIngredientsCalculating");
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   
@@ -919,12 +939,12 @@ public class FormulationTest extends RepoBaseTestCase {
 			finishedProduct1.setQty(2d);
 			finishedProduct1.setUnit(ProductUnit.kg);				
 			List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
-			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF11NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial11NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial12NodeRef));
-			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d,  grpGarniture, DeclarationType.DETAIL_FR, localSF12NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial13NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial14NodeRef));
+			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, localSF11NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial11NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, rawMaterial12NodeRef));
+			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, localSF12NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial13NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial14NodeRef));
 			finishedProduct1.setCompoList(compoList1);
 			 Collection<QName> dataLists = productDictionaryService.getDataLists();
 			NodeRef finishedProductNodeRef1 = productDAO.create(folderNodeRef, finishedProduct1, dataLists);
@@ -1030,12 +1050,12 @@ public class FormulationTest extends RepoBaseTestCase {
 			finishedProduct2.setQty(2d);
 			finishedProduct2.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-			compoList2.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF11NodeRef));
-			compoList2.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d,  null, DeclarationType.DECLARE_FR, rawMaterial11NodeRef));
-			compoList2.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial12NodeRef));
-			compoList2.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF12NodeRef));
-			compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial13NodeRef));
-			compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DO_NOT_DECLARE_FR, rawMaterial14NodeRef));
+			compoList2.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, localSF11NodeRef));
+			compoList2.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial11NodeRef));
+			compoList2.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, rawMaterial12NodeRef));
+			compoList2.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, localSF12NodeRef));
+			compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial13NodeRef));
+			compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DO_NOT_DECLARE_FR, rawMaterial14NodeRef));
 			finishedProduct2.setCompoList(compoList2);
 			NodeRef finishedProductNodeRef2 = productDAO.create(folderNodeRef, finishedProduct2, dataLists);			
 			
@@ -1142,6 +1162,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testFormulateCostAndNutOfProductInkgAndg() throws Exception{
 		   
+		logger.info("testFormulateCostAndNutOfProductInkgAndg");
+		
 		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				public NodeRef execute() throws Throwable {					   				
 								
@@ -1154,12 +1176,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.g, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.g, 0d, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
 				
@@ -1219,6 +1241,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testFormulateCostAndNutOfProductInkgAndgAndmLAndm() throws Exception{
 		   
+		logger.info("testFormulateCostAndNutOfProductInkgAndgAndmLAndm");
+		
 		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				public NodeRef execute() throws Throwable {					   				
 								
@@ -1232,12 +1256,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.P);
 				finishedProduct.setDensity(0.1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.P, 0d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 40d, 0d, 0d, CompoListUnit.g, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.mL, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.P, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 30d, 0d, 0d, CompoListUnit.g, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 0.05d, 0d, 0d, CompoListUnit.P, 0d, null, DeclarationType.OMIT_FR, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.P, 0d, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 40d, 0d, 0d, CompoListUnit.g, 0d, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.mL, 0d, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.P, 0d, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 30d, 0d, 0d, CompoListUnit.g, 0d, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 0.05d, 0d, 0d, CompoListUnit.P, 0d, DeclarationType.OMIT_FR, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
 				
@@ -1297,6 +1321,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testFormulateWithDensity() throws Exception{
 		   
+		logger.info("testFormulateWithDensity");
+		
 		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				public NodeRef execute() throws Throwable {					   				
 								
@@ -1353,6 +1379,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 * Test sort nut list.
 	 */
 	public void testSortNutList(){
+		
+		logger.info("testSortNutList");
 		
 		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				public NodeRef execute() throws Throwable {					   				
@@ -1479,6 +1507,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testAllergenListCalculating() throws Exception{
 		   
+		logger.info("testAllergenListCalculating");
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   
 				
@@ -1518,8 +1548,8 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, SFProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, SFProduct2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, SFProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, SFProduct2NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 				
@@ -1688,6 +1718,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testFormulateRawMaterial() throws Exception{
 		   
+		logger.info("testFormulateRawMaterial");
+		
 		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				public NodeRef execute() throws Throwable {					   
 				
@@ -1733,6 +1765,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testCalculateWithLoss() throws Exception{
 		   
+		logger.info("testCalculateWithLoss");
+		
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
 					
@@ -1745,12 +1779,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 5d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 10d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 20d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 5d, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 20d, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 				
@@ -1921,6 +1955,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testCalculateSubFormula() throws Exception{
 		   
+		logger.info("testCalculateSubFormula");
+		
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
 					
@@ -1933,14 +1969,14 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, null, 3d, 2d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, null, 1d, 100d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.kg, 5d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 30d, null, CompoListUnit.kg, 10d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 1d, 200d, CompoListUnit.kg, 20d, grpGarniture, DeclarationType.DETAIL_FR, localSF3NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 170d, null, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, null, DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, null, 3d, 2d, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, null, 1d, 100d, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.kg, 5d, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 30d, null, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 1d, 200d, CompoListUnit.kg, 20d, DeclarationType.DETAIL_FR, localSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 170d, null, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 				
@@ -1951,6 +1987,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				/*-- Verify formulation --*/
 				logger.debug("/*-- Verify formulation --*/");
 				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+				int checks=0;
 				
 				for(CompoListDataItem compoListDataItem : formulatedProduct.getCompoList()){
 					
@@ -1958,44 +1995,53 @@ public class FormulationTest extends RepoBaseTestCase {
 						assertEquals("check SF1 qty", 3d, compoListDataItem.getQty());
 						assertEquals("check SF1 qty sub formula", 3d, compoListDataItem.getQtySubFormula());
 						assertEquals("check SF1 after process", 2d, compoListDataItem.getQtyAfterProcess());
+						checks++;
 					}
 					else if(compoListDataItem.getProduct().equals(localSF2NodeRef)){
 						assertEquals("check SF2 qty", 1.5d, compoListDataItem.getQty());
 						assertEquals("check SF2 qty sub formula", 1d, compoListDataItem.getQtySubFormula());
 						assertEquals("check SF2 after process", 100d, compoListDataItem.getQtyAfterProcess());
+						checks++;
 					}
 					else if(compoListDataItem.getProduct().equals(rawMaterial1NodeRef)){
 						assertEquals("check MP1 qty", 1.2d, compoListDataItem.getQty());
 						assertEquals("check MP1 qty sub formula", 80d, compoListDataItem.getQtySubFormula());
 						assertEquals("check MP1 after process", null, compoListDataItem.getQtyAfterProcess());
+						checks++;
 					}
 					else if(compoListDataItem.getProduct().equals(rawMaterial2NodeRef)){
 						assertEquals("check MP2 qty", 0.45d, compoListDataItem.getQty());
 						assertEquals("check MP2 qty sub formula", 30d, compoListDataItem.getQtySubFormula());
 						assertEquals("check MP2 after process", null, compoListDataItem.getQtyAfterProcess());
+						checks++;
 					}
 					else if(compoListDataItem.getProduct().equals(localSF3NodeRef)){
 						assertEquals("check SF3 qty", 1.5d, compoListDataItem.getQty());
 						assertEquals("check SF3 qty sub formula", 1d, compoListDataItem.getQtySubFormula());
 						assertEquals("check SF3 after process", 200d, compoListDataItem.getQtyAfterProcess());
+						checks++;
 					}
 					else if(compoListDataItem.getProduct().equals(rawMaterial3NodeRef)){
 						assertEquals("check MP3 qty", 1.275d, compoListDataItem.getQty());
 						assertEquals("check MP3 qty sub formula", 170d, compoListDataItem.getQtySubFormula());
 						assertEquals("check MP3 after process", null, compoListDataItem.getQtyAfterProcess());
+						checks++;
 					}
 					else if(compoListDataItem.getProduct().equals(rawMaterial4NodeRef)){
 						assertEquals("check MP4 qty", 0.3d, compoListDataItem.getQty());
 						assertEquals("check MP4 qty sub formula", 40d, compoListDataItem.getQtySubFormula());
 						assertEquals("check MP4 after process", null, compoListDataItem.getQtyAfterProcess());
+						checks++;
 					}
 					else if(compoListDataItem.getProduct().equals(rawMaterial5NodeRef)){
 						assertEquals("check MP5 qty", 0.0075d, compoListDataItem.getQty());
 						assertEquals("check MP5 qty sub formula", 1d, compoListDataItem.getQtySubFormula());
 						assertEquals("check MP5 after process", null, compoListDataItem.getQtyAfterProcess());
+						checks++;
 					}
 				}
 				
+				assertEquals(8, checks);
 				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
 							
 				return null;
@@ -2006,6 +2052,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	
 	public void testPackagingCosts() throws Exception{
 		   
+		logger.info("testPackagingCosts");
+		
 		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				public NodeRef execute() throws Throwable {					   							
 						
@@ -2097,6 +2145,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testFormulationWithIngRequirements() throws Exception{
 		   
+		logger.info("testFormulationWithIngRequirements");
+		
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
 					
@@ -2155,14 +2205,14 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, null, 3d, 2d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, null, 1d, 100d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.kg, 5d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 30d, null, CompoListUnit.kg, 10d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 1d, 200d, CompoListUnit.kg, 20d, grpGarniture, DeclarationType.DETAIL_FR, localSF3NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 170d, null, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, null, DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, null, 3d, 2d, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, null, 1d, 100d, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.kg, 5d, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 30d, null, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 1d, 200d, CompoListUnit.kg, 20d, DeclarationType.DETAIL_FR, localSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 170d, null, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);	
 				
@@ -2244,6 +2294,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testFormulationWithCostAndNutMiniMaxi() throws Exception{
 		   
+		logger.info("testFormulationWithCostAndNutMiniMaxi");
+		
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
 					
@@ -2257,12 +2309,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 				
@@ -2465,6 +2517,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testCalculateCostDetails() throws Exception{
 		   
+		logger.info("testCalculateCostDetails");
+		
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
 					
@@ -2524,12 +2578,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				 */
 				
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 5d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 10d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 20d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 5d, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 20d, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 				
@@ -2686,6 +2740,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testCalculateYieldField() throws Exception{
 		   
+		logger.info("testCalculateYieldField");
+		
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
 					
@@ -2698,14 +2754,14 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, null, 3d, 2d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, null, 1d, 100d, CompoListUnit.kg, 10d, grpPate, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.kg, 5d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 30d, null, CompoListUnit.kg, 10d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 1d, 200d, CompoListUnit.kg, 20d, grpGarniture, DeclarationType.DETAIL_FR, localSF3NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 170d, null, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, null, DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, null, 3d, 2d, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, null, 1d, 100d, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.kg, 5d, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 30d, null, CompoListUnit.kg, 10d, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 1d, 200d, CompoListUnit.kg, 20d, DeclarationType.DETAIL_FR, localSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 170d, null, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, DeclarationType.DECLARE_FR, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
 				
@@ -2755,6 +2811,8 @@ public class FormulationTest extends RepoBaseTestCase {
 	 */
 	public void testManualListItem() throws Exception{
 		   
+		logger.info("testManualListItem");
+		
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
 					
@@ -2767,12 +2825,12 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.DETAIL_FR, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.DETAIL_FR, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DETAIL_FR, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.OMIT_FR, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
 				
@@ -2854,7 +2912,9 @@ public class FormulationTest extends RepoBaseTestCase {
 	 * @throws Exception the exception
 	 */
 	public void testProcess() throws Exception{
-		   
+		 
+		logger.info("testProcess");
+		
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
 				
