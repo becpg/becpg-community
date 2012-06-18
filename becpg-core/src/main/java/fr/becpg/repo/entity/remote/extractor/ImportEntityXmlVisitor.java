@@ -233,7 +233,7 @@ public class ImportEntityXmlVisitor {
 				currAssoc.pop();
 				currAssocType.pop();
 			} else if (type != null && type.length() > 0 && !type.equals("d:noderef") ) {
-				 logger.debug("Set property : " + currProp + " value " + currValue+" for type "+type);
+			//	 logger.debug("Set property : " + currProp + " value " + currValue+" for type "+type);
 				if (currValue.length() > 0) {
 					nodeService.setProperty(curNodeRef.peek(), currProp, currValue.toString());
 				} else {
@@ -272,7 +272,7 @@ public class ImportEntityXmlVisitor {
 			if(ret==null){
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, name);
-	
+				logger.debug("Creating missing node :"+name+" at path :"+parentPath);
 				ret =  nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, type, properties).getChildRef();
 			} else {
 				if(!nodeService.getType(ret).equals(type)){
@@ -335,7 +335,7 @@ public class ImportEntityXmlVisitor {
 			if (ret.size() > 0) {
 				logger.debug("Found node for query :" + runnedQuery);
 				for (NodeRef node : ret) {
-					if (name.equals(nodeService.getProperty(node, ContentModel.PROP_NAME))) {
+					if (name.equals(nodeService.getProperty(node, RemoteHelper.getPropName(type)))) {
 						return node;
 					}
 				}

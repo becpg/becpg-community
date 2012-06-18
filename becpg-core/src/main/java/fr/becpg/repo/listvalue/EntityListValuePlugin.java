@@ -258,9 +258,9 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			}
 		}
 
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(BeCPGModel.PROP_LNK_VALUE));
+		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, getSort(BeCPGModel.PROP_LKV_VALUE));
 
-		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LNK_VALUE, nodeService));
+		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE, nodeService));
 
 	}
 

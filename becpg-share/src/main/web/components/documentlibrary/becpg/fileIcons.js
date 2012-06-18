@@ -1,7 +1,28 @@
 
+      
+                  
+beCPG.util.getFileIcon = function(p_fileName, p_record ,p_isContainer,p_isSimpleView)
+{
+   
+   var  node = p_record.jsNode,
+		 type = node.type;
+		 
+   var iconSize = p_isSimpleView ? 32 :64;
+   
+   if(p_isContainer && !(type == "{http://www.bcpg.fr/model/becpg/1.0}entityFolder" || type == "bcpg:entityFolder")){
+   	return Alfresco.constants.URL_RESCONTEXT 
+      + 'components/documentlibrary/images/folder-'+iconSize+'.png';
+   }
+   
+   if(p_isSimpleView || type == "{http://www.bcpg.fr/model/becpg/1.0}entityFolder" || type == "bcpg:entityFolder"){
+   	return Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'+Alfresco.util.getFileIcon(p_fileName,type,iconSize);
+   }
 
-
-
+   return  Alfresco.DocumentList.generateThumbnailUrl(p_record);
+   
+};
+                  
+                  
 /**
  * Override file icon types
  */
@@ -63,6 +84,8 @@ Alfresco.util.getFileIcon.types =
    "{http://www.bcpg.fr/model/quality/1.0}controlPoint":"controlPoint",
    "qa:controlPoint":"controlPoint",
    "{http://www.bcpg.fr/model/quality/1.0}qualityControl":"qualityControl",
-   "qa:qualityControl":"qualityControl"
+   "qa:qualityControl":"qualityControl",
+   "{http://www.bcpg.fr/model/becpg/1.0}entityFolder":"entityFolder",
+   "bcpg:entityFolder":"entityFolder"
 		   
 };

@@ -4016,7 +4016,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:lkvValue" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
@@ -4039,7 +4039,7 @@
 			<!-- Create item form -->
 			<form >
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:lkvValue" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
@@ -4057,7 +4057,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:lkvValue" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
@@ -4066,7 +4066,7 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
-					<show id="cm:name" />
+					<show id="bcpg:lkvValue" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>

@@ -1,79 +1,79 @@
 /* Data Types */
 .datagrid span.finishedProduct {
-	background: url(../../components/images/products/finishedProduct-16.png)
+	background: url(../../components/images/filetypes/generic-finishedProduct-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .datagrid span.localSemiFinishedProduct {
 	background:
-		url(../../components/images/products/localSemiFinishedProduct-16.png)
+		url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .datagrid span.packagingKit {
-	background: url(../../components/images/products/packagingKit-16.png)
+	background: url(../../components/images/filetypes/generic-packagingKit-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .datagrid span.packagingMaterial {
 	background:
-		url(../../components/images/products/packagingMaterial-16.png)
+		url(../../components/images/filetypes/generic-packagingMaterial-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .datagrid span.rawMaterial {
-	background: url(../../components/images/products/rawMaterial-16.png)
+	background: url(../../components/images/filetypes/generic-rawMaterial-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .datagrid span.semiFinishedProduct {
 	background:
-		url(../../components/images/products/semiFinishedProduct-16.png)
+		url(../../components/images/filetypes/generic-semiFinishedProduct-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 /** --- **/
 .datagrid span.finishedProduct-ToValidate {
-	background: url(../../components/images/products/finishedProduct-16.png)
+	background: url(../../components/images/filetypes/generic-finishedProduct-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .datagrid span.localSemiFinishedProduct-ToValidate {
 	background:
-		url(../../components/images/products/localSemiFinishedProduct-16.png)
+		url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .datagrid span.packagingKit-ToValidate {
-	background: url(../../components/images/products/packagingKit-16.png)
+	background: url(../../components/images/filetypes/generic-packagingKit-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .datagrid span.packagingMaterial-ToValidate {
 	background:
-		url(../../components/images/products/packagingMaterial-16.png)
+		url(../../components/images/filetypes/generic-packagingMaterial-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .datagrid span.rawMaterial-ToValidate {
-	background: url(../../components/images/products/rawMaterial-16.png)
+	background: url(../../components/images/filetypes/generic-rawMaterial-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .datagrid span.semiFinishedProduct-ToValidate {
 	background:
-		url(../../components/images/products/semiFinishedProduct-16.png)
+		url(../../components/images/filetypes/generic-semiFinishedProduct-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
@@ -88,8 +88,8 @@
 
 /** --- **/
 .datagrid span.finishedProduct-Valid {
-	background: url(../../components/images/products/valid-16.png),
-		url(../../components/images/products/finishedProduct-16.png);
+	background: url(../../components/images/states/valid-16.png),
+		url(../../components/images/filetypes/generic-finishedProduct-16.png);
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
@@ -98,8 +98,8 @@
 }
 
 .datagrid span.localSemiFinishedProduct-Valid {
-	background: url(../../components/images/products/valid-16.png),
-		url(../../components/images/products/localSemiFinishedProduct-16.png);
+	background: url(../../components/images/states/valid-16.png),
+		url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png);
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
@@ -108,8 +108,8 @@
 }
 
 .datagrid span.packagingKit-Valid {
-	background: url(../../components/images/products/valid-16.png),
-		url(../../components/images/products/packagingKit-16.png);
+	background: url(../../components/images/states/valid-16.png),
+		url(../../components/images/filetypes/generic-packagingKit-16.png);
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
@@ -118,8 +118,8 @@
 }
 
 .datagrid span.packagingMaterial-Valid {
-	background: url(../../components/images/products/valid-16.png),
-		url(../../components/images/products/packagingMaterial-16.png);
+	background: url(../../components/images/states/valid-16.png),
+		url(../../components/images/filetypes/generic-packagingMaterial-16.png);
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
@@ -128,8 +128,8 @@
 }
 
 .datagrid span.rawMaterial-Valid {
-	background: url(../../components/images/products/valid-16.png),
-		url(../../components/images/products/rawMaterial-16.png);
+	background: url(../../components/images/states/valid-16.png),
+		url(../../components/images/filetypes/generic-rawMaterial-16.png);
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
@@ -138,8 +138,8 @@
 }
 
 .datagrid span.semiFinishedProduct-Valid {
-	background: url(../../components/images/products/valid-16.png),
-		url(../../components/images/products/semiFinishedProduct-16.png);
+	background: url(../../components/images/states/valid-16.png),
+		url(../../components/images/filetypes/generic-semiFinishedProduct-16.png);
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
@@ -148,7 +148,7 @@
 }
 
 .datagrid span.resourceProduct-Valid {
-	background: url(../../components/images/products/valid-16.png),
+	background: url(../../components/images/states/valid-16.png),
 		url(../../components/images/filetypes/generic-resourceProduct-16.png);
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -166,19 +166,19 @@
 
 /* reqType */
 .datagrid .reqTypeForbidden {
-	background: url(../../components/images/productLists/stop-16.png)
+	background: url(../../components/images/states/stop-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .datagrid .reqTypeTolerated {
-	background: url(../../components/images/productLists/warning-16.png)
+	background: url(../../components/images/states/warning-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .datagrid .reqTypeInfo {
-	background: url(../../components/images/productLists/info-16.png)
+	background: url(../../components/images/states/info-16.png)
 		no-repeat;
 	padding-left: 20px;
 }

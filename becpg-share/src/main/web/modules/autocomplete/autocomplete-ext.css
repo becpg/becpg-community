@@ -3,85 +3,85 @@
 
 
 .yui-ac-container span.finishedProduct-ToValidate {
-	background: url(../../components/images/products/finishedProduct-16.png) no-repeat;
+	background: url(../../components/images/filetypes/generic-finishedProduct-16.png) no-repeat;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.localSemiFinishedProduct-ToValidate {
-	background: url(../../components/images/products/localSemiFinishedProduct-16.png)
+	background: url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.packagingKit-ToValidate {
-	background: url(../../components/images/products/packagingKit-16.png) no-repeat;
+	background: url(../../components/images/filetypes/generic-packagingKit-16.png) no-repeat;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.packagingMaterial-ToValidate {
-	background: url(../../components/images/products/packagingMaterial-16.png) no-repeat;
+	background: url(../../components/images/filetypes/generic-packagingMaterial-16.png) no-repeat;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.rawMaterial-ToValidate {
-	background: url(../../components/images/products/rawMaterial-16.png) no-repeat;
+	background: url(../../components/images/filetypes/generic-rawMaterial-16.png) no-repeat;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.semiFinishedProduct-ToValidate {
-	background: url(../../components/images/products/semiFinishedProduct-16.png) no-repeat;
+	background: url(../../components/images/filetypes/generic-semiFinishedProduct-16.png) no-repeat;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.resourceProduct-ToValidate {
-	background: url(../../components/images/products/resourceProduct-16.png) no-repeat;
+	background: url(../../components/images/filetypes/generic-resourceProduct-16.png) no-repeat;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.finishedProduct-Valid {
-	background: url(../../components/images/products/valid-16.png), url(../../components/images/products/finishedProduct-16.png) ;
+	background: url(../../components/images/states/valid-16.png), url(../../components/images/filetypes/generic-finishedProduct-16.png) ;
 	background-repeat:  no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.localSemiFinishedProduct-Valid {
-	background: url(../../components/images/products/valid-16.png), url(../../components/images/products/localSemiFinishedProduct-16.png);
+	background: url(../../components/images/states/valid-16.png), url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png);
 		background-repeat:  no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.packagingKit-Valid {
-	background: url(../../components/images/products/valid-16.png), url(../../components/images/products/packagingKit-16.png);
+	background: url(../../components/images/states/valid-16.png), url(../../components/images/filetypes/generic-packagingKit-16.png);
 	background-repeat:  no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.packagingMaterial-Valid {
-	background: url(../../components/images/products/valid-16.png), url(../../components/images/products/packagingMaterial-16.png);
+	background: url(../../components/images/states/valid-16.png), url(../../components/images/filetypes/generic-packagingMaterial-16.png);
 	background-repeat:  no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.rawMaterial-Valid {
-	background: url(../../components/images/products/valid-16.png), url(../../components/images/products/rawMaterial-16.png) ;
+	background: url(../../components/images/states/valid-16.png), url(../../components/images/filetypes/generic-rawMaterial-16.png) ;
 	background-repeat:  no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.semiFinishedProduct-Valid {
-	background: url(../../components/images/products/valid-16.png), url(../../components/images/products/semiFinishedProduct-16.png);
+	background: url(../../components/images/states/valid-16.png), url(../../components/images/filetypes/generic-semiFinishedProduct-16.png);
 	background-repeat:  no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
 }
 
 .yui-ac-container span.resourceProduct-Valid {
-	background: url(../../components/images/products/valid-16.png), url(../../components/images/products/resourceProduct-16.png);
+	background: url(../../components/images/states/valid-16.png), url(../../components/images/filetypes/generic-resourceProduct-16.png);
 	background-repeat:  no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;

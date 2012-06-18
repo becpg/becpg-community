@@ -249,18 +249,18 @@ div.current-formula
 
 
 .spel-editor span.product {
-	background: url(../../components/images/products/finishedProduct-16.png) no-repeat;
+	background: url(../../components/images/filetypes/generic-finishedProduct-16.png) no-repeat;
 	padding-left: 20px;
 }
 
 
 .spel-editor span.packagingList {
-	background: url(../../components/images/products/packagingKit-16.png) no-repeat;
+	background: url(../../components/images/filetypes/generic-packagingKit-16.png) no-repeat;
 	padding-left: 20px;
 }
 
 .spel-editor span.processList {
-	background: url(../../components/images/products/packagingKit-16.png) no-repeat;
+	background: url(../../components/images/filetypes/generic-packagingKit-16.png) no-repeat;
 	padding-left: 20px;
 }
 

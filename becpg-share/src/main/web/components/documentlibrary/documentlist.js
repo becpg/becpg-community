@@ -1480,63 +1480,42 @@
          {
             var record = oRecord.getData(),
                node = record.jsNode,
-               properties = node.properties,
                name = record.displayName,
                isContainer = node.isContainer,
                isLink = node.isLink,
                extn = name.substring(name.lastIndexOf(".")),
                imgId = node.nodeRef.nodeRef; // DD added
 
-            
-            var containerTarget; // This will only get set if thumbnail represents a container
-            
-            if (scope.options.simpleView)
-            {
-               /**
-                * Simple View
-                */
-               oColumn.width = 40;
-               Dom.setStyle(elCell, "width", oColumn.width + "px");
-               Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
-
-               //TODO icon + thème inci
-               
-               if (isContainer)
-               {
-                  elCell.innerHTML = '<span class="folder-small">' + (isLink ? '<span class="link"></span>' : '') + (scope.dragAndDropEnabled ? '<span class="droppable"></span>' : '') + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/documentlibrary/images/folder-32.png" /></a>';
-                  containerTarget = new YAHOO.util.DDTarget(imgId); // Make the folder a target
-               }
-               else
-               {
-                  var id = scope.id + '-preview-' + oRecord.getId();
-                  elCell.innerHTML = '<span id="' + id + '" class="icon32">' + (isLink ? '<span class="link"></span>' : '') + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' +  Alfresco.util.getFileIcon(name,node.type) + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
-
-                  // Preview tooltip
-                  scope.previewTooltips.push(id);
-               }
-            }
-            else
-            {
                /**
                 * Detailed View
                 */
-               oColumn.width = 100;
+               oColumn.width = scope.options.simpleView ? 40 : 100;
                Dom.setStyle(elCell, "width", oColumn.width + "px");
                Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
 
                if (isContainer)
                {
-                  elCell.innerHTML = '<span class="folder">' + (isLink ? '<span class="link"></span>' : '') + (scope.dragAndDropEnabled ? '<span class="droppable"></span>' : '') + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/documentlibrary/images/folder-64.png" /></a>';
+                  elCell.innerHTML = '<span class="folder'+(scope.options.simpleView?'-small':'')+'">' + (isLink ? '<span class="link"></span>' : '') 
+                  + (scope.dragAndDropEnabled ? '<span class="droppable"></span>' : '') 
+                  + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) 
+                  + '<img id="' + imgId + '" src="' + beCPG.util.getFileIcon(name,record,isContainer,scope.options.simpleView) +'" /></a>';
                   containerTarget = new YAHOO.util.DDTarget(imgId); // Make the folder a target
                }
                else
                {
-                  elCell.innerHTML = '<span class="thumbnail">' + (isLink ? '<span class="link"></span>' : '') + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + Alfresco.DocumentList.generateThumbnailUrl(record) + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
+               	 var id = scope.id + '-preview-' + oRecord.getId();
+                  elCell.innerHTML = '<span  id="' + id + '" class="'+(scope.options.simpleView?'icon32':'thumbnail')+'">' + (isLink ? '<span class="link"></span>' : '') 
+                  + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) 
+                  + '<img id="' + imgId + '" src="' + beCPG.util.getFileIcon(name,record,isContainer,scope.options.simpleView) 
+                  + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
+                  
+                  if(scope.options.simpleView){
+                  	// Preview tooltip
+                  	scope.previewTooltips.push(id);
+                  }
                }
-            }
-            
-
-            var dnd = new Alfresco.DnD(imgId, scope);
+ 
+               new Alfresco.DnD(imgId, scope);
             
          };
       },

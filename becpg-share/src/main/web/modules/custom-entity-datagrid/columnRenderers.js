@@ -24,7 +24,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	   propertyName : "text_cm:name",
+	   propertyName : "text_bcpg:lkvValue",
 	   renderer : function(oRecord, data, label, scope) {
 		   if(oRecord.getData("itemData")["prop_bcpg_depthLevel"]!=null){
 		      var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;

@@ -27,7 +27,7 @@ import fr.becpg.repo.thumbnail.BeCPGThumbnailService;
  * Provide specific thumbnail for custom becpg types
  * 
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
- * TODO
+ * 
  */
 public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 		BeCPGThumbnailService, ThumbnailService {
@@ -106,7 +106,7 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 					logger.debug(e,e);
 				}
 				
-			}
+			} 
 			imgName = "generic-" + type.getLocalName() + "-thumb.png";
 			return getImage(imgName);
 		}

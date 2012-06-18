@@ -10,7 +10,7 @@ public class RemoteHelper {
 
 	public static QName getPropName(QName type) {
 		if(BeCPGModel.TYPE_LINKED_VALUE.equals(type)){
-			return BeCPGModel.PROP_LNK_VALUE;
+			return BeCPGModel.PROP_LKV_VALUE;
 		}
 		return ContentModel.PROP_NAME;
 	}

@@ -197,7 +197,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			value = propertyFormats.getDatetimeFormat().format(v);
 		} else if (dataType.equals(DataTypeDefinition.NODE_REF.toString())) {
-			value = (String) nodeService.getProperty((NodeRef) v,ContentModel.PROP_NAME);
+			if(nodeService.getType((NodeRef) v).equals(BeCPGModel.PROP_LKV_VALUE)){
+				value = (String) nodeService.getProperty((NodeRef) v,BeCPGModel.PROP_LKV_VALUE);
+			} else {
+				value = (String) nodeService.getProperty((NodeRef) v,ContentModel.PROP_NAME);
+			}
 		} else if (dataType.equals(DataTypeDefinition.MLTEXT.toString())) {
 
 			value = v.toString();

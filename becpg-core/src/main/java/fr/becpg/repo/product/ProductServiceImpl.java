@@ -301,13 +301,17 @@ public class ProductServiceImpl implements ProductService {
 		if(productData.getHierarchy1() != null){
 			
 			String name = HierarchyHelper.getHierachyName(productData.getHierarchy1(), nodeService);
-			NodeRef hierarchy1NodeRef = repoService.createFolderByPath(productTypeNodeRef,name, name);
-		
-			// hierarchy 2
-			if(productData.getHierarchy2() != null){
-				name = HierarchyHelper.getHierachyName(productData.getHierarchy2(), nodeService);
-				destinationNodeRef = repoService.createFolderByPath(hierarchy1NodeRef,name, name);
-    		}
+			if(name!=null){
+				NodeRef hierarchy1NodeRef = repoService.createFolderByPath(productTypeNodeRef,name, name);
+
+				// hierarchy 2				
+				if(productData.getHierarchy2() != null){
+					name = HierarchyHelper.getHierachyName(productData.getHierarchy2(), nodeService);
+					if(name!=null){
+						destinationNodeRef = repoService.createFolderByPath(hierarchy1NodeRef,name, name);
+					}
+	    		}
+			}
 		}		
 		
 		if(destinationNodeRef != null){

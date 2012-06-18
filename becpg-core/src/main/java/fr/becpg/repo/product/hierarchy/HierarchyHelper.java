@@ -27,7 +27,7 @@ public class HierarchyHelper {
 
 	public static String getHierachyName(NodeRef hierarchyNodeRef, NodeService nodeService) {
 		if(hierarchyNodeRef!=null){
-			return (String)nodeService.getProperty(hierarchyNodeRef, BeCPGModel.PROP_LNK_VALUE);
+			return (String)nodeService.getProperty(hierarchyNodeRef, BeCPGModel.PROP_LKV_VALUE);
 		}
 		return null;
 	}

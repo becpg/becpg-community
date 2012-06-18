@@ -76,6 +76,48 @@
       },
 
       /**
+       * Fired by YUI when parent element is available for scripting.
+       *
+       * @method onReady
+       */
+      onReady: function DataLists_onReady()
+      {
+         this.widgets.newList = Alfresco.util.createYUIButton(this, "newListButton", this.onNewList,
+         {
+            disabled: true
+         });
+         // Retrieve the lists from the specified Site & Container
+         this.populateDataLists(
+         {
+            fn: function DataLists_onReady_callback()
+            {
+               this.renderDataLists();
+
+               // Select current list, if relevant
+               if (this.options.listId.length > 0)
+               {
+                  YAHOO.Bubbling.fire("activeDataListChanged",
+                  {
+                  	list : this.options.listId,
+                     dataList: this.dataLists[this.options.listId],
+                     scrollTo: true
+                  });
+               }
+               else
+               {
+                  YAHOO.Bubbling.fire("hideFilter");
+               }
+               
+               if (this.dataListsLength === 0 || window.location.hash === "#new")
+               {
+                  this.widgets.newList.fireEvent("click");
+               }
+            },
+            scope: this
+         });
+      },
+      
+      /**
        * Retrieves the Data Lists from the Repo
        *
        * @method populateDataLists
@@ -147,9 +189,6 @@
 
          Alfresco.util.Ajax.jsonGet(
          {
-			//### beCPG : call beCPG service
-            //url: $combine(Alfresco.constants.PROXY_URI, "slingshot/datalists/lists/site", this.options.siteId, this.options.containerId),
-            //url: $combine(Alfresco.constants.PROXY_URI, "becpg/entitylists/node", this.options.containerId.replace(":/", "")),
 			url: $combine(Alfresco.constants.PROXY_URI, "becpg/entitylists/node", this.options.entityNodeRef.replace(":/", "")),
             successCallback:
             {
@@ -250,7 +289,14 @@
                {
                   if (lists.hasOwnProperty(index))
                   {
+                  	
+                  	
                      list = lists[index];
+                     
+                     if(this.options.listId==null || this.options.listId.length<1){
+                  		this.options.listId = list.name;
+                  	}
+                     
                      permissions = list.permissions;
                      
                      // Build the DOM elements
