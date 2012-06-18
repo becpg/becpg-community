@@ -134,6 +134,9 @@ public class CreateProduct extends JBPMSpringActionHandler {
 
 					NodeRef productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, parentNodeRef, entityType,
 							entityName);
+					
+					// change state: ToValidate
+					nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE, "ToValidate");
 
 					// profitability
 					Double unitPrice = (Double) executionContext.getContextInstance().getVariable(
