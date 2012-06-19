@@ -35,6 +35,9 @@
 				<#if row.item.typeShort == "bcpg:dynamicCharachList" >
 				"name": "${row.item.properties["bcpg:dynamicCharachTitle"]!""}",
 				"title": "${row.item.properties["bcpg:dynamicCharachTitle"]!""}",
+				<#elseif row.item.typeShort == "bcpg:linkedValue" >
+				"name": "${row.item.properties["bcpg:lkvValue"]!""}",
+				"title": "${row.item.properties["bcpg:lkvValue"]!""}",
 				<#else>
 				"name": "${row.item.properties.name!""}",
 				"title": "${row.item.properties.title!""}",

@@ -86,6 +86,8 @@ Alfresco.util.getFileIcon.types =
    "{http://www.bcpg.fr/model/quality/1.0}qualityControl":"qualityControl",
    "qa:qualityControl":"qualityControl",
    "{http://www.bcpg.fr/model/becpg/1.0}entityFolder":"entityFolder",
-   "bcpg:entityFolder":"entityFolder"
+   "bcpg:entityFolder":"entityFolder",
+   "{http://www.bcpg.fr/model/becpg/1.0}systemEntity":"systemEntity",
+   "bcpg:systemEntity":"systemEntity"
 		   
 };

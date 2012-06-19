@@ -49,7 +49,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	private static Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);
 
 	private static final String PERSON_DISPLAY_CACHE = "fr.becpg.cache.personDisplayCache";
-	// private static final String SEARCH_CACHE = "fr.becpg.cache.searchCache";
 
 	private NodeService nodeService;
 
@@ -202,7 +201,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			value = propertyFormats.getDatetimeFormat().format(v);
 		} else if (dataType.equals(DataTypeDefinition.NODE_REF.toString())) {
-			if(nodeService.getType((NodeRef) v).equals(BeCPGModel.PROP_LKV_VALUE)){
+			if(nodeService.getType((NodeRef) v).equals(BeCPGModel.TYPE_LINKED_VALUE)){
 				value = (String) nodeService.getProperty((NodeRef) v,BeCPGModel.PROP_LKV_VALUE);
 			} else {
 				value = (String) nodeService.getProperty((NodeRef) v,ContentModel.PROP_NAME);

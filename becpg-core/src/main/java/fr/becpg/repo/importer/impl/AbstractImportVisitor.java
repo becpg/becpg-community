@@ -277,9 +277,13 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			String name = (String)properties.get(ContentModel.PROP_NAME);
 			if(logger.isDebugEnabled()){
 				logger.debug("create node. Type: " + importContext.getType() + " - Properties: " + properties);
-			}				
+			}
+			QName assocName = ContentModel.ASSOC_CHILDREN;
+			if(name != null && name.length()>0){
+				assocName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
+			}
 			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), importContext.getType(), properties).getChildRef();			 
+					assocName, importContext.getType(), properties).getChildRef();			 
 		}
 		else if(importContext.isDoUpdate()){
 			
