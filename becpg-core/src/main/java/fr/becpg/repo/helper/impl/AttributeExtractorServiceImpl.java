@@ -41,6 +41,7 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.security.SecurityService;
 
 public class AttributeExtractorServiceImpl implements AttributeExtractorService {
@@ -175,7 +176,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			if (propertyDef.getName().equals(BeCPGModel.PROP_PRODUCT_STATE)) {
 
 				value = TranslateHelper.getTranslatedProductState(ProductData.getSystemState((String) v));
-			} else if (propertyDef.isMultiValued()) {
+			}else if (propertyDef.getName().equals(BeCPGModel.PROP_COMPOLIST_DECL_TYPE)) {
+
+				value = TranslateHelper.getTranslatedDeclarationType(CompoListDataItem.parseDeclarationType((String) v));
+			}
+			else if (propertyDef.isMultiValued()) {
 
 				List<String> values = (List<String>) v;
 

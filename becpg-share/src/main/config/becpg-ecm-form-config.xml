@@ -23,7 +23,7 @@
 					</field>		
 					<field id="ecm:ecoType" read-only="true">
 						<control
-							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							template="/fr/becpg/components/form/controls/selectone.ftl" >
 							 <control-param name="options">Replacement|Remplacement,Simulation|Simulation,Variant|Variante</control-param>
 						</control>
 					</field>					
@@ -61,13 +61,13 @@
 					</field>		
 					<field id="ecm:ecoState">
 						<control
-							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							template="/fr/becpg/components/form/controls/selectone.ftl" >
 							 <control-param name="options">ToValidate|A valider,Valid|Validé,Refused|Refusé,ToCalculateWUsed|Calculer les cas d'emploi,WUsedCalculated|Cas d'emploi calculés,ToSimulate|Simuler,Simulated|Simulé,ToApply|Appliquer,Applied|Appliqué</control-param>
 						</control>
 					</field>
 					<field id="ecm:ecoType">
 						<control
-							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							template="/fr/becpg/components/form/controls/selectone.ftl" >
 							 <control-param name="options">Replacement|Remplacement,Simulation|Simulation,Variant|Variante</control-param>
 						</control>
 					</field>					
@@ -90,7 +90,7 @@
 				<appearance>
 					<field id="ecm:rlRevisionType">
 						<control
-							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							template="/fr/becpg/components/form/controls/selectone.ftl" >
 							 <control-param name="options">NoRevision|Sans révision,Minor|Mineure,Major|Majeure</control-param>
 						</control>
 					</field>						
@@ -128,7 +128,7 @@
 				<appearance>
 					<field id="ecm:rlRevisionType">
 						<control
-							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							template="/fr/becpg/components/form/controls/selectone.ftl" >
 							 <control-param name="options">NoRevision|Sans révision,Minor|Mineure,Major|Majeure</control-param>
 						</control>
 					</field>
@@ -200,8 +200,8 @@
 				<appearance>
 					<field id="ecm:culReqType">
 					<control
-						template="/org/alfresco/components/form/controls/selectone.ftl" >
-						 <control-param name="options">Forbidden|Interdit,Tolerated|Toléré,Info|Info</control-param>
+						template="/fr/becpg/components/form/controls/selectone.ftl" >
+						 <control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info</control-param>
 					</control>
 				</field>
 				</appearance>							
@@ -236,9 +236,9 @@
 				<appearance>
 					<field id="ecm:culReqType">
 					<control
-						template="/org/alfresco/components/form/controls/selectone.ftl" >
-						 <control-param name="options">Forbidden|Interdit,Tolerated|Toléré,Info|Info</control-param>
-					</control>
+						template="/fr/becpg/components/form/controls/selectone.ftl" >
+						 <control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info</control-param>
+					data.reqtype.infontrol>
 				</field>
 				</appearance>				
 			</form>

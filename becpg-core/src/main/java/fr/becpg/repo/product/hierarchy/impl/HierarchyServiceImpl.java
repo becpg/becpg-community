@@ -74,8 +74,9 @@ public class HierarchyServiceImpl implements HierarchyService{
 	@Override
 	public NodeRef createHierarchy2(NodeRef dataListNodeRef, NodeRef hierachy1NodeRef, String hierachy2) {
 		
+		logger.debug("createHierarchy, hierarchy1 : " + hierachy1NodeRef + " - hierarchy2: " + hierachy2);
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, hierachy2);
+		properties.put(BeCPGModel.PROP_LKV_VALUE, hierachy2);
 		if (hierachy1NodeRef != null) {
 			properties.put(BeCPGModel.PROP_PARENT_LEVEL, hierachy1NodeRef);
 		}

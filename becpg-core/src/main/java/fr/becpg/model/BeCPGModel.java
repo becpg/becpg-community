@@ -498,7 +498,7 @@ public interface BeCPGModel {
 	static final QName TYPE_LINKED_VALUE = QName.createQName(BECPG_URI,
 			"linkedValue");
 	
-	// lnkValue
+	// lkvValue
 	/** The Constant PROP_LNK_VALUE. */
 	static final QName PROP_LKV_VALUE = QName.createQName(BECPG_URI,
 			"lkvValue");

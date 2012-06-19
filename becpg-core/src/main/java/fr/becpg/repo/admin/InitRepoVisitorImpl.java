@@ -644,7 +644,11 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		Map<String,QName> entityLists = new HashMap<String,QName>();
 		
 		entityLists.put(RepoConsts.PATH_ING_TYPES,BeCPGModel.TYPE_LIST_VALUE);
-	
+		entityLists.put(RepoConsts.PATH_ALLERGEN_TYPES,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_NUT_GROUPS,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_NUT_TYPES,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_PACKAGING_LEVELS,BeCPGModel.TYPE_LIST_VALUE);
+		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2010-2011 beCPG. All rights reserved.
  */
-package fr.becpg.repo.entity;
+package fr.becpg.repo.entity.datalist.policy;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.test.RepoBaseTestCase;

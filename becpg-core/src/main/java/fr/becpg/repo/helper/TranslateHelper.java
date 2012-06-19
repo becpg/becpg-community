@@ -7,12 +7,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.NullableBoolean;
+import fr.becpg.repo.product.data.productList.DeclarationType;
 
 public class TranslateHelper {
 
 	private static final String PATH_MSG_PFX= "path.";
 	private static final String PRODUCT_STATE_MSG_PFX = "state.product.";
+	private static final String DECLARATION_TYPE_MSG_PFX = "declarationType.";
 	
 	private static final String MESSAGE_TRUE = "data.boolean.true";
 	private static final String MESSAGE_FALSE = "data.boolean.false";
@@ -60,19 +61,14 @@ public class TranslateHelper {
 		return translation;
 	}
 	
-	public static String getTranslatedNullableBoolean(NullableBoolean b) {
+	public static String getTranslatedDeclarationType(DeclarationType declType) {
 		
-		String translation = "";
-		
-		if(NullableBoolean.True.equals(b)){
-			translation = I18NUtil.getMessage(MESSAGE_TRUE, Locale.getDefault());
-		}
-		else if(NullableBoolean.False.equals(b)){
-			translation = I18NUtil.getMessage(MESSAGE_FALSE, Locale.getDefault());
+		String translation = I18NUtil.getMessage(DECLARATION_TYPE_MSG_PFX + declType.toString().toLowerCase(), Locale.getDefault());
+		if(translation == null){
+			logger.error("Failed to translate declarationType. declarationType: " + declType);
 		}
 		
 		return translation;
 	}
-	
 	
 }

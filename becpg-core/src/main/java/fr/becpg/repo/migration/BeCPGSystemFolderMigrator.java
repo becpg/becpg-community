@@ -1,6 +1,5 @@
 package fr.becpg.repo.migration;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileExistsException;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -24,7 +22,6 @@ import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -270,6 +267,7 @@ public class BeCPGSystemFolderMigrator {
 					if(versionHierarchy1 != null){
 						
 						if(versionHierarchy1.equals(hierarchy1)){
+							logger.debug("getOrcreateDeletedHierarchy hierarchy1: " + versionHierarchy1);
 							hierarchy1NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, null, versionHierarchy1);
 						}						
 					}
@@ -280,6 +278,7 @@ public class BeCPGSystemFolderMigrator {
 					if(versionHierarchy2 != null){
 						
 						if(!versionHierarchy2.equals(hierarchy2)){
+							logger.debug("getOrcreateDeletedHierarchy hierarchy2: " + versionHierarchy2);
 							hierarchy2NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, hierarchy1NodeRef, versionHierarchy2);
 						}						
 					}
@@ -320,22 +319,25 @@ public class BeCPGSystemFolderMigrator {
 				//hierarchy1
 				NodeRef hierarchy1NodeRef = null;
 				String hierarchy1 = (String)nodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
-				if(!hierarchy1.contains("/")){
+				if(hierarchy1 == null){
+					hierarchy1NodeRef = null;
+				}
+				else if(!hierarchy1.contains("/")){
 					
 					hierarchy1NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, null, hierarchy1);
 					
-				}
-				else{
-					hierarchy1NodeRef = new NodeRef(hierarchy1);
 				}
 				
 				//hierarchy2
 				NodeRef hierarchy2NodeRef = null;
 				String hierarchy2 = (String)nodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
-				if(!hierarchy2.contains("/")){
+				if(hierarchy2 == null){
+					hierarchy2NodeRef = null;
+				}
+				else if(!hierarchy2.contains("/")){
 					
 					hierarchy2NodeRef = hierarchy1NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, hierarchy1NodeRef, hierarchy2);
-				}
+				}				
 				
 				try{
 					//disable policy to classify on product

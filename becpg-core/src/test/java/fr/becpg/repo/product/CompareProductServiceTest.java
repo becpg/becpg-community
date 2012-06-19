@@ -368,15 +368,15 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, localSF1NodeRef));
+						DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+						DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+						DeclarationType.Detail, rawMaterial2NodeRef));
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, localSF2NodeRef));
+						DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+						DeclarationType.Declare, rawMaterial3NodeRef));
 				// compoList.add(new CompoListDataItem(null, 2, 3d, 0d,
 				// 0d, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
 				// rawMaterial4NodeRef));
@@ -419,17 +419,17 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 
 				compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, localSF1NodeRef));
+						DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+						DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+						DeclarationType.Detail, rawMaterial2NodeRef));
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, localSF2NodeRef));
+						DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, null,
-						DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+						DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
+						DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 
 				NodeRef fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);
@@ -576,15 +576,15 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, localSF1NodeRef));
+						DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+						DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+						DeclarationType.Detail, rawMaterial2NodeRef));
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, localSF2NodeRef));
+						DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+						DeclarationType.Declare, rawMaterial3NodeRef));
 				// compoList.add(new CompoListDataItem(null, 2, 3d, 0d,
 				// 0d, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
 				// rawMaterial4NodeRef));
@@ -599,17 +599,17 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 
 				compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, localSF1NodeRef));
+						DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DECLARE_FR, rawMaterial1NodeRef));
+						DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, rawMaterial2NodeRef));
+						DeclarationType.Detail, rawMaterial2NodeRef));
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, localSF2NodeRef));
+						DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, null,
-						DeclarationType.DECLARE_FR, rawMaterial3NodeRef));
+						DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.DETAIL_FR, rawMaterial4NodeRef));
+						DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 
 				NodeRef fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);

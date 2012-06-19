@@ -30,7 +30,6 @@ import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
-import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.NullableBoolean;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -255,7 +254,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	private void calculateILOfPart(ProductData productData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Double> totalQtyIngMap) throws FormulateException{
 		
 		//OMIT is not taken in account
-		if(DeclarationType.parse(compoListDataItem.getDeclType()) == DeclarationType.OMIT){
+		if(compoListDataItem.getDeclType() == DeclarationType.Omit){
 			return;
 		}
 		
@@ -332,19 +331,13 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 				for(ForbiddenIngListDataItem fil : productSpecicationData.getForbiddenIngList()){					
 					
 					// GMO
-					if(fil.isGMO() != null && !fil.isGMO().equals(NullableBoolean.Null)){
-						Boolean b = fil.isGMO().equals(NullableBoolean.True) ? Boolean.TRUE : Boolean.FALSE;
-						if(!b.equals(ingListDataItem.isGMO())){
-							continue; // check next rule
-						}
+					if(fil.isGMO() != null && !fil.isGMO().equals(ingListDataItem.isGMO())){
+						continue; // check next rule
 					}
 					
 					// Ionized
-					if(fil.isIonized() != null && !fil.isIonized().equals(NullableBoolean.Null)){
-						Boolean b = fil.isIonized().equals(NullableBoolean.True) ? Boolean.TRUE : Boolean.FALSE;
-						if(!b.equals(ingListDataItem.isIonized())){
-							continue; // check next rule
-						}
+					if(fil.isIonized() != null && !fil.isIonized().equals(ingListDataItem.isIonized())){
+						continue; // check next rule
 					}
 					
 					// Ings
@@ -452,9 +445,9 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			for(int index = 0; index<compoList.size() ; index++){
 				
 				CompoListDataItem compoListDataItem = compoList.get(index);		
-				DeclarationType declarationType = DeclarationType.parse(compoListDataItem.getDeclType());
+				DeclarationType declarationType = compoListDataItem.getDeclType();
 				
-				if(declarationType == DeclarationType.DETAIL){
+				if(declarationType == DeclarationType.Detail){
 					int parentIndex = index;
 					//PQU 19/03/2011
 					//int lastChild = index + 1;
@@ -474,7 +467,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 					}				
 					index = lastChild;
 				}
-				else if(declarationType == DeclarationType.GROUP){
+				else if(declarationType == DeclarationType.Group){
 					int parentIndex = index;
 					//int lastChild = index + 1;
 					int lastChild = index;
@@ -486,10 +479,10 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 					compositeIngList.add(grpIng);
 					index = lastChild;
 				}
-				else if(declarationType == DeclarationType.DO_NOT_DECLARE){
+				else if(declarationType == DeclarationType.DoNotDeclare){
 					defaultCompositeIng = calculateILLOfCompositeIng(defaultCompositeIng, compoListDataItem);
 				}
-				else if(declarationType == DeclarationType.DECLARE){
+				else if(declarationType == DeclarationType.Declare){
 					logger.trace("calculateILL - DECLARE : defaultCompositeIng: " +  defaultCompositeIng.getIng() + " - current product: " + nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
 					defaultCompositeIng = calculateILLOfCompositeIng(defaultCompositeIng, compoListDataItem);
 				}		
@@ -543,15 +536,15 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		Collection<QName> dataLists = new ArrayList<QName>();		
 		dataLists.add(BeCPGModel.TYPE_INGLIST);			
 		ProductData part = productDAO.find(compoListDataItem.getProduct(), dataLists);
-		DeclarationType declarationType = DeclarationType.parse(compoListDataItem.getDeclType());
-		boolean isDeclared = (declarationType == DeclarationType.DO_NOT_DECLARE) ? false:true;
+		DeclarationType declarationType = compoListDataItem.getDeclType();
+		boolean isDeclared = (declarationType == DeclarationType.DoNotDeclare) ? false:true;
 		CompositeIng compositeIng = parentIng;
 		
 		//OMIT, DETAIL
-		if(declarationType == DeclarationType.OMIT){
+		if(declarationType == DeclarationType.Omit){
 			return parentIng;//nothing to do...
 		}
-		else if(declarationType == DeclarationType.DETAIL){
+		else if(declarationType == DeclarationType.Detail){
 			
 			MLText mlText =  (MLText)mlNodeService.getProperty(part.getNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
 			compositeIng = new CompositeIng(part.getNodeRef(), mlText);

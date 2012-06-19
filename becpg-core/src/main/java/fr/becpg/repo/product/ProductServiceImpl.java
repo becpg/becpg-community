@@ -6,13 +6,10 @@ package fr.becpg.repo.product;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.OwnableService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
@@ -34,15 +31,8 @@ import fr.becpg.repo.product.hierarchy.HierarchyHelper;
  */
 public class ProductServiceImpl implements ProductService {
 
-	
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(ProductServiceImpl.class);	
-	
 	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;	
+	private NodeService nodeService;	
 	
 	/** The product dao. */
 	private ProductDAO productDAO;
@@ -85,16 +75,7 @@ public class ProductServiceImpl implements ProductService {
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
-	}
-	
-	/**
-	 * Sets the file folder service.
-	 *
-	 * @param fileFolderService the new file folder service
-	 */
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
-	}		
+	}	
 	
 	/**
 	 * Sets the product dao.

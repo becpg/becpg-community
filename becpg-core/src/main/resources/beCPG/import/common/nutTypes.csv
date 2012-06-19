@@ -1,0 +1,7 @@
+PATH;/System/Lists/bcpg:entityLists/NutTypes
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Nutriment
+VALUES;Vitamine
+VALUES;Minéraux
+VALUES;Valeur énergétique

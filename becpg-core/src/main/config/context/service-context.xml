@@ -390,9 +390,6 @@
 	<bean id="productDictionaryService" class="fr.becpg.repo.product.ProductDictionaryServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="fileFolderService" ref="fileFolderService" />		
-		<property name="repositoryHelper" ref="repositoryHelper" />
-		<property name="repoService" ref="repoService"/>
 	</bean>
 
 	<!-- Product DAO -->
@@ -406,7 +403,6 @@
 	<!-- Product -->
 	<bean id="productService" class="fr.becpg.repo.product.ProductServiceImpl">
 		<property name="nodeService" ref="nodeService" />
-		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="productDAO" ref="productDAO" />		
 		<property name="productDictionaryService" ref="productDictionaryService" />		
 		<property name="compositionCalculatingVisitor" ref="compositionCalculatingVisitor" />

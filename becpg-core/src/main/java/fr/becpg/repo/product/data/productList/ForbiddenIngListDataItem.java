@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.helper.TranslateHelper;
-
 public class ForbiddenIngListDataItem {
 
 	NodeRef nodeRef;
@@ -17,9 +15,9 @@ public class ForbiddenIngListDataItem {
 	
 	Double qtyPercMaxi;
 	
-	NullableBoolean isGMO;
+	Boolean isGMO;
 	
-	NullableBoolean isIonized;
+	Boolean isIonized;
 	
 	private List<NodeRef> ings = new ArrayList<NodeRef>();
 		
@@ -59,19 +57,19 @@ public class ForbiddenIngListDataItem {
 		this.qtyPercMaxi = qtyPercMaxi;
 	}
 
-	public NullableBoolean isGMO() {
+	public Boolean isGMO() {
 		return isGMO;
 	}
 
-	public void setIsGMO(NullableBoolean isGMO) {
+	public void setIsGMO(Boolean isGMO) {
 		this.isGMO = isGMO;
 	}
 
-	public NullableBoolean isIonized() {
+	public Boolean isIonized() {
 		return isIonized;
 	}
 
-	public void setIsIonized(NullableBoolean isIonized) {
+	public void setIsIonized(Boolean isIonized) {
 		this.isIonized = isIonized;
 	}
 
@@ -99,7 +97,7 @@ public class ForbiddenIngListDataItem {
 		this.bioOrigins = bioOrigins;
 	}
 	
-	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, Double qtyPercMaxi, NullableBoolean isGMO, NullableBoolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
+	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, Double qtyPercMaxi, Boolean isGMO, Boolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
 	{
 		setNodeRef(nodeRef);
 		setReqType(reqType);
@@ -110,33 +108,5 @@ public class ForbiddenIngListDataItem {
 		setIsGMO(isGMO);
 		setIsIonized(isIonized);		
 		setIngs(ings);
-	}
-	
-	public enum NullableBoolean{
-		Null,
-		True,
-		False;
-		
-		public static NullableBoolean valueOf(String value, boolean isTranslated){
-			
-			NullableBoolean nullableBoolean = NullableBoolean.Null;
-			
-			if(value!=null && !value.isEmpty()){
-				if(isTranslated){
-					
-					if(value.equals(TranslateHelper.getTranslatedNullableBoolean(NullableBoolean.True))){
-						nullableBoolean = NullableBoolean.True;
-					}
-					else{
-						nullableBoolean = NullableBoolean.False;
-					}
-				}
-				else{
-					nullableBoolean = NullableBoolean.valueOf(value);
-				}
-			}
-			
-			return nullableBoolean;
-		}
-	}		
+	}	
 }

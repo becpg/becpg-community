@@ -45,15 +45,6 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 	/** The dictionary service. */
 	private DictionaryService dictionaryService;
 	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
-	/** The repository helper. */
-	private org.alfresco.repo.model.Repository repositoryHelper;
-	
-	/** The repo service. */
-	private RepoService repoService;
-		
 	/**
 	 * Sets the node service.
 	 *
@@ -70,33 +61,6 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
-	}
-	
-	/**
-	 * Sets the file folder service.
-	 *
-	 * @param fileFolderService the new file folder service
-	 */
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
-	}
-	
-	/**
-	 * Sets the repository helper.
-	 *
-	 * @param repositoryHelper the new repository helper
-	 */
-	public void setRepositoryHelper(org.alfresco.repo.model.Repository repositoryHelper) {
-		this.repositoryHelper = repositoryHelper;
-	}
-	
-	/**
-	 * Sets the repo service.
-	 *
-	 * @param repoService the new repo service
-	 */
-	public void setRepoService(RepoService repoService) {
-		this.repoService = repoService;
 	}
 	
 	/**

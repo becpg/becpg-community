@@ -38,7 +38,7 @@ public class CompoListDataItem{
 	private Double yieldPerc = null;
 	
 	/** The decl type. */
-	private String declType;			
+	private DeclarationType declType = DeclarationType.Declare;			
 	
 	/** The product. */
 	private NodeRef product;
@@ -152,7 +152,7 @@ public class CompoListDataItem{
 	 *
 	 * @return the decl type
 	 */
-	public String getDeclType() {
+	public DeclarationType getDeclType() {
 		return declType;
 	}
 	
@@ -161,7 +161,7 @@ public class CompoListDataItem{
 	 *
 	 * @param declType the new decl type
 	 */
-	public void setDeclType(String declType) {
+	public void setDeclType(DeclarationType declType) {
 		this.declType = declType;
 	}
 	
@@ -203,7 +203,7 @@ public class CompoListDataItem{
 	 * @param declType
 	 * @param product
 	 */
-	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, Double yieldPerc, String declType, NodeRef product){
+	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, Double yieldPerc, DeclarationType declType, NodeRef product){
 		
 		setNodeRef(nodeRef);
 		setDepthLevel(depthLevel);
@@ -228,7 +228,7 @@ public class CompoListDataItem{
 	 * @param declType
 	 * @param product
 	 */
-	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, String declType, NodeRef product){
+	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, DeclarationType declType, NodeRef product){
 		
 		setNodeRef(nodeRef);
 		setDepthLevel(depthLevel);
@@ -301,5 +301,10 @@ public class CompoListDataItem{
 		}
 		
 		return z_idx;
+	}
+
+	public static DeclarationType parseDeclarationType(String declType) {
+		
+		return (declType != null && declType != "") ? DeclarationType.valueOf(declType) : DeclarationType.Declare;		
 	}
 }

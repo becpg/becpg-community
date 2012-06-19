@@ -159,12 +159,27 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
+				
 				// Delete initialyzed repo
 				deleteSystemFolder();
 				// Init repo for test
 				initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
 				
 				Assert.assertEquals(3,entitySystemService.getSystemEntities().size());
+				
+				initConstraints();
+				
+				return null;
+
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				
+				dictionaryDAO.reset();
+				
+				
 				
 				initCharacteristics();
 				initHierarchyLists();
@@ -228,14 +243,48 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		}
 
 	}
+	
+	private void initConstraints(){
+		
+		NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+		
+		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_LISTS);
+
+		//nutGroups
+		NodeRef nutGroupsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_NUT_GROUPS);		
+		for (int i = 1; i <= 2; i++) {
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, "Groupe " + i);
+			ChildAssociationRef childAssocRef = nodeService.createNode(nutGroupsFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+			
+			logger.debug("Path: " + nodeService.getPath(childAssocRef.getChildRef()));
+		}
+		//packagingLevels
+		NodeRef packagingLevelsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_PACKAGING_LEVELS);
+		String []packagingLevels = {"Primaire", "Tertiaire"};
+		for (String packagingLevel : packagingLevels) {
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, packagingLevel);
+			nodeService.createNode(packagingLevelsFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);			
+		}
+		//allergenTypes
+		NodeRef allergenTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_ALLERGEN_TYPES);
+		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		properties.put(ContentModel.PROP_NAME, VALUE_ALLERGEN_TYPE);
+		nodeService.createNode(allergenTypesFolder, ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+		
+	}
 
 	/**
 	 * Initialize the characteristics of the repository.
 	 */
 	private void initCharacteristics() {
 
-		NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-
+		NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));		
+		
 		NodeRef charactsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_CHARACTS);
 
 		// allergens

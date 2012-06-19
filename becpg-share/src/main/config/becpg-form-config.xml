@@ -2892,6 +2892,12 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:compoListDeclType">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Declare|data.declarationType.declare,Detail|data.declarationType.detail,Group|data.declarationType.group,Omit|data.declarationType.omit,DoNotDeclare|data.declarationType.donotdeclare
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:parentLevel">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete.ftl">
@@ -2920,8 +2926,8 @@
 						</control>
 					</field>
 					<field id="bcpg:depthLevel">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">1,2,3,4,All</control-param>
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">1|1,2|2,3|3,4|4,All|data.level.all</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -2976,6 +2982,12 @@
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:compoListDeclType">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Declare|data.declarationType.declare,Detail|data.declarationType.detail,Group|data.declarationType.group,Omit|data.declarationType.omit,DoNotDeclare|data.declarationType.donotdeclare
 							</control-param>
 						</control>
 					</field>
@@ -3728,13 +3740,25 @@
 
 				<appearance>
 					<field id="bcpg:filReqType">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Forbidden|Interdit,Tolerated|Toléré,Info|Info
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info
+							</control-param>
+						</control>
+					</field>					
+					<field id="bcpg:filReqMessage">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:filIsGMO">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:filReqMessage">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					<field id="bcpg:filIsIonized">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
+							</control-param>
+						</control>
 					</field>
 					<field id="bcpg:filIngs">
 						<control
@@ -3784,13 +3808,25 @@
 
 				<appearance>
 					<field id="bcpg:filReqType">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Forbidden|Interdit,Tolerated|Toléré,Info|Info
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:filReqMessage">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:filIsGMO">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:filIsIonized">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
+							</control-param>
+						</control>
 					</field>
 					<field id="bcpg:filIngs">
 						<control
@@ -3822,8 +3858,8 @@
 
 				<appearance>
 					<field id="bcpg:rclReqType">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Forbidden|Interdit,Tolerated|Toléré,Info|Info
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info
 							</control-param>
 						</control>
 					</field>
@@ -3856,8 +3892,8 @@
 
 				<appearance>
 					<field id="bcpg:rclReqType">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Forbidden|Interdit,Tolerated|Toléré,Info|Info
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info
 							</control-param>
 						</control>
 					</field>
@@ -4017,7 +4053,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:lkvValue" />
-					<show id="bcpg:parentLevel" />
+					<show id="bcpg:parentLevel" />					
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
@@ -4068,6 +4104,7 @@
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:lkvValue" />
 					<show id="bcpg:parentLevel" />
+					<show id="bcpg:code" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>

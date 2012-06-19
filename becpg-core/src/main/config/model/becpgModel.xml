@@ -64,26 +64,34 @@
 				<value>cm:name</value>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:nutGroup" type="LIST">
-			<parameter name="allowedValues">
+		<constraint name="bcpg:nutGroup"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-					<value>Groupe 1</value>
-					<value>Groupe 2</value>
-					<value>Autre</value>
+					<value>/System/Lists/bcpg:entityLists/NutGroups</value>
 				</list>
 			</parameter>
-		</constraint>
-		<constraint name="bcpg:nutType" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value></value>
-					<value>Nutriment</value>
-					<value>Vitamine</value>
-					<value>Minéraux</value>
-					<value>Valeur énergétique</value>
-				</list>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:nutType"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/NutTypes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>		
 		<constraint name="bcpg:nutUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -115,24 +123,28 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:allergenType" type="LIST">
-			<parameter name="allowedValues">
+		<constraint name="bcpg:allergenType"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-					<value>Allergène informatif</value>
-					<value>Allergène majeur</value>
-					<value>Risque</value>
-					<value>Substance indésirable</value>
+					<value>/System/Lists/bcpg:entityLists/AllergenTypes</value>
 				</list>
 			</parameter>
-		</constraint>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>		
 		<constraint name="bcpg:declarationTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value>Déclarer</value>
-					<value>Détailler</value>
-					<value>Regrouper</value>
-					<value>Omettre</value>
-					<value>Ne pas déclarer</value>
+					<value>Declare</value>
+					<value>Detail</value>
+					<value>Group</value>
+					<value>Omit</value>
+					<value>DoNotDeclare</value>
 				</list>
 			</parameter>
 		</constraint>		
@@ -244,15 +256,20 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:packagingLevel" type="LIST">
-			<parameter name="allowedValues">
+		<constraint name="bcpg:packagingLevel"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-					<value>Primaire</value>
-					<value>Secondaire</value>
-					<value>Tertiaire</value>
+					<value>/System/Lists/bcpg:entityLists/PackagingLevels</value>
 				</list>
 			</parameter>
-		</constraint>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>			
 		<constraint name="bcpg:reqTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -262,16 +279,7 @@
 					<value>Info</value>
 				</list>
 			</parameter>
-		</constraint>
-		<constraint name="bcpg:nullableBoolean" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value></value>
-					<value>Vrai</value>
-					<value>Faux</value>
-				</list>
-			</parameter>
-		</constraint>
+		</constraint>		
 	</constraints>
 
 	<types>
@@ -1221,18 +1229,12 @@
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:filIsGMO">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<constraints>
-						<constraint ref="bcpg:nullableBoolean" />
-					</constraints>
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>					
 				</property>
 				<property name="bcpg:filIsIonized">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<constraints>
-						<constraint ref="bcpg:nullableBoolean" />
-					</constraints>
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>					
 				</property>
 			</properties>
 			<associations>
@@ -1394,7 +1396,7 @@
 		<type name="bcpg:linkedValue">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
-				<property name="bcpg:lnkValue">
+				<property name="bcpg:lkvValue">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 				</property>

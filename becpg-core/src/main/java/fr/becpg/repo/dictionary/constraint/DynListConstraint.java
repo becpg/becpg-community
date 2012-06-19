@@ -265,8 +265,22 @@ public class DynListConstraint extends ListOfValuesConstraint {
     	String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);
     	
     	for(String folder : arrPath){
-    		pathBuffer.append("/cm:");
-    		pathBuffer.append(ISO9075.encode(folder));    		 
+    		
+    		if(folder.isEmpty()){
+    			continue;
+    		}
+    		else if(folder.contains(RepoConsts.MODEL_PREFIX_SEPARATOR)){
+    			pathBuffer.append("/");
+    			String []tmp = folder.split(RepoConsts.MODEL_PREFIX_SEPARATOR);
+    			pathBuffer.append(tmp[0]);
+    			pathBuffer.append(RepoConsts.MODEL_PREFIX_SEPARATOR);
+    			pathBuffer.append(ISO9075.encode(tmp[1]));
+    		}   
+    		else{
+    			pathBuffer.append("/cm:");
+    			pathBuffer.append(ISO9075.encode(folder));
+    		}
+    		    		 
     	}
     	
     	//remove 1st character '/'

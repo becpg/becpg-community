@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.dictionary.InvalidTypeException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -34,7 +33,6 @@ import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.PackagingKitData;
@@ -50,7 +48,6 @@ import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharachListItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
-import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.NullableBoolean;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
@@ -422,7 +419,7 @@ public class ProductDAOImpl implements ProductDAO {
 							(Double) properties.get(BeCPGModel.PROP_COMPOLIST_QTY), (Double) properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA),
 							(Double) properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Double) properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC),
 							(Double) properties.get(BeCPGModel.PROP_COMPOLIST_YIELD_PERC),
-							(String) properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE), part);
+							CompoListDataItem.parseDeclarationType((String) properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE)), part);
 					compoList.add(compoListDataItem);
 				}
 			}
@@ -834,8 +831,8 @@ public class ProductDAOImpl implements ProductDAO {
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
 
 					Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
-					NullableBoolean isGMO = NullableBoolean.valueOf((String) properties.get(BeCPGModel.PROP_FIL_IS_GMO), true);
-					NullableBoolean isIonized = NullableBoolean.valueOf((String) properties.get(BeCPGModel.PROP_FIL_IS_IONIZED), true);
+					Boolean isGMO = (Boolean) properties.get(BeCPGModel.PROP_FIL_IS_GMO);
+					Boolean isIonized = (Boolean) properties.get(BeCPGModel.PROP_FIL_IS_IONIZED);
 
 					List<AssociationRef> ingAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_FIL_INGS);
 					List<NodeRef> ings = new ArrayList<NodeRef>(ingAssocRefs.size());
@@ -2041,8 +2038,8 @@ public class ProductDAOImpl implements ProductDAO {
 					properties.put(BeCPGModel.PROP_FIL_REQ_TYPE, forbiddenIngListDataItem.getReqType());
 					properties.put(BeCPGModel.PROP_FIL_REQ_MESSAGE, forbiddenIngListDataItem.getReqMessage());
 					properties.put(BeCPGModel.PROP_FIL_QTY_PERC_MAXI, forbiddenIngListDataItem.getQtyPercMaxi());
-					properties.put(BeCPGModel.PROP_FIL_IS_GMO, TranslateHelper.getTranslatedNullableBoolean(forbiddenIngListDataItem.isGMO()));
-					properties.put(BeCPGModel.PROP_FIL_IS_IONIZED, TranslateHelper.getTranslatedNullableBoolean(forbiddenIngListDataItem.isIonized()));
+					properties.put(BeCPGModel.PROP_FIL_IS_GMO, forbiddenIngListDataItem.isGMO());
+					properties.put(BeCPGModel.PROP_FIL_IS_IONIZED, forbiddenIngListDataItem.isIonized());
 
 					if (filesToUpdate.contains(forbiddenIngListDataItem.getNodeRef())) {
 						// update

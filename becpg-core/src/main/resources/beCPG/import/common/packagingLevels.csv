@@ -1,0 +1,6 @@
+PATH;/System/Lists/bcpg:entityLists/PackagingLevels
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Primaire
+VALUES;Secondaire
+VALUES;Tertiaire
