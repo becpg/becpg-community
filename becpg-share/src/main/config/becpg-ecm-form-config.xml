@@ -238,7 +238,7 @@
 					<control
 						template="/fr/becpg/components/form/controls/selectone.ftl" >
 						 <control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info</control-param>
-					data.reqtype.infontrol>
+					</control>
 				</field>
 				</appearance>				
 			</form>
