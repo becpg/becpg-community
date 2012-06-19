@@ -53,6 +53,13 @@
 		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="permissionService" ref="permissionService" />
+		<property name="dataListSortService" ref="dataListSortService" />
+	</bean>
+	
+	<bean id="webscript.fr.becpg.entity.datalist.sort.post" class="fr.becpg.repo.web.scripts.entity.datalist.SortDataListWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="dataListSortService" ref="dataListSortService" />
 	</bean>
 	
 	

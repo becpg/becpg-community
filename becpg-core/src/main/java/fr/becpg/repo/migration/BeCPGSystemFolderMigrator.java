@@ -217,7 +217,7 @@ public class BeCPGSystemFolderMigrator {
 		String queryPath = String.format(QUERY_SUGGEST_PRODUCT_BY_NAME,type.toPrefixString(namespaceService), hierarchy1, hierarchy2  );
 
 		logger.debug("search products, queryPath: " + queryPath);
-		List<NodeRef> ret = beCPGSearchService.unProtLuceneSearch(queryPath, getSort(ContentModel.PROP_NAME),-1);
+		List<NodeRef> ret = beCPGSearchService.unProtLuceneSearch(queryPath, LuceneHelper.getSort(ContentModel.PROP_NAME),-1);
 		
 		if(ret.size()>0){
 			logger.info("Found "+ret.size()+" product to migrate");
@@ -416,7 +416,7 @@ public class BeCPGSystemFolderMigrator {
 
 		String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE_ALL, LuceneHelper.encodePath(gethierarchy1Path(path)));
 
-		List<NodeRef> ret = beCPGSearchService.unProtLuceneSearch(queryPath, getSort(ContentModel.PROP_NAME),-1);
+		List<NodeRef> ret = beCPGSearchService.unProtLuceneSearch(queryPath, LuceneHelper.getSort(ContentModel.PROP_NAME),-1);
 		logger.info("Found "+ret.size()+" hierarchy to migrate under "+queryPath);
 		return extract(ret, ContentModel.PROP_NAME);
 	}
@@ -432,7 +432,7 @@ public class BeCPGSystemFolderMigrator {
 	private List<String> getExistingHierachies2(String path, String hierarchy1) {
 		String queryPath = String.format(PATH_QUERY_SUGGEST_LKV_VALUE_ALL, LuceneHelper.encodePath(gethierarchy2Path(path)), hierarchy1);
 
-		List<NodeRef> ret = beCPGSearchService.unProtLuceneSearch(queryPath, getSort(ContentModel.PROP_NAME),-1);
+		List<NodeRef> ret = beCPGSearchService.unProtLuceneSearch(queryPath, LuceneHelper.getSort(ContentModel.PROP_NAME),-1);
 		logger.info("Found "+ret.size()+" hierarchy to migrate under "+queryPath);
 		
 		return extract(ret, PROP_LINKED_VALUE_VALUE);
@@ -482,13 +482,6 @@ public class BeCPGSystemFolderMigrator {
 		return repoService.getFolderByPath(parentNodeRef, folderPath);
 	}
 
-	private Map<String, Boolean> getSort(QName field) {
-
-		Map<String, Boolean> sort = new HashMap<String, Boolean>();
-		sort.put("@" + field, true);
-
-		return sort;
-	}
 	
 	/**
 	 * Look for the hierarchy, if it doesn't exist, create a deleted hierarchy

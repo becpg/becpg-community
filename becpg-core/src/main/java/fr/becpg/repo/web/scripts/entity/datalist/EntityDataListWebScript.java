@@ -30,9 +30,11 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
+import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
+import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.security.SecurityService;
 
 /**
@@ -87,10 +89,11 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	private NamespaceService namespaceService;
 
-
 	private PermissionService permissionService;
 
 	private DataListExtractorFactory dataListExtractorFactory;
+	
+	private DataListSortService dataListSortService;
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -111,6 +114,10 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	public void setDataListExtractorFactory(DataListExtractorFactory dataListExtractorFactory) {
 		this.dataListExtractorFactory = dataListExtractorFactory;
+	}
+
+	public void setDataListSortService(DataListSortService dataListSortService) {
+		this.dataListSortService = dataListSortService;
 	}
 
 	/**
@@ -262,7 +269,9 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 			ret.put("metadata", metadata);
 			if(dataListFilter.isSimpleItem()){
-				ret.put("item", new JSONObject(extractedItems.getItems().get(0)));
+				Map<String,Object> item = extractedItems.getItems().get(0);
+				ret.put("item", new JSONObject(item));
+				ret.put("lastSiblingNodeRef", dataListSortService.getLastSiblingNode((NodeRef)item.get(AbstractDataListExtractor.PROP_NODE)));
 			} else {
 				ret.put("items", processResults(extractedItems));
 			}

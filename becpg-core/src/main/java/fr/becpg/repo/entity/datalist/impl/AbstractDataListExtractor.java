@@ -58,24 +58,24 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	}
 
 
-	protected static final String PROP_NODE = "nodeRef";
-	protected static final String PROP_TAGS = "tags";
-	protected static final String PROP_DISPLAYNAME = "displayName";
-	protected static final String PROP_NAME = "name";
-	protected static final String PROP_TITLE = "title";
-	protected static final String PROP_DESCRIPTION = "description";
-	protected static final String PROP_MODIFIER = "modifiedByUser";
-	protected static final String PROP_MODIFIED = "modifiedOn";
-	protected static final String PROP_CREATED = "createdOn";
-	protected static final String PROP_CREATOR = "createdByUser";
-	protected static final String PROP_PATH = "path";
-	protected static final String PROP_MODIFIER_DISPLAY = "modifiedBy";
-	protected static final String PROP_CREATOR_DISPLAY = "createdBy";
-	protected static final String PROP_NODEDATA = "itemData";
-	protected static final String PROP_ACTIONSET = "actionSet";
-	protected static final String PROP_PERMISSIONS = "permissions";
-	protected static final String PROP_ACTIONLABELS = "actionLabels";
-	protected static final String PROP_ACCESSRIGHT = "accessRight";
+	public static final String PROP_NODE = "nodeRef";
+	public static final String PROP_TAGS = "tags";
+	public static final String PROP_DISPLAYNAME = "displayName";
+	public static final String PROP_NAME = "name";
+	public static final String PROP_TITLE = "title";
+	public static final String PROP_DESCRIPTION = "description";
+	public static final String PROP_MODIFIER = "modifiedByUser";
+	public static final String PROP_MODIFIED = "modifiedOn";
+	public static final String PROP_CREATED = "createdOn";
+	public static final String PROP_CREATOR = "createdByUser";
+	public static final String PROP_PATH = "path";
+	public static final String PROP_MODIFIER_DISPLAY = "modifiedBy";
+	public static final String PROP_CREATOR_DISPLAY = "createdBy";
+	public static final String PROP_NODEDATA = "itemData";
+	public static final String PROP_ACTIONSET = "actionSet";
+	public static final String PROP_PERMISSIONS = "permissions";
+	public static final String PROP_ACTIONLABELS = "actionLabels";
+	public static final String PROP_ACCESSRIGHT = "accessRight";
 	
 
 	private static Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);

@@ -324,6 +324,10 @@
 		<property name="multiLevelExtractor" ref="multiLevelExtractor"/>
 	</bean>
 	
+	<bean id="dataListSortService" class="fr.becpg.repo.entity.datalist.impl.DataListSortServiceImpl">
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+	</bean>
 	
 	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">
 	</bean>
@@ -374,11 +378,11 @@
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="dataListSortService" ref="dataListSortService" />
 	</bean>	
 	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="dataListSortService" ref="dataListSortService" />
 	</bean>	
 	
 	<!-- WUsedList -->
