@@ -118,12 +118,12 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 				sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);				
 				
 		    	
-		    	assertEquals("Check cost order", 1, nodeService.getProperty(sfData.getCostList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 2, nodeService.getProperty(sfData.getCostList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 3, nodeService.getProperty(sfData.getCostList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 4, nodeService.getProperty(sfData.getCostList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 5, nodeService.getProperty(sfData.getCostList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 6, nodeService.getProperty(sfData.getCostList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		    	assertEquals("Check cost order", 100, nodeService.getProperty(sfData.getCostList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals("Check cost order", 200, nodeService.getProperty(sfData.getCostList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals("Check cost order", 300, nodeService.getProperty(sfData.getCostList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals("Check cost order", 400, nodeService.getProperty(sfData.getCostList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals("Check cost order", 500, nodeService.getProperty(sfData.getCostList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals("Check cost order", 600, nodeService.getProperty(sfData.getCostList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
 		    	
 				return null;
 				
