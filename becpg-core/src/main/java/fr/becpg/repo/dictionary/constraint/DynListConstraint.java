@@ -6,6 +6,7 @@ package fr.becpg.repo.dictionary.constraint;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
@@ -14,8 +15,11 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryException;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.search.LimitBy;
+import org.alfresco.service.cmr.search.PermissionEvaluationMode;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.ResultSetRow;
+import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -188,14 +192,23 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		            	String encodedPath = encodePath(path);    			
 		        		
 		        		String queryPath = String.format(RepoConsts.PATH_QUERY_LIST_CONSTRAINTS, encodedPath, constraintType);
-		        		logger.debug("queryPath : " + queryPath);
-		        		ResultSet resultSet = null;
 		        		
-		        		try{
-		        			resultSet = serviceRegistry.getSearchService().query(RepoConsts.SPACES_STORE, 
-		        						SearchService.LANGUAGE_LUCENE, queryPath);
-		        	        
-		        			logger.debug("resultSet.length() : " + resultSet.length());
+		        		ResultSet resultSet = null;
+		        		SearchParameters sp = new SearchParameters();
+		        		sp.addStore(RepoConsts.SPACES_STORE);
+		        		sp.setLanguage(SearchService.LANGUAGE_LUCENE);
+		        		sp.setQuery(queryPath);
+		        		sp.setLimitBy(LimitBy.UNLIMITED);
+		        		sp.addLocale(Locale.getDefault());
+		        		sp.setPermissionEvaluation(PermissionEvaluationMode.EAGER);
+		        		sp.excludeDataInTheCurrentTransaction(false);
+		        		sp.addSort(SearchParameters.SORT_IN_DOCUMENT_ORDER_DESCENDING);
+		        		try {
+		        			resultSet = serviceRegistry.getSearchService().query(sp);
+		        			if(logger.isDebugEnabled()){
+			        			logger.debug("queryPath : " + queryPath);
+			        			logger.debug("resultSet.length() : " + resultSet.length());
+		        			}
 		        			
 		        	        if (resultSet.length() != 0)
 		        	        {

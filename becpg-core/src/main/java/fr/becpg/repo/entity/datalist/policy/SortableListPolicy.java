@@ -3,9 +3,13 @@
  */
 package fr.becpg.repo.entity.datalist.policy;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -19,7 +23,9 @@ import fr.becpg.repo.entity.datalist.DataListSortService;
  * 
  * @author querephi
  */
-public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy {
+public class SortableListPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, 
+										   NodeServicePolicies.OnAddAspectPolicy, 
+										   NodeServicePolicies.OnDeleteNodePolicy {
 
 	private static Log logger = LogFactory.getLog(SortableListPolicy.class);
 
@@ -41,6 +47,37 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 	public void init() {
 		logger.debug("Init SortableListPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_SORTABLE_LIST, new JavaBehaviour(this, "onAddAspect"));
+		logger.debug("Init DepthLevelListPolicy...");
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
+				new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
+				new JavaBehaviour(this, "onDeleteNode"));
+	}
+
+	@Override
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+
+		NodeRef beforeParentLevel = (NodeRef) before.get(BeCPGModel.PROP_PARENT_LEVEL);
+		NodeRef afterParentLevel = (NodeRef) after.get(BeCPGModel.PROP_PARENT_LEVEL);
+		
+		if(logger.isDebugEnabled()){
+			logger.debug("call DepthLevelListPolicy");
+		}
+		
+		// has changed ?
+		boolean hasChanged = false;
+		if (afterParentLevel != null && !afterParentLevel.equals(beforeParentLevel)) {				
+			hasChanged = true;
+		}else if(beforeParentLevel != null && !beforeParentLevel.equals(afterParentLevel)){//parentLevel is null
+			hasChanged = true;
+		}
+		else{
+			hasChanged = false;
+		}
+		
+		if(hasChanged){				
+			dataListSortService.computeDepthAndSort(nodeRef);
+		}		
 	}
 
 	@Override
@@ -52,8 +89,18 @@ public class SortableListPolicy implements NodeServicePolicies.OnAddAspectPolicy
 				logger.debug("Add sortable aspect policy ");
 			}
 
-			dataListSortService.createSortIndex(nodeRef);
+			dataListSortService.computeDepthAndSort(nodeRef);
 		}
 	}
+	
+	
+	@Override
+	public void onDeleteNode(ChildAssociationRef childRef, boolean isNodeArchived) {
+		
+		dataListSortService.deleteChildrens(childRef.getParentRef(), childRef.getChildRef());
+	
+	}
+
+	
 
 }
