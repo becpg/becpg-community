@@ -3,8 +3,10 @@ package fr.becpg.repo.web.scripts.entity.datalist;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.Cache;
@@ -19,7 +21,7 @@ import fr.becpg.repo.entity.datalist.DataListSortService;
 /**
  * 
  * @author matthieu
- *
+ * 
  */
 public class SortDataListWebScript extends DeclarativeWebScript {
 
@@ -31,14 +33,19 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 
 	protected static final String PARAM_ID = "id";
 
-	private static final String PARAM_DEST_NODEREFS = "destNodeRefs";
+	private static final String PARAM_DEST_NODEREFS = "destNodeRef";
 
 	private static final String PARAM_DIR = "dir";
 
 	private DataListSortService dataListSortService;
 
 	private NodeService nodeService;
-	
+
+	private BehaviourFilter policyBehaviourFilter;
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
 
 	public void setDataListSortService(DataListSortService dataListSortService) {
 		this.dataListSortService = dataListSortService;
@@ -51,37 +58,49 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
 		logger.debug("call Sort webscript");
-		
+
 		Map<String, Object> model = new HashMap<String, Object>();
-		
+
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 
 		String storeType = templateArgs.get(PARAM_STORE_TYPE);
 		String storeId = templateArgs.get(PARAM_STORE_ID);
 		String nodeId = templateArgs.get(PARAM_ID);
-		String destNodeRefArg = req.getParameter(PARAM_DEST_NODEREFS);
+		String destNodeRefArgs = req.getParameter(PARAM_DEST_NODEREFS);
 		String dir = req.getParameter(PARAM_DIR);
-		if(storeType!=null && storeId!=null && nodeId!=null && destNodeRefArg!=null){
+
+		if (storeType != null && storeId != null && nodeId != null && destNodeRefArgs != null) {
 			NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
-			
-		  //TODO Split
-			
-			NodeRef destNodeRef = new NodeRef(destNodeRefArg);
-			
-			model.put("origSort", nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT));
-	
-				if(dir==null || !dir.equals("up")){
-					//TODO up down
-					dataListSortService.insertAfter(destNodeRef, nodeRef);
-				} else {
-					dataListSortService.insertAfter(destNodeRef, nodeRef);
+
+			String[] destNodeRefs = destNodeRefArgs.split(",");
+
+			try {
+
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+
+				model.put("origSort", nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT));
+
+				if (dir != null || destNodeRefs.length > 1) {
+					dir = dir != null ? dir : "up";
+					if (dir != "up") {
+						ArrayUtils.reverse(destNodeRefs);
+					}
+					for (int i = 0; i < destNodeRefs.length; i++) {
+						dataListSortService.swap(nodeRef, new NodeRef(destNodeRefs[i]));
+					}
+
+				} else if (destNodeRefs.length == 1) {
+					dataListSortService.insertAfter(new NodeRef(destNodeRefs[0]), nodeRef);
 				}
+
 				model.put("destSort", nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT));
 				return model;
-	
-			   
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+			}
+
 		}
-		throw new WebScriptException("Invalid argument ");  
+		throw new WebScriptException("Invalid argument ");
 	}
-	
+
 }

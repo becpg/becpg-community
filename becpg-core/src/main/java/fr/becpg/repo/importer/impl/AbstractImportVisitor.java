@@ -52,6 +52,7 @@ import fr.becpg.config.mapping.FileMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.importer.ClassMapping;
@@ -791,8 +792,8 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 				if(nodeRef != null && nodeService.getType(nodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)){
 					nodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, name);
 				}
-			}
-			else{
+			} else if(!type.equals(BeCPGModel.TYPE_LINKED_VALUE)) {
+			
 				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_OR_CREATE_NODEREF));
 			}			
 		}
@@ -916,7 +917,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 				return	ret.get(0);
 			} else if(ret.size()>1){
 				for (NodeRef n : ret) {
-					if (value.equals(nodeService.getProperty(n, ContentModel.PROP_NAME))) {
+					if (value.equals(nodeService.getProperty(n, RemoteHelper.getPropName(BeCPGModel.TYPE_LINKED_VALUE)))) {
 						return n;
 					}
 				}
@@ -1000,7 +1001,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 					// we try with the name, if several results, we iterate and test the name
 					if(doQuery == false){
 						// +@cm\\:localName:%s
-						queryPath.append(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, value, LuceneHelper.Operator.AND));
+						queryPath.append(LuceneHelper.getCondEqualValue(RemoteHelper.getPropName(type), value, LuceneHelper.Operator.AND));
 						doQuery = true;
 						searchByName = true;
 					}
@@ -1033,7 +1034,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			        		boolean found = false;
 			        		
 			        		for(NodeRef n : resultSet){
-			        			if(value.equals(nodeService.getProperty(n, ContentModel.PROP_NAME))){
+			        			if(value.equals(nodeService.getProperty(n, RemoteHelper.getPropName(type)))){
 			        				
 			        				// we found, but we continue to iterate to check how many match
 			        				if(!found){

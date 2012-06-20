@@ -2902,9 +2902,7 @@
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete.ftl">
  							<control-param name="ds">becpg/autocomplete/compoListParentLevel
- 							</control-param>
-							<control-param name="urlParamsToPass">entityNodeRef
-							</control-param>
+ 							</control-param>	
 							<control-param name="saveTitle">false</control-param>
 						</control>
  					</field> 
@@ -2996,8 +2994,6 @@
 							template="/fr/becpg/components/form/controls/autocomplete.ftl">
  							<control-param name="ds">becpg/autocomplete/compoListParentLevel
  							</control-param>
-							<control-param name="urlParamsToPass">entityNodeRef
-							</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
  					</field> 

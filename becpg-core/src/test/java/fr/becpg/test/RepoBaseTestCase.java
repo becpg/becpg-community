@@ -43,6 +43,7 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.hierarchy.HierarchyHelper;
+import fr.becpg.repo.product.hierarchy.HierarchyService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -113,6 +114,8 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	protected EntitySystemService entitySystemService;
 
 	private InitVisitor initRepoVisitor;
+	
+	protected HierarchyService hierarchyService;
 
 	/** The allergens. */
 	protected List<NodeRef> allergens = new ArrayList<NodeRef>();
@@ -156,6 +159,7 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		initRepoVisitor = (InitVisitor) ctx.getBean("initRepoVisitor");
 		entitySystemService = (EntitySystemService) ctx.getBean("entitySystemService");
 		dictionaryDAO = (DictionaryDAO) ctx.getBean("dictionaryDAO");
+		hierarchyService = (HierarchyService) ctx.getBean("hierarchyService");
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -474,48 +478,16 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 
 		/*-- create hierarchy --*/
 		// RawMaterial - Sea food
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, HIERARCHY1_SEA_FOOD);
-		HIERARCHY1_SEA_FOOD_REF = nodeService.createNode(rawMaterialHierarchyNodeRef, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
-
-		properties.clear();
-		properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, HIERARCHY2_FISH);
-		properties.put(BeCPGModel.PROP_PARENT_LEVEL, HIERARCHY1_SEA_FOOD_REF);
-		HIERARCHY2_FISH_REF = nodeService.createNode(rawMaterialHierarchyNodeRef, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
-		// Sea food - Crustacean
-		properties.clear();
-		properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, HIERARCHY2_CRUSTACEAN);
-		properties.put(BeCPGModel.PROP_PARENT_LEVEL, HIERARCHY1_SEA_FOOD_REF);
-		HIERARCHY2_CRUSTACEAN_REF = nodeService.createNode(rawMaterialHierarchyNodeRef, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
-		properties.clear();
+		
+		
+		HIERARCHY1_SEA_FOOD_REF =   hierarchyService.createHierarchy1(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
+		HIERARCHY2_FISH_REF = hierarchyService.createHierarchy2(rawMaterialHierarchyNodeRef,HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
+		HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy2(rawMaterialHierarchyNodeRef,HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
 
 		// FinishedProduct - Frozen
 
-		properties.put(ContentModel.PROP_NAME, HIERARCHY1_FROZEN);
-		HIERARCHY1_FROZEN_REF = nodeService.createNode(finishedProductHierarchyNodeRef, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
-		// Sea food - Fish
-		properties.clear();
-
-		// Frozen - Pizza
-		properties.clear();
-		properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, HIERARCHY2_PIZZA);
-		properties.put(BeCPGModel.PROP_PARENT_LEVEL, HIERARCHY1_FROZEN_REF);
-		HIERARCHY2_PIZZA_REF = nodeService.createNode(finishedProductHierarchyNodeRef, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
-		// Frozen - Quiche
-		properties.clear();
-		properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, HIERARCHY2_QUICHE);
-
-		properties.put(BeCPGModel.PROP_PARENT_LEVEL, HIERARCHY1_FROZEN_REF);
-		HIERARCHY2_QUICHE_REF = nodeService.createNode(finishedProductHierarchyNodeRef, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
+		HIERARCHY1_FROZEN_REF =    hierarchyService.createHierarchy1(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN);
+		HIERARCHY2_PIZZA_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef,HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
+		HIERARCHY2_QUICHE_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef,HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);
 	}
 }

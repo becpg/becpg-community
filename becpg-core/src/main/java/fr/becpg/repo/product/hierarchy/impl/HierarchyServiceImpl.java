@@ -100,7 +100,7 @@ public class HierarchyServiceImpl implements HierarchyService{
 			return	ret.get(0);
 		} else if(ret.size()>1){
 			for (NodeRef n : ret) {
-				if (value.equals(nodeService.getProperty(n, ContentModel.PROP_NAME))) {
+				if (value.equals(nodeService.getProperty(n, BeCPGModel.PROP_LKV_VALUE))) {
 					return n;
 				}
 			}

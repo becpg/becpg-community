@@ -376,8 +376,6 @@
 	</bean>
 	<bean id="depthLevelListPolicy" class="fr.becpg.repo.entity.datalist.policy.DepthLevelListPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="dataListSortService" ref="dataListSortService" />
 	</bean>	
 	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" init-method="init">

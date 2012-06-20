@@ -60,6 +60,7 @@
 		parent="webscript">
 		<property name="nodeService" ref="nodeService" />
 		<property name="dataListSortService" ref="dataListSortService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	
 	

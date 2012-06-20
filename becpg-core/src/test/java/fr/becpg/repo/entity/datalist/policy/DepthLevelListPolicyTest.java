@@ -9,14 +9,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.product.ProductDAO;
+import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.ProductData;
@@ -27,7 +29,7 @@ import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.test.RepoBaseTestCase;
 
 /**
- * The Class MultiLevelDataServiceTest.
+ * The Class DepthLevelListPolicyTest.
  * 
  * @author querephi
  */
@@ -38,9 +40,12 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(DepthLevelListPolicyTest.class);
 
+	
+	private DataListSortService dataListSortService;
+	
 
-	/** The product dao. */
-	private ProductDAO productDAO;
+	private BehaviourFilter policyBehaviourFilter;
+
 
 
 	/*
@@ -52,7 +57,8 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		productDAO = (ProductDAO) ctx.getBean("productDAO");
+		dataListSortService = (DataListSortService) ctx.getBean("dataListSortService");
+		policyBehaviourFilter = (BehaviourFilter)ctx.getBean("policyBehaviourFilter");
 	}
 
 	/*
@@ -132,8 +138,11 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				NodeRef finishedProductNodeRef = productDAO.create(testFolder, finishedProduct, dataLists);
 
 				ProductData finishedProductLoaded = productDAO.find(finishedProductNodeRef, dataLists);						
-				
+
 				assertNotNull(finishedProductLoaded.getCompoList());
+
+				printSort(finishedProductLoaded.getCompoList());
+				
 				assertEquals(7, finishedProductLoaded.getCompoList().size());
 				assertEquals((Integer)1, finishedProductLoaded.getCompoList().get(0).getDepthLevel());
 				assertEquals((Integer)2, finishedProductLoaded.getCompoList().get(1).getDepthLevel());
@@ -143,8 +152,6 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				assertEquals((Integer)2, finishedProductLoaded.getCompoList().get(5).getDepthLevel());
 				assertEquals((Integer)1, finishedProductLoaded.getCompoList().get(6).getDepthLevel());
 				
-				printSort(finishedProductLoaded.getCompoList());
-				
 				assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
 				assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
 				assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
@@ -153,10 +160,24 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				assertEquals((Integer)202, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
 				assertEquals((Integer)300, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 				
+//				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+//				//Test insert after
+//				dataListSortService.insertAfter(finishedProductLoaded.getCompoList().get(6).getNodeRef(), finishedProductLoaded.getCompoList().get(2).getNodeRef());
+//				
+//				printSort(finishedProductLoaded.getCompoList());
+//				
+//				dataListSortService.insertAfter(finishedProductLoaded.getCompoList().get(2).getNodeRef(), finishedProductLoaded.getCompoList().get(6).getNodeRef());
+//				
+//				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				
 				// change parentLevel
 				logger.debug("Change parentLevel");
 				nodeService.setProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), 
 						BeCPGModel.PROP_PARENT_LEVEL, finishedProductLoaded.getCompoList().get(2).getNodeRef());
+				
+
+				printSort(finishedProductLoaded.getCompoList());
+				
 				
 				//check level have been propagated
 				assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
@@ -166,8 +187,6 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				assertEquals((Integer)5, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 				assertEquals((Integer)5, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 				assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-				
-				printSort(finishedProductLoaded.getCompoList());
 				
 				assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
 				assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
@@ -182,6 +201,9 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				nodeService.setProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), 
 						BeCPGModel.PROP_PARENT_LEVEL, finishedProductLoaded.getCompoList().get(1).getNodeRef());
 				
+
+				printSort(finishedProductLoaded.getCompoList());
+				
 				//check level have been propagated
 				assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 				assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
@@ -190,8 +212,6 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				assertEquals((Integer)5, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 				assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));							
 				assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-				
-				printSort(finishedProductLoaded.getCompoList());
 				
 				assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
 				assertEquals((Integer)200, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
@@ -206,6 +226,8 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				nodeService.setProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), 
 						BeCPGModel.PROP_PARENT_LEVEL, finishedProductLoaded.getCompoList().get(1).getNodeRef());
 				
+				printSort(finishedProductLoaded.getCompoList());
+				
 				//check level have been propagated
 				assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 				assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
@@ -214,8 +236,6 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				assertEquals((Integer)5, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 				assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 				assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));												
-				
-				printSort(finishedProductLoaded.getCompoList());
 				
 				assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
 				assertEquals((Integer)200, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
@@ -246,7 +266,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		
 		for(CompoListDataItem c : compoListDataItem){
 			
-			logger.debug("level : " + c.getDepthLevel() + " - Product " + (String)nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME) + 
+			logger.info("level : " + c.getDepthLevel() + " - Product " + (String)nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME) + 
 					" - sorted: " + (Integer)nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_SORT));
 		}
 	}
