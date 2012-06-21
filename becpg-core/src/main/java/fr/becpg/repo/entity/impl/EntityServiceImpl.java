@@ -20,6 +20,7 @@ import javax.imageio.ImageIO;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.model.FileNotFoundException;
@@ -91,6 +92,8 @@ public class EntityServiceImpl implements EntityService {
 
 	private BehaviourFilter policyBehaviourFilter;
 
+	private DictionaryService dictionaryService;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -134,7 +137,11 @@ public class EntityServiceImpl implements EntityService {
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
+	
 
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
 
 	@Override
 	public boolean hasDataListModified(NodeRef nodeRef) {
@@ -488,6 +495,29 @@ public class EntityServiceImpl implements EntityService {
 				IOUtils.closeQuietly(out);
 			}
 		}
+	}
+
+	@Override
+	public NodeRef getEntityDefaultImage(NodeRef entityNodeRef) throws BeCPGException {
+			
+		String 	imgName = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+		try {
+			return getImage(entityNodeRef, imgName);
+		} catch (BeCPGException e) {
+			logger.debug("No image found for cm:name");
+		}
+		
+		
+	 	imgName = TranslateHelper.getTranslatedPath(
+				RepoConsts.PATH_LOGO_IMAGE).toLowerCase();
+
+		if (dictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_PRODUCT)) {
+			imgName = TranslateHelper.getTranslatedPath(
+					RepoConsts.PATH_PRODUCT_IMAGE).toLowerCase();
+
+		}
+
+		return getImage(entityNodeRef, imgName);
 	}
 
 }

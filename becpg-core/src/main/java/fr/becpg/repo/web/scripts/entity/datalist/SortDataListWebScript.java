@@ -3,7 +3,6 @@ package fr.becpg.repo.web.scripts.entity.datalist;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.lang.ArrayUtils;
@@ -41,12 +40,6 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 
 	private NodeService nodeService;
 
-	private BehaviourFilter policyBehaviourFilter;
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
 	public void setDataListSortService(DataListSortService dataListSortService) {
 		this.dataListSortService = dataListSortService;
 	}
@@ -74,9 +67,6 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 
 			String[] destNodeRefs = destNodeRefArgs.split(",");
 
-			try {
-
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 
 				model.put("origSort", nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT));
 
@@ -95,10 +85,7 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 
 				model.put("destSort", nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT));
 				return model;
-			} finally {
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-			}
-
+			
 		}
 		throw new WebScriptException("Invalid argument ");
 	}

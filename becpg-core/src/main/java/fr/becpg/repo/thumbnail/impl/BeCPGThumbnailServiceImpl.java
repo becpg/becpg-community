@@ -16,10 +16,9 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.thumbnail.BeCPGThumbnailService;
 
@@ -68,7 +67,6 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 	public NodeRef render(NodeRef sourceNodeRef) {
 		QName type = nodeService.getType(sourceNodeRef);
 		// Try to find a logo for the specific type
-		String imgName;
 
 		if (!ContentModel.TYPE_CONTENT.equals(type)
 				&& !ContentModel.TYPE_FOLDER.equals(type)
@@ -84,20 +82,11 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 							BeCPGModel.TYPE_SUPPLIER)
 					|| dictionaryService.isSubClass(type,
 							BeCPGModel.TYPE_PRODUCT)) {
-				imgName = TranslateHelper.getTranslatedPath(
-						RepoConsts.PATH_LOGO_IMAGE).toLowerCase();
-	
-				if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
-					imgName = TranslateHelper.getTranslatedPath(
-							RepoConsts.PATH_PRODUCT_IMAGE).toLowerCase();
-
-				}
-
-				logger.debug("Look for product thumbnail: " + imgName);
+		
 				
 				NodeRef img;
 				try {
-					img = entityService.getImage(sourceNodeRef, imgName);
+					img = entityService.getEntityDefaultImage(sourceNodeRef);
 					if (img != null) {
 					return super.getThumbnailByName(img,
 								ContentModel.PROP_CONTENT, DOC_LIB_THUMBNAIL);
@@ -107,8 +96,7 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 				}
 				
 			} 
-			imgName = "generic-" + type.getLocalName() + "-thumb.png";
-			return getImage(imgName);
+			return getImage("generic-" + type.getLocalName() + "-thumb.png");
 		}
 		return null;
 

@@ -23,7 +23,6 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.ProductData;
@@ -131,10 +130,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		 * get the product image
 		 */
 		try {
-			String productImageFileName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_IMAGE).toLowerCase();
-			NodeRef imgNodeRef;
-
-			imgNodeRef = entityService.getImage(entityNodeRef, productImageFileName);
+			NodeRef imgNodeRef = entityService.getEntityDefaultImage(entityNodeRef);
 
 			byte[] imageBytes = null;
 

@@ -4,7 +4,6 @@
    {
      siteId: "${page.url.templateArgs.site!""}",
 	  entityNodeRef: "${page.url.args.nodeRef!""}",
-	  showFormulate: ${showFormulate?string},
 	  showECO: ${showECO?string}
    }).setMessages(${messages});
 //]]></script>
@@ -12,13 +11,6 @@
    <div id="${args.htmlid}-headerBar" class="header-bar flat-button theme-bg-2">
       <div class="left">
          <div id="toolbar-contribs" ></div>
-			<div class="formulate">
-	         <span id="${id}-formulateButton" class="yui-button yui-push-button">
-	            <span class="first-child">
-	               <button type="button" title="${msg('button.formulate.description')}">${msg('button.formulate')}</button>
-	            </span>
-	         </span>
-	      </div>
 	      <div class="eco-calculate-wused">
 	         <span id="${id}-ecoCalculateWUsedButton" class="yui-button yui-push-button">
 	            <span class="first-child">

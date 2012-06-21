@@ -7,34 +7,22 @@
 <script type="text/javascript">//<![CDATA[
     Alfresco.constants.DASHLET_RESIZE = YAHOO.env.ua.mobile === null;
    
-   (function()
-   {
-    var dataGridModuleCount = 1;
-    
-    YAHOO.Bubbling.on("dataGridReady", function (layer, args){
-    		if(dataGridModuleCount == 3){
-   			// Initialize the browser history management library
-		      try {
-			      YAHOO.util.History.initialize("yui-history-field", "yui-history-iframe");
-		         } catch (e2) {
-			      	/*
-						* The only exception that gets thrown here is when the
-						* browser is not supported (Opera, or not A-grade)
-						*/
-			        Alfresco.logger.error(this.name + ": Couldn't initialize HistoryManager.", e2);
-			        var obj = args[1];
-	              if ((obj !== null) && (obj.entityDataGridModule !== null))
-	              {
-					     obj.entityDataGridModule.onHistoryManagerReady();
-					  }
-					}
-			}
-			dataGridModuleCount++;
-		});
-   
-    })();
-   
-   //]]></script>
+      new beCPG.component.FormulationView("${id}").setOptions(
+	   {
+	     siteId: "${page.url.templateArgs.site!""}",
+		  entityNodeRef: "${page.url.args.nodeRef!""}"
+	   }).setMessages(${messages});
+
+//]]></script>
+<div id="toolbar-contribs-${id}" style="display:none;">  
+  <div class="formulate">
+	    <span id="${id}-formulateButton" class="yui-button yui-push-button">
+	         <span class="first-child">
+	             <button type="button" title="${msg('button.formulate.description')}">${msg('button.formulate')}</button>
+	         </span>
+	    </span>
+   </div>
+</div>
 <div id="yui-main">
 		  <@dataGridDashlet dashletId="compoList-${id}" />
 		<div class="yui-g formulation">

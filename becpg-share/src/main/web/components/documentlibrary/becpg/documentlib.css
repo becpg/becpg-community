@@ -1,0 +1,27 @@
+div.entityFolderInstructions {
+	 
+	 background-color: #F4FAFF;
+    border: 1px dashed #73B4DA;
+    color: #515D6B;
+    padding: 10px;
+	 margin: 0 -10px;
+	 clear: both;
+}
+
+div.entityFolderInstructions span {
+    font-size: 108%;
+    margin-top: 10px;
+}
+
+div.entityFolderInstructions img {
+	padding: 0px 6px 0 10px;
+   vertical-align: middle;
+}
+
+div.entityFolderInstructions span ul {
+    padding-left: 100px;
+}
+
+div.entityFolderInstructions span ul li {
+    list-style: square;
+}

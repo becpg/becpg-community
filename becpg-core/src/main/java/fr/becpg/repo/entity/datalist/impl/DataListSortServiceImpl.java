@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -37,6 +38,12 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 	private BeCPGSearchService beCPGSearchService;
 
+	private BehaviourFilter policyBehaviourFilter;
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -45,27 +52,31 @@ public class DataListSortServiceImpl implements DataListSortService {
 		this.beCPGSearchService = beCPGSearchService;
 	}
 
-	
-
 	@Override
 	public void computeDepthAndSort(NodeRef nodeRef) {
-
 		NodeRef listContainer = nodeService.getPrimaryParent(nodeRef).getParentRef();
-
+		
 		// depthLevel manage sort
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
-			NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
 
-			NodeRef siblingNode = getSiblingNode(listContainer, parentLevel, nodeRef);
+			try {
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("computeDepthAndSort for :" + tryGetName(nodeRef));
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+					NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+
+				NodeRef siblingNode = getSiblingNode(listContainer, parentLevel, nodeRef);
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("computeDepthAndSort for :" + tryGetName(nodeRef));
+				}
+
+				insertAfter(listContainer, siblingNode, nodeRef);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 			}
-
-			insertAfter(listContainer, siblingNode, nodeRef);
 		} else {
 
-			insertAfter(listContainer, getLastChildren(null, listContainer,false), nodeRef);
+			insertAfter(listContainer, getLastChildren(null, listContainer, false), nodeRef);
 		}
 
 	}
@@ -88,7 +99,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 		Integer level = null;
 		Integer sort = null;
 
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+		boolean isDepthLevel = nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL);
+
+		if (isDepthLevel) {
 
 			parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
 
@@ -139,7 +152,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		if (sortedNodeRef != null) {
 			if (logger.isDebugEnabled()) {
-				logger.debug(" nextSort not available : " + nextSort + " - node: " + tryGetName(nodeRef));
+				logger.debug(" nextSort not available : " + nextSort + " - node: " + tryGetName(nodeRef) + " taken by " + tryGetName(sortedNodeRef));
 			}
 			fixSortableList(listContainer, nodeRef);
 			insertAfter(listContainer, siblingNode, nodeRef);
@@ -151,9 +164,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 			nodeService.setProperty(nodeRef, BeCPGModel.PROP_SORT, nextSort);
 			nodeService.setProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL, level);
 
-			if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+			if (isDepthLevel) {
 
-				List<NodeRef> listItems = getChildren(listContainer, nodeRef,true);
+				List<NodeRef> listItems = getChildren(listContainer, nodeRef, true);
 
 				if (logger.isDebugEnabled() && listItems.size() > 0) {
 					logger.debug("propagateLevel level: " + level + " listItems.size(): " + listItems.size());
@@ -171,15 +184,15 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 	}
 
-	private void fixSortableList(NodeRef parentNodeRef,NodeRef nodeRef) {
+	private void fixSortableList(NodeRef parentNodeRef, NodeRef nodeRef) {
 
 		logger.info("FixSortableList. parentNodeRef: " + parentNodeRef + "");
-	
+
 		Set<NodeRef> listItems = new LinkedHashSet<NodeRef>(getChildren(parentNodeRef));
 
 		int newSort = RepoConsts.SORT_DEFAULT_STEP;
 		for (NodeRef listItem : listItems) {
-			logger.debug("set property of " + tryGetName(listItem)+ " sort " + nodeService.getProperty(listItem, BeCPGModel.PROP_SORT) + " new sort " + newSort);
+			logger.debug("set property of " + tryGetName(listItem) + " sort " + nodeService.getProperty(listItem, BeCPGModel.PROP_SORT) + " new sort " + newSort);
 			nodeService.setProperty(listItem, BeCPGModel.PROP_SORT, newSort);
 			newSort = newSort + RepoConsts.SORT_DEFAULT_STEP;
 
@@ -197,20 +210,20 @@ public class DataListSortServiceImpl implements DataListSortService {
 		NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
 		NodeRef listContainer = nodeService.getPrimaryParent(nodeRef).getParentRef();
 
-		return getLastChildren(getSiblingNode(listContainer, parentLevel, nodeRef), listContainer,true);
+		return getLastChildren(getSiblingNode(listContainer, parentLevel, nodeRef), listContainer, true);
 	}
 
 	private NodeRef getLastChildren(NodeRef destNodeRef, NodeRef listContainer, boolean isDepthList) {
-		String query = getQueryByParentLevel(listContainer, destNodeRef,isDepthList);
+		String query = getQueryByParentLevel(listContainer, destNodeRef, isDepthList);
 		List<NodeRef> listItems = beCPGSearchService.unProtLuceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_SORT, false), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		if (listItems.size() > 0 ) {
-			if(isDepthList){
-				destNodeRef = getLastChildren(listContainer, listItems.get(0),isDepthList);
+		if (listItems.size() > 0) {
+			if (isDepthList) {
+				destNodeRef = getLastChildren(listContainer, listItems.get(0), isDepthList);
 			} else {
 				destNodeRef = listItems.get(0);
 			}
-			
-		} 
+
+		}
 		return destNodeRef;
 	}
 
@@ -219,10 +232,10 @@ public class DataListSortServiceImpl implements DataListSortService {
 	 */
 	private NodeRef getSiblingNode(NodeRef listContainer, NodeRef parentLevel, NodeRef nodeRef) {
 
-		String query = getQueryByParentLevel(listContainer, parentLevel,true);
+		String query = getQueryByParentLevel(listContainer, parentLevel, true);
 		query += LuceneHelper.getCondEqualID(nodeRef, Operator.NOT);
 		List<NodeRef> listItems = beCPGSearchService.unProtLuceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_SORT, false), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		return listItems.size() > 0 ? listItems.get(0) : null;
+		return listItems.size() > 0 && !listItems.get(0).equals(nodeRef) ? listItems.get(0) : null;
 
 	}
 
@@ -235,7 +248,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_SORT, sort.toString(), Operator.AND);
 		query += LuceneHelper.getCondEqualID(nodeRef, Operator.NOT);
 		List<NodeRef> listItems = beCPGSearchService.unProtLuceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_SORT, false), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		return listItems.size() > 0 ? listItems.get(0) : null;
+		return listItems.size() > 0 && !listItems.get(0).equals(nodeRef) ? listItems.get(0) : null;
 	}
 
 	/*
@@ -252,7 +265,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 	 */
 	private List<NodeRef> getChildren(NodeRef listContainer, NodeRef parentLevel, boolean isDepthList) {
 
-		return beCPGSearchService.unProtLuceneSearch(getQueryByParentLevel(listContainer, parentLevel,isDepthList), LuceneHelper.getSort(BeCPGModel.PROP_SORT, true),
+		return beCPGSearchService.unProtLuceneSearch(getQueryByParentLevel(listContainer, parentLevel, isDepthList), LuceneHelper.getSort(BeCPGModel.PROP_SORT, true),
 				RepoConsts.MAX_RESULTS_NO_LIMIT);
 	}
 
@@ -263,7 +276,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		String query = String.format(QUERY_LIST_ITEMS, listContainer);
 		if (parentLevel == null) {
-			if(isDepthList){
+			if (isDepthList) {
 				query += LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_PARENT_LEVEL, Operator.AND);
 			}
 		} else {
@@ -288,7 +301,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 	@Override
 	public void deleteChildrens(NodeRef listContainer, NodeRef nodeRef) {
 
-		List<NodeRef> listItems = getChildren(listContainer, nodeRef,true);
+		List<NodeRef> listItems = getChildren(listContainer, nodeRef, true);
 
 		for (NodeRef tmp : listItems) {
 			nodeService.deleteNode(tmp);

@@ -88,6 +88,12 @@ Alfresco.util.getFileIcon.types =
    "{http://www.bcpg.fr/model/becpg/1.0}entityFolder":"entityFolder",
    "bcpg:entityFolder":"entityFolder",
    "{http://www.bcpg.fr/model/becpg/1.0}systemEntity":"systemEntity",
-   "bcpg:systemEntity":"systemEntity"
+   "bcpg:systemEntity":"systemEntity",
+   "{http://www.bcpg.fr/model/becpg/1.0}finishProduct":"finishProduct",
+   "bcpg:finishProduct":"finishProduct",
+   "{http://www.bcpg.fr/model/becpg/1.0}semiFinishProduct":"semiFinishProduct",
+   "bcpg:semiFinishProduct":"semiFinishProduct",
+   "{http://www.bcpg.fr/model/becpg/1.0}rawMaterial":"rawMaterial",
+   "bcpg:rawMaterial":"rawMaterial"
 		   
 };

@@ -46,7 +46,17 @@ public interface EntityService {
 	 * @param nodeRef
 	 * @return
 	 */
-	List<NodeRef> getImages(NodeRef nodeRef) throws BeCPGException;
+	public List<NodeRef> getImages(NodeRef nodeRef) throws BeCPGException;
+	
+	
+	/**
+	 * Get default image for entity
+	 * @param sourceNodeRef
+	 * @return
+	 * @throws BeCPGException
+	 */
+	public NodeRef getEntityDefaultImage(NodeRef sourceNodeRef) throws BeCPGException;
+
 	
 	
 	/**
@@ -86,7 +96,6 @@ public interface EntityService {
 	 */
 	public void writeImages(NodeRef nodeRef, Map<String, byte[]> images) throws BeCPGException;
 
-	
 	
     
 }

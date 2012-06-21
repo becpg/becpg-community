@@ -226,9 +226,9 @@
 		<!-- Action definitions -->
 		<actions>
 
-			<action id="entity-view-datalist" type="pagelink"
+			<action id="entity-view-datalist" type="javascript"
 				label="actions.document.viewEntityLists">
-				<param name="page">entity-data-lists?nodeRef={node.nodeRef}</param>
+				<param name="function">onActionShowCharact</param>
 				<!-- aspect check bcpg:entityListsAspect -->
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 			</action>
@@ -347,6 +347,7 @@
 
 		<dependencies>
 			<css src="/modules/entity-version/new-version-min.css" />
+			<css src="/components/documentlibrary/becpg/documentlib.css" />
 			<js src="/modules/entity-version/new-version-min.js" />
 			<js src="/components/documentlibrary/becpg/fileIcons-min.js" />
 			<js src="/components/documentlibrary/becpg/metadataRenderers-min.js" />

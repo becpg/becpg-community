@@ -266,6 +266,7 @@
 		<property name="contentService" ref="contentService"/>
 		<property name="mimetypeService" ref="mimetypeService"/>
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>
    <bean id="entitySystemService" class="fr.becpg.repo.entity.impl.EntitySystemServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -327,6 +328,7 @@
 	<bean id="dataListSortService" class="fr.becpg.repo.entity.datalist.impl.DataListSortServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	
 	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">

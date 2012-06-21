@@ -2162,6 +2162,9 @@
                templateInstance = null,
                elements = null;
 
+           
+            
+            
             if (permissions)
             {
                var userCanUpload = me.doclistMetadata.parent.permissions.user.CreateChildren && YAHOO.env.ua.mobile === null;
@@ -2246,6 +2249,9 @@
                      container.appendChild(templateInstance);
                   }
                }
+             
+               
+         
             }
             else
             {
@@ -2274,6 +2280,14 @@
                   Dom.removeClass(templateInstance, "hidden");
                   container.appendChild(templateInstance);
                }
+            }
+            
+            
+            if (oFullResponse.metadata.parent.type == "bcpg:entityFolder")
+            {
+               Dom.removeClass(me.id + "-becpg-entityFolder-instructions", "hidden");
+            } else {
+                Dom.addClass(me.id + "-becpg-entityFolder-instructions", "hidden");
             }
 
             // Add a node in with a style of "clear" set to both to ensure that the main div is given
