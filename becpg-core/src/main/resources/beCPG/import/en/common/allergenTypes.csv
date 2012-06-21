@@ -1,0 +1,7 @@
+PATH;/System/Lists/bcpg:entityLists/AllergenTypes
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Informative allergen
+VALUES;Major allergen
+VALUES;Risk
+VALUES;Undesirable substance

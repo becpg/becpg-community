@@ -146,6 +146,8 @@ public class RepoServiceImpl implements RepoService {
 	@Override
 	public void moveNode(NodeRef nodeRefToMove, NodeRef destionationNodeRef) {
 
+		logger.debug("start moveNode");
+		
 		// check the product is not already classified !
 		NodeRef parentOfNodeRefToMove = nodeService.getPrimaryParent(nodeRefToMove).getParentRef();
 		if (destionationNodeRef.equals(parentOfNodeRefToMove)) {

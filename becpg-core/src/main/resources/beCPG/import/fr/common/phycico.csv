@@ -1,0 +1,12 @@
+"PATH";"/System/Characts/bcpg:entityLists/PhysicoChems";
+"TYPE";"bcpg:physicoChem";
+"COLUMNS";"cm:name";"bcpg:physicoChemUnit"
+"VALUES";"Conductivité";"-"
+"VALUES";"Granulométrie";"-"
+"VALUES";"Gras sur sec";"-"
+"VALUES";"Humidité";"-"
+"VALUES";"pH";"-"
+"VALUES";"Point de fusion";"°C"
+"VALUES";"Pourcentage de corps étrangers";"%"
+"VALUES";"Solubilité";"-"
+"VALUES";"Point de congélation";"°C"

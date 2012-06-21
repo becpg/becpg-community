@@ -1,19 +1,73 @@
 <alfresco-config>	
 
+	<!-- var:charact type (existing nodes) -->
 	<config evaluator="node-type" condition="var:charact">
 		<forms>
-			<!-- Data List pop-up edit form -->
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
 					<show id="var:charactKey" />
-				</field-visibility>				
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:title" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>					
+					<show id="var:charactKey" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
-	
+
+	<config evaluator="model-type" condition="var:charact">
+		<forms>
+			<!-- Create item form -->
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="var:charactKey" />
+
+				</field-visibility>
+
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:title" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<show id="var:charactKey" />
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="var:charactKey" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" />
+					<show id="cm:description" />		
+					<show id="var:charactKey" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
 	<!-- var:propertyVariantList type -->
 	<config evaluator="model-type" condition="var:propertyVariantList">
 		<forms>

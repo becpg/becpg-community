@@ -1,0 +1,21 @@
+PATH;/System/Characts/bcpg:entityLists/Microbios;
+TYPE;bcpg:microbio;
+COLUMNS;cm:name;cm:description
+VALUES;Aerobic mesophilic flora 30 ° C;
+VALUES;Total Coliforms 30 ° C;
+VALUES;Thermotolerant coliforms 44 ° C;
+VALUES;Escherichia coli;
+VALUES;"""Staphylococci coagulase +""";
+VALUES;ASR;
+VALUES;Salmonella;
+VALUES;Search Listeria monocytogenes;
+VALUES;Listeria monocytogenes counts;
+VALUES;lactic Acid Bacteria;
+VALUES;Pseudomonas;
+VALUES;Mold-yeast;
+VALUES;Other flora 1;
+VALUES;enterobacteria;
+VALUES;Enumeration of Legionella pneumophila spp and;
+VALUES;E. coli O157;
+VALUES;Bacillus cereus;
+VALUES;Clostridium perfrengens;

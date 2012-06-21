@@ -1,0 +1,7 @@
+PATH;/System/Lists/bcpg:entityLists/NutTypes
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Vitamins
+VALUES;Minerals
+VALUES;Proximates
+VALUES;Lipids

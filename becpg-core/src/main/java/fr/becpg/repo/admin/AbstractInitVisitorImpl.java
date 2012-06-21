@@ -35,7 +35,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 public abstract class AbstractInitVisitorImpl {		
 	
 	/** The logger. */
-	protected static Log logger = LogFactory.getLog(InitRepoVisitorImpl.class);
+	protected static Log logger = LogFactory.getLog(AbstractInitVisitorImpl.class);
 	
 	/** The node service. */
 	protected NodeService nodeService = null;

@@ -105,6 +105,8 @@
 					<value>kJ</value>
 					<value>kcal</value>
 					<value>µg</value>
+					<value>IU</value>
+					<value>mcg_DFE</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -118,12 +120,16 @@
 					<value>kJ/100g</value>
 					<value>kcal/100g</value>
 					<value>µg/100g</value>
+					<value>IU/100g</value>
+					<value>mcg_DFE/100g</value>					
 					<value>-/100mL</value>
 					<value>g/100mL</value>
 					<value>mg/100mL</value>
 					<value>kJ/100mL</value>
 					<value>kcal/100mL</value>
 					<value>µg/100mL</value>
+					<value>IU/100mL</value>
+					<value>mcg_DFE/100mL</value>					
 				</list>
 			</parameter>
 		</constraint>

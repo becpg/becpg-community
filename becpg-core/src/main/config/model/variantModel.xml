@@ -27,7 +27,7 @@
 	<types>
 	
 		<type name="var:charact">
-			<parent>cm:content</parent>	
+			<parent>bcpg:charact</parent>	
 			<properties>
 				<property name="var:charactKey">
 					<type>d:text</type>

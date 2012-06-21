@@ -1,0 +1,49 @@
+PATH;/System/Characts/bcpg:entityLists/Nuts;;
+TYPE;bcpg:nut;;
+COLUMNS;cm:name;bcpg:nutUnit;bcpg:nutType
+VALUES;Water ;g;Proximates
+VALUES;Energy ;kcal;Proximates
+VALUES;Protein ;g;Proximates
+VALUES;Total lipid (fat) ;g;Proximates
+VALUES;Ash;g;Proximates
+VALUES;Carbohydrate, by difference ;g;Proximates
+VALUES;Fiber, total dietary ;g;Proximates
+VALUES;Sugars, total ;g;Proximates
+VALUES;Calcium, Ca ;mg;Minerals
+VALUES;Iron, Fe ;mg;Minerals
+VALUES;Magnesium, Mg ;mg;Minerals
+VALUES;Phosphorus, P ;mg;Minerals
+VALUES;Potassium, K ;mg;Minerals
+VALUES;Sodium, Na ;mg;Minerals
+VALUES;Zinc, Zn ;mg;Minerals
+VALUES;Copper;mg;Minerals
+VALUES;Manganese;mg;Minerals
+VALUES;Selenium;µg;Minerals
+VALUES;Vitamin C, total ascorbic acid ;mg;Vitamins
+VALUES;Thiamin ;mg;Vitamins
+VALUES;Riboflavin ;mg;Vitamins
+VALUES;Niacin ;mg;Vitamins
+VALUES;Panto acid;mg;Vitamins
+VALUES;Vitamin B-6 ;mg;Vitamins
+VALUES;Folate, DFE ;µg;Vitamins
+VALUES;Folic Acid;µg;Vitamins
+VALUES;Food Folate;µg;Vitamins
+VALUES;Folate DFE;µg;Vitamins
+VALUES;CholineTot;mg;Vitamins
+VALUES;Vitamin B-12 ;µg;Vitamins
+VALUES;Vitamin A, IU ;IU;Vitamins
+VALUES;Vitamin A, RAE ;mcg_DFE;Vitamins
+VALUES;Retinol;µg;Vitamins
+VALUES;Alpha_Carot;µg;Vitamins
+VALUES;Beta-carotene;µg;Vitamins
+VALUES;Beta_Crypt;µg;Vitamins
+VALUES;Lycopene;µg;Vitamins
+VALUES;Lut+Zea;µg;Vitamins
+VALUES;Vitamin E (alpha-tocopherol) ;mg;Vitamins
+VALUES;Vitamin D (D2 + D3) ;µg;Vitamins
+VALUES;Vitamin D ;IU;Vitamins
+VALUES;Vitamin K (phylloquinone) ;µg;Vitamins
+VALUES;Fatty acids, total saturated ;g;Lipids
+VALUES;Fatty acids, total monounsaturated ;g;Lipids
+VALUES;Fatty acids, total polyunsaturated ;g;Lipids
+VALUES;Cholesterol ;mg;Lipids

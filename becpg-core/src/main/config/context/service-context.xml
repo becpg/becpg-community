@@ -379,6 +379,7 @@
 	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="dataListSortService" ref="dataListSortService" />
+		<property name="nodeService" ref="nodeService" />
 	</bean>	
 	
 	<!-- WUsedList -->

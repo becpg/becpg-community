@@ -10,6 +10,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.OwnableService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
@@ -18,6 +20,7 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.helper.impl.RepoServiceImpl;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.FormulateException;
@@ -31,6 +34,8 @@ import fr.becpg.repo.product.hierarchy.HierarchyHelper;
  */
 public class ProductServiceImpl implements ProductService {
 
+	private static Log logger = LogFactory.getLog(ProductServiceImpl.class);
+	
 	/** The node service. */
 	private NodeService nodeService;	
 	
@@ -291,9 +296,21 @@ public class ProductServiceImpl implements ProductService {
 					if(name!=null){
 						destinationNodeRef = repoService.createFolderByPath(hierarchy1NodeRef,name, name);
 					}
+					else{
+						logger.error("Cannot create folder for productHierarchy2 since hierarchyName is null. productHierarchy2: " + productData.getHierarchy2());
+					}					
 	    		}
+				else{
+					logger.error("Cannot classify product since it doesn't have a productHierarchy2.");
+				}
 			}
-		}		
+			else{
+				logger.error("Cannot create folder for productHierarchy1 since hierarchyName is null. productHierarchy1: " + productData.getHierarchy1());
+			}
+		}
+		else{
+			logger.error("Cannot classify product since it doesn't have a productHierarchy1.");
+		}
 		
 		if(destinationNodeRef != null){
 			
@@ -311,6 +328,9 @@ public class ProductServiceImpl implements ProductService {
 			
 			// productNodeRef : remove all owner related rights 
             ownableService.setOwner(productNodeRef, OwnableService.NO_OWNER);    			
+		}
+		else{
+			logger.error("Failed to classify product. productNodeRef: " + productNodeRef);
 		}
     }
 

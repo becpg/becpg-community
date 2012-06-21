@@ -1,32 +1,73 @@
 <alfresco-config>	
 
+	<!-- mpm:processStep type (existing nodes) -->
 	<config evaluator="node-type" condition="mpm:processStep">
 		<forms>
-			<!-- Data List pop-up edit form -->
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
-				</field-visibility>				
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:title" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
-	
-	<config evaluator="node-type" condition="mpm:processResource">
+
+	<config evaluator="model-type" condition="mpm:processStep">
 		<forms>
-			<!-- Data List pop-up edit form -->
+			<!-- Create item form -->
 			<form>
+
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
-				</field-visibility>				
+
+				</field-visibility>
+
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:title" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" />
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" />					
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" />
+					<show id="cm:description" />						
+					<show id="bcpg:code" />
+				</field-visibility>
 			</form>
 		</forms>
-	</config>
+	</config>	
 	
 	<!-- mpm:processList type -->
 	<config evaluator="model-type" condition="mpm:processList">

@@ -25,10 +25,10 @@
 			<!-- nuts -->
 			<column id="nutEnergiekJ" dataListQName="bcpg:nutList"
 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Energie kJ selon Directive étiquetage 2008-100-CE" type="Characteristic" />
+				charactNodeRef="" charactName="Energie kJ, étiquetage" type="Characteristic" />
 			<column id="nutEnergiekcal" dataListQName="bcpg:nutList"
 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
-				charactNodeRef="" charactName="Energie kcal selon Directive étiquetage 2008-100-CE" type="Characteristic" />
+				charactNodeRef="" charactName="Energie kcal, étiquetage" type="Characteristic" />
 					
 			<column id="nutProteines" dataListQName="bcpg:nutList"
 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"

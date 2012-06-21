@@ -1,0 +1,12 @@
+"PATH";"/System/Characts/bcpg:entityLists/PhysicoChems";
+"TYPE";"bcpg:physicoChem";
+"COLUMNS";"cm:name";"bcpg:physicoChemUnit"
+"VALUES";"Conductivity";"-"
+"VALUES";"Grit";"-"
+"VALUES";"Fat over Dry";"-"
+"VALUES";"humidity";"-"
+"VALUES";"pH";"-"
+"VALUES";"Melting Point";"°C"
+"VALUES";"Percentage of foreign bodies";"%"
+"VALUES";"Solubility";"-"
+"VALUES";"Freezing Point";"°C"

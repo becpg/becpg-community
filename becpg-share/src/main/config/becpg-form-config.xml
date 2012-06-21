@@ -2559,7 +2559,8 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:title" force="true" />
+					<show id="cm:title" />
+					<show id="cm:description" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -2616,6 +2617,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -2672,6 +2674,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -2728,6 +2731,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -2762,6 +2766,7 @@
 								<control-param name="activateLinks">true</control-param>
 							</control>
 						</field>
+						<field id="bcpg:code" read-only="true" />
 					</appearance>
 				</appearance>
 			</form>
@@ -2794,6 +2799,7 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:code" read-only="true" />
 				</appearance>
 			</form>
 		</forms>
@@ -2829,6 +2835,7 @@
 								<control-param name="activateLinks">true</control-param>
 							</control>
 						</field>
+						<field id="bcpg:code" read-only="true" />
 					</appearance>
 				</appearance>
 			</form>
@@ -2861,6 +2868,7 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:code" read-only="true" />
 				</appearance>
 			</form>
 		</forms>
@@ -2942,7 +2950,6 @@
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
-					<show id="bcpg:sort" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 			</form>

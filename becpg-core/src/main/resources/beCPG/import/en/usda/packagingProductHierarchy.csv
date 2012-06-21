@@ -1,0 +1,40 @@
+PATH;/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:lkvValue;
+VALUES;Barquettes;
+VALUES;Carton;
+VALUES;Palette;
+VALUES;Film;
+VALUES;Boite;
+VALUES;Pots;
+VALUES;Opercules;
+VALUES;Etiquettes;
+VALUES;Briques;
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Barquettes;Barquettes plastiques
+VALUES;Carton;Recyclable
+VALUES;Palette;Recyclable
+VALUES;Film;Thermoformable
+VALUES;Boite;PF
+VALUES;Etiquettes;Autocollantes
+VALUES;Pots;Plastiques
+VALUES;Pots;Verres
+VALUES;Opercules;Opercules 
+VALUES;Briques;Briques cartons
+VALUES;Briques;Briques plastiques
+;;
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:lkvValue;
+VALUES;-;-
+VALUES;Palettisation;
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;-;-
+VALUES;Palettisation;-

@@ -1,0 +1,252 @@
+#;http://www.iso.org/iso/fr/english_country_names_and_code_elements;;;;
+PATH;/System/Characts/bcpg:entityLists/GeoOrigins;;;;
+TYPE;bcpg:geoOrigin;;;;
+COLUMNS;cm:name;bcpg:geoOriginISOCode;bcpg:legalName;bcpg:legalName_fr;bcpg:legalName_en
+VALUES;Afghanistan;AF;Afghanistan;Afghanistan;Afghanistan
+VALUES;South Africa;ZA;South Africa;Afrique du sud;South Africa
+VALUES;Clandestine Islands;AX;Clandestine Islands;Åland, îles;Clandestine Islands
+VALUES;Albania;AL;Albania;Albanie;Albania
+VALUES;Algeria;DZ;Algeria;Algérie;Algeria
+VALUES;Germany;DE;Germany;Allemagne;Germany
+VALUES;Andorra;AD;Andorra;Andorre;Andorra
+VALUES;Angola;AO;Angola;Angola;Angola
+VALUES;Anguilla;AI;Anguilla;Anguilla;Anguilla
+VALUES;Antarctica;AQ;Antarctica;Antarctique;Antarctica
+VALUES;Antigua and Barbuda;AG;Antigua and Barbuda;Antigua-et-barbuda;Antigua and Barbuda
+VALUES;Saudi Arabia;SA;Saudi Arabia;Arabie saoudite;Saudi Arabia
+VALUES;Argentina;AR;Argentina;Argentine;Argentina
+VALUES;Armenia;AM;Armenia;Arménie;Armenia
+VALUES;Aruba;AW;Aruba;Aruba;Aruba
+VALUES;Australia;AU;Australia;Australie;Australia
+VALUES;Austria;AT;Austria;Autriche;Austria
+VALUES;Azerbaijan;AZ;Azerbaijan;Azerbaïdjan;Azerbaijan
+VALUES;Bahamas;BS;Bahamas;Bahamas;Bahamas
+VALUES;Bahrain;BH;Bahrain;Bahreïn;Bahrain
+VALUES;Bangladesh;BD;Bangladesh;Bangladesh;Bangladesh
+VALUES;Barbados;BB;Barbados;Barbade;Barbados
+VALUES;Belarus;BY;Belarus;Bélarus;Belarus
+VALUES;Belgium;BE;Belgium;Belgique;Belgium
+VALUES;Belize;BZ;Belize;Belize;Belize
+VALUES;Benin;BJ;Benin;Bénin;Benin
+VALUES;Bermuda;BM;Bermuda;Bermudes;Bermuda
+VALUES;Bhutan;BT;Bhutan;Bhoutan;Bhutan
+VALUES;Bolivia, the state Multi-;BO;Bolivia, the state Multi-;Bolivie, l'état plurinational de;Bolivia, the state Multi-
+VALUES;Bonaire, St. Eustatius and Saba;BQ;Bonaire, St. Eustatius and Saba;Bonaire, saint-eustache et saba;Bonaire, St. Eustatius and Saba
+VALUES;Bosnia and Herzegovina;BA;Bosnia and Herzegovina;Bosnie-herzégovine;Bosnia and Herzegovina
+VALUES;Botswana;BW;Botswana;Botswana;Botswana
+VALUES;Bouvet Island;BV;Bouvet Island;Bouvet, île;Bouvet Island
+VALUES;Brazil;BR;Brazil;Brésil;Brazil
+VALUES;Brunei Darussalam;BN;Brunei Darussalam;Brunéi darussalam;Brunei Darussalam
+VALUES;Bulgaria;BG;Bulgaria;Bulgarie;Bulgaria
+VALUES;Burkina Faso;BF;Burkina Faso;Burkina faso;Burkina Faso
+VALUES;Burundi;BI;Burundi;Burundi;Burundi
+VALUES;Cayman Islands;KY;Cayman Islands;Caïmanes, îles;Cayman Islands
+VALUES;Cambodia;KH;Cambodia;Cambodge;Cambodia
+VALUES;Cameroon;CM;Cameroon;Cameroun;Cameroon
+VALUES;Canada;CA;Canada;Canada;Canada
+VALUES;Cape Verde;CV;Cape Verde;Cap-vert;Cape Verde
+VALUES;Central African Republic;CF;Central African Republic;Centrafricaine, république;Central African Republic
+VALUES;Chile;CL;Chile;Chili;Chile
+VALUES;China;CN;China;Chine;China
+VALUES;Christmas Island;CX;Christmas Island;Christmas, île;Christmas Island
+VALUES;Cyprus;CY;Cyprus;Chypre;Cyprus
+VALUES;Cocos (Keeling) Islands;CC;Cocos (Keeling) Islands;Cocos (keeling), îles;Cocos (Keeling) Islands
+VALUES;Colombia;CO;Colombia;Colombie;Colombia
+VALUES;Comoros;KM;Comoros;Comores;Comoros
+VALUES;Congo;CG;Congo;Congo;Congo
+VALUES;Congo, Democratic Republic of;CD;Congo, Democratic Republic of;Congo, la république démocratique du;Congo, Democratic Republic of
+VALUES;Cook Islands;CK;Cook Islands;Cook, îles;Cook Islands
+VALUES;Korea, Republic of;KR;Korea, Republic of;Corée, république de;Korea, Republic of
+VALUES;Korea, Democratic People's Republic of;KP;Korea, Democratic People's Republic of;Corée, république populaire démocratique de;Korea, Democratic People's Republic of
+VALUES;Costa Rica;CR;Costa Rica;Costa rica;Costa Rica
+VALUES;Ivory Coast;CI;Ivory Coast;Côte d'ivoire;Ivory Coast
+VALUES;Croatia;HR;Croatia;Croatie;Croatia
+VALUES;Cuba;CU;Cuba;Cuba;Cuba
+VALUES;Curacao;CW;Curacao;Curaçao;Curacao
+VALUES;Denmark;DK;Denmark;Danemark;Denmark
+VALUES;Djibouti;DJ;Djibouti;Djibouti;Djibouti
+VALUES;Dominican Republic;DO;Dominican Republic;Dominicaine, république;Dominican Republic
+VALUES;Dominique;DM;Dominique;Dominique;Dominique
+VALUES;Egypt;EG;Egypt;Égypte;Egypt
+VALUES;El Salvador;SV;El Salvador;El salvador;El Salvador
+VALUES;United Arab Emirates;AE;United Arab Emirates;Émirats arabes unis;United Arab Emirates
+VALUES;Ecuador;EC;Ecuador;Équateur;Ecuador
+VALUES;Eritrea;ER;Eritrea;Érythrée;Eritrea
+VALUES;Spain;ES;Spain;Espagne;Spain
+VALUES;Estonia;EE;Estonia;Estonie;Estonia
+VALUES;United States;US;United States;États-unis;United States
+VALUES;Ethiopia;ET;Ethiopia;Éthiopie;Ethiopia
+VALUES;Falkland Islands (Malvinas);FK;Falkland Islands (Malvinas);Falkland, îles (malvinas);Falkland Islands (Malvinas)
+VALUES;Faroe Islands;FO;Faroe Islands;Féroé, îles;Faroe Islands
+VALUES;Fiji;FJ;Fiji;Fidji;Fiji
+VALUES;Finland;FI;Finland;Finlande;Finland
+VALUES;France;FR;France;France;France
+VALUES;Gabon;GA;Gabon;Gabon;Gabon
+VALUES;Gambia;GM;Gambia;Gambie;Gambia
+VALUES;Georgia;GE;Georgia;Géorgie;Georgia
+VALUES;South Georgia and South Sandwich Islands;GS;South Georgia and South Sandwich Islands;Géorgie du sud et les îles sandwich du sud;South Georgia and South Sandwich Islands
+VALUES;Ghana;GH;Ghana;Ghana;Ghana
+VALUES;Gibraltar;GI;Gibraltar;Gibraltar;Gibraltar
+VALUES;Greece;GR;Greece;Grèce;Greece
+VALUES;Grenade;GD;Grenade;Grenade;Grenade
+VALUES;Greenland;GL;Greenland;Groenland;Greenland
+VALUES;Guadeloupe;GP;Guadeloupe;Guadeloupe;Guadeloupe
+VALUES;Guam;GU;Guam;Guam;Guam
+VALUES;Guatemala;GT;Guatemala;Guatemala;Guatemala
+VALUES;Guernsey;GG;Guernsey;Guernesey;Guernsey
+VALUES;Guinea;GN;Guinea;Guinée;Guinea
+VALUES;Guinea-Bissau;GW;Guinea-Bissau;Guinée-bissau;Guinea-Bissau
+VALUES;Equatorial Guinea;GQ;Equatorial Guinea;Guinée équatoriale;Equatorial Guinea
+VALUES;Guyana;GY;Guyana;Guyana;Guyana
+VALUES;French Guiana;GF;French Guiana;Guyane française;French Guiana
+VALUES;Haiti;HT;Haiti;Haïti;Haiti
+VALUES;Heard Island and McDonald Islands;HM;Heard Island and McDonald Islands;Heard, île et mcdonald, îles;Heard Island and McDonald Islands
+VALUES;Honduras;HN;Honduras;Honduras;Honduras
+VALUES;Hong Kong;HK;Hong Kong;Hong-kong;Hong Kong
+VALUES;Hungary;HU;Hungary;Hongrie;Hungary
+VALUES;Isle of Man;IM;Isle of Man;Île de man;Isle of Man
+VALUES;Minor Outlying Islands United States;UM;Minor Outlying Islands United States;Îles mineures éloignées des états-unis;Minor Outlying Islands United States
+VALUES;British Virgin Islands;VG;British Virgin Islands;Îles vierges britanniques;British Virgin Islands
+VALUES;Virgin Islands of the United States;VI;Virgin Islands of the United States;Îles vierges des états-unis;Virgin Islands of the United States
+VALUES;India;IN;India;Inde;India
+VALUES;Indonesia;ID;Indonesia;Indonésie;Indonesia
+VALUES;Iran, Islamic Republic of;IR;Iran, Islamic Republic of;Iran, république islamique d';Iran, Islamic Republic of
+VALUES;Iraq;IQ;Iraq;Iraq;Iraq
+VALUES;Ireland;IE;Ireland;Irlande;Ireland
+VALUES;Iceland;IS;Iceland;Islande;Iceland
+VALUES;Israel;IL;Israel;Israël;Israel
+VALUES;Italy;IT;Italy;Italie;Italy
+VALUES;Jamaica;JM;Jamaica;Jamaïque;Jamaica
+VALUES;Japan;JP;Japan;Japon;Japan
+VALUES;Jersey;JE;Jersey;Jersey;Jersey
+VALUES;Jordan;JO;Jordan;Jordanie;Jordan
+VALUES;Kazakhstan;KZ;Kazakhstan;Kazakhstan;Kazakhstan
+VALUES;Kenya;KE;Kenya;Kenya;Kenya
+VALUES;Kyrgyzstan;KG;Kyrgyzstan;Kirghizistan;Kyrgyzstan
+VALUES;Kiribati;KI;Kiribati;Kiribati;Kiribati
+VALUES;Kuwait;KW;Kuwait;Koweït;Kuwait
+VALUES;Lao People's Democratic Republic;LA;Lao People's Democratic Republic;Lao, république démocratique populaire;Lao People's Democratic Republic
+VALUES;Lesotho;LS;Lesotho;Lesotho;Lesotho
+VALUES;Latvia;LV;Latvia;Lettonie;Latvia
+VALUES;Lebanon;LB;Lebanon;Liban;Lebanon
+VALUES;Liberia;LR;Liberia;Libéria;Liberia
+VALUES;Libyan Arab Jamahiriya;LY;Libyan Arab Jamahiriya;Libyenne, jamahiriya arabe;Libyan Arab Jamahiriya
+VALUES;Liechtenstein;LI;Liechtenstein;Liechtenstein;Liechtenstein
+VALUES;Lithuania;LT;Lithuania;Lituanie;Lithuania
+VALUES;Luxembourg;LU;Luxembourg;Luxembourg;Luxembourg
+VALUES;Macao;MO;Macao;Macao;Macao
+VALUES;Macedonia, the former Yugoslav Republic of;MK;Macedonia, the former Yugoslav Republic of;Macédoine, l'ex-république yougoslave de;Macedonia, the former Yugoslav Republic of
+VALUES;Madagascar;MG;Madagascar;Madagascar;Madagascar
+VALUES;Malaysia;MY;Malaysia;Malaisie;Malaysia
+VALUES;Malawi;MW;Malawi;Malawi;Malawi
+VALUES;Maldives;MV;Maldives;Maldives;Maldives
+VALUES;Mali;ML;Mali;Mali;Mali
+VALUES;Malta;MT;Malta;Malte;Malta
+VALUES;Northern Mariana Islands;MP;Northern Mariana Islands;Mariannes du nord, îles;Northern Mariana Islands
+VALUES;Morocco;MA;Morocco;Maroc;Morocco
+VALUES;Marshall Islands;MH;Marshall Islands;Marshall, îles;Marshall Islands
+VALUES;Martinique;MQ;Martinique;Martinique;Martinique
+VALUES;Maurice;MU;Maurice;Maurice;Maurice
+VALUES;Mauritania;MR;Mauritania;Mauritanie;Mauritania
+VALUES;Mayotte;YT;Mayotte;Mayotte;Mayotte
+VALUES;Mexico;MX;Mexico;Mexique;Mexico
+VALUES;Micronesia, Federated States of;FM;Micronesia, Federated States of;Micronésie, états fédérés de;Micronesia, Federated States of
+VALUES;Moldova, Republic of;MD;Moldova, Republic of;Moldova, république de;Moldova, Republic of
+VALUES;Monaco;MC;Monaco;Monaco;Monaco
+VALUES;Mongolia;MN;Mongolia;Mongolie;Mongolia
+VALUES;Montenegro;ME;Montenegro;Monténégro;Montenegro
+VALUES;Montserrat;MS;Montserrat;Montserrat;Montserrat
+VALUES;Mozambique;MZ;Mozambique;Mozambique;Mozambique
+VALUES;Myanmar;MM;Myanmar;Myanmar;Myanmar
+VALUES;Namibia;NA;Namibia;Namibie;Namibia
+VALUES;Nauru;NR;Nauru;Nauru;Nauru
+VALUES;Nepal;NP;Nepal;Népal;Nepal
+VALUES;Nicaragua;NI;Nicaragua;Nicaragua;Nicaragua
+VALUES;Niger;NE;Niger;Niger;Niger
+VALUES;Nigeria;NG;Nigeria;Nigéria;Nigeria
+VALUES;Niue;NU;Niue;Niué;Niue
+VALUES;Norfolk Island;NF;Norfolk Island;Norfolk, île;Norfolk Island
+VALUES;Norway;NO;Norway;Norvège;Norway
+VALUES;New Caledonia;NC;New Caledonia;Nouvelle-calédonie;New Caledonia
+VALUES;New zealand;NZ;New zealand;Nouvelle-zélande;New zealand
+VALUES;Indian Ocean British territory of the;IO;Indian Ocean British territory of the;Océan indien, territoire britannique de l';Indian Ocean British territory of the
+VALUES;Oman;OM;Oman;Oman;Oman
+VALUES;Uganda;UG;Uganda;Ouganda;Uganda
+VALUES;Uzbekistan;UZ;Uzbekistan;Ouzbékistan;Uzbekistan
+VALUES;Pakistan;PK;Pakistan;Pakistan;Pakistan
+VALUES;Palau;PW;Palau;Palaos;Palau
+VALUES;Occupied Palestinian territory;PS;Occupied Palestinian territory;Palestinien occupé, territoire;Occupied Palestinian territory
+VALUES;Panama;PA;Panama;Panama;Panama
+VALUES;Papua New Guinea;PG;Papua New Guinea;Papouasie-nouvelle-guinée;Papua New Guinea
+VALUES;Paraguay;PY;Paraguay;Paraguay;Paraguay
+VALUES;Netherlands;NL;Netherlands;Pays-bas;Netherlands
+VALUES;Peru;PE;Peru;Pérou;Peru
+VALUES;Philippines;PH;Philippines;Philippines;Philippines
+VALUES;Pitcairn;PN;Pitcairn;Pitcairn;Pitcairn
+VALUES;Poland;PL;Poland;Pologne;Poland
+VALUES;French Polynesia;PF;French Polynesia;Polynésie française;French Polynesia
+VALUES;Puerto Rico;PR;Puerto Rico;Porto rico;Puerto Rico
+VALUES;Portugal;PT;Portugal;Portugal;Portugal
+VALUES;Qatar;QA;Qatar;Qatar;Qatar
+VALUES;Meeting;RE;Meeting;Réunion;Meeting
+VALUES;Romania;RO;Romania;Roumanie;Romania
+VALUES;United Kingdom;GB;United Kingdom;Royaume-uni;United Kingdom
+VALUES;Russian Federation;RU;Russian Federation;Russie, fédération de;Russian Federation
+VALUES;Rwanda;RW;Rwanda;Rwanda;Rwanda
+VALUES;Western Sahara;EH;Western Sahara;Sahara occidental;Western Sahara
+VALUES;Saint-Barthélemy;BL;Saint-Barthélemy;Saint-barthélemy;Saint-Barthélemy
+VALUES;St. Helena, Ascension and Tristan da Cunha;SH;St. Helena, Ascension and Tristan da Cunha;Sainte-hélène, ascension et tristan da cunha;St. Helena, Ascension and Tristan da Cunha
+VALUES;Saint Lucia;LC;Saint Lucia;Sainte-lucie;Saint Lucia
+VALUES;Saint Kitts and Nevis;KN;Saint Kitts and Nevis;Saint-kitts-et-nevis;Saint Kitts and Nevis
+VALUES;San Marino;SM;San Marino;Saint-marin;San Marino
+VALUES;St. Martin (French side);MF;St. Martin (French side);Saint-martin(partie française);St. Martin (French side)
+VALUES;St. martin (Dutch);SX;St. martin (Dutch);Saint-martin (partie néerlandaise);St. martin (Dutch)
+VALUES;Saint Pierre and Miquelon;PM;Saint Pierre and Miquelon;Saint-pierre-et-miquelon;Saint Pierre and Miquelon
+VALUES;Holy See (State of Vatican City);VA;Holy See (State of Vatican City);Saint-siège (état de la cité du vatican);Holy See (State of Vatican City)
+VALUES;St. Vincent and the Grenadines;VC;St. Vincent and the Grenadines;Saint-vincent-et-les grenadines;St. Vincent and the Grenadines
+VALUES;Solomon Islands;SB;Solomon Islands;Salomon, îles;Solomon Islands
+VALUES;Samoa;WS;Samoa;Samoa;Samoa
+VALUES;American Samoa;AS;American Samoa;Samoa américaines;American Samoa
+VALUES;Sao Tome and Principe;ST;Sao Tome and Principe;Sao tomé-et-principe;Sao Tome and Principe
+VALUES;Senegal;SN;Senegal;Sénégal;Senegal
+VALUES;Serbia;RS;Serbia;Serbie;Serbia
+VALUES;Seychelles;SC;Seychelles;Seychelles;Seychelles
+VALUES;Sierra Leone;SL;Sierra Leone;Sierra leone;Sierra Leone
+VALUES;Singapore;SG;Singapore;Singapour;Singapore
+VALUES;Slovakia;SK;Slovakia;Slovaquie;Slovakia
+VALUES;Slovenia;SI;Slovenia;Slovénie;Slovenia
+VALUES;Somalia;SO;Somalia;Somalie;Somalia
+VALUES;Sudan;SD;Sudan;Soudan;Sudan
+VALUES;Sri Lanka;LK;Sri Lanka;Sri lanka;Sri Lanka
+VALUES;Suede;SE;Suede;Suède;Suede
+VALUES;Switzerland;CH;Switzerland;Suisse;Switzerland
+VALUES;Suriname;SR;Suriname;Suriname;Suriname
+VALUES;Svalbard and Jan Mayen;SJ;Svalbard and Jan Mayen;Svalbard et île jan mayen;Svalbard and Jan Mayen
+VALUES;Swaziland;SZ;Swaziland;Swaziland;Swaziland
+VALUES;Syrian Arab Republic;SY;Syrian Arab Republic;Syrienne, république arabe;Syrian Arab Republic
+VALUES;Tajikistan;TJ;Tajikistan;Tadjikistan;Tajikistan
+VALUES;Taiwan, Province of China;TW;Taiwan, Province of China;Taïwan, province de chine;Taiwan, Province of China
+VALUES;Tanzania, United Republic of;TZ;Tanzania, United Republic of;Tanzanie, république-unie de;Tanzania, United Republic of
+VALUES;Chad;TD;Chad;Tchad;Chad
+VALUES;Czech Republic;CZ;Czech Republic;Tchèque, république;Czech Republic
+VALUES;French Southern Territories;TF;French Southern Territories;Terres australes françaises;French Southern Territories
+VALUES;Thailand;TH;Thailand;Thaïlande;Thailand
+VALUES;Timor-Leste;TL;Timor-Leste;Timor-leste;Timor-Leste
+VALUES;Togo;TG;Togo;Togo;Togo
+VALUES;Tokelau;TK;Tokelau;Tokelau;Tokelau
+VALUES;Tonga;TO;Tonga;Tonga;Tonga
+VALUES;Trinidad and Tobago;TT;Trinidad and Tobago;Trinité-et-tobago;Trinidad and Tobago
+VALUES;Tunisia;TN;Tunisia;Tunisie;Tunisia
+VALUES;Turkmenistan;TM;Turkmenistan;Turkménistan;Turkmenistan
+VALUES;Turks and Caicos Islands;TC;Turks and Caicos Islands;Turks et caïques, îles;Turks and Caicos Islands
+VALUES;Turkey;TR;Turkey;Turquie;Turkey
+VALUES;Tuvalu;TV;Tuvalu;Tuvalu;Tuvalu
+VALUES;Ukraine;UA;Ukraine;Ukraine;Ukraine
+VALUES;Uruguay;UY;Uruguay;Uruguay;Uruguay
+VALUES;Vanuatu;VU;Vanuatu;Vanuatu;Vanuatu
+VALUES;Venezuela, Bolivarian Republic of;VE;Venezuela, Bolivarian Republic of;Venezuela, république bolivarienne du;Venezuela, Bolivarian Republic of
+VALUES;Viet Nam;VN;Viet Nam;Viet nam;Viet Nam
+VALUES;Wallis and Futuna;WF;Wallis and Futuna;Wallis et futuna;Wallis and Futuna
+VALUES;Yemen;YE;Yemen;Yémen;Yemen
+VALUES;Zambia;ZM;Zambia;Zambie;Zambia
+VALUES;Zimbabwe;ZW;Zimbabwe;Zimbabwe;Zimbabwe

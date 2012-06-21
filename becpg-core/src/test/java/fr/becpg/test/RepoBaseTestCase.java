@@ -115,7 +115,7 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 
 	private InitVisitor initRepoVisitor;
 	
-	protected HierarchyService hierarchyService;
+	private HierarchyService hierarchyService;
 
 	/** The allergens. */
 	protected List<NodeRef> allergens = new ArrayList<NodeRef>();
@@ -245,18 +245,26 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_LISTS);
 
 		//nutGroups
-		NodeRef nutGroupsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_NUT_GROUPS);		
-		for (int i = 1; i <= 2; i++) {
+		NodeRef nutGroupsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_NUT_GROUPS);
+		String []nutGroups = {"Groupe 1", "Groupe 2", "Autre"};
+		for (String nutGroup : nutGroups) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, "Groupe " + i);
-			ChildAssociationRef childAssocRef = nodeService.createNode(nutGroupsFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
-			
-			logger.debug("Path: " + nodeService.getPath(childAssocRef.getChildRef()));
+			properties.put(ContentModel.PROP_NAME, nutGroup);
+			nodeService.createNode(nutGroupsFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);			
+		}
+		//nutTypes
+		NodeRef nutTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_NUT_TYPES);
+		String []nutTypes = {"Nutriment", "Vitamine", "Minéraux", "Valeur énergétique"};
+		for (String nutType : nutTypes) {
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, nutType);
+			nodeService.createNode(nutTypesFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);			
 		}
 		//packagingLevels
 		NodeRef packagingLevelsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_PACKAGING_LEVELS);
-		String []packagingLevels = {"Primaire", "Tertiaire"};
+		String []packagingLevels = {"Primaire", "Secondaire", "Tertiaire"};
 		for (String packagingLevel : packagingLevels) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, packagingLevel);
@@ -468,16 +476,13 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 
 		/*-- create hierarchy --*/
 		// RawMaterial - Sea food
-		
-		
-		HIERARCHY1_SEA_FOOD_REF =   hierarchyService.createHierarchy1(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
-		HIERARCHY2_FISH_REF = hierarchyService.createHierarchy2(rawMaterialHierarchyNodeRef,HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
+		HIERARCHY1_SEA_FOOD_REF = hierarchyService.createHierarchy1(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
+		HIERARCHY2_FISH_REF = hierarchyService.createHierarchy2(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
 		HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy2(rawMaterialHierarchyNodeRef,HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
-
+		
 		// FinishedProduct - Frozen
-
-		HIERARCHY1_FROZEN_REF =    hierarchyService.createHierarchy1(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN);
-		HIERARCHY2_PIZZA_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef,HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
-		HIERARCHY2_QUICHE_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef,HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);
+		HIERARCHY1_FROZEN_REF = hierarchyService.createHierarchy1(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN);
+		HIERARCHY2_PIZZA_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
+		HIERARCHY2_QUICHE_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);			
 	}
 }

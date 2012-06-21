@@ -1,0 +1,149 @@
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+#;Cereals and pasta;Flours and starches
+#;Cereals and pasta;Rice and other seeds
+#;Cereals and pasta;Pasta and semolina
+#;Pastries and biscuits;Baking mixes
+#;Dairy products and desserts;Milk
+#;Dairy products and desserts;Dietetic milk foods
+#;Dairy products and desserts;Creams and cream specialties
+#;Dairy products and desserts;Yoghurt and yoghurt-type dairy specialties
+#;Dairy products and desserts;Ultra-fresh white cheese
+#;Dairy products and desserts;Desserts fresh or uht
+#;Dairy products and desserts;Desserts and ice
+#;Dairy products and desserts;Milk substitutes
+#;Dairy products and desserts;Dairy
+#;Cheese;Soft-ripened cheeses
+#;Cheese;Veined cheeses ripened
+#;Cheese;Ripened cheeses farm
+#;Cheese;Ripened cheeses lasts
+#;Cheese;Processed cheese
+#;Cheese;Unripened cheeses and cheese specialties
+#;Fat;Butter and milk fat
+#;Fat;Other animal fats
+#;Fat;Margarines and fats composed
+#;Fat;Vegetable oils and fats
+#;Seafood;Fishes
+#;Seafood;Unprocessed fish and amphibians
+#;Seafood;Products based on fish
+#;Seafood;Crustaceans and molluscs unprocessed
+#;Crustaceans and molluscs;Based products and shellfish
+#;Sugars and confectionery;Sugar, honey, syrups
+#;Sugars and confectionery;Jams
+#;Sugars and confectionery;Chocolate confectionery
+#;Sugars and confectionery;Chocolates and chocolate products
+#;Soft drinks;Soft drinks
+#;Soft drinks;Water
+#;Soft drinks;Coffee, tea, herbal tea, cocoa beverages
+#;Soft drinks;Preparations for soft drinks
+#;Alcoholic beverages;Beer and similar
+#;Alcoholic beverages;Cider and similar
+#;Alcoholic beverages;Wines
+#;Alcoholic beverages;Liqueurs and spirits
+#;Alcoholic beverages;Cocktails
+#;Soups and broths;Ready to eat soups
+#;Soups and broths;Broths ready for consumption
+#;Soups and broths;Soups and broths unreconstituted
+#;Seasonings and sauces;Herbs, spices and seasonings
+#;Seasonings and sauces;Savory sauces and condiments
+#;Seasonings and sauces;Sweet sauces
+#;Foodstuffs intended for particular nutritional;Foods for special medical purposes
+#;Foodstuffs intended for particular nutritional;Food to meet the expenditure intentions muscle
+#;Foodstuffs intended for particular nutritional;Foods for restricted diets
+#;Foodstuffs intended for particular nutritional;Foods for infants and young children
+#;Eggs and derivatives;Eggs and derivatives
+#;Meat;Meat
+#;Poultry;Poultry
+#;Giblets;Giblets
+#;Cooked and cured meats;Cooked and cured meats
+#;Cooked and cured meats;Pork cold cuts
+#;Cooked and cured meats;Deli chicken
+#;Cooked and cured meats;Deli turkey
+#;Fruits, vegetables;Vegetables
+#;Fruits, vegetables;Pulses
+#;Fruits, vegetables;Potatoes and related
+#;Fruits, vegetables;Fruits
+#;Juices and nectars;Juices and nectars
+#;Oil seeds and chestnuts;Oil seeds and chestnuts
+#;Salads and raw vegetables;Salads and raw vegetables
+#;Various ingredients;Various ingredients
+#;Food supplements;Food supplements
+#;Cheese;Cheese
+#;Foodstuffs intended for particular nutritional;Foodstuffs intended for particular nutritional
+#;Grocery;Additives, functional ingredients
+#;Grocery;Spices
+#;Grocery;Aromas, flavoring preparations
+#;Grocery;Spices, condiments
+#;Grocery;Fat
+#;Grocery;Sauces
+#;Grocery;Bread products
+#;Grocery;Alcohols, water
+#;Grocery;Pasta, rice, meal
+#;Grocery;Flours, cereals
+#;Grocery;Coating
+#;Grocery;Breadcrumbs
+#;Grocery;Grocery other
+VALUES;USDA;Dairy and Egg Products
+VALUES;USDA;Spices and Herbs
+VALUES;USDA;Baby Foods
+VALUES;USDA;Fats and Oils
+VALUES;USDA;Poultry Products
+VALUES;USDA;Soups, Sauces, and Gravies
+VALUES;USDA;Sausages and Luncheon Meats
+VALUES;USDA;Breakfast Cereals
+VALUES;USDA;Fruits and Fruit Juices
+VALUES;USDA;Pork Products
+VALUES;USDA;Vegetables and Vegetable Products
+VALUES;USDA;Nut and Seed Products
+VALUES;USDA;Beef Products
+VALUES;USDA;Beverages
+VALUES;USDA;Finfish and Shellfish Products
+VALUES;USDA;Legumes and Legume Products
+VALUES;USDA;Lamb, Veal, and Game Products
+VALUES;USDA;Baked Products
+VALUES;USDA;Sweets
+VALUES;USDA;Cereal Grains and Pasta
+VALUES;USDA;Fast Foods
+VALUES;USDA;Meals, Entrees, and Sidedishes
+VALUES;USDA;Snacks
+VALUES;USDA;Ethnic Foods
+VALUES;USDA;Restaurant Foods
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Bakery-pastry;Breads
+VALUES;Bakery-pastry;Crackers and breads unsurveyed
+VALUES;Bakery-pastry;Pastries and buns
+VALUES;Pastries and biscuits;Cakes and pastries
+VALUES;Pastries and biscuits;Sweet biscuits
+VALUES;Pastries and biscuits;Crackers appetizers
+VALUES;Breakfast cereals and cereal bars;Breakfast cereals and cereal bars
+VALUES;Mixed dishes;Mixed dishes
+VALUES;Mixed dishes;Cooked meat or poultry
+VALUES;Mixed dishes;Dishes based on fish or aquatic products
+VALUES;Mixed dishes;Dishes of vegetables or legumes
+VALUES;Mixed dishes;Cooked cereal or pasta
+VALUES;Mixed dishes;Cheese dishes
+VALUES;Mixed dishes;Pizzas, pancakes and pies
+VALUES;Sandwiches;Sandwiches
+VALUES;Japanese products;Lemur
+VALUES;Japanese products;Skewer
+VALUES;Japanese products;Sushi
+VALUES;Japanese products;Sashimi
+VALUES;Menus - kits;Sushi
+VALUES;Quiches;Individual quiches
+;;
+;;
+;;
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;0;0
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;0;0
