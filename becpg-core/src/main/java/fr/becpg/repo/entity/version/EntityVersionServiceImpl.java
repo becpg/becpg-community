@@ -118,6 +118,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 		policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 		policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+		//disable classify
+		policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);		
 		// doesn't work, need to disable current class, subclass of entity, better than disableBehaviour()
 		//policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY);
 		policyBehaviourFilter.disableBehaviour(type);
@@ -155,6 +157,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_PRODUCT);
 			// doesn't work, need to disable current class, subclass of entity, better than disableBehaviour()
 			//policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY);
 			policyBehaviourFilter.enableBehaviour(type);
@@ -310,7 +313,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Override
 	public NodeRef getEntityVersion(Version version) {
-
+		
 		NodeRef versionHistoryNodeRef = getVersionHistoryNodeRef(version.getVersionedNodeRef());
 		List<ChildAssociationRef> versionAssocs = getVersionAssocs(versionHistoryNodeRef, false);
 

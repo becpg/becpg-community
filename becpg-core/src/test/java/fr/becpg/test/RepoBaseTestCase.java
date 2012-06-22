@@ -477,7 +477,7 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		/*-- create hierarchy --*/
 		// RawMaterial - Sea food
 		HIERARCHY1_SEA_FOOD_REF = hierarchyService.createHierarchy1(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
-		HIERARCHY2_FISH_REF = hierarchyService.createHierarchy2(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
+		HIERARCHY2_FISH_REF = hierarchyService.createHierarchy2(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
 		HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy2(rawMaterialHierarchyNodeRef,HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
 		
 		// FinishedProduct - Frozen

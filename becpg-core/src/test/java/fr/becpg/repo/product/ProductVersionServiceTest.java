@@ -127,7 +127,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				assertNotNull("Has list container", listContainerNodeRef);
 				
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
-				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
+				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);				
 				NodeRef evRawMaterialNodeRefV0_1 = entityVersionService.getEntityVersion(vRawMaterialNodeRefV0_1);
 				assertNotNull(evRawMaterialNodeRefV0_1);
 				ProductData vRawMaterial = productDAO.find(evRawMaterialNodeRefV0_1, dataLists);
