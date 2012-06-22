@@ -208,8 +208,6 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 	private NodeRef getLastChild(NodeRef destNodeRef, NodeRef listContainer, NodeRef nodeRef, boolean isDepthList) {
 		
-		logger.debug("getLastChild: " + tryGetName(destNodeRef));
-		
 		String query = getQueryByParentLevel(listContainer, destNodeRef,isDepthList);
 		query += LuceneHelper.getCondEqualID(nodeRef, Operator.NOT);
 		query += LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_SORT, Operator.NOT);
