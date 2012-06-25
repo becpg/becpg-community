@@ -20,6 +20,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
 import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 
@@ -259,6 +260,16 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									}
 									formQuery += operator + propName + ":\"" + from + "\"..\"" + to + "\"";
 								}
+							} else if(propName.contains("productHierarchy")){
+								String hierarchyQuery = getHierarchyQuery(propName,propValue);
+								if(hierarchyQuery!=null && hierarchyQuery.length()>0){
+									if(language == SearchService.LANGUAGE_FTS_ALFRESCO){
+										formQuery += operator + propName + ":(" + hierarchyQuery + ")";
+									} else {
+										formQuery += operator + propName + ":\"" + hierarchyQuery + "\"";
+									}
+								}
+								
 							} else if(propName.endsWith("depthLevel")){
 								Integer maxLevel = null;
 								try {
@@ -306,6 +317,25 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		
 		return query;
+	}
+
+	private String getHierarchyQuery(String propName, String hierachyName) {
+//		String searchQuery = " +PATH:\"/app:company_home/"
+//					    + RepoConsts.PATH_SYSTEM
+//						+"/"+RepoConsts.PATH_PRODUCT_HIERARCHY
+//						+"/"+BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)
+		String searchQuery = "+TYPE:\"bcpg:linkedValue\"  +@bcpg\\:lkvValue:\""+hierachyName+"\" "; 
+		
+		if(propName.endsWith("productHierarchy1")){
+			searchQuery+=" +ISNULL:bcpg\\:parentLevel";
+		 } 
+		List<NodeRef> nodes = beCPGSearchService.luceneSearch(searchQuery,-1);
+		String ret = "";
+		for(NodeRef node : nodes){
+			ret+=" \""+node.toString()+"\"";
+		}
+		
+		return ret;
 	}
 
 	/**
@@ -413,6 +443,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 					}
 				}
 			}
+			
+			
 
 			// criteria on geo origin, we query as an OR operator
 			if (key.equals(CRITERIA_GEO_ORIGIN) && !propValue.isEmpty()) {
