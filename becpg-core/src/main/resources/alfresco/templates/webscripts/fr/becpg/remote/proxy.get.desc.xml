@@ -1,0 +1,9 @@
+<webscript>
+	<shortname>Proxy remote server</shortname>
+	<description>Proxy remote server</description>	
+	<url>/becpg/remote/proxy/{remoteUrl}</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readonly" >required</transaction>
+	<lifecycle>public_api</lifecycle>
+</webscript>

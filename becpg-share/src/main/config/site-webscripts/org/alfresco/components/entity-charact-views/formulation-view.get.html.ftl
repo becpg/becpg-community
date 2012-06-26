@@ -22,6 +22,13 @@
 	         </span>
 	    </span>
    </div>
+   <div class="import">
+	    <span id="${id}-importButton" class="yui-button yui-push-button">
+	         <span class="first-child">
+	             <button type="button" title="${msg('button.import.description')}">${msg('button.import')}</button>
+	         </span>
+	    </span>
+   </div>
 </div>
 <div id="yui-main">
 		  <@dataGridDashlet dashletId="compoList-${id}" />

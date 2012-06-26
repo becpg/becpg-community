@@ -1,8 +1,9 @@
 <#assign fc=config.scoped["Edition"]["footer"]>
+<#if fc.getChildValue("analytics-id")??>
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-32506303-1']);
+  _gaq.push(['_setAccount', '${fc.getChildValue("analytics-id")}']);
   _gaq.push(['_trackPageview']);
 
   (function() {
@@ -12,6 +13,7 @@
   })();
 
 </script>
+</#if>
 <div class="footer ${fc.getChildValue("css-class")!"footer-com"}">
    <span class="copyright">
       <img src="${url.context}/components/images/${fc.getChildValue("logo")!"alfresco-share-logo.png"}" alt="${fc.getChildValue("alt-text")!"Alfresco Community"}" height="27" width="212" />

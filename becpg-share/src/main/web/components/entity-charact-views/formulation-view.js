@@ -90,6 +90,11 @@
 			   disabled : false
 		   });
 		   
+		   this.widgets.formulateButton = Alfresco.util.createYUIButton(this, "importButton", this.onActionEntityImport, {
+			   disabled : false
+		   });
+		   
+		   
 		  //Toolbar contribs
 			var controls = Dom.getChildren("toolbar-contribs-"+this.id);
 		   for(var el in controls){
@@ -145,7 +150,71 @@
 		         scope : this
 		      }
 		   });
-	   }
+	   },
+	   
+	   
+
+		 /**
+	    * Import entity
+	    *
+	    * @method onActionEntityImport
+	    */
+	   onActionEntityImport: function FormulationView_onActionEntityImport(e, p_obj)
+	   {
+	      var actionUrl = Alfresco.constants.PROXY_URI + "becpg/remote/import";
+
+	      var doSetupFormsValidation = function FormulationView_onActionEntityImport_doSetupFormsValidation(p_form)
+	      {
+//	         // Validation
+//	         p_form.addValidation(this.id +  "-entityImporter-entities-added", function fnValidateType(field, args, event, form, silent, message)
+//	         {
+//	            return field.value != "";
+//	         }, null, "change");
+//	         p_form.setShowSubmitStateDynamically(true, false);
+	      };
+
+	      // Always create a new instance
+	      this.modules.entityImporter = new Alfresco.module.SimpleDialog(this.id + "-entityImporter").setOptions(
+	      {
+	         width: "33em",
+	         templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-importer/entity-importer",
+	         actionUrl: actionUrl,
+	         doSetupFormsValidation:
+	         {
+	            fn: doSetupFormsValidation,
+	            scope: this
+	         },
+	         firstFocus: this.id + "-entityImporter-supplier-field",
+	         onSuccess:
+	         {
+	            fn: function FormulationView_onActionEntityImport_success(response)
+	            {
+	               Alfresco.util.PopupManager.displayMessage(
+	               {
+	                  text: this.msg("message.import.success")
+	               });
+	            },
+	            scope: this
+	         },
+	         onFailure:
+	         {
+	            fn: function FormulationView_onActionEntityImport_failure(response)
+	            {
+	               Alfresco.util.PopupManager.displayMessage(
+	               {
+	                  text: this.msg("message.import.failure")
+	               });
+	            },
+	            scope: this
+	         }
+	      });
+	      this.modules.entityImporter.show();
+	   },
+	   
 
 	}, true);
+	
+	
+
+	
 })();

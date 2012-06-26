@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>entity-importer</shortname>
+  <description>Import entity from remote system</description>
+  <url>/modules/entity-importer/entity-importer</url>
+</webscript>

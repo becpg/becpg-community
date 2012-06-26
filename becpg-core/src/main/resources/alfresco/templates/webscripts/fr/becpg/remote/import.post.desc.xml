@@ -1,0 +1,9 @@
+<webscript>
+	<shortname>Import Entities</shortname>
+	<description>Import Entities</description>	
+	<url>/becpg/remote/import</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readwrite" buffersize="0">required</transaction>
+	<lifecycle>public_api</lifecycle>
+</webscript>

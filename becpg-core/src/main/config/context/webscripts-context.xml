@@ -190,6 +190,24 @@
 		<property name="mimetypeService" ref="mimetypeService" />
 	</bean>
 	
+   <bean id="webscript.fr.becpg.remote.import.post" class="fr.becpg.repo.web.scripts.remote.ImportEntityWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="remoteEntityService" ref="remoteEntityService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+		<property name="remoteUser" value="${beCPG.remoteUser}"/>
+		<property name="remotePwd" value="${beCPG.remotePwd}"/>
+		<property name="remoteServer" value="${beCPG.remoteServer}"/>
+	</bean>
+	
+	 <bean id="webscript.fr.becpg.remote.proxy.get" class="fr.becpg.repo.web.scripts.remote.RemoteProxyWebscript"
+		parent="webscript">
+		<property name="remoteUser" value="${beCPG.remoteUser}"/>
+		<property name="remotePwd" value="${beCPG.remotePwd}"/>
+		<property name="remoteServer" value="${beCPG.remoteServer}"/>
+	</bean>
+	
 	<bean id="webscript.fr.becpg.remote.entityData.post" class="fr.becpg.repo.web.scripts.remote.UpdateEntityDataWebScript"
 		parent="webscript">
 		<property name="nodeService" ref="nodeService" />
