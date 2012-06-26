@@ -50,21 +50,27 @@
 			<properties>
 				<property name="mpm:plQty">
 					<type>d:double</type>
+					<index enabled="false"/>
 				</property>				
 				<property name="mpm:plQtyResource">
 					<type>d:double</type>
+					<index enabled="false"/>
 				</property>
 				<property name="mpm:plRateResource">
 					<type>d:double</type>
+					<index enabled="false"/>
 				</property>
 				<property name="mpm:plYield">
 					<type>d:double</type>
+					<index enabled="false"/>
 				</property>
 				<property name="mpm:plRateProcess">
 					<type>d:double</type>
+					<index enabled="false"/>
 				</property>
 				<property name="mpm:plRateProduct">
 					<type>d:double</type>
+					<index enabled="false"/>
 				</property>
 			</properties>
 			<associations>

@@ -1,0 +1,29 @@
+MAPPING;Default
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;bcpg:lkvValue
+VALUES;Céréales et pâtes
+VALUES;Pâtisseries et biscuits
+VALUES;Produits laitiers et entremets
+VALUES;Fromages
+VALUES;Oeufs et dérivés
+VALUES;Matières grasses
+VALUES;Viandes
+VALUES;Volailles
+VALUES;Abats
+VALUES;Charcuteries et salaisons
+VALUES;Produits de la mer
+VALUES;Fruits, Légumes
+VALUES;Fruits
+VALUES;Jus et nectars
+VALUES;Graines oléagineuses et châtaignes
+VALUES;Sucres et confiseries
+VALUES;Boissons sans alcool
+VALUES;Boissons alcoolisées
+VALUES;Salades composées et crudités
+VALUES;Soupes et bouillons
+VALUES;Assaisonnements et sauces
+VALUES;Denrées destinées à une alimentation particulière
+VALUES;Ingrédients divers
+VALUES;Compléments alimentaires
+VALUES;Epicerie

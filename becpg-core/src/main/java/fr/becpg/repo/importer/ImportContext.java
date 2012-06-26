@@ -39,7 +39,9 @@ public class ImportContext {
 	private String importFileName;
 	
 	/** The import type. */
-	private ImportType importType = ImportType.Node;	
+	private ImportType importType = ImportType.Node;
+	
+	private List<QName> disabledPolicies = new ArrayList<QName>();
 	
 	private PropertyFormats propertyFormats;		
 
@@ -154,6 +156,14 @@ public class ImportContext {
 		this.importType = importType;
 	}
 	
+	public List<QName> getDisabledPolicies() {
+		return disabledPolicies;
+	}
+
+	public void setDisabledPolicies(List<QName> disabledPolicies) {
+		this.disabledPolicies = disabledPolicies;
+	}
+
 	public PropertyFormats getPropertyFormats() {
 		return propertyFormats;
 	}

@@ -1,0 +1,39 @@
+MAPPING;Default;
+PATH;/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:lkvValue;
+VALUES;trays;
+VALUES;cardboard;
+VALUES;palette;
+VALUES;film;
+VALUES;box;
+VALUES;pots;
+VALUES;lids;
+VALUES;Labels;
+VALUES;bricks;
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;trays;plastic trays
+VALUES;cardboard;recyclable
+VALUES;palette;recyclable
+VALUES;film;thermoformable
+VALUES;box;PF
+VALUES;Labels;Sticky
+VALUES;pots;plastics
+VALUES;pots;glasses
+VALUES;lids;lids
+VALUES;bricks;cardboard bricks
+VALUES;bricks;plastic bricks
+;;
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:lkvValue;
+VALUES;palletization;
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;palletization;palletization

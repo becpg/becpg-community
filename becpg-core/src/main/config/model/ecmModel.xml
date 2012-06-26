@@ -108,6 +108,7 @@
 				<property name="ecm:rlRevisionType">
 					<type>d:text</type>
 					<multiple>false</multiple>
+					<index enabled="false"/>
 					<constraints>
 						<constraint ref="ecm:revisionTypes" />
 					</constraints>
@@ -144,11 +145,13 @@
 			<parent>bcpg:entityListItem</parent>			
 			<properties>
 				<property name="ecm:impactedDataList">
-					<type>d:qname</type>					
+					<type>d:qname</type>				
+					<index enabled="false"/>	
 				</property>
 				<property name="ecm:isWUsedImpacted">
 					<type>d:boolean</type>
-					<default>true</default>					
+					<default>true</default>			
+					<index enabled="false"/>		
 				</property>			
 			</properties>
 			<associations>
@@ -188,6 +191,7 @@
 				<property name="ecm:culRevision">
 					<type>d:text</type>
 					<multiple>false</multiple>
+					<index enabled="false"/>
 					<constraints>
 						<constraint ref="ecm:revisionTypes" />
 					</constraints>
@@ -195,16 +199,19 @@
 				<property name="ecm:culReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="false"/>
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>					
 				</property>				
 				<property name="ecm:culReqDetails">
-					<type>d:text</type>					
+					<type>d:text</type>				
+					<index enabled="false"/>	
 				</property>	
 				<property name="ecm:culTreated">
 					<type>d:boolean</type>
-					<default>false</default>					
+					<default>false</default>				
+					<index enabled="false"/>	
 				</property>	
 			</properties>		
 			<associations>
@@ -250,9 +257,11 @@
 			<properties>
 				<property name="ecm:cclSourceValue">
 					<type>d:double</type>					
+					<index enabled="false"/>
 				</property>
 				<property name="ecm:cclTargetValue">
 					<type>d:double</type>			
+					<index enabled="false"/>
 				</property>			
 			</properties>
 			<associations>

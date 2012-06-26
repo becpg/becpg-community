@@ -178,7 +178,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	}
 
 	@Override
-	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, String value, Map<QName, Serializable> properties) throws ImporterException {
+	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, String value, Map<QName, Serializable> properties) throws ImporterException {
 		QName propName = propDef.getName();
 
 		if (propName.equals(BeCPGModel.PROP_PRODUCT_HIERARCHY1) || propName.equals(BeCPGModel.PROP_PRODUCT_HIERARCHY2)) {
@@ -202,6 +202,6 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 			}			
 			return hierarchyNodeRef;
 		}
-		return super.findTargetNodeByValue(importContext, propDef, value, properties);
+		return super.findPropertyTargetNodeByValue(importContext, propDef, value, properties);
 	}
 }

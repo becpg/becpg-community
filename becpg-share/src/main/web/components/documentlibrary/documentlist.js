@@ -2284,8 +2284,30 @@
             
             
             if (oFullResponse.metadata.parent.type == "bcpg:entityFolder")
-            {
-               Dom.removeClass(me.id + "-becpg-entityFolder-instructions", "hidden");
+            {                            
+               var div = Dom.get(me.id + "-becpg-entityFolder-instructions"),
+               		instructionKey,
+               		entityFolderClassName = oFullResponse.metadata.parent.properties["bcpg:entityFolderClassName"], 
+               		instructions;
+               
+        	   entityFolderType = entityFolderClassName.split("}")[1];
+        	   //same message for every product
+        	   if(entityFolderType == "rawMaterial" || entityFolderType == "finishedProduct" || 
+        			   entityFolderType == "semiFinishedProduct" || entityFolderType == "localSemiFinishedProduct" ||
+        			   entityFolderType == "packagingKit" || entityFolderType == "packagingMaterial" ||
+        			   entityFolderType == "resourceProduct"){
+        		   instructionKey = "product";
+        	   }
+        	   else{
+        		   instructionKey = entityFolderType;
+        	   }
+               
+               instructions = "<img  src='/share/res/components/images/filetypes/generic-" + entityFolderType + "-32.png'>";
+               instructions += "<span >" + Alfresco.util.message("page.documentlibrary.instructions." + instructionKey) + "</span>";
+               
+               div.innerHTML = instructions;
+               Dom.removeClass(div, "hidden");
+               
             } else {
                 Dom.addClass(me.id + "-becpg-entityFolder-instructions", "hidden");
             }

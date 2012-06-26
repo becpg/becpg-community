@@ -61,7 +61,6 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProductDAOImpl.
  * 
@@ -70,7 +69,7 @@ import fr.becpg.repo.product.data.productList.RequirementType;
 public class ProductDAOImpl implements ProductDAO {
 
 	public static final String KEY_COST_DETAILS = "%s-%s";
-
+	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductDAOImpl.class);
 
@@ -829,10 +828,12 @@ public class ProductDAOImpl implements ProductDAO {
 				List<NodeRef> listItemNodeRefs = listItems(forbiddenIngListNodeRef, BeCPGModel.TYPE_FORBIDDENINGLIST);
 
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
-
+					
 					Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
-					Boolean isGMO = (Boolean) properties.get(BeCPGModel.PROP_FIL_IS_GMO);
-					Boolean isIonized = (Boolean) properties.get(BeCPGModel.PROP_FIL_IS_IONIZED);
+					String strIsGMO = (String) properties.get(BeCPGModel.PROP_FIL_IS_GMO);
+					Boolean isGMO = strIsGMO != null && !strIsGMO.isEmpty() ? Boolean.valueOf(strIsGMO) : null;
+					String strIsIonized = (String) properties.get(BeCPGModel.PROP_FIL_IS_IONIZED);
+					Boolean isIonized = strIsIonized != null && !strIsIonized.isEmpty() ? Boolean.valueOf(strIsIonized) : null;
 
 					List<AssociationRef> ingAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_FIL_INGS);
 					List<NodeRef> ings = new ArrayList<NodeRef>(ingAssocRefs.size());
@@ -2038,8 +2039,8 @@ public class ProductDAOImpl implements ProductDAO {
 					properties.put(BeCPGModel.PROP_FIL_REQ_TYPE, forbiddenIngListDataItem.getReqType());
 					properties.put(BeCPGModel.PROP_FIL_REQ_MESSAGE, forbiddenIngListDataItem.getReqMessage());
 					properties.put(BeCPGModel.PROP_FIL_QTY_PERC_MAXI, forbiddenIngListDataItem.getQtyPercMaxi());
-					properties.put(BeCPGModel.PROP_FIL_IS_GMO, forbiddenIngListDataItem.isGMO());
-					properties.put(BeCPGModel.PROP_FIL_IS_IONIZED, forbiddenIngListDataItem.isIonized());
+					properties.put(BeCPGModel.PROP_FIL_IS_GMO, forbiddenIngListDataItem.isGMO() == null ? "" : forbiddenIngListDataItem.isGMO().toString());
+					properties.put(BeCPGModel.PROP_FIL_IS_IONIZED, forbiddenIngListDataItem.isIonized() == null ? "" : forbiddenIngListDataItem.isIonized().toString());
 
 					if (filesToUpdate.contains(forbiddenIngListDataItem.getNodeRef())) {
 						// update
@@ -2240,5 +2241,4 @@ public class ProductDAOImpl implements ProductDAO {
 		// Done
 		return result;
 	}
-
 }

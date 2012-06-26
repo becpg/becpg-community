@@ -1,6 +1,7 @@
 package fr.becpg.repo.thumbnail.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -9,8 +10,6 @@ import org.alfresco.repo.thumbnail.ThumbnailServiceImpl;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.thumbnail.ThumbnailService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -20,6 +19,7 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.thumbnail.BeCPGThumbnailService;
 
 /**
@@ -31,7 +31,8 @@ import fr.becpg.repo.thumbnail.BeCPGThumbnailService;
 public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 		BeCPGThumbnailService, ThumbnailService {
 
-	public static String DOC_LIB_THUMBNAIL = "doclib";
+	private static String DOC_LIB_THUMBNAIL = "doclib";
+	private static String ICON_THUMBNAIL_NAME = "generic-%s-thumb*png";
 
 	private static Log logger = LogFactory
 			.getLog(BeCPGThumbnailServiceImpl.class);
@@ -42,7 +43,7 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 
 	private EntityService entityService;
 
-	private SearchService searchService;
+	private BeCPGSearchService beCPGSearchService;
 
 	private Map<String, NodeRef> cachedThumbs = new HashMap<String, NodeRef>();
 
@@ -58,9 +59,9 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
-
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
+	
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	@Override
@@ -77,12 +78,9 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 				&& !SiteModel.TYPE_SITE.equals(type)
 				&& !SiteModel.TYPE_SITES.equals(type)) {
 
-			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_CLIENT)
-					|| dictionaryService.isSubClass(type,
-							BeCPGModel.TYPE_SUPPLIER)
-					|| dictionaryService.isSubClass(type,
-							BeCPGModel.TYPE_PRODUCT)) {
-		
+			if (BeCPGModel.TYPE_CLIENT.isMatch(type) || 
+					BeCPGModel.TYPE_SUPPLIER.isMatch(type) || 
+					dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {		
 				
 				NodeRef img;
 				try {
@@ -96,7 +94,7 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 				}
 				
 			} 
-			return getImage("generic-" + type.getLocalName() + "-thumb.png");
+			return getImage(String.format(ICON_THUMBNAIL_NAME, type.getLocalName()));
 		}
 		return null;
 
@@ -115,21 +113,20 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 
 		String query = String.format(RepoConsts.PATH_QUERY_THUMBNAIL, imgName);
 
-		ResultSet resultSet = searchService.query(RepoConsts.SPACES_STORE,
-				SearchService.LANGUAGE_LUCENE, query);
+		List<NodeRef> listItems = beCPGSearchService.unProtLuceneSearch(query);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Look for thumbnail : " + query);
-			logger.debug("Found  : " + resultSet.getNodeRefs().size()
+			logger.debug("Found  : " + listItems.size()
 					+ " results");
 		}
 
-		if (resultSet.getNodeRefs().size() != 1) {
+		if (listItems.size() == 0) {
 			logger.debug("image not found. imgName: " + imgName);
 			return null;
 		}
 
-		ret = resultSet.getNodeRef(0);
+		ret = listItems.get(0);
 
 		cachedThumbs.put(imgName, ret);
 		return ret;

@@ -1,0 +1,29 @@
+MAPPING;Default;
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;USDA;Produits laitiers et oeufs
+VALUES;USDA;Épices et fines herbes
+VALUES;USDA;Aliments infantiles
+VALUES;USDA;Graisses et les huiles
+VALUES;USDA;Produits de la volaille
+VALUES;USDA;Soupes, sauces et napper
+VALUES;USDA;Saucisses, saucissons et les viandes froides
+VALUES;USDA;Céréales pour petit déjeuner
+VALUES;USDA;Fruits et jus de fruits
+VALUES;USDA;Produits de porc
+VALUES;USDA;Les légumes et les produits d'origine végétale
+VALUES;USDA;Produits de noix et de graines
+VALUES;USDA;Produits de boeuf
+VALUES;USDA;Boissons
+VALUES;USDA;Produits de poissons, mollusques et crustacés
+VALUES;USDA;Les légumineuses et les produits de légumineuses
+VALUES;USDA;Produits d'agneau, de veau, et du jeu
+VALUES;USDA;Produits de boulangerie
+VALUES;USDA;Sucré
+VALUES;USDA;Céréales et pâtes
+VALUES;USDA;Fast foods
+VALUES;USDA;Les repas, les plats de résistance, et sidedishes
+VALUES;USDA;Snacks
+VALUES;USDA;Aliments ethniques
+VALUES;USDA;Aliments restaurants

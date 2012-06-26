@@ -1,46 +1,47 @@
-"PATH";"/System/Characts/bcpg:entityLists/Costs";;;;;;
-"TYPE";"bcpg:cost";;;;;;
-"COLUMNS";"cm:name";"bcpg:costCurrency";;;;;
-"VALUES";"Coût MP";"€";;;;;
-"VALUES";"Coût prév MP";"€";;;;;
-"VALUES";"Coût Emb";"€";;;;;
-"VALUES";"Coût prév Emb";"€";;;;;
+PATH;/System/Characts/bcpg:entityLists/Costs;;;;;;
+TYPE;bcpg:cost;;;;;;
+COLUMNS;cm:name;bcpg:costCurrency;;;;;
+VALUES;Coût MP;€;;;;;
+VALUES;Coût prév MP;€;;;;;
+VALUES;Coût Emb;€;;;;;
+VALUES;Coût prév Emb;€;;;;;
 ;;;;;;;
-"PATH";"/System/Characts/bcpg:entityLists/Nuts";;;;;;
-"TYPE";"bcpg:nut";;;;;;
-"COLUMNS";"cm:name";"bcpg:nutUnit";"bcpg:nutType";"bcpg:nutGroup";;;
-"VALUES";"Energie (kJoules)";"kJ";"Valeur énergétique";"Groupe 1";;;
-"VALUES";"Energie (kCalories)";"kcal";"Valeur énergétique";"Groupe 1";;;
-"VALUES";"Protéines";"g";"Nutriment";"Groupe 1";;;
-"VALUES";"Protéines brutes (N x 6.25)";"g";"Nutriment";"Autre";;;
-"VALUES";"Glucides";"g";"Nutriment";"Groupe 1";;;
-"VALUES";"Lipides";"g";"Nutriment";"Groupe 1";;;
+PATH;/System/Characts/bcpg:entityLists/Nuts;;;;;;
+TYPE;bcpg:nut;;;;;;
+COLUMNS;cm:name;bcpg:nutUnit;bcpg:nutType;bcpg:nutGroup;;;
+VALUES;Energie (kJoules);kJ;Valeur énergétique;Groupe 1;;;
+VALUES;Energie (kCalories);kcal;Valeur énergétique;Groupe 1;;;
+VALUES;Protéines;g;Nutriment;Groupe 1;;;
+VALUES;Protéines brutes (N x 6.25);g;Nutriment;Autre;;;
+VALUES;Glucides;g;Nutriment;Groupe 1;;;
+VALUES;Lipides;g;Nutriment;Groupe 1;;;
 ;;;;;;;
-"PATH";"/Temp/Suppliers";;;;;;
-"TYPE";"bcpg:supplier";;;;;;
-"COLUMNS";"bcpg:code";"cm:name";;;;;
-"VALUES";12;"Fournisseur fruits de mer";;;;;
-"VALUES";13;"Fournisseur2";;;;;
-"VALUES";14;"Fournisseur3";;;;;
+PATH;/Temp/Suppliers;;;;;;
+TYPE;bcpg:supplier;;;;;;
+COLUMNS;bcpg:code;cm:name;;;;;
+VALUES;12;Fournisseur fruits de mer;;;;;
+VALUES;13;Fournisseur2;;;;;
+VALUES;14;Fournisseur3;;;;;
 ;;;;;;;
-"PATH";"/Temp/Products";;;;;;
-"TYPE";"bcpg:finishedProduct";;;;;;
-"COLUMNS";"bcpg:code";"cm:name";"cm:description";"bcpg:legalName";"bcpg:productHierarchy1";"bcpg:productHierarchy2";"bcpg:productState"
-"VALUES";1000012012;"Saumon surgelé 80x20x4";;"saumon sugelé";"Frozen";"Pizza";"ToValidate"
+PATH;/Temp/Products;;;;;;
+TYPE;bcpg:finishedProduct;;;;;;
+COLUMNS;bcpg:code;cm:name;cm:description;bcpg:legalName;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:productState
+VALUES;1000012012;Saumon surgelé 80x20x4;;saumon sugelé;Frozen;Pizza;ToValidate
 ;;;;;;;
-"PATH";"/Temp/Products";;;;;;
-"TYPE";"bcpg:rawMaterial";;;;;;
-"COLUMNS";"bcpg:code";"cm:name";"cm:description";"bcpg:legalName";"bcpg:productHierarchy1";"bcpg:productHierarchy2";"bcpg:productState"
-"VALUES";1000012013;"MP1";;;"Sea food";"Fish";"ToValidate"
-"VALUES";1000012014;"MP2";;;"Sea food";"Fish";"ToValidate"
-"VALUES";1000012015;"MP3";;;"Sea food";"Fish";"ToValidate"
+PATH;/Temp/Products;;;;;;
+TYPE;bcpg:rawMaterial;;;;;;
+COLUMNS;bcpg:code;cm:name;cm:description;bcpg:legalName;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:productState
+VALUES;1000012013;MP1;;;Sea food;Fish;ToValidate
+VALUES;1000012014;MP2;;;Sea food;Fish;ToValidate
+VALUES;1000012015;MP3;;;Sea food;Fish;ToValidate
 ;;;;;;;
 ;;;;;;;
-"PATH";"/Temp/Products";;;;;;
-"TYPE";"bcpg:compoList";;;;;;
-"MAPPING";"Products";;;;;;
-"COLUMNS";"code";"level";"compoListProduct";"compoListQty";"compoListUnit";;
-"VALUES";1000012012;1;1000012013;1;"g";"Saumon surgelé 80x20x4";
-"VALUES";1000012012;1;1000012014;2;"kg";"Saumon surgelé 80x20x4";
-"VALUES";1000012012;1;1000012015;3,1;"g";"Saumon surgelé 80x20x4";
-"VALUES";1000012012;1;1000012015;3,2;"g";"Saumon surgelé 80x20x4";
+PATH;/Temp/Products;;;;;;
+TYPE;bcpg:compoList;;;;;;
+MAPPING;Products;;;;;;
+IMPORT_TYPE;EntityListItem;;;;;;
+COLUMNS;code;level;compoListProduct;compoListQty;compoListUnit;;
+VALUES;1000012012;1;1000012013;1;g;Saumon surgelé 80x20x4;
+VALUES;1000012012;1;1000012014;2;kg;Saumon surgelé 80x20x4;
+VALUES;1000012012;1;1000012015;3,1;g;Saumon surgelé 80x20x4;
+VALUES;1000012012;1;1000012015;3,2;g;Saumon surgelé 80x20x4;

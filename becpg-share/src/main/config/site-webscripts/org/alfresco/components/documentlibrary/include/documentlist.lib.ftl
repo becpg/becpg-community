@@ -152,8 +152,6 @@
    
    <#-- beCPG entityFolder -->
    <div id="${id}-becpg-entityFolder-instructions" class="hidden entityFolderInstructions">
-      <img  src="${url.context}/res/components/images/filetypes/generic-entityFolder-32.png">
-      <span >${msg("page.documentlibrary.entityfolder.instructions")}</span>
    </div>
 
    <#-- Main Panel: Document List -->

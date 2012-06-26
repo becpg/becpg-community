@@ -102,8 +102,10 @@ public class SortableListPolicy implements NodeServicePolicies.OnUpdatePropertie
 		logger.debug("SortableListPolicy.onAddAspect: " + aspect);		
 		
 		// try to avoid to do two times the work, otherwise it duplicates nodeRef in lucene index !!!
-		if ((aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST) && !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) || 
-				aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+		if ((aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST) && 
+				!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL) && 
+				nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null) 
+				|| aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
 			
 			if (logger.isDebugEnabled()) {
 				logger.debug("Add sortable aspect policy ");

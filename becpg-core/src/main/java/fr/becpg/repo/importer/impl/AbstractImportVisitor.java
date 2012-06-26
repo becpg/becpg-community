@@ -267,7 +267,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 	@Override
 	public NodeRef importNode(ImportContext importContext, List<String> values) throws ParseException, ImporterException {
 		
-		logger.debug("ImportNode");
+		logger.debug("ImportNode. type: " + importContext.getType());
 				  						 
 		// import properties		
 		Map<QName, Serializable> properties = getNodePropertiesToImport(importContext, values); 				 		
@@ -277,14 +277,14 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		if(nodeRef == null){
 			String name = (String)properties.get(ContentModel.PROP_NAME);
 			if(logger.isDebugEnabled()){
-				logger.debug("create node. Type: " + importContext.getType() + " - Properties: " + properties);
+				logger.debug("create node. Type: " + importContext.getType() + " - Properties: " + properties);				
 			}
 			QName assocName = ContentModel.ASSOC_CHILDREN;
 			if(name != null && name.length()>0){
 				assocName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
 			}
 			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
-					assocName, importContext.getType(), properties).getChildRef();			 
+					assocName, importContext.getType(), properties).getChildRef();			 			
 		}
 		else if(importContext.isDoUpdate()){
 			
@@ -338,7 +338,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 					 Serializable value = null;
 					 QName dataType = propDef.getDataType().getName();
 					 if(dataType.isMatch(DataTypeDefinition.NODE_REF)){
-						 value = findTargetNodeByValue(importContext, propDef, values.get(z_idx), properties);
+						 value = findPropertyTargetNodeByValue(importContext, propDef, values.get(z_idx), properties);
 					 } else {
 						 value = ImportHelper.loadPropertyValue(importContext, values, z_idx);			
 					 }
@@ -827,7 +827,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 								
 				if(properties.get(attribute) != null){
 					// +@cm\\:localName:%s					
-					queryPath += LuceneHelper.getCondEqualValue(attribute, (String)properties.get(attribute), LuceneHelper.Operator.AND);
+					queryPath += LuceneHelper.getCondEqualValue(attribute, properties.get(attribute) != null ? properties.get(attribute).toString() : null, LuceneHelper.Operator.AND);
 					doQuery = true;
 				}				
 			}	
@@ -840,7 +840,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		}			
 			
 		if(doQuery){
-			logger.debug(queryPath);
+			logger.debug("findNodeByKeyOrCode: " + queryPath);
 
 			List<NodeRef> resultSet = beCPGSearchService.luceneSearch(queryPath.toString(), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 				
@@ -902,13 +902,24 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 	
 	
 
-	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, String value, Map<QName, Serializable> properties) throws ImporterException {
+	/**
+	 * Find the target node according to the property (no target type associated to a property of type nodeRef
+	 * @param importContext
+	 * @param propDef
+	 * @param value
+	 * @param properties
+	 * @return
+	 * @throws ImporterException
+	 */
+	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, String value, Map<QName, Serializable> properties) throws ImporterException {
 		QName propName = propDef.getName();
 		
 		if (propName.equals(BeCPGModel.PROP_PARENT_LEVEL)) {
 
 			String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, LuceneHelper.encodePath(importContext.getPath()), value);
 
+			logger.debug("findPropertyTargetNodeByValue: " + queryPath);
+			
 			List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_NO_LIMIT);
 
 			logger.debug("resultSet.length() : " + ret.size() + " for " + queryPath);
@@ -1010,7 +1021,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 				
 			if(doQuery){
 				
-				logger.debug(queryPath);
+				logger.debug("findTargetNodeByValue: " + queryPath);
 				
 				List<NodeRef> resultSet = beCPGSearchService.luceneSearch(queryPath.toString(), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 

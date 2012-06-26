@@ -1,0 +1,87 @@
+MAPPING;Default;
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Céréales et pâtes;Farines et amidons
+VALUES;Céréales et pâtes;Riz et autres graines
+VALUES;Céréales et pâtes;Pâtes et semoules
+VALUES;Pâtisseries et biscuits;Préparations pour pâtisseries
+VALUES;Produits laitiers et entremets;Laits
+VALUES;Produits laitiers et entremets;Aliments lactés diététiques
+VALUES;Produits laitiers et entremets;Crèmes et spécialités à base de crème
+VALUES;Produits laitiers et entremets;Yaourts et spécialités laitières type yaourts
+VALUES;Produits laitiers et entremets;Fromages blancs ultrafrais
+VALUES;Produits laitiers et entremets;Desserts lactés frais ou UHT
+VALUES;Produits laitiers et entremets;Entremets et glaces
+VALUES;Produits laitiers et entremets;Succédanés du lait
+VALUES;Produits laitiers et entremets;Produits laitiers
+VALUES;Fromages;Fromages affinés à pâte molle
+VALUES;Fromages;Fromages affinés à pâte persillée
+VALUES;Fromages;Fromages affinés à pâte ferme
+VALUES;Fromages;Fromages affinés à pâte dure
+VALUES;Fromages;Fromages fondus
+VALUES;Fromages;Fromages non affinés et spécialités fromagères
+VALUES;Matières grasses;Beurres et matières grasses laitières
+VALUES;Matières grasses;Autres matières grasses animales
+VALUES;Matières grasses;Margarines et matières grasses composées
+VALUES;Matières grasses;Huiles et graisses végétales
+VALUES;Produits de la mer;Poissons
+VALUES;Produits de la mer;Poissons et batraciens non transformés
+VALUES;Produits de la mer;Produits à base de poissons
+VALUES;Produits de la mer;Crustacés et mollusques non transformés
+VALUES;Crustacés et mollusques;Produits à base de crustacés et mollusques
+VALUES;Sucres et confiseries;Sucres, miels, sirops
+VALUES;Sucres et confiseries;Confitures
+VALUES;Sucres et confiseries;Confiseries non chocolatées
+VALUES;Sucres et confiseries;Chocolats et produits à base de chocolat
+VALUES;Boissons sans alcool;Boissons rafraîchissantes sans alcool
+VALUES;Boissons sans alcool;Eaux
+VALUES;Boissons sans alcool;Café, thé, infusions, boissons au cacao
+VALUES;Boissons sans alcool;Préparations pour boissons sans alcool
+VALUES;Boissons alcoolisées;Bières et similaires
+VALUES;Boissons alcoolisées;Cidres et similaires
+VALUES;Boissons alcoolisées;Vins
+VALUES;Boissons alcoolisées;Liqueurs et alcools
+VALUES;Boissons alcoolisées;Cocktails
+VALUES;Soupes et bouillons;Soupes prêtes à consommer
+VALUES;Soupes et bouillons;Bouillons prêts à consommer
+VALUES;Soupes et bouillons;Soupes et bouillons non reconstitués
+VALUES;Assaisonnements et sauces;Herbes, épices et assaisonnements
+VALUES;Assaisonnements et sauces;Sauces salées et condiments
+VALUES;Assaisonnements et sauces;Sauces sucrées
+VALUES;Denrées destinées à une alimentation particulière;Aliments destinés à des fins médicales spécial
+VALUES;Denrées destinées à une alimentation particulière;Aliments adaptés à une dépense musculaire inten
+VALUES;Denrées destinées à une alimentation particulière;Aliments pour régimes hypocaloriques
+VALUES;Denrées destinées à une alimentation particulière;Aliments pour nourrissons et enfants en bas âge
+VALUES;Oeufs et dérivés;Oeufs et dérivés
+VALUES;Viandes;Viandes
+VALUES;Volailles;Volailles
+VALUES;Abats;Abats
+VALUES;Charcuteries et salaisons;Charcuteries et salaisons
+VALUES;Charcuteries et salaisons;Charcuteries de porc
+VALUES;Charcuteries et salaisons;Charcuteries de poulet
+VALUES;Charcuteries et salaisons;Charcuteries de dinde
+VALUES;Fruits, Légumes;Légumes
+VALUES;Fruits, Légumes;Légumes secs
+VALUES;Fruits, Légumes;Pommes de terre et apparentés
+VALUES;Fruits, Légumes;Fruits
+VALUES;Jus et nectars;Jus et nectars
+VALUES;Graines oléagineuses et châtaignes;Graines oléagineuses et châtaignes
+VALUES;Salades composées et crudités;Salades composées et crudités
+VALUES;Ingrédients divers;Ingrédients divers
+VALUES;Compléments alimentaires;Compléments alimentaires
+VALUES;Fromages;Fromages
+VALUES;Denrées destinées à une alimentation particulière;Denrées destinées à une alimentation particulière
+VALUES;Epicerie;Additifs, ingrédients fonctionnels
+VALUES;Epicerie;Epices
+VALUES;Epicerie;Arômes, préparations aromatisantes
+VALUES;Epicerie;Aromates, condiments
+VALUES;Epicerie;Matières grasses
+VALUES;Epicerie;Sauces
+VALUES;Epicerie;Produits de panification
+VALUES;Epicerie;Alcools, eau
+VALUES;Epicerie;Pâtes, riz, semoules
+VALUES;Epicerie;Farines, céréales
+VALUES;Epicerie;Enrobant
+VALUES;Epicerie;Chapelure
+VALUES;Epicerie;Epicerie autres

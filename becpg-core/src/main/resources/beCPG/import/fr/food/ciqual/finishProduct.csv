@@ -1,0 +1,284 @@
+PATH;/Temp/PF;;;;;
+TYPE;bcpg:finishedProduct;;;;;
+MAPPING;NutDatabaseFrench;;;;;
+COLUMNS;bcpg:code;cm:name;bcpg:legalName;bcpg:legalName_en;bcpg:productHierarchy1;bcpg:productHierarchy2
+VALUES;PF7001;Pain, baguette courante;Pain, baguette courante;Bread, French 250 g baguette;Boulangerie-viennoiserie;Pains
+VALUES;PF7004;Pain grillÃ©, domestique;Pain grillÃ©, domestique;Bread, plain, toasted at home;Boulangerie-viennoiserie;Pains
+VALUES;PF7012;Pain courant franÃ§ais, 400 g ou boule;Pain courant franÃ§ais, 400 g ou boule;Bread, French 400 g loaf, from bakery;Boulangerie-viennoiserie;Pains
+VALUES;PF7100;Pain de campagne ou bis;Pain de campagne ou bis;Bread, French, country style, from bakery;Boulangerie-viennoiserie;Pains
+VALUES;PF7110;Pain complet, fabrication artisanale;Pain complet, fabrication artisanale;Bread, wholemeal, from bakery;Boulangerie-viennoiserie;Pains
+VALUES;PF7125;Pain de seigle et froment;Pain de seigle et froment;Bread, rye + wheat, from bakery;Boulangerie-viennoiserie;Pains
+VALUES;PF7126;Pain de seigle aux raisins;Pain de seigle aux raisins;Rye bun with raisins, from bakery;Boulangerie-viennoiserie;Pains
+VALUES;PF7160;Pain, baguette sans sel;Pain, baguette sans sel;Bread, French 250 g baguette, without salt;Boulangerie-viennoiserie;Pains
+VALUES;PF7200;Pain de mie;Pain de mie;Bread, sandwich loaf;Boulangerie-viennoiserie;Pains
+VALUES;PF7225;Pain briochÃ© ou viennois;Pain briochÃ© ou viennois;Vienna bread, from bakery;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF7255;Pain aux cÃ©rÃ©ales et graines, artisanal;Pain aux cÃ©rÃ©ales et graines, artisanal;Bread, mixed cereal, from bakery;Boulangerie-viennoiserie;Pains
+VALUES;PF7300;Biscotte classique;Biscotte classique;Rusk, plain;Boulangerie-viennoiserie;Biscottes et pains non levÃ©s
+VALUES;PF7310;Biscotte sans adjonction de sel;Biscotte sans adjonction de sel;Rusk, unsalted;Boulangerie-viennoiserie;Biscottes et pains non levÃ©s
+VALUES;PF7330;Biscotte multicÃ©rÃ©ale;Biscotte multicÃ©rÃ©ale;Rusk, mixed cereal;Boulangerie-viennoiserie;Biscottes et pains non levÃ©s
+VALUES;PF7340;Biscotte complÃšte ou riche en fibres;Biscotte complÃšte ou riche en fibres;Rusk, wholemeal;Boulangerie-viennoiserie;Biscottes et pains non levÃ©s
+VALUES;PF7400;Pain grillÃ©, tranches, au froment;Pain grillÃ©, tranches, au froment;Bread, plain, toasted, commercial;Boulangerie-viennoiserie;Biscottes et pains non levÃ©s
+VALUES;PF7410;Tartine craquante, extrudÃ©e et grillÃ©e;Tartine craquante, extrudÃ©e et grillÃ©e;Rusk, extruded;Boulangerie-viennoiserie;Biscottes et pains non levÃ©s
+VALUES;PF7411;Tartine craquante, extrudÃ©e et grillÃ©e, fourrÃ©e au chocolat ou aux fruits;Tartine craquante, extrudÃ©e et grillÃ©e, fourrÃ©e au chocolat ou aux fruits;Biscuit, extruded, chocolate or fruit filling;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF7425;Pain grillÃ©, tranches, multicÃ©rÃ©ale;Pain grillÃ©, tranches, multicÃ©rÃ©ale;Bread, multigrain, toasted, commercial;Boulangerie-viennoiserie;Biscottes et pains non levÃ©s
+VALUES;PF7430;CroÃ»tons;CroÃ»tons;Croutons;Boulangerie-viennoiserie;Biscottes et pains non levÃ©s
+VALUES;PF7500;Chapelure;Chapelure;Breadcrumbs, commercial;Boulangerie-viennoiserie;Biscottes et pains non levÃ©s
+VALUES;PF7525;Gressins;Gressins;Bread stick;Boulangerie-viennoiserie;Biscottes et pains non levÃ©s
+VALUES;PF7601;Croissant ordinaire ou au beurre;Croissant ordinaire ou au beurre;Croissant, ordinary or butter;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF7615;Croissant ordinaire, artisanal;Croissant ordinaire, artisanal;Croissant, ordinary, from bakery;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF7620;Croissant au beurre, artisanal;Croissant au beurre, artisanal;Croissant, butter, from bakery;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF7650;Croissant aux amandes, artisanal;Croissant aux amandes, artisanal;Croissant with almonds, from bakery;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF7710;Pain au lait, artisanal;Pain au lait, artisanal;Milkbread roll, from bakery;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF7720;Pain aux raisins (viennoiserie);Pain aux raisins (viennoiserie);Raisin bun, from bakery;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF7730;Pain au chocolat feuilletÃ©, artisanal;Pain au chocolat feuilletÃ©, artisanal;Bun with chocolate filling, from bakery;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF7740;Brioche, prÃ©emballÃ©e;Brioche, prÃ©emballÃ©e;Brioche, commercial;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF7741;Brioche artisanale;Brioche artisanale;Brioche, bakery;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF7812;Fougasse, garnie;Fougasse, garnie;Fougasse;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF7814;Cake salÃ© (garniture : fromage, lÃ©gumes, viande, poisson, volaille,âŠ);Cake salÃ© (garniture : fromage, lÃ©gumes, viande, poisson, volaille,âŠ);Savoury cake (with cheese, vegetables, meat or fish);Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF8296;Terrine ou mousse de lÃ©gumes;Terrine ou mousse de lÃ©gumes;Vegetable terrines and mousses;Plats composÃ©s;Plats Ã  base de lÃ©gumes ou lÃ©gumineuses
+VALUES;PF8601;Tripes Ã  la mode de Caen;Tripes Ã  la mode de Caen;Tripes Ã  la mode de Caen;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF8934;Quenelle de poisson, cuite;Quenelle de poisson, cuite;Quenelle, fish, cooked;Plats composÃ©s;Plats Ã  base de poisson ou produits aquatiques
+VALUES;PF9230;Pop-corn ou MaÃ¯s Ã©clatÃ©, Ã  l'huile, salÃ©;Pop-corn ou MaÃ¯s Ã©clatÃ©, Ã  l'huile, salÃ©;Popcorn, oil-popped, salted;PÃ¢tisseries et biscuits;Biscuits salÃ©s apÃ©ritifs
+VALUES;PF9231;Pop-corn ou MaÃ¯s Ã©clatÃ©, Ã  l'air, non salÃ©;Pop-corn ou MaÃ¯s Ã©clatÃ©, Ã  l'air, non salÃ©;Popcorn, air-popped, no salt;PÃ¢tisseries et biscuits;Biscuits salÃ©s apÃ©ritifs
+VALUES;PF9313;Flocons d'avoine, cuits Ã  l'eau;Flocons d'avoine, cuits Ã  l'eau;Oats porridge, made with water;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF10023;Beignet de crevette;Beignet de crevette;Shrimp fritters;Plats composÃ©s;Plats Ã  base de poisson ou produits aquatiques
+VALUES;PF20914;Escalope vÃ©gÃ©tale ou Steak Ã  base de soja;Escalope vÃ©gÃ©tale ou Steak Ã  base de soja;Soy burger;Plats composÃ©s;Plats Ã  base de lÃ©gumes ou lÃ©gumineuses
+VALUES;PF23000;GÃ¢teau (aliment moyen);GÃ¢teau (aliment moyen);Cake (average);PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23007;GÃ¢teau mousse de fruits sur gÃ©noise, type miroir;GÃ¢teau mousse de fruits sur gÃ©noise, type miroir;Sponge cake with fruit mousse;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23021;Baba au rhum;Baba au rhum;Rum baba;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23024;Macaron moelleux fourrÃ© Ã  la confiture ou Ã  la crÃšme;Macaron moelleux fourrÃ© Ã  la confiture ou Ã  la crÃšme;Macaroon filled with jam or cream;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23032;Brownie au chocolat;Brownie au chocolat;Brownies, chocolate-nut;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23050;Biscuit de Savoie;Biscuit de Savoie;Sponge cake;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23081;Quatre-quarts, prÃ©emballÃ©;Quatre-quarts, prÃ©emballÃ©;Pound cake, commercial;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23121;Far aux pruneaux;Far aux pruneaux;Breton cake with prunes;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23200;Pain d'Ã©pices;Pain d'Ã©pices;Gingerbread;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23300;Baklava ou baklawa (pÃ¢tisserie orientale aux amandes et sirop);Baklava ou baklawa (pÃ¢tisserie orientale aux amandes et sirop);Baklava oriental pastry;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23301;Corne de gazelle (pÃ¢tisserie orientale aux amandes et sirop);Corne de gazelle (pÃ¢tisserie orientale aux amandes et sirop);Corne de gazelle oriental pastry;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23455;Chou Ã  la crÃšme (chantilly ou pÃ¢tissiÃšre);Chou Ã  la crÃšme (chantilly ou pÃ¢tissiÃšre);Pastry cream puff;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23467;Chouquette;Chouquette;Puff pastry, sugar coated, from bakery;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF23477;Ãclair;Ãclair;Eclair, from bakery;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23480;Chausson aux pommes;Chausson aux pommes;Apple turnover, from bakery;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF23490;Tarte ou tartelette aux pommes;Tarte ou tartelette aux pommes;Apple pie or tart, from bakery;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23493;Crumble aux pommes;Crumble aux pommes;Apple crumble;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23499;Tarte ou tartelette aux fruits;Tarte ou tartelette aux fruits;Fruit pie or tart, from bakery;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23501;Tarte Ã  la crÃšme;Tarte Ã  la crÃšme;Custard pie;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23525;Flan pÃ¢tissier aux Åufs ou Ã  la parisienne;Flan pÃ¢tissier aux Åufs ou Ã  la parisienne;Flan with pie crust;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23531;Charlotte aux fruits;Charlotte aux fruits;Fruit charlotte, from bakery;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23585;GÃ¢teau au chocolat;GÃ¢teau au chocolat;Cake, chocolate;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23589;GÃ¢teau au fromage blanc;GÃ¢teau au fromage blanc;Cheesecake, from bakery;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23684;Galette des rois feuilletÃ©e, fourrÃ©e frangipane;Galette des rois feuilletÃ©e, fourrÃ©e frangipane;Twelfth Night cake;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23800;CrÃªpe au froment, nature;CrÃªpe au froment, nature;Crepe, plain;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23801;CrÃªpe ou galette bretonne au sarrasin;CrÃªpe ou galette bretonne au sarrasin;Buckwheat crepe;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23805;Blini;Blini;Blinis;Boulangerie-viennoiserie;Biscottes et pains non levÃ©s
+VALUES;PF23815;CrÃªpe au froment, sucrÃ©e;CrÃªpe au froment, sucrÃ©e;Crepe with sugar;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23820;CrÃªpe au froment, fourrÃ©e Ã  la confiture;CrÃªpe au froment, fourrÃ©e Ã  la confiture;Crepe, filled with jam;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23821;CrÃªpe au froment, fourrÃ©e au chocolat ou Ã  la pÃ¢te Ã  tartiner chocolat et noisettes;CrÃªpe au froment, fourrÃ©e au chocolat ou Ã  la pÃ¢te Ã  tartiner chocolat et noisettes;Crepe, filled with chocolate;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23855;Gaufre bruxelloise ou liÃ©geoise, avec ou sans chocolat, prÃ©emballÃ©e;Gaufre bruxelloise ou liÃ©geoise, avec ou sans chocolat, prÃ©emballÃ©e;Wafle, industrial;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23880;Beignet nature;Beignet nature;Doughnut, plain;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF23881;Beignet Ã  la confiture;Beignet Ã  la confiture;Doughnut, jam filled, from bakery;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF23883;Beignet aux fruits;Beignet aux fruits;Fritter, fruit;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF23900;PÃ¢tisserie (aliment moyen);PÃ¢tisserie (aliment moyen);Pastry (average);PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23909;Cake aux fruits;Cake aux fruits;Fruit cake;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23939;GÃ¢teau moelleux fourrÃ© au chocolat ou aux pÃ©pites de chocolat ou au lait;GÃ¢teau moelleux fourrÃ© au chocolat ou aux pÃ©pites de chocolat ou au lait;Mini pound cake with chocolate filling;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23940;GÃ¢teau moelleux fourrÃ© au chocolat multicouche;GÃ¢teau moelleux fourrÃ© au chocolat multicouche;Multi-layer mini pound cake;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23941;GÃ¢teau moelleux fourrÃ© aux fruits type mini-roulÃ© ou mini-cake fourrÃ©;GÃ¢teau moelleux fourrÃ© aux fruits type mini-roulÃ© ou mini-cake fourrÃ©;Mini pound cake with fruit filling;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF23950;Muffin, aux myrtilles ou au chocolat;Muffin, aux myrtilles ou au chocolat;Muffin, blueberry or chocolate;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;PF24000;Biscuit sec, tout type;Biscuit sec, tout type;Biscuit (cookie);PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24002;Biscuit sec Ã  teneur garantie en vitamines;Biscuit sec Ã  teneur garantie en vitamines;Biscuit (cookie), vitamin enriched;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24003;Biscuit sec Ã  teneur garantie en vitamines et minÃ©raux;Biscuit sec Ã  teneur garantie en vitamines et minÃ©raux;Biscuit (cookie), vitamin and mineral enriched;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24004;Biscuit sec aux fruits, hyposodÃ©;Biscuit sec aux fruits, hyposodÃ©;Biscuit (cookie) with fruit, low sodium;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24007;Biscuit sec croquant au chocolat, allÃ©gÃ© en matiÃšre grasse;Biscuit sec croquant au chocolat, allÃ©gÃ© en matiÃšre grasse;Biscuit (cookie), light, chocolate;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24010;Biscuit sec, avec matiÃšre grasse vÃ©gÃ©tale;Biscuit sec, avec matiÃšre grasse vÃ©gÃ©tale;Biscuit (cookie), plain;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24015;Biscuit sec petit beurre;Biscuit sec petit beurre;Biscuit (cookie), butter, sweet;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24016;Biscuit sec avec tablette de chocolat;Biscuit sec avec tablette de chocolat;Biscuit (cookie) with chocolate square;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24031;Biscuit sec croquant (ex : tuile) sans chocolat, allÃ©gÃ© en matiÃšre grasse;Biscuit sec croquant (ex : tuile) sans chocolat, allÃ©gÃ© en matiÃšre grasse;Biscuit (cookie), light, without chocolate;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24034;Biscuit sec pour petit dÃ©jeuner;Biscuit sec pour petit dÃ©jeuner;Breakfast biscuit (cookie), dry;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24036;Biscuit sec chocolatÃ©, prÃ©emballÃ©;Biscuit sec chocolatÃ©, prÃ©emballÃ©;Biscuit (cookie), chocolat;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24037;Biscuit sec fourrÃ© Ã  la pÃ¢te ou purÃ©e de fruits;Biscuit sec fourrÃ© Ã  la pÃ¢te ou purÃ©e de fruits;Biscuit (cookie) with fruit filling;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24038;Biscuit sec avec nappage chocolat;Biscuit sec avec nappage chocolat;Biscuit (cookie), chocolate-covered;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24040;Biscuit sec pour petit dÃ©jeuner, au chocolat;Biscuit sec pour petit dÃ©jeuner, au chocolat;Breakfast biscuit (cookie), with chocolate, dry;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24049;Biscuit sec au beurre, sablÃ©, galette ou palet;Biscuit sec au beurre, sablÃ©, galette ou palet;Biscuit (cookie), shortbread, commercial;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24225;"GoÃ»ter sec fourrÃ© (sandwichÃ©"") parfum lait ou vanille""";"GoÃ»ter sec fourrÃ© (sandwichÃ©"") parfum lait ou vanille""";Biscuit (cookie), sandwich type, with vanilla or milk filling;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24231;"GoÃ»ter sec fourrÃ© (sandwichÃ©"") parfum chocolat""";"GoÃ»ter sec fourrÃ© (sandwichÃ©"") parfum chocolat""";Biscuit (cookie), snack with chocolate filling;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24310;Gaufrette fourrÃ©e, autre fourrage qu'aux fruits (chocolat, vanille, noisetteâŠ);Gaufrette fourrÃ©e, autre fourrage qu'aux fruits (chocolat, vanille, noisetteâŠ);Biscuit (cookie), wafer with filling;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24320;Gaufrette fourrÃ©e, aux fruits;Gaufrette fourrÃ©e, aux fruits;Biscuit (cookie), wafer with fruit filling;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24430;Biscuit sec aux Åufs Ã  la cuillÃšre (cuiller) ou Boudoir;Biscuit sec aux Åufs Ã  la cuillÃšre (cuiller) ou Boudoir;Biscuit (cookie), sponge fingers or Lady fingers;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24441;Langue de chat;Langue de chat;Biscuit (cookie), vanilla;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24520;Meringue;Meringue;Biscuit (cookie), meringue, from bakery;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24615;Biscuit sec ou tuile, aux amandes;Biscuit sec ou tuile, aux amandes;Biscuit (cookie), thin, with almonds;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24630;Madeleine;Madeleine;Madeleine biscuit (cookie);PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF24659;Biscuit sec feuilletÃ©, type palmier ou autres;Biscuit sec feuilletÃ©, type palmier ou autres;Biscuit (cookie), flaky pastry;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24660;Palmier, artisanal;Palmier, artisanal;Biscuit (cookie), flaky pastry, from bakery;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24666;Mille-feuilles;Mille-feuilles;Mille-feuille pastry, from bakery;PÃ¢tisseries et biscuits;GÃ¢teaux et pÃ¢tisseries
+VALUES;PF24678;Biscuit sec (gÃ©noise) nappÃ© aux fruits, type barquette;Biscuit sec (gÃ©noise) nappÃ© aux fruits, type barquette;Biscuit (cookie), boat-shaped, jam filled, commercial;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24680;Biscuit moelleux fourrÃ© Ã  l'orange et enrobÃ© de sucre glace;Biscuit moelleux fourrÃ© Ã  l'orange et enrobÃ© de sucre glace;Little sponge cake with orange filling, sugar iced;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24684;Cookie;Cookie;Biscuit (cookie), chocolate-chip;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF24686;GÃ©noise sÃšche fourrÃ©e aux fruits et nappÃ©e de chocolat;GÃ©noise sÃšche fourrÃ©e aux fruits et nappÃ©e de chocolat;Biscuit (cookie), with fruit filling, chocolate-topped;PÃ¢tisseries et biscuits;Biscuits secs sucrÃ©s
+VALUES;PF25001;Blanquette de veau;Blanquette de veau;Veal stew in white sauce;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25002;Cassoulet, appertisÃ©;Cassoulet, appertisÃ©;Cassoulet, canned;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25003;Choucroute garnie, appertisÃ©e;Choucroute garnie, appertisÃ©e;Sauerkraut with meat, canned;Plats composÃ©s;Plats Ã  base de lÃ©gumes ou lÃ©gumineuses
+VALUES;PF25004;Choucroute, sans jus;Choucroute, sans jus;Sauerkraut, drained;Plats composÃ©s;Plats Ã  base de lÃ©gumes ou lÃ©gumineuses
+VALUES;PF25009;Hachis Parmentier;Hachis Parmentier;Shepherd's pie;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25010;Petit salÃ© ou saucisse aux lentilles;Petit salÃ© ou saucisse aux lentilles;Lentils with salt-cured pork or sausage;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25013;Pot-au-feu;Pot-au-feu;Pot-au-feu;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25018;Ratatouille niÃ§oise;Ratatouille niÃ§oise;Ratatouille;Plats composÃ©s;Plats Ã  base de lÃ©gumes ou lÃ©gumineuses
+VALUES;PF25019;Ravioli viande, sauce tomate;Ravioli viande, sauce tomate;Ravioli with meat and tomato sauce, canned;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25020;SoufflÃ© au fromage;SoufflÃ© au fromage;Cheese soufflÃ©;Plats composÃ©s;Plats Ã  base de fromage
+VALUES;PF25029;Couscous mouton;Couscous mouton;Couscous with mutton;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25031;Paella;Paella;PaÃ«lla;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25033;BÅuf bourguignon;BÅuf bourguignon;Beef stew, Burgundy-style;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25049;Poisson avec tagliatelles;Poisson avec tagliatelles;Fish with tagliatelles and cream;Plats composÃ©s;Plats Ã  base de poisson ou produits aquatiques
+VALUES;PF25051;Paella, surgelÃ©e;Paella, surgelÃ©e;PaÃ«lla, frozen;Plats composÃ©s;Plats Ã  base de poisson ou produits aquatiques
+VALUES;PF25056;Gratin dauphinois;Gratin dauphinois;Creamed potatoes, DauphinÃ©-style;Plats composÃ©s;Plats Ã  base de lÃ©gumes ou lÃ©gumineuses
+VALUES;PF25057;PoÃªlÃ©e savoyarde;PoÃªlÃ©e savoyarde;Potato, cheese and wine dish;Plats composÃ©s;Plats Ã  base de lÃ©gumes ou lÃ©gumineuses
+VALUES;PF25065;BÅuf carottes;BÅuf carottes;Beef with carrots, canned;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25067;Osso buco Ã  la milanaise;Osso buco Ã  la milanaise;Veal osso buco;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25071;PotÃ©e auvergnate;PotÃ©e auvergnate;Stew of sausages with cabbage and root vegetables;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25080;Cannelloni Ã  la viande;Cannelloni Ã  la viande;Cannelloni, meat;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25081;Lasagne Ã  la bolognaise;Lasagne Ã  la bolognaise;Lasagne with bolognese sauce;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25085;PÃ¢tes Ã  la bolognaise (spaghetti, tagliatelles);PÃ¢tes Ã  la bolognaise (spaghetti, tagliatelles);Pasta with bolognese sauce;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25088;Riz cantonnais;Riz cantonnais;Rice, fried, Canton style;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25089;Cordon bleu de volaille;Cordon bleu de volaille;Poultry filled with cheese and ham;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25092;Poulet basquaise au riz;Poulet basquaise au riz;Chicken, Basque style, with rice;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25093;Poulet basquaise aux pÃ¢tes;Poulet basquaise aux pÃ¢tes;Chicken, Basque style, with pasta;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25103;Tomate farcie;Tomate farcie;Stuffed tomatoes;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25108;Samossas ou samoussas;Samossas ou samoussas;Samosas;Plats composÃ©s;Plats composÃ©s
+VALUES;PF25109;Spaghetti, sauce tomate;Spaghetti, sauce tomate;Spaghetti with tomato sauce;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25111;Chili con carne;Chili con carne;Chili con carne;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25116;Poulet au curry, avec riz ou semoule, prÃ©emballÃ©;Poulet au curry, avec riz ou semoule, prÃ©emballÃ©;Chicken curry, with rice;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25121;Coq au vin;Coq au vin;Coq au vin;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25122;Gratin de pÃ¢tes;Gratin de pÃ¢tes;Pasta au gratin;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25123;Moussaka;Moussaka;Moussaka;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25124;Navarin d'agneau;Navarin d'agneau;Lamb navarin;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25125;Paupiette de veau;Paupiette de veau;Veal paupiette;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25126;Paupiette de volaille;Paupiette de volaille;Poultry paupiette;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25127;Couscous royal Ã  la viande;Couscous royal Ã  la viande;Couscous with mutton and beef;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25130;Gratin d'endives et jambon;Gratin d'endives et jambon;Witlof and ham au gratin;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25135;PÃ¢tes Ã  la carbonara;PÃ¢tes Ã  la carbonara;Pasta with carbonara sauce;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25137;Tartiflette;Tartiflette;Tartiflette;Plats composÃ©s;Plats Ã  base de fromage
+VALUES;PF25138;Couscous au poulet;Couscous au poulet;Couscous with chicken;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25144;Poisson Ã  la provenÃ§ale et riz;Poisson Ã  la provenÃ§ale et riz;Fish with tomato sauce and rice;Plats composÃ©s;Plats Ã  base de poisson ou produits aquatiques
+VALUES;PF25146;Poisson sauce oseille;Poisson sauce oseille;Fish in sorrel sauce;Plats composÃ©s;Plats Ã  base de poisson ou produits aquatiques
+VALUES;PF25151;FeuilletÃ© au saumon;FeuilletÃ© au saumon;Salmon in puff pastry;Plats composÃ©s;Plats Ã  base de poisson ou produits aquatiques
+VALUES;PF25156;Ravioli au fromage, cuit;Ravioli au fromage, cuit;Ravioli with cheese, cooked;Plats composÃ©s;Plats Ã  base de cÃ©rÃ©ales ou pÃ¢tes
+VALUES;PF25159;Tajine de mouton;Tajine de mouton;Mutton tajine;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25162;Gratin de lÃ©gumes;Gratin de lÃ©gumes;Vegetables au gratin;Plats composÃ©s;Plats Ã  base de lÃ©gumes ou lÃ©gumineuses
+VALUES;PF25163;BÅuf, boulettes cuites;BÅuf, boulettes cuites;Beef, meat balls, cooked;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25172;Viande en sauce (aliment moyen);Viande en sauce (aliment moyen);Meat in sauce (average);Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25173;Veau, escalope panÃ©e, cuite;Veau, escalope panÃ©e, cuite;Veal cutlet, breaded, cooked;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25174;Poulet au curry;Poulet au curry;Chicken curry;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25400;Croque-monsieur;Croque-monsieur;Grilled cheese & ham sandwich;Sandwichs;Sandwichs
+VALUES;PF25401;Friand au fromage;Friand au fromage;Puff pastry with cheese;Plats composÃ©s;Plats Ã  base de fromage
+VALUES;PF25402;Friand Ã  la viande;Friand Ã  la viande;Pastry filled with patÃ©;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25403;Hot-dog;Hot-dog;Hot-dog;Sandwichs;Sandwichs
+VALUES;PF25404;Pizza fromage;Pizza fromage;Pizza, tomato and cheese;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25405;Quiche lorraine;Quiche lorraine;Quiche lorraine;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25409;CrÃªpe fourrÃ©e bÃ©chamel jambon;CrÃªpe fourrÃ©e bÃ©chamel jambon;Crepe, stuffed with ham;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25410;CrÃªpe fourrÃ©e bÃ©chamel jambon fromage;CrÃªpe fourrÃ©e bÃ©chamel jambon fromage;Crepe, stuffed with ham and cheese;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25412;BouchÃ©e Ã  la reine, au poulet;BouchÃ©e Ã  la reine, au poulet;Vol-au-vent with chicken;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25413;Hamburger;Hamburger;Hamburger, regular, fast foods restaurant;Sandwichs;Sandwichs
+VALUES;PF25414;Cheeseburger;Cheeseburger;Cheeseburger, fast foods restaurant;Sandwichs;Sandwichs
+VALUES;PF25415;Double cheeseburger;Double cheeseburger;Cheeseburger, double, fast foods restaurant;Sandwichs;Sandwichs
+VALUES;PF25417;Tarte aux lÃ©gumes;Tarte aux lÃ©gumes;Vegetable quiche, from delicatessen or bakery;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25418;Croissant au jambon;Croissant au jambon;Croissant with ham, from bakery;Sandwichs;Sandwichs
+VALUES;PF25419;Rouleau de printemps;Rouleau de printemps;Summer roll;Plats composÃ©s;Plats composÃ©s
+VALUES;PF25420;Nem ou PÃ¢tÃ© impÃ©rial;Nem ou PÃ¢tÃ© impÃ©rial;Egg roll or Nem;Plats composÃ©s;Plats composÃ©s
+VALUES;PF25422;Sandwich baguette, merguez frites;Sandwich baguette, merguez frites;Sandwich on french bread, sausage-chips (french fries);Sandwichs;Sandwichs
+VALUES;PF25428;Sandwich grec ou DÃ¶ner kebap, pita, avec cruditÃ©s;Sandwich grec ou DÃ¶ner kebap, pita, avec cruditÃ©s;Sandwich on pita bread, gyros or kebab, lettuce & tomato, mayonnaise;Sandwichs;Sandwichs
+VALUES;PF25429;Sandwich grec ou Kebab, baguette, avec cruditÃ©s;Sandwich grec ou Kebab, baguette, avec cruditÃ©s;Sandwich on french bread, gyros or kebab, lettuce & tomato, mayonnaise;Sandwichs;Sandwichs
+VALUES;PF25431;Sandwich baguette, thon, cruditÃ©s (tomate, salade), mayonnaise;Sandwich baguette, thon, cruditÃ©s (tomate, salade), mayonnaise;Sandwich on french bread, tuna, lettuce & tomato, mayonnaise;Sandwichs;Sandwichs
+VALUES;PF25433;Accra de morue;Accra de morue;Cod fritters;Plats composÃ©s;Plats Ã  base de poisson ou produits aquatiques
+VALUES;PF25434;Sandwich panini, jambon cru, mozzarella, tomates;Sandwich panini, jambon cru, mozzarella, tomates;Sandwich on panini bread, raw ham, mozarella and tomatoes;Sandwichs;Sandwichs
+VALUES;PF25435;Pizza jambon fromage;Pizza jambon fromage;Pizza, ham and cheese;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25437;GougÃšre, faite maison;GougÃšre, faite maison;Cheese chou-pastry puff;Plats composÃ©s;Plats Ã  base de fromage
+VALUES;PF25438;Brick garni (garniture : crevettes, lÃ©gumes, volaille, viande, poisson,âŠ);Brick garni (garniture : crevettes, lÃ©gumes, volaille, viande, poisson,âŠ);Brik pastry, filled (vegetables, shrimp or meat);Plats composÃ©s;Plats composÃ©s
+VALUES;PF25444;Tarte au fromage;Tarte au fromage;Cheese and egg quiche;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25472;Pizza 4 saisons;Pizza 4 saisons;Pizza, 4 seasons;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25475;Sandwich baguette, jambon, Åuf dur, cruditÃ©s (tomate, salade), beurre;Sandwich baguette, jambon, Åuf dur, cruditÃ©s (tomate, salade), beurre;Sandwich on french bread, ham, egg, tomato, lettuce, butter;Sandwichs;Sandwichs
+VALUES;PF25476;Sandwich baguette, poulet, cruditÃ©s (tomate, salade), mayonnaise;Sandwich baguette, poulet, cruditÃ©s (tomate, salade), mayonnaise;Sandwich on french bread, chicken, lettuce & tomato, mayonnaise;Sandwichs;Sandwichs
+VALUES;PF25478;Pizza 4 fromages;Pizza 4 fromages;Pizza, 4 cheese;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25488;Sandwich baguette, saumon fumÃ©, beurre;Sandwich baguette, saumon fumÃ©, beurre;Sandwich on french bread, smoked salmon and butter;Sandwichs;Sandwichs
+VALUES;PF25503;BouchÃ©e Ã  la reine, au poisson et fruits de mer;BouchÃ©e Ã  la reine, au poisson et fruits de mer;Vol-au-vent with seafood;Plats composÃ©s;Plats Ã  base de poisson ou produits aquatiques
+VALUES;PF25504;Brochette de volaille;Brochette de volaille;Kebab, poultry;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25505;Brochette de bÅuf;Brochette de bÅuf;Kebab, beef;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25506;Brochette mixte de viande;Brochette mixte de viande;Kebab, mixed meat;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25508;FeuilletÃ© fourrÃ© bÃ©chamel jambon fromage;FeuilletÃ© fourrÃ© bÃ©chamel jambon fromage;Puff pastry with ham, cheese and becamel sauce;Plats composÃ©s;Plats Ã  base de fromage
+VALUES;PF25509;Fondue savoyarde;Fondue savoyarde;Cheese fondu;Plats composÃ©s;Plats Ã  base de fromage
+VALUES;PF25511;LÃ©gumes farcis (sauf tomate);LÃ©gumes farcis (sauf tomate);Stuffed vegetables (excluding tomato);Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25512;Nuggets de volaille;Nuggets de volaille;Chicken nuggets;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25513;Pan bagna;Pan bagna;Sandwich, tuna and vegetable;Sandwichs;Sandwichs
+VALUES;PF25515;"Pizza spÃ©ciale""""";"Pizza spÃ©ciale""""";Pizza, various toppings;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25516;Pizza (aliment moyen);Pizza (aliment moyen);Pizza (average);Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25517;Sandwich baguette, jambon, beurre;Sandwich baguette, jambon, beurre;Sandwich on french bread, ham and butter;Sandwichs;Sandwichs
+VALUES;PF25518;Sandwich baguette, camembert, beurre;Sandwich baguette, camembert, beurre;Sandwich on french bread, camembert and butter;Sandwichs;Sandwichs
+VALUES;PF25519;Sandwich baguette, pÃ¢tÃ©, cornichons;Sandwich baguette, pÃ¢tÃ©, cornichons;Sandwich on french bread, patÃ© and pickles;Sandwichs;Sandwichs
+VALUES;PF25520;Sandwich baguette, saucisson sec, beurre;Sandwich baguette, saucisson sec, beurre;Sandwich on french bread, dry sausage and butter;Sandwichs;Sandwichs
+VALUES;PF25521;Sandwich baguette, jambon, emmental, beurre;Sandwich baguette, jambon, emmental, beurre;Sandwich on french bread, emmental cheese and butter;Sandwichs;Sandwichs
+VALUES;PF25522;Sandwich (aliment moyen);Sandwich (aliment moyen);Sandwich (average);Sandwichs;Sandwichs
+VALUES;PF25523;Toasts salÃ©s, garnitures diverses;Toasts salÃ©s, garnitures diverses;CanapÃ©s (toasts with various toppings);Plats composÃ©s;Plats composÃ©s
+VALUES;PF25524;Tomates provenÃ§ales;Tomates provenÃ§ales;Tomatoes, grilled with garlic breadcrumbs;Plats composÃ©s;Plats Ã  base de lÃ©gumes ou lÃ©gumineuses
+VALUES;PF25526;Pizza jambon fromage champignons ou Pizza royale, surgelÃ©e;Pizza jambon fromage champignons ou Pizza royale, surgelÃ©e;Pizza, cheese and mushrooms, frozen;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25530;Sandwich baguette, cruditÃ©s diverses, mayonnaise;Sandwich baguette, cruditÃ©s diverses, mayonnaise;Sandwich on french bread, vegetables and mayonnaise;Sandwichs;Sandwichs
+VALUES;PF25531;Sandwich baguette, dinde, cruditÃ©s (tomate, salade), mayonnaise;Sandwich baguette, dinde, cruditÃ©s (tomate, salade), mayonnaise;Sandwich on french bread, turkey, lettuce & tomato, mayonnaise;Sandwichs;Sandwichs
+VALUES;PF25532;Sandwich baguette, Åuf, cruditÃ©s (tomate, salade), mayonnaise;Sandwich baguette, Åuf, cruditÃ©s (tomate, salade), mayonnaise;Sandwich on french bread, egg, lettuce & tomato, mayonnaise;Sandwichs;Sandwichs
+VALUES;PF25533;Sandwich baguette, porc, cruditÃ©s (tomate, salade), mayonnaise;Sandwich baguette, porc, cruditÃ©s (tomate, salade), mayonnaise;Sandwich on french bread, pork, lettuce & tomato, mayonnaise;Sandwichs;Sandwichs
+VALUES;PF25535;Sandwich baguette, merguez, ketchup moutarde;Sandwich baguette, merguez, ketchup moutarde;Sandwich on french bread, sausage, ketchup & mustard;Sandwichs;Sandwichs
+VALUES;PF25536;Sandwich baguette, salami, beurre;Sandwich baguette, salami, beurre;Sandwich on french bread, salami and butter;Sandwichs;Sandwichs
+VALUES;PF25537;Carpaccio de saumon;Carpaccio de saumon;Salmon carpaccio;Plats composÃ©s;Plats Ã  base de poisson ou produits aquatiques
+VALUES;PF25538;Carpaccio de boeuf;Carpaccio de boeuf;Beef carpaccio;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25539;Brochette de poisson;Brochette de poisson;Kebab, fish;Plats composÃ©s;Plats Ã  base de poisson ou produits aquatiques
+VALUES;PF25540;Brochette de crevettes;Brochette de crevettes;Kebab, shrimp;Plats composÃ©s;Plats Ã  base de poisson ou produits aquatiques
+VALUES;PF25541;Brochette d'agneau;Brochette d'agneau;Kebab, lamb;Plats composÃ©s;Plats Ã  base de viande ou volaille
+VALUES;PF25542;Croque-madame;Croque-madame;Grilled cheese, ham & egg sandwich;Sandwichs;Sandwichs
+VALUES;PF25543;Sandwich baguette (aliment moyen);Sandwich baguette (aliment moyen);Sandwich on french bread (average);Sandwichs;Sandwichs
+VALUES;PF25544;Sandwich pain de mie, garnitures diverses (aliment moyen);Sandwich pain de mie, garnitures diverses (aliment moyen);Sandwich on loaf bread (average);Sandwichs;Sandwichs
+VALUES;PF25545;Fromage panÃ©;Fromage panÃ©;Cheese, breaded;Plats composÃ©s;Plats Ã  base de fromage
+VALUES;PF25546;Fromage panÃ© au jambon;Fromage panÃ© au jambon;Cheese and ham, breaded;Plats composÃ©s;Plats Ã  base de fromage
+VALUES;PF25548;Pizza jambon fromage champignons ou Pizza royale;Pizza jambon fromage champignons ou Pizza royale;Pizza, cheese and mushrooms;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25549;CrÃªpe fourrÃ©e bÃ©chamel fromage;CrÃªpe fourrÃ©e bÃ©chamel fromage;Crepe, stuffed with cheese;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25550;Flammenkueche ou Tarte flambÃ©e aux lardons;Flammenkueche ou Tarte flambÃ©e aux lardons;Flammenkueche (Alsacian ''pizza'' with bacon & cream);Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25551;Beignet de viande, volaille ou poisson, fait maison;Beignet de viande, volaille ou poisson, fait maison;Meat, poultry or fish fritters, home made;Plats composÃ©s;Plats composÃ©s
+VALUES;PF25552;CrÃªpe fourrÃ©e bÃ©chamel jambon fromage champignon;CrÃªpe fourrÃ©e bÃ©chamel jambon fromage champignon;Crepe, stuffed with ham, cheese and mushrooms;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25553;Tourte aux poireaux;Tourte aux poireaux;Leek pie;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25554;Tarte provenÃ§ale Ã  la tomate;Tarte provenÃ§ale Ã  la tomate;Tomato pie;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25555;Tarte saumon et oseille;Tarte saumon et oseille;Salmon and sorrel quiche;Plats composÃ©s;Pizzas, crÃªpes et tartes salÃ©es
+VALUES;PF25556;Beignet de lÃ©gumes, fait maison (aliment moyen);Beignet de lÃ©gumes, fait maison (aliment moyen);Vegetable fritter, home made (average);Plats composÃ©s;Plats Ã  base de lÃ©gumes ou lÃ©gumineuses
+VALUES;PF31100;Barre cÃ©rÃ©aliÃšre Ã  base de cÃ©rÃ©ales pour petit dÃ©jeuner et de lait, enrichie en vitamines et minÃ©raux;Barre cÃ©rÃ©aliÃšre Ã  base de cÃ©rÃ©ales pour petit dÃ©jeuner et de lait, enrichie en vitamines et minÃ©raux;Breakfast bar, enriched in vitamins and minerals;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF31101;"Barre cÃ©rÃ©aliÃšre ligne"" aux fruits, enrichie en vitamines et minÃ©raux""";"Barre cÃ©rÃ©aliÃšre ligne"" aux fruits, enrichie en vitamines et minÃ©raux""";Cereal bar with fruit, enriched in vitamins and minerals;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF31102;"Barre cÃ©rÃ©aliÃšre ligne"" au chocolat, enrichie en vitamines et minÃ©raux""";"Barre cÃ©rÃ©aliÃšre ligne"" au chocolat, enrichie en vitamines et minÃ©raux""";Cereal bar with chocolate, enriched in vitamins and minerals;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF31104;Barre cÃ©rÃ©aliÃšre diÃ©tÃ©tique hypocalorique;Barre cÃ©rÃ©aliÃšre diÃ©tÃ©tique hypocalorique;Cereal bar, low calorie;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF31106;Barre cÃ©rÃ©aliÃšre chocolatÃ©e;Barre cÃ©rÃ©aliÃšre chocolatÃ©e;Cereal bar, chocolate;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF31113;Barre cÃ©rÃ©aliÃšre aux fruits;Barre cÃ©rÃ©aliÃšre aux fruits;Cereal bar with fruit;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF31114;Barre cÃ©rÃ©aliÃšre aux amandes ou noisettes;Barre cÃ©rÃ©aliÃšre aux amandes ou noisettes;Cereal bar with nuts;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32000;Grains de blÃ© soufflÃ©s au miel ou caramel, enrichis en vitamines et minÃ©raux;Grains de blÃ© soufflÃ©s au miel ou caramel, enrichis en vitamines et minÃ©raux;Breakfast cereals, puffed wheat, honey or caramel, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32001;CÃ©rÃ©ales pour petit dÃ©jeuner chocolatÃ©es sucrÃ©es, non fourrÃ©es, enrichies en vitamines et minÃ©raux;CÃ©rÃ©ales pour petit dÃ©jeuner chocolatÃ©es sucrÃ©es, non fourrÃ©es, enrichies en vitamines et minÃ©raux;Breakfast cereals, chocolate, without filling, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32002;CÃ©rÃ©ales pour petit dÃ©jeuner riches en fibres, enrichies en vitamines et minÃ©raux;CÃ©rÃ©ales pour petit dÃ©jeuner riches en fibres, enrichies en vitamines et minÃ©raux;Breakfast cereals, rich in fibre, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32003;CÃ©rÃ©ales pour petit dÃ©jeuner sucrÃ©es (aliment moyen);CÃ©rÃ©ales pour petit dÃ©jeuner sucrÃ©es (aliment moyen);Breakfast cereals, sweet (average);CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32004;Muesli (aliment moyen);Muesli (aliment moyen);Muesli (average);CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32005;PÃ©tales de maÃ¯s natures, enrichis en vitamines et minÃ©raux;PÃ©tales de maÃ¯s natures, enrichis en vitamines et minÃ©raux;Breakfast cereals, corn flakes, plain, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32006;Riz soufflÃ© nature, enrichi en vitamines et minÃ©raux;Riz soufflÃ© nature, enrichi en vitamines et minÃ©raux;Breakfast cereals, puffed rice, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32009;PÃ©tales de blÃ© chocolatÃ©s, enrichis en vitamines et minÃ©raux;PÃ©tales de blÃ© chocolatÃ©s, enrichis en vitamines et minÃ©raux;Breakfast cereals, wheat flakes, chocolate, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32016;CÃ©rÃ©ales pour petit dÃ©jeuner fourrÃ©es au chocolat ou chocolat-noisettes, enrichies en vitamines et minÃ©raux;CÃ©rÃ©ales pour petit dÃ©jeuner fourrÃ©es au chocolat ou chocolat-noisettes, enrichies en vitamines et minÃ©raux;Breakfast cereals, chocolate filling, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32018;CÃ©rÃ©ales pour petit dÃ©jeuner fourrÃ©es, fourrage autre que chocolat, enrichies en vitamines et minÃ©raux;CÃ©rÃ©ales pour petit dÃ©jeuner fourrÃ©es, fourrage autre que chocolat, enrichies en vitamines et minÃ©raux;Breakfast cereals, with filling (no chocolate), enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32021;"CÃ©rÃ©ales pour petit dÃ©jeuner ligne"" nature, enrichies en vitamines et minÃ©raux""";"CÃ©rÃ©ales pour petit dÃ©jeuner ligne"" nature, enrichies en vitamines et minÃ©raux""";Breakfast cereals, diet, plain, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32022;"CÃ©rÃ©ales pour petit dÃ©jeuner ligne"" au chocolat, enrichies en vitamines et minÃ©raux""";"CÃ©rÃ©ales pour petit dÃ©jeuner ligne"" au chocolat, enrichies en vitamines et minÃ©raux""";Breakfast cereals, diet, with chocolat, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32023;"CÃ©rÃ©ales pour petit dÃ©jeuner ligne"" aux fruits, enrichies en vitamines et minÃ©raux""";"CÃ©rÃ©ales pour petit dÃ©jeuner ligne"" aux fruits, enrichies en vitamines et minÃ©raux""";Breakfast cereals, diet, with fruit, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32110;Muesli floconneux aux fruits ou fruits secs, enrichi en vitamines et minÃ©raux;Muesli floconneux aux fruits ou fruits secs, enrichi en vitamines et minÃ©raux;Muesli, Bircher style, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32111;Muesli croustillant aux fruits ou fruits secs, enrichi en vitamines et minÃ©raux;Muesli croustillant aux fruits ou fruits secs, enrichi en vitamines et minÃ©raux;Muesli, crunchy, with fruits, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32112;Muesli croustillant au chocolat, enrichi en vitamines et minÃ©raux;Muesli croustillant au chocolat, enrichi en vitamines et minÃ©raux;Muesli, crunchy, with chocolate, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32113;Muesli floconneux aux fruits ou fruits secs, sans sucre ajoutÃ©;Muesli floconneux aux fruits ou fruits secs, sans sucre ajoutÃ©;Muesli, Bircher style, no added sugar;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32114;Muesli floconneux aux fruits ou fruits secs, allÃ©gÃ© en matiÃšre grasse, enrichi en vitamines et minÃ©raux;Muesli floconneux aux fruits ou fruits secs, allÃ©gÃ© en matiÃšre grasse, enrichi en vitamines et minÃ©raux;Muesli, Bircher style, enriched, low fat;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32115;Grains de blÃ© soufflÃ©s chocolatÃ©s, enrichis en vitamines et minÃ©raux;Grains de blÃ© soufflÃ©s chocolatÃ©s, enrichis en vitamines et minÃ©raux;Breakfast cereals, puffed wheat, chocolate , enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32116;CÃ©rÃ©ales pour petit dÃ©jeuner trÃšs riches en fibres, enrichies en vitamines et minÃ©raux;CÃ©rÃ©ales pour petit dÃ©jeuner trÃšs riches en fibres, enrichies en vitamines et minÃ©raux;Breakfast cereals, very rich in fibre, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32121;PÃ©tales de maÃ¯s glacÃ©s au sucre, enrichis en vitamines et minÃ©raux;PÃ©tales de maÃ¯s glacÃ©s au sucre, enrichis en vitamines et minÃ©raux;Breakfast cereals, corn flakes, sugar frosted, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32123;PÃ©tales de blÃ© avec noix, noisettes ou amandes, enrichis en vitamines et minÃ©raux;PÃ©tales de blÃ© avec noix, noisettes ou amandes, enrichis en vitamines et minÃ©raux;Breakfast cereals, wheat flakes with fruit or nuts, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32131;Riz soufflÃ© au chocolat, enrichi en vitamines et minÃ©raux;Riz soufflÃ© au chocolat, enrichi en vitamines et minÃ©raux;Breakfast cereals, puffed rice, chocolate, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32132;Boules de maÃ¯s soufflÃ©es chocolatÃ©es, enrichies en vitamines et minÃ©raux;Boules de maÃ¯s soufflÃ©es chocolatÃ©es, enrichies en vitamines et minÃ©raux;Breakfast cereals, popped or extruded corn, chocolate;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32133;Boules de maÃ¯s soufflÃ©es au miel, enrichies en vitamines et minÃ©raux;Boules de maÃ¯s soufflÃ©es au miel, enrichies en vitamines et minÃ©raux;Breakfast cereals, popped or extruded corn, honey, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF32135;Multi-cÃ©rÃ©ales soufflÃ©es ou extrudÃ©es, enrichies en vitamines et minÃ©raux;Multi-cÃ©rÃ©ales soufflÃ©es ou extrudÃ©es, enrichies en vitamines et minÃ©raux;Breakfast cereals, multi-cereal, puffed or extruded, enriched;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres;CÃ©rÃ©ales petit dÃ©jeuner et barres cÃ©rÃ©aliÃšres
+VALUES;PF38105;Chips de maÃ¯s ou tortilla chips;Chips de maÃ¯s ou tortilla chips;Tortilla chips;PÃ¢tisseries et biscuits;Biscuits salÃ©s apÃ©ritifs
+VALUES;PF38106;Biscuit apÃ©ritif soufflÃ©, Ã  base de pomme de terre;Biscuit apÃ©ritif soufflÃ©, Ã  base de pomme de terre;Cocktail biscuit, potato-based;PÃ¢tisseries et biscuits;Biscuits salÃ©s apÃ©ritifs
+VALUES;PF38400;Biscuit apÃ©ritif soufflÃ©, Ã  base de maÃ¯s, sans cacahuÃšte;Biscuit apÃ©ritif soufflÃ©, Ã  base de maÃ¯s, sans cacahuÃšte;Cocktail biscuit, extruded, salted;PÃ¢tisseries et biscuits;Biscuits salÃ©s apÃ©ritifs
+VALUES;PF38401;Biscuit apÃ©ritif, crackers, garni ou fourrÃ©, au fromage;Biscuit apÃ©ritif, crackers, garni ou fourrÃ©, au fromage;Cocktail biscuit with cheese-topping or filling;PÃ¢tisseries et biscuits;Biscuits salÃ©s apÃ©ritifs
+VALUES;PF38402;Biscuit apÃ©ritif, crackers, nature;Biscuit apÃ©ritif, crackers, nature;Cocktail biscuit without cheese;PÃ¢tisseries et biscuits;Biscuits salÃ©s apÃ©ritifs
+VALUES;PF38403;Biscuit apÃ©ritif, crackers, allÃ©gÃ© en matiÃšre grasse;Biscuit apÃ©ritif, crackers, allÃ©gÃ© en matiÃšre grasse;Cocktail biscuit, low fat;PÃ¢tisseries et biscuits;Biscuits salÃ©s apÃ©ritifs

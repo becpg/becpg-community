@@ -67,7 +67,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	/** The PAT h_ classi f_ folder. */
 	private static String PATH_CLASSIF_FOLDER_RM = "./cm:Products/cm:ToValidate/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish";
 	
-	private static String PATH_CLASSIF_FOLDER_FP = "./cm:Products/cm:ToValidate/cm:FinishedProduct/cm:Sea_x0020_food/cm:Fish";
+	private static String PATH_CLASSIF_FOLDER_FP = "./cm:Products/cm:ToValidate/cm:FinishedProduct/cm:Frozen/cm:Pizza";
 	
 	private static String PATH_SITE_FOLDER = "./st:sites/cm:folder";
 	
@@ -117,9 +117,23 @@ public class ImportServiceTest extends RepoBaseTestCase {
         policyBehaviourFilter = (BehaviourFilter)ctx.getBean("policyBehaviourFilter");
         hierarchyService = (HierarchyService)ctx.getBean("hierarchyService");
         beCPGSearchService = (BeCPGSearchService)ctx.getBean("beCPGSearchService");
+        
+        cleanTempFolder();
     }
     
-	
+	private void cleanTempFolder(){
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
+				if (folderNodeRef != null) {
+					fileFolderService.delete(folderNodeRef);
+				}				
+				return null;
+			}
+		}, false, true);
+	}
 	
 
 	/**
@@ -128,7 +142,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws ImporterException the be cpg exception
 	 */
-	public void xtestImportText() throws IOException, ImporterException{
+	public void testImportText() throws IOException, ImporterException{
 	
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override
@@ -278,7 +292,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 * @throws Exception 
 	 * @throws ParseException 
 	 */
-	public void xtestImportProducts() throws ParseException, Exception{
+	public void testImportProducts() throws ParseException, Exception{
 		
 		/*
 		 * Delete temp, products folder
@@ -561,45 +575,9 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		
 	}
 	
-	public void xtestCatchIntegrityException() throws IOException, ImporterException{
+	public void testCatchIntegrityException() throws IOException, ImporterException{
 		
-		/**
-		 * Test the catch of integrity exception
-		 */
 		Exception exception = null;
-		try{
-			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-	 			@Override
-				public NodeRef execute() throws Throwable {
-	 				
-	 				NodeRef tempFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
-	 				if(tempFolder != null){
-	 					nodeService.deleteNode(tempFolder); 					 					
-	 				}
-	 				 				 				
-	 				tempFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), PATH_TEMP, PATH_TEMP);			
-	 				
-	 				RawMaterialData rmData = new RawMaterialData();
-	 				rmData.setName("Name");
-	 				rmData.setHierarchy1(null);
-	 				
-	 				try{
-	 					 productDAO.create(repositoryHelper.getCompanyHome(), rmData, null);
-	 				}
-	 				catch(Exception e){
-	 					assertNotNull("Should not be null" ,e);
-	 				}
-	 				
-	 				return null;
-
-	 			}},false,true);	
-		}
-		catch(Exception e){
-			exception = e;
-		}
-		
-		assertNotNull("Check exception was thrown", exception);
-		exception = null;
 		
 		/**
 		 * Test the catch of integrity exception during import
@@ -659,7 +637,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws ImporterException the be cpg exception
 	 */
-	public void xtestImportProductLists() throws IOException, ImporterException{
+	public void testImportProductLists() throws IOException, ImporterException{
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override
@@ -779,6 +757,28 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 */
 	public void testImportHierarchies() throws IOException, ImporterException{
 	
+		importHierarchies();
+		
+		// 2nd time to check they are updated and not recreated
+		importHierarchies();
+		
+		//check		
+		String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, 
+				LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(BeCPGModel.TYPE_RAWMATERIAL,namespaceService)),
+				"USDA");
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_NO_LIMIT);
+		assertEquals(1, ret.size());
+		
+		queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, 
+				LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(BeCPGModel.TYPE_RAWMATERIAL,namespaceService)), ret.get(0),
+				"Dairy and Egg Products");
+		ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_NO_LIMIT);
+		assertEquals(1, ret.size());
+		
+	}
+	
+	private void importHierarchies(){
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override
 			public NodeRef execute() throws Throwable {

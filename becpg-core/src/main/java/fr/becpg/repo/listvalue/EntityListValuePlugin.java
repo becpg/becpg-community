@@ -198,7 +198,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		logger.debug("repository : " + queryPath);
 
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, LuceneHelper.getSort(ContentModel.PROP_NAME));
+		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, null);
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));
 
@@ -258,7 +258,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			}
 		}
 
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, LuceneHelper.getSort(BeCPGModel.PROP_LKV_VALUE));
+		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, null);
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE, nodeService));
 
@@ -289,7 +289,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE_ALL, path);
 		}
 
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, LuceneHelper.getSort(ContentModel.PROP_NAME));
+		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, null);
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));
 
@@ -326,7 +326,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		// filter by classNames
 		queryPath = filterByClass(queryPath, arrClassNames);
 
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, LuceneHelper.getSort(ContentModel.PROP_NAME));
+		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, null);
 
 		return new ListValuePage(ret, pageNum, pageSize, new ProductValueExtractor(ContentModel.PROP_NAME, nodeService, namespaceService));
 

@@ -25,6 +25,7 @@ VALUES;;1000014;Fournisseur3;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 PATH;/Temp/Products;;;;;;;;;;;;;;;;;;;;;;
 TYPE;bcpg:rawMaterial;;;;;;;;;;;;;;;;;;;;;;
+DISABLED_POLICIES;rep:reportEntityAspect;;;;;;;;;;;;;;;;;;;;;;
 MAPPING;Products;;;;;;;;;;;;;;;;;;;;;;
 COLUMNS;bcpg:code;cm:name;cm:description;bcpg:legalName;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:productState;bcpg:productQty;bcpg:productUnit;bcpg:productDensity;bcpg:eanCode;cm:created;cm:creator;cm:modified;cm:modifier;bcpg:suppliers;coutMP;coutEmb;nutProteines;nutLipides;nutGlucides;img1Path;img1Title
 VALUES;;Saumon surgelé 80x20x4;;saumon sugelé;Sea food;Fish;ToValidate;;;;;07/06/2011;admin;;admin;1000012,1000013;1;3,1;2,5;3,6;5,6;file:${basedir}/src/test/resources/beCPG/import/images/sushi saumon/produit.jpg;saumon

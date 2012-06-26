@@ -271,7 +271,7 @@ public class NutsCalculatingVisitor implements ProductVisitor {
         	    final int AFTER = 1;	    
         		int comparison = EQUAL;
         				
-        		if(!n1.getGroup().equals(n2.getGroup())){
+        		if(n1.getGroup() != null && n2.getGroup() != null && !n1.getGroup().equals(n2.getGroup())){
         			
         			NutGroup o1NutGroup = NutGroup.parse(n1.getGroup());
         			NutGroup o2NutGroup = NutGroup.parse(n2.getGroup());

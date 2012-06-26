@@ -1,0 +1,1080 @@
+PATH;/System/Characts/bcpg:entityLists/Ings;;;;
+TYPE;bcpg:ing;;;;
+COLUMNS;cm:name;bcpg:ingType;bcpg:ingCEECode;bcpg:legalName;bcpg:legalName_fr
+#;http://fr.wikipedia.org/wiki/Liste_des_additifs_alimentaires;;;;
+VALUES;E100 - Curcumin;Food coloring;E100;E100 - Curcumin;E100 - curcumine
+VALUES;E100 (i) - Curcumin;Food coloring;E100(i);E100 (i) - Curcumin;E100(i) - curcumine
+VALUES;E100 (ii) - turmeric;Food coloring;E100(ii);E100 (ii) - turmeric;E100(ii) - turmerique
+VALUES;E1000 - cholic acid (emulsifier);Other additive;E1000;E1000 - cholic acid (emulsifier);E1000 - acide cholique (émulsifiant)
+VALUES;E1001 - salts and esters of choline (emulsifier);Other additive;E1001;E1001 - salts and esters of choline (emulsifier);E1001 - sels et esters de choline (émulsifiant)
+VALUES;E1001 (i) - acetate, choline, emulsifier;Other additive;E1001(i);E1001 (i) - acetate, choline, emulsifier;E1001(i) - acétate de choline, émulsifiant
+VALUES;E1001 (ii) - choline carbonate, emulsifier;Other additive;E1001(ii);E1001 (ii) - choline carbonate, emulsifier;E1001(ii) - carbonate de choline, émulsifiant
+VALUES;E1001 (iii) - choline chloride, emulsifier;Other additive;E1001(iii);E1001 (iii) - choline chloride, emulsifier;E1001(iii) - chlorure de choline, émulsifiant
+VALUES;E1001 (iv) - choline citrate, emulsifier;Other additive;E1001(iv);E1001 (iv) - choline citrate, emulsifier;E1001(iv) - citrate de choline, émulsifiant
+VALUES;E1001 (v) - choline tartrate, emulsifier;Other additive;E1001(v);E1001 (v) - choline tartrate, emulsifier;E1001(v) - tartrate de choline, émulsifiant
+VALUES;E1001 (vi) - lactate, choline, emulsifier;Other additive;E1001(vi);E1001 (vi) - lactate, choline, emulsifier;E1001(vi) - lactate de choline, émulsifiant
+VALUES;E101 (i) - riboflavin (vitamin b2);Food coloring;E101(i);E101 (i) - riboflavin (vitamin b2);E101(i) - riboflavine (vitamine b2)
+VALUES;E101 (iii) - Riboflavin (Bacillus subtilis);Food coloring;E101(iii);E101 (iii) - Riboflavin (Bacillus subtilis);E101(iii) - riboflavine (bacillus subtilis)
+VALUES;E101a (ii) - 5'-phosphate sodium riboflavin;Food coloring;E101a(ii);E101a (ii) - 5'-phosphate sodium riboflavin;E101a(ii) - 5'-phosphate sodique de riboflavine
+VALUES;E102 - tartrazine;Food coloring;E102;E102 - tartrazine;E102 - tartrazine
+VALUES;E103 - yellow Chrysoine (forbidden in France);Food coloring;E103;E103 - yellow Chrysoine (forbidden in France);E103 - jaune chrysoine (interdit en france)
+VALUES;E104 - Quinoline Yellow;Food coloring;E104;E104 - Quinoline Yellow;E104 - jaune de quinoléine
+VALUES;E105 - yellow solid;Food coloring;E105;E105 - yellow solid;E105 - jaune solide
+VALUES;E106 - riboflavin-5-phosphate sodium, Vitamin B2;Food coloring;E106;E106 - riboflavin-5-phosphate sodium, Vitamin B2;E106 - riboflavine-5-sodium phosphate, vitamine B2
+VALUES;E107 - Yellow 2G;Food coloring;E107;E107 - Yellow 2G;E107 - jaune 2g
+VALUES;E110 - Sunset Yellow FCF;Food coloring;E110;E110 - Sunset Yellow FCF;E110 - jaune orange s
+VALUES;E1100 - amylases, flour treatment agent;Other additive;E1100;E1100 - amylases, flour treatment agent;E1100 - amylases, agent de traitement des farines
+VALUES;E1101 - proteases, flour treatment agent, stabilizer, flavor enhancer;Other additive;E1101;E1101 - proteases, flour treatment agent, stabilizer, flavor enhancer;E1101 - protéases, agent de traitement des farines, stabilisant, exaltateur d'arome
+VALUES;E1101 (i) - protease, flour treatment agent, stabilizer, flavor enhancer;Other additive;E1101(i);E1101 (i) - protease, flour treatment agent, stabilizer, flavor enhancer;E1101(i) - protéase, agent de traitement des farines, stabilisant, exaltateur d'arome
+VALUES;E1101 (ii) - papain, Flavour;Other additive;E1101(ii);E1101 (ii) - papain, Flavour;E1101(ii) - papaïne, exaltateur d'arome
+VALUES;E1101 (iii) - bromelain, flour treatment agent, stabilizer, flavor enhancer;Other additive;E1101(iii);E1101 (iii) - bromelain, flour treatment agent, stabilizer, flavor enhancer;E1101(iii) - bromelaïne, agent de traitement des farines, stabilisant, exaltateur d'arome
+VALUES;E1101 (iv) - ficin, flour treatment agent, stabilizer, flavor enhancer;Other additive;E1101(iv);E1101 (iv) - ficin, flour treatment agent, stabilizer, flavor enhancer;E1101(iv) - ficine, agent de traitement des farines, stabilisant, exaltateur d'arome
+VALUES;E1102 - glucose oxidase, antioxidant;Other additive;E1102;E1102 - glucose oxidase, antioxidant;E1102 - glucose oxydase, antioxidant
+VALUES;E1103 - invertase (stabilizer);Other additive;E1103;E1103 - invertase (stabilizer);E1103 - invertase (stabilisant)
+VALUES;E1104 - lipases, Flavour;Other additive;E1104;E1104 - lipases, Flavour;E1104 - lipases, exaltateur d'arome
+VALUES;E1105 - lysozyme (preservative);Other additive;E1105;E1105 - lysozyme (preservative);E1105 - lysozyme (agent de conservation)
+VALUES;E111 - Orange GGN, alpha-naphthol;Food coloring;E111;E111 - Orange GGN, alpha-naphthol;E111 - orange ggn, alpha-naphthol
+VALUES;E120 - carminic acid (cochineal or carmine or red);Food coloring;E120;E120 - carminic acid (cochineal or carmine or red);E120 - acide carminique (ou carmin ou rouge cochenille)
+VALUES;E1200 - polydextrose (ballast agent, stabilizer, thickener);Other additive;E1200;E1200 - polydextrose (ballast agent, stabilizer, thickener);E1200 - polydextrose (agent de lest, stabilisant, epaississant)
+VALUES;E1201 - poly vinyl pyrrolidone (firming, stabilizer, dispersant);Other additive;E1201;E1201 - poly vinyl pyrrolidone (firming, stabilizer, dispersant);E1201 - poly vinyl pyrrolidone (raffermissant, stabilisant, dispersant)
+VALUES;E1202 - polyvinyl polypyrrolidone (color stabilizer, colloidal agent);Other additive;E1202;E1202 - polyvinyl polypyrrolidone (color stabilizer, colloidal agent);E1202 - polyvinyl polypyrrolidone (stabilisant de la couleur, agent colloidal)
+VALUES;E1203 - polyvinyl alcohol (coating agent, binder, hermetic packaging, surface finishing agent);Other additive;E1203;E1203 - polyvinyl alcohol (coating agent, binder, hermetic packaging, surface finishing agent);E1203 - alcool polyvinylique (agent d'enrobage, liant, agent de conditionnement hermetique, agent de finition superficielle)
+VALUES;E1204 - pullulan;Other additive;E1204;E1204 - pullulan;E1204 - pullulane
+VALUES;E121 - Archil orcein;Food coloring;E121;E121 - Archil orcein;E121 - orseille orceine
+VALUES;E122 - Azorubine (or carmoisine);Food coloring;E122;E122 - Azorubine (or carmoisine);E122 - azorubine (ou carmoisine)
+VALUES;E123 - Amaranth;Food coloring;E123;E123 - Amaranth;E123 - amarante
+VALUES;E124 - Ponceau 4R, Cochineal Red A;Food coloring;E124;E124 - Ponceau 4R, Cochineal Red A;E124 - ponceau 4r, rouge cochenille a
+VALUES;E125 - Ponceau SX;Food coloring;E125;E125 - Ponceau SX;E125 - ponceau sx
+VALUES;E126 - culvert gr;Food coloring;E126;E126 - culvert gr;E126 - ponceau gr
+VALUES;E127 - erythrosine;Food coloring;E127;E127 - erythrosine;E127 - érythrosine
+VALUES;E128 - red 2g;Food coloring;E128;E128 - red 2g;E128 - rouge 2g
+VALUES;E129 - Allura Red AC;Food coloring;E129;E129 - Allura Red AC;E129 - rouge allura ac
+VALUES;E130 - manascorubine;Food coloring;E130;E130 - manascorubine;E130 - manascorubine
+VALUES;E131 - Patent Blue V;Food coloring;E131;E131 - Patent Blue V;E131 - bleu patente v
+VALUES;E132 - indigo (or indigo carmine);Food coloring;E132;E132 - indigo (or indigo carmine);E132 - indigotine (ou carmin d'indigo)
+VALUES;E133 - Brilliant Blue FCF;Food coloring;E133;E133 - Brilliant Blue FCF;E133 - bleu brillant fcf
+VALUES;E140 - chlorophyllins;Food coloring;E140;E140 - chlorophyllins;E140 - chlorophyllines
+VALUES;E1400 - Dextrins, roasted starch, stabilizer, thickener, binder, emulsifier;Other additive;E1400;E1400 - Dextrins, roasted starch, stabilizer, thickener, binder, emulsifier;E1400 - dextrines, amidon torréfié, stabilisant, épaississant, liant, émulsifiant
+VALUES;E1401 - Acid treated starch, stabilizer, thickener, binder, emulsifier;Other additive;E1401;E1401 - Acid treated starch, stabilizer, thickener, binder, emulsifier;E1401 - amidon traite aux acides, stabilisant, épaississant, liant, émulsifiant
+VALUES;E1402 - Alkaline treated starch, stabilizer, thickener, binder, emulsifier;Other additive;E1402;E1402 - Alkaline treated starch, stabilizer, thickener, binder, emulsifier;E1402 - amidon traite aux alcalis, stabilisant, épaississant, liant, émulsifiant
+VALUES;E1403 - bleached starch, stabilizer, thickener, binder, emulsifier;Other additive;E1403;E1403 - bleached starch, stabilizer, thickener, binder, emulsifier;E1403 - amidon blanchi, stabilisant, épaississant, liant, émulsifiant
+VALUES;E1404 - starch oxide (gelling agent, thickener);Other additive;E1404;E1404 - starch oxide (gelling agent, thickener);E1404 - amidon oxyde (gélifiant, épaississant)
+VALUES;E1405 - Enzyme Treated Starch, stabilizer, thickener, binder, emulsifier;Other additive;E1405;E1405 - Enzyme Treated Starch, stabilizer, thickener, binder, emulsifier;E1405 - amidons traites aux enzymes, stabilisant, épaississant, liant, émulsifiant
+VALUES;E140a - chlorophylls, pheophytin magnesium;Food coloring;E140a;E140a - chlorophylls, pheophytin magnesium;E140a - chlorophylles, pheophytine au magnésium
+VALUES;E140b - chlorophyllins;Food coloring;E140b;E140b - chlorophyllins;E140b - chlorophyllines
+VALUES;E141 (i) - Copper complexes of chlorophylls;Food coloring;E141(i);E141 (i) - Copper complexes of chlorophylls;E141(i) - complexe cuivrique des chlorophylles
+VALUES;E141 (ii) - Copper complexes of chlorophyllins with sodium and potassium;Food coloring;E141(ii);E141 (ii) - Copper complexes of chlorophyllins with sodium and potassium;E141(ii) - complexe cuivrique des chlorophyllines avec sels de sodium et de potassium
+VALUES;E1410 - starch phosphate (gelling agent, thickener);Other additive;E1410;E1410 - starch phosphate (gelling agent, thickener);E1410 - phosphate d'amidon (gélifiant, épaississant)
+VALUES;E1411 - Distarch glycerol (gelling agent, thickener);Other additive;E1411;E1411 - Distarch glycerol (gelling agent, thickener);E1411 - glycérol de diamidon (gélifiant, épaississant)
+VALUES;E1412 - distarch phosphate (gelling agent, thickener);Other additive;E1412;E1412 - distarch phosphate (gelling agent, thickener);E1412 - phosphate de diamidon (gélifiant, épaississant)
+VALUES;E1413 - distarch phosphate phosphate (gelling agent, thickener);Other additive;E1413;E1413 - distarch phosphate phosphate (gelling agent, thickener);E1413 - phosphate de diamidon phosphate (gélifiant, épaississant)
+VALUES;E1414 - distarch acetyl phosphate (gelling agent, thickener);Other additive;E1414;E1414 - distarch acetyl phosphate (gelling agent, thickener);E1414 - phosphate de diamidon acetyle (gélifiant, épaississant)
+VALUES;E142 - acid brilliant green BS, lissamine green;Food coloring;E142;E142 - acid brilliant green BS, lissamine green;E142 - vert acide brillant bs, vert lissamine
+VALUES;E1420 - acetyl starch (gelling agent, thickener);Other additive;E1420;E1420 - acetyl starch (gelling agent, thickener);E1420 - amidon acétyle (gélifiant, épaississant)
+VALUES;E1421 - acetyl starch has vinyl acetate;Other additive;E1421;E1421 - acetyl starch has vinyl acetate;E1421 - amidon acétyle a acétate de vinyle
+VALUES;E1422 - acetyl distarch adipate (gelling agent, thickener);Other additive;E1422;E1422 - acetyl distarch adipate (gelling agent, thickener);E1422 - adipate de diamidon acétyle (gélifiant, épaississant)
+VALUES;E1423 - distarch acetyl glycerol (gelling agent, thickener);Other additive;E1423;E1423 - distarch acetyl glycerol (gelling agent, thickener);E1423 - glycérol de diamidon acétyle (gélifiant, épaississant)
+VALUES;E143 - green FCF;Food coloring;E143;E143 - green FCF;E143 - vert solide fcf
+VALUES;E1430 - distarch glycerin;Other additive;E1430;E1430 - distarch glycerin;E1430 - diamidon glycérine
+VALUES;E1440 - hydroxypropyl starch (gelling agent, thickener);Other additive;E1440;E1440 - hydroxypropyl starch (gelling agent, thickener);E1440 - amidon hydroxypropyle (gélifiant, épaississant)
+VALUES;E1441 - glycerin distarch hydroxypropyl or hydroxy-propyl;Other additive;E1441;E1441 - glycerin distarch hydroxypropyl or hydroxy-propyl;E1441 - glycérine de diamidon hydroxypropyle ou hydroxy-propylique
+VALUES;E1442 - hydroxypropyl distarch phosphate (gelling agent, thickener);Other additive;E1442;E1442 - hydroxypropyl distarch phosphate (gelling agent, thickener);E1442 - phosphate de diamidon hydroxypropyle (gélifiant, épaississant)
+VALUES;E1443 - hydroxypropyl distarch glycerol (gelling agent, thickener);Other additive;E1443;E1443 - hydroxypropyl distarch glycerol (gelling agent, thickener);E1443 - glycérol de diamidon hydroxypropyle (gélifiant, épaississant)
+VALUES;E1450 - sodium starch octenyl succinate (stabilizer, thickener, binder, emulsifier);Other additive;E1450;E1450 - sodium starch octenyl succinate (stabilizer, thickener, binder, emulsifier);E1450 - octenyle succinate d'amidon sodique (stabilisant, épaississant, liant, émulsifiant)
+VALUES;E1451 - Acetylated oxidised starch (stabilizer, thickener, binder, emulsifier);Other additive;E1451;E1451 - Acetylated oxidised starch (stabilizer, thickener, binder, emulsifier);E1451 - amidon oxyde acetyle (stabilisant, épaississant, liant, émulsifiant)
+VALUES;E1452 - octenyl succinate starch aluminum, anticaking agent, carrier, stabilizer;Other additive;E1452;E1452 - octenyl succinate starch aluminum, anticaking agent, carrier, stabilizer;E1452 - succinate octenylique aluminique d'amidon, anticaking agent, carrier, stabilisant
+VALUES;E150 - caramel;Food coloring;E150;E150 - caramel;E150 - caramel
+VALUES;E1503 - castor oil, carrier solvent, anticaking agent, glazing agent;Other additive;E1503;E1503 - castor oil, carrier solvent, anticaking agent, glazing agent;E1503 - huile de ricin, solvant de support, antiagglomérant, agent de glaçage
+VALUES;E1504 - ethyl acetate;Other additive;E1504;E1504 - ethyl acetate;E1504 - acétate d'éthyle
+VALUES;E1505 - triethyl citrate (foam stabilizer);Other additive;E1505;E1505 - triethyl citrate (foam stabilizer);E1505 - citrate de triéthyle (stabilisant de mousse)
+VALUES;E150a - caramels;Food coloring;E150a;E150a - caramels;E150a - caramels
+VALUES;E150b - Caustic sulphite caramel, sodium sulfite;Food coloring;E150b;E150b - Caustic sulphite caramel, sodium sulfite;E150b - caramel de sulfite caustique, sulfite de soude
+VALUES;E150c - Ammonia caramel;Food coloring;E150c;E150c - Ammonia caramel;E150c - caramel ammoniacal
+VALUES;E150d - Sulphite ammonia caramel;Food coloring;E150d;E150d - Sulphite ammonia caramel;E150d - caramel au sulfite d'ammonium
+VALUES;E151 - Brilliant Black BN, Black PN;Food coloring;E151;E151 - Brilliant Black BN, Black PN;E151 - noir brillant bn, noir pn
+VALUES;E1510 - ethanol;Other additive;E1510;E1510 - ethanol;E1510 - éthanol
+VALUES;E1517 - glyceroldiacetate;Other additive;E1517;E1517 - glyceroldiacetate;E1517 - glyceroldiacetate
+VALUES;E1518 - triacetin (glyceryl triacetate) (humectant);Other additive;E1518;E1518 - triacetin (glyceryl triacetate) (humectant);E1518 - triacétine (triacétate de glyceryle) (humectant)
+VALUES;E1519 - benzyl alcohol;Other additive;E1519;E1519 - benzyl alcohol;E1519 - alcool benzylique
+VALUES;E152 - black carbon (hydrocarbon);Food coloring;E152;E152 - black carbon (hydrocarbon);E152 - noir de carbone (hydrocarbure)
+VALUES;E1520 - propylene glycol (propane diol - 1.2) (humectant, wetting, dispersing);Other additive;E1520;E1520 - propylene glycol (propane diol - 1.2) (humectant, wetting, dispersing);E1520 - propylène glycol (propane diol - 1,2) (humectant, mouillant, dispersant)
+VALUES;E1521 - polyethylene glycol, macrogol (polyethylene ethanediol - 1.2) (antifoam);Other additive;E1521;E1521 - polyethylene glycol, macrogol (polyethylene ethanediol - 1.2) (antifoam);E1521 - polyéthylène glycol, macrogol (poly éthane diol - 1,2) (antimoussant)
+VALUES;E153 - Vegetable carbon;Food coloring;E153;E153 - Vegetable carbon;E153 - charbon végétal médicinal
+VALUES;E154 - fk Brown;Food coloring;E154;E154 - fk Brown;E154 - brun fk
+VALUES;E155 - chocolate brown ht;Food coloring;E155;E155 - chocolate brown ht;E155 - brun chocolat ht
+VALUES;E160a to e160f - carotenoids;Food coloring;E160a à e160f;E160a to e160f - carotenoids;E160a à e160f - caroténoïdes
+VALUES;E160a (i) - beta-carotene;Food coloring;E160a(i);E160a (i) - beta-carotene;E160a(i) - beta-carotène
+VALUES;E160a (ii) - carotenoid extract Ingredients;Food coloring;E160a(ii);E160a (ii) - carotenoid extract Ingredients;E160a(ii) - caroténoïdes extrait de Ingrédients
+VALUES;E160a (iii) - beta-carotene from Blakeslea trispora;Food coloring;E160a(iii);E160a (iii) - beta-carotene from Blakeslea trispora;E160a(iii) - beta-carotène extrait de blakeslea trispora
+VALUES;E160a (iv) - beta-carotene from algae;Food coloring;E160a(iv);E160a (iv) - beta-carotene from algae;E160a(iv) - beta-carotène extrait d'algue
+VALUES;E160b - annatto (or annatto) mixture of bixin and norbixin;Food coloring;E160b;E160b - annatto (or annatto) mixture of bixin and norbixin;E160b - rocou (ou annatto) mélange de bixine et norbixine
+VALUES;E160b (i) - bixin (annatto);Food coloring;E160b(i);E160b (i) - bixin (annatto);E160b(i) - bixine (rocou)
+VALUES;E160b (ii) - norbixin (annatto);Food coloring;E160b(ii);E160b (ii) - norbixin (annatto);E160b(ii) - norbixine (rocou)
+VALUES;E160c - paprika extract (Capsanthin and capsorubin);Food coloring;E160c;E160c - paprika extract (Capsanthin and capsorubin);E160c - extrait de paprika (capsantheine et capsorubine)
+VALUES;E160d - lycopene;Food coloring;E160d;E160d - lycopene;E160d - lycopene
+VALUES;E160d (i) and e160d (ii) - lycopene;Food coloring;E160d(i) et e160d(ii);E160d (i) and e160d (ii) - lycopene;E160d(i) et e160d(ii) - lycopène
+VALUES;E160d (iii) - lycopene from Blakeslea trispora;Food coloring;E160d(iii);E160d (iii) - lycopene from Blakeslea trispora;E160d(iii) - lycopène extrait de blakeslea trispora
+VALUES;E160e - apocarotenal 8 '(c30);Food coloring;E160e;E160e - apocarotenal 8 '(c30);E160e - apocarotenal 8' (c30)
+VALUES;E160f - ethyl ester of acid-apocarotenique-8 '(c30);Food coloring;E160f;E160f - ethyl ester of acid-apocarotenique-8 '(c30);E160f - ester ethylique de l'acide -apocarotenique-8' (c30)
+VALUES;E161a - flavoxanthine;Food coloring;E161a;E161a - flavoxanthine;E161a - flavoxanthine
+VALUES;E161a to e161j - xanthophylls;Food coloring;E161a à e161j;E161a to e161j - xanthophylls;E161a à e161j - xanthophylles
+VALUES;E161b - Lutein;Food coloring;E161b;E161b - Lutein;E161b - lutéine
+VALUES;E161b (i) - Lutein from Tagetes erecta;Food coloring;E161b(i);E161b (i) - Lutein from Tagetes erecta;E161b(i) - lutéines de tagetes erecta
+VALUES;E161b (ii) - extract it from Tagetes;Food coloring;E161b(ii);E161b (ii) - extract it from Tagetes;E161b(ii) - extrais de tagetes
+VALUES;E161c - cryptoxanthin;Food coloring;E161c;E161c - cryptoxanthin;E161c - cryptoxanthine
+VALUES;E161d - rubixanthine;Food coloring;E161d;E161d - rubixanthine;E161d - rubixanthine
+VALUES;E161e - violaxanthin;Food coloring;E161e;E161e - violaxanthin;E161e - violaxanthine
+VALUES;E161f - rhodoxanthine;Food coloring;E161f;E161f - rhodoxanthine;E161f - rhodoxanthine
+VALUES;E161g - canthaxanthin;Food coloring;E161g;E161g - canthaxanthin;E161g - canthaxanthine
+VALUES;E161h - zeaxanthin;Food coloring;E161h;E161h - zeaxanthin;E161h - zeaxanthine
+VALUES;E161h (i) - zeaxanthin (synthetic);Food coloring;E161h(i);E161h (i) - zeaxanthin (synthetic);E161h(i) - zeaxanthine (de synthese)
+VALUES;E161h (ii) - zeaxanthin-rich extract from Tagetes erecta;Food coloring;E161h(ii);E161h (ii) - zeaxanthin-rich extract from Tagetes erecta;E161h(ii) - zeaxanthine riche en extrait de tagetes erecta
+VALUES;E161i - citranaxanthin;Food coloring;E161i;E161i - citranaxanthin;E161i - citranaxanthine
+VALUES;E161j - astaxanthin;Food coloring;E161j;E161j - astaxanthin;E161j - astaxanthine
+VALUES;E162 - beet red, betanin;Food coloring;E162;E162 - beet red, betanin;E162 - rouge de betterave, betanine
+VALUES;E163a - cyanidin;Food coloring;E163a;E163a - cyanidin;E163a - cyanidine
+VALUES;E163a to e163f - anthocyanins;Food coloring;E163a à e163f;E163a to e163f - anthocyanins;E163a à e163f - anthocyanes
+VALUES;E163b - delphinidin;Food coloring;E163b;E163b - delphinidin;E163b - delphinidine
+VALUES;E163c - malvidin;Food coloring;E163c;E163c - malvidin;E163c - malvidine
+VALUES;E163d - pelargonidin;Food coloring;E163d;E163d - pelargonidin;E163d - pelargonidine
+VALUES;E163e - peonidin;Food coloring;E163e;E163e - peonidin;E163e - peonidine
+VALUES;E163f - petunidin;Food coloring;E163f;E163f - petunidin;E163f - petunidine
+VALUES;E164 - yellow gardenia;Food coloring;E164;E164 - yellow gardenia;E164 - jaune de gardenia
+VALUES;E165 - blue gardenia;Food coloring;E165;E165 - blue gardenia;E165 - bleu de gardenia
+VALUES;E166 - Sandalwood;Food coloring;E166;E166 - Sandalwood;E166 - bois de santal
+VALUES;E170 (i) - calcium carbonate;Food coloring;E170(i);E170 (i) - calcium carbonate;E170(i) - carbonate de calcium
+VALUES;E170 (ii) - calcium hydrogen carbonate;Food coloring;E170(ii);E170 (ii) - calcium hydrogen carbonate;E170(ii) - carbonate acide de calcium
+VALUES;E171 - titanium oxide, titanium dioxide, titanium dioxide;Food coloring;E171;E171 - titanium oxide, titanium dioxide, titanium dioxide;E171 - oxyde de titane, dioxyde de titane, bioxyde de titane
+VALUES;E172 - Iron oxides and hydroxides;Food coloring;E172;E172 - Iron oxides and hydroxides;E172 - oxyde et hydroxyde de fer
+VALUES;E172 (i) - iron oxide, black;Food coloring;E172(i);E172 (i) - iron oxide, black;E172(i) - oxyde de fer, noir
+VALUES;E172 (ii) - iron oxide, red;Food coloring;E172(ii);E172 (ii) - iron oxide, red;E172(ii) - oxyde de fer, rouge
+VALUES;E172 (iii) - iron oxide, yellow;Food coloring;E172(iii);E172 (iii) - iron oxide, yellow;E172(iii) - oxyde de fer, jaune
+VALUES;E173 - aluminum;Food coloring;E173;E173 - aluminum;E173 - aluminium
+VALUES;E174 - Silver;Food coloring;E174;E174 - Silver;E174 - argent
+VALUES;E175 - Gold;Food coloring;E175;E175 - Gold;E175 - or
+VALUES;E180 - latolrubine BK;Food coloring;E180;E180 - latolrubine BK;E180 - lithol-rubine bk
+VALUES;E181 - tannin, tannic acid;Food coloring;E181;E181 - tannin, tannic acid;E181 - tannin, acide tannique
+VALUES;E182 - Archil;Food coloring;E182;E182 - Archil;E182 - orseille
+VALUES;E200 - sorbic acid (SA);Conservative;E200;E200 - sorbic acid (SA);E200 - acide sorbique (sa)
+VALUES;E201 - sodium sorbate (sa);Conservative;E201;E201 - sodium sorbate (sa);E201 - sorbate de sodium (sa)
+VALUES;E202 - potassium sorbate (sa);Conservative;E202;E202 - potassium sorbate (sa);E202 - sorbate de potassium (sa)
+VALUES;E203 - Calcium sorbate (sa);Conservative;E203;E203 - Calcium sorbate (sa);E203 - sorbate de calcium (sa)
+VALUES;E209 - hydroxybenzoate hepthyle;Conservative;E209;E209 - hydroxybenzoate hepthyle;E209 - hydroxybenzoate d'hepthyle
+VALUES;E210 - benzoic acid (BA);Conservative;E210;E210 - benzoic acid (BA);E210 - acide benzoïque (ba)
+VALUES;E211 - sodium benzoate (ba);Conservative;E211;E211 - sodium benzoate (ba);E211 - benzoate de sodium (ba)
+VALUES;E212 - potassium benzoate (ba);Conservative;E212;E212 - potassium benzoate (ba);E212 - benzoate de potassium (ba)
+VALUES;E213 - calcium benzoate (ba);Conservative;E213;E213 - calcium benzoate (ba);E213 - benzoate de calcium (ba)
+VALUES;E214 - 4-hydroxybenzoate or ethyl ethylparaben (PHB);Conservative;E214;E214 - 4-hydroxybenzoate or ethyl ethylparaben (PHB);E214 - 4-hydroxybenzoate d'ethyle ou ethylparabene (phb)
+VALUES;E215 - sodium derivative of ethyl 4-hydroxybenzoate (PHB);Conservative;E215;E215 - sodium derivative of ethyl 4-hydroxybenzoate (PHB);E215 - derive sodique du 4-hydroxybenzoate d'ethyle (phb)
+VALUES;E216 - 4-hydroxybenzoate or propyl paraben (PHB);Conservative;E216;E216 - 4-hydroxybenzoate or propyl paraben (PHB);E216 - 4-hydroxybenzoate de propyle ou propylparabene (phb)
+VALUES;E217 - sodium derivative of 4-hydroxybenzoate (PHB);Conservative;E217;E217 - sodium derivative of 4-hydroxybenzoate (PHB);E217 - derive sodique du 4-hydroxybenzoate de propyle (phb)
+VALUES;E218 - 4-hydroxybenzoate or methylparaben (PHB);Conservative;E218;E218 - 4-hydroxybenzoate or methylparaben (PHB);E218 - 4-hydroxybenzoate de méthyle ou methylparabene(phb)
+VALUES;E219 - sodium derivative of 4-hydroxybenzoate (PHB);Conservative;E219;E219 - sodium derivative of 4-hydroxybenzoate (PHB);E219 - derive sodique du 4-hydroxybenzoate de méthyle (phb)
+VALUES;E220 - sulfur dioxide;Conservative;E220;E220 - sulfur dioxide;E220 - anhydride sulfureux
+VALUES;E221 - sodium sulphite;Conservative;E221;E221 - sodium sulphite;E221 - sulfite de sodium
+VALUES;E222 - sodium bisulfite (Sodium hydrogen sulfite);Conservative;E222;E222 - sodium bisulfite (Sodium hydrogen sulfite);E222 - bisulfite de sodium (sulfite acide de sodium)
+VALUES;E223 - sodium metabisulfite, sodium metabisulfite;Conservative;E223;E223 - sodium metabisulfite, sodium metabisulfite;E223 - disulfite de sodium, metabisulfite de sodium
+VALUES;E224 - metabisulphite potassium metabisulfite / potassium metabisulfite;Conservative;E224;E224 - metabisulphite potassium metabisulfite / potassium metabisulfite;E224 - disulfite de potassium, pyrosulfite / metabisulfite de potassium
+VALUES;E225 - disulphite calcium or calcium pyrosulphite metasulfite;Conservative;E225;E225 - disulphite calcium or calcium pyrosulphite metasulfite;E225 - disulfite de calcium pyrosulfite de calcium ou metasulfite
+VALUES;E226 - calcium sulphite;Conservative;E226;E226 - calcium sulphite;E226 - sulfite de calcium
+VALUES;E227 - calcium hydrogen sulfite, bisulfite, calcium;Conservative;E227;E227 - calcium hydrogen sulfite, bisulfite, calcium;E227 - sulfite acide de calcium, bisulfite de calcium
+VALUES;E228 - potassium hydrogen sulfite, potassium bisulfite;Conservative;E228;E228 - potassium hydrogen sulfite, potassium bisulfite;E228 - sulfite acide de potassium, bisulfite de potassium
+VALUES;E230 - biphenyl (diphenyl);Conservative;E230;E230 - biphenyl (diphenyl);E230 - biphenyle (diphenyle)
+VALUES;E231 - orthophenyl, 2-hydroxybiphenyl;Conservative;E231;E231 - orthophenyl, 2-hydroxybiphenyl;E231 - orthophenylphenol, 2-hydroxybiphenyle
+VALUES;E232 - sodium orthophenylphenate, sodium diphenyl 2 yl;Conservative;E232;E232 - sodium orthophenylphenate, sodium diphenyl 2 yl;E232 - orthophenylphenate de sodium, sodium diphenyl 2 yl
+VALUES;E233 - thiabendazole or 2 - (4-thiazolyl) benzimidazole;Conservative;E233;E233 - thiabendazole or 2 - (4-thiazolyl) benzimidazole;E233 - thiabendazole ou 2-(4-thiazolyl)benzimidazole
+VALUES;E234 - nisin;Conservative;E234;E234 - nisin;E234 - nisine
+VALUES;E235 - Natamycin (pimaricin);Conservative;E235;E235 - Natamycin (pimaricin);E235 - natamycine (pimaricine)
+VALUES;E236 - formic acid;Conservative;E236;E236 - formic acid;E236 - acide formique
+VALUES;E237 - sodium formate;Conservative;E237;E237 - sodium formate;E237 - formiate de sodium
+VALUES;E238 - calcium formate;Conservative;E238;E238 - calcium formate;E238 - formiate de calcium
+VALUES;E239 - HEXAMETHYLENETETRAMINE;Conservative;E239;E239 - HEXAMETHYLENETETRAMINE;E239 - hexamethylenetetramine
+VALUES;E240 - formaldehyde;Conservative;E240;E240 - formaldehyde;E240 - formaldehyde
+VALUES;E241 - gum guaiac;Conservative;E241;E241 - gum guaiac;E241 - gomme gaiac
+VALUES;E242 - dimethyl dicarbonate;Conservative;E242;E242 - dimethyl dicarbonate;E242 - dicarbonate de dimethyle
+VALUES;E243 - lauric arginate ethyl;Conservative;E243;E243 - lauric arginate ethyl;E243 - arginate d'ethyle laurique
+VALUES;E249 - potassium nitrite;Conservative;E249;E249 - potassium nitrite;E249 - nitrite de potassium
+VALUES;E250 - sodium nitrite;Conservative;E250;E250 - sodium nitrite;E250 - nitrite de sodium
+VALUES;E251 - sodium nitrate;Conservative;E251;E251 - sodium nitrate;E251 - nitrate de sodium
+VALUES;E252 - potassium nitrate;Conservative;E252;E252 - potassium nitrate;E252 - nitrate de potassium
+VALUES;E260 - acetic acid;Conservative;E260;E260 - acetic acid;E260 - acide acétique
+VALUES;E261 - potassium acetate;Conservative;E261;E261 - potassium acetate;E261 - acétates de potassium
+VALUES;E261 (i) - potassium acetate;Conservative;E261(i);E261 (i) - potassium acetate;E261(i) - acétate de potassium
+VALUES;E261 (ii) - potassium diacetate;Conservative;E261(ii);E261 (ii) - potassium diacetate;E261(ii) - diacétate de potassium
+VALUES;E262 (i) - sodium acetate;Conservative;E262(i);E262 (i) - sodium acetate;E262(i) - acétate de sodium
+VALUES;E262 (ii) - sodium diacetate;Conservative;E262(ii);E262 (ii) - sodium diacetate;E262(ii) - diacétate de sodium
+VALUES;E263 - calcium acetate;Conservative;E263;E263 - calcium acetate;E263 - acetate de calcium
+VALUES;E264 - Ammonium acetate;Conservative;E264;E264 - Ammonium acetate;E264 - acétate d'ammonium
+VALUES;E265 - acid déhydracétique;Conservative;E265;E265 - acid déhydracétique;E265 - acide déhydracétique
+VALUES;E266 - sodium dehydroacetate;Conservative;E266;E266 - sodium dehydroacetate;E266 - déhydroacétate de sodium
+VALUES;E270 - lactic acid;Conservative;E270;E270 - lactic acid;E270 - acide lactique
+VALUES;E280 - propionic acid;Conservative;E280;E280 - propionic acid;E280 - acide propionique
+VALUES;E281 - sodium propionate;Conservative;E281;E281 - sodium propionate;E281 - propionate de sodium
+VALUES;E282 - calcium propionate;Conservative;E282;E282 - calcium propionate;E282 - propionate de calcium
+VALUES;E283 - potassium propionate;Conservative;E283;E283 - potassium propionate;E283 - propionate de potassium
+VALUES;E284 - boric acid;Conservative;E284;E284 - boric acid;E284 - acide borique
+VALUES;E285 - sodium tetraborate (borax);Conservative;E285;E285 - sodium tetraborate (borax);E285 - tetraborate de sodium (borax)
+VALUES;E290 - carbon dioxide, carbon dioxide;Conservative;E290;E290 - carbon dioxide, carbon dioxide;E290 - dioxyde de carbone, anhydride carbonique
+VALUES;E296 - malic acid (dl-or l-);Conservative;E296;E296 - malic acid (dl-or l-);E296 - acide malique (dl- ou l-)
+VALUES;E297 - fumaric acid;Conservative;E297;E297 - fumaric acid;E297 - acide fumarique
+VALUES;E300 - ascorbic acid, vitamin c;Antioxidant;E300;E300 - ascorbic acid, vitamin c;E300 - acide ascorbique, vitamine c
+VALUES;E301 - sodium ascorbate, vitamin c;Antioxidant;E301;E301 - sodium ascorbate, vitamin c;E301 - ascorbate de sodium, vitamine c
+VALUES;E302 - calcium ascorbate, vitamin c;Antioxidant;E302;E302 - calcium ascorbate, vitamin c;E302 - ascorbate de calcium, vitamine c
+VALUES;E303 - diacetate ascorbyl;Antioxidant;E303;E303 - diacetate ascorbyl;E303 - diacetate d'ascorbyle
+VALUES;E304 - acid palmityl-6-l-ascorbic acid, ascorbyl palmitate;Antioxidant;E304;E304 - acid palmityl-6-l-ascorbic acid, ascorbyl palmitate;E304 - acide palmityle-6-l-ascorbique, palmitate d'ascorbyle
+VALUES;E305 - ascorbyl stearate;Antioxidant;E305;E305 - ascorbyl stearate;E305 - stéarate d'ascorbyle
+VALUES;E306 - extract rich in tocopherols, vitamin E;Antioxidant;E306;E306 - extract rich in tocopherols, vitamin E;E306 - extrait riche en tocophérols, vitamine e
+VALUES;E307 - synthetic alpha-tocopherol, vitamin E;Antioxidant;E307;E307 - synthetic alpha-tocopherol, vitamin E;E307 - alpha-tocophérol de synthèse, vitamine e
+VALUES;E307a - tocopherol, d-alpha-;Antioxidant;E307a;E307a - tocopherol, d-alpha-;E307a - tocophérol, d-alpha-
+VALUES;E307b - tocopherol concentrates;Antioxidant;E307b;E307b - tocopherol concentrates;E307b - tocophérol concentre
+VALUES;E307c - tocopherol, dl-alpha-;Antioxidant;E307c;E307c - tocopherol, dl-alpha-;E307c - tocophérol, dl-alpha-
+VALUES;E308 - gamma-tocopherol synthesis, vitamin E;Antioxidant;E308;E308 - gamma-tocopherol synthesis, vitamin E;E308 - gamma-tocophérol de synthèse, vitamine e
+VALUES;E309 - synthetic delta-tocopherol, vitamin E;Antioxidant;E309;E309 - synthetic delta-tocopherol, vitamin E;E309 - delta-tocophérol de synthèse, vitamine e
+VALUES;E310 - propyl gallate;Antioxidant;E310;E310 - propyl gallate;E310 - gallate de propyle
+VALUES;E311 - octyl gallate;Antioxidant;E311;E311 - octyl gallate;E311 - gallate d'octyle
+VALUES;E312 - dodecyl gallate, n-dodecyl ester;Antioxidant;E312;E312 - dodecyl gallate, n-dodecyl ester;E312 - gallate dodecyle, ester n-dodecylique
+VALUES;E313 - thiodipropionic acid synthetic antioxidant;Antioxidant;E313;E313 - thiodipropionic acid synthetic antioxidant;E313 - acide thiodipropionique anti- oxydant synthetique
+VALUES;E314 - guaiac gum natural antioxidant;Antioxidant;E314;E314 - guaiac gum natural antioxidant;E314 - guaiac gum anti-oxydant naturel
+VALUES;E315 - erythorbic acid;Antioxidant;E315;E315 - erythorbic acid;E315 - acide erythorbique
+VALUES;E316 - sodium erythorbate;Antioxidant;E316;E316 - sodium erythorbate;E316 - erythorbate de sodium
+VALUES;E317 - potassium isoascorbate;Antioxidant;E317;E317 - potassium isoascorbate;E317 - isoascorbate de potassium
+VALUES;E318 - calcium isoascorbate;Antioxidant;E318;E318 - calcium isoascorbate;E318 - isoascorbate de calcium
+VALUES;E319 - butylhydroquinone, synthetic;Antioxidant;E319;E319 - butylhydroquinone, synthetic;E319 - butylhydroquinone, synthetique
+VALUES;E320 - butylated hydroxyanisole (BHA);Antioxidant;E320;E320 - butylated hydroxyanisole (BHA);E320 - buthylhydroxyanisol (bha)
+VALUES;E321 - butylated hydroxytoluene (BHT);Antioxidant;E321;E321 - butylated hydroxytoluene (BHT);E321 - buthylhydroxytoluene (bht)
+VALUES;E322 (i) - lecithin, antioxidant, emulsifier;Lecithin;E322(i);E322 (i) - lecithin, antioxidant, emulsifier;E322(i) - lécithine, antioxidant, emulsifiant
+VALUES;E322 (ii) - Partially hydrolyzed lecithin, antioxidant, emulsifier;Lecithin;E322(ii);E322 (ii) - Partially hydrolyzed lecithin, antioxidant, emulsifier;E322(ii) - lécithine partiellement hydrolysee, antioxidant, emulsifiant
+VALUES;E323 - anoxomere, antioxidant;Lecithin;E323;E323 - anoxomere, antioxidant;E323 - anoxomere, antioxidant
+VALUES;E324 - ethoxyquin, an antioxidant, pesticide;Antioxidant;E324;E324 - ethoxyquin, an antioxidant, pesticide;E324 - ethoxyquine, antioxidant, pesticide
+VALUES;E325 - sodium lactate;Lactate;E325;E325 - sodium lactate;E325 - lactate de sodium
+VALUES;E326 - potassium lactate;Lactate;E326;E326 - potassium lactate;E326 - lactate de potassium
+VALUES;E327 - calcium lactate;Lactate;E327;E327 - calcium lactate;E327 - lactate de calcium
+VALUES;E328 - Ammonium lactate, acidity regulator, flour treatment agent;Lactate;E328;E328 - Ammonium lactate, acidity regulator, flour treatment agent;E328 - lactate d'ammonium, régulateur de l'acidité, agent de traitement des farines
+VALUES;E329 - magnesium lactate (dl-), acidity regulator, flour treatment agent;Lactate;E329;E329 - magnesium lactate (dl-), acidity regulator, flour treatment agent;E329 - lactate de magnésium (dl-), régulateur de l'acidité, agent de traitement des farines
+VALUES;E330 - Citric Acid;Citrate;E330;E330 - Citric Acid;E330 - acide citrique
+VALUES;E331 - sodium citrate (monosodium, disodium, trisodium);Citrate;E331;E331 - sodium citrate (monosodium, disodium, trisodium);E331 - citrates de sodium (monosodique, disodique, trisodique)
+VALUES;E331 (i) - sodium dihydrogen citrate, acidity regulator, sequestrant, emulsifier, stabilizer;Citrate;E331(i);E331 (i) - sodium dihydrogen citrate, acidity regulator, sequestrant, emulsifier, stabilizer;E331(i) - citrate biacide de sodium, régulateur d'acidité, séquestrant, émulsifiant, stabilisant
+VALUES;E331 (ii) - disodium citrate dibasic, acidity regulator, sequestrant, emulsifier, stabilizer;Citrate;E331(ii);E331 (ii) - disodium citrate dibasic, acidity regulator, sequestrant, emulsifier, stabilizer;E331(ii) - citrate monoacide disodique, regulateur d'acidité, séquestrant, émulsifiant, stabilisant
+VALUES;E331 (iii) - trisodium citrate, acidity regulator, sequestrant, emulsifier, stabilizer;Citrate;E331(iii);E331 (iii) - trisodium citrate, acidity regulator, sequestrant, emulsifier, stabilizer;E331(iii) - citrate trisodique, régulateur d'acidité, séquestrant, émulsifiant, stabilisant
+VALUES;E332 - Potassium citrates (monopotassium, tripotassium);Citrate;E332;E332 - Potassium citrates (monopotassium, tripotassium);E332 - citrates de potassium (monopotassique, tripotassique)
+VALUES;E332 (i) - potassium dihydrogen citrate, acidity regulator, sequestrant, stabilizer;Citrate;E332(i);E332 (i) - potassium dihydrogen citrate, acidity regulator, sequestrant, stabilizer;E332(i) - citrate biacide de potassium, régulateur de l'acidité, séquestrant, stabilisant
+VALUES;E332 (ii) - tripotassium citrate, acidity regulator, sequestrant, stabilizer;Citrate;E332(ii);E332 (ii) - tripotassium citrate, acidity regulator, sequestrant, stabilizer;E332(ii) - citrate tripotassique, régulateur de l'acidité, séquestrant, stabilisant
+VALUES;E333 - calcium citrate (monocalcium, dicalcium, tricalcium phosphate);Citrate;E333;E333 - calcium citrate (monocalcium, dicalcium, tricalcium phosphate);E333 - citrates de calcium (monocalcique, dicalcique, tricalcique)
+VALUES;E333 (i) - monocalcium citrate, acidity regulator, firming agent, sequestrant, stabilizer;Citrate;E333(i);E333 (i) - monocalcium citrate, acidity regulator, firming agent, sequestrant, stabilizer;E333(i) - citrate de monocalcium, régulateur de l'acidité, affermissant, séquestrant, stabilisant
+VALUES;E333 (ii) - dicalcium citrate, acidity regulator, firming agent, sequestrant, stabilizer;Citrate;E333(ii);E333 (ii) - dicalcium citrate, acidity regulator, firming agent, sequestrant, stabilizer;E333(ii) - citrate de dicalcium, régulateur de l'acidité, affermissant, séquestrant, stabilisant
+VALUES;E333 (iii) - tricalcium citrate, acidity regulator, firming agent, sequestrant, stabilizer;Citrate;E333(iii);E333 (iii) - tricalcium citrate, acidity regulator, firming agent, sequestrant, stabilizer;E333(iii) - citrate de tricalcium, régulateur de l'acidité, affermissant, séquestrant, stabilisant
+VALUES;E334 - tartaric acid [l (+) -];Tartrate;E334;E334 - tartaric acid [l (+) -];E334 - acide tartrique [l (+) - ]
+VALUES;E335 (i) - sodium tartrate;Tartrate;E335(i);E335 (i) - sodium tartrate;E335(i) - tartrate monosodique
+VALUES;E335 (ii) - disodium tartrate;Tartrate;E335(ii);E335 (ii) - disodium tartrate;E335(ii) - tartrate disodique
+VALUES;E336 (i) - tartrate monopotassium;Tartrate;E336(i);E336 (i) - tartrate monopotassium;E336(i) - tartrate monopotassique
+VALUES;E336 (ii) - dipotassium tartrate;Tartrate;E336(ii);E336 (ii) - dipotassium tartrate;E336(ii) - tartrate dipotassique
+VALUES;E337 - sodium tartrate and potassium;Tartrate;E337;E337 - sodium tartrate and potassium;E337 - tartrate double de sodium et de potassium
+VALUES;E338 - orthophosphoric acid;Orthophosphate;E338;E338 - orthophosphoric acid;E338 - acide orthophosphorique
+VALUES;E339 - sodium orthophosphate (monosodium, disodium, trisodium);Orthophosphate;E339;E339 - sodium orthophosphate (monosodium, disodium, trisodium);E339 - orthophosphates de sodium (monosodique, disodique, trisodique)
+VALUES;E339 (i) - monosodium phosphate;Orthophosphate;E339(i);E339 (i) - monosodium phosphate;E339(i) - phosphate monosodique
+VALUES;E339 (ii) - disodium phosphate;Orthophosphate;E339(ii);E339 (ii) - disodium phosphate;E339(ii) - phosphate disodique
+VALUES;E339 (iii) - trisodium phosphate;Orthophosphate;E339(iii);E339 (iii) - trisodium phosphate;E339(iii) - phosphate trisodique
+VALUES;E340 - potassium orthophosphate (monopotassium, dipotassium, tripotassium);Orthophosphate;E340;E340 - potassium orthophosphate (monopotassium, dipotassium, tripotassium);E340 - orthophosphates de potassium (monopotassique, dipotassique, tripotassique)
+VALUES;E340 (i) - dihydrogen orthophosphate, acidity regulator, sequestrant, emulsifier, texturizing agent, stabilizer, water retention agent / moisture;Orthophosphate;E340(i);E340 (i) - dihydrogen orthophosphate, acidity regulator, sequestrant, emulsifier, texturizing agent, stabilizer, water retention agent / moisture;E340(i) - orthophosphate monopotassique, régulateur de l'acidité, séquestrant, émulsifiant, agent de texture, stabilisant, agent de rétention d'eau/d'humidité
+VALUES;E340 (ii) - dipotassium orthophosphate, acidity regulator, sequestrant, emulsifier, texturizing agent, stabilizer, water retention agent / moisture;Orthophosphate;E340(ii);E340 (ii) - dipotassium orthophosphate, acidity regulator, sequestrant, emulsifier, texturizing agent, stabilizer, water retention agent / moisture;E340(ii) - orthophosphate dipotassique, régulateur de l'acidité, séquestrant, émulsifiant, agent de texture, stabilisant, agent de rétention d'eau/d'humidité
+VALUES;E340 (iii) - tripotassium orthophosphate, acidity regulator, sequestrant, emulsifier, texturizing agent, stabilizer, water retention agent / moisture;Orthophosphate;E340(iii);E340 (iii) - tripotassium orthophosphate, acidity regulator, sequestrant, emulsifier, texturizing agent, stabilizer, water retention agent / moisture;E340(iii) - orthophosphate tripotassique, régulateur de l'acidité, séquestrant, émulsifiant, agent de texture, stabilisant, agent de rétention d'eau/d'humidité
+VALUES;E341 - calcium orthophosphate (monocalcium, dicalcium, tricalcium phosphate);Orthophosphate;E341;E341 - calcium orthophosphate (monocalcium, dicalcium, tricalcium phosphate);E341 - orthophosphates de calcium (monocalcique, dicalcique, tricalcique)
+VALUES;E341 (i) - monocalcium orthophosphate, acidity regulator, flour treatment agent, firming agent, texturizing agent, raising agent, anticaking agent retention of water / moisture, stabilizing;Orthophosphate;E341(i);E341 (i) - monocalcium orthophosphate, acidity regulator, flour treatment agent, firming agent, texturizing agent, raising agent, anticaking agent retention of water / moisture, stabilizing;E341(i) - orthophosphate monocalcique, régulateur de l'acidité, agent de traitement des farines, affermissant, agent de texture, agent levant, antiagglomérant, agent de rétention d'eau/d'humidité, stabilisant
+VALUES;E341 (ii) - dicalcium orthophosphate, acidity regulator, flour treatment agent, firming agent, texturizing agent, raising agent, anticaking agent retention of water / moisture, stabilizing;Orthophosphate;E341(ii);E341 (ii) - dicalcium orthophosphate, acidity regulator, flour treatment agent, firming agent, texturizing agent, raising agent, anticaking agent retention of water / moisture, stabilizing;E341(ii) - orthophosphate dicalcique, régulateur de l'acidité, agent de traitement des farines, affermissant, agent de texture, agent levant, antiagglomérant, agent de rétention d'eau/d'humidité, stabilisant
+VALUES;E341 (iii) - tricalcium orthophosphate, acidity regulator, flour treatment agent, firming agent, texturizing agent, raising agent, anticaking agent retention of water / moisture, stabilizer, buffer;Orthophosphate;E341(iii);E341 (iii) - tricalcium orthophosphate, acidity regulator, flour treatment agent, firming agent, texturizing agent, raising agent, anticaking agent retention of water / moisture, stabilizer, buffer;E341(iii) - orthophosphate tricalcique, régulateur de l'acidité, agent de traitement des farines, affermissant, agent de texture, agent levant, antiagglomérant, agent de rétention d'eau/d'humidité, stabilisant, tampon
+VALUES;E342 - Ammonium phosphate, acidity regulator, flour treatment agent;Orthophosphate;E342;E342 - Ammonium phosphate, acidity regulator, flour treatment agent;E342 - phosphates d'ammonium, régulateur de l'acidité, agent de traitement des farines
+VALUES;E342 (i) - monoammonium orthophosphate, acidity regulator, flour treatment agent;Orthophosphate;E342(i);E342 (i) - monoammonium orthophosphate, acidity regulator, flour treatment agent;E342(i) - orthophosphate monoammonie, régulateur de l'acidité, agent de traitement des farines
+VALUES;E342 (ii) - orthophosphate diammonium acidity regulator, flour treatment agent;Orthophosphate;E342(ii);E342 (ii) - orthophosphate diammonium acidity regulator, flour treatment agent;E342(ii) - orthophosphate diammonie, régulateur de l'acidité, agent de traitement des farines
+VALUES;E343 - orthophosphate, magnesium buffer;Orthophosphate;E343;E343 - orthophosphate, magnesium buffer;E343 - orthophosphates de magnésium, tampons
+VALUES;E343 (i) - orthophosphate Monomagnesium, acidity regulator, anticaking;Orthophosphate;E343(i);E343 (i) - orthophosphate Monomagnesium, acidity regulator, anticaking;E343(i) - orthophosphate monomagnesien, régulateur de l'acidité, antiagglomérant
+VALUES;E343 (ii) - orthophosphate Dimagnesium, acidity regulator, anticaking;Orthophosphate;E343(ii);E343 (ii) - orthophosphate Dimagnesium, acidity regulator, anticaking;E343(ii) - orthophosphate dimagnesien, régulateur de l'acidité, antiagglomérant
+VALUES;E343 (iii) - orthophosphate trimagnesium, acidity regulator, anticaking;Orthophosphate;E343(iii);E343 (iii) - orthophosphate trimagnesium, acidity regulator, anticaking;E343(iii) - orthophosphate trimagnesien, régulateur de l'acidité, antiagglomérant
+VALUES;E344 - lecithin citrate, Curator;Citrate;E344;E344 - lecithin citrate, Curator;E344 - citrate de lécithine, Conservateur
+VALUES;E345 - magnesium citrate, pH adjustment;Citrate;E345;E345 - magnesium citrate, pH adjustment;E345 - citrate de magnésium, régulateur de l'acidité
+VALUES;E349 - Ammonium malate;Malate;E349;E349 - Ammonium malate;E349 - malate d'ammonium
+VALUES;E350 (i) - sodium malate;Malate;E350(i);E350 (i) - sodium malate;E350(i) - malate de sodium
+VALUES;E350 (ii) - Sodium hydrogen malate;Malate;E350(ii);E350 (ii) - Sodium hydrogen malate;E350(ii) - malate acide de sodium
+VALUES;E351 - potassium malate;Malate;E351;E351 - potassium malate;E351 - malate de potassium
+VALUES;E351 (i) - potassium hydrogen malate, acidity regulator;Malate;E351(i);E351 (i) - potassium hydrogen malate, acidity regulator;E351(i) - malate acide de potassium, régulateur de l'acidité
+VALUES;E351 (ii) - potassium malate, acidity regulator;Malate;E351(ii);E351 (ii) - potassium malate, acidity regulator;E351(ii) - malate de potassium, régulateur de l'acidité
+VALUES;E352 (i) - calcium malate;Malate;E352(i);E352 (i) - calcium malate;E352(i) - malate de calcium
+VALUES;E352 (ii) - calcium hydrogen malate;Malate;E352(ii);E352 (ii) - calcium hydrogen malate;E352(ii) - malate acide de calcium
+VALUES;E353 - acid METATARTARIC;Tartrate;E353;E353 - acid METATARTARIC;E353 - acide metatartrique
+VALUES;E354 - calcium tartrate;Tartrate;E354;E354 - calcium tartrate;E354 - tartrate de calcium
+VALUES;E355 - adipic acid;Adipate;E355;E355 - adipic acid;E355 - acide adipique
+VALUES;E356 - sodium adipate;Adipate;E356;E356 - sodium adipate;E356 - adipate de sodium
+VALUES;E357 - potassium adipate;Adipate;E357;E357 - potassium adipate;E357 - adipate de potassium
+VALUES;E359 - Ammonium adipates, acidity regulator;Adipate;E359;E359 - Ammonium adipates, acidity regulator;E359 - adipates d'ammonium, régulateur de l'acidité
+VALUES;E363 - succinic acid;Adipate;E363;E363 - succinic acid;E363 - acide succinique
+VALUES;E364 - sodium succinate, pH adjustment, flavor enhancers;Adipate;E364;E364 - sodium succinate, pH adjustment, flavor enhancers;E364 - succinates de sodium, régulateur de l'acidité, exalteur d'arome
+VALUES;E364 (i) - sodium succinate, pH adjustment, Flavour;Adipate;E364(i);E364 (i) - sodium succinate, pH adjustment, Flavour;E364(i) - succinate monosodique, régulateur de l'acidité, exaltateur d'arome
+VALUES;E364 (ii) - disodium succinate, pH adjustment, Flavour;Adipate;E364(ii);E364 (ii) - disodium succinate, pH adjustment, Flavour;E364(ii) - succinate disodique, régulateur de l'acidité, exaltateur d'arome
+VALUES;E365 - sodium fumarate, acidity regulators;Adipate;E365;E365 - sodium fumarate, acidity regulators;E365 - fumarate de sodium, régulateurs d'acidité
+VALUES;E366 - potassium fumarates, acidity regulator;Adipate;E366;E366 - potassium fumarates, acidity regulator;E366 - fumarates de potassium, régulateur de l'acidité
+VALUES;E367 - calcium fumarate, acidity regulator;Adipate;E367;E367 - calcium fumarate, acidity regulator;E367 - fumarates de calcium, régulateur de l'acidité
+VALUES;E368 - ammonium fumarate, acidity regulator;Adipate;E368;E368 - ammonium fumarate, acidity regulator;E368 - fumarate d'ammonium, régulateur de l'acidité
+VALUES;E370 - 1,4-heptonolactone;Adipate;E370;E370 - 1,4-heptonolactone;E370 - 1,4-heptonolactone
+VALUES;E375 - nicotinic acid, niacin (vitamin b3);Adipate;E375;E375 - nicotinic acid, niacin (vitamin b3);E375 - acide nicotinique, niacine (vitamine b3)
+VALUES;E380 - citrate triammonium;Adipate;E380;E380 - citrate triammonium;E380 - citrate de triammonium
+VALUES;E381 - green ferric ammonium citrate;Adipate;E381;E381 - green ferric ammonium citrate;E381 - citrate d'ammonium ferrique vert
+VALUES;E383 - calcium glycerophosphate, thickening, gelling, stabilizing;Adipate;E383;E383 - calcium glycerophosphate, thickening, gelling, stabilizing;E383 - glycerophosphate de calcium, épaississant, gélifiant, stabilisant
+VALUES;E384 - isopropyl citrates, antioxidant, preservative, sequestrant;Adipate;E384;E384 - isopropyl citrates, antioxidant, preservative, sequestrant;E384 - citrates d'isopropyle, antioxidant, Conservateur, séquestrant
+VALUES;E385 - ethylene diamine tetra-acetate, calcium disodium (calcium disodium edta);Adipate;E385;E385 - ethylene diamine tetra-acetate, calcium disodium (calcium disodium edta);E385 - éthylène diamine tétra-acétate de calcium disodium (calcium disodium edta)
+VALUES;E386 - edta: disodium ethylenediamine tetra-acetate, synthetic stabilizers;Adipate;E386;E386 - edta: disodium ethylenediamine tetra-acetate, synthetic stabilizers;E386 - edta: disodium ethylenediamine tétra-acétate, stabilisateurs synthétiques
+VALUES;E387 - oxystearin stabilizer;Adipate;E387;E387 - oxystearin stabilizer;E387 - oxystearin, stabilisateur
+VALUES;E388 - thiodipropionic acid, synthetic antioxidant;Adipate;E388;E388 - thiodipropionic acid, synthetic antioxidant;E388 - acide thiodipropionique, antioxidant synthétique
+VALUES;E389 - dilauryl thiodipropionate, antioxidant;Adipate;E389;E389 - dilauryl thiodipropionate, antioxidant;E389 - thiodipropionate de dilauryle, antioxidant
+VALUES;E390 - distearyl thiodipropionate, antioxidant;Adipate;E390;E390 - distearyl thiodipropionate, antioxidant;E390 - thiodipropionate de distearyle, antioxidant
+VALUES;E391 - phytic acid, Curator;Adipate;E391;E391 - phytic acid, Curator;E391 - acide phytique, Conservateur
+VALUES;E392 - rosemary extract, antioxidant;Adipate;E392;E392 - rosemary extract, antioxidant;E392 - extrait de romarin, antioxidant
+VALUES;E399 - calcium lactobionate, stabilizing;Adipate;E399;E399 - calcium lactobionate, stabilizing;E399 - lactobionate de calcium, stabilisant
+VALUES;E400 - alginic acid;Alginate;E400;E400 - alginic acid;E400 - acide alginique
+VALUES;E401 - sodium alginate;Alginate;E401;E401 - sodium alginate;E401 - alginate de sodium
+VALUES;E402 - potassium alginate;Alginate;E402;E402 - potassium alginate;E402 - alginate de potassium
+VALUES;E403 - Ammonium alginate;Alginate;E403;E403 - Ammonium alginate;E403 - alginate d'ammonium
+VALUES;E404 - calcium alginate;Alginate;E404;E404 - calcium alginate;E404 - alginate de calcium
+VALUES;E405 - alginate propane-1 ,2-diol;Alginate;E405;E405 - alginate propane-1 ,2-diol;E405 - alginate de propane-1,2-diol
+VALUES;E406 - agar-agar;Alginate;E406;E406 - agar-agar;E406 - agar-agar
+VALUES;E407 - carrageenan (seaweed);Alginate;E407;E407 - carrageenan (seaweed);E407 - carraghenanes (algues)
+VALUES;E407a - seaweed processed euchema;Alginate;E407a;E407a - seaweed processed euchema;E407a - algues euchema transformees
+VALUES;E408 - yeast glucan;Alginate;E408;E408 - yeast glucan;E408 - glycane de levure de boulanger
+VALUES;E409 - arabinogalactan;Alginate;E409;E409 - arabinogalactan;E409 - arabinogalactane
+VALUES;E410 - carob flour or locust bean gum;Gum;E410;E410 - carob flour or locust bean gum;E410 - farine de graines de caroube ou gomme de caroube
+VALUES;E411 - oat gum;Gum;E411;E411 - oat gum;E411 - gomme d'avoine
+VALUES;E412 - jaguar gum or guar gum;Gum;E412;E412 - jaguar gum or guar gum;E412 - gomme de jaguar ou gomme de guar
+VALUES;E413 - dragon gum, or tragacanth, tragacanth;Gum;E413;E413 - dragon gum, or tragacanth, tragacanth;E413 - gomme de dragon, ou gomme adragante, tragacanthe
+VALUES;E414 - gum acacia or gum arabic;Gum;E414;E414 - gum acacia or gum arabic;E414 - gomme d'acacia ou gomme arabique
+VALUES;E415 - xanthan gum or gum but;Gum;E415;E415 - xanthan gum or gum but;E415 - gomme xanthane ou gomme de mais
+VALUES;E416 - gum karaya;Gum;E416;E416 - gum karaya;E416 - gomme karaya
+VALUES;E417 - tara gum;Gum;E417;E417 - tara gum;E417 - gomme tara
+VALUES;E418 - gellan gum;Gum;E418;E418 - gellan gum;E418 - gomme gellane
+VALUES;E419 - gum ghatti;Gum;E419;E419 - gum ghatti;E419 - gomme ghatti
+VALUES;E420 (i) - sorbitol;Gum;E420(i);E420 (i) - sorbitol;E420(i) - sorbitol
+VALUES;E420 (ii) - sorbitol syrup;Gum;E420(ii);E420 (ii) - sorbitol syrup;E420(ii) - sirop de sorbitol
+VALUES;E421 - mannitol;Gum;E421;E421 - mannitol;E421 - mannitol
+VALUES;E422 - glycerol;Gum;E422;E422 - glycerol;E422 - glycerol
+VALUES;E424 - curdlan;Gum;E424;E424 - curdlan;E424 - curdlan
+VALUES;E425 (i) - konjac gum;Gum;E425(i);E425 (i) - konjac gum;E425(i) - gomme de konjac
+VALUES;E425 (ii) - Konjac glucomannan (konjac root extract);Gum;E425(ii);E425 (ii) - Konjac glucomannan (konjac root extract);E425(ii) - glucomannane de konjac (extrait de racine de konjac)
+VALUES;E426 - soybean hemicellulose;Gum;E426;E426 - soybean hemicellulose;E426 - hemicellulose de soja
+VALUES;E427 - gum breaks;Gum;E427;E427 - gum breaks;E427 - gomme de casse
+VALUES;E428 - gelatin, stabilizer, gelling agent, emulsifier, thickener, support;Gum;E428;E428 - gelatin, stabilizer, gelling agent, emulsifier, thickener, support;E428 - gélatine, stabilisant, gélifiant, émulsifiant, épaississant, support
+VALUES;E429 - peptones (emulsifier);Gum;E429;E429 - peptones (emulsifier);E429 - peptones (émulsifiant)
+VALUES;E430 - polyoxyethylene stearate (8) (emulsifier);Gum;E430;E430 - polyoxyethylene stearate (8) (emulsifier);E430 - stéarate de polyoxyethylene (8) (émulsifiant)
+VALUES;E431 - polyoxyethylene stearate (40) (emulsifier);Gum;E431;E431 - polyoxyethylene stearate (40) (emulsifier);E431 - stéarate de polyoxyethylene (40) (émulsifiant)
+VALUES;E432 - polyoxyethylene sorbitan monolaurate (polysorbate 20) (emulsifier);Gum;E432;E432 - polyoxyethylene sorbitan monolaurate (polysorbate 20) (emulsifier);E432 - monolaurate de polyoxyethylene sorbitane (polysorbate 20) (émulsifiant)
+VALUES;E433 - polyoxyethylene sorbitan (polysorbate 80) (emulsifier);Gum;E433;E433 - polyoxyethylene sorbitan (polysorbate 80) (emulsifier);E433 - monooleate de polyoxyethylene de sorbitane (polysorbate 80) (émulsifiant)
+VALUES;E434 - polyoxyethylene sorbitan monopalmitate (polysorbate 40) (emulsifier);Gum;E434;E434 - polyoxyethylene sorbitan monopalmitate (polysorbate 40) (emulsifier);E434 - monopalmitate de polyoxyethylene sorbitane (polysorbate 40) (émulsifiant)
+VALUES;E435 - polyoxyethylene sorbitan (polysorbate 60) (emulsifier);Gum;E435;E435 - polyoxyethylene sorbitan (polysorbate 60) (emulsifier);E435 - monostearate de polyoxyethylene sorbitane (polysorbate 60) (émulsifiant)
+VALUES;E436 - polyoxyethylene sorbitan (polysorbate 65) (emulsifier);Gum;E436;E436 - polyoxyethylene sorbitan (polysorbate 65) (emulsifier);E436 - tristearate de polyoxyethylene sorbitane (polysorbate 65) (émulsifiant)
+VALUES;E440 - pectin, natural thickener;Gum;E440;E440 - pectin, natural thickener;E440 - pectines, agent épaississant naturel
+VALUES;E440 (i) - Pectin;Gum;E440(i);E440 (i) - Pectin;E440(i) - pectine
+VALUES;E440 (ii) - amidated pectin;Gum;E440(ii);E440 (ii) - amidated pectin;E440(ii) - pectine amidée
+VALUES;E441 - gelatin;Gum;E441;E441 - gelatin;E441 - gélatine
+VALUES;E442 - Ammonium phosphatides (emulsifier);Gum;E442;E442 - Ammonium phosphatides (emulsifier);E442 - phosphatides d'ammonium (émulsifiant)
+VALUES;E443 - brominated vegetable oil, emulsifier, stabilizer;Gum;E443;E443 - brominated vegetable oil, emulsifier, stabilizer;E443 - huile végétale bromée, émulsifiant, stabilisant
+VALUES;E444 - sucrose acetate isobutyrate;Gum;E444;E444 - sucrose acetate isobutyrate;E444 - acétate isobutyrate de saccharose
+VALUES;E445 - Glycerol ester of wood rosin;Gum;E445;E445 - Glycerol ester of wood rosin;E445 - esters glycériques de résine de bois
+VALUES;E446 - succistearine, emulsifier;Gum;E446;E446 - succistearine, emulsifier;E446 - succistearine, émulsifiant
+VALUES;E450 (i) - disodium diphosphate;Diphosphate;E450(i);E450 (i) - disodium diphosphate;E450(i) - diphosphate disodique
+VALUES;E450 (ii) - trisodium diphosphate;Diphosphate;E450(ii);E450 (ii) - trisodium diphosphate;E450(ii) - diphosphate trisodique
+VALUES;E450 (iii) - tetrasodium diphosphate;Diphosphate;E450(iii);E450 (iii) - tetrasodium diphosphate;E450(iii) - diphosphate tetrasodique
+VALUES;E450 (iii) - sodium pyrophosphate, tetrasodium pyrophosphate;Phosphate;E450(iii);E450 (iii) - sodium pyrophosphate, tetrasodium pyrophosphate;E450(iii) - pyrophosphate de sodium, pyrophosphate tetrasodique
+VALUES;E450 (iv) - dipotassium diphosphate;Diphosphate;E450(iv);E450 (iv) - dipotassium diphosphate;E450(iv) - diphosphate dipotassique
+VALUES;E450 (v) - tetrapotassium diphosphate;Diphosphate;E450(v);E450 (v) - tetrapotassium diphosphate;E450(v) - diphosphate tetrapotassique
+VALUES;E450 (vi) - dicalcium diphosphate;Diphosphate;E450(vi);E450 (vi) - dicalcium diphosphate;E450(vi) - diphosphate dicalcique
+VALUES;E450 (vii) - Calcium dihydrogen diphosphate;Diphosphate;E450(vii);E450 (vii) - Calcium dihydrogen diphosphate;E450(vii) - dihydrogeno diphosphate de calcium
+VALUES;E450 (viii) - Dimagnesium diphosphate, emulsifier, stabilizer, acidity regulator, raising agent, sequestrant, water retention agent / moisture;Diphosphate;E450(viii);E450 (viii) - Dimagnesium diphosphate, emulsifier, stabilizer, acidity regulator, raising agent, sequestrant, water retention agent / moisture;E450(viii) - diphosphate dimagnesien, émulsifiant, stabilisant, régulateur de l'acidité, agent levant, séquestrant, agent de rétention d'eau/d'humidité
+VALUES;E451 (i) - pentasodium triphosphate;Thiosulfate;E451(i);E451 (i) - pentasodium triphosphate;E451(i) - triphosphate pentasodique
+VALUES;E451 (ii) - triphosphate Pentapotassium;Thiosulfate;E451(ii);E451 (ii) - triphosphate Pentapotassium;E451(ii) - triphosphate pentapotassique
+VALUES;E452 (i) - Sodium polyphosphate;Thiosulfate;E452(i);E452 (i) - Sodium polyphosphate;E452(i) - polyphosphates sodiques
+VALUES;E452 (ii) - potassium polyphosphates;Thiosulfate;E452(ii);E452 (ii) - potassium polyphosphates;E452(ii) - polyphosphates potassiques
+VALUES;E452 (iii) - Sodium calcium polyphosphate;Thiosulfate;E452(iii);E452 (iii) - Sodium calcium polyphosphate;E452(iii) - polyphosphates calco-sodiques
+VALUES;E452 (iv) - calcium polyphosphates;Thiosulfate;E452(iv);E452 (iv) - calcium polyphosphates;E452(iv) - polyphosphates calciques
+VALUES;E452 (v) - ammonium polyphosphate, emulsifier, stabilizer, chelating agent, texture, water retention agent / moisture;Thiosulfate;E452(v);E452 (v) - ammonium polyphosphate, emulsifier, stabilizer, chelating agent, texture, water retention agent / moisture;E452(v) - polyphosphate d'ammonium, émulsifiant, stabilisant, séquestrant, agent de texture, agent de rétention d'eau/d'humidité
+VALUES;E452 (vi) - tripoliphosphate sodium and potassium, emulsifier, stabilizer, acidity regulator, raising agent, sequestrant, water retention agent / moisture;Thiosulfate;E452(vi);E452 (vi) - tripoliphosphate sodium and potassium, emulsifier, stabilizer, acidity regulator, raising agent, sequestrant, water retention agent / moisture;E452(vi) - tripoliphosphate de sodium et de potassium, émulsifiant, stabilisant, régulateur de l'acidité, agent levant, séquestrant, agent de rétention d'eau/d'humidité
+VALUES;E457 - cyclodextrin, alpha-, stabilizer, binder;Thiosulfate;E457;E457 - cyclodextrin, alpha-, stabilizer, binder;E457 - cyclodextrine, alpha-, stabilisant, liant
+VALUES;E458 - cyclodextrin, gamma-, stabilizer, binder;Thiosulfate;E458;E458 - cyclodextrin, gamma-, stabilizer, binder;E458 - cyclodextrine, gamma-, stabilisant, liant
+VALUES;E459 - beta-cyclodextrin;Thiosulfate;E459;E459 - beta-cyclodextrin;E459 - beta-cyclodextrine
+VALUES;E460 - cellulose;Cellulose derivative;E460;E460 - cellulose;E460 - celluloses
+VALUES;E460 (i) - microcrystalline cellulose;Cellulose derivative;E460(i);E460 (i) - microcrystalline cellulose;E460(i) - cellulose microcristalline
+VALUES;E460 (ii) - cellulose powder;Cellulose derivative;E460(ii);E460 (ii) - cellulose powder;E460(ii) - cellulose en poudre
+VALUES;E461 - methylcellulose;Cellulose derivative;E461;E461 - methylcellulose;E461 - methylcellulose
+VALUES;E462 - ethylcellulose;Cellulose derivative;E462;E462 - ethylcellulose;E462 - ethylcellulose
+VALUES;E463 - hydroxypropyl;Cellulose derivative;E463;E463 - hydroxypropyl;E463 - hydroxypropylcellulose
+VALUES;E464 - hydroxypropylmethylcellulose;Cellulose derivative;E464;E464 - hydroxypropylmethylcellulose;E464 - hydroxypropylmethylcellulose
+VALUES;E465 - ethylmethylcellulose;Cellulose derivative;E465;E465 - ethylmethylcellulose;E465 - ethylmethylcellulose
+VALUES;E466 - carboxymethylcellulose;Cellulose derivative;E466;E466 - carboxymethylcellulose;E466 - carboxymethylcellulose
+VALUES;E467 - ethyl-hydroxyethyl cellulose, thickener, stabilizer, emulsifier;Cellulose derivative;E467;E467 - ethyl-hydroxyethyl cellulose, thickener, stabilizer, emulsifier;E467 - ethyl-hydroxyethyl-cellulose, épaississant, stabilisant, émulsifiant
+VALUES;E468 - sodium carboxymethylcellulose crosslinked (not allowed in food);Cellulose derivative;E468;E468 - sodium carboxymethylcellulose crosslinked (not allowed in food);E468 - carboxymethylcellulose de sodium réticulée (non autorisée en agroalimentaire)
+VALUES;E469 - Enzymatically hydrolysed carboxymethylcellulose;Cellulose derivative;E469;E469 - Enzymatically hydrolysed carboxymethylcellulose;E469 - carboxymethylcellulose hydrolysée de manière enzymatique
+VALUES;E470 - sodium salts / potassium / calcium fatty acid;Dietary fatty acid derivative;E470;E470 - sodium salts / potassium / calcium fatty acid;E470 - sels de sodium/potassium/calcium d'acides gras
+VALUES;E470 (i) - salts of myristic, palmitic and stearic acids with ammonia, calcium, potassium and sodium, emulsifier, stabilizer, anticaking;Dietary fatty acid derivative;E470(i);E470 (i) - salts of myristic, palmitic and stearic acids with ammonia, calcium, potassium and sodium, emulsifier, stabilizer, anticaking;E470(i) - sels d'acides myristique, palmitique et stéarique avec ammoniaque, calcium, potassium et sodium, émulsifiant, stabilisant, antiagglomérant
+VALUES;E470 (ii) - salts of oleic acid with calcium, potassium and sodium, emulsifier, stabilizer, anticaking;Dietary fatty acid derivative;E470(ii);E470 (ii) - salts of oleic acid with calcium, potassium and sodium, emulsifier, stabilizer, anticaking;E470(ii) - sels d'acide oléique avec calcium, potassium et sodium, émulsifiant, stabilisant, antiagglomérant
+VALUES;E470a - stearate sodium / potassium / calcium;Dietary fatty acid derivative;E470a;E470a - stearate sodium / potassium / calcium;E470a - stéarate de sodium/potassium/calcium
+VALUES;E470b - magnesium stearate;Dietary fatty acid derivative;E470b;E470b - magnesium stearate;E470b - stéarate de magnésium
+VALUES;E471 - mono-and diglycerides of edible fatty acids;Dietary fatty acid derivative;E471;E471 - mono-and diglycerides of edible fatty acids;E471 - mono- et diglycerides d'acides gras alimentaires
+VALUES;E472 - esters of fatty acids;Dietary fatty acid derivative;E472;E472 - esters of fatty acids;E472 - esters d'acides gras alimentaires
+VALUES;E472a - diacetyl-acetic ester of fatty acids;Dietary fatty acid derivative;E472a;E472a - diacetyl-acetic ester of fatty acids;E472a - ester diacetyl-acetique d'acides gras
+VALUES;E472b - diacetyl-lactic ester of mono-and diglycerides of fatty acids;Dietary fatty acid derivative;E472b;E472b - diacetyl-lactic ester of mono-and diglycerides of fatty acids;E472b - ester diacetyl-lactique de mono- et diglycerides d'acides gras
+VALUES;E472c - diacetyl-citric ester of mono-and diglycerides of fatty acids;Dietary fatty acid derivative;E472c;E472c - diacetyl-citric ester of mono-and diglycerides of fatty acids;E472c - ester diacetyl-citrique de mono- et diglycerides d'acides gras
+VALUES;E472d - tartaric ester of mono-and diglycerides of fatty acids;Dietary fatty acid derivative;E472d;E472d - tartaric ester of mono-and diglycerides of fatty acids;E472d - ester tartrique de mono- et diglycerides d'acides gras
+VALUES;E472e - monoacethyltartrique ester of mono-and diglycerides of fatty acids;Dietary fatty acid derivative;E472e;E472e - monoacethyltartrique ester of mono-and diglycerides of fatty acids;E472e - ester monoacethyltartrique de mono- et diglycerides d'acides gras
+VALUES;E472f - Mixed acetic and tartaric acid esters of mono-and diglycerides of fatty acids;Dietary fatty acid derivative;E472f;E472f - Mixed acetic and tartaric acid esters of mono-and diglycerides of fatty acids;E472f - esters mixtes acétiques et tartriques des mono- et diglycerides d'acides gras
+VALUES;E472g - succinylated monoglycerides, emulsifier, stabilizer, chelating;Dietary fatty acid derivative;E472g;E472g - succinylated monoglycerides, emulsifier, stabilizer, chelating;E472g - monoglycerides succinyles, emulsifiant, stabilisant, séquestrant
+VALUES;E473 - sucrose ester;Dietary fatty acid derivative;E473;E473 - sucrose ester;E473 - sucroester
+VALUES;E473a - sucrose oligoesters type I and type II, emulsifier, stabilizer;Dietary fatty acid derivative;E473a;E473a - sucrose oligoesters type I and type II, emulsifier, stabilizer;E473a - oligoesters de saccharose de type i et de type ii, émulsifiant, stabilisant
+VALUES;E474 - sucroglycerides;Dietary fatty acid derivative;E474;E474 - sucroglycerides;E474 - sucroglycerides
+VALUES;E475 - polyglycerol esters of fatty acids;Dietary fatty acid derivative;E475;E475 - polyglycerol esters of fatty acids;E475 - esters polyglyceriques d'acides gras
+VALUES;E476 - polyglycerol esters of fatty acids of castor oil, polyglycerol POLYRICINOLEATE;Dietary fatty acid derivative;E476;E476 - polyglycerol esters of fatty acids of castor oil, polyglycerol POLYRICINOLEATE;E476 - esters polyglyceriques d'acides gras d'huile de ricin, polyricinoleate de polyglycerol
+VALUES;E477 - propylene glycol esters of fatty acid;Dietary fatty acid derivative;E477;E477 - propylene glycol esters of fatty acid;E477 - esters du propylene-glycol d'acide gras
+VALUES;E478 - lactyls esters of fatty acids of glycerol and propane-1 ,2-diol;Dietary fatty acid derivative;E478;E478 - lactyls esters of fatty acids of glycerol and propane-1 ,2-diol;E478 - esters lactyles d'acides gras du glycerol et du propane-1,2 diol
+VALUES;E479b - soybean oil oxidized by heating reacted with mono-and diglycerides of fatty acids, emulsifying;Dietary fatty acid derivative;E479b;E479b - soybean oil oxidized by heating reacted with mono-and diglycerides of fatty acids, emulsifying;E479b - huile de soja oxydée par chauffage ayant réagi avec des mono- et diglycerides d'acides gras, émulsifiant
+VALUES;E481 - stearoyl-2-lactylate;Dietary fatty acid derivative;E481;E481 - stearoyl-2-lactylate;E481 - stearoyl-2-lactylate de sodium
+VALUES;E481 (i) - Sodium stearoyl lactylate, emulsifier, stabilizer;Dietary fatty acid derivative;E481(i);E481 (i) - Sodium stearoyl lactylate, emulsifier, stabilizer;E481(i) - stearyl de sodium lactyle, émulsifiant, stabilisant
+VALUES;E481 (ii) - sodium oleyl lactyl, emulsifier, stabilizer;Dietary fatty acid derivative;E481(ii);E481 (ii) - sodium oleyl lactyl, emulsifier, stabilizer;E481(ii) - oleyl de sodium lactyle, émulsifiant, stabilisant
+VALUES;E482 - stearoyl-2-lactylate calcium;Dietary fatty acid derivative;E482;E482 - stearoyl-2-lactylate calcium;E482 - stearoyl-2-lactylate de calcium
+VALUES;E482 (i) - Calcium stearoyl lactylate, an emulsifier;Dietary fatty acid derivative;E482(i);E482 (i) - Calcium stearoyl lactylate, an emulsifier;E482(i) - stearyl de calcium lactyle, émulsifiant
+VALUES;E482 (ii) - Calcium oleyl lactyl, emulsifier, stabilizer;Dietary fatty acid derivative;E482(ii);E482 (ii) - Calcium oleyl lactyl, emulsifier, stabilizer;E482(ii) - oleyl de calcium lactyle, émulsifiant, stabilisant
+VALUES;E483 - stearyl tartrate;Dietary fatty acid derivative;E483;E483 - stearyl tartrate;E483 - tartrate de stéaryle
+VALUES;E484 - stearyl citrate;Dietary fatty acid derivative;E484;E484 - stearyl citrate;E484 - citrate de stéaryle
+VALUES;E485 - renamed as 441;Dietary fatty acid derivative;E485;E485 - renamed as 441;E485 - renomme comme 441
+VALUES;E486 - stearoylfumarate calcium, emulsifier;Dietary fatty acid derivative;E486;E486 - stearoylfumarate calcium, emulsifier;E486 - stearoylfumarate de calcium, émulsifiant
+VALUES;E487 - sodium lauryl sulphate, emulsifier;Dietary fatty acid derivative;E487;E487 - sodium lauryl sulphate, emulsifier;E487 - laurylsulfate de sodium, émulsifiant
+VALUES;E488 - mono-and di-glycerides, ethoxylated emulsifier;Dietary fatty acid derivative;E488;E488 - mono-and di-glycerides, ethoxylated emulsifier;E488 - mono- et di-glycerides ethoxyles, émulsifiant
+VALUES;E489 - methylglycoside ester of coconut oil, emulsifier;Dietary fatty acid derivative;E489;E489 - methylglycoside ester of coconut oil, emulsifier;E489 - ester de methylglycoside d'huile de coco, émulsifiant
+VALUES;E490 - propylene glycol, a solvent;Dietary fatty acid derivative;E490;E490 - propylene glycol, a solvent;E490 - glycole de propylène, solvant
+VALUES;E491 - sorbitan monostearate;Dietary fatty acid derivative;E491;E491 - sorbitan monostearate;E491 - monostearate de sorbitane
+VALUES;E492 - sorbitan tristearate;Dietary fatty acid derivative;E492;E492 - sorbitan tristearate;E492 - tristearate de sorbitane
+VALUES;E493 - Sorbitan monolaurate;Dietary fatty acid derivative;E493;E493 - Sorbitan monolaurate;E493 - monolaurate de sorbitane
+VALUES;E494 - sorbitan monooleate;Dietary fatty acid derivative;E494;E494 - sorbitan monooleate;E494 - monoleate de sorbitane
+VALUES;E495 - sorbitan monopalmitate;Dietary fatty acid derivative;E495;E495 - sorbitan monopalmitate;E495 - monopalmitate de sorbitane
+VALUES;E496 - sorbitan trioleate, stabilizer, emulsifier;Dietary fatty acid derivative;E496;E496 - sorbitan trioleate, stabilizer, emulsifier;E496 - trioleate de sorbitane, stabilisant, émulsifiant
+VALUES;E500 - sodium carbonate;Carbonate;E500;E500 - sodium carbonate;E500 - carbonates de sodium
+VALUES;E500 (i) - sodium carbonate;Carbonate;E500(i);E500 (i) - sodium carbonate;E500(i) - carbonate de sodium
+VALUES;E500 (ii) - sodium bicarbonate (baking soda / baking soda);Carbonate;E500(ii);E500 (ii) - sodium bicarbonate (baking soda / baking soda);E500(ii) - carbonate acide de sodium (bicarbonate de sodium / bicarbonate de soude)
+VALUES;E500 (iii) - sodium sesquicarbonate, acidity regulator, raising agent, anticaking;Carbonate;E500(iii);E500 (iii) - sodium sesquicarbonate, acidity regulator, raising agent, anticaking;E500(iii) - sesquicarbonate de sodium, régulateur de l'acidité, agent levant, antiagglomérant
+VALUES;E501 - potassium carbonates;Carbonate;E501;E501 - potassium carbonates;E501 - carbonates de potassium
+VALUES;E501 (i) - potassium carbonate;Carbonate;E501(i);E501 (i) - potassium carbonate;E501(i) - carbonate de potassium
+VALUES;E501 (ii) - potassium bicarbonate (baking soda);Carbonate;E501(ii);E501 (ii) - potassium bicarbonate (baking soda);E501(ii) - carbonate acide de potassium (bicarbonate de potassium)
+VALUES;E502 - carbonates;Carbonate;E502;E502 - carbonates;E502 - carbonates
+VALUES;E503 - ammonium carbonates;Carbonate;E503;E503 - ammonium carbonates;E503 - carbonates d'ammonium
+VALUES;E503 (i) - ammonium carbonate;Carbonate;E503(i);E503 (i) - ammonium carbonate;E503(i) - carbonate d'ammonium
+VALUES;E503 (ii) - ammonium bicarbonate (ammonium bicarbonate);Carbonate;E503(ii);E503 (ii) - ammonium bicarbonate (ammonium bicarbonate);E503(ii) - carbonate acide d'ammonium (bicarbonate d'ammonium)
+VALUES;E504 - magnesium carbonates;Carbonate;E504;E504 - magnesium carbonates;E504 - carbonates de magnésium
+VALUES;E504 (i) - magnesium carbonate;Carbonate;E504(i);E504 (i) - magnesium carbonate;E504(i) - carbonate de magnésium
+VALUES;E504 (ii) - magnesium hydrogen carbonate (magnesium bicarbonate);Carbonate;E504(ii);E504 (ii) - magnesium hydrogen carbonate (magnesium bicarbonate);E504(ii) - carbonate acide de magnésium (bicarbonate de magnésium)
+VALUES;E505 - iron carbonate;Carbonate;E505;E505 - iron carbonate;E505 - carbonate de fer
+VALUES;E507 - hydrochloric acid;Chloride;E507;E507 - hydrochloric acid;E507 - acide chlorhydrique
+VALUES;E508 - potassium chloride;Chloride;E508;E508 - potassium chloride;E508 - chlorure de potassium
+VALUES;E509 - calcium chloride;Chloride;E509;E509 - calcium chloride;E509 - chlorure de calcium
+VALUES;E510 - Ammonium chloride;Chloride;E510;E510 - Ammonium chloride;E510 - chlorure d'ammonium
+VALUES;E511 - magnesium chloride;Chloride;E511;E511 - magnesium chloride;E511 - chlorure de magnésium
+VALUES;E512 - stannous chloride;Chloride;E512;E512 - stannous chloride;E512 - chlorure stanneux
+VALUES;E513 - sulfuric acid;Sulfate;E513;E513 - sulfuric acid;E513 - acide sulfurique
+VALUES;E514 - sodium sulphate;Sulfate;E514;E514 - sodium sulphate;E514 - sulfate de sodium
+VALUES;E514 (ii) - sodium hydrogen;Sulfate;E514(ii);E514 (ii) - sodium hydrogen;E514(ii) - hydrogenosulfate de sodium
+VALUES;E515 - potassium sulphate;Sulfate;E515;E515 - potassium sulphate;E515 - sulfate de potassium
+VALUES;E516 - calcium sulphate, gypsum, plaster of paris;Sulfate;E516;E516 - calcium sulphate, gypsum, plaster of paris;E516 - sulfate de calcium, gypse, plâtre de paris
+VALUES;E517 - Ammonium sulfate stabilizer;Sulfate;E517;E517 - Ammonium sulfate stabilizer;E517 - sulfate d'ammonium, stabilisateur
+VALUES;E518 - magnesium sulfate;Sulfate;E518;E518 - magnesium sulfate;E518 - sulfate de magnésium
+VALUES;E519 - copper sulphate;Sulfate;E519;E519 - copper sulphate;E519 - sulfate de cuivre
+VALUES;E520 - aluminum sulfate;Sulfate;E520;E520 - aluminum sulfate;E520 - sulfate d'aluminium
+VALUES;E521 - sodium aluminum sulfate;Sulfate;E521;E521 - sodium aluminum sulfate;E521 - sulfate d'aluminium sodique
+VALUES;E522 - potassium aluminum sulfate;Sulfate;E522;E522 - potassium aluminum sulfate;E522 - sulfate d'aluminium potassique
+VALUES;E523 - ammonium alum;Sulfate;E523;E523 - ammonium alum;E523 - sulfate d'aluminium ammonique
+VALUES;E524 - sodium hydroxide;Hydroxide;E524;E524 - sodium hydroxide;E524 - hydroxyde de sodium
+VALUES;E525 - potassium hydroxide;Hydroxide;E525;E525 - potassium hydroxide;E525 - hydroxyde de potassium
+VALUES;E526 - calcium hydroxide;Hydroxide;E526;E526 - calcium hydroxide;E526 - hydroxyde de calcium
+VALUES;E527 - ammonium hydroxide;Hydroxide;E527;E527 - ammonium hydroxide;E527 - hydroxyde d'ammonium
+VALUES;E528 - magnesium hydroxide;Hydroxide;E528;E528 - magnesium hydroxide;E528 - hydroxyde de magnésium
+VALUES;E529 - calcium oxide, quicklime;Hydroxide;E529;E529 - calcium oxide, quicklime;E529 - oxyde de calcium, chaux vive
+VALUES;E530 - magnesium oxide periclase;Hydroxide;E530;E530 - magnesium oxide periclase;E530 - oxyde de magnésium périclase
+VALUES;E535 - sodium ferrocyanide (yellow prussiate of soda);Ferrocyanide;E535;E535 - sodium ferrocyanide (yellow prussiate of soda);E535 - ferrocyanure de sodium (prussiate jaune de sodium)
+VALUES;E536 - potassium ferrocyanide;Ferrocyanide;E536;E536 - potassium ferrocyanide;E536 - ferrocyanure de potassium
+VALUES;E537 - hexacyanomanganate iron;Ferrocyanide;E537;E537 - hexacyanomanganate iron;E537 - hexacyanomanganate de fer
+VALUES;E538 - calcium ferrocyanide;Ferrocyanide;E538;E538 - calcium ferrocyanide;E538 - ferrocyanure de calcium
+VALUES;E539 - sodium thiosulfate, antioxidant;Thiosulfate;E539;E539 - sodium thiosulfate, antioxidant;E539 - thiosulfate de sodium, antioxidant
+VALUES;E540 - calcium hydrogen phosphate;Phosphate;E540;E540 - calcium hydrogen phosphate;E540 - phosphate acide de calcium
+VALUES;E541 - aluminum phosphate and sodium;Phosphate;E541;E541 - aluminum phosphate and sodium;E541 - phosphate d'aluminium et de sodium
+VALUES;E541 (i) - sodium aluminum phosphate (acid), acidity regulator, emulsifier, leavening agent;Phosphate;E541(i);E541 (i) - sodium aluminum phosphate (acid), acidity regulator, emulsifier, leavening agent;E541(i) - phosphate de sodium-aluminium (acide), régulateur de l'acidité, émulsifiant, agent levant
+VALUES;E541 (ii) - sodium aluminum phosphate (basic), acidity regulator, emulsifier;Phosphate;E541(ii);E541 (ii) - sodium aluminum phosphate (basic), acidity regulator, emulsifier;E541(ii) - phosphate de sodium-aluminium (basique), régulateur de l'acidité, émulsifiant
+VALUES;E542 - edible bone phosphate;Phosphate;E542;E542 - edible bone phosphate;E542 - phosphate d'os comestible
+VALUES;E543 - sodium polyphosphate, calcium emulsifier;Phosphate;E543;E543 - sodium polyphosphate, calcium emulsifier;E543 - polyphosphate de sodium de calcium, émulsifiant
+VALUES;E544 - calcium polyphosphate;Phosphate;E544;E544 - calcium polyphosphate;E544 - polyphosphate de calcium
+VALUES;E545 - ammonium polyphosphate;Phosphate;E545;E545 - ammonium polyphosphate;E545 - polyphosphate d'ammonium
+VALUES;E546 - magnesium pyrophosphate;Phosphate;E546;E546 - magnesium pyrophosphate;E546 - pyrophosphate de magnésium
+VALUES;E550 - sodium silicate;Silicate;E550;E550 - sodium silicate;E550 - silicate de sodium
+VALUES;E550 (i) - Sodium Silicate, anticaking;Silicate;E550(i);E550 (i) - Sodium Silicate, anticaking;E550(i) - silicate de sodium, antiagglomérant
+VALUES;E550 (ii) - sodium metasilicate, anticaking;Silicate;E550(ii);E550 (ii) - sodium metasilicate, anticaking;E550(ii) - metasilicate de sodium, antiagglomérant
+VALUES;E551 - silicon dioxide;Silicate;E551;E551 - silicon dioxide;E551 - dioxyde de silicium
+VALUES;E552 - calcium silicate;Silicate;E552;E552 - calcium silicate;E552 - silicate de calcium
+VALUES;E553 - magnesium silicate, anticoagulant agent;Silicate;E553;E553 - magnesium silicate, anticoagulant agent;E553 - silicate de magnésium, agent anticoagulant
+VALUES;E553 (i) - magnesium silicate, anti-caking powder for spray dryer;Silicate;E553(i);E553 (i) - magnesium silicate, anti-caking powder for spray dryer;E553(i) - silicate de magnésium, antiagglomérant, poudre pour pulvérisation sèche
+VALUES;E553 (ii) - magnesium trisilicate, anti-caking powder for spray dryer;Silicate;E553(ii);E553 (ii) - magnesium trisilicate, anti-caking powder for spray dryer;E553(ii) - trisilicate de magnésium, antiagglomérant, poudre pour pulvérisation sèche
+VALUES;E553 (iii) - talc, anti-caking powder for spray drying, coating agent, surface finishing agent, texturizing agent;Silicate;E553(iii);E553 (iii) - talc, anti-caking powder for spray drying, coating agent, surface finishing agent, texturizing agent;E553(iii) - talc, antiagglomérant, poudre pour pulvérisation sèche, agent d'enrobage, agent de finition superficielle, agent de texture
+VALUES;E553a (i) - magnesium silicate;Silicate;E553a(i);E553a (i) - magnesium silicate;E553a(i) - silicate de magnésium
+VALUES;E553a (ii) - magnesium trisilicate;Silicate;E553a(ii);E553a (ii) - magnesium trisilicate;E553a(ii) - trisilicate de magnésium
+VALUES;E553b - talc;Silicate;E553b;E553b - talc;E553b - talc
+VALUES;E554 - sodium aluminum silicate;Silicate;E554;E554 - sodium aluminum silicate;E554 - silicate alumino-sodique
+VALUES;E555 - potassium aluminum silicate;Silicate;E555;E555 - potassium aluminum silicate;E555 - silicate alumino-potassique
+VALUES;E556 - calcium aluminum silicate;Silicate;E556;E556 - calcium aluminum silicate;E556 - silicate alumino-calcique
+VALUES;E557 - zinc silicate;Silicate;E557;E557 - zinc silicate;E557 - silicate de zinc
+VALUES;E558 - bentonite;Silicate;E558;E558 - bentonite;E558 - bentonite
+VALUES;E559 - aluminum silicate (kaolin);Silicate;E559;E559 - aluminum silicate (kaolin);E559 - silicate d'aluminium (kaolin)
+VALUES;E560 - potassium silicate, anticaking;Silicate;E560;E560 - potassium silicate, anticaking;E560 - silicate de potassium, antiagglomérant
+VALUES;E570 - stearic acid, stearin;Stearate;E570;E570 - stearic acid, stearin;E570 - acide stéarique, stéarine
+VALUES;E571 - ammonium stearate, anticoagulant agent;Stearate;E571;E571 - ammonium stearate, anticoagulant agent;E571 - stéarate d'ammonium, agent anticoagulant
+VALUES;E572 - magnesium stearate;Stearate;E572;E572 - magnesium stearate;E572 - stéarate de magnésium
+VALUES;E573 - aluminum stearate;Stearate;E573;E573 - aluminum stearate;E573 - stéarate d'aluminium
+VALUES;E574 - gluconic acid;Gluconate;E574;E574 - gluconic acid;E574 - acide gluconique
+VALUES;E575 - glucono-delta-lactone;Gluconate;E575;E575 - glucono-delta-lactone;E575 - glucono-delta-lactone
+VALUES;E576 - sodium gluconate;Gluconate;E576;E576 - sodium gluconate;E576 - gluconate de sodium
+VALUES;E577 - potassium gluconate;Gluconate;E577;E577 - potassium gluconate;E577 - gluconate de potassium
+VALUES;E578 - calcium gluconate;Gluconate;E578;E578 - calcium gluconate;E578 - gluconate de calcium
+VALUES;E579 - ferrous gluconate;Gluconate;E579;E579 - ferrous gluconate;E579 - gluconate ferreux
+VALUES;E580 - magnesium gluconate, acidity regulator, firming agent, appraiser aroma;Gluconate;E580;E580 - magnesium gluconate, acidity regulator, firming agent, appraiser aroma;E580 - gluconate de magnésium, régulateur de l'acidité, affermissant, évaluateur d'arome
+VALUES;E585 - ferrous lactate;Gluconate;E585;E585 - ferrous lactate;E585 - lactate ferreux
+VALUES;E586 - hexylresorcinol, 4 -, agent for color retention, antioxidant;Gluconate;E586;E586 - hexylresorcinol, 4 -, agent for color retention, antioxidant;E586 - hexylresorcinol, 4-, agent de rétention de la couleur, antioxidant
+VALUES;E620 - glutamic acid;Gluconate;E620;E620 - glutamic acid;E620 - acide glutamique
+VALUES;E621 - monosodium glutamate;Gluconate;E621;E621 - monosodium glutamate;E621 - glutamate monosodique
+VALUES;E622 - monopotassium glutamate;Gluconate;E622;E622 - monopotassium glutamate;E622 - glutamate monopotassique
+VALUES;E623 - calcium diglutamate;Gluconate;E623;E623 - calcium diglutamate;E623 - diglutamate de calcium
+VALUES;E624 - Ammonium glutamate;Gluconate;E624;E624 - Ammonium glutamate;E624 - glutamate d'ammonium
+VALUES;E625 - Magnesium diglutamate;Gluconate;E625;E625 - Magnesium diglutamate;E625 - diglutamate de magnesium
+VALUES;E626 - guanylic acid (guanosine monophosphate);Guanylate;E626;E626 - guanylic acid (guanosine monophosphate);E626 - acide guanylique (guanosine monophosphate)
+VALUES;E627 - Disodium guanylate;Guanylate;E627;E627 - Disodium guanylate;E627 - guanylate disodique
+VALUES;E628 - dipotassium guanylate;Guanylate;E628;E628 - dipotassium guanylate;E628 - guanylate dipotassique
+VALUES;E629 - Calcium guanylate;Guanylate;E629;E629 - Calcium guanylate;E629 - guanylate de calcium
+VALUES;E630 - inosinic acid;Inosinate;E630;E630 - inosinic acid;E630 - acide inosinique
+VALUES;E631 - Disodium inosinate;Inosinate;E631;E631 - Disodium inosinate;E631 - inosinate disodique
+VALUES;E632 - Dipotassium inosinate;Inosinate;E632;E632 - Dipotassium inosinate;E632 - inosinate dipotassique
+VALUES;E633 - Calcium inosinate;Inosinate;E633;E633 - Calcium inosinate;E633 - inosinate de calcium
+VALUES;E634 - Calcium 5'-ribonucleotide;Flavour enhancer;E634;E634 - Calcium 5'-ribonucleotide;E634 - 5'-ribonucleotide calcique
+VALUES;E635 - Disodium 5'-ribonucleotide;Flavour enhancer;E635;E635 - Disodium 5'-ribonucleotide;E635 - 5'-ribonucleotide disodique
+VALUES;E636 - maltol;Flavour enhancer;E636;E636 - maltol;E636 - maltol
+VALUES;E637 - ethyl maltol;Flavour enhancer;E637;E637 - ethyl maltol;E637 - ethyle maltol
+VALUES;E638 - aspartame, sodium l-, flavor enhancer;Flavour enhancer;E638;E638 - aspartame, sodium l-, flavor enhancer;E638 - aspartame de sodium, l-, exaltateur d'arome
+VALUES;E639 - alanine, dl-, flavor enhancer;Flavour enhancer;E639;E639 - alanine, dl-, flavor enhancer;E639 - alanine, dl-, exaltateur d'arome
+VALUES;E640 - glycine and its sodium salt;Flavour enhancer;E640;E640 - glycine and its sodium salt;E640 - glycine et son sel de sodium
+VALUES;E641 - L-leucine;Flavour enhancer;E641;E641 - L-leucine;E641 - l-leucine
+VALUES;E642 - lysine hydrochloride, Flavour;Flavour enhancer;E642;E642 - lysine hydrochloride, Flavour;E642 - hydrochlorure de lysine, exaltateur d'arome
+VALUES;E650 - zinc acetate, Flavour;Flavour enhancer;E650;E650 - zinc acetate, Flavour;E650 - acetate de zinc, exaltateur d'arome
+VALUES;E710 - antibiotic spiramycin;Antibiotic;E710;E710 - antibiotic spiramycin;E710 - spiramycines antibiotique
+VALUES;E713 - antibiotic tylosin;Antibiotic;E713;E713 - antibiotic tylosin;E713 - tylosine antibiotique
+VALUES;E900 - polydimethylsiloxane (dimethicone);Wax and hydrocarbon;E900;E900 - polydimethylsiloxane (dimethicone);E900 - polydimethylsiloxane (dimethicone)
+VALUES;E900a - polydimethylsiloxane, anti-foaming, anti-caking agent, emulsifier;Wax and hydrocarbon;E900a;E900a - polydimethylsiloxane, anti-foaming, anti-caking agent, emulsifier;E900a - polydimethylsiloxane, antimoussant, antiagglomérant, émulsifiant
+VALUES;E900b - methylphenylpolisiloxane, antifoaming;Wax and hydrocarbon;E900b;E900b - methylphenylpolisiloxane, antifoaming;E900b - methylphenylpolisiloxane, antimoussant
+VALUES;E901 - white beeswax, yellow beeswax;Wax and hydrocarbon;E901;E901 - white beeswax, yellow beeswax;E901 - cire d'abeille blanchâtre, cire d'abeille jaunâtre
+VALUES;E902 - Candelilla wax;Wax and hydrocarbon;E902;E902 - Candelilla wax;E902 - cire de candelilla
+VALUES;E903 - carnauba wax, beeswax yellow;Wax and hydrocarbon;E903;E903 - carnauba wax, beeswax yellow;E903 - cire de carnauba, cire d'abeille jaunâtre
+VALUES;E904 - shellac (or shellac);Chewing gum;E904;E904 - shellac (or shellac);E904 - gomme laque (ou shellac)
+VALUES;E905 - mineral oil, paraffin;Ice;E905;E905 - mineral oil, paraffin;E905 - huile minérale, paraffine
+VALUES;E905a - food grade mineral oil, glazing agent, conditioning agent hermetic;Ice;E905a;E905a - food grade mineral oil, glazing agent, conditioning agent hermetic;E905a - huile minérale de qualité alimentaire, agent de glaçage, agent de conditionnement hermetique
+VALUES;E905b - Vaseline (petrolatum), glazing agent, conditioning agent tight, anti-foaming;Ice;E905b;E905b - Vaseline (petrolatum), glazing agent, conditioning agent tight, anti-foaming;E905b - vaseline (petrolatum), agent de glaçage, agent de conditionnement hermétique, antimoussant
+VALUES;E905c - wax oil, glazing agent, conditioning agent tight;Ice;E905c;E905c - wax oil, glazing agent, conditioning agent tight;E905c - cire de pétrole, agent de glaçage, agent de conditionnement hermétique
+VALUES;E905c (i) - microcrystalline wax, glazing agent;Ice;E905c(i);E905c (i) - microcrystalline wax, glazing agent;E905c(i) - cire microcristalline, agent de glaçage
+VALUES;E905c (ii) - paraffin wax, glazing agent;Ice;E905c(ii);E905c (ii) - paraffin wax, glazing agent;E905c(ii) - cire de paraffine, agent de glaçage
+VALUES;E905d - mineral oil, high viscosity glaze, conditioning agent tight;Ice;E905d;E905d - mineral oil, high viscosity glaze, conditioning agent tight;E905d - huile minérale, viscosité élevée agent de glaçage, agent de conditionnement hermétique
+VALUES;E905e - mineral oil, medium and low viscosity (category i), glazing agent, conditioning agent tight;Ice;E905e;E905e - mineral oil, medium and low viscosity (category i), glazing agent, conditioning agent tight;E905e - huile minérale, viscosite moyenne et faible (catégorie i), agent de glaçage, agent de conditionnement hermétique
+VALUES;E905f - mineral oil, medium and low viscosity (category ii), glazing agent, conditioning agent tight;Ice;E905f;E905f - mineral oil, medium and low viscosity (category ii), glazing agent, conditioning agent tight;E905f - huile minérale, viscosité moyenne et faible (catégorie ii), agent de glaçage, agent de conditionnement hermétique
+VALUES;E905g - mineral oil, medium and low viscosity (class iii), glazing agent, conditioning agent tight;Ice;E905g;E905g - mineral oil, medium and low viscosity (class iii), glazing agent, conditioning agent tight;E905g - huile minérale, viscosité moyenne et faible (catégorie iii), agent de glaçage, agent de conditionnement hermétique
+VALUES;E906 - gum benzoic;Ice;E906;E906 - gum benzoic;E906 - gomme benzoïque
+VALUES;E907 - refined microcrystalline wax;Ice;E907;E907 - refined microcrystalline wax;E907 - cire microcristalline raffinée
+VALUES;E908 - rice bran wax;Ice;E908;E908 - rice bran wax;E908 - cire de son de riz
+VALUES;E909 - spermaceti wax, glazing agent;Ice;E909;E909 - spermaceti wax, glazing agent;E909 - cire de blanc de baleine, agent de glaçage
+VALUES;E910 - wax esters, glazing agent;Ice;E910;E910 - wax esters, glazing agent;E910 - esters de cires, agent de glaçage
+VALUES;E911 - methyl esters of fatty acids, glazing agent;Ice;E911;E911 - methyl esters of fatty acids, glazing agent;E911 - esters méthyliques d'acides gras, agent de glaçage
+VALUES;E912 - montan acid ester;Ice;E912;E912 - montan acid ester;E912 - ester de l'acide montanique
+VALUES;E913 - lanolin;Ice;E913;E913 - lanolin;E913 - lanoline
+VALUES;E914 - oxidized polyethylene wax;Ice;E914;E914 - oxidized polyethylene wax;E914 - cire de polyéthylène oxydée
+VALUES;E915 - rosin esters;Ice;E915;E915 - rosin esters;E915 - esters de colophane
+VALUES;E916 - calcium iodate, flour treatment agent;Ice;E916;E916 - calcium iodate, flour treatment agent;E916 - iodate de calcium, agent de traitement des farines
+VALUES;E917 - potassium iodate, flour treatment agent;Ice;E917;E917 - potassium iodate, flour treatment agent;E917 - iodate de potassium, agent de traitement des farines
+VALUES;E918 - nitrogen oxides, flour treatment agent;Ice;E918;E918 - nitrogen oxides, flour treatment agent;E918 - oxydes d'azote, agent de traitement des farines
+VALUES;E919 - nitrosyl chloride, flour treatment agent;Ice;E919;E919 - nitrosyl chloride, flour treatment agent;E919 - chlorure de nitrosyle, agent de traitement des farines
+VALUES;E920 - l-cysteine ??and its hydrochlorides;Ice;E920;E920 - l-cysteine ??and its hydrochlorides;E920 - l-cysteine et ses chlorhydrates
+VALUES;E921 - cystine;Ice;E921;E921 - cystine;E921 - cystine
+VALUES;E922 - potassium persulfate;Ice;E922;E922 - potassium persulfate;E922 - persulfate de potassium
+VALUES;E923 - ammonium persulfate;Ice;E923;E923 - ammonium persulfate;E923 - persulfate d'ammonium
+VALUES;E924 - potassium bromate;Ice;E924;E924 - potassium bromate;E924 - bromate de potassium
+VALUES;E924a - potassium bromate, flour treatment agent;Ice;E924a;E924a - potassium bromate, flour treatment agent;E924a - bromate de potassium, agent de traitement des farines
+VALUES;E924b - calcium bromate, flour treatment agent;Ice;E924b;E924b - calcium bromate, flour treatment agent;E924b - bromate de calcium, agent de traitement des farines
+VALUES;E925 - chlorine;Ice;E925;E925 - chlorine;E925 - chlore
+VALUES;E926 - chlorine dioxide;Ice;E926;E926 - chlorine dioxide;E926 - dioxyde de chlore
+VALUES;E927 - azoformamide, azodicarbonamide;Ice;E927;E927 - azoformamide, azodicarbonamide;E927 - azoformamide, azodicarbonamide
+VALUES;E927a - azoformamide;Ice;E927a;E927a - azoformamide;E927a - azoformamide
+VALUES;E927b - carbamide, urea;Ice;E927b;E927b - carbamide, urea;E927b - carbamide, uree
+VALUES;E928 - Benzoyl peroxide;Ice;E928;E928 - Benzoyl peroxide;E928 - peroxyde de benzoyle
+VALUES;E929 - acetone peroxide, flour treatment agent;Ice;E929;E929 - acetone peroxide, flour treatment agent;E929 - peroxyde d'acétone, agent de traitement des farines
+VALUES;E930 - calcium peroxide;Ice;E930;E930 - calcium peroxide;E930 - peroxyde de calcium
+VALUES;E931 - dinitrogen, nitrogen (formerly);Gas;E931;E931 - dinitrogen, nitrogen (formerly);E931 - diazote, nitrogène (anc.)
+VALUES;E932 - nitrogen oxide;Gas;E932;E932 - nitrogen oxide;E932 - oxyde d'azote
+VALUES;E938 - argon;Gas;E938;E938 - argon;E938 - argon
+VALUES;E939 - Helium;Gas;E939;E939 - Helium;E939 - hélium
+VALUES;E940 - DICHLORODIFLUOROMETHANE;Gas;E940;E940 - DICHLORODIFLUOROMETHANE;E940 - dichlorodifluoromethane
+VALUES;E941 - nitrous;Gas;E941;E941 - nitrous;E941 - diazote
+VALUES;E942 - nitrous oxide;Gas;E942;E942 - nitrous oxide;E942 - protoxyde d'azote
+VALUES;E943a - butane;Gas;E943a;E943a - butane;E943a - butane
+VALUES;E943b - isobutane;Gas;E943b;E943b - isobutane;E943b - isobutane
+VALUES;E944 - Propane;Gas;E944;E944 - Propane;E944 - propane
+VALUES;E945 - chloropentafluoroethane;Gas;E945;E945 - chloropentafluoroethane;E945 - chloropentafluoroethane
+VALUES;E946 - octafluorocyclobutane;Gas;E946;E946 - octafluorocyclobutane;E946 - octafluorocyclobutane
+VALUES;E948 - oxygen;Gas;E948;E948 - oxygen;E948 - dioxygène
+VALUES;E949 - hydrogen;Gas;E949;E949 - hydrogen;E949 - dihydrogène
+VALUES;E950 - acesulfame k;Sweetener;E950;E950 - acesulfame k;E950 - acésulfame k
+VALUES;E951 - aspartame;Sweetener;E951;E951 - aspartame;E951 - aspartame
+VALUES;E952 - cyclamic acid and its salts (cyclamates) of Na and Ca;Sweetener;E952;E952 - cyclamic acid and its salts (cyclamates) of Na and Ca;E952 - acide cyclamique et ses sels (cyclamates) de na et de ca
+VALUES;E952 (i) - cyclamic acid, sweetener;Sweetener;E952(i);E952 (i) - cyclamic acid, sweetener;E952(i) - acide cyclamique, édulcorant
+VALUES;E952 (ii) - calcium cyclamate, sweetener;Sweetener;E952(ii);E952 (ii) - calcium cyclamate, sweetener;E952(ii) - cyclamate de calcium, édulcorant
+VALUES;E952 (iii) - potassium cyclamate, sweetener;Sweetener;E952(iii);E952 (iii) - potassium cyclamate, sweetener;E952(iii) - cyclamate de potassium, édulcorant
+VALUES;E952 (iv) - sodium cyclamate, sweetener;Sweetener;E952(iv);E952 (iv) - sodium cyclamate, sweetener;E952(iv) - cyclamate de sodium, édulcorant
+VALUES;E953 - isomalt;Sweetener;E953;E953 - isomalt;E953 - isomalt
+VALUES;E954 - saccharin and its salts (saccharinates) of Na, K and Ca;Sweetener;E954;E954 - saccharin and its salts (saccharinates) of Na, K and Ca;E954 - saccharine et ses sels (saccharinates) de na, k et ca
+VALUES;E954 (i) - saccharin sweetener;Sweetener;E954(i);E954 (i) - saccharin sweetener;E954(i) - saccharine, édulcorant
+VALUES;E954 (ii) - calcium saccharin, sweetener;Sweetener;E954(ii);E954 (ii) - calcium saccharin, sweetener;E954(ii) - saccharine de calcium, édulcorant
+VALUES;E954 (iii) - potassium saccharin, sweetener;Sweetener;E954(iii);E954 (iii) - potassium saccharin, sweetener;E954(iii) - saccharine de potassium, édulcorant
+VALUES;E954 (iv) - sodium saccharin, sweetener;Sweetener;E954(iv);E954 (iv) - sodium saccharin, sweetener;E954(iv) - saccharine de sodium, édulcorant
+VALUES;E955 - sucralose;Sweetener;E955;E955 - sucralose;E955 - sucralose
+VALUES;E956 - alitame;Sweetener;E956;E956 - alitame;E956 - alitame
+VALUES;E957 - thaumatin;Sweetener;E957;E957 - thaumatin;E957 - thaumatine
+VALUES;E958 - glycyrrhizic acid and its salts, glycyrrhizin, liquorice;Sweetener;E958;E958 - glycyrrhizic acid and its salts, glycyrrhizin, liquorice;E958 - acide glycyrrhizique et sels, glycyrrhizine, liquorice
+VALUES;E959 - neohesperidin dihydrochalcone (NHDC);Sweetener;E959;E959 - neohesperidin dihydrochalcone (NHDC);E959 - neohesperidine dihydrochalcone (nhdc)
+VALUES;E960 - steviol glycosides (stevioside and rebaudioside a), stevia extract, sweetener;Sweetener;E960;E960 - steviol glycosides (stevioside and rebaudioside a), stevia extract, sweetener;E960 - glucosides de steviol (stevioside et rebaudioside a), extrait de stevia, édulcorant
+VALUES;E961 - Neotame;Sweetener;E961;E961 - Neotame;E961 - neotame
+VALUES;E962 - salt of aspartame-acesulfame;Sweetener;E962;E962 - salt of aspartame-acesulfame;E962 - sel d'aspartame-acésulfame
+VALUES;E963 - tagatose, d-, sweetener;Sweetener;E963;E963 - tagatose, d-, sweetener;E963 - tagatose, d-, édulcorant
+VALUES;E964 - polyglycitol syrup, sweetener;Sweetener;E964;E964 - polyglycitol syrup, sweetener;E964 - sirop de polyglycitol, édulcorant
+VALUES;E965 - maltitol, softening;Sweetener;E965;E965 - maltitol, softening;E965 - maltitol, adoucissant
+VALUES;E965 (i) - maltitol;Sweetener;E965(i);E965 (i) - maltitol;E965(i) - maltitol
+VALUES;E965 (ii) - maltitol syrup;Sweetener;E965(ii);E965 (ii) - maltitol syrup;E965(ii) - sirop de maltitol
+VALUES;E966 - lactitol;Sweetener;E966;E966 - lactitol;E966 - lactitol
+VALUES;E967 - xylitol;Sweetener;E967;E967 - xylitol;E967 - xylitol
+VALUES;E968 - erythritol;Sweetener;E968;E968 - erythritol;E968 - erythritol
+VALUES;E999 - quillaia extracts (foaming);Other additive;E999;E999 - quillaia extracts (foaming);E999 - extraits de quillaia (moussant)
+VALUES;E999 (i) - Quillaia extract type 1, foaming agent, emulsifier;Other additive;E999(i);E999 (i) - Quillaia extract type 1, foaming agent, emulsifier;E999(i) - extrait de quillaia de type 1, agent moussant, émulsifiant
+VALUES;E999 (ii) - Quillaia extract type 2 foaming agent, emulsifier;Other additive;E999(ii);E999 (ii) - Quillaia extract type 2 foaming agent, emulsifier;E999(ii) - extrait de quillaia de type 2, agent moussant, émulsifiant
+;;;;;
+#;;;;;
+VALUES;beef steak;Ingredient;;beef steak;Boeuf entrecôte
+VALUES;Beef sirloin or tenderloin;Ingredient;;Beef sirloin or tenderloin;Boeuf faux-filet ou filet
+VALUES;beef rump;Ingredient;;beef rump;Boeuf rumsteck
+VALUES;beef panties;Ingredient;;beef panties;Boeuf culotte
+VALUES;beef cottage;Ingredient;;beef cottage;Boeuf gîte
+VALUES;Beef knuckle and lanyard;Ingredient;;Beef knuckle and lanyard;Boeuf tranche grasse et aiguillette
+VALUES;beef chuck;Ingredient;;beef chuck;Boeuf paleron
+VALUES;beef scoter;Ingredient;;beef scoter;Boeuf macreuse
+VALUES;beef heel;Ingredient;;beef heel;Boeuf talon
+VALUES;beef claw;Ingredient;;beef claw;Boeuf griffe
+VALUES;beef steak;Ingredient;;beef steak;Boeuf bavette
+VALUES;beef necklace;Ingredient;;beef necklace;Boeuf collier
+VALUES;beef chest;Ingredient;;beef chest;Boeuf poitrine
+VALUES;beef stick;Ingredient;;beef stick;Boeuf crosse
+VALUES;Beef before bed;Ingredient;;Beef before bed;Boeuf gîte avant
+VALUES;Beef Short Ribs;Ingredient;;Beef Short Ribs;Boeuf plat de côtes
+VALUES;beef chest;Ingredient;;beef chest;Boeuf poitrine 
+VALUES;beef brisket;Ingredient;;beef brisket;Boeuf tendron
+VALUES;beef flank;Ingredient;;beef flank;Boeuf flanchet
+VALUES;Beef back heel;Ingredient;;Beef back heel;Boeuf gîte arrière
+VALUES;beef brain;Ingredient;;beef brain;Boeuf cervelle
+VALUES;beef heart;Ingredient;;beef heart;Boeuf coeur
+VALUES;beef liver;Ingredient;;beef liver;Boeuf foie
+VALUES;beef tongue;Ingredient;;beef tongue;Boeuf langue
+VALUES;beef kidney;Ingredient;;beef kidney;Boeuf rognons
+VALUES;beef head;Ingredient;;beef head;Boeuf tête
+VALUES;beef tripe;Ingredient;;beef tripe;Boeuf tripes
+VALUES;Sheep Rack;Ingredient;;Sheep Rack;Mouton carré couvert
+VALUES;sheep netting;Ingredient;;sheep netting;Mouton filet
+VALUES;lamb saddle;Ingredient;;lamb saddle;Mouton selle
+VALUES;Mouton lamb;Ingredient;;Mouton lamb;Mouton gigot
+VALUES;Mouton square discovered;Ingredient;;Mouton square discovered;Mouton carré découvert
+VALUES;lamb shoulder;Ingredient;;lamb shoulder;Mouton épaule
+VALUES;Mouton collar;Ingredient;;Mouton collar;Mouton collier
+VALUES;Mutton chops up;Ingredient;;Mutton chops up;Mouton haut de côtelettes
+VALUES;Mouton chest;Ingredient;;Mouton chest;Mouton poitrine
+VALUES;sheep brains;Ingredient;;sheep brains;Mouton cervelle
+VALUES;sheep heart;Ingredient;;sheep heart;Mouton coeur
+VALUES;sheep liver;Ingredient;;sheep liver;Mouton foie
+VALUES;Mouton language;Ingredient;;Mouton language;Mouton langue
+VALUES;sheep kidney;Ingredient;;sheep kidney;Mouton rognons
+VALUES;Veal rib seconds;Ingredient;;Veal rib seconds;Veau côtes secondes
+VALUES;Veal ribs first;Ingredient;;Veal ribs first;Veau côtes premières
+VALUES;veal loin;Ingredient;;veal loin;Veau longe
+VALUES;Veal and panties almost;Ingredient;;Veal and panties almost;Veau quasi et culotte
+VALUES;Veal thigh nuts, nut sub-;Ingredient;;Veal thigh nuts, nut sub-;"Veau cuisse ; noix, sous-noix"
+VALUES;Veal Ribs;Ingredient;;Veal Ribs;Veau côtes découvertes
+VALUES;veal shoulder;Ingredient;;veal shoulder;Veau épaule
+VALUES;calf walk;Ingredient;;calf walk;Veau pied
+VALUES;veal brisket;Ingredient;;veal brisket;Veau tendron
+VALUES;veal flank;Ingredient;;veal flank;Veau flanchet
+VALUES;veal shank;Ingredient;;veal shank;Veau jarret
+VALUES;veal breast;Ingredient;;veal breast;Veau poitrine
+VALUES;veal necklace;Ingredient;;veal necklace;Veau collier
+VALUES;veal head;Ingredient;;veal head;Veau tête
+VALUES;calf brains;Ingredient;;calf brains;Veau cervelle
+VALUES;calf heart;Ingredient;;calf heart;Veau coeur
+VALUES;calf liver;Ingredient;;calf liver;Veau foie
+VALUES;veal tongue;Ingredient;;veal tongue;Veau langue
+VALUES;veal kidneys;Ingredient;;veal kidneys;Veau rognons
+VALUES;veal head;Ingredient;;veal head;Veau tête
+VALUES;pork ham;Ingredient;;pork ham;Porc jambon
+VALUES;pork knuckle;Ingredient;;pork knuckle;Porc jambonneau
+VALUES;pig foot;Ingredient;;pig foot;Porc pied
+VALUES;pork advanced;Ingredient;;pork advanced;Porc pointe
+VALUES;pork fillet;Ingredient;;pork fillet;Porc filet
+VALUES;pork square;Ingredient;;pork square;Porc carré
+VALUES;pork loin;Ingredient;;pork loin;Porc échine
+VALUES;range pork;Ingredient;;range pork;Porc palette
+VALUES;Pork Ribs;Ingredient;;Pork Ribs;Porc plat de côtes
+VALUES;Pork ribs through;Ingredient;;Pork ribs through;Porc travers de côtes
+VALUES;pork throat;Ingredient;;pork throat;Porc gorge
+VALUES;pork chest;Ingredient;;pork chest;Porc poitrine
+VALUES;pork shoulder;Ingredient;;pork shoulder;Porc épaule
+VALUES;pig head;Ingredient;;pig head;Porc tête
+VALUES;pig heart;Ingredient;;pig heart;Porc coeur
+VALUES;pork liver;Ingredient;;pork liver;Porc foie
+VALUES;pig kidneys;Ingredient;;pig kidneys;Porc rognons
+VALUES;pig head;Ingredient;;pig head;Porc tête
+;;;;;
+#;;Ingredient;;;
+VALUES;chicken breast;Ingredient;;chicken breast;Poulet poitrine
+VALUES;Chicken thigh;Ingredient;;Chicken thigh;Poulet haut de cuisse
+VALUES;chicken drumstick;Ingredient;;chicken drumstick;Poulet pilon
+VALUES;chicken whip;Ingredient;;chicken whip;Poulet fouet
+VALUES;chicken median;Ingredient;;chicken median;Poulet médiane
+VALUES;chicken stew;Ingredient;;chicken stew;Poulet blanquette
+VALUES;chicken rump;Ingredient;;chicken rump;Poulet croupion
+VALUES;duck neck;Ingredient;;duck neck;Canard cou
+VALUES;duck fillet;Ingredient;;duck fillet;Canard filet
+VALUES;duck drumstick;Ingredient;;duck drumstick;Canard pilon
+VALUES;duck tail;Ingredient;;duck tail;Canard croupion
+VALUES;duck whip;Ingredient;;duck whip;Canard fouet
+VALUES;duck wing;Ingredient;;duck wing;Canard aileron
+VALUES;duck sleeve;Ingredient;;duck sleeve;Canard manchon 
+VALUES;turkey neck;Ingredient;;turkey neck;Dinde cou
+VALUES;turkey breast;Ingredient;;turkey breast;Dinde poitrine
+VALUES;Turkey thigh;Ingredient;;Turkey thigh;Dinde haut de cuisse
+VALUES;turkey drumstick;Ingredient;;turkey drumstick;Dinde pilon
+VALUES;turkey tail;Ingredient;;turkey tail;Dinde croupion
+VALUES;turkey whip;Ingredient;;turkey whip;Dinde fouet
+VALUES;turkey wing;Ingredient;;turkey wing;Dinde aileron
+VALUES;turkey stew;Ingredient;;turkey stew;Dinde blanquette
+;;;;;
+;;;;;
+VALUES;apricot;Ingredient;;apricot;Abricot
+VALUES;almond;Ingredient;;almond;Amande
+VALUES;Arbouse;Ingredient;;Arbouse;Arbouse
+VALUES;cranberry;Ingredient;;cranberry;Canneberge
+VALUES;carambola;Ingredient;;carambola;Carambole
+VALUES;blackcurrant;Ingredient;;blackcurrant;Cassis
+VALUES;cherry;Ingredient;;cherry;Cerise
+VALUES;Chadec;Ingredient;;Chadec;Chadec
+VALUES;Chicoutai;Ingredient;;Chicoutai;Chicoutai
+VALUES;Chestnut / Brown;Ingredient;;Chestnut / Brown;Châtaigne / Marron
+VALUES;quince;Ingredient;;quince;Coing
+VALUES;Corossol;Ingredient;;Corossol;Corossol
+VALUES;date;Ingredient;;date;Datte
+VALUES;Dourian;Ingredient;;Dourian;Dourian
+VALUES;fig;Ingredient;;fig;Figue
+VALUES;strawberry;Ingredient;;strawberry;Fraise
+VALUES;raspberry;Ingredient;;raspberry;Framboise
+VALUES;Passion fruit;Ingredient;;Passion fruit;Fruit de la passion
+VALUES;guava;Ingredient;;guava;Goyave
+VALUES;currant;Ingredient;;currant;Groseille
+VALUES;Jacquier;Ingredient;;Jacquier;Jacquier
+VALUES;khaki;Ingredient;;khaki;Kaki
+VALUES;kiwi;Ingredient;;kiwi;Kiwi
+VALUES;lychee;Ingredient;;lychee;Litchi
+VALUES;longan;Ingredient;;longan;Longane
+VALUES;macadamia;Ingredient;;macadamia;Macadamia
+VALUES;mango;Ingredient;;mango;Mangue
+VALUES;blueberry;Ingredient;;blueberry;Myrtille
+VALUES;nectarine;Ingredient;;nectarine;Nectarine
+VALUES;nuts;Ingredient;;nuts;Noix
+VALUES;Pecans;Ingredient;;Pecans;Noix de pécan
+VALUES;papaya;Ingredient;;papaya;Papaye
+VALUES;Physalis;Ingredient;;Physalis;Physalis
+VALUES;Pimpin / Vacoa / Pandanus;Ingredient;;Pimpin / Vacoa / Pandanus;Pimpin / Vacoa / Pandanus
+VALUES;pomegranate;Ingredient;;pomegranate;Pomme grenade
+VALUES;fishing;Ingredient;;fishing;Pêche
+VALUES;rhubarb;Ingredient;;rhubarb;Rhubarbe
+VALUES;sapodilla;Ingredient;;sapodilla;Sapotille
+VALUES;grapes;Ingredient;;grapes;Raisins
+VALUES;Mirabelle;Ingredient;;Mirabelle;Mirabelle
+VALUES;plum;Ingredient;;plum;Prune
+VALUES;Agen prunes;Ingredient;;Agen prunes;Pruneau d'Agen
+VALUES;Quetsche;Ingredient;;Quetsche;Quetsche
+VALUES;Greengage;Ingredient;;Greengage;Reine-Claude
+VALUES;banana;Ingredient;;banana;Banane
+VALUES;pears;Ingredient;;pears;Poires
+VALUES;apples;Ingredient;;apples;Pommes
+VALUES;melon;Ingredient;;melon;Melon
+VALUES;citrus;Ingredient;;citrus;Agrumes
+VALUES;lemon;Ingredient;;lemon;Citron
+VALUES;Clementine;Ingredient;;Clementine;Clémentine
+VALUES;Combawa or Combava;Ingredient;;Combawa or Combava;Combawa ou Combava
+VALUES;citron;Ingredient;;citron;Cédrat
+VALUES;kumquat;Ingredient;;kumquat;Kumquat
+VALUES;Hand of Buddha;Ingredient;;Hand of Buddha;Main de Boudha
+VALUES;mandarin;Ingredient;;mandarin;Mandarine
+VALUES;orange;Ingredient;;orange;Orange
+VALUES;grapefruit;Ingredient;;grapefruit;Pamplemousse
+VALUES;Grapefruit;Ingredient;;Grapefruit;Pomelo
+VALUES;Coconut milk;Ingredient;;Coconut milk;Lait de coco
+VALUES;Coconut;Ingredient;;Coconut;Noix de coco
+VALUES;strawberry;Ingredient;;strawberry;Fraise
+VALUES;pineapple;Ingredient;;pineapple;Ananas
+;;;;;
+VALUES;peanut;Ingredient;;peanut;Arachide
+VALUES;Arrow-root;Ingredient;;Arrow-root;Arrow-root
+VALUES;Bamboo (shoot ...);Ingredient;;Bamboo (shoot ...);Bambou (pousse de...)
+VALUES;broccoli;Ingredient;;broccoli;Brocoli
+VALUES;carrot;Ingredient;;carrot;Carotte
+VALUES;chayote;Ingredient;;chayote;Chayote
+VALUES;Water chestnut;Ingredient;;Water chestnut;Châtaigne d'eau
+VALUES;cucumber;Ingredient;;cucumber;Concombre
+VALUES;gherkin;Ingredient;;gherkin;Cornichon
+VALUES;zucchini;Ingredient;;zucchini;Courgette
+VALUES;Crosne;Ingredient;;Crosne;Crosne
+VALUES;caper;Ingredient;;caper;Câpre
+VALUES;celery;Ingredient;;celery;Céleri
+VALUES;Celeriac;Ingredient;;Celeriac;Céleri-rave
+VALUES;Dachine;Ingredient;;Dachine;Dachine
+VALUES;daikon;Ingredient;;daikon;Daikon
+VALUES;fennel;Ingredient;;fennel;Fenouil
+VALUES;Breadfruit;Ingredient;;Breadfruit;Fruit à pain
+VALUES;black bean;Ingredient;;black bean;Haricot noir
+VALUES;yam;Ingredient;;yam;Igname
+VALUES;jicama;Ingredient;;jicama;Jicama
+VALUES;Water spinach;Ingredient;;Water spinach;Liseron d'eau
+VALUES;corn;Ingredient;;corn;Maïs
+VALUES;Turnips / turnip;Ingredient;;Turnips / turnip;Navet / Rabiole
+VALUES;nopal;Ingredient;;nopal;Nopal
+VALUES;onion;Ingredient;;onion;Oignon
+VALUES;Okra or Gumbo;Ingredient;;Okra or Gumbo;Okra ou Gumbo
+VALUES;parsnip;Ingredient;;parsnip;Panais
+VALUES;sweet potato;Ingredient;;sweet potato;Patate douce
+VALUES;plantain;Ingredient;;plantain;Plantain
+VALUES;chickpea;Ingredient;;chickpea;Pois chiche
+VALUES;pigeon pea;Ingredient;;pigeon pea;Pois pigeon
+VALUES;green peas;Ingredient;;green peas;Pois vert
+VALUES;polenta;Ingredient;;polenta;Polenta
+VALUES;radish;Ingredient;;radish;Radis
+VALUES;horseradish;Ingredient;;horseradish;Raifort
+VALUES;rutabaga;Ingredient;;rutabaga;Rutabaga
+VALUES;liquorice;Ingredient;;liquorice;Réglisse
+VALUES;salsify;Ingredient;;salsify;Salsifis
+VALUES;soy;Ingredient;;soy;Soya
+VALUES;tamarind;Ingredient;;tamarind;Tamarin
+VALUES;Taro;Ingredient;;Taro;Taro
+VALUES;Ti leaf;Ingredient;;Ti leaf;Ti feuille
+VALUES;Ti-cucumber;Ingredient;;Ti-cucumber;Ti-concombre
+VALUES;tomato;Ingredient;;tomato;Tomate
+VALUES;Tomatillo (tomatillo);Ingredient;;Tomatillo (tomatillo);Tomatille (tomatillo)
+VALUES;Jerusalem artichoke;Ingredient;;Jerusalem artichoke;Topinambour
+VALUES;Fiddlehead;Ingredient;;Fiddlehead;Tête de violon
+VALUES;Wasabi;Ingredient;;Wasabi;Wasabi
+VALUES;shallot;Ingredient;;shallot;Échalote
+VALUES;spinach;Ingredient;;spinach;Épinard
+VALUES;mushroom;Ingredient;;mushroom;Champignon
+VALUES;truffle;Ingredient;;truffle;Truffe
+VALUES;Lettuce and Verduret;Ingredient;;Lettuce and Verduret;Laitue et verdurette
+VALUES;squash;Ingredient;;squash;Courge
+VALUES;leek;Ingredient;;leek;Poireau
+VALUES;Potato;Ingredient;;Potato;Pomme de terre
+VALUES;asparagus;Ingredient;;asparagus;Asperge
+VALUES;dry bean;Ingredient;;dry bean;Haricot sec
+VALUES;cool Beans;Ingredient;;cool Beans;Haricot frais
+VALUES;broad bean;Ingredient;;broad bean;Gourgane
+VALUES;green bean;Ingredient;;green bean;Haricot vert
+VALUES;eggplant;Ingredient;;eggplant;Aubergine
+VALUES;Bette;Ingredient;;Bette;Bette
+VALUES;cabbage;Ingredient;;cabbage;Chou
+VALUES;beet;Ingredient;;beet;Betterave
+VALUES;pepper;Ingredient;;pepper;Poivron
+VALUES;cassava;Ingredient;;cassava;Manioc
+VALUES;onion;Ingredient;;onion;Oignon
+VALUES;cucumber;Ingredient;;cucumber;Concombre
+;;;;;
+VALUES;lamb;Ingredient;;lamb;Agneau
+VALUES;bison;Ingredient;;bison;Bison
+VALUES;beef;Ingredient;;beef;Boeuf
+VALUES;Cabri;Ingredient;;Cabri;Cabri
+VALUES;caribou;Ingredient;;caribou;Caribou
+VALUES;kangaroo;Ingredient;;kangaroo;Kangourou
+VALUES;rabbit;Ingredient;;rabbit;Lapin
+VALUES;hare;Ingredient;;hare;Lièvre
+VALUES;boar;Ingredient;;boar;Sanglier
+VALUES;tripe;Ingredient;;tripe;Tripes
+VALUES;calf;Ingredient;;calf;Veau
+VALUES;pork;Ingredient;;pork;Porc
+VALUES;ostrich;Ingredient;;ostrich;Autruche
+VALUES;quail;Ingredient;;quail;Caille
+VALUES;duck;Ingredient;;duck;Canard
+VALUES;turkey;Ingredient;;turkey;Dinde
+VALUES;pheasant;Ingredient;;pheasant;Faisan
+VALUES;foie gras;Ingredient;;foie gras;Foie gras
+VALUES;goose;Ingredient;;goose;Oie
+VALUES;partridge;Ingredient;;partridge;Perdrix
+VALUES;guinea fowl;Ingredient;;guinea fowl;Pintade
+VALUES;Bresse;Ingredient;;Bresse;Poularde de Bresse
+VALUES;chicken;Ingredient;;chicken;Poulet
+VALUES;pigeon;Ingredient;;pigeon;Pigeon
+;;;;;
+VALUES;cusk;Ingredient;;cusk;Abadèche
+VALUES;haddock;Ingredient;;haddock;Aiglefin
+VALUES;anchovy;Ingredient;;anchovy;Anchois
+VALUES;eel;Ingredient;;eel;Anguille
+VALUES;bar;Ingredient;;bar;Bar
+VALUES;barramundi;Ingredient;;barramundi;Barramundi
+VALUES;monkfish;Ingredient;;monkfish;Baudroie
+VALUES;pike;Ingredient;;pike;Brochet
+VALUES;capelin;Ingredient;;capelin;Capelan
+VALUES;carp;Ingredient;;carp;Carpe
+VALUES;Chapon / scorpion;Ingredient;;Chapon / scorpion;Chapon / rascasse
+VALUES;chub;Ingredient;;chub;Chevesne
+VALUES;cobia;Ingredient;;cobia;Cobia
+VALUES;conger;Ingredient;;conger;Congre
+VALUES;bream;Ingredient;;bream;Daurade
+VALUES;golden;Ingredient;;golden;Doré
+VALUES;escolar;Ingredient;;escolar;Escolier
+VALUES;Espada;Ingredient;;Espada;Espada
+VALUES;swordfish;Ingredient;;swordfish;Espadon
+VALUES;sturgeon;Ingredient;;sturgeon;Esturgeon
+VALUES;halibut;Ingredient;;halibut;Flétan
+VALUES;frog;Ingredient;;frog;Grenouille
+VALUES;Grondin Perlon;Ingredient;;Grondin Perlon;Grondin Perlon
+VALUES;herring;Ingredient;;herring;Hareng
+VALUES;ling;Ingredient;;ling;Lingue
+VALUES;Catfish;Ingredient;;Catfish;Loup de mer
+VALUES;Patagonian toothfish;Ingredient;;Patagonian toothfish;Légine australe
+VALUES;mahi mahi;Ingredient;;mahi mahi;Mahi Mahi
+VALUES;mackerel;Ingredient;;mackerel;Maquereau
+VALUES;whiting;Ingredient;;whiting;Merlan
+VALUES;Hake, Colin;Ingredient;;Hake, Colin;Merlu, Colin
+VALUES;grouper;Ingredient;;grouper;Mérou
+VALUES;char;Ingredient;;char;Omble chevalier
+VALUES;Onaga;Ingredient;;Onaga;Onaga
+VALUES;Pangasius;Ingredient;;Pangasius;Pangasius
+VALUES;pole;Ingredient;;pole;Perche
+VALUES;Nile perch;Ingredient;;Nile perch;Perche du Nil
+VALUES;octopus;Ingredient;;octopus;Pieuvre
+VALUES;Plaice;Ingredient;;Plaice;Plie ou carrelet
+VALUES;shark;Ingredient;;shark;Requin
+VALUES;red mullet;Ingredient;;red mullet;Rouget
+VALUES;Saint-Pierre;Ingredient;;Saint-Pierre;Saint-Pierre
+VALUES;Sandre;Ingredient;;Sandre;Sandre
+VALUES;sardine;Ingredient;;sardine;Sardine
+VALUES;catfish;Ingredient;;catfish;Silure
+VALUES;sole;Ingredient;;sole;Sole
+VALUES;Stockfish;Ingredient;;Stockfish;Stockfish
+VALUES;surimi;Ingredient;;surimi;Surimi
+VALUES;tuna;Ingredient;;tuna;Thon
+VALUES;Tobiko caviar ingredient or driving;Ingredient;;Tobiko caviar ingredient or driving;Tobiko ou caviar de Ingrédient volant
+VALUES;turbot;Ingredient;;turbot;Turbot
+VALUES;red snapper;Ingredient;;red snapper;Vivaneau
+VALUES;smelt;Ingredient;;smelt;Éperlan
+VALUES;trout;Ingredient;;trout;Truite
+VALUES;salmon;Ingredient;;salmon;Saumon
+VALUES;cuttlefish;Ingredient;;cuttlefish;Seiche
+VALUES;caviar;Ingredient;;caviar;Caviar
+VALUES;cod;Ingredient;;cod;Cabillaud
+;;;;;
+VALUES;periwinkle;Ingredient;;periwinkle;Bigorneau
+VALUES;whelk;Ingredient;;whelk;Buccin
+VALUES;Slipper lobster;Ingredient;;Slipper lobster;Cigale de mer
+VALUES;shell;Ingredient;;shell;Coque
+VALUES;knife;Ingredient;;knife;Couteau
+VALUES;Shrimp / Prawns;Ingredient;;Shrimp / Prawns;Crevette / Gambas
+VALUES;northern Shrimp;Ingredient;;northern Shrimp;Crevette nordique
+VALUES;slipper limpet;Ingredient;;slipper limpet;Crépidule
+VALUES;snail;Ingredient;;snail;Escargot
+VALUES;lobster;Ingredient;;lobster;Homard
+VALUES;Conch, Conch;Ingredient;;Conch, Conch;Lambi, Conque
+VALUES;langoustine;Ingredient;;langoustine;Langoustine
+VALUES;mold;Ingredient;;mold;Moule
+VALUES;abalone;Ingredient;;abalone;Ormeau
+VALUES;sea ??urchin;Ingredient;;sea ??urchin;Oursin
+VALUES;clam;Ingredient;;clam;Palourde
+VALUES;limpet;Ingredient;;limpet;Patelle
+VALUES;Barnacle barnacle or;Ingredient;;Barnacle barnacle or;Pousse-pied ou anatife
+VALUES;scallop;Ingredient;;scallop;Pétoncle
+VALUES;Saint-Jacques;Ingredient;;Saint-Jacques;Saint-Jacques
+VALUES;purple;Ingredient;;purple;Violet
+VALUES;crayfish;Ingredient;;crayfish;Écrevisse
+VALUES;oyster;Ingredient;;oyster;Huître
+VALUES;crab;Ingredient;;crab;Crabe
+;;;;;
+VALUES;garlic;Ingredient;;garlic;Ail
+VALUES;anise;Ingredient;;anise;Anis
+VALUES;Asa foetida;Ingredient;;Asa foetida;Asa foetida
+VALUES;cinnamon;Ingredient;;cinnamon;Cannelle
+VALUES;cardamom;Ingredient;;cardamom;Cardamome
+VALUES;Caripoulé;Ingredient;;Caripoulé;Caripoulé
+VALUES;caraway;Ingredient;;caraway;Carvi
+VALUES;Clove;Ingredient;;Clove;Clou de girofle
+VALUES;cumin;Ingredient;;cumin;Cumin
+VALUES;turmeric;Ingredient;;turmeric;Curcuma
+VALUES;curry;Ingredient;;curry;Curry
+VALUES;Fenugreek;Ingredient;;Fenugreek;Fenugreek
+VALUES;garam Masala;Ingredient;;garam Masala;Garam Massala
+VALUES;juniper;Ingredient;;juniper;Genièvre
+VALUES;ginger;Ingredient;;ginger;Gingembre
+VALUES;mace;Ingredient;;mace;Macis
+VALUES;Massala;Ingredient;;Massala;Massala
+VALUES;mustard;Ingredient;;mustard;Moutarde
+VALUES;nutmeg;Ingredient;;nutmeg;Muscade
+VALUES;Bajan spice mix;Ingredient;;Bajan spice mix;Mélange d'épices bajan
+VALUES;Ras el hanout;Ingredient;;Ras el hanout;Ras-el-hanout
+VALUES;saffron;Ingredient;;saffron;Safran
+VALUES;sassafras;Ingredient;;sassafras;Sassafras
+VALUES;sate;Ingredient;;sate;Saté
+VALUES;sumach;Ingredient;;sumach;Sumac
+VALUES;sesame;Ingredient;;sesame;Sésame
+VALUES;vanilla;Ingredient;;vanilla;Vanille
+VALUES;spice;Ingredient;;spice;Piment
+VALUES;pepper;Ingredient;;pepper;Poivre
+VALUES;salt;Ingredient;;salt;Sel
+;;;;;
+VALUES;dill;Ingredient;;dill;Aneth
+VALUES;basil;Ingredient;;basil;Basilic
+VALUES;borage;Ingredient;;borage;Bourrache
+VALUES;chive;Ingredient;;chive;Ciboulette
+VALUES;Chinese chives;Ingredient;;Chinese chives;Ciboulette chinoise
+VALUES;lemongrass;Ingredient;;lemongrass;Citronnelle
+VALUES;coriander;Ingredient;;coriander;Coriandre
+VALUES;hyssop;Ingredient;;hyssop;Hysope
+VALUES;lavender;Ingredient;;lavender;Lavande
+VALUES;marjoram;Ingredient;;marjoram;Marjolaine
+VALUES;myrtle;Ingredient;;myrtle;Myrte
+VALUES;melissa;Ingredient;;melissa;Mélisse
+VALUES;oregano;Ingredient;;oregano;Origan
+VALUES;parsley;Ingredient;;parsley;Persil
+VALUES;rosemary;Ingredient;;rosemary;Romarin
+VALUES;Salicorne;Ingredient;;Salicorne;Salicorne
+VALUES;Sariette;Ingredient;;Sariette;Sariette
+VALUES;sage;Ingredient;;sage;Sauge
+VALUES;thyme;Ingredient;;thyme;Thym
+VALUES;lime;Ingredient;;lime;Tilleul
+VALUES;verbena;Ingredient;;verbena;Verveine
+VALUES;violet;Ingredient;;violet;Violette
+;;;;;
+VALUES;Maple (products);Ingredient;;Maple (products);Érable (produits de)
+VALUES;brown sugar;Ingredient;;brown sugar;Cassonade
+VALUES;honey;Ingredient;;honey;Miel
+VALUES;treacle;Ingredient;;treacle;Mélasse
+VALUES;sugar;Ingredient;;sugar;Sucre
+VALUES;rice;Ingredient;;rice;Riz
+VALUES;coffee;Ingredient;;coffee;Café
+VALUES;oat;Ingredient;;oat;Avoine
+VALUES;wheat;Ingredient;;wheat;Blé
+VALUES;Boulghol / Boulgour;Ingredient;;Boulghol / Boulgour;Boulghol / Boulgour
+VALUES;hop;Ingredient;;hop;Houblon
+VALUES;barley;Ingredient;;barley;Orge
+VALUES;quinoa;Ingredient;;quinoa;Quinoa
+VALUES;buckwheat;Ingredient;;buckwheat;Sarrasin
+VALUES;rye;Ingredient;;rye;Seigle
+VALUES;Semolina / Couscous;Ingredient;;Semolina / Couscous;Semoule / Couscous
+VALUES;sorghum;Ingredient;;sorghum;Sorgho
+VALUES;Spelt;Ingredient;;Spelt;Épeautre
+VALUES;tea;Ingredient;;tea;Thé

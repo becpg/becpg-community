@@ -502,8 +502,6 @@ public interface BeCPGModel {
 	/** The Constant PROP_LNK_VALUE. */
 	static final QName PROP_LKV_VALUE = QName.createQName(BECPG_URI,
 			"lkvValue");
-	
-	
 
 	// listValue
 	/** The Constant TYPE_LIST_VALUE. */
@@ -513,6 +511,9 @@ public interface BeCPGModel {
 	/** entityFolder */
 	static final QName TYPE_ENTITY_FOLDER = QName.createQName(BECPG_URI,
 			"entityFolder");
+	
+	static final QName PROP_ENTITY_FOLDER_CLASS_NAME = QName.createQName(
+			BECPG_URI, "entityFolderClassName");
 	
 	/** entity */
 	static final QName TYPE_ENTITY = QName.createQName(BECPG_URI,

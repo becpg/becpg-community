@@ -18,12 +18,11 @@ import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
-import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -45,6 +44,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.importer.ImportContext;
@@ -83,6 +83,10 @@ public class ImportServiceImpl implements ImportService {
 	/** The Constant PFX_VALUES. */
 	private static final String PFX_VALUES = "VALUES";
 	
+	private static final String PFX_IMPORT_TYPE = "IMPORT_TYPE";
+	
+	private static final String PFX_DISABLED_POLICIES = "DISABLED_POLICIES";
+	
 	private static final String PATH_SITES = "st:sites";
 	
 	private static final String FORMAT_DATE_FRENCH = "dd/MM/yyyy";
@@ -105,6 +109,8 @@ public class ImportServiceImpl implements ImportService {
 	private static final int COLUMN_MAPPING = 1;
 	private static final int COLUMN_PATH = 1;
 	private static final int COLUMN_TYPE = 1;
+	private static final int COLUMN_IMPORT_TYPE = 1;
+	private static final int COLUMN_DISABLED_POLICIES = 1;
 	
 	private static final int BATCH_SIZE	= 10;
 	
@@ -141,6 +147,8 @@ public class ImportServiceImpl implements ImportService {
 	
 	/** The dictionary service. */
 	private DictionaryService dictionaryService;	
+	
+	private BehaviourFilter policyBehaviourFilter;
 					
 	/**
 	 * Sets the search service.
@@ -231,6 +239,10 @@ public class ImportServiceImpl implements ImportService {
 		this.dictionaryService = dictionaryService;
 	}
 	
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
 	/**
 	 * Import a text file
 	 * @throws ParseException 
@@ -388,8 +400,7 @@ public class ImportServiceImpl implements ImportService {
 		Element mappingElt = null;
 		NamespaceService namespaceService = serviceRegistry.getNamespaceService();
 		RetryingTransactionHelper txnHelper = serviceRegistry.getRetryingTransactionHelper();				
-		String[] arrStr = null;
-		
+		String[] arrStr = null;		
 		
 		while((arrStr = importContext.readLine()) != null){
 			
@@ -436,6 +447,30 @@ public class ImportServiceImpl implements ImportService {
 				
 				importContext.setParentNodeRef(parentNodeRef);																
 			}
+			else if(prefix.equals(PFX_IMPORT_TYPE)){
+				
+				importContext.setImportType(null);
+				
+				String importTypeValue = arrStr[COLUMN_IMPORT_TYPE];
+				if(importTypeValue.isEmpty()){
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_IMPORT_TYPE, importContext.getCSVLine()));
+				}
+					
+				ImportType importType = ImportType.valueOf(importTypeValue);
+				importContext.setImportType(importType);
+			}
+			else if(prefix.equals(PFX_DISABLED_POLICIES)){
+				
+				importContext.getDisabledPolicies().clear();
+				
+				String disabledPoliciesValue = arrStr[COLUMN_DISABLED_POLICIES];
+				if(!disabledPoliciesValue.isEmpty()){
+					for(String disabledPolicy : disabledPoliciesValue.split(RepoConsts.MULTI_VALUES_SEPARATOR)){
+						importContext.getDisabledPolicies().add(QName.createQName(disabledPolicy, namespaceService));
+					}
+					
+				}				
+			}
 			else if(prefix.equals(PFX_TYPE)){
 				
 				importContext.setType(null);
@@ -447,37 +482,40 @@ public class ImportServiceImpl implements ImportService {
 				QName type = QName.createQName(typeValue, namespaceService);				
 				importContext.setType(type);								
 				
-				if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)){
-					importContext.setImportType(ImportType.Product);
-				}
-				else if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && importContext.getClassMappings().get(type)!=null){
-					importContext.setImportType(ImportType.EntityListItem);
-				}
-				else{
-					
-					// look for entityListsAspect
-					boolean entityListsAspect = false;					
-					TypeDefinition typeDef = dictionaryService.getType(type);
-					if(typeDef == null){
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNKNOWN_TYPE, type));
-					}
-					else{
-						for(AspectDefinition aspectDef : typeDef.getDefaultAspects()){
-							if(aspectDef.getName().equals(BeCPGModel.ASPECT_ENTITYLISTS)){						
-								entityListsAspect = true;
-								break;
-							}
-						}
-					}
-					
-					
-					if(entityListsAspect){
-						importContext.setImportType(ImportType.EntityListAspect);
-					}					
-					else{
-						importContext.setImportType(ImportType.Node);
-					}
-				}					
+//				// detect or use ImportType defined in CSV file
+//				if(detectImportType){
+//					if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)){
+//						importContext.setImportType(ImportType.Product);
+//					}
+//					else if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && importContext.getClassMappings().get(type)!=null){
+//						importContext.setImportType(ImportType.EntityListItem);
+//					}
+//					else{
+//						
+//						// look for entityListsAspect
+//						boolean entityListsAspect = false;					
+//						TypeDefinition typeDef = dictionaryService.getType(type);
+//						if(typeDef == null){
+//							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNKNOWN_TYPE, type));
+//						}
+//						else{
+//							for(AspectDefinition aspectDef : typeDef.getDefaultAspects()){
+//								if(aspectDef.getName().equals(BeCPGModel.ASPECT_ENTITYLISTS)){						
+//									entityListsAspect = true;
+//									break;
+//								}
+//							}
+//						}
+//						
+//						
+//						if(entityListsAspect){
+//							importContext.setImportType(ImportType.EntityListAspect);
+//						}					
+//						else{
+//							importContext.setImportType(ImportType.Node);
+//						}
+//					}	
+//				}							
 			}
 			else if(prefix.equals(PFX_STOP_ON_FIRST_ERROR)){
 				
@@ -535,36 +573,50 @@ public class ImportServiceImpl implements ImportService {
         		 }        		       		         		 
         		 
         		 
-        		 int nbBatches = ((lastIndex - firstIndex) / BATCH_SIZE) + 1;      		         		 
+        		 int nbBatches = ((lastIndex - firstIndex) / BATCH_SIZE) + 1;
         		 
-        		 for(int z_idx=0 ; z_idx<nbBatches ; z_idx++ ){
-        			         			 
-        			 importContext.setImportIndex(firstIndex + (z_idx * BATCH_SIZE));
-        			 int tempIndex = firstIndex + ((z_idx + 1)* BATCH_SIZE);
-        			 final int finalLastIndex =  tempIndex > lastIndex ? lastIndex : tempIndex;
-            		 final ImportContext finalImportContext = importContext;              		     		
-            		 
-            		 // add info message in log and file import            		 
-            		 String info = I18NUtil.getMessage(MSG_INFO_IMPORT_BATCH, 							 					
+        		
+        			 
+	    		 for(int z_idx=0 ; z_idx<nbBatches ; z_idx++ ){
+	    			         			 
+	    			 importContext.setImportIndex(firstIndex + (z_idx * BATCH_SIZE));
+	    			 int tempIndex = firstIndex + ((z_idx + 1)* BATCH_SIZE);
+	    			 final int finalLastIndex =  tempIndex > lastIndex ? lastIndex : tempIndex;
+	        		 final ImportContext finalImportContext = importContext;              		     		
+	        		 
+	        		 // add info message in log and file import            		 
+	        		 String info = I18NUtil.getMessage(MSG_INFO_IMPORT_BATCH, 							 					
 							 					(z_idx + 1), nbBatches,
 							 					importContext.getImportFileName(),
 							 					(importContext.getImportIndex() + 1),
 							 					(finalLastIndex + 1));
-            		 logger.info(info);
-            		 //notifyImportFile(importContext, info);
-            		  
-        			 // use transaction
-            		 importContext = txnHelper.doInTransaction(new RetryingTransactionCallback<ImportContext>(){
-        				 public ImportContext execute() throws Exception{
-     	                    	
-        					 return importInBatch(finalImportContext, finalLastIndex);
-        				 }
-        			 }, 
-        			 false,											// readonly
-            		 importContext.isRequiresNewTransaction());  	// requires new txn flag
-            		 
-            		 //importContext = importInBatch(finalImportContext, finalLastIndex);
-        		 }
+	        		 logger.info(info);
+	        		 //notifyImportFile(importContext, info);
+	        			 
+	        		 // use transaction
+	        		 importContext = txnHelper.doInTransaction(new RetryingTransactionCallback<ImportContext>(){
+	    				 public ImportContext execute() throws Exception{
+	 	                    	
+							try {
+
+								// do it in transaction otherwise, not taken in account
+								for (QName disabledPolicy : finalImportContext.getDisabledPolicies()) {
+									logger.debug("disableBehaviour: " + disabledPolicy);
+									policyBehaviourFilter.disableBehaviour(disabledPolicy);
+								}
+								return importInBatch(finalImportContext, finalLastIndex);
+
+							} finally {
+
+								for (QName disabledPolicy : finalImportContext.getDisabledPolicies()) {
+									policyBehaviourFilter.enableBehaviour(disabledPolicy);
+								}
+							}
+	    				 }
+	    			 }, 
+	    			 false,											// readonly
+	        		 importContext.isRequiresNewTransaction());  	// requires new txn flag
+	    		 }
         		 
         		 importContext.goToPreviousLine();
         		 
@@ -623,7 +675,7 @@ public class ImportServiceImpl implements ImportService {
 			   			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_VALUES, importContext.getCSVLine())); 
 			   		 }
 								
-			   		 if(ImportType.Product.equals(importContext.getImportType())){
+			   		 if(dictionaryService.isSubClass(importContext.getType(), BeCPGModel.TYPE_PRODUCT)){
 			   			 importProductVisitor.importNode(importContext, values);        			
 			   		 }
 			   		 else if(ImportType.EntityListAspect.equals(importContext.getImportType())){

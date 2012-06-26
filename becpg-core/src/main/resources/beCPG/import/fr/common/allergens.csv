@@ -1,6 +1,6 @@
 PATH;/System/Characts/bcpg:entityLists/Allergens;;;;;;
 TYPE;bcpg:allergen;;;;;;
-MAPPING;Ciqual;;;;;;
+MAPPING;Default;;;;;;
 COLUMNS;bcpg:allergenCode;cm:name;bcpg:allergenType;bcpg:legalName;bcpg:legalName_fr;bcpg:legalName_en;bcpg:allergenSubset
 VALUES;F1;Blanc d'oeuf (Classique);Allergène informatif;;Blanc d'oeuf (Classique);Egg White (Classical);
 VALUES;F2;Lait de vache;Allergène informatif;;Lait de vache;Cow's Milk ;

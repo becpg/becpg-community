@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings>
+	<settings>
+		<!-- <setting id="dateFormat" value="dd/MM/yyyy"/> -->
+		<!-- <setting id="decimalPattern" value="#0.00"/> -->
+	</settings>
+
+	<mapping name="bcpg:client">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns />
+	</mapping>
+
+	<mapping name="bcpg:supplier">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns />
+	</mapping>
+	
+	<mapping name="bcpg:linkedValue">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:lkvValue" />
+			<nodeColumnKey attribute="bcpg:parentLevel" />
+			<nodeColumnKey attribute="bcpg:depthLevel" />
+		</nodeColumnKeys>
+		<columns />
+	</mapping>
+
+</mappings>

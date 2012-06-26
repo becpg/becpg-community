@@ -252,7 +252,8 @@ public class EntityServiceImpl implements EntityService {
 					// move entity in entityfolder and rename entityfolder
 					nodeService.moveNode(entityNodeRef, entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(entityNodeRef));
 					nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-
+					nodeService.setProperty(entityFolderNodeRef, BeCPGModel.PROP_ENTITY_FOLDER_CLASS_NAME, entityType);
+					
 					// initialize permissions according to template
 					for (FileInfo folder : fileFolderService.listFolders(folderTplNodeRef)) {
 

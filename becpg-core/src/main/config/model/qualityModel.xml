@@ -305,13 +305,15 @@
 			<properties>				
 				<property name="qa:wlState">
 					<type>d:text</type>
+					<index enabled="false"/>
 					<constraints>
 						<constraint ref="qa:ncStates" />
 					</constraints>					
 				</property>
 				<property name="qa:wlComment">
 					<type>d:text</type>
-					<mandatory>true</mandatory>					
+					<mandatory>true</mandatory>
+					<index enabled="false"/>					
 				</property>															
 			</properties>			
 		</type>
@@ -322,15 +324,18 @@
 			<properties>			
 				<property name="qa:sdlQty">
 					<type>d:int</type>
-					<mandatory>true</mandatory>					
+					<mandatory>true</mandatory>	
+					<index enabled="false"/>				
 				</property>
 				<property name="qa:sdlFreq">
 					<type>d:int</type>
-					<mandatory>true</mandatory>					
+					<mandatory>true</mandatory>	
+					<index enabled="false"/>				
 				</property>
 				<property name="qa:sdlFreqUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>	
+					<index enabled="false"/>
 					<constraints>
 						<constraint ref="qa:freqUnits" />
 					</constraints>				
@@ -401,14 +406,17 @@
 			<properties>				
 				<property name="qa:slDateTime">
 					<type>d:datetime</type>
-					<mandatory>true</mandatory>					
+					<mandatory>true</mandatory>			
+					<index enabled="false"/>		
 				</property>
 				<property name="qa:slSampleId">
 					<type>d:text</type>
-					<mandatory>true</mandatory>					
+					<mandatory>true</mandatory>				
+					<index enabled="false"/>	
 				</property>
 				<property name="qa:slSampleState">
 					<type>d:text</type>
+					<index enabled="false"/>
 					<constraints>
 						<constraint ref="qa:states" />
 					</constraints>				
@@ -454,23 +462,28 @@
 			<properties>	
 				<property name="qa:clSampleId">
 					<type>d:text</type>
-					<mandatory>true</mandatory>								
+					<mandatory>true</mandatory>			
+					<index enabled="false"/>					
 				</property>
 				<property name="qa:clValue">
 					<type>d:double</type>
-					<mandatory>false</mandatory>								
+					<mandatory>false</mandatory>			
+					<index enabled="false"/>					
 				</property>		
 				<property name="qa:clTarget">
 					<type>d:double</type>
-					<mandatory>false</mandatory>								
+					<mandatory>false</mandatory>		
+					<index enabled="false"/>					
 				</property>	
 				<property name="qa:clUnit">
 					<type>d:text</type>
-					<mandatory>false</mandatory>								
+					<mandatory>false</mandatory>			
+					<index enabled="false"/>					
 				</property>
 				<property name="qa:clState">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="false"/>
 					<constraints>
 						<constraint ref="qa:states" />
 					</constraints>										
@@ -525,22 +538,26 @@
 			<properties>
 				<property name="qa:clType">
 					<type>d:text</type>
-					<mandatory>false</mandatory>	
+					<mandatory>false</mandatory>
+					<index enabled="false"/>	
 					<constraints>
 						<constraint ref="qa:controlTypes" />
 					</constraints>				
 				</property>												
 				<property name="qa:clMini">
 					<type>d:double</type>
-					<mandatory>false</mandatory>								
+					<mandatory>false</mandatory>		
+					<index enabled="false"/>						
 				</property>
 				<property name="qa:clMaxi">
 					<type>d:double</type>
-					<mandatory>false</mandatory>								
+					<mandatory>false</mandatory>						
+					<index enabled="false"/>		
 				</property>				
 				<property name="qa:clRequired">
 					<type>d:boolean</type>
-					<mandatory>false</mandatory>									
+					<mandatory>false</mandatory>			
+					<index enabled="false"/>						
 				</property>				
 			</properties>
 			<associations>								

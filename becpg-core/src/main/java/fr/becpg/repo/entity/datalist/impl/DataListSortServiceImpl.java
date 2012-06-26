@@ -295,7 +295,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		return part != null ? (String) nodeService.getProperty(part, ContentModel.PROP_NAME) : (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 	}
-
+	
 	@Override
 	public void deleteChildrens(NodeRef listContainer, NodeRef nodeRef) {
 
@@ -314,7 +314,6 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		setProperty(nodeRef, BeCPGModel.PROP_SORT, nodeService.getProperty(destNodeRef, BeCPGModel.PROP_SORT));
 		setProperty(destNodeRef, BeCPGModel.PROP_SORT, sortIndex);
-
 	}
 	
 	private void setProperty(NodeRef nodeRef, QName property, Serializable value){

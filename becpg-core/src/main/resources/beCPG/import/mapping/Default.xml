@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings>
+	<settings>
+		<!-- <setting id="dateFormat" value="dd/MM/yyyy"/> -->
+		<!-- <setting id="decimalPattern" value="#0.00"/> -->
+	</settings>
+	
+	
+	<!-- PRODUCT -->
+	<mapping name="bcpg:rawMaterial">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns>
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+            <column id="supplier" attribute="bcpg:suppliers" type="Attribute" />
+		</columns>
+	</mapping>
+	
+	
+	<!-- Allergens -->
+	
+	<mapping name="bcpg:allergen">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:allergenCode" />
+		</nodeColumnKeys>
+		<columns>
+			
+		</columns>
+	</mapping>
+
+	<mapping name="bcpg:client">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+	
+		<column id="img1Path" attribute="cm:content" path="Images/logo.jpg"
+					type="File" />
+		<column id="img1Title" attribute="cm:title" path="Images/logo.jpg"
+					type="File" />	
+		</columns>
+	</mapping>
+
+	<mapping name="bcpg:supplier">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+	
+		<column id="img1Path" attribute="cm:content" path="Images/logo.jpg"
+					type="File" />
+		<column id="img1Title" attribute="cm:title" path="Images/logo.jpg"
+					type="File" />	
+		</columns>
+	</mapping>
+	
+	<mapping name="bcpg:linkedValue">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:lkvValue" />
+			<nodeColumnKey attribute="bcpg:parentLevel" />
+			<nodeColumnKey attribute="bcpg:depthLevel" />
+		</nodeColumnKeys>
+		<columns />
+	</mapping>
+
+</mappings>

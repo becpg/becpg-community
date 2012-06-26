@@ -155,42 +155,32 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
 			boolean hasFailed = false;
 			
             try
-            {   
-//            	if(nodeService.exists(nodeRef)){
-//            		
-//            		List<String> errors = importService.importText(nodeRef, true, true);
-//            		
-//            		if(errors != null && !errors.isEmpty()){
-//            			
-//            			log += LOG_SEPARATOR;
-//            			log += String.format("%d errors occured. Here are the 20 first errors. There are more details in the log of the application 'Alfresco.log'.", errors.size());
-//     	                
-//            			// we store the 20 first errors
-//            			for(int z_idx=0 ; z_idx < errors.size() && z_idx < LOG_MAX_ERRORS ; z_idx++){
-//            				String error = errors.get(z_idx);
-//            				log += LOG_SEPARATOR;
-//            				log += error;
-//            			}
-//                     
-//            			hasFailed = true;
-//            		} 
-//            	}
-
-            	RetryingTransactionCallback<List<String>> actionCallback = new RetryingTransactionCallback<List<String>>()
-                {
-                    @Override
-    				public List<String> execute() throws Exception
-                    {                
-                    	if(nodeService.exists(nodeRef)){
-                    		
-                    		return importService.importText(nodeRef, true, true);
-                    	}
-                            			        
-                        return null;
-                    }
-                };
-                List<String> errors = transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
+            {
+//            	RetryingTransactionCallback<List<String>> actionCallback = new RetryingTransactionCallback<List<String>>()
+//                {
+//                    @Override
+//    				public List<String> execute() throws Exception
+//                    {                
+//                    	if(nodeService.exists(nodeRef)){
+//                    		
+//                    		return importService.importText(nodeRef, true, true); // need a new transaction, otherwise impossible to do another action like create a content
+//                    	}
+//                            			        
+//                        return null;
+//                    }
+//                };
+//                List<String> errors = transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
                 
+            	/*
+            	 * need a new transaction, otherwise impossible to do another action like create a content
+            	 * do it in several transaction to avoid timeout connection
+            	 */
+            	List<String> errors = null;
+            	if(nodeService.exists(nodeRef)){
+            		
+            		errors = importService.importText(nodeRef, true, true);
+            	}
+                  
                 if(errors != null && !errors.isEmpty()){
  	                
                  	for(String error : errors){
