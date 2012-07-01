@@ -44,7 +44,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.importer.ImportContext;
@@ -53,7 +52,6 @@ import fr.becpg.repo.importer.ImportType;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
 
-// TODO: Auto-generated Javadoc
 /**
  * Import service.
  *

@@ -37,6 +37,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.charact.AllergenType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -84,7 +85,6 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 
 	protected NodeRef HIERARCHY2_QUICHE_REF;
 
-	private static String VALUE_ALLERGEN_TYPE = "Allergène majeur";
 	private static String VALUE_COST_CURRENCY = "€";
 
 	/** The logger. */
@@ -274,7 +274,7 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		//allergenTypes
 		NodeRef allergenTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_ALLERGEN_TYPES);
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, VALUE_ALLERGEN_TYPE);
+		properties.put(ContentModel.PROP_NAME, AllergenType.Major.toString());
 		nodeService.createNode(allergenTypesFolder, ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		
@@ -296,7 +296,7 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 			for (int i = 0; i < 10; i++) {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, "Allergen " + i);
-				properties.put(BeCPGModel.PROP_ALLERGEN_TYPE, VALUE_ALLERGEN_TYPE);
+				properties.put(BeCPGModel.PROP_ALLERGEN_TYPE, AllergenType.Major.toString());
 				ChildAssociationRef childAssocRef = nodeService.createNode(allergenFolder, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties);
 				allergens.add(childAssocRef.getChildRef());

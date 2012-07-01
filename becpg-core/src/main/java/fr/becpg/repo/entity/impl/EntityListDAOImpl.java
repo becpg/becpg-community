@@ -12,6 +12,7 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -24,6 +25,9 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.LuceneHelper;
+import fr.becpg.repo.helper.LuceneHelper.Operator;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
@@ -34,7 +38,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 public class EntityListDAOImpl implements EntityListDAO {
 
-	private static final String QUERY_PARENT = " +PARENT:\"%s\" +TYPE:\"%s\" +@bcpg\\:isManualListItem:true";
+	private static final String QUERY_LIST_ITEM = " +PARENT:\"%s\" +TYPE:\"%s\"";
 
 	private static Log logger = LogFactory.getLog(EntityListDAOImpl.class);
 
@@ -49,6 +53,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 	private CopyService copyService;
 
 	private BeCPGSearchService beCPGSearchService;
+	
+	private AssociationService associationService;
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -72,6 +78,10 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
+	}
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	@Override
@@ -198,7 +208,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 	}
 
 	@Override
-	public NodeRef getLink(NodeRef listContainerNodeRef, QName assocQName, NodeRef nodeRef) {
+	public NodeRef getListItem(NodeRef listContainerNodeRef, QName assocQName, NodeRef nodeRef) {
 
 		if (listContainerNodeRef != null && assocQName != null && nodeRef != null) {
 
@@ -265,15 +275,39 @@ public class EntityListDAOImpl implements EntityListDAO {
 	}
 
 	/**
-	 * Get the manual links
+	 * Get the manual ListItems
 	 * 
 	 * @param listNodeRef
 	 * @return
 	 */
 	@Override
-	public List<NodeRef> getManualLinks(NodeRef listNodeRef, QName listQName) {
+	public List<NodeRef> getManualListItems(NodeRef listNodeRef, QName listQName) {
 
-		return beCPGSearchService.unProtLuceneSearch(String.format(QUERY_PARENT, listNodeRef, listQName));
+		String query = String.format(QUERY_LIST_ITEM, listNodeRef, listQName);
+		query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_IS_MANUAL_LISTITEM, Boolean.TRUE.toString(), Operator.AND);
+			
+		return beCPGSearchService.unProtLuceneSearch(query);
+	}
+
+	@Override
+	public NodeRef createListItem(NodeRef listNodeRef, QName listType, Map<QName, Serializable> properties,
+			Map<QName, List<NodeRef>> associations) {
+		
+		// create
+		NodeRef nodeRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,
+				ContentModel.ASSOC_CHILDREN, listType, properties).getChildRef();
+		
+		for(Map.Entry<QName, List<NodeRef>> kv : associations.entrySet()){
+			associationService.update(nodeRef, kv.getKey(), kv.getValue());
+		}
+		
+		return nodeRef;
+	}
+
+	@Override
+	public List<NodeRef> getListItems(NodeRef listNodeRef, QName listQName) {
+				
+		return beCPGSearchService.unProtLuceneSearch(String.format(QUERY_LIST_ITEM, listNodeRef, listQName), LuceneHelper.getSort(BeCPGModel.PROP_SORT), RepoConsts.MAX_RESULTS_NO_LIMIT);
 	}
 
 }

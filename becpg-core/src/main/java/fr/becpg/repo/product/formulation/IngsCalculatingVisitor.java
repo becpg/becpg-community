@@ -603,7 +603,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			
 			if(listNodeRef != null){
 				
-				List<NodeRef> manualLinks = entityListDAO.getManualLinks(listNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
+				List<NodeRef> manualLinks = entityListDAO.getManualListItems(listNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
 				
 				for(NodeRef manualLink : manualLinks){
 					
@@ -632,7 +632,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			
 			if(listNodeRef != null){
 				
-				List<NodeRef> manualLinks = entityListDAO.getManualLinks(listNodeRef, BeCPGModel.TYPE_INGLIST);
+				List<NodeRef> manualLinks = entityListDAO.getManualListItems(listNodeRef, BeCPGModel.TYPE_INGLIST);
 				
 				if(!manualLinks.isEmpty()){
 					ingMap.clear();

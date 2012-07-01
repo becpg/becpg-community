@@ -1,6 +1,8 @@
 package fr.becpg.repo.entity;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -76,7 +78,21 @@ public interface EntityListDAO {
 	 *            the node ref
 	 * @return the link
 	 */
-	public NodeRef getLink(NodeRef listNodeRef, QName propertyQName, NodeRef nodeRef);
+	public NodeRef getListItem(NodeRef listNodeRef, QName propertyQName, NodeRef nodeRef);
+	
+	/**
+	 * Create the link node of a data list that has the nodeRef stored in the
+	 * propertyQName.
+	 * 
+	 * @param listNodeRef
+	 *            the list node ref
+	 * @param propertyQName
+	 *            the property q name
+	 * @param nodeRef
+	 *            the node ref
+	 * @return the link
+	 */
+	public NodeRef createListItem(NodeRef listNodeRef, QName listType, Map<QName, Serializable> properties, Map<QName, List<NodeRef>>associations);
 
 	/**
 	 * 
@@ -111,6 +127,15 @@ public interface EntityListDAO {
 	 * @param listQName
 	 * @return
 	 */
-	public List<NodeRef> getManualLinks(NodeRef listNodeRef, QName listQName);
+	public List<NodeRef> getManualListItems(NodeRef listNodeRef, QName listQName);
+	
+	/**
+	 * Get the manual links
+	 * 
+	 * @param listContainerNodeRef
+	 * @param listQName
+	 * @return
+	 */
+	public List<NodeRef> getListItems(NodeRef listNodeRef, QName listQName);
 
 }

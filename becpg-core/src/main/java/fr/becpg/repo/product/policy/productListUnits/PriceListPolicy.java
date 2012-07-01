@@ -116,14 +116,16 @@ public class PriceListPolicy implements NodeServicePolicies.OnUpdatePropertiesPo
 		}
 		
 		if(costListNodeRef != null){
-			NodeRef linkNodeRef = entityListDAO.getLink(costListNodeRef, BeCPGModel.ASSOC_COSTLIST_COST, costNodeRef);
+			NodeRef linkNodeRef = entityListDAO.getListItem(costListNodeRef, BeCPGModel.ASSOC_COSTLIST_COST, costNodeRef);
 			
-			nodeService.setProperty(linkNodeRef, BeCPGModel.PROP_COSTLIST_VALUE, value);
+			if(linkNodeRef != null){
+				nodeService.setProperty(linkNodeRef, BeCPGModel.PROP_COSTLIST_VALUE, value);
+			}			
 		}
 		else{
 			
 			costListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
-			productDAO.createCostListItem(costListNodeRef, new CostListDataItem(null, value, null, null, costNodeRef, false), null);
+			productDAO.createCostListItem(costListNodeRef, new CostListDataItem(null, value, null, null, costNodeRef, false), null, null);
 		}
 	}
 

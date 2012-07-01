@@ -14,6 +14,7 @@ import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -171,13 +172,15 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			value = TranslateHelper.getTranslatedBoolean(b, propertyFormats.isUseDefaultLocale());
 
 		} else if (dataType.equals(DataTypeDefinition.TEXT.toString())) {
-
+			
 			if (propertyDef.getName().equals(BeCPGModel.PROP_PRODUCT_STATE)) {
 
 				value = TranslateHelper.getTranslatedProductState(ProductData.getSystemState((String) v));
-			}else if (propertyDef.getName().equals(BeCPGModel.PROP_COMPOLIST_DECL_TYPE)) {
-
-				value = TranslateHelper.getTranslatedDeclarationType(CompoListDataItem.parseDeclarationType((String) v));
+			}
+			//translate constraints (not cm:name)
+			else if (!propertyDef.getName().isMatch(ContentModel.PROP_NAME) && propertyDef.getConstraints().size()>0) {
+				
+				value = TranslateHelper.getConstraint(propertyDef.getName(),(String) v, propertyFormats.isUseDefaultLocale());
 			}
 			else if (propertyDef.isMultiValued()) {
 

@@ -4,22 +4,21 @@
 		<!-- <setting id="dateFormat" value="dd/MM/yyyy"/> -->
 		<!-- <setting id="decimalPattern" value="#0.00"/> -->
 	</settings>
-	
-	
-	<!-- PRODUCT -->
-	<mapping name="bcpg:rawMaterial">
+
+	<mapping name="bcpg:finishedProduct">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
 		<columns>
-			<column id="code" attribute="bcpg:code" type="Attribute" />
-            <column id="supplier" attribute="bcpg:suppliers" type="Attribute" />
-		</columns>
-	</mapping>
 	
+			<column id="img1Path" attribute="cm:content" path="Images/product.jpg"
+						type="File" />
+			<column id="img1Name" attribute="cm:name" path="Images/product.jpg"
+						type="File" />	
+		</columns>
+	</mapping>	
 	
 	<!-- Allergens -->
-	
 	<mapping name="bcpg:allergen">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:allergenCode" />
@@ -59,6 +58,7 @@
 	
 	<mapping name="bcpg:linkedValue">
 		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:contains" />
 			<nodeColumnKey attribute="bcpg:lkvValue" />
 			<nodeColumnKey attribute="bcpg:parentLevel" />
 			<nodeColumnKey attribute="bcpg:depthLevel" />

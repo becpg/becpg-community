@@ -185,7 +185,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				String allergenType = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_ALLERGEN_TYPE);
 
 				Element AllergenElt = allergenListElt.addElement(TAG_ALLERGEN);
-				AllergenElt.addAttribute(BeCPGModel.PROP_ALLERGENLIST_ALLERGEN.getLocalName(), allergen);
+				AllergenElt.addAttribute(BeCPGModel.ASSOC_ALLERGENLIST_ALLERGEN.getLocalName(), allergen);
 				AllergenElt.addAttribute(BeCPGModel.PROP_ALLERGEN_TYPE.getLocalName(), allergenType);
 				AllergenElt.addAttribute(BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY.getLocalName(), Boolean.toString(dataItem.getVoluntary()));
 				AllergenElt.addAttribute(BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY.getLocalName(), Boolean.toString(dataItem.getInVoluntary()));

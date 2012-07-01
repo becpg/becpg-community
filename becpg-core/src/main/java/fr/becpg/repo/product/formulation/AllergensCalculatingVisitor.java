@@ -203,7 +203,7 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 
 			if (listNodeRef != null) {
 
-				List<NodeRef> manualLinks = entityListDAO.getManualLinks(listNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
+				List<NodeRef> manualLinks = entityListDAO.getManualListItems(listNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
 
 				for (NodeRef manualLink : manualLinks) {
 

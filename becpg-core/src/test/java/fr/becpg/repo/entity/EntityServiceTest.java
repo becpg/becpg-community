@@ -199,7 +199,7 @@ public class EntityServiceTest extends RepoBaseTestCase {
 				ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, allergen.getId()), BeCPGModel.TYPE_ALLERGENLIST, properties);
 				NodeRef linkNodeRef = childAssocRef.getChildRef();
-				nodeService.createAssociation(linkNodeRef, allergen, BeCPGModel.PROP_ALLERGENLIST_ALLERGEN);
+				nodeService.createAssociation(linkNodeRef, allergen, BeCPGModel.ASSOC_ALLERGENLIST_ALLERGEN);
 
 				logger.debug("listNodeRef: " + listNodeRef);
 				logger.debug("added allergen modified: " + nodeService.getProperty(linkNodeRef, ContentModel.PROP_MODIFIED));

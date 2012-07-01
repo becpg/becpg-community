@@ -38,3 +38,8 @@ TYPE;bcpg:linkedValue;
 COLUMNS;bcpg:parentLevel;bcpg:lkvValue
 VALUES;Mélange - garniture;Mélange - garniture
 VALUES;Pâtisserie;Pâtisserie
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Epicerie;Alcools, eau

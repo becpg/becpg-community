@@ -54,6 +54,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
 import fr.becpg.repo.helper.LuceneHelper;
+import fr.becpg.repo.helper.LuceneHelper.Operator;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
@@ -62,7 +63,6 @@ import fr.becpg.repo.importer.ImporterException;
 import fr.becpg.repo.listvalue.EntityListValuePlugin;
 import fr.becpg.repo.search.BeCPGSearchService;
 
-// TODO: Auto-generated Javadoc
 /**
  * Abstract class used to import a node with its attributes and files.
  *
@@ -824,8 +824,13 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		if(classMapping != null && classMapping.getNodeColumnKeys().size() > 0){					
 			
 			for(QName attribute : classMapping.getNodeColumnKeys()){
-								
-				if(properties.get(attribute) != null){
+				
+				if(ContentModel.ASSOC_CONTAINS.isMatch(attribute)){
+					//query by path
+					queryPath += LuceneHelper.getCondPath(importContext.getPath(), Operator.AND);
+					doQuery = true;
+				}
+				else if(properties.get(attribute) != null){
 					// +@cm\\:localName:%s					
 					queryPath += LuceneHelper.getCondEqualValue(attribute, properties.get(attribute) != null ? properties.get(attribute).toString() : null, LuceneHelper.Operator.AND);
 					doQuery = true;

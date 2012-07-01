@@ -254,7 +254,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		
 		//look for pivot
 		if(entityList.getLocalName().equals(BeCPGModel.TYPE_ALLERGENLIST.getLocalName())){
-			pivotProperty = BeCPGModel.PROP_ALLERGENLIST_ALLERGEN;
+			pivotProperty = BeCPGModel.ASSOC_ALLERGENLIST_ALLERGEN;
 		}
 		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_COMPOLIST.getLocalName())){
 			isCompositeDL = true;

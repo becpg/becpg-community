@@ -21,6 +21,7 @@
 	
 	<mapping name="bcpg:linkedValue">
 		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:contains" />
 			<nodeColumnKey attribute="bcpg:lkvValue" />
 			<nodeColumnKey attribute="bcpg:parentLevel" />
 			<nodeColumnKey attribute="bcpg:depthLevel" />

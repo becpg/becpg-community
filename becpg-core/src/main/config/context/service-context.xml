@@ -248,12 +248,13 @@
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="copyService" ref="copyService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="associationService" ref="associationService" />
 	</bean>
 	<bean id="entityTplService" class="fr.becpg.repo.entity.impl.EntityTplServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="dictionaryService" ref="dictionaryService" />		
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />		
 	</bean>
 	<bean id="entityService" class="fr.becpg.repo.entity.impl.EntityServiceImpl">
 		<property name="nodeService" ref="nodeService" />

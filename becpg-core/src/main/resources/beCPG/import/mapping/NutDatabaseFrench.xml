@@ -52,6 +52,7 @@
 			<column id="Energie kJ" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Energie kJ" type="Characteristic" />
 			<column id="Protéines" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Protéines" type="Characteristic" />
 			<column id="Lipides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Lipides" type="Characteristic" />
+			<column id="Glucides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Glucides" type="Characteristic" />
 			<column id="Fibres alimentaires" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Fibres alimentaires" type="Characteristic" />
 			<column id="Sucres" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Sucres" type="Characteristic" />
 			<column id="Calcium" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Calcium" type="Characteristic" />

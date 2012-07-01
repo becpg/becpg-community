@@ -1830,7 +1830,12 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:allergenType" />
+					<field id="bcpg:allergenType">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Major|data.allergentype.major,Minor|data.allergentype.minor
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:allergenCode" />
 					<field id="bcpg:allergenSubset">
 						<control
@@ -1861,7 +1866,12 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:allergenType" />
+					<field id="bcpg:allergenType">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Major|data.allergentype.major,Minor|data.allergentype.minor
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:allergenCode" />
 					<field id="bcpg:allergenSubset">
 						<control
@@ -1877,6 +1887,14 @@
 					<show id="bcpg:allergenType" />
 					<show id="bcpg:allergenCode" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:allergenType">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Major|data.allergentype.major,Minor|data.allergentype.minor
+							</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -2902,7 +2920,7 @@
 					</field>
 					<field id="bcpg:compoListDeclType">
 						<control template="/fr/becpg/components/form/controls/selectone.ftl">
-							<control-param name="options">Declare|data.declarationType.declare,Detail|data.declarationType.detail,Group|data.declarationType.group,Omit|data.declarationType.omit,DoNotDeclare|data.declarationType.donotdeclare
+							<control-param name="options">Declare|data.declarationtype.declare,Detail|data.declarationtype.detail,Group|data.declarationtype.group,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare
 							</control-param>
 						</control>
 					</field>
@@ -2911,7 +2929,7 @@
 							template="/fr/becpg/components/form/controls/autocomplete.ftl">
  							<control-param name="ds">becpg/autocomplete/compoListParentLevel
  							</control-param>	
-							<control-param name="saveTitle">false</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
  					</field> 
 				</appearance>
@@ -2992,7 +3010,7 @@
 					</field>
 					<field id="bcpg:compoListDeclType">
 						<control template="/fr/becpg/components/form/controls/selectone.ftl">
-							<control-param name="options">Declare|data.declarationType.declare,Detail|data.declarationType.detail,Group|data.declarationType.group,Omit|data.declarationType.omit,DoNotDeclare|data.declarationType.donotdeclare
+							<control-param name="options">Declare|data.declarationtype.declare,Detail|data.declarationtype.detail,Group|data.declarationtype.group,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare
 							</control-param>
 						</control>
 					</field>
@@ -3001,7 +3019,7 @@
 							template="/fr/becpg/components/form/controls/autocomplete.ftl">
  							<control-param name="ds">becpg/autocomplete/compoListParentLevel
  							</control-param>
-							<control-param name="saveTitle">false</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
  					</field> 
 				</appearance>

@@ -413,7 +413,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		for(CharacteristicMapping characteristicMapping : exportSearchCtx.getCharacteristicsColumns()){
     		
     		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, characteristicMapping.getDataListQName());
-    		NodeRef linkNodeRef = entityListDAO.getLink(listNodeRef, characteristicMapping.getCharactQName(), characteristicMapping.getCharactNodeRef());
+    		NodeRef linkNodeRef = entityListDAO.getListItem(listNodeRef, characteristicMapping.getCharactQName(), characteristicMapping.getCharactNodeRef());
     		
     		if(linkNodeRef != null){
     			

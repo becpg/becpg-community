@@ -418,7 +418,7 @@
 		               if (items != null && text.indexOf("workspace://") > 0) {
 			               for ( var i = 0, il = items.length; i < il; i++) {
 				               item = items[i];
-				               text = text.replace(item.nodeRef, "<div id='" + item.nodeRef
+				               text = text.replace("== '" + item.nodeRef, "== '<div id='" + item.nodeRef
 				                     + "' class='spel-editor-nodeRef' >" + item.name + "</div>");
 
 			               }

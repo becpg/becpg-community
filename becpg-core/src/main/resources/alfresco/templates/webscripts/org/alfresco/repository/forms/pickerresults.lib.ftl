@@ -38,6 +38,9 @@
 				<#elseif row.item.typeShort == "bcpg:linkedValue" >
 				"name": "${row.item.properties["bcpg:lkvValue"]!""}",
 				"title": "${row.item.properties["bcpg:lkvValue"]!""}",
+				<#elseif row.item.typeShort == "bcpg:compoList" >				
+				"name": "${row.item.assocs["bcpg:compoListProduct"][0].properties.name!""}",
+				"title": "${row.item.assocs["bcpg:compoListProduct"][0].properties.name!""}",				
 				<#else>
 				"name": "${row.item.properties.name!""}",
 				"title": "${row.item.properties.title!""}",

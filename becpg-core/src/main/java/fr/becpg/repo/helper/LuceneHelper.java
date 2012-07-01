@@ -21,6 +21,7 @@ public class LuceneHelper {
 	private static final String QUERY_COND_PROP_EQUAL_VALUE = " %s +@%s:\"%s\"";
 	private static final String QUERY_COND_PROP_CONTAINS_VALUE = " %s +@%s:%s";
 	private static final String QUERY_COND_PROP_ISNULL_VALUE = " %s ISNULL:\"%s\"";
+	private static final String QUERY_COND_PATH = " %s +PATH:\"/app:company_home/%s/*\"";
 	private static final String QUERY_COND_ID = " %s ID:\"%s\"";
 
 	/**
@@ -69,6 +70,17 @@ public class LuceneHelper {
 	public static String getCondIsNullValue(QName property, Operator operator) {
 
 		return String.format(QUERY_COND_PROP_ISNULL_VALUE, operator != null ? operator : "", Repository.escapeQName(property));
+	}
+	
+	/**
+	 * Return a +PATH condition (encode path)
+	 * @param path
+	 * @param operator
+	 * @return
+	 */
+	public static String getCondPath(String path, Operator operator){
+		
+		return String.format(QUERY_COND_PATH, operator != null ? operator : "", encodePath(path));
 	}
 
 	public enum Operator {

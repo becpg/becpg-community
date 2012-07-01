@@ -133,18 +133,12 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:allergenType"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-			<parameter name="path">
+		<constraint name="bcpg:allergenType" type="LIST">
+			<parameter name="allowedValues">
 				<list>
-					<value>/System/Lists/bcpg:entityLists/AllergenTypes</value>
+					<value>Major</value>
+					<value>Minor</value>					
 				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>cm:name</value>
 			</parameter>
 		</constraint>
 		<constraint name="bcpg:declarationTypes" type="LIST">

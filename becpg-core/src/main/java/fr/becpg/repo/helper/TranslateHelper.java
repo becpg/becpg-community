@@ -2,6 +2,8 @@ package fr.becpg.repo.helper;
 
 import java.util.Locale;
 
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -13,7 +15,7 @@ public class TranslateHelper {
 
 	private static final String PATH_MSG_PFX= "path.";
 	private static final String PRODUCT_STATE_MSG_PFX = "state.product.";
-	private static final String DECLARATION_TYPE_MSG_PFX = "declarationType.";
+	private static final String CONSTRAINT_MSG_PFX = "constraint.%s.%s";
 	
 	private static final String MESSAGE_TRUE = "data.boolean.true";
 	private static final String MESSAGE_FALSE = "data.boolean.false";
@@ -61,11 +63,23 @@ public class TranslateHelper {
 		return translation;
 	}
 	
-	public static String getTranslatedDeclarationType(DeclarationType declType) {
+	public static String getConstraint(QName propertyName, String value, boolean useDefaultLocale) {
+				
+		String translation = null;
+		String messageKey = String.format(CONSTRAINT_MSG_PFX, propertyName.getLocalName().toLowerCase(), value.toLowerCase());
 		
-		String translation = I18NUtil.getMessage(DECLARATION_TYPE_MSG_PFX + declType.toString().toLowerCase(), Locale.getDefault());
+		if(useDefaultLocale){
+			translation = I18NUtil.getMessage(messageKey, Locale.getDefault());
+		}
+		else{
+			translation = I18NUtil.getMessage(messageKey);
+		}
+				
 		if(translation == null){
-			logger.error("Failed to translate declarationType. declarationType: " + declType);
+			if(logger.isDebugEnabled()){
+				logger.debug("Failed to translate constraint. propertyName: " + propertyName + " - value: " + value);
+			}			
+			translation = value;
 		}
 		
 		return translation;

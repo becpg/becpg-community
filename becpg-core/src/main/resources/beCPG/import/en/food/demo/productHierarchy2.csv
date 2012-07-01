@@ -1,0 +1,45 @@
+MAPPING;Default;
+PATH;/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Bakery-pastry;Breads
+VALUES;Bakery-pastry;Crackers and breads unsurveyed
+VALUES;Bakery-pastry;Pastries and buns
+VALUES;Pastries and biscuits;Cakes and pastries
+VALUES;Pastries and biscuits;Sweet biscuits
+VALUES;Pastries and biscuits;Crackers appetizers
+VALUES;Breakfast cereals and cereal bars;Breakfast cereals and cereal bars
+VALUES;Mixed dishes;Mixed dishes
+VALUES;Mixed dishes;Cooked meat or poultry
+VALUES;Mixed dishes;Dishes based on fish or aquatic products
+VALUES;Mixed dishes;Dishes of vegetables or legumes
+VALUES;Mixed dishes;Cooked cereal or pasta
+VALUES;Mixed dishes;Cheese dishes
+VALUES;Mixed dishes;Pizzas, pancakes and pies
+VALUES;Sandwiches;Sandwiches
+VALUES;Japanese products;Lemur
+VALUES;Japanese products;Skewer
+VALUES;Japanese products;Sushi
+VALUES;Japanese products;Sashimi
+VALUES;Menus - kits;Sushi
+VALUES;Quiches;Individual quiches
+VALUES;Quiches;Family quiches
+;;
+;;
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Mixture - packing;Mixture - packing
+VALUES;Pastry;Pastry
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Mixture - packing;Mixture - packing
+VALUES;Pastry;Pastry
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Grocery;Alcohols, water

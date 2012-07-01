@@ -527,7 +527,7 @@ public class CostsCalculatingVisitor implements ProductVisitor {
 			
 			if(listNodeRef != null){
 				
-				List<NodeRef> manualLinks = entityListDAO.getManualLinks(listNodeRef, BeCPGModel.TYPE_COSTLIST);				
+				List<NodeRef> manualLinks = entityListDAO.getManualListItems(listNodeRef, BeCPGModel.TYPE_COSTLIST);				
 				
 				for(NodeRef manualLink : manualLinks){
 					

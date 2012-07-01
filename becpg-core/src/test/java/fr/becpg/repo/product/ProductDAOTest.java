@@ -176,7 +176,7 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
    /**
     * Test get link.
     */
-   public void testGetLink(){
+   public void testGetListItem(){
 	   
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			@Override
@@ -207,7 +207,7 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 				
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
 				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
-				NodeRef nodeRef = entityListDAO.getLink(listNodeRef, BeCPGModel.ASSOC_COSTLIST_COST, costNodeRef);
+				NodeRef nodeRef = entityListDAO.getListItem(listNodeRef, BeCPGModel.ASSOC_COSTLIST_COST, costNodeRef);
 				
 				assertEquals("Cost list data item should be the same", costListDataItemNodeRef, nodeRef);
 				

@@ -124,7 +124,7 @@ public interface BeCPGModel {
 			BECPG_URI, "allergenListVoluntary");
 	
 	/** The Constant PROP_ALLERGENLIST_ALLERGEN. */
-	static final QName PROP_ALLERGENLIST_ALLERGEN = QName.createQName(
+	static final QName ASSOC_ALLERGENLIST_ALLERGEN = QName.createQName(
 			BECPG_URI, "allergenListAllergen");
 	
 	/** The Constant PROP_ALLERGENLIST_INVOLUNTARY. */

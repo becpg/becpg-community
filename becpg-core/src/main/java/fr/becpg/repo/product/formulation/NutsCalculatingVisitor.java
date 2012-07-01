@@ -317,7 +317,7 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 			
 			if(listNodeRef != null){
 				
-				List<NodeRef> manualLinks = entityListDAO.getManualLinks(listNodeRef, BeCPGModel.TYPE_NUTLIST);
+				List<NodeRef> manualLinks = entityListDAO.getManualListItems(listNodeRef, BeCPGModel.TYPE_NUTLIST);
 				
 				for(NodeRef manualLink : manualLinks){
 					

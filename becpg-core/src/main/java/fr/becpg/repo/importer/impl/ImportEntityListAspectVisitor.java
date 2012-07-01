@@ -115,7 +115,7 @@ public class ImportEntityListAspectVisitor extends AbstractImportVisitor impleme
 							linkNodeRef = cacheLinks.get(linkKey);
 						}
 						else{
-							linkNodeRef = entityListDAO.getLink(listNodeRef, charactMapping.getCharactQName(), charactMapping.getCharactNodeRef());
+							linkNodeRef = entityListDAO.getListItem(listNodeRef, charactMapping.getCharactQName(), charactMapping.getCharactNodeRef());
 							cacheLinks.put(linkKey, linkNodeRef);
 						}						
 						
