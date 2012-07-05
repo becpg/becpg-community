@@ -8,6 +8,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.template.TemplateNode;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -45,13 +46,12 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 	private NodeService nodeService;
 	private TemplateService templateService;
 	private JavaMailSender mailService;
-	private ServiceRegistry serviceRegistry;
-	
+	private ServiceRegistry serviceRegistry;	
 	private SearchService searchService;
+	private TenantAdminService tenantAdminService;
 	
-	private NodeRef modelMailNodeRef;
-	
-	private NodeRef workflowModelMailNodeRef;
+	private Map<String, NodeRef> modelMailNodeRefs = new HashMap<String, NodeRef>();
+	private Map<String, NodeRef> workflowModelMailNodeRefs = new HashMap<String, NodeRef>();
 	
 	private String mailFrom;
 
@@ -70,16 +70,17 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
+	
+	public void setSearchService(SearchService searchService) {
+		this.searchService = searchService;
+	}
+	
+	public void setTenantAdminService(TenantAdminService tenantAdminService) {
+		this.tenantAdminService = tenantAdminService;
+	}
 
 	public void setMailFrom(String mailFrom) {
 		this.mailFrom = mailFrom;
-	}
-	
-	
-	
-
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
 	}
 
 	@Override
@@ -139,9 +140,14 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 
 	@Override
 	public NodeRef getModelMailNodeRef() {
+		
+		String tenantDomain = tenantAdminService.getCurrentUserDomain();
+        NodeRef modelMailNodeRef = modelMailNodeRefs.get(tenantDomain);
+        
 		if(modelMailNodeRef==null){
 			ResultSet  resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_LUCENE, EMAIL_MODEL_PATH_QUERY);
 		     modelMailNodeRef =  resultSet.getNodeRef(0);
+		     modelMailNodeRefs.put(tenantDomain, modelMailNodeRef);
 		}
 		
 		return modelMailNodeRef;
@@ -150,6 +156,9 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 	@Override
 	public NodeRef getWorkflowModelMailNodeRef() {
 		
+		String tenantDomain = tenantAdminService.getCurrentUserDomain();
+        NodeRef workflowModelMailNodeRef = workflowModelMailNodeRefs.get(tenantDomain);
+        
 		if(workflowModelMailNodeRef==null){
 			ResultSet  resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_LUCENE, EMAIL_WORKFLOW_MODEL_PATH_QUERY);
 			
@@ -164,6 +173,8 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 		    	workflowModelMailNodeRef = nodeService.createNode(getModelMailNodeRef(), ContentModel.ASSOC_CONTAINS, 
 											QName.createQName(NamespaceService.APP_MODEL_1_0_URI, PATH_WORKFLOW), 
 											ContentModel.TYPE_FOLDER, properties).getChildRef();
+		    	
+		    	workflowModelMailNodeRefs.put(tenantDomain, workflowModelMailNodeRef);
 			}
 			
 		}

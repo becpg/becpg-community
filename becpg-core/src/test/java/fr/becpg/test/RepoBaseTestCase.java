@@ -172,15 +172,7 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 				Assert.assertEquals(3,entitySystemService.getSystemEntities().size());
 				
 				initConstraints();
-						
-				return null;
-
-			}
-		}, false, true);
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-									
+								
 				dictionaryDAO.reset();
 				
 				initCharacteristics();

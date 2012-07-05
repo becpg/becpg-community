@@ -12,6 +12,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -58,9 +59,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private SearchService searchService;
 
 	/** The entitys history node ref. */
-	private NodeRef entitiesHistoryNodeRef;
+	private Map<String, NodeRef> entitiesHistoryNodeRefs = new HashMap<String, NodeRef>();
 
 	private BehaviourFilter policyBehaviourFilter;
+	
+	private TenantAdminService tenantAdminService;
 
 	/**
 	 * Sets the node service.
@@ -94,6 +97,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
+	public void setTenantAdminService(TenantAdminService tenantAdminService) {
+		this.tenantAdminService = tenantAdminService;
 	}
 
 	@Override
@@ -255,6 +262,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 */
 	@Override
 	public NodeRef getEntitysHistoryFolder() {
+		
+		String tenantDomain = tenantAdminService.getCurrentUserDomain();
+        NodeRef entitiesHistoryNodeRef = entitiesHistoryNodeRefs.get(tenantDomain);
+        
 		if (entitiesHistoryNodeRef == null) {
 
 			ResultSet resultSet = null;
@@ -264,6 +275,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						ENTITIES_HISTORY_XPATH);
 				if (resultSet.length() > 0) {
 					entitiesHistoryNodeRef = resultSet.getNodeRef(0);
+					entitiesHistoryNodeRefs.put(tenantDomain, entitiesHistoryNodeRef);
 				}
 			} catch (Exception e) {
 				logger.error("Failed to get entitysHistory", e);
@@ -281,24 +293,26 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 * (create it if it doesn't exist).
 	 */
 	private void createEntitysHistoryFolder() {
-		if (entitiesHistoryNodeRef == null) {
+		
+		String tenantDomain = tenantAdminService.getCurrentUserDomain();
+		
+		if (!entitiesHistoryNodeRefs.containsKey(tenantDomain)) {
 
 			final NodeRef storeNodeRef = nodeService.getRootNode(RepoConsts.SPACES_STORE);
 
-			AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Object>() {
+			NodeRef entitiesHistoryNodeRef = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
 				@Override
-				public Boolean doWork() throws Exception {
+				public NodeRef doWork() throws Exception {
 					// create folder
 					logger.debug("create folder 'EntitysHistory'");
 					HashMap<QName, Serializable> props = new HashMap<QName, Serializable>();
 					props.put(ContentModel.PROP_NAME, ENTITIES_HISTORY_NAME);
-					entitiesHistoryNodeRef = nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN,
+					return nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN,
 							QNAME_ENTITIES_HISTORY, ContentModel.TYPE_FOLDER, props).getChildRef();
-
-					return null;
-
 				}
 			}, AuthenticationUtil.getSystemUserName());
+			
+			entitiesHistoryNodeRefs.put(tenantDomain, entitiesHistoryNodeRef);
 		}
 	}
 

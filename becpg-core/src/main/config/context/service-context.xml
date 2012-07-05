@@ -191,6 +191,7 @@
     	<property name="serviceRegistry" ref="ServiceRegistry"/>
     	<property name="mailFrom" value="${mail.from.default}" />
     	<property name="searchService" ref="searchService"/>
+    	<property name="tenantAdminService" ref="tenantAdminService"/>
 	</bean>
 	
 	<!-- EntityVersion -->
@@ -199,6 +200,7 @@
 		<property name="copyService" ref="copyService" />	
 	   <property name="searchService" ref="searchService" />
 	   <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+	   <property name="tenantAdminService" ref="tenantAdminService"/>
 	</bean>
 	
 	<!-- Migrator -->
