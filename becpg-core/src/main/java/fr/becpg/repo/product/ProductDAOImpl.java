@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.SystemProductType;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -1301,9 +1302,10 @@ public class ProductDAOImpl implements ProductDAO {
 				}
 
 				// update or create nodes	
-				int sortIndex = 1; //sort by formulation
+				int sortIndex = RepoConsts.SORT_DEFAULT_STEP; //sort by formulation
 				for (CostListDataItem costListDataItem : costList) {
 					createCostListItem(costListNodeRef, costListDataItem, filesToUpdate, sortIndex);
+					sortIndex = sortIndex + RepoConsts.SORT_DEFAULT_STEP;
 				}
 			}
 		}
@@ -1317,8 +1319,7 @@ public class ProductDAOImpl implements ProductDAO {
 		properties.put(BeCPGModel.PROP_COSTLIST_MAXI, costListDataItem.getMaxi());
 		properties.put(BeCPGModel.PROP_IS_MANUAL_LISTITEM, costListDataItem.getIsManual());
 		
-		properties.put(BeCPGModel.PROP_SORT, sortIndex);
-		sortIndex++;
+		properties.put(BeCPGModel.PROP_SORT, sortIndex);		
 
 		if (filesToUpdate != null && filesToUpdate.containsKey(costNodeRef)) {
 			// update
@@ -1384,7 +1385,7 @@ public class ProductDAOImpl implements ProductDAO {
 				}
 
 				// update or create nodes	
-				int sortIndex = 1; //sort by formulation
+				int sortIndex = RepoConsts.SORT_DEFAULT_STEP; //sort by formulation
 				for (CostDetailsListDataItem costDetailsListDataItem : costDetailsList) {
 					NodeRef costNodeRef = costDetailsListDataItem.getCost();
 					NodeRef sourceNodeRef = costDetailsListDataItem.getSource();
@@ -1396,7 +1397,7 @@ public class ProductDAOImpl implements ProductDAO {
 					properties.put(BeCPGModel.PROP_COSTDETAILSLIST_PERC, costDetailsListDataItem.getPercentage());
 					
 					properties.put(BeCPGModel.PROP_SORT, sortIndex);
-					sortIndex++;				
+					sortIndex = sortIndex + RepoConsts.SORT_DEFAULT_STEP;				
 
 					if (filesToUpdate.containsKey(key)) {
 						// update
@@ -1531,7 +1532,7 @@ public class ProductDAOImpl implements ProductDAO {
 				}
 
 				// update or create nodes			
-				int sortIndex = 1; //sort by formulation
+				int sortIndex = RepoConsts.SORT_DEFAULT_STEP; //sort by formulation
 				for (IngListDataItem ingListDataItem : ingList) {
 					NodeRef linkNodeRef = ingListDataItem.getIng();
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -1541,7 +1542,7 @@ public class ProductDAOImpl implements ProductDAO {
 					properties.put(BeCPGModel.PROP_IS_MANUAL_LISTITEM, ingListDataItem.getIsManual());
 					
 					properties.put(BeCPGModel.PROP_SORT, sortIndex);
-					sortIndex++;
+					sortIndex = sortIndex + RepoConsts.SORT_DEFAULT_STEP;
 
 					// Ing
 					if (filesToUpdate.containsKey(linkNodeRef)) {
@@ -1616,7 +1617,7 @@ public class ProductDAOImpl implements ProductDAO {
 				}
 
 				// update or create nodes		
-				int sortIndex = 1; //sort by formulation
+				int sortIndex = RepoConsts.SORT_DEFAULT_STEP; //sort by formulation
 				for (NutListDataItem nutListDataItem : nutList) {
 					NodeRef nutNodeRef = nutListDataItem.getNut();
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -1628,7 +1629,7 @@ public class ProductDAOImpl implements ProductDAO {
 					properties.put(BeCPGModel.PROP_IS_MANUAL_LISTITEM, nutListDataItem.getIsManual());
 					
 					properties.put(BeCPGModel.PROP_SORT, sortIndex);
-					sortIndex++;
+					sortIndex = sortIndex + RepoConsts.SORT_DEFAULT_STEP;
 					
 					if (filesToUpdate.containsKey(nutNodeRef)) {
 						// update

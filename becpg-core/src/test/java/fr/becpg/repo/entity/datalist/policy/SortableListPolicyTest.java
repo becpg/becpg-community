@@ -117,6 +117,7 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 		    	// load SF and test it
 				sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);				
 				
+				printSort(sfData.getCostList());
 		    	
 		    	assertEquals("Check cost order", 100, nodeService.getProperty(sfData.getCostList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
 				assertEquals("Check cost order", 200, nodeService.getProperty(sfData.getCostList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
@@ -440,4 +441,14 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 //        // Done
 //        return result;
 //    }
+	
+	public void printSort(List<CostListDataItem> costListDataItem) {
+
+		for (CostListDataItem c : costListDataItem) {
+
+			logger.info("level : " + (Integer) nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL)
+					+ " - Cost " + (String) nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME)
+					+ " - sorted: " + (Integer) nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_SORT));
+		}
+	}
 }

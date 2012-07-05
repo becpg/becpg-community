@@ -35,6 +35,8 @@ public class DataListSortServiceImpl implements DataListSortService {
 	private static final String QUERY_LIST_ITEMS_BY_SORT = "+PARENT:\"%s\" AND +@bcpg\\:sort:[%s TO MAX]";
 
 	private static int DEFAULT_LEVEL = 1;
+	
+	private static int MAX_LEVEL = 256;
 
 	private NodeService nodeService;
 
@@ -69,10 +71,10 @@ public class DataListSortServiceImpl implements DataListSortService {
 				logger.debug("computeDepthAndSort for :" + tryGetName(nodeRef));
 			}
 
-			insertAfter(listContainer, siblingNode, nodeRef);
+			insertAfter(listContainer, siblingNode, nodeRef, null);
 		} else {
 
-			insertAfter(listContainer, getLastChild(null, listContainer, nodeRef, false), nodeRef);
+			insertAfter(listContainer, getLastChild(null, listContainer, nodeRef, false), nodeRef, null);
 		}
 
 	}
@@ -86,15 +88,19 @@ public class DataListSortServiceImpl implements DataListSortService {
 		setProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL, parentLevel);
 
 		NodeRef listContainer = nodeService.getPrimaryParent(nodeRef).getParentRef();
-		insertAfter(listContainer, destNodeRef, nodeRef);
+		insertAfter(listContainer, destNodeRef, nodeRef, null);
 	}
 
-	private void insertAfter(NodeRef listContainer, NodeRef siblingNode, NodeRef nodeRef) {
+	private void insertAfter(NodeRef listContainer, NodeRef siblingNode, NodeRef nodeRef, Integer level) {
 
-		logger.debug("### insertAfter");
+		logger.debug("### insertAfter");		
+		if(level != null && level > MAX_LEVEL){
+			logger.warn("insertAfter is over MAX_LEVEL, exit.");
+			return;
+		}
+		
 		
 		NodeRef parentLevel = null;
-		Integer level = null;
 		Integer sort = null;
 		boolean isDepthList = nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL);
 		
@@ -159,10 +165,8 @@ public class DataListSortServiceImpl implements DataListSortService {
 				logger.debug(" nextSort not available : " + nextSort + " - node: " + tryGetName(nodeRef) + " - taken by: " + tryGetName(sortedNodeRef));
 			}
 			fixSortableList(listContainer, nodeRef);
-			insertAfter(listContainer, siblingNode, nodeRef);
-		} else {
-
-			setProperty(nodeRef, BeCPGModel.PROP_SORT, nextSort);
+			insertAfter(listContainer, siblingNode, nodeRef, level != null ? level + 1 : level);
+		} else {			
 
 			if (isDepthList) {
 
@@ -173,10 +177,13 @@ public class DataListSortServiceImpl implements DataListSortService {
 				NodeRef prevNode = nodeRef;
 				
 				for (NodeRef tmp : listItems) {
-					insertAfter(listContainer, prevNode, tmp);
+					insertAfter(listContainer, prevNode, tmp, level != null ? level + 1 : level);
 					prevNode = tmp;
 				}
 			}
+			
+			//set property after, otherwise it duplicates nodeRef in lucene index !!!
+			setProperty(nodeRef, BeCPGModel.PROP_SORT, nextSort);
 		}
 	}
 

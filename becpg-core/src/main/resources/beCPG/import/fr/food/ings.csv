@@ -656,428 +656,428 @@ VALUES;E999(i) - extrait de quillaia de type 1, agent moussant, émulsifiant;Aut
 VALUES;E999(ii) - extrait de quillaia de type 2, agent moussant, émulsifiant;Autre additif;E999(ii);E999(ii) - extrait de quillaia de type 2, agent moussant, émulsifiant;E999 (ii) - Quillaia extract type 2 foaming agent, emulsifier
 ;;;;;
 #;http://passion-cuisine.skynetblogs.be/archive/2008/01/05/les-parties-du-boeuf.html;;;;
-VALUES;Boeuf entrecôte;Ingrédient;;Boeuf entrecôte;beef steak
+VALUES;Boeuf entrecôte;Ingrédient;;Boeuf entrecôte;Beef steak
 VALUES;Boeuf faux-filet ou filet;Ingrédient;;Boeuf faux-filet ou filet;Beef sirloin or tenderloin
-VALUES;Boeuf rumsteck;Ingrédient;;Boeuf rumsteck;beef rump
-VALUES;Boeuf culotte;Ingrédient;;Boeuf culotte;beef panties
-VALUES;Boeuf gîte;Ingrédient;;Boeuf gîte;beef cottage
+VALUES;Boeuf rumsteck;Ingrédient;;Boeuf rumsteck;Beef rump
+VALUES;Boeuf culotte;Ingrédient;;Boeuf culotte;Beef panties
+VALUES;Boeuf gîte;Ingrédient;;Boeuf gîte;Beef cottage
 VALUES;Boeuf tranche grasse et aiguillette;Ingrédient;;Boeuf tranche grasse et aiguillette;Beef knuckle and lanyard
-VALUES;Boeuf paleron;Ingrédient;;Boeuf paleron;beef chuck
-VALUES;Boeuf macreuse;Ingrédient;;Boeuf macreuse;beef scoter
-VALUES;Boeuf talon;Ingrédient;;Boeuf talon;beef heel
-VALUES;Boeuf griffe;Ingrédient;;Boeuf griffe;beef claw
-VALUES;Boeuf bavette;Ingrédient;;Boeuf bavette;beef steak
-VALUES;Boeuf collier;Ingrédient;;Boeuf collier;beef necklace
-VALUES;Boeuf poitrine;Ingrédient;;Boeuf poitrine;beef chest
-VALUES;Boeuf crosse;Ingrédient;;Boeuf crosse;beef stick
+VALUES;Boeuf paleron;Ingrédient;;Boeuf paleron;Beef chuck
+VALUES;Boeuf macreuse;Ingrédient;;Boeuf macreuse;Beef scoter
+VALUES;Boeuf talon;Ingrédient;;Boeuf talon;Beef heel
+VALUES;Boeuf griffe;Ingrédient;;Boeuf griffe;Beef claw
+VALUES;Boeuf bavette;Ingrédient;;Boeuf bavette;Beef steak
+VALUES;Boeuf collier;Ingrédient;;Boeuf collier;Beef necklace
+VALUES;Boeuf poitrine;Ingrédient;;Boeuf poitrine;Beef chest
+VALUES;Boeuf crosse;Ingrédient;;Boeuf crosse;Beef stick
 VALUES;Boeuf gîte avant;Ingrédient;;Boeuf gîte avant;Beef before bed
-VALUES;Boeuf plat de côtes;Ingrédient;;Boeuf plat de côtes;Beef Short Ribs
-VALUES;Boeuf poitrine ;Ingrédient;;Boeuf poitrine ;beef chest
-VALUES;Boeuf tendron;Ingrédient;;Boeuf tendron;beef brisket
-VALUES;Boeuf flanchet;Ingrédient;;Boeuf flanchet;beef flank
+VALUES;Boeuf plat de côtes;Ingrédient;;Boeuf plat de côtes;Beef short ribs
+VALUES;Boeuf poitrine ;Ingrédient;;Boeuf poitrine ;Beef chest
+VALUES;Boeuf tendron;Ingrédient;;Boeuf tendron;Beef brisket
+VALUES;Boeuf flanchet;Ingrédient;;Boeuf flanchet;Beef flank
 VALUES;Boeuf gîte arrière;Ingrédient;;Boeuf gîte arrière;Beef back heel
-VALUES;Boeuf cervelle;Ingrédient;;Boeuf cervelle;beef brain
-VALUES;Boeuf coeur;Ingrédient;;Boeuf coeur;beef heart
-VALUES;Boeuf foie;Ingrédient;;Boeuf foie;beef liver
-VALUES;Boeuf langue;Ingrédient;;Boeuf langue;beef tongue
-VALUES;Boeuf rognons;Ingrédient;;Boeuf rognons;beef kidney
-VALUES;Boeuf tête;Ingrédient;;Boeuf tête;beef head
-VALUES;Boeuf tripes;Ingrédient;;Boeuf tripes;beef tripe
-VALUES;Mouton carré couvert;Ingrédient;;Mouton carré couvert;Sheep Rack
-VALUES;Mouton filet;Ingrédient;;Mouton filet;sheep netting
-VALUES;Mouton selle;Ingrédient;;Mouton selle;lamb saddle
+VALUES;Boeuf cervelle;Ingrédient;;Boeuf cervelle;Beef brain
+VALUES;Boeuf coeur;Ingrédient;;Boeuf coeur;Beef heart
+VALUES;Boeuf foie;Ingrédient;;Boeuf foie;Beef liver
+VALUES;Boeuf langue;Ingrédient;;Boeuf langue;Beef tongue
+VALUES;Boeuf rognons;Ingrédient;;Boeuf rognons;Beef kidney
+VALUES;Boeuf tête;Ingrédient;;Boeuf tête;Beef head
+VALUES;Boeuf tripes;Ingrédient;;Boeuf tripes;Beef tripe
+VALUES;Mouton carré couvert;Ingrédient;;Mouton carré couvert;Sheep rack
+VALUES;Mouton filet;Ingrédient;;Mouton filet;Sheep netting
+VALUES;Mouton selle;Ingrédient;;Mouton selle;Lamb saddle
 VALUES;Mouton gigot;Ingrédient;;Mouton gigot;Mouton lamb
 VALUES;Mouton carré découvert;Ingrédient;;Mouton carré découvert;Mouton square discovered
-VALUES;Mouton épaule;Ingrédient;;Mouton épaule;lamb shoulder
+VALUES;Mouton épaule;Ingrédient;;Mouton épaule;Lamb shoulder
 VALUES;Mouton collier;Ingrédient;;Mouton collier;Mouton collar
 VALUES;Mouton haut de côtelettes;Ingrédient;;Mouton haut de côtelettes;Mutton chops up
 VALUES;Mouton poitrine;Ingrédient;;Mouton poitrine;Mouton chest
-VALUES;Mouton cervelle;Ingrédient;;Mouton cervelle;sheep brains
-VALUES;Mouton coeur;Ingrédient;;Mouton coeur;sheep heart
-VALUES;Mouton foie;Ingrédient;;Mouton foie;sheep liver
+VALUES;Mouton cervelle;Ingrédient;;Mouton cervelle;Sheep brains
+VALUES;Mouton coeur;Ingrédient;;Mouton coeur;Sheep heart
+VALUES;Mouton foie;Ingrédient;;Mouton foie;Sheep liver
 VALUES;Mouton langue;Ingrédient;;Mouton langue;Mouton language
-VALUES;Mouton rognons;Ingrédient;;Mouton rognons;sheep kidney
+VALUES;Mouton rognons;Ingrédient;;Mouton rognons;Sheep kidney
 VALUES;Veau côtes secondes;Ingrédient;;Veau côtes secondes;Veal rib seconds
 VALUES;Veau côtes premières;Ingrédient;;Veau côtes premières;Veal ribs first
-VALUES;Veau longe;Ingrédient;;Veau longe;veal loin
+VALUES;Veau longe;Ingrédient;;Veau longe;Veal loin
 VALUES;Veau quasi et culotte;Ingrédient;;Veau quasi et culotte;Veal and panties almost
 VALUES;"Veau cuisse ; noix, sous-noix";Ingrédient;;"Veau cuisse ; noix, sous-noix";Veal thigh nuts, nut sub-
-VALUES;Veau côtes découvertes;Ingrédient;;Veau côtes découvertes;Veal Ribs
-VALUES;Veau épaule;Ingrédient;;Veau épaule;veal shoulder
-VALUES;Veau pied;Ingrédient;;Veau pied;calf walk
-VALUES;Veau tendron;Ingrédient;;Veau tendron;veal brisket
-VALUES;Veau flanchet;Ingrédient;;Veau flanchet;veal flank
-VALUES;Veau jarret;Ingrédient;;Veau jarret;veal shank
-VALUES;Veau poitrine;Ingrédient;;Veau poitrine;veal breast
-VALUES;Veau collier;Ingrédient;;Veau collier;veal necklace
-VALUES;Veau tête;Ingrédient;;Veau tête;veal head
-VALUES;Veau cervelle;Ingrédient;;Veau cervelle;calf brains
-VALUES;Veau coeur;Ingrédient;;Veau coeur;calf heart
-VALUES;Veau foie;Ingrédient;;Veau foie;calf liver
-VALUES;Veau langue;Ingrédient;;Veau langue;veal tongue
-VALUES;Veau rognons;Ingrédient;;Veau rognons;veal kidneys
-VALUES;Veau tête;Ingrédient;;Veau tête;veal head
-VALUES;Porc jambon;Ingrédient;;Porc jambon;pork ham
-VALUES;Porc jambonneau;Ingrédient;;Porc jambonneau;pork knuckle
-VALUES;Porc pied;Ingrédient;;Porc pied;pig foot
-VALUES;Porc pointe;Ingrédient;;Porc pointe;pork advanced
-VALUES;Porc filet;Ingrédient;;Porc filet;pork fillet
-VALUES;Porc carré;Ingrédient;;Porc carré;pork square
-VALUES;Porc échine;Ingrédient;;Porc échine;pork loin
-VALUES;Porc palette;Ingrédient;;Porc palette;range pork
-VALUES;Porc plat de côtes;Ingrédient;;Porc plat de côtes;Pork Ribs
+VALUES;Veau côtes découvertes;Ingrédient;;Veau côtes découvertes;Veal ribs
+VALUES;Veau épaule;Ingrédient;;Veau épaule;Veal shoulder
+VALUES;Veau pied;Ingrédient;;Veau pied;Calf walk
+VALUES;Veau tendron;Ingrédient;;Veau tendron;Veal brisket
+VALUES;Veau flanchet;Ingrédient;;Veau flanchet;Veal flank
+VALUES;Veau jarret;Ingrédient;;Veau jarret;Veal shank
+VALUES;Veau poitrine;Ingrédient;;Veau poitrine;Veal breast
+VALUES;Veau collier;Ingrédient;;Veau collier;Veal necklace
+VALUES;Veau tête;Ingrédient;;Veau tête;Veal head
+VALUES;Veau cervelle;Ingrédient;;Veau cervelle;Calf brains
+VALUES;Veau coeur;Ingrédient;;Veau coeur;Calf heart
+VALUES;Veau foie;Ingrédient;;Veau foie;Calf liver
+VALUES;Veau langue;Ingrédient;;Veau langue;Veal tongue
+VALUES;Veau rognons;Ingrédient;;Veau rognons;Veal kidneys
+VALUES;Veau tête;Ingrédient;;Veau tête;Veal head
+VALUES;Porc jambon;Ingrédient;;Porc jambon;Pork ham
+VALUES;Porc jambonneau;Ingrédient;;Porc jambonneau;Pork knuckle
+VALUES;Porc pied;Ingrédient;;Porc pied;Pig foot
+VALUES;Porc pointe;Ingrédient;;Porc pointe;Pork advanced
+VALUES;Porc filet;Ingrédient;;Porc filet;Pork fillet
+VALUES;Porc carré;Ingrédient;;Porc carré;Pork square
+VALUES;Porc échine;Ingrédient;;Porc échine;Pork loin
+VALUES;Porc palette;Ingrédient;;Porc palette;Range pork
+VALUES;Porc plat de côtes;Ingrédient;;Porc plat de côtes;Pork ribs
 VALUES;Porc travers de côtes;Ingrédient;;Porc travers de côtes;Pork ribs through
-VALUES;Porc gorge;Ingrédient;;Porc gorge;pork throat
-VALUES;Porc poitrine;Ingrédient;;Porc poitrine;pork chest
-VALUES;Porc épaule;Ingrédient;;Porc épaule;pork shoulder
-VALUES;Porc tête;Ingrédient;;Porc tête;pig head
-VALUES;Porc coeur;Ingrédient;;Porc coeur;pig heart
-VALUES;Porc foie;Ingrédient;;Porc foie;pork liver
-VALUES;Porc rognons;Ingrédient;;Porc rognons;pig kidneys
-VALUES;Porc tête;Ingrédient;;Porc tête;pig head
+VALUES;Porc gorge;Ingrédient;;Porc gorge;Pork throat
+VALUES;Porc poitrine;Ingrédient;;Porc poitrine;Pork chest
+VALUES;Porc épaule;Ingrédient;;Porc épaule;Pork shoulder
+VALUES;Porc tête;Ingrédient;;Porc tête;Pig head
+VALUES;Porc coeur;Ingrédient;;Porc coeur;Pig heart
+VALUES;Porc foie;Ingrédient;;Porc foie;Pork liver
+VALUES;Porc rognons;Ingrédient;;Porc rognons;Pig kidneys
+VALUES;Porc tête;Ingrédient;;Porc tête;Pig head
 ;;;;;
 #;http://www.douce-france.fr/metier/volaille-morceaux.html;Ingrédient;;;
-VALUES;Poulet poitrine;Ingrédient;;Poulet poitrine;chicken breast
+VALUES;Poulet poitrine;Ingrédient;;Poulet poitrine;Chicken breast
 VALUES;Poulet haut de cuisse;Ingrédient;;Poulet haut de cuisse;Chicken thigh
-VALUES;Poulet pilon;Ingrédient;;Poulet pilon;chicken drumstick
-VALUES;Poulet fouet;Ingrédient;;Poulet fouet;chicken whip
-VALUES;Poulet médiane;Ingrédient;;Poulet médiane;chicken median
-VALUES;Poulet blanquette;Ingrédient;;Poulet blanquette;chicken stew
-VALUES;Poulet croupion;Ingrédient;;Poulet croupion;chicken rump
-VALUES;Canard cou;Ingrédient;;Canard cou;duck neck
-VALUES;Canard filet;Ingrédient;;Canard filet;duck fillet
-VALUES;Canard pilon;Ingrédient;;Canard pilon;duck drumstick
-VALUES;Canard croupion;Ingrédient;;Canard croupion;duck tail
-VALUES;Canard fouet;Ingrédient;;Canard fouet;duck whip
-VALUES;Canard aileron;Ingrédient;;Canard aileron;duck wing
-VALUES;Canard manchon ;Ingrédient;;Canard manchon ;duck sleeve
-VALUES;Dinde cou;Ingrédient;;Dinde cou;turkey neck
-VALUES;Dinde poitrine;Ingrédient;;Dinde poitrine;turkey breast
+VALUES;Poulet pilon;Ingrédient;;Poulet pilon;Chicken drumstick
+VALUES;Poulet fouet;Ingrédient;;Poulet fouet;Chicken whip
+VALUES;Poulet médiane;Ingrédient;;Poulet médiane;Chicken median
+VALUES;Poulet blanquette;Ingrédient;;Poulet blanquette;Chicken stew
+VALUES;Poulet croupion;Ingrédient;;Poulet croupion;Chicken rump
+VALUES;Canard cou;Ingrédient;;Canard cou;Duck neck
+VALUES;Canard filet;Ingrédient;;Canard filet;Duck fillet
+VALUES;Canard pilon;Ingrédient;;Canard pilon;Duck drumstick
+VALUES;Canard croupion;Ingrédient;;Canard croupion;Duck tail
+VALUES;Canard fouet;Ingrédient;;Canard fouet;Duck whip
+VALUES;Canard aileron;Ingrédient;;Canard aileron;Duck wing
+VALUES;Canard manchon ;Ingrédient;;Canard manchon ;Duck sleeve
+VALUES;Dinde cou;Ingrédient;;Dinde cou;Turkey neck
+VALUES;Dinde poitrine;Ingrédient;;Dinde poitrine;Turkey breast
 VALUES;Dinde haut de cuisse;Ingrédient;;Dinde haut de cuisse;Turkey thigh
-VALUES;Dinde pilon;Ingrédient;;Dinde pilon;turkey drumstick
-VALUES;Dinde croupion;Ingrédient;;Dinde croupion;turkey tail
-VALUES;Dinde fouet;Ingrédient;;Dinde fouet;turkey whip
-VALUES;Dinde aileron;Ingrédient;;Dinde aileron;turkey wing
-VALUES;Dinde blanquette;Ingrédient;;Dinde blanquette;turkey stew
+VALUES;Dinde pilon;Ingrédient;;Dinde pilon;Turkey drumstick
+VALUES;Dinde croupion;Ingrédient;;Dinde croupion;Turkey tail
+VALUES;Dinde fouet;Ingrédient;;Dinde fouet;Turkey whip
+VALUES;Dinde aileron;Ingrédient;;Dinde aileron;Turkey wing
+VALUES;Dinde blanquette;Ingrédient;;Dinde blanquette;Turkey stew
 ;;;;;
 ;;;;;
-VALUES;Abricot;Ingrédient;;Abricot;apricot
-VALUES;Amande;Ingrédient;;Amande;almond
+VALUES;Abricot;Ingrédient;;Abricot;Apricot
+VALUES;Amande;Ingrédient;;Amande;Almond
 VALUES;Arbouse;Ingrédient;;Arbouse;Arbouse
-VALUES;Canneberge;Ingrédient;;Canneberge;cranberry
-VALUES;Carambole;Ingrédient;;Carambole;carambola
-VALUES;Cassis;Ingrédient;;Cassis;blackcurrant
-VALUES;Cerise;Ingrédient;;Cerise;cherry
+VALUES;Canneberge;Ingrédient;;Canneberge;Cranberry
+VALUES;Carambole;Ingrédient;;Carambole;Carambola
+VALUES;Cassis;Ingrédient;;Cassis;Blackcurrant
+VALUES;Cerise;Ingrédient;;Cerise;Cherry
 VALUES;Chadec;Ingrédient;;Chadec;Chadec
 VALUES;Chicoutai;Ingrédient;;Chicoutai;Chicoutai
-VALUES;Châtaigne / Marron;Ingrédient;;Châtaigne / Marron;Chestnut / Brown
-VALUES;Coing;Ingrédient;;Coing;quince
+VALUES;Châtaigne / Marron;Ingrédient;;Châtaigne / Marron;Chestnut / brown
+VALUES;Coing;Ingrédient;;Coing;Quince
 VALUES;Corossol;Ingrédient;;Corossol;Corossol
-VALUES;Datte;Ingrédient;;Datte;date
+VALUES;Datte;Ingrédient;;Datte;Date
 VALUES;Dourian;Ingrédient;;Dourian;Dourian
-VALUES;Figue;Ingrédient;;Figue;fig
-VALUES;Fraise;Ingrédient;;Fraise;strawberry
-VALUES;Framboise;Ingrédient;;Framboise;raspberry
+VALUES;Figue;Ingrédient;;Figue;Fig
+VALUES;Fraise;Ingrédient;;Fraise;Strawberry
+VALUES;Framboise;Ingrédient;;Framboise;Raspberry
 VALUES;Fruit de la passion;Ingrédient;;Fruit de la passion;Passion fruit
-VALUES;Goyave;Ingrédient;;Goyave;guava
-VALUES;Groseille;Ingrédient;;Groseille;currant
+VALUES;Goyave;Ingrédient;;Goyave;Guava
+VALUES;Groseille;Ingrédient;;Groseille;Currant
 VALUES;Jacquier;Ingrédient;;Jacquier;Jacquier
-VALUES;Kaki;Ingrédient;;Kaki;khaki
-VALUES;Kiwi;Ingrédient;;Kiwi;kiwi
-VALUES;Litchi;Ingrédient;;Litchi;lychee
-VALUES;Longane;Ingrédient;;Longane;longan
-VALUES;Macadamia;Ingrédient;;Macadamia;macadamia
-VALUES;Mangue;Ingrédient;;Mangue;mango
-VALUES;Myrtille;Ingrédient;;Myrtille;blueberry
-VALUES;Nectarine;Ingrédient;;Nectarine;nectarine
-VALUES;Noix;Ingrédient;;Noix;nuts
+VALUES;Kaki;Ingrédient;;Kaki;Khaki
+VALUES;Kiwi;Ingrédient;;Kiwi;Kiwi
+VALUES;Litchi;Ingrédient;;Litchi;Lychee
+VALUES;Longane;Ingrédient;;Longane;Longan
+VALUES;Macadamia;Ingrédient;;Macadamia;Macadamia
+VALUES;Mangue;Ingrédient;;Mangue;Mango
+VALUES;Myrtille;Ingrédient;;Myrtille;Blueberry
+VALUES;Nectarine;Ingrédient;;Nectarine;Nectarine
+VALUES;Noix;Ingrédient;;Noix;Nuts
 VALUES;Noix de pécan;Ingrédient;;Noix de pécan;Pecans
-VALUES;Papaye;Ingrédient;;Papaye;papaya
+VALUES;Papaye;Ingrédient;;Papaye;Papaya
 VALUES;Physalis;Ingrédient;;Physalis;Physalis
-VALUES;Pimpin / Vacoa / Pandanus;Ingrédient;;Pimpin / Vacoa / Pandanus;Pimpin / Vacoa / Pandanus
-VALUES;Pomme grenade;Ingrédient;;Pomme grenade;pomegranate
-VALUES;Pêche;Ingrédient;;Pêche;fishing
-VALUES;Rhubarbe;Ingrédient;;Rhubarbe;rhubarb
-VALUES;Sapotille;Ingrédient;;Sapotille;sapodilla
-VALUES;Raisins;Ingrédient;;Raisins;grapes
+VALUES;Pimpin / Vacoa / Pandanus;Ingrédient;;Pimpin / Vacoa / Pandanus;Pimpin / vacoa / pandanus
+VALUES;Pomme grenade;Ingrédient;;Pomme grenade;Pomegranate
+VALUES;Pêche;Ingrédient;;Pêche;Fishing
+VALUES;Rhubarbe;Ingrédient;;Rhubarbe;Rhubarb
+VALUES;Sapotille;Ingrédient;;Sapotille;Sapodilla
+VALUES;Raisins;Ingrédient;;Raisins;Grapes
 VALUES;Mirabelle;Ingrédient;;Mirabelle;Mirabelle
-VALUES;Prune;Ingrédient;;Prune;plum
+VALUES;Prune;Ingrédient;;Prune;Plum
 VALUES;Pruneau d'Agen;Ingrédient;;Pruneau d'Agen;Agen prunes
 VALUES;Quetsche;Ingrédient;;Quetsche;Quetsche
 VALUES;Reine-Claude;Ingrédient;;Reine-Claude;Greengage
-VALUES;Banane;Ingrédient;;Banane;banana
-VALUES;Poires;Ingrédient;;Poires;pears
-VALUES;Pommes;Ingrédient;;Pommes;apples
-VALUES;Melon;Ingrédient;;Melon;melon
-VALUES;Agrumes;Ingrédient;;Agrumes;citrus
-VALUES;Citron;Ingrédient;;Citron;lemon
+VALUES;Banane;Ingrédient;;Banane;Banana
+VALUES;Poires;Ingrédient;;Poires;Pears
+VALUES;Pommes;Ingrédient;;Pommes;Apples
+VALUES;Melon;Ingrédient;;Melon;Melon
+VALUES;Agrumes;Ingrédient;;Agrumes;Citrus
+VALUES;Citron;Ingrédient;;Citron;Lemon
 VALUES;Clémentine;Ingrédient;;Clémentine;Clementine
-VALUES;Combawa ou Combava;Ingrédient;;Combawa ou Combava;Combawa or Combava
-VALUES;Cédrat;Ingrédient;;Cédrat;citron
-VALUES;Kumquat;Ingrédient;;Kumquat;kumquat
-VALUES;Main de Boudha;Ingrédient;;Main de Boudha;Hand of Buddha
-VALUES;Mandarine;Ingrédient;;Mandarine;mandarin
-VALUES;Orange;Ingrédient;;Orange;orange
-VALUES;Pamplemousse;Ingrédient;;Pamplemousse;grapefruit
+VALUES;Combawa ou Combava;Ingrédient;;Combawa ou Combava;Combawa or combava
+VALUES;Cédrat;Ingrédient;;Cédrat;Citron
+VALUES;Kumquat;Ingrédient;;Kumquat;Kumquat
+VALUES;Main de Boudha;Ingrédient;;Main de Boudha;Hand of buddha
+VALUES;Mandarine;Ingrédient;;Mandarine;Mandarin
+VALUES;Orange;Ingrédient;;Orange;Orange
+VALUES;Pamplemousse;Ingrédient;;Pamplemousse;Grapefruit
 VALUES;Pomelo;Ingrédient;;Pomelo;Grapefruit
 VALUES;Lait de coco;Ingrédient;;Lait de coco;Coconut milk
 VALUES;Noix de coco;Ingrédient;;Noix de coco;Coconut
-VALUES;Fraise;Ingrédient;;Fraise;strawberry
-VALUES;Ananas;Ingrédient;;Ananas;pineapple
+VALUES;Fraise;Ingrédient;;Fraise;Strawberry
+VALUES;Ananas;Ingrédient;;Ananas;Pineapple
 ;;;;;
-VALUES;Arachide;Ingrédient;;Arachide;peanut
+VALUES;Arachide;Ingrédient;;Arachide;Peanut
 VALUES;Arrow-root;Ingrédient;;Arrow-root;Arrow-root
 VALUES;Bambou (pousse de...);Ingrédient;;Bambou (pousse de...);Bamboo (shoot ...)
-VALUES;Brocoli;Ingrédient;;Brocoli;broccoli
-VALUES;Carotte;Ingrédient;;Carotte;carrot
-VALUES;Chayote;Ingrédient;;Chayote;chayote
+VALUES;Brocoli;Ingrédient;;Brocoli;Broccoli
+VALUES;Carotte;Ingrédient;;Carotte;Carrot
+VALUES;Chayote;Ingrédient;;Chayote;Chayote
 VALUES;Châtaigne d'eau;Ingrédient;;Châtaigne d'eau;Water chestnut
-VALUES;Concombre;Ingrédient;;Concombre;cucumber
-VALUES;Cornichon;Ingrédient;;Cornichon;gherkin
-VALUES;Courgette;Ingrédient;;Courgette;zucchini
+VALUES;Concombre;Ingrédient;;Concombre;Cucumber
+VALUES;Cornichon;Ingrédient;;Cornichon;Gherkin
+VALUES;Courgette;Ingrédient;;Courgette;Zucchini
 VALUES;Crosne;Ingrédient;;Crosne;Crosne
-VALUES;Câpre;Ingrédient;;Câpre;caper
-VALUES;Céleri;Ingrédient;;Céleri;celery
+VALUES;Câpre;Ingrédient;;Câpre;Caper
+VALUES;Céleri;Ingrédient;;Céleri;Celery
 VALUES;Céleri-rave;Ingrédient;;Céleri-rave;Celeriac
 VALUES;Dachine;Ingrédient;;Dachine;Dachine
-VALUES;Daikon;Ingrédient;;Daikon;daikon
-VALUES;Fenouil;Ingrédient;;Fenouil;fennel
+VALUES;Daikon;Ingrédient;;Daikon;Daikon
+VALUES;Fenouil;Ingrédient;;Fenouil;Fennel
 VALUES;Fruit à pain;Ingrédient;;Fruit à pain;Breadfruit
-VALUES;Haricot noir;Ingrédient;;Haricot noir;black bean
-VALUES;Igname;Ingrédient;;Igname;yam
-VALUES;Jicama;Ingrédient;;Jicama;jicama
+VALUES;Haricot noir;Ingrédient;;Haricot noir;Black bean
+VALUES;Igname;Ingrédient;;Igname;Yam
+VALUES;Jicama;Ingrédient;;Jicama;Jicama
 VALUES;Liseron d'eau;Ingrédient;;Liseron d'eau;Water spinach
-VALUES;Maïs;Ingrédient;;Maïs;corn
+VALUES;Maïs;Ingrédient;;Maïs;Corn
 VALUES;Navet / Rabiole;Ingrédient;;Navet / Rabiole;Turnips / turnip
-VALUES;Nopal;Ingrédient;;Nopal;nopal
-VALUES;Oignon;Ingrédient;;Oignon;onion
-VALUES;Okra ou Gumbo;Ingrédient;;Okra ou Gumbo;Okra or Gumbo
-VALUES;Panais;Ingrédient;;Panais;parsnip
-VALUES;Patate douce;Ingrédient;;Patate douce;sweet potato
-VALUES;Plantain;Ingrédient;;Plantain;plantain
-VALUES;Pois chiche;Ingrédient;;Pois chiche;chickpea
-VALUES;Pois pigeon;Ingrédient;;Pois pigeon;pigeon pea
-VALUES;Pois vert;Ingrédient;;Pois vert;green peas
-VALUES;Polenta;Ingrédient;;Polenta;polenta
-VALUES;Radis;Ingrédient;;Radis;radish
-VALUES;Raifort;Ingrédient;;Raifort;horseradish
-VALUES;Rutabaga;Ingrédient;;Rutabaga;rutabaga
-VALUES;Réglisse;Ingrédient;;Réglisse;liquorice
-VALUES;Salsifis;Ingrédient;;Salsifis;salsify
-VALUES;Soya;Ingrédient;;Soya;soy
-VALUES;Tamarin;Ingrédient;;Tamarin;tamarind
+VALUES;Nopal;Ingrédient;;Nopal;Nopal
+VALUES;Oignon;Ingrédient;;Oignon;Onion
+VALUES;Okra ou Gumbo;Ingrédient;;Okra ou Gumbo;Okra or gumbo
+VALUES;Panais;Ingrédient;;Panais;Parsnip
+VALUES;Patate douce;Ingrédient;;Patate douce;Sweet potato
+VALUES;Plantain;Ingrédient;;Plantain;Plantain
+VALUES;Pois chiche;Ingrédient;;Pois chiche;Chickpea
+VALUES;Pois pigeon;Ingrédient;;Pois pigeon;Pigeon pea
+VALUES;Pois vert;Ingrédient;;Pois vert;Green peas
+VALUES;Polenta;Ingrédient;;Polenta;Polenta
+VALUES;Radis;Ingrédient;;Radis;Radish
+VALUES;Raifort;Ingrédient;;Raifort;Horseradish
+VALUES;Rutabaga;Ingrédient;;Rutabaga;Rutabaga
+VALUES;Réglisse;Ingrédient;;Réglisse;Liquorice
+VALUES;Salsifis;Ingrédient;;Salsifis;Salsify
+VALUES;Soya;Ingrédient;;Soya;Soy
+VALUES;Tamarin;Ingrédient;;Tamarin;Tamarind
 VALUES;Taro;Ingrédient;;Taro;Taro
 VALUES;Ti feuille;Ingrédient;;Ti feuille;Ti leaf
 VALUES;Ti-concombre;Ingrédient;;Ti-concombre;Ti-cucumber
-VALUES;Tomate;Ingrédient;;Tomate;tomato
+VALUES;Tomate;Ingrédient;;Tomate;Tomato
 VALUES;Tomatille (tomatillo);Ingrédient;;Tomatille (tomatillo);Tomatillo (tomatillo)
 VALUES;Topinambour;Ingrédient;;Topinambour;Jerusalem artichoke
 VALUES;Tête de violon;Ingrédient;;Tête de violon;Fiddlehead
 VALUES;Wasabi;Ingrédient;;Wasabi;Wasabi
-VALUES;Échalote;Ingrédient;;Échalote;shallot
-VALUES;Épinard;Ingrédient;;Épinard;spinach
-VALUES;Champignon;Ingrédient;;Champignon;mushroom
-VALUES;Truffe;Ingrédient;;Truffe;truffle
-VALUES;Laitue et verdurette;Ingrédient;;Laitue et verdurette;Lettuce and Verduret
-VALUES;Courge;Ingrédient;;Courge;squash
-VALUES;Poireau;Ingrédient;;Poireau;leek
+VALUES;Échalote;Ingrédient;;Échalote;Shallot
+VALUES;Épinard;Ingrédient;;Épinard;Spinach
+VALUES;Champignon;Ingrédient;;Champignon;Mushroom
+VALUES;Truffe;Ingrédient;;Truffe;Truffle
+VALUES;Laitue et verdurette;Ingrédient;;Laitue et verdurette;Lettuce and verduret
+VALUES;Courge;Ingrédient;;Courge;Squash
+VALUES;Poireau;Ingrédient;;Poireau;Leek
 VALUES;Pomme de terre;Ingrédient;;Pomme de terre;Potato
-VALUES;Asperge;Ingrédient;;Asperge;asparagus
-VALUES;Haricot sec;Ingrédient;;Haricot sec;dry bean
-VALUES;Haricot frais;Ingrédient;;Haricot frais;cool Beans
-VALUES;Gourgane;Ingrédient;;Gourgane;broad bean
-VALUES;Haricot vert;Ingrédient;;Haricot vert;green bean
-VALUES;Aubergine;Ingrédient;;Aubergine;eggplant
+VALUES;Asperge;Ingrédient;;Asperge;Asparagus
+VALUES;Haricot sec;Ingrédient;;Haricot sec;Dry bean
+VALUES;Haricot frais;Ingrédient;;Haricot frais;Cool beans
+VALUES;Gourgane;Ingrédient;;Gourgane;Broad bean
+VALUES;Haricot vert;Ingrédient;;Haricot vert;Green bean
+VALUES;Aubergine;Ingrédient;;Aubergine;Eggplant
 VALUES;Bette;Ingrédient;;Bette;Bette
-VALUES;Chou;Ingrédient;;Chou;cabbage
-VALUES;Betterave;Ingrédient;;Betterave;beet
-VALUES;Poivron;Ingrédient;;Poivron;pepper
-VALUES;Manioc;Ingrédient;;Manioc;cassava
-VALUES;Oignon;Ingrédient;;Oignon;onion
-VALUES;Concombre;Ingrédient;;Concombre;cucumber
+VALUES;Chou;Ingrédient;;Chou;Cabbage
+VALUES;Betterave;Ingrédient;;Betterave;Beet
+VALUES;Poivron;Ingrédient;;Poivron;Pepper
+VALUES;Manioc;Ingrédient;;Manioc;Cassava
+VALUES;Oignon;Ingrédient;;Oignon;Onion
+VALUES;Concombre;Ingrédient;;Concombre;Cucumber
 ;;;;;
-VALUES;Agneau;Ingrédient;;Agneau;lamb
-VALUES;Bison;Ingrédient;;Bison;bison
-VALUES;Boeuf;Ingrédient;;Boeuf;beef
+VALUES;Agneau;Ingrédient;;Agneau;Lamb
+VALUES;Bison;Ingrédient;;Bison;Bison
+VALUES;Boeuf;Ingrédient;;Boeuf;Beef
 VALUES;Cabri;Ingrédient;;Cabri;Cabri
-VALUES;Caribou;Ingrédient;;Caribou;caribou
-VALUES;Kangourou;Ingrédient;;Kangourou;kangaroo
-VALUES;Lapin;Ingrédient;;Lapin;rabbit
-VALUES;Lièvre;Ingrédient;;Lièvre;hare
-VALUES;Sanglier;Ingrédient;;Sanglier;boar
-VALUES;Tripes;Ingrédient;;Tripes;tripe
-VALUES;Veau;Ingrédient;;Veau;calf
-VALUES;Porc;Ingrédient;;Porc;pork
-VALUES;Autruche;Ingrédient;;Autruche;ostrich
-VALUES;Caille;Ingrédient;;Caille;quail
-VALUES;Canard;Ingrédient;;Canard;duck
-VALUES;Dinde;Ingrédient;;Dinde;turkey
-VALUES;Faisan;Ingrédient;;Faisan;pheasant
-VALUES;Foie gras;Ingrédient;;Foie gras;foie gras
-VALUES;Oie;Ingrédient;;Oie;goose
-VALUES;Perdrix;Ingrédient;;Perdrix;partridge
-VALUES;Pintade;Ingrédient;;Pintade;guinea fowl
+VALUES;Caribou;Ingrédient;;Caribou;Caribou
+VALUES;Kangourou;Ingrédient;;Kangourou;Kangaroo
+VALUES;Lapin;Ingrédient;;Lapin;Rabbit
+VALUES;Lièvre;Ingrédient;;Lièvre;Hare
+VALUES;Sanglier;Ingrédient;;Sanglier;Boar
+VALUES;Tripes;Ingrédient;;Tripes;Tripe
+VALUES;Veau;Ingrédient;;Veau;Calf
+VALUES;Porc;Ingrédient;;Porc;Pork
+VALUES;Autruche;Ingrédient;;Autruche;Ostrich
+VALUES;Caille;Ingrédient;;Caille;Quail
+VALUES;Canard;Ingrédient;;Canard;Duck
+VALUES;Dinde;Ingrédient;;Dinde;Turkey
+VALUES;Faisan;Ingrédient;;Faisan;Pheasant
+VALUES;Foie gras;Ingrédient;;Foie gras;Foie gras
+VALUES;Oie;Ingrédient;;Oie;Goose
+VALUES;Perdrix;Ingrédient;;Perdrix;Partridge
+VALUES;Pintade;Ingrédient;;Pintade;Guinea fowl
 VALUES;Poularde de Bresse;Ingrédient;;Poularde de Bresse;Bresse
-VALUES;Poulet;Ingrédient;;Poulet;chicken
-VALUES;Pigeon;Ingrédient;;Pigeon;pigeon
+VALUES;Poulet;Ingrédient;;Poulet;Chicken
+VALUES;Pigeon;Ingrédient;;Pigeon;Pigeon
 ;;;;;
-VALUES;Abadèche;Ingrédient;;Abadèche;cusk
-VALUES;Aiglefin;Ingrédient;;Aiglefin;haddock
-VALUES;Anchois;Ingrédient;;Anchois;anchovy
-VALUES;Anguille;Ingrédient;;Anguille;eel
-VALUES;Bar;Ingrédient;;Bar;bar
-VALUES;Barramundi;Ingrédient;;Barramundi;barramundi
-VALUES;Baudroie;Ingrédient;;Baudroie;monkfish
-VALUES;Brochet;Ingrédient;;Brochet;pike
-VALUES;Capelan;Ingrédient;;Capelan;capelin
-VALUES;Carpe;Ingrédient;;Carpe;carp
+VALUES;Abadèche;Ingrédient;;Abadèche;Cusk
+VALUES;Aiglefin;Ingrédient;;Aiglefin;Haddock
+VALUES;Anchois;Ingrédient;;Anchois;Anchovy
+VALUES;Anguille;Ingrédient;;Anguille;Eel
+VALUES;Bar;Ingrédient;;Bar;Bar
+VALUES;Barramundi;Ingrédient;;Barramundi;Barramundi
+VALUES;Baudroie;Ingrédient;;Baudroie;Monkfish
+VALUES;Brochet;Ingrédient;;Brochet;Pike
+VALUES;Capelan;Ingrédient;;Capelan;Capelin
+VALUES;Carpe;Ingrédient;;Carpe;Carp
 VALUES;Chapon / rascasse;Ingrédient;;Chapon / rascasse;Chapon / scorpion
-VALUES;Chevesne;Ingrédient;;Chevesne;chub
-VALUES;Cobia;Ingrédient;;Cobia;cobia
-VALUES;Congre;Ingrédient;;Congre;conger
-VALUES;Daurade;Ingrédient;;Daurade;bream
-VALUES;Doré;Ingrédient;;Doré;golden
-VALUES;Escolier;Ingrédient;;Escolier;escolar
+VALUES;Chevesne;Ingrédient;;Chevesne;Chub
+VALUES;Cobia;Ingrédient;;Cobia;Cobia
+VALUES;Congre;Ingrédient;;Congre;Conger
+VALUES;Daurade;Ingrédient;;Daurade;Bream
+VALUES;Doré;Ingrédient;;Doré;Golden
+VALUES;Escolier;Ingrédient;;Escolier;Escolar
 VALUES;Espada;Ingrédient;;Espada;Espada
-VALUES;Espadon;Ingrédient;;Espadon;swordfish
-VALUES;Esturgeon;Ingrédient;;Esturgeon;sturgeon
-VALUES;Flétan;Ingrédient;;Flétan;halibut
-VALUES;Grenouille;Ingrédient;;Grenouille;frog
-VALUES;Grondin Perlon;Ingrédient;;Grondin Perlon;Grondin Perlon
-VALUES;Hareng;Ingrédient;;Hareng;herring
-VALUES;Lingue;Ingrédient;;Lingue;ling
+VALUES;Espadon;Ingrédient;;Espadon;Swordfish
+VALUES;Esturgeon;Ingrédient;;Esturgeon;Sturgeon
+VALUES;Flétan;Ingrédient;;Flétan;Halibut
+VALUES;Grenouille;Ingrédient;;Grenouille;Frog
+VALUES;Grondin Perlon;Ingrédient;;Grondin Perlon;Grondin perlon
+VALUES;Hareng;Ingrédient;;Hareng;Herring
+VALUES;Lingue;Ingrédient;;Lingue;Ling
 VALUES;Loup de mer;Ingrédient;;Loup de mer;Catfish
 VALUES;Légine australe;Ingrédient;;Légine australe;Patagonian toothfish
-VALUES;Mahi Mahi;Ingrédient;;Mahi Mahi;mahi mahi
-VALUES;Maquereau;Ingrédient;;Maquereau;mackerel
-VALUES;Merlan;Ingrédient;;Merlan;whiting
-VALUES;Merlu, Colin;Ingrédient;;Merlu, Colin;Hake, Colin
-VALUES;Mérou;Ingrédient;;Mérou;grouper
-VALUES;Omble chevalier;Ingrédient;;Omble chevalier;char
+VALUES;Mahi Mahi;Ingrédient;;Mahi Mahi;Mahi mahi
+VALUES;Maquereau;Ingrédient;;Maquereau;Mackerel
+VALUES;Merlan;Ingrédient;;Merlan;Whiting
+VALUES;Merlu, Colin;Ingrédient;;Merlu, Colin;Hake, colin
+VALUES;Mérou;Ingrédient;;Mérou;Grouper
+VALUES;Omble chevalier;Ingrédient;;Omble chevalier;Char
 VALUES;Onaga;Ingrédient;;Onaga;Onaga
 VALUES;Pangasius;Ingrédient;;Pangasius;Pangasius
-VALUES;Perche;Ingrédient;;Perche;pole
+VALUES;Perche;Ingrédient;;Perche;Pole
 VALUES;Perche du Nil;Ingrédient;;Perche du Nil;Nile perch
-VALUES;Pieuvre;Ingrédient;;Pieuvre;octopus
+VALUES;Pieuvre;Ingrédient;;Pieuvre;Octopus
 VALUES;Plie ou carrelet;Ingrédient;;Plie ou carrelet;Plaice
-VALUES;Requin;Ingrédient;;Requin;shark
-VALUES;Rouget;Ingrédient;;Rouget;red mullet
-VALUES;Saint-Pierre;Ingrédient;;Saint-Pierre;Saint-Pierre
+VALUES;Requin;Ingrédient;;Requin;Shark
+VALUES;Rouget;Ingrédient;;Rouget;Red mullet
+VALUES;Saint-Pierre;Ingrédient;;Saint-Pierre;Saint-pierre
 VALUES;Sandre;Ingrédient;;Sandre;Sandre
-VALUES;Sardine;Ingrédient;;Sardine;sardine
-VALUES;Silure;Ingrédient;;Silure;catfish
-VALUES;Sole;Ingrédient;;Sole;sole
+VALUES;Sardine;Ingrédient;;Sardine;Sardine
+VALUES;Silure;Ingrédient;;Silure;Catfish
+VALUES;Sole;Ingrédient;;Sole;Sole
 VALUES;Stockfish;Ingrédient;;Stockfish;Stockfish
-VALUES;Surimi;Ingrédient;;Surimi;surimi
-VALUES;Thon;Ingrédient;;Thon;tuna
+VALUES;Surimi;Ingrédient;;Surimi;Surimi
+VALUES;Thon;Ingrédient;;Thon;Tuna
 VALUES;Tobiko ou caviar de Ingrédient volant;Ingrédient;;Tobiko ou caviar de Ingrédient volant;Tobiko caviar ingredient or driving
-VALUES;Turbot;Ingrédient;;Turbot;turbot
-VALUES;Vivaneau;Ingrédient;;Vivaneau;red snapper
-VALUES;Éperlan;Ingrédient;;Éperlan;smelt
-VALUES;Truite;Ingrédient;;Truite;trout
-VALUES;Saumon;Ingrédient;;Saumon;salmon
-VALUES;Seiche;Ingrédient;;Seiche;cuttlefish
-VALUES;Caviar;Ingrédient;;Caviar;caviar
-VALUES;Cabillaud;Ingrédient;;Cabillaud;cod
+VALUES;Turbot;Ingrédient;;Turbot;Turbot
+VALUES;Vivaneau;Ingrédient;;Vivaneau;Red snapper
+VALUES;Éperlan;Ingrédient;;Éperlan;Smelt
+VALUES;Truite;Ingrédient;;Truite;Trout
+VALUES;Saumon;Ingrédient;;Saumon;Salmon
+VALUES;Seiche;Ingrédient;;Seiche;Cuttlefish
+VALUES;Caviar;Ingrédient;;Caviar;Caviar
+VALUES;Cabillaud;Ingrédient;;Cabillaud;Cod
 ;;;;;
-VALUES;Bigorneau;Ingrédient;;Bigorneau;periwinkle
-VALUES;Buccin;Ingrédient;;Buccin;whelk
+VALUES;Bigorneau;Ingrédient;;Bigorneau;Periwinkle
+VALUES;Buccin;Ingrédient;;Buccin;Whelk
 VALUES;Cigale de mer;Ingrédient;;Cigale de mer;Slipper lobster
-VALUES;Coque;Ingrédient;;Coque;shell
-VALUES;Couteau;Ingrédient;;Couteau;knife
-VALUES;Crevette / Gambas;Ingrédient;;Crevette / Gambas;Shrimp / Prawns
-VALUES;Crevette nordique;Ingrédient;;Crevette nordique;northern Shrimp
-VALUES;Crépidule;Ingrédient;;Crépidule;slipper limpet
-VALUES;Escargot;Ingrédient;;Escargot;snail
-VALUES;Homard;Ingrédient;;Homard;lobster
-VALUES;Lambi, Conque;Ingrédient;;Lambi, Conque;Conch, Conch
-VALUES;Langoustine;Ingrédient;;Langoustine;langoustine
-VALUES;Moule;Ingrédient;;Moule;mold
-VALUES;Ormeau;Ingrédient;;Ormeau;abalone
-VALUES;Oursin;Ingrédient;;Oursin;sea ??urchin
-VALUES;Palourde;Ingrédient;;Palourde;clam
-VALUES;Patelle;Ingrédient;;Patelle;limpet
+VALUES;Coque;Ingrédient;;Coque;Shell
+VALUES;Couteau;Ingrédient;;Couteau;Knife
+VALUES;Crevette / Gambas;Ingrédient;;Crevette / Gambas;Shrimp / prawns
+VALUES;Crevette nordique;Ingrédient;;Crevette nordique;Northern shrimp
+VALUES;Crépidule;Ingrédient;;Crépidule;Slipper limpet
+VALUES;Escargot;Ingrédient;;Escargot;Snail
+VALUES;Homard;Ingrédient;;Homard;Lobster
+VALUES;Lambi, Conque;Ingrédient;;Lambi, Conque;Conch, conch
+VALUES;Langoustine;Ingrédient;;Langoustine;Langoustine
+VALUES;Moule;Ingrédient;;Moule;Mold
+VALUES;Ormeau;Ingrédient;;Ormeau;Abalone
+VALUES;Oursin;Ingrédient;;Oursin;Sea ??urchin
+VALUES;Palourde;Ingrédient;;Palourde;Clam
+VALUES;Patelle;Ingrédient;;Patelle;Limpet
 VALUES;Pousse-pied ou anatife;Ingrédient;;Pousse-pied ou anatife;Barnacle barnacle or
-VALUES;Pétoncle;Ingrédient;;Pétoncle;scallop
-VALUES;Saint-Jacques;Ingrédient;;Saint-Jacques;Saint-Jacques
-VALUES;Violet;Ingrédient;;Violet;purple
-VALUES;Écrevisse;Ingrédient;;Écrevisse;crayfish
-VALUES;Huître;Ingrédient;;Huître;oyster
-VALUES;Crabe;Ingrédient;;Crabe;crab
+VALUES;Pétoncle;Ingrédient;;Pétoncle;Scallop
+VALUES;Saint-Jacques;Ingrédient;;Saint-Jacques;Saint-jacques
+VALUES;Violet;Ingrédient;;Violet;Purple
+VALUES;Écrevisse;Ingrédient;;Écrevisse;Crayfish
+VALUES;Huître;Ingrédient;;Huître;Oyster
+VALUES;Crabe;Ingrédient;;Crabe;Crab
 ;;;;;
-VALUES;Ail;Ingrédient;;Ail;garlic
-VALUES;Anis;Ingrédient;;Anis;anise
+VALUES;Ail;Ingrédient;;Ail;Garlic
+VALUES;Anis;Ingrédient;;Anis;Anise
 VALUES;Asa foetida;Ingrédient;;Asa foetida;Asa foetida
-VALUES;Cannelle;Ingrédient;;Cannelle;cinnamon
-VALUES;Cardamome;Ingrédient;;Cardamome;cardamom
+VALUES;Cannelle;Ingrédient;;Cannelle;Cinnamon
+VALUES;Cardamome;Ingrédient;;Cardamome;Cardamom
 VALUES;Caripoulé;Ingrédient;;Caripoulé;Caripoulé
-VALUES;Carvi;Ingrédient;;Carvi;caraway
+VALUES;Carvi;Ingrédient;;Carvi;Caraway
 VALUES;Clou de girofle;Ingrédient;;Clou de girofle;Clove
-VALUES;Cumin;Ingrédient;;Cumin;cumin
-VALUES;Curcuma;Ingrédient;;Curcuma;turmeric
-VALUES;Curry;Ingrédient;;Curry;curry
+VALUES;Cumin;Ingrédient;;Cumin;Cumin
+VALUES;Curcuma;Ingrédient;;Curcuma;Turmeric
+VALUES;Curry;Ingrédient;;Curry;Curry
 VALUES;Fenugreek;Ingrédient;;Fenugreek;Fenugreek
-VALUES;Garam Massala;Ingrédient;;Garam Massala;garam Masala
-VALUES;Genièvre;Ingrédient;;Genièvre;juniper
-VALUES;Gingembre;Ingrédient;;Gingembre;ginger
-VALUES;Macis;Ingrédient;;Macis;mace
+VALUES;Garam Massala;Ingrédient;;Garam Massala;Garam masala
+VALUES;Genièvre;Ingrédient;;Genièvre;Juniper
+VALUES;Gingembre;Ingrédient;;Gingembre;Ginger
+VALUES;Macis;Ingrédient;;Macis;Mace
 VALUES;Massala;Ingrédient;;Massala;Massala
-VALUES;Moutarde;Ingrédient;;Moutarde;mustard
-VALUES;Muscade;Ingrédient;;Muscade;nutmeg
+VALUES;Moutarde;Ingrédient;;Moutarde;Mustard
+VALUES;Muscade;Ingrédient;;Muscade;Nutmeg
 VALUES;Mélange d'épices bajan;Ingrédient;;Mélange d'épices bajan;Bajan spice mix
 VALUES;Ras-el-hanout;Ingrédient;;Ras-el-hanout;Ras el hanout
-VALUES;Safran;Ingrédient;;Safran;saffron
-VALUES;Sassafras;Ingrédient;;Sassafras;sassafras
-VALUES;Saté;Ingrédient;;Saté;sate
-VALUES;Sumac;Ingrédient;;Sumac;sumach
-VALUES;Sésame;Ingrédient;;Sésame;sesame
-VALUES;Vanille;Ingrédient;;Vanille;vanilla
-VALUES;Piment;Ingrédient;;Piment;spice
-VALUES;Poivre;Ingrédient;;Poivre;pepper
-VALUES;Sel;Ingrédient;;Sel;salt
+VALUES;Safran;Ingrédient;;Safran;Saffron
+VALUES;Sassafras;Ingrédient;;Sassafras;Sassafras
+VALUES;Saté;Ingrédient;;Saté;Sate
+VALUES;Sumac;Ingrédient;;Sumac;Sumach
+VALUES;Sésame;Ingrédient;;Sésame;Sesame
+VALUES;Vanille;Ingrédient;;Vanille;Vanilla
+VALUES;Piment;Ingrédient;;Piment;Spice
+VALUES;Poivre;Ingrédient;;Poivre;Pepper
+VALUES;Sel;Ingrédient;;Sel;Salt
 ;;;;;
-VALUES;Aneth;Ingrédient;;Aneth;dill
-VALUES;Basilic;Ingrédient;;Basilic;basil
-VALUES;Bourrache;Ingrédient;;Bourrache;borage
-VALUES;Ciboulette;Ingrédient;;Ciboulette;chive
+VALUES;Aneth;Ingrédient;;Aneth;Dill
+VALUES;Basilic;Ingrédient;;Basilic;Basil
+VALUES;Bourrache;Ingrédient;;Bourrache;Borage
+VALUES;Ciboulette;Ingrédient;;Ciboulette;Chive
 VALUES;Ciboulette chinoise;Ingrédient;;Ciboulette chinoise;Chinese chives
-VALUES;Citronnelle;Ingrédient;;Citronnelle;lemongrass
-VALUES;Coriandre;Ingrédient;;Coriandre;coriander
-VALUES;Hysope;Ingrédient;;Hysope;hyssop
-VALUES;Lavande;Ingrédient;;Lavande;lavender
-VALUES;Marjolaine;Ingrédient;;Marjolaine;marjoram
-VALUES;Myrte;Ingrédient;;Myrte;myrtle
-VALUES;Mélisse;Ingrédient;;Mélisse;melissa
-VALUES;Origan;Ingrédient;;Origan;oregano
-VALUES;Persil;Ingrédient;;Persil;parsley
-VALUES;Romarin;Ingrédient;;Romarin;rosemary
+VALUES;Citronnelle;Ingrédient;;Citronnelle;Lemongrass
+VALUES;Coriandre;Ingrédient;;Coriandre;Coriander
+VALUES;Hysope;Ingrédient;;Hysope;Hyssop
+VALUES;Lavande;Ingrédient;;Lavande;Lavender
+VALUES;Marjolaine;Ingrédient;;Marjolaine;Marjoram
+VALUES;Myrte;Ingrédient;;Myrte;Myrtle
+VALUES;Mélisse;Ingrédient;;Mélisse;Melissa
+VALUES;Origan;Ingrédient;;Origan;Oregano
+VALUES;Persil;Ingrédient;;Persil;Parsley
+VALUES;Romarin;Ingrédient;;Romarin;Rosemary
 VALUES;Salicorne;Ingrédient;;Salicorne;Salicorne
 VALUES;Sariette;Ingrédient;;Sariette;Sariette
-VALUES;Sauge;Ingrédient;;Sauge;sage
-VALUES;Thym;Ingrédient;;Thym;thyme
-VALUES;Tilleul;Ingrédient;;Tilleul;lime
-VALUES;Verveine;Ingrédient;;Verveine;verbena
-VALUES;Violette;Ingrédient;;Violette;violet
+VALUES;Sauge;Ingrédient;;Sauge;Sage
+VALUES;Thym;Ingrédient;;Thym;Thyme
+VALUES;Tilleul;Ingrédient;;Tilleul;Lime
+VALUES;Verveine;Ingrédient;;Verveine;Verbena
+VALUES;Violette;Ingrédient;;Violette;Violet
 ;;;;;
 VALUES;Érable (produits de);Ingrédient;;Érable (produits de);Maple (products)
-VALUES;Cassonade;Ingrédient;;Cassonade;brown sugar
-VALUES;Miel;Ingrédient;;Miel;honey
-VALUES;Mélasse;Ingrédient;;Mélasse;treacle
-VALUES;Sucre;Ingrédient;;Sucre;sugar
-VALUES;Riz;Ingrédient;;Riz;rice
-VALUES;Café;Ingrédient;;Café;coffee
-VALUES;Avoine;Ingrédient;;Avoine;oat
-VALUES;Blé;Ingrédient;;Blé;wheat
-VALUES;Boulghol / Boulgour;Ingrédient;;Boulghol / Boulgour;Boulghol / Boulgour
-VALUES;Houblon;Ingrédient;;Houblon;hop
-VALUES;Orge;Ingrédient;;Orge;barley
-VALUES;Quinoa;Ingrédient;;Quinoa;quinoa
-VALUES;Sarrasin;Ingrédient;;Sarrasin;buckwheat
-VALUES;Seigle;Ingrédient;;Seigle;rye
-VALUES;Semoule / Couscous;Ingrédient;;Semoule / Couscous;Semolina / Couscous
-VALUES;Sorgho;Ingrédient;;Sorgho;sorghum
+VALUES;Cassonade;Ingrédient;;Cassonade;Brown sugar
+VALUES;Miel;Ingrédient;;Miel;Honey
+VALUES;Mélasse;Ingrédient;;Mélasse;Treacle
+VALUES;Sucre;Ingrédient;;Sucre;Sugar
+VALUES;Riz;Ingrédient;;Riz;Rice
+VALUES;Café;Ingrédient;;Café;Coffee
+VALUES;Avoine;Ingrédient;;Avoine;Oat
+VALUES;Blé;Ingrédient;;Blé;Wheat
+VALUES;Boulghol / Boulgour;Ingrédient;;Boulghol / Boulgour;Boulghol / boulgour
+VALUES;Houblon;Ingrédient;;Houblon;Hop
+VALUES;Orge;Ingrédient;;Orge;Barley
+VALUES;Quinoa;Ingrédient;;Quinoa;Quinoa
+VALUES;Sarrasin;Ingrédient;;Sarrasin;Buckwheat
+VALUES;Seigle;Ingrédient;;Seigle;Rye
+VALUES;Semoule / Couscous;Ingrédient;;Semoule / Couscous;Semolina / couscous
+VALUES;Sorgho;Ingrédient;;Sorgho;Sorghum
 VALUES;Épeautre;Ingrédient;;Épeautre;Spelt
-VALUES;Thé;Ingrédient;;Thé;tea
+VALUES;Thé;Ingrédient;;Thé;Tea
 ;;;;;
 ;;;;;
 ;;;;;
@@ -1121,7 +1121,7 @@ VALUES;Amidon modifié;Ingrédient;;Amidon modifié;Modified starch
 VALUES;Amidon natif;Ingrédient;;Amidon natif;Native starch
 VALUES;Amidon transformé;Ingrédient;;Amidon transformé;Modified starch
 VALUES;Ananas;Ingrédient;;Ananas;Pineapple
-VALUES;Ananas crush;Ingrédient;;Ananas crush;Pineapple Crush
+VALUES;Ananas crush;Ingrédient;;Ananas crush;Pineapple crush
 VALUES;Ananas fibres;Ingrédient;;Ananas fibres;Pineapple fibers
 VALUES;Ananas jus;Ingrédient;;Ananas jus;Pineapple juice
 VALUES;Ananas jus concentré;Ingrédient;;Ananas jus concentré;Pineapple juice concentrate
@@ -1175,7 +1175,7 @@ VALUES;Arome poivre naturel;Ingrédient;;Arome poivre naturel;Natural pepper fla
 VALUES;Arome poulet rôti;Ingrédient;;Arome poulet rôti;Roast chicken flavor
 VALUES;Arome poulet rôti naturel;Ingrédient;;Arome poulet rôti naturel;Natural flavor roast chicken
 VALUES;Arome pruneau;Ingrédient;;Arome pruneau;Prune aroma
-VALUES;Arome Saint Jacques;Ingrédient;;Arome Saint Jacques;Aroma Saint Jacques
+VALUES;Arome Saint Jacques;Ingrédient;;Arome Saint Jacques;Aroma saint jacques
 VALUES;Arome vanille;Ingrédient;;Arome vanille;Vanilla aroma
 VALUES;Arome vanilline;Ingrédient;;Arome vanilline;Vanillin aroma
 VALUES;Arome vin blanc naturel;Ingrédient;;Arome vin blanc naturel;Natural aroma white wine
@@ -1198,7 +1198,7 @@ VALUES;Babeurre;Ingrédient;;Babeurre;Buttermilk
 VALUES;Babeurre déshydraté;Ingrédient;;Babeurre déshydraté;Dehydrated buttermilk
 VALUES;Bactéries;Ingrédient;;Bactéries;Bacteria
 VALUES;Badiane;Ingrédient;;Badiane;Badiane
-VALUES;Baie rose;Ingrédient;;Baie rose;Rose Bay
+VALUES;Baie rose;Ingrédient;;Baie rose;Rose bay
 VALUES;Bambou pousse;Ingrédient;;Bambou pousse;Bamboo grows
 VALUES;Bambou pousse fibre;Ingrédient;;Bambou pousse fibre;Bamboo grows fiber
 VALUES;Banane;Ingrédient;;Banane;Banana
@@ -1216,7 +1216,7 @@ VALUES;Bentonite;Ingrédient;;Bentonite;Bentonite
 VALUES;Beta-apocarotenale-8';Ingrédient;;Beta-apocarotenale-8';Beta-apocarotenale-8 '
 VALUES;Beta-azarone;Ingrédient;;Beta-azarone;Beta-azarone
 VALUES;Beta-thuyone;Ingrédient;;Beta-thuyone;Beta-thujone
-VALUES;Betterave déshydratée;Ingrédient;;Betterave déshydratée;Dried Beet
+VALUES;Betterave déshydratée;Ingrédient;;Betterave déshydratée;Dried beet
 VALUES;Betterave fibres;Ingrédient;;Betterave fibres;Beet fiber
 VALUES;Betterave mélasse;Ingrédient;;Betterave mélasse;Beet molasses
 VALUES;Betterave rouge jus concentré;Ingrédient;;Betterave rouge jus concentré;Beetroot juice concentrate
@@ -1236,8 +1236,8 @@ VALUES;Biscuit;Ingrédient;;Biscuit;Biscuit
 VALUES;Bison coeur de rumsteck;Ingrédient;;Bison coeur de rumsteck;Bison heart of rump
 VALUES;Bison épaule;Ingrédient;;Bison épaule;Bison shoulder
 VALUES;Bison jarret;Ingrédient;;Bison jarret;Bison hock
-VALUES;Bison rumsteck;Ingrédient;;Bison rumsteck;Bison Rump
-VALUES;Bison tende de tranche;Ingrédient;;Bison tende de tranche;Bison Topside
+VALUES;Bison rumsteck;Ingrédient;;Bison rumsteck;Bison rump
+VALUES;Bison tende de tranche;Ingrédient;;Bison tende de tranche;Bison topside
 VALUES;Bison tranche grasse;Ingrédient;;Bison tranche grasse;Bison knuckle
 VALUES;Bison viande;Ingrédient;;Bison viande;Bison meat
 VALUES;Blé;Ingrédient;;Blé;Wheat
@@ -1281,12 +1281,12 @@ VALUES;Boeuf jarret;Ingrédient;;Boeuf jarret;Beef shank
 VALUES;Boeuf jumeau;Ingrédient;;Boeuf jumeau;Twin beef
 VALUES;Boeuf langue;Ingrédient;;Boeuf langue;Beef tongue
 VALUES;Boeuf maigre;Ingrédient;;Boeuf maigre;Lean beef
-VALUES;Boeuf menu;Ingrédient;;Boeuf menu;Beef Menu
+VALUES;Boeuf menu;Ingrédient;;Boeuf menu;Beef menu
 VALUES;Boeuf nerf de pied;Ingrédient;;Boeuf nerf de pied;Beef foot nerve
 VALUES;Boeuf nerveux de gite;Ingrédient;;Boeuf nerveux de gite;Beef nervous cottage
 VALUES;Boeuf paleron;Ingrédient;;Boeuf paleron;Beef chuck
 VALUES;Boeuf panse;Ingrédient;;Boeuf panse;Beef paunch
-VALUES;Boeuf persille;Ingrédient;;Boeuf persille;Beef Marbling
+VALUES;Boeuf persille;Ingrédient;;Boeuf persille;Beef marbling
 VALUES;Boeuf pied;Ingrédient;;Boeuf pied;Beef up
 VALUES;Boeuf rognon;Ingrédient;;Boeuf rognon;Beef kidney
 VALUES;Boeuf rond de gite;Ingrédient;;Boeuf rond de gite;Beef round cottage
@@ -1330,7 +1330,7 @@ VALUES;Cacao sec dégraissé;Ingrédient;;Cacao sec dégraissé;Cocoa fat dry
 VALUES;Café soluble;Ingrédient;;Café soluble;Instant coffee
 VALUES;Caille viande;Ingrédient;;Caille viande;Quail meat
 VALUES;Calamar;Ingrédient;;Calamar;Squid
-VALUES;Calcium disodium EDTA;Ingrédient;;Calcium disodium EDTA;Calcium disodium EDTA
+VALUES;Calcium disodium EDTA;Ingrédient;;Calcium disodium EDTA;Calcium disodium edta
 VALUES;Calcium laitier;Ingrédient;;Calcium laitier;Dairy calcium
 VALUES;Calvados;Ingrédient;;Calvados;Calvados
 VALUES;Camembert;Ingrédient;;Camembert;Camembert
@@ -1352,7 +1352,7 @@ VALUES;Cannelle;Ingrédient;;Cannelle;Cinnamon
 VALUES;Cannelle poudre;Ingrédient;;Cannelle poudre;Cinnamon powder
 VALUES;Cantal;Ingrédient;;Cantal;Cantal
 VALUES;Câpre;Ingrédient;;Câpre;Caper
-VALUES;Capsicum oléorésine;Ingrédient;;Capsicum oléorésine;Oleoresin Capsicum
+VALUES;Capsicum oléorésine;Ingrédient;;Capsicum oléorésine;Oleoresin capsicum
 VALUES;Caramel ordinaire;Ingrédient;;Caramel ordinaire;Plain caramel
 VALUES;Carbonate d'ammonium;Ingrédient;;Carbonate d'ammonium;Ammonium carbonate
 VALUES;Carbonate de magnésium;Ingrédient;;Carbonate de magnésium;Magnesium carbonate
@@ -1381,7 +1381,7 @@ VALUES;Caseinate de potassium;Ingrédient;;Caseinate de potassium;Potassium case
 VALUES;Caseinate de sodium;Ingrédient;;Caseinate de sodium;Sodium caseinate
 VALUES;Caseine présure;Ingrédient;;Caseine présure;Rennet casein
 VALUES;Cassis;Ingrédient;;Cassis;Blackcurrant
-VALUES;Cassis baie;Ingrédient;;Cassis baie;Cassis Bay
+VALUES;Cassis baie;Ingrédient;;Cassis baie;Cassis bay
 VALUES;Cassis crème;Ingrédient;;Cassis crème;Blackcurrant cream
 VALUES;Cassis jus concentre;Ingrédient;;Cassis jus concentre;Blackcurrant juice concentrate
 VALUES;Cassis purée;Ingrédient;;Cassis purée;Blackcurrant puree
@@ -1421,7 +1421,7 @@ VALUES;Cerise morceau;Ingrédient;;Cerise morceau;Cherry piece
 VALUES;Cerise noire;Ingrédient;;Cerise noire;Black cherry
 VALUES;Cerise noire morceau;Ingrédient;;Cerise noire morceau;Black cherry piece
 VALUES;Cerise noire purée;Ingrédient;;Cerise noire purée;Black cherry puree
-VALUES;Cerise Oblazinska;Ingrédient;;Cerise Oblazinska;Cherry Oblazinska
+VALUES;Cerise Oblazinska;Ingrédient;;Cerise Oblazinska;Cherry oblazinska
 VALUES;Cerise purée;Ingrédient;;Cerise purée;Cherry puree
 VALUES;Cerise purée concentrée;Ingrédient;;Cerise purée concentrée;Cherry puree concentrate
 VALUES;Chablis;Ingrédient;;Chablis;Chablis
@@ -1439,7 +1439,7 @@ VALUES;Chapon haut de cuisse;Ingrédient;;Chapon haut de cuisse;Capon thigh
 VALUES;Chapon pilon;Ingrédient;;Chapon pilon;Chapon pestle
 VALUES;Charbon végétal médicinal;Ingrédient;;Charbon végétal médicinal;Vegetable carbon
 VALUES;Châtaigne d'eau;Ingrédient;;Châtaigne d'eau;Water chestnut
-VALUES;Châteauneuf du pape;Ingrédient;;Châteauneuf du pape;Chateauneuf du Pape
+VALUES;Châteauneuf du pape;Ingrédient;;Châteauneuf du pape;Chateauneuf du pape
 VALUES;Cheddar;Ingrédient;;Cheddar;Cheddar
 VALUES;Cheddar orange;Ingrédient;;Cheddar orange;Orange cheddar
 VALUES;Chèvre fromage;Ingrédient;;Chèvre fromage;Goat cheese
@@ -1470,12 +1470,12 @@ VALUES;Ciboulette;Ingrédient;;Ciboulette;Chive
 VALUES;Cidre;Ingrédient;;Cidre;Cider
 VALUES;Cire;Ingrédient;;Cire;Wax
 VALUES;Cire de carnauba;Ingrédient;;Cire de carnauba;Carnauba wax
-VALUES;citrate de calcium;Ingrédient;;citrate de calcium;calcium citrate
-VALUES;citrate de potassium;Ingrédient;;citrate de potassium;potassium citrate
-VALUES;citrate trisodique;Ingrédient;;citrate trisodique;trisodium citrate
-VALUES;citrates de calcium;Ingrédient;;citrates de calcium;calcium citrate
-VALUES;citrates de potassium;Ingrédient;;citrates de potassium;potassium citrate
-VALUES;citrates de sodium;Ingrédient;;citrates de sodium;sodium citrate
+VALUES;citrate de calcium;Ingrédient;;citrate de calcium;Calcium citrate
+VALUES;citrate de potassium;Ingrédient;;citrate de potassium;Potassium citrate
+VALUES;citrate trisodique;Ingrédient;;citrate trisodique;Trisodium citrate
+VALUES;citrates de calcium;Ingrédient;;citrates de calcium;Calcium citrate
+VALUES;citrates de potassium;Ingrédient;;citrates de potassium;Potassium citrate
+VALUES;citrates de sodium;Ingrédient;;citrates de sodium;Sodium citrate
 VALUES;Citron;Ingrédient;;Citron;Lemon
 VALUES;Citron cellule entière;Ingrédient;;Citron cellule entière;Lemon whole cell
 VALUES;Citron cellule pressée;Ingrédient;;Citron cellule pressée;Pressed lemon cell
@@ -1542,7 +1542,7 @@ VALUES;Crépine;Ingrédient;;Crépine;Strainer
 VALUES;Crevette décortiquée;Ingrédient;;Crevette décortiquée;Peeled shrimp
 VALUES;Crevette déshydratée;Ingrédient;;Crevette déshydratée;Dried shrimp
 VALUES;Crevette extrait;Ingrédient;;Crevette extrait;Shrimp extract
-VALUES;Crevette nordique;Ingrédient;;Crevette nordique;Northern Shrimp
+VALUES;Crevette nordique;Ingrédient;;Crevette nordique;Northern shrimp
 VALUES;Crevette poudre;Ingrédient;;Crevette poudre;Shrimp powder
 VALUES;Crevette queue;Ingrédient;;Crevette queue;Shrimp tail
 VALUES;Crevette tropicale;Ingrédient;;Crevette tropicale;Tropical shrimp
@@ -1589,7 +1589,7 @@ VALUES;Dindonneau jambon;Ingrédient;;Dindonneau jambon;Turkey ham
 VALUES;Dioxyde de silicium;Ingrédient;;Dioxyde de silicium;Silicon dioxide
 VALUES;Dioxyde de souffre;Ingrédient;;Dioxyde de souffre;Sulfur dioxide
 VALUES;Diphosphate disodique;Ingrédient;;Diphosphate disodique;Disodium diphosphate
-VALUES;Diphosphate tetrapotassique;Ingrédient;;Diphosphate tetrapotassique;TETRAPOTASSIUM diphosphate
+VALUES;Diphosphate tetrapotassique;Ingrédient;;Diphosphate tetrapotassique;Tetrapotassium diphosphate
 VALUES;Diphosphate tetrasodique;Ingrédient;;Diphosphate tetrasodique;Tetrasodium diphosphate
 VALUES;Diphosphates;Ingrédient;;Diphosphates;Diphosphates
 VALUES;Dorade coryphène pave;Ingrédient;;Dorade coryphène pave;Dolphinfish paves
@@ -1618,7 +1618,7 @@ VALUES;Epices et plantes aromatiques;Ingrédient;;Epices et plantes aromatiques;
 VALUES;Epices extraits;Ingrédient;;Epices extraits;Spice extracts
 VALUES;Epices extraits naturels;Ingrédient;;Epices extraits naturels;Spices natural extracts
 VALUES;Epinard;Ingrédient;;Epinard;Spinach
-VALUES;Epinard déshydraté;Ingrédient;;Epinard déshydraté;Dehydrated Spinach
+VALUES;Epinard déshydraté;Ingrédient;;Epinard déshydraté;Dehydrated spinach
 VALUES;Erable sirop;Ingrédient;;Erable sirop;Maple syrup
 VALUES;Escargots;Ingrédient;;Escargots;Snails
 VALUES;Ester éthylique de l'acide beta-apocarotenique-8';Ingrédient;;Ester éthylique de l'acide beta-apocarotenique-8';Acid ethyl ester beta-apocarotenique-8 '
@@ -1663,7 +1663,7 @@ VALUES;Filtre tous;Ingrédient;;Filtre tous;Filter all
 VALUES;Flageolet;Ingrédient;;Flageolet;Flageolet
 VALUES;Flocons d'avoine;Ingrédient;;Flocons d'avoine;Oatmeal
 VALUES;Flocons de blé;Ingrédient;;Flocons de blé;Wheat flakes
-VALUES;Fourme d'Ambert;Ingrédient;;Fourme d'Ambert;Fourme d'Ambert
+VALUES;Fourme d'Ambert;Ingrédient;;Fourme d'Ambert;Fourme d'ambert
 VALUES;Fraise;Ingrédient;;Fraise;Strawberry
 VALUES;Fraise des bois;Ingrédient;;Fraise des bois;Strawberry
 VALUES;Fraise des bois purée concentrée;Ingrédient;;Fraise des bois purée concentrée;Strawberry puree concentrate
@@ -1732,7 +1732,7 @@ VALUES;Glycérol / glycérine;Ingrédient;;Glycérol / glycérine;Glycerol / gly
 VALUES;Glycine et son sel de sodium;Ingrédient;;Glycine et son sel de sodium;Glycine and its sodium salt
 VALUES;Gomme adragante;Ingrédient;;Gomme adragante;Tragacanth
 VALUES;Gomme arabique;Ingrédient;;Gomme arabique;Gum arabic
-VALUES;Gomme de Guar;Ingrédient;;Gomme de Guar;Guar Gum
+VALUES;Gomme de Guar;Ingrédient;;Gomme de Guar;Guar gum
 VALUES;Gomme Xanthane;Ingrédient;;Gomme Xanthane;Xanthan gum
 VALUES;Gouda;Ingrédient;;Gouda;Gouda
 VALUES;Goyave purée;Ingrédient;;Goyave purée;Guava puree
@@ -1772,12 +1772,12 @@ VALUES;Herbe aromatique extrait;Ingrédient;;Herbe aromatique extrait;Herb extra
 VALUES;Herbes;Ingrédient;;Herbes;Herbs
 VALUES;Herbes aromatiques;Ingrédient;;Herbes aromatiques;Herbs
 VALUES;Herbes aromatiques extraits;Ingrédient;;Herbes aromatiques extraits;Herb extracts
-VALUES;Herbes de Provence;Ingrédient;;Herbes de Provence;Herbes de Provence
+VALUES;Herbes de Provence;Ingrédient;;Herbes de Provence;Herbes de provence
 VALUES;Herbes fines;Ingrédient;;Herbes fines;Herbs
 VALUES;Hoki filet;Ingrédient;;Hoki filet;Hoki fillet
 VALUES;Homard;Ingrédient;;Homard;Lobster
-VALUES;Homard américain;Ingrédient;;Homard américain;American Lobster
-VALUES;Homard bisque;Ingrédient;;Homard bisque;Lobster Bisque
+VALUES;Homard américain;Ingrédient;;Homard américain;American lobster
+VALUES;Homard bisque;Ingrédient;;Homard bisque;Lobster bisque
 VALUES;Homard concentré;Ingrédient;;Homard concentré;Concentrated lobster
 VALUES;Houblon extrait;Ingrédient;;Houblon extrait;Hops extract
 VALUES;Huile de noix de coco et de palme;Ingrédient;;Huile de noix de coco et de palme;Coconut oil and palm
@@ -1804,10 +1804,10 @@ VALUES;Ketchup;Ingrédient;;Ketchup;Ketchup
 VALUES;Kiwi;Ingrédient;;Kiwi;Kiwi
 VALUES;Krill;Ingrédient;;Krill;Krill
 VALUES;Lactaire;Ingrédient;;Lactaire;Lacteal
-VALUES;lactate de calcium;Ingrédient;;lactate de calcium;calcium lactate
-VALUES;lactate de fer;Ingrédient;;lactate de fer;iron lactate
-VALUES;lactate de potassium;Ingrédient;;lactate de potassium;potassium lactate
-VALUES;lactate de sodium;Ingrédient;;lactate de sodium;sodium lactate
+VALUES;lactate de calcium;Ingrédient;;lactate de calcium;Calcium lactate
+VALUES;lactate de fer;Ingrédient;;lactate de fer;Iron lactate
+VALUES;lactate de potassium;Ingrédient;;lactate de potassium;Potassium lactate
+VALUES;lactate de sodium;Ingrédient;;lactate de sodium;Sodium lactate
 VALUES;Lactobacillus acidophilus;Ingrédient;;Lactobacillus acidophilus;Lactobacillus acidophilus
 VALUES;Lactobacillus casei ssp rhamnosus;Ingrédient;;Lactobacillus casei ssp rhamnosus;Lactobacillus casei ssp rhamnosus
 VALUES;Lactobacillus delbrueckii bulgaricus;Ingrédient;;Lactobacillus delbrueckii bulgaricus;Lactobacillus delbrueckii bulgaricus
@@ -1847,7 +1847,7 @@ VALUES;Lait protéine;Ingrédient;;Lait protéine;Milk protein
 VALUES;Lait protéine et extrait lactique;Ingrédient;;Lait protéine et extrait lactique;Milk protein extract and lactic
 VALUES;Lait protéines;Ingrédient;;Lait protéines;Milk proteins
 VALUES;Laitue;Ingrédient;;Laitue;Lettuce
-VALUES;Langouste blanche;Ingrédient;;Langouste blanche;Spiny Lobster
+VALUES;Langouste blanche;Ingrédient;;Langouste blanche;Spiny lobster
 VALUES;Langouste blanche chair;Ingrédient;;Langouste blanche chair;Spiny lobster meat
 VALUES;Langouste blanche queue;Ingrédient;;Langouste blanche queue;Spiny lobster tail
 VALUES;Langouste chair;Ingrédient;;Langouste chair;Lobster meat
@@ -1857,7 +1857,7 @@ VALUES;Lapin cuisse;Ingrédient;;Lapin cuisse;Rabbit thigh
 VALUES;Lapin râble;Ingrédient;;Lapin râble;Rabbit saddle
 VALUES;Lapin viande;Ingrédient;;Lapin viande;Rabbit meat
 VALUES;Lapin viande de cote;Ingrédient;;Lapin viande de cote;Rabbit meat aside
-VALUES;Lapin viande de flanchet;Ingrédient;;Lapin viande de flanchet;Rabbit meat Flank
+VALUES;Lapin viande de flanchet;Ingrédient;;Lapin viande de flanchet;Rabbit meat flank
 VALUES;Lapin viande d'épaule;Ingrédient;;Lapin viande d'épaule;Rabbit meat shoulder
 VALUES;Lardons fumes;Ingrédient;;Lardons fumes;Smoked bacon
 VALUES;Laurier;Ingrédient;;Laurier;Laurel
@@ -1871,14 +1871,14 @@ VALUES;Légumes concentre;Ingrédient;;Légumes concentre;Vegetable concentrates
 VALUES;Légumes déshydratés;Ingrédient;;Légumes déshydratés;Dehydrated vegetables
 VALUES;Légumes extrait;Ingrédient;;Légumes extrait;Vegetable extract
 VALUES;Lentille blonde;Ingrédient;;Lentille blonde;Lentil
-VALUES;Lentille verte;Ingrédient;;Lentille verte;Green Lens
+VALUES;Lentille verte;Ingrédient;;Lentille verte;Green lens
 VALUES;Leuconoctoc mesenteroides ssp cremoris;Ingrédient;;Leuconoctoc mesenteroides ssp cremoris;Leuconoctoc mesenteroides ssp cremoris
 VALUES;Leuconoctoc mesenteroides ssp dextranicum;Ingrédient;;Leuconoctoc mesenteroides ssp dextranicum;Leuconoctoc mesenteroides ssp dextranicum
 VALUES;Leuconoctoc mesenteroides ssp mesenteroides;Ingrédient;;Leuconoctoc mesenteroides ssp mesenteroides;Leuconoctoc mesenteroides ssp mesenteroides
 VALUES;Leuconoctoc pseudomesenteroides;Ingrédient;;Leuconoctoc pseudomesenteroides;Leuconoctoc pseudomesenteroides
 VALUES;Leuconostoc;Ingrédient;;Leuconostoc;Leuconostoc
 VALUES;Levain;Ingrédient;;Levain;Sourdough
-VALUES;Levain crème;Ingrédient;;Levain crème;Bread Cream
+VALUES;Levain crème;Ingrédient;;Levain crème;Bread cream
 VALUES;Levain lactique;Ingrédient;;Levain lactique;Starter
 VALUES;Levure;Ingrédient;;Levure;Yeast
 VALUES;Levure boulangère;Ingrédient;;Levure boulangère;Yeast
@@ -1926,10 +1926,10 @@ VALUES;Manioc amidon transforme;Ingrédient;;Manioc amidon transforme;Cassava st
 VALUES;Manioc fécule;Ingrédient;;Manioc fécule;Cassava starch
 VALUES;Manioc fécule prégélatinisée;Ingrédient;;Manioc fécule prégélatinisée;Pregelatinized cassava starch
 VALUES;Margarine;Ingrédient;;Margarine;Margarine
-VALUES;Marinade curry;Ingrédient;;Marinade curry;Curry Marinade
+VALUES;Marinade curry;Ingrédient;;Marinade curry;Curry marinade
 VALUES;Marinade hot and spicy;Ingrédient;;Marinade hot and spicy;Hot and spicy marinade
 VALUES;Marinade maitre d'hôtel;Ingrédient;;Marinade maitre d'hôtel;Marinade butler
-VALUES;Marinade mexicaine;Ingrédient;;Marinade mexicaine;Mexican Marinade
+VALUES;Marinade mexicaine;Ingrédient;;Marinade mexicaine;Mexican marinade
 VALUES;Marinade pizzaiolo;Ingrédient;;Marinade pizzaiolo;Marinade pizza
 VALUES;Marinade tandoori;Ingrédient;;Marinade tandoori;Tandoori marinade
 VALUES;Marjolaine;Ingrédient;;Marjolaine;Marjoram
@@ -1953,7 +1953,7 @@ VALUES;Menthe douce;Ingrédient;;Menthe douce;Spearmint
 VALUES;Merguez;Ingrédient;;Merguez;Merguez
 VALUES;Merlan;Ingrédient;;Merlan;Whiting
 VALUES;Merlan filet;Ingrédient;;Merlan filet;Whiting fillet
-VALUES;Merlu blanc du cap filet;Ingrédient;;Merlu blanc du cap filet;White hake fillet Cape
+VALUES;Merlu blanc du cap filet;Ingrédient;;Merlu blanc du cap filet;White hake fillet cape
 VALUES;Merlu blanc filet;Ingrédient;;Merlu blanc filet;White hake fillet
 VALUES;Mgla;Ingrédient;;Mgla;Mgla
 VALUES;Miel;Ingrédient;;Miel;Honey
@@ -1973,7 +1973,7 @@ VALUES;Morille;Ingrédient;;Morille;Morel
 VALUES;Moule;Ingrédient;;Moule;Mold
 VALUES;Moule du pacifique;Ingrédient;;Moule du pacifique;Pan pacific
 VALUES;Moule extrait;Ingrédient;;Moule extrait;Mold extract
-VALUES;Moules mytilus edulis;Ingrédient;;Moules mytilus edulis;Mussel Mytilus edulis
+VALUES;Moules mytilus edulis;Ingrédient;;Moules mytilus edulis;Mussel mytilus edulis
 VALUES;Mousseron;Ingrédient;;Mousseron;Mousseron
 VALUES;Moutarde;Ingrédient;;Moutarde;Mustard
 VALUES;Moutarde a l'ancienne;Ingrédient;;Moutarde a l'ancienne;Mustard has the old
@@ -2010,12 +2010,12 @@ VALUES;Myrtille sauvage purée;Ingrédient;;Myrtille sauvage purée;Wild blueber
 VALUES;Myrtille sauvage purée concentrée;Ingrédient;;Myrtille sauvage purée concentrée;Wild blueberry puree concentrate
 VALUES;Navet;Ingrédient;;Navet;Turnip
 VALUES;Nectarine;Ingrédient;;Nectarine;Nectarine
-VALUES;Nectarine de méditerranée;Ingrédient;;Nectarine de méditerranée;Nectarine Mediterranean
+VALUES;Nectarine de méditerranée;Ingrédient;;Nectarine de méditerranée;Nectarine mediterranean
 VALUES;Nectarine morceau;Ingrédient;;Nectarine morceau;Nectarine piece
 VALUES;Nectarine purée;Ingrédient;;Nectarine purée;Nectarine puree
 VALUES;Nectarine purée concentrée;Ingrédient;;Nectarine purée concentrée;Nectarine puree concentrate
 VALUES;Nigelle graine;Ingrédient;;Nigelle graine;Nigella seeds
-VALUES;Noilly Prat;Ingrédient;;Noilly Prat;Noilly Prat
+VALUES;Noilly Prat;Ingrédient;;Noilly Prat;Noilly prat
 VALUES;Noisette;Ingrédient;;Noisette;Hazelnut
 VALUES;Noisette pate;Ingrédient;;Noisette pate;Hazelnut paste
 VALUES;Noix;Ingrédient;;Noix;Nuts
@@ -2031,26 +2031,26 @@ VALUES;Noix de coco râpée;Ingrédient;;Noix de coco râpée;Shredded coconut
 VALUES;Noix de coco râpures;Ingrédient;;Noix de coco râpures;Coconut shavings
 VALUES;Noix de muscade;Ingrédient;;Noix de muscade;Nutmeg
 VALUES;Noix de pecan;Ingrédient;;Noix de pecan;Pecans
-VALUES;Noix de st Jacques;Ingrédient;;Noix de st Jacques;St Jacques nuts
-VALUES;Noix de st Jacques avec corail;Ingrédient;;Noix de st Jacques avec corail;St Jacques nuts with coral
-VALUES;Noix de st Jacques sans corail;Ingrédient;;Noix de st Jacques sans corail;St Jacques nuts without coral
+VALUES;Noix de st Jacques;Ingrédient;;Noix de st Jacques;St jacques nuts
+VALUES;Noix de st Jacques avec corail;Ingrédient;;Noix de st Jacques avec corail;St jacques nuts with coral
+VALUES;Noix de st Jacques sans corail;Ingrédient;;Noix de st Jacques sans corail;St jacques nuts without coral
 VALUES;Nouilles chinoises;Ingrédient;;Nouilles chinoises;Chinese noodles
 VALUES;Nuoc mam;Ingrédient;;Nuoc mam;Nuoc mam
 VALUES;Octenyle succinate d'amidon sodique;Ingrédient;;Octenyle succinate d'amidon sodique;Sodium starch octenyl succinate
 VALUES;Octenyle succinate d'amidon sodique;Ingrédient;;Octenyle succinate d'amidon sodique;Sodium starch octenyl succinate
-VALUES;oeuf;Ingrédient;;oeuf;egg
-VALUES;oeuf blanc;Ingrédient;;oeuf blanc;egg white
-VALUES;oeuf blanc poudre;Ingrédient;;oeuf blanc poudre;egg white powder
-VALUES;oeuf entier;Ingrédient;;oeuf entier;whole egg
-VALUES;oeuf entier pasteurise;Ingrédient;;oeuf entier pasteurise;pasteurized whole egg
-VALUES;oeuf entier poudre;Ingrédient;;oeuf entier poudre;whole egg powder
-VALUES;oeuf frais;Ingrédient;;oeuf frais;fresh egg
-VALUES;oeuf jaune;Ingrédient;;oeuf jaune;egg yellow
-VALUES;oeuf jaune frais;Ingrédient;;oeuf jaune frais;fresh egg yolk
-VALUES;oeuf jaune poudre;Ingrédient;;oeuf jaune poudre;egg yolk powder
-VALUES;oeuf poudre de blanc;Ingrédient;;oeuf poudre de blanc;egg white powder
-VALUES;oeufs durs;Ingrédient;;oeufs durs;boiled eggs
-VALUES;oeufs pasteurises;Ingrédient;;oeufs pasteurises;pasteurized eggs
+VALUES;oeuf;Ingrédient;;oeuf;Egg
+VALUES;oeuf blanc;Ingrédient;;oeuf blanc;Egg white
+VALUES;oeuf blanc poudre;Ingrédient;;oeuf blanc poudre;Egg white powder
+VALUES;oeuf entier;Ingrédient;;oeuf entier;Whole egg
+VALUES;oeuf entier pasteurise;Ingrédient;;oeuf entier pasteurise;Pasteurized whole egg
+VALUES;oeuf entier poudre;Ingrédient;;oeuf entier poudre;Whole egg powder
+VALUES;oeuf frais;Ingrédient;;oeuf frais;Fresh egg
+VALUES;oeuf jaune;Ingrédient;;oeuf jaune;Egg yellow
+VALUES;oeuf jaune frais;Ingrédient;;oeuf jaune frais;Fresh egg yolk
+VALUES;oeuf jaune poudre;Ingrédient;;oeuf jaune poudre;Egg yolk powder
+VALUES;oeuf poudre de blanc;Ingrédient;;oeuf poudre de blanc;Egg white powder
+VALUES;oeufs durs;Ingrédient;;oeufs durs;Boiled eggs
+VALUES;oeufs pasteurises;Ingrédient;;oeufs pasteurises;Pasteurized eggs
 VALUES;Oie filet;Ingrédient;;Oie filet;Goose net
 VALUES;Oignon;Ingrédient;;Oignon;Onion
 VALUES;Oignon extrait;Ingrédient;;Oignon extrait;Onion extract
@@ -2109,11 +2109,11 @@ VALUES;Pamplemousse rose morceau;Ingrédient;;Pamplemousse rose morceau;Pink gra
 VALUES;Panais;Ingrédient;;Panais;Parsnip
 VALUES;Papaye;Ingrédient;;Papaye;Papaya
 VALUES;Papaye jaune;Ingrédient;;Papaye jaune;Papaya yellow
-VALUES;Papaye morceau;Ingrédient;;Papaye morceau;Papaya Song
+VALUES;Papaye morceau;Ingrédient;;Papaye morceau;Papaya song
 VALUES;Papaye rouge;Ingrédient;;Papaye rouge;Red papaya
 VALUES;Paprika;Ingrédient;;Paprika;Paprika
 VALUES;Paprika extrait;Ingrédient;;Paprika extrait;Paprika extract
-VALUES;Paprika oléorésine;Ingrédient;;Paprika oléorésine;Paprika Oleoresin
+VALUES;Paprika oléorésine;Ingrédient;;Paprika oléorésine;Paprika oleoresin
 VALUES;Parmesan;Ingrédient;;Parmesan;Parmesan
 VALUES;Parrure de poitrine;Ingrédient;;Parrure de poitrine;Headdress of chest
 VALUES;Parrure d'épaule;Ingrédient;;Parrure d'épaule;Headdress shoulder
@@ -2172,8 +2172,8 @@ VALUES;Pintade filet;Ingrédient;;Pintade filet;Guinea fowl fillet
 VALUES;Pintade suprême;Ingrédient;;Pintade suprême;Guinea fowl supreme
 VALUES;Pintade viande;Ingrédient;;Pintade viande;Guinea fowl meat
 VALUES;Pintade viande de cuisse;Ingrédient;;Pintade viande de cuisse;Guinea fowl thigh meat
-VALUES;Pintadeau aiguillette;Ingrédient;;Pintadeau aiguillette;Guinea Fowl lanyard
-VALUES;Pintadeau suprême;Ingrédient;;Pintadeau suprême;Guinea Fowl Supreme
+VALUES;Pintadeau aiguillette;Ingrédient;;Pintadeau aiguillette;Guinea fowl lanyard
+VALUES;Pintadeau suprême;Ingrédient;;Pintadeau suprême;Guinea fowl supreme
 VALUES;Plante aromatique;Ingrédient;;Plante aromatique;Aromatic plant
 VALUES;Plantes aromatiques;Ingrédient;;Plantes aromatiques;Herbs
 VALUES;Plantes aromatiques et épices;Ingrédient;;Plantes aromatiques et épices;Herbs and spices
@@ -2185,7 +2185,7 @@ VALUES;Poire morceau;Ingrédient;;Poire morceau;Pear piece
 VALUES;Poire purée;Ingrédient;;Poire purée;Pear puree
 VALUES;Poire purée concentrée;Ingrédient;;Poire purée concentrée;Pear puree concentrate
 VALUES;Poire Williams;Ingrédient;;Poire Williams;Williams pear
-VALUES;Poire Williams morceau;Ingrédient;;Poire Williams morceau;Poire Williams song
+VALUES;Poire Williams morceau;Ingrédient;;Poire Williams morceau;Poire williams song
 VALUES;Poire Williams purée;Ingrédient;;Poire Williams purée;Williams pear puree
 VALUES;Poire Williams purée concentrée;Ingrédient;;Poire Williams purée concentrée;Williams pear puree concentrate
 VALUES;Poireau;Ingrédient;;Poireau;Leek
@@ -2294,10 +2294,10 @@ VALUES;Poule haut de cuisse;Ingrédient;;Poule haut de cuisse;Chicken thigh
 VALUES;Poule pilon;Ingrédient;;Poule pilon;Chicken drumstick
 VALUES;Poule viande;Ingrédient;;Poule viande;Chicken meat
 VALUES;Poulet aiguillette;Ingrédient;;Poulet aiguillette;Chicken lanyard
-VALUES;Poulet blanc traité en salaison;Ingrédient;;Poulet blanc traité en salaison;White chicken Cured
+VALUES;Poulet blanc traité en salaison;Ingrédient;;Poulet blanc traité en salaison;White chicken cured
 VALUES;Poulet cou;Ingrédient;;Poulet cou;Chicken neck
 VALUES;Poulet cuisse;Ingrédient;;Poulet cuisse;Chicken thigh
-VALUES;Poulet cuisse de Loué;Ingrédient;;Poulet cuisse de Loué;Chicken thigh Praised
+VALUES;Poulet cuisse de Loué;Ingrédient;;Poulet cuisse de Loué;Chicken thigh praised
 VALUES;Poulet cuisse Halal;Ingrédient;;Poulet cuisse Halal;Halal chicken thigh
 VALUES;Poulet cuisse sans peau sans os;Ingrédient;;Poulet cuisse sans peau sans os;Chicken thigh boneless skinless
 VALUES;Poulet filet;Ingrédient;;Poulet filet;Chicken fillet
@@ -2319,18 +2319,18 @@ VALUES;Poulet viande de cuisse;Ingrédient;;Poulet viande de cuisse;Chicken thig
 VALUES;Poulet viande de filet;Ingrédient;;Poulet viande de filet;Chicken fillet meat
 VALUES;Poulet viande de haut de cuisse;Ingrédient;;Poulet viande de haut de cuisse;Chicken thigh meat
 VALUES;Préparation aromatique;Ingrédient;;Préparation aromatique;Preparation aromatic
-VALUES;Préparation aromatique boucane;Ingrédient;;Préparation aromatique boucane;Preparation aromatic Butt
+VALUES;Préparation aromatique boucane;Ingrédient;;Préparation aromatique boucane;Preparation aromatic butt
 VALUES;Préparation aromatique couscous;Ingrédient;;Préparation aromatique couscous;Preparation aromatic couscous
-VALUES;Préparation aromatique mexicaine;Ingrédient;;Préparation aromatique mexicaine;Preparation aromatic Mexican
+VALUES;Préparation aromatique mexicaine;Ingrédient;;Préparation aromatique mexicaine;Preparation aromatic mexican
 VALUES;Préparation aromatique paella;Ingrédient;;Préparation aromatique paella;Preparation aromatic paella
 VALUES;Préparation aromatique poivre vert;Ingrédient;;Préparation aromatique poivre vert;Preparation aromatic green pepper
 VALUES;Préparation aromatique yassa;Ingrédient;;Préparation aromatique yassa;Preparation aromatic yassa
 VALUES;Préparation aromatisante;Ingrédient;;Préparation aromatisante;Flavoring preparation
 VALUES;Préparation aromatisante naturelle;Ingrédient;;Préparation aromatisante naturelle;Natural flavoring preparation
-VALUES;Préparation fromagère au goût bleu;Ingrédient;;Préparation fromagère au goût bleu;Blue cheese to taste Preparation
-VALUES;Préparation fromagère au goût cheddar;Ingrédient;;Préparation fromagère au goût cheddar;Cheddar cheese to taste Preparation
-VALUES;Préparation fromagère au goût emmental;Ingrédient;;Préparation fromagère au goût emmental;Emmental cheese to taste Preparation
-VALUES;Préparation fromagère au goût gouda;Ingrédient;;Préparation fromagère au goût gouda;Gouda cheese to taste Preparation
+VALUES;Préparation fromagère au goût bleu;Ingrédient;;Préparation fromagère au goût bleu;Blue cheese to taste preparation
+VALUES;Préparation fromagère au goût cheddar;Ingrédient;;Préparation fromagère au goût cheddar;Cheddar cheese to taste preparation
+VALUES;Préparation fromagère au goût emmental;Ingrédient;;Préparation fromagère au goût emmental;Emmental cheese to taste preparation
+VALUES;Préparation fromagère au goût gouda;Ingrédient;;Préparation fromagère au goût gouda;Gouda cheese to taste preparation
 VALUES;Préparation safranée;Ingrédient;;Préparation safranée;Preparation saffron
 VALUES;Préparations aromatisantes;Ingrédient;;Préparations aromatisantes;Flavours
 VALUES;Préparations aromatisantes (autres);Ingrédient;;Préparations aromatisantes (autres);Flavoring preparations (other)
@@ -2348,7 +2348,7 @@ VALUES;Protéines de soja;Ingrédient;;Protéines de soja;Soy protein
 VALUES;Protéines vegetales;Ingrédient;;Protéines vegetales;Vegetable proteins
 VALUES;Pruneau;Ingrédient;;Pruneau;Prune
 VALUES;Pruneau entier;Ingrédient;;Pruneau entier;Prune entire
-VALUES;Pruneau morceau;Ingrédient;;Pruneau morceau;Prune Song
+VALUES;Pruneau morceau;Ingrédient;;Pruneau morceau;Prune song
 VALUES;Pruneau purée;Ingrédient;;Pruneau purée;Prune puree
 VALUES;Pulegone;Ingrédient;;Pulegone;Pulegone
 VALUES;Quassine;Ingrédient;;Quassine;Quassine
@@ -2375,13 +2375,13 @@ VALUES;Riz;Ingrédient;;Riz;Rice
 VALUES;Riz amidon;Ingrédient;;Riz amidon;Rice starch
 VALUES;Riz basmati;Ingrédient;;Riz basmati;Basmati rice
 VALUES;Riz farine;Ingrédient;;Riz farine;Rice flour
-VALUES;Riz sauvage;Ingrédient;;Riz sauvage;Wild Rice
+VALUES;Riz sauvage;Ingrédient;;Riz sauvage;Wild rice
 VALUES;Rocouyer;Ingrédient;;Rocouyer;Annatto
 VALUES;Romarin;Ingrédient;;Romarin;Rosemary
 VALUES;Romarin extrait;Ingrédient;;Romarin extrait;Rosemary extract
 VALUES;Roquefort;Ingrédient;;Roquefort;Roquefort
 VALUES;Rouge de betterave;Ingrédient;;Rouge de betterave;Beet red
-VALUES;Rouget barbet de Thaïlande filet;Ingrédient;;Rouget barbet de Thaïlande filet;Red mullet fillet of Thailand
+VALUES;Rouget barbet de Thaïlande filet;Ingrédient;;Rouget barbet de Thaïlande filet;Red mullet fillet of thailand
 VALUES;Rouget barbet filet;Ingrédient;;Rouget barbet filet;Red mullet fillet
 VALUES;Saccharine et ses sels de na, k et ca;Ingrédient;;Saccharine et ses sels de na, k et ca;Saccharin and its salts na, k and c
 VALUES;Saccharose;Ingrédient;;Saccharose;Sucrose
@@ -2402,9 +2402,9 @@ VALUES;Sanglier noix d'épaule;Ingrédient;;Sanglier noix d'épaule;Boar shoulde
 VALUES;Santonine;Ingrédient;;Santonine;Santonin
 VALUES;Sarrasin farine;Ingrédient;;Sarrasin farine;Buckwheat flour
 VALUES;Sarriette;Ingrédient;;Sarriette;Savory
-VALUES;Sauce Hoi Sin;Ingrédient;;Sauce Hoi Sin;Hoi Sin sauce
+VALUES;Sauce Hoi Sin;Ingrédient;;Sauce Hoi Sin;Hoi sin sauce
 VALUES;Sauce huître;Ingrédient;;Sauce huître;Oyster sauce
-VALUES;Sauce Nuoc Mam;Ingrédient;;Sauce Nuoc Mam;Nuoc Mam sauce
+VALUES;Sauce Nuoc Mam;Ingrédient;;Sauce Nuoc Mam;Nuoc mam sauce
 VALUES;Sauce piment;Ingrédient;;Sauce piment;Chilli sauce
 VALUES;Sauce ratatouille;Ingrédient;;Sauce ratatouille;Ratatouille sauce
 VALUES;Sauce soja;Ingrédient;;Sauce soja;Soy sauce
@@ -2415,7 +2415,7 @@ VALUES;Saucisse de Toulouse;Ingrédient;;Saucisse de Toulouse;Toulouse sausage
 VALUES;Saucisse mexicaine;Ingrédient;;Saucisse mexicaine;Mexican sausage
 VALUES;Sauge;Ingrédient;;Sauge;Sage
 VALUES;Saumon;Ingrédient;;Saumon;Salmon
-VALUES;Saumon argenté du pacifique;Ingrédient;;Saumon argenté du pacifique;Coho salmon of the Pacific
+VALUES;Saumon argenté du pacifique;Ingrédient;;Saumon argenté du pacifique;Coho salmon of the pacific
 VALUES;Saumon atlantique;Ingrédient;;Saumon atlantique;Atlantic salmon
 VALUES;Saumon atlantique chair;Ingrédient;;Saumon atlantique chair;Atlantic salmon flesh
 VALUES;Saumon atlantique escalope;Ingrédient;;Saumon atlantique escalope;Atlantic salmon cutlet
@@ -2446,7 +2446,7 @@ VALUES;Sel nitrite;Ingrédient;;Sel nitrite;Nitrite salt
 VALUES;Sels de sodium, de potassium et de calcium d'acide gras;Ingrédient;;Sels de sodium, de potassium et de calcium d'acide gras;Sodium salts, potassium and calcium fatty acid
 VALUES;Semoule;Ingrédient;;Semoule;Semolina
 VALUES;Serpolet;Ingrédient;;Serpolet;Thyme
-VALUES;Sérum poudre;Ingrédient;;Sérum poudre;Serum Powder
+VALUES;Sérum poudre;Ingrédient;;Sérum poudre;Serum powder
 VALUES;Sésame;Ingrédient;;Sésame;Sesame
 VALUES;Sésame graines;Ingrédient;;Sésame graines;Sesame seeds
 VALUES;Sésame huile;Ingrédient;;Sésame huile;Sesame oil
@@ -2498,7 +2498,7 @@ VALUES;Sucrose;Ingrédient;;Sucrose;Sucrose
 VALUES;Sureau;Ingrédient;;Sureau;Elderberry
 VALUES;Sureau jus;Ingrédient;;Sureau jus;Elderberry juice
 VALUES;Sureau jus concentré de;Ingrédient;;Sureau jus concentré de;Elderberry juice concentrate
-VALUES;Sureau sauvage;Ingrédient;;Sureau sauvage;Wild Elderberry
+VALUES;Sureau sauvage;Ingrédient;;Sureau sauvage;Wild elderberry
 VALUES;Surimi;Ingrédient;;Surimi;Surimi
 VALUES;Tagete extrait;Ingrédient;;Tagete extrait;Tagete extract
 VALUES;Tamarin;Ingrédient;;Tamarin;Tamarind
@@ -2512,7 +2512,7 @@ VALUES;Thon Listao;Ingrédient;;Thon Listao;Skipjack tuna
 VALUES;Thym;Ingrédient;;Thym;Thyme
 VALUES;Tomate;Ingrédient;;Tomate;Tomato
 VALUES;Tomate concentré;Ingrédient;;Tomate concentré;Concentrated tomato
-VALUES;Tomate confite;Ingrédient;;Tomate confite;Sundried Tomato
+VALUES;Tomate confite;Ingrédient;;Tomate confite;Sundried tomato
 VALUES;Tomate coulis;Ingrédient;;Tomate coulis;Tomato coulis
 VALUES;Tomate déshydratée;Ingrédient;;Tomate déshydratée;Dehydrated tomato
 VALUES;Tomate double concentré;Ingrédient;;Tomate double concentré;Double concentrated tomato
@@ -2551,7 +2551,7 @@ VALUES;Vanille;Ingrédient;;Vanille;Vanilla
 VALUES;Vanille gousse épuisée;Ingrédient;;Vanille gousse épuisée;Vanilla bean exhausted
 VALUES;Vanille graines;Ingrédient;;Vanille graines;Vanilla seeds
 VALUES;Vanilline;Ingrédient;;Vanilline;Vanillin
-VALUES;Vanilline oléorésine;Ingrédient;;Vanilline oléorésine;Oleoresin Vanillin
+VALUES;Vanilline oléorésine;Ingrédient;;Vanilline oléorésine;Oleoresin vanillin
 VALUES;Veau bas carre;Ingrédient;;Veau bas carre;Veal lower edge
 VALUES;Veau collier;Ingrédient;;Veau collier;Calf collar
 VALUES;Veau cuissot;Ingrédient;;Veau cuissot;Veal haunch
@@ -2586,7 +2586,7 @@ VALUES;Vinaigre de vin;Ingrédient;;Vinaigre de vin;Wine vinegar
 VALUES;Vinaigre de vin rouge;Ingrédient;;Vinaigre de vin rouge;Red wine vinegar
 VALUES;Vinaigre de xérès;Ingrédient;;Vinaigre de xérès;Sherry vinegar
 VALUES;Vitamine a;Ingrédient;;Vitamine a;Vitamin a
-VALUES;Vitamine b1;Ingrédient;;Vitamine b1;Vitamin B1
+VALUES;Vitamine b1;Ingrédient;;Vitamine b1;Vitamin b1
 VALUES;Vitamine b12;Ingrédient;;Vitamine b12;Vitamin b12
 VALUES;Vitamine b5;Ingrédient;;Vitamine b5;Vitamin b5
 VALUES;Vitamine b6;Ingrédient;;Vitamine b6;Vitamin b6
@@ -2598,7 +2598,7 @@ VALUES;Volaille fond;Ingrédient;;Volaille fond;Poultry background
 VALUES;Volaille graisse;Ingrédient;;Volaille graisse;Poultry fat
 VALUES;Volaille merguez;Ingrédient;;Volaille merguez;Poultry sausages
 VALUES;Volaille viande;Ingrédient;;Volaille viande;Poultry meat
-VALUES;Volvaire;Ingrédient;;Volvaire;Rice Straw Mushrooms
+VALUES;Volvaire;Ingrédient;;Volvaire;Rice straw mushrooms
 VALUES;Whisky;Ingrédient;;Whisky;Whiskey
 VALUES;Xanthane gomme;Ingrédient;;Xanthane gomme;Xanthan gum
 VALUES;Yaourt;Ingrédient;;Yaourt;Yoghurt

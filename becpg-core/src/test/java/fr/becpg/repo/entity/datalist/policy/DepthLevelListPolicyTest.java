@@ -9,16 +9,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.ProductData;
@@ -40,13 +37,6 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(DepthLevelListPolicyTest.class);
 
-	
-	private DataListSortService dataListSortService;
-	
-
-	private BehaviourFilter policyBehaviourFilter;
-
-
 
 	/*
 	 * (non-Javadoc)
@@ -56,9 +46,6 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-
-		dataListSortService = (DataListSortService) ctx.getBean("dataListSortService");
-		policyBehaviourFilter = (BehaviourFilter)ctx.getBean("policyBehaviourFilter");
 	}
 
 	/*
@@ -260,14 +247,15 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		
 		assertNotNull(finishedProductLoaded.getCompoList());
 		assertEquals(5, finishedProductLoaded.getCompoList().size());
-	}
+	}	
 	
-	private void printSort(List<CompoListDataItem> compoListDataItem){
-		
-		for(CompoListDataItem c : compoListDataItem){
-			
-			logger.info("level : " + (Integer)nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL) + " - Product " + (String)nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME) + 
-					" - sorted: " + (Integer)nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_SORT));
+	public void printSort(List<CompoListDataItem> compoListDataItem) {
+
+		for (CompoListDataItem c : compoListDataItem) {
+
+			logger.info("level : " + (Integer) nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL)
+					+ " - Product " + (String) nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME)
+					+ " - sorted: " + (Integer) nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_SORT));
 		}
 	}
 }

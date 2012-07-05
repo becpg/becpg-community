@@ -107,16 +107,21 @@ public class EntityCheckOutCheckInServicePolicy implements CheckOutCheckInServic
 	public void onCheckOut(final NodeRef workingCopy) {
 				
 		// Copy entity datalists (rights are checked by copyService during recursiveCopy)
-		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>(){
-	         @Override
-			public Void doWork() throws Exception
-	         {      
-	        	NodeRef nodeRef = getCheckedOut(workingCopy);
-	         	entityListDAO.copyDataLists(nodeRef, workingCopy, true);
-	         	return null;
-	         	
-	         }
-	     }, AuthenticationUtil.getSystemUserName());	
+		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>() {
+			@Override
+			public Void doWork() throws Exception {
+				try {
+					//disable policy to avoid duplicated noderefs
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+
+					NodeRef nodeRef = getCheckedOut(workingCopy);
+					entityListDAO.copyDataLists(nodeRef, workingCopy, true);
+					return null;
+				} finally {
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				}
+			}
+		}, AuthenticationUtil.getSystemUserName());	
 	     
 	     // Set contributor permission for user to edit datalists
         String userName = getUserName();
