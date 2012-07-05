@@ -332,11 +332,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			type = ((PropertyDefinition) attribute).getDataType().getName().getPrefixedQName(namespaceService);
 
 			if (isSearch) {
-				tmp.put("label", attribute.getTitle());
 				tmp.put("type", type);
 			} else if (type != null) {
 				tmp.put("metadata", extractMetadata(type, nodeRef));
 			}
+			tmp.put("label", attribute.getTitle());
 			tmp.put("displayValue", displayName);
 			tmp.put("value", value);
 			return tmp;
@@ -345,6 +345,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, attribute.getName());
 			if (isSearch) {
+				
 				for (AssociationRef assocRef : assocRefs) {
 
 					if (!displayName.isEmpty()) {
@@ -353,7 +354,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 					displayName += (String) nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME);
 				}
-
+				tmp.put("label", attribute.getTitle());
 				tmp.put("type", "subtype");
 				tmp.put("displayValue", displayName);
 				tmp.put("value", displayName);

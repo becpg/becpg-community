@@ -84,6 +84,7 @@
 										<exclude>org/alfresco/repo/workflow/jbpm/JBPMEngine**</exclude>
 										<exclude>org/alfresco/repo/security/authentication/RepositoryAuthenticationDao**</exclude>
 										<exclude>org/alfresco/repo/security/authority/AuthorityDAOImpl**</exclude>
+										<exclude>org/alfresco/repo/workflow/activiti/ActivitiWorkflowEngine**</exclude>
 									</excludes>
 								</filter>
 							</filters>

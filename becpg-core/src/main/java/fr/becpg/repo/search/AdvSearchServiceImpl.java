@@ -331,8 +331,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		 } 
 		List<NodeRef> nodes = beCPGSearchService.luceneSearch(searchQuery,-1);
 		String ret = "";
-		for(NodeRef node : nodes){
-			ret+=" \""+node.toString()+"\"";
+		if(nodes!=null && nodes.size()>0){
+			for(NodeRef node : nodes){
+				ret+=" \""+node.toString()+"\"";
+			}
+		} else {
+			ret += hierachyName;
 		}
 		
 		return ret;

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.model.ContentModel;
@@ -19,6 +20,8 @@ import org.alfresco.repo.googledocs.GoogleDocsServiceInitException;
 import org.alfresco.repo.googledocs.GoolgeDocsUnsupportedMimetypeException;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
+import org.alfresco.repo.transaction.TransactionListener;
 import org.alfresco.repo.transaction.TransactionListenerAdapter;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentData;
@@ -27,11 +30,18 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessPermission;
+import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.AuthorityType;
+import org.alfresco.service.cmr.security.OwnableService;
+import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ParameterCheck;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.gdata.client.GoogleAuthTokenFactory.UserToken;
 import com.google.gdata.client.authn.oauth.GoogleOAuthParameters;
 import com.google.gdata.client.authn.oauth.OAuthHmacSha1Signer;
 import com.google.gdata.client.docs.DocsService;
@@ -39,6 +49,10 @@ import com.google.gdata.client.media.MediaService;
 import com.google.gdata.data.IEntry;
 import com.google.gdata.data.MediaContent;
 import com.google.gdata.data.PlainTextConstruct;
+import com.google.gdata.data.acl.AclEntry;
+import com.google.gdata.data.acl.AclFeed;
+import com.google.gdata.data.acl.AclRole;
+import com.google.gdata.data.acl.AclScope;
 import com.google.gdata.data.docs.DocumentEntry;
 import com.google.gdata.data.docs.DocumentListEntry;
 import com.google.gdata.data.docs.DocumentListEntry.MediaType;
@@ -48,6 +62,7 @@ import com.google.gdata.data.docs.PresentationEntry;
 import com.google.gdata.data.docs.SpreadsheetEntry;
 import com.google.gdata.data.media.MediaSource;
 import com.google.gdata.data.media.MediaStreamSource;
+import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ContentType;
 import com.google.gdata.util.ServiceException;
 
@@ -73,7 +88,11 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 	/** Services */
 	private NodeService nodeService;
 	private ContentService contentService;
+	private PersonService personService;
 	private MimetypeService mimetypeService;
+	private PermissionService permissionService;
+	private OwnableService ownableService;
+	private AuthorityService authorityService;
 	private DictionaryService dictionaryService;
 
 	/** Indicates whether the GDoc integration is enabled or not */
@@ -87,7 +106,14 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 	/** Authentication credentials */
 	private String applicationName;
 	private String spreadSheetServiceName;
+	private String username;
+	private String password;
 
+	/** Cached service tokens */
+	private Map<String, String> serviceTokens = new HashMap<String, String>(2);
+	
+	/** Permission map */
+	private Map<String, String> permissionMap;
 
 	// TODO: need a way of indicating if a customer is a premium user or not
 
@@ -145,7 +171,10 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 		GoogleOAuthParameters oauthtoken = OAuthTokenUtils.getCurrentOAuthToken();
 
 		if (oauthtoken == null) {
-			throw new GoogleDocsServiceInitException("No Google Docs oauthToken found. Please set the Google Docs authentication configuration.");
+			logger.debug("Not a google auth using basic Google integration");
+			return getDefaultMediaService(serviceName);
+			
+			//throw new GoogleDocsServiceInitException("No Google Docs oauthToken found. Please set the Google Docs authentication configuration.");
 		}
 
 		if (logger.isDebugEnabled() == true) {
@@ -169,6 +198,47 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 
 		return service;
 	}
+	
+	/**
+	 * 
+	 * @param serviceName
+	 * @return
+	 */
+	public MediaService getDefaultMediaService(String serviceName) {
+		if (applicationName == null) {
+			throw new GoogleDocsServiceInitException("Google Docs service " + serviceName + " could not be initialised, because no Google Doc application name has been specified.");
+		}
+
+		MediaService service = null;
+		if (serviceName.equals(DocsService.DOCS_SERVICE) == true) {
+			service = new DocsService(applicationName);
+		} else {
+			service = new MediaService(serviceName, applicationName);
+		}
+		service.setChunkedMediaUpload(-1);
+
+		String token = serviceTokens.get(serviceName);
+		if (token == null) {
+			try {
+				if (username == null || username.length() == 0 || password == null) {
+					throw new GoogleDocsServiceInitException("No Google Docs credentials found. Please set the Google Docs authentication configuration.");
+				}
+
+				if (logger.isDebugEnabled() == true) {
+					logger.debug("Setting user credentials for GDoc service. (serviceName=" + serviceName + ", userName=" + username + ", password=" + password + ")");
+				}
+
+				service.setUserCredentials(username, password);
+				serviceTokens.put(serviceName, ((UserToken) service.getAuthTokenFactory().getAuthToken()).getValue());
+			} catch (AuthenticationException e) {
+				throw new GoogleDocsServiceInitException("Unable to connect to Google Docs.  Please check the Google Docs authentication configuration.", e);
+			}
+		} else {
+			service.setUserToken(token);
+		}
+
+		return service;
+	}
 
 	/**
 	 * @param nodeService
@@ -186,6 +256,13 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 		this.contentService = contentService;
 	}
 
+	/**
+	 * @param personService
+	 *            person service
+	 */
+	public void setPersonService(PersonService personService) {
+		this.personService = personService;
+	}
 	
 	/**
 	 * @param mimetypeService
@@ -195,6 +272,29 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 		this.mimetypeService = mimetypeService;
 	}
 
+	/**
+	 * @param permissionService
+	 *            permission service
+	 */
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	/**
+	 * @param ownableService
+	 *            ownable service
+	 */
+	public void setOwnableService(OwnableService ownableService) {
+		this.ownableService = ownableService;
+	}
+
+	/**
+	 * @param authorityService
+	 *            authority service
+	 */
+	public void setAuthorityService(AuthorityService authorityService) {
+		this.authorityService = authorityService;
+	}
 
 	/**
 	 * @param dictionaryService
@@ -245,6 +345,32 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 	}
 
 	/**
+	 * @param username
+	 *            google service user name
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+		updatedAuthenticationCredentials();
+	}
+
+	/**
+	 * @param password
+	 *            google service password
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+		updatedAuthenticationCredentials();
+	}
+
+	/**
+	 * @param permissionMap
+	 *            permission map
+	 */
+	public void setPermissionMap(Map<String, String> permissionMap) {
+		this.permissionMap = permissionMap;
+	}
+
+	/**
 	 * Set whether the service is enabled or not.
 	 * 
 	 * @param enabled
@@ -252,6 +378,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+		updatedAuthenticationCredentials();
 	}
 
 	/**
@@ -319,8 +446,10 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 		// Create the new google document
 		DocumentListEntry document = createGoogleDocument(name, mimetype, parentFolder, is);
 
-//		// Set permissions
-//		setGoogleResourcePermissions(nodeRef, document, permissionContext);
+		// Set permissions
+		if(OAuthTokenUtils.getCurrentOAuthToken()==null){
+			setGoogleResourcePermissions(nodeRef, document, permissionContext);
+		}
 
 		// Set the google document details
 		setResourceDetails(nodeRef, document);
@@ -347,94 +476,94 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 		}
 	}
 
-//	/**
-//	 * Set a google permission on a specified resource
-//	 * 
-//	 * @param nodeRef
-//	 *            node reference
-//	 * @param resource
-//	 *            document resource
-//	 * @param permissionContext
-//	 *            permission context
-//	 */
-//	private void setGoogleResourcePermissions(NodeRef nodeRef, DocumentListEntry resource, GoogleDocsPermissionContext permissionContext) {
-//		if (GoogleDocsPermissionContext.PRIVATE.equals(permissionContext) == false) {
-//			Set<AccessPermission> accessPermissions = permissionService.getAllSetPermissions(nodeRef);
-//			for (AccessPermission accessPermission : accessPermissions) {
-//				String authorityName = accessPermission.getAuthority();
-//				AuthorityType authorityType = accessPermission.getAuthorityType();
-//				String permission = accessPermission.getPermission();
-//				if (permissionMap.containsKey(permission) == true) {
-//					String aclRole = permissionMap.get(permission);
-//					if (GoogleDocsPermissionContext.SHARE_READ.equals(permissionContext) == true && ("reader".equals(aclRole) == true || "writer".equals(aclRole) == true)) {
-//						// Set the permission to read
-//						setGoogleResourcePermission(resource, authorityType, authorityName, "reader");
-//					} else if (GoogleDocsPermissionContext.SHARE_WRITE.equals(permissionContext) == true && "writer".equals(aclRole) == true) {
-//						// Set the permission to write
-//						setGoogleResourcePermission(resource, authorityType, authorityName, "writer");
-//					} else if (GoogleDocsPermissionContext.SHARE_READWRITE.equals(permissionContext) == true
-//							&& ("reader".equals(aclRole) == true || "writer".equals(aclRole) == true)) {
-//						// Set the permission to the current acl
-//						setGoogleResourcePermission(resource, authorityType, authorityName, aclRole);
-//					}
-//				}
-//			}
-//		}
-//
-//		// Always make sure the owner has write permissions on the document
-//		String owner = ownableService.getOwner(nodeRef);
-//		setGoogleResourcePermission(resource, AuthorityType.USER, owner, "writer");
-//	}
+	/**
+	 * Set a google permission on a specified resource
+	 * 
+	 * @param nodeRef
+	 *            node reference
+	 * @param resource
+	 *            document resource
+	 * @param permissionContext
+	 *            permission context
+	 */
+	private void setGoogleResourcePermissions(NodeRef nodeRef, DocumentListEntry resource, GoogleDocsPermissionContext permissionContext) {
+		if (GoogleDocsPermissionContext.PRIVATE.equals(permissionContext) == false) {
+			Set<AccessPermission> accessPermissions = permissionService.getAllSetPermissions(nodeRef);
+			for (AccessPermission accessPermission : accessPermissions) {
+				String authorityName = accessPermission.getAuthority();
+				AuthorityType authorityType = accessPermission.getAuthorityType();
+				String permission = accessPermission.getPermission();
+				if (permissionMap.containsKey(permission) == true) {
+					String aclRole = permissionMap.get(permission);
+					if (GoogleDocsPermissionContext.SHARE_READ.equals(permissionContext) == true && ("reader".equals(aclRole) == true || "writer".equals(aclRole) == true)) {
+						// Set the permission to read
+						setGoogleResourcePermission(resource, authorityType, authorityName, "reader");
+					} else if (GoogleDocsPermissionContext.SHARE_WRITE.equals(permissionContext) == true && "writer".equals(aclRole) == true) {
+						// Set the permission to write
+						setGoogleResourcePermission(resource, authorityType, authorityName, "writer");
+					} else if (GoogleDocsPermissionContext.SHARE_READWRITE.equals(permissionContext) == true
+							&& ("reader".equals(aclRole) == true || "writer".equals(aclRole) == true)) {
+						// Set the permission to the current acl
+						setGoogleResourcePermission(resource, authorityType, authorityName, aclRole);
+					}
+				}
+			}
+		}
 
-//	/**
-//	 * Set a google permission on a specified resource
-//	 * 
-//	 * @param resource
-//	 *            document resource
-//	 * @param authorityType
-//	 *            authority type
-//	 * @param authorityName
-//	 *            authority name
-//	 * @param role
-//	 *            role
-//	 */
-//	private void setGoogleResourcePermission(DocumentListEntry resource, AuthorityType authorityType, String authorityName, String role) {
-//		if (AuthorityType.USER.equals(authorityType) == true) {
-//			// Set the user permissions on the resource
-//			String userEMail = getUserEMail(authorityName);
-//			if (userEMail != null && userEMail.length() != 0) {
-//				setGoogleResourcePermission(resource, userEMail, role);
-//			}
-//		} else if (AuthorityType.GROUP.equals(authorityType) == true) {
-//			Set<String> childAuthorities = authorityService.getContainedAuthorities(AuthorityType.USER, authorityName, false);
-//			for (String childAuthority : childAuthorities) {
-//				setGoogleResourcePermission(resource, AuthorityType.USER, childAuthority, role);
-//			}
-//		}
-//	}
+		// Always make sure the owner has write permissions on the document
+		String owner = ownableService.getOwner(nodeRef);
+		setGoogleResourcePermission(resource, AuthorityType.USER, owner, "writer");
+	}
 
-//	/**
-//	 * Gets the users email used to identify their google account.
-//	 * 
-//	 * @param userName
-//	 *            user name
-//	 * @return String google account email, null if none
-//	 */
-//	private String getUserEMail(String userName) {
-//		String email = null;
-//		NodeRef personNodeRef = personService.getPerson(userName);
-//		if (personNodeRef != null) {
-//			// First see if the google user information has been set
-//			email = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_GOOGLEUSERNAME);
-//
-//			// If no google user information then default back to the user's
-//			// email
-//			if (email == null || email.length() == 0) {
-//				email = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_EMAIL);
-//			}
-//		}
-//		return email;
-//	}
+	/**
+	 * Set a google permission on a specified resource
+	 * 
+	 * @param resource
+	 *            document resource
+	 * @param authorityType
+	 *            authority type
+	 * @param authorityName
+	 *            authority name
+	 * @param role
+	 *            role
+	 */
+	private void setGoogleResourcePermission(DocumentListEntry resource, AuthorityType authorityType, String authorityName, String role) {
+		if (AuthorityType.USER.equals(authorityType) == true) {
+			// Set the user permissions on the resource
+			String userEMail = getUserEMail(authorityName);
+			if (userEMail != null && userEMail.length() != 0) {
+				setGoogleResourcePermission(resource, userEMail, role);
+			}
+		} else if (AuthorityType.GROUP.equals(authorityType) == true) {
+			Set<String> childAuthorities = authorityService.getContainedAuthorities(AuthorityType.USER, authorityName, false);
+			for (String childAuthority : childAuthorities) {
+				setGoogleResourcePermission(resource, AuthorityType.USER, childAuthority, role);
+			}
+		}
+	}
+
+	/**
+	 * Gets the users email used to identify their google account.
+	 * 
+	 * @param userName
+	 *            user name
+	 * @return String google account email, null if none
+	 */
+	private String getUserEMail(String userName) {
+		String email = null;
+		NodeRef personNodeRef = personService.getPerson(userName);
+		if (personNodeRef != null) {
+			// First see if the google user information has been set
+			email = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_GOOGLEUSERNAME);
+
+			// If no google user information then default back to the user's
+			// email
+			if (email == null || email.length() == 0) {
+				email = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_EMAIL);
+			}
+		}
+		return email;
+	}
 
 	/**
 	 * Gets the nodes parent folder google resource.
@@ -464,7 +593,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 				String name = null;
 				QName parentNodeType = nodeService.getType(parentNodeRef);
 				if (dictionaryService.isSubClass(parentNodeType, ContentModel.TYPE_STOREROOT) == true) {
-					name = applicationName; //parentNodeRef.getStoreRef().getIdentifier();
+					name = OAuthTokenUtils.getCurrentOAuthToken()==null ? parentNodeRef.getStoreRef().getIdentifier() :applicationName;
 				} else {
 					name = (String) nodeService.getProperty(parentNodeRef, ContentModel.PROP_NAME);
 				}
@@ -845,93 +974,93 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 		return folderEntry;
 	}
 
-//	/**
-//	 * Set permissions on a googleDoc resource
-//	 * 
-//	 * @param resourceId
-//	 * @param email
-//	 * @param role
-//	 */
-//	private void setGoogleResourcePermission(DocumentListEntry resource, String email, String role) {
-//		// Check mandatory parameters have been set
-//		ParameterCheck.mandatory("resource", resource);
-//		ParameterCheck.mandatory("email", email);
-//		ParameterCheck.mandatory("role", role);
-//
-//		// Log details
-//		if (logger.isDebugEnabled() == true) {
-//			logger.debug("Setting the role " + role + " on the google resource " + resource.getResourceId() + " for email " + email + ".");
-//		}
-//
-//		try {
-//			AclRole aclRole = new AclRole(role);
-//			AclScope scope = new AclScope(AclScope.Type.USER, email);
-//
-//			// Get the URL
-//			URL aclFeedLinkURL = new URL(resource.getAclFeedLink().getHref());
-//
-//			// See if we have already set this permission or not
-//			AclEntry aclEntry = null;
-//			AclFeed aclFeed = getDocumentService().getFeed(aclFeedLinkURL, AclFeed.class);
-//			if (aclFeed != null) {
-//				List<AclEntry> aclEntries = aclFeed.getEntries();
-//				for (AclEntry tempAclEntry : aclEntries) {
-//					AclScope tempScope = tempAclEntry.getScope();
-//					if (tempScope.equals(scope) == true) {
-//						// Existing ACL entry found
-//						aclEntry = tempAclEntry;
-//						break;
-//					}
-//				}
-//			}
-//
-//			// Set the permission details
-//			if (aclEntry == null) {
-//				aclEntry = new AclEntry();
-//				aclEntry.setRole(aclRole);
-//				aclEntry.setScope(scope);
-//				getDocumentService().insert(aclFeedLinkURL, aclEntry);
-//			} else {
-//				// Log details of failure
-//				if (logger.isDebugEnabled() == true) {
-//					logger.debug("Unable to the role " + role + " on the google resource " + resource.getResourceId() + " for email " + email + "."
-//							+ "  This user already has a role on this document.");
-//				}
-//			}
-//
-//			// TODO for now we will not 'update' the permissions if they have
-//			// already been set ....
-//			//
-//			// else
-//			// {
-//			// AclRole currentAclRole = aclEntry.getRole();
-//			// if (currentAclRole.toString().equals(aclRole.toString()) ==
-//			// false)
-//			// {
-//			// aclEntry.setRole(aclRole);
-//			// googleDocumentService.update(new
-//			// URL(aclEntry.getEditLink().getHref()), aclEntry);
-//			// }
-//			// }
-//		} catch (ServiceException e) {
-//			// Ignore this exception since we don't want to roll back the entire
-//			// transaction because
-//			// a single users permissions can not be set.
-//			// It seems the google API will return a server exception if the
-//			// email does not correspond to
-//			// a google account, so catching this exception in this
-//			// indiscriminate way is the best thing to
-//			// do for now.
-//
-//			// Log details of failure
-//			if (logger.isDebugEnabled() == true) {
-//				logger.debug("Unable to the role " + role + " on the google resource " + resource.getResourceId() + " for email " + email + "."
-//						+ "  Check that this is a valid google account.");
-//			}
-//		} catch (IOException e) {
-//			throw new AlfrescoRuntimeException("Unable to set premissions on google document", e);
-//		}
-//	}
+	/**
+	 * Set permissions on a googleDoc resource
+	 * 
+	 * @param resourceId
+	 * @param email
+	 * @param role
+	 */
+	private void setGoogleResourcePermission(DocumentListEntry resource, String email, String role) {
+		// Check mandatory parameters have been set
+		ParameterCheck.mandatory("resource", resource);
+		ParameterCheck.mandatory("email", email);
+		ParameterCheck.mandatory("role", role);
+
+		// Log details
+		if (logger.isDebugEnabled() == true) {
+			logger.debug("Setting the role " + role + " on the google resource " + resource.getResourceId() + " for email " + email + ".");
+		}
+
+		try {
+			AclRole aclRole = new AclRole(role);
+			AclScope scope = new AclScope(AclScope.Type.USER, email);
+
+			// Get the URL
+			URL aclFeedLinkURL = new URL(resource.getAclFeedLink().getHref());
+
+			// See if we have already set this permission or not
+			AclEntry aclEntry = null;
+			AclFeed aclFeed = getDocumentService().getFeed(aclFeedLinkURL, AclFeed.class);
+			if (aclFeed != null) {
+				List<AclEntry> aclEntries = aclFeed.getEntries();
+				for (AclEntry tempAclEntry : aclEntries) {
+					AclScope tempScope = tempAclEntry.getScope();
+					if (tempScope.equals(scope) == true) {
+						// Existing ACL entry found
+						aclEntry = tempAclEntry;
+						break;
+					}
+				}
+			}
+
+			// Set the permission details
+			if (aclEntry == null) {
+				aclEntry = new AclEntry();
+				aclEntry.setRole(aclRole);
+				aclEntry.setScope(scope);
+				getDocumentService().insert(aclFeedLinkURL, aclEntry);
+			} else {
+				// Log details of failure
+				if (logger.isDebugEnabled() == true) {
+					logger.debug("Unable to the role " + role + " on the google resource " + resource.getResourceId() + " for email " + email + "."
+							+ "  This user already has a role on this document.");
+				}
+			}
+
+			// TODO for now we will not 'update' the permissions if they have
+			// already been set ....
+			//
+			// else
+			// {
+			// AclRole currentAclRole = aclEntry.getRole();
+			// if (currentAclRole.toString().equals(aclRole.toString()) ==
+			// false)
+			// {
+			// aclEntry.setRole(aclRole);
+			// googleDocumentService.update(new
+			// URL(aclEntry.getEditLink().getHref()), aclEntry);
+			// }
+			// }
+		} catch (ServiceException e) {
+			// Ignore this exception since we don't want to roll back the entire
+			// transaction because
+			// a single users permissions can not be set.
+			// It seems the google API will return a server exception if the
+			// email does not correspond to
+			// a google account, so catching this exception in this
+			// indiscriminate way is the best thing to
+			// do for now.
+
+			// Log details of failure
+			if (logger.isDebugEnabled() == true) {
+				logger.debug("Unable to the role " + role + " on the google resource " + resource.getResourceId() + " for email " + email + "."
+						+ "  Check that this is a valid google account.");
+			}
+		} catch (IOException e) {
+			throw new AlfrescoRuntimeException("Unable to set premissions on google document", e);
+		}
+	}
 
 	/**
 	 * Marks a resource as created in this transaction
@@ -1037,4 +1166,39 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 		}
 	}
 
+	private TransactionListener validateCredentials = new TransactionListener() {
+
+		@Override
+		public void afterCommit() {
+		}
+
+		@Override
+		public void afterRollback() {
+		}
+
+		@Override
+		public void beforeCommit(boolean readOnly) {
+			if (enabled == true) {
+				if (username == null || username.length() == 0 || password == null) {
+					throw new GoogleDocsServiceInitException("No Google Docs credentials found. Please set the Google Docs authentication configuration.");
+				}
+			}
+		}
+
+		@Override
+		public void beforeCompletion() {
+		}
+
+		@Override
+		public void flush() {
+		}
+	};
+
+	private void updatedAuthenticationCredentials() {
+		// Reset the token map
+		serviceTokens = new HashMap<String, String>(2);
+		if (RetryingTransactionHelper.getActiveUserTransaction() != null) {
+			AlfrescoTransactionSupport.bindListener(validateCredentials);
+		}
+	}
 }
