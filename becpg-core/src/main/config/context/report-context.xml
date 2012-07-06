@@ -57,7 +57,7 @@
 		<property name="beCPGReportEngine" ref="beCPGReportEngine" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="entityListValuePlugin" ref="entityListValuePlugin" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="entityService" ref="entityService" />
 		<property name="attributeExtractorService" ref="attributeExtractorService"/>		
 		<property name="dictionaryService" ref="dictionaryService" />

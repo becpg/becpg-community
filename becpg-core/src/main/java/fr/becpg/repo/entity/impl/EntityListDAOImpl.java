@@ -12,7 +12,6 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -286,7 +285,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		String query = String.format(QUERY_LIST_ITEM, listNodeRef, listQName);
 		query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_IS_MANUAL_LISTITEM, Boolean.TRUE.toString(), Operator.AND);
 			
-		return beCPGSearchService.unProtLuceneSearch(query);
+		return beCPGSearchService.luceneSearch(query);
 	}
 
 	@Override
@@ -307,7 +306,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public List<NodeRef> getListItems(NodeRef listNodeRef, QName listQName) {
 				
-		return beCPGSearchService.unProtLuceneSearch(String.format(QUERY_LIST_ITEM, listNodeRef, listQName), LuceneHelper.getSort(BeCPGModel.PROP_SORT), RepoConsts.MAX_RESULTS_NO_LIMIT);
+		return beCPGSearchService.luceneSearch(String.format(QUERY_LIST_ITEM, listNodeRef, listQName), LuceneHelper.getSort(BeCPGModel.PROP_SORT), RepoConsts.MAX_RESULTS_NO_LIMIT);
 	}
 
 }

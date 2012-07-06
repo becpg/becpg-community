@@ -13,7 +13,6 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
@@ -22,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -41,10 +41,7 @@ public class RepoServiceImpl implements RepoService {
 	private NodeService nodeService = null;	
 	
 	/** The search service. */
-	private SearchService searchService;
-	
-	/** The namespace service. */
-	private NamespaceService namespaceService;
+	private BeCPGSearchService beCPGSearchService;
 	
 	/** The fileFolderService service. */
 	private FileFolderService fileFolderService;
@@ -68,22 +65,11 @@ public class RepoServiceImpl implements RepoService {
 		this.nodeService = nodeService;
 	}		
 	
-	/**
-	 * Sets the search service.
-	 *
-	 * @param searchService the new search service
-	 */
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
-	}
 	
-	/**
-	 * Sets the namespace service.
-	 *
-	 * @param namespaceService the new namespace service
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
+
+
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	/* (non-Javadoc)
@@ -133,8 +119,7 @@ public class RepoServiceImpl implements RepoService {
 
 		logger.debug("get folder by path: " + xPath);
 		
-		List<NodeRef> nodes = searchService.selectNodes(parentNodeRef, 
-				xPath, null, namespaceService, false);
+		List<NodeRef> nodes = beCPGSearchService.searchByPath(parentNodeRef,xPath);
 		
 		if(!nodes.isEmpty()){
 			return nodes.get(0);			

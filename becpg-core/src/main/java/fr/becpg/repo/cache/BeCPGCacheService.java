@@ -10,7 +10,7 @@ public interface BeCPGCacheService {
 
 	public <T> T getFromCache(
 			String cacheName, String cacheKey , 
-			BeCPGCacheDataProviderCallBack<T> sigedCacheDataProviderCallBack);
+			BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack);
 	
 	public void clearAllCaches();
 

@@ -56,7 +56,7 @@
    
    <!-- script context -->
    
-   	<bean id="beCPGSecurity" parent="baseJavaScriptExtension" class="fr.becpg.repo.security.jscript.BeCPGSecurity">
+   <bean id="beCPGSecurity" parent="baseJavaScriptExtension" class="fr.becpg.repo.security.jscript.BeCPGSecurity">
         <property name="extensionName">
             <value>beCPGSecurity</value>
         </property> 

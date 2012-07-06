@@ -177,7 +177,7 @@ public class EntityServiceImpl implements EntityService {
 				String querySearch = String.format(QUERY_PRODUCTLIST_ITEMS_OUT_OF_DATE, queryParentsSearch, ISO8601DateFormat.format(modified));
 
 				logger.debug("queryPath: " + querySearch);
-				List<NodeRef> resultSet = beCPGSearchService.luceneSearch(querySearch, 1);
+				List<NodeRef> resultSet = beCPGSearchService.luceneSearch(querySearch, null , RepoConsts.MAX_RESULTS_SINGLE_VALUE );
 				logger.debug("resultSet.length() : " + resultSet.size());
 
 				if (resultSet.size() > 0) {

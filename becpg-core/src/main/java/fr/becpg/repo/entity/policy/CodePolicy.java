@@ -3,14 +3,13 @@
  */
 package fr.becpg.repo.entity.policy;
 
+import java.util.List;
+
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchParameters;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -42,7 +42,7 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 	private AutoNumService autoNumService;
 	
 	/** The search service. */
-	private SearchService searchService;
+	private BeCPGSearchService beCPGSearchService;
 			
 	
 	/**
@@ -72,15 +72,11 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 		this.autoNumService = autoNumService;
 	}
 	
-	/**
-	 * Sets the search service.
-	 *
-	 * @param searchService the new search service
-	 */
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
+	
+	
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
 	}
-		
 
 	/**
 	 * Inits the.
@@ -105,25 +101,10 @@ public class CodePolicy implements NodeServicePolicies.OnAddAspectPolicy {
 		
 		if(code != null && !code.isEmpty()){
 			
-									
-			SearchParameters sp = new SearchParameters();
-	        sp.addStore(RepoConsts.SPACES_STORE);
-	        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-	        sp.setQuery(String.format(QUERY_NODE_BY_CODE, typeQName, code));	                
-	        
-	        ResultSet resultSet =null;
-	        
-	        try{
-		        resultSet = searchService.query(sp);
-				
-		        if (resultSet.length() == 0){
-		        	 generateCode = false;
-		        }	        
-	        }
-	        finally{
-	        	if(resultSet != null)
-	        		resultSet.close();
-	        }
+			List<NodeRef> ret = beCPGSearchService.luceneSearch(String.format(QUERY_NODE_BY_CODE, typeQName, code),RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+						
+			generateCode = ret!=null && ret.size()>0;
+		
 		}
 		
 		// generate a new code

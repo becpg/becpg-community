@@ -33,4 +33,15 @@
    <import resource="classpath:alfresco/module/${artifactId}/context/ecm-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/gs1-context.xml" />
   
+  
+<!--   	
+	 <bean id="${artifactId}.becpgCoreModule" class="fr.becpg.BeCPGCoreModule" parent="module.baseComponent" >
+	     <property name="moduleId" value="${pom.groupId}.${pom.artifactId}" /> 
+	     <property name="name" value="budgedComponent" />
+	     <property name="description" value="Budged Component AMP" />
+	     <property name="sinceVersion" value="2.0" />
+	     <property name="appliesFromVersion" value="2.0" />
+ 	</bean> -->
+  	
+  
 </beans>

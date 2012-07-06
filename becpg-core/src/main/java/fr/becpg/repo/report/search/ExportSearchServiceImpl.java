@@ -44,8 +44,8 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.listvalue.EntityListValuePlugin;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
+import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
@@ -138,9 +138,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	/** The product dao. */
 	private EntityListDAO entityListDAO;
 	
-	/** The list value service. */
-	private EntityListValuePlugin entityListValuePlugin;
-	
+	private BeCPGSearchService beCPGSearchService;
 	
 	private EntityService entityService;				
 	
@@ -201,14 +199,9 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	}
 
 	
-	/**
-	 * @param entityListValuePlugin the entityListValuePlugin to set
-	 */
-	public void setEntityListValuePlugin(EntityListValuePlugin entityListValuePlugin) {
-		this.entityListValuePlugin = entityListValuePlugin;
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
 	}
-
-
 
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
@@ -516,7 +509,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
     		}				
 			else if(!charactName.isEmpty()){					
 				AssociationDefinition assocDef = dictionaryService.getAssociation(charactQName);
-				charactNodeRef = entityListValuePlugin.getItemByTypeAndName(assocDef.getTargetClass().getName(), charactName);
+				charactNodeRef = getItemByTypeAndName(assocDef.getTargetClass().getName(), charactName);
 				
 				if(charactNodeRef == null){
 					throw new MappingException(String.format("ERROR : Failed to get the nodeRef of the characteristic. Type:%s - Name:%s",  assocDef.getTargetClass().getName(), charactName));
@@ -554,7 +547,20 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		return exportSearchCtx;
 	}
 
-	
+	private NodeRef getItemByTypeAndName(QName type, String name) {
+
+		String queryPath = String.format(RepoConsts.QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
+
+		List<NodeRef> nodes = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+
+		if (nodes.size() > 0) {
+			return nodes.get(0);
+		}
+
+		return null;
+
+	}
+
 		
 
 }

@@ -85,6 +85,7 @@
 										<exclude>org/alfresco/repo/security/authentication/RepositoryAuthenticationDao**</exclude>
 										<exclude>org/alfresco/repo/security/authority/AuthorityDAOImpl**</exclude>
 										<exclude>org/alfresco/repo/workflow/activiti/ActivitiWorkflowEngine**</exclude>
+										<exclude>org/alfresco/repo/workflow/activiti/ActivitiTypeConverter**</exclude>
 									</excludes>
 								</filter>
 							</filters>

@@ -113,7 +113,7 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 
 		String query = String.format(RepoConsts.PATH_QUERY_THUMBNAIL, imgName);
 
-		List<NodeRef> listItems = beCPGSearchService.unProtLuceneSearch(query);
+		List<NodeRef> listItems = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Look for thumbnail : " + query);

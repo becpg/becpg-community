@@ -198,7 +198,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		logger.debug("repository : " + queryPath);
 
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, null);
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));
 
@@ -258,7 +258,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			}
 		}
 
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, null);
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE, nodeService));
 
@@ -289,7 +289,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE_ALL, path);
 		}
 
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, null);
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));
 
@@ -326,7 +326,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		// filter by classNames
 		queryPath = filterByClass(queryPath, arrClassNames);
 
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, null);
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 
 		return new ListValuePage(ret, pageNum, pageSize, new ProductValueExtractor(ContentModel.PROP_NAME, nodeService, namespaceService));
 
@@ -365,20 +365,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 *            the name
 	 * @return the item by type and name
 	 */
-
-	public NodeRef getItemByTypeAndName(QName type, String name) {
-
-		String queryPath = String.format(RepoConsts.QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
-
-		List<NodeRef> nodes = beCPGSearchService.unProtLuceneSearch(queryPath, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-
-		if (nodes.size() > 0) {
-			return nodes.get(0);
-		}
-
-		return null;
-
-	}
 
 	/**
 	 * Get the report templates of the product type that user can choose from

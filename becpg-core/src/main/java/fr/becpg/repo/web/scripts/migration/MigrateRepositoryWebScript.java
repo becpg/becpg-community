@@ -4,16 +4,12 @@
 package fr.becpg.repo.web.scripts.migration;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchParameters;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,9 +19,9 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.BeCPGVersionMigrator;
 import fr.becpg.repo.migration.BeCPGSystemFolderMigrator;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * The Class MigrateRepositoryWebScript.
@@ -49,7 +45,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	private static final String PARAM_ACTION = "action";
 
 	/** The search service. */
-	private SearchService searchService;
+	private BeCPGSearchService beCPGSearchService;
 	
 	
 	private BehaviourFilter policyBehaviourFilter;
@@ -59,14 +55,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	private BeCPGVersionMigrator beCPGVersionMigrator;
 	
 	private BeCPGSystemFolderMigrator beCPGSystemFolderMigrator;
-	
-	/**
-	 * Sets the search service.
-	 *
-	 * @param searchService the new search service
-	 */
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
+
+
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
@@ -123,28 +115,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 
 		logger.info("migrateProperty");
 		
-		List<NodeRef> items = new ArrayList<NodeRef>();
-    	ResultSet resultSet = null;
-    	
-    	SearchParameters sp = new SearchParameters();
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(query);	                         
-        
-    	try{
-    		resultSet = searchService.query(sp);
-    		if(resultSet.length() > 0){
-    			items = resultSet.getNodeRefs();        			
-    		}
-    	}	       
-    	catch(Exception e){
-    		logger.error("Failed to get items", e);
-    	}
-    	finally{
-    		if(resultSet != null)
-    			resultSet.close();
-    	}        
-    	
+		List<NodeRef> items =  beCPGSearchService.luceneSearch(query);
+
     	logger.info("items to migrate: " + items.size());    	
     	
     	int maxCnt = iPagination != null && iPagination < items.size() ? iPagination : items.size();

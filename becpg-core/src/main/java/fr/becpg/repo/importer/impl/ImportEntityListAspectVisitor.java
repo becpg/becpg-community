@@ -23,7 +23,6 @@ import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
@@ -40,13 +39,7 @@ public class ImportEntityListAspectVisitor extends AbstractImportVisitor impleme
 	protected static Log logger = LogFactory.getLog(ImportEntityListAspectVisitor.class);
 	
 	protected static final String CACHE_KEY = "cKey%s-%s";
-		
-	/** The product dao. */
-	private EntityListDAO entityListDAO;	
 	
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
 
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.importer.AbstractImportVisitor#importNode(fr.becpg.repo.importer.ImportContext, java.util.List)

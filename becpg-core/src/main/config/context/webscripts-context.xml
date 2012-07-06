@@ -129,20 +129,13 @@
 		<property name="entityReportService" ref="entityReportService" />
 	</bean>
 
-	<!-- Debug -->
-	<bean id="webscript.fr.becpg.debug.restoreArchivedNode.get"
-		class="fr.becpg.repo.web.scripts.debug.RestoreArchivedNodeWebScript"
-		parent="webscript">
-		<property name="nodeService" ref="nodeService" />
-		<property name="searchService" ref="searchService" />
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-	</bean>
+
 
 	<!-- Migration -->
 	<bean id="webscript.fr.becpg.migration.migrateRepository.get"
 		class="fr.becpg.repo.web.scripts.migration.MigrateRepositoryWebScript"
 		parent="webscript">
-		<property name="searchService" ref="searchService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="mlNodeService" ref="mlAwareNodeService" />
 		<property name="beCPGVersionMigrator" ref="beCPGVersionMigrator" />

@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
-import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
@@ -52,6 +51,7 @@ import fr.becpg.config.mapping.FileMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.LuceneHelper.Operator;
@@ -60,7 +60,6 @@ import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
-import fr.becpg.repo.listvalue.EntityListValuePlugin;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -135,68 +134,39 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 	protected static final String MSG_ERROR_TARGET_ASSOC_SEVERAL = "import_service.error.err_target_assoc_several";
 	protected static final String MSG_ERROR_GET_ASSOC_TARGET = "import_service.error.err_get_assoc_target";	
 		
-	/** The logger. */
 	private static Log logger = LogFactory.getLog(AbstractImportVisitor.class);
 	
-	/** The node service. */
 	protected NodeService nodeService;
 	
-	/** The list value service. */
-	protected EntityListValuePlugin entityListValuePlugin;
-	
-	/** The search service. */
 	protected BeCPGSearchService beCPGSearchService;
 	
-	/** The dictionary service. */
 	protected DictionaryService dictionaryService;
 	
-	/** The service registry. */
-	protected ServiceRegistry serviceRegistry;
-	
-	/** The repo service. */
 	protected RepoService repoService;
 	
-	/** The content service. */
 	protected ContentService contentService;
 	
-	/** The mimetype service. */
 	protected MimetypeService mimetypeService;
 	
-	/** The namespace service. */
 	protected NamespaceService namespaceService;
-		
 	
 	protected ApplicationContext applicationContext;
-
-
-
 	
-	/**
-	 * @param applicationContext the applicationContext to set
-	 */
+	protected EntityListDAO entityListDAO;	
+	
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+
+
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}
 
-
-
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 	
-	
-	/**
-	 * @param entityListValuePlugin the entityListValuePlugin to set
-	 */
-	public void setEntityListValuePlugin(EntityListValuePlugin entityListValuePlugin) {
-		this.entityListValuePlugin = entityListValuePlugin;
-	}
-
 
 	/**
 	 * @param beCPGSearchService
@@ -216,14 +186,6 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		this.dictionaryService = dictionaryService;
 	}
 	
-	/**
-	 * Sets the service registry.
-	 *
-	 * @param serviceRegistry the new service registry
-	 */
-	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
-		this.serviceRegistry = serviceRegistry;
-	}
 	
 	/**
 	 * Sets the repo service.
@@ -537,8 +499,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 	@SuppressWarnings("unchecked")
 	@Override
 	public ImportContext loadClassMapping(Element mappingsElt, ImportContext importContext) throws MappingException {						
-		
-		NamespaceService namespaceService = serviceRegistry.getNamespaceService();
+				
 		List<Node> mappingNodes = mappingsElt.selectNodes(QUERY_XPATH_MAPPING);
 		
 		Node dateFormat = mappingsElt.selectSingleNode(QUERY_XPATH_DATE_FORMAT);
@@ -634,8 +595,9 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 	    		}				
 				else if(!charactName.isEmpty()){					
 					AssociationDefinition assocDef = dictionaryService.getAssociation(charactQName);
-    				charactNodeRef = entityListValuePlugin.getItemByTypeAndName(assocDef.getTargetClass().getName(), charactName);
-    				
+    				charactNodeRef = getItemByTypeAndName(assocDef.getTargetClass().getName(), charactName);
+
+
     				if(charactNodeRef == null){
     					throw new MappingException(I18NUtil.getMessage(MSG_ERROR_GET_NODEREF_CHARACT, assocDef.getTargetClass().getName(), charactName));
     				}
@@ -1087,7 +1049,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			}
 			// list value => by name
 			else if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)){
-				nodeRef = entityListValuePlugin.getItemByTypeAndName(type, value);
+				nodeRef = getItemByTypeAndName(type, value);
 			}		
 			
 			// add in the cache
@@ -1097,6 +1059,20 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		return nodeRef;	
 	}
 
+
+	private NodeRef getItemByTypeAndName(QName type, String name) {
+
+		String queryPath = String.format(RepoConsts.QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
+
+		List<NodeRef> nodes = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+
+		if (nodes.size() > 0) {
+			return nodes.get(0);
+		}
+
+		return null;
+
+	}
 
 
 }

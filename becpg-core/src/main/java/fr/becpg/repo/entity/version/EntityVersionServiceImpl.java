@@ -16,7 +16,6 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.namespace.NamespaceService;
@@ -31,6 +30,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.mail.BeCPGMailService;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * Store the entity version history in the SpacesStore otherwise we cannot use
@@ -60,7 +60,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private CopyService copyService;
 
 	/** The search service. */
-	private SearchService searchService;
+	private BeCPGSearchService beCPGSearchService;
 
 	private BehaviourFilter policyBehaviourFilter;
 	
@@ -86,14 +86,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		this.copyService = copyService;
 	}
 
-	/**
-	 * Sets the search service.
-	 * 
-	 * @param searchService
-	 *            the new search service
-	 */
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
@@ -265,13 +259,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			public NodeRef getData() {
 				
 				NodeRef entitiesHistoryNodeRef = null;
-				ResultSet resultSet = null;
+				List<NodeRef> resultSet = null;
 
 				try {
-					resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_XPATH,
-							ENTITIES_HISTORY_XPATH);
-					if (resultSet.length() > 0) {
-						entitiesHistoryNodeRef = resultSet.getNodeRef(0);
+					resultSet = beCPGSearchService.search(ENTITIES_HISTORY_XPATH, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE, SearchService.LANGUAGE_XPATH);
+					
+					if (resultSet.size() > 0) {
+						entitiesHistoryNodeRef = resultSet.get(0);
 					}
 					else{
 						
@@ -291,9 +285,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					}
 				} catch (Exception e) {
 					logger.error("Failed to get entitysHistory", e);
-				} finally {
-					if (resultSet != null)
-						resultSet.close();
 				}
 				
 				return entitiesHistoryNodeRef;

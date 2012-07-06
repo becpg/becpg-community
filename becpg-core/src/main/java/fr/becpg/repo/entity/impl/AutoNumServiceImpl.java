@@ -273,7 +273,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		
 		NodeRef autoNumNodeRef = null;
 		
-		List<NodeRef> nodeRefs = beCPGSearchService.unProtLuceneSearch(String.format(RepoConsts.QUERY_AUTONUM, className, propertyName));
+		List<NodeRef> nodeRefs = beCPGSearchService.luceneSearch(String.format(RepoConsts.QUERY_AUTONUM, className, propertyName), null , RepoConsts.MAX_RESULTS_SINGLE_VALUE );
 		
 		for(NodeRef nodeRef : nodeRefs){
 			if(nodeService.exists(nodeRef)){

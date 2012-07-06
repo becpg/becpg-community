@@ -294,11 +294,11 @@ public class ImportEntityXmlVisitor {
 
 	private NodeRef findNodeByPath(String parentPath) {
 		String runnedQuery = "+PATH:\"" + parentPath + "\"";
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 		if (ret.size() > 0) {
 			logger.debug("Found node for query :" + runnedQuery);
 		} else {
-			ret = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_TO_DO, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+			ret = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_TO_DO, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 		}
 
 		return ret.get(0);
@@ -322,7 +322,7 @@ public class ImportEntityXmlVisitor {
 
 		if (code != null && code.length() > 0) {
 			runnedQuery += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, code, null);
-			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery,null , RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 			if (ret.size() > 0) {
 				logger.debug("Found node for query :" + runnedQuery);
 				return ret.get(0);
@@ -331,7 +331,7 @@ public class ImportEntityXmlVisitor {
 
 		if (name != null && name.length() > 0) {
 			runnedQuery += LuceneHelper.getCondEqualValue(RemoteHelper.getPropName(type), name, code != null && code.length() > 0 ? LuceneHelper.Operator.OR : null);
-			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery,  RepoConsts.MAX_RESULTS_NO_LIMIT);
+			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery,null, RepoConsts.MAX_RESULTS_NO_LIMIT);
 			if (ret.size() > 0) {
 				logger.debug("Found node for query :" + runnedQuery);
 				for (NodeRef node : ret) {

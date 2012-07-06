@@ -27,10 +27,6 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchParameters;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.IOUtils;
@@ -51,6 +47,7 @@ import fr.becpg.repo.importer.ImportService;
 import fr.becpg.repo.importer.ImportType;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * Import service.
@@ -98,7 +95,7 @@ public class ImportServiceImpl implements ImportService {
 	private static final String MSG_ERROR_MAPPING_NOT_FOUND = "import_service.error.err_mapping_not_found";
 	private static final String MSG_ERROR_READING_MAPPING = "import_service.error.err_reading_mapping";
 	private static final String MSG_ERROR_UNDEFINED_LINE = "import_service.error.err_undefined_line";
-	private static final String MSG_ERROR_UNKNOWN_TYPE = "import_service.error.err_unknown_type";
+	// private static final String MSG_ERROR_UNKNOWN_TYPE = "import_service.error.err_unknown_type";
 	
 	/** The Constant SEPARATOR. */
 	private static final char SEPARATOR = ';';	
@@ -116,7 +113,7 @@ public class ImportServiceImpl implements ImportService {
 	private static Log logger = LogFactory.getLog(ImportServiceImpl.class);
 	
 	/** The search service. */
-	private SearchService searchService = null;
+	private BeCPGSearchService beCPGSearchService = null;
 	
 	/** The node service. */
 	private NodeService nodeService = null;
@@ -148,15 +145,12 @@ public class ImportServiceImpl implements ImportService {
 	
 	private BehaviourFilter policyBehaviourFilter;
 					
-	/**
-	 * Sets the search service.
-	 *
-	 * @param searchService the new search service
-	 */
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
-	}	
 	
+	
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
+	}
+
 	/**
 	 * Sets the node service.
 	 *
@@ -338,12 +332,12 @@ public class ImportServiceImpl implements ImportService {
 		String queryPath = "";
 		NodeRef failedFolder = null;
 		NodeRef succeededFolder = null;
-		ResultSet resultSet = null;
+		List<NodeRef> resultSet = null;
 		try{
 			// failed
 			queryPath = RepoConsts.PATH_QUERY_IMPORT_FAILED_FOLDER;
-			resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_LUCENE, queryPath);
-			failedFolder = resultSet.getNodeRef(0);
+			resultSet = beCPGSearchService.luceneSearch(queryPath,RepoConsts.MAX_RESULTS_SINGLE_VALUE); 
+			failedFolder = resultSet.get(0);
 			
 			if(failedFolder != null){
 				NodeRef targetNodeRef = nodeService.getChildByName(failedFolder, ContentModel.ASSOC_CONTAINS, (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
@@ -354,8 +348,8 @@ public class ImportServiceImpl implements ImportService {
 			
 			// succeeded
 			queryPath = RepoConsts.PATH_QUERY_IMPORT_SUCCEEDED_FOLDER;
-			resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_LUCENE, queryPath);
-			succeededFolder = resultSet.getNodeRef(0);
+			resultSet =  beCPGSearchService.luceneSearch(queryPath,RepoConsts.MAX_RESULTS_SINGLE_VALUE); 
+			succeededFolder = resultSet.get(0);
 			
 			if(succeededFolder != null){
 				NodeRef targetNodeRef = nodeService.getChildByName(succeededFolder, ContentModel.ASSOC_CONTAINS, (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
@@ -367,10 +361,6 @@ public class ImportServiceImpl implements ImportService {
 		}
 		catch(Exception e){
 			logger.error("Missing folder 'Import failed' or 'Import Succeeded'. Lucene query: " + queryPath, e);
-		}
-		finally{
-			if(resultSet != null)
-				resultSet.close();
 		}
 		
 		// move nodeRef in the right folder
@@ -743,28 +733,10 @@ public class ImportServiceImpl implements ImportService {
 					
 		logger.debug(queryPath);
 		
-		SearchParameters sp = new SearchParameters();
-		//sp.addLocale(repoConfig.getSystemLocale());
-        sp.addStore(RepoConsts.SPACES_STORE);
-        sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-        sp.setQuery(queryPath.toString());	        
-        sp.setLimitBy(LimitBy.FINAL_SIZE);
-        sp.setLimit(RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-        
-        ResultSet resultSet =null;
-        
-        try{
-	        resultSet = searchService.query(sp);
-			
-	        logger.debug("resultSet.length() : " + resultSet.length());
-	        if (resultSet.length() != 0){
-	        	mappingNodeRef = resultSet.getNodeRef(0); 
-	        }	        
-        }
-        finally{
-        	if(resultSet != null)
-        		resultSet.close();
-        }
+		List<NodeRef> rets = beCPGSearchService.luceneSearch(queryPath,RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		if (rets.size() != 0){
+	        mappingNodeRef = rets.get(0); 
+	     }	        
                 				
 		if(mappingNodeRef == null){
 			String msg = I18NUtil.getMessage(MSG_ERROR_MAPPING_NOT_FOUND, name);

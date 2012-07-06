@@ -133,7 +133,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 		String searchQuery = "+TYPE:\"" + BeCPGModel.TYPE_SYSTEM_ENTITY + "\" -TYPE:\"cm:systemfolder\""
 				+ " -@cm\\:lockType:READ_ONLY_LOCK"
 				+ " -ASPECT:\"bcpg:compositeVersion\"";
-		return beCPGSearchService.luceneSearch(searchQuery,-1);
+		return beCPGSearchService.luceneSearch(searchQuery);
 	}
 
 }

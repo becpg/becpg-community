@@ -12,7 +12,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -47,16 +46,10 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	/** The repository helper. */
 	private Repository repositoryHelper;
 
-	private SearchService searchService;
-	
 	private HierarchyService hierarchyService;
 
 	public void setRepositoryHelper(Repository repositoryHelper) {
 		this.repositoryHelper = repositoryHelper;
-	}
-
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
 	}
 
 	public void setHierarchyService(HierarchyService hierarchyService) {
@@ -113,7 +106,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 										// stored
 										String path = String.format(PATH_PRODUCT_FOLDER, state, systemProductType, ISO9075.encode(HierarchyHelper.getHierachyName(hierarchy1,nodeService)), ISO9075.encode(HierarchyHelper.getHierachyName(hierarchy2,nodeService)));
 
-										List<NodeRef> nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), path, null, namespaceService, false);
+										List<NodeRef> nodes = beCPGSearchService.searchByPath(repositoryHelper.getCompanyHome(), path);
 
 										if (!nodes.isEmpty()) {
 											nodeRef = nodeService.getChildByName(nodes.get(0), ContentModel.ASSOC_CONTAINS, name);

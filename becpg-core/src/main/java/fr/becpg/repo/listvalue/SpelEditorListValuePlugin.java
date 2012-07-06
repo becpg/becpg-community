@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 
@@ -63,7 +64,7 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
 		logger.debug("suggestVariable for query : " + queryPath);
 
-		List<NodeRef> ret = beCPGSearchService.suggestSearch(queryPath, LuceneHelper.getSort(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE));
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, LuceneHelper.getSort(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE), RepoConsts.MAX_SUGGESTIONS);
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE, nodeService));
 	}

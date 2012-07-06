@@ -289,7 +289,7 @@ public class SecurityServiceImpl implements SecurityService, ApplicationListener
 	private List<NodeRef> findAllAclGroups() {
 		String runnedQuery = "+TYPE:\""
 				+ SecurityModel.TYPE_ACL_GROUP.toString() + "\"";
-		return beCPGSearchService.unProtLuceneSearch(runnedQuery);
+		return beCPGSearchService.luceneSearch(runnedQuery);
 	}
 
 	@Override

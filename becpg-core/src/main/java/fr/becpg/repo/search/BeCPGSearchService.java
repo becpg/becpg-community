@@ -7,14 +7,13 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 public interface BeCPGSearchService {
 
+	List<NodeRef> luceneSearch(String runnedQuery);
 
-	List<NodeRef> luceneSearch(String runnedQuery, int searchLimit);
+	List<NodeRef> luceneSearch(String runnedQuery, int maxResults);
 
-	List<NodeRef> unProtLuceneSearch(String runnedQuery);
-
-	List<NodeRef> unProtLuceneSearch(String runnedQuery, Map<String, Boolean> sort, int searchLimit);
-
-	List<NodeRef> suggestSearch(String runnedQuery, Map<String, Boolean> sort);
+	List<NodeRef> luceneSearch(String runnedQuery, Map<String, Boolean> sort);
+	
+	List<NodeRef> luceneSearch(String runnedQuery, Map<String, Boolean> sort, int maxResults);
 
 	List<NodeRef> search(String searchQuery, Map<String, Boolean> sortMap, int maxResults,
 			String searchLanguage);

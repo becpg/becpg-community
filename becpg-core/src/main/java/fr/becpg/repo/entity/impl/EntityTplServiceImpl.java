@@ -12,7 +12,6 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
@@ -187,7 +186,7 @@ public class EntityTplServiceImpl implements EntityTplService {
     		query = String.format(QUERY_ENTITY_TEMPLATE, nodeType);
     	}
 		
-		List<NodeRef> tplsNodeRef = beCPGSearchService.unProtLuceneSearch(query);
+		List<NodeRef> tplsNodeRef = beCPGSearchService.luceneSearch(query);
         
         return tplsNodeRef.size() > 0 ? tplsNodeRef.get(0) : null;
 	}
@@ -218,7 +217,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		
 		if(query != null){
 			
-			List<NodeRef> characts = beCPGSearchService.unProtLuceneSearch(query, LuceneHelper.getSort(ContentModel.PROP_NAME), RepoConsts.MAX_RESULTS_NO_LIMIT);
+			List<NodeRef> characts = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(ContentModel.PROP_NAME), RepoConsts.MAX_RESULTS_NO_LIMIT);
 			
 			for(NodeRef charact : characts){
 				

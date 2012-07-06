@@ -32,4 +32,11 @@
 			</list>
 		</property>
 	</bean>
+	
+	
+	<!-- dynListConstraint -->
+	<bean id="dynListConstraint" class="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+	</bean>
+	
 </beans>

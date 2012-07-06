@@ -21,7 +21,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
@@ -34,13 +33,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
 	
-	private EntityListDAO entityListDAO;
-	
 	private FileFolderService fileFolderService;	
-	
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
 
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
