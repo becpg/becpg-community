@@ -5,6 +5,9 @@
  * @class DocumentActions
  */
 (function() {
+	
+	  var $siteURL = Alfresco.util.siteURL,
+     		$isValueSet = Alfresco.util.isValueSet;
 
 	YAHOO.Bubbling.fire("registerAction", {
 	   actionName : "onActionCheckOutEntity",
@@ -107,9 +110,15 @@
 
 	YAHOO.Bubbling.fire("registerAction", {
 	   actionName : "onActionShowCharact",
-	   fn : function onActionShowCharact(asset) {
-	   	var redirect = Alfresco.constants.URL_PAGECONTEXT + "entity-data-lists?nodeRef="+asset.nodeRef;
-	   	if(asset.node.aspects.indexOf("bcpg:transformationAspect")>0){
+	   fn : function onActionShowCharact(p_record) {
+	   	
+	   	var recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null;
+	   	var redirect  = $siteURL("entity-data-lists?nodeRef="+p_record.nodeRef,
+         {
+            site: recordSiteName
+         });
+	   	
+	   	if(p_record.node.aspects.indexOf("bcpg:transformationAspect")>0){
 	   		redirect+="&list=compoList";
 	   	}
 	   	

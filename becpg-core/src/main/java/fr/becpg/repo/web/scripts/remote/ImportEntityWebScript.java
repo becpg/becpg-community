@@ -6,6 +6,7 @@ import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.util.Arrays;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.io.IOUtils;
@@ -47,7 +48,9 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 	}
 
 	public void setRemotePwd(char[] remotePwd) {
-		this.remotePwd = remotePwd;
+		if(remotePwd!=null){
+			this.remotePwd = Arrays.copyOf(remotePwd, remotePwd.length);
+		}
 	}
 
 	@Override

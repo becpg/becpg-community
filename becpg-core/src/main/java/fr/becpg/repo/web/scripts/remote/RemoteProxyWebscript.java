@@ -6,6 +6,7 @@ import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -40,7 +41,9 @@ public class RemoteProxyWebscript extends AbstractWebScript {
 	}
 
 	public void setRemotePwd(char[] remotePwd) {
-		this.remotePwd = remotePwd;
+		if(remotePwd!=null){
+			this.remotePwd = Arrays.copyOf(remotePwd, remotePwd.length);
+		}
 	}
 
 	
