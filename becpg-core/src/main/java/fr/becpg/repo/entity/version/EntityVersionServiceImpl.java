@@ -12,7 +12,6 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -29,6 +28,9 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
+import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.mail.BeCPGMailService;
 
 /**
  * Store the entity version history in the SpacesStore otherwise we cannot use
@@ -42,6 +44,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private static final QName QNAME_ENTITIES_HISTORY = QName.createQName(BeCPGModel.BECPG_URI, ENTITIES_HISTORY_NAME);
 
 	private static final String ENTITIES_HISTORY_XPATH = "/bcpg:entitiesHistory";
+	private static final String KEY_ENTITIES_HISTORY = "EntitiesHistory";
+	
 
 	/** The Constant VERSION_NAME_DELIMITER. */
 	private static final String VERSION_NAME_DELIMITER = " v";
@@ -58,12 +62,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	/** The search service. */
 	private SearchService searchService;
 
-	/** The entitys history node ref. */
-	private Map<String, NodeRef> entitiesHistoryNodeRefs = new HashMap<String, NodeRef>();
-
 	private BehaviourFilter policyBehaviourFilter;
 	
-	private TenantAdminService tenantAdminService;
+	private BeCPGCacheService beCPGCacheService;
 
 	/**
 	 * Sets the node service.
@@ -98,9 +99,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
-
-	public void setTenantAdminService(TenantAdminService tenantAdminService) {
-		this.tenantAdminService = tenantAdminService;
+	
+	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
+		this.beCPGCacheService = beCPGCacheService;
 	}
 
 	@Override
@@ -214,12 +215,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		HashMap<QName, Serializable> props = new HashMap<QName, Serializable>();
 		props.put(ContentModel.PROP_NAME, nodeRef.getId());
 
-		// does entitys history folder exist ?
-		if (getEntitysHistoryFolder() == null) {
-			createEntitysHistoryFolder();
-		}
-
-		ChildAssociationRef childAssocRef = nodeService.createNode(getEntitysHistoryFolder(),
+		ChildAssociationRef childAssocRef = nodeService.createNode(getEntitiesHistoryFolder(),
 				ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, nodeRef.getId()), ContentModel.TYPE_FOLDER,
 				props);
@@ -242,8 +238,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private NodeRef getVersionHistoryNodeRef(NodeRef nodeRef) {
 		NodeRef vhNodeRef = null;
 
-		if (getEntitysHistoryFolder() != null) {
-			vhNodeRef = nodeService.getChildByName(getEntitysHistoryFolder(), ContentModel.ASSOC_CONTAINS,
+		if (getEntitiesHistoryFolder() != null) {
+			vhNodeRef = nodeService.getChildByName(getEntitiesHistoryFolder(), ContentModel.ASSOC_CONTAINS,
 					nodeRef.getId());
 		}
 
@@ -261,59 +257,48 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 * @return the entitys history folder
 	 */
 	@Override
-	public NodeRef getEntitysHistoryFolder() {
+	public NodeRef getEntitiesHistoryFolder() {
 		
-		String tenantDomain = tenantAdminService.getCurrentUserDomain();
-        NodeRef entitiesHistoryNodeRef = entitiesHistoryNodeRefs.get(tenantDomain);
-        
-		if (entitiesHistoryNodeRef == null) {
+		return beCPGCacheService.getFromCache(BeCPGMailService.class.getName(), KEY_ENTITIES_HISTORY , new BeCPGCacheDataProviderCallBack<NodeRef>() {
 
-			ResultSet resultSet = null;
+			@Override
+			public NodeRef getData() {
+				
+				NodeRef entitiesHistoryNodeRef = null;
+				ResultSet resultSet = null;
 
-			try {
-				resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_XPATH,
-						ENTITIES_HISTORY_XPATH);
-				if (resultSet.length() > 0) {
-					entitiesHistoryNodeRef = resultSet.getNodeRef(0);
-					entitiesHistoryNodeRefs.put(tenantDomain, entitiesHistoryNodeRef);
+				try {
+					resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_XPATH,
+							ENTITIES_HISTORY_XPATH);
+					if (resultSet.length() > 0) {
+						entitiesHistoryNodeRef = resultSet.getNodeRef(0);
+					}
+					else{
+						
+						// create folder
+						final NodeRef storeNodeRef = nodeService.getRootNode(RepoConsts.SPACES_STORE);
+
+						return AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
+							@Override
+							public NodeRef doWork() throws Exception {								
+								logger.debug("create folder 'EntitysHistory'");
+								HashMap<QName, Serializable> props = new HashMap<QName, Serializable>();
+								props.put(ContentModel.PROP_NAME, ENTITIES_HISTORY_NAME);
+								return nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN,
+										QNAME_ENTITIES_HISTORY, ContentModel.TYPE_FOLDER, props).getChildRef();
+							}
+						}, AuthenticationUtil.getSystemUserName());	
+					}
+				} catch (Exception e) {
+					logger.error("Failed to get entitysHistory", e);
+				} finally {
+					if (resultSet != null)
+						resultSet.close();
 				}
-			} catch (Exception e) {
-				logger.error("Failed to get entitysHistory", e);
-			} finally {
-				if (resultSet != null)
-					resultSet.close();
-			}
-		}
-
-		return entitiesHistoryNodeRef;
-	}
-
-	/**
-	 * Create the entitys history folder node where we store entity versions
-	 * (create it if it doesn't exist).
-	 */
-	private void createEntitysHistoryFolder() {
-		
-		String tenantDomain = tenantAdminService.getCurrentUserDomain();
-		
-		if (!entitiesHistoryNodeRefs.containsKey(tenantDomain)) {
-
-			final NodeRef storeNodeRef = nodeService.getRootNode(RepoConsts.SPACES_STORE);
-
-			NodeRef entitiesHistoryNodeRef = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
-				@Override
-				public NodeRef doWork() throws Exception {
-					// create folder
-					logger.debug("create folder 'EntitysHistory'");
-					HashMap<QName, Serializable> props = new HashMap<QName, Serializable>();
-					props.put(ContentModel.PROP_NAME, ENTITIES_HISTORY_NAME);
-					return nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN,
-							QNAME_ENTITIES_HISTORY, ContentModel.TYPE_FOLDER, props).getChildRef();
-				}
-			}, AuthenticationUtil.getSystemUserName());
-			
-			entitiesHistoryNodeRefs.put(tenantDomain, entitiesHistoryNodeRef);
-		}
+				
+				return entitiesHistoryNodeRef;
+			}			
+		});		
 	}
 
 	@Override

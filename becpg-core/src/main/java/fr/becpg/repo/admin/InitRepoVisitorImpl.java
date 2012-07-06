@@ -210,8 +210,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitSystemListValuesEntity(systemNodeRef, RepoConsts.PATH_LISTS);
 
 		// Hierarchy
-		visitSystemHierachiesEntity(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
-		
+		visitSystemHierachiesEntity(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);		
 		
 		// Exchange
 		NodeRef exchangeNodeRef = visitFolder(companyHome, RepoConsts.PATH_EXCHANGE);
@@ -254,8 +253,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolderAndEntityTpls(systemNodeRef);
 
 		// MailTemplates
-		addFilesResources(beCPGMailService.getModelMailNodeRef(), "classpath:beCPG/mails/*.ftl");
-		addFilesResources(beCPGMailService.getWorkflowModelMailNodeRef(), "classpath:beCPG/mails/workflow/*.ftl");
+		addFilesResources(beCPGMailService.getEmailTemplatesFolder(), "classpath:beCPG/mails/*.ftl");
+		addFilesResources(beCPGMailService.getEmailWorkflowTemplatesFolder(), "classpath:beCPG/mails/workflow/*.ftl");
 
 		// Companies
 		NodeRef companiesNodeRef = visitFolder(companyHome, RepoConsts.PATH_COMPANIES);

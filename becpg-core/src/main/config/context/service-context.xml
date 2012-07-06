@@ -190,8 +190,8 @@
     	<property name="templateService" ref="templateService"/>
     	<property name="serviceRegistry" ref="ServiceRegistry"/>
     	<property name="mailFrom" value="${mail.from.default}" />
-    	<property name="searchService" ref="searchService"/>
-    	<property name="tenantAdminService" ref="tenantAdminService"/>
+    	<property name="beCPGSearchService" ref="beCPGSearchService"/>
+    	<property name="beCPGCacheService" ref="beCPGCacheService"/>
 	</bean>
 	
 	<!-- EntityVersion -->
@@ -200,7 +200,7 @@
 		<property name="copyService" ref="copyService" />	
 	   <property name="searchService" ref="searchService" />
 	   <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-	   <property name="tenantAdminService" ref="tenantAdminService"/>
+	   <property name="beCPGCacheService" ref="beCPGCacheService"/>
 	</bean>
 	
 	<!-- Migrator -->

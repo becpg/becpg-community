@@ -430,7 +430,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		if (userId.equalsIgnoreCase(AuthenticationUtil.getSystemUserName())) {
 			return userId;
 		}
-		return beCPGCacheService.getFromUserCache(PERSON_DISPLAY_CACHE, userId, new BeCPGCacheDataProviderCallBack<String>() {
+		return beCPGCacheService.getFromCache(PERSON_DISPLAY_CACHE, userId, new BeCPGCacheDataProviderCallBack<String>() {
 			public String getData() {
 				String displayName = "";
 				NodeRef personNodeRef = personService.getPerson(userId);

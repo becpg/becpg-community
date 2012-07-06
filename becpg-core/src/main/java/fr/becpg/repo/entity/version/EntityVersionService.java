@@ -39,8 +39,8 @@ public interface EntityVersionService {
 	public void deleteVersionHistory(NodeRef entityNodeRef);
 	
 	/**
-	 * Get the entitysHistoryFolder	
+	 * Get the entitiesHistoryFolder	
 	 * @return
 	 */
-	public NodeRef getEntitysHistoryFolder();
+	public NodeRef getEntitiesHistoryFolder();
 }

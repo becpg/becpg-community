@@ -67,7 +67,7 @@ public class OlapServiceImpl implements OlapService {
 	@Override
 	public List<OlapChart> retrieveOlapCharts()  {
 		
-		return beCPGCacheService.getFromUserCache(OlapService.class.getName(),"olapCharts" , new BeCPGCacheDataProviderCallBack<List<OlapChart>>() {
+		return beCPGCacheService.getFromCache(OlapService.class.getName(),"olapCharts" , new BeCPGCacheDataProviderCallBack<List<OlapChart>>() {
 
 			@Override
 			public List<OlapChart> getData() {

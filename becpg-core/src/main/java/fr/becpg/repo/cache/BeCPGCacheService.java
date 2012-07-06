@@ -8,7 +8,7 @@ package fr.becpg.repo.cache;
  */
 public interface BeCPGCacheService {
 
-	public <T> T getFromUserCache(
+	public <T> T getFromCache(
 			String cacheName, String cacheKey , 
 			BeCPGCacheDataProviderCallBack<T> sigedCacheDataProviderCallBack);
 	

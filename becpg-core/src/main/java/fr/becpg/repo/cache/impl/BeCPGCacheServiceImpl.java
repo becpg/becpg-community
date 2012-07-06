@@ -48,7 +48,7 @@ public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, 
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getFromUserCache(String cacheName, String cacheKey,
+	public <T> T getFromCache(String cacheName, String cacheKey,
 			BeCPGCacheDataProviderCallBack<T> sigedCacheDataProviderCallBack) {
 		
 		cacheKey = computeCacheKey(cacheKey);

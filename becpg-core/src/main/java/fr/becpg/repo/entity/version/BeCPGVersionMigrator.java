@@ -68,7 +68,7 @@ public class BeCPGVersionMigrator {
 	public void migrateVersionHistory(){
 		
 		logger.debug("migrateVersionHistory");
-		NodeRef versionHistoryNodeRef = entityVersionService.getEntitysHistoryFolder();
+		NodeRef versionHistoryNodeRef = entityVersionService.getEntitiesHistoryFolder();
 		
 		if (versionHistoryNodeRef == null) {
 			logger.info("No version to migrate, since versionHistoryNodeRef is null");
