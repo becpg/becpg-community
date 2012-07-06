@@ -384,6 +384,7 @@
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="dataListSortService" ref="dataListSortService" />
 		<property name="nodeService" ref="nodeService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>	
 	
 	<!-- WUsedList -->

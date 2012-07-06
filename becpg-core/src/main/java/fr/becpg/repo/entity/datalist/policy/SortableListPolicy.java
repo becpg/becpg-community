@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -26,7 +27,8 @@ import fr.becpg.repo.entity.datalist.DataListSortService;
  */
 public class SortableListPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, 
 										   NodeServicePolicies.OnAddAspectPolicy, 
-										   NodeServicePolicies.OnDeleteNodePolicy {
+										   NodeServicePolicies.OnDeleteNodePolicy,
+										   NodeServicePolicies.BeforeDeleteNodePolicy{
 
 	private static Log logger = LogFactory.getLog(SortableListPolicy.class);
 
@@ -35,6 +37,8 @@ public class SortableListPolicy implements NodeServicePolicies.OnUpdatePropertie
 	private DataListSortService dataListSortService;
 	
 	private NodeService nodeService;
+	
+	private BehaviourFilter policyBehaviourFilter;
 
 	public void setPolicyComponent(PolicyComponent policyComponent) {
 		this.policyComponent = policyComponent;
@@ -48,6 +52,10 @@ public class SortableListPolicy implements NodeServicePolicies.OnUpdatePropertie
 		this.nodeService = nodeService;
 	}
 
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
 	/**
 	 * Inits the.
 	 */
@@ -57,6 +65,8 @@ public class SortableListPolicy implements NodeServicePolicies.OnUpdatePropertie
 				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
 				new JavaBehaviour(this, "onDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
+				new JavaBehaviour(this, "beforeDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL, new JavaBehaviour(this, "onAddAspect"));
 		
 		logger.debug("Init SortableListPolicy...");		
@@ -113,13 +123,27 @@ public class SortableListPolicy implements NodeServicePolicies.OnUpdatePropertie
 	
 			dataListSortService.computeDepthAndSort(nodeRef);
 		}
-	}
-	
+	}	
 	
 	@Override
 	public void onDeleteNode(ChildAssociationRef childRef, boolean isNodeArchived) {
 		
 		logger.debug("SortableListPolicy.onDeleteNode");
-		dataListSortService.deleteChildrens(childRef.getParentRef(), childRef.getChildRef());
+		
+//		if(nodeService.hasAspect(childRef.getChildRef(), BeCPGModel.ASPECT_ENTITYLISTS)){
+//			//activate again policy
+//			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+//		}
+//		else{
+			dataListSortService.deleteChildrens(childRef.getParentRef(), childRef.getChildRef());
+//		}				
+	}
+
+	@Override
+	public void beforeDeleteNode(NodeRef nodeRef) {
+		
+//		if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS)){
+//			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+//		}		
 	}
 }

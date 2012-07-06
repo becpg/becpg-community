@@ -65,7 +65,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
 			NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
 
-			NodeRef siblingNode = getSiblingNode(listContainer, parentLevel, nodeRef);
+			NodeRef siblingNode = getLastSiblingNode(listContainer, parentLevel, nodeRef);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("computeDepthAndSort for :" + tryGetName(nodeRef));
@@ -164,7 +164,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 			if (logger.isDebugEnabled()) {
 				logger.debug(" nextSort not available : " + nextSort + " - node: " + tryGetName(nodeRef) + " - taken by: " + tryGetName(sortedNodeRef));
 			}
-			fixSortableList(listContainer, nodeRef);
+			fixSortableList(listContainer, parentLevel, RepoConsts.SORT_DEFAULT_STEP);
 			insertAfter(listContainer, siblingNode, nodeRef, level != null ? level + 1 : level);
 		} else {			
 
@@ -187,17 +187,20 @@ public class DataListSortServiceImpl implements DataListSortService {
 		}
 	}
 
-	private void fixSortableList(NodeRef parentNodeRef,NodeRef nodeRef) {
+	private int fixSortableList(NodeRef parentNodeRef, NodeRef parentLevel,  int newSort) {
 
 		logger.info("###FixSortableList. parentNodeRef: " + parentNodeRef + "");
 	
-		Set<NodeRef> listItems = new LinkedHashSet<NodeRef>(getChildren(parentNodeRef));
+		Set<NodeRef> listItems = new LinkedHashSet<NodeRef>(getChildren(parentNodeRef, parentLevel, true));
 
-		int newSort = RepoConsts.SORT_DEFAULT_STEP;
 		for (NodeRef listItem : listItems) {
 			setProperty(listItem, BeCPGModel.PROP_SORT, newSort);
 			newSort = newSort + RepoConsts.SORT_DEFAULT_STEP;
+			
+			newSort = fixSortableList(parentNodeRef, listItem, newSort);
 		}
+		
+		return newSort;
 	}
 
 	@Override
@@ -210,7 +213,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
 		NodeRef listContainer = nodeService.getPrimaryParent(nodeRef).getParentRef();
 
-		return getLastChild(getSiblingNode(listContainer, parentLevel, nodeRef), listContainer, nodeRef, true);
+		return getLastChild(getLastSiblingNode(listContainer, parentLevel, nodeRef), listContainer, nodeRef, true);
 	}
 
 	private NodeRef getLastChild(NodeRef destNodeRef, NodeRef listContainer, NodeRef nodeRef, boolean isDepthList) {
@@ -236,11 +239,19 @@ public class DataListSortServiceImpl implements DataListSortService {
 	/*
 	 * Get the last sibling node of the level
 	 */
-	private NodeRef getSiblingNode(NodeRef listContainer, NodeRef parentLevel, NodeRef nodeRef) {
+	private NodeRef getLastSiblingNode(NodeRef listContainer, NodeRef parentLevel, NodeRef nodeRef) {
+
+		return getSiblingNode(listContainer, parentLevel, nodeRef, false); 
+	}	
+	
+	/*
+	 * Get the last or first sibling node of the level (depending of sort)
+	 */
+	private NodeRef getSiblingNode(NodeRef listContainer, NodeRef parentLevel, NodeRef nodeRef, boolean sort) {
 
 		String query = getQueryByParentLevel(listContainer, parentLevel,true);
 		query += LuceneHelper.getCondEqualID(nodeRef, Operator.NOT);
-		List<NodeRef> listItems = beCPGSearchService.unProtLuceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_SORT, false), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		List<NodeRef> listItems = beCPGSearchService.unProtLuceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_SORT, sort), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 		return listItems.size() > 0 ? listItems.get(0) : null;
 	}
 
@@ -263,6 +274,16 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		return beCPGSearchService.unProtLuceneSearch(String.format(QUERY_LIST_ITEMS, listContainer), LuceneHelper.getSort(BeCPGModel.PROP_SORT, true),
 				RepoConsts.MAX_RESULTS_NO_LIMIT);
+	}
+	
+	/*
+	 * Check node has child
+	 */
+	private boolean hasChild(NodeRef listContainer, NodeRef nodeRef) {
+
+		List<NodeRef> listItems = beCPGSearchService.unProtLuceneSearch(String.format(QUERY_LIST_ITEMS, listContainer), LuceneHelper.getSort(BeCPGModel.PROP_SORT, true),
+				RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		return listItems.size() > 0;
 	}
 
 	/*
@@ -315,12 +336,41 @@ public class DataListSortServiceImpl implements DataListSortService {
 	}
 
 	@Override
-	public void swap(NodeRef nodeRef, NodeRef destNodeRef) {
+	public void swap(NodeRef nodeRef, NodeRef destNodeRef, boolean moveUp) {
+		
 		// TODO manage level
-		Integer sortIndex = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
-
-		setProperty(nodeRef, BeCPGModel.PROP_SORT, nodeService.getProperty(destNodeRef, BeCPGModel.PROP_SORT));
-		setProperty(destNodeRef, BeCPGModel.PROP_SORT, sortIndex);
+		Integer sort = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
+		Integer level = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
+		Integer destLevel = (Integer) nodeService.getProperty(destNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
+		NodeRef listContainer = nodeService.getPrimaryParent(nodeRef).getParentRef();
+		
+		if(level == destLevel){
+			// don't need to look for the right destNode						
+		}
+		else if((moveUp && level < destLevel) || (!moveUp && level > destLevel)){
+			// look for the right destNode (first or last sibling)
+			destNodeRef = getSiblingNode(listContainer, 
+										(NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL), 
+										nodeRef, 
+										moveUp);
+		}
+		else{
+			// cannot swap
+			return;
+		}				
+		
+		if(destNodeRef != null){
+		
+			NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+			Integer destSort = (Integer) nodeService.getProperty(destNodeRef, BeCPGModel.PROP_SORT);
+			setProperty(nodeRef, BeCPGModel.PROP_SORT, destSort);
+			setProperty(destNodeRef, BeCPGModel.PROP_SORT, sort);
+			
+			// We need to fix sort when one of the 2 nodes have a child
+			if(hasChild(listContainer, nodeRef) || hasChild(listContainer, destNodeRef)){
+				fixSortableList(listContainer, parentLevel, RepoConsts.SORT_DEFAULT_STEP);
+			}
+		}		
 	}
 	
 	private void setProperty(NodeRef nodeRef, QName property, Serializable value){

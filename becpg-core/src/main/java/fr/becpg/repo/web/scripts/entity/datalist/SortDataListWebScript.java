@@ -76,7 +76,7 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 						ArrayUtils.reverse(destNodeRefs);
 					}
 					for (int i = 0; i < destNodeRefs.length; i++) {
-						dataListSortService.swap(nodeRef, new NodeRef(destNodeRefs[i]));
+						dataListSortService.swap(nodeRef, new NodeRef(destNodeRefs[i]), dir == "up");
 					}
 
 				} else if (destNodeRefs.length == 1) {

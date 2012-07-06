@@ -12,6 +12,6 @@ public interface DataListSortService {
 
 	public void deleteChildrens(NodeRef parentRef, NodeRef childRef);
 
-	public void swap(NodeRef nodeRef, NodeRef destNodeRef);
+	public void swap(NodeRef nodeRef, NodeRef destNodeRef, boolean moveUp);
 	
 }

@@ -10,12 +10,14 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.ProductData;
@@ -37,6 +39,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(DepthLevelListPolicyTest.class);
 
+	private DataListSortService dataListSortService;
 
 	/*
 	 * (non-Javadoc)
@@ -46,6 +49,8 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		
+		dataListSortService = (DataListSortService) ctx.getBean("dataListSortService");
 	}
 
 	/*
@@ -247,6 +252,95 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		
 		assertNotNull(finishedProductLoaded.getCompoList());
 		assertEquals(5, finishedProductLoaded.getCompoList().size());
+	}	
+	
+	/**
+	 * Test swap
+	 */
+	public void testSwap() {
+
+		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				/*-- create folders : Test--*/
+				logger.debug("/*-- create folders --*/");
+				NodeRef testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
+				if (testFolder != null) {
+					fileFolderService.delete(testFolder);
+				}
+				testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+
+				/*-- Create raw material --*/
+				logger.debug("/*-- Create raw material --*/");
+				RawMaterialData rawMaterial1 = new RawMaterialData();
+				rawMaterial1.setName("Raw material 1");
+				NodeRef rawMaterial1NodeRef = productDAO.create(testFolder, rawMaterial1, null);
+				RawMaterialData rawMaterial2 = new RawMaterialData();
+				rawMaterial2.setName("Raw material 2");
+				NodeRef rawMaterial2NodeRef = productDAO.create(testFolder, rawMaterial2, null);
+				LocalSemiFinishedProduct lSF1 = new LocalSemiFinishedProduct();
+				lSF1.setName("Local semi finished 1");
+				NodeRef lSF1NodeRef = productDAO.create(testFolder, lSF1, null);
+
+				LocalSemiFinishedProduct lSF2 = new LocalSemiFinishedProduct();
+				lSF2.setName("Local semi finished 2");
+				NodeRef lSF2NodeRef = productDAO.create(testFolder, lSF2, null);
+				
+				LocalSemiFinishedProduct lSF3 = new LocalSemiFinishedProduct();
+				lSF3.setName("Local semi finished 3");
+				NodeRef lSF3NodeRef = productDAO.create(testFolder, lSF3, null);
+				
+				LocalSemiFinishedProduct lSF4 = new LocalSemiFinishedProduct();
+				lSF4.setName("Local semi finished 4");
+				NodeRef lSF4NodeRef = productDAO.create(testFolder, lSF4, null);
+
+				/*-- Create finished product --*/
+				logger.debug("/*-- Create finished product --*/");
+				FinishedProductData finishedProduct = new FinishedProductData();
+				finishedProduct.setName("Finished Product");
+				List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
+				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, lSF4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial1NodeRef));
+				finishedProduct.setCompoList(compoList);
+				Collection<QName> dataLists = new ArrayList<QName>();
+				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+				NodeRef finishedProductNodeRef = productDAO.create(testFolder, finishedProduct, dataLists);
+
+				ProductData finishedProductLoaded = productDAO.find(finishedProductNodeRef, dataLists);						
+
+				assertNotNull(finishedProductLoaded.getCompoList());
+
+				printSort(finishedProductLoaded.getCompoList());				
+				
+				assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals((Integer)202, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals((Integer)203, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals((Integer)204, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals((Integer)304, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+				
+				dataListSortService.swap(finishedProductLoaded.getCompoList().get(3).getNodeRef(), finishedProductLoaded.getCompoList().get(2).getNodeRef(), true);
+				
+				printSort(finishedProductLoaded.getCompoList());
+				
+				assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals((Integer)200, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals((Integer)300, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals((Integer)400, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals((Integer)500, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals((Integer)600, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+				assertEquals((Integer)700, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+				
+				
+				return finishedProductNodeRef;
+			}
+		}, false, true);		
 	}	
 	
 	public void printSort(List<CompoListDataItem> compoListDataItem) {
