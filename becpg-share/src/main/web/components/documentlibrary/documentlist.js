@@ -2283,7 +2283,10 @@
             }
             
             
-            if (oFullResponse.metadata.parent.type == "bcpg:entityFolder")
+            if (oFullResponse!=null 
+            		&& oFullResponse.metadata!=null 
+            		&& oFullResponse.metadata.parent!=null 
+            		&& oFullResponse.metadata.parent.type == "bcpg:entityFolder")
             {                            
                var div = Dom.get(me.id + "-becpg-entityFolder-instructions"),
                		instructionKey,

@@ -56,7 +56,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	private NamespaceService namespaceService;
 
 	private BeCPGSearchService beCPGSearchService;
-	
 
 	private PermissionService permissionService;
 
@@ -79,11 +78,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
 	}
-	
-
 
 	@Override
-	public List<NodeRef> queryAdvSearch(String searchQuery, String language,  QName datatype, Map<String, String> criteria, Map<String, Boolean> sortMap, int maxResults) {
+	public List<NodeRef> queryAdvSearch(String searchQuery, String language, QName datatype, Map<String, String> criteria, Map<String, Boolean> sortMap, int maxResults) {
 
 		if (maxResults <= 0) {
 			maxResults = MAX_RESULTS;
@@ -103,13 +100,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			}
 			nodes = filterWithPermissions(nodes, new ReadPermissionFilter(), maxResults);
 		}
-		
-		
-		
+
 		return nodes;
 	}
-	
-	
+
 	@Override
 	public String getSearchQueryByProperties(QName datatype, String term, String tag, boolean isRepo, String siteId, String containerId) {
 		String ftsQuery = "";
@@ -159,8 +153,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return ftsQuery;
 	}
 
-	
-
 	private boolean isAssocSearch(Map<String, String> criteria) {
 		if (criteria != null) {
 			for (Map.Entry<String, String> criterion : criteria.entrySet()) {
@@ -192,19 +184,16 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return nodes;
 	}
 
-
-	
 	private String appendCriteria(String query, String language, Map<String, String> criteria) {
 		if (criteria != null && !criteria.isEmpty()) {
 
 			String formQuery = "";
-				
-			
+
 			for (Map.Entry<String, String> criterion : criteria.entrySet()) {
 
 				String key = criterion.getKey();
 				String propValue = criterion.getValue();
-				String operator = (language == SearchService.LANGUAGE_FTS_ALFRESCO) ? (formQuery.length()<1 ? "" : " AND "): " +";
+				String operator = (language == SearchService.LANGUAGE_FTS_ALFRESCO) ? (formQuery.length() < 1 ? "" : " AND ") : " +";
 
 				if (!propValue.isEmpty()) {
 					// properties
@@ -217,10 +206,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 							// property name - convert to DD property name
 							// format
-							if(language == SearchService.LANGUAGE_FTS_ALFRESCO){
+							if (language == SearchService.LANGUAGE_FTS_ALFRESCO) {
 								propName = propName.replace("_", ":");
 							} else {
-								propName = "@"+propName.replace("_", "\\:");
+								propName = "@" + propName.replace("_", "\\:");
 							}
 
 							// special case for range packed properties
@@ -260,37 +249,36 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									}
 									formQuery += operator + propName + ":\"" + from + "\"..\"" + to + "\"";
 								}
-							} else if(propName.contains("productHierarchy")){
-								String hierarchyQuery = getHierarchyQuery(propName,propValue);
-								if(hierarchyQuery!=null && hierarchyQuery.length()>0){
-									if(language == SearchService.LANGUAGE_FTS_ALFRESCO){
+							} else if (propName.contains("productHierarchy")) {
+								String hierarchyQuery = getHierarchyQuery(propName, propValue);
+								if (hierarchyQuery != null && hierarchyQuery.length() > 0) {
+									if (language == SearchService.LANGUAGE_FTS_ALFRESCO) {
 										formQuery += operator + propName + ":(" + hierarchyQuery + ")";
 									} else {
 										formQuery += operator + propName + ":\"" + hierarchyQuery + "\"";
 									}
 								}
-								
-							} else if(propName.endsWith("depthLevel")){
+
+							} else if (propName.endsWith("depthLevel")) {
 								Integer maxLevel = null;
 								try {
 									maxLevel = Integer.parseInt(propValue);
 								} catch (Exception e) {
 									// do nothing
 								}
-								if(maxLevel!=null){
+								if (maxLevel != null) {
 									formQuery += operator + propName + ":[0 TO " + propValue + "]";
 								}
 							} else {
-							
+
 								// beCPG - bug fix : pb with operator -, AND, OR
 								// poivre AND -noir
 								// poivre AND noir
 								// sushi AND (saumon OR thon) AND -dorade
 								// formQuery += (first ? "" : " AND ") +
 								// propName + ":\"" + propValue + "\"";
-								
 
-								if(language == SearchService.LANGUAGE_FTS_ALFRESCO){
+								if (language == SearchService.LANGUAGE_FTS_ALFRESCO) {
 									formQuery += operator + propName + ":(" + propValue + ")";
 								} else {
 									formQuery += operator + propName + ":\"" + propValue + "\"";
@@ -299,46 +287,43 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 						} else {
 							// pseudo cm:content property - e.g. mimetype, size
 							// or encoding
-							formQuery +=   operator+"m:content." + propName + ":\"" + propValue + "\"";
+							formQuery += operator + "m:content." + propName + ":\"" + propValue + "\"";
 						}
 					}
 				}
 			}
 
-
-			if(query!=null && query.length()>0
-					&& formQuery.length()>0){
-				query += " AND ("+formQuery+")";
-			} else if(formQuery.length()>0 ){
+			if (query != null && query.length() > 0 && formQuery.length() > 0) {
+				query += " AND (" + formQuery + ")";
+			} else if (formQuery.length() > 0) {
 				query = formQuery;
 			}
-			
+
 		}
 
-		
 		return query;
 	}
 
 	private String getHierarchyQuery(String propName, String hierachyName) {
-//		String searchQuery = " +PATH:\"/app:company_home/"
-//					    + RepoConsts.PATH_SYSTEM
-//						+"/"+RepoConsts.PATH_PRODUCT_HIERARCHY
-//						+"/"+BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)
-		String searchQuery = "+TYPE:\"bcpg:linkedValue\"  +@bcpg\\:lkvValue:\""+hierachyName+"\" "; 
-		
-		if(propName.endsWith("productHierarchy1")){
-			searchQuery+=" +ISNULL:bcpg\\:parentLevel";
-		 } 
-		List<NodeRef> nodes = beCPGSearchService.luceneSearch(searchQuery,-1);
+
+		String searchQuery = String.format(
+				RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_BY_NAME,
+				LuceneHelper.encodePath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/" + BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)
+						+ "//*"), hierachyName);
+
+		if (propName.endsWith("productHierarchy1")) {
+			searchQuery += " +ISNULL:bcpg\\:parentLevel";
+		}
+		List<NodeRef> nodes = beCPGSearchService.luceneSearch(searchQuery, -1);
 		String ret = "";
-		if(nodes!=null && nodes.size()>0){
-			for(NodeRef node : nodes){
-				ret+=" \""+node.toString()+"\"";
+		if (nodes != null && nodes.size() > 0) {
+			for (NodeRef node : nodes) {
+				ret += " \"" + node.toString() + "\"";
 			}
 		} else {
 			ret += hierachyName;
 		}
-		
+
 		return ret;
 	}
 
@@ -362,7 +347,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			String propValue = criterion.getValue();
 
 			// association
-			if (key.startsWith("assoc_")  && !propValue.isEmpty()) {
+			if (key.startsWith("assoc_") && !propValue.isEmpty()) {
 
 				String assocName = key.substring(6);
 				if (assocName.endsWith("_added")) {
@@ -373,26 +358,26 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 						assocName = assocName.replace("_", ":");
 						QName assocQName = QName.createQName(assocName, namespaceService);
 
-							String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
-							for (String strNodeRef : arrValues) {
+						String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+						for (String strNodeRef : arrValues) {
 
-								NodeRef nodeRef = new NodeRef(strNodeRef);
+							NodeRef nodeRef = new NodeRef(strNodeRef);
 
-								if (nodeService.exists(nodeRef)) {
+							if (nodeService.exists(nodeRef)) {
 
-									List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
+								List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
 
-									// remove nodes that don't respect the
-									// assoc_ criteria
-									List<NodeRef> nodesToKeep = new ArrayList<NodeRef>();
+								// remove nodes that don't respect the
+								// assoc_ criteria
+								List<NodeRef> nodesToKeep = new ArrayList<NodeRef>();
 
-									for (AssociationRef assocRef : assocRefs) {
+								for (AssociationRef assocRef : assocRefs) {
 
-										nodesToKeep.add(assocRef.getSourceRef());
-									}
-
-									nodes.retainAll(nodesToKeep);
+									nodesToKeep.add(assocRef.getSourceRef());
 								}
+
+								nodes.retainAll(nodesToKeep);
+							}
 
 						}
 					}
@@ -447,8 +432,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 					}
 				}
 			}
-			
-			
 
 			// criteria on geo origin, we query as an OR operator
 			if (key.equals(CRITERIA_GEO_ORIGIN) && !propValue.isEmpty()) {

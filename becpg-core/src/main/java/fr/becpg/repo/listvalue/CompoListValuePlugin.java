@@ -99,7 +99,8 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 
 					if (addNode) {
 						logger.debug("add node productName: "+ productName);
-						result.add(new ListValueEntry(kv.getKey().toString(), productName, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName()));
+						String state = (String )nodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE);
+						result.add(new ListValueEntry(kv.getKey().toString(), productName, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName()+"-"+state));
 					}
 				}
 

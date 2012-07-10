@@ -7,9 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -18,20 +15,15 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.extensions.surf.util.AbstractLifecycleBean;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.BeCPGDao;
+import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.data.ACLGroupData;
@@ -44,17 +36,9 @@ import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
  * 
  * @author "Matthieu Laborie <laborima@gmail.com>"
  */
-@SuppressWarnings("rawtypes")
-public class SecurityServiceImpl implements SecurityService, ApplicationListener, ApplicationContextAware {
+public class SecurityServiceImpl implements SecurityService {
 
-
-	 private ProcessorLifecycle lifecycle = new ProcessorLifecycle();
-	
-	
-	/*
-	 * ACL keys / Group List
-	 */
-	private Map<String, List<ACLEntryDataItem.PermissionModel>> acls = new HashMap<String, List<ACLEntryDataItem.PermissionModel>>();
+	private static final String ACLS_CACHE_KEY = "ACLS_CACHE_KEY";
 
 	private static Log logger = LogFactory.getLog(SecurityServiceImpl.class);
 
@@ -67,18 +51,10 @@ public class SecurityServiceImpl implements SecurityService, ApplicationListener
 	private DictionaryService dictionaryService;
 
 	private NamespacePrefixResolver namespacePrefixResolver;
-	
-	private TransactionService transactionService;
-	
-	//TODO private BeCPGCacheService beCPGCacheService;
-	
 
-	public void setTransactionService(TransactionService transactionService) {
-		this.transactionService = transactionService;
-	}
+	private BeCPGCacheService beCPGCacheService;
 
-	public void setNamespacePrefixResolver(
-			NamespacePrefixResolver namespacePrefixResolver) {
+	public void setNamespacePrefixResolver(NamespacePrefixResolver namespacePrefixResolver) {
 		this.namespacePrefixResolver = namespacePrefixResolver;
 	}
 
@@ -97,19 +73,12 @@ public class SecurityServiceImpl implements SecurityService, ApplicationListener
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
 	}
-	
 
-//	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
-//		this.beCPGCacheService = beCPGCacheService;
-//	}
+	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
+		this.beCPGCacheService = beCPGCacheService;
+	}
 
 	@Override
-	/**
-	 * Compute access mode for the given field name on a specific type
-	 * @param nodeType
-	 * @param name
-	 * @return Access Mode status
-	 */
 	public int computeAccessMode(QName nodeType, String propName) {
 		StopWatch stopWatch = null;
 		if (logger.isDebugEnabled()) {
@@ -119,31 +88,27 @@ public class SecurityServiceImpl implements SecurityService, ApplicationListener
 		try {
 
 			String key = computeAclKey(nodeType, propName);
-			logger.debug("Compute acl for: "+key);
-			
-			if (acls.containsKey(key)) {
+			logger.debug("Compute acl for: " + key);
 
-				List<ACLEntryDataItem.PermissionModel> perms = acls.get(key);
+			if (getAcls().containsKey(key)) {
+
+				List<ACLEntryDataItem.PermissionModel> perms = getAcls().get(key);
 				int ret = SecurityService.WRITE_ACCESS;
 				if (!isAdmin()) {
 
-					
 					// Rule to override if one of the rule says that is has a
 					// better right
 					for (PermissionModel permissionModel : perms) {
 
-						if (permissionModel.isReadOnly()
-								&& isInGroup(permissionModel)) {
+						if (permissionModel.isReadOnly() && isInGroup(permissionModel)) {
 							ret = SecurityService.READ_ACCESS;
 							// Continue we can get better;
-						} else if (permissionModel.isReadOnly()
-								&& ret == SecurityService.WRITE_ACCESS) {
+						} else if (permissionModel.isReadOnly() && ret == SecurityService.WRITE_ACCESS) {
 							ret = SecurityService.NONE_ACCESS;
 
 						}
 
-						if (permissionModel.isWrite()
-								&& !isInGroup(permissionModel)) {
+						if (permissionModel.isWrite() && !isInGroup(permissionModel)) {
 							ret = SecurityService.READ_ACCESS;
 							// Continue we can get better;
 						} else if (permissionModel.isWrite()) {
@@ -153,7 +118,6 @@ public class SecurityServiceImpl implements SecurityService, ApplicationListener
 					}
 				}
 
-				
 				return ret;
 			}
 
@@ -161,11 +125,58 @@ public class SecurityServiceImpl implements SecurityService, ApplicationListener
 		} finally {
 			if (logger.isDebugEnabled()) {
 				stopWatch.stop();
-				logger.debug("Compute Access Mode takes : "
-						+ stopWatch.getTotalTimeSeconds() + "s");
+				logger.debug("Compute Access Mode takes : " + stopWatch.getTotalTimeSeconds() + "s");
 			}
 
 		}
+	}
+
+	@Override
+	public void refreshAcls() {
+		beCPGCacheService.removeFromCache(SecurityService.class.getName(), ACLS_CACHE_KEY);
+	}
+
+	private Map<String, List<ACLEntryDataItem.PermissionModel>> getAcls() {
+		return beCPGCacheService.getFromCache(SecurityService.class.getName(), ACLS_CACHE_KEY,
+				new BeCPGCacheDataProviderCallBack<Map<String, List<ACLEntryDataItem.PermissionModel>>>() {
+
+					@Override
+					public Map<String, List<ACLEntryDataItem.PermissionModel>> getData() {
+						Map<String, List<ACLEntryDataItem.PermissionModel>> acls = new HashMap<String, List<PermissionModel>>();
+						StopWatch stopWatch = null;
+						if (logger.isDebugEnabled()) {
+							stopWatch = new StopWatch();
+							stopWatch.start();
+						}
+
+						List<NodeRef> aclGroups = findAllAclGroups();
+						if (aclGroups != null) {
+							for (NodeRef aclGroupNodeRef : aclGroups) {
+								ACLGroupData aclGrp = aclGroupDao.find(aclGroupNodeRef);
+								List<ACLEntryDataItem> aclEntries = aclGrp.getAcls();
+								if (aclEntries != null) {
+									for (ACLEntryDataItem aclEntry : aclEntries) {
+										String key = computeAclKey(aclGrp.getNodeType(), aclEntry.getPropName());
+										List<PermissionModel> perms = new ArrayList<ACLEntryDataItem.PermissionModel>();
+										perms.add(aclEntry.getPermissionModel());
+										if (acls.containsKey(key)) {
+											perms.addAll(acls.get(key));
+										}
+										acls.put(key, perms);
+									}
+								}
+
+							}
+						}
+
+						if (logger.isDebugEnabled()) {
+							stopWatch.stop();
+							logger.debug("Compute ACLs takes : " + stopWatch.getTotalTimeSeconds() + "s");
+						}
+
+						return acls;
+					}
+				});
 	}
 
 	private boolean isAdmin() {
@@ -193,102 +204,8 @@ public class SecurityServiceImpl implements SecurityService, ApplicationListener
 		return nodeType.toString() + "_" + propName;
 	}
 
-
-	
-
-	@Override
-	public void onApplicationEvent(ApplicationEvent event) {
-		lifecycle.onApplicationEvent(event);
-	}
-	
-	
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
-	{
-	        lifecycle.setApplicationContext(applicationContext);
-	}
-
-	
-	 /**
-     * Hooks into Spring Application Lifecycle
-     */
-    private class ProcessorLifecycle extends AbstractLifecycleBean
-    {
-        @Override
-        protected void onBootstrap(ApplicationEvent event)
-        {
-        	logger.debug("Init SecurityService");
-        	RunAsWork<Object> actionRunAs = new RunAsWork<Object>()
-                    {
-                        @Override
-    					public Object doWork() throws Exception
-                        {
-                            RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>()
-                            {
-                                @Override
-    							public Object execute()
-                                {                                   
-
-                        			computeAcls();
-                			        
-                                    return null;
-                                }
-                            };
-                            return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
-                        }
-                    };
-                    AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
-        	
-        }
-    
-        @Override
-        protected void onShutdown(ApplicationEvent event)
-        {
-        }
-    }
-	
-	
-
-	public void computeAcls() {
-		acls.clear();
-		StopWatch stopWatch = null;
-		if (logger.isDebugEnabled()) {
-			stopWatch = new StopWatch();
-			stopWatch.start();
-		}
-
-		List<NodeRef> aclGroups = findAllAclGroups();
-		if (aclGroups != null) {
-			for (NodeRef aclGroupNodeRef : aclGroups) {
-				ACLGroupData aclGrp = aclGroupDao.find(aclGroupNodeRef);
-				List<ACLEntryDataItem> aclEntries = aclGrp.getAcls();
-				if (aclEntries != null) {
-					for (ACLEntryDataItem aclEntry : aclEntries) {
-						String key = computeAclKey(aclGrp.getNodeType(),
-								aclEntry.getPropName());
-						List<PermissionModel> perms = new ArrayList<ACLEntryDataItem.PermissionModel>();
-						perms.add(aclEntry.getPermissionModel());
-						if (acls.containsKey(key)) {
-							perms.addAll(acls.get(key));
-						}
-						acls.put(key, perms);
-					}
-				}
-
-			}
-		}
-
-		if (logger.isDebugEnabled()) {
-			stopWatch.stop();
-			logger.debug("Compute ACLs takes : "
-					+ stopWatch.getTotalTimeSeconds() + "s");
-		}
-
-	}
-
 	private List<NodeRef> findAllAclGroups() {
-		String runnedQuery = "+TYPE:\""
-				+ SecurityModel.TYPE_ACL_GROUP.toString() + "\"";
+		String runnedQuery = "+TYPE:\"" + SecurityModel.TYPE_ACL_GROUP.toString() + "\"";
 		return beCPGSearchService.luceneSearch(runnedQuery);
 	}
 
@@ -299,47 +216,40 @@ public class SecurityServiceImpl implements SecurityService, ApplicationListener
 		List<NodeRef> aclGroups = findAllAclGroups();
 		if (aclGroups != null) {
 			for (NodeRef aclGroupNodeRef : aclGroups) {
-	
+
 				ACLGroupData aclGroup = aclGroupDao.find(aclGroupNodeRef);
 
-				TypeDefinition typeDefinition = dictionaryService
-						.getType(aclGroup.getNodeType());
+				TypeDefinition typeDefinition = dictionaryService.getType(aclGroup.getNodeType());
 
-				if (typeDefinition != null
-						&& typeDefinition.getProperties() != null) {
-					for (Map.Entry<QName, PropertyDefinition> properties : typeDefinition
-							.getProperties().entrySet()) {
-						if(isViewableProperty(properties.getKey())){
-							appendPropName(typeDefinition,properties,ret);
+				if (typeDefinition != null && typeDefinition.getProperties() != null) {
+					for (Map.Entry<QName, PropertyDefinition> properties : typeDefinition.getProperties().entrySet()) {
+						if (isViewableProperty(properties.getKey())) {
+							appendPropName(typeDefinition, properties, ret);
 						}
 					}
 
-					List<AspectDefinition> aspects = typeDefinition
-							.getDefaultAspects();
-					
-					if(aspects== null){
+					List<AspectDefinition> aspects = typeDefinition.getDefaultAspects();
+
+					if (aspects == null) {
 						aspects = new ArrayList<AspectDefinition>();
 					}
-					
-					for(QName  aspect: aclGroup.getNodeAspects()){
+
+					for (QName aspect : aclGroup.getNodeAspects()) {
 						AspectDefinition aspectDefinition = dictionaryService.getAspect(aspect);
 						aspects.add(aspectDefinition);
-						
+
 					}
-					
-						for (AspectDefinition aspect : aspects) {
-							if (aspect != null
-									&& aspect.getProperties() != null) {
-								for (Map.Entry<QName, PropertyDefinition> properties : aspect
-										.getProperties().entrySet()) {
-									if(isViewableProperty(properties.getKey())){
-										appendPropName(typeDefinition,properties,ret);
-									}
+
+					for (AspectDefinition aspect : aspects) {
+						if (aspect != null && aspect.getProperties() != null) {
+							for (Map.Entry<QName, PropertyDefinition> properties : aspect.getProperties().entrySet()) {
+								if (isViewableProperty(properties.getKey())) {
+									appendPropName(typeDefinition, properties, ret);
 								}
 							}
-
 						}
 
+					}
 
 				}
 			}
@@ -349,57 +259,47 @@ public class SecurityServiceImpl implements SecurityService, ApplicationListener
 	}
 
 	private void appendPropName(TypeDefinition typeDefinition, Entry<QName, PropertyDefinition> properties, List<String> ret) {
-		String key = properties.getKey()
-				.toPrefixString(namespacePrefixResolver);
+		String key = properties.getKey().toPrefixString(namespacePrefixResolver);
 		String label = properties.getValue().getTitle();
 
-		if(!ret.contains(key + "|" + typeDefinition.getTitle() + " - " + label) && label!=null){
+		if (!ret.contains(key + "|" + typeDefinition.getTitle() + " - " + label) && label != null) {
 			ret.add(key + "|" + typeDefinition.getTitle() + " - " + label);
 		}
 
 	}
 
 	/**
-	 * Test if the property  should be show
-	 * @param qName the q name
+	 * Test if the property should be show
+	 * 
+	 * @param qName
+	 *            the q name
 	 * @return true, if is viewable property
 	 */
-	private boolean isViewableProperty(QName qName){
-		
-		if(qName.equals(ContentModel.PROP_NODE_REF) || 
-				qName.equals(ContentModel.PROP_NODE_DBID) ||
-				qName.equals(ContentModel.PROP_NODE_UUID) ||
-				qName.equals(ContentModel.PROP_STORE_IDENTIFIER) ||
-				qName.equals(ContentModel.PROP_STORE_NAME) ||
-				qName.equals(ContentModel.PROP_STORE_PROTOCOL) ||
-				qName.equals(ContentModel.PROP_CONTENT) ||
-				qName.equals(ContentModel.PROP_AUTO_VERSION) ||
-				qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) ||				
-				// do not compare frozen properties and version properties				
-				qName.equals(BeCPGModel.PROP_VERSION_DESCRIPTION) ||
-				qName.equals(BeCPGModel.PROP_VERSION_LABEL) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_NODE_DBID) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_NODE_REF) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_ACCESSED) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_CREATOR) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_CREATED) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_MODIFIER) ||
-				qName.equals(BeCPGModel.PROP_FROZEN_MODIFIED) ||
-				//system properties
-				qName.equals(BeCPGModel.PROP_PARENT_LEVEL)||
-				qName.equals(ContentModel.PROP_NAME) ||
-				qName.equals(ContentModel.PROP_CREATOR) ||
-				qName.equals(ContentModel.PROP_CREATED) ||
-				qName.equals(ContentModel.PROP_ACCESSED) ||
-				qName.equals(ContentModel.PROP_MODIFIER) ||
-				qName.equals(ContentModel.PROP_MODIFIED)){
-				
-				return false;
+	@SuppressWarnings("deprecation")
+	private boolean isViewableProperty(QName qName) {
+
+		if (qName.equals(ContentModel.PROP_NODE_REF) || qName.equals(ContentModel.PROP_NODE_DBID) || qName.equals(ContentModel.PROP_NODE_UUID)
+				|| qName.equals(ContentModel.PROP_STORE_IDENTIFIER) || qName.equals(ContentModel.PROP_STORE_NAME)
+				|| qName.equals(ContentModel.PROP_STORE_PROTOCOL)
+				|| qName.equals(ContentModel.PROP_CONTENT)
+				|| qName.equals(ContentModel.PROP_AUTO_VERSION)
+				|| qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS)
+				||
+				// do not compare frozen properties and version properties
+				qName.equals(BeCPGModel.PROP_VERSION_DESCRIPTION) || qName.equals(BeCPGModel.PROP_VERSION_LABEL) || qName.equals(BeCPGModel.PROP_FROZEN_NODE_DBID)
+				|| qName.equals(BeCPGModel.PROP_FROZEN_NODE_REF) || qName.equals(BeCPGModel.PROP_FROZEN_ACCESSED) || qName.equals(BeCPGModel.PROP_FROZEN_CREATOR)
+				|| qName.equals(BeCPGModel.PROP_FROZEN_CREATED) || qName.equals(BeCPGModel.PROP_FROZEN_MODIFIER)
+				|| qName.equals(BeCPGModel.PROP_FROZEN_MODIFIED)
+				||
+				// system properties
+				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) || qName.equals(ContentModel.PROP_NAME) || qName.equals(ContentModel.PROP_CREATOR)
+				|| qName.equals(ContentModel.PROP_CREATED) || qName.equals(ContentModel.PROP_ACCESSED) || qName.equals(ContentModel.PROP_MODIFIER)
+				|| qName.equals(ContentModel.PROP_MODIFIED)) {
+
+			return false;
 		}
-		
+
 		return true;
 	}
-	
-	
-	
+
 }

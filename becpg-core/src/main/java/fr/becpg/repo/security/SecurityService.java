@@ -14,9 +14,9 @@ public interface SecurityService {
 	/**
 	 * Access status
 	 */
-	public static int NONE_ACCESS = 0;
-	public static int READ_ACCESS = 1;
-	public static int WRITE_ACCESS = 2;
+	static int NONE_ACCESS = 0;
+	static int READ_ACCESS = 1;
+	static int WRITE_ACCESS = 2;
 	
 	/**
 	 * Compute access mode for the given field name on a specific type
@@ -24,18 +24,18 @@ public interface SecurityService {
 	 * @param name
 	 * @return Access Mode status
 	 */
-	public int computeAccessMode(QName nodeType, String name);
+	int computeAccessMode(QName nodeType, String name);
 	
 	/**
-	 * Compute ACLS in memory
+	 * Refresh ACLS cache per tenant
 	 */
-	public void computeAcls();
+	void refreshAcls();
 
 	/**
 	 * Extract props list based on existing ACL_GROUPS
 	 * @param item
 	 * @return
 	 */
-	public List<String> getAvailablePropNames();
+	List<String> getAvailablePropNames();
 
 }
