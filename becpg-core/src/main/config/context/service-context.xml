@@ -15,22 +15,22 @@
 			</list>
 		</property>
 	</bean>
-	
-	<bean id="becpgBootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">      
-      <property name="resourceBundles">
-         <list>
-         	 <value>alfresco/module/${pom.artifactId}/model/becpgModel</value>
-             <value>alfresco/module/${pom.artifactId}/messages/paths</value>
-             <value>alfresco/module/${pom.artifactId}/messages/states</value>
-             <value>alfresco/module/${pom.artifactId}/messages/becpg-messages</value>
-             <value>alfresco/module/${pom.artifactId}/messages/groups</value>
-             <value>alfresco/module/${pom.artifactId}/messages/demo</value>
-             <value>alfresco/module/${pom.artifactId}/messages/import-service</value>             
-         </list>
-      </property>      
-   </bean>
-	
-	
+
+	<bean id="becpgBootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
+		<property name="resourceBundles">
+			<list>
+				<value>alfresco/module/${pom.artifactId}/model/becpgModel</value>
+				<value>alfresco/module/${pom.artifactId}/messages/paths</value>
+				<value>alfresco/module/${pom.artifactId}/messages/states</value>
+				<value>alfresco/module/${pom.artifactId}/messages/becpg-messages</value>
+				<value>alfresco/module/${pom.artifactId}/messages/groups</value>
+				<value>alfresco/module/${pom.artifactId}/messages/demo</value>
+				<value>alfresco/module/${pom.artifactId}/messages/import-service</value>
+			</list>
+		</property>
+	</bean>
+
+
 	<!-- Admin -->
 	<bean id="initRepoVisitor" class="fr.becpg.repo.admin.InitRepoVisitorImpl">
 		<property name="fileFolderService" ref="fileFolderService" />
@@ -39,42 +39,42 @@
 		<property name="ruleService" ref="ruleService" />
 		<property name="actionService" ref="actionService" />
 		<property name="authorityService" ref="authorityService" />
-		<property name="permissionService" ref="permissionService"/>			
-		<property name="reportTplService" ref="reportTplService"/>		
+		<property name="permissionService" ref="permissionService" />
+		<property name="reportTplService" ref="reportTplService" />
 		<property name="contentService" ref="contentService" />
-		<property name="mimetypeService" ref="mimetypeService"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
-		<property name="entityTplService" ref="entityTplService"/>
-		<property name="beCPGMailService" ref="becpgMailService"/>		
-		<property name="designerInitService" ref="designerInitService"/> 
-		<property name="entitySystemService" ref="entitySystemService"/>
+		<property name="mimetypeService" ref="mimetypeService" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="entityTplService" ref="entityTplService" />
+		<property name="beCPGMailService" ref="becpgMailService" />
+		<property name="designerInitService" ref="designerInitService" />
+		<property name="entitySystemService" ref="entitySystemService" />
 	</bean>
-		
+
 
 	<!-- Helper -->
-	<bean id="repoService" class="fr.becpg.repo.helper.impl.RepoServiceImpl">		
+	<bean id="repoService" class="fr.becpg.repo.helper.impl.RepoServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="fileFolderService" ref="fileFolderService" />
 	</bean>
-	<bean id="attributeExtractorService" class="fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl">		
+	<bean id="attributeExtractorService" class="fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl">
 		<property name="nodeService" ref="nodeService" />
-		<property name="dictionaryService" ref="dictionaryService"/>
-		<property name="beCPGCacheService" ref="beCPGCacheService"/>
-		<property name="namespaceService" ref="namespaceService"/>
-		<property name="permissionService" ref="permissionService"/>
-		<property name="personService" ref="personService"/>
-		<property name="taggingService" ref="taggingService"/>
-		<property name="securityService" ref="securityService"/>
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="personService" ref="personService" />
+		<property name="taggingService" ref="taggingService" />
+		<property name="securityService" ref="securityService" />
 	</bean>
-	<bean id="associationService" class="fr.becpg.repo.helper.impl.AssociationServiceImpl">		
+	<bean id="associationService" class="fr.becpg.repo.helper.impl.AssociationServiceImpl">
 		<property name="nodeService" ref="nodeService" />
-	</bean>	
-	
+	</bean>
+
 	<!-- List values plugins -->
-	
-	<bean id="entityListValuePlugin" parent="baseListValuePlugin"  init-method="init"
-			 class="fr.becpg.repo.listvalue.EntityListValuePlugin">
+
+	<bean id="entityListValuePlugin" parent="baseListValuePlugin"
+		init-method="init" class="fr.becpg.repo.listvalue.EntityListValuePlugin">
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
@@ -83,8 +83,8 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="reportTplService" ref="reportTplService" />
 	</bean>
-	<bean id="spelEditorListValuePlugin" parent="baseListValuePlugin"  init-method="init"
-			 class="fr.becpg.repo.listvalue.SpelEditorListValuePlugin">
+	<bean id="spelEditorListValuePlugin" parent="baseListValuePlugin"
+		init-method="init" class="fr.becpg.repo.listvalue.SpelEditorListValuePlugin">
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
@@ -93,8 +93,8 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="reportTplService" ref="reportTplService" />
 	</bean>
-	<bean id="compoListValuePlugin" parent="baseListValuePlugin"  init-method="init"
-			 class="fr.becpg.repo.listvalue.CompoListValuePlugin">
+	<bean id="compoListValuePlugin" parent="baseListValuePlugin"
+		init-method="init" class="fr.becpg.repo.listvalue.CompoListValuePlugin">
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
 		<property name="nodeService" ref="nodeService" />
 	</bean>
@@ -110,114 +110,122 @@
 		<property name="importNodeVisitor" ref="importNodeVisitor" />
 		<property name="importProductVisitor" ref="importProductVisitor" />
 		<property name="importEntityListAspectVisitor" ref="importEntityListAspectVisitor" />
-		<property name="importEntityListItemVisitor" ref="importEntityListItemVisitor" />				
+		<property name="importEntityListItemVisitor" ref="importEntityListItemVisitor" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
-	
+
 	<!-- Abstract bean -->
-	<bean id="parentImportVisitor" abstract="true" class="fr.becpg.repo.importer.impl.AbstractImportVisitor" >
-		<property name="nodeService" ref="nodeService" />		
+	<bean id="parentImportVisitor" abstract="true"
+		class="fr.becpg.repo.importer.impl.AbstractImportVisitor">
+		<property name="nodeService" ref="nodeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="repoService" ref="repoService" />
 		<property name="contentService" ref="contentService" />
-		<property name="mimetypeService" ref="mimetypeService"/>		
-		<property name="namespaceService" ref="namespaceService"/>
-	   <property name="entityListDAO" ref="entityListDAO" />
+		<property name="mimetypeService" ref="mimetypeService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
-	
-	<bean id="importNodeVisitor" class="fr.becpg.repo.importer.impl.ImportNodeVisitor" parent="parentImportVisitor"/>		
-	
-	<bean id="importProductVisitor" class="fr.becpg.repo.importer.impl.ImportProductVisitor" parent="parentImportVisitor">
+
+	<bean id="importNodeVisitor" class="fr.becpg.repo.importer.impl.ImportNodeVisitor"
+		parent="parentImportVisitor" />
+
+	<bean id="importProductVisitor" class="fr.becpg.repo.importer.impl.ImportProductVisitor"
+		parent="parentImportVisitor">
 		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="hierarchyService" ref="hierarchyService" />
 	</bean>
-	
-	<bean id="importEntityListAspectVisitor" class="fr.becpg.repo.importer.impl.ImportEntityListAspectVisitor" parent="parentImportVisitor"/>	
-	
-	<bean id="importEntityListItemVisitor" class="fr.becpg.repo.importer.impl.ImportEntityListItemVisitor" parent="parentImportVisitor">
+
+	<bean id="importEntityListAspectVisitor"
+		class="fr.becpg.repo.importer.impl.ImportEntityListAspectVisitor"
+		parent="parentImportVisitor" />
+
+	<bean id="importEntityListItemVisitor" class="fr.becpg.repo.importer.impl.ImportEntityListItemVisitor"
+		parent="parentImportVisitor">
 		<property name="fileFolderService" ref="fileFolderService" />
 	</bean>
-	
-	
-	<bean id="userImporterService" class="fr.becpg.repo.importer.user.impl.UserImporterServiceImpl">
-		<property name="authenticationService" ref="authenticationService"/>
-		<property name="contentService" ref="contentService"/>
-		<property name="nodeService" ref="nodeService"/>
-		<property name="personService" ref="personService"/>
-		<property name="siteService" ref="siteService"/>
-		<property name="authorityService" ref="authorityService"/>
-		<property name="beCPGMailService" ref="becpgMailService"/>
-	   <property name="namespacePrefixResolver" ref="namespaceService" />
+
+
+	<bean id="userImporterService"
+		class="fr.becpg.repo.importer.user.impl.UserImporterServiceImpl">
+		<property name="authenticationService" ref="authenticationService" />
+		<property name="contentService" ref="contentService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="personService" ref="personService" />
+		<property name="siteService" ref="siteService" />
+		<property name="authorityService" ref="authorityService" />
+		<property name="beCPGMailService" ref="becpgMailService" />
+		<property name="namespacePrefixResolver" ref="namespaceService" />
 	</bean>
-	
+
 	<!-- Mail service -->
-	
+
 	<bean id="becpgMailService" class="fr.becpg.repo.mail.impl.BeCPGMailServiceImpl">
-		<property name="nodeService" ref="nodeService"/>
-    	<property name="mailService" ref="mailService"/>   
-    	<property name="templateService" ref="templateService"/>
-    	<property name="serviceRegistry" ref="ServiceRegistry"/>
-    	<property name="mailFrom" value="${mail.from.default}" />
-    	<property name="beCPGSearchService" ref="beCPGSearchService"/>
-    	<property name="beCPGCacheService" ref="beCPGCacheService"/>
+		<property name="nodeService" ref="nodeService" />
+		<property name="mailService" ref="mailService" />
+		<property name="templateService" ref="templateService" />
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="mailFrom" value="${mail.from.default}" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
 	</bean>
-	
+
 	<!-- EntityVersion -->
 	<bean id="entityVersionService" class="fr.becpg.repo.entity.version.EntityVersionServiceImpl">
-		<property name="nodeService" ref="nodeService" />		
-		<property name="copyService" ref="copyService" />	
-	   <property name="beCPGSearchService" ref="beCPGSearchService" />
-	   <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-	   <property name="beCPGCacheService" ref="beCPGCacheService"/>
+		<property name="nodeService" ref="nodeService" />
+		<property name="copyService" ref="copyService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
 	</bean>
-	
+
 	<!-- Migrator -->
 	<bean id="beCPGVersionMigrator" class="fr.becpg.repo.entity.version.BeCPGVersionMigrator">
-		<property name="entityVersionService" ref="entityVersionService" />		
-		<property name="nodeService" ref="nodeService" />	
-	   <property name="versionService" ref="versionService" />
-	   <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-	   <property name="dbNodeService">
-      <ref bean="mtAwareNodeService" />
-      </property>
+		<property name="entityVersionService" ref="entityVersionService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="versionService" ref="versionService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="dbNodeService">
+			<ref bean="mtAwareNodeService" />
+		</property>
 	</bean>
-	
+
 	<bean id="beCPGSystemFolderMigrator" class="fr.becpg.repo.migration.BeCPGSystemFolderMigrator">
-		<property name="beCPGSearchService" ref="beCPGSearchService" />		
-		<property name="nodeService" ref="nodeService" />	
-	   <property name="entitySystemService" ref="entitySystemService" />
-	   <property name="fileFolderService" ref="fileFolderService" />
-	   <property name="initRepoVisitor" ref="initRepoVisitor" />
-      <property name="repoService" ref="repoService" />
-      <property name="repository" ref="repositoryHelper" />
-      <property name="namespaceService" ref="namespaceService"/>
-      <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-      <property name="versionService" ref="versionService" />
-      <property name="dbNodeService">
-            <ref bean="mtAwareNodeService" />
-        </property>        
-        <property name="dictionaryService" ref="dictionaryService" />
-        <property name="hierarchyService" ref="hierarchyService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="entitySystemService" ref="entitySystemService" />
+		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="initRepoVisitor" ref="initRepoVisitor" />
+		<property name="repoService" ref="repoService" />
+		<property name="repository" ref="repositoryHelper" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="versionService" ref="versionService" />
+		<property name="dbNodeService">
+			<ref bean="mtAwareNodeService" />
+		</property>
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="hierarchyService" ref="hierarchyService" />
 	</bean>
-	
+
 	<!-- CompareEntityService -->
-	<bean id="compareEntityService" class="fr.becpg.repo.entity.comparison.CompareEntityServiceImpl">
+	<bean id="compareEntityService"
+		class="fr.becpg.repo.entity.comparison.CompareEntityServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="namespaceService" ref="namespaceService"/>
-		<property name="attributeExtractorService" ref="attributeExtractorService"/>
-		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
-	
+
 	<!-- Entity -->
 	<bean id="entityListDAO" class="fr.becpg.repo.entity.impl.EntityListDAOImpl">
 		<property name="nodeService" ref="nodeService" />
-		<property name="dictionaryService" ref="dictionaryService" />		
-		<property name="fileFolderService" ref="fileFolderService"/>	
-		<property name="namespaceService" ref="namespaceService"/>
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="namespaceService" ref="namespaceService" />
 		<property name="copyService" ref="copyService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="associationService" ref="associationService" />
@@ -225,8 +233,8 @@
 	<bean id="entityTplService" class="fr.becpg.repo.entity.impl.EntityTplServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="dictionaryService" ref="dictionaryService" />		
-		<property name="beCPGSearchService" ref="beCPGSearchService" />		
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
 	<bean id="entityService" class="fr.becpg.repo.entity.impl.EntityServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -234,130 +242,144 @@
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="permissionService" ref="permissionService" />
-		<property name="entityTplService" ref="entityTplService"/>
-		<property name="entityVersionService" ref="entityVersionService"/>
-		<property name="copyService" ref="copyService"/>
-		<property name="contentService" ref="contentService"/>
-		<property name="mimetypeService" ref="mimetypeService"/>
+		<property name="entityTplService" ref="entityTplService" />
+		<property name="entityVersionService" ref="entityVersionService" />
+		<property name="copyService" ref="copyService" />
+		<property name="contentService" ref="contentService" />
+		<property name="mimetypeService" ref="mimetypeService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
-   <bean id="entitySystemService" class="fr.becpg.repo.entity.impl.EntitySystemServiceImpl">
+	<bean id="entitySystemService" class="fr.becpg.repo.entity.impl.EntitySystemServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
-	
-	<bean id="remoteEntityService" class="fr.becpg.repo.entity.remote.impl.RemoteEntityServiceImpl">
+
+	<bean id="remoteEntityService"
+		class="fr.becpg.repo.entity.remote.impl.RemoteEntityServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityService" ref="entityService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="namespaceService" ref="namespaceService"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
-	</bean>	
-	
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="dictionaryService" ref="dictionaryService" />
+	</bean>
+
 	<!-- DataLists -->
-	
-	<bean id="multiLevelDataListService" class="fr.becpg.repo.entity.datalist.impl.MultiLevelDataListServiceImpl">
-		<property name="entityListDAO" ref="entityListDAO"/>
-		<property name="nodeService" ref="nodeService"/>
-		 <property name="advSearchService" ref="advSearchService"/>
+
+	<bean id="multiLevelDataListService"
+		class="fr.becpg.repo.entity.datalist.impl.MultiLevelDataListServiceImpl">
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="advSearchService" ref="advSearchService" />
 	</bean>
-	
-	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor" >
-		 <property name="attributeExtractorService" ref="attributeExtractorService"/>
-		<property name="nodeService" ref="nodeService"/>
-	   <property name="services" ref="ServiceRegistry"/>
-	   <property name="permissionService" ref="permissionService"/>
-	   <property name="advSearchService" ref="advSearchService"/>
-	   <property name="multiLevelDataListService" ref="multiLevelDataListService"/>
+
+	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor">
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="services" ref="ServiceRegistry" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="advSearchService" ref="advSearchService" />
+		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
 	</bean>
-	
-	
-	<bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor" >
-	   <property name="attributeExtractorService" ref="attributeExtractorService"/>
-		<property name="nodeService" ref="nodeService"/>
-	   <property name="services" ref="ServiceRegistry"/>
-	   <property name="permissionService" ref="permissionService"/>
-	   <property name="advSearchService" ref="advSearchService"/>
+
+
+	<bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor">
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="services" ref="ServiceRegistry" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="advSearchService" ref="advSearchService" />
 	</bean>
-	
-	<bean id="wUsedExtractor" class="fr.becpg.repo.entity.datalist.impl.WUsedExtractor" >
-	   <property name="attributeExtractorService" ref="attributeExtractorService"/>
-		<property name="nodeService" ref="nodeService"/>
-	   <property name="services" ref="ServiceRegistry"/>
-	   <property name="permissionService" ref="permissionService"/>
-	   <property name="advSearchService" ref="advSearchService"/>
-	   <property name="wUsedListService" ref="wUsedListService"/>
-	   <property name="namespaceService" ref="namespaceService"/>
+
+	<bean id="wUsedExtractor" class="fr.becpg.repo.entity.datalist.impl.WUsedExtractor">
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="services" ref="ServiceRegistry" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="advSearchService" ref="advSearchService" />
+		<property name="wUsedListService" ref="wUsedListService" />
+		<property name="namespaceService" ref="namespaceService" />
 	</bean>
-	
-	<bean id="dataListExtractorFactory"  class="fr.becpg.repo.entity.datalist.impl.DataListExtractorFactoryImpl">
-		<property name="simpleExtractor" ref="simpleExtractor"/>
-		<property name="wUsedExtractor" ref="wUsedExtractor"/>
-		<property name="multiLevelExtractor" ref="multiLevelExtractor"/>
+
+	<bean id="dataListExtractorFactory"
+		class="fr.becpg.repo.entity.datalist.impl.DataListExtractorFactoryImpl">
+		<property name="simpleExtractor" ref="simpleExtractor" />
+		<property name="wUsedExtractor" ref="wUsedExtractor" />
+		<property name="multiLevelExtractor" ref="multiLevelExtractor" />
 	</bean>
-	
-	<bean id="dataListSortService" class="fr.becpg.repo.entity.datalist.impl.DataListSortServiceImpl">
+
+	<bean id="dataListSortService"
+		class="fr.becpg.repo.entity.datalist.impl.DataListSortServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
-	
+
 	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">
 	</bean>
-	<!-- Entity Policies-->
+	<!-- Entity Policies -->
 	<bean id="autoNumService" class="fr.becpg.repo.entity.impl.AutoNumServiceImpl">
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="repoService" ref="repoService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
-		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
-	<bean id="codePolicy" class="fr.becpg.repo.entity.policy.CodePolicy" init-method="init">
+	<bean id="codePolicy" class="fr.becpg.repo.entity.policy.CodePolicy"
+		init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
-	<bean id="entityPolicy" class="fr.becpg.repo.entity.policy.EntityPolicy" init-method="init">
+	<bean id="entityPolicy" class="fr.becpg.repo.entity.policy.EntityPolicy"
+		init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
-		<property name="entityService" ref="entityService" />		
-	</bean>	
-	<bean id="entityCheckOutCheckInServicePolicy" class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy" init-method="init">
-		<property name="policyComponent" ref="policyComponent" />			
+		<property name="entityService" ref="entityService" />
+	</bean>
+	<bean id="entityCheckOutCheckInServicePolicy"
+		class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy"
+		init-method="init">
+		<property name="policyComponent" ref="policyComponent" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="nodeService" ref="nodeService" />
-		<property name="authenticationService" ref="authenticationService" />		
+		<property name="authenticationService" ref="authenticationService" />
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="permissionService" ref="permissionService" />		
+		<property name="permissionService" ref="permissionService" />
 	</bean>
-	<bean id="entityVersionServicePolicy" class="fr.becpg.repo.entity.policy.EntityVersionServicePolicy" init-method="init">
-		<property name="policyComponent" ref="policyComponent" />			
-		<property name="entityVersionService" ref="entityVersionService" />			
+	<bean id="entityVersionServicePolicy" class="fr.becpg.repo.entity.policy.EntityVersionServicePolicy"
+		init-method="init">
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="entityVersionService" ref="entityVersionService" />
 	</bean>
-	<!-- Entity Datalist Policies-->
-	<bean id="initEntityListPolicy" class="fr.becpg.repo.entity.datalist.policy.InitEntityListPolicy" init-method="init">
+	<!-- Entity Datalist Policies -->
+	<bean id="initEntityListPolicy"
+		class="fr.becpg.repo.entity.datalist.policy.InitEntityListPolicy"
+		init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
-		<property name="namespaceService" ref="namespaceService"/>
+		<property name="namespaceService" ref="namespaceService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
-	<bean id="auditEntityListItemPolicies" class="fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy" init-method="init">
+	<bean id="auditEntityListItemPolicies"
+		class="fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy"
+		init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
-		<property name="nodeService" ref="nodeService" />		
+		<property name="nodeService" ref="nodeService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="authenticationService" ref="authenticationService" />
 	</bean>
-	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" init-method="init">
+	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy"
+		init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="dataListSortService" ref="dataListSortService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-		<property name="transactionService" ref="transactionService"/>
-	</bean>	
-	
+		<property name="transactionService" ref="transactionService" />
+	</bean>
+
 	<!-- WUsedList -->
 	<bean id="wUsedListService" class="fr.becpg.repo.entity.datalist.impl.WUsedListServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -373,29 +395,29 @@
 	<bean id="productDAO" class="fr.becpg.repo.product.ProductDAOImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="mlNodeService" ref="mlAwareNodeService" />
-		<property name="entityListDAO" ref="entityListDAO"/>
-		<property name="associationService" ref="associationService" />		
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="associationService" ref="associationService" />
 	</bean>
 
 	<!-- Product -->
 	<bean id="productService" class="fr.becpg.repo.product.ProductServiceImpl">
 		<property name="nodeService" ref="nodeService" />
-		<property name="productDAO" ref="productDAO" />		
-		<property name="productDictionaryService" ref="productDictionaryService" />		
+		<property name="productDAO" ref="productDAO" />
+		<property name="productDictionaryService" ref="productDictionaryService" />
 		<property name="compositionCalculatingVisitor" ref="compositionCalculatingVisitor" />
 		<property name="processCalculatingVisitor" ref="processCalculatingVisitor" />
 		<property name="allergensCalculatingVisitor" ref="allergensCalculatingVisitor" />
 		<property name="nutsCalculatingVisitor" ref="nutsCalculatingVisitor" />
 		<property name="costsCalculatingVisitor" ref="costsCalculatingVisitor" />
-		<property name="ingsCalculatingVisitor" ref="ingsCalculatingVisitor" />		
-		<property name="formulaVisitor" ref="formulaVisitor"/>
+		<property name="ingsCalculatingVisitor" ref="ingsCalculatingVisitor" />
+		<property name="formulaVisitor" ref="formulaVisitor" />
 		<property name="repoService" ref="repoService" />
-		<property name="ownableService" ref="ownableService"/>
+		<property name="ownableService" ref="ownableService" />
 	</bean>
-	
+
 	<!-- Formulation visitors -->
-	<bean id="formulaVisitor" class="fr.becpg.repo.product.formulation.FormulaVisitor"/>
-	
+	<bean id="formulaVisitor" class="fr.becpg.repo.product.formulation.FormulaVisitor" />
+
 	<bean id="compositionCalculatingVisitor"
 		class="fr.becpg.repo.product.formulation.CompositionCalculatingVisitor">
 		<property name="nodeService" ref="nodeService" />
@@ -427,78 +449,88 @@
 		<property name="productDAO" ref="productDAO" />
 		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
-	
-	<!-- Product Policies -->	
-	<bean id="productListUnits.ProductPolicy" class="fr.becpg.repo.product.policy.productListUnits.ProductPolicy" init-method="init">
+
+	<!-- Product Policies -->
+	<bean id="productListUnits.ProductPolicy"
+		class="fr.becpg.repo.product.policy.productListUnits.ProductPolicy"
+		init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="fileFolderService" ref="fileFolderService" />
 	</bean>
-	<bean id="productListUnits.ProductListPolicy" class="fr.becpg.repo.product.policy.productListUnits.ProductListPolicy" init-method="init">
+	<bean id="productListUnits.ProductListPolicy"
+		class="fr.becpg.repo.product.policy.productListUnits.ProductListPolicy"
+		init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
 	</bean>
-	<bean id="productListUnits.PriceListPolicy" class="fr.becpg.repo.product.policy.productListUnits.PriceListPolicy" init-method="init">
+	<bean id="productListUnits.PriceListPolicy"
+		class="fr.becpg.repo.product.policy.productListUnits.PriceListPolicy"
+		init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="productDAO" ref="productDAO" />
 	</bean>
-	<bean id="productPolicies" class="fr.becpg.repo.product.policy.ProductPolicies" init-method="init">
+	<bean id="productPolicies" class="fr.becpg.repo.product.policy.ProductPolicies"
+		init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="productService" ref="productService" />
 		<property name="nodeService" ref="nodeService" />
-		<property name="namespaceService" ref="namespaceService" />	
+		<property name="namespaceService" ref="namespaceService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
 	</bean>
-	<!-- Product Listeners -->	
+	<!-- Product Listeners -->
 	<bean id="productCheckInListener" class="fr.becpg.repo.product.listener.ProductCheckInListener">
 		<property name="productService" ref="productService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
-	
-	<bean id="hierarchyService" class="fr.becpg.repo.product.hierarchy.impl.HierarchyServiceImpl">
+
+	<bean id="hierarchyService"
+		class="fr.becpg.repo.product.hierarchy.impl.HierarchyServiceImpl">
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService"/>
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="nodeService" ref="nodeService" />
 	</bean>
-	
+
 	<!-- Search -->
 	<bean id="advSearchService" class="fr.becpg.repo.search.AdvSearchServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="namespaceService" ref="namespaceService" />	
-		<property name="beCPGSearchService" ref="beCPGSearchService"/>
-		<property name="permissionService" ref="permissionService"/>
-	</bean>		
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="permissionService" ref="permissionService" />
+	</bean>
 	<bean id="beCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
 		<property name="searchService" ref="searchService" />
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
-	
-		   	
-  <!-- Override Thumbnail service implementation bean -->
-    <bean id="thumbnailService" class="fr.becpg.repo.thumbnail.impl.BeCPGThumbnailServiceImpl" init-method="init">
-    	<property name="entityService" ref="entityService"/>
-    	<property name="dictionaryService" ref="dictionaryService"/>
-    	<property name="beCPGSearchService" ref="beCPGSearchService"/>    	
-    	<property name="nodeService" ref="nodeService"/>
-        <property name="renditionService" ref="renditionService" />
-        <property name="thumbnailRegistry" ref="thumbnailRegistry" />
-        <property name="policyComponent" ref="policyComponent" />
-    </bean>
-    
-    <!-- Cache -->
-    
-    <bean id="beCPGCacheService" class="fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl">
-	     <property name="configLocation">
-	    		<value>classpath:alfresco/module/${pom.artifactId}/becpg-ehcache.xml</value>
-		  	</property>
-		  	<property name="tenantService" ref="tenantService"/>
-    </bean>
-    
-    
+
+
+	<!-- Override Thumbnail service implementation bean -->
+	<bean id="thumbnailService" class="fr.becpg.repo.thumbnail.impl.BeCPGThumbnailServiceImpl"
+		init-method="init">
+		<property name="entityService" ref="entityService" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="renditionService" ref="renditionService" />
+		<property name="thumbnailRegistry" ref="thumbnailRegistry" />
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
+	</bean>
+
+	<!-- Cache -->
+
+	<bean id="beCPGCacheService" class="fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl">
+		<property name="configLocation">
+			<value>classpath:alfresco/module/${pom.artifactId}/becpg-ehcache.xml</value>
+		</property>
+		<property name="tenantService" ref="tenantService" />
+	</bean>
+
+
 </beans>

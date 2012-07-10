@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,8 +149,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			QName type = QName.createQName(className, namespaceService);
 			return suggestTargetAssoc(type, query, pageNum, pageSize, arrClassNames);
 		} else if (sourceType.equals(SOURCE_TYPE_PRODUCT)) {
-
-			return suggestProduct(query, pageNum, pageSize, arrClassNames);
+			return suggestTargetAssoc(BeCPGModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames);
 		} else if (sourceType.equals(SOURCE_TYPE_LINKED_VALUE)) {
 			return suggestLinkedValue(path, parent, query, pageNum, pageSize, props);
 		} else if (sourceType.equals(SOURCE_TYPE_LIST_VALUE)) {
@@ -178,13 +179,17 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 	protected ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames) {
 
-		logger.debug("suggestTargetAssoc");
+		if (logger.isDebugEnabled()) {
+			if (arrClassNames != null) {
+				logger.debug("suggestTargetAssoc with arrClassNames : " + Arrays.toString(arrClassNames));
+			}
+		}
 
 		String queryPath = "";
 
 		// Is code or name search
-		if (isQueryCode(query, type)) {
-			query = prepareQueryCode(query, type);
+		if (isQueryCode(query, type, arrClassNames)) {
+			query = prepareQueryCode(query, type, arrClassNames);
 			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_CODE, type, query);
 		} else if (isAllQuery(query)) {
 			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_ALL, type);
@@ -196,11 +201,12 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		// filter by classNames
 		queryPath = filterByClass(queryPath, arrClassNames);
 
-		logger.debug("repository : " + queryPath);
+		// filter product state
+		queryPath += String.format(RepoConsts.QUERY_FILTER_PRODUCT_STATE, SystemState.Archived, SystemState.Refused);
 
 		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 
-		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));
+		return new ListValuePage(ret, pageNum, pageSize, new TargetAssocValueExtractor(ContentModel.PROP_NAME, nodeService, namespaceService));
 
 	}
 
@@ -219,20 +225,20 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 *            the query
 	 * @return the map
 	 */
-	protected ListValuePage suggestLinkedValue(String path, String parent, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+	private ListValuePage suggestLinkedValue(String path, String parent, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		if (path == null) {
 			NodeRef entityNodeRef = null;
 			@SuppressWarnings("unchecked")
-			HashMap<String, String> extras =  (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
-			if(extras!=null){
+			HashMap<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
+			if (extras != null) {
 				if (extras.get("destination") != null) {
-					entityNodeRef =  new NodeRef((String) extras.get("destination"));
-				} else if(extras.get("itemId") != null){
-					entityNodeRef =  new NodeRef((String) extras.get("itemId"));
+					entityNodeRef = new NodeRef((String) extras.get("destination"));
+				} else if (extras.get("itemId") != null) {
+					entityNodeRef = new NodeRef((String) extras.get("itemId"));
 					entityNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
 				}
-				if(entityNodeRef!=null){
+				if (entityNodeRef != null) {
 					path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
 					path = path.replace("/app:company_home/", "");
 				}
@@ -276,7 +282,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 *            the query
 	 * @return the map
 	 */
-	protected ListValuePage suggestListValue(String path, String query, Integer pageNum, Integer pageSize) {
+	private ListValuePage suggestListValue(String path, String query, Integer pageNum, Integer pageSize) {
 
 		logger.debug("suggestListValue");
 
@@ -295,65 +301,51 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 	}
 
-	/**
-	 * Suggest a product according to query
-	 * 
-	 * Query path : +PATH:"/app:company_home//*" +TYPE:"bcpg:product"
-	 * +@cm\:name:"f* -@cm\:productState:Archived -@cm\:productState:Refused"
-	 * +PATH:"/app:company_home//*" +TYPE:"bcpg:product" +@cm\:code:"f*
-	 * -@cm\:productState:Archived -@cm\:productState:Refused".
-	 * 
-	 * @param query
-	 *            the query
-	 * @return the map
-	 */
-	protected ListValuePage suggestProduct(String query, Integer pageNum, Integer pageSize, String[] arrClassNames) {
-
-		logger.debug("suggestProduct");
-		String queryPath = "";
-
-		// Is code or name search, test if query is an interger ?
-		if (isQueryCode(query, BeCPGModel.TYPE_PRODUCT)) {
-			query = prepareQueryCode(query, BeCPGModel.TYPE_PRODUCT);
-			queryPath += String.format(RepoConsts.QUERY_SUGGEST_PRODUCT_BY_CODE, query, SystemState.Archived, SystemState.Refused);
-		} else if (isAllQuery(query)) {
-			queryPath += String.format(RepoConsts.QUERY_SUGGEST_PRODUCT_ALL, SystemState.Archived, SystemState.Refused);
-		} else {
-			query = prepareQuery(query);
-			queryPath += String.format(RepoConsts.QUERY_SUGGEST_PRODUCT_BY_NAME, query, SystemState.Archived, SystemState.Refused);
-		}
-
-		// filter by classNames
-		queryPath = filterByClass(queryPath, arrClassNames);
-
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
-
-		return new ListValuePage(ret, pageNum, pageSize, new ProductValueExtractor(ContentModel.PROP_NAME, nodeService, namespaceService));
-
-	}
-
-	protected String prepareQueryCode(String query, QName type) {
+	private String prepareQueryCode(String query, QName type, String[] arrClassNames) {
 		if (Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query)) {
+			List<QName> types = new ArrayList<QName>();
+			if (arrClassNames != null && arrClassNames.length > 0) {
+				for (int i = 0; i < arrClassNames.length; i++) {
+					types.add(QName.createQName(arrClassNames[i], namespaceService));
+				}
+			} else {
+				types.add(type);
+			}
 
-			if (BeCPGModel.TYPE_PRODUCT.equals(type)) {
-				StringBuffer ret = new StringBuffer();
-				for (QName subType : dictionaryService.getSubTypes(type, true)) {
+			StringBuffer ret = new StringBuffer();
+			for (QName typeTmp : types) {
+				if (BeCPGModel.TYPE_PRODUCT.equals(typeTmp)) {
+					for (QName subType : dictionaryService.getSubTypes(typeTmp, true)) {
+						if (ret.length() > 0) {
+							ret.append(" OR ");
+						}
+						ret.append(autoNumService.getPrefixedCode(subType, BeCPGModel.PROP_CODE, Long.parseLong(query)));
+					}
+				} else {
 					if (ret.length() > 0) {
 						ret.append(" OR ");
 					}
-					ret.append(autoNumService.getPrefixedCode(subType, BeCPGModel.PROP_CODE, Long.parseLong(query)));
+					ret.append(autoNumService.getPrefixedCode(typeTmp, BeCPGModel.PROP_CODE, Long.parseLong(query)));
 				}
-				return "(" + ret.toString() + ")";
-			} else {
-
-				return autoNumService.getPrefixedCode(type, BeCPGModel.PROP_CODE, Long.parseLong(query));
 			}
+			return "(" + ret.toString() + ")";
+
 		}
 		return query;
 	}
 
-	protected boolean isQueryCode(String query, QName type) {
-		return Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query) || Pattern.matches(autoNumService.getAutoNumMatchPattern(type, BeCPGModel.PROP_CODE), query);
+	private boolean isQueryCode(String query, QName type, String[] arrClassNames) {
+		boolean ret = Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query);
+		if (arrClassNames != null) {
+			for (int i = 0; i < arrClassNames.length; i++) {
+				QName filteredType = QName.createQName(arrClassNames[i], namespaceService);
+				ret = ret || Pattern.matches(autoNumService.getAutoNumMatchPattern(filteredType, BeCPGModel.PROP_CODE), query);
+			}
+		} else {
+			ret = ret || Pattern.matches(autoNumService.getAutoNumMatchPattern(type, BeCPGModel.PROP_CODE), query);
+		}
+
+		return ret;
 	}
 
 	/**
@@ -377,7 +369,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 * @return the map
 	 */
 
-	protected ListValuePage suggestProductReportTemplates(QName nodeType, String query, Integer pageNum, Integer pageSize) {
+	private ListValuePage suggestProductReportTemplates(QName nodeType, String query, Integer pageNum, Integer pageSize) {
 
 		query = prepareQuery(query);
 		List<NodeRef> tplsNodeRef = reportTplService.suggestUserReportTemplates(ReportType.Document, nodeType, query);
@@ -460,7 +452,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		}
 		return luceneAnaLyzer;
 	}
-
 
 	private String filterByClass(String query, String[] arrClassNames) {
 

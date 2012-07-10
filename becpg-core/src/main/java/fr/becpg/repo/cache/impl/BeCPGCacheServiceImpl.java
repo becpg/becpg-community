@@ -40,13 +40,15 @@ public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, 
 		this.configLocation = configLocation;
 	}
 
+	@Override
 	public void afterPropertiesSet() throws IOException, CacheException {
 		PropertyCheck.mandatory(this, "configLocation", configLocation);
 
-		logger.info("Init beCPG Cache");
+		logger.debug("Init beCPG Cache");
 		cacheManager = new CacheManager(this.configLocation.getURL());
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getFromCache(String cacheName, String cacheKey,
 			BeCPGCacheDataProviderCallBack<T> sigedCacheDataProviderCallBack) {
@@ -73,6 +75,28 @@ public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, 
 
 		return ret;
 	}
+	
+	@Override
+	public void removeFromCache(String cacheName, String cacheKey) {
+		cacheKey = computeCacheKey(cacheKey);
+		Cache cache = getCache(cacheName);
+		cache.remove(cacheKey);
+		
+	}
+	
+	@Override
+	public void destroy() {
+		logger.info("Close beCPG cache");
+		cacheManager.shutdown();
+	}
+
+	@Override
+	public void clearAllCaches() {
+		logger.info("Clear all cache");
+		cacheManager.clearAll();
+	}
+
+	
 
 	private String computeCacheKey(String cacheKey) {
 		return cacheKey+"@"+tenantService.getCurrentUserDomain();
@@ -85,14 +109,7 @@ public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, 
 		return cacheManager.getCache(cacheName);
 	}
 
-	public void destroy() {
-		logger.info("Close beCPG cache");
-		cacheManager.shutdown();
-	}
-
-	public void clearAllCaches() {
-		logger.info("Clear all cache");
-		cacheManager.clearAll();
-	}
+	
+	
 
 }

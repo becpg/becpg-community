@@ -61,7 +61,6 @@
 							<!-- <finalName>alfresco-repository-${alfresco.version}</finalName> 
 								<shadedArtifactAttached>true</shadedArtifactAttached> -->
 							<!-- <shadedArtifactId>alfresco-repository</shadedArtifactId> -->
-
 							<artifactSet>
 								<includes>
 									<include>org.alfresco.sdk:alfresco-repository-${alfresco.version}</include>
@@ -86,6 +85,11 @@
 										<exclude>org/alfresco/repo/security/authority/AuthorityDAOImpl**</exclude>
 										<exclude>org/alfresco/repo/workflow/activiti/ActivitiWorkflowEngine**</exclude>
 										<exclude>org/alfresco/repo/workflow/activiti/ActivitiTypeConverter**</exclude>
+										<exclude>org/alfresco/repo/search/impl/lucene/index/IndexInfo**</exclude>
+										<exclude>org/alfresco/repo/search/impl/lucene/index/ReferenceCounting**</exclude>
+										<exclude>org/alfresco/repo/search/impl/lucene/index/ReferenceCountingReadOnlyIndexReaderFactory**</exclude>
+										<exclude>org/alfresco/repo/search/impl/lucene/AVMLuceneIndexerImpl**</exclude>
+										<exclude>org/alfresco/repo/search/impl/lucene/LuceneAlfrescoLuceneQueryLanguage**</exclude>
 									</excludes>
 								</filter>
 							</filters>

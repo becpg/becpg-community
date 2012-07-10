@@ -17,7 +17,7 @@
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="dictionaryService" ref="dictionaryService"/>
 		<property name="namespacePrefixResolver" ref="namespaceService" />
-		<property name="transactionService" ref="transactionService"/>
+		<property name="beCPGCacheService" ref="beCPGCacheService"/>
 	</bean>
 
 	<!-- Form Processor Filters to process permission on property level -->

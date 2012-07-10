@@ -1,8 +1,6 @@
 package fr.becpg.repo.thumbnail.impl;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.site.SiteModel;
@@ -18,6 +16,8 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.thumbnail.BeCPGThumbnailService;
@@ -31,6 +31,7 @@ import fr.becpg.repo.thumbnail.BeCPGThumbnailService;
 public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 		BeCPGThumbnailService, ThumbnailService {
 
+	private static final String THUMB_CACHE_KEY_PREFIX = "thumbCache_";
 	private static String DOC_LIB_THUMBNAIL = "doclib";
 	private static String ICON_THUMBNAIL_NAME = "generic-%s-thumb*png";
 
@@ -44,8 +45,10 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 	private EntityService entityService;
 
 	private BeCPGSearchService beCPGSearchService;
+	
+	private BeCPGCacheService beCPGCacheService;
 
-	private Map<String, NodeRef> cachedThumbs = new HashMap<String, NodeRef>();
+	// private Map<String, NodeRef> cachedThumbs = new HashMap<String, NodeRef>();
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -62,6 +65,11 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 	
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
+	}
+	
+	
+	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
+		this.beCPGCacheService = beCPGCacheService;
 	}
 
 	@Override
@@ -92,7 +100,6 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 				} catch (BeCPGException e) {
 					logger.debug(e,e);
 				}
-				
 			} 
 			return getImage(String.format(ICON_THUMBNAIL_NAME, type.getLocalName()));
 		}
@@ -100,36 +107,33 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 
 	}
 
-	private NodeRef getImage(String imgName) {
-		NodeRef ret = null;
-		if (cachedThumbs.containsKey(imgName)) {
-			ret = cachedThumbs.get(imgName);
-			if (ret == null || !nodeService.exists(ret)) {
-				cachedThumbs.remove(imgName);
-			} else {
-				return ret;
+	private NodeRef getImage(final String imgName) {
+		
+		return beCPGCacheService.getFromCache(BeCPGThumbnailService.class.getName(), THUMB_CACHE_KEY_PREFIX+imgName, new BeCPGCacheDataProviderCallBack<NodeRef>() {
+
+			@Override
+			public NodeRef getData() {
+				String query = String.format(RepoConsts.PATH_QUERY_THUMBNAIL, imgName);
+
+				List<NodeRef> listItems = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Look for thumbnail : " + query);
+					logger.debug("Found  : " + listItems.size()
+							+ " results");
+				}
+
+				if (listItems.size() == 0) {
+					logger.debug("image not found. imgName: " + imgName);
+					return null;
+				}
+
+				return listItems.get(0);
 			}
-		}
-
-		String query = String.format(RepoConsts.PATH_QUERY_THUMBNAIL, imgName);
-
-		List<NodeRef> listItems = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Look for thumbnail : " + query);
-			logger.debug("Found  : " + listItems.size()
-					+ " results");
-		}
-
-		if (listItems.size() == 0) {
-			logger.debug("image not found. imgName: " + imgName);
-			return null;
-		}
-
-		ret = listItems.get(0);
-
-		cachedThumbs.put(imgName, ret);
-		return ret;
+			
+			
+		});
+		
 
 	}
 

@@ -138,11 +138,11 @@
    padding-top: 0.1em;
 }
 
-.search .results div.details span.tags
+.search .results div.details span.tags span
 {
    background-image: url(images/tag-16.png);
-   background-position: 0px 2px;
    background-repeat: no-repeat;
+   padding-left:20px;
 }
 
 .search .yui-dt .yui-dt-message

@@ -13,7 +13,7 @@ public interface BeCPGThumbnailService {
 	 * This method is in charge to retrieved the thumbnail 
 	 *  nodes associated with the current BeCPG node
 	 */
-	public NodeRef render(NodeRef sourceNodeRef);
+	 NodeRef render(NodeRef sourceNodeRef);
 	
 
 }

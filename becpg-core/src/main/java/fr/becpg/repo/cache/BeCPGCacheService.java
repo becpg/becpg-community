@@ -4,14 +4,16 @@ package fr.becpg.repo.cache;
 /**
  * 
  * @author matthieu
- *
+ * Tenant Aware Cache
  */
 public interface BeCPGCacheService {
 
-	public <T> T getFromCache(
+	<T> T getFromCache(
 			String cacheName, String cacheKey , 
 			BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack);
 	
-	public void clearAllCaches();
+	void clearAllCaches();
+
+	void removeFromCache(String name, String aclsCacheKey);
 
 }

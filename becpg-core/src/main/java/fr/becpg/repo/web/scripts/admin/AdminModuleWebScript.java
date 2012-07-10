@@ -97,7 +97,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			beCPGCacheService.clearAllCaches();
 		} else if (action.equals(ACTION_RELOAD_ACL)) {
 			logger.debug("Reload acls");
-			securityService.computeAcls();
+			securityService.refreshAcls();
 		} else if (action.equals(ACTION_RELOAD_MODEL)) {
 			logger.debug("Reload models");
 			dictionaryDAO.reset();

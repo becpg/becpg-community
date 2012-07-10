@@ -190,15 +190,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	}
 
-//	Failed tests:   testSuggestProduct(fr.becpg.repo.web.scripts.listvalue.AutoCompleteWebScriptTest): Status code 500 returned, but expected 200 for /becpg/autocomplete/product?q=ra (get)(..)
-//			  testComputeAccessMode(fr.becpg.repo.security.SecurityServiceTest): expected:<1> but was:<2>
-//
-//			Tests in error: 
-//			  testECOInMultiLeveCompo(fr.becpg.repo.ecm.ECOTest): 00230000 Exception in Transaction.
-//			  testImportProducts(fr.becpg.repo.importer.ImportServiceTest): 00230001 Exception from transactional callback: fr.becpg.repo.importer.impl.ImportServiceImpl$2@194b24b
-//
-//	
-//	
+
 	public void testComputeAccessMode() {
 
 		
@@ -221,7 +213,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 						createACLGroup(folderNodeRef);
 
-						securityService.computeAcls();
+						securityService.refreshAcls();
 
 						return null;
 
@@ -278,20 +270,22 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		Assert.assertNotNull(types);
 		Assert.assertTrue(types.size()>0);
 		
-//		for(String type : dynPropsConstraint.getAllowedValues()){
-//			System.out.println("Type : "+type);
-//		}
+		if(logger.isDebugEnabled()){
+			for(String type : dynPropsConstraint.getAllowedValues()){
+				logger.debug("Type : "+type);
+			}
+		}
 		
 		dynPropsConstraint.setConstraintType(DynPropsConstraint.ASPECT_NODE);
 		List<String> aspects =  dynPropsConstraint.getAllowedValues();
 		Assert.assertNotNull(aspects);
 		Assert.assertTrue(aspects.size()>0);
 		
-		
-		
-//		for(String aspect : dynPropsConstraint.getAllowedValues()){
-//			System.out.println("aspect : "+aspect);
-//		}
+		if(logger.isDebugEnabled()){
+			for(String aspect : dynPropsConstraint.getAllowedValues()){
+				logger.debug("aspect : "+aspect);
+			}
+		}
 		
 	}
 	
