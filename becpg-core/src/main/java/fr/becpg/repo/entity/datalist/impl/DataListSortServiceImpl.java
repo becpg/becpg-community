@@ -240,28 +240,35 @@ public class DataListSortServiceImpl implements DataListSortService {
 		 * We drag 1.3 on 2.1. Last child found is 2.3 but it should not be after 1.2 so we need to look for 1.2 to know when level stops
 		 */				
 		
-		logger.debug("getLastChild of " + tryGetName(destNodeRef));					
-		Integer startSort = (Integer)nodeService.getProperty(destNodeRef, BeCPGModel.PROP_SORT);		
-		Integer level = (Integer)nodeService.getProperty(destNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
-		
 		String stopSortCond = "MAX";
-		if(startSort != null && level != null){
-						
-			String query = String.format(QUERY_LIST_ITEMS_BY_SORT, listContainer, 
-					startSort+1, "MAX");
-			query += LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_SORT, Operator.NOT);
-			query += LuceneHelper.getCondMinMax(BeCPGModel.PROP_DEPTH_LEVEL, "1", Integer.toString(level), Operator.AND);			
-			List<NodeRef> listItems = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_SORT, true), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		Integer startSort = null;
+		
+		if(destNodeRef != null){
 			
-			logger.debug(" - startSort: " + startSort + " - query: " + query + " size: " + listItems.size());
-			if(listItems.size() > 0){ 
-				Integer stopSort = (Integer)nodeService.getProperty(listItems.get(0), BeCPGModel.PROP_SORT);
-				logger.debug("stopSort: " + stopSort);				
-				if(stopSort != null && startSort < stopSort){
-					stopSortCond = stopSort.toString();
+			logger.debug("getLastChild of " + tryGetName(destNodeRef));					
+			startSort = (Integer)nodeService.getProperty(destNodeRef, BeCPGModel.PROP_SORT);		
+			Integer level = (Integer)nodeService.getProperty(destNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
+			
+			
+			if(startSort != null && level != null){
+							
+				String query = String.format(QUERY_LIST_ITEMS_BY_SORT, listContainer, 
+						startSort+1, "MAX");
+				query += LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_SORT, Operator.NOT);
+				query += LuceneHelper.getCondMinMax(BeCPGModel.PROP_DEPTH_LEVEL, "1", Integer.toString(level), Operator.AND);			
+				List<NodeRef> listItems = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_SORT, true), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+				
+				logger.debug(" - startSort: " + startSort + " - query: " + query + " size: " + listItems.size());
+				if(listItems.size() > 0){ 
+					Integer stopSort = (Integer)nodeService.getProperty(listItems.get(0), BeCPGModel.PROP_SORT);
+					logger.debug("stopSort: " + stopSort);				
+					if(stopSort != null && startSort < stopSort){
+						stopSortCond = stopSort.toString();
+					}
 				}
 			}
 		}
+		
 						
 		logger.debug("startSort: " + startSort + " - stopCond: " + stopSortCond);
 
