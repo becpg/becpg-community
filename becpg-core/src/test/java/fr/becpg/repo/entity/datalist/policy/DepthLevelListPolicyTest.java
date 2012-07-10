@@ -180,12 +180,12 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 		
 		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)200, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)300, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)400, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)601, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)602, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)700, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -210,12 +210,12 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 		
 		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)200, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)300, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)400, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)601, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));	
-		assertEquals((Integer)602, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));										
-		assertEquals((Integer)700, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));								
+		assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));							
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -240,12 +240,12 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));												
 		
 		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)200, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)300, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));				
-		assertEquals((Integer)400, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)601, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)602, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)603, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 								
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -355,9 +355,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
 		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
 		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
-		
-		
+		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));		
 	}	
 	
 	/**
@@ -443,7 +441,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
 		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 		
-		logger.debug("InsertAfter");
+		logger.debug("Test InsertAfter");
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
@@ -451,8 +449,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				return null;
 			}
 		}, false, true);
-		
-		
+				
 		printSort(finishedProductLoaded.getCompoList());
 				
 		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
@@ -464,6 +461,33 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 		
 		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		
+		logger.debug("Test InsertAfter 2");
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				dataListSortService.insertAfter(finishedProductLoaded.getCompoList().get(3).getNodeRef(), finishedProductLoaded.getCompoList().get(1).getNodeRef());
+				return null;
+			}
+		}, false, true);
+				
+		printSort(finishedProductLoaded.getCompoList());
+		
+		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));				
+		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));							
+		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		
+		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
 		assertEquals((Integer)200, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
 		assertEquals((Integer)300, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
 		assertEquals((Integer)400, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
@@ -471,7 +495,34 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		assertEquals((Integer)602, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
 		assertEquals((Integer)700, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 		
-		logger.debug("InsertAfter 2");
+		logger.debug("Test InsertAfter 3");
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				dataListSortService.insertAfter(finishedProductLoaded.getCompoList().get(3).getNodeRef(), finishedProductLoaded.getCompoList().get(6).getNodeRef());
+				return null;
+			}
+		}, false, true);
+				
+		printSort(finishedProductLoaded.getCompoList());
+		
+		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));				
+		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));							
+		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		
+		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)200, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)300, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)701, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)702, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)703, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)700, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		
+		logger.debug("Test InsertAfter 4");
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
@@ -495,10 +546,9 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		assertEquals((Integer)200, nodeService.getProperty(finishedProductLoaded.getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
 		assertEquals((Integer)300, nodeService.getProperty(finishedProductLoaded.getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
 		assertEquals((Integer)301, nodeService.getProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)603, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)604, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)302, nodeService.getProperty(finishedProductLoaded.getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals((Integer)303, nodeService.getProperty(finishedProductLoaded.getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
 		assertEquals((Integer)700, nodeService.getProperty(finishedProductLoaded.getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
-		
 		
 	}	
 	

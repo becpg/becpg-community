@@ -23,6 +23,7 @@ public class LuceneHelper {
 	private static final String QUERY_COND_PROP_ISNULL_VALUE = " %s ISNULL:\"%s\"";
 	private static final String QUERY_COND_PATH = " %s +PATH:\"/app:company_home/%s/*\"";
 	private static final String QUERY_COND_ID = " %s ID:\"%s\"";
+	private static final String QUERY_COND_BY_SORT = " %s +@%s:[%s TO %s]";
 
 	/**
 	 * Return an equal condition on a property
@@ -82,6 +83,18 @@ public class LuceneHelper {
 		
 		return String.format(QUERY_COND_PATH, operator != null ? operator : "", encodePath(path));
 	}
+	
+	/**
+	 * Get conditions on sort
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	public static String getCondMinMax(QName property, String min, String max, Operator operator) {
+
+		return String.format(QUERY_COND_BY_SORT, operator != null ? operator : "", Repository.escapeQName(property), min, max);
+	}
+	
 
 	public enum Operator {
 		AND, OR, NOT

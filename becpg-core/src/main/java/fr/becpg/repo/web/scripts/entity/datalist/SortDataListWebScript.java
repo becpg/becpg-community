@@ -72,7 +72,7 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 
 				if (dir != null || selectedNodeRefs.length > 1) {
 					
-					if (dir != "up") {
+					if (!dir.equals("up")) {
 						ArrayUtils.reverse(selectedNodeRefs);
 					}
 					
