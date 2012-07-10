@@ -52,7 +52,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	/** The Constant SUFFIX_SIMPLE_QUOTE. */
 	private static final String SUFFIX_SIMPLE_QUOTE = "'";
 
-	private static final String QUERY_TYPE = " +TYPE:\"%s\"";
+	private static final String QUERY_TYPE = " TYPE:\"%s\"";
 
 	/** The Constant SOURCE_TYPE_TARGET_ASSOC. */
 	private static final String SOURCE_TYPE_TARGET_ASSOC = "targetassoc";

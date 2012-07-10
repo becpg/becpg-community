@@ -32,7 +32,7 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 
 	protected static final String PARAM_ID = "id";
 
-	private static final String PARAM_DEST_NODEREFS = "destNodeRef";
+	private static final String PARAM_SELECTED_NODEREFS = "selectedNodeRefs";
 
 	private static final String PARAM_DIR = "dir";
 
@@ -59,28 +59,29 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 		String storeType = templateArgs.get(PARAM_STORE_TYPE);
 		String storeId = templateArgs.get(PARAM_STORE_ID);
 		String nodeId = templateArgs.get(PARAM_ID);
-		String destNodeRefArgs = req.getParameter(PARAM_DEST_NODEREFS);
+		String selectedNodeRefsArgs = req.getParameter(PARAM_SELECTED_NODEREFS);
 		String dir = req.getParameter(PARAM_DIR);
 
-		if (storeType != null && storeId != null && nodeId != null && destNodeRefArgs != null) {
+		if (storeType != null && storeId != null && nodeId != null && selectedNodeRefsArgs != null) {
 			NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 
-			String[] destNodeRefs = destNodeRefArgs.split(",");
+			String[] selectedNodeRefs = selectedNodeRefsArgs.split(",");
 
 
 				model.put("origSort", nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT));
 
-				if (dir != null || destNodeRefs.length > 1) {
-					dir = dir != null ? dir : "up";
+				if (dir != null || selectedNodeRefs.length > 1) {
+					
 					if (dir != "up") {
-						ArrayUtils.reverse(destNodeRefs);
+						ArrayUtils.reverse(selectedNodeRefs);
 					}
-					for (int i = 0; i < destNodeRefs.length; i++) {
-						dataListSortService.swap(nodeRef, new NodeRef(destNodeRefs[i]), dir == "up");
+					
+					for (int i = 0; i < selectedNodeRefs.length; i++) {
+						dataListSortService.move(new NodeRef(selectedNodeRefs[i]), dir.equals("up"));
 					}
 
-				} else if (destNodeRefs.length == 1) {
-					dataListSortService.insertAfter(new NodeRef(destNodeRefs[0]), nodeRef);
+				} else if (selectedNodeRefs.length == 1) {
+					dataListSortService.insertAfter(new NodeRef(selectedNodeRefs[0]), nodeRef);
 				}
 
 				model.put("destSort", nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT));

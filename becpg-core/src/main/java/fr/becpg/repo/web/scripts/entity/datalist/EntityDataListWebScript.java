@@ -271,7 +271,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			if(dataListFilter.isSimpleItem()){
 				Map<String,Object> item = extractedItems.getItems().get(0);
 				ret.put("item", new JSONObject(item));
-				ret.put("lastSiblingNodeRef", dataListSortService.getLastSiblingNode((NodeRef)item.get(AbstractDataListExtractor.PROP_NODE)));
+				ret.put("lastSiblingNodeRef", dataListSortService.getLastChild((NodeRef)item.get(AbstractDataListExtractor.PROP_NODE)));
 			} else {
 				ret.put("items", processResults(extractedItems));
 			}
