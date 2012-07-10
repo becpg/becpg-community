@@ -14,7 +14,6 @@ import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
-import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -42,7 +41,6 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.security.SecurityService;
 
 public class AttributeExtractorServiceImpl implements AttributeExtractorService {
@@ -132,7 +130,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
-	
+
 	@Override
 	public PropertyFormats getPropertyFormats() {
 		return propertyFormats;
@@ -163,26 +161,23 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					value += RepoConsts.LABEL_SEPARATOR + (String) nodeService.getProperty(categoryNodeRef, ContentModel.PROP_NAME);
 				}
 			}
-		} else if (dataType.equals(DataTypeDefinition.BOOLEAN.toString())
-				|| (dataType.equals(DataTypeDefinition.ANY.toString())
-				&& (v instanceof Boolean))) {
+		} else if (dataType.equals(DataTypeDefinition.BOOLEAN.toString()) || (dataType.equals(DataTypeDefinition.ANY.toString()) && (v instanceof Boolean))) {
 
 			Boolean b = (Boolean) v;
 
 			value = TranslateHelper.getTranslatedBoolean(b, propertyFormats.isUseDefaultLocale());
 
 		} else if (dataType.equals(DataTypeDefinition.TEXT.toString())) {
-			
+
 			if (propertyDef.getName().equals(BeCPGModel.PROP_PRODUCT_STATE)) {
 
 				value = TranslateHelper.getTranslatedProductState(ProductData.getSystemState((String) v));
 			}
-			//translate constraints (not cm:name)
-			else if (!propertyDef.getName().isMatch(ContentModel.PROP_NAME) && propertyDef.getConstraints().size()>0) {
-				
-				value = TranslateHelper.getConstraint(propertyDef.getName(),(String) v, propertyFormats.isUseDefaultLocale());
-			}
-			else if (propertyDef.isMultiValued()) {
+			// translate constraints (not cm:name)
+			else if (!propertyDef.getName().isMatch(ContentModel.PROP_NAME) && propertyDef.getConstraints().size() > 0) {
+
+				value = TranslateHelper.getConstraint(propertyDef.getName(), (String) v, propertyFormats.isUseDefaultLocale());
+			} else if (propertyDef.isMultiValued()) {
 
 				List<String> values = (List<String>) v;
 
@@ -204,17 +199,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			value = propertyFormats.getDatetimeFormat().format(v);
 		} else if (dataType.equals(DataTypeDefinition.NODE_REF.toString())) {
-			if(nodeService.getType((NodeRef) v).equals(BeCPGModel.TYPE_LINKED_VALUE)){
-				value = (String) nodeService.getProperty((NodeRef) v,BeCPGModel.PROP_LKV_VALUE);
+			if (nodeService.getType((NodeRef) v).equals(BeCPGModel.TYPE_LINKED_VALUE)) {
+				value = (String) nodeService.getProperty((NodeRef) v, BeCPGModel.PROP_LKV_VALUE);
 			} else {
-				value = (String) nodeService.getProperty((NodeRef) v,ContentModel.PROP_NAME);
+				value = (String) nodeService.getProperty((NodeRef) v, ContentModel.PROP_NAME);
 			}
 		} else if (dataType.equals(DataTypeDefinition.MLTEXT.toString())) {
 
 			value = v.toString();
 		} else if (dataType.equals(DataTypeDefinition.DOUBLE.toString()) || dataType.equals(DataTypeDefinition.FLOAT.toString())
-				|| (dataType.equals(DataTypeDefinition.ANY.toString())
-						&& (v instanceof Double || v instanceof Float))) {
+				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && (v instanceof Double || v instanceof Float))) {
 
 			if (propertyFormats.getDecimalFormat() != null) {
 				value = propertyFormats.getDecimalFormat().format(v);
@@ -229,7 +223,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			} else {
 				value = v.toString();
 			}
-		} 
+		}
 
 		else {
 			TypeConverter converter = new TypeConverter();
@@ -312,9 +306,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	}
 
-	
-	
-	
 	private Object extractNodeData(NodeRef nodeRef, ClassAttributeDefinition attribute, boolean isSearch, int order) {
 		Map<String, Object> tmp = new HashMap<String, Object>();
 		if (isSearch) {
@@ -345,7 +336,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, attribute.getName());
 			if (isSearch) {
-				
+
 				for (AssociationRef assocRef : assocRefs) {
 
 					if (!displayName.isEmpty()) {
@@ -371,16 +362,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					}
 					tmp.put("displayValue", (String) nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME));
 					tmp.put("value", assocRef.getTargetRef().toString());
-					
-					String path = nodeService.getPath(assocRef.getTargetRef()).toPrefixString(namespaceService);
-					if(SiteHelper.isSitePath(path)){
-						String siteId = SiteHelper.extractSiteId(path, getDisplayPath(nodeRef));
-						
-						if(siteId!=null){
-							tmp.put("siteId", siteId);
-						}
+					String siteId = extractSiteId(assocRef.getTargetRef());
+					if (siteId != null) {
+					  tmp.put("siteId", siteId);
 					}
-					
+
 					ret.add(tmp);
 				}
 				return ret;
@@ -403,7 +389,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
 				metadata += "-" + nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE);
 			}
-		}		
+		}
 		return metadata;
 	}
 
@@ -465,6 +451,15 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		return securityService.computeAccessMode(nodeType, propName) != SecurityService.NONE_ACCESS;
 
+	}
+
+	@Override
+	public String extractSiteId(NodeRef nodeRef) {
+		String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
+		if (SiteHelper.isSitePath(path)) {
+			return SiteHelper.extractSiteId(path, getDisplayPath(nodeRef));
+		}
+		return null;
 	}
 
 }

@@ -80,10 +80,6 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<String, Object> props) {
 
-		
-		
-		
-		
 		Map<String, Object> tmp = super.doExtract(nodeRef, itemType, metadataFields, props);
 		if(props.get(PROP_DEPTH)!=null){
 			@SuppressWarnings("unchecked")
@@ -106,8 +102,12 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			entity.put("value",entityNodeRef);
 			entity.put("displayValue",(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 			entity.put("metadata", attributeExtractorService.extractMetadata(nodeService.getType(entityNodeRef), entityNodeRef));
-			String assocName  = (String) props.get(PROP_REVERSE_ASSOC);	
+			String siteId = attributeExtractorService.extractSiteId(entityNodeRef);
+			if(siteId!=null){
+				entity.put("siteId",siteId);
+			}
 			
+			String assocName  = (String) props.get(PROP_REVERSE_ASSOC);	
 			
 			tmp.put("assoc_"+assocName.replaceFirst(":", "_"), entity);
 		}
