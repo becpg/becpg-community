@@ -902,8 +902,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			}
 
 			logger.error(" linked value parent : " + queryPath + " not found ");
-			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, properties));
-
+			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
 		}
 
 		return findTargetNodeByValue(importContext, propDef.getDataType().getName(), value);
