@@ -16,7 +16,7 @@ public class RepoConsts {
 	/*-- Path query --*/			
 	public static final String PATH_QUERY_SUGGEST_VALUE = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:listValue\" +@cm\\:name:(%s) ";
 	public static final String PATH_QUERY_SUGGEST_VALUE_ALL  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:listValue\" ";
-	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_BY_NAME  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:lkvValue:\"%s\" ";
+	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_BY_NAME  = " +PATH:\"/app:company_home/%s//*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:lkvValue:\"%s\" ";
 	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ALL  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:parentLevel:\"%s\" ";
 	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ALL_ROOT  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +ISNULL:bcpg\\:parentLevel  ";
 	public static final String PATH_QUERY_SUGGEST_LKV_VALUE = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:parentLevel:\"%s\"  +@bcpg\\:lkvValue:\"%s\" ";

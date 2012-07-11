@@ -52,7 +52,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	private static Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 
 	private NodeService nodeService;
+	
 	private DictionaryService dictionaryService;
+	
 	private NamespaceService namespaceService;
 
 	private BeCPGSearchService beCPGSearchService;
@@ -87,7 +89,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}
 
 		searchQuery = appendCriteria(searchQuery, language, criteria);
-
+		
 		boolean isAssocSearch = isAssocSearch(criteria);
 
 		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap, isAssocSearch ? SIZE_UNLIMITED : maxResults, language);
@@ -100,7 +102,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			}
 			nodes = filterWithPermissions(nodes, new ReadPermissionFilter(), maxResults);
 		}
-
 		return nodes;
 	}
 
@@ -150,6 +151,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		// beCPG : now, exclude always product history
 		ftsQuery += PRODUCTS_TO_EXCLUDE;
 
+		if(logger.isDebugEnabled()){
+			logger.debug(" build searchQueryByProperties :" +ftsQuery );
+		}
+		
 		return ftsQuery;
 	}
 
@@ -305,23 +310,26 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	private String getHierarchyQuery(String propName, String hierachyName) {
-
-		String searchQuery = String.format(
-				RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_BY_NAME,
-				LuceneHelper.encodePath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/" + BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)
-						+ "//*"), hierachyName);
-
-		if (propName.endsWith("productHierarchy1")) {
-			searchQuery += " +ISNULL:bcpg\\:parentLevel";
+		List<NodeRef> nodes = null;
+		
+		if(!NodeRef.isNodeRef(hierachyName)){
+			String searchQuery = String.format(
+					RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_BY_NAME,
+					LuceneHelper.encodePath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/" + BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)
+							), hierachyName);
+	
+			if (propName.endsWith("productHierarchy1")) {
+				searchQuery += " +ISNULL:bcpg\\:parentLevel";
+			}
+			nodes =  beCPGSearchService.luceneSearch(searchQuery, -1);
 		}
-		List<NodeRef> nodes = beCPGSearchService.luceneSearch(searchQuery, -1);
 		String ret = "";
 		if (nodes != null && nodes.size() > 0) {
 			for (NodeRef node : nodes) {
 				ret += " \"" + node.toString() + "\"";
 			}
 		} else {
-			ret += hierachyName;
+			ret += "\""+hierachyName+"\"";
 		}
 
 		return ret;

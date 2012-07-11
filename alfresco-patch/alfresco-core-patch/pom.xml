@@ -29,6 +29,14 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>spring-webscripts</artifactId>
+			<version>1.0.0</version>
+			<type>jar</type>
+		</dependency>
 
 		<!-- alfresco -->
 		<dependency>

@@ -154,10 +154,10 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.alfresco.sdk</groupId>
-			<artifactId>spring-webscripts-1.0.0</artifactId>
-			<version>${alfresco.version}</version>
-			<classifier>community</classifier>
+			<groupId>fr.becpg</groupId>
+			<artifactId>spring-webscripts</artifactId>
+			<version>1.0.0</version>
+			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

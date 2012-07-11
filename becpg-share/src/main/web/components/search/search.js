@@ -589,10 +589,11 @@
 
 				               for (key in itemData) {
 					               var item = itemData[key];
-
+					               var propName = key + (item.type == 'subtype' ? "_added" : ""); 
+					               
 					               if (item.displayValue != null && item.displayValue.length > 0) {
 						               desc += '<div class="details">' + $html(item.label) + ': ';
-						               desc += '<span id="' + me.id + '|' + $html(key) + '|' + $html(item.value) + '|'
+						               desc += '<span id="' + me.id + '|' + $html(propName) + '|' + $html(item.value) + '|'
 						                     + $html(itemType) + '" class="searchByProp" ><a class="search-prop" href="#">'
 						                     + $html(item.displayValue) + '</a></span>';
 						               desc += '</div>';
@@ -603,7 +604,7 @@
 							               } else {
 								               desc += ",&nbsp;";
 							               }
-							               desc += '<span id="' + me.id + '|' + $html(key) + '|' + $html(item[jj].value) + '|'
+							               desc += '<span id="' + me.id + '|' + $html(propName) + '|' + $html(item[jj].value) + '|'
 							                     + $html(itemType)
 							                     + '" class="searchByProp" ><a class="search-prop" href="#">'
 							                     + $html(item[jj].displayValue) + '</a></span>';
