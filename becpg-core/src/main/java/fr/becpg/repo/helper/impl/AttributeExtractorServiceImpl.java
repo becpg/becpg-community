@@ -265,15 +265,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 				if (tmp != null) {
 					logger.debug("Extract field : " + field);
-					if (isSearch) {
-						ret.put(field, tmp);
-					} else {
-						String prefix = "prop_";
-						if (isAssoc(propDef)) {
-							prefix = "assoc_";
-						}
-						ret.put(prefix + field.replaceFirst(":", "_"), tmp);
+					String prefix = "prop_";
+					if (isAssoc(propDef)) {
+						prefix = "assoc_";
 					}
+					ret.put(prefix + field.replaceFirst(":", "_"), tmp);
 				}
 			}
 		}
@@ -336,19 +332,21 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, attribute.getName());
 			if (isSearch) {
-
+				String nodeRefs = "";
 				for (AssociationRef assocRef : assocRefs) {
 
 					if (!displayName.isEmpty()) {
 						displayName += RepoConsts.LABEL_SEPARATOR;
+						nodeRefs += RepoConsts.LABEL_SEPARATOR;
 					}
 
 					displayName += (String) nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME);
+					nodeRefs += assocRef.getTargetRef().toString();
 				}
 				tmp.put("label", attribute.getTitle());
 				tmp.put("type", "subtype");
 				tmp.put("displayValue", displayName);
-				tmp.put("value", displayName);
+				tmp.put("value", nodeRefs);
 				return tmp;
 
 			} else {

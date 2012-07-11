@@ -179,6 +179,7 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 	}
 
+	
 
 	private String getPath(String nodeRef) {
 		return nodeService.getPath(new NodeRef(nodeRef)).toPrefixString(namespaceService);
