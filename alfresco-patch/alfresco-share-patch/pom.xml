@@ -14,6 +14,16 @@
 	<name>Alfresco share patch</name>
 	<version>1.4.0</version>
 	<description>beCPG AMP patch for share UI</description>
+	<dependencies>
+	 		<!-- patch -->
+			<dependency>
+				<groupId>fr.becpg</groupId>
+				<artifactId>spring-webscripts</artifactId>
+				<version>1.0.0</version>
+				<type>jar</type>
+			</dependency>
+	 
+	</dependencies>
 	<build>
 		<plugins>
 			<!-- native2ascii -->
