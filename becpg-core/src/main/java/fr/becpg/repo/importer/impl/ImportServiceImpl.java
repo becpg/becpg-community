@@ -757,6 +757,9 @@ public class ImportServiceImpl implements ImportService {
 			logger.error(msg, e);
 			throw new ImporterException(msg);
 		}		
+		finally {
+			IOUtils.closeQuietly(is);
+		}
 		
 		return mappingElt;
 	}

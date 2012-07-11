@@ -186,7 +186,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		logger.info("###FixSortableList. parentNodeRef: " + listContainer + "");
     	
-		List<NodeRef> listItems = beCPGSearchService.luceneSearch(String.format(QUERY_LIST_ITEMS, listContainer), LuceneHelper.getSort(BeCPGModel.PROP_SORT, true), RepoConsts.MAX_RESULTS_NO_LIMIT);
+		String query = String.format(QUERY_LIST_ITEMS, listContainer);
+		query += LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_SORT, Operator.NOT);
+		List<NodeRef> listItems = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_SORT, true), RepoConsts.MAX_RESULTS_NO_LIMIT);
 		int newSort = RepoConsts.SORT_DEFAULT_STEP;
 		
 		for (NodeRef listItem : listItems) {
