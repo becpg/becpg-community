@@ -2929,7 +2929,7 @@
 							template="/fr/becpg/components/form/controls/autocomplete.ftl">
  							<control-param name="ds">becpg/autocomplete/compoListParentLevel
  							</control-param>	
-							<control-param name="showTooltip">false</control-param>
+							<control-param name="showTooltip">false</control-param>							
 						</control>
  					</field> 
 				</appearance>
@@ -3020,6 +3020,7 @@
  							<control-param name="ds">becpg/autocomplete/compoListParentLevel
  							</control-param>
 							<control-param name="showTooltip">false</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
  					</field> 
 				</appearance>

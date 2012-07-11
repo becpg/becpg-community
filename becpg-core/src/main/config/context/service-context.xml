@@ -377,7 +377,6 @@
 		<property name="dataListSortService" ref="dataListSortService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-		<property name="transactionService" ref="transactionService" />
 	</bean>
 
 	<!-- WUsedList -->

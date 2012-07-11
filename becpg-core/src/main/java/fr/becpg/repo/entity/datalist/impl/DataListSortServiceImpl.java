@@ -60,14 +60,22 @@ public class DataListSortServiceImpl implements DataListSortService {
 		// depthLevel manage sort
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
 			NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
-
-			NodeRef siblingNode = getLastChildOfLevel(listContainer, parentLevel, nodeRef);
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("computeDepthAndSort for :" + tryGetName(nodeRef));
+			
+			// cycle detection
+			if(nodeRef.equals(parentLevel)){
+				
+				logger.error("Cannot select itself as parent, otherwise we get a cycle. nodeRef: " + nodeRef);
 			}
+			else{
+			
+				NodeRef siblingNode = getLastChildOfLevel(listContainer, parentLevel, nodeRef);
 
-			insertAfter(listContainer, siblingNode, nodeRef);
+				if (logger.isDebugEnabled()) {
+					logger.debug("computeDepthAndSort for :" + tryGetName(nodeRef));
+				}
+
+				insertAfter(listContainer, siblingNode, nodeRef);
+			}			
 		} else {
 
 			insertAfter(listContainer, getLastChild(null, listContainer, nodeRef, false), nodeRef);

@@ -552,6 +552,83 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		
 	}	
 	
+	/**
+	 * Test if cycles are detected
+	 */
+	public void testCycles() {
+
+		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				/*-- create folders : Test--*/
+				logger.debug("/*-- create folders --*/");
+				NodeRef testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
+				if (testFolder != null) {
+					fileFolderService.delete(testFolder);
+				}
+				testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+
+				/*-- Create raw material --*/
+				logger.debug("/*-- Create raw material --*/");
+				RawMaterialData rawMaterial1 = new RawMaterialData();
+				rawMaterial1.setName("Raw material 1");
+				NodeRef rawMaterial1NodeRef = productDAO.create(testFolder, rawMaterial1, null);
+				RawMaterialData rawMaterial2 = new RawMaterialData();
+				rawMaterial2.setName("Raw material 2");
+				NodeRef rawMaterial2NodeRef = productDAO.create(testFolder, rawMaterial2, null);
+				LocalSemiFinishedProduct lSF1 = new LocalSemiFinishedProduct();
+				lSF1.setName("Local semi finished 1");
+				NodeRef lSF1NodeRef = productDAO.create(testFolder, lSF1, null);
+
+				LocalSemiFinishedProduct lSF2 = new LocalSemiFinishedProduct();
+				lSF2.setName("Local semi finished 2");
+				NodeRef lSF2NodeRef = productDAO.create(testFolder, lSF2, null);
+				
+				LocalSemiFinishedProduct lSF3 = new LocalSemiFinishedProduct();
+				lSF3.setName("Local semi finished 3");
+				NodeRef lSF3NodeRef = productDAO.create(testFolder, lSF3, null);
+				
+				LocalSemiFinishedProduct lSF4 = new LocalSemiFinishedProduct();
+				lSF4.setName("Local semi finished 4");
+				NodeRef lSF4NodeRef = productDAO.create(testFolder, lSF4, null);
+
+				/*-- Create finished product --*/
+				logger.debug("/*-- Create finished product --*/");
+				FinishedProductData finishedProduct = new FinishedProductData();
+				finishedProduct.setName("Finished Product");
+				List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
+				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, lSF4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial1NodeRef));
+				finishedProduct.setCompoList(compoList);
+				Collection<QName> dataLists = new ArrayList<QName>();
+				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+				return productDAO.create(testFolder, finishedProduct, dataLists);
+			}
+		}, false, true);		
+		
+		Collection<QName> dataLists = new ArrayList<QName>();
+		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+		final ProductData finishedProductLoaded = productDAO.find(finishedProductNodeRef, dataLists);						
+
+		assertNotNull(finishedProductLoaded.getCompoList());
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				// change parentLevel : choose itself to get a cycle
+				logger.debug("Change parentLevel : choose itself to get a cycle");
+				nodeService.setProperty(finishedProductLoaded.getCompoList().get(3).getNodeRef(), 
+						BeCPGModel.PROP_PARENT_LEVEL, finishedProductLoaded.getCompoList().get(3).getNodeRef());
+				return null;
+			}
+		}, false, true);		
+	}	
+	
 	public void printSort(List<CompoListDataItem> compoListDataItem) {
 
 		for (CompoListDataItem c : compoListDataItem) {

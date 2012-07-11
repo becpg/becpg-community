@@ -21,8 +21,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
@@ -165,9 +167,24 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 		ListValuePage listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, new Integer(
 				ListValueService.SUGGEST_PAGE_SIZE), props);
 
-		for (ListValueEntry listValueEntry : listValuePage.getResults()) {
-			logger.info("listValueEntry: " + listValueEntry.getName() + " - " + listValueEntry.getValue());
-		}
+//		for (ListValueEntry listValueEntry : listValuePage.getResults()) {
+//			logger.info("listValueEntry: " + listValueEntry.getName() + " - " + listValueEntry.getValue());
+//		}
+		
+		assertEquals(2, listValuePage.getResults().size());
+		
+		// Check cycle detection (exclude localSF1NodeRef)
+		Collection<QName> dataLists = productDictionaryService.getDataLists();
+		ProductData finishedProduct = productDAO.find(finishedProductNodeRef, dataLists);
+		
+		HashMap<String, String> extras = new HashMap<String, String>();
+		extras.put("itemId", finishedProduct.getCompoList().get(0).getNodeRef().toString());
+		props.put(ListValueService.EXTRA_PARAM, extras);
+		
+		listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, new Integer(
+				ListValueService.SUGGEST_PAGE_SIZE), props);
+
+		assertEquals(1, listValuePage.getResults().size());
 	}
 
 }

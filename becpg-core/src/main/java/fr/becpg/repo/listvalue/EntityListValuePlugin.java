@@ -30,6 +30,7 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.helper.LuceneHelper;
+import fr.becpg.repo.helper.LuceneHelper.Operator;
 import fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin;
 import fr.becpg.repo.listvalue.impl.ListValueServiceImpl;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
@@ -227,16 +228,18 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 */
 	private ListValuePage suggestLinkedValue(String path, String parent, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
+		NodeRef itemIdNodeRef = null;
+		
 		if (path == null) {
-			NodeRef entityNodeRef = null;
+			NodeRef entityNodeRef = null;			
 			@SuppressWarnings("unchecked")
-			HashMap<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
+			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
 				if (extras.get("destination") != null) {
 					entityNodeRef = new NodeRef((String) extras.get("destination"));
 				} else if (extras.get("itemId") != null) {
-					entityNodeRef = new NodeRef((String) extras.get("itemId"));
-					entityNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
+					itemIdNodeRef = new NodeRef((String) extras.get("itemId"));
+					entityNodeRef = nodeService.getPrimaryParent(itemIdNodeRef).getParentRef();
 				}
 				if (entityNodeRef != null) {
 					path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
@@ -262,6 +265,11 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			} else {
 				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ALL, path, parent);
 			}
+		}
+		
+		// avoid cycle: when editing an item, cannot select itself as parent
+		if(itemIdNodeRef != null){
+			queryPath += LuceneHelper.getCondEqualID(itemIdNodeRef, Operator.NOT);
 		}
 
 		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);

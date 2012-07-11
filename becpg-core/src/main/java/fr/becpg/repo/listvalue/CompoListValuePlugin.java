@@ -2,6 +2,7 @@ package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,14 +57,23 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 			
 			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
 			
-			List<ListValueEntry> result = getParentsLevel(mlld, query);			
+			NodeRef itemId = null;
+			@SuppressWarnings("unchecked")
+			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
+			if (extras != null) {
+				if (extras.get("itemId") != null) {
+					itemId = new NodeRef((String) extras.get("itemId"));
+				}				
+			}
+			
+			List<ListValueEntry> result = getParentsLevel(mlld, query, itemId);			
 			
 			return new ListValuePage(result, pageNum, pageSize, null);			
 		}
 		return null;
 	}
 
-	private List<ListValueEntry> getParentsLevel(MultiLevelListData mlld, String query) {
+	private List<ListValueEntry> getParentsLevel(MultiLevelListData mlld, String query, NodeRef itemId) {
 
 		List<ListValueEntry> result = new ArrayList<ListValueEntry>();
 
@@ -96,6 +106,11 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 					} else {
 						addNode = true;
 					}
+					
+					// avoid cycle: when editing an item, cannot select itself as parent
+					if(itemId != null && itemId.equals(kv.getKey())){
+						addNode = false;
+					}
 
 					if (addNode) {
 						logger.debug("add node productName: "+ productName);
@@ -105,7 +120,7 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 				}
 
 				if (kv.getValue() != null) {
-					result.addAll(getParentsLevel(kv.getValue(), query));
+					result.addAll(getParentsLevel(kv.getValue(), query, itemId));
 				}
 			}
 		}
