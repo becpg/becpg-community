@@ -139,8 +139,10 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 				// calculate children
 				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
 				qty += calculateQtyUsedBeforeProcess(c);
-			}else{
-				qty += component.getData().getQty();
+			} else {
+				if(component.getData()!=null && component.getData().getQty()!=null){
+					qty += component.getData().getQty();
+				}
 			}
 		}
 		
