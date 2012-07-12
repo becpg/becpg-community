@@ -9,24 +9,22 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadPoolExecutor;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.transaction.TransactionListener;
 import org.alfresco.repo.transaction.TransactionListenerAdapter;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.importer.ImportService;
 
-// TODO: Auto-generated Javadoc
 /**
  * Action used to import text files.
  *
@@ -48,9 +46,8 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
 	private static Log logger = LogFactory.getLog(ImporterActionExecuter.class);			
 	
 	private ImportService importService;
-	private NodeService nodeService;
-	private TransactionService transactionService;
 	private TransactionListener transactionListener;
+	private ThreadPoolExecutor threadExecuter;
 
 	/**
 	 * Sets the import service.
@@ -65,14 +62,10 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
 		this.transactionListener = new ImportServiceTransactionListener();
 	}
 	
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
+	public void setThreadExecuter(ThreadPoolExecutor threadExecuter) {
+		this.threadExecuter = threadExecuter;
 	}
 
-	public void setTransactionService(TransactionService transactionService) {
-		this.transactionService = transactionService;
-	}	
-	
 	/**
 	 * Execute when a file is uploaded
 	 */
@@ -97,8 +90,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
 	 */
 	@Override
 	protected void addParameterDefinitions(List<ParameterDefinition> arg0) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}	
 	
 	
@@ -127,12 +119,11 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
 			if (nodeRefs != null) {
 				for (NodeRef nodeRef : nodeRefs) {
 					Runnable runnable = new FileImporter(nodeRef);						
-					runnable.run();										
+					threadExecuter.execute(runnable);					
 				}
 			}						
 		}	
 	}	
-
 
 	/**
 	 * The Class FileImporter.
@@ -149,88 +140,75 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
 		
 		@Override
 		public void run()
-        {
-			// import file
-			String log = LOG_STARTING_DATE + Calendar.getInstance().getTime();
-			boolean hasFailed = false;
-			
-            try
-            {
-//            	RetryingTransactionCallback<List<String>> actionCallback = new RetryingTransactionCallback<List<String>>()
-//                {
-//                    @Override
-//    				public List<String> execute() throws Exception
-//                    {                
-//                    	if(nodeService.exists(nodeRef)){
-//                    		
-//                    		return importService.importText(nodeRef, true, true); // need a new transaction, otherwise impossible to do another action like create a content
-//                    	}
-//                            			        
-//                        return null;
-//                    }
-//                };
-//                List<String> errors = transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
-                
-            	/*
-            	 * need a new transaction, otherwise impossible to do another action like create a content
-            	 * do it in several transaction to avoid timeout connection
-            	 */
-            	List<String> errors = null;
-            	if(nodeService.exists(nodeRef)){
-            		
-            		errors = importService.importText(nodeRef, true, true);
-            	}
-                  
-                if(errors != null && !errors.isEmpty()){
- 	                
-                 	for(String error : errors){
- 	                	log += LOG_SEPARATOR;
- 	                    log += error;
- 	                }
-                 
-                     hasFailed = true;
-                 }
-            	                               
-            }            
-            catch (Exception e) {
-    			hasFailed = true;
-            	logger.error("Failed to import file text", e);	
-    			
-    			// set printStackTrance in description
-            	StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);                           
-                String stackTrace = sw.toString();
-    			
-    			log += LOG_SEPARATOR;
-    			log += LOG_ERROR + stackTrace;
-			} 
-			finally{
-				log += LOG_SEPARATOR;
-				log += LOG_ENDING_DATE + Calendar.getInstance().getTime();
-			}
-			
-			// set log, stackTrace and move file
-			// create a new transaction to avoid concurrencyFailureException
-			final boolean finalHasFailed = hasFailed;
-			final String finalLog = log;
-						
-			RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>()
+        {	
+			RunAsWork<Object> actionRunAs = new RunAsWork<Object>()
             {
                 @Override
-				public Object execute() throws Exception
-                {                
-                	if(nodeService.exists(nodeRef)){
-                		 
-                		logger.debug("move file in folder. HasFailed: " + finalHasFailed);
-                		nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, finalLog);                		
-                		importService.moveImportedFile(nodeRef, finalHasFailed);                		
-                	}
-                        			        
+				public Object doWork() throws Exception
+                {
+                	// import file
+        			String log = LOG_STARTING_DATE + Calendar.getInstance().getTime();
+        			boolean hasFailed = false;
+                	
+                	try
+                    {
+//                    	RetryingTransactionCallback<List<String>> actionCallback = new RetryingTransactionCallback<List<String>>()
+//                        {
+//                            @Override
+//            				public List<String> execute() throws Exception
+//                            {                
+//                            	if(nodeService.exists(nodeRef)){
+//                            		
+//                            		return importService.importText(nodeRef, true, true); // need a new transaction, otherwise impossible to do another action like create a content
+//                            	}
+//                                    			        
+//                                return null;
+//                            }
+//                        };
+//                        List<String> errors = transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
+                        
+                    	/*
+                    	 * need a new transaction, otherwise impossible to do another action like create a content
+                    	 * do it in several transaction to avoid timeout connection
+                    	 */
+                    	List<String> errors = importService.importText(nodeRef, true, true);
+                          
+                        if(errors != null && !errors.isEmpty()){
+         	                
+                         	for(String error : errors){
+         	                	log += LOG_SEPARATOR;
+         	                    log += error;
+         	                }
+                         
+                             hasFailed = true;
+                         }
+                    	                               
+                    }            
+                    catch (Exception e) {
+            			hasFailed = true;
+                    	logger.error("Failed to import file text", e);	
+            			
+            			// set printStackTrance in description
+                    	StringWriter sw = new StringWriter();
+                        PrintWriter pw = new PrintWriter(sw);
+                        e.printStackTrace(pw);                           
+                        String stackTrace = sw.toString();
+            			
+            			log += LOG_SEPARATOR;
+            			log += LOG_ERROR + stackTrace;
+        			} 
+        			finally{
+        				log += LOG_SEPARATOR;
+        				log += LOG_ENDING_DATE + Calendar.getInstance().getTime();
+        			}
+        			
+        			// set log, stackTrace and move file
+                    importService.moveImportedFile(nodeRef, hasFailed, log);   
+                    
                     return null;
                 }
             };
-            transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);   			
+            AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());			   	
         }
 	}	
 

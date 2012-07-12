@@ -19,7 +19,6 @@ import java.util.Locale;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -27,7 +26,6 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -241,134 +239,108 @@ public class ImportServiceImpl implements ImportService {
 	 * @throws IOException 
 	 */
 	@Override
-	public List<String> importText(NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws ImporterException, IOException, ParseException, Exception{
+	public List<String> importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws ImporterException, IOException, ParseException, Exception{
 		
 		logger.debug("start import");
-
-		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-		InputStream is = null;
-		try{
-			is = reader.getContentInputStream();
-			
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Reading Import File");
-			}
-			Charset charset = ImportHelper.guestCharset(is,reader.getEncoding());
-			if(logger.isDebugEnabled()){
-				logger.debug("reader.getEncoding() : " + reader.getEncoding());
-				logger.debug("finder.getEncoding() : " + charset );
-			}
-			
-			ImportContext importContext = new ImportContext();
-			importContext.setDoUpdate(doUpdate);
-			importContext.setStopOnFirstError(true);
-			String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH
-					: FORMAT_DATE_ENGLISH;
-			importContext.getPropertyFormats().setDateFormat(new SimpleDateFormat(dateFormat));
-			importContext.getPropertyFormats().setDecimalFormat(
-					(DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault()));
-			importContext.setImportFileName((String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-			importContext.setRequiresNewTransaction(requiresNewTransaction);
-			
-			return proccessUpload(is, importContext ,charset);
-			
 		
-			
-		} finally {
-			IOUtils.closeQuietly(is);
-		}
-	}
-	
-	
-	private List<String> proccessUpload(InputStream input, ImportContext importContext, Charset charset) throws ImporterException, ParseException, Exception {
-        if (importContext.getImportFileName() != null && importContext.getImportFileName().length() > 0)
-        {
-            if (importContext.getImportFileName().endsWith(".csv"))
-            {
-            	  return  processCSVUpload(input, importContext ,charset);
+        // prepare context
+		RetryingTransactionCallback<ImportContext> prepareContextCallback = new RetryingTransactionCallback<ImportContext>(){
+           
+			@Override
+			public ImportContext execute() throws Exception{
+            	
+				ImportContext importContext = new ImportContext();
+				InputStream is = null;
+				try{
+					
+					ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+					is = reader.getContentInputStream();
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("Reading Import File");
+					}
+					Charset charset = ImportHelper.guestCharset(is,reader.getEncoding());
+					if(logger.isDebugEnabled()){
+						logger.debug("reader.getEncoding() : " + reader.getEncoding());
+						logger.debug("finder.getEncoding() : " + charset );
+					}
+										
+					importContext.setImportFileName((String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+					importContext.setCsvReader(new CSVReader(new InputStreamReader(is, charset), SEPARATOR));
+					
+				} finally {
+					IOUtils.closeQuietly(is);
+				}     
+				return importContext;
             }
-            if (importContext.getImportFileName().endsWith(".xml"))
-            {
-                return processXMLUpload(input,importContext);
-                
-            }
-          
-        }
-        // If in doubt, assume it's probably a .csv
-        return  processCSVUpload(input, importContext ,charset);
-
-}
-	
-	
-	
-	private List<String> processXMLUpload(InputStream input,ImportContext importContext) {
-		return null;
-		// TODO Auto-generated method stub
+        };        
+        ImportContext importContext = serviceRegistry.getRetryingTransactionHelper().doInTransaction(prepareContextCallback, true, requiresNewTransaction);
 		
-	}
-
-	private List<String> processCSVUpload(InputStream input, ImportContext importContext, Charset charset) throws ImporterException, ParseException, Exception {
-		// open file and load content
-		
-		CSVReader csvReader = new CSVReader(new InputStreamReader(input,charset), SEPARATOR);
-		try {
-			// context
-			importContext.setCsvReader(csvReader);
-			// import				
-			return importCSV(importContext, csvReader);				
-		} finally {
-			if(csvReader!=null){
-				csvReader.close();
-			}
-		}
-	
-	}
+		importContext.setStopOnFirstError(true);
+		String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH
+				: FORMAT_DATE_ENGLISH;
+		importContext.getPropertyFormats().setDateFormat(new SimpleDateFormat(dateFormat));
+		importContext.getPropertyFormats().setDecimalFormat(
+				(DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault()));
+		importContext.setDoUpdate(doUpdate);
+		importContext.setRequiresNewTransaction(requiresNewTransaction);
+        
+		return importCSV(importContext);
+	}	
 
 	@Override
-	public void moveImportedFile(NodeRef nodeRef, boolean hasFailed) {			
+	public void moveImportedFile(final NodeRef nodeRef, final boolean hasFailed, final String log) {			
 				
-		// delete files that have the same name before moving it in the succeeded or failed folder
-		String queryPath = "";
-		NodeRef failedFolder = null;
-		NodeRef succeededFolder = null;
-		List<NodeRef> resultSet = null;
-		try{
-			// failed
-			queryPath = RepoConsts.PATH_QUERY_IMPORT_FAILED_FOLDER;
-			resultSet = beCPGSearchService.luceneSearch(queryPath,RepoConsts.MAX_RESULTS_SINGLE_VALUE); 
-			failedFolder = resultSet.get(0);
-			
-			if(failedFolder != null){
-				NodeRef targetNodeRef = nodeService.getChildByName(failedFolder, ContentModel.ASSOC_CONTAINS, (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-				if(targetNodeRef != null){
-					nodeService.deleteNode(targetNodeRef);
-				}
-			}
-			
-			// succeeded
-			queryPath = RepoConsts.PATH_QUERY_IMPORT_SUCCEEDED_FOLDER;
-			resultSet =  beCPGSearchService.luceneSearch(queryPath,RepoConsts.MAX_RESULTS_SINGLE_VALUE); 
-			succeededFolder = resultSet.get(0);
-			
-			if(succeededFolder != null){
-				NodeRef targetNodeRef = nodeService.getChildByName(succeededFolder, ContentModel.ASSOC_CONTAINS, (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-				if(targetNodeRef != null){
-					nodeService.deleteNode(targetNodeRef);
-				}
-			}
-			
-		}
-		catch(Exception e){
-			logger.error("Missing folder 'Import failed' or 'Import Succeeded'. Lucene query: " + queryPath, e);
-		}
-		
-		// move nodeRef in the right folder
-		NodeRef parentNodeRef = hasFailed ? failedFolder : succeededFolder;				
-		if(parentNodeRef != null){	
-			nodeService.moveNode(nodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(nodeRef));
-		}
-		
+		RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>()
+        {
+            @Override
+			public Object execute() throws Exception
+            {                
+            	if(nodeService.exists(nodeRef)){
+            		 
+            		// delete files that have the same name before moving it in the succeeded or failed folder
+            		String queryPath = "";
+            		NodeRef failedFolder = null;
+            		NodeRef succeededFolder = null;
+            		List<NodeRef> resultSet = null;
+            		
+            		// failed
+            		queryPath = RepoConsts.PATH_QUERY_IMPORT_FAILED_FOLDER;
+            		resultSet = beCPGSearchService.luceneSearch(queryPath,RepoConsts.MAX_RESULTS_SINGLE_VALUE); 
+            		failedFolder = resultSet.get(0);
+            		
+            		if(failedFolder != null){
+            			NodeRef targetNodeRef = nodeService.getChildByName(failedFolder, ContentModel.ASSOC_CONTAINS, (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+            			if(targetNodeRef != null){
+            				nodeService.deleteNode(targetNodeRef);
+            			}
+            		}
+            		
+            		// succeeded
+            		queryPath = RepoConsts.PATH_QUERY_IMPORT_SUCCEEDED_FOLDER;
+            		resultSet =  beCPGSearchService.luceneSearch(queryPath,RepoConsts.MAX_RESULTS_SINGLE_VALUE); 
+            		succeededFolder = resultSet.get(0);
+            		
+            		if(succeededFolder != null){
+            			NodeRef targetNodeRef = nodeService.getChildByName(succeededFolder, ContentModel.ASSOC_CONTAINS, (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+            			if(targetNodeRef != null){
+            				nodeService.deleteNode(targetNodeRef);
+            			}
+            		}
+            		
+            		// move nodeRef in the right folder
+            		NodeRef parentNodeRef = hasFailed ? failedFolder : succeededFolder;				
+            		if(parentNodeRef != null){	
+            			nodeService.moveNode(nodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(nodeRef));
+            		}
+            		
+            		nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, log);
+            	}
+                    			        
+                return null;
+            }
+        };
+        serviceRegistry.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);        
 	}
 		
 	/**
@@ -381,18 +353,78 @@ public class ImportServiceImpl implements ImportService {
 	 * @throws ImporterException the be cpg exception
 	 * @throws ParseException the parse exception
 	 */
-	private List<String> importCSV(ImportContext importContext, CSVReader csvReader) throws IOException, ImporterException, ParseException, Exception{
+	private List<String> importCSV(ImportContext importContext) throws IOException, ImporterException, ParseException, Exception{
 		
-		logger.debug("importFile");				
-			
+		logger.debug("importFile");	
+		
+		int lastIndex = importContext.getLines().size();
+		int nbBatches = (lastIndex / BATCH_SIZE) + 1;
+		 
+		for(int z_idx=0 ; z_idx<nbBatches ; z_idx++ ){
+			         			 
+			importContext.setImportIndex(z_idx * BATCH_SIZE);
+			int tempIndex = (z_idx + 1)* BATCH_SIZE;
+			final int finalLastIndex =  tempIndex > lastIndex ? lastIndex : tempIndex;
+   		 	final ImportContext finalImportContext = importContext;              		     		
+   		 
+	   		// add info message in log and file import            		 
+	   		String info = I18NUtil.getMessage(MSG_INFO_IMPORT_BATCH, 							 					
+					 					(z_idx + 1), nbBatches,
+					 					importContext.getImportFileName(),
+					 					(importContext.getImportIndex() + 1),
+					 					(finalLastIndex + 1));
+	   		logger.info(info);	   		
+   			 
+	   		// use transaction
+	   		importContext = serviceRegistry.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<ImportContext>(){
+	   			public ImportContext execute() throws Exception{
+                    	
+	   				try {
+
+	   					// do it in transaction otherwise, not taken in account
+	   					for (QName disabledPolicy : finalImportContext.getDisabledPolicies()) {
+							logger.debug("disableBehaviour: " + disabledPolicy);
+							policyBehaviourFilter.disableBehaviour(disabledPolicy);
+						}
+						return importInBatch(finalImportContext, finalLastIndex);
+
+	   				} finally {
+
+						for (QName disabledPolicy : finalImportContext.getDisabledPolicies()) {
+							policyBehaviourFilter.enableBehaviour(disabledPolicy);
+						}
+					}
+				 }
+			 }, 
+			 false,											// readonly
+			 importContext.isRequiresNewTransaction());  	// requires new txn flag		
+		}
+		
+		return importContext.getLog();
+    }
+	
+	private String cleanPath(String pathValue) {
+		if(pathValue.startsWith("/")){
+			return pathValue.substring(1);
+		}
+		return pathValue;
+	}
+
+	/**
+	 * Import a batch of lines
+	 * @param importContext
+	 * @param lastIndex
+	 * @return
+	 * @throws Exception
+	 */
+	private ImportContext importInBatch(ImportContext importContext, final int lastIndex) throws Exception{
+		
 		Element mappingElt = null;
-		NamespaceService namespaceService = serviceRegistry.getNamespaceService();
-		RetryingTransactionHelper txnHelper = serviceRegistry.getRetryingTransactionHelper();				
-		String[] arrStr = null;		
+		String[] arrStr = null;
 		
-		while((arrStr = importContext.readLine()) != null){
-			
-			String prefix = arrStr[COLUMN_PREFIX];						
+		while(importContext.getImportIndex() <= lastIndex && (arrStr = importContext.readLine()) != null){
+						
+			String prefix = arrStr[COLUMN_PREFIX];
 			
 			if(prefix.isEmpty()){
 				// skip blank lines, nothing to do...
@@ -422,17 +454,7 @@ public class ImportServiceImpl implements ImportService {
 				for(String path : arrPath)
 					paths.add(path);	
 				
-				// use transaction, otherwise folder is not found in the transactions when we import lines
-				final List<String> finalPaths = paths;
-				NodeRef parentNodeRef = txnHelper.doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-					public NodeRef execute() throws Exception{
-		                    	
-						return repoService.createFolderByPaths(repositoryHelper.getCompanyHome(), finalPaths);
-					}
-				},
-	   			false,    // read only flag
-	   			importContext.isRequiresNewTransaction());  // requires new txn flag
-				
+				NodeRef parentNodeRef = repoService.createFolderByPaths(repositoryHelper.getCompanyHome(), paths);				
 				importContext.setParentNodeRef(parentNodeRef);																
 			}
 			else if(prefix.equals(PFX_IMPORT_TYPE)){
@@ -454,7 +476,7 @@ public class ImportServiceImpl implements ImportService {
 				String disabledPoliciesValue = arrStr[COLUMN_DISABLED_POLICIES];
 				if(!disabledPoliciesValue.isEmpty()){
 					for(String disabledPolicy : disabledPoliciesValue.split(RepoConsts.MULTI_VALUES_SEPARATOR)){
-						importContext.getDisabledPolicies().add(QName.createQName(disabledPolicy, namespaceService));
+						importContext.getDisabledPolicies().add(QName.createQName(disabledPolicy, serviceRegistry.getNamespaceService()));
 					}
 					
 				}				
@@ -467,7 +489,7 @@ public class ImportServiceImpl implements ImportService {
 				if(typeValue.isEmpty())
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_TYPE, importContext.getCSVLine()));
 				
-				QName type = QName.createQName(typeValue, namespaceService);				
+				QName type = QName.createQName(typeValue, serviceRegistry.getNamespaceService());				
 				importContext.setType(type);								
 				
 //				// detect or use ImportType defined in CSV file
@@ -541,108 +563,7 @@ public class ImportServiceImpl implements ImportService {
        		 	mappingElt = loadMapping(mappingValue);
        		 	importContext = importNodeVisitor.loadClassMapping(mappingElt, importContext);
 			}
-        	 else if(prefix.equals(PFX_VALUES)){
-        		 
-        		 // split in several batches, calculate the last index to import
-        		 int firstIndex = importContext.getImportIndex();
-        		 int lastIndex = importContext.goToNextLine();
-        		 
-        		 while((arrStr = importContext.readLine()) != null){
-        			 
-        			 prefix = arrStr[COLUMN_PREFIX];
-
-        			 if(prefix.equals(PFX_VALUES) || prefix.equals(PFX_COMMENT) || prefix.isEmpty()){
-        				 lastIndex = importContext.getImportIndex();
-        			 }
-        			 else{        		
-        				 break;
-        			 }         			 
-        			 importContext.goToNextLine();
-        		 }        		       		         		 
-        		 
-        		 
-        		 int nbBatches = ((lastIndex - firstIndex) / BATCH_SIZE) + 1;
-        		 
-        		
-        			 
-	    		 for(int z_idx=0 ; z_idx<nbBatches ; z_idx++ ){
-	    			         			 
-	    			 importContext.setImportIndex(firstIndex + (z_idx * BATCH_SIZE));
-	    			 int tempIndex = firstIndex + ((z_idx + 1)* BATCH_SIZE);
-	    			 final int finalLastIndex =  tempIndex > lastIndex ? lastIndex : tempIndex;
-	        		 final ImportContext finalImportContext = importContext;              		     		
-	        		 
-	        		 // add info message in log and file import            		 
-	        		 String info = I18NUtil.getMessage(MSG_INFO_IMPORT_BATCH, 							 					
-							 					(z_idx + 1), nbBatches,
-							 					importContext.getImportFileName(),
-							 					(importContext.getImportIndex() + 1),
-							 					(finalLastIndex + 1));
-	        		 logger.info(info);
-	        		 //notifyImportFile(importContext, info);
-	        			 
-	        		 // use transaction
-	        		 importContext = txnHelper.doInTransaction(new RetryingTransactionCallback<ImportContext>(){
-	    				 public ImportContext execute() throws Exception{
-	 	                    	
-							try {
-
-								// do it in transaction otherwise, not taken in account
-								for (QName disabledPolicy : finalImportContext.getDisabledPolicies()) {
-									logger.debug("disableBehaviour: " + disabledPolicy);
-									policyBehaviourFilter.disableBehaviour(disabledPolicy);
-								}
-								return importInBatch(finalImportContext, finalLastIndex);
-
-							} finally {
-
-								for (QName disabledPolicy : finalImportContext.getDisabledPolicies()) {
-									policyBehaviourFilter.enableBehaviour(disabledPolicy);
-								}
-							}
-	    				 }
-	    			 }, 
-	    			 false,											// readonly
-	        		 importContext.isRequiresNewTransaction());  	// requires new txn flag
-	    		 }
-        		 
-        		 importContext.goToPreviousLine();
-        		 
-        	 }else{
-        		 throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNSUPPORTED_PREFIX, importContext.getCSVLine(), prefix));
-        	 }
-			
-			importContext.goToNextLine();
-			
-		}
-		
-		return importContext.getLog();
-    }
-	
-	private String cleanPath(String pathValue) {
-		if(pathValue.startsWith("/")){
-			return pathValue.substring(1);
-		}
-		return pathValue;
-	}
-
-	/**
-	 * Import a batch of values
-	 * @param importContext
-	 * @param lastIndex
-	 * @return
-	 * @throws Exception
-	 */
-	private ImportContext importInBatch(final ImportContext importContext, final int lastIndex) throws Exception{
-		
-		String[] arrStr = null;
-		
-		while(importContext.getImportIndex() <= lastIndex && (arrStr = importContext.readLine()) != null){
-						
-			String prefix = arrStr[COLUMN_PREFIX];
-			
-			// skip COMMENTS and empty lines, we just import VALUES
-			if(prefix.equals(PFX_VALUES)){
+			else if(prefix.equals(PFX_VALUES)){
 			
 				try{
 					 
@@ -712,6 +633,9 @@ public class ImportServiceImpl implements ImportService {
 					 }
 				 }
 			}			
+			else{
+	   		 throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNSUPPORTED_PREFIX, importContext.getCSVLine(), prefix));
+	   	 	}
 			importContext.goToNextLine();						
 		}
 		

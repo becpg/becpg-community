@@ -65,7 +65,7 @@ public class ImportContext {
 	
 	/** indicate the the import is in a site document library **/
 	private boolean isSiteDocLib = false;
-
+	
 	/**
 	 * Gets the parent node ref.
 	 *
@@ -252,6 +252,10 @@ public class ImportContext {
 
 	public void setSiteDocLib(boolean isSiteDocLib) {
 		this.isSiteDocLib = isSiteDocLib;
+	}
+
+	public List<String[]> getLines() {
+		return lines;
 	}
 
 	/**

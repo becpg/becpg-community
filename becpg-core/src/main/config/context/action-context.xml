@@ -3,9 +3,8 @@
 <beans>
 
 	<bean id="import-content" class="fr.becpg.repo.action.executer.ImporterActionExecuter" parent="action-executer">
-      <property name="importService" ref="importService" />
-      <property name="nodeService" ref="nodeService" />
-      <property name="transactionService" ref="transactionService" />      
+      <property name="importService" ref="importService" />           
+      <property name="threadExecuter" ref="defaultAsyncThreadPool" />
     </bean>  	
     
     <bean id="import-user" class="fr.becpg.repo.action.executer.UserImporterActionExecuter" parent="action-executer">

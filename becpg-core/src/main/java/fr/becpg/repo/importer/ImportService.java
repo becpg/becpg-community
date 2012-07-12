@@ -31,5 +31,5 @@ public interface ImportService {
 	 * @param nodeRef
 	 * @param hasFailed
 	 */
-	public void moveImportedFile(NodeRef nodeRef, boolean hasFailed);
+	public void moveImportedFile(NodeRef nodeRef, boolean hasFailed, String log);
 }

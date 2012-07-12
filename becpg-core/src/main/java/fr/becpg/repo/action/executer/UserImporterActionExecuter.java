@@ -3,7 +3,6 @@ package fr.becpg.repo.action.executer;
 import java.util.Calendar;
 import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ParameterDefinition;
@@ -23,36 +22,25 @@ import fr.becpg.repo.importer.user.UserImporterService;
  */
 public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 	
-	
 	private static Log _logger = LogFactory.getLog(UserImporterActionExecuter.class);
-	
 
 	public static final String NAME = "import-user";
-
-
 	public static final String PARAM_VALUE_EXTENSION = ".csv";
-	
 	
 	private static final String LOG_STARTING_DATE = "Starting date: ";	
 	private static final String LOG_ENDING_DATE = "Ending date: ";	
 	private static final String LOG_ERROR = "Error: ";	
 	private static final String LOG_SEPARATOR = "\n";
-	
 
 	private UserImporterService userImporterService;
 	
 	private ImportService importService;
 	
 	private NodeService nodeService;
-	
-	
-	
-	
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-
 
 	/**
 	 * Sets the import service.
@@ -62,7 +50,6 @@ public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 	public void setImportService(ImportService importService) {
 		this.importService = importService;
 	}	
-
 
 	public void setUserImporterService(UserImporterService userImporterService) {
 		this.userImporterService = userImporterService;
@@ -95,18 +82,13 @@ public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 		
 		if(nodeService.exists(actionedUponNodeRef)){
    		 
-			_logger.debug("move file in folder. HasFailed: " + hasFailed);
-    		nodeService.setProperty(actionedUponNodeRef, ContentModel.PROP_TITLE, log);                		
-    		importService.moveImportedFile(actionedUponNodeRef, hasFailed);                		
-    	}
-            			        
-		
+			_logger.debug("move file in folder. HasFailed: " + hasFailed);             		
+    		importService.moveImportedFile(actionedUponNodeRef, hasFailed, log);                		
+    	}        
 	}
 
 	@Override
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 
 	}
-	
-
 }
