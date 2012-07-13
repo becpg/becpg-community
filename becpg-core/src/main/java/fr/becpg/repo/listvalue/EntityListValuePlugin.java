@@ -44,7 +44,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private static Log logger = LogFactory.getLog(ListValueServiceImpl.class);
 
 	/** The Constant SUFFIX_ALL. */
-	private static final String SUFFIX_ALL = "*";
+	protected static final String SUFFIX_ALL = "*";
 
 	/** The Constant SUFFIX_SPACE. */
 	private static final String SUFFIX_SPACE = " ";
@@ -447,7 +447,10 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		return query;
 	}
 
-	private Analyzer getTextAnalyzer() {
+	
+
+	
+	protected Analyzer getTextAnalyzer() {
 		if (luceneAnaLyzer == null) {
 			DataTypeDefinition def = dictionaryDAO.getDataType(DataTypeDefinition.TEXT);
 

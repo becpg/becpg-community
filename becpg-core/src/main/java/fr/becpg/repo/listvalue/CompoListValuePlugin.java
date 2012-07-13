@@ -1,6 +1,10 @@
 package fr.becpg.repo.listvalue;
 
+
+import java.io.IOException;
+import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +14,9 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.Token;
+import org.apache.lucene.analysis.TokenStream;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
@@ -91,11 +98,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 					if (!query.isEmpty()) {
 						
 						if (productName != null) {
-							
-							//TODO
-							logger.debug("prepareQuery(productName): " + prepareQuery(productName));
-							logger.debug("prepareQuery(query): " + prepareQuery(query));
-							if(prepareQuery(productName).equals(prepareQuery(query))){
+							if(isQueryMath(query,productName)){
 								addNode = true;
 							}							
 						}
@@ -119,4 +122,79 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 		return result;
 	}
 
+
+	
+	boolean isQueryMath(String query, String productName) {
+
+		if (query != null) {
+		
+			if(SUFFIX_ALL.equals(query)){
+				return true;
+			}
+			
+			Analyzer analyzer = getTextAnalyzer();
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Using analyzer : " + analyzer.getClass().getName());
+			}
+			TokenStream querySource = null;
+			Reader queryReader = null;
+			TokenStream productNameSource = null;
+			Reader productNameReader = null;
+			try {
+
+				queryReader = new StringReader(query);
+				productNameReader = new StringReader(productName);
+				querySource = analyzer.tokenStream(null, queryReader);
+				productNameSource = analyzer.tokenStream(null, productNameReader);
+				
+				Token reusableToken = new Token();
+				boolean match = true;
+				while ((reusableToken = querySource.next(reusableToken)) != null) {
+					Token tmpToken = new Token();
+					while ((tmpToken = productNameSource.next(tmpToken)) != null) {
+						match = false;
+						if(logger.isDebugEnabled()){
+							logger.debug("Test StartWith : "+reusableToken.term()+" with "+tmpToken.term());
+						}
+						
+						if(tmpToken.term().startsWith(reusableToken.term())){
+							match = true;
+							break;
+						}
+					}	
+					if(!match){
+						break;
+					}
+				}
+				querySource.reset();
+				productNameSource.reset();
+				return match;
+			} catch (Exception e) {
+				logger.error(e, e);
+			} finally {
+
+				try {
+					if (querySource != null) {
+						querySource.close();
+					}
+					if (productNameSource != null) {
+						productNameSource.close();
+					}
+					
+				} catch (IOException e) {
+					// Nothing todo here
+					logger.error(e, e);
+				}
+
+			}
+
+		}
+
+		return false;
+	}
+	
+	
+	
+	
 }

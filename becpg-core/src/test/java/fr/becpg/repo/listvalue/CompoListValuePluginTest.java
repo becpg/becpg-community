@@ -189,5 +189,21 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 
 		assertEquals(1, listValuePage.getResults().size());
 	}
+	
+	
+	public void testIsQueryMatch(){
+		assertTrue(compoListValuePlugin.isQueryMath("*","Pâte de riz" ));
+		assertTrue(compoListValuePlugin.isQueryMath("Pâte*","Pâte de riz" ));
+		assertTrue(compoListValuePlugin.isQueryMath("Pâte","Pâte de riz" ));
+		assertTrue(compoListValuePlugin.isQueryMath("Pâte*","Pate de riz" ));
+		assertTrue(compoListValuePlugin.isQueryMath("Pâte*","Pates de riz" ));
+		assertTrue(compoListValuePlugin.isQueryMath("Pâte*","pate de riz" ));
+		assertTrue(compoListValuePlugin.isQueryMath("Pat*","Patisserie de riz" ));
+		assertTrue(compoListValuePlugin.isQueryMath("Riz*","Pâte de riz" ));
+		assertTrue(compoListValuePlugin.isQueryMath("Riz*","Riz au lait" ));
+		assertFalse(compoListValuePlugin.isQueryMath("Pâto*","Patisserie" ));
+		assertFalse(compoListValuePlugin.isQueryMath("Pâte*","DesPates" ));
+		
+	}
 
 }
