@@ -97,6 +97,7 @@
 		init-method="init" class="fr.becpg.repo.listvalue.CompoListValuePlugin">
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
 		<property name="nodeService" ref="nodeService" />
+		<property name="dictionaryDAO" ref="dictionaryDAO" />
 	</bean>
 
 	<!-- Importer -->

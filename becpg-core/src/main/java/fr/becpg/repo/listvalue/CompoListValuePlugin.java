@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,18 +15,15 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
-import fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin;
 
-public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
+public class CompoListValuePlugin extends EntityListValuePlugin {
 
 	private static Log logger = LogFactory.getLog(CompoListValuePlugin.class);
 
 	private static final String SOURCE_TYPE_COMPOLIST_PARENT_LEVEL = "compoListParentLevel";
-	private static final String SUFFIX_ALL = "*";
 	
 	private MultiLevelDataListService multiLevelDataListService;
-	private NodeService nodeService;
-
+	
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_COMPOLIST_PARENT_LEVEL };
@@ -36,10 +32,6 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 
 	public void setMultiLevelDataListService(MultiLevelDataListService multiLevelDataListService) {
 		this.multiLevelDataListService = multiLevelDataListService;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
 	}
 
 	@Override
@@ -55,6 +47,7 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 			dataListFilter.setDataType(BeCPGModel.TYPE_COMPOLIST);
 			dataListFilter.setEntityNodeRef(entityNodeRef);
 			
+			// need to load assoc so we use the MultiLevelDataListService
 			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
 			
 			NodeRef itemId = null;
@@ -83,6 +76,11 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 				
 				NodeRef productNodeRef = kv.getValue().getEntityNodeRef();
 				logger.debug("productNodeRef: "+ productNodeRef);
+				
+				// avoid cycle: when editing an item, cannot select itself as parent
+				if(itemId != null && itemId.equals(kv.getKey())){
+					continue;
+				}
 
 				if (nodeService.getType(productNodeRef).isMatch(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
 
@@ -94,22 +92,15 @@ public class CompoListValuePlugin extends AbstractBaseListValuePlugin {
 						
 						if (productName != null) {
 							
-							if(query.endsWith(SUFFIX_ALL)){
-								query = query.substring(0, query.length()-1);
-							}
-							
-							String name = productName.substring(0, query.length());
-							if (query.equalsIgnoreCase(name)) {
+							//TODO
+							logger.debug("prepareQuery(productName): " + prepareQuery(productName));
+							logger.debug("prepareQuery(query): " + prepareQuery(query));
+							if(prepareQuery(productName).equals(prepareQuery(query))){
 								addNode = true;
-							}
+							}							
 						}
 					} else {
 						addNode = true;
-					}
-					
-					// avoid cycle: when editing an item, cannot select itself as parent
-					if(itemId != null && itemId.equals(kv.getKey())){
-						addNode = false;
 					}
 
 					if (addNode) {

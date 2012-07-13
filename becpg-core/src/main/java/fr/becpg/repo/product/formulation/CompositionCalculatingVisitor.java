@@ -140,7 +140,7 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
 				qty += calculateQtyUsedBeforeProcess(c);
 			}else{
-				qty += component.getData().getQty();
+				qty += getQtyInKg(component.getData());
 			}
 		}
 		

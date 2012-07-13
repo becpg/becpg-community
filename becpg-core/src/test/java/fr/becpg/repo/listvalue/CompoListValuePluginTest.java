@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.ProductData;
@@ -31,7 +30,6 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.test.RepoBaseTestCase;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ListValueServiceTest.
  * 
@@ -172,6 +170,11 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 //		}
 		
 		assertEquals(2, listValuePage.getResults().size());
+		
+		listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "Local semi finished 2", null, new Integer(
+				ListValueService.SUGGEST_PAGE_SIZE), props);
+
+		assertEquals(1, listValuePage.getResults().size());
 		
 		// Check cycle detection (exclude localSF1NodeRef)
 		Collection<QName> dataLists = productDictionaryService.getDataLists();

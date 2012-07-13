@@ -180,7 +180,7 @@ public class CompositeIng extends AbstractIng {
 			String ingName = ing.getName(locale);
 			
 			if(ingName == null){
-				logger.warn("Null locale name: " + ing.getIng());
+				logger.warn("Ing '" + ing.getIng() + "' doesn't have a value for this locale '" + locale + "'.");
 			}
 			
 			if(!ingredients.isEmpty()){
