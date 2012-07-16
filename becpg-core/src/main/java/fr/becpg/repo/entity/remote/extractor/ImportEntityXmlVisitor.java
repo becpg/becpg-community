@@ -117,7 +117,7 @@ public class ImportEntityXmlVisitor {
 
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
-			if (qName.equals("becpg:image")) {
+			if (qName.equals(BeCPGModel.BECPG_PREFIX+":image")) {
 				datas.put(name, Base64.decodeBase64(currValue.toString()));
 			}
 		}
@@ -137,6 +137,8 @@ public class ImportEntityXmlVisitor {
 		Stack<QName> currAssoc = new Stack<QName>();
 
 		Stack<String> currAssocType = new Stack<String>();
+		
+		boolean isNodeRefAssoc = false;
 
 		QName currProp = null;
 
@@ -165,7 +167,7 @@ public class ImportEntityXmlVisitor {
 				nodeType = QName.createQName(qName, namespaceService);
 
 				NodeRef node = null;
-				if (currAssocType.isEmpty() || !currAssocType.peek().equals("childAssoc")) {
+				if (currAssocType.isEmpty() || !currAssocType.peek().equals("childAssoc") || isNodeRefAssoc) {
 					node = findNode(nodeRef, code, name, path, nodeType, currProp);
 				}
 				// Entity node
@@ -180,7 +182,7 @@ public class ImportEntityXmlVisitor {
 					curNodeRef.push(node);
 				} else {
 
-					if (!currAssocType.isEmpty() && currAssocType.peek().equals("childAssoc")) {
+					if (!currAssocType.isEmpty() && currAssocType.peek().equals("childAssoc") && !isNodeRefAssoc) {
 						curNodeRef.push(createAssocNode(curNodeRef.peek(), nodeType, currAssoc.peek(), name));
 					} else {
 
@@ -196,15 +198,22 @@ public class ImportEntityXmlVisitor {
 							throw new SAXException("Cannot add node to assoc, node not found : " + name);
 						}
 
-						if (!currAssoc.isEmpty()) {
+						if (!currAssoc.isEmpty() && !isNodeRefAssoc) {
 							logger.debug("Node found creating assoc: " + currAssoc.peek());
 							nodeService.createAssociation(curNodeRef.peek(), node, currAssoc.peek());
 							curNodeRef.push(node);
-
-						} else {
+						} 
+						
+						
+						if(isNodeRefAssoc){
 							// Case d:nodeRef
+							if(logger.isDebugEnabled()){
+								logger.debug("Set property : " + currProp.toPrefixString(namespaceService) + " value " + node +" for type "+type);
+							}
 							nodeService.setProperty(curNodeRef.peek(), currProp, node);
 							curNodeRef.push(node);
+							logger.debug("UnSet is nodeRefAssoc");
+							isNodeRefAssoc = false;
 						}
 					}
 				}
@@ -212,7 +221,11 @@ public class ImportEntityXmlVisitor {
 				currAssoc.push(QName.createQName(qName, namespaceService));
 				currAssocType.push(type);
 				removeAllExistingAssoc(curNodeRef.peek(), currAssoc.peek(), type);
-			} else if (type != null && type.length() > 0) {
+			}  else if (type != null && type.length() > 0) {
+				if(type.equals("d:noderef")){
+					logger.debug("Set is nodeRefAssoc");
+					isNodeRefAssoc = true;
+				}
 				currProp = QName.createQName(qName, namespaceService);
 			}
 
@@ -233,7 +246,9 @@ public class ImportEntityXmlVisitor {
 				currAssoc.pop();
 				currAssocType.pop();
 			} else if (type != null && type.length() > 0 && !type.equals("d:noderef") ) {
-			//	 logger.debug("Set property : " + currProp + " value " + currValue+" for type "+type);
+				if(logger.isDebugEnabled()){
+					logger.debug("Set property : " + currProp.toPrefixString() + " value " + currValue+" for type "+type);
+				}
 				if (currValue.length() > 0) {
 					nodeService.setProperty(curNodeRef.peek(), currProp, currValue.toString());
 				} else {

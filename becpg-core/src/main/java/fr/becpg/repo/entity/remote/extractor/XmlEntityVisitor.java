@@ -58,15 +58,16 @@ public class XmlEntityVisitor {
 
 		// Create an output factory
 		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-
+		xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
 		// Create an XML stream writer
 		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
 
+		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Indent xml formater ON");
 			xmlw = new IndentingXMLStreamWriter(xmlw);
 		}
-
+		
 		// Write XML prologue
 		xmlw.writeStartDocument();
 		// Visit node
@@ -83,7 +84,7 @@ public class XmlEntityVisitor {
 	public void visit(List<NodeRef> entities, OutputStream result) throws XMLStreamException {
 		// Create an output factory
 		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-
+		xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
 		// Create an XML stream writer
 		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
 
@@ -95,7 +96,7 @@ public class XmlEntityVisitor {
 		// Write XML prologue
 		xmlw.writeStartDocument();
 		// Visit node
-		xmlw.writeStartElement("becpg:entities");
+		xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX,"entities",BeCPGModel.BECPG_URI);
 		
 		for (Iterator<NodeRef> iterator = entities.iterator(); iterator.hasNext();) {
 			NodeRef nodeRef = (NodeRef) iterator.next();
@@ -114,7 +115,7 @@ public class XmlEntityVisitor {
 	public void visit(NodeRef entityNodeRef, Map<String, byte[]> images, OutputStream result) throws XMLStreamException {
 		// Create an output factory
 				XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-
+				xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
 				// Create an XML stream writer
 				XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
 
@@ -126,7 +127,7 @@ public class XmlEntityVisitor {
 				// Write XML prologue
 				xmlw.writeStartDocument();
 				// Visit node
-				xmlw.writeStartElement("becpg:data");
+				xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX,"data",BeCPGModel.BECPG_URI);
 				
 				NodeRef parentRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
 				
@@ -149,7 +150,7 @@ public class XmlEntityVisitor {
 				}
 				
 				for (Entry<String, byte[]> image : images.entrySet() ) {
-					xmlw.writeStartElement("becpg:image");
+					xmlw.writeStartElement(BeCPGModel.BECPG_URI,"image",BeCPGModel.BECPG_URI);
 					xmlw.writeAttribute("name", image.getKey());
 					xmlw.writeCData(Base64.encodeBase64String(image.getValue()));
 					xmlw.writeEndElement();
@@ -169,9 +170,9 @@ public class XmlEntityVisitor {
 
 	private void visitNode(NodeRef nodeRef, XMLStreamWriter xmlw, boolean assocs, boolean props) throws XMLStreamException {
 
-		QName nodeType = nodeService.getType(nodeRef);
-
-		xmlw.writeStartElement(nodeType.toPrefixString(namespaceService));
+		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
+		String prefix = nodeType.getPrefixString().split(":")[0];
+		xmlw.writeStartElement(prefix, nodeType.getLocalName(),  nodeType.getNamespaceURI());
 
 		NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
 		
@@ -218,9 +219,10 @@ public class XmlEntityVisitor {
 			if(!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 				&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 				&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL)){
-				xmlw.writeStartElement(assocDef.getName().toPrefixString(namespaceService));
-			
-			
+				QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
+				String prefix = nodeType.getPrefixString().split(":")[0];
+				xmlw.writeStartElement(prefix, nodeType.getLocalName(),  nodeType.getNamespaceURI());
+				
 				if(assocDef.isChild()){
 					xmlw.writeAttribute("type","childAssoc" );
 					List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
@@ -259,13 +261,16 @@ public class XmlEntityVisitor {
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI)
 						&& !propQName.equals(ContentModel.PROP_CONTENT)) {
-					logger.debug("Extract prop : "+entry.getKey());
 					PropertyDefinition propertyDefinition = dictionaryService.getProperty(entry.getKey());
 					if(propertyDefinition!=null){
-						xmlw.writeStartElement(entry.getKey().toPrefixString(namespaceService));
+						QName propName =  entry.getKey().getPrefixedQName(namespaceService);
+						String prefix = propName.getPrefixString().split(":")[0];
+						xmlw.writeStartElement(prefix, propName.getLocalName(),  propName.getNamespaceURI());
+						logger.debug("Extract prop : "+propName.toPrefixString());
 						xmlw.writeAttribute("type",propertyDefinition.getDataType().getName().toPrefixString(namespaceService) );
 						visitPropValue(entry.getValue(), xmlw);
 						xmlw.writeEndElement();
+						//xmlw.writeNamespace(prefix,  propName.getNamespaceURI());
 					} else {
 						logger.warn("Properties not in dictionnary: "+entry.getKey());
 					}

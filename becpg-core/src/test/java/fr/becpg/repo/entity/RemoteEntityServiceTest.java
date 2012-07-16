@@ -8,13 +8,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
@@ -23,8 +21,7 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.data.SemiFinishedProductData;
-import fr.becpg.repo.product.data.productList.AllergenListDataItem;
+import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -79,33 +76,21 @@ public class RemoteEntityServiceTest extends RepoBaseTestCase {
 
 
 	public void testRemoteEntity() throws FileNotFoundException {
-
+		
+		final RepoBaseTestCase repoBaseTestCase = this;
 		// create product
-		sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
+		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
+				/*-- create folders : Test--*/
+				logger.debug("/*-- create folders --*/");
+				NodeRef testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
+				if (testFolder != null) {
+					fileFolderService.delete(testFolder);
 				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+				testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 
-				// create SF
-				SemiFinishedProductData sfData = new SemiFinishedProductData();
-				sfData.setName("SF");
-				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-				allergenList.add(new AllergenListDataItem(null, true, true, null, null, allergens.get(0), false));
-				allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergens.get(1), false));
-				allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergens.get(2), false));
-				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
-				sfData.setAllergenList(allergenList);
-
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
-
-				return productDAO.create(folderNodeRef, sfData, dataLists);
-
+				return BeCPGTestHelper.createMultiLevelProduct(testFolder, repoBaseTestCase);
 			}
 		}, false, true);
 
