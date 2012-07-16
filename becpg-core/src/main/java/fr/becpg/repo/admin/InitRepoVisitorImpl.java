@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -99,6 +100,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
 	private static final String PRODUCT_REPORT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
+	private static final String PRODUCT_REPORT_EN_PATH = "beCPG/birt/document/product/default/ProductReport-en.rptdesign";
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
 	private static final String ECO_REPORT_PATH = "beCPG/birt/system/ecm/ECOReport.rptdesign";
@@ -826,10 +828,11 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			try {
 
 				ClassDefinition classDef = dictionaryService.getClass(productType);
+				String reportPath = Locale.getDefault().equals(Locale.FRENCH) ? PRODUCT_REPORT_PATH : PRODUCT_REPORT_EN_PATH;
 				NodeRef compareProductFolderNodeRef = repoService.createFolderByPath(productReportTplsNodeRef,
 						classDef.getTitle(), classDef.getTitle());
 				reportTplService.createTplRptDesign(compareProductFolderNodeRef, classDef.getTitle(),
-						PRODUCT_REPORT_PATH, ReportType.Document, ReportFormat.PDF, productType, true, true, false);
+						reportPath, ReportType.Document, ReportFormat.PDF, productType, true, true, false);
 			} catch (Exception e) {
 				logger.error("Failed to create product report tpl. SystemProductType: " + productType, e);
 			}
