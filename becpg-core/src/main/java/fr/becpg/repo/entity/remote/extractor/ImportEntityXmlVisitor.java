@@ -339,8 +339,6 @@ public class ImportEntityXmlVisitor {
 						return node;
 					}
 				}
-
-				return ret.get(0);
 			}
 		}
 

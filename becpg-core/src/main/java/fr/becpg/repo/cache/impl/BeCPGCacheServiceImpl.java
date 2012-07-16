@@ -69,8 +69,10 @@ public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, 
 
 		if (ret == null) {
 			ret = sigedCacheDataProviderCallBack.getData();
-			logger.debug("Store values to " + cacheKey);
-			cache.put(new Element(cacheKey, ret));
+			if(ret!=null){
+				logger.debug("Store values to " + cacheKey);
+				cache.put(new Element(cacheKey, ret));
+			}
 		}
 
 		return ret;
