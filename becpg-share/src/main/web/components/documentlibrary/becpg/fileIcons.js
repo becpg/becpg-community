@@ -1,29 +1,5 @@
 
-      
-                  
-beCPG.util.getFileIcon = function(p_fileName, p_record ,p_isContainer,p_isSimpleView)
-{
-   
-   var  node = p_record.jsNode,
-		 type = node.type;
-		 
-   var iconSize = p_isSimpleView ? 32 :64;
-   
-   if(p_isContainer && !(type == "{http://www.bcpg.fr/model/becpg/1.0}entityFolder" || type == "bcpg:entityFolder")){
-   	return Alfresco.constants.URL_RESCONTEXT 
-      + 'components/documentlibrary/images/folder-'+iconSize+'.png';
-   }
-   
-   if(p_isSimpleView || type == "{http://www.bcpg.fr/model/becpg/1.0}entityFolder" || type == "bcpg:entityFolder"){
-	   var entityFolderClassName = node.properties["bcpg:entityFolderClassName"];
-	   return Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'+Alfresco.util.getFileIcon(p_fileName,entityFolderClassName,iconSize);	  	
-   }
-
-   return  Alfresco.DocumentList.generateThumbnailUrl(p_record);
-   
-};
-                  
-                  
+               
 /**
  * Override file icon types
  */
@@ -106,3 +82,31 @@ Alfresco.util.getFileIcon.types =
    "bcpg:resourceProduct":"resourceProduct"
 		   
 };
+                  
+beCPG.util.getFileIcon = function(p_fileName, p_record ,p_isContainer,p_isSimpleView)
+{
+   
+   var  node = p_record.jsNode,
+		 type = node.type;
+		 
+   var iconSize = p_isSimpleView ? 32 :64;
+   
+   if(p_isContainer && !(type == "{http://www.bcpg.fr/model/becpg/1.0}entityFolder" || type == "bcpg:entityFolder")){
+   	return Alfresco.constants.URL_RESCONTEXT 
+      + 'components/documentlibrary/images/folder-'+iconSize+'.png';
+   }
+   
+   if( type == "{http://www.bcpg.fr/model/becpg/1.0}entityFolder" || type == "bcpg:entityFolder"){
+	   var entityFolderClassName = node.properties["bcpg:entityFolderClassName"];
+	   return Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'+Alfresco.util.getFileIcon(p_fileName,entityFolderClassName,iconSize);	  	
+   } else if(p_isSimpleView ) {
+   	 return Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'+Alfresco.util.getFileIcon(p_fileName,type,iconSize);	  	
+   }
+
+   
+   
+   return  Alfresco.DocumentList.generateThumbnailUrl(p_record);
+   
+};
+                  
+         
