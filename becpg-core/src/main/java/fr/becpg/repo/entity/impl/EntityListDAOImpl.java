@@ -177,6 +177,9 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 						existingLists.add(listNodeRef);
 					}
+					else{
+						logger.warn("Existing list doesn't inheritate from 'bcpg:entityListItem'.");
+					}
 				}
 
 			}
