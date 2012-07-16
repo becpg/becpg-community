@@ -292,6 +292,7 @@ public class ImportEntityXmlVisitor {
 			} else {
 				if(!nodeService.getType(ret).equals(type)){
 					logger.error("Found node with same name: "+name+" but incorrect type :"+nodeService.getType(ret)+"/"+type+" under: "+parentPath);
+					return null;
 				}
 			}
 			
@@ -320,6 +321,12 @@ public class ImportEntityXmlVisitor {
 
 	}
 
+	/*
+	 * We search for :
+	 * 	1° - TYPE/PATH/CODE/SAME NAME
+	 *  2° - TYPE/PATH/SAME NAME
+	 *  3° - TYPE/SAME NAME
+	 */
 	private NodeRef findNode(String nodeRef, String code, String name, String path, QName type, QName currProp) {
 		if (nodeRef != null && nodeService.exists(new NodeRef(nodeRef))) {
 			return new NodeRef(nodeRef);
@@ -332,31 +339,32 @@ public class ImportEntityXmlVisitor {
 		}
 
 		if (path != null) {
-			runnedQuery += " +PATH:\"" + path + "\" ";
+			runnedQuery += " +PATH:\"" + path + "//.\" ";
 		}
 
 		if (code != null && code.length() > 0) {
-			runnedQuery += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, code, null);
-			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery,null , RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-			if (ret.size() > 0) {
-				logger.debug("Found node for query :" + runnedQuery);
-				return ret.get(0);
-			}
-		}
-
-		if (name != null && name.length() > 0) {
-			runnedQuery += LuceneHelper.getCondEqualValue(RemoteHelper.getPropName(type), name, code != null && code.length() > 0 ? LuceneHelper.Operator.OR : null);
-			List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery,null, RepoConsts.MAX_RESULTS_NO_LIMIT);
-			if (ret.size() > 0) {
-				logger.debug("Found node for query :" + runnedQuery);
-				for (NodeRef node : ret) {
-					if (name.equals(nodeService.getProperty(node, RemoteHelper.getPropName(type)))) {
-						return node;
-					}
+			runnedQuery += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, code, null);	
+		} else 	if (name != null && name.length() > 0) {
+			runnedQuery += LuceneHelper.getCondEqualValue(RemoteHelper.getPropName(type), name,  null);
+		}	
+			
+			
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery,null, RepoConsts.MAX_RESULTS_NO_LIMIT);
+		if (ret.size() > 0) {
+			for (NodeRef node : ret) {
+				if (name.equals(nodeService.getProperty(node, RemoteHelper.getPropName(type)))) {
+					logger.debug("Found node for query :" + runnedQuery);
+					return node;
 				}
 			}
 		}
-
+		
+		if(code != null ) {
+			logger.debug("Retrying findNode without code for previous query : "+runnedQuery);
+			return findNode(nodeRef, null, name, path, type,currProp);
+		}
+		
+		
 		if (path != null) {
 			logger.debug("Retrying findNode without path for previous query : "+runnedQuery);
 			return findNode(nodeRef, code, name, null, type,currProp);

@@ -521,4 +521,13 @@ public class EntityServiceImpl implements EntityService {
 		return getImage(entityNodeRef, imgName);
 	}
 
+	@Override
+	public boolean hasImageFolder(NodeRef entityNodeRef) {
+		try {
+			return getImageFolder(entityNodeRef)!=null;
+		} catch (BeCPGException e) {
+			return false;
+		}
+	}
+
 }

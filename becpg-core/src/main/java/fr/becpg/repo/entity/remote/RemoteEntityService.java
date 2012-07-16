@@ -19,7 +19,7 @@ public interface RemoteEntityService {
 	 * @param format
 	 * @throws BeCPGException
 	 */
-	public void getEntity(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException;
+	void getEntity(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException;
 
 
 	/**
@@ -31,7 +31,7 @@ public interface RemoteEntityService {
 	 * @return Create entity nodeRef
 	 * @throws BeCPGException
 	 */
-	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format, EntityProviderCallBack callback) throws BeCPGException;
+	NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format, EntityProviderCallBack callback) throws BeCPGException;
 	
 	
 	/**
@@ -40,7 +40,7 @@ public interface RemoteEntityService {
 	 * @param out
 	 * @param format
 	 */
-	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format) throws BeCPGException;
+	void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format) throws BeCPGException;
 
 	/**
 	 * Return entity data
@@ -48,7 +48,7 @@ public interface RemoteEntityService {
 	 * @param outputStream
 	 * @param format
 	 */
-	public void getEntityData(NodeRef entityNodeRef, OutputStream outputStream, RemoteEntityFormat format) throws BeCPGException;
+	void getEntityData(NodeRef entityNodeRef, OutputStream outputStream, RemoteEntityFormat format) throws BeCPGException;
 
 	/**
 	 * 
@@ -56,7 +56,15 @@ public interface RemoteEntityService {
 	 * @param inputStream
 	 * @param format
 	 */
-	public void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream inputStream, RemoteEntityFormat format) throws BeCPGException;
+	void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream inputStream, RemoteEntityFormat format) throws BeCPGException;
+
+
+	/**
+	 * Is entity has templateFolder
+	 * @param entityNodeRef
+	 * @return
+	 */
+	boolean containsData(NodeRef entityNodeRef);
 	
 	
 }

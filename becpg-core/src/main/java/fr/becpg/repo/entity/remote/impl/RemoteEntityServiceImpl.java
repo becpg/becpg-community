@@ -167,4 +167,9 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		return images;
 	}
 
+	@Override
+	public boolean containsData(NodeRef entityNodeRef)  {
+		return entityService.hasImageFolder(entityNodeRef);
+	}
+
 }

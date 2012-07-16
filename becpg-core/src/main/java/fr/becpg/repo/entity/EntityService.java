@@ -20,14 +20,14 @@ public interface EntityService {
 	 * Check if the datalists have been modified after the modification of the entity
 	 * @return
 	 */
-	public boolean hasDataListModified(NodeRef nodeRef);
+	 boolean hasDataListModified(NodeRef nodeRef);
 	
 	/**
      * Initialize entity folder.
      *
      * @param entityNodeRef the entity node ref
      */
-    public void initializeEntityFolder(NodeRef entityNodeRef);
+     void initializeEntityFolder(NodeRef entityNodeRef);
     
     
 	/**
@@ -38,7 +38,7 @@ public interface EntityService {
 	 * @return the  image
 	 * @throws BeCPGException 
 	 */
-	public NodeRef getImage(NodeRef nodeRef, String imgName) throws BeCPGException;
+	 NodeRef getImage(NodeRef nodeRef, String imgName) throws BeCPGException;
 	
 	
 	/**
@@ -46,7 +46,7 @@ public interface EntityService {
 	 * @param nodeRef
 	 * @return
 	 */
-	public List<NodeRef> getImages(NodeRef nodeRef) throws BeCPGException;
+	 List<NodeRef> getImages(NodeRef nodeRef) throws BeCPGException;
 	
 	
 	/**
@@ -55,7 +55,7 @@ public interface EntityService {
 	 * @return
 	 * @throws BeCPGException
 	 */
-	public NodeRef getEntityDefaultImage(NodeRef sourceNodeRef) throws BeCPGException;
+	 NodeRef getEntityDefaultImage(NodeRef sourceNodeRef) throws BeCPGException;
 
 	
 	
@@ -64,20 +64,20 @@ public interface EntityService {
 	 * @param imgNodeRef
 	 * @return
 	 */
-	public byte[] getImage(NodeRef imgNodeRef);
+	 byte[] getImage(NodeRef imgNodeRef);
 	
 	/**
 	 * Initialyze default param on 
 	 * 
 	 * @param entityNodeRef
 	 */
-	public void initializeEntity(NodeRef entityNodeRef);
+	 void initializeEntity(NodeRef entityNodeRef);
 
 	/**
 	 * Delete all version of the entity
 	 * @param entityNodeRef
 	 */
-	public void deleteEntity(NodeRef entityNodeRef);
+	 void deleteEntity(NodeRef entityNodeRef);
 
 	/**
 	 * Create or copy an entity
@@ -87,14 +87,20 @@ public interface EntityService {
 	 * @param entityName
 	 * @return
 	 */
-	public NodeRef createOrCopyFrom(NodeRef sourceNodeRef, NodeRef parentNodeRef, QName entityType, String entityName);
+	NodeRef createOrCopyFrom(NodeRef sourceNodeRef, NodeRef parentNodeRef, QName entityType, String entityName);
 
 	/**
 	 * Write image in the image folder of the entity 
 	 * @param images
 	 * @throws BeCPGException 
 	 */
-	public void writeImages(NodeRef nodeRef, Map<String, byte[]> images) throws BeCPGException;
+	 void writeImages(NodeRef nodeRef, Map<String, byte[]> images) throws BeCPGException;
+
+	 /**
+	  * @param entityNodeRef
+	  * @return Check if entity has image Folder
+	  */
+	 boolean hasImageFolder(NodeRef entityNodeRef);
 
 	
     

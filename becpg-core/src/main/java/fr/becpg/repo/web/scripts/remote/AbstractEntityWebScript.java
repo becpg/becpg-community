@@ -176,10 +176,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 							 
 							NodeRef entityNodeRef =  remoteEntityService.createOrUpdateEntity(nodeRef, entityStream, RemoteEntityFormat.xml, this);
 							
-							dataStream = dataUrl.openStream();
+							if(remoteEntityService.containsData(entityNodeRef)){
 							
-							remoteEntityService.addOrUpdateEntityData(entityNodeRef, dataStream, RemoteEntityFormat.xml);
+								dataStream = dataUrl.openStream();
+								remoteEntityService.addOrUpdateEntityData(entityNodeRef, dataStream, RemoteEntityFormat.xml);
 							
+							}
 							return entityNodeRef;
 							
 						} finally {
