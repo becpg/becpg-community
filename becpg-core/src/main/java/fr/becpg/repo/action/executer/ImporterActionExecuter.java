@@ -118,7 +118,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
 					.getResource(KEY_FILES_TO_IMPORT);
 			if (nodeRefs != null) {
 				for (NodeRef nodeRef : nodeRefs) {
-					Runnable runnable = new FileImporter(nodeRef);						
+					Runnable runnable = new FileImporter(nodeRef, AuthenticationUtil.getRunAsUser());						
 					threadExecuter.execute(runnable);					
 				}
 			}						
@@ -133,9 +133,11 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
 	private class FileImporter implements Runnable {
 		
 		private NodeRef nodeRef;
+		private String runAsUser;
 		
-		private FileImporter(NodeRef nodeRef) {
+		private FileImporter(NodeRef nodeRef, String runAsUser) {
 			this.nodeRef = nodeRef;
+			this.runAsUser = runAsUser;
 		}
 		
 		@Override
@@ -208,7 +210,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
                     return null;
                 }
             };
-            AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());			   	
+            AuthenticationUtil.runAs(actionRunAs, runAsUser);			   	
         }
 	}	
 
