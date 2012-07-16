@@ -24,6 +24,7 @@ import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
+import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
@@ -207,8 +208,21 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 							@Override
 							public Object execute() {
 
+								StopWatch watch = null;
+								if (logger.isDebugEnabled()) {
+									watch = new StopWatch();
+									watch.start();
+								}
+								
 								entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
 
+								if (logger.isDebugEnabled()) {
+									watch.stop();
+									logger.debug("copyDataLists executed in  "
+											+ watch.getTotalTimeSeconds() + " seconds - templateNodeRef "
+											+  templateNodeRef);
+								}
+								
 								return null;
 							}
 						};

@@ -572,7 +572,7 @@
 		</type>
 		<!-- ______________________________________ PLANT ______________________________________ -->
 		<type name="bcpg:plant">
-			<parent>cm:content</parent>
+			<parent>bcpg:entityListItem</parent>
 			<properties>
 				<property name="bcpg:plantTel">
 					<type>d:text</type>
