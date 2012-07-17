@@ -6,6 +6,7 @@ package fr.becpg.repo.entity.policy;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
+import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -47,8 +48,8 @@ public class EntityPolicy implements NodeServicePolicies.OnCreateNodePolicy, Nod
 	 */
 	public void init(){
 		logger.debug("Init EntityPolicy...");
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "onCreateNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "onDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "onCreateNode", NotificationFrequency.TRANSACTION_COMMIT));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "onDeleteNode", NotificationFrequency.TRANSACTION_COMMIT));
 	}
 
 	/**
@@ -60,8 +61,7 @@ public class EntityPolicy implements NodeServicePolicies.OnCreateNodePolicy, Nod
 		NodeRef entityNodeRef = childAssocRef.getChildRef();
 		
 		entityService.initializeEntity(entityNodeRef);
-		entityService.initializeEntityFolder(entityNodeRef);
-	
+		entityService.initializeEntityFolder(entityNodeRef);	
 	}
 
 	@Override
