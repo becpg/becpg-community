@@ -97,10 +97,10 @@ public interface EntityService {
 	 void writeImages(NodeRef nodeRef, Map<String, byte[]> images) throws BeCPGException;
 
 	 /**
-	  * @param entityNodeRef
-	  * @return Check if entity has image Folder
+	  * @param type
+	  * @return true if entity type can have image
 	  */
-	 boolean hasImageFolder(NodeRef entityNodeRef);
+	 boolean hasAssociatedImages(QName type);
 
 	
     

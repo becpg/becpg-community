@@ -67,6 +67,7 @@ public class ImportEntityXmlVisitor {
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
+		
 
 			EntityXmlHandler handler = new EntityXmlHandler(entityNodeRef);
 			saxParser.parse(in, handler);

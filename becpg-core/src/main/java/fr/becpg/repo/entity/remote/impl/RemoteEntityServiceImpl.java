@@ -15,6 +15,7 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
@@ -118,7 +119,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Override
 	public void getEntityData(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
-		if (format.equals(RemoteEntityFormat.xml)) {
+		if (RemoteEntityFormat.xml.equals(format)) {
 			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService);
 			try {
 				xmlEntityVisitor.visit(entityNodeRef, extractData(entityNodeRef), result);
@@ -133,7 +134,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Override
 	public void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format) throws BeCPGException {
-		if (format.equals(RemoteEntityFormat.xml)) {
+		if (RemoteEntityFormat.xml.equals(format)) {
 			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, beCPGSearchService);
 			try {
 				Map<String, byte[]> images = xmlEntityVisitor.visitData(in);
@@ -169,7 +170,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Override
 	public boolean containsData(NodeRef entityNodeRef)  {
-		return entityService.hasImageFolder(entityNodeRef);
+		QName type = nodeService.getType(entityNodeRef);
+		return entityService.hasAssociatedImages(type);
 	}
 
 }

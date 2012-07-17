@@ -134,30 +134,8 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 		}
 
 		OAuthTokenUtils.setCurrentOAuthToken(getOAuthSessionToken((HttpServletRequest) request));
-
-		
-		if (request.getAttribute(NO_AUTH_REQUIRED) != null) {
-			if (getLogger().isDebugEnabled())
-				getLogger().debug("Authentication not required (filter), chaining ...");
-			
-			//No auth need tenant anyway
-			// Check if the user is already authenticated
-			SessionUser user = getSessionUser(context,  (HttpServletRequest)request, (HttpServletResponse)response, true);
-			
-			// If the user has been validated then continue to
-			// the next filter
-			if (user != null) {
-
-				// Filter validate hook
-				onValidate(context, (HttpServletRequest)request, (HttpServletResponse)response, null);
-
-				if (getLogger().isDebugEnabled())
-					getLogger().debug("Authentication not required (user), chaining ...");
-
-			}
-			
-			chain.doFilter(request, response);
-		} else if (authenticateRequest(context, (HttpServletRequest) request, (HttpServletResponse) response)) {
+	
+	    if (authenticateRequest(context, (HttpServletRequest) request, (HttpServletResponse) response)) {
 			chain.doFilter(request, response);
 		}
 
@@ -278,6 +256,11 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 				getLogger().debug("Authentication not required (user), chaining ...");
 
 			// Chain to the next filter
+			return true;
+		}
+		
+		//Chain anyway to the next filter
+		if(request.getAttribute(NO_AUTH_REQUIRED)!=null){
 			return true;
 		}
 		

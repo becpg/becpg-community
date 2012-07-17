@@ -5,7 +5,6 @@ import java.util.List;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.repo.thumbnail.ThumbnailServiceImpl;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.thumbnail.ThumbnailService;
@@ -14,7 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -40,8 +38,6 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 
 	private NodeService nodeService;
 
-	private DictionaryService dictionaryService;
-
 	private EntityService entityService;
 
 	private BeCPGSearchService beCPGSearchService;
@@ -53,10 +49,6 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 		super.setNodeService(nodeService);
-	}
-
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
 	}
 
 	public void setEntityService(EntityService entityService) {
@@ -86,9 +78,7 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 				&& !SiteModel.TYPE_SITE.equals(type)
 				&& !SiteModel.TYPE_SITES.equals(type)) {
 
-			if (BeCPGModel.TYPE_CLIENT.isMatch(type) || 
-					BeCPGModel.TYPE_SUPPLIER.isMatch(type) || 
-					dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {		
+			if (entityService.hasAssociatedImages(type)) {		
 				
 				NodeRef img;
 				try {

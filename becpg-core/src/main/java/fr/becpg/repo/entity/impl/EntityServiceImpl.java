@@ -522,12 +522,12 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	@Override
-	public boolean hasImageFolder(NodeRef entityNodeRef) {
-		try {
-			return getImageFolder(entityNodeRef)!=null;
-		} catch (BeCPGException e) {
-			return false;
-		}
+	public boolean hasAssociatedImages(QName type) {
+
+		
+		return BeCPGModel.TYPE_CLIENT.isMatch(type) || 
+		BeCPGModel.TYPE_SUPPLIER.isMatch(type) || 
+		dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT);
 	}
 
 }

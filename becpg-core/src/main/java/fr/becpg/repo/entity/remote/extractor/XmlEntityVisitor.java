@@ -150,7 +150,7 @@ public class XmlEntityVisitor {
 				}
 				
 				for (Entry<String, byte[]> image : images.entrySet() ) {
-					xmlw.writeStartElement(BeCPGModel.BECPG_URI,"image",BeCPGModel.BECPG_URI);
+					xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX,"image",BeCPGModel.BECPG_URI);
 					xmlw.writeAttribute("name", image.getKey());
 					xmlw.writeCData(Base64.encodeBase64String(image.getValue()));
 					xmlw.writeEndElement();
