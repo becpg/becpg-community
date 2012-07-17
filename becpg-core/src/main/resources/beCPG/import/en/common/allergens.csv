@@ -271,7 +271,7 @@ VALUES;FX2;Crustaceans and crustacean products;Major;Crustacés et produits à b
 VALUES;FX3;Egg and egg-based product;Major;Oeuf et produit à base d'oeuf;Oeuf et produit à base d'oeuf;Egg and egg-based product;F1,F75,F76,F77,F232,F233,F245
 VALUES;FX4;Peanuts and products containing peanut;Major;Arachides et produits à base de d'arachide;Arachides et produits à base de d'arachide;Peanuts and products containing peanut;F13
 VALUES;FX5;Soybeans and soy products;Major;Soja et produits à base de soja;Soja et produits à base de soja;Soybeans and soy products;F14
-VALUES;FX6;And milk-based product (including lactose);Major;Lait et produit à base de (dont lactose);Lait et produit à base de (dont lactose);And milk-based product (including lactose);F2,F78,F81,F82,F231,F236,F300,F325
+VALUES;FX6;Milk-based product (including lactose);Major;Lait et produit à base de (dont lactose);Lait et produit à base de (dont lactose);And milk-based product (including lactose);F2,F78,F81,F82,F231,F236,F300,F325
 VALUES;FX7;Nuts (walnuts hazelnuts);Major;Fruits à Coque* (noix noisettes);Fruits à Coque* (noix noisettes);* Nuts (walnuts hazelnuts);F17,F18,F20,F201,F202,F203,F253,F256
 VALUES;FX8;Fish and fish-based product;Major;Poisson et produit à base de poisson;Poisson et produit à base de poisson;Fish and fish-based product;F3,F40,F41,F42,F50,F60,F147,F204,F205,F254,F264,F303,F307,F308,F313,F337,F369,F381,F384
 VALUES;FX9;Celery and celery products;Major;Céleri et produits à base de céleri;Céleri et produits à base de céleri;Celery and celery products;F85
