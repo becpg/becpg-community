@@ -114,7 +114,7 @@ public class SortableListPolicy extends TransactionListenerAdapter implements No
 		logger.debug("SortableListPolicy.onAddAspect: " + aspect);		
 		
 		// try to avoid to do two times the work, otherwise it duplicates nodeRef in lucene index !!!
-		if ((aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST) && 
+		if (nodeService.exists(nodeRef) && (aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST) && 
 				!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL) && 
 				nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null) 
 				|| (aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL) && nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null)) {
