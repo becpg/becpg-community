@@ -8,59 +8,42 @@ import java.util.Map;
 
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.policy.PolicyComponent;
-import org.alfresco.repo.transaction.TransactionListenerAdapter;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.DataListSortService;
+import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
  * The Class SortableListPolicy.
  * 
  * @author querephi
  */
-public class SortableListPolicy extends TransactionListenerAdapter implements NodeServicePolicies.OnUpdatePropertiesPolicy, 
+@Service
+public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, 
 										   NodeServicePolicies.OnAddAspectPolicy, 
-										   NodeServicePolicies.OnDeleteNodePolicy{
+										   NodeServicePolicies.OnDeleteNodePolicy
+										   {
 
 	private static Log logger = LogFactory.getLog(SortableListPolicy.class);
 
-	private PolicyComponent policyComponent;
 
 	private DataListSortService dataListSortService;
 	
-	private NodeService nodeService;
-	
-	private BehaviourFilter policyBehaviourFilter;
-
-	public void setPolicyComponent(PolicyComponent policyComponent) {
-		this.policyComponent = policyComponent;
-	}
-
 	public void setDataListSortService(DataListSortService dataListSortService) {
 		this.dataListSortService = dataListSortService;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	/**
 	 * Inits the.
 	 */
-	public void init() {
+	public void doInit() {
 		logger.debug("Init DepthLevelListPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
 				new JavaBehaviour(this, "onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));
@@ -72,6 +55,10 @@ public class SortableListPolicy extends TransactionListenerAdapter implements No
 		logger.debug("Init SortableListPolicy...");		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_SORTABLE_LIST, 
 				new JavaBehaviour(this, "onAddAspect", NotificationFrequency.TRANSACTION_COMMIT));		
+		
+		super.disableOnCopyBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+		super.disableOnCopyBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+
 	}
 
 	@Override
@@ -140,4 +127,6 @@ public class SortableListPolicy extends TransactionListenerAdapter implements No
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 		}			
 	}
+	
+
 }

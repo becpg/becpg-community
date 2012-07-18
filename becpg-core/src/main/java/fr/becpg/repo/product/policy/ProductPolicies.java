@@ -13,11 +13,13 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.product.ProductService;
 
+@Service
 public class ProductPolicies implements NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	private static Log logger = LogFactory.getLog(ProductPolicies.class);

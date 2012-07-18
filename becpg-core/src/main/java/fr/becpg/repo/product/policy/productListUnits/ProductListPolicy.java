@@ -9,12 +9,14 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.formulation.CostsCalculatingVisitor;
 import fr.becpg.repo.product.formulation.NutsCalculatingVisitor;
 
+@Service
 public class ProductListPolicy implements NodeServicePolicies.OnCreateAssociationPolicy {
 
 	private static Log logger = LogFactory.getLog(ProductListPolicy.class);
@@ -117,4 +119,5 @@ public class ProductListPolicy implements NodeServicePolicies.OnCreateAssociatio
 		
 	}
 
+	
 }

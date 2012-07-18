@@ -5,12 +5,14 @@ package fr.becpg.repo.entity.version;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
+import org.springframework.stereotype.Service;
 
 /**
  * The Interface EntityVersionService.
  *
  * @author querephi
  */
+@Service
 public interface EntityVersionService {			
 		
 	/** The Constant VERSION_DELIMITER. */

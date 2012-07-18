@@ -4,6 +4,7 @@
 package fr.becpg.repo.entity;
 
 import org.alfresco.service.namespace.QName;
+import org.springframework.stereotype.Service;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -11,6 +12,7 @@ import org.alfresco.service.namespace.QName;
  *
  * @author querephi
  */
+@Service
 public interface AutoNumService {
 
 	/**

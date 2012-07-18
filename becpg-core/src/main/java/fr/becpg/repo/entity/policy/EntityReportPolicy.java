@@ -4,13 +4,17 @@
 package fr.becpg.repo.entity.policy;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.alfresco.repo.copy.CopyBehaviourCallback;
+import org.alfresco.repo.copy.CopyDetails;
+import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
@@ -23,12 +27,15 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.report.entity.EntityReportService;
 
 /**
@@ -36,7 +43,8 @@ import fr.becpg.repo.report.entity.EntityReportService;
  *
  * @author querephi, matthieu
  */
-public class EntityReportPolicy extends TransactionListenerAdapter implements
+@Service
+public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 		NodeServicePolicies.OnUpdateNodePolicy,
 		NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnDeleteAssociationPolicy{
@@ -47,8 +55,6 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityReportPolicy.class);
 
-	/** The policy component. */
-	private PolicyComponent policyComponent;
 	
 	/** The transaction service. */
 	private TransactionService transactionService;
@@ -68,14 +74,6 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 	/** The entityReportService **/
 	private EntityReportService entityReportService;
 	
-	/**
-	 * Sets the policy component.
-	 *
-	 * @param policyComponent the new policy component
-	 */
-	public void setPolicyComponent(PolicyComponent policyComponent) {
-		this.policyComponent = policyComponent;
-	}
 
 	/**
 	 * Sets the transaction service.
@@ -122,7 +120,7 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 	/**
 	 * Inits the.
 	 */
-	public void init() {				
+	public void doInit() {				
 		
 		logger.debug("Init EntityReportPolicy...");
 		policyComponent.bindClassBehaviour(
@@ -140,8 +138,10 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 				ReportModel.ASPECT_REPORT_ENTITY, new JavaBehaviour(this,
 						"onDeleteAssociation", NotificationFrequency.TRANSACTION_COMMIT));
 		
+		disableOnCopyBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+		
 		// transaction listeners
-		this.transactionListener = new ProductReportServiceTransactionListener();
+		this.transactionListener = new EntityReportServiceTransactionListener();
 	}
 
 	/**
@@ -184,11 +184,49 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 		updatedNodeRefs.add(entityNodeRef);
 	}
 
+	
+	/*
+	 * Disable report generation for copy
+	 */
+	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
+		return new EntityCopyBehaviourCallback(policyBehaviourFilter);
+	}
+
+	private class EntityCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
+		private final BehaviourFilter behaviourFilter;
+
+		private EntityCopyBehaviourCallback(BehaviourFilter behaviourFilter) {
+			this.behaviourFilter = behaviourFilter;
+		}
+
+		@Override
+		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {
+			NodeRef targetNodeRef = copyDetails.getTargetNodeRef();
+			behaviourFilter.disableBehaviour(targetNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+
+			// Always copy
+			return true;
+		}
+
+	}
+
+	/*
+	 * Re-enable aspect behaviour for the source node
+	 */
+	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
+
+		policyBehaviourFilter.enableBehaviour(destinationRef, ReportModel.ASPECT_REPORT_ENTITY);
+
+	}
+	
+	
     /**
 	 * Check if the system should generate the report for this product
 	 * @param entityNodeRef
 	 * @return
 	 */
+	// TODO la desactivation de la copie doit suffire
+	@Deprecated
 	public boolean IsReportable(NodeRef entityNodeRef) {
 		
     	if(nodeService.exists(entityNodeRef) ){
@@ -212,7 +250,7 @@ public class EntityReportPolicy extends TransactionListenerAdapter implements
 	 *
 	 * @see ProductReportServiceTransactionEvent
 	 */
-	private class ProductReportServiceTransactionListener extends TransactionListenerAdapter {
+	private class EntityReportServiceTransactionListener extends TransactionListenerAdapter {
 		
 		/* (non-Javadoc)
 		 * @see org.alfresco.repo.transaction.TransactionListenerAdapter#afterCommit()

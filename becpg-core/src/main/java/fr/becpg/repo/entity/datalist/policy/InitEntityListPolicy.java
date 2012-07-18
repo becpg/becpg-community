@@ -9,17 +9,17 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -27,16 +27,12 @@ import fr.becpg.model.DataListModel;
  *
  * @author querephi
  */
-public class InitEntityListPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
+@Service
+public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy  {
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(InitEntityListPolicy.class);
 	
-	/** The policy component. */
-	private PolicyComponent policyComponent;		
-	
-	/** The node service. */
-	private NodeService nodeService;
 	
 	/** The namespace service. */
 	private NamespaceService namespaceService;
@@ -44,23 +40,7 @@ public class InitEntityListPolicy implements NodeServicePolicies.OnUpdatePropert
 	/** The dictionary service. */
 	private DictionaryService dictionaryService;
 			
-	/**
-	 * Sets the policy component.
-	 *
-	 * @param policyComponent the new policy component
-	 */
-	public void setPolicyComponent(PolicyComponent policyComponent) {
-		this.policyComponent = policyComponent;
-	}
 	
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}	
 	
 	/**
 	 * Sets the namespace service.
@@ -83,9 +63,12 @@ public class InitEntityListPolicy implements NodeServicePolicies.OnUpdatePropert
 	/**
 	 * Inits the.
 	 */
-	public void init(){
+	public void doInit() {
 		logger.debug("Init ProductListPolicies...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, DataListModel.TYPE_DATALIST, new JavaBehaviour(this, "onUpdateProperties"));
+		
+		//Copy
+		disableOnCopyBehaviour(DataListModel.TYPE_DATALIST);
 	}
 
 	/**
@@ -119,5 +102,7 @@ public class InitEntityListPolicy implements NodeServicePolicies.OnUpdatePropert
 			}
 		}		
 	}	
+	
+
 
 }
