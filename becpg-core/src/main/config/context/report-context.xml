@@ -75,8 +75,7 @@
 	</bean>	
 	
 	<!-- Policy -->
-	<bean id="EntityReportPolicy" class="fr.becpg.repo.entity.policy.EntityReportPolicy" init-method="init">
-		<property name="policyComponent" ref="policyComponent" />
+	<bean id="EntityReportPolicy" class="fr.becpg.repo.entity.policy.EntityReportPolicy" parent="abstractBeCPGPolicy">
 		<property name="transactionService" ref="transactionService"/>
 		<property name="threadExecuter" ref="defaultAsyncThreadPool" />
 		<property name="nodeService" ref="nodeService" />		

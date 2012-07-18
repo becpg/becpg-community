@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
 
@@ -14,6 +15,7 @@ import fr.becpg.common.BeCPGException;
  * @author querephi
  *
  */
+@Service
 public interface EntityService {
 
 	/**
