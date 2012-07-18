@@ -286,10 +286,12 @@ public class BeCPGSystemFolderMigrator {
 						hierarchy2NodeRef = null;
 					}
 					
-					dbNodeService.removeProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
-					dbNodeService.setProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1, hierarchy1NodeRef);					
-					dbNodeService.removeProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
-					dbNodeService.setProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2, hierarchy2NodeRef);
+					if(hierarchy1NodeRef != null && hierarchy2NodeRef!= null){
+						dbNodeService.removeProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
+						dbNodeService.setProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1, hierarchy1NodeRef);					
+						dbNodeService.removeProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
+						dbNodeService.setProperty(afterVersionNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2, hierarchy2NodeRef);
+					}					
 				}						
 			}
 		}	
@@ -308,7 +310,8 @@ public class BeCPGSystemFolderMigrator {
 			
 			logger.debug("fix product type: " + productType);
 			
-			String QUERY_PRODUCT_TO_FIX = "+TYPE:\"bcpg:product\" -@bcpg\\:productHierarchy1:\"workspace:\"  -@bcpg\\:productHierarchy2:\"workspace:\"";
+			String QUERY_PRODUCT_TO_FIX = String.format("+TYPE:\"%s\" -@bcpg\\:productHierarchy1:\"workspace:\"  -@bcpg\\:productHierarchy2:\"workspace:\"",
+														productType);
 			
 			List<NodeRef> productNodeRefs = beCPGSearchService.luceneSearch(QUERY_PRODUCT_TO_FIX);
 			
@@ -324,8 +327,7 @@ public class BeCPGSystemFolderMigrator {
 				}
 				else if(!hierarchy1.contains("/")){
 					
-					hierarchy1NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, null, hierarchy1);
-					
+					hierarchy1NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, null, hierarchy1);					
 				}
 				
 				//hierarchy2
@@ -336,8 +338,20 @@ public class BeCPGSystemFolderMigrator {
 				}
 				else if(!hierarchy2.contains("/")){
 					
-					hierarchy2NodeRef = hierarchy1NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, hierarchy1NodeRef, hierarchy2);
+					hierarchy2NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, hierarchy1NodeRef, hierarchy2);
 				}				
+				
+				if(hierarchy1NodeRef == null){
+				
+					logger.error("hierarchy1 is not found: " + hierarchy1);
+					continue;
+				}
+				
+				if(hierarchy2NodeRef == null){
+					
+					logger.error("hierarchy2 is not found: " + hierarchy2);
+					continue;
+				}
 				
 				try{
 					//disable policy to classify on product
@@ -357,12 +371,8 @@ public class BeCPGSystemFolderMigrator {
 		        	policyBehaviourFilter.enableBehaviour(productNodeRef, ContentModel.ASPECT_VERSIONABLE);
 		        }	
 				
-				
-				
-				migrateHistory(hierarchiesNodeRef, productType, productNodeRef, hierarchy1, hierarchy1NodeRef, hierarchy2, hierarchy2NodeRef);
-			}
-					
-			
+				migrateHistory(hierarchiesNodeRef, productType, productNodeRef, hierarchy1, hierarchy1NodeRef, hierarchy2, hierarchy2NodeRef);				
+			}			
 		}
 	}
 	
@@ -491,31 +501,31 @@ public class BeCPGSystemFolderMigrator {
 	 * @param hierarchy
 	 * @return
 	 */
-	private NodeRef getOrcreateDeletedHierarchy(NodeRef hierarchiesNodeRef, QName productType, NodeRef hierarchy1NodeRef, String hierarchy){
+	private NodeRef getOrcreateDeletedHierarchy(NodeRef hierarchiesNodeRef, QName productType, NodeRef parentHierarchyNodeRef, String hierarchy){
 		
 		NodeRef dataListNodeRef = getCharactDataList(hierarchiesNodeRef, productType.getLocalName() + HierarchyHelper.HIERARCHY_SUFFIX);
 		NodeRef hierarchyNodeRef = null;
 		
-		if(hierarchy1NodeRef == null){
+		if(parentHierarchyNodeRef == null){
 			hierarchyNodeRef = hierarchyService.getHierarchy1(productType, hierarchy);			
 		}
 		else{
-			hierarchyNodeRef = hierarchyService.getHierarchy2(productType, hierarchy1NodeRef, hierarchy);			
+			hierarchyNodeRef = hierarchyService.getHierarchy2(productType, parentHierarchyNodeRef, hierarchy);			
 		}
 		
 		// create deleted hierarchy
 		if(hierarchyNodeRef == null){
 			
-			if(hierarchy1NodeRef == null){
+			if(parentHierarchyNodeRef == null){
 				hierarchyNodeRef = hierarchyService.createHierarchy1(dataListNodeRef, hierarchy);
 			}
 			else{
-				hierarchyNodeRef = hierarchyService.createHierarchy2(dataListNodeRef, hierarchy1NodeRef, hierarchy);
+				hierarchyNodeRef = hierarchyService.createHierarchy2(dataListNodeRef, parentHierarchyNodeRef, hierarchy);
 			}			
 			nodeService.setProperty(hierarchyNodeRef, BeCPGModel.PROP_IS_DELETED, true);
 		}
 		
-		return hierarchy1NodeRef;
+		return hierarchyNodeRef;
 	}
 	
 }
