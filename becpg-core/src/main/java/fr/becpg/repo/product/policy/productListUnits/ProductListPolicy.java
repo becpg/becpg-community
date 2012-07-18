@@ -25,12 +25,13 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.formulation.CostsCalculatingVisitor;
 import fr.becpg.repo.product.formulation.NutsCalculatingVisitor;
 
 @Service
-public class ProductListPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
+public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
 											NodeServicePolicies.OnUpdatePropertiesPolicy{
 
 	private static final String KEY_PRODUCT_LISTITEMS = "ProductListPolicy.productListItems";
@@ -38,24 +39,12 @@ public class ProductListPolicy implements NodeServicePolicies.OnCreateAssociatio
 	
 	private static Log logger = LogFactory.getLog(ProductListPolicy.class);
 	
-	private PolicyComponent policyComponent;		
-		
-	private NodeService nodeService;
-	
 	private TransactionListener transactionListener;
 	
 	private EntityListDAO entityListDAO;
 	
 	private FileFolderService fileFolderService;
 	
-	public void setPolicyComponent(PolicyComponent policyComponent) {
-		this.policyComponent = policyComponent;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
@@ -64,7 +53,8 @@ public class ProductListPolicy implements NodeServicePolicies.OnCreateAssociatio
 		this.fileFolderService = fileFolderService;
 	}
 
-	public void init(){
+	@Override
+	public void doInit() {
 		logger.debug("Init productListUnits.ProductListPolicy...");
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, 
 				BeCPGModel.TYPE_COSTLIST, BeCPGModel.ASSOC_COSTLIST_COST, new JavaBehaviour(this, "onCreateAssociation"));
@@ -76,8 +66,11 @@ public class ProductListPolicy implements NodeServicePolicies.OnCreateAssociatio
 				BeCPGModel.TYPE_PRODUCT, 
 				new JavaBehaviour(this, "onUpdateProperties"));
 		
+		super.disableOnCopyBehaviour(BeCPGModel.TYPE_COSTLIST);
+		super.disableOnCopyBehaviour(BeCPGModel.TYPE_NUTLIST);
+		
 		// transaction listeners
-		this.transactionListener = new ProductListPolicyTransactionListener();				
+		this.transactionListener = new ProductListPolicyTransactionListener();
 	}
 	
 	@Override
