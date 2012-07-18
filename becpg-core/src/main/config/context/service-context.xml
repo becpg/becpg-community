@@ -449,19 +449,13 @@
 	</bean>
 
 	<!-- Product Policies -->
-	<bean id="productListUnits.ProductPolicy"
-		class="fr.becpg.repo.product.policy.productListUnits.ProductPolicy"
-		init-method="init">
-		<property name="policyComponent" ref="policyComponent" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="fileFolderService" ref="fileFolderService" />
-	</bean>
 	<bean id="productListUnits.ProductListPolicy"
 		class="fr.becpg.repo.product.policy.productListUnits.ProductListPolicy"
 		init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="nodeService" ref="nodeService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="fileFolderService" ref="fileFolderService" />
 	</bean>
 	<bean id="productListUnits.PriceListPolicy"
 		class="fr.becpg.repo.product.policy.productListUnits.PriceListPolicy"

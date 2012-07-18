@@ -23,7 +23,6 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.test.RepoBaseTestCase;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProductListPoliciesTest.
  *
@@ -39,6 +38,13 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 	
 	/** The product dao. */
 	private ProductDAO productDAO;
+	
+	Set<QName> dataLists = new HashSet<QName>();
+	NodeRef costListItem1NodeRef = null;
+	NodeRef costListItem2NodeRef = null;
+	NodeRef costListItem3NodeRef = null;
+	NodeRef nutListItem1NodeRef = null;
+	NodeRef nutListItem2NodeRef = null;
 	
 	
 	/* (non-Javadoc)
@@ -79,7 +85,23 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 	 */
 	   public void testCreateProductLists(){
 		   
-		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			dataLists.add(BeCPGModel.TYPE_COSTLIST);
+			dataLists.add(BeCPGModel.TYPE_NUTLIST);
+	
+			final NodeRef cost1 = costs.get(0);
+			nodeService.setProperty(cost1, BeCPGModel.PROP_COSTCURRENCY, "€");
+			final NodeRef cost2 = costs.get(1);
+			nodeService.setProperty(cost2, BeCPGModel.PROP_COSTCURRENCY, "$");
+			final NodeRef cost3 = costs.get(2);
+			nodeService.setProperty(cost3, BeCPGModel.PROP_COSTCURRENCY, "€");
+			nodeService.setProperty(cost3, BeCPGModel.PROP_COSTFIXED, true);
+	
+			final NodeRef nut1 = nuts.get(0);
+			nodeService.setProperty(nut1, BeCPGModel.PROP_NUTUNIT, "kcal");
+			final NodeRef nut2 = nuts.get(1);
+			nodeService.setProperty(nut2, BeCPGModel.PROP_NUTUNIT, "kJ");
+			
+		   final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				@Override
 				public NodeRef execute() throws Throwable {
 				
@@ -100,19 +122,6 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 					rawMaterialData.setUnit(ProductUnit.kg);
 					rawMaterialData.setName("RM");
 					
-					NodeRef cost1 = costs.get(0);
-					nodeService.setProperty(cost1, BeCPGModel.PROP_COSTCURRENCY, "€");
-					NodeRef cost2 = costs.get(1);
-					nodeService.setProperty(cost2, BeCPGModel.PROP_COSTCURRENCY, "$");
-					NodeRef cost3 = costs.get(2);
-					nodeService.setProperty(cost3, BeCPGModel.PROP_COSTCURRENCY, "€");
-					nodeService.setProperty(cost3, BeCPGModel.PROP_COSTFIXED, true);
-					
-					NodeRef nut1 = nuts.get(0);
-					nodeService.setProperty(nut1, BeCPGModel.PROP_NUTUNIT, "kcal");
-					NodeRef nut2 = nuts.get(1);
-					nodeService.setProperty(nut2, BeCPGModel.PROP_NUTUNIT, "kJ");
-					
 					List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
 					costList.add(new CostListDataItem(null, 12d, "", null, cost1, false));
 					costList.add(new CostListDataItem(null, 11d, "", null, cost2, false));
@@ -124,10 +133,14 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 					nutList.add(new NutListDataItem(null, 12.5d, "", 0d, 0d, "Groupe 1", nut2, false));
 					rawMaterialData.setNutList(nutList);
 					
-					Set<QName> dataLists = new HashSet<QName>();
-					dataLists.add(BeCPGModel.TYPE_COSTLIST);
-					dataLists.add(BeCPGModel.TYPE_NUTLIST);
-					NodeRef rawMaterialNodeRef = productDAO.create(folderNodeRef, rawMaterialData, dataLists);											
+					return productDAO.create(folderNodeRef, rawMaterialData, dataLists);							
+					
+				}},false,true);
+		   
+		   
+		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+				@Override
+				public NodeRef execute() throws Throwable {
 					
 					RawMaterialData rawMaterialDBData = (RawMaterialData)productDAO.find(rawMaterialNodeRef, dataLists);
 					
@@ -167,7 +180,14 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 					 */
 					nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_PRODUCT_UNIT, ProductUnit.L);
 					
-					rawMaterialDBData = (RawMaterialData)productDAO.find(rawMaterialNodeRef, dataLists);
+					return null;
+				}},false,true);
+					
+		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+				@Override
+				public NodeRef execute() throws Throwable {
+					
+					RawMaterialData rawMaterialDBData = (RawMaterialData)productDAO.find(rawMaterialNodeRef, dataLists);
 					
 					for(CostListDataItem c : rawMaterialDBData.getCostList()){
 						
@@ -200,24 +220,39 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 						}
 					}
 					
+					return null;					
+				}},false,true);
+		   
+		   	/*
+			 *  Change cost, nut
+			 */
+					
+		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+				@Override
+				public NodeRef execute() throws Throwable {
+					
+					RawMaterialData rawMaterialDBData = (RawMaterialData)productDAO.find(rawMaterialNodeRef, dataLists);
+					
 					/*
 					 *  Change cost, nut
 					 */
-					NodeRef costListItem1NodeRef = null;
-					NodeRef costListItem2NodeRef = null;
-					NodeRef costListItem3NodeRef = null;
+					int checks = 0;
 					for(CostListDataItem c : rawMaterialDBData.getCostList()){
 						
 						if(c.getCost().equals(cost1)){
 							costListItem1NodeRef = c.getNodeRef();
+							checks++;
 						}
 						else if(c.getCost().equals(cost2)){
 							costListItem2NodeRef = c.getNodeRef();
+							checks++;
 						}
 						else if(c.getCost().equals(cost3)){
 							costListItem3NodeRef = c.getNodeRef();
+							checks++;
 						}
 					}
+					assertEquals(3, checks);					
 					
 					nodeService.removeAssociation(costListItem1NodeRef, cost1, BeCPGModel.ASSOC_COSTLIST_COST);
 					nodeService.removeAssociation(costListItem2NodeRef, cost2, BeCPGModel.ASSOC_COSTLIST_COST);
@@ -226,22 +261,33 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 					nodeService.createAssociation(costListItem2NodeRef, cost3, BeCPGModel.ASSOC_COSTLIST_COST);
 					nodeService.createAssociation(costListItem3NodeRef, cost1, BeCPGModel.ASSOC_COSTLIST_COST);
 					
-					NodeRef nutListItem1NodeRef = null;
-					NodeRef nutListItem2NodeRef = null;
+					checks = 0;					
 					for(NutListDataItem n : rawMaterialDBData.getNutList()){
 						
 						if(n.getNut().equals(nut1)){
 							nutListItem1NodeRef = n.getNodeRef();
+							checks++;
 						}
 						else if(n.getNut().equals(nut2)){
 							nutListItem2NodeRef = n.getNodeRef();
+							checks++;
 						}						
 					}
+					assertEquals(2, checks);
 					
 					nodeService.removeAssociation(nutListItem1NodeRef, nut1, BeCPGModel.ASSOC_NUTLIST_NUT);
 					nodeService.removeAssociation(nutListItem2NodeRef, nut2, BeCPGModel.ASSOC_NUTLIST_NUT);		
 					nodeService.createAssociation(nutListItem1NodeRef, nut2, BeCPGModel.ASSOC_NUTLIST_NUT);
 					nodeService.createAssociation(nutListItem2NodeRef, nut1, BeCPGModel.ASSOC_NUTLIST_NUT);
+					
+					return null;					
+				}},false,true);
+					
+		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+				@Override
+				public NodeRef execute() throws Throwable {
+					
+					RawMaterialData rawMaterialDBData = (RawMaterialData)productDAO.find(rawMaterialNodeRef, dataLists);
 					
 					rawMaterialDBData = (RawMaterialData)productDAO.find(rawMaterialNodeRef, dataLists);
 					
