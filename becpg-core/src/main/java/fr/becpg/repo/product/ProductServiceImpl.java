@@ -297,19 +297,19 @@ public class ProductServiceImpl implements ProductService {
 						destinationNodeRef = repoService.createFolderByPath(hierarchy1NodeRef,name, name);
 					}
 					else{
-						logger.error("Cannot create folder for productHierarchy2 since hierarchyName is null. productHierarchy2: " + productData.getHierarchy2());
+						logger.debug("Cannot create folder for productHierarchy2 since hierarchyName is null. productHierarchy2: " + productData.getHierarchy2());
 					}					
 	    		}
 				else{
-					logger.error("Cannot classify product since it doesn't have a productHierarchy2.");
+					logger.debug("Cannot classify product since it doesn't have a productHierarchy2.");
 				}
 			}
 			else{
-				logger.error("Cannot create folder for productHierarchy1 since hierarchyName is null. productHierarchy1: " + productData.getHierarchy1());
+				logger.debug("Cannot create folder for productHierarchy1 since hierarchyName is null. productHierarchy1: " + productData.getHierarchy1());
 			}
 		}
 		else{
-			logger.error("Cannot classify product since it doesn't have a productHierarchy1.");
+			logger.debug("Cannot classify product since it doesn't have a productHierarchy1.");
 		}
 		
 		if(destinationNodeRef != null){
