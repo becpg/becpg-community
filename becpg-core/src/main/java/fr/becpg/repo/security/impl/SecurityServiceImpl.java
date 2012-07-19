@@ -17,6 +17,7 @@ import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -36,6 +37,7 @@ import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
  * 
  * @author "Matthieu Laborie <laborima@gmail.com>"
  */
+@Service
 public class SecurityServiceImpl implements SecurityService {
 
 	private static final String ACLS_CACHE_KEY = "ACLS_CACHE_KEY";

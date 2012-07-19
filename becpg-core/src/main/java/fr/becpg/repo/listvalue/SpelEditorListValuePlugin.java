@@ -10,12 +10,14 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 
+@Service
 public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
 	/** The logger. */

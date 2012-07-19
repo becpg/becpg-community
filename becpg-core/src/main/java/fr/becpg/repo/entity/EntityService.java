@@ -15,7 +15,6 @@ import fr.becpg.common.BeCPGException;
  * @author querephi
  *
  */
-@Service
 public interface EntityService {
 
 	/**

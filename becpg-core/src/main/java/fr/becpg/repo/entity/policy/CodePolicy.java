@@ -83,7 +83,7 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 	protected void doBeforeCommit(Set<NodeRef> pendingNodes) {
 
 		for (NodeRef nodeRef : pendingNodes) {
-			if (nodeService.exists(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {
+			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {
 
 					// check code is already taken. If yes : this object is
 					// a copy of an

@@ -33,6 +33,7 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.entity.remote.RemoteEntityService;
 
 /**
  * 
@@ -96,7 +97,7 @@ public class XmlEntityVisitor {
 		// Write XML prologue
 		xmlw.writeStartDocument();
 		// Visit node
-		xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX,"entities",BeCPGModel.BECPG_URI);
+		xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX,RemoteEntityService.ELEM_ENTITIES,BeCPGModel.BECPG_URI);
 		
 		for (Iterator<NodeRef> iterator = entities.iterator(); iterator.hasNext();) {
 			NodeRef nodeRef = (NodeRef) iterator.next();
@@ -127,7 +128,7 @@ public class XmlEntityVisitor {
 				// Write XML prologue
 				xmlw.writeStartDocument();
 				// Visit node
-				xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX,"data",BeCPGModel.BECPG_URI);
+				xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX,RemoteEntityService.ELEM_DATA,BeCPGModel.BECPG_URI);
 				
 				NodeRef parentRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
 				
@@ -137,25 +138,24 @@ public class XmlEntityVisitor {
 				
 				Path path = nodeService.getPath(parentRef);
 
-				xmlw.writeAttribute("path", path.toPrefixString(namespaceService));
-				xmlw.writeAttribute("type", "node");
+				xmlw.writeAttribute(RemoteEntityService.ATTR_PATH, path.toPrefixString(namespaceService));
+				xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
 
 				String name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 
-				xmlw.writeAttribute("name", name);
-				xmlw.writeAttribute("nodeRef", entityNodeRef.toString());
+				xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, name);
+				xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, entityNodeRef.toString());
 
 				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_CODE)) {
-					xmlw.writeAttribute("code", (String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE));
+					xmlw.writeAttribute(RemoteEntityService.ATTR_CODE, (String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE));
 				}
 				
 				for (Entry<String, byte[]> image : images.entrySet() ) {
-					xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX,"image",BeCPGModel.BECPG_URI);
-					xmlw.writeAttribute("name", image.getKey());
+					xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX,RemoteEntityService.ELEM_IMAGE,BeCPGModel.BECPG_URI);
+					xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, image.getKey());
 					xmlw.writeCData(Base64.encodeBase64String(image.getValue()));
 					xmlw.writeEndElement();
 				}
-				
 				
 				xmlw.writeEndElement();
 				// Write document end. This closes all open structures
@@ -182,16 +182,16 @@ public class XmlEntityVisitor {
 		
 		Path path = nodeService.getPath(parentRef);
 
-		xmlw.writeAttribute("path", path.toPrefixString(namespaceService));
-		xmlw.writeAttribute("type", "node");
+		xmlw.writeAttribute(RemoteEntityService.ATTR_PATH, path.toPrefixString(namespaceService));
+		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
 
 		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType));
 
-		xmlw.writeAttribute("name", name);
-		xmlw.writeAttribute("nodeRef", nodeRef.toString());
+		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, name);
+		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
 
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
-			xmlw.writeAttribute("code", (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));
+			xmlw.writeAttribute(RemoteEntityService.ATTR_CODE, (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));
 		}
 
 		if (props) {
@@ -224,7 +224,7 @@ public class XmlEntityVisitor {
 				xmlw.writeStartElement(prefix, nodeType.getLocalName(),  nodeType.getNamespaceURI());
 				
 				if(assocDef.isChild()){
-					xmlw.writeAttribute("type","childAssoc" );
+					xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE,RemoteEntityService.CHILD_ASSOC_TYPE);
 					List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
 					for (ChildAssociationRef assocRef : assocRefs) {
 						if (assocRef.getTypeQName().equals(assocDef.getName())) {
@@ -233,7 +233,7 @@ public class XmlEntityVisitor {
 						}
 					}
 				} else {
-					xmlw.writeAttribute("type","assoc" );
+					xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE,RemoteEntityService.ASSOC_TYPE );
 					List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
 					for (AssociationRef assocRef : assocRefs) {
 							NodeRef childRef = assocRef.getTargetRef();
@@ -267,10 +267,9 @@ public class XmlEntityVisitor {
 						String prefix = propName.getPrefixString().split(":")[0];
 						xmlw.writeStartElement(prefix, propName.getLocalName(),  propName.getNamespaceURI());
 						logger.debug("Extract prop : "+propName.toPrefixString());
-						xmlw.writeAttribute("type",propertyDefinition.getDataType().getName().toPrefixString(namespaceService) );
+						xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE,propertyDefinition.getDataType().getName().toPrefixString(namespaceService) );
 						visitPropValue(entry.getValue(), xmlw);
 						xmlw.writeEndElement();
-						//xmlw.writeNamespace(prefix,  propName.getNamespaceURI());
 					} else {
 						logger.warn("Properties not in dictionnary: "+entry.getKey());
 					}

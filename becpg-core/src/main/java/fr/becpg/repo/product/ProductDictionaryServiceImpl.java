@@ -7,18 +7,17 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 
 // TODO: Auto-generated Javadoc
@@ -27,6 +26,7 @@ import fr.becpg.repo.helper.TranslateHelper;
  *
  * @author querephi
  */
+@Service
 public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 
 	

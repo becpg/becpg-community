@@ -177,8 +177,8 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="copyService" ref="copyService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
+		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 
 	<!-- Migrator -->
@@ -248,8 +248,8 @@
 		<property name="copyService" ref="copyService" />
 		<property name="contentService" ref="contentService" />
 		<property name="mimetypeService" ref="mimetypeService" />
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="dictionaryService" ref="dictionaryService" />
+	   <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	<bean id="entitySystemService" class="fr.becpg.repo.entity.impl.EntitySystemServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -335,6 +335,7 @@
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="nodeService" ref="nodeService"/>
+		<property name="lockService" ref="lockService"/>
 	</bean>
 
 
@@ -343,6 +344,7 @@
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
+	
 	<bean id="entityPolicy" class="fr.becpg.repo.entity.policy.EntityPolicy"
 		init-method="init" parent="abstractBeCPGPolicy">
 		<property name="entityService" ref="entityService" />
@@ -354,11 +356,9 @@
 		<property name="authenticationService" ref="authenticationService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="permissionService" ref="permissionService" />
-	</bean>
-	<bean id="entityVersionServicePolicy" class="fr.becpg.repo.entity.policy.EntityVersionServicePolicy"
-		 parent="abstractBeCPGPolicy" >
 		<property name="entityVersionService" ref="entityVersionService" />
 	</bean>
+
 	
 	
 	<!-- Entity Datalist Policies -->
@@ -452,26 +452,20 @@
 	<bean id="productListUnits.ProductListPolicy"
 		class="fr.becpg.repo.product.policy.productListUnits.ProductListPolicy"
 		parent="abstractBeCPGPolicy">
-		<property name="policyComponent" ref="policyComponent" />
-		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="fileFolderService" ref="fileFolderService" />
 	</bean>
 	<bean id="productListUnits.PriceListPolicy"
 		class="fr.becpg.repo.product.policy.productListUnits.PriceListPolicy"
-		init-method="init">
-		<property name="policyComponent" ref="policyComponent" />
-		<property name="nodeService" ref="nodeService" />
+		parent="abstractBeCPGPolicy">
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="productDAO" ref="productDAO" />
 	</bean>
-	<bean id="productPolicies" class="fr.becpg.repo.product.policy.ProductPolicies"
-		init-method="init">
-		<property name="policyComponent" ref="policyComponent" />
-		<property name="productService" ref="productService" />
-		<property name="nodeService" ref="nodeService" />
+	<bean id="classifyProductPolicy" class="fr.becpg.repo.product.policy.ClassifyProductPolicy"
+		parent="abstractBeCPGPolicy">
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
+		<property name="productService" ref="productService"/>
 	</bean>
 	<!-- Product Listeners -->
 	<bean id="productCheckInListener" class="fr.becpg.repo.product.listener.ProductCheckInListener">

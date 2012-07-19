@@ -16,6 +16,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -31,6 +32,7 @@ import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
  * @author querephi
  * 
  */
+@Service
 public class AdvSearchServiceImpl implements AdvSearchService {
 
 	/** The Constant SITES_SPACE_QNAME_PATH. */

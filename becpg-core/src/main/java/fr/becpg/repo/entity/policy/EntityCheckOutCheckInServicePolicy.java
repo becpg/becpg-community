@@ -13,6 +13,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -21,9 +22,12 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.event.CheckInEntityEvent;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -47,6 +51,8 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
     private PermissionService permissionService;
     private ApplicationContext applicationContext;
 
+    private EntityVersionService entityVersionService;
+    
 
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
@@ -62,8 +68,13 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 	
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		
 		this.applicationContext = applicationContext;		
+	}
+
+	
+	
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
 	}
 
 	/**
@@ -80,14 +91,32 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 
 	@Override
 	public void onCheckOut(final NodeRef workingCopy) {
-				
+		
 		// Copy entity datalists (rights are checked by copyService during recursiveCopy)
 		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>() {
 			@Override
 			public Void doWork() throws Exception {
+				try {
+					//disable datalist policies
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_COSTLIST);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_NUTLIST);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+					policyBehaviourFilter.disableBehaviour(DataListModel.TYPE_DATALIST);
+					
 					NodeRef nodeRef = getCheckedOut(workingCopy);
 					entityListDAO.copyDataLists(nodeRef, workingCopy, true);
 					return null;
+					
+				} finally {
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_COSTLIST);
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_NUTLIST);
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+					policyBehaviourFilter.enableBehaviour(DataListModel.TYPE_DATALIST);
+				}
 
 			}
 		}, AuthenticationUtil.getSystemUserName());	
@@ -104,14 +133,49 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
             String contentUrl,
             boolean keepCheckedOut) {
 		
-		// CopyService failed with DuplicateChildNodeNameException: Duplicate child name not allowed: DataLists
-		// Delete the datalists of the target node
-		NodeRef nodeRef = getCheckedOut(workingCopyNodeRef);
-		NodeRef containerListNodeRef = entityListDAO.getListContainer(nodeRef);
-		if(containerListNodeRef != null){
-			nodeService.deleteNode(containerListNodeRef);
-		}		
+			NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
+			
+			QName type = nodeService.getType(origNodeRef);
+
+			// disable policy to avoid code, folder initialization and report
+			// generation
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_CODE);
+			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+			//disable classify
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);		
+			// doesn't work, need to disable current class, subclass of entity, better than disableBehaviour()
+			//policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY);
+			policyBehaviourFilter.disableBehaviour(type);
+
+			try {
+			
+				entityVersionService.createVersionAndCheckin(origNodeRef, workingCopyNodeRef);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_CODE);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_FINISHEDPRODUCT);
+				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_PRODUCT);
+				// doesn't work, need to disable current class, subclass of entity, better than disableBehaviour()
+				//policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY);
+				policyBehaviourFilter.enableBehaviour(type);
+			}
+			
 	}
+		
+	@Override
+	public void onCheckIn(NodeRef nodeRef) {
+		
+		// reset state to ToValidate
+		nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.ToValidate);
+	
+		// publish checkin entity event
+		applicationContext.publishEvent(new CheckInEntityEvent(this, nodeRef));
+	}
+
 	
 	/**
      * Gets the authenticated users node reference
@@ -151,14 +215,5 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
         return original;
     }
 
-	@Override
-	public void onCheckIn(NodeRef nodeRef) {
-		
-		// reset state to ToValidate
-		nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.ToValidate);
-	
-		// publish checkin entity event
-		applicationContext.publishEvent(new CheckInEntityEvent(this, nodeRef));
-	}
 
 }

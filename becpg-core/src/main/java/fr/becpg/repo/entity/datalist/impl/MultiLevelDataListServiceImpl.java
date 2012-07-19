@@ -8,6 +8,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.SearchService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -22,6 +23,7 @@ import fr.becpg.repo.search.AdvSearchService;
  * 
  * @author matthieu
  */
+@Service
 public class MultiLevelDataListServiceImpl implements MultiLevelDataListService {
 
 	private static Log logger = LogFactory.getLog(MultiLevelDataListServiceImpl.class);

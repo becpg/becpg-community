@@ -1,10 +1,12 @@
 package fr.becpg.repo.entity.impl;
 
 import org.alfresco.service.namespace.QName;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
+@Service
 public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 
 	@Override
