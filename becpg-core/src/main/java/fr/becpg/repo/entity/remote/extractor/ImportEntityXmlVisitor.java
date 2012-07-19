@@ -31,6 +31,7 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
+import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
@@ -67,7 +68,6 @@ public class ImportEntityXmlVisitor {
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
-		
 
 			EntityXmlHandler handler = new EntityXmlHandler(entityNodeRef);
 			saxParser.parse(in, handler);
@@ -95,11 +95,11 @@ public class ImportEntityXmlVisitor {
 
 	private class EntityDataXmlHandler extends DefaultHandler {
 
-		Map<String, byte[]> datas = new HashMap<String, byte[]>();
+		private Map<String, byte[]> datas = new HashMap<String, byte[]>();
 
-		StringBuffer currValue = new StringBuffer();
+		private StringBuffer currValue = new StringBuffer();
 
-		String name;
+		private String name;
 
 		public Map<String, byte[]> getDatas() {
 			return datas;
@@ -108,7 +108,7 @@ public class ImportEntityXmlVisitor {
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			currValue = new StringBuffer();
-			name = attributes.getValue("name");
+			name = attributes.getValue(RemoteEntityService.ATTR_NAME);
 		}
 
 		@Override
@@ -118,7 +118,7 @@ public class ImportEntityXmlVisitor {
 
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
-			if (qName.equals(BeCPGModel.BECPG_PREFIX+":image")) {
+			if (qName.equals(BeCPGModel.BECPG_PREFIX + ":" +RemoteEntityService.ELEM_IMAGE)) {
 				datas.put(name, Base64.decodeBase64(currValue.toString()));
 			}
 		}
@@ -127,23 +127,23 @@ public class ImportEntityXmlVisitor {
 
 	private class EntityXmlHandler extends DefaultHandler {
 
-		NodeRef entityNodeRef = null;
+		private NodeRef entityNodeRef = null;
 
-		Stack<NodeRef> curNodeRef = new Stack<NodeRef>();
+		private Stack<NodeRef> curNodeRef = new Stack<NodeRef>();
 
-		StringBuffer currValue = new StringBuffer();
+		private StringBuffer currValue = new StringBuffer();
 
-		Stack<String> typeStack = new Stack<String>();
+		private Stack<String> typeStack = new Stack<String>();
 
-		Stack<QName> currAssoc = new Stack<QName>();
+		private Stack<QName> currAssoc = new Stack<QName>();
 
-		Stack<String> currAssocType = new Stack<String>();
-		
-		boolean isNodeRefAssoc = false;
+		private Stack<String> currAssocType = new Stack<String>();
 
-		QName currProp = null;
+		private boolean isNodeRefAssoc = false;
 
-		QName nodeType = null;
+		private QName currProp = null;
+
+		private QName nodeType = null;
 
 		public EntityXmlHandler(NodeRef entityNodeRef) {
 			this.entityNodeRef = entityNodeRef;
@@ -151,24 +151,24 @@ public class ImportEntityXmlVisitor {
 
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-			String type = attributes.getValue("type");
+			String type = attributes.getValue(RemoteEntityService.ATTR_TYPE);
 			typeStack.push(type);
 
-			if (type != null && type.equals("node")) {
-				String path = attributes.getValue("path");
-				String name = attributes.getValue("name");
-				String nodeRef = attributes.getValue("nodeRef");
+			if (type != null && type.equals(RemoteEntityService.NODE_TYPE)) {
+				String path = attributes.getValue(RemoteEntityService.ATTR_PATH);
+				String name = attributes.getValue(RemoteEntityService.ATTR_NAME);
+				String nodeRef = attributes.getValue(RemoteEntityService.ATTR_NODEREF);
 
 				if (entityNodeRef != null && curNodeRef.isEmpty()) {
 					logger.debug("We force node update by providing nodeRef");
 					nodeRef = entityNodeRef.toString();
 				}
-				String code = attributes.getValue("code");
+				String code = attributes.getValue(RemoteEntityService.ATTR_CODE);
 
 				nodeType = QName.createQName(qName, namespaceService);
 
 				NodeRef node = null;
-				if (currAssocType.isEmpty() || !currAssocType.peek().equals("childAssoc") || isNodeRefAssoc) {
+				if (currAssocType.isEmpty() || !currAssocType.peek().equals(RemoteEntityService.CHILD_ASSOC_TYPE) || isNodeRefAssoc) {
 					node = findNode(nodeRef, code, name, path, nodeType, currProp);
 				}
 				// Entity node
@@ -183,7 +183,7 @@ public class ImportEntityXmlVisitor {
 					curNodeRef.push(node);
 				} else {
 
-					if (!currAssocType.isEmpty() && currAssocType.peek().equals("childAssoc") && !isNodeRefAssoc) {
+					if (!currAssocType.isEmpty() && currAssocType.peek().equals(RemoteEntityService.CHILD_ASSOC_TYPE) && !isNodeRefAssoc) {
 						curNodeRef.push(createAssocNode(curNodeRef.peek(), nodeType, currAssoc.peek(), name));
 					} else {
 
@@ -203,13 +203,12 @@ public class ImportEntityXmlVisitor {
 							logger.debug("Node found creating assoc: " + currAssoc.peek());
 							nodeService.createAssociation(curNodeRef.peek(), node, currAssoc.peek());
 							curNodeRef.push(node);
-						} 
-						
-						
-						if(isNodeRefAssoc){
+						}
+
+						if (isNodeRefAssoc) {
 							// Case d:nodeRef
-							if(logger.isDebugEnabled()){
-								logger.debug("Set property : " + currProp.toPrefixString(namespaceService) + " value " + node +" for type "+type);
+							if (logger.isDebugEnabled()) {
+								logger.debug("Set property : " + currProp.toPrefixString(namespaceService) + " value " + node + " for type " + type);
 							}
 							nodeService.setProperty(curNodeRef.peek(), currProp, node);
 							curNodeRef.push(node);
@@ -218,12 +217,12 @@ public class ImportEntityXmlVisitor {
 						}
 					}
 				}
-			} else if (type != null && (type.equals("assoc") || type.equals("childAssoc"))) {
+			} else if (type != null && (type.equals(RemoteEntityService.ASSOC_TYPE) || type.equals(RemoteEntityService.CHILD_ASSOC_TYPE))) {
 				currAssoc.push(QName.createQName(qName, namespaceService));
 				currAssocType.push(type);
 				removeAllExistingAssoc(curNodeRef.peek(), currAssoc.peek(), type);
-			}  else if (type != null && type.length() > 0) {
-				if(type.equals("d:noderef")){
+			} else if (type != null && type.length() > 0) {
+				if (type.equals(RemoteEntityService.NODEREF_TYPE)) {
 					logger.debug("Set is nodeRefAssoc");
 					isNodeRefAssoc = true;
 				}
@@ -241,14 +240,14 @@ public class ImportEntityXmlVisitor {
 
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			String type = typeStack.pop();
-			if (type != null && type.equals("node")) {
+			if (type != null && type.equals(RemoteEntityService.NODE_TYPE)) {
 				entityNodeRef = curNodeRef.pop();
-			} else if (type != null && (type.equals("assoc") || type.equals("childAssoc"))) {
+			} else if (type != null && (type.equals(RemoteEntityService.ASSOC_TYPE) || type.equals(RemoteEntityService.CHILD_ASSOC_TYPE))) {
 				currAssoc.pop();
 				currAssocType.pop();
-			} else if (type != null && type.length() > 0 && !type.equals("d:noderef") ) {
-				if(logger.isDebugEnabled()){
-					logger.debug("Set property : " + currProp.toPrefixString() + " value " + currValue+" for type "+type);
+			} else if (type != null && type.length() > 0 && !type.equals(RemoteEntityService.NODEREF_TYPE)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Set property : " + currProp.toPrefixString() + " value " + currValue + " for type " + type);
 				}
 				if (currValue.length() > 0) {
 					nodeService.setProperty(curNodeRef.peek(), currProp, currValue.toString());
@@ -265,7 +264,7 @@ public class ImportEntityXmlVisitor {
 	};
 
 	private void removeAllExistingAssoc(NodeRef nodeRef, QName assocName, String type) {
-		if (type.equals("childAssoc")) {
+		if (type.equals(RemoteEntityService.CHILD_ASSOC_TYPE)) {
 			for (ChildAssociationRef assoc : nodeService.getChildAssocs(nodeRef)) {
 				if (assoc.getQName().equals(assocName)) {
 					nodeService.deleteNode(assoc.getChildRef());
@@ -282,21 +281,21 @@ public class ImportEntityXmlVisitor {
 		NodeRef parentNodeRef = findNodeByPath(parentPath);
 
 		if (parentNodeRef != null) {
-			
+
 			NodeRef ret = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
-			
-			if(ret==null){
+
+			if (ret == null) {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, name);
-				logger.debug("Creating missing node :"+name+" at path :"+parentPath);
-				ret =  nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, type, properties).getChildRef();
+				logger.debug("Creating missing node :" + name + " at path :" + parentPath);
+				ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, type, properties).getChildRef();
 			} else {
-				if(!nodeService.getType(ret).equals(type)){
-					logger.error("Found node with same name: "+name+" but incorrect type :"+nodeService.getType(ret)+"/"+type+" under: "+parentPath);
+				if (!nodeService.getType(ret).equals(type)) {
+					logger.error("Found node with same name: " + name + " but incorrect type :" + nodeService.getType(ret) + "/" + type + " under: " + parentPath);
 					return null;
 				}
 			}
-			
+
 			return ret;
 		}
 		throw new SAXException("Path doesn't exist on repository :" + parentPath);
@@ -323,10 +322,8 @@ public class ImportEntityXmlVisitor {
 	}
 
 	/*
-	 * We search for :
-	 * 	1° - TYPE/PATH/CODE/SAME NAME
-	 *  2° - TYPE/PATH/SAME NAME
-	 *  3° - TYPE/SAME NAME
+	 * We search for : 1° - TYPE/PATH/CODE/SAME NAME 2° - TYPE/PATH/SAME NAME 3°
+	 * - TYPE/SAME NAME
 	 */
 	private NodeRef findNode(String nodeRef, String code, String name, String path, QName type, QName currProp) {
 		if (nodeRef != null && nodeService.exists(new NodeRef(nodeRef))) {
@@ -344,13 +341,12 @@ public class ImportEntityXmlVisitor {
 		}
 
 		if (code != null && code.length() > 0) {
-			runnedQuery += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, code, null);	
-		} else 	if (name != null && name.length() > 0) {
-			runnedQuery += LuceneHelper.getCondEqualValue(RemoteHelper.getPropName(type), name,  null);
-		}	
-			
-			
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery,null, RepoConsts.MAX_RESULTS_NO_LIMIT);
+			runnedQuery += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, code, null);
+		} else if (name != null && name.length() > 0) {
+			runnedQuery += LuceneHelper.getCondEqualValue(RemoteHelper.getPropName(type), name, null);
+		}
+
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, null, RepoConsts.MAX_RESULTS_NO_LIMIT);
 		if (ret.size() > 0) {
 			for (NodeRef node : ret) {
 				if (name.equals(nodeService.getProperty(node, RemoteHelper.getPropName(type)))) {
@@ -359,20 +355,18 @@ public class ImportEntityXmlVisitor {
 				}
 			}
 		}
-		
-		if(code != null ) {
-			logger.debug("Retrying findNode without code for previous query : "+runnedQuery);
-			return findNode(nodeRef, null, name, path, type,currProp);
+
+		if (code != null) {
+			logger.debug("Retrying findNode without code for previous query : " + runnedQuery);
+			return findNode(nodeRef, null, name, path, type, currProp);
 		}
-		
-		
+
 		if (path != null) {
-			logger.debug("Retrying findNode without path for previous query : "+runnedQuery);
-			return findNode(nodeRef, code, name, null, type,currProp);
+			logger.debug("Retrying findNode without path for previous query : " + runnedQuery);
+			return findNode(nodeRef, code, name, null, type, currProp);
 		}
 
 		return null;
 	}
-
 
 }

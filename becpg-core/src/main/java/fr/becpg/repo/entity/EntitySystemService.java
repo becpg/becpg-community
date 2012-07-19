@@ -5,14 +5,12 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.springframework.stereotype.Service;
 
 /**
  * 
  * @author matthieu
  *
  */
-@Service
 public interface EntitySystemService {
 
 	/**

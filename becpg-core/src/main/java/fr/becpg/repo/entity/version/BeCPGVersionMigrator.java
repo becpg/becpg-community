@@ -1,6 +1,7 @@
 package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,6 +32,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 
+@SuppressWarnings("deprecation")
 public class BeCPGVersionMigrator {
 
 	private static Log logger = LogFactory.getLog(BeCPGVersionMigrator.class);
@@ -64,6 +66,7 @@ public class BeCPGVersionMigrator {
 	public void setDbNodeService(NodeService dbNodeService) {
 		this.dbNodeService = dbNodeService;
 	}
+
 
 	public void migrateVersionHistory(){
 		

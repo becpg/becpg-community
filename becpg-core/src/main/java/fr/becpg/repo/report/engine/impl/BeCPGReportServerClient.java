@@ -13,6 +13,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.http.client.ClientProtocolException;
 import org.dom4j.Element;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
@@ -27,6 +28,7 @@ import fr.becpg.report.client.ReportParams;
  * @author matthieu
  * 
  */
+@Service
 public class BeCPGReportServerClient extends AbstractBeCPGReportClient
 		implements BeCPGReportEngine {
 

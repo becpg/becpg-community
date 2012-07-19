@@ -6,9 +6,7 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public interface EntityListDAO {
 
 	/**
@@ -139,5 +137,12 @@ public interface EntityListDAO {
 	 * @return
 	 */
 	public List<NodeRef> getListItems(NodeRef listNodeRef, QName listQName);
+
+	/**
+	 * Move datalists
+	 * @param origNodeRef
+	 * @param nodeRef
+	 */
+	public void moveDataLists(NodeRef origNodeRef, NodeRef nodeRef);
 
 }

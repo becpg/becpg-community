@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
@@ -23,12 +22,13 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
@@ -38,6 +38,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * 
  * @author querephi
  */
+@Service
 public class EntityVersionServiceImpl implements EntityVersionService {
 	private static final String ENTITIES_HISTORY_NAME = "entitiesHistory";
 
@@ -61,11 +62,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	/** The search service. */
 	private BeCPGSearchService beCPGSearchService;
-
-	private BehaviourFilter policyBehaviourFilter;
 	
 	private BeCPGCacheService beCPGCacheService;
 
+	
+	private EntityListDAO entityListDAO;
+	
 	/**
 	 * Sets the node service.
 	 * 
@@ -89,84 +91,56 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
 	}
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
 	
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
+	
+	
+	
+	
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+
 	@Override
-	public NodeRef createEntityVersion(final NodeRef nodeRef, Version version) {
+	public void createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 
-		/*
-		 * 1. FileFolderService.copy and CopyService.copy doesn't support cross
-		 * copy stores : This operation is not supported by a version store
-		 * implementation of the node service. 2. createNode doesn't work with
-		 * version store : This operation is not supported by a version store
-		 * implementation of the node service.
-		 */
 
-		logger.debug("createEntityVersion: " + nodeRef);
+		logger.debug("createEntityVersion: " + origNodeRef);
 
-		final NodeRef versionHistoryRef = getVersionHistoryNodeRef(nodeRef);
-		QName type = nodeService.getType(nodeRef);
-
-		// disable policy to avoid code, folder initialization and report
-		// generation
-		policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_CODE);
-		policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-		policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-		policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
-		//disable classify
-		policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);		
-		// doesn't work, need to disable current class, subclass of entity, better than disableBehaviour()
-		//policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY);
-		policyBehaviourFilter.disableBehaviour(type);
-
+		final NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
+	
 		NodeRef versionNodeRef = null;
 
-		try {
-
-			// Rights are checked by copyService during recursiveCopy
-			versionNodeRef = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
+		// Rights are checked by copyService during recursiveCopy
+		versionNodeRef = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
 				@Override
-				public NodeRef doWork() throws Exception {
+			public NodeRef doWork() throws Exception {
+			    // Non recursive copy
+				NodeRef nodeRef =  copyService.copy(origNodeRef, versionHistoryRef, ContentModel.ASSOC_CONTAINS,
+							ContentModel.ASSOC_CHILDREN);
+				//Move origNodeRef DataList to version
+				entityListDAO.moveDataLists(origNodeRef, nodeRef);
+				//Move workingCopyNodeRef DataList to origNodeRef
+				entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
+				return nodeRef;
 
-					return copyService.copy(nodeRef, versionHistoryRef, ContentModel.ASSOC_CONTAINS,
-							ContentModel.ASSOC_CHILDREN, true);
-
-				}
-			}, AuthenticationUtil.getSystemUserName());
-
-			if (nodeService.hasAspect(versionNodeRef, ContentModel.ASPECT_CHECKED_OUT)) {
-				nodeService.removeAspect(versionNodeRef, ContentModel.ASPECT_CHECKED_OUT);
 			}
+		 }, AuthenticationUtil.getSystemUserName());
 
-			Map<QName, Serializable> versionProperties = nodeService.getProperties(versionNodeRef);
-			String name = nodeService.getProperty(nodeRef, ContentModel.PROP_NAME) + VERSION_NAME_DELIMITER
-					+ nodeService.getProperty(nodeRef, ContentModel.PROP_VERSION_LABEL);
+		Map<QName, Serializable> versionProperties = nodeService.getProperties(versionNodeRef);
+		
+		String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + VERSION_NAME_DELIMITER
+					+ nodeService.getProperty(origNodeRef, ContentModel.PROP_VERSION_LABEL);
 			versionProperties.put(ContentModel.PROP_NAME, name);
 			nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionProperties);
 
-			updateEffectivity(nodeRef, versionNodeRef);
-
-		} finally {
-			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_CODE);
-			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_FINISHEDPRODUCT);
-			policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
-			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_PRODUCT);
-			// doesn't work, need to disable current class, subclass of entity, better than disableBehaviour()
-			//policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY);
-			policyBehaviourFilter.enableBehaviour(type);
-
-		}
-
-		return versionNodeRef;
+			updateEffectivity(origNodeRef, versionNodeRef);
+		
+		
+		
 	}
 
 	private void updateEffectivity(NodeRef entityNodeRef, NodeRef versionNodeRef) {
@@ -320,5 +294,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		logger.error("Failed to find entity version. version: " + version.getFrozenStateNodeRef());
 		return null;
 	}
+
+
 
 }

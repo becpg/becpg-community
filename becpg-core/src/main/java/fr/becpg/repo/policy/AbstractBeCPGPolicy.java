@@ -11,10 +11,14 @@ import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.TransactionListenerAdapter;
 import org.alfresco.repo.version.Version2Model;
+import org.alfresco.service.cmr.lock.LockService;
+import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.PropertyCheck;
+
+import fr.becpg.model.BeCPGModel;
 
 public abstract class AbstractBeCPGPolicy {
 
@@ -23,6 +27,9 @@ public abstract class AbstractBeCPGPolicy {
 	protected PolicyComponent policyComponent;
 
 
+	protected LockService lockService;
+	
+	
 	protected NodeService nodeService;
 	
 
@@ -30,8 +37,6 @@ public abstract class AbstractBeCPGPolicy {
 	
 
 	private static final String KEY_PENDING_NODES = "AbstractBeCPGPolicy.pendingNodes";
-
-
 	
 	public void setPolicyComponent(PolicyComponent policyComponent) {
 		this.policyComponent = policyComponent;
@@ -44,12 +49,17 @@ public abstract class AbstractBeCPGPolicy {
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-
 	
+
+	public void setLockService(LockService lockService) {
+		this.lockService = lockService;
+	}
+
 	public void init(){
 
 		PropertyCheck.mandatory(this, "policyComponent", policyComponent);
 		PropertyCheck.mandatory(this, "policyBehaviourFilter", policyBehaviourFilter);
+		PropertyCheck.mandatory(this, "nodeService", nodeService);
 		
 		doInit();
 		
@@ -70,16 +80,33 @@ public abstract class AbstractBeCPGPolicy {
 	protected boolean isWorkingCopyOrVersion(NodeRef nodeRef) {
 
 		boolean workingCopy = nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY);
-
+		
+		// Ignore if the node is a working copy or version node
+		return workingCopy || isVersionNode(nodeRef);
+	}
+	
+	
+	protected boolean isVersionNode(NodeRef nodeRef){
+		boolean isBeCPGVersion = nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
 		boolean isVersionNode = nodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID);
 
 		// Ignore if the node is a working copy or version node
-		return workingCopy || isVersionNode;
+		return isBeCPGVersion || isVersionNode;
+	}
+	
+	
+	protected boolean isNotLocked(NodeRef nodeRef){
+		return nodeService.exists(nodeRef) && lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK;
+		
 	}
 	
 	 public abstract void doInit();
 	 
 	 protected void doBeforeCommit(Set<NodeRef> pendingNodes){
+		 //Do Nothing
+	 }
+	 
+	 protected void doAfterCommit(Set<NodeRef> pendingNodes){
 		 //Do Nothing
 	 }
 	
@@ -105,6 +132,16 @@ public abstract class AbstractBeCPGPolicy {
 
 				if (pendingNodes != null) {
 					doBeforeCommit(pendingNodes);
+				}
+			}
+			
+			@Override
+			public void afterCommit() {
+				@SuppressWarnings("unchecked")
+				Set<NodeRef> pendingNodes = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(KEY_PENDING_NODES);
+
+				if (pendingNodes != null) {
+					doAfterCommit(pendingNodes);
 				}
 			}
 

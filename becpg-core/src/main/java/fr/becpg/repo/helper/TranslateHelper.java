@@ -2,14 +2,12 @@ package fr.becpg.repo.helper;
 
 import java.util.Locale;
 
-import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.product.data.productList.DeclarationType;
 
 public class TranslateHelper {
 

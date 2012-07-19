@@ -19,6 +19,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Repository;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
@@ -35,6 +36,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * @author querephi
  * 
  */
+@Repository
 public class EntityListDAOImpl implements EntityListDAO {
 
 	private static final String QUERY_LIST_ITEM = " +PARENT:\"%s\" +TYPE:\"%s\"";
@@ -310,6 +312,24 @@ public class EntityListDAOImpl implements EntityListDAO {
 	public List<NodeRef> getListItems(NodeRef listNodeRef, QName listQName) {
 				
 		return beCPGSearchService.luceneSearch(String.format(QUERY_LIST_ITEM, listNodeRef, listQName), LuceneHelper.getSort(BeCPGModel.PROP_SORT), RepoConsts.MAX_RESULTS_NO_LIMIT);
+	}
+
+	@Override
+	public void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
+		NodeRef sourceListContainerNodeRef = getListContainer(sourceNodeRef);
+		NodeRef targetListContainerNodeRef = getListContainer(targetNodeRef);
+
+		if (sourceListContainerNodeRef != null) {
+			if (targetListContainerNodeRef != null) {
+
+				nodeService.deleteNode(targetListContainerNodeRef);
+			}
+			
+			nodeService.moveNode(sourceListContainerNodeRef, targetNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS);
+			
+			
+		}
+		
 	}
 
 }

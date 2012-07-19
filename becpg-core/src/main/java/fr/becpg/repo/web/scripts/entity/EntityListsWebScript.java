@@ -24,6 +24,7 @@ import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -32,6 +33,7 @@ import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.policy.BeCPGPolicyHelper;
 import fr.becpg.repo.security.SecurityService;
 
 /**
@@ -39,6 +41,7 @@ import fr.becpg.repo.security.SecurityService;
  * 
  * @author querephi
  */
+@Service
 public class EntityListsWebScript extends DeclarativeWebScript {
 
 	// request parameter names
@@ -213,9 +216,15 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 									watch = new StopWatch();
 									watch.start();
 								}
-								
-								entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
+								try {
+									BeCPGPolicyHelper.enableCopyBehaviourForTransaction();
+										
+									entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
 
+								} finally {
+									BeCPGPolicyHelper.disableCopyBehaviourForTransaction();
+								}
+								
 								if (logger.isDebugEnabled()) {
 									watch.stop();
 									logger.debug("copyDataLists executed in  "

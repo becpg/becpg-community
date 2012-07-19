@@ -12,7 +12,19 @@ import fr.becpg.common.BeCPGException;
 @Service
 public interface RemoteEntityService {
 
-	
+	/* Constants */
+	static final String CHILD_ASSOC_TYPE = "childAssoc";
+	static final String ASSOC_TYPE = "assoc";
+	static final String NODEREF_TYPE = "d:noderef";
+	static final String NODE_TYPE = "node";
+	static final String ATTR_TYPE = "type";
+	static final String ATTR_PATH = "path";
+	static final String ATTR_NAME = "name";
+	static final String ATTR_NODEREF = "nodeRef";
+	static final String ATTR_CODE = "code";
+	static final String ELEM_ENTITIES = "entities";
+	static final String ELEM_DATA = "data";
+	static final String ELEM_IMAGE = "image";
 
 	/**
 	 * Get entity at provided format

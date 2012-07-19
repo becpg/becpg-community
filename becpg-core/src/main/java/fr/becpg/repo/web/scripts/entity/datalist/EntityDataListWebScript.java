@@ -26,6 +26,7 @@ import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.entity.datalist.DataListExtractor;
@@ -42,6 +43,7 @@ import fr.becpg.repo.security.SecurityService;
  * 
  * @author matthieu
  */
+@Service
 public class EntityDataListWebScript extends AbstractWebScript {
 
 	/** The logger. */
