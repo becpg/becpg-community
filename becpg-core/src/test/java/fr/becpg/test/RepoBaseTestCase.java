@@ -21,6 +21,7 @@ import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.BaseAlfrescoTestCase;
@@ -85,37 +86,36 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 
 	protected NodeRef HIERARCHY2_QUICHE_REF;
 
+	protected NodeRef testFolderNodeRef; 
+	
 	private static String VALUE_COST_CURRENCY = "€";
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
 
-	/** The mimetype service. */
 	protected MimetypeService mimetypeService;
 
-	/** The repository helper. */
 	protected Repository repositoryHelper;
 
-	/** The repo service. */
+	protected NodeService nodeService;
+
 	protected RepoService repoService;
 
-	/** The file folder service. */
 	protected FileFolderService fileFolderService;
 
-	/** The product dao. */
 	protected ProductDAO productDAO;
 
 	protected DictionaryDAO dictionaryDAO;
 
-	/** The product dictionary service. */
 	protected ProductDictionaryService productDictionaryService;
 
-	/** The entity System service. */
 	protected EntitySystemService entitySystemService;
 
 	private InitVisitor initRepoVisitor;
-	
+
 	private HierarchyService hierarchyService;
+
+	protected RepoBaseTestCase repoBaseTestCase;
 
 	/** The allergens. */
 	protected List<NodeRef> allergens = new ArrayList<NodeRef>();
@@ -160,29 +160,30 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		entitySystemService = (EntitySystemService) ctx.getBean("entitySystemService");
 		dictionaryDAO = (DictionaryDAO) ctx.getBean("dictionaryDAO");
 		hierarchyService = (HierarchyService) ctx.getBean("hierarchyService");
+		nodeService = (NodeService) ctx.getBean("nodeService");
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				
+
 				// Delete initialyzed repo
 				deleteSystemFolder();
 				// Init repo for test
 				initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
-				
-				Assert.assertEquals(3,entitySystemService.getSystemEntities().size());
-				
+
+				Assert.assertEquals(3, entitySystemService.getSystemEntities().size());
+
 				initConstraints();
-				
+
 				return null;
 
 			}
 		}, false, true);
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-											
+
 				dictionaryDAO.reset();
-				
+
 				initCharacteristics();
 				initHierarchyLists();
 				// reset dictionary to reload constraints on list_values
@@ -192,6 +193,9 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 			}
 		}, false, true);
 
+		repoBaseTestCase = this;
+		
+		testFolderNodeRef = createTestFolder();
 	}
 
 	/*
@@ -245,47 +249,47 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		}
 
 	}
-	
-	private void initConstraints(){
-		
+
+	private void initConstraints() {
+
 		NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-		
+
 		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_LISTS);
 
-		//nutGroups
+		// nutGroups
 		NodeRef nutGroupsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_NUT_GROUPS);
-		String []nutGroups = {"Groupe 1", "Groupe 2", "Autre"};
+		String[] nutGroups = { "Groupe 1", "Groupe 2", "Autre" };
 		for (String nutGroup : nutGroups) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, nutGroup);
 			nodeService.createNode(nutGroupsFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);			
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
-		//nutTypes
+		// nutTypes
 		NodeRef nutTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_NUT_TYPES);
-		String []nutTypes = {"Nutriment", "Vitamine", "Minéraux", "Valeur énergétique"};
+		String[] nutTypes = { "Nutriment", "Vitamine", "Minéraux", "Valeur énergétique" };
 		for (String nutType : nutTypes) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, nutType);
 			nodeService.createNode(nutTypesFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);			
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
-		//packagingLevels
+		// packagingLevels
 		NodeRef packagingLevelsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_PACKAGING_LEVELS);
-		String []packagingLevels = {"Primaire", "Secondaire", "Tertiaire"};
+		String[] packagingLevels = { "Primaire", "Secondaire", "Tertiaire" };
 		for (String packagingLevel : packagingLevels) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, packagingLevel);
 			nodeService.createNode(packagingLevelsFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);			
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
-		//allergenTypes
+		// allergenTypes
 		NodeRef allergenTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_ALLERGEN_TYPES);
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, AllergenType.Major.toString());
 		nodeService.createNode(allergenTypesFolder, ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
-		
+
 	}
 
 	/**
@@ -293,8 +297,8 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	 */
 	private void initCharacteristics() {
 
-		NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));		
-		
+		NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+
 		NodeRef charactsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_CHARACTS);
 
 		// allergens
@@ -387,6 +391,18 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 				organos.add(fileInfo.getNodeRef());
 			}
 		}
+	}
+
+	/*
+	 * Create a test folder
+	 */
+	protected NodeRef createTestFolder() {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+				return BeCPGTestHelper.createTestFolder(repoBaseTestCase);
+			}
+		}, false, true);
 	}
 
 	/**
@@ -486,11 +502,11 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		// RawMaterial - Sea food
 		HIERARCHY1_SEA_FOOD_REF = hierarchyService.createHierarchy1(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
 		HIERARCHY2_FISH_REF = hierarchyService.createHierarchy2(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
-		HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy2(rawMaterialHierarchyNodeRef,HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
-		
+		HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy2(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
+
 		// FinishedProduct - Frozen
 		HIERARCHY1_FROZEN_REF = hierarchyService.createHierarchy1(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN);
 		HIERARCHY2_PIZZA_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
-		HIERARCHY2_QUICHE_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);			
+		HIERARCHY2_QUICHE_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);
 	}
 }

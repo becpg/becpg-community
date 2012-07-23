@@ -321,8 +321,11 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		if (sourceListContainerNodeRef != null) {
 			if (targetListContainerNodeRef != null) {
-
 				nodeService.deleteNode(targetListContainerNodeRef);
+			}
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("Move :"+nodeService.getPath(sourceListContainerNodeRef)+" to "+nodeService.getPath(targetNodeRef));
 			}
 			
 			nodeService.moveNode(sourceListContainerNodeRef, targetNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS);
