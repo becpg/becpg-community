@@ -6,7 +6,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.stereotype.Service;
 
-@Service
+
 public interface EntityTplService {
 
 	/**

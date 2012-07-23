@@ -6,9 +6,11 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.helper.AssociationService;
 
+@Service
 public class AssociationServiceImpl implements AssociationService {
 	
 	private NodeService nodeService;
@@ -39,7 +41,9 @@ public class AssociationServiceImpl implements AssociationService {
 		//add nodes that are not in db
 		if(assocNodeRefs != null){
 			for(NodeRef n : assocNodeRefs){
-				nodeService.createAssociation(nodeRef, n, qName);
+				if(nodeService.exists(n)){
+					nodeService.createAssociation(nodeRef, n, qName);
+				}
 			}
 		}		
 	}

@@ -19,6 +19,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -35,6 +36,7 @@ import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
+@Service
 public class EntityReportServiceImpl implements EntityReportService{
 
 	

@@ -35,6 +35,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.BeCPGModel;
@@ -52,6 +53,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  *
  * @author querephi
  */
+@Service
 public class ImportServiceImpl implements ImportService {
 	
 		

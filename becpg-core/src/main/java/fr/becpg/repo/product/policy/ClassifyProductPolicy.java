@@ -2,44 +2,36 @@ package fr.becpg.repo.product.policy;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.PropertyCheck;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.SiteHelper;
+import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.ProductService;
 
 @Service
-public class ProductPolicies implements NodeServicePolicies.OnUpdatePropertiesPolicy {
+public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
 
-	private static Log logger = LogFactory.getLog(ProductPolicies.class);
+	private static Log logger = LogFactory.getLog(ClassifyProductPolicy.class);
 
-	private PolicyComponent policyComponent;
 	private ProductService productService;
-	private NodeService nodeService;
 	private NamespaceService namespaceService;
 	private Repository repositoryHelper;
 
-	public void setPolicyComponent(PolicyComponent policyComponent) {
-		this.policyComponent = policyComponent;
-	}
 
 	public void setProductService(ProductService productService) {
 		this.productService = productService;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
 	}
 
 	public void setNamespaceService(NamespaceService namespaceService) {
@@ -50,8 +42,13 @@ public class ProductPolicies implements NodeServicePolicies.OnUpdatePropertiesPo
 		this.repositoryHelper = repositoryHelper;
 	}
 
-	public void init() {
+	public void doInit() {
 
+		PropertyCheck.mandatory(this, "productService", productService);
+		PropertyCheck.mandatory(this, "namespaceService", namespaceService);
+		PropertyCheck.mandatory(this, "repositoryHelper", repositoryHelper);
+		
+		
 		logger.debug("Init ProductPolicies...");
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_PRODUCT,
@@ -84,13 +81,22 @@ public class ProductPolicies implements NodeServicePolicies.OnUpdatePropertiesPo
 		}
 
 		if (classify) {
-
-			String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
-			if (!SiteHelper.isSitePath(path)) {
-				productService.classifyProduct(repositoryHelper.getCompanyHome(), nodeRef);
-			}
+			queueNode(nodeRef);
 		}
 
+	}
+	
+	
+	@Override
+	protected void doBeforeCommit(Set<NodeRef> pendingNodes) {
+		for (NodeRef nodeRef : pendingNodes) {
+			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {
+				String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
+				if (!SiteHelper.isSitePath(path)) {
+					productService.classifyProduct(repositoryHelper.getCompanyHome(), nodeRef);
+				}
+			}
+		}
 	}
 
 }

@@ -78,8 +78,6 @@
 	<bean id="EntityReportPolicy" class="fr.becpg.repo.entity.policy.EntityReportPolicy" parent="abstractBeCPGPolicy">
 		<property name="transactionService" ref="transactionService"/>
 		<property name="threadExecuter" ref="defaultAsyncThreadPool" />
-		<property name="nodeService" ref="nodeService" />		
-		<property name="lockService" ref="lockService" />
 		<property name="entityReportService" ref="entityReportService" />
 	</bean>		
    

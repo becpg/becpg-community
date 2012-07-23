@@ -23,6 +23,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Repository;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
@@ -65,6 +66,7 @@ import fr.becpg.repo.product.data.productList.RequirementType;
  * 
  * @author querephi
  */
+@Repository
 public class ProductDAOImpl implements ProductDAO {
 
 	public static final String KEY_COST_DETAILS = "%s-%s";

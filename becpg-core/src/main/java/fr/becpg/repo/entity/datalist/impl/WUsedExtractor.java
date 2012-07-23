@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
@@ -20,6 +21,7 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
  * @author matthieu
  *
  */
+@Service
 public class WUsedExtractor extends MultiLevelExtractor {
 	
 	

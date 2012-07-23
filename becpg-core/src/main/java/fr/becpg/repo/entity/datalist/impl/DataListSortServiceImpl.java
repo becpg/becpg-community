@@ -11,6 +11,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -24,6 +25,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * @author matthieu, philippe
  * 
  */
+@Service
 public class DataListSortServiceImpl implements DataListSortService {
 
 	private static Log logger = LogFactory.getLog(DataListSortServiceImpl.class);

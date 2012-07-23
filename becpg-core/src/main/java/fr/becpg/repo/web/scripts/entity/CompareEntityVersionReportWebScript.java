@@ -22,6 +22,7 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.comparison.CompareEntityReportService;
@@ -32,6 +33,7 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  *
  * @author querephi
  */
+@Service
 public class CompareEntityVersionReportWebScript extends AbstractWebScript  {
 	
 	private static final String PARAM_STORE_TYPE = "store_type";	

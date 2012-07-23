@@ -14,6 +14,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -24,6 +25,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.charact.AllergenType;
 import fr.becpg.repo.search.BeCPGSearchService;
 
+@Service
 public class EntityTplServiceImpl implements EntityTplService {
 
 	private static final String QUERY_ENTITY_TEMPLATE = " +TYPE:\"bcpg:entity\" +@bcpg\\:entityTplClassName:\"%s\" +@bcpg\\:entityTplEnabled:true";

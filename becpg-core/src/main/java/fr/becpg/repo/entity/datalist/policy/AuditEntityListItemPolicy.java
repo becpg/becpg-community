@@ -57,7 +57,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 	 @Override
 	protected void doBeforeCommit(Set<NodeRef> pendingNodes) {
 		for (NodeRef listNodeRef : pendingNodes) {
-			if (nodeService.exists(listNodeRef)) {
+			if (nodeService.exists(listNodeRef) && !isVersionNode(listNodeRef)) {
 				try {
 					policyBehaviourFilter.disableBehaviour(listNodeRef, ContentModel.ASPECT_AUDITABLE);
 					nodeService.setProperty(listNodeRef, ContentModel.PROP_MODIFIED, new Date());

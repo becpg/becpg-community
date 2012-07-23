@@ -40,6 +40,7 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
@@ -57,6 +58,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * @author querephi
  * 
  */
+@Service
 public class EntityServiceImpl implements EntityService {
 
 	/** The Constant QUERY_PRODUCTLIST_ITEMS_OUT_OF_DATE. */

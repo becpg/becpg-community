@@ -1,10 +1,13 @@
 package fr.becpg.repo.entity.datalist.impl;
 
+import org.springframework.stereotype.Service;
+
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 
+@Service
 public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 
 

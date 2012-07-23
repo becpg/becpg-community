@@ -21,6 +21,7 @@ import org.springframework.extensions.webscripts.DeclarativeWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
+import org.springframework.stereotype.Service;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -28,6 +29,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
  *
  * @author querephi
  */
+@Service
 public class FormCheckInWebScript extends DeclarativeWebScript {
 
 	// request parameter names
