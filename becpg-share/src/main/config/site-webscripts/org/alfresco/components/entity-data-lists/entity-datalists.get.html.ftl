@@ -3,13 +3,7 @@
    new beCPG.component.EntityDataLists("${id}").setOptions(
    {
       entityNodeRef: "${page.url.args.nodeRef!""}",
-      listId: "${(page.url.args.list!"")?js_string}",
-      listTypes: [<#list listTypes as type>
-      {
-         name: "${type.name?js_string}",
-         title: "${type.title?js_string}",
-         description: "${type.description?js_string}"
-      }<#if type_has_next>,</#if></#list>]
+      listId: "${(page.url.args.list!"")?js_string}"
    }).setMessages(${messages});
 //]]></script>
 <div id="${id}-body" class="datalists">
