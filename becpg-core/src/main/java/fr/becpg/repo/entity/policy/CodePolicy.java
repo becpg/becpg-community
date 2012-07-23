@@ -80,7 +80,7 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 	}
 
 	@Override
-	protected void doBeforeCommit(Set<NodeRef> pendingNodes) {
+	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
 		for (NodeRef nodeRef : pendingNodes) {
 			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {

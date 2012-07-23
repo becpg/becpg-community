@@ -111,7 +111,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		logger.debug("createEntityVersion: " + origNodeRef);
 
 		final NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
-	
+
 		NodeRef versionNodeRef = null;
 
 		// Rights are checked by copyService during recursiveCopy
@@ -120,7 +120,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			public NodeRef doWork() throws Exception {
 			    // Non recursive copy
 				NodeRef nodeRef =  copyService.copy(origNodeRef, versionHistoryRef, ContentModel.ASSOC_CONTAINS,
-							ContentModel.ASSOC_CHILDREN);
+							ContentModel.ASSOC_CHILDREN,false);
 				//Move origNodeRef DataList to version
 				entityListDAO.moveDataLists(origNodeRef, nodeRef);
 				//Move workingCopyNodeRef DataList to origNodeRef
@@ -137,13 +137,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			versionProperties.put(ContentModel.PROP_NAME, name);
 			nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionProperties);
 
-			updateEffectivity(origNodeRef, versionNodeRef);
-		
-		
+			updateVersionEffectivity(origNodeRef, versionNodeRef);
 		
 	}
 
-	private void updateEffectivity(NodeRef entityNodeRef, NodeRef versionNodeRef) {
+	private void updateVersionEffectivity(NodeRef entityNodeRef, NodeRef versionNodeRef) {
 		Date newEffectivity = new Date();
 		Date oldEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
 		if (oldEffectivity == null) {
@@ -151,7 +149,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 		nodeService.setProperty(versionNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, oldEffectivity);
 		nodeService.setProperty(versionNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
-		nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, newEffectivity);
 	}
 
 	/**
