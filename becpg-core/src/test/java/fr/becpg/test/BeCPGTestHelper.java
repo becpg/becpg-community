@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -21,6 +22,23 @@ import fr.becpg.repo.product.data.productList.DeclarationType;
 public class BeCPGTestHelper {
 
 	private static Log logger = LogFactory.getLog(BeCPGTestHelper.class);
+	
+	/** The PAT h_ testfolder. */
+	private static String PATH_TESTFOLDER = "TestFolder";
+	
+	
+	
+	public static NodeRef createTestFolder(RepoBaseTestCase repoBaseTestCase){
+		
+		NodeRef folderNodeRef = repoBaseTestCase.nodeService.getChildByName(repoBaseTestCase.repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+		if(folderNodeRef != null)
+		{
+			repoBaseTestCase.fileFolderService.delete(folderNodeRef);    		
+		}			
+		return repoBaseTestCase.fileFolderService.create(repoBaseTestCase.repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+		
+	}
+	
 	
 	public static NodeRef createMultiLevelProduct(NodeRef testFolder, RepoBaseTestCase repoBaseTestCase){
 

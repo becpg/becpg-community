@@ -146,7 +146,7 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 
 
 	@Override
-	protected void doAfterCommit(Set<NodeRef> pendingNodes) {
+	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
 			for (NodeRef nodeRef : pendingNodes) {					
 				if(IsReportable(nodeRef)){
 					Runnable runnable = new ProductReportGenerator(nodeRef, AuthenticationUtil.getAdminUserName());

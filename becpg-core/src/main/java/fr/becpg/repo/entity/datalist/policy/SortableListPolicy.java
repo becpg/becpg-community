@@ -90,7 +90,6 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 		}
 		
 		if(hasChanged){		
-			
 			dataListSortService.computeDepthAndSort(nodeRef);
 		}		
 	}

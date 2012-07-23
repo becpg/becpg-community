@@ -88,7 +88,7 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 	
 	
 	@Override
-	protected void doBeforeCommit(Set<NodeRef> pendingNodes) {
+	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef nodeRef : pendingNodes) {
 			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {
 				String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
