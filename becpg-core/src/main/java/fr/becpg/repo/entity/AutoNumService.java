@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
  *
  * @author querephi
  */
-@Service
 public interface AutoNumService {
 
 	/**

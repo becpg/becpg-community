@@ -11,6 +11,7 @@ import org.alfresco.service.cmr.thumbnail.ThumbnailService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.RepoConsts;
@@ -26,6 +27,7 @@ import fr.becpg.repo.thumbnail.BeCPGThumbnailService;
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  * 
  */
+@Service
 public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 		BeCPGThumbnailService, ThumbnailService {
 

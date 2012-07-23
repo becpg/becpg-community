@@ -7,11 +7,13 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 
+@Service
 public class SimpleExtractor extends AbstractDataListExtractor {
 
 

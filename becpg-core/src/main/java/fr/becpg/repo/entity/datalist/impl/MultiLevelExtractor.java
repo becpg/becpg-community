@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
@@ -17,6 +18,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
+@Service
 public class MultiLevelExtractor extends SimpleExtractor {
 
 	public static final String PROP_DEPTH = "depth";

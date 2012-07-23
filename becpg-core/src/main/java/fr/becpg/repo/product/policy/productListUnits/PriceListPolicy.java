@@ -3,15 +3,13 @@ package fr.becpg.repo.product.policy.productListUnits;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.repo.node.NodeServicePolicies;
-import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,31 +17,22 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 
 @Service
-public class PriceListPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy {
+public class PriceListPolicy  extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy {
 
 	private static int PREF_RANK = 1;
 	
 	private static Log logger = LogFactory.getLog(PriceListPolicy.class);
 	
-	private PolicyComponent policyComponent;		
-		
-	private NodeService nodeService;
 	
 	private EntityListDAO entityListDAO;
 	
 	private ProductDAO productDAO;
-	
-	public void setPolicyComponent(PolicyComponent policyComponent) {
-		this.policyComponent = policyComponent;
-	}
 
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -53,29 +42,26 @@ public class PriceListPolicy implements NodeServicePolicies.OnUpdatePropertiesPo
 		this.productDAO = productDAO;
 	}
 
-	public void init(){
+	public void doInit(){
 		logger.debug("Init productListUnits.PriceListPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, 
-				BeCPGModel.TYPE_PRICELIST, new JavaBehaviour(this, "onCreateNode", NotificationFrequency.TRANSACTION_COMMIT));
+				BeCPGModel.TYPE_PRICELIST, new JavaBehaviour(this, "onCreateNode"));
 		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, 
-				BeCPGModel.TYPE_PRICELIST, new JavaBehaviour(this, "onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));
+				BeCPGModel.TYPE_PRICELIST, new JavaBehaviour(this, "onUpdateProperties"));
+		
+		super.disableOnCopyBehaviour(BeCPGModel.TYPE_PRICELIST);
 	}		
 
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
-		
 		NodeRef priceListItemNodeRef = childAssocRef.getChildRef();
 		
-		Integer prefRank = (Integer)nodeService.getProperty(priceListItemNodeRef, BeCPGModel.PROP_PRICELIST_PREF_RANK);
+		queueNode(priceListItemNodeRef);
 		
-		logger.debug("onCreateNode, prefRank: " + prefRank);
-		
-		if(prefRank != null && prefRank.equals(PREF_RANK)){
-			updateCostList(priceListItemNodeRef);
-		}
 	}
 
+	
 	@Override
 	public void onUpdateProperties(NodeRef priceListItemNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		
@@ -98,9 +84,27 @@ public class PriceListPolicy implements NodeServicePolicies.OnUpdatePropertiesPo
 		}
 		
 		if(doUpdate){
-			updateCostList(priceListItemNodeRef);
+			queueNode(priceListItemNodeRef);
 		}
 	}
+	
+	
+
+	@Override
+	protected void doBeforeCommit(Set<NodeRef> pendingNodes) {
+		for (NodeRef nodeRef : pendingNodes) {
+			if (nodeService.exists(nodeRef)  ) {
+				Integer prefRank = (Integer)nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRICELIST_PREF_RANK);
+				
+				logger.debug("onCreateNode, prefRank: " + prefRank);
+				
+				if(prefRank != null && prefRank.equals(PREF_RANK)){
+					updateCostList(nodeRef);
+				}
+			}
+		}
+	}
+	
 	
 	private void updateCostList(NodeRef priceListItemNodeRef){
 		

@@ -19,6 +19,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Repository;
 
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.BeCPGDao;
@@ -32,6 +33,7 @@ import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  *
  */
+@Repository
 public class ACLGroupDAOImpl implements BeCPGDao<ACLGroupData> {
 
 	private static Log logger = LogFactory.getLog(ACLGroupDAOImpl.class);

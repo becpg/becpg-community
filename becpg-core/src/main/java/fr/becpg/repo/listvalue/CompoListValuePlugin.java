@@ -17,12 +17,14 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
+@Service
 public class CompoListValuePlugin extends EntityListValuePlugin {
 
 	private static Log logger = LogFactory.getLog(CompoListValuePlugin.class);

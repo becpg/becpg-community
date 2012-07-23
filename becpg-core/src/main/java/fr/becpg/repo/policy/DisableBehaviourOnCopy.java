@@ -32,8 +32,10 @@ CopyServicePolicies.OnCopyCompletePolicy {
 
 		@Override
 		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {
-			NodeRef targetNodeRef = copyDetails.getTargetNodeRef();
-			policyBehaviourFilter.disableBehaviour(targetNodeRef, type);
+			if(!BeCPGPolicyHelper.isCopyBehaviourEnableForTransaction()){
+				NodeRef targetNodeRef = copyDetails.getTargetNodeRef();
+				policyBehaviourFilter.disableBehaviour(targetNodeRef, type);
+			}
 
 			// Always copy
 			return true;
@@ -44,9 +46,9 @@ CopyServicePolicies.OnCopyCompletePolicy {
 	 * Re-enable aspect behaviour for the source node
 	 */
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
-
-		policyBehaviourFilter.enableBehaviour(destinationRef, type);
-
+		if(!BeCPGPolicyHelper.isCopyBehaviourEnableForTransaction()){
+			policyBehaviourFilter.enableBehaviour(destinationRef, type);
+		}
 	}
 
 	

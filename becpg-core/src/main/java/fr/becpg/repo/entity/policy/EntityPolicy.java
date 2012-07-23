@@ -32,6 +32,9 @@ public class EntityPolicy extends AbstractBeCPGPolicy implements NodeServicePoli
 
 	private EntityService entityService;
 
+	
+	
+	
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
@@ -62,9 +65,9 @@ public class EntityPolicy extends AbstractBeCPGPolicy implements NodeServicePoli
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
 		NodeRef entityNodeRef = childAssocRef.getChildRef();
-		//Todo 
-
-		entityService.deleteEntity(entityNodeRef);
+		if(nodeService.exists(entityNodeRef)){
+			entityService.deleteEntity(entityNodeRef);
+		}
 
 	}
 	
@@ -72,7 +75,7 @@ public class EntityPolicy extends AbstractBeCPGPolicy implements NodeServicePoli
 	protected void doBeforeCommit(Set<NodeRef> pendingNodes) {
 
 		for (NodeRef entityNodeRef : pendingNodes) {
-			if(nodeService.exists(entityNodeRef)){
+			if(isNotLocked(entityNodeRef)){
 				entityService.initializeEntity(entityNodeRef);
 				entityService.initializeEntityFolder(entityNodeRef);
 			}

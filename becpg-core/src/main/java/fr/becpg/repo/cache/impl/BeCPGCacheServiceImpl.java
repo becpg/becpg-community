@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -22,6 +23,7 @@ import fr.becpg.repo.cache.BeCPGCacheService;
  * 
  * @author matthieu
  */
+@Service
 public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, BeCPGCacheService {
 
 	private static Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);

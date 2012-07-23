@@ -3,37 +3,22 @@
  */
 package fr.becpg.repo.entity.policy;
 
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.alfresco.repo.copy.CopyBehaviourCallback;
-import org.alfresco.repo.copy.CopyDetails;
-import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
-import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
-import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.repo.transaction.TransactionListener;
-import org.alfresco.repo.transaction.TransactionListenerAdapter;
-import org.alfresco.service.cmr.lock.LockService;
-import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -49,8 +34,6 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 		NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnDeleteAssociationPolicy{
 
-	/** The Constant KEY_ENTITYREPORT_TO_GENERATE. */
-	private static final String KEY_ENTITYREPORT_TO_GENERATE = "entityReportToGenerate";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityReportPolicy.class);
@@ -61,16 +44,7 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 	
 	/** The thread pool executor. */
 	private ThreadPoolExecutor threadExecuter;
-	
-	/** The transaction listener. */
-	private TransactionListener transactionListener;	
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The Lock Service **/
-	private LockService lockService;
-	
+
 	/** The entityReportService **/
 	private EntityReportService entityReportService;
 	
@@ -91,24 +65,6 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 		this.threadExecuter = threadExecuter;
 	}
 
-	/**
-	 * 
-	 * @param lockService
-	 */
-	public void setLockService(LockService lockService) {
-		this.lockService = lockService;
-	}
-	
-	
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}	
-
 	
 	/**
 	 * @param entityReportService the entityReportService to set
@@ -126,22 +82,20 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 		policyComponent.bindClassBehaviour(
 				NodeServicePolicies.OnUpdateNodePolicy.QNAME,
 				ReportModel.ASPECT_REPORT_ENTITY, new JavaBehaviour(this,
-						"onUpdateNode", NotificationFrequency.TRANSACTION_COMMIT));
+						"onUpdateNode"));
 		
 		policyComponent.bindAssociationBehaviour(
 				NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
 				ReportModel.ASPECT_REPORT_ENTITY, new JavaBehaviour(this,
-						"onCreateAssociation", NotificationFrequency.TRANSACTION_COMMIT));
+						"onCreateAssociation"));
 		
 		policyComponent.bindAssociationBehaviour(
 				NodeServicePolicies.OnDeleteAssociationPolicy.QNAME,
 				ReportModel.ASPECT_REPORT_ENTITY, new JavaBehaviour(this,
-						"onDeleteAssociation", NotificationFrequency.TRANSACTION_COMMIT));
+						"onDeleteAssociation"));
 		
 		disableOnCopyBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 		
-		// transaction listeners
-		this.transactionListener = new EntityReportServiceTransactionListener();
 	}
 
 	/**
@@ -166,58 +120,11 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 	}
 
 	private void onUpdateProduct(NodeRef entityNodeRef){
+
+		queueNode(entityNodeRef);
 	
-		// The policy is disabled but this is an after commit treatment, so the policy is enabled...  
-		if(!IsReportable(entityNodeRef)){
-			return;
-		}
-		
-		// Bind the listener to the transaction
-		AlfrescoTransactionSupport.bindListener(transactionListener);
-		// Get the set of nodes read
-		@SuppressWarnings("unchecked")
-		Set<NodeRef> updatedNodeRefs = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(KEY_ENTITYREPORT_TO_GENERATE);
-		if (updatedNodeRefs == null) {
-			updatedNodeRefs = new HashSet<NodeRef>(5);
-			AlfrescoTransactionSupport.bindResource(KEY_ENTITYREPORT_TO_GENERATE, updatedNodeRefs);
-		}
-		updatedNodeRefs.add(entityNodeRef);
 	}
 
-	
-	/*
-	 * Disable report generation for copy
-	 */
-	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
-		return new EntityCopyBehaviourCallback(policyBehaviourFilter);
-	}
-
-	private class EntityCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
-		private final BehaviourFilter behaviourFilter;
-
-		private EntityCopyBehaviourCallback(BehaviourFilter behaviourFilter) {
-			this.behaviourFilter = behaviourFilter;
-		}
-
-		@Override
-		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {
-			NodeRef targetNodeRef = copyDetails.getTargetNodeRef();
-			behaviourFilter.disableBehaviour(targetNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-
-			// Always copy
-			return true;
-		}
-
-	}
-
-	/*
-	 * Re-enable aspect behaviour for the source node
-	 */
-	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
-
-		policyBehaviourFilter.enableBehaviour(destinationRef, ReportModel.ASPECT_REPORT_ENTITY);
-
-	}
 	
 	
     /**
@@ -225,53 +132,31 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 	 * @param entityNodeRef
 	 * @return
 	 */
-	// TODO la desactivation de la copie doit suffire
-	@Deprecated
 	public boolean IsReportable(NodeRef entityNodeRef) {
 		
     	if(nodeService.exists(entityNodeRef) ){
     		
     		// do not generate report for product version
-    		if(!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+    		if(!isVersionNode(entityNodeRef)){
     			return true;
     		}
     	}
 		return false;			
 	}
 
-	/**
-	 * The listener interface for receiving productReportServiceTransaction events.
-	 * The class that is interested in processing a productReportServiceTransaction
-	 * event implements this interface, and the object created
-	 * with that class is registered with a component using the
-	 * component's <code>addProductReportServiceTransactionListener<code> method. When
-	 * the productReportServiceTransaction event occurs, that object's appropriate
-	 * method is invoked.
-	 *
-	 * @see ProductReportServiceTransactionEvent
-	 */
-	private class EntityReportServiceTransactionListener extends TransactionListenerAdapter {
-		
-		/* (non-Javadoc)
-		 * @see org.alfresco.repo.transaction.TransactionListenerAdapter#afterCommit()
-		 */
-		@Override
-		public void afterCommit() {
-			// Get all the nodes that need their read counts incremented
-			@SuppressWarnings("unchecked")
-			Set<NodeRef> readNodeRefs = (Set<NodeRef>) AlfrescoTransactionSupport
-					.getResource(KEY_ENTITYREPORT_TO_GENERATE);
-			if (readNodeRefs != null) {
-				for (NodeRef nodeRef : readNodeRefs) {					
-					
+
+	@Override
+	protected void doAfterCommit(Set<NodeRef> pendingNodes) {
+			for (NodeRef nodeRef : pendingNodes) {					
+				if(IsReportable(nodeRef)){
 					Runnable runnable = new ProductReportGenerator(nodeRef, AuthenticationUtil.getAdminUserName());
 					threadExecuter.execute(runnable);
-					
 				}
+				
 			}
-		}
-	}	
-
+	}
+	
+	
 
 	/**
 	 * The Class ProductReportGenerator.
@@ -313,7 +198,7 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 							public Object execute()
                             {                                   
 
-                            	if(nodeService.exists(entityNodeRef) && lockService.getLockStatus(entityNodeRef) == LockStatus.NO_LOCK){
+                            	if(isNotLocked(entityNodeRef)){
                             		
                             		entityReportService.generateReport(entityNodeRef);
                             	}

@@ -12,6 +12,7 @@ import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.formulation.FormulateException;
@@ -22,6 +23,7 @@ import fr.becpg.repo.product.formulation.FormulateException;
  *
  * @author querephi
  */
+@Service
 public class FormulateWebScript extends AbstractWebScript
 {	
 	

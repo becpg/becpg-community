@@ -19,13 +19,10 @@ public interface EntityVersionService {
 	public static final String VERSION_DELIMITER = ".";
 	
 	/**
-	 * Creates the entity version with datalists
+	 * Creates the entity version with datalists and checkin
 	 *
-	 * @param entityNodeRef the entity node ref
-	 * @param properties the properties
-	 * @return the node ref
 	 */
-	public NodeRef createEntityVersion(NodeRef entityNodeRef, Version version);
+	public void createVersionAndCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
 	
 	/**
 	 * Get the entity version with datalists
@@ -45,4 +42,6 @@ public interface EntityVersionService {
 	 * @return
 	 */
 	public NodeRef getEntitiesHistoryFolder();
+
+	
 }
