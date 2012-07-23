@@ -1,6 +1,5 @@
 <#escape x as jsonUtils.encodeJSONString(x)>
 {
-  
    <#if aclType??>"aclType":"${aclType}",</#if>
    <#if container??>
    "container": "${container.nodeRef?string}",
@@ -9,11 +8,19 @@
    {
       "create": ${hasWritePermission?string}
    },
+   <#if listTypes??>
+   "listTypes" : [<#list listTypes as classdef>
+      {
+       <#if classdef.name??>"name": "${classdef.name.toPrefixString()}",</#if>
+      "title": "${classdef.title!""}",
+      "description": "${classdef.description!""}"
+     }<#if classdef_has_next>,</#if></#list>],
+    </#if>
    "datalists":
    [
    <#list lists as list>
     {
-       "entityName" : "${entity.name}",
+      "entityName" : "${entity.name}",
 	   "name": "${list.name}",
 	   "title": "${list.properties.title!list.name}",
 	   "description": "${list.properties.description!""}",

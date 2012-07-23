@@ -4,14 +4,19 @@
 package fr.becpg.repo.web.scripts.entity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
@@ -76,6 +81,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 	/** The Constant MODEL_WUSED_LIST. */
 	private static final String MODEL_WUSED_LIST = "wUsedList";
+	
+	private static final String MODEL_PROP_KEY_LIST_TYPES = "listTypes";
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityListsWebScript.class);
@@ -95,13 +102,10 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private NamespaceService namespaceService;
 
 	private TransactionService transactionService;
+	
+	private DictionaryService dictionaryService;
 
-	/**
-	 * Sets the node service.
-	 * 
-	 * @param nodeService
-	 *            the new node service
-	 */
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -128,6 +132,12 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
+	}
+
+	
+	
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
 	}
 
 	/**
@@ -190,6 +200,22 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				listContainerNodeRef = entityListDAO.createListContainer(nodeRef);
 			}
 			if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
+	
+				// Add types that can be added
+
+		        Set<ClassDefinition> classDefinitions = new HashSet<ClassDefinition>();
+				Collection <QName> qname = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
+				
+		        for(QName qnameObj: qname)
+			    {	
+		        	if(!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(qnameObj) && !BeCPGModel.TYPE_PRODUCTLIST_ITEM.equals(qnameObj)){
+		        		classDefinitions.add(dictionaryService.getClass(qnameObj));
+		        	}
+			    }
+		    	
+		    	model.put(MODEL_PROP_KEY_LIST_TYPES, classDefinitions);
+		    	
+		    	
 				hasWritePermission = true;
 				skipFilter = true;
 			}
