@@ -7,7 +7,7 @@
       </Level>
       <Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String" uniqueMembers="false" levelType="TimeQuarters" hideMemberIf="Never">
       </Level>
-      <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+      <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
       </Level>
       <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
       </Level>
@@ -19,7 +19,7 @@
       </Table>
       <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
       </Level>
-      <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+      <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
       </Level>
     </Hierarchy>
     <Hierarchy name="Date par semaine" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par semaine">
@@ -42,7 +42,7 @@
         </Level>
         <Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String" uniqueMembers="false" levelType="TimeQuarters" hideMemberIf="Never">
         </Level>
-        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
         </Level>
         <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
         </Level>
@@ -54,7 +54,7 @@
         </Table>
         <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
         </Level>
-        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
         </Level>
       </Hierarchy>
       <Hierarchy name="Date par semaine" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par semaine">
@@ -74,7 +74,7 @@
         </Level>
         <Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String" uniqueMembers="false" levelType="TimeQuarters" hideMemberIf="Never">
         </Level>
-        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
         </Level>
         <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
         </Level>
@@ -86,7 +86,7 @@
         </Table>
         <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
         </Level>
-        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
         </Level>
       </Hierarchy>
       <Hierarchy name="Date par semaine" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par semaine">
@@ -162,7 +162,7 @@
         </Level>
         <Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String" uniqueMembers="false" levelType="TimeQuarters" hideMemberIf="Never">
         </Level>
-        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
         </Level>
         <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
         </Level>
@@ -174,7 +174,7 @@
         </Table>
         <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
         </Level>
-        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
         </Level>
       </Hierarchy>
       <Hierarchy name="Date par semaine" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par semaine">
@@ -194,7 +194,7 @@
         </Level>
         <Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String" uniqueMembers="false" levelType="TimeQuarters" hideMemberIf="Never">
         </Level>
-        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
         </Level>
         <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
         </Level>
@@ -206,7 +206,7 @@
         </Table>
         <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
         </Level>
-        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
         </Level>
       </Hierarchy>
       <Hierarchy name="Date par semaine" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par semaine">
@@ -226,7 +226,7 @@
         </Level>
         <Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String" uniqueMembers="false" levelType="TimeQuarters" hideMemberIf="Never">
         </Level>
-        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
         </Level>
         <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
         </Level>
@@ -238,7 +238,7 @@
         </Table>
         <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
         </Level>
-        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
         </Level>
       </Hierarchy>
       <Hierarchy name="Date par semaine" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par semaine">
@@ -258,7 +258,7 @@
         </Level>
         <Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String" uniqueMembers="false" levelType="TimeQuarters" hideMemberIf="Never">
         </Level>
-        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
         </Level>
         <Level name="Semaine" column="Week" nameColumn="NWeek" type="String" uniqueMembers="false" levelType="TimeWeeks" hideMemberIf="Never">
         </Level>
@@ -270,7 +270,7 @@
         </Table>
         <Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never">
         </Level>
-        <Level name="Mois" column="Month" nameColumn="NMonth3L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        <Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
         </Level>
       </Hierarchy>
       <Hierarchy name="Date par semaine" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="dimdate_id" caption="Date par semaine">
