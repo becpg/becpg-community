@@ -23,6 +23,18 @@
 }
 
 
+.datalist-toolbar .formulate span.first-child
+{
+   background: url(images/formulate-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .import span.first-child
+{
+   background: url(../images/publish-external-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
 .datalist-toolbar .onActionUp
 {
    background-image: url(../images/up-arrow-16.png);
