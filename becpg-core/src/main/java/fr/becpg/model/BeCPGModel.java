@@ -18,11 +18,11 @@ public interface BeCPGModel {
 
 	// Food Model URI
 	/** The Constant BECPG_URI. */
-	public static final String BECPG_URI = "http://www.bcpg.fr/model/becpg/1.0";
+	static final String BECPG_URI = "http://www.bcpg.fr/model/becpg/1.0";
 
 	// Food Model Prefix
 	/** The Constant BECPG_PREFIX. */
-	public static final String BECPG_PREFIX = "bcpg";
+	static final String BECPG_PREFIX = "bcpg";
 
 	//
 	// Product Model Definitions
@@ -407,20 +407,25 @@ public interface BeCPGModel {
 			"rclSources");
 	
 
-	public static final QName TYPE_DYNAMICCHARACTLIST = QName.createQName(BECPG_URI,
+	static final QName TYPE_DYNAMICCHARACTLIST = QName.createQName(BECPG_URI,
 			"dynamicCharactList");
 	
-	public static final QName PROP_DYNAMICCHARACT_TITLE = QName.createQName(BECPG_URI,
+	static final QName PROP_DYNAMICCHARACT_TITLE = QName.createQName(BECPG_URI,
 			"dynamicCharactTitle");
 	
-	public static final QName PROP_DYNAMICCHARACT_FORMULA = QName.createQName(BECPG_URI,
+	static final QName PROP_DYNAMICCHARACT_FORMULA = QName.createQName(BECPG_URI,
 			"dynamicCharactFormula");
 	
-	public static final QName PROP_DYNAMICCHARACT_VALUE = QName.createQName(BECPG_URI,
+	static final QName PROP_DYNAMICCHARACT_VALUE = QName.createQName(BECPG_URI,
 			"dynamicCharactValue");
 	
-	public static final QName PROP_DYNAMICCHARACT_GROUP_COLOR = QName.createQName(BECPG_URI,
+	static final QName PROP_DYNAMICCHARACT_GROUP_COLOR = QName.createQName(BECPG_URI,
 			"dynamicCharactGroupColor");
+	
+
+	static final QName PROP_DYNAMICCHARACT_VARIABLE = QName.createQName(BECPG_URI,
+			"dynamicCharactVar");
+
 	
 	// contactList
 	static final QName TYPE_CONTACTLIST = QName.createQName(BECPG_URI,
@@ -519,7 +524,7 @@ public interface BeCPGModel {
 	"entity");
 
 
-	public static final QName TYPE_SYSTEM_ENTITY = QName.createQName(BECPG_URI,
+	static final QName TYPE_SYSTEM_ENTITY = QName.createQName(BECPG_URI,
 			"systemEntity");
 	
 	// autoNum
@@ -540,7 +545,7 @@ public interface BeCPGModel {
 			BECPG_URI, "autoNumValue");
 	
 	/** The Constant PROP_AUTO_NUM_VALUE. */
-	public static final QName PROP_AUTO_NUM_PREFIX = QName.createQName(
+	static final QName PROP_AUTO_NUM_PREFIX = QName.createQName(
 			BECPG_URI, "autoNumPrefix");
 	
 	// entityTpl aspect
@@ -691,27 +696,27 @@ public interface BeCPGModel {
 	/**
 	 * Effectivity
 	 */
-	public static final QName PROP_START_EFFECTIVITY = QName.createQName(BECPG_URI, "startEffectivity");		
+	static final QName PROP_START_EFFECTIVITY = QName.createQName(BECPG_URI, "startEffectivity");		
 	
-	public static final QName PROP_END_EFFECTIVITY = QName.createQName(BECPG_URI, "endEffectivity");
+	static final QName PROP_END_EFFECTIVITY = QName.createQName(BECPG_URI, "endEffectivity");
 
 	
 	/**
 	 * Profitability
 	 */
-	public static final QName ASPECT_PROFITABILITY = QName.createQName(BECPG_URI, "profitabilityAspect");
+	static final QName ASPECT_PROFITABILITY = QName.createQName(BECPG_URI, "profitabilityAspect");
 	
-	public static final QName PROP_UNIT_PRICE = QName.createQName(BECPG_URI, "unitPrice");
+	static final QName PROP_UNIT_PRICE = QName.createQName(BECPG_URI, "unitPrice");
 	
-	public static final QName PROP_BREAK_EVEN = QName.createQName(BECPG_URI, "breakEven");
+	static final QName PROP_BREAK_EVEN = QName.createQName(BECPG_URI, "breakEven");
 	
-	public static final QName PROP_PROJECTED_QTY = QName.createQName(BECPG_URI, "projectedQty");	
+	static final QName PROP_PROJECTED_QTY = QName.createQName(BECPG_URI, "projectedQty");	
 
-	public static final QName PROP_PROFITABILITY = QName.createQName(BECPG_URI, "profitability");
+	static final QName PROP_PROFITABILITY = QName.createQName(BECPG_URI, "profitability");
 	
-	public static final QName PROP_UNIT_TOTAL_COST = QName.createQName(BECPG_URI, "unitTotalCost");
+	static final QName PROP_UNIT_TOTAL_COST = QName.createQName(BECPG_URI, "unitTotalCost");
 
-	public static final QName PROP_PRICE_CURRENCY =  QName.createQName(BECPG_URI, "priceCurrency");	
+	static final QName PROP_PRICE_CURRENCY =  QName.createQName(BECPG_URI, "priceCurrency");	
 	
 	/**
 	 * manufacturingAspect
