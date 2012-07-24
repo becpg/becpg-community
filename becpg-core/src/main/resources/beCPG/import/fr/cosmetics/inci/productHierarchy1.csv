@@ -1,30 +1,30 @@
-"PATH";"/System/ProductHierarchy/FinishedProduct_Hierarchy1"
-"TYPE";"bcpg:listValue"
-"COLUMNS";"cm:name"
-"VALUES";"Beauté et soins"
-"VALUES";"Bien-être"
-"VALUES";"Compléments alimentaires"
-"VALUES";"Hygiène"
-"VALUES";"Ligne et minceur"
-
-"PATH";"/System/ProductHierarchy/RawMaterial_Hierarchy1"
-"TYPE";"bcpg:listValue"
-"COLUMNS";"cm:name"
-"VALUES";"Ingrédients de base"
-"VALUES";"Huiles Essentielles"
-"VALUES";"Huiles/beurres végétaux"
-"VALUES";"Extraits de plantes"
-"VALUES";"Actifs cosmétiques"
-"VALUES";"Les plus"
-
-"PATH";"/System/ProductHierarchy/LocalSemiFinishedProduct_Hierarchy1"
-"TYPE";"bcpg:listValue"
-"COLUMNS";"cm:name"
-"VALUES";"Modes opératoires"
-
-"PATH";"/System/ProductHierarchy/SemiFinishedProduct_Hierarchy1"
-"TYPE";"bcpg:listValue"
-"COLUMNS";"cm:name"
-"VALUES";"Bases"
-"VALUES";"Préparation"
-"VALUES";"Savons"
+PATH;/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;bcpg:lkvValue
+VALUES;BeautÃ© et soins
+VALUES;Bien-Ãªtre
+VALUES;ComplÃ©ments alimentaires
+VALUES;HygiÃ¨ne
+VALUES;Ligne et minceur
+;
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;bcpg:lkvValue
+VALUES;IngrÃ©dients de base
+VALUES;Huiles Essentielles
+VALUES;Huiles/beurres vÃ©gÃ©taux
+VALUES;Extraits de plantes
+VALUES;Actifs cosmÃ©tiques
+VALUES;Les plus
+;
+PATH;/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;bcpg:lkvValue
+VALUES;Modes opÃ©ratoires
+;
+PATH;/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;bcpg:lkvValue
+VALUES;Bases
+VALUES;PrÃ©paration
+VALUES;Savons
