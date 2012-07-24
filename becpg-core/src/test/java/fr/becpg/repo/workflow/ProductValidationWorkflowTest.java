@@ -65,6 +65,8 @@ public class ProductValidationWorkflowTest extends RepoBaseTestCase {
 	
 	private NodeRef rawMaterial1NodeRef;
 	
+	private String workflowId = "";
+	
 
 	/*
 	 * (non-Javadoc)
@@ -164,62 +166,67 @@ public class ProductValidationWorkflowTest extends RepoBaseTestCase {
 		super.tearDown();
 
 	}
-	
-
 
 	public void testWorkFlow() {
 
-		
 		authenticationComponent.setSystemUserAsCurrentUser();
-		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-	 			public NodeRef execute() throws Throwable {
-	 				
-	 				createUsers();
-	 		        
-	 				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_PRODUCTFOLDER);			
-	 				if(folderNodeRef != null)
-	 				{
-	 					nodeService.deleteNode(folderNodeRef);    		
-	 				}			
-	 				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_PRODUCTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-	 				
-	 				RawMaterialData rawMaterial1 = new RawMaterialData();
-	 				rawMaterial1.setName("Raw material 1");
-	 				
-	 				rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, null);
-	 				
-	 				return null;
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
-	 			}},false,true); 		
+				createUsers();
 
-		String workflowId = "";
-		for (WorkflowDefinition def : workflowService.getAllDefinitions()) {
-			logger.debug(def.getId() + " " + def.getName());
-			if ("jbpm$bcpgwf:productValidationWF".equals(def.getName())) {
-				try {
-					for (WorkflowInstance instance : workflowService.getWorkflows(def.getId())) {
-						workflowService.deleteWorkflow(instance.getId());
+				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
+						ContentModel.ASSOC_CONTAINS, PATH_PRODUCTFOLDER);
+				if (folderNodeRef != null) {
+					nodeService.deleteNode(folderNodeRef);
+				}
+				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_PRODUCTFOLDER,
+						ContentModel.TYPE_FOLDER).getNodeRef();
+
+				RawMaterialData rawMaterial1 = new RawMaterialData();
+				rawMaterial1.setName("Raw material 1");
+
+				rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, null);
+
+				for (WorkflowDefinition def : workflowService.getAllDefinitions()) {
+					logger.debug(def.getId() + " " + def.getName());
+					if ("jbpm$bcpgwf:productValidationWF".equals(def.getName())) {
+						try {
+							for (WorkflowInstance instance : workflowService.getWorkflows(def.getId())) {
+								workflowService.deleteWorkflow(instance.getId());
+							}
+
+						} catch (Exception e) {
+							logger.error(e.getMessage());
+						}
+					}
+					if ("jbpm$bcpgwf:productValidationWF".equals(def.getName())) {
+						workflowId = def.getId();
+						break;
 					}
 
-				} catch (Exception e) {
-					logger.error(e.getMessage());
 				}
-			}
-			if ("jbpm$bcpgwf:productValidationWF".equals(def.getName())) {
-				workflowId = def.getId();
-				break;
-			}
 
-		}
-		
+				return null;
+
+			}
+		}, false, true);
+
 		authenticationComponent.setCurrentUser(USER_ONE);
-		
-		// validate 1
-		validateProduct(workflowId, rawMaterial1NodeRef);
-		
-		//validate 2
-		//validateProduct(workflowId, rawMaterial1NodeRef);
-		
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				// validate 1
+				validateProduct(workflowId, rawMaterial1NodeRef);
+
+				// validate 2
+				validateProduct(workflowId, rawMaterial1NodeRef);
+
+				return null;
+
+			}
+		}, false, true);
 	}
 
 	protected WorkflowTask getNextTaskForWorkflow(String workflowInstanceId) {

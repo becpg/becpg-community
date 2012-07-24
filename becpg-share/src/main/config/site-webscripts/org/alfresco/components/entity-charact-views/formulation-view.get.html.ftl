@@ -33,11 +33,11 @@
 <div id="yui-main">
 		  <@dataGridDashlet dashletId="compoList-${id}" />
 		<div class="yui-g formulation">
-			<div class="yui-u first dynamicCharachList">
+			<div class="yui-u first dynamicCharactList">
 				<@dataGridDashlet 
-					dashletId="dynamicCharachList-${id}" 
-					dashletTitle=msg("dashlet.dynamicCharachList.title")  
-					itemType="bcpg:dynamicCharachList"  />
+					dashletId="dynamicCharactList-${id}" 
+					dashletTitle=msg("dashlet.dynamicCharactList.title")  
+					itemType="bcpg:dynamicCharactList"  />
 			</div>
 		   <div class="yui-u constraintsList">
 		   <@dataGridDashlet 

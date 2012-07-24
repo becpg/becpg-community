@@ -21,7 +21,7 @@ import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.DynamicCharachListItem;
+import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -94,8 +94,8 @@ public class ProductData implements ProductElement {
 	/** The compo list. */
 	private List<CompoListDataItem> compoList;
 
-	/** The dynamicCharachList*/
-	private List<DynamicCharachListItem> dynamicCharachList;
+	/** The dynamicCharactList*/
+	private List<DynamicCharactListItem> dynamicCharactList;
 	
 	/** The cost list. */
 	private List<CostListDataItem> costList;
@@ -592,12 +592,12 @@ public class ProductData implements ProductElement {
 	}
 
 
-	public List<DynamicCharachListItem> getDynamicCharachList() {
-		return dynamicCharachList;
+	public List<DynamicCharactListItem> getDynamicCharactList() {
+		return dynamicCharactList;
 	}
 
-	public void setDynamicCharachList(List<DynamicCharachListItem> dynamicCharachList) {
-		this.dynamicCharachList = dynamicCharachList;
+	public void setDynamicCharactList(List<DynamicCharactListItem> dynamicCharactList) {
+		this.dynamicCharactList = dynamicCharactList;
 	}
 
 	/**
@@ -704,10 +704,10 @@ public class ProductData implements ProductElement {
 			}
 		}
 		
-		if(productData.getDynamicCharachList() != null){
-			dynamicCharachList = new ArrayList<DynamicCharachListItem>(productData.getDynamicCharachList());
-			for(DynamicCharachListItem c : productData.getDynamicCharachList()){
-				dynamicCharachList.add(new DynamicCharachListItem(c));
+		if(productData.getDynamicCharactList() != null){
+			dynamicCharactList = new ArrayList<DynamicCharactListItem>(productData.getDynamicCharactList());
+			for(DynamicCharactListItem c : productData.getDynamicCharactList()){
+				dynamicCharactList.add(new DynamicCharactListItem(c));
 			}
 		}
 		

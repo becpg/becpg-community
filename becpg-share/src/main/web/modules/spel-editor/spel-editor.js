@@ -704,8 +704,8 @@
 		                  template : "processList.?[plResource.toString() == '{item1}' ][0].{item2}"
 		               }, {
 		                  name : "variables",
-		                  type : "bcpg:dynamicCharachList",
-		                  template : "dynamicCharachList.?[nodeRef.toString() == '{item1}' ][0].value"
+		                  type : "bcpg:dynamicCharactList",
+		                  template : "dynamicCharactList.?[nodeRef.toString() == '{item1}' ][0].value"
 		               } ];
 
 		               var menuItem, item, label;

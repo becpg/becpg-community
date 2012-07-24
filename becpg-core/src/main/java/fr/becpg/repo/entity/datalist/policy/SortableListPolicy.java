@@ -46,15 +46,15 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 	public void doInit() {
 		logger.debug("Init DepthLevelListPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
-				new JavaBehaviour(this, "onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));
+				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
-				new JavaBehaviour(this, "onDeleteNode", NotificationFrequency.TRANSACTION_COMMIT));
+				new JavaBehaviour(this, "onDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL, 
-				new JavaBehaviour(this, "onAddAspect", NotificationFrequency.TRANSACTION_COMMIT));		
+				new JavaBehaviour(this, "onAddAspect"));		
 		
 		logger.debug("Init SortableListPolicy...");		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_SORTABLE_LIST, 
-				new JavaBehaviour(this, "onAddAspect", NotificationFrequency.TRANSACTION_COMMIT));		
+				new JavaBehaviour(this, "onAddAspect"));		
 		
 		super.disableOnCopyBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 		super.disableOnCopyBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);

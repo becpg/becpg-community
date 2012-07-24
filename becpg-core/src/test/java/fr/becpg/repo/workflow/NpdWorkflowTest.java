@@ -90,6 +90,10 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 
 	private  SearchService searchService;
 	
+	private EntityService entityService;
+	
+	private ProductDAO productDAO;
+	
 	private NodeRef productNodeRef;
 
 	
@@ -181,13 +185,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
      */
     private NodeRef client;
 	
-	
-	private EntityService entityService;
-	
-	/** The product dao. */
-	private ProductDAO productDAO;
-	
-	
+	private String workflowId = "";
 	
 
 	/*
@@ -662,142 +660,136 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 
 	public void testNPDWorkFlow() {
 
-		
 		authenticationComponent.setSystemUserAsCurrentUser();
-		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-	 			public NodeRef execute() throws Throwable {
-	 				
-	 				createUsers();
-	 				initParts();
-	 		        
-	 				return null;
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
-	 			}},false,true); 
+				createUsers();
+				initParts();
 
-	
-		NodeRef npfFile = transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
-					@Override
-					public NodeRef execute() throws Throwable {
-						return createNPDFile();
+				for (WorkflowDefinition def : workflowService.getAllDefinitions()) {
+					logger.debug(def.getId() + " " + def.getName());
+					if ("jbpm$bcpgwf:productValidationWF".equals(def.getName())) {
+						try {
+							for (WorkflowInstance instance : workflowService.getWorkflows(def.getId())) {
+								workflowService.deleteWorkflow(instance.getId());
+							}
+
+						} catch (Exception e) {
+							logger.error(e.getMessage());
+						}
 					}
-				});
-
-		String workflowId = "";
-		for (WorkflowDefinition def : workflowService.getAllDefinitions()) {
-			logger.debug(def.getId() + " " + def.getName());
-			if ("jbpm$bcpgwf:productValidationWF".equals(def.getName())) {
-				try {
-					for (WorkflowInstance instance : workflowService.getWorkflows(def.getId())) {
-						workflowService.deleteWorkflow(instance.getId());
+					if ("jbpm$npdwf:newProductDevelopmentWF".equals(def.getName())) {
+						workflowId = def.getId();
+						break;
 					}
 
-				} catch (Exception e) {
-					logger.error(e.getMessage());
 				}
-			}
-			if ("jbpm$npdwf:newProductDevelopmentWF".equals(def.getName())) {
-				workflowId = def.getId();
-				break;
-			}
 
-		}
+				return null;
+
+			}
+		}, false, true);
+
 		// workflowService.undeployDefinition(wfId);
 		authenticationComponent.setCurrentUser(USER_ONE);
 
-		// Fill a map of default properties to start the workflow with
-		// Start NPD
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		Date dueDate = Calendar.getInstance().getTime();
-	//	properties.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, "description123");
-		properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
-		properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
-		WorkflowPath path = workflowService.startWorkflow(workflowId, properties);
-		assertNotNull("The workflow path is null!", path);
+				NodeRef npfFile = createNPDFile();
 
-		WorkflowInstance instance = path.getInstance();
-		assertNotNull("The workflow instance is null!", instance);
+				// Fill a map of default properties to start the workflow with
+				// Start NPD
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Date dueDate = Calendar.getInstance().getTime();
+				// properties.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION,
+				// "description123");
+				properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
+				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
 
-		String workflowInstanceId = instance.getId();
+				WorkflowPath path = workflowService.startWorkflow(workflowId, properties);
+				assertNotNull("The workflow path is null!", path);
 
-		WorkflowNode node = path.getNode();
-		assertNotNull("The workflow node is null!", node);
+				WorkflowInstance instance = path.getInstance();
+				assertNotNull("The workflow instance is null!", instance);
 
-		assertEquals(node.getName(), "initiate-npd");
+				String workflowInstanceId = instance.getId();
 
-		// Update start task
+				WorkflowNode node = path.getNode();
+				assertNotNull("The workflow node is null!", node);
 
-		WorkflowTask task = getNextTaskForWorkflow(workflowInstanceId);
+				assertEquals(node.getName(), "initiate-npd");
 
-		logger.info("Set start information " + task.getName());
-		properties = new HashMap<QName, Serializable>();
-		
-		NodeRef  workflowPackage = workflowService.createPackage(null);
-		ChildAssociationRef childAssoc = nodeService.getPrimaryParent(npfFile);
-		nodeService.addChild(workflowPackage, npfFile, WorkflowModel.ASSOC_PACKAGE_CONTAINS, childAssoc.getQName());
+				// Update start task
 
-		properties.put(NPDModel.PROP_NPD_TYPE, "Etude");
-		properties.put(NPDModel.PROP_NPD_PRODUCT_NAME, "Test NPD Product");
-		properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
-		List<NodeRef> folderNodeRefs = new ArrayList<NodeRef>();
-		folderNodeRefs.add(folderNodeRef);
-		java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-		assocs.put(NPDModel.ASSOC_NPD_FOLDER, folderNodeRefs);		
-		
-		// Info de l'appel d'offre
-		properties.put(NPDModel.PROP_CFT_TRANSMITTER, "matthieu");
-		properties.put(NPDModel.PROP_CFT_COMPANY, "cftCompany");
-		properties.put(NPDModel.PROP_CFT_OPENING_DATE, new Date());
-		properties.put(NPDModel.PROP_CFT_SAMPLING_DATE, new Date());
-		properties.put(NPDModel.PROP_CFT_LAUNCH_DATE_DESIRED, new Date());
-		properties.put(NPDModel.PROP_CFT_RESPONSE_DATE_DESIRED, new Date());
-		properties.put(NPDModel.PROP_CFT_REPONSE_DATEREALIZED, new Date());
-		properties.put(NPDModel.PROP_UNIT_PRICE, 10d);
-		assocs.put(NPDModel.ASSOC_CFT_CLIENT, getClientsNodeRef());
-		
+				WorkflowTask task = getNextTaskForWorkflow(workflowInstanceId);
 
-		workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
+				logger.info("Set start information " + task.getName());
+				properties = new HashMap<QName, Serializable>();
 
-		task = workflowService.endTask(task.getId(), "start");
+				NodeRef workflowPackage = workflowService.createPackage(null);
+				ChildAssociationRef childAssoc = nodeService.getPrimaryParent(npfFile);
+				nodeService.addChild(workflowPackage, npfFile, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+						childAssoc.getQName());
 
-		logger.debug("NpdNUmber :"+task.getProperties().get(NPDModel.PROP_NPD_NUMBER));
-		logger.debug("End task"+task.getName());
+				properties.put(NPDModel.PROP_NPD_TYPE, "Etude");
+				properties.put(NPDModel.PROP_NPD_PRODUCT_NAME, "Test NPD Product");
+				properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
+				List<NodeRef> folderNodeRefs = new ArrayList<NodeRef>();
+				folderNodeRefs.add(folderNodeRef);
+				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
+				assocs.put(NPDModel.ASSOC_NPD_FOLDER, folderNodeRefs);
 
-		path = task.getPath();
+				// Info de l'appel d'offre
+				properties.put(NPDModel.PROP_CFT_TRANSMITTER, "matthieu");
+				properties.put(NPDModel.PROP_CFT_COMPANY, "cftCompany");
+				properties.put(NPDModel.PROP_CFT_OPENING_DATE, new Date());
+				properties.put(NPDModel.PROP_CFT_SAMPLING_DATE, new Date());
+				properties.put(NPDModel.PROP_CFT_LAUNCH_DATE_DESIRED, new Date());
+				properties.put(NPDModel.PROP_CFT_RESPONSE_DATE_DESIRED, new Date());
+				properties.put(NPDModel.PROP_CFT_REPONSE_DATEREALIZED, new Date());
+				properties.put(NPDModel.PROP_UNIT_PRICE, 10d);
+				assocs.put(NPDModel.ASSOC_CFT_CLIENT, getClientsNodeRef());
 
-		
-		// Go to marketing brief
+				workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
 
-		//assertEquals(path.getNode().getName(), "marketing-brief");
-	
-		//path = doMarketingBriefStep(workflowInstanceId);
+				task = workflowService.endTask(task.getId(), "start");
 
-		// //Go to needDefinition
-		assertEquals(path.getNode().getName(), "needDefinition");
-		path = doNeedDefinition(workflowInstanceId);
-		
+				logger.debug("NpdNUmber :" + task.getProperties().get(NPDModel.PROP_NPD_NUMBER));
+				logger.debug("End task" + task.getName());
 
-		//warning fork here
-		path = doNeedValidationStep(workflowInstanceId, "approve-needDefinition");
+				path = task.getPath();
 
-		
-		
-		// recipe // Packaging
+				// Go to marketing brief
 
-		doFeasibilityAssigment(workflowInstanceId);
+				// assertEquals(path.getNode().getName(), "marketing-brief");
 
+				// path = doMarketingBriefStep(workflowInstanceId);
 
-		// Do
+				// //Go to needDefinition
+				assertEquals(path.getNode().getName(), "needDefinition");
+				path = doNeedDefinition(workflowInstanceId);
 
-		doFeasibilityAnalisys(workflowInstanceId);
+				// warning fork here
+				path = doNeedValidationStep(workflowInstanceId, "approve-needDefinition");
 
-		// Join
-		
-		doValidateAnalisys(workflowInstanceId);
+				// recipe // Packaging
+				doFeasibilityAssigment(workflowInstanceId);
 
-		assertTrue(workflowService.getWorkflowById(workflowInstanceId).isActive());
-		workflowService.cancelWorkflow(workflowInstanceId);
+				// Do
+				doFeasibilityAnalisys(workflowInstanceId);
+
+				// Join
+				doValidateAnalisys(workflowInstanceId);
+
+				assertTrue(workflowService.getWorkflowById(workflowInstanceId).isActive());
+				workflowService.cancelWorkflow(workflowInstanceId);
+
+				return null;
+
+			}
+		}, false, true);
 
 	}
 

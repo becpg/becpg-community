@@ -72,6 +72,8 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 	private NodeRef rawMaterial1NodeRef;
 
 	private NodeRef rawMaterial2NodeRef;
+	
+	private String workflowInstanceId = null;
 
 	private BeCPGDao<NonConformityData> nonConformityDAO;
 	
@@ -209,13 +211,12 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 		}, false, true);
 
 		authenticationComponent.setCurrentUser(USER_ONE);
-
+		
 		executeNonConformityWF(false);
 
 		executeNonConformityWF(true);
 		
 		executeNonConformityAdhoc();
-
 	}
 
 	protected WorkflowTask getNextTaskForWorkflow(String workflowInstanceId) {
@@ -228,84 +229,99 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 		return workflowTasks.get(0);
 	}
 
-	private void executeNonConformityWF(boolean needPrevAction) {
+	private void executeNonConformityWF(final boolean needPrevAction) {
 
-		WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$nonConformityProcess");
-		logger.debug("wfDefId found : " + wfDef.getId());
+		final WorkflowTask task1 = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
+			public WorkflowTask execute() throws Throwable {
 
-		// Fill a map of default properties to start the workflow with
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		Date dueDate = Calendar.getInstance().getTime();
-		properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
-		properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
-		Serializable workflowPackage = workflowService.createPackage(null);
-		properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
-		properties.put(ASSOC_PRODUCT, rawMaterial1NodeRef);
+				WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$nonConformityProcess");
+				logger.debug("wfDefId found : " + wfDef.getId());
 
-		WorkflowPath path = workflowService.startWorkflow(wfDef.getId(), properties);
-		assertNotNull("The workflow path is null!", path);
+				// Fill a map of default properties to start the workflow with
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Date dueDate = Calendar.getInstance().getTime();
+				properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
+				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
+				Serializable workflowPackage = workflowService.createPackage(null);
+				properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
+				properties.put(ASSOC_PRODUCT, rawMaterial1NodeRef);
 
-		String workflowInstanceId = path.getInstance().getId();
-		assertNotNull("The workflow instance is null!", workflowInstanceId);
+				WorkflowPath path = workflowService.startWorkflow(wfDef.getId(), properties);
+				assertNotNull("The workflow path is null!", path);
 
-		WorkflowTask startTask = workflowService.getStartTask(workflowInstanceId);
-		workflowService.endTask(startTask.getId(), null);
+				workflowInstanceId = path.getInstance().getId();
+				assertNotNull("The workflow instance is null!", workflowInstanceId);
 
-		List<WorkflowPath> paths = workflowService.getWorkflowPaths(workflowInstanceId);
-		assertEquals(1, paths.size());
-		path = paths.get(0);
+				WorkflowTask startTask = workflowService.getStartTask(workflowInstanceId);
+				workflowService.endTask(startTask.getId(), null);
 
-		List<WorkflowTask> tasks = workflowService.getTasksForWorkflowPath(path.getId());
-		assertEquals(1, tasks.size());
-		WorkflowTask task = tasks.get(0);
+				List<WorkflowPath> paths = workflowService.getWorkflowPaths(workflowInstanceId);
+				assertEquals(1, paths.size());
+				path = paths.get(0);
 
-		assertEquals("ncwf:analysisTask", task.getName());
+				List<WorkflowTask> tasks = workflowService.getTasksForWorkflowPath(path.getId());
+				assertEquals(1, tasks.size());
+				return tasks.get(0);				
+			}
+		}, false, true);
+		
+		assertEquals("ncwf:analysisTask", task1.getName());
+		
+		NodeRef ncNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				
+				NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
+				List<FileInfo> files = fileFolderService.listFiles(pkgNodeRef);
+				for (FileInfo file : files) {
+
+					if (QualityModel.TYPE_NC.equals(nodeService.getType(file.getNodeRef()))) {
+						return file.getNodeRef();
+					}
+				}
+				
+				return null;
+			}
+		}, false, true);
 
 		/*
 		 * Update analysisTask task
 		 */
-
-		NodeRef ncNodeRef = null;
-		NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-		List<FileInfo> files = fileFolderService.listFiles(pkgNodeRef);
-		for (FileInfo file : files) {
-
-			if (QualityModel.TYPE_NC.equals(nodeService.getType(file.getNodeRef()))) {
-				ncNodeRef = file.getNodeRef();
-			}
-		}
 		assertNotNull(ncNodeRef);
-
 		checkStorageFolder(ncNodeRef);
+		
+		final WorkflowTask task2 = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
+			public WorkflowTask execute() throws Throwable {
 
-		logger.info("Set analysisTask information " + task.getName());
-		properties = new HashMap<QName, Serializable>();
-		properties.put(WorkflowModel.PROP_COMMENT, "commentaire émetteur");
-		properties.put(PROP_NEED_PREV_ACTION, needPrevAction);
-		properties.put(PROP_STATE, "En cours");
+				logger.info("Set analysisTask information " + task1.getName());
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(WorkflowModel.PROP_COMMENT, "commentaire émetteur");
+				properties.put(PROP_NEED_PREV_ACTION, needPrevAction);
+				properties.put(PROP_STATE, "En cours");
 
-		java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-		List<NodeRef> assignees = new ArrayList<NodeRef>();
-		assignees.add(personService.getPerson(USER_ONE));
-		assocs.put(ASSOC_CORR_ACTION_ACTOR, assignees);
-		assignees = new ArrayList<NodeRef>();
-		assignees.add(personService.getPerson(USER_TWO));
-		assocs.put(ASSOC_CHECK_ACTOR, assignees);
+				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
+				List<NodeRef> assignees = new ArrayList<NodeRef>();
+				assignees.add(personService.getPerson(USER_ONE));
+				assocs.put(ASSOC_CORR_ACTION_ACTOR, assignees);
+				assignees = new ArrayList<NodeRef>();
+				assignees.add(personService.getPerson(USER_TWO));
+				assocs.put(ASSOC_CHECK_ACTOR, assignees);
 
-		workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
-		task = workflowService.endTask(task.getId(), null);
+				workflowService.updateTask(task1.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
+				return workflowService.endTask(task1.getId(), null);			
+			}
+		}, false, true);
 
 		if (needPrevAction) {
-			assertEquals("prevActionTask", task.getPath().getNode().getName());
+			assertEquals("prevActionTask", task2.getPath().getNode().getName());
 		} else {
-			assertEquals("corrActionTask", task.getPath().getNode().getName());
+			assertEquals("corrActionTask", task2.getPath().getNode().getName());
 		}
 
 		checkWorkLog(ncNodeRef, 1, "En cours", "commentaire émetteur");
 		/*
 		 * do corrActionTask
 		 */
-		task = submitTask(workflowInstanceId, "ncwf:corrActionTask", null, "À déclasser", "commentaire émetteur 2");
+		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:corrActionTask", null, "À déclasser", "commentaire émetteur 2");
 		assertEquals("checkTask", task.getPath().getNode().getName());
 
 		checkWorkLog(ncNodeRef, 2, "À déclasser", "commentaire émetteur 2");
@@ -335,47 +351,59 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 	}
 
 	private void executeNonConformityAdhoc() {
+		
+		final WorkflowTask task1 = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
+			public WorkflowTask execute() throws Throwable {
 
-		WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$nonConformityAdhoc");
-		logger.debug("wfDefId found : " + wfDef.getId());
+				WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$nonConformityAdhoc");
+				logger.debug("wfDefId found : " + wfDef.getId());
 
-		// Fill a map of default properties to start the workflow with
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		Date dueDate = Calendar.getInstance().getTime();
-		properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
-		properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
-		Serializable workflowPackage = workflowService.createPackage(null);
-		properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
-		properties.put(ASSOC_PRODUCT, rawMaterial1NodeRef);
+				// Fill a map of default properties to start the workflow with
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Date dueDate = Calendar.getInstance().getTime();
+				properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
+				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
+				Serializable workflowPackage = workflowService.createPackage(null);
+				properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
+				properties.put(ASSOC_PRODUCT, rawMaterial1NodeRef);
 
-		WorkflowPath path = workflowService.startWorkflow(wfDef.getId(), properties);
-		assertNotNull("The workflow path is null!", path);
+				WorkflowPath path = workflowService.startWorkflow(wfDef.getId(), properties);
+				assertNotNull("The workflow path is null!", path);
 
-		String workflowInstanceId = path.getInstance().getId();
-		assertNotNull("The workflow instance is null!", workflowInstanceId);
+				workflowInstanceId = path.getInstance().getId();
+				assertNotNull("The workflow instance is null!", workflowInstanceId);
 
-		WorkflowTask startTask = workflowService.getStartTask(workflowInstanceId);
-		workflowService.endTask(startTask.getId(), null);
+				WorkflowTask startTask = workflowService.getStartTask(workflowInstanceId);
+				workflowService.endTask(startTask.getId(), null);
 
-		List<WorkflowPath> paths = workflowService.getWorkflowPaths(workflowInstanceId);
-		assertEquals(1, paths.size());
-		path = paths.get(0);
+				List<WorkflowPath> paths = workflowService.getWorkflowPaths(workflowInstanceId);
+				assertEquals(1, paths.size());
+				path = paths.get(0);
 
-		List<WorkflowTask> tasks = workflowService.getTasksForWorkflowPath(path.getId());
-		assertEquals(1, tasks.size());
-		WorkflowTask task = tasks.get(0);
-
-		assertEquals("ncwf:workTask", task.getName());
-
-		NodeRef ncNodeRef = null;
-		NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-		List<FileInfo> files = fileFolderService.listFiles(pkgNodeRef);
-		for (FileInfo file : files) {
-
-			if (QualityModel.TYPE_NC.equals(nodeService.getType(file.getNodeRef()))) {
-				ncNodeRef = file.getNodeRef();
+				List<WorkflowTask> tasks = workflowService.getTasksForWorkflowPath(path.getId());
+				assertEquals(1, tasks.size());
+				return tasks.get(0);			
 			}
-		}
+		}, false, true);
+		
+		assertEquals("ncwf:workTask", task1.getName());
+		
+		NodeRef ncNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				
+				NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
+				List<FileInfo> files = fileFolderService.listFiles(pkgNodeRef);
+				for (FileInfo file : files) {
+
+					if (QualityModel.TYPE_NC.equals(nodeService.getType(file.getNodeRef()))) {
+						return file.getNodeRef();
+					}
+				}
+				
+				return null;
+			}
+		}, false, true);
+		
 		assertNotNull(ncNodeRef);
 
 		checkStorageFolder(ncNodeRef);
@@ -384,7 +412,7 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 		 * Update workTask (analysis)
 		 */
 
-		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(USER_ONE), "En cours",
+		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(USER_ONE), "En cours",
 				"commentaire émetteur");
 		assertEquals("workTask", task.getPath().getNode().getName());
 
@@ -415,82 +443,102 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 		assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
 	}
 
-	private WorkflowTask submitTask(String workflowInstanceId, String taskName, NodeRef assigneeNodeRef, String state,
-			String comment) {
+	private WorkflowTask submitTask(final String workflowInstanceId, final String taskName, final NodeRef assigneeNodeRef, final String state,
+			final String comment) {
+		
+		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
+			public WorkflowTask execute() throws Throwable {
 
-		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
-		taskQuery.setProcessId(workflowInstanceId);
-		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
+				WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
+				taskQuery.setProcessId(workflowInstanceId);
+				taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
 
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-		properties.put(WorkflowModel.PROP_COMMENT, comment);
-		if (state != null) {
-			properties.put(PROP_STATE, state);
-		}
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
+				properties.put(WorkflowModel.PROP_COMMENT, comment);
+				if (state != null) {
+					properties.put(PROP_STATE, state);
+				}
 
-		if (assigneeNodeRef != null) {
+				if (assigneeNodeRef != null) {
 
-			List<NodeRef> assignees = new ArrayList<NodeRef>();
-			assignees.add(assigneeNodeRef);
-			assocs.put(PROP_ASSIGNEE, assignees);
-		}
+					List<NodeRef> assignees = new ArrayList<NodeRef>();
+					assignees.add(assigneeNodeRef);
+					assocs.put(PROP_ASSIGNEE, assignees);
+				}
 
-		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
+				List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
 
-		for (WorkflowTask task : workflowTasks) {
-			if (taskName.equals(task.getName())) {
+				for (WorkflowTask task : workflowTasks) {
+					if (taskName.equals(task.getName())) {
 
-				logger.debug("submit task" + task.getName());
-				workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
-				task = workflowService.endTask(task.getId(), null);
+						logger.debug("submit task" + task.getName());
+						workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
+						task = workflowService.endTask(task.getId(), null);
 
-				return task;
+						return task;
+					}
+				}
+
+				return null;
 			}
-		}
-
-		return null;
+		}, false, true);	
 	}
 
-	private void checkWorkLog(NodeRef ncNodeRef, int workLogSize, String state, String comment) {
+	private void checkWorkLog(final NodeRef ncNodeRef, final int workLogSize, final String state, final String comment) {
 
-		NonConformityData ncData = nonConformityDAO.find(ncNodeRef);
-		assertNotNull(ncData.getWorkLog());
-		assertEquals(workLogSize, ncData.getWorkLog().size());
-		assertEquals(state, ncData.getState());
-		assertEquals(null, ncData.getComment());
-		assertEquals(state, ncData.getWorkLog().get(workLogSize - 1).getState());
-		assertEquals(comment, ncData.getWorkLog().get(workLogSize - 1).getComment());
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				NonConformityData ncData = nonConformityDAO.find(ncNodeRef);
+				assertNotNull(ncData.getWorkLog());
+				assertEquals(workLogSize, ncData.getWorkLog().size());
+				assertEquals(state, ncData.getState());
+				assertEquals(null, ncData.getComment());
+				assertEquals(state, ncData.getWorkLog().get(workLogSize - 1).getState());
+				assertEquals(comment, ncData.getWorkLog().get(workLogSize - 1).getComment());
+				return null;
+			}
+		}, true, true);		
 	}
 
-	private void checkStorageFolder(NodeRef ncNodeRef) {
+	private void checkStorageFolder(final NodeRef ncNodeRef) {
 
-		/*
-		 * We should have: Folder Product Folder NonConformities Folder
-		 * NonConformity NC1 Node NC1
-		 */
-		NodeRef nonConformityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-		NodeRef nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(nonConformityFolderNodeRef).getParentRef();
-		NodeRef productFolderNodeRef = nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
-		NodeRef rawMaterial1FolderNodeRef = nodeService.getPrimaryParent(rawMaterial1NodeRef).getParentRef();
-		assertEquals("Check NC moved in product", rawMaterial1FolderNodeRef, productFolderNodeRef);
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
-		// remove assoc
-		nodeService.removeAssociation(ncNodeRef, rawMaterial1NodeRef, QualityModel.ASSOC_PRODUCT);
+				/*
+				 * We should have: Folder Product Folder NonConformities Folder
+				 * NonConformity NC1 Node NC1
+				 */
+				NodeRef nonConformityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
+				NodeRef nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(nonConformityFolderNodeRef).getParentRef();
+				NodeRef productFolderNodeRef = nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
+				NodeRef rawMaterial1FolderNodeRef = nodeService.getPrimaryParent(rawMaterial1NodeRef).getParentRef();
+								
+				assertEquals("Check NC moved in product", rawMaterial1FolderNodeRef, productFolderNodeRef);
 
-		nonConformityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-		nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(nonConformityFolderNodeRef).getParentRef();
-		assertEquals(
-				"/{http://www.alfresco.org/model/application/1.0}company_home/{http://www.alfresco.org/model/content/1.0}Quality/{http://www.alfresco.org/model/content/1.0}NonConformities",
-				nodeService.getPath(nonConformitiesFolderNodeRef).toString());
+				// remove assoc
+				nodeService.removeAssociation(ncNodeRef, rawMaterial1NodeRef, QualityModel.ASSOC_PRODUCT);
 
-		// create assoc rawMaterial 2
-		nodeService.createAssociation(ncNodeRef, rawMaterial2NodeRef, QualityModel.ASSOC_PRODUCT);
+				nonConformityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
+				nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(nonConformityFolderNodeRef).getParentRef();
+				assertEquals(
+						"/{http://www.alfresco.org/model/application/1.0}company_home/{http://www.alfresco.org/model/content/1.0}Quality/{http://www.alfresco.org/model/content/1.0}NonConformities",
+						nodeService.getPath(nonConformitiesFolderNodeRef).toString());
 
-		nonConformityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-		nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(nonConformityFolderNodeRef).getParentRef();
-		productFolderNodeRef = nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
-		NodeRef rawMaterial2FolderNodeRef = nodeService.getPrimaryParent(rawMaterial2NodeRef).getParentRef();
-		assertEquals("Check NC moved in product", rawMaterial2FolderNodeRef, productFolderNodeRef);
+				// create assoc rawMaterial 2
+				nodeService.createAssociation(ncNodeRef, rawMaterial2NodeRef, QualityModel.ASSOC_PRODUCT);
+
+				nonConformityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
+				nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(nonConformityFolderNodeRef).getParentRef();
+				productFolderNodeRef = nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
+				NodeRef rawMaterial2FolderNodeRef = nodeService.getPrimaryParent(rawMaterial2NodeRef).getParentRef();
+				assertEquals("Check NC moved in product", rawMaterial2FolderNodeRef, productFolderNodeRef);
+				
+				return null;
+			}
+		}, false, true);
+		
 	}
 }

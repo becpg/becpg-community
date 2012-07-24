@@ -407,21 +407,20 @@ public interface BeCPGModel {
 			"rclSources");
 	
 
-	public static final QName TYPE_DYNAMICCHARCATLIST = QName.createQName(BECPG_URI,
-			"dynamicCharachList");
+	public static final QName TYPE_DYNAMICCHARACTLIST = QName.createQName(BECPG_URI,
+			"dynamicCharactList");
 	
-	public static final QName PROP_DYNAMICCHARCAT_TITLE = QName.createQName(BECPG_URI,
-			"dynamicCharachTitle");
+	public static final QName PROP_DYNAMICCHARACT_TITLE = QName.createQName(BECPG_URI,
+			"dynamicCharactTitle");
 	
-	public static final QName PROP_DYNAMICCHARCAT_FORMULA = QName.createQName(BECPG_URI,
-			"dynamicCharachFormula");
+	public static final QName PROP_DYNAMICCHARACT_FORMULA = QName.createQName(BECPG_URI,
+			"dynamicCharactFormula");
 	
-	public static final QName PROP_DYNAMICCHARCAT_VALUE = QName.createQName(BECPG_URI,
-			"dynamicCharachValue");
+	public static final QName PROP_DYNAMICCHARACT_VALUE = QName.createQName(BECPG_URI,
+			"dynamicCharactValue");
 	
-
-	public static final QName PROP_DYNAMICCHARCAT_GROUP_COLOR = QName.createQName(BECPG_URI,
-			"dynamicCharachGroupColor");
+	public static final QName PROP_DYNAMICCHARACT_GROUP_COLOR = QName.createQName(BECPG_URI,
+			"dynamicCharactGroupColor");
 	
 	// contactList
 	static final QName TYPE_CONTACTLIST = QName.createQName(BECPG_URI,
