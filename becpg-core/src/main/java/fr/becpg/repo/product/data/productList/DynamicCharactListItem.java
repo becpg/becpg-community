@@ -2,7 +2,7 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-public class DynamicCharachListItem {
+public class DynamicCharactListItem {
 	
 	/** The node ref. */
 	private NodeRef nodeRef;	
@@ -56,27 +56,27 @@ public class DynamicCharachListItem {
 		this.groupColor = groupColor;
 	}
 
-	public DynamicCharachListItem() {
+	public DynamicCharactListItem() {
 		super();
 	}
 
-	public DynamicCharachListItem(NodeRef nodeRef, String dynamicCharachTitle, String dynamicCharachFormula, Object dynamicCharachValue, String dynamicCharachGroupColor) {
+	public DynamicCharactListItem(NodeRef nodeRef, String dynamicCharactTitle, String dynamicCharactFormula, Object dynamicCharactValue, String dynamicCharactGroupColor) {
 		super();
 		this.nodeRef = nodeRef;
-		this.name = dynamicCharachTitle;
-		this.formula = dynamicCharachFormula;
-		this.value = dynamicCharachValue;
-		this.groupColor = dynamicCharachGroupColor;
+		this.name = dynamicCharactTitle;
+		this.formula = dynamicCharactFormula;
+		this.value = dynamicCharactValue;
+		this.groupColor = dynamicCharactGroupColor;
 	}
 	
 	
-	public DynamicCharachListItem(String dynamicCharachTitle, String dynamicCharachFormula) {
+	public DynamicCharactListItem(String dynamicCharactTitle, String dynamicCharactFormula) {
 		super();
-		this.name = dynamicCharachTitle;
-		this.formula = dynamicCharachFormula;
+		this.name = dynamicCharactTitle;
+		this.formula = dynamicCharactFormula;
 	}
 
-	public DynamicCharachListItem(DynamicCharachListItem copy){
+	public DynamicCharactListItem(DynamicCharactListItem copy){
 		this.nodeRef = copy.nodeRef;
 		this.name = copy.name;
 		this.formula = copy.formula;

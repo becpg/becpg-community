@@ -46,7 +46,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.DynamicCharachListItem;
+import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -303,8 +303,8 @@ public class ProductDAOImpl implements ProductDAO {
 					productData.setReqCtrlList(loadReqCtrlList(listsContainerNodeRef));
 				} else if (dataList.equals(MPMModel.TYPE_PROCESSLIST)) {
 					productData.setProcessList(loadProcessList(listsContainerNodeRef));
-				} else if (dataList.equals(BeCPGModel.TYPE_DYNAMICCHARCATLIST)) {
-					productData.setDynamicCharachList(loadDynamicCharachList(listsContainerNodeRef));
+				} else if (dataList.equals(BeCPGModel.TYPE_DYNAMICCHARACTLIST)) {
+					productData.setDynamicCharactList(loadDynamicCharactList(listsContainerNodeRef));
 				} else {
 					logger.debug(String.format("DataList '%s' is not loaded since it is not implemented.", dataList));
 				}
@@ -366,28 +366,28 @@ public class ProductDAOImpl implements ProductDAO {
 	}
 
 	@Override
-	public List<DynamicCharachListItem> loadDynamicCharachList(NodeRef listContainerNodeRef) {
-		List<DynamicCharachListItem> dynamicCharachList = new ArrayList<DynamicCharachListItem>();
+	public List<DynamicCharactListItem> loadDynamicCharactList(NodeRef listContainerNodeRef) {
+		List<DynamicCharactListItem> dynamicCharactList = new ArrayList<DynamicCharactListItem>();
 		if (listContainerNodeRef != null) {
-			NodeRef dynamicCharachListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
-			if (dynamicCharachListNodeRef != null) {
-				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(dynamicCharachListNodeRef, BeCPGModel.TYPE_DYNAMICCHARCATLIST);
+			NodeRef dynamicCharactListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+			if (dynamicCharactListNodeRef != null) {
+				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(dynamicCharactListNodeRef, BeCPGModel.TYPE_DYNAMICCHARACTLIST);
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
-					dynamicCharachList.add(loadDynamicCharachListItem(listItemNodeRef));
+					dynamicCharactList.add(loadDynamicCharactListItem(listItemNodeRef));
 				}
 			}
 		}
 
-		return dynamicCharachList;
+		return dynamicCharactList;
 	}
 
 	@Override
-	public DynamicCharachListItem loadDynamicCharachListItem(NodeRef listItemNodeRef) {
+	public DynamicCharactListItem loadDynamicCharactListItem(NodeRef listItemNodeRef) {
 		Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
 
-		return new DynamicCharachListItem(listItemNodeRef, (String) properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE),
-				(String) properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_FORMULA), properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE),
-				(String) properties.get(BeCPGModel.PROP_DYNAMICCHARCAT_GROUP_COLOR));
+		return new DynamicCharactListItem(listItemNodeRef, (String) properties.get(BeCPGModel.PROP_DYNAMICCHARACT_TITLE),
+				(String) properties.get(BeCPGModel.PROP_DYNAMICCHARACT_FORMULA), properties.get(BeCPGModel.PROP_DYNAMICCHARACT_VALUE),
+				(String) properties.get(BeCPGModel.PROP_DYNAMICCHARACT_GROUP_COLOR));
 	}
 
 	/**
@@ -1013,8 +1013,8 @@ public class ProductDAOImpl implements ProductDAO {
 					createReqCtrlList(containerNodeRef, productData.getReqCtrlList());
 				} else if (dataList.equals(MPMModel.TYPE_PROCESSLIST)) {
 					createProcessList(containerNodeRef, productData.getProcessList());
-				} else if (dataList.equals(BeCPGModel.TYPE_DYNAMICCHARCATLIST)) {
-					createDynamicCharachList(containerNodeRef, productData.getDynamicCharachList());
+				} else if (dataList.equals(BeCPGModel.TYPE_DYNAMICCHARACTLIST)) {
+					createDynamicCharactList(containerNodeRef, productData.getDynamicCharactList());
 				} else {
 					logger.debug(String.format("DataList '%s' is not created since it is not implemented.", dataList));
 				}				
@@ -1102,33 +1102,33 @@ public class ProductDAOImpl implements ProductDAO {
 		}
 	}
 
-	private void createDynamicCharachList(NodeRef listContainerNodeRef, List<DynamicCharachListItem> dynamicCharachList) {
+	private void createDynamicCharactList(NodeRef listContainerNodeRef, List<DynamicCharactListItem> dynamicCharactList) {
 		if (listContainerNodeRef != null) {
-			NodeRef dynamicCharachListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+			NodeRef dynamicCharactListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
 
-			if (dynamicCharachList == null) {
-				dynamicCharachList = new ArrayList<DynamicCharachListItem>();
+			if (dynamicCharactList == null) {
+				dynamicCharactList = new ArrayList<DynamicCharactListItem>();
 			}
 
-			// dynamicCharach list, create if needed
-			if (dynamicCharachListNodeRef == null) {
-				dynamicCharachListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
+			// dynamicCharact list, create if needed
+			if (dynamicCharactListNodeRef == null) {
+				dynamicCharactListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
 			}
 
-			List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(dynamicCharachListNodeRef, BeCPGModel.TYPE_DYNAMICCHARCATLIST);
+			List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(dynamicCharactListNodeRef, BeCPGModel.TYPE_DYNAMICCHARACTLIST);
 
 			// create temp list
-			List<NodeRef> dynamicCharachListToTreat = new ArrayList<NodeRef>();
-			for (DynamicCharachListItem dynamicCharachListDataItem : dynamicCharachList) {
-				if (dynamicCharachListDataItem.getNodeRef() != null) {
-					dynamicCharachListToTreat.add(dynamicCharachListDataItem.getNodeRef());
+			List<NodeRef> dynamicCharactListToTreat = new ArrayList<NodeRef>();
+			for (DynamicCharactListItem dynamicCharactListDataItem : dynamicCharactList) {
+				if (dynamicCharactListDataItem.getNodeRef() != null) {
+					dynamicCharactListToTreat.add(dynamicCharactListDataItem.getNodeRef());
 				}
 			}
 			List<NodeRef> filesToUpdate = new ArrayList<NodeRef>();
 			// remove deleted nodes
 			for (NodeRef listItemNodeRef : listItemNodeRefs) {
 
-				if (!dynamicCharachListToTreat.contains(listItemNodeRef)) {
+				if (!dynamicCharactListToTreat.contains(listItemNodeRef)) {
 					// delete
 					nodeService.deleteNode(listItemNodeRef);
 				} else {
@@ -1137,22 +1137,22 @@ public class ProductDAOImpl implements ProductDAO {
 			}
 
 			// update or create nodes			
-			for (DynamicCharachListItem dynamicCharachListDataItem : dynamicCharachList) {
-				NodeRef linkNodeRef = dynamicCharachListDataItem.getNodeRef();
+			for (DynamicCharactListItem dynamicCharactListDataItem : dynamicCharactList) {
+				NodeRef linkNodeRef = dynamicCharactListDataItem.getNodeRef();
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE, dynamicCharachListDataItem.getName());
-				properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_FORMULA, dynamicCharachListDataItem.getFormula());
-				properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_VALUE, (Serializable) dynamicCharachListDataItem.getValue());
-				properties.put(BeCPGModel.PROP_DYNAMICCHARCAT_GROUP_COLOR, dynamicCharachListDataItem.getGroupColor());
+				properties.put(BeCPGModel.PROP_DYNAMICCHARACT_TITLE, dynamicCharactListDataItem.getName());
+				properties.put(BeCPGModel.PROP_DYNAMICCHARACT_FORMULA, dynamicCharactListDataItem.getFormula());
+				properties.put(BeCPGModel.PROP_DYNAMICCHARACT_VALUE, (Serializable) dynamicCharactListDataItem.getValue());
+				properties.put(BeCPGModel.PROP_DYNAMICCHARACT_GROUP_COLOR, dynamicCharactListDataItem.getGroupColor());
 				
 				if (filesToUpdate.contains(linkNodeRef)) {
 					// update
 					nodeService.addProperties(linkNodeRef, properties);
 				} else {
 					// create
-					ChildAssociationRef childAssocRef = nodeService.createNode(dynamicCharachListNodeRef, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(dynamicCharachListDataItem.getName())),
-							BeCPGModel.TYPE_DYNAMICCHARCATLIST, properties);
+					ChildAssociationRef childAssocRef = nodeService.createNode(dynamicCharactListNodeRef, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(dynamicCharactListDataItem.getName())),
+							BeCPGModel.TYPE_DYNAMICCHARACTLIST, properties);
 					linkNodeRef = childAssocRef.getChildRef();
 				}
 
@@ -1206,13 +1206,14 @@ public class ProductDAOImpl implements ProductDAO {
 					}
 				}
 
+				int sortIndex = RepoConsts.SORT_DEFAULT_STEP;
 				Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(compoList);				
-				createCompositeCompoListItem(compoListNodeRef, composite, filesToUpdate);
+				createCompositeCompoListItem(compoListNodeRef, composite, filesToUpdate, sortIndex);
 			}
 		}		
 	}
 
-	private void createCompositeCompoListItem(NodeRef compoListNodeRef, Composite<CompoListDataItem> composite, List<NodeRef> filesToUpdate) {
+	private void createCompositeCompoListItem(NodeRef compoListNodeRef, Composite<CompoListDataItem> composite, List<NodeRef> filesToUpdate, int sortIndex) {
 
 		for (AbstractComponent<CompoListDataItem> component : composite.getChildren()) {
 			
@@ -1227,6 +1228,9 @@ public class ProductDAOImpl implements ProductDAO {
 			properties.put(BeCPGModel.PROP_COMPOLIST_LOSS_PERC, compoListDataItem.getLossPerc());
 			properties.put(BeCPGModel.PROP_COMPOLIST_YIELD_PERC, compoListDataItem.getYieldPerc());
 			properties.put(BeCPGModel.PROP_COMPOLIST_DECL_TYPE, compoListDataItem.getDeclType());
+			
+			properties.put(BeCPGModel.PROP_SORT, sortIndex);
+			sortIndex = sortIndex + RepoConsts.SORT_DEFAULT_STEP;
 
 			if (filesToUpdate.contains(compoListDataItem.getNodeRef())) {
 				// update
@@ -1250,7 +1254,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 			if (component instanceof Composite) {
 
-				createCompositeCompoListItem(compoListNodeRef, (Composite<CompoListDataItem>) component, filesToUpdate);
+				createCompositeCompoListItem(compoListNodeRef, (Composite<CompoListDataItem>) component, filesToUpdate, sortIndex);
 			}
 
 		}

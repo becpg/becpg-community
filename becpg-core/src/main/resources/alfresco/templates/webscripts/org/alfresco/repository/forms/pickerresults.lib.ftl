@@ -32,9 +32,9 @@
 			{
 				"type": "${row.item.typeShort}",
 				"isContainer": ${row.item.isContainer?string},
-				<#if row.item.typeShort == "bcpg:dynamicCharachList" >
-				"name": "${row.item.properties["bcpg:dynamicCharachTitle"]!""}",
-				"title": "${row.item.properties["bcpg:dynamicCharachTitle"]!""}",
+				<#if row.item.typeShort == "bcpg:dynamicCharactList" >
+				"name": "${row.item.properties["bcpg:dynamicCharactTitle"]!""}",
+				"title": "${row.item.properties["bcpg:dynamicCharactTitle"]!""}",
 				<#elseif row.item.typeShort == "bcpg:linkedValue" >
 				"name": "${row.item.properties["bcpg:lkvValue"]!""}",
 				"title": "${row.item.properties["bcpg:lkvValue"]!""}",

@@ -3991,23 +3991,23 @@
 
 
 
-	<!-- bcpg:dynamicCharachList type -->
-	<config evaluator="model-type" condition="bcpg:dynamicCharachList">
+	<!-- bcpg:dynamicCharactList type -->
+	<config evaluator="model-type" condition="bcpg:dynamicCharactList">
 		<forms>
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="bcpg:dynamicCharachTitle" />
-					<show id="bcpg:dynamicCharachFormula" />
-					<show id="bcpg:dynamicCharachGroupColor" />
+					<show id="bcpg:dynamicCharactTitle" />
+					<show id="bcpg:dynamicCharactFormula" />
+					<show id="bcpg:dynamicCharactGroupColor" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:dynamicCharachFormula">
+					<field id="bcpg:dynamicCharactFormula">
 						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
 						</control>
 					</field>
-					<field id="bcpg:dynamicCharachGroupColor">
+					<field id="bcpg:dynamicCharactGroupColor">
 						<control
 							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
 					</field>
@@ -4017,21 +4017,21 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
-					<show id="bcpg:dynamicCharachGroupColor" />
-					<show id="bcpg:dynamicCharachTitle" />
-					<show id="bcpg:dynamicCharachValue" />
+					<show id="bcpg:dynamicCharactGroupColor" />
+					<show id="bcpg:dynamicCharactTitle" />
+					<show id="bcpg:dynamicCharactValue" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:dynamicCharachGroupColor" label-id="becpg.forms.set.grp.label" />
+					<field id="bcpg:dynamicCharactGroupColor" label-id="becpg.forms.set.grp.label" />
 				</appearance>
 			</form>
 
 			<form id="filter">
 				<field-visibility>
-					<show id="bcpg:dynamicCharachGroupColor" />
+					<show id="bcpg:dynamicCharactGroupColor" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:dynamicCharachGroupColor">
+					<field id="bcpg:dynamicCharactGroupColor">
 						<control
 							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
 					</field>
@@ -4040,23 +4040,23 @@
 
 		</forms>
 	</config>
-	<!-- bcpg:dynamicCharachList type (existing nodes) -->
-	<config evaluator="node-type" condition="bcpg:dynamicCharachList">
+	<!-- bcpg:dynamicCharactList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:dynamicCharactList">
 		<forms>
 			<!-- Data List pop-up edit form -->
 			<form>
 				<field-visibility>
-					<show id="bcpg:dynamicCharachTitle" />
-					<show id="bcpg:dynamicCharachFormula" />
-					<show id="bcpg:dynamicCharachGroupColor" />
+					<show id="bcpg:dynamicCharactTitle" />
+					<show id="bcpg:dynamicCharactFormula" />
+					<show id="bcpg:dynamicCharactGroupColor" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:dynamicCharachFormula">
+					<field id="bcpg:dynamicCharactFormula">
 						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
 						</control>
 					</field>
-					<field id="bcpg:dynamicCharachGroupColor">
+					<field id="bcpg:dynamicCharactGroupColor">
 						<control
 							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
 					</field>

@@ -40,6 +40,11 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 	private ProductDAO productDAO;
 	
 	Set<QName> dataLists = new HashSet<QName>();
+	NodeRef cost1 = null;
+	NodeRef cost2 = null;
+	NodeRef cost3 = null;
+	NodeRef nut1 = null;
+	NodeRef nut2 = null;
 	NodeRef costListItem1NodeRef = null;
 	NodeRef costListItem2NodeRef = null;
 	NodeRef costListItem3NodeRef = null;
@@ -86,20 +91,7 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 	   public void testCreateProductLists(){
 		   
 			dataLists.add(BeCPGModel.TYPE_COSTLIST);
-			dataLists.add(BeCPGModel.TYPE_NUTLIST);
-	
-			final NodeRef cost1 = costs.get(0);
-			nodeService.setProperty(cost1, BeCPGModel.PROP_COSTCURRENCY, "€");
-			final NodeRef cost2 = costs.get(1);
-			nodeService.setProperty(cost2, BeCPGModel.PROP_COSTCURRENCY, "$");
-			final NodeRef cost3 = costs.get(2);
-			nodeService.setProperty(cost3, BeCPGModel.PROP_COSTCURRENCY, "€");
-			nodeService.setProperty(cost3, BeCPGModel.PROP_COSTFIXED, true);
-	
-			final NodeRef nut1 = nuts.get(0);
-			nodeService.setProperty(nut1, BeCPGModel.PROP_NUTUNIT, "kcal");
-			final NodeRef nut2 = nuts.get(1);
-			nodeService.setProperty(nut2, BeCPGModel.PROP_NUTUNIT, "kJ");
+			dataLists.add(BeCPGModel.TYPE_NUTLIST);			
 			
 		   final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				@Override
@@ -114,6 +106,19 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 					}			
 					folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 									
+					cost1 = costs.get(0);
+					nodeService.setProperty(cost1, BeCPGModel.PROP_COSTCURRENCY, "€");
+					cost2 = costs.get(1);
+					nodeService.setProperty(cost2, BeCPGModel.PROP_COSTCURRENCY, "$");
+					cost3 = costs.get(2);
+					nodeService.setProperty(cost3, BeCPGModel.PROP_COSTCURRENCY, "€");
+					nodeService.setProperty(cost3, BeCPGModel.PROP_COSTFIXED, true);
+			
+					nut1 = nuts.get(0);
+					nodeService.setProperty(nut1, BeCPGModel.PROP_NUTUNIT, "kcal");
+					nut2 = nuts.get(1);
+					nodeService.setProperty(nut2, BeCPGModel.PROP_NUTUNIT, "kJ");
+					
 					/*
 					 * Create raw material
 					 */

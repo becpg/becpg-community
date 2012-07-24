@@ -1380,24 +1380,23 @@
 
 		<!-- Dynamic charact list -->
 
-		<type name="bcpg:dynamicCharachList">
+		<type name="bcpg:dynamicCharactList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
-				<property name="bcpg:dynamicCharachTitle">
+				<property name="bcpg:dynamicCharactTitle">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="bcpg:dynamicCharactFormula">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<index enabled="false"/>
 				</property>
-				<property name="bcpg:dynamicCharachFormula">
-					<type>d:text</type>
-					<mandatory>true</mandatory>
-					<index enabled="false"/>
-				</property>
-				<property name="bcpg:dynamicCharachValue">
+				<property name="bcpg:dynamicCharactValue">
 					<type>d:any</type>
 					<index enabled="false"/>
 				</property>
-				<property name="bcpg:dynamicCharachGroupColor">
+				<property name="bcpg:dynamicCharactGroupColor">
 					<type>d:text</type>
 					<default>000000</default>
 				</property>

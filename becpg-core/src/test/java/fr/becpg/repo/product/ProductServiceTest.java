@@ -417,7 +417,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 		logger.debug("testClassifyProduct");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Clean --*/
@@ -443,8 +443,14 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				rawMaterial.setHierarchy1(HIERARCHY1_FROZEN_REF);
 				rawMaterial.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				rawMaterial.setState(SystemState.Valid);
-				NodeRef rawMaterialNodeRef = productDAO.create(testFolder, rawMaterial, null);
-				// productService.initializeProductFolder(rawMaterialNodeRef);
+				return productDAO.create(testFolder, rawMaterial, null);
+				
+			}
+		}, false, true);
+		
+		final NodeRef rawMaterial2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
 
 				/*-- classify --*/
 				logger.debug("/*-- classify --*/");
@@ -493,20 +499,26 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				rawMaterial2.setHierarchy1(HIERARCHY1_FROZEN_REF);
 				rawMaterial2.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				rawMaterial2.setState(SystemState.Valid);
-				NodeRef rawMaterial2NodeRef = productDAO.create(testFolder, rawMaterial2, null);
-				// productService.initializeProductFolder(rawMaterial2NodeRef);
+				return productDAO.create(testFolder, rawMaterial2, null);
+				
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
 
 				/*-- classify --*/
 				logger.debug("/*-- classify --*/");
 				productService.classifyProduct(repositoryHelper.getCompanyHome(), rawMaterial2NodeRef);
 
 				/*-- Check --*/
-				paths = nodeService.getPaths(rawMaterial2NodeRef, true);
+				List<Path> paths = nodeService.getPaths(rawMaterial2NodeRef, true);
 				logger.debug("/*-- Check --*/");
 				logger.debug("path: " + paths.get(0));
-				displayPath = paths.get(0).toDisplayPath(nodeService, permissionService);
+				String displayPath = paths.get(0).toDisplayPath(nodeService, permissionService);
 				logger.debug("display path: " + displayPath);
-				arrDisplayPaths = displayPath.split(RepoConsts.PATH_SEPARATOR);
+				String []arrDisplayPaths = displayPath.split(RepoConsts.PATH_SEPARATOR);
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);

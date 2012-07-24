@@ -190,7 +190,7 @@ public class ProductServiceImpl implements ProductService {
     		dataLists.add(MPMModel.TYPE_PROCESSLIST);
     		dataLists.add(BeCPGModel.TYPE_NUTLIST); // TODO keep min/max
     		dataLists.add(BeCPGModel.TYPE_COSTLIST); // TODO keep max
-    		dataLists.add(BeCPGModel.TYPE_DYNAMICCHARCATLIST); 
+    		dataLists.add(BeCPGModel.TYPE_DYNAMICCHARACTLIST); 
         	ProductData productData = productDAO.find(productNodeRef, dataLists); 
         	        	
         	// do the formulation if the product has a composition, or packaging list defined

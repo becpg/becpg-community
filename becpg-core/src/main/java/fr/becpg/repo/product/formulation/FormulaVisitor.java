@@ -10,7 +10,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.DynamicCharachListItem;
+import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 
 /**
  * Use Spring EL to parse formula and compute value
@@ -29,16 +29,16 @@ public class FormulaVisitor implements ProductVisitor {
 		EvaluationContext context = new StandardEvaluationContext(productData);
 
 
-		if (productData.getDynamicCharachList() != null) {
-			for (DynamicCharachListItem dynamicCharachListItem : productData.getDynamicCharachList()) {
+		if (productData.getDynamicCharactList() != null) {
+			for (DynamicCharactListItem dynamicCharactListItem : productData.getDynamicCharactList()) {
 				try {
-					logger.debug("Parse formula : " + dynamicCharachListItem.getFormula() + " (" + dynamicCharachListItem.getName() + ")");
-					Expression exp = parser.parseExpression(dynamicCharachListItem.getFormula());
-					dynamicCharachListItem.setValue(exp.getValue(context));		
-					logger.debug("Value :" + dynamicCharachListItem.getValue());
+					logger.debug("Parse formula : " + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")");
+					Expression exp = parser.parseExpression(dynamicCharactListItem.getFormula());
+					dynamicCharactListItem.setValue(exp.getValue(context));		
+					logger.debug("Value :" + dynamicCharactListItem.getValue());
 				} catch (Exception e) {
-					dynamicCharachListItem.setValue("#Error");
-					logger.warn("Error in formula :" + dynamicCharachListItem.getFormula() + " (" + dynamicCharachListItem.getName() + ")", e);
+					dynamicCharactListItem.setValue("#Error");
+					logger.warn("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")", e);
 				}
 			}
 		}

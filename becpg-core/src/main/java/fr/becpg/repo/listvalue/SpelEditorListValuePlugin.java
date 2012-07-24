@@ -49,7 +49,7 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
 		QName type = QName.createQName(className, namespaceService);
 
-		if (type.equals(BeCPGModel.TYPE_DYNAMICCHARCATLIST)) {
+		if (type.equals(BeCPGModel.TYPE_DYNAMICCHARACTLIST)) {
 			return suggestVariable(type, query, pageNum, pageSize, new NodeRef((String) props.get(ListValueService.PROP_NODEREF)));
 		}
 
@@ -62,13 +62,13 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
 		query = prepareQuery(query);
 		queryPath = String
-				.format(" +TYPE:\"%s\"  +@bcpg\\:dynamicCharachTitle:(%s) +PATH:\"/%s//*\"  ", type, query, nodeService.getPath(nodeRef).toPrefixString(namespaceService));
+				.format(" +TYPE:\"%s\"  +@bcpg\\:dynamicCharactTitle:(%s) +PATH:\"%s/*/*/*\"  ", type, query, nodeService.getPath(nodeRef).toPrefixString(namespaceService));
 
 		logger.debug("suggestVariable for query : " + queryPath);
 
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, LuceneHelper.getSort(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE), RepoConsts.MAX_SUGGESTIONS);
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, LuceneHelper.getSort(BeCPGModel.PROP_DYNAMICCHARACT_TITLE), RepoConsts.MAX_SUGGESTIONS);
 
-		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_DYNAMICCHARCAT_TITLE, nodeService));
+		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_DYNAMICCHARACT_TITLE, nodeService));
 	}
 
 }
