@@ -11,7 +11,7 @@
 	/**
 	 * YUI Library aliases
 	 */
-	var Dom = YAHOO.util.Dom;
+	var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling;
 
 	/**
 	 * EntityDataListToolbar constructor.
@@ -26,7 +26,21 @@
 
 		beCPG.component.EntityDataListToolbar.superclass.constructor.call(this, "beCPG.component.EntityDataListToolbar",
 		      htmlId, [ "button", "container" ]);
+		
+		// Initialise prototype properties
+		this.toolbarButtonActions = {};
 
+		// Renderers
+		Bubbling.on("registerToolbarButtonAction", this.onRegisterToolbarButtonAction, this);
+		
+		Bubbling.on("activeDataListChanged", this.onActiveDataListChanged, this);
+
+		/* Deferred list population until DOM ready */
+		this.deferredToolbarPopulation = new Alfresco.util.Deferred([ "onReady", "onActiveDataListChanged" ], {
+		   fn : this.populateToolbar,
+		   scope : this
+		});
+		
 		return this;
 	};
 
@@ -63,18 +77,74 @@
 			 * @type string
 			 * @default ""
 			 */
-	      entityNodeRef : "",
-
-	      /**
-			 * Current showECO.
-			 * 
-			 * @property showECO
-			 * @type boolean
-			 * @default ""
-			 */
-	      showECO : false
+	      entityNodeRef : ""
 	   },
 
+	   /**
+		 * Register a toolbar button action via Bubbling event
+		 * 
+		 */
+	   onRegisterToolbarButtonAction : function EntityDataListToolbar_onRegisterToolbarButtonAction(layer, args) {
+		   var obj = args[1];
+		   if (obj && obj.actionName) {
+		   	 this.toolbarButtonActions[obj.actionName] = obj;
+		   } 
+	   },
+	   
+	   /**
+	    * Append toolbar buttons
+	    */
+	   onActiveDataListChanged : function EntityDataListToolbar_onRegisterToolbarButtonAction(layer, args) {
+	      var obj = args[1];
+         if ((obj !== null) && (obj.dataList !== null)) {
+            this.datalistMeta = obj.dataList;
+
+            if (obj.list != null && (this.options.list == null || this.options.list.length < 1)) {
+               this.options.list = obj.list;
+            }
+
+            // Could happen more than once, so check return value of
+            // fulfil()
+            if (!this.deferredToolbarPopulation.fulfil("onActiveDataListChanged")) {
+               this.populateToolbar();
+            }
+         }
+	   },
+	   
+	   populateToolbar : function EntityDataGrid_populateDataGrid() {
+	   	 
+	   	this.widgets.actionButtons = {};
+	   	
+	   	if (!YAHOO.lang.isObject(this.datalistMeta)) {
+            return;
+         }
+        var container =   Dom.get(this.id +"-toolbar-buttons"),
+        		template  =   Dom.get(this.id + "-toolBar-template-button");
+         
+         for(actionName in this.toolbarButtonActions){
+         	var action = this.toolbarButtonActions[actionName];
+         	if(action.evaluate == null || action.evaluate(this.datalistMeta)){
+         		
+               var templateInstance = template.cloneNode(true);
+  
+                Dom.addClass(templateInstance, actionName);
+  
+               container.appendChild(templateInstance);
+               
+               var spanEl = Dom.getFirstChild(templateInstance);
+               Dom.setAttribute(spanEl,"id", this.id+"-"+actionName+"Button");
+   
+               this.widgets.actionButtons[actionName] = 
+               	Alfresco.util.createYUIButton(this, actionName+"Button", action.fn);
+                
+               this.widgets.actionButtons[actionName].set("label",this.msg("button."+actionName));
+               this.widgets.actionButtons[actionName].set("title",this.msg("button."+actionName+".description"));
+              
+              Dom.removeClass(templateInstance, "hidden");
+         	}
+         }
+	   },
+	   
 	   /**
 		 * Fired by YUI when parent element is available for scripting.
 		 * 
@@ -88,213 +158,14 @@
 		   this.widgets.rssFeedButton = Alfresco.util.createYUIButton(this, "rssFeedButton", {
 			   disabled : true
 		   });
-
-		   // eco button
-		   if (this.options.showECO) {
-			   this.widgets.ecoCalculateWUsedButton = Alfresco.util.createYUIButton(this, "ecoCalculateWUsedButton",
-			         this.onECOCalculateWUsed, {
-				         disabled : false
-			         });
-			   this.widgets.ecoDoSimulationButton = Alfresco.util.createYUIButton(this, "ecoDoSimulationButton",
-			         this.onECODoSimulation, {
-				         disabled : false
-			         });
-			   this.widgets.ecoApplyButton = Alfresco.util.createYUIButton(this, "ecoApplyButton", this.onECOApply, {
-				   disabled : false
-			   });
-		   } else {
-			   Dom.setStyle(this.id + "-ecoCalculateWUsedButton", "display", "none");
-			   Dom.setStyle(this.id + "-ecoDoSimulationButton", "display", "none");
-			   Dom.setStyle(this.id + "-ecoApplyButton", "display", "none");
-		   }
-
-		   // finish button
-		   this.widgets.finishButton = Alfresco.util.createYUIButton(this, "finishButton", this.onFinish, {
-			   disabled : false
-		   });
+		   
+         this.deferredToolbarPopulation.fulfil("onReady");
 
 		   // Finally show the component body here to prevent UI artifacts on YUI
 			// button decoration
 		   Dom.setStyle(this.id + "-body", "visibility", "visible");
 	   },
 
-	   /**
-		 * ECOCalculateWUsed button click handler
-		 * 
-		 * @method onECOCalculateWUsed
-		 * @param e
-		 *           {object} DomEvent
-		 * @param p_obj
-		 *           {object} Object passed back from addListener method
-		 */
-	   onECOCalculateWUsed : function EntityDataListToolbar_onECOCalculateWUsed(e, p_obj) {
-		   Alfresco.util.PopupManager.displayMessage({
-			   text : this.msg("message.eco-calculate-wused.please-wait")
-		   });
-
-		   Alfresco.util.Ajax.request({
-		      method : Alfresco.util.Ajax.GET,
-		      url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/"
-		            + this.options.entityNodeRef.replace(":/", "") + "/calculatewused",
-		      successCallback : {
-		         fn : function EntityDataListToolbar_onECOCalculateWUsed_success(response) {
-			         Alfresco.util.PopupManager.displayMessage({
-				         text : this.msg("message.eco-calculate-wused.success")
-			         });
-
-		         },
-		         scope : this
-		      },
-		      failureCallback : {
-		         fn : function EntityDataListToolbar_onECOCalculateWUsed_failure(response) {
-			         if (response.message != null) {
-				         Alfresco.util.PopupManager.displayPrompt({
-					         text : response.message
-				         });
-			         } else {
-				         Alfresco.util.PopupManager.displayMessage({
-					         text : this.msg("message.eco-calculate-wused.failure")
-				         });
-			         }
-		         },
-		         scope : this
-		      }
-		   });
-	   },
-
-	   /**
-		 * ECODoSimulation button click handler
-		 * 
-		 * @method onECODoSimulation
-		 * @param e
-		 *           {object} DomEvent
-		 * @param p_obj
-		 *           {object} Object passed back from addListener method
-		 */
-	   onECODoSimulation : function EntityDataListToolbar_onECODoSimulation(e, p_obj) {
-		   Alfresco.util.PopupManager.displayMessage({
-			   text : this.msg("message.eco-do-simulation.please-wait")
-		   });
-
-		   Alfresco.util.Ajax.request({
-		      method : Alfresco.util.Ajax.GET,
-		      url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/"
-		            + this.options.entityNodeRef.replace(":/", "") + "/dosimulation",
-		      successCallback : {
-		         fn : function EntityDataListToolbar_onECODoSimulation_success(response) {
-			         Alfresco.util.PopupManager.displayMessage({
-				         text : this.msg("message.eco-do-simulation.success")
-			         });
-
-		         },
-		         scope : this
-		      },
-		      failureCallback : {
-		         fn : function EntityDataListToolbar_onECODoSimulation_failure(response) {
-			         if (response.message != null) {
-				         Alfresco.util.PopupManager.displayPrompt({
-					         text : response.message
-				         });
-			         } else {
-				         Alfresco.util.PopupManager.displayMessage({
-					         text : this.msg("message.eco-do-simulation.failure")
-				         });
-			         }
-		         },
-		         scope : this
-		      }
-		   });
-	   },
-
-	   /**
-		 * ECOApply button click handler
-		 * 
-		 * @method onECOApply
-		 * @param e
-		 *           {object} DomEvent
-		 * @param p_obj
-		 *           {object} Object passed back from addListener method
-		 */
-	   onECOApply : function EntityDataListToolbar_onECOApply(e, p_obj) {
-		   Alfresco.util.PopupManager.displayMessage({
-			   text : this.msg("message.eco-apply.please-wait")
-		   });
-
-		   Alfresco.util.Ajax.request({
-		      method : Alfresco.util.Ajax.GET,
-		      url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/"
-		            + this.options.entityNodeRef.replace(":/", "") + "/apply",
-		      successCallback : {
-		         fn : function EntityDataListToolbar_onECOApply_success(response) {
-			         Alfresco.util.PopupManager.displayMessage({
-				         text : this.msg("message.eco-apply.success")
-			         });
-
-		         },
-		         scope : this
-		      },
-		      failureCallback : {
-		         fn : function EntityDataListToolbar_onECOApply_failure(response) {
-			         if (response.message != null) {
-				         Alfresco.util.PopupManager.displayPrompt({
-					         text : response.message
-				         });
-			         } else {
-				         Alfresco.util.PopupManager.displayMessage({
-					         text : this.msg("message.eco-apply.failure")
-				         });
-			         }
-		         },
-		         scope : this
-		      }
-		   });
-	   },
-
-	   /**
-		 * Finish button click handler
-		 * 
-		 * @method onFinish
-		 * @param e
-		 *           {object} DomEvent
-		 * @param p_obj
-		 *           {object} Object passed back from addListener method
-		 */
-	   onFinish : function EntityDataListToolbar_onFinish(e, p_obj) {
-		   Alfresco.util.PopupManager.displayMessage({
-			   text : this.msg("message.generate-report.please-wait")
-		   });
-
-		   Alfresco.util.Ajax.request({
-		      method : Alfresco.util.Ajax.GET,
-		      url : Alfresco.constants.PROXY_URI + "becpg/entity/generate-report/node/"
-		            + this.options.entityNodeRef.replace(":/", "") + "/check-datalists",
-		      successCallback : {
-		         fn : function EntityDataListToolbar_onFinish_success(response) {
-			         Alfresco.util.PopupManager.displayMessage({
-				         text : this.msg("message.generate-report.success")
-			         });
-
-			         if (this.options.siteId != "") {
-				         window.location = Alfresco.constants.URL_PAGECONTEXT + "site/" + this.options.siteId
-				               + "/document-details?nodeRef=" + this.options.entityNodeRef;
-			         } else {
-				         window.location = Alfresco.constants.URL_PAGECONTEXT + "document-details?nodeRef="
-				               + this.options.entityNodeRef;
-			         }
-
-		         },
-		         scope : this
-		      },
-		      failureCallback : {
-		         fn : function EntityDataListToolbar_onFinish_failure(response) {
-			         Alfresco.util.PopupManager.displayMessage({
-				         text : this.msg("message.generate-report.failure")
-			         });
-		         },
-		         scope : this
-		      }
-		   });
-	   }
-
+	 
 	}, true);
 })();
