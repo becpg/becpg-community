@@ -705,7 +705,7 @@
 		               }, {
 		                  name : "variables",
 		                  type : "bcpg:dynamicCharactList",
-		                  template : "dynamicCharactList.?[nodeRef.toString() == '{item1}' ][0].value"
+		                  template : "dynamicCharactList.?[name == '{name1}' ][0].value"
 		               } ];
 
 		               var menuItem, item, label;
@@ -807,6 +807,7 @@
 				               } else {
 
 					               var text = Lang.substitute(me.options.selectedParentType.template, {
+					               	name1 : data.name,
 						               item1 : data.value
 					               });
 

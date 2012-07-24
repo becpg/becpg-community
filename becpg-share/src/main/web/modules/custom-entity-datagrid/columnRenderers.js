@@ -111,9 +111,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 	
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	   propertyName : "bcpg:dynamicCharachValue",
+	   propertyName : "bcpg:dynamicCharactValue",
 	   renderer : function(oRecord, data, label, scope) {
-	   	 var color =   oRecord.getData("itemData")["prop_bcpg_dynamicCharachGroupColor"].value ;
+	   	 var color =   oRecord.getData("itemData")["prop_bcpg_dynamicCharactGroupColor"].value ;
 	   	 if(!color){
 	   		color = "000000"; 
 	   	 }
@@ -125,9 +125,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 	
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	   propertyName : "bcpg:dynamicCharachGroupColor",
+	   propertyName : "bcpg:dynamicCharactGroupColor",
 	   renderer : function(oRecord, data, label, scope) {
-	   	 var color =   oRecord.getData("itemData")["prop_bcpg_dynamicCharachGroupColor"].value ;
+	   	 var color =   oRecord.getData("itemData")["prop_bcpg_dynamicCharactGroupColor"].value ;
 	   	 if(!color){
 	   		color = "000000"; 
 	   	 }
