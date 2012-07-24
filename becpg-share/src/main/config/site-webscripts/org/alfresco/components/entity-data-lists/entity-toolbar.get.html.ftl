@@ -1,4 +1,5 @@
 <#assign id = args.htmlid>
+<#include "../component.head.inc">
 <script type="text/javascript">//<![CDATA[
    new beCPG.component.EntityDataListToolbar("${id}").setOptions(
    {
@@ -6,7 +7,7 @@
 	  entityNodeRef: "${page.url.args.nodeRef!""}"
    }).setMessages(${messages});
 //]]></script>
-<script type="text/javascript" src="${page.url.context}/res/components/entity-data-lists/custom-entity-toolbar.js"></script>
+<@script type="text/javascript" src="${page.url.context}/res/components/entity-data-lists/custom-entity-toolbar.js"></@script>
 <div id="${args.htmlid}-body" class="datalist-toolbar toolbar">
    <div id="${args.htmlid}-headerBar" class="header-bar flat-button theme-bg-2">
       <div class="left">

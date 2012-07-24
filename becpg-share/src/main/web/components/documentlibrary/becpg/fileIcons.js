@@ -79,8 +79,9 @@ Alfresco.util.getFileIcon.types =
    "{http://www.bcpg.fr/model/becpg/1.0}packagingMaterial":"packagingMaterial",
    "bcpg:packagingMaterial":"packagingMaterial",
    "{http://www.bcpg.fr/model/becpg/1.0}resourceProduct":"resourceProduct",
-   "bcpg:resourceProduct":"resourceProduct"
-		   
+   "bcpg:resourceProduct":"resourceProduct",
+   "{http://www.bcpg.fr/model/ecm/1.0}changeOrder":"changeOrder",
+   "ecm:changeOrder":"changeOrder"
 };
                   
 beCPG.util.getFileIcon = function(p_fileName, p_record ,p_isContainer,p_isSimpleView)
