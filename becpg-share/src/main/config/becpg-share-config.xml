@@ -7,7 +7,7 @@
 			<alt-text>Alfresco Share</alt-text>
 			<css-class>footer-becpg</css-class>
 			<label>beCPG @2010-2012</label>
-			<analytics-id>UA-21318502-1</analytics-id>
+			<analytics-id>UA-33644643-1</analytics-id>
 		</footer>
 		<about>
 			<css-class>logo-com</css-class>
@@ -18,6 +18,7 @@
 	<config replace="true">
 
 		<header>
+
 			<app-items>
 				<!-- defaults: icon="{id}.png" label="header.{id}.label" description="header.{id}.description" -->
 				<item type="link" id="my-dashboard">{userdashboardpage}</item>
@@ -69,6 +70,14 @@
 			</dependencies>
 		</header>
 	</config>
+
+
+   <config evaluator="string-compare" condition="HelpPages" replace="true">
+      <help-pages>
+         <share-help>http://becpg.fr/google/support</share-help>
+         <share-tutorial>http://becpg.fr/documentation/starting-kit</share-tutorial>
+      </help-pages>
+   </config>
 
 
 	<config evaluator="string-compare" condition="Workflow">
