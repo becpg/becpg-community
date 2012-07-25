@@ -151,7 +151,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		String dataType = propertyDef.getDataType().toString();
 
 		if (dataType.equals(DataTypeDefinition.ASSOC_REF.toString())) {
-			value = (String) nodeService.getProperty((NodeRef) v, ContentModel.PROP_NAME);
+			QName type = nodeService.getType((NodeRef) v);
+			value = (String) nodeService.getProperty((NodeRef) v, getPropName(type));
 		} else if (dataType.equals(DataTypeDefinition.CATEGORY.toString())) {
 
 			List<NodeRef> categories = (ArrayList<NodeRef>) v;
@@ -201,11 +202,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			value = propertyFormats.getDatetimeFormat().format(v);
 		} else if (dataType.equals(DataTypeDefinition.NODE_REF.toString())) {
-			if (nodeService.getType((NodeRef) v).equals(BeCPGModel.TYPE_LINKED_VALUE)) {
-				value = (String) nodeService.getProperty((NodeRef) v, BeCPGModel.PROP_LKV_VALUE);
-			} else {
-				value = (String) nodeService.getProperty((NodeRef) v, ContentModel.PROP_NAME);
-			}
+			QName type = nodeService.getType((NodeRef) v);
+			value = (String) nodeService.getProperty((NodeRef) v, getPropName(type));
+
 		} else if (dataType.equals(DataTypeDefinition.MLTEXT.toString())) {
 
 			value = v.toString();
@@ -342,7 +341,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						nodeRefs += RepoConsts.LABEL_SEPARATOR;
 					}
 
-					displayName += (String) nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME);
+					type = nodeService.getType(assocRef.getTargetRef());
+					displayName += (String) nodeService.getProperty(assocRef.getTargetRef(), getPropName(type));
 					nodeRefs += assocRef.getTargetRef().toString();
 				}
 				tmp.put("label", attribute.getTitle());
@@ -360,11 +360,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					if (type != null) {
 						tmp.put("metadata", extractMetadata(type, assocRef.getTargetRef()));
 					}
-					tmp.put("displayValue", (String) nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME));
+					tmp.put("displayValue", (String) nodeService.getProperty(assocRef.getTargetRef(), getPropName(type)));
 					tmp.put("value", assocRef.getTargetRef().toString());
 					String siteId = extractSiteId(assocRef.getTargetRef());
 					if (siteId != null) {
-					  tmp.put("siteId", siteId);
+						tmp.put("siteId", siteId);
 					}
 
 					ret.add(tmp);
@@ -375,6 +375,17 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 
 		return null;
+	}
+
+	private QName getPropName(QName type) {
+		if (type.equals(ContentModel.TYPE_PERSON)) {
+			return ContentModel.PROP_USERNAME;
+		} else if(type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)){
+			return ContentModel.PROP_AUTHORITY_DISPLAY_NAME;
+		} else if (type.equals(BeCPGModel.TYPE_LINKED_VALUE)){
+			return BeCPGModel.PROP_LKV_VALUE;
+		}
+		return ContentModel.PROP_NAME;
 	}
 
 	@Override
