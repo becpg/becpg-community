@@ -76,7 +76,10 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 
 	/** The raw material4 node ref. */
 	private NodeRef rawMaterial4NodeRef;
-
+	
+	private NodeRef fp1NodeRef;
+	
+	private NodeRef fp2NodeRef;
 
 	/** The costs. */
 	private List<NodeRef> costs = new ArrayList<NodeRef>();
@@ -382,7 +385,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// rawMaterial4NodeRef));
 				fp1.setCompoList(compoList);
 
-				NodeRef fp1NodeRef = productDAO.create(folderNodeRef, fp1, dataLists);
+				fp1NodeRef = productDAO.create(folderNodeRef, fp1, dataLists);
 
 				logger.debug("create FP 2");
 
@@ -432,7 +435,16 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 						DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 
-				NodeRef fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);
+				fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);
+				
+				return null;
+
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+		
 				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
 				productsNodeRef.add(fp2NodeRef);
 
@@ -590,7 +602,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// rawMaterial4NodeRef));
 				fp1.setCompoList(compoList);
 
-				NodeRef fp1NodeRef = productDAO.create(folderNodeRef, fp1, dataLists);
+				fp1NodeRef = productDAO.create(folderNodeRef, fp1, dataLists);
 
 				logger.debug("createRawMaterial 1");
 
@@ -612,7 +624,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 						DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 
-				NodeRef fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);
+				fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);
 				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
 				productsNodeRef.add(fp2NodeRef);
 

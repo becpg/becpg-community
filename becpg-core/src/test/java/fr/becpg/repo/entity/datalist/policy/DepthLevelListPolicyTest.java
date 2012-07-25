@@ -75,7 +75,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	 */
 	public void testChangeParentLevelCompoList() {
 
-		logger.debug("testGetWUsedProduct");
+		logger.debug("testChangeParentLevelCompoList");
 
 
 		final RepoBaseTestCase repoBaseTestCase = this;
@@ -232,6 +232,8 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	 */
 	public void testSwap() {
 
+		logger.debug("testSwap");
+		
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
@@ -327,6 +329,8 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	 */
 	public void testinsertAfter() {
 
+		logger.debug("testinsertAfter");
+		
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
@@ -521,6 +525,8 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	 */
 	public void testCycles() {
 
+		logger.debug("testCycles");
+		
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 

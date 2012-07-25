@@ -490,6 +490,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		NodeRef parentNodeRef = nodeService.getPrimaryParent(product2NodeRef).getParentRef(); 				
 		NodeRef imagesNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, "Images");
 		assertNotNull("check Images exits", imagesNodeRef);
+		
 		NodeRef imgNodeRef = nodeService.getChildByName(imagesNodeRef, ContentModel.ASSOC_CONTAINS, "produit.jpg");
 		assertNotNull("check produit.jpg exits", imgNodeRef);
 		assertEquals("Check title on image", "sushi saumon", nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
@@ -684,8 +685,18 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	    		logger.debug("Start import");
  				importService.importText(nodeRef, true, false);
  	 			
+ 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITY);
+ 				
+ 				return null;
+
+ 			}},false,true);	
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+ 			@Override
+			public NodeRef execute() throws Throwable {
+ 				
  				/*-- check imported values --*/
- 				tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
+ 				NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
  				assertNotNull("Temp folder should exist", tempNodeRef);
  				NodeRef importFolderNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, PATH_PRODUCTS);
  				assertNotNull("import folder should exist", importFolderNodeRef);
@@ -696,7 +707,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 																PATH_CLASSIF_FOLDER_RM, 
 																null, namespaceService, false);
  				assertEquals("classif folder should exist", (int)1 , nodes.size());
- 				productsNodeRef = nodes.get(0);
+ 				NodeRef productsNodeRef = nodes.get(0);
  				assertEquals("3 rm should exist", (int)3 , fileFolderService.listFolders(productsNodeRef).size());
  				
  				nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), 

@@ -895,8 +895,6 @@ public class FormulationTest extends RepoBaseTestCase {
 					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH));
 					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH));
 					
-					logger.debug("###locales: " + illDataItem.getValue().getLocales());
-					
 					//Garniture 52,17 % (ing3 100,00 %), Pâte 47,83 % (Legal Raw material 2 72,73 % (ing2 75,00 %, ing1 25,00 %), ing2 18,18 %, ing1 9,09 %)
 					if(illDataItem.getGrp() == null){		
 						assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check.",  "Garniture french 52,17 % (ing3 french 100,00 %), Pâte french 47,83 % (Legal Raw material 2 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
@@ -918,7 +916,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestIngredientsCalculating() throws Exception{
+	public void testIngredientsCalculating() throws Exception{
 		
 		logger.info("testIngredientsCalculating");
 		
@@ -1159,7 +1157,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateCostAndNutOfProductInkgAndg() throws Exception{
+	public void testFormulateCostAndNutOfProductInkgAndg() throws Exception{
 		   
 		logger.info("testFormulateCostAndNutOfProductInkgAndg");
 		
@@ -1238,7 +1236,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateCostAndNutOfProductInkgAndgAndmLAndm() throws Exception{
+	public void testFormulateCostAndNutOfProductInkgAndgAndmLAndm() throws Exception{
 		   
 		logger.info("testFormulateCostAndNutOfProductInkgAndgAndmLAndm");
 		
@@ -1318,7 +1316,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateWithDensity() throws Exception{
+	public void testFormulateWithDensity() throws Exception{
 		   
 		logger.info("testFormulateWithDensity");
 		
@@ -1377,7 +1375,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	/**
 	 * Test sort nut list.
 	 */
-	public void xtestSortNutList(){
+	public void testSortNutList(){
 		
 		logger.info("testSortNutList");
 		
@@ -1504,7 +1502,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestAllergenListCalculating() throws Exception{
+	public void testAllergenListCalculating() throws Exception{
 		   
 		logger.info("testAllergenListCalculating");
 		
@@ -1715,7 +1713,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateRawMaterial() throws Exception{
+	public void testFormulateRawMaterial() throws Exception{
 		   
 		logger.info("testFormulateRawMaterial");
 		
@@ -1762,7 +1760,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestCalculateWithLoss() throws Exception{
+	public void testCalculateWithLoss() throws Exception{
 		   
 		logger.info("testCalculateWithLoss");
 		
@@ -1952,7 +1950,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestCalculateSubFormula() throws Exception{
+	public void testCalculateSubFormula() throws Exception{
 		   
 		logger.info("testCalculateSubFormula");
 		
@@ -2049,7 +2047,7 @@ public class FormulationTest extends RepoBaseTestCase {
 		   
 	   }
 	
-	public void xtestPackagingCosts() throws Exception{
+	public void testPackagingCosts() throws Exception{
 		   
 		logger.info("testPackagingCosts");
 		
@@ -2142,7 +2140,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulationWithIngRequirements() throws Exception{
+	public void testFormulationWithIngRequirements() throws Exception{
 		   
 		logger.info("testFormulationWithIngRequirements");
 		
@@ -2291,7 +2289,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulationWithCostAndNutMiniMaxi() throws Exception{
+	public void testFormulationWithCostAndNutMiniMaxi() throws Exception{
 		   
 		logger.info("testFormulationWithCostAndNutMiniMaxi");
 		
@@ -2383,7 +2381,7 @@ public class FormulationTest extends RepoBaseTestCase {
 //	 *
 //	 * @throws Exception the exception
 //	 */
-//	public void xtestFormulationWithRequirements() throws Exception{
+//	public void testFormulationWithRequirements() throws Exception{
 //		   
 //	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 //			public NodeRef execute() throws Throwable {					   							
@@ -2514,7 +2512,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestCalculateCostDetails() throws Exception{
+	public void testCalculateCostDetails() throws Exception{
 		   
 		logger.info("testCalculateCostDetails");
 		
@@ -2737,7 +2735,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestCalculateYieldField() throws Exception{
+	public void testCalculateYieldField() throws Exception{
 		   
 		logger.info("testCalculateYieldField");
 		
@@ -2808,11 +2806,11 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestManualListItem() throws Exception{
+	public void testManualListItem() throws Exception{
 		   
 		logger.info("testManualListItem");
 		
-	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
 					
 				/*-- Create finished product --*/
@@ -2831,10 +2829,13 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
-				
-				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
-				
+				return productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+
+			}},false,true);
+	   
+	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			public NodeRef execute() throws Throwable {	
+								
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");
 				productService.formulate(finishedProductNodeRef);
@@ -2842,8 +2843,6 @@ public class FormulationTest extends RepoBaseTestCase {
 				/*-- Verify formulation --*/
 				logger.debug("/*-- Verify formulation --*/");
 				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
-				
-				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
 				
 				//costs
 				int checks = 0;
@@ -2910,7 +2909,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestProcess() throws Exception{
+	public void testProcess() throws Exception{
 		 
 		logger.info("testProcess");
 		

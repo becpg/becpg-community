@@ -410,6 +410,8 @@ public class ProductDAOImpl implements ProductDAO {
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
 
 					Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
+					
+					logger.debug("###depthLevel: " + properties.get(BeCPGModel.PROP_DEPTH_LEVEL));
 
 					List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
 					NodeRef part = compoAssocRefs.size() > 0 ? (compoAssocRefs.get(0)).getTargetRef() : null;
@@ -1206,14 +1208,13 @@ public class ProductDAOImpl implements ProductDAO {
 					}
 				}
 
-				int sortIndex = RepoConsts.SORT_DEFAULT_STEP;
 				Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(compoList);				
-				createCompositeCompoListItem(compoListNodeRef, composite, filesToUpdate, sortIndex);
+				createCompositeCompoListItem(compoListNodeRef, composite, filesToUpdate);
 			}
 		}		
 	}
 
-	private void createCompositeCompoListItem(NodeRef compoListNodeRef, Composite<CompoListDataItem> composite, List<NodeRef> filesToUpdate, int sortIndex) {
+	private void createCompositeCompoListItem(NodeRef compoListNodeRef, Composite<CompoListDataItem> composite, List<NodeRef> filesToUpdate) {
 
 		for (AbstractComponent<CompoListDataItem> component : composite.getChildren()) {
 			
@@ -1229,9 +1230,6 @@ public class ProductDAOImpl implements ProductDAO {
 			properties.put(BeCPGModel.PROP_COMPOLIST_YIELD_PERC, compoListDataItem.getYieldPerc());
 			properties.put(BeCPGModel.PROP_COMPOLIST_DECL_TYPE, compoListDataItem.getDeclType());
 			
-			properties.put(BeCPGModel.PROP_SORT, sortIndex);
-			sortIndex = sortIndex + RepoConsts.SORT_DEFAULT_STEP;
-
 			if (filesToUpdate.contains(compoListDataItem.getNodeRef())) {
 				// update
 				nodeService.addProperties(compoListDataItem.getNodeRef(), properties);
@@ -1254,7 +1252,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 			if (component instanceof Composite) {
 
-				createCompositeCompoListItem(compoListNodeRef, (Composite<CompoListDataItem>) component, filesToUpdate, sortIndex);
+				createCompositeCompoListItem(compoListNodeRef, (Composite<CompoListDataItem>) component, filesToUpdate);
 			}
 
 		}

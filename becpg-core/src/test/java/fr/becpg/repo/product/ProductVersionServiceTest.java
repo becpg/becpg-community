@@ -143,20 +143,38 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 	 * Test check out check in.
 	 */
 	public void testCheckOutCheckIn() {
+		
+		final Collection<QName> dataLists = productDictionaryService.getDataLists();
+		final ProductUnit productUnit = ProductUnit.P;
+		final int valueAdded = 1;
 
-		ProductData newRawMaterial = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<ProductData>() {
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
-			public ProductData execute() throws Throwable {
+			public NodeRef execute() throws Throwable {
 
 				/*-- Create raw material --*/
-				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
+				return createRawMaterial(testFolderNodeRef, "MP test report");
+				
+			}
+		}, false, true);
+		
+		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
 
 				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
 				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 				nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 
 				// Check out
-				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+				return checkOutCheckInService.checkout(rawMaterialNodeRef);
+				
+			}
+		}, false, true);
+		
+		final ProductData rawMaterial = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<ProductData>() {
+			@Override
+			public ProductData execute() throws Throwable {
 
 				assertNotNull("Check working copy exists", workingCopyNodeRef);
 
@@ -164,8 +182,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				assertEquals("productCode should be the same after checkout", nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_CODE),
 						nodeService.getProperty(workingCopyNodeRef, BeCPGModel.PROP_CODE));
 
-				// Check costs on working copy
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
+				// Check costs on working copy				
 				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
 				ProductData workingCopyRawMaterial = productDAO.find(workingCopyNodeRef, dataLists);
 				assertEquals("Check costs size", rawMaterial.getCostList().size(), workingCopyRawMaterial.getCostList().size());
@@ -180,14 +197,20 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 					assertNotSame("Check cost noderef", costListDataItem.getNodeRef(), vCostListDataItem.getNodeRef());
 				}
 
-				// Modify working copy
-				int valueAdded = 1;
-				ProductUnit productUnit = ProductUnit.P;
+				// Modify working copy							
 				workingCopyRawMaterial.setUnit(productUnit);
 				for (CostListDataItem c : workingCopyRawMaterial.getCostList()) {
 					c.setValue(c.getValue() + valueAdded);
 				}
-				productDAO.update(workingCopyNodeRef, workingCopyRawMaterial, dataLists);
+				productDAO.update(workingCopyNodeRef, workingCopyRawMaterial, dataLists);				
+			
+				return rawMaterial;
+			}
+		}, false, true);
+		
+		final ProductData newRawMaterial = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<ProductData>() {
+			@Override
+			public ProductData execute() throws Throwable {
 
 				// Check in
 				NodeRef newRawMaterialNodeRef = null;
@@ -202,7 +225,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
 				ProductData newRawMaterial = productDAO.find(newRawMaterialNodeRef, dataLists);
-				assertEquals("Check version", "0.1", newRawMaterial.getVersionLabel());
+				assertEquals("Check version", "0.2", newRawMaterial.getVersionLabel());
 				assertEquals("Check unit", productUnit, newRawMaterial.getUnit());
 
 				// Check productCode
@@ -224,12 +247,12 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				assertEquals("Check products are the same", rawMaterialNodeRef, newRawMaterialNodeRef);
 
 				// 2nd Check out, Check in
-				workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+				NodeRef workingCopy2NodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
 
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
 				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				versionProperties.put(Version.PROP_DESCRIPTION, "description");
-				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopy2NodeRef, versionProperties);
 
 				newRawMaterial = productDAO.find(newRawMaterialNodeRef, dataLists);
 				assertEquals("Check version", "1.0", newRawMaterial.getVersionLabel());
@@ -243,7 +266,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 		for (int i = 0; i < newRawMaterial.getCostList().size(); i++) {
 			CostListDataItem vCostListDataItem = newRawMaterial.getCostList().get(i);
 
-			assertEquals("Check cost unit", ProductUnit.P.toString(), vCostListDataItem.getUnit());
+			assertEquals("Check cost unit", "€/P", vCostListDataItem.getUnit());
 		}
 
 	}
