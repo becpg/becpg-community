@@ -138,7 +138,19 @@ public abstract class AbstractBeCPGPolicy {
 		if (pendingNodes != null) {
 			pendingNodes.remove(entityNodeRef);
 		}
-
+	}
+	
+	protected boolean containsNodeInQueue(NodeRef nodeRef){
+		return containsNodeInQueue(generateDefaultKey(),nodeRef);
+	}
+	
+	protected boolean containsNodeInQueue(String key, NodeRef entityNodeRef) {
+		@SuppressWarnings("unchecked")
+		Set<NodeRef> pendingNodes = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(key);
+		if (pendingNodes != null) {
+			return pendingNodes.contains(entityNodeRef);
+		}
+		return false;
 	}
 	
 	protected String generateDefaultKey(){
