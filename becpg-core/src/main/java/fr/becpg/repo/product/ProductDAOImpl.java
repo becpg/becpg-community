@@ -367,10 +367,11 @@ public class ProductDAOImpl implements ProductDAO {
 
 	@Override
 	public List<DynamicCharactListItem> loadDynamicCharactList(NodeRef listContainerNodeRef) {
-		List<DynamicCharactListItem> dynamicCharactList = new ArrayList<DynamicCharactListItem>();
-		if (listContainerNodeRef != null) {
+		List<DynamicCharactListItem> dynamicCharactList = null;
+		if (listContainerNodeRef != null) {			
 			NodeRef dynamicCharactListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST);
 			if (dynamicCharactListNodeRef != null) {
+				dynamicCharactList =  new ArrayList<DynamicCharactListItem>();
 				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(dynamicCharactListNodeRef, BeCPGModel.TYPE_DYNAMICCHARACTLIST);
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
 					dynamicCharactList.add(loadDynamicCharactListItem(listItemNodeRef));
