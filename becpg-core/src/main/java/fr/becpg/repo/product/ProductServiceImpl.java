@@ -192,49 +192,52 @@ public class ProductServiceImpl implements ProductService {
     		dataLists.add(BeCPGModel.TYPE_COSTLIST); // TODO keep max
     		dataLists.add(BeCPGModel.TYPE_DYNAMICCHARACTLIST); 
         	ProductData productData = productDAO.find(productNodeRef, dataLists); 
-        	        	
+logger.info("###compo: " + productData.getCompoList());        	        	
         	// do the formulation if the product has a composition, or packaging list defined
         	if((productData.getCompoList() != null && productData.getCompoList().size() != 0) || 
         			(productData.getPackagingList() != null && productData.getPackagingList().size() != 0) || 
         			(productData.getProcessList() != null && productData.getProcessList().size() != 0)){
         	
         		productData = formulate(productData);
-    	    	    	
+logger.info("###compo: " + productData.getCompoList());
+logger.info("###compo: " + (productData.getCompoList()!=null));   
         		// #202 : we don't want to create all datalists for packaging kit
         		Collection<QName> dataListsToSave = new ArrayList<QName>();
-        		if(productData.getCompoList() !=null){
-        			dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-        		}
-        		if(productData.getPackagingList() !=null){
-        			dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
-        		}
-        		if(productData.getProcessList() !=null){
-        			dataLists.add(MPMModel.TYPE_PROCESSLIST);
-        		}
-        		if(productData.getNutList() !=null){
-        			dataLists.add(BeCPGModel.TYPE_NUTLIST);
-        		}
-        		if(productData.getCostList() !=null){
-        			dataLists.add(BeCPGModel.TYPE_COSTLIST);
-        		}
-        		if(productData.getDynamicCharactList() !=null){
-        			dataLists.add(BeCPGModel.TYPE_DYNAMICCHARACTLIST);
-        		}
-        		if(productData.getAllergenList() !=null){
-        			dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-        		}
-        		if(productData.getCostDetailsList() !=null){
-        			dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
-        		}
-        		if(productData.getIngList() !=null){
-        			dataLists.add(BeCPGModel.TYPE_INGLIST);
-        		}
-        		if(productData.getIngLabelingList() !=null){
-        			dataLists.add(BeCPGModel.TYPE_INGLABELINGLIST);
-        		}
-        		if(productData.getReqCtrlList() !=null){
-        			dataLists.add(BeCPGModel.TYPE_REQCTRLLIST);
-        		}
+				if (productData.getCompoList() != null) {
+					dataListsToSave.add(BeCPGModel.TYPE_COMPOLIST);
+				}
+				if (productData.getPackagingList() != null) {
+					dataListsToSave.add(BeCPGModel.TYPE_PACKAGINGLIST);
+				}
+				if (productData.getProcessList() != null) {
+					dataListsToSave.add(MPMModel.TYPE_PROCESSLIST);
+				}
+				if (productData.getNutList() != null) {
+					dataListsToSave.add(BeCPGModel.TYPE_NUTLIST);
+				}
+				if (productData.getCostList() != null) {
+					dataListsToSave.add(BeCPGModel.TYPE_COSTLIST);
+				}
+				if (productData.getDynamicCharactList() != null) {
+					dataListsToSave.add(BeCPGModel.TYPE_DYNAMICCHARACTLIST);
+				}
+				if (productData.getAllergenList() != null) {
+					dataListsToSave.add(BeCPGModel.TYPE_ALLERGENLIST);
+				}
+				if (productData.getCostDetailsList() != null) {
+					dataListsToSave.add(BeCPGModel.TYPE_COSTDETAILSLIST);
+				}
+				if (productData.getIngList() != null) {
+					dataListsToSave.add(BeCPGModel.TYPE_INGLIST);
+				}
+				if (productData.getIngLabelingList() != null) {
+					dataListsToSave.add(BeCPGModel.TYPE_INGLABELINGLIST);
+				}
+				if (productData.getReqCtrlList() != null) {
+					dataListsToSave.add(BeCPGModel.TYPE_REQCTRLLIST);
+				}
+				
+				logger.info("###dataListsToSave: " + dataListsToSave);  
     	    	
     	    	productDAO.update(productNodeRef, productData, dataListsToSave);
         	}    	    	    

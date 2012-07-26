@@ -277,8 +277,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 						
 		logger.debug("startSort: " + startSort + " - stopCond: " + stopSortCond);
 
-		String query = LuceneHelper.getCondParent(listContainer, null);
-		query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_PARENT_LEVEL, destNodeRef.toString(), Operator.AND);
+		String query = getQueryByParentLevel(listContainer, destNodeRef,isDepthList);
 		query += LuceneHelper.getCondEqualID(nodeRef, Operator.NOT);
 		query += LuceneHelper.getCondMinMax(BeCPGModel.PROP_SORT, startSort!= null ? Integer.toString(startSort+1) : "1", stopSortCond, Operator.AND);
 		
