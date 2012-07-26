@@ -74,8 +74,6 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 
 		boolean classify = false;
 		boolean checkPath = false;
-		
-		logger.info("before: " + beforeState + " - after: " + afterState);
 
 		//state
 		if (afterState != null && !afterState.isEmpty() && !afterState.equals(beforeState)) {
