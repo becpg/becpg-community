@@ -27,7 +27,9 @@ import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.LuceneHelper;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -202,7 +204,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		        		sp.addLocale(Locale.getDefault());
 		        		sp.setPermissionEvaluation(PermissionEvaluationMode.EAGER);
 		        		sp.excludeDataInTheCurrentTransaction(false);
-		        		sp.addSort(SearchParameters.SORT_IN_DOCUMENT_ORDER_DESCENDING);
+		        		sp.addSort("@" + BeCPGModel.PROP_SORT, true);
 		        		try {
 		        			resultSet = serviceRegistry.getSearchService().query(sp);
 		        			if(logger.isDebugEnabled()){
