@@ -100,18 +100,10 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 			@Override
 			public NodeRef execute() throws Throwable {
 			
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
-				if(folderNodeRef != null)
-				{
-					fileFolderService.delete(folderNodeRef);    		
-				}			
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-				
 				// create RM
 				RawMaterialData rmData = new RawMaterialData();
 				rmData.setName("RM");								
-				NodeRef rmNodeRef = productDAO.create(folderNodeRef, rmData, null);
+				NodeRef rmNodeRef = productDAO.create(testFolderNodeRef, rmData, null);
 				
 				// create SF
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
@@ -126,7 +118,7 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 				sfData.setAllergenList(allergenList);
 				
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
-				NodeRef sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);
+				NodeRef sfNodeRef = productDAO.create(testFolderNodeRef, sfData, dataLists);
 				
 				// load SF and test it
 				sfData = (SemiFinishedProductData)productDAO.find(sfNodeRef, dataLists);				
@@ -181,17 +173,8 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			@Override
 			public NodeRef execute() throws Throwable {
-			
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
-				if(folderNodeRef != null)
-				{
-					fileFolderService.delete(folderNodeRef);    		
-				}			
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-				
-				
-				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");				
+							
+				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef,"MP test report");				
 				 Collection<QName> dataLists = productDictionaryService.getDataLists();
 				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
 				
@@ -226,14 +209,6 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 			@Override
 			public NodeRef execute() throws Throwable {
 			
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
-				if(folderNodeRef != null)
-				{
-					fileFolderService.delete(folderNodeRef);    		
-				}			
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-				
 				// create node
 				MLText mlTextILL = new MLText();
 				mlTextILL.addValue(Locale.ENGLISH, "English value");
@@ -242,7 +217,7 @@ public class ProductDAOTest  extends RepoBaseTestCase  {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 	    		properties.put(BeCPGModel.PROP_ILL_VALUE, mlTextILL);
 	    									
-				NodeRef illNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_INGLABELINGLIST, properties).getChildRef();
+				NodeRef illNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_INGLABELINGLIST, properties).getChildRef();
 				
 				nodeService.setProperty(illNodeRef, BeCPGModel.PROP_ILL_VALUE, mlTextILL);
 								

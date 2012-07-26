@@ -28,16 +28,12 @@ import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.test.RepoBaseTestCase;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProductReportServiceTest.
  * 
  * @author querephi
  */
 public class EntityReportServiceTest extends RepoBaseTestCase {
-
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityReportServiceTest.class);
@@ -177,13 +173,6 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				// create SF
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
@@ -195,7 +184,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				sfData.setAllergenList(allergenList);
 
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
-				sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);
+				sfNodeRef = productDAO.create(testFolderNodeRef, sfData, dataLists);
 
 				assertEquals("check system templates", 1, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT).size());
 
@@ -297,13 +286,6 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				NodeRef productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				// create SF
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
@@ -315,7 +297,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				sfData.setAllergenList(allergenList);
 
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
-				sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);
+				sfNodeRef = productDAO.create(testFolderNodeRef, sfData, dataLists);
 
 				QName typeQName = nodeService.getType(sfNodeRef);
 				assertEquals("check system templates", 0, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());

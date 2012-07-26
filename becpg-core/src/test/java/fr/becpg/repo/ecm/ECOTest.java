@@ -52,13 +52,7 @@ public class ECOTest extends RepoBaseTestCase {
 
 	private ECOService ecoService;
 
-	/** The PAT h_ productfolder. */
-	private static String PATH_PRODUCTFOLDER = "TestProductFolder";
-
 	public static final String Double_FORMAT = "0.0000";
-
-	/** The folder node ref. */
-	private NodeRef folderNodeRef;
 
 	/** The local s f1 node ref. */
 	private NodeRef localSF1NodeRef;
@@ -139,14 +133,7 @@ public class ECOTest extends RepoBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-
-				/*-- Create test folder --*/
-				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_PRODUCTFOLDER);
-				if (folderNodeRef != null) {
-					nodeService.deleteNode(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_PRODUCTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
+				
 				/*-- Create raw materials --*/
 				logger.debug("/*-- Create raw materials --*/");
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
@@ -166,7 +153,7 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial1.setNutList(nutList);
-				rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, dataLists);
+				rawMaterial1NodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, dataLists);
 
 				/*-- Raw material 2 --*/
 				RawMaterialData rawMaterial2 = new RawMaterialData();
@@ -184,7 +171,7 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial2.setNutList(nutList);
-				rawMaterial2NodeRef = productDAO.create(folderNodeRef, rawMaterial2, dataLists);
+				rawMaterial2NodeRef = productDAO.create(testFolderNodeRef, rawMaterial2, dataLists);
 
 				/*-- Raw material 3 --*/
 				RawMaterialData rawMaterial3 = new RawMaterialData();
@@ -202,7 +189,7 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial3.setNutList(nutList);
-				rawMaterial3NodeRef = productDAO.create(folderNodeRef, rawMaterial3, dataLists);
+				rawMaterial3NodeRef = productDAO.create(testFolderNodeRef, rawMaterial3, dataLists);
 
 				/*-- Raw material 4 --*/
 				RawMaterialData rawMaterial4 = new RawMaterialData();
@@ -210,7 +197,7 @@ public class ECOTest extends RepoBaseTestCase {
 				rawMaterial4.setLegalName("Legal Raw material 4");
 				rawMaterial4.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				rawMaterial4.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				rawMaterial4NodeRef = productDAO.create(folderNodeRef, rawMaterial4, dataLists);
+				rawMaterial4NodeRef = productDAO.create(testFolderNodeRef, rawMaterial4, dataLists);
 
 				/*-- Raw material 5 --*/
 				RawMaterialData rawMaterial5 = new RawMaterialData();
@@ -228,7 +215,7 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial5.setNutList(nutList);
-				rawMaterial5NodeRef = productDAO.create(folderNodeRef, rawMaterial5, dataLists);
+				rawMaterial5NodeRef = productDAO.create(testFolderNodeRef, rawMaterial5, dataLists);
 
 				/*-- Local semi finished product 1 --*/
 				LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
@@ -236,7 +223,7 @@ public class ECOTest extends RepoBaseTestCase {
 				localSF1.setLegalName("Legal Local semi finished 1");
 				localSF1.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				localSF1.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				localSF1NodeRef = productDAO.create(folderNodeRef, localSF1, dataLists);
+				localSF1NodeRef = productDAO.create(testFolderNodeRef, localSF1, dataLists);
 
 				/*-- Local semi finished product 2 --*/
 				LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
@@ -244,7 +231,7 @@ public class ECOTest extends RepoBaseTestCase {
 				localSF2.setLegalName("Legal Local semi finished 2");
 				localSF2.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				localSF2.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				localSF2NodeRef = productDAO.create(folderNodeRef, localSF2, dataLists);
+				localSF2NodeRef = productDAO.create(testFolderNodeRef, localSF2, dataLists);
 
 				return null;
 
@@ -281,7 +268,7 @@ public class ECOTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
 
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
 
@@ -363,7 +350,7 @@ public class ECOTest extends RepoBaseTestCase {
 				replacementList.add(new ReplacementListDataItem(null, RevisionType.Minor, rawMaterial4NodeRef, rawMaterial5NodeRef));
 				changeOrderData.setReplacementList(replacementList);
 
-				NodeRef ecoNodeRef = changeOrderDAO.create(folderNodeRef, changeOrderData);
+				NodeRef ecoNodeRef = changeOrderDAO.create(testFolderNodeRef, changeOrderData);
 
 				// calculate WUsed
 				ecoService.calculateWUsedList(ecoNodeRef);
@@ -500,7 +487,7 @@ public class ECOTest extends RepoBaseTestCase {
 				replacementList.add(new ReplacementListDataItem(null, RevisionType.Minor, rawMaterial4NodeRef, rawMaterial5NodeRef));
 				changeOrderData.setReplacementList(replacementList);
 
-				NodeRef ecoNodeRef = changeOrderDAO.create(folderNodeRef, changeOrderData);
+				NodeRef ecoNodeRef = changeOrderDAO.create(testFolderNodeRef, changeOrderData);
 
 				// calculate WUsed
 				nodeService.setProperty(ecoNodeRef, ECMModel.PROP_ECO_STATE, ECOState.ToCalculateWUsed);
@@ -638,7 +625,7 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct3.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				NodeRef finishedProduct3NodeRef = productDAO.create(folderNodeRef, finishedProduct3, dataLists);
+				NodeRef finishedProduct3NodeRef = productDAO.create(testFolderNodeRef, finishedProduct3, dataLists);
 
 				/*-- Formulate product --*/
 				try {
@@ -700,7 +687,7 @@ public class ECOTest extends RepoBaseTestCase {
 				replacementList.add(new ReplacementListDataItem(null, RevisionType.Minor, rawMaterial4NodeRef, rawMaterial5NodeRef));
 				changeOrderData.setReplacementList(replacementList);
 
-				NodeRef ecoNodeRef = changeOrderDAO.create(folderNodeRef, changeOrderData);
+				NodeRef ecoNodeRef = changeOrderDAO.create(testFolderNodeRef, changeOrderData);
 
 				// calculate WUsed
 				ecoService.calculateWUsedList(ecoNodeRef);

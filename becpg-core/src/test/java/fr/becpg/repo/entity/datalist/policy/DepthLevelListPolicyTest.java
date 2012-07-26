@@ -34,8 +34,6 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 
-	private static String PATH_TESTFOLDER = "TestFolder";
-
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(DepthLevelListPolicyTest.class);
 
@@ -83,15 +81,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				/*-- create folders : Test--*/
-				logger.debug("/*-- create folders --*/");
-				NodeRef testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (testFolder != null) {
-					fileFolderService.delete(testFolder);
-				}
-				testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
-				return BeCPGTestHelper.createMultiLevelProduct(testFolder, repoBaseTestCase);
+				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef, repoBaseTestCase);
 			}
 		}, false, true);
 		
@@ -236,38 +226,30 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-
-				/*-- create folders : Test--*/
-				logger.debug("/*-- create folders --*/");
-				NodeRef testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (testFolder != null) {
-					fileFolderService.delete(testFolder);
-				}
-				testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
+				
 				/*-- Create raw material --*/
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
-				NodeRef rawMaterial1NodeRef = productDAO.create(testFolder, rawMaterial1, null);
+				NodeRef rawMaterial1NodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, null);
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
-				NodeRef rawMaterial2NodeRef = productDAO.create(testFolder, rawMaterial2, null);
+				NodeRef rawMaterial2NodeRef = productDAO.create(testFolderNodeRef, rawMaterial2, null);
 				LocalSemiFinishedProduct lSF1 = new LocalSemiFinishedProduct();
 				lSF1.setName("Local semi finished 1");
-				NodeRef lSF1NodeRef = productDAO.create(testFolder, lSF1, null);
+				NodeRef lSF1NodeRef = productDAO.create(testFolderNodeRef, lSF1, null);
 
 				LocalSemiFinishedProduct lSF2 = new LocalSemiFinishedProduct();
 				lSF2.setName("Local semi finished 2");
-				NodeRef lSF2NodeRef = productDAO.create(testFolder, lSF2, null);
+				NodeRef lSF2NodeRef = productDAO.create(testFolderNodeRef, lSF2, null);
 				
 				LocalSemiFinishedProduct lSF3 = new LocalSemiFinishedProduct();
 				lSF3.setName("Local semi finished 3");
-				NodeRef lSF3NodeRef = productDAO.create(testFolder, lSF3, null);
+				NodeRef lSF3NodeRef = productDAO.create(testFolderNodeRef, lSF3, null);
 				
 				LocalSemiFinishedProduct lSF4 = new LocalSemiFinishedProduct();
 				lSF4.setName("Local semi finished 4");
-				NodeRef lSF4NodeRef = productDAO.create(testFolder, lSF4, null);
+				NodeRef lSF4NodeRef = productDAO.create(testFolderNodeRef, lSF4, null);
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
@@ -284,7 +266,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				finishedProduct.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				return productDAO.create(testFolder, finishedProduct, dataLists);
+				return productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
 			}
 		}, false, true);		
 		
@@ -334,37 +316,29 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				/*-- create folders : Test--*/
-				logger.debug("/*-- create folders --*/");
-				NodeRef testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (testFolder != null) {
-					fileFolderService.delete(testFolder);
-				}
-				testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				/*-- Create raw material --*/
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
-				NodeRef rawMaterial1NodeRef = productDAO.create(testFolder, rawMaterial1, null);
+				NodeRef rawMaterial1NodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, null);
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
-				NodeRef rawMaterial2NodeRef = productDAO.create(testFolder, rawMaterial2, null);
+				NodeRef rawMaterial2NodeRef = productDAO.create(testFolderNodeRef, rawMaterial2, null);
 				LocalSemiFinishedProduct lSF1 = new LocalSemiFinishedProduct();
 				lSF1.setName("Local semi finished 1");
-				NodeRef lSF1NodeRef = productDAO.create(testFolder, lSF1, null);
+				NodeRef lSF1NodeRef = productDAO.create(testFolderNodeRef, lSF1, null);
 
 				LocalSemiFinishedProduct lSF2 = new LocalSemiFinishedProduct();
 				lSF2.setName("Local semi finished 2");
-				NodeRef lSF2NodeRef = productDAO.create(testFolder, lSF2, null);
+				NodeRef lSF2NodeRef = productDAO.create(testFolderNodeRef, lSF2, null);
 				
 				LocalSemiFinishedProduct lSF3 = new LocalSemiFinishedProduct();
 				lSF3.setName("Local semi finished 3");
-				NodeRef lSF3NodeRef = productDAO.create(testFolder, lSF3, null);
+				NodeRef lSF3NodeRef = productDAO.create(testFolderNodeRef, lSF3, null);
 				
 				LocalSemiFinishedProduct lSF4 = new LocalSemiFinishedProduct();
 				lSF4.setName("Local semi finished 4");
-				NodeRef lSF4NodeRef = productDAO.create(testFolder, lSF4, null);
+				NodeRef lSF4NodeRef = productDAO.create(testFolderNodeRef, lSF4, null);
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
@@ -381,7 +355,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				finishedProduct.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				return productDAO.create(testFolder, finishedProduct, dataLists);
+				return productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
 			}
 		}, false, true);		
 		
@@ -529,38 +503,30 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-
-				/*-- create folders : Test--*/
-				logger.debug("/*-- create folders --*/");
-				NodeRef testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (testFolder != null) {
-					fileFolderService.delete(testFolder);
-				}
-				testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
+				
 				/*-- Create raw material --*/
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
-				NodeRef rawMaterial1NodeRef = productDAO.create(testFolder, rawMaterial1, null);
+				NodeRef rawMaterial1NodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, null);
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
-				NodeRef rawMaterial2NodeRef = productDAO.create(testFolder, rawMaterial2, null);
+				NodeRef rawMaterial2NodeRef = productDAO.create(testFolderNodeRef, rawMaterial2, null);
 				LocalSemiFinishedProduct lSF1 = new LocalSemiFinishedProduct();
 				lSF1.setName("Local semi finished 1");
-				NodeRef lSF1NodeRef = productDAO.create(testFolder, lSF1, null);
+				NodeRef lSF1NodeRef = productDAO.create(testFolderNodeRef, lSF1, null);
 
 				LocalSemiFinishedProduct lSF2 = new LocalSemiFinishedProduct();
 				lSF2.setName("Local semi finished 2");
-				NodeRef lSF2NodeRef = productDAO.create(testFolder, lSF2, null);
+				NodeRef lSF2NodeRef = productDAO.create(testFolderNodeRef, lSF2, null);
 				
 				LocalSemiFinishedProduct lSF3 = new LocalSemiFinishedProduct();
 				lSF3.setName("Local semi finished 3");
-				NodeRef lSF3NodeRef = productDAO.create(testFolder, lSF3, null);
+				NodeRef lSF3NodeRef = productDAO.create(testFolderNodeRef, lSF3, null);
 				
 				LocalSemiFinishedProduct lSF4 = new LocalSemiFinishedProduct();
 				lSF4.setName("Local semi finished 4");
-				NodeRef lSF4NodeRef = productDAO.create(testFolder, lSF4, null);
+				NodeRef lSF4NodeRef = productDAO.create(testFolderNodeRef, lSF4, null);
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
@@ -577,7 +543,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				finishedProduct.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				return productDAO.create(testFolder, finishedProduct, dataLists);
+				return productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
 			}
 		}, false, true);		
 		

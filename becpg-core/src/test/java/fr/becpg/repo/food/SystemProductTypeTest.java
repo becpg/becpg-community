@@ -3,12 +3,12 @@
  */
 package fr.becpg.repo.food;
 
-import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
+import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -16,26 +16,19 @@ import fr.becpg.model.SystemProductType;
  *
  * @author querephi
  */
-public class SystemProductTypeTest extends BaseAlfrescoTestCase{
+public class SystemProductTypeTest extends RepoBaseTestCase{
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(SystemProductTypeTest.class);
 	
-	/* (non-Javadoc)
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
-    	super.setUp();		
+		super.setUp();
     	
     	logger.debug("ProductTypeTest::setUp");
     	    	
     }
     
-    
-	/* (non-Javadoc)
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
 	@Override
     public void tearDown() throws Exception
     {	

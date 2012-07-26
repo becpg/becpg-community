@@ -213,15 +213,9 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			public ProductData execute() throws Throwable {
 
 				// Check in
-				NodeRef newRawMaterialNodeRef = null;
-				try {
-					Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
-					versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
-					newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
-				} catch (Exception e) {
-					logger.error("Failed to checkin", e);
-					assertNull(e);
-				}
+				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+				NodeRef newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);				
 
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
 				ProductData newRawMaterial = productDAO.find(newRawMaterialNodeRef, dataLists);
@@ -249,7 +243,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				// 2nd Check out, Check in
 				NodeRef workingCopy2NodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
 
-				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				versionProperties = new HashMap<String, Serializable>();
 				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				versionProperties.put(Version.PROP_DESCRIPTION, "description");
 				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopy2NodeRef, versionProperties);

@@ -10,7 +10,6 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -32,15 +31,8 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class RemoteEntityServiceTest extends RepoBaseTestCase {
 
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";
-
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(RemoteEntityServiceTest.class);
-
-	/** The product dao. */
-	private ProductDAO productDAO;
-
 
 	private RemoteEntityService remoteEntityService;
 	
@@ -82,15 +74,7 @@ public class RemoteEntityServiceTest extends RepoBaseTestCase {
 		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				/*-- create folders : Test--*/
-				logger.debug("/*-- create folders --*/");
-				NodeRef testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (testFolder != null) {
-					fileFolderService.delete(testFolder);
-				}
-				testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
-				return BeCPGTestHelper.createMultiLevelProduct(testFolder, repoBaseTestCase);
+				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef, repoBaseTestCase);
 			}
 		}, false, true);
 
@@ -130,10 +114,6 @@ public class RemoteEntityServiceTest extends RepoBaseTestCase {
 
 				return null;
 			}
-		}, false, true);
-		
-		
-	
+		}, false, true);	
 	}
-
 }

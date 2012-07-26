@@ -49,7 +49,6 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.test.RepoBaseTestCase;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FormulationTest.
  *
@@ -66,9 +65,6 @@ public class FormulationTest extends RepoBaseTestCase {
 	/** The product dao. */
 	private ProductDAO productDAO;
     
-    /** The PAT h_ productfolder. */
-    private static String PATH_PRODUCTFOLDER = "TestProductFolder";
-    
     /** The GROU p1. */
     private static String GROUP1 = "Groupe 1";      
     
@@ -82,9 +78,6 @@ public class FormulationTest extends RepoBaseTestCase {
     private static String PACKAGING_TERTIAIRE = "Tertiaire";
     
     public static final String  FLOAT_FORMAT = "0.0000";
-    
-    /** The folder node ref. */
-    private NodeRef folderNodeRef;
     
     /** The local s f1 node ref. */
     private NodeRef  localSF1NodeRef;
@@ -223,56 +216,48 @@ public class FormulationTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   
 			
-			/*-- Create test folder --*/
-			folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_PRODUCTFOLDER);			
-			if(folderNodeRef != null)
-			{
-				nodeService.deleteNode(folderNodeRef);    		
-			}			
-			folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_PRODUCTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-			
 			/*-- characteristics --*/
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			//Costs
 			properties.put(ContentModel.PROP_NAME, "cost1");			 					 				
 			properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-			cost1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+			cost1 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "cost2");			 					 				
 			properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-			cost2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+			cost2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "pkgCost1");			 					 				
 			properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-			pkgCost1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+			pkgCost1 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "pkgCost2");			 					 				
 			properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-			pkgCost2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+			pkgCost2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
 			//Nuts
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "nut1");
 			properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 			properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-			nut1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+			nut1 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "nut2");
 			properties.put(BeCPGModel.PROP_NUTUNIT, "kcal");
 			properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-			nut2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();			
+			nut2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();			
 			//Allergens
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "allergen1");			 					 				
-			allergen1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
+			allergen1 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "allergen2");			 					 				
-			allergen2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
+			allergen2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "allergen3");			 					 				
-			allergen3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
+			allergen3 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "allergen4");			 					 				
-			allergen4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
+			allergen4 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
 			//Ings
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "ing1");
@@ -281,7 +266,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing1 english");
 			mlName.addValue(Locale.FRENCH, "ing1 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			ing1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
+			ing1 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "ing2");
 			mlName = new MLText();
@@ -289,7 +274,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing2 english");
 			mlName.addValue(Locale.FRENCH, "ing2 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			ing2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
+			ing2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "ing3");
 			mlName = new MLText();
@@ -297,28 +282,28 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "ing3 english");
 			mlName.addValue(Locale.FRENCH, "ing3 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			ing3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
+			ing3 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			properties.put(ContentModel.PROP_NAME, "ing4");
 			mlName = new MLText();
 			mlName.addValue(Locale.getDefault(), "ing4 default");
 			mlName.addValue(Locale.ENGLISH, "ing4 english");
 			mlName.addValue(Locale.FRENCH, "ing4 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			ing4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
+			ing4 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			//Geo origins
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "geoOrigin1");
-			geoOrigin1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_GEO_ORIGIN, properties).getChildRef();
+			geoOrigin1 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_GEO_ORIGIN, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "geoOrigin2");
-			geoOrigin2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_GEO_ORIGIN, properties).getChildRef();
+			geoOrigin2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_GEO_ORIGIN, properties).getChildRef();
 			//Bio origins
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "bioOrigin1");
-			bioOrigin1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_BIO_ORIGIN, properties).getChildRef();
+			bioOrigin1 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_BIO_ORIGIN, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "bioOrigin2");
-			bioOrigin2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_BIO_ORIGIN, properties).getChildRef();
+			bioOrigin2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_BIO_ORIGIN, properties).getChildRef();
 						
 			/*-- Create raw materials --*/
 			logger.debug("/*-- Create raw materials --*/");
@@ -359,7 +344,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 2d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial1.setIngList(ingList);
-			rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, dataLists);
+			rawMaterial1NodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, dataLists);
 			
 			/*-- Raw material 2 --*/
 			RawMaterialData rawMaterial2 = new RawMaterialData();
@@ -398,7 +383,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 3d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial2.setIngList(ingList);			
-			rawMaterial2NodeRef = productDAO.create(folderNodeRef, rawMaterial2, dataLists);
+			rawMaterial2NodeRef = productDAO.create(testFolderNodeRef, rawMaterial2, dataLists);
 			
 			/*-- Raw material 3 --*/
 			RawMaterialData rawMaterial3 = new RawMaterialData();
@@ -433,7 +418,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			geoOrigins.add(geoOrigin2);			
 			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial3.setIngList(ingList);		
-			rawMaterial3NodeRef = productDAO.create(folderNodeRef, rawMaterial3, dataLists);
+			rawMaterial3NodeRef = productDAO.create(testFolderNodeRef, rawMaterial3, dataLists);
 			
 			/*-- Raw material 4 --*/
 			RawMaterialData rawMaterial4 = new RawMaterialData();
@@ -451,7 +436,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			geoOrigins.add(geoOrigin2);			
 			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial4.setIngList(ingList);		
-			rawMaterial4NodeRef = productDAO.create(folderNodeRef, rawMaterial4, dataLists);
+			rawMaterial4NodeRef = productDAO.create(testFolderNodeRef, rawMaterial4, dataLists);
 			
 			/*-- Raw material 5 --*/
 			RawMaterialData rawMaterial5 = new RawMaterialData();
@@ -472,7 +457,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
 			rawMaterial5.setNutList(nutList);					
 			rawMaterial5.setIngList(ingList);		
-			rawMaterial5NodeRef = productDAO.create(folderNodeRef, rawMaterial5, dataLists);
+			rawMaterial5NodeRef = productDAO.create(testFolderNodeRef, rawMaterial5, dataLists);
 			
 			/*-- Raw material 6 --*/
 			RawMaterialData rawMaterial6 = new RawMaterialData();
@@ -513,7 +498,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 20d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial6.setIngList(ingList);			
-			rawMaterial6NodeRef = productDAO.create(folderNodeRef, rawMaterial6, dataLists);
+			rawMaterial6NodeRef = productDAO.create(testFolderNodeRef, rawMaterial6, dataLists);
 			
 			/*-- Local semi finished product 1 --*/
 			LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
@@ -523,7 +508,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "Pâte english");
 			mlName.addValue(Locale.FRENCH, "Pâte french");				
 			localSF1.setLegalName(mlName);
-			localSF1NodeRef = productDAO.create(folderNodeRef, localSF1, dataLists);
+			localSF1NodeRef = productDAO.create(testFolderNodeRef, localSF1, dataLists);
 			
 			/*-- Local semi finished product 1 --*/
 			LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
@@ -533,12 +518,12 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "Garniture english");
 			mlName.addValue(Locale.FRENCH, "Garniture french");
 			localSF2.setLegalName(mlName);							
-			localSF2NodeRef = productDAO.create(folderNodeRef, localSF2, dataLists);
+			localSF2NodeRef = productDAO.create(testFolderNodeRef, localSF2, dataLists);
 			
 			LocalSemiFinishedProduct localSF3 = new LocalSemiFinishedProduct();
 			localSF3.setName("Local semi finished 3");
 			localSF3.setLegalName("Legal Local semi finished 3");							
-			localSF3NodeRef = productDAO.create(folderNodeRef, localSF3, dataLists);			
+			localSF3NodeRef = productDAO.create(testFolderNodeRef, localSF3, dataLists);			
 			
 			logger.debug("/*-- Create raw materials 11 => 14 with ingList only--*/");
 			/*-- Raw material 11 --*/
@@ -560,7 +545,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 2d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial11.setIngList(ingList);
-			rawMaterial11NodeRef = productDAO.create(folderNodeRef, rawMaterial11, dataLists);
+			rawMaterial11NodeRef = productDAO.create(testFolderNodeRef, rawMaterial11, dataLists);
 			
 			/*-- Raw material 12 --*/
 			RawMaterialData rawMaterial12 = new RawMaterialData();
@@ -582,7 +567,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 3d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial12.setIngList(ingList);			
-			rawMaterial12NodeRef = productDAO.create(folderNodeRef, rawMaterial12, dataLists);
+			rawMaterial12NodeRef = productDAO.create(testFolderNodeRef, rawMaterial12, dataLists);
 			
 			/*-- Raw material 13 --*/
 			RawMaterialData rawMaterial13 = new RawMaterialData();
@@ -600,7 +585,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			geoOrigins.add(geoOrigin2);			
 			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial13.setIngList(ingList);		
-			rawMaterial13NodeRef = productDAO.create(folderNodeRef, rawMaterial13, dataLists);
+			rawMaterial13NodeRef = productDAO.create(testFolderNodeRef, rawMaterial13, dataLists);
 			
 			/*-- Raw material 14 --*/
 			RawMaterialData rawMaterial14 = new RawMaterialData();
@@ -619,7 +604,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));
 			ingList.add(new IngListDataItem(null, 2d, geoOrigins, bioOrigins, true, true, ing4, false));
 			rawMaterial14.setIngList(ingList);		
-			rawMaterial14NodeRef = productDAO.create(folderNodeRef, rawMaterial14, dataLists);
+			rawMaterial14NodeRef = productDAO.create(testFolderNodeRef, rawMaterial14, dataLists);
 			
 			/*-- Local semi finished product 11 --*/
 			LocalSemiFinishedProduct localSF11 = new LocalSemiFinishedProduct();
@@ -629,7 +614,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "Pâte english");
 			mlName.addValue(Locale.FRENCH, "Pâte french");
 			localSF11.setLegalName(mlName);			
-			localSF11NodeRef = productDAO.create(folderNodeRef, localSF11, dataLists);
+			localSF11NodeRef = productDAO.create(testFolderNodeRef, localSF11, dataLists);
 			
 			/*-- Local semi finished product 12 --*/
 			LocalSemiFinishedProduct localSF12 = new LocalSemiFinishedProduct();
@@ -639,7 +624,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			mlName.addValue(Locale.ENGLISH, "Garniture english");
 			mlName.addValue(Locale.FRENCH, "Garniture french");
 			localSF12.setLegalName(mlName);					
-			localSF12NodeRef = productDAO.create(folderNodeRef, localSF12, dataLists);
+			localSF12NodeRef = productDAO.create(testFolderNodeRef, localSF12, dataLists);
 			
 			return null;
 
@@ -663,7 +648,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				properties.put(ContentModel.PROP_NAME, "fixedCost");			 					 				
 				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
 				properties.put(BeCPGModel.PROP_COSTFIXED, true);
-				NodeRef fixedCost = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+				NodeRef fixedCost = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
 				
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
@@ -716,7 +701,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				finishedProduct.setDynamicCharactList(dynamicCharactListItems);
 				
 				
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
 				
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
 				
@@ -944,7 +929,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
 			finishedProduct1.setCompoList(compoList1);
 			 Collection<QName> dataLists = productDictionaryService.getDataLists();
-			NodeRef finishedProductNodeRef1 = productDAO.create(folderNodeRef, finishedProduct1, dataLists);
+			NodeRef finishedProductNodeRef1 = productDAO.create(testFolderNodeRef, finishedProduct1, dataLists);
 			
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -1054,7 +1039,7 @@ public class FormulationTest extends RepoBaseTestCase {
 			compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
 			compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DoNotDeclare, rawMaterial14NodeRef));
 			finishedProduct2.setCompoList(compoList2);
-			NodeRef finishedProductNodeRef2 = productDAO.create(folderNodeRef, finishedProduct2, dataLists);			
+			NodeRef finishedProductNodeRef2 = productDAO.create(testFolderNodeRef, finishedProduct2, dataLists);			
 			
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -1180,7 +1165,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
 				
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
 				
@@ -1260,7 +1245,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 30d, 0d, 0d, CompoListUnit.g, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 0.05d, 0d, 0d, CompoListUnit.P, 0d, DeclarationType.Omit, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
 				
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
 				
@@ -1335,7 +1320,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 1, 0d, 1d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));				
 				compoList.add(new CompoListDataItem(null, 1, 0d, 2d, 0d, CompoListUnit.L, 0d, null, DeclarationType.Declare, rawMaterial6NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
 				
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");
@@ -1386,49 +1371,49 @@ public class FormulationTest extends RepoBaseTestCase {
 					properties.put(ContentModel.PROP_NAME, "nut3");
 					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-					NodeRef nut3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+					NodeRef nut3 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 					
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "nut14");
 					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-					NodeRef nut14 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+					NodeRef nut14 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 					
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "nut5");
 					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-					NodeRef nut5 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+					NodeRef nut5 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 					
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "nut26");
 					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-					NodeRef nut26 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+					NodeRef nut26 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 					
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "nut17");
 					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-					NodeRef nut17 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+					NodeRef nut17 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 					
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "nut8");
 					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-					NodeRef nut8 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+					NodeRef nut8 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 					
 					properties.clear();		
 					properties.put(ContentModel.PROP_NAME, "nut9");
 					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-					NodeRef nut9 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+					NodeRef nut9 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 					
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "nut10");
 					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-					NodeRef nut10 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+					NodeRef nut10 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 					
 					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
 					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Autre", nut10, false));
@@ -1451,7 +1436,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					SFProduct1.setUnit(ProductUnit.kg);
 					SFProduct1.setQty(1d);
 					SFProduct1.setNutList(nutList);					
-					NodeRef SFProduct1NodeRef = productDAO.create(folderNodeRef, SFProduct1, dataLists);
+					NodeRef SFProduct1NodeRef = productDAO.create(testFolderNodeRef, SFProduct1, dataLists);
 					
 					productDAO.find(SFProduct1NodeRef, dataLists);					
 					
@@ -1464,7 +1449,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
 					compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, SFProduct1NodeRef));			
 					SFProduct2.setCompoList(compoList2);
-					NodeRef SFProduct2NodeRef = productDAO.create(folderNodeRef, SFProduct2, dataLists);
+					NodeRef SFProduct2NodeRef = productDAO.create(testFolderNodeRef, SFProduct2, dataLists);
 					
 					productService.formulate(SFProduct2NodeRef);
 									
@@ -1524,7 +1509,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList1.add(new CompoListDataItem(null, 1, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));					
 				SFProduct1.setCompoList(compoList1);
-				NodeRef SFProduct1NodeRef = productDAO.create(folderNodeRef, SFProduct1, dataLists);
+				NodeRef SFProduct1NodeRef = productDAO.create(testFolderNodeRef, SFProduct1, dataLists);
 				
 				//SF2
 				SemiFinishedProductData SFProduct2 = new SemiFinishedProductData();
@@ -1536,7 +1521,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial4NodeRef));					
 				SFProduct2.setCompoList(compoList2);
-				NodeRef SFProduct2NodeRef = productDAO.create(folderNodeRef, SFProduct2, dataLists);
+				NodeRef SFProduct2NodeRef = productDAO.create(testFolderNodeRef, SFProduct2, dataLists);
 						
 				//PF1
 				FinishedProductData finishedProduct = new FinishedProductData();
@@ -1548,7 +1533,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct1NodeRef));
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct2NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
 				
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate products --*/");
@@ -1783,7 +1768,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
 				
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");
@@ -1975,7 +1960,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
 				
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");
@@ -2065,7 +2050,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					costList.add(new CostListDataItem(null, 3d, "€/P", null, pkgCost1, false));
 					costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 					packagingMaterial1.setCostList(costList);					
-					packagingMaterial1NodeRef = productDAO.create(folderNodeRef, packagingMaterial1, dataLists);
+					packagingMaterial1NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial1, dataLists);
 					
 					/*-- Packaging material 2 --*/					
 					PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
@@ -2076,7 +2061,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					costList.add(new CostListDataItem(null, 1d, "€/m", null, pkgCost1, false));
 					costList.add(new CostListDataItem(null, 2d, "€/m", null, pkgCost2, false));
 					packagingMaterial2.setCostList(costList);					
-					packagingMaterial2NodeRef = productDAO.create(folderNodeRef, packagingMaterial2, dataLists);
+					packagingMaterial2NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial2, dataLists);
 					
 					/*-- Packaging material 1 --*/					
 					PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
@@ -2087,7 +2072,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
 					costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 					packagingMaterial3.setCostList(costList);					
-					packagingMaterial3NodeRef = productDAO.create(folderNodeRef, packagingMaterial3, dataLists);
+					packagingMaterial3NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial3, dataLists);
 					
 					/*-- Create finished product --*/
 					logger.debug("/*-- Create finished product --*/");
@@ -2101,7 +2086,7 @@ public class FormulationTest extends RepoBaseTestCase {
 					packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PACKAGING_PRIMAIRE, packagingMaterial2NodeRef));
 					packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PACKAGING_TERTIAIRE, packagingMaterial3NodeRef));
 					finishedProduct.setPackagingList(packagingList);
-					NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+					NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
 					
 					/*-- Formulate product --*/
 					logger.debug("/*-- Formulate product --*/");
@@ -2152,7 +2137,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				// specification
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
 				properties.put(ContentModel.PROP_NAME, "Spec");
-				NodeRef productSpecificationNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, 
+				NodeRef productSpecificationNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, 
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
 								(String)properties.get(ContentModel.PROP_NAME)), 
 								BeCPGModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
@@ -2211,7 +2196,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);	
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);	
 				
 				// create association
 				nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef, BeCPGModel.ASSOC_PRODUCT_SPECIFICATION);
@@ -2313,7 +2298,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
 				
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");
@@ -2403,7 +2388,7 @@ public class FormulationTest extends RepoBaseTestCase {
 //				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
 //				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial4NodeRef));
 //				finishedProduct.setCompoList(compoList);
-//				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+//				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
 //				
 //				/*-- Formulate product --*/
 //				logger.debug("/*-- Formulate product --*/");
@@ -2534,7 +2519,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				costList.add(new CostListDataItem(null, 3d, "€/P", null, pkgCost1, false));
 				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 				packagingMaterial1.setCostList(costList);					
-				packagingMaterial1NodeRef = productDAO.create(folderNodeRef, packagingMaterial1, dataLists);
+				packagingMaterial1NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial1, dataLists);
 				
 				/*-- Packaging material 2 --*/					
 				PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
@@ -2545,7 +2530,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				costList.add(new CostListDataItem(null, 1d, "€/m", null, pkgCost1, false));
 				costList.add(new CostListDataItem(null, 2d, "€/m", null, pkgCost2, false));
 				packagingMaterial2.setCostList(costList);					
-				packagingMaterial2NodeRef = productDAO.create(folderNodeRef, packagingMaterial2, dataLists);
+				packagingMaterial2NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial2, dataLists);
 				
 				/*-- Packaging material 1 --*/					
 				PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
@@ -2556,7 +2541,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
 				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 				packagingMaterial3.setCostList(costList);					
-				packagingMaterial3NodeRef = productDAO.create(folderNodeRef, packagingMaterial3, dataLists);
+				packagingMaterial3NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial3, dataLists);
 				
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Produit fini 1");
@@ -2582,7 +2567,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
 				
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");
@@ -2760,7 +2745,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 3, null, 40d, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				compoList.add(new CompoListDataItem(null, 3, null, 1d, null, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
 				
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");
@@ -2829,7 +2814,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
-				return productDAO.create(folderNodeRef, finishedProduct, dataLists);				
+				return productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
 
 			}},false,true);
 	   
@@ -2925,37 +2910,37 @@ public class FormulationTest extends RepoBaseTestCase {
 				//Costs
 				properties.put(ContentModel.PROP_NAME, "costTransfo");			 					 				
 				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-				NodeRef costTransfoNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+				NodeRef costTransfoNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "costMOTransfo");			 					 				
 				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-				NodeRef costMOTransfoNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+				NodeRef costMOTransfoNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "costMOMaintenance");			 					 				
 				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-				NodeRef costMOMaintenanceNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+				NodeRef costMOMaintenanceNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
 				
 				//Steps
 				logger.debug("Steps");
 				properties.put(ContentModel.PROP_NAME, "Découpe");			 					 				
 				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-				NodeRef decoupeNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef decoupeNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "Hachage");			 					 				
 				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-				NodeRef hachageNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef hachageNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "Cuisson");			 					 				
 				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-				NodeRef cuissonNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef cuissonNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "Mélange");			 					 				
 				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-				NodeRef melangeNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef melangeNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "Etape Ligne");			 					 				
 				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-				NodeRef ligneStepNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef ligneStepNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				// resources
 				logger.debug("Resources");
@@ -2964,35 +2949,35 @@ public class FormulationTest extends RepoBaseTestCase {
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 8d, "€/h", null, costMOTransfoNodeRef, false));
 				boucherResourceData.setCostList(costList);
-				NodeRef boucherResourceNodeRef = productDAO.create(folderNodeRef, boucherResourceData, dataLists);
+				NodeRef boucherResourceNodeRef = productDAO.create(testFolderNodeRef, boucherResourceData, dataLists);
 				
 				ResourceProductData operateurResourceData = new ResourceProductData();
 				operateurResourceData.setName("Operateur");
 				costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 15d, "€/h", null, costMOTransfoNodeRef, false));
 				operateurResourceData.setCostList(costList);
-				NodeRef operateurResourceNodeRef = productDAO.create(folderNodeRef, operateurResourceData, dataLists);
+				NodeRef operateurResourceNodeRef = productDAO.create(testFolderNodeRef, operateurResourceData, dataLists);
 				
 				ResourceProductData hachoirResourceData = new ResourceProductData();
 				hachoirResourceData.setName("Hachoir");
 				costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 10d, "€/h", null, costTransfoNodeRef, false));
 				hachoirResourceData.setCostList(costList);
-				NodeRef hachoirResourceNodeRef = productDAO.create(folderNodeRef, hachoirResourceData, dataLists);
+				NodeRef hachoirResourceNodeRef = productDAO.create(testFolderNodeRef, hachoirResourceData, dataLists);
 				
 				ResourceProductData cuiseurResourceData = new ResourceProductData();
 				cuiseurResourceData.setName("Cuiseur");
 				costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 30d, "€/h", null, costTransfoNodeRef, false));
 				cuiseurResourceData.setCostList(costList);
-				NodeRef cuiseurResourceNodeRef = productDAO.create(folderNodeRef, cuiseurResourceData, dataLists);
+				NodeRef cuiseurResourceNodeRef = productDAO.create(testFolderNodeRef, cuiseurResourceData, dataLists);
 				
 				ResourceProductData malaxeurResourceData = new ResourceProductData();
 				malaxeurResourceData.setName("Malaxeur");
 				costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 40d, "€/h", null, costTransfoNodeRef, false));
 				malaxeurResourceData.setCostList(costList);
-				NodeRef malaxeurResourceNodeRef = productDAO.create(folderNodeRef, malaxeurResourceData, dataLists);
+				NodeRef malaxeurResourceNodeRef = productDAO.create(testFolderNodeRef, malaxeurResourceData, dataLists);
 				
 				ResourceProductData ligneResourceData = new ResourceProductData();
 				ligneResourceData.setName("Ligne");
@@ -3001,7 +2986,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				costList.add(new CostListDataItem(null, 15d, "€/h", null, costMOTransfoNodeRef, false));
 				costList.add(new CostListDataItem(null, 5d, "€/h", null, costMOMaintenanceNodeRef, false));
 				ligneResourceData.setCostList(costList);
-				NodeRef ligneResourceNodeRef= productDAO.create(folderNodeRef, ligneResourceData, dataLists);
+				NodeRef ligneResourceNodeRef= productDAO.create(testFolderNodeRef, ligneResourceData, dataLists);
 				
 				/*-- Create finished product --*/
 				dataLists.clear();
@@ -3030,7 +3015,7 @@ public class FormulationTest extends RepoBaseTestCase {
 				//ligne
 				processList.add(new ProcessListDataItem(null, 1d, 1d, 500d, null, null, null, ligneStepNodeRef, null, ligneResourceNodeRef));				
 				finishedProduct.setProcessList(processList);
-				NodeRef finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
 								
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");

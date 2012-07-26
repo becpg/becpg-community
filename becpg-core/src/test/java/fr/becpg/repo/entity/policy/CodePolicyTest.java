@@ -18,50 +18,34 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.test.RepoBaseTestCase;
 
 /**
  * The Class CodePolicyTest.
  *
  * @author querephi
  */
-public class CodePolicyTest  extends BaseAlfrescoTestCase  {
-	
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";       
-	
+public class CodePolicyTest extends RepoBaseTestCase  {
+
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CodePolicyTest.class);
 	
 	/** The node service. */
 	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
-	/** The authentication component. */
-	private AuthenticationComponent authenticationComponent;	
-	
-	/** The repository helper. */
-	private Repository repositoryHelper;    
-	
+
 	/** The auto num service. */
 	private AutoNumService autoNumService;
 	
-	private NodeRef folderNodeRef = null;
 	private String code1 = null;
 	private String code2 = null;
 	private String code3 = null;
 	private String code4 = null;
 	
-	/* (non-Javadoc)
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {		
 		super.setUp();	
@@ -72,42 +56,13 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
     	fileFolderService = (FileFolderService)ctx.getBean("fileFolderService");  
     	authenticationComponent = (AuthenticationComponent)ctx.getBean("authenticationComponent");
         repositoryHelper = (Repository)ctx.getBean("repositoryHelper");
-        autoNumService = (AutoNumService)ctx.getBean("autoNumService"); 
-        
-        transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			@Override
-			public NodeRef execute() throws Throwable {
-			
-				/*-- Create test folder --*/
-				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
-				if(folderNodeRef != null)
-				{
-					fileFolderService.delete(folderNodeRef);    		
-				}			
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-				
-				return null;
-			}},false,true);
-                        
+        autoNumService = (AutoNumService)ctx.getBean("autoNumService");         
     }
     
-	/* (non-Javadoc)
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
 	@Override
     public void tearDown() throws Exception
     {
-		try
-        {
-            authenticationComponent.clearCurrentSecurityContext();
-        }
-        catch (Throwable e)
-        {
-            e.printStackTrace();
-            // Don't let this mask any previous exceptions
-        }
         super.tearDown();
-
     }	
 	
 	/**
@@ -126,7 +81,7 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 						String name = "Supplier 1";
 						properties.put(ContentModel.PROP_NAME, name);
-						return nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS,
+						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 								BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
 
@@ -145,7 +100,7 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 						String name = "Supplier 2";
 						properties.put(ContentModel.PROP_NAME, name);
-						return nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS,
+						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 								BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
 
@@ -166,7 +121,7 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 						String name = "Supplier 3";
 						properties.put(ContentModel.PROP_NAME, name);
 						properties.put(BeCPGModel.PROP_CODE, "F3");
-						return nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS,
+						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 								BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
 
@@ -187,7 +142,7 @@ public class CodePolicyTest  extends BaseAlfrescoTestCase  {
 						String name = "Supplier 4";
 						properties.put(ContentModel.PROP_NAME, name);
 						properties.put(BeCPGModel.PROP_CODE, "F3");
-						return nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS,
+						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 								BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
 

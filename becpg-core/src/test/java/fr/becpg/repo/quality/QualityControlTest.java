@@ -43,11 +43,6 @@ public class QualityControlTest extends RepoBaseTestCase {
 	private NodeRef qualityControlNodeRef;
 	private NodeRef controlPlanNodeRef;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void setUp() throws Exception {
@@ -61,11 +56,6 @@ public class QualityControlTest extends RepoBaseTestCase {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
 	@Override
 	public void tearDown() throws Exception {
 		try {
@@ -78,20 +68,20 @@ public class QualityControlTest extends RepoBaseTestCase {
 
 	}
 
-	private void createControlPlan(NodeRef folderNodeRef) {
+	private void createControlPlan(NodeRef testFolderNodeRef) {
 
 		// create method
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		String name = "Method";
 		properties.put(ContentModel.PROP_NAME, name);
-		methodNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
+		methodNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 				QualityModel.TYPE_CONTROL_METHOD, properties).getChildRef();
 
 		// create control step
 		properties.clear();
 		name = "Step";
 		properties.put(ContentModel.PROP_NAME, name);
-		controlStepNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
+		controlStepNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 				QualityModel.TYPE_CONTROL_STEP, properties).getChildRef();
 
 		// create control point
@@ -100,7 +90,7 @@ public class QualityControlTest extends RepoBaseTestCase {
 		List<ControlDefListDataItem> controlDefList = new ArrayList<ControlDefListDataItem>();
 		controlDefList.add(new ControlDefListDataItem(null, "Nutritionnelle", null, null, true, methodNodeRef, nuts));
 		controlPointData.setControlDefList(controlDefList);
-		controlPointNodeRef = controlPointDAO.create(folderNodeRef, controlPointData);
+		controlPointNodeRef = controlPointDAO.create(testFolderNodeRef, controlPointData);
 
 		// // create group
 		// Set<String> zones = new HashSet<String>();
@@ -123,10 +113,10 @@ public class QualityControlTest extends RepoBaseTestCase {
 		List<SamplingDefListDataItem> samplingDefList = new ArrayList<SamplingDefListDataItem>();
 		samplingDefList.add(new SamplingDefListDataItem(null, 2, 1, "/4heures", controlPointNodeRef, controlStepNodeRef, null));
 		controlPlanData.setSamplingDefList(samplingDefList);
-		controlPlanNodeRef = controlPlanDAO.create(folderNodeRef, controlPlanData);
+		controlPlanNodeRef = controlPlanDAO.create(testFolderNodeRef, controlPlanData);
 	}
 
-	private void createQualityControl(NodeRef folderNodeRef, List<NodeRef> controlPlansNodeRef, NodeRef productNodeRef) {
+	private void createQualityControl(NodeRef testFolderNodeRef, List<NodeRef> controlPlansNodeRef, NodeRef productNodeRef) {
 
 		QualityControlData qualityControlData = new QualityControlData();
 		qualityControlData.setName("Quality control");
@@ -137,7 +127,7 @@ public class QualityControlTest extends RepoBaseTestCase {
 		qualityControlData.setProduct(productNodeRef);
 		qualityControlData.setControlPlans(controlPlansNodeRef);
 
-		qualityControlNodeRef = qualityControlDAO.create(folderNodeRef, qualityControlData);
+		qualityControlNodeRef = qualityControlDAO.create(testFolderNodeRef, qualityControlData);
 
 		// TODO : add a policy...
 		// qualityControlService.createSamplingList(qualityControlNodeRef,
@@ -151,20 +141,13 @@ public class QualityControlTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
-				createControlPlan(folderNodeRef);
+				createControlPlan(testFolderNodeRef);
 				List<NodeRef> controlPlansNodeRef = new ArrayList<NodeRef>();
 				controlPlansNodeRef.add(controlPlanNodeRef);
 
-				NodeRef productNodeRef = createRawMaterial(folderNodeRef, "Raw material");
+				NodeRef productNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
 
-				createQualityControl(folderNodeRef, controlPlansNodeRef, productNodeRef);
+				createQualityControl(testFolderNodeRef, controlPlansNodeRef, productNodeRef);
 
 				return null;
 

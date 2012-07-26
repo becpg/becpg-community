@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -22,7 +21,6 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.test.RepoBaseTestCase;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProductListPoliciesTest.
  *
@@ -30,18 +28,12 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class PriceListPolicyTest  extends RepoBaseTestCase  {
 	
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";       
-	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(PriceListPolicyTest.class);
 	
 	private NodeRef cost1 = null;
 	private NodeRef cost2 = null;
-	
-	/* (non-Javadoc)
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
+
 	@Override
 	protected void setUp() throws Exception {		
 		super.setUp();	
@@ -49,10 +41,7 @@ public class PriceListPolicyTest  extends RepoBaseTestCase  {
     	logger.debug("ProductServiceTest:setUp");
           
     }
-    
-	/* (non-Javadoc)
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
+
 	@Override
     public void tearDown() throws Exception
     {
@@ -82,14 +71,6 @@ public class PriceListPolicyTest  extends RepoBaseTestCase  {
 				@Override
 				public NodeRef execute() throws Throwable {
 				
-					/*-- Create test folder --*/
-					NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
-					if(folderNodeRef != null)
-					{
-						fileFolderService.delete(folderNodeRef);    		
-					}			
-					folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-									
 					/*
 					 * Create raw material
 					 */
@@ -113,7 +94,7 @@ public class PriceListPolicyTest  extends RepoBaseTestCase  {
 					priceList.add(new PriceListDataItem(null, 23d, "€/kg", 1000d, "kg", 2, null, null, cost1, null));
 					rawMaterialData.setPriceList(priceList);
 					
-					NodeRef rawMaterialNodeRef = productDAO.create(folderNodeRef, rawMaterialData, dataLists);											
+					NodeRef rawMaterialNodeRef = productDAO.create(testFolderNodeRef, rawMaterialData, dataLists);											
 										
 					return rawMaterialNodeRef;
 					

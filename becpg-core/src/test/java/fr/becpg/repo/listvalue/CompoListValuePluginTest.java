@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -37,19 +36,10 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class CompoListValuePluginTest extends RepoBaseTestCase {
 
-	/** The Constant PATH_TEMPFOLDER. */
-	private static final String PATH_TEMPFOLDER = "TempFolder";
-
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CompoListValuePluginTest.class);
 
 	private CompoListValuePlugin compoListValuePlugin;
-
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-
-	/** The repository helper. */
-	private Repository repositoryHelper;
 
 	private NodeRef rawMaterial1NodeRef;
 	private NodeRef rawMaterial2NodeRef;
@@ -58,11 +48,6 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 	private NodeRef localSF2NodeRef;
 	private NodeRef finishedProductNodeRef;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -84,11 +69,6 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 		}, false, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		try {
@@ -103,18 +83,9 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 
 	public void initProducts() {
 
-		logger.debug("look for temp folder");
-		NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
-				ContentModel.ASSOC_CONTAINS, PATH_TEMPFOLDER);
-		if (folderNodeRef != null) {
-			fileFolderService.delete(folderNodeRef);
-		}
-		folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TEMPFOLDER,
-				ContentModel.TYPE_FOLDER).getNodeRef();
-
-		rawMaterial1NodeRef = createRawMaterial(folderNodeRef, "RM1");
-		rawMaterial2NodeRef = createRawMaterial(folderNodeRef, "RM2");
-		rawMaterial3NodeRef = createRawMaterial(folderNodeRef, "RM3");
+		rawMaterial1NodeRef = createRawMaterial(testFolderNodeRef, "RM1");
+		rawMaterial2NodeRef = createRawMaterial(testFolderNodeRef, "RM2");
+		rawMaterial3NodeRef = createRawMaterial(testFolderNodeRef, "RM3");
 
 		Collection<QName> dataLists = productDictionaryService.getDataLists();
 
@@ -122,13 +93,13 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 		LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
 		localSF1.setName("Local semi finished 1");
 		localSF1.setLegalName("Legal Local semi finished 1");
-		localSF1NodeRef = productDAO.create(folderNodeRef, localSF1, dataLists);
+		localSF1NodeRef = productDAO.create(testFolderNodeRef, localSF1, dataLists);
 
 		/*-- Local semi finished product 1 --*/
 		LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
 		localSF2.setName("Local semi finished 2");
 		localSF2.setLegalName("Legal Local semi finished 2");
-		localSF2NodeRef = productDAO.create(folderNodeRef, localSF2, dataLists);
+		localSF2NodeRef = productDAO.create(testFolderNodeRef, localSF2, dataLists);
 
 		FinishedProductData finishedProduct = new FinishedProductData();
 		finishedProduct.setName("Produit fini 1");
@@ -149,7 +120,7 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 				DeclarationType.Declare, rawMaterial3NodeRef));
 		finishedProduct.setCompoList(compoList);
 
-		finishedProductNodeRef = productDAO.create(folderNodeRef, finishedProduct, dataLists);
+		finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
 	}
 
 	/**

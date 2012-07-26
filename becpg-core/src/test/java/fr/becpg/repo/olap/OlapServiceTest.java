@@ -21,11 +21,6 @@ public class OlapServiceTest extends RepoBaseTestCase {
 	/** The repository helper. */
 	private OlapService olapService;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

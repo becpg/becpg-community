@@ -88,8 +88,6 @@ public class DataListSortServiceImpl implements DataListSortService {
 	@Override
 	public void insertAfter(NodeRef selectedNodeRef, NodeRef nodeRef) {
 
-		logger.debug("###insertAfter selectedNodeRef: " + tryGetName(selectedNodeRef) + " - nodeRef: " + tryGetName(nodeRef));
-		
 		NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
 
 		// Put at same level
@@ -132,7 +130,6 @@ public class DataListSortServiceImpl implements DataListSortService {
 				if(siblingSort != null && siblingSort > sort){
 					sort = siblingSort;
 				}				
-				logger.debug("###lastChild of: " + tryGetName(siblingNode) + " is " + tryGetName(lastChild) + " -sort: " + sort);
 			}
 			else{
 				sort = (Integer) nodeService.getProperty(siblingNode, BeCPGModel.PROP_SORT);

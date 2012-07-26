@@ -33,15 +33,10 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class SortableListPolicyTest extends RepoBaseTestCase {
 
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";
-
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(SortableListPolicyTest.class);
 
 	private EntityListDAO entityListDAO;
-
-	private NodeRef folderNodeRef = null;
 
 	/** The sf node ref. */
 	private NodeRef sfNodeRef;
@@ -58,25 +53,6 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 		logger.debug("ProductServiceTest:setUp");
 
 		entityListDAO = (EntityListDAO) ctx.getBean("entityListDAO");
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				/*-- Create test folder --*/
-				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
-						ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER,
-						ContentModel.TYPE_FOLDER).getNodeRef();
-
-				return null;
-
-			}
-		}, false, true);
-
 	}
 
 	/*
@@ -116,7 +92,7 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 				costList.add(new CostListDataItem(null, 2d, "€/kg", null, costs.get(3), false));
 				sfData.setCostList(costList);
 
-				sfNodeRef = productDAO.create(folderNodeRef, sfData, dataLists);
+				sfNodeRef = productDAO.create(testFolderNodeRef, sfData, dataLists);
 
 				// simulate the UI
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);

@@ -79,11 +79,6 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 	
 	private NonConformityService nonConformityService;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void setUp() throws Exception {
@@ -157,11 +152,6 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
 	@Override
 	public void tearDown() throws Exception {
 		try {
