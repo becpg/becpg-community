@@ -216,7 +216,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
@@ -405,7 +405,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
@@ -528,7 +528,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 
@@ -615,7 +615,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 
@@ -708,7 +708,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
@@ -802,7 +802,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
@@ -899,7 +899,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
@@ -996,7 +996,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
@@ -1100,7 +1100,7 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:productDensity" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
@@ -1206,7 +1206,7 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:productDensity" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
@@ -1315,7 +1315,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="rep:reportTpls" set="mainInfo" />
@@ -1433,7 +1433,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="rep:reportTpls" set="mainInfo" />
@@ -1545,7 +1545,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
@@ -1642,7 +1642,7 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" read-only="true" set="mainInfo" />
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
@@ -4206,17 +4206,6 @@
 	<!-- ________________________________________________________________ ASPECTS 
 		________________________________________________________________ -->
 
-
-	<config evaluator="aspect" condition="bcpg:transformationAspect">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:productQty" />
-					<show id="bcpg:productDensity" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
 
 	<config evaluator="aspect" condition="bcpg:productTypeAspect">
 		<forms>
