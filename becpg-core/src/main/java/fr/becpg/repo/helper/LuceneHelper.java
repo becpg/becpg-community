@@ -24,6 +24,7 @@ public class LuceneHelper {
 	private static final String QUERY_COND_PATH = " %s +PATH:\"/app:company_home/%s/*\"";
 	private static final String QUERY_COND_ID = " %s ID:\"%s\"";
 	private static final String QUERY_COND_BY_SORT = " %s +@%s:[%s TO %s]";
+	private static final String QUERY_COND_PARENT = " %s +PARENT:\"%s\"";
 
 	/**
 	 * Return an equal condition on a property
@@ -93,6 +94,18 @@ public class LuceneHelper {
 	public static String getCondMinMax(QName property, String min, String max, Operator operator) {
 
 		return String.format(QUERY_COND_BY_SORT, operator != null ? operator : "", Repository.escapeQName(property), min, max);
+	}
+	
+	/**
+	 * Return a parent condition on nodeRef
+	 * 
+	 * @param property
+	 * @param value
+	 * @return
+	 */
+	public static String getCondParent(NodeRef nodeRef, Operator operator) {
+
+		return String.format(QUERY_COND_PARENT, operator != null ? operator : "", nodeRef);
 	}
 	
 
