@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -504,6 +505,13 @@ public class EntityServiceImpl implements EntityService {
 	public NodeRef getEntityDefaultImage(NodeRef entityNodeRef) throws BeCPGException {
 			
 		String 	imgName = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+		
+		// manage workingCopy
+		String wcLabel = CheckOutCheckInServiceImpl.getWorkingCopyLabel();		
+		if(imgName.endsWith(wcLabel)){
+			imgName = getNameFromWorkingCopyName(imgName, wcLabel);
+		}
+		
 		try {
 			return getImage(entityNodeRef, imgName);
 		} catch (BeCPGException e) {
@@ -530,6 +538,27 @@ public class EntityServiceImpl implements EntityService {
 		return BeCPGModel.TYPE_CLIENT.isMatch(type) || 
 		BeCPGModel.TYPE_SUPPLIER.isMatch(type) || 
 		dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT);
-	}
+	}	
+	
+	/**
+     * Get original name from the working copy name and the cm:workingCopyLabel
+     * that was used to create it.
+     * 
+     * @param workingCopyLabel
+     * @return  original name
+     */
+    private String getNameFromWorkingCopyName(String workingCopyName, String workingCopyLabel){
+        String workingCopyLabelRegEx = workingCopyLabel.replaceAll("\\(", "\\\\(");
+        workingCopyLabelRegEx = workingCopyLabelRegEx.replaceAll("\\)", "\\\\)");
+        if (workingCopyName.contains(" " + workingCopyLabel))
+        {
+            workingCopyName = workingCopyName.replaceFirst(" " + workingCopyLabelRegEx, "");
+        }
+        else if (workingCopyName.contains(workingCopyLabel))
+        {
+            workingCopyName = workingCopyName.replaceFirst(workingCopyLabelRegEx, "");
+        }
+        return workingCopyName;
+    }
 
 }
