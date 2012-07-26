@@ -6,104 +6,6 @@
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.dualchartlisting</property>
     <property name="bidiLayoutOrientation">ltr</property>
     <property name="imageDPI">112</property>
-    <parameters>
-        <scalar-parameter name="allergenListHideChapter" id="1583">
-            <property name="hidden">true</property>
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <property name="distinct">true</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">false</value>
-            </simple-property-list>
-            <property name="paramType">simple</property>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="costListHideChapter" id="1584">
-            <property name="hidden">true</property>
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <property name="distinct">true</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">false</value>
-            </simple-property-list>
-            <property name="paramType">simple</property>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="ingListHideChapter" id="1585">
-            <property name="hidden">true</property>
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <property name="distinct">true</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">false</value>
-            </simple-property-list>
-            <property name="paramType">simple</property>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="ingLabelingListHideChapter" id="1586">
-            <property name="hidden">true</property>
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <property name="distinct">true</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">false</value>
-            </simple-property-list>
-            <property name="paramType">simple</property>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="microbioListHideChapter" id="1587">
-            <property name="hidden">true</property>
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <property name="distinct">true</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">false</value>
-            </simple-property-list>
-            <property name="paramType">simple</property>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="nutListHideChapter" id="1588">
-            <property name="hidden">true</property>
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <property name="distinct">true</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">false</value>
-            </simple-property-list>
-            <property name="paramType">simple</property>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="organoListHideChapter" id="1589">
-            <property name="hidden">true</property>
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <property name="distinct">true</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">false</value>
-            </simple-property-list>
-            <property name="paramType">simple</property>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="physicoChemListHideChapter" id="1590">
-            <property name="hidden">true</property>
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <property name="distinct">true</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">false</value>
-            </simple-property-list>
-            <property name="paramType">simple</property>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-    </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
             <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
@@ -2248,10 +2150,37 @@
             </row>
         </grid>
         <grid id="1349">
+            <property name="dataSet">OrganoList</property>
             <list-property name="visibility">
                 <structure>
                     <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">params["organoListHideChapter"].value</expression>
+                    <expression name="valueExpr" type="javascript">row["Count"]==0</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">organoListValue</property>
+                    <text-property name="displayName">organoListValue</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["organoListValue"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">organoListOrgano</property>
+                    <text-property name="displayName">organoListOrgano</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["organoListOrgano"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Count</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["organoListOrgano"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
                 </structure>
             </list-property>
             <column id="1350"/>
@@ -2350,10 +2279,49 @@
             </row>
         </grid>
         <grid id="1359">
+            <property name="dataSet">NutList</property>
             <list-property name="visibility">
                 <structure>
                     <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">params["nutListHideChapter"].value</expression>
+                    <expression name="valueExpr" type="javascript">row["Count"]==0</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">nutListValue</property>
+                    <text-property name="displayName">nutListValue</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["nutListValue"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">nutListUnit</property>
+                    <text-property name="displayName">nutListUnit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["nutListUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">nutListGroup</property>
+                    <text-property name="displayName">nutListGroup</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["nutListGroup"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">nutListNut</property>
+                    <text-property name="displayName">nutListNut</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["nutListNut"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Count</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["nutListNut"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
                 </structure>
             </list-property>
             <column id="1360"/>
@@ -2586,10 +2554,43 @@
             </row>
         </grid>
         <grid id="1371">
+            <property name="dataSet">CostList</property>
             <list-property name="visibility">
                 <structure>
                     <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">params["costListHideChapter"].value</expression>
+                    <expression name="valueExpr" type="javascript">row["Count"]==0</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">costListValue</property>
+                    <text-property name="displayName">costListValue</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["costListValue"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">costListUnit</property>
+                    <text-property name="displayName">costListUnit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["costListUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">costListCost</property>
+                    <text-property name="displayName">costListCost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["costListCost"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Count</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["costListCost"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
                 </structure>
             </list-property>
             <column id="1372"/>
@@ -2737,10 +2738,60 @@
             </row>
         </grid>
         <grid id="1383">
+            <property name="dataSet">AllergenList</property>
             <list-property name="visibility">
                 <structure>
                     <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">params["allergenListHideChapter"].value</expression>
+                    <expression name="valueExpr" type="javascript">row["Count"]==0</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">allergenListAllergen</property>
+                    <text-property name="displayName">allergenListAllergen</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["allergenListAllergen"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">allergenListInVoluntary</property>
+                    <text-property name="displayName">allergenListInVoluntary</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["allergenListInVoluntary"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">allergenListVoluntary</property>
+                    <text-property name="displayName">allergenListVoluntary</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["allergenListVoluntary"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">allergenListInVolSources</property>
+                    <text-property name="displayName">allergenListInVolSources</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["allergenListInVolSources"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">allergenListVolSources</property>
+                    <text-property name="displayName">allergenListVolSources</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["allergenListVolSources"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">allergenType</property>
+                    <text-property name="displayName">allergenType</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["allergenType"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Count</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
                 </structure>
             </list-property>
             <column id="1384"/>
@@ -2922,10 +2973,61 @@ else
             </row>
         </grid>
         <grid id="1438">
+            <property name="dataSet">IngList</property>
             <list-property name="visibility">
                 <structure>
                     <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">params["ingListHideChapter"].value</expression>
+                    <expression name="valueExpr" type="javascript">row["Count"]==0</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">ingListQtyPerc</property>
+                    <text-property name="displayName">ingListQtyPerc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListGeoOrigin</property>
+                    <text-property name="displayName">ingListGeoOrigin</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListGeoOrigin"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListBioOrigin</property>
+                    <text-property name="displayName">ingListBioOrigin</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListBioOrigin"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListIsGMO</property>
+                    <text-property name="displayName">ingListIsGMO</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListIsGMO"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListIng</property>
+                    <text-property name="displayName">ingListIng</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListIng"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListCEECode</property>
+                    <text-property name="displayName">ingListCEECode</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListCEECode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Count</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["ingListIng"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
                 </structure>
             </list-property>
             <column id="1439"/>
@@ -3127,6 +3229,12 @@ else
             <property name="borderTopColor">#FFFFFF</property>
             <property name="verticalAlign">top</property>
             <property name="dataSet">ingLabelingList</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">row["Count"]==0</expression>
+                </structure>
+            </list-property>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">language</property>
@@ -3145,6 +3253,18 @@ else
                     <text-property name="displayName">illValue</text-property>
                     <expression name="expression" type="javascript">dataSetRow["illValue"]</expression>
                     <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Count</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["language"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
                 </structure>
             </list-property>
             <column id="1706"/>
@@ -3194,10 +3314,49 @@ else
             </detail>
         </table>
         <grid id="1411">
+            <property name="dataSet">microbioList</property>
             <list-property name="visibility">
                 <structure>
                     <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">params["microbioListHideChapter"].value</expression>
+                    <expression name="valueExpr" type="javascript">row["Count"]==0</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">mblMicrobio</property>
+                    <text-property name="displayName">mblMicrobio</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["mblMicrobio"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">mblValue</property>
+                    <text-property name="displayName">mblValue</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["mblValue"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">mblUnit</property>
+                    <text-property name="displayName">mblUnit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["mblUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">mblMaxi</property>
+                    <text-property name="displayName">mblMaxi</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["mblMaxi"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Count</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["mblMicrobio"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
                 </structure>
             </list-property>
             <column id="1412"/>
@@ -3386,10 +3545,55 @@ else
             </row>
         </grid>
         <grid id="1421">
+            <property name="dataSet">physicoChemList</property>
             <list-property name="visibility">
                 <structure>
                     <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">params["physicoChemListHideChapter"].value</expression>
+                    <expression name="valueExpr" type="javascript">row["Count"]==0</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">pclPhysicoChem</property>
+                    <text-property name="displayName">pclPhysicoChem</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pclPhysicoChem"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pclValue</property>
+                    <text-property name="displayName">pclValue</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pclValue"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pclUnit</property>
+                    <text-property name="displayName">pclUnit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pclUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pclMaxi</property>
+                    <text-property name="displayName">pclMaxi</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pclMaxi"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pclMini</property>
+                    <text-property name="displayName">pclMini</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pclMini"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Count</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["pclPhysicoChem"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
                 </structure>
             </list-property>
             <column id="1422"/>
