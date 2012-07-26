@@ -16,7 +16,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.BaseAlfrescoTestCase;
 import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,6 +25,7 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -33,10 +33,7 @@ import fr.becpg.repo.product.data.RawMaterialData;
  *
  * @author querephi
  */
-public class ProductListPoliciesTest  extends BaseAlfrescoTestCase  {
-	
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";       
+public class ProductListPoliciesTest extends RepoBaseTestCase  {
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductListPoliciesTest.class);
@@ -44,23 +41,14 @@ public class ProductListPoliciesTest  extends BaseAlfrescoTestCase  {
 	/** The node service. */
 	private NodeService nodeService;
 	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
 	/** The authentication component. */
 	private AuthenticationComponent authenticationComponent;	
 	
 	/** The product dao. */
 	private ProductDAO productDAO;
 	
-	/** The repository helper. */
-	private Repository repositoryHelper;    
-	
 	private EntityListDAO entityListDAO;
 	
-	/* (non-Javadoc)
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {		
 		super.setUp();	
@@ -75,10 +63,7 @@ public class ProductListPoliciesTest  extends BaseAlfrescoTestCase  {
         entityListDAO = (EntityListDAO)ctx.getBean("entityListDAO");
                         
     }
-    
-	/* (non-Javadoc)
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
+
 	@Override
     public void tearDown() throws Exception
     {
@@ -103,18 +88,10 @@ public class ProductListPoliciesTest  extends BaseAlfrescoTestCase  {
 		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				@Override
 				public NodeRef execute() throws Throwable {
-				
-					/*-- Create test folder --*/
-					NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
-					if(folderNodeRef != null)
-					{
-						fileFolderService.delete(folderNodeRef);    		
-					}			
-					folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-									
+												
 					RawMaterialData rawMaterialData = new RawMaterialData();
 					rawMaterialData.setName("RM");
-					NodeRef rawMaterialNodeRef = productDAO.create(folderNodeRef, rawMaterialData, null);											
+					NodeRef rawMaterialNodeRef = productDAO.create(testFolderNodeRef, rawMaterialData, null);											
 					
 		    		NodeRef containerListNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
 		    		

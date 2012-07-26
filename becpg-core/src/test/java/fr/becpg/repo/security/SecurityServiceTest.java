@@ -58,11 +58,6 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	private DynPropsConstraint dynPropsConstraint;
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void setUp() throws Exception {
@@ -86,10 +81,6 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		dynPropsConstraint = (DynPropsConstraint) ctx.getBean("dynPropsConstraint");
 		
 		authenticationComponent.setSystemUserAsCurrentUser();
-		
-		
-
-	
 
 	}
 	
@@ -139,11 +130,6 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
 	@Override
 	public void tearDown() throws Exception {
 		try {
@@ -156,7 +142,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	}
 
-	private void createACLGroup(NodeRef folderNodeRef) {
+	private void createACLGroup(NodeRef testFolderNodeRef) {
 
 		createUsers();
 		
@@ -186,7 +172,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 				PermissionModel.READ_ONLY, groups));
 
 		aclGroupData.setAcls(acls);
-		aclGroupDao.create(folderNodeRef, aclGroupData);
+		aclGroupDao.create(testFolderNodeRef, aclGroupData);
 
 	}
 
@@ -198,20 +184,8 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 				new RetryingTransactionCallback<NodeRef>() {
 					@Override
 					public NodeRef execute() throws Throwable {
-
-						/*-- Create test folder --*/
-						NodeRef folderNodeRef = nodeService.getChildByName(
-								repositoryHelper.getCompanyHome(),
-								ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-						if (folderNodeRef != null) {
-							fileFolderService.delete(folderNodeRef);
-						}
-						folderNodeRef = fileFolderService.create(
-								repositoryHelper.getCompanyHome(),
-								PATH_TESTFOLDER, ContentModel.TYPE_FOLDER)
-								.getNodeRef();
-
-						createACLGroup(folderNodeRef);
+						
+						createACLGroup(testFolderNodeRef);
 
 						securityService.refreshAcls();
 

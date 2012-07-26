@@ -187,12 +187,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 	
 	private String workflowId = "";
 	
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -211,9 +205,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		authorityService = (AuthorityService) ctx.getBean("authorityService");
 
 		personService = (PersonService) ctx.getBean("PersonService");
-
-
-
 	}
 
 	private void createUsers() {

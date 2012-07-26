@@ -149,6 +149,8 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		}
 		// Then context
 		super.setUp();
+		
+		repoBaseTestCase = this;
 
 		mimetypeService = (MimetypeService) ctx.getBean("mimetypeService");
 		repositoryHelper = (Repository) ctx.getBean("repositoryHelper");
@@ -165,9 +167,11 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
+				testFolderNodeRef = BeCPGTestHelper.createTestFolder(repoBaseTestCase);;
+				
 				// Delete initialyzed repo
 				deleteSystemFolder();
-				// Init repo for test
+				// Init repo for tes
 				initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
 
 				Assert.assertEquals(3, entitySystemService.getSystemEntities().size());
@@ -192,10 +196,6 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 
 			}
 		}, false, true);
-
-		repoBaseTestCase = this;
-		
-		testFolderNodeRef = createTestFolder();
 	}
 
 	/*
@@ -391,18 +391,6 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 				organos.add(fileInfo.getNodeRef());
 			}
 		}
-	}
-
-	/*
-	 * Create a test folder
-	 */
-	protected NodeRef createTestFolder() {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-				return BeCPGTestHelper.createTestFolder(repoBaseTestCase);
-			}
-		}, false, true);
 	}
 
 	/**

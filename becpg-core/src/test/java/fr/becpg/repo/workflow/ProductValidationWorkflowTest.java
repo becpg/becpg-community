@@ -66,13 +66,7 @@ public class ProductValidationWorkflowTest extends RepoBaseTestCase {
 	private NodeRef rawMaterial1NodeRef;
 	
 	private String workflowId = "";
-	
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -83,7 +77,6 @@ public class ProductValidationWorkflowTest extends RepoBaseTestCase {
 		authenticationDAO = (MutableAuthenticationDao) ctx.getBean("authenticationDao");
 		authorityService = (AuthorityService) ctx.getBean("authorityService");
 		personService = (PersonService) ctx.getBean("PersonService");
-	
 	}
 
 	private void createUsers() {
@@ -150,11 +143,6 @@ public class ProductValidationWorkflowTest extends RepoBaseTestCase {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
 	@Override
 	public void tearDown() throws Exception {
 		try {

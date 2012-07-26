@@ -410,8 +410,6 @@ public class ProductDAOImpl implements ProductDAO {
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
 
 					Map<QName, Serializable> properties = nodeService.getProperties(listItemNodeRef);
-					
-					logger.debug("###depthLevel: " + properties.get(BeCPGModel.PROP_DEPTH_LEVEL));
 
 					List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
 					NodeRef part = compoAssocRefs.size() > 0 ? (compoAssocRefs.get(0)).getTargetRef() : null;

@@ -38,7 +38,6 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.test.RepoBaseTestCase;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CompareProductServiceTest.
  * 
@@ -46,18 +45,11 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class CompareProductServiceTest extends RepoBaseTestCase {
 
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";
-	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CompareProductServiceTest.class);
 
 	/** The compare product service. */
 	private CompareEntityService compareEntityService;
-
-
-	/** The folder node ref. */
-	private NodeRef folderNodeRef;
 
 	/** The local s f1 node ref. */
 	private NodeRef localSF1NodeRef;
@@ -87,11 +79,6 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 	/** The allergens. */
 	private List<NodeRef> allergens = new ArrayList<NodeRef>();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -106,11 +93,6 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 		initObjects();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
 	@Override
 	public void tearDown() throws Exception {
 		try {
@@ -130,15 +112,6 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-
-				/*-- Create test folder --*/
-				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-						PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER,
-						ContentModel.TYPE_FOLDER).getNodeRef();
 
 				// costs
 				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
@@ -192,43 +165,43 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
 				rawMaterial1.setLegalName("Legal Raw material 1");
-				rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, dataLists);
+				rawMaterial1NodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, dataLists);
 
 				/*-- Raw material 2 --*/
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
 				rawMaterial2.setLegalName("Legal Raw material 2");
-				rawMaterial2NodeRef = productDAO.create(folderNodeRef, rawMaterial2, dataLists);
+				rawMaterial2NodeRef = productDAO.create(testFolderNodeRef, rawMaterial2, dataLists);
 
 				/*-- Raw material 3 --*/
 				RawMaterialData rawMaterial3 = new RawMaterialData();
 				rawMaterial3.setName("Raw material 3");
 				rawMaterial3.setLegalName("Legal Raw material 3");
-				rawMaterial3NodeRef = productDAO.create(folderNodeRef, rawMaterial3, dataLists);
+				rawMaterial3NodeRef = productDAO.create(testFolderNodeRef, rawMaterial3, dataLists);
 
 				/*-- Raw material 4 --*/
 				RawMaterialData rawMaterial4 = new RawMaterialData();
 				rawMaterial4.setName("Raw material 4");
 				rawMaterial4.setLegalName("Legal Raw material 4");
-				rawMaterial4NodeRef = productDAO.create(folderNodeRef, rawMaterial4, dataLists);
+				rawMaterial4NodeRef = productDAO.create(testFolderNodeRef, rawMaterial4, dataLists);
 
 				/*-- Raw material 5 --*/
 				RawMaterialData rawMaterial5 = new RawMaterialData();
 				rawMaterial5.setName("Raw material 5");
 				rawMaterial5.setLegalName("Legal Raw material 5");
-				productDAO.create(folderNodeRef, rawMaterial5, dataLists);
+				productDAO.create(testFolderNodeRef, rawMaterial5, dataLists);
 
 				/*-- Local semi finished product 1 --*/
 				LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
 				localSF1.setName("Local semi finished 1");
 				localSF1.setLegalName("Legal Local semi finished 1");
-				localSF1NodeRef = productDAO.create(folderNodeRef, localSF1, dataLists);
+				localSF1NodeRef = productDAO.create(testFolderNodeRef, localSF1, dataLists);
 
 				/*-- Local semi finished product 1 --*/
 				LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
 				localSF2.setName("Local semi finished 2");
 				localSF2.setLegalName("Legal Local semi finished 2");
-				localSF2NodeRef = productDAO.create(folderNodeRef, localSF2, dataLists);
+				localSF2NodeRef = productDAO.create(testFolderNodeRef, localSF2, dataLists);
 
 				return null;
 
@@ -355,7 +328,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// create an MP for the allergens
 				RawMaterialData allergenRawMaterial = new RawMaterialData();
 				allergenRawMaterial.setName("MP allergen");
-				NodeRef allergenRawMaterialNodeRef = productDAO.create(folderNodeRef, allergenRawMaterial, dataLists);
+				NodeRef allergenRawMaterialNodeRef = productDAO.create(testFolderNodeRef, allergenRawMaterial, dataLists);
 
 				// Allergens
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
@@ -385,7 +358,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// rawMaterial4NodeRef));
 				fp1.setCompoList(compoList);
 
-				fp1NodeRef = productDAO.create(folderNodeRef, fp1, dataLists);
+				fp1NodeRef = productDAO.create(testFolderNodeRef, fp1, dataLists);
 
 				logger.debug("create FP 2");
 
@@ -435,7 +408,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 						DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 
-				fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);
+				fp2NodeRef = productDAO.create(testFolderNodeRef, fp2, dataLists);
 				
 				return null;
 
@@ -602,7 +575,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// rawMaterial4NodeRef));
 				fp1.setCompoList(compoList);
 
-				fp1NodeRef = productDAO.create(folderNodeRef, fp1, dataLists);
+				fp1NodeRef = productDAO.create(testFolderNodeRef, fp1, dataLists);
 
 				logger.debug("createRawMaterial 1");
 
@@ -624,7 +597,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 						DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 
-				fp2NodeRef = productDAO.create(folderNodeRef, fp2, dataLists);
+				fp2NodeRef = productDAO.create(testFolderNodeRef, fp2, dataLists);
 				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
 				productsNodeRef.add(fp2NodeRef);
 

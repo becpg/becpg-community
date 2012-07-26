@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -15,7 +14,6 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -24,25 +22,20 @@ import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.test.RepoBaseTestCase;
 
 /**
  * The Class ProductPoliciesTest.
  * 
  * @author querephi
  */
-public class ProductPoliciesTest extends BaseAlfrescoTestCase {
-
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";
+public class ProductPoliciesTest extends RepoBaseTestCase {
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductPoliciesTest.class);
 
 	/** The node service. */
 	private NodeService nodeService;
-
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
 
 	/** The authentication component. */
 	private AuthenticationComponent authenticationComponent;
@@ -53,13 +46,9 @@ public class ProductPoliciesTest extends BaseAlfrescoTestCase {
 	/** The product dao. */
 	private ProductDAO productDAO;
 
-	/** The repository helper. */
-	private Repository repositoryHelper;
-
 	/** The auto num service. */
 	private AutoNumService autoNumService;
 
-	private NodeRef folderNodeRef = null;
 	private String productCode1 = null;
 	private String productCode2 = null;
 
@@ -77,24 +66,6 @@ public class ProductPoliciesTest extends BaseAlfrescoTestCase {
 		authenticationComponent = (AuthenticationComponent) ctx.getBean("authenticationComponent");
 		repositoryHelper = (Repository) ctx.getBean("repositoryHelper");
 		autoNumService = (AutoNumService) ctx.getBean("autoNumService");
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				/*-- Create test folder --*/
-				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
-						ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER,
-						ContentModel.TYPE_FOLDER).getNodeRef();
-
-				return null;
-
-			}
-		}, false, true);
 	}
 
 	@Override
@@ -123,7 +94,7 @@ public class ProductPoliciesTest extends BaseAlfrescoTestCase {
 
 						RawMaterialData rawMaterial1 = new RawMaterialData();
 						rawMaterial1.setName("Raw material 1");
-						return productDAO.create(folderNodeRef, rawMaterial1, dataLists);
+						return productDAO.create(testFolderNodeRef, rawMaterial1, dataLists);
 
 					}
 				}, false, true);
@@ -138,7 +109,7 @@ public class ProductPoliciesTest extends BaseAlfrescoTestCase {
 
 						RawMaterialData rawMaterial2 = new RawMaterialData();
 						rawMaterial2.setName("Raw material 2");
-						return productDAO.create(folderNodeRef, rawMaterial2, dataLists);
+						return productDAO.create(testFolderNodeRef, rawMaterial2, dataLists);
 
 					}
 				}, false, true);

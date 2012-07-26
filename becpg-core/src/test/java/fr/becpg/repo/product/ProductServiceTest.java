@@ -71,9 +71,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 	private static final int WUSED_LEVEL = 1;
 
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";
-
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductServiceTest.class);
 
@@ -101,9 +98,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	private DictionaryService dictionaryService;
 	
 	private WUsedListService wUsedListService;
-
-	/** The test folder. */
-	private NodeRef testFolder;
 
 	/*
 	 * (non-Javadoc)
@@ -155,13 +149,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-				createRawMaterial(folderNodeRef, "MP test report");
+				createRawMaterial(testFolderNodeRef, "MP test report");
 
 				return null;
 
@@ -194,21 +182,14 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				reportTplService.createTplRptDesign(productReportTplFolder, classDef.getTitle(), "beCPG/birt/document/product/default/ProductReport.rptdesign",
 						ReportType.Document, ReportFormat.PDF, productType, true, true, true);
 
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				/*-- Create images folder --*/
-				NodeRef imagesNodeRef = fileFolderService.create(folderNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
+				NodeRef imagesNodeRef = fileFolderService.create(testFolderNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
 
 				addProductImage(imagesNodeRef);
 
 				/*-- Create product --*/
 				logger.debug("Create product");
-				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef, "MP test report");
+				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
 
 				/*-- Generate report --*/
 				entityReportService.generateReport(rawMaterialNodeRef);
@@ -234,7 +215,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, "Product Tpl");
-				nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS,
+				nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ENTITY, properties)
 						.getChildRef();
 
@@ -260,13 +241,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				/*-- create folders : Test, system, product templates--*/
-				logger.debug("/*-- create folders --*/");
-				testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (testFolder != null) {
-					fileFolderService.delete(testFolder);
-				}
-				testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
+				
 				NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 
@@ -330,7 +305,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial = new RawMaterialData();
 				rawMaterial.setName("Raw material");
-				NodeRef rawMaterialNodeRef = productDAO.create(testFolder, rawMaterial, null);
+				NodeRef rawMaterialNodeRef = productDAO.create(testFolderNodeRef, rawMaterial, null);
 				// productService.initializeProductFolder(rawMaterialNodeRef);
 
 				return rawMaterialNodeRef;
@@ -341,7 +316,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		// Check
 		logger.debug("//Check raw material");
 		NodeRef parentRawMaterialNodeRef = nodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef();
-		assertEquals("Parent of raw material must be the testFolder", testFolder, parentRawMaterialNodeRef);
+		assertEquals("Parent of raw material must be the testFolderNodeRef", testFolderNodeRef, parentRawMaterialNodeRef);
 		assertEquals("Parent of raw material must have the type FOLDER", ContentModel.TYPE_FOLDER, nodeService.getType(parentRawMaterialNodeRef));
 
 		/*-- Create finished product --*/
@@ -351,7 +326,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				logger.debug("/*-- Create finished product --*/");
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Finished Product");
-				NodeRef finishedProductNodeRef = productDAO.create(testFolder, finishedProduct, null);
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, null);
 				// productService.initializeProductFolder(finishedProductNodeRef);
 
 				return finishedProductNodeRef;
@@ -362,7 +337,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		// Check
 		logger.debug("//Check finished product");
 		NodeRef parentFinishedProductNodeRef = nodeService.getPrimaryParent(finishedProductNodeRef).getParentRef();
-		assertNotSame("Parent of finished product should not be the testFolder", testFolder, parentRawMaterialNodeRef);
+		assertNotSame("Parent of finished product should not be the testFolderNodeRef", testFolderNodeRef, parentRawMaterialNodeRef);
 		assertEquals("Parent of finished product must have the type PRODUCT_FOLDER", BeCPGModel.TYPE_ENTITY_FOLDER, nodeService.getType(parentFinishedProductNodeRef));
 		NodeRef imagesFolder = nodeService.getChildByName(parentFinishedProductNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		assertNotNull("Images folder must be not null", imagesFolder);
@@ -428,14 +403,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 					nodeService.deleteNode(productsNodeRef);
 				}
 
-				/*-- create folders : Test--*/
-				logger.debug("/*-- create folders --*/");
-				testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (testFolder != null) {
-					fileFolderService.delete(testFolder);
-				}
-				testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				/*-- Create raw material --*/
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial = new RawMaterialData();
@@ -443,7 +410,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				rawMaterial.setHierarchy1(HIERARCHY1_FROZEN_REF);
 				rawMaterial.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				rawMaterial.setState(SystemState.Valid);
-				return productDAO.create(testFolder, rawMaterial, null);
+				return productDAO.create(testFolderNodeRef, rawMaterial, null);
 				
 			}
 		}, false, true);
@@ -499,7 +466,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				rawMaterial2.setHierarchy1(HIERARCHY1_FROZEN_REF);
 				rawMaterial2.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				rawMaterial2.setState(SystemState.Valid);
-				return productDAO.create(testFolder, rawMaterial2, null);
+				return productDAO.create(testFolderNodeRef, rawMaterial2, null);
 				
 			}
 		}, false, true);
@@ -546,26 +513,18 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				/*-- create folders : Test--*/
-				logger.debug("/*-- create folders --*/");
-				testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (testFolder != null) {
-					fileFolderService.delete(testFolder);
-				}
-				testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				/*-- Create raw material --*/
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial = new RawMaterialData();
 				rawMaterial.setName("Raw material");
-				NodeRef rawMaterialNodeRef = productDAO.create(testFolder, rawMaterial, null);
+				NodeRef rawMaterialNodeRef = productDAO.create(testFolderNodeRef, rawMaterial, null);
 				LocalSemiFinishedProduct lSF1 = new LocalSemiFinishedProduct();
 				lSF1.setName("Local semi finished 1");
-				NodeRef lSF1NodeRef = productDAO.create(testFolder, lSF1, null);
+				NodeRef lSF1NodeRef = productDAO.create(testFolderNodeRef, lSF1, null);
 
 				LocalSemiFinishedProduct lSF2 = new LocalSemiFinishedProduct();
 				lSF2.setName("Local semi finished 2");
-				NodeRef lSF2NodeRef = productDAO.create(testFolder, lSF2, null);
+				NodeRef lSF2NodeRef = productDAO.create(testFolderNodeRef, lSF2, null);
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
@@ -578,7 +537,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				finishedProduct.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				NodeRef finishedProductNodeRef = productDAO.create(testFolder, finishedProduct, dataLists);
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
 
 				logger.debug("local semi finished 1: " + lSF1NodeRef);
 				logger.debug("local semi finished 2: " + lSF2NodeRef);
@@ -650,19 +609,11 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				/*-- create folders : Test--*/
-				logger.debug("/*-- create folders --*/");
-				testFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (testFolder != null) {
-					fileFolderService.delete(testFolder);
-				}
-				testFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				/*-- Create raw material --*/
 				logger.debug("/*-- Create pkg material --*/");
 				PackagingMaterialData packagingMaterial = new PackagingMaterialData();
 				packagingMaterial.setName("Packaging material");
-				NodeRef packagingMaterialNodeRef = productDAO.create(testFolder, packagingMaterial, null);
+				NodeRef packagingMaterialNodeRef = productDAO.create(testFolderNodeRef, packagingMaterial, null);
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
@@ -674,14 +625,14 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				List<PackagingListDataItem> packagingList1 = new ArrayList<PackagingListDataItem>();
 				packagingList1.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, "Primaire", packagingMaterialNodeRef));
 				finishedProduct1.setPackagingList(packagingList1);
-				NodeRef finishedProductNodeRef1 = productDAO.create(testFolder, finishedProduct1, dataLists);
+				NodeRef finishedProductNodeRef1 = productDAO.create(testFolderNodeRef, finishedProduct1, dataLists);
 
 				FinishedProductData finishedProduct2 = new FinishedProductData();
 				finishedProduct2.setName("Finished Product");
 				List<PackagingListDataItem> packagingList2 = new ArrayList<PackagingListDataItem>();
 				packagingList2.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, "Secondaire", packagingMaterialNodeRef));
 				finishedProduct2.setPackagingList(packagingList2);
-				NodeRef finishedProductNodeRef2 = productDAO.create(testFolder, finishedProduct2, dataLists);
+				NodeRef finishedProductNodeRef2 = productDAO.create(testFolderNodeRef, finishedProduct2, dataLists);
 
 				List<PackagingListDataItem> wUsedProducts = getWUsedPackagingList(packagingMaterialNodeRef);
 

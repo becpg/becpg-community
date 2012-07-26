@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -30,9 +29,6 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 	
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";       
-	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductListAttributesPolicyTest.class);
 	
@@ -51,24 +47,13 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 	NodeRef nutListItem1NodeRef = null;
 	NodeRef nutListItem2NodeRef = null;
 	
-	
-	/* (non-Javadoc)
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {		
 		super.setUp();	
-		
-    	logger.debug("ProductServiceTest:setUp");
-    
-    
-    	productDAO = (ProductDAO)ctx.getBean("productDAO");
-                          
+	
+    	productDAO = (ProductDAO)ctx.getBean("productDAO");                         
     }
-    
-	/* (non-Javadoc)
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
+
 	@Override
     public void tearDown() throws Exception
     {
@@ -96,16 +81,7 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 		   final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				@Override
 				public NodeRef execute() throws Throwable {
-				
-					
-					/*-- Create test folder --*/
-					NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
-					if(folderNodeRef != null)
-					{
-						fileFolderService.delete(folderNodeRef);    		
-					}			
-					folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-									
+						
 					cost1 = costs.get(0);
 					nodeService.setProperty(cost1, BeCPGModel.PROP_COSTCURRENCY, "€");
 					cost2 = costs.get(1);
@@ -138,7 +114,7 @@ public class ProductListAttributesPolicyTest  extends RepoBaseTestCase  {
 					nutList.add(new NutListDataItem(null, 12.5d, "", 0d, 0d, "Groupe 1", nut2, false));
 					rawMaterialData.setNutList(nutList);
 					
-					return productDAO.create(folderNodeRef, rawMaterialData, dataLists);							
+					return productDAO.create(testFolderNodeRef, rawMaterialData, dataLists);							
 					
 				}},false,true);
 		   

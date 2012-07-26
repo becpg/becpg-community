@@ -7,17 +7,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.config.format.PropertyFormats;
+import fr.becpg.test.RepoBaseTestCase;
 
 
 // TODO: Auto-generated Javadoc
@@ -26,7 +24,7 @@ import fr.becpg.config.format.PropertyFormats;
  *
  * @author querephi
  */
-public class PropertyServiceTest  extends BaseAlfrescoTestCase  {
+public class PropertyServiceTest  extends RepoBaseTestCase  {
 	  
 	
 	/** The logger. */
@@ -48,16 +46,7 @@ public class PropertyServiceTest  extends BaseAlfrescoTestCase  {
     	logger.debug("ProductServiceTest:setUp");
     	
     	attributeExtractorService = (AttributeExtractorService)ctx.getBean("attributeExtractorService");
-    	dictionaryService = (DictionaryService)ctx.getBean("dictionaryService");
-    	
-        transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
- 			@Override
-			public NodeRef execute() throws Throwable {
- 		        
- 				return null;
-
- 			}},false,true);  
-                        
+    	dictionaryService = (DictionaryService)ctx.getBean("dictionaryService");                        
     }
     
     

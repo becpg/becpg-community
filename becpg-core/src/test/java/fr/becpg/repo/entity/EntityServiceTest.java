@@ -35,9 +35,6 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class EntityServiceTest extends RepoBaseTestCase {
 
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";
-
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityServiceTest.class);
 
@@ -119,13 +116,6 @@ public class EntityServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				// create SF
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
@@ -138,7 +128,7 @@ public class EntityServiceTest extends RepoBaseTestCase {
 
 				Collection<QName> dataLists = productDictionaryService.getDataLists();
 
-				return productDAO.create(folderNodeRef, sfData, dataLists);
+				return productDAO.create(testFolderNodeRef, sfData, dataLists);
 
 			}
 		}, false, true);
