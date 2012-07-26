@@ -56,7 +56,9 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 	}
 
 	/**
-	 * Classify product if it is not created in a site
+	 * Classify product:
+	 * 	- if state is changed, it is always classified
+	 * 	- if hierarchy1 and hierarchy2 is changed, it is classified when a product is not in a site
 	 */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
@@ -71,19 +73,37 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 		NodeRef afterHierarchy2 = (NodeRef) after.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);
 
 		boolean classify = false;
+		boolean checkPath = false;
+		
+		logger.info("before: " + beforeState + " - after: " + afterState);
 
+		//state
 		if (afterState != null && !afterState.isEmpty() && !afterState.equals(beforeState)) {
 			classify = true;
-		} else if (afterHierarchy1 != null  && !afterHierarchy1.equals(beforeHierarchy1)) {
+			//create node with default state, we let it in the site
+			if(beforeState == null){
+				checkPath = true;
+			}
+			
+		} 
+		//hierarchy1 and hierarchy2
+		else if ((afterHierarchy1 != null  && !afterHierarchy1.equals(beforeHierarchy1)) || 
+					(afterHierarchy2 != null  && !afterHierarchy2.equals(beforeHierarchy2))) {
 			classify = true;
-		} else if (afterHierarchy2 != null  && !afterHierarchy2.equals(beforeHierarchy2)) {
-			classify = true;
+			checkPath = true;					
+		}
+		
+		//check path
+		if(checkPath && classify){
+			String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
+			if (SiteHelper.isSitePath(path)) {
+				classify = false;
+			}
 		}
 
-		if (classify) {
+		if (classify) {			
 			queueNode(nodeRef);
 		}
-
 	}
 	
 	
@@ -91,12 +111,8 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef nodeRef : pendingNodes) {
 			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {
-				String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
-				if (!SiteHelper.isSitePath(path)) {
-					productService.classifyProduct(repositoryHelper.getCompanyHome(), nodeRef);
-				}
+				productService.classifyProduct(repositoryHelper.getCompanyHome(), nodeRef);
 			}
 		}
 	}
-
 }

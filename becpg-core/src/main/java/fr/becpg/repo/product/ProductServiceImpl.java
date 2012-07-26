@@ -200,13 +200,43 @@ public class ProductServiceImpl implements ProductService {
         	
         		productData = formulate(productData);
     	    	    	
-    	    	dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-    	    	dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
-    	    	dataLists.add(BeCPGModel.TYPE_INGLIST);
-    	    	dataLists.add(BeCPGModel.TYPE_INGLABELINGLIST);
-    	    	dataLists.add(BeCPGModel.TYPE_REQCTRLLIST);
+        		// #202 : we don't want to create all datalists for packaging kit
+        		Collection<QName> dataListsToSave = new ArrayList<QName>();
+        		if(productData.getCompoList() !=null){
+        			dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+        		}
+        		if(productData.getPackagingList() !=null){
+        			dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+        		}
+        		if(productData.getProcessList() !=null){
+        			dataLists.add(MPMModel.TYPE_PROCESSLIST);
+        		}
+        		if(productData.getNutList() !=null){
+        			dataLists.add(BeCPGModel.TYPE_NUTLIST);
+        		}
+        		if(productData.getCostList() !=null){
+        			dataLists.add(BeCPGModel.TYPE_COSTLIST);
+        		}
+        		if(productData.getDynamicCharactList() !=null){
+        			dataLists.add(BeCPGModel.TYPE_DYNAMICCHARACTLIST);
+        		}
+        		if(productData.getAllergenList() !=null){
+        			dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
+        		}
+        		if(productData.getCostDetailsList() !=null){
+        			dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
+        		}
+        		if(productData.getIngList() !=null){
+        			dataLists.add(BeCPGModel.TYPE_INGLIST);
+        		}
+        		if(productData.getIngLabelingList() !=null){
+        			dataLists.add(BeCPGModel.TYPE_INGLABELINGLIST);
+        		}
+        		if(productData.getReqCtrlList() !=null){
+        			dataLists.add(BeCPGModel.TYPE_REQCTRLLIST);
+        		}
     	    	
-    	    	productDAO.update(productNodeRef, productData, dataLists);
+    	    	productDAO.update(productNodeRef, productData, dataListsToSave);
         	}    	    	    
     	} catch (Exception e) {
 			if(e instanceof FormulateException){
