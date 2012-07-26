@@ -118,9 +118,12 @@
             site: recordSiteName
          });
 	   	
-	   	if(p_record.node.aspects.indexOf("bcpg:transformationAspect")>0){
+	   	if(p_record.node.type == "bcpg:finishedProduct" || p_record.node.type == "bcpg:semiFinishedProduct"){
 	   		redirect+="&list=compoList";
 	   	}
+		else if(p_record.node.type == "bcpg:packagingKit"){
+			redirect+="&list=packagingList";
+		}
 	   	
 	   	window.location.href = redirect;
 	   }
