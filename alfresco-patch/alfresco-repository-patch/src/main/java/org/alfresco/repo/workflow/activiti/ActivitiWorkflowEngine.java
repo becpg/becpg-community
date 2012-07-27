@@ -108,6 +108,8 @@ import org.alfresco.util.GUID;
 import org.alfresco.util.collections.Function;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -202,6 +204,7 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     private String companyHomePath;
     private StoreRef companyHomeStore;
     
+    private static Log logger = LogFactory.getLog(ActivitiWorkflowEngine.class);
     
     public ActivitiWorkflowEngine()
     {
@@ -1147,8 +1150,18 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
                         .generateDiagram(processDefinition,
                                     ActivitiConstants.PROCESS_INSTANCE_IMAGE_FORMAT,
                                     runtimeService.getActiveActivityIds(processInstanceId)); 
+            } else {
+            	if(processDefinition != null){
+            		logger.warn(" No Graphical Notation Defined for workflow");
+            	} else {
+            		logger.error("Process instance doesn't exists");
+            	}
             }
+        } else {
+        	logger.error("Process instance is over");
         }
+        
+        
         return null;
     }
 
