@@ -396,9 +396,10 @@
 			               Event.preventDefault(e);
 		               }
 
-		               this.widgets.editor.saveHTML();
-
+		               this.widgets.editor.saveHTML(); 
+		            
 		               this.options.currentValue = this._cleanHtml(Dom.get(this.id + "-editor-textarea").value);
+		               
 		               Dom.get(this.currentValueHtmlId).value = this.options.currentValue;
 		               YAHOO.Bubbling.fire("mandatoryControlValueUpdated", Dom.get(this.currentValueHtmlId));
 
@@ -407,8 +408,8 @@
 
 	               _cleanHtml : function(html) {
 
-		               return html.replace(new RegExp("<div id=\"", "g"), "").replace(
-		                     new RegExp("\" class=.*?</div>", "g"), "");
+		               return html.replace(new RegExp("'<div id=\"", "g"), "'").replace(
+		                     new RegExp("\" class=.*?'", "g"), "'");
 
 	               },
 
