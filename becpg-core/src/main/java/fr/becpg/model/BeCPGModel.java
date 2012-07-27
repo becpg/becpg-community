@@ -421,10 +421,6 @@ public interface BeCPGModel {
 	
 	static final QName PROP_DYNAMICCHARACT_GROUP_COLOR = QName.createQName(BECPG_URI,
 			"dynamicCharactGroupColor");
-	
-
-	static final QName PROP_DYNAMICCHARACT_VARIABLE = QName.createQName(BECPG_URI,
-			"dynamicCharactVar");
 
 	
 	// contactList
