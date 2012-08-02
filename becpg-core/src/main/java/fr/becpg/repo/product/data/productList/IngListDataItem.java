@@ -8,13 +8,15 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.BaseObject;
+
 // TODO: Auto-generated Javadoc
 /**
  * Store an ingredient in the ingredient list.
  *
  * @author querephi
  */
-public class IngListDataItem implements Comparable<IngListDataItem>, IManualDataItem{
+public class IngListDataItem  extends BaseObject implements Comparable<IngListDataItem>, IManualDataItem{
 
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -232,7 +234,81 @@ public class IngListDataItem implements Comparable<IngListDataItem>, IManualData
 	 */
 	@Override
 	public int compareTo(IngListDataItem o) {
-		
 		return o.getQtyPerc().compareTo(this.getQtyPerc());
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((bioOrigin == null) ? 0 : bioOrigin.hashCode());
+		result = prime * result + ((geoOrigin == null) ? 0 : geoOrigin.hashCode());
+		result = prime * result + ((ing == null) ? 0 : ing.hashCode());
+		result = prime * result + ((isGMO == null) ? 0 : isGMO.hashCode());
+		result = prime * result + ((isIonized == null) ? 0 : isIonized.hashCode());
+		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
+		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((qtyPerc == null) ? 0 : qtyPerc.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		IngListDataItem other = (IngListDataItem) obj;
+		if (bioOrigin == null) {
+			if (other.bioOrigin != null)
+				return false;
+		} else if (!bioOrigin.equals(other.bioOrigin))
+			return false;
+		if (geoOrigin == null) {
+			if (other.geoOrigin != null)
+				return false;
+		} else if (!geoOrigin.equals(other.geoOrigin))
+			return false;
+		if (ing == null) {
+			if (other.ing != null)
+				return false;
+		} else if (!ing.equals(other.ing))
+			return false;
+		if (isGMO == null) {
+			if (other.isGMO != null)
+				return false;
+		} else if (!isGMO.equals(other.isGMO))
+			return false;
+		if (isIonized == null) {
+			if (other.isIonized != null)
+				return false;
+		} else if (!isIonized.equals(other.isIonized))
+			return false;
+		if (isManual == null) {
+			if (other.isManual != null)
+				return false;
+		} else if (!isManual.equals(other.isManual))
+			return false;
+		if (nodeRef == null) {
+			if (other.nodeRef != null)
+				return false;
+		} else if (!nodeRef.equals(other.nodeRef))
+			return false;
+		if (qtyPerc == null) {
+			if (other.qtyPerc != null)
+				return false;
+		} else if (!qtyPerc.equals(other.qtyPerc))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "IngListDataItem [nodeRef=" + nodeRef + ", qtyPerc=" + qtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized="
+				+ isIonized + ", ing=" + ing + ", isManual=" + isManual + "]";
+	}
+	
+	
 }

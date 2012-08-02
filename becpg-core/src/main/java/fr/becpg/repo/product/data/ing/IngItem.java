@@ -45,4 +45,36 @@ public class IngItem extends AbstractIng {
 		super(ing, mlName);
 		this.qty = qty;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		IngItem other = (IngItem) obj;
+		if (qty == null) {
+			if (other.qty != null)
+				return false;
+		} else if (!qty.equals(other.qty))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "IngItem [qty=" + qty + "]";
+	}
+	
+	
 }
