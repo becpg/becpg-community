@@ -1,0 +1,10 @@
+<webscript>
+  <shortname>Logo Upload</shortname>
+  <description>Upload logo file content</description>
+  <format default="json" />
+  <authentication>admin</authentication>
+  <transaction>required</transaction>
+  <url>/slingshot/application/uploadlogo</url>
+  <url>/slingshot/application/uploadlogo;jsessionid{jsessionid}</url>
+  <lifecycle>internal</lifecycle>
+</webscript>
