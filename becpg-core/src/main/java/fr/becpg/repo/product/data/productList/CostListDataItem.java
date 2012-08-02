@@ -5,12 +5,14 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.BaseObject;
+
 /**
  * The Class CostListDataItem.
  *
  * @author querephi
  */
-public class CostListDataItem implements IManualDataItem{
+public class CostListDataItem extends BaseObject implements IManualDataItem{
 	
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -161,8 +163,64 @@ public class CostListDataItem implements IManualDataItem{
 
 	@Override
 	public String toString() {
-		return "CostListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", maxi=" + maxi
-				+ ", cost=" + cost + ", isManual=" + isManual + "]";
+		return "CostListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", cost=" + cost + ", isManual=" + isManual + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((cost == null) ? 0 : cost.hashCode());
+		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
+		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
+		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CostListDataItem other = (CostListDataItem) obj;
+		if (cost == null) {
+			if (other.cost != null)
+				return false;
+		} else if (!cost.equals(other.cost))
+			return false;
+		if (isManual == null) {
+			if (other.isManual != null)
+				return false;
+		} else if (!isManual.equals(other.isManual))
+			return false;
+		if (maxi == null) {
+			if (other.maxi != null)
+				return false;
+		} else if (!maxi.equals(other.maxi))
+			return false;
+		if (nodeRef == null) {
+			if (other.nodeRef != null)
+				return false;
+		} else if (!nodeRef.equals(other.nodeRef))
+			return false;
+		if (unit == null) {
+			if (other.unit != null)
+				return false;
+		} else if (!unit.equals(other.unit))
+			return false;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
+			return false;
+		return true;
+	}
+	
+	
 }
 

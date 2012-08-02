@@ -9,7 +9,7 @@ package fr.becpg.repo.product.data.productList;
  *
  * @author querephi
  */
-public enum NutGroup {
+public enum NutGroup  {
 	
 	/** The Group1. */
 	Group1,
@@ -59,4 +59,6 @@ public enum NutGroup {
 		
 		return group;
 	}	
+	
+	
 }

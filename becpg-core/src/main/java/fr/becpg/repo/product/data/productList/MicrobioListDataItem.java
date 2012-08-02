@@ -5,13 +5,15 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.BaseObject;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class MicrobioListDataItem.
  *
  * @author querephi
  */
-public class MicrobioListDataItem {
+public class MicrobioListDataItem extends BaseObject {
 
 	/** The node ref. */
 	private NodeRef nodeRef;		
@@ -165,4 +167,67 @@ public class MicrobioListDataItem {
 		setTextCriteria(m.getTextCriteria());
 		setMicrobio(m.getMicrobio());
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
+		result = prime * result + ((microbio == null) ? 0 : microbio.hashCode());
+		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((textCriteria == null) ? 0 : textCriteria.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MicrobioListDataItem other = (MicrobioListDataItem) obj;
+		if (maxi == null) {
+			if (other.maxi != null)
+				return false;
+		} else if (!maxi.equals(other.maxi))
+			return false;
+		if (microbio == null) {
+			if (other.microbio != null)
+				return false;
+		} else if (!microbio.equals(other.microbio))
+			return false;
+		if (nodeRef == null) {
+			if (other.nodeRef != null)
+				return false;
+		} else if (!nodeRef.equals(other.nodeRef))
+			return false;
+		if (textCriteria == null) {
+			if (other.textCriteria != null)
+				return false;
+		} else if (!textCriteria.equals(other.textCriteria))
+			return false;
+		if (unit == null) {
+			if (other.unit != null)
+				return false;
+		} else if (!unit.equals(other.unit))
+			return false;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "MicrobioListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", textCriteria=" + textCriteria + ", microbio=" + microbio
+				+ "]";
+	}
+	
+	
 }

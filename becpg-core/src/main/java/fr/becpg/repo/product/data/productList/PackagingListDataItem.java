@@ -5,12 +5,14 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.BaseObject;
+
 /**
  * The Class PackagingListDataItem.
  *
  * @author querephi
  */
-public class PackagingListDataItem{
+public class PackagingListDataItem extends BaseObject {
 
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -99,5 +101,58 @@ public class PackagingListDataItem{
 		setPackagingListUnit(packagingListUnit);
 		setPkgLevel(pkgLevel);
 		setProduct(product);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((packagingListUnit == null) ? 0 : packagingListUnit.hashCode());
+		result = prime * result + ((pkgLevel == null) ? 0 : pkgLevel.hashCode());
+		result = prime * result + ((product == null) ? 0 : product.hashCode());
+		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PackagingListDataItem other = (PackagingListDataItem) obj;
+		if (nodeRef == null) {
+			if (other.nodeRef != null)
+				return false;
+		} else if (!nodeRef.equals(other.nodeRef))
+			return false;
+		if (packagingListUnit != other.packagingListUnit)
+			return false;
+		if (pkgLevel == null) {
+			if (other.pkgLevel != null)
+				return false;
+		} else if (!pkgLevel.equals(other.pkgLevel))
+			return false;
+		if (product == null) {
+			if (other.product != null)
+				return false;
+		} else if (!product.equals(other.product))
+			return false;
+		if (qty == null) {
+			if (other.qty != null)
+				return false;
+		} else if (!qty.equals(other.qty))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "PackagingListDataItem [nodeRef=" + nodeRef + ", qty=" + qty + ", packagingListUnit=" + packagingListUnit + ", pkgLevel=" + pkgLevel + ", product=" + product + "]";
 	}	
+	
+	
 }

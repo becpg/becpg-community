@@ -41,7 +41,7 @@ import fr.becpg.repo.product.formulation.FormulateException;
  *
  * @author querephi
  */
-public class ProductData implements ProductElement {
+public class ProductData extends BaseObject implements ProductElement {
 	
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -789,14 +789,224 @@ public class ProductData implements ProductElement {
 	}	
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((allergenList == null) ? 0 : allergenList.hashCode());
+		result = prime * result + ((breakEven == null) ? 0 : breakEven.hashCode());
+		result = prime * result + ((compoList == null) ? 0 : compoList.hashCode());
+		result = prime * result + ((costDetailsList == null) ? 0 : costDetailsList.hashCode());
+		result = prime * result + ((costList == null) ? 0 : costList.hashCode());
+		result = prime * result + ((density == null) ? 0 : density.hashCode());
+		result = prime * result + ((dynamicCharactList == null) ? 0 : dynamicCharactList.hashCode());
+		result = prime * result + ((forbiddenIngList == null) ? 0 : forbiddenIngList.hashCode());
+		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
+		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
+		result = prime * result + ((ingLabelingList == null) ? 0 : ingLabelingList.hashCode());
+		result = prime * result + ((ingList == null) ? 0 : ingList.hashCode());
+		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
+		result = prime * result + ((listsContainer == null) ? 0 : listsContainer.hashCode());
+		result = prime * result + ((microbioList == null) ? 0 : microbioList.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((nutList == null) ? 0 : nutList.hashCode());
+		result = prime * result + ((organoList == null) ? 0 : organoList.hashCode());
+		result = prime * result + ((packagingList == null) ? 0 : packagingList.hashCode());
+		result = prime * result + ((physicoChemList == null) ? 0 : physicoChemList.hashCode());
+		result = prime * result + ((priceList == null) ? 0 : priceList.hashCode());
+		result = prime * result + ((processList == null) ? 0 : processList.hashCode());
+		result = prime * result + ((profitability == null) ? 0 : profitability.hashCode());
+		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
+		result = prime * result + ((reqCtrlList == null) ? 0 : reqCtrlList.hashCode());
+		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		result = prime * result + ((unitPrice == null) ? 0 : unitPrice.hashCode());
+		result = prime * result + ((unitTotalCost == null) ? 0 : unitTotalCost.hashCode());
+		result = prime * result + ((versionLabel == null) ? 0 : versionLabel.hashCode());
+		result = prime * result + ((yield == null) ? 0 : yield.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProductData other = (ProductData) obj;
+		if (allergenList == null) {
+			if (other.allergenList != null)
+				return false;
+		} else if (!allergenList.equals(other.allergenList))
+			return false;
+		if (breakEven == null) {
+			if (other.breakEven != null)
+				return false;
+		} else if (!breakEven.equals(other.breakEven))
+			return false;
+		if (compoList == null) {
+			if (other.compoList != null)
+				return false;
+		} else if (!compoList.equals(other.compoList))
+			return false;
+		if (costDetailsList == null) {
+			if (other.costDetailsList != null)
+				return false;
+		} else if (!costDetailsList.equals(other.costDetailsList))
+			return false;
+		if (costList == null) {
+			if (other.costList != null)
+				return false;
+		} else if (!costList.equals(other.costList))
+			return false;
+		if (density == null) {
+			if (other.density != null)
+				return false;
+		} else if (!density.equals(other.density))
+			return false;
+		if (dynamicCharactList == null) {
+			if (other.dynamicCharactList != null)
+				return false;
+		} else if (!dynamicCharactList.equals(other.dynamicCharactList))
+			return false;
+		if (forbiddenIngList == null) {
+			if (other.forbiddenIngList != null)
+				return false;
+		} else if (!forbiddenIngList.equals(other.forbiddenIngList))
+			return false;
+		if (hierarchy1 == null) {
+			if (other.hierarchy1 != null)
+				return false;
+		} else if (!hierarchy1.equals(other.hierarchy1))
+			return false;
+		if (hierarchy2 == null) {
+			if (other.hierarchy2 != null)
+				return false;
+		} else if (!hierarchy2.equals(other.hierarchy2))
+			return false;
+		if (ingLabelingList == null) {
+			if (other.ingLabelingList != null)
+				return false;
+		} else if (!ingLabelingList.equals(other.ingLabelingList))
+			return false;
+		if (ingList == null) {
+			if (other.ingList != null)
+				return false;
+		} else if (!ingList.equals(other.ingList))
+			return false;
+		if (legalName == null) {
+			if (other.legalName != null)
+				return false;
+		} else if (!legalName.equals(other.legalName))
+			return false;
+		if (listsContainer == null) {
+			if (other.listsContainer != null)
+				return false;
+		} else if (!listsContainer.equals(other.listsContainer))
+			return false;
+		if (microbioList == null) {
+			if (other.microbioList != null)
+				return false;
+		} else if (!microbioList.equals(other.microbioList))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (nodeRef == null) {
+			if (other.nodeRef != null)
+				return false;
+		} else if (!nodeRef.equals(other.nodeRef))
+			return false;
+		if (nutList == null) {
+			if (other.nutList != null)
+				return false;
+		} else if (!nutList.equals(other.nutList))
+			return false;
+		if (organoList == null) {
+			if (other.organoList != null)
+				return false;
+		} else if (!organoList.equals(other.organoList))
+			return false;
+		if (packagingList == null) {
+			if (other.packagingList != null)
+				return false;
+		} else if (!packagingList.equals(other.packagingList))
+			return false;
+		if (physicoChemList == null) {
+			if (other.physicoChemList != null)
+				return false;
+		} else if (!physicoChemList.equals(other.physicoChemList))
+			return false;
+		if (priceList == null) {
+			if (other.priceList != null)
+				return false;
+		} else if (!priceList.equals(other.priceList))
+			return false;
+		if (processList == null) {
+			if (other.processList != null)
+				return false;
+		} else if (!processList.equals(other.processList))
+			return false;
+		if (profitability == null) {
+			if (other.profitability != null)
+				return false;
+		} else if (!profitability.equals(other.profitability))
+			return false;
+		if (qty == null) {
+			if (other.qty != null)
+				return false;
+		} else if (!qty.equals(other.qty))
+			return false;
+		if (reqCtrlList == null) {
+			if (other.reqCtrlList != null)
+				return false;
+		} else if (!reqCtrlList.equals(other.reqCtrlList))
+			return false;
+		if (state != other.state)
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
+		if (unit != other.unit)
+			return false;
+		if (unitPrice == null) {
+			if (other.unitPrice != null)
+				return false;
+		} else if (!unitPrice.equals(other.unitPrice))
+			return false;
+		if (unitTotalCost == null) {
+			if (other.unitTotalCost != null)
+				return false;
+		} else if (!unitTotalCost.equals(other.unitTotalCost))
+			return false;
+		if (versionLabel == null) {
+			if (other.versionLabel != null)
+				return false;
+		} else if (!versionLabel.equals(other.versionLabel))
+			return false;
+		if (yield == null) {
+			if (other.yield != null)
+				return false;
+		} else if (!yield.equals(other.yield))
+			return false;
+		return true;
+	}
+
+	@Override
 	public String toString() {
-		return "ProductData [nodeRef=" + nodeRef + ", versionLabel=" + versionLabel + ", hierarchy1=" + hierarchy1
-				+ ", hierarchy2=" + hierarchy2 + ", name=" + name + ", legalName=" + legalName + ", title=" + title
-				+ ", state=" + state + ", qty=" + qty + ", unit=" + unit + ", density=" + density + ", listsContainer="
-				+ listsContainer + ", allergenList=" + allergenList + ", compoList=" + compoList + ", costList="
-				+ costList + ", costDetailsList=" + costDetailsList + ", ingList=" + ingList + ", nutList=" + nutList
-				+ ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList + ", microbioList="
-				+ microbioList + ", physicoChemList=" + physicoChemList + ", packagingList=" + packagingList
-				+ ", forbiddenIngList=" + forbiddenIngList + ", reqCtrlList=" + reqCtrlList + "]";
+		return "ProductData [nodeRef=" + nodeRef + ", versionLabel=" + versionLabel + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", name=" + name
+				+ ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield
+				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", listsContainer="
+				+ listsContainer + ", allergenList=" + allergenList + ", compoList=" + compoList + ", dynamicCharactList=" + dynamicCharactList + ", costList=" + costList
+				+ ", costDetailsList=" + costDetailsList + ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList
+				+ ", ingLabelingList=" + ingLabelingList + ", microbioList=" + microbioList + ", physicoChemList=" + physicoChemList + ", packagingList=" + packagingList
+				+ ", forbiddenIngList=" + forbiddenIngList + ", reqCtrlList=" + reqCtrlList + ", processList=" + processList + "]";
 	}			
 }

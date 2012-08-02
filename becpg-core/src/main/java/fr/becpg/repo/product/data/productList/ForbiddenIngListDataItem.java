@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-public class ForbiddenIngListDataItem {
+import fr.becpg.repo.product.data.BaseObject;
+
+public class ForbiddenIngListDataItem extends BaseObject{
 
 	NodeRef nodeRef;
 	
@@ -108,5 +110,84 @@ public class ForbiddenIngListDataItem {
 		setIsGMO(isGMO);
 		setIsIonized(isIonized);		
 		setIngs(ings);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((bioOrigins == null) ? 0 : bioOrigins.hashCode());
+		result = prime * result + ((geoOrigins == null) ? 0 : geoOrigins.hashCode());
+		result = prime * result + ((ings == null) ? 0 : ings.hashCode());
+		result = prime * result + ((isGMO == null) ? 0 : isGMO.hashCode());
+		result = prime * result + ((isIonized == null) ? 0 : isIonized.hashCode());
+		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((qtyPercMaxi == null) ? 0 : qtyPercMaxi.hashCode());
+		result = prime * result + ((reqMessage == null) ? 0 : reqMessage.hashCode());
+		result = prime * result + ((reqType == null) ? 0 : reqType.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ForbiddenIngListDataItem other = (ForbiddenIngListDataItem) obj;
+		if (bioOrigins == null) {
+			if (other.bioOrigins != null)
+				return false;
+		} else if (!bioOrigins.equals(other.bioOrigins))
+			return false;
+		if (geoOrigins == null) {
+			if (other.geoOrigins != null)
+				return false;
+		} else if (!geoOrigins.equals(other.geoOrigins))
+			return false;
+		if (ings == null) {
+			if (other.ings != null)
+				return false;
+		} else if (!ings.equals(other.ings))
+			return false;
+		if (isGMO == null) {
+			if (other.isGMO != null)
+				return false;
+		} else if (!isGMO.equals(other.isGMO))
+			return false;
+		if (isIonized == null) {
+			if (other.isIonized != null)
+				return false;
+		} else if (!isIonized.equals(other.isIonized))
+			return false;
+		if (nodeRef == null) {
+			if (other.nodeRef != null)
+				return false;
+		} else if (!nodeRef.equals(other.nodeRef))
+			return false;
+		if (qtyPercMaxi == null) {
+			if (other.qtyPercMaxi != null)
+				return false;
+		} else if (!qtyPercMaxi.equals(other.qtyPercMaxi))
+			return false;
+		if (reqMessage == null) {
+			if (other.reqMessage != null)
+				return false;
+		} else if (!reqMessage.equals(other.reqMessage))
+			return false;
+		if (reqType != other.reqType)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "ForbiddenIngListDataItem [nodeRef=" + nodeRef + ", reqType=" + reqType + ", reqMessage=" + reqMessage + ", qtyPercMaxi=" + qtyPercMaxi + ", isGMO=" + isGMO
+				+ ", isIonized=" + isIonized + ", ings=" + ings + ", geoOrigins=" + geoOrigins + ", bioOrigins=" + bioOrigins + "]";
 	}	
+	
+	
+	
 }
