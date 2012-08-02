@@ -90,6 +90,7 @@
 										<exclude>org/alfresco/repo/search/impl/lucene/index/ReferenceCountingReadOnlyIndexReaderFactory**</exclude>
 										<exclude>org/alfresco/repo/search/impl/lucene/AVMLuceneIndexerImpl**</exclude>
 										<exclude>org/alfresco/repo/search/impl/lucene/LuceneAlfrescoLuceneQueryLanguage**</exclude>
+										<exclude>org/alfresco/repo/audit/AuditMethodInterceptor**</exclude>
 									</excludes>
 								</filter>
 							</filters>
