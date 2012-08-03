@@ -139,7 +139,12 @@ public class RepoConsts {
 	/*-- Lucene --*/
 	public static final int MAX_RESULTS_SINGLE_VALUE = 1;
 	
-	public static final int MAX_RESULTS_NO_LIMIT = 256;
+	public static final int MAX_RESULTS_256 = 256;
+	
+	public static final int MAX_RESULTS_1000 = 1000;
+	
+	public static final int MAX_RESULTS_UNLIMITED = -1;
+	
 	public static final int MAX_SUGGESTIONS = 100;
 	
 	

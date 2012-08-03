@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -74,7 +75,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 				if (dataListNodeRef != null) {
 
 					List<NodeRef> childRefs = advSearchService.queryAdvSearch(dataListFilter.getSearchQuery(dataListNodeRef), SearchService.LANGUAGE_LUCENE,
-							dataListFilter.getDataType(), dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(), -1);
+							dataListFilter.getDataType(), dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(), RepoConsts.MAX_RESULTS_UNLIMITED);
 
 					for (NodeRef childRef : childRefs) {
 						entityNodeRef = getEntityNodeRef(childRef);

@@ -11,6 +11,8 @@ package fr.becpg.repo.product.data.productList;
  */
 public enum NutGroup  {
 	
+	//Order is important for compareTo
+	
 	/** The Group1. */
 	Group1,
 	
