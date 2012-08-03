@@ -82,6 +82,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	protected static final String PARAM_PAGE_SIZE = "pageSize";
 
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
+	
+	protected static final String PARAM_QUERY_EXECUTION_ID =  "queryExecutionId";
 
 	/** Services **/
 
@@ -144,7 +146,9 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		DataListFilter dataListFilter = new DataListFilter();
 		pagination.setMaxResults(getNumParameter(req, PARAM_MAX_RESULTS));
 		pagination.setPageSize(getNumParameter(req, PARAM_PAGE_SIZE));
-	
+		pagination.setQueryExecutionId(req.getParameter(PARAM_QUERY_EXECUTION_ID));
+		
+		
 		String itemType = req.getParameter(PARAM_ITEMTYPE);
 		String dataListName = req.getParameter(PARAM_DATA_LIST_NAME);
 		String argDays = req.getParameter(PARAM_DAYS);
@@ -187,14 +191,13 @@ public class EntityDataListWebScript extends AbstractWebScript {
 						filterData = (String) filterJSON.get("filterData");
 					}
 				} else {
-					filterId = "all";
+					filterId = DataListFilter.ALL_FILTER;
 				}
 			}
-			
-		
+
 			
 			if(dataListFilter.isSimpleItem()){
-				filterId = "node";
+				filterId = DataListFilter.NODE_FILTER;
 			} else {
 				Integer page = getNumParameter(req, PARAM_PAGE);
 			
@@ -205,7 +208,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			}
 
 
-			if (filterId.equals("filterform") && filterData != null) {
+			if (filterId.equals(DataListFilter.FORM_FILTER) && filterData != null) {
 				JSONObject jsonObject = new JSONObject(filterData);
 				dataListFilter.setCriteriaMap(extractCriteria(jsonObject));
 			}
@@ -247,7 +250,11 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				ret.put("startIndex", pagination.getPage());
 				ret.put("pageSize", pagination.getPageSize());
 				ret.put("totalRecords", extractedItems.getFullListSize());
+				if(pagination.getQueryExecutionId()!=null){
+					ret.put(PARAM_QUERY_EXECUTION_ID, pagination.getQueryExecutionId());
+				}
 			}
+			
 			JSONObject metadata = new JSONObject();
 
 			JSONObject parent = new JSONObject();

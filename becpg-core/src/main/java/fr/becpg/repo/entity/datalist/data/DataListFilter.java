@@ -2,15 +2,27 @@ package fr.becpg.repo.entity.datalist.data;
 
 import java.util.Calendar;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
+import org.alfresco.util.Pair;
 import org.json.JSONException;
 
+import fr.becpg.model.BeCPGModel;
+
 public class DataListFilter {
+
+	public static final String NODE_FILTER = "node";
+	
+	public static final String ALL_FILTER = "all";
+
+	public static final String FORM_FILTER = "filterform";
 
 	private String filterQuery = null;
 	
@@ -22,17 +34,30 @@ public class DataListFilter {
 	
 	private Map<String, String> criteriaMap = null;
 	
+	private List<Pair<QName, Boolean>> sortProps = new LinkedList<Pair<QName, Boolean>>();
+	
 	private Map<String, Boolean> sortMap = new LinkedHashMap<String, Boolean>();
 	
-	private  QName dataType = null;
+	private QName dataType = null;
+	
+	private boolean allFilter = false;
+	
 	
 	
 	public DataListFilter() {
 		super();
+		//TODO doublon
 		sortMap.put("@bcpg:sort", true);
 		sortMap.put("@cm:created", true);
+		sortProps.add(new Pair<QName, Boolean>(BeCPGModel.PROP_SORT,true));
+		sortProps.add(new Pair<QName, Boolean>(ContentModel.PROP_CREATED,true));
 	}
 
+	public List<Pair<QName, Boolean>> getSortProps() {
+		return sortProps;
+	}
+	
+	
 	public String getFilterQuery() {
 		return filterQuery;
 	}
@@ -117,7 +142,13 @@ public class DataListFilter {
 	}
 
 
+	public boolean isAllFilter() {
+		return allFilter && dataListNodeRef!=null;
+	}
+
 	public void buildQueryFilter( String filterId, String filterData, String argDays ) throws JSONException {
+		
+		
 
 		filterQuery = " +TYPE:\"" + dataType.toString() + "\"";
 
@@ -156,7 +187,7 @@ public class DataListFilter {
 			} else if (filterId.equals("createdByMe")) {
 				filterQuery += " +@cm\\:creator:\"" + getUserName() + '"';
 				filterQuery += " -TYPE:\"folder\"";
-			} else if (filterId.equals("node")) {
+			} else if (filterId.equals(NODE_FILTER)) {
 				filterQuery = "+ID:\"" + nodeRef + "\"";
 			} else if (filterId.equals("tag")) {
 				// Remove any trailing "/" character
@@ -164,6 +195,8 @@ public class DataListFilter {
 					filterData = filterData.substring(0, filterData.length() - 2);
 				}
 				filterQuery += "+PATH:\"/cm:taggable/cm:" + ISO9075.encode(filterData) + "/member\"";
+			}  else if (filterId.equals(ALL_FILTER)) {
+				allFilter = true;
 			}
 		}
 
@@ -181,6 +214,8 @@ public class DataListFilter {
 		return "DataListFilter [filterQuery=" + filterQuery + ", entityNodeRef=" + entityNodeRef + ", dataListNodeRef=" + dataListNodeRef + ", criteriaMap=" + criteriaMap
 				+ ", sortMap=" + sortMap + ", dataType=" + dataType + "]";
 	}
+
+	
 
 
 	

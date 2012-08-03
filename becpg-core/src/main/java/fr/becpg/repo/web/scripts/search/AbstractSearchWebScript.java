@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.search.AdvSearchService;
 
 public abstract class AbstractSearchWebScript extends AbstractWebScript {
@@ -175,7 +176,7 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 		}
 
 
-		return advSearchService.queryAdvSearch(searchQuery, language, datatype, criteriaMap, sortMap, maxResults!=null ? maxResults : -1);
+		return advSearchService.queryAdvSearch(searchQuery, language, datatype, criteriaMap, sortMap, maxResults!=null ? maxResults : RepoConsts.MAX_RESULTS_256);
 
 	}
 
