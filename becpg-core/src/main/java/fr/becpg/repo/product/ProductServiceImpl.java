@@ -192,15 +192,14 @@ public class ProductServiceImpl implements ProductService {
     		dataLists.add(BeCPGModel.TYPE_COSTLIST); // TODO keep max
     		dataLists.add(BeCPGModel.TYPE_DYNAMICCHARACTLIST); 
         	ProductData productData = productDAO.find(productNodeRef, dataLists); 
-logger.info("###compo: " + productData.getCompoList());        	        	
+        	        	
         	// do the formulation if the product has a composition, or packaging list defined
         	if((productData.getCompoList() != null && productData.getCompoList().size() != 0) || 
         			(productData.getPackagingList() != null && productData.getPackagingList().size() != 0) || 
         			(productData.getProcessList() != null && productData.getProcessList().size() != 0)){
         	
         		productData = formulate(productData);
-logger.info("###compo: " + productData.getCompoList());
-logger.info("###compo: " + (productData.getCompoList()!=null));   
+
         		// #202 : we don't want to create all datalists for packaging kit
         		Collection<QName> dataListsToSave = new ArrayList<QName>();
 				if (productData.getCompoList() != null) {
@@ -237,8 +236,6 @@ logger.info("###compo: " + (productData.getCompoList()!=null));
 					dataListsToSave.add(BeCPGModel.TYPE_REQCTRLLIST);
 				}
 				
-				logger.info("###dataListsToSave: " + dataListsToSave);  
-    	    	
     	    	productDAO.update(productNodeRef, productData, dataListsToSave);
         	}    	    	    
     	} catch (Exception e) {

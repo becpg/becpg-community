@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.workflow.WorkflowModel;
@@ -64,6 +65,8 @@ public class CreateProduct extends JBPMSpringActionHandler {
 	private EntityService entityService;
 
 	private ProductService productService;
+	
+	private BehaviourFilter policyBehaviourFilter;
 
 	private static final String CM_URL = NamespaceService.CONTENT_MODEL_1_0_URI;
 
@@ -81,6 +84,7 @@ public class CreateProduct extends JBPMSpringActionHandler {
 		fileFolderService = (FileFolderService) factory.getBean("fileFolderService");
 		productService = (ProductService) factory.getBean("productService");
 		productDAO = (ProductDAO) factory.getBean("productDAO");
+		policyBehaviourFilter = (BehaviourFilter) factory.getBean("policyBehaviourFilter");
 	}
 
 	/*
@@ -132,11 +136,21 @@ public class CreateProduct extends JBPMSpringActionHandler {
 						packagingNodeRef = packagingNode.getNodeRef();
 					}
 
-					NodeRef productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, parentNodeRef, entityType,
-							entityName);
+					NodeRef productNodeRef = null;
 					
-					// change state: ToValidate
-					nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE, "ToValidate");
+					try{
+						//disable classify
+						policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);
+						
+						productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, parentNodeRef, entityType,
+								entityName);
+						
+						// change state: ToValidate
+						nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE, "ToValidate");
+					}
+					finally{
+						policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_PRODUCT);
+					}					
 
 					// profitability
 					Double unitPrice = (Double) executionContext.getContextInstance().getVariable(
