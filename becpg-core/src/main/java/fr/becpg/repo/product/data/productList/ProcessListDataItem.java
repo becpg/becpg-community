@@ -5,12 +5,14 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.BaseObject;
+
 /**
  * The Class ProcessListDataItem.
  *
  * @author querephi
  */
-public class ProcessListDataItem{
+public class ProcessListDataItem extends BaseObject{
 	
 	private NodeRef nodeRef;		
 	private Double qty = 0d;	
@@ -159,10 +161,90 @@ public class ProcessListDataItem{
 
 	@Override
 	public String toString() {
-		return "ProcessListDataItem [nodeRef=" + nodeRef + ", qty=" + qty + ", qtyResource=" + qtyResource
-				+ ", rateResource=" + rateResource + ", yield=" + yield + ", rateProcess=" + rateProcess
-				+ ", rateProduct=" + rateProduct + ", step=" + step + ", product=" + product + ", resource=" + resource
-				+ "]";
+		return "ProcessListDataItem [nodeRef=" + nodeRef + ", qty=" + qty + ", qtyResource=" + qtyResource + ", rateResource=" + rateResource + ", yield=" + yield
+				+ ", rateProcess=" + rateProcess + ", rateProduct=" + rateProduct + ", step=" + step + ", product=" + product + ", resource=" + resource + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((product == null) ? 0 : product.hashCode());
+		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
+		result = prime * result + ((qtyResource == null) ? 0 : qtyResource.hashCode());
+		result = prime * result + ((rateProcess == null) ? 0 : rateProcess.hashCode());
+		result = prime * result + ((rateProduct == null) ? 0 : rateProduct.hashCode());
+		result = prime * result + ((rateResource == null) ? 0 : rateResource.hashCode());
+		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
+		result = prime * result + ((step == null) ? 0 : step.hashCode());
+		result = prime * result + ((yield == null) ? 0 : yield.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProcessListDataItem other = (ProcessListDataItem) obj;
+		if (nodeRef == null) {
+			if (other.nodeRef != null)
+				return false;
+		} else if (!nodeRef.equals(other.nodeRef))
+			return false;
+		if (product == null) {
+			if (other.product != null)
+				return false;
+		} else if (!product.equals(other.product))
+			return false;
+		if (qty == null) {
+			if (other.qty != null)
+				return false;
+		} else if (!qty.equals(other.qty))
+			return false;
+		if (qtyResource == null) {
+			if (other.qtyResource != null)
+				return false;
+		} else if (!qtyResource.equals(other.qtyResource))
+			return false;
+		if (rateProcess == null) {
+			if (other.rateProcess != null)
+				return false;
+		} else if (!rateProcess.equals(other.rateProcess))
+			return false;
+		if (rateProduct == null) {
+			if (other.rateProduct != null)
+				return false;
+		} else if (!rateProduct.equals(other.rateProduct))
+			return false;
+		if (rateResource == null) {
+			if (other.rateResource != null)
+				return false;
+		} else if (!rateResource.equals(other.rateResource))
+			return false;
+		if (resource == null) {
+			if (other.resource != null)
+				return false;
+		} else if (!resource.equals(other.resource))
+			return false;
+		if (step == null) {
+			if (other.step != null)
+				return false;
+		} else if (!step.equals(other.step))
+			return false;
+		if (yield == null) {
+			if (other.yield != null)
+				return false;
+		} else if (!yield.equals(other.yield))
+			return false;
+		return true;
+	}
+	
+	
+	
 }
 

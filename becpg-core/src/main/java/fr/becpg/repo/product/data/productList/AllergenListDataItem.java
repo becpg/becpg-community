@@ -8,13 +8,15 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.BaseObject;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class AllergenListDataItem.
  *
  * @author querephi
  */
-public class AllergenListDataItem implements IManualDataItem{
+public class AllergenListDataItem extends BaseObject implements IManualDataItem{
 
 	/** The node ref. */
 	private NodeRef nodeRef;	
@@ -198,4 +200,73 @@ public class AllergenListDataItem implements IManualDataItem{
 		setAllergen(a.getAllergen());
 		setIsManual(a.getIsManual());
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((allergen == null) ? 0 : allergen.hashCode());
+		result = prime * result + ((inVoluntary == null) ? 0 : inVoluntary.hashCode());
+		result = prime * result + ((inVoluntarySources == null) ? 0 : inVoluntarySources.hashCode());
+		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
+		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((voluntary == null) ? 0 : voluntary.hashCode());
+		result = prime * result + ((voluntarySources == null) ? 0 : voluntarySources.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AllergenListDataItem other = (AllergenListDataItem) obj;
+		if (allergen == null) {
+			if (other.allergen != null)
+				return false;
+		} else if (!allergen.equals(other.allergen))
+			return false;
+		if (inVoluntary == null) {
+			if (other.inVoluntary != null)
+				return false;
+		} else if (!inVoluntary.equals(other.inVoluntary))
+			return false;
+		if (inVoluntarySources == null) {
+			if (other.inVoluntarySources != null)
+				return false;
+		} else if (!inVoluntarySources.equals(other.inVoluntarySources))
+			return false;
+		if (isManual == null) {
+			if (other.isManual != null)
+				return false;
+		} else if (!isManual.equals(other.isManual))
+			return false;
+		if (nodeRef == null) {
+			if (other.nodeRef != null)
+				return false;
+		} else if (!nodeRef.equals(other.nodeRef))
+			return false;
+		if (voluntary == null) {
+			if (other.voluntary != null)
+				return false;
+		} else if (!voluntary.equals(other.voluntary))
+			return false;
+		if (voluntarySources == null) {
+			if (other.voluntarySources != null)
+				return false;
+		} else if (!voluntarySources.equals(other.voluntarySources))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "AllergenListDataItem [nodeRef=" + nodeRef + ", voluntary=" + voluntary + ", inVoluntary=" + inVoluntary + ", voluntarySources=" + voluntarySources
+				+ ", inVoluntarySources=" + inVoluntarySources + ", allergen=" + allergen + ", isManual=" + isManual + "]";
+	}
+	
+	
 }

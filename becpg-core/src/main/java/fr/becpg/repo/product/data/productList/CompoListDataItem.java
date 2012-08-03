@@ -9,13 +9,14 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.Leaf;
+import fr.becpg.repo.product.data.BaseObject;
 
 /**
  * The Class CompoListDataItem.
  *
  * @author querephi
  */
-public class CompoListDataItem{
+public class CompoListDataItem extends BaseObject {
 
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -307,4 +308,86 @@ public class CompoListDataItem{
 		
 		return (declType != null && declType != "") ? DeclarationType.valueOf(declType) : DeclarationType.Declare;		
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((compoListUnit == null) ? 0 : compoListUnit.hashCode());
+		result = prime * result + ((declType == null) ? 0 : declType.hashCode());
+		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
+		result = prime * result + ((lossPerc == null) ? 0 : lossPerc.hashCode());
+		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((product == null) ? 0 : product.hashCode());
+		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
+		result = prime * result + ((qtyAfterProcess == null) ? 0 : qtyAfterProcess.hashCode());
+		result = prime * result + ((qtySubFormula == null) ? 0 : qtySubFormula.hashCode());
+		result = prime * result + ((yieldPerc == null) ? 0 : yieldPerc.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CompoListDataItem other = (CompoListDataItem) obj;
+		if (compoListUnit != other.compoListUnit)
+			return false;
+		if (declType != other.declType)
+			return false;
+		if (depthLevel == null) {
+			if (other.depthLevel != null)
+				return false;
+		} else if (!depthLevel.equals(other.depthLevel))
+			return false;
+		if (lossPerc == null) {
+			if (other.lossPerc != null)
+				return false;
+		} else if (!lossPerc.equals(other.lossPerc))
+			return false;
+		if (nodeRef == null) {
+			if (other.nodeRef != null)
+				return false;
+		} else if (!nodeRef.equals(other.nodeRef))
+			return false;
+		if (product == null) {
+			if (other.product != null)
+				return false;
+		} else if (!product.equals(other.product))
+			return false;
+		if (qty == null) {
+			if (other.qty != null)
+				return false;
+		} else if (!qty.equals(other.qty))
+			return false;
+		if (qtyAfterProcess == null) {
+			if (other.qtyAfterProcess != null)
+				return false;
+		} else if (!qtyAfterProcess.equals(other.qtyAfterProcess))
+			return false;
+		if (qtySubFormula == null) {
+			if (other.qtySubFormula != null)
+				return false;
+		} else if (!qtySubFormula.equals(other.qtySubFormula))
+			return false;
+		if (yieldPerc == null) {
+			if (other.yieldPerc != null)
+				return false;
+		} else if (!yieldPerc.equals(other.yieldPerc))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "CompoListDataItem [nodeRef=" + nodeRef + ", depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", qtyAfterProcess="
+				+ qtyAfterProcess + ", compoListUnit=" + compoListUnit + ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", product=" + product
+				+ "]";
+	}
+	
+	
 }
