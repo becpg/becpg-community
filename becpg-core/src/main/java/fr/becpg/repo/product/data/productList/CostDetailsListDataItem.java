@@ -5,12 +5,14 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.BaseObject;
+
 /**
  * The Class CostDetailsListDataItem.
  *
  * @author querephi
  */
-public class CostDetailsListDataItem{
+public class CostDetailsListDataItem extends BaseObject{
 	
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -154,5 +156,67 @@ public class CostDetailsListDataItem{
 		setCost(c.getCost());
 		setSource(c.getSource());
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((cost == null) ? 0 : cost.hashCode());
+		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((percentage == null) ? 0 : percentage.hashCode());
+		result = prime * result + ((source == null) ? 0 : source.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CostDetailsListDataItem other = (CostDetailsListDataItem) obj;
+		if (cost == null) {
+			if (other.cost != null)
+				return false;
+		} else if (!cost.equals(other.cost))
+			return false;
+		if (nodeRef == null) {
+			if (other.nodeRef != null)
+				return false;
+		} else if (!nodeRef.equals(other.nodeRef))
+			return false;
+		if (percentage == null) {
+			if (other.percentage != null)
+				return false;
+		} else if (!percentage.equals(other.percentage))
+			return false;
+		if (source == null) {
+			if (other.source != null)
+				return false;
+		} else if (!source.equals(other.source))
+			return false;
+		if (unit == null) {
+			if (other.unit != null)
+				return false;
+		} else if (!unit.equals(other.unit))
+			return false;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "CostDetailsListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", percentage=" + percentage + ", cost=" + cost + ", source=" + source + "]";
+	}
+	
+	
 }
 

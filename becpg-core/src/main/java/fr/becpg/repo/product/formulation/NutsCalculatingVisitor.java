@@ -263,38 +263,45 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 			
 		Collections.sort(nutList, new Comparator<NutListDataItem>(){
         	
+			final int BEFORE = -1;
+    	    final int EQUAL = 0;
+    	    final int AFTER = 1;	
+			
             @Override
 			public int compare(NutListDataItem n1, NutListDataItem n2){
+
+            	if(n1!=null && n2!=null){
+            		if(n1.equals(n2)){
+            			return EQUAL;
+            		}
+            		
+                int comp = AFTER;
+            		 
+            	  NutGroup o1NutGroup = NutGroup.parse(n1.getGroup());
+            	  NutGroup o2NutGroup = NutGroup.parse(n2.getGroup());
+           
+            	  //Compare with enum declaration order level
+            	  comp = o1NutGroup.compareTo(o2NutGroup);
+            		
+            		if(EQUAL == comp){
+            			String nutName1 = (String)nodeService.getProperty(n1.getNut(), ContentModel.PROP_NAME);
+                    	String nutName2 = (String)nodeService.getProperty(n2.getNut(), ContentModel.PROP_NAME);
+                    	
+                    	return nutName1.compareTo(nutName2);
+            		}
+            		
+            		return comp;
+            		
+            	} else if(n1 == null && n2 !=null){
+            		return AFTER;
+            	} else if(n2 == null && n1!=null){
+            		return BEFORE;
+            	}	else {
+            		return EQUAL;
+            	}
             	
-            	final int BEFORE = -1;
-        	    final int EQUAL = 0;
-        	    final int AFTER = 1;	    
-        		int comparison = EQUAL;
-        				
-        		if(n1.getGroup() != null && n2.getGroup() != null && !n1.getGroup().equals(n2.getGroup())){
-        			
-        			NutGroup o1NutGroup = NutGroup.parse(n1.getGroup());
-        			NutGroup o2NutGroup = NutGroup.parse(n2.getGroup());
-        			
-        			if(o1NutGroup == NutGroup.Group1){
-        				comparison = BEFORE;
-        			}
-        			else if(o1NutGroup == NutGroup.Other){
-        				comparison = AFTER;
-        			}
-        			else if(o2NutGroup == NutGroup.Group1){
-        				comparison = AFTER;
-        			}
-        		}
-        		else{
-        			String nutName1 = (String)nodeService.getProperty(n1.getNut(), ContentModel.PROP_NAME);
-                	String nutName2 = (String)nodeService.getProperty(n2.getNut(), ContentModel.PROP_NAME);
-                	
-        			comparison = nutName1.compareTo(nutName2);
-        		}
-        				
-        		return comparison;                
             }
+
 
         });
         
