@@ -38,6 +38,7 @@ import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.lucene.analysis.FrenchSnowballAnalyserThatRemovesAccents;
 
 @Service
 public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
@@ -256,13 +257,13 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		path = LuceneHelper.encodePath(path);
 		if (!isAllQuery(query)) {
 			query = prepareQuery(query);
-			if (parent == null || parent.isEmpty()) {
+			if (parent == null) {
 				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, path, query);
 			} else {
 				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, path, parent, query);
 			}
 		} else {
-			if (parent == null || parent.isEmpty()) {
+			if (parent == null) {
 				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ALL_ROOT, path);
 			} else {
 				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ALL, path, parent);
@@ -402,6 +403,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			// Query with wildcard are not getting analyzed by stemmers
 			// so do it manually
 			Analyzer analyzer = getTextAnalyzer();
+			
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Using analyzer : " + analyzer.getClass().getName());
@@ -412,7 +414,11 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 				reader = new StringReader(query);
 
-				source = analyzer.tokenStream(null, reader);
+				if(analyzer instanceof FrenchSnowballAnalyserThatRemovesAccents){
+					source = ((FrenchSnowballAnalyserThatRemovesAccents)analyzer).tokenStream(null, reader, true);
+				} else {
+					source = analyzer.tokenStream(null, reader);
+				}
 
 				StringBuffer buff = new StringBuffer();
 				Token reusableToken = new Token();

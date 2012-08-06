@@ -42,10 +42,17 @@ public class FrenchSnowballAnalyserThatRemovesAccents extends Analyzer
     @Override
     public TokenStream tokenStream(String fieldName, Reader reader)
     {
+       return tokenStream(fieldName, reader,false);
+    }
+    
+    public TokenStream tokenStream(String fieldName, Reader reader, boolean disableStopWords)
+    {
         TokenStream result = new StandardTokenizer(reader);
         result = new AlfrescoStandardFilter(result);
         result = new LowerCaseFilter(result);
-        result = new StopFilter(result, stopSet);
+        if(!disableStopWords){
+        	result = new StopFilter(result, stopSet);
+        }
         result = new AccentFilter(result);
         result = new SnowballFilter(result, "French");
         return result;
