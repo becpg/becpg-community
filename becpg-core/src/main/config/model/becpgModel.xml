@@ -1441,6 +1441,9 @@
 
 		<type name="bcpg:entity">
 			<parent>cm:content</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:effectivityAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:systemEntity">
