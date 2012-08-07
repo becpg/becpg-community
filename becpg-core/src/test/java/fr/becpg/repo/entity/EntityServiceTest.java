@@ -7,7 +7,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +17,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -22,9 +25,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.product.ProductDAO;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
+import fr.becpg.repo.product.data.productList.PriceListDataItem;
+import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -38,8 +43,6 @@ public class EntityServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityServiceTest.class);
 
-	/** The product dao. */
-	private ProductDAO productDAO;
 
 	/** The policy behaviour filter. */
 	private BehaviourFilter policyBehaviourFilter;
@@ -47,6 +50,8 @@ public class EntityServiceTest extends RepoBaseTestCase {
 	private EntityListDAO entityListDAO;
 
 	private EntityService entityService;
+	
+	private CopyService copyService;
 	
 
 	/** The sf node ref. */
@@ -63,11 +68,10 @@ public class EntityServiceTest extends RepoBaseTestCase {
 
 		logger.debug("ProductServiceTest:setUp");
 
-		productDAO = (ProductDAO) ctx.getBean("productDAO");
 		policyBehaviourFilter = (BehaviourFilter) ctx.getBean("policyBehaviourFilter");
 		entityListDAO = (EntityListDAO) ctx.getBean("entityListDAO");
 		entityService = (EntityService) ctx.getBean("entityService");
-
+		copyService = (CopyService) ctx.getBean("copyService");
 	}
 
 	/*
@@ -220,6 +224,124 @@ public class EntityServiceTest extends RepoBaseTestCase {
 
 		assertEquals("datalist has been modified", true, entityService.hasDataListModified(sfNodeRef));
 
+	}
+	
+	
+	public void testEntityFolder(){
+		 Date start = new Date();
+		
+		// Create a product
+		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef, repoBaseTestCase);
+			}
+		}, false, true);
+		
+		Date startEffectivity = (Date)nodeService.getProperty(sfNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
+		assertNotNull(startEffectivity);
+		assertTrue(start.getTime()<startEffectivity.getTime());
+		
+		NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(sfNodeRef).getParentRef();
+		QName parentEntityType = nodeService.getType(parentEntityNodeRef);
+
+		
+		
+		// Actual entity parent is not a entity folder
+		assertTrue(parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER));
+		assertTrue(((String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME)).endsWith((String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME)));
+		
+		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				return copyService.copyAndRename(sfNodeRef, testFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+			}
+		}, false, true);
+		
+		Date startEffectivity2 = (Date)nodeService.getProperty(sfNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
+		assertNotNull(startEffectivity2);
+		assertTrue(startEffectivity.getTime()<startEffectivity2.getTime());
+		
+
+		parentEntityNodeRef = nodeService.getPrimaryParent(sfNodeRef).getParentRef();
+		parentEntityType = nodeService.getType(parentEntityNodeRef);
+		
+		assertTrue(parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER));
+
+		assertNotSame(nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME), BeCPGTestHelper.PRODUCT_NAME);
+			
+		assertTrue(((String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME)).endsWith((String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME)));
+	}
+	
+	public void testEffectivity(){
+		
+	final Date start = new Date();
+	final Date end = new Date();	
+	final Collection<QName> dataLists = new ArrayList<QName>();
+		dataLists.add(BeCPGModel.TYPE_PRICELIST);
+		
+	sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				
+				
+				/*-- Create raw material --*/		
+				logger.debug("/*-- Create raw material --*/");
+	
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				//Costs
+				properties.put(ContentModel.PROP_NAME, "cost1");			 					 				
+				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				NodeRef cost = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+			
+				
+				PriceListDataItem priceListDataItem = new PriceListDataItem();
+				priceListDataItem.setStartEffectivity(start);
+				priceListDataItem.setEndEffectivity(end);
+				priceListDataItem.setCost(cost);
+				
+				RawMaterialData rawMaterial1 = new RawMaterialData();
+				rawMaterial1.setName("Raw material 1");
+				
+				List<PriceListDataItem> priceList = new LinkedList<PriceListDataItem>();
+				priceList.add(priceListDataItem);
+				rawMaterial1.setPriceList(priceList);
+			
+				
+				NodeRef rawMaterialNodeRef =  productDAO.create(testFolderNodeRef, rawMaterial1, dataLists);
+				
+				// load SF and test it
+				rawMaterial1 = (RawMaterialData)productDAO.find(rawMaterialNodeRef, dataLists);				
+				assertNotNull("check priceList", rawMaterial1.getPriceList());
+				
+				for(PriceListDataItem p : rawMaterial1.getPriceList()){
+
+						assertEquals(start.getTime(), p.getStartEffectivity().getTime());
+						assertEquals(end.getTime(), p.getEndEffectivity().getTime());
+				}
+				
+				return rawMaterialNodeRef;
+				
+			}
+		}, false, true);
+		
+	 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		public NodeRef execute() throws Throwable {
+
+			NodeRef rawMaterialNodeRef = copyService.copyAndRename(sfNodeRef, testFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+			
+
+			RawMaterialData rawMaterial1 =  (RawMaterialData)productDAO.find(rawMaterialNodeRef, dataLists);		
+			assertNotNull("check priceList", rawMaterial1.getPriceList());
+			
+			for(PriceListDataItem p : rawMaterial1.getPriceList()){
+				
+				assertEquals(start.getTime(), p.getStartEffectivity().getTime());
+				assertEquals(end.getTime(), p.getEndEffectivity().getTime());
+			}
+			
+			return rawMaterialNodeRef;
+		}
+	}, false, true);
 	}
 
 }

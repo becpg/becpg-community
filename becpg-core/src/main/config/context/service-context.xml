@@ -249,7 +249,6 @@
 		<property name="contentService" ref="contentService" />
 		<property name="mimetypeService" ref="mimetypeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
-	   <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	<bean id="entitySystemService" class="fr.becpg.repo.entity.impl.EntitySystemServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -341,6 +340,12 @@
 		init-method="init" parent="abstractBeCPGPolicy">
 		<property name="entityService" ref="entityService" />
 	</bean>
+	
+	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy"
+		init-method="init" parent="abstractBeCPGPolicy">
+		<property name="dictionaryService" ref="dictionaryService" />
+	</bean>
+	
 	
 	<bean id="entityCheckOutCheckInServicePolicy"
 		class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy"

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
 
@@ -59,20 +58,13 @@ public interface EntityService {
 	 NodeRef getEntityDefaultImage(NodeRef sourceNodeRef) throws BeCPGException;
 
 	
-	
 	/**
 	 * 
 	 * @param imgNodeRef
 	 * @return
 	 */
 	 byte[] getImage(NodeRef imgNodeRef);
-	
-	/**
-	 * Initialyze default param on 
-	 * 
-	 * @param entityNodeRef
-	 */
-	 void initializeEntity(NodeRef entityNodeRef);
+
 
 	/**
 	 * Delete all version of the entity
@@ -102,6 +94,13 @@ public interface EntityService {
 	  * @return true if entity type can have image
 	  */
 	 boolean hasAssociatedImages(QName type);
+
+	/**
+	 * 
+	 * @param entityNodeRef
+	 * @return entityFolderNodeRef
+	 */
+	 NodeRef getEntityFolder(NodeRef entityNodeRef);
 
 	
     

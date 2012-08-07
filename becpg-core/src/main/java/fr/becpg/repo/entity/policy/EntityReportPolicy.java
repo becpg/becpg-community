@@ -198,7 +198,7 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 							public Object execute()
                             {                                   
 
-                            	if(isNotLocked(entityNodeRef)){
+                            	if(nodeService.exists(entityNodeRef) && isNotLocked(entityNodeRef) ){
                             		
                             		entityReportService.generateReport(entityNodeRef);
                             	}

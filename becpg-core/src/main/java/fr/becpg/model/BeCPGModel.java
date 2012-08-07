@@ -692,6 +692,10 @@ public interface BeCPGModel {
 	/**
 	 * Effectivity
 	 */
+	
+	
+	static final QName ASPECT_EFFECTIVITY = QName.createQName(BECPG_URI, "effectivityAspect");		
+	
 	static final QName PROP_START_EFFECTIVITY = QName.createQName(BECPG_URI, "startEffectivity");		
 	
 	static final QName PROP_END_EFFECTIVITY = QName.createQName(BECPG_URI, "endEffectivity");

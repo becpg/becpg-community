@@ -19,7 +19,6 @@ import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -93,8 +92,6 @@ public class EntityServiceImpl implements EntityService {
 
 	private ContentService contentService;
 
-	private BehaviourFilter policyBehaviourFilter;
-
 	private DictionaryService dictionaryService;
 	
 	public void setNodeService(NodeService nodeService) {
@@ -136,11 +133,6 @@ public class EntityServiceImpl implements EntityService {
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-	
 
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
@@ -302,10 +294,11 @@ public class EntityServiceImpl implements EntityService {
 					}
 				}
 			}
-
 		}
 	}
 
+	
+	
 	/**
 	 * Load an image in the folder Images.
 	 * 
@@ -402,14 +395,6 @@ public class EntityServiceImpl implements EntityService {
 		return imageBytes;
 	}
 
-	@Override
-	public void initializeEntity(NodeRef entityNodeRef) {
-		logger.debug("initialyze entity");
-		if (entityNodeRef != null && nodeService.exists(entityNodeRef)) {
-			nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
-		}
-
-	}
 
 	@Override
 	public void deleteEntity(NodeRef entityNodeRef) {
@@ -429,27 +414,10 @@ public class EntityServiceImpl implements EntityService {
 			ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
 				@Override
 				public NodeRef doWork() throws Exception {
-
-					QName type = nodeService.getType(sourceNodeRef);
-					try {
-						// disable policies of entity to avoid :
-						// java.lang.IllegalStateException: Post-copy
-						// association has a source that was NOT copied.
-						// at
-						// org.alfresco.repo.copy.CopyServiceImpl.copyPendingAssociations(CopyServiceImpl.java:788)
-						policyBehaviourFilter.disableBehaviour(type);
 						NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-
 						nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
-
-						// call policies of entity
-						initializeEntity(ret);
-						initializeEntityFolder(ret);
-
 						return ret;
-					} finally {
-						policyBehaviourFilter.enableBehaviour(type);
-					}
+
 				}
 			}, AuthenticationUtil.getSystemUserName());
 
@@ -560,5 +528,17 @@ public class EntityServiceImpl implements EntityService {
         }
         return workingCopyName;
     }
+
+	@Override
+	public NodeRef getEntityFolder(NodeRef entityNodeRef) {
+		NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
+		QName parentEntityType = nodeService.getType(parentEntityNodeRef);
+
+		// Actual entity parent is not a entity folder
+		if (parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)) {
+			return parentEntityNodeRef;
+		}
+		return null;
+	}
 
 }
