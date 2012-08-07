@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="bcpgwf:productValidationWF" width="1022" height="378">
+<root-container name="bcpgwf:productValidationWF" width="1309" height="896">
   <node name="start" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

@@ -251,6 +251,12 @@
 	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">
 	</bean>
 	<!-- Entity Policies-->
+	<bean id="abstractBeCPGPolicy" abstract="true" class="fr.becpg.repo.policy.AbstractBeCPGPolicy" init-method="init">
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="nodeService" ref="nodeService"/>
+		<property name="lockService" ref="lockService"/>
+	</bean>
 	<bean id="autoNumService" class="fr.becpg.repo.entity.impl.AutoNumServiceImpl">
 		<property name="searchService" ref="searchService" />
 		<property name="nodeService" ref="nodeService" />
@@ -375,6 +381,12 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="productDAO" ref="productDAO" />
+	</bean>
+	<bean id="classifyProductPolicy" class="fr.becpg.repo.product.policy.ClassifyProductPolicy"
+		parent="abstractBeCPGPolicy">
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="repositoryHelper" ref="repositoryHelper" />
+		<property name="productService" ref="productService"/>
 	</bean>
 	<!-- Product Listeners -->	
 	<bean id="productCheckInListener" class="fr.becpg.repo.product.listener.ProductCheckInListener">

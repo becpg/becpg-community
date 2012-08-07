@@ -69,11 +69,11 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 		// create product node
 		NodeRef productNodeRef = super.importNode(importContext, values);					
 		
-		// classify if product is not imported in a site
-		if(!importContext.isSiteDocLib()){
-			logger.debug("classify product");
-			productService.classifyProduct(repositoryHelper.getCompanyHome(), productNodeRef);
-		}		
+//		// classify if product is not imported in a site
+//		if(!importContext.isSiteDocLib()){
+//			logger.debug("classify product");
+//			productService.classifyProduct(repositoryHelper.getCompanyHome(), productNodeRef);
+//		}		
 		
 		logger.debug("product imported");
 		return productNodeRef;
