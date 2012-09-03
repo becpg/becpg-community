@@ -1,6 +1,12 @@
 package fr.becpg.repo.entity.datalist.data;
 
+import java.util.LinkedList;
 import java.util.List;
+
+import org.alfresco.query.PagingResults;
+import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.util.Pair;
 
 import fr.becpg.repo.RepoConsts;
 
@@ -19,6 +25,8 @@ public class DataListPagination {
 	private int fullListSize;
 
 	private int page = 1;
+	
+	private String queryExecutionId = null;
 
 	public int getMaxResults() {
 		return maxResults;
@@ -61,6 +69,15 @@ public class DataListPagination {
 		this.page = page;
 	}
 
+
+	public String getQueryExecutionId() {
+		return queryExecutionId;
+	}
+
+	public void setQueryExecutionId(String queryExecutionId) {
+		this.queryExecutionId = queryExecutionId;
+	}
+	
 	public <T> List<T> paginate(List<T> list) {
 		if (list != null) {
 			fullListSize = list.size();
@@ -73,10 +90,35 @@ public class DataListPagination {
 		return list;
 	}
 
+	public List<NodeRef> paginate(PagingResults<FileInfo> pageOfNodeInfos) {
+   		    List<FileInfo> nodeInfos = pageOfNodeInfos.getPage();
+	        int size = nodeInfos.size();
+	        List<NodeRef> ret = new LinkedList<NodeRef>();
+	        for (int i=0; i<size; i++)
+	        {
+	            FileInfo nodeInfo = nodeInfos.get(i);
+	            ret.add(nodeInfo.getNodeRef());
+	        }
+	        
+	        Pair<Integer, Integer> totalResultCount = pageOfNodeInfos.getTotalResultCount();
+	        if (totalResultCount != null)
+	        {
+	            fullListSize =  (totalResultCount.getSecond() != null ? totalResultCount.getSecond() : -1);
+	        }
+	        queryExecutionId = pageOfNodeInfos.getQueryExecutionId();
+	        
+		return ret;
+	}
+	
+
 	@Override
 	public String toString() {
 		return "DataListPagination [maxResults=" + maxResults + ", pageSize=" + pageSize + ", fullListSize=" + fullListSize + ", page=" + page + "]";
 	}
+
+	
+
+
 
 	
 	

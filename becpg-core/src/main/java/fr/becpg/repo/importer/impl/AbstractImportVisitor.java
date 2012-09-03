@@ -887,7 +887,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 
 			logger.debug("findPropertyTargetNodeByValue: " + queryPath);
 			
-			List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_NO_LIMIT);
+			List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_256);
 
 			logger.debug("resultSet.length() : " + ret.size() + " for " + queryPath);
 

@@ -191,7 +191,7 @@ public class DataListSortServiceImpl implements DataListSortService {
     	
 		String query = LuceneHelper.getCondParent(listContainer, null);
 		query += LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_SORT, Operator.NOT);
-		List<NodeRef> listItems = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_SORT, true), RepoConsts.MAX_RESULTS_NO_LIMIT);
+		List<NodeRef> listItems = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_SORT, true), RepoConsts.MAX_RESULTS_256);
 		int newSort = RepoConsts.SORT_DEFAULT_STEP;
 		
 		for (NodeRef listItem : listItems) {
@@ -345,7 +345,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 	private List<NodeRef> getChildren(NodeRef listContainer, NodeRef parentLevel, boolean isDepthList) {
 
 		return beCPGSearchService.luceneSearch(getQueryByParentLevel(listContainer, parentLevel,isDepthList), LuceneHelper.getSort(BeCPGModel.PROP_SORT, true),
-				RepoConsts.MAX_RESULTS_NO_LIMIT);
+				RepoConsts.MAX_RESULTS_256);
 	}
 
 	/*
@@ -419,7 +419,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 			query += LuceneHelper.getCondMinMax(BeCPGModel.PROP_SORT, String.valueOf(sort+1), String.valueOf(lastSort), Operator.AND);			
 			List<NodeRef> children = beCPGSearchService.luceneSearch(query, 
 																	LuceneHelper.getSort(BeCPGModel.PROP_SORT, true), 
-																	RepoConsts.MAX_RESULTS_NO_LIMIT);
+																	RepoConsts.MAX_RESULTS_256);
 						
 			Integer destSort = (Integer) nodeService.getProperty(destNodeRef, BeCPGModel.PROP_SORT);
 			NodeRef lastDestChild = getLastChild(destNodeRef, listContainer, null, true);
@@ -428,7 +428,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 			query += LuceneHelper.getCondMinMax(BeCPGModel.PROP_SORT, String.valueOf(destSort+1), String.valueOf(lastDestSort), Operator.AND);	
 			List<NodeRef> destChildren = beCPGSearchService.luceneSearch(query, 
 																	LuceneHelper.getSort(BeCPGModel.PROP_SORT, true), 
-																	RepoConsts.MAX_RESULTS_NO_LIMIT);
+																	RepoConsts.MAX_RESULTS_256);
 			
 			// udpate sort of nodeRef and children
 			int newSort = destSort;				

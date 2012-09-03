@@ -47,10 +47,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	private static final String CRITERIA_BIO_ORIGIN = "assoc_bcpg_ingListBioOrigin_added";
 
-	private static final int MAX_RESULTS = 250;
-
-	private final int SIZE_UNLIMITED = -1;
-
 	private static Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 
 	private NodeService nodeService;
@@ -87,14 +83,14 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	public List<NodeRef> queryAdvSearch(String searchQuery, String language, QName datatype, Map<String, String> criteria, Map<String, Boolean> sortMap, int maxResults) {
 
 		if (maxResults <= 0) {
-			maxResults = MAX_RESULTS;
+			maxResults = RepoConsts.MAX_RESULTS_1000;
 		}
 
 		searchQuery = appendCriteria(searchQuery, language, criteria);
 		
 		boolean isAssocSearch = isAssocSearch(criteria);
 
-		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap, isAssocSearch ? SIZE_UNLIMITED : maxResults, language);
+		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap, isAssocSearch ? RepoConsts.MAX_RESULTS_UNLIMITED : maxResults, language);
 
 		if (isAssocSearch) {
 			nodes = filterByAssociations(nodes, criteria);

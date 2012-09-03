@@ -346,7 +346,7 @@ public class ImportEntityXmlVisitor {
 			runnedQuery += LuceneHelper.getCondEqualValue(RemoteHelper.getPropName(type), name, null);
 		}
 
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, null, RepoConsts.MAX_RESULTS_NO_LIMIT);
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, null, RepoConsts.MAX_RESULTS_256);
 		if (ret.size() > 0) {
 			for (NodeRef node : ret) {
 				if (name.equals(nodeService.getProperty(node, RemoteHelper.getPropName(type)))) {

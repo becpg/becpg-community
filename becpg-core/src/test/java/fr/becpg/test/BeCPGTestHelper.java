@@ -26,23 +26,24 @@ public class BeCPGTestHelper {
 	/** The PAT h_ testfolder. */
 	private static String PATH_TESTFOLDER = "TestFolder";
 	
-	
+	public static String PRODUCT_NAME = "Finished Product";
 	
 	public static NodeRef createTestFolder(RepoBaseTestCase repoBaseTestCase){
 		
 		NodeRef folderNodeRef = repoBaseTestCase.nodeService.getChildByName(repoBaseTestCase.repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
 		if(folderNodeRef != null)
 		{
+		
 			repoBaseTestCase.fileFolderService.delete(folderNodeRef);    		
 		}			
-		return repoBaseTestCase.fileFolderService.create(repoBaseTestCase.repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-		
+		return  repoBaseTestCase.fileFolderService.create(repoBaseTestCase.repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+
 	}
 	
 	
 	public static NodeRef createMultiLevelProduct(NodeRef testFolder, RepoBaseTestCase repoBaseTestCase){
 
-		/*-- Create raw material --*/
+		/*-- Create raw material --*/		
 		logger.debug("/*-- Create raw material --*/");
 		RawMaterialData rawMaterial1 = new RawMaterialData();
 		rawMaterial1.setName("Raw material 1");

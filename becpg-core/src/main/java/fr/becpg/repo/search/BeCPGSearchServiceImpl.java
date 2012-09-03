@@ -26,7 +26,6 @@ import fr.becpg.repo.RepoConsts;
 @Service
 public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 
-	public static final int SIZE_UNLIMITED = -1;
 	
 	private static final String DEFAULT_FIELD_NAME = "keywords";
 	
@@ -50,7 +49,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 
 	@Override
 	public List<NodeRef> luceneSearch(String runnedQuery) {
-		return luceneSearch(runnedQuery, null, SIZE_UNLIMITED);
+		return luceneSearch(runnedQuery, null, RepoConsts.MAX_RESULTS_UNLIMITED);
 	}
 	
 	@Override
@@ -61,7 +60,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 
 	@Override
 	public List<NodeRef> luceneSearch(String runnedQuery, Map<String, Boolean> sort) {
-		return luceneSearch(runnedQuery, sort, SIZE_UNLIMITED);
+		return luceneSearch(runnedQuery, sort, RepoConsts.MAX_RESULTS_UNLIMITED);
 	}
 		
 	@Override
@@ -90,7 +89,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	    	sp.excludeDataInTheCurrentTransaction(false);
 	    	//sp.setDefaultOperator(Operator.AND);
 	    	
-	        if(maxResults == SIZE_UNLIMITED){
+	        if(maxResults == RepoConsts.MAX_RESULTS_UNLIMITED){
 				sp.setLimitBy(LimitBy.UNLIMITED);
 			}
 			else{

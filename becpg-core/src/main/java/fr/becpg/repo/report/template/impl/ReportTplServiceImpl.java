@@ -99,7 +99,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 		
 		String query = getQueryReportTpl(reportType, nodeType, true);							
 		
-		return beCPGSearchService.luceneSearch(query, new HashMap<String, Boolean>(), RepoConsts.MAX_RESULTS_NO_LIMIT);
+		return beCPGSearchService.luceneSearch(query, new HashMap<String, Boolean>(), RepoConsts.MAX_RESULTS_256);
 	}
 	
 	/**
@@ -139,7 +139,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 			query += LuceneHelper.getCondContainsValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
 		}
 		
-		return beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_NO_LIMIT);
+		return beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_256);
 	}
 	
 	/**

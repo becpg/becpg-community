@@ -219,7 +219,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		
 		if(query != null){
 			
-			List<NodeRef> characts = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(ContentModel.PROP_NAME), RepoConsts.MAX_RESULTS_NO_LIMIT);
+			List<NodeRef> characts = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(ContentModel.PROP_NAME), RepoConsts.MAX_RESULTS_256);
 			
 			for(NodeRef charact : characts){
 				
