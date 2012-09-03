@@ -777,13 +777,13 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, 
 				LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(BeCPGModel.TYPE_RAWMATERIAL,namespaceService)),
 				"USDA");
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_NO_LIMIT);
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_256);
 		assertEquals(1, ret.size());
 		
 		queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, 
 				LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(BeCPGModel.TYPE_RAWMATERIAL,namespaceService)), ret.get(0),
 				"Dairy and Egg Products");
-		ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_NO_LIMIT);
+		ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_256);
 		assertEquals(1, ret.size());
 		
 	}
@@ -828,11 +828,11 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		assertNotNull(hierarchy2Spices);
 		
 		// check unicity
-		List<NodeRef> listItems = beCPGSearchService.luceneSearch(LuceneHelper.getCondEqualID(hierarchy1USDA, null), RepoConsts.MAX_RESULTS_NO_LIMIT);
+		List<NodeRef> listItems = beCPGSearchService.luceneSearch(LuceneHelper.getCondEqualID(hierarchy1USDA, null), RepoConsts.MAX_RESULTS_256);
 		assertEquals(1, listItems.size());
-		listItems = beCPGSearchService.luceneSearch(LuceneHelper.getCondEqualID(hierarchy2Dairy, null), RepoConsts.MAX_RESULTS_NO_LIMIT);
+		listItems = beCPGSearchService.luceneSearch(LuceneHelper.getCondEqualID(hierarchy2Dairy, null), RepoConsts.MAX_RESULTS_256);
 		assertEquals(1, listItems.size());
-		listItems = beCPGSearchService.luceneSearch(LuceneHelper.getCondEqualID(hierarchy2Spices, null), RepoConsts.MAX_RESULTS_NO_LIMIT);
+		listItems = beCPGSearchService.luceneSearch(LuceneHelper.getCondEqualID(hierarchy2Spices, null), RepoConsts.MAX_RESULTS_256);
 		assertEquals(1, listItems.size());		
 	}
 }

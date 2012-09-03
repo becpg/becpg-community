@@ -249,7 +249,6 @@
 		<property name="contentService" ref="contentService" />
 		<property name="mimetypeService" ref="mimetypeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
-	   <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	<bean id="entitySystemService" class="fr.becpg.repo.entity.impl.EntitySystemServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -276,30 +275,22 @@
 		<property name="advSearchService" ref="advSearchService" />
 	</bean>
 
-	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor">
+   <bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor">
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="services" ref="ServiceRegistry" />
 		<property name="permissionService" ref="permissionService" />
 		<property name="advSearchService" ref="advSearchService" />
+		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="fileFolderService" ref="fileFolderService"/>
+	</bean>
+
+	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor" parent="simpleExtractor">
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
 	</bean>
 
-
-	<bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor">
-		<property name="attributeExtractorService" ref="attributeExtractorService" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="services" ref="ServiceRegistry" />
-		<property name="permissionService" ref="permissionService" />
-		<property name="advSearchService" ref="advSearchService" />
-	</bean>
-
-	<bean id="wUsedExtractor" class="fr.becpg.repo.entity.datalist.impl.WUsedExtractor">
-		<property name="attributeExtractorService" ref="attributeExtractorService" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="services" ref="ServiceRegistry" />
-		<property name="permissionService" ref="permissionService" />
-		<property name="advSearchService" ref="advSearchService" />
+	
+	<bean id="wUsedExtractor" class="fr.becpg.repo.entity.datalist.impl.WUsedExtractor" parent="multiLevelExtractor">
 		<property name="wUsedListService" ref="wUsedListService" />
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
@@ -349,6 +340,12 @@
 		init-method="init" parent="abstractBeCPGPolicy">
 		<property name="entityService" ref="entityService" />
 	</bean>
+	
+	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy"
+		init-method="init" parent="abstractBeCPGPolicy">
+		<property name="dictionaryService" ref="dictionaryService" />
+	</bean>
+	
 	
 	<bean id="entityCheckOutCheckInServicePolicy"
 		class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy"
