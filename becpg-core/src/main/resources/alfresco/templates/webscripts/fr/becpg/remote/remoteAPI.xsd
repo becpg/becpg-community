@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.bcpg.fr/model/becpg/1.0/remote" xmlns:tns="http://www.bcpg.fr/model/becpg/1.0/remote" elementFormDefault="qualified">
+
+  
+  <complexType name="getEntityListType">
+	  <choice>
+	      <element name="path" type="string" minOccurs="0" maxOccurs="1"/>
+	      <element name="query" type="string" minOccurs="0" maxOccurs="1"/>
+    </choice>
+  </complexType>
+
+  <complexType name="getEntityType">
+	  <choice>
+	      <element name="path" type="string" minOccurs="0" maxOccurs="1"/>
+	      <element name="query" type="string" minOccurs="0" maxOccurs="1"/>
+	      <element name="nodeRef" type="string" minOccurs="0" maxOccurs="1"/>
+    </choice>
+  </complexType>
+
+  <complexType name="entityListType">
+    <sequence>
+      <element name="entity" type="tns:entityType" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+
+  <complexType name="entityType">
+  <!--   <attribute name="title" type="string"/>
+    <attribute name="url" type="anyURI" 
+       wsdlx:interface="booksvc:BookInterface"
+       wsdlx:binding="booksvc:BookHTTPBinding"/> -->
+  </complexType>
+
+</schema>
