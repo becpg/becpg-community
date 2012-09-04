@@ -6,6 +6,7 @@ import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public class RemoteProxyWebscript extends AbstractWebScript {
 		String remoteUrl = remoteServer+"/service/"+templateArgs.get(REMOTE_URL_PARAM);
 		boolean first = true;
 		for(String name : req.getParameterNames()){
-			remoteUrl+=(first?"?":"&")+name+"="+req.getParameter(name);
+			remoteUrl+=(first?"?":"&")+name+"="+URLEncoder.encode(req.getParameter(name),"UTF-8");
 			first = false;
 		}
 		
