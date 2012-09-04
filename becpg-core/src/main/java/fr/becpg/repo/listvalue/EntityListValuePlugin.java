@@ -232,9 +232,9 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private ListValuePage suggestLinkedValue(String path, String parent, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		NodeRef itemIdNodeRef = null;
-		
+
 		if (path == null) {
-			NodeRef entityNodeRef = null;			
+			NodeRef entityNodeRef = null;
 			@SuppressWarnings("unchecked")
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
@@ -269,9 +269,9 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ALL, path, parent);
 			}
 		}
-		
+
 		// avoid cycle: when editing an item, cannot select itself as parent
-		if(itemIdNodeRef != null){
+		if (itemIdNodeRef != null) {
 			queryPath += LuceneHelper.getCondEqualID(itemIdNodeRef, Operator.NOT);
 		}
 
@@ -314,33 +314,41 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 	private String prepareQueryCode(String query, QName type, String[] arrClassNames) {
 		if (Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query)) {
-			List<QName> types = new ArrayList<QName>();
-			if (arrClassNames != null && arrClassNames.length > 0) {
-				for (int i = 0; i < arrClassNames.length; i++) {
-					types.add(QName.createQName(arrClassNames[i], namespaceService));
-				}
-			} else {
-				types.add(type);
+			Long codeNumber = null;
+			try {
+				codeNumber = Long.parseLong(query);
+			} catch (NumberFormatException e) {
+				logger.debug(e,e);
 			}
 
-			StringBuffer ret = new StringBuffer();
-			for (QName typeTmp : types) {
-				if (BeCPGModel.TYPE_PRODUCT.equals(typeTmp)) {
-					for (QName subType : dictionaryService.getSubTypes(typeTmp, true)) {
+			if (codeNumber != null) {
+				List<QName> types = new ArrayList<QName>();
+				if (arrClassNames != null && arrClassNames.length > 0) {
+					for (int i = 0; i < arrClassNames.length; i++) {
+						types.add(QName.createQName(arrClassNames[i], namespaceService));
+					}
+				} else {
+					types.add(type);
+				}
+
+				StringBuffer ret = new StringBuffer();
+				for (QName typeTmp : types) {
+					if (BeCPGModel.TYPE_PRODUCT.equals(typeTmp)) {
+						for (QName subType : dictionaryService.getSubTypes(typeTmp, true)) {
+							if (ret.length() > 0) {
+								ret.append(" OR ");
+							}
+							ret.append(autoNumService.getPrefixedCode(subType, BeCPGModel.PROP_CODE, codeNumber));
+						}
+					} else {
 						if (ret.length() > 0) {
 							ret.append(" OR ");
 						}
-						ret.append(autoNumService.getPrefixedCode(subType, BeCPGModel.PROP_CODE, Long.parseLong(query)));
+						ret.append(autoNumService.getPrefixedCode(typeTmp, BeCPGModel.PROP_CODE, codeNumber));
 					}
-				} else {
-					if (ret.length() > 0) {
-						ret.append(" OR ");
-					}
-					ret.append(autoNumService.getPrefixedCode(typeTmp, BeCPGModel.PROP_CODE, Long.parseLong(query)));
 				}
+				return "(" + ret.toString() + ")";
 			}
-			return "(" + ret.toString() + ")";
-
 		}
 		return query;
 	}
@@ -403,7 +411,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			// Query with wildcard are not getting analyzed by stemmers
 			// so do it manually
 			Analyzer analyzer = getTextAnalyzer();
-			
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Using analyzer : " + analyzer.getClass().getName());
@@ -414,8 +421,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 				reader = new StringReader(query);
 
-				if(analyzer instanceof FrenchSnowballAnalyserThatRemovesAccents){
-					source = ((FrenchSnowballAnalyserThatRemovesAccents)analyzer).tokenStream(null, reader, true);
+				if (analyzer instanceof FrenchSnowballAnalyserThatRemovesAccents) {
+					source = ((FrenchSnowballAnalyserThatRemovesAccents) analyzer).tokenStream(null, reader, true);
 				} else {
 					source = analyzer.tokenStream(null, reader);
 				}
@@ -455,9 +462,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		return query;
 	}
 
-	
-
-	
 	protected Analyzer getTextAnalyzer() {
 		if (luceneAnaLyzer == null) {
 			DataTypeDefinition def = dictionaryDAO.getDataType(DataTypeDefinition.TEXT);

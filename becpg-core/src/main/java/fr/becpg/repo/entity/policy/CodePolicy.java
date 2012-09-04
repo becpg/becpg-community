@@ -76,47 +76,80 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName type) {
-		queueNode(nodeRef);
-	}
+		
+		// check code is already taken. If yes : this object is
+		// a copy of an
+		// existing node
+		String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
+		boolean generateCode = true;
+		QName typeQName = nodeService.getType(nodeRef);
 
-	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+		if (code != null && !code.isEmpty()) {
 
-		for (NodeRef nodeRef : pendingNodes) {
-			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {
+			List<NodeRef> ret = beCPGSearchService.luceneSearch(String.format(QUERY_NODE_BY_CODE, typeQName, code), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
-					// check code is already taken. If yes : this object is
-					// a copy of an
-					// existing node
-					String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
-					boolean generateCode = true;
-					QName typeQName = nodeService.getType(nodeRef);
+			generateCode = ret != null && ret.size() > 0;
 
-					if (code != null && !code.isEmpty()) {
+		}
 
-						List<NodeRef> ret = beCPGSearchService.luceneSearch(String.format(QUERY_NODE_BY_CODE, typeQName, code), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		// generate a new code
+		if (generateCode) {
 
-						generateCode = ret != null && ret.size() > 0;
-
-					}
-
-					// generate a new code
-					if (generateCode) {
-
-						String c = autoNumService.getAutoNumValue(typeQName, BeCPGModel.PROP_CODE);
-						nodeService.setProperty(nodeRef, BeCPGModel.PROP_CODE, c);
-					} else {
-						// store autoNum in db
-
-						autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, code);
-						// Add Prefix to code if none
-						// FIX: nodeService.setProperty(nodeRef,
-						// BeCPGModel.PROP_CODE,
-						// c);
-					}
-				}
-			
+			String c = autoNumService.getAutoNumValue(typeQName, BeCPGModel.PROP_CODE);
+			nodeService.setProperty(nodeRef, BeCPGModel.PROP_CODE, c);
+		} else {
+			// store autoNum in db
+			autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, code);
+			// Add Prefix to code if none
+			// FIX: nodeService.setProperty(nodeRef,
+			// BeCPGModel.PROP_CODE,
+			// c);
 		}
 	}
+	
+//	@Override
+//	public void onAddAspect(NodeRef nodeRef, QName type) {
+//		queueNode(nodeRef);
+//	}
+//
+//	@Override
+//	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+//
+//		for (NodeRef nodeRef : pendingNodes) {
+//			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {
+//
+//					// check code is already taken. If yes : this object is
+//					// a copy of an
+//					// existing node
+//					String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
+//					boolean generateCode = true;
+//					QName typeQName = nodeService.getType(nodeRef);
+//
+//					if (code != null && !code.isEmpty()) {
+//
+//						List<NodeRef> ret = beCPGSearchService.luceneSearch(String.format(QUERY_NODE_BY_CODE, typeQName, code), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+//
+//						generateCode = ret != null && ret.size() > 0;
+//
+//					}
+//
+//					// generate a new code
+//					if (generateCode) {
+//
+//						String c = autoNumService.getAutoNumValue(typeQName, BeCPGModel.PROP_CODE);
+//						nodeService.setProperty(nodeRef, BeCPGModel.PROP_CODE, c);
+//					} else {
+//						// store autoNum in db
+//
+//						autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, code);
+//						// Add Prefix to code if none
+//						// FIX: nodeService.setProperty(nodeRef,
+//						// BeCPGModel.PROP_CODE,
+//						// c);
+//					}
+//				}
+//			
+//		}
+//	}
 
 }

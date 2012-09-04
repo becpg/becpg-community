@@ -381,21 +381,7 @@ public class ImportServiceImpl implements ImportService {
 	   		importContext = serviceRegistry.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<ImportContext>(){
 	   			public ImportContext execute() throws Exception{
                     	
-	   				try {
-
-	   					// do it in transaction otherwise, not taken in account
-	   					for (QName disabledPolicy : finalImportContext.getDisabledPolicies()) {
-							logger.debug("disableBehaviour: " + disabledPolicy);
-							policyBehaviourFilter.disableBehaviour(disabledPolicy);
-						}
-						return importInBatch(finalImportContext, finalLastIndex);
-
-	   				} finally {
-
-						for (QName disabledPolicy : finalImportContext.getDisabledPolicies()) {
-							policyBehaviourFilter.enableBehaviour(disabledPolicy);
-						}
-					}
+	   				return importInBatch(finalImportContext, finalLastIndex);
 				 }
 			 }, 
 			 false,											// readonly
@@ -585,8 +571,14 @@ public class ImportServiceImpl implements ImportService {
 			   		 if(undefinedValues){
 			   			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_VALUES, importContext.getCSVLine())); 
 			   		 }
-								
-			   		 if(dictionaryService.isSubClass(importContext.getType(), BeCPGModel.TYPE_PRODUCT)){
+
+				   	// disable policy
+					for (QName disabledPolicy : importContext.getDisabledPolicies()) {
+						logger.debug("disableBehaviour: " + disabledPolicy);
+						policyBehaviourFilter.disableBehaviour(disabledPolicy);
+					}
+					
+					if(dictionaryService.isSubClass(importContext.getType(), BeCPGModel.TYPE_PRODUCT)){
 			   			 importProductVisitor.importNode(importContext, values);        			
 			   		 }
 			   		 else if(ImportType.EntityListAspect.equals(importContext.getImportType())){
@@ -597,8 +589,8 @@ public class ImportServiceImpl implements ImportService {
 			   		 }
 			   		 else{
 			   			 importNodeVisitor.importNode(importContext, values);
-			   		 }    
-			   		 
+			   		 }  
+	   				
 			   		 logger.info(I18NUtil.getMessage(MSG_INFO_IMPORT_LINE, importContext.getCSVLine()));
 				}
 				catch(ImporterException e){
@@ -634,6 +626,12 @@ public class ImportServiceImpl implements ImportService {
 						 importContext.getLog().add(error);       				 
 					 }
 				 }
+				finally{
+					//enable policy
+					for (QName disabledPolicy : importContext.getDisabledPolicies()) {
+						policyBehaviourFilter.enableBehaviour(disabledPolicy);
+					}
+				}
 			}			
 			else{
 	   		 throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNSUPPORTED_PREFIX, importContext.getCSVLine(), prefix));
