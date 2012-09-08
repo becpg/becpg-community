@@ -10,6 +10,7 @@
 		<comparisonRow entityList="4. Allergènes" characteristic="Céréales contenant du gluten et produits à base de céréales contenant du gluten" property="Présence int." value1="Faux" value3="" value4="" />
 		<comparisonRow entityList="4. Allergènes" characteristic="xxx" property="Présence int. (MP)" value1="" value2="Farine fournier" value3="" value4="" />
 		<comparisonRow entityList="4. Allergènes" characteristic="Céréales contenant du gluten et produits à base de céréales contenant du gluten" property="Présence int. (MP)" value1="" value2="Farine fournier" value3="" value4="" />
+		<comparisonRow entityList="4. Allergènes" characteristic="Allergen1" propertyQName="bcpg:isManualListItem" property="Manuel" value1="Oui" value2="Non" value3="" value4="" />
 	</comparisonRows>
 	<structComparisonRows>
 		<structComparisonRow comparison="product1 - product2" productList="1. Composition" depthLevel="1" item1="Garniture" properties1="Quantité : 12 / Unité : Kg" item2="Garniture" properties2="Quantité : 13 / Unité : g / Quantité : 13 / Unité : g / Quantité : 13 / Unité : g" operator="Modified"/>
