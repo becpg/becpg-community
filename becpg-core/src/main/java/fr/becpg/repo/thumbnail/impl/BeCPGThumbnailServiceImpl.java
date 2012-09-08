@@ -33,7 +33,7 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 
 	private static final String THUMB_CACHE_KEY_PREFIX = "thumbCache_";
 	private static String DOC_LIB_THUMBNAIL = "doclib";
-	private static String ICON_THUMBNAIL_NAME = "generic-%s-thumb*png";
+	private static String ICON_THUMBNAIL_NAME = "generic-%s-thumb*";
 
 	private static Log logger = LogFactory
 			.getLog(BeCPGThumbnailServiceImpl.class);
