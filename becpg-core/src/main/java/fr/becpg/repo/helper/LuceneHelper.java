@@ -25,6 +25,7 @@ public class LuceneHelper {
 	private static final String QUERY_COND_ID = " %s ID:\"%s\"";
 	private static final String QUERY_COND_BY_SORT = " %s +@%s:[%s TO %s]";
 	private static final String QUERY_COND_PARENT = " %s +PARENT:\"%s\"";
+	private static final String QUERY_COND_TYPE = " %s +TYPE:\"%s\"";
 
 	/**
 	 * Return an equal condition on a property
@@ -106,6 +107,18 @@ public class LuceneHelper {
 	public static String getCondParent(NodeRef nodeRef, Operator operator) {
 
 		return String.format(QUERY_COND_PARENT, operator != null ? operator : "", nodeRef);
+	}
+	
+	/**
+	 * Return a typbe condition on QName
+	 * 
+	 * @param type
+	 * @param operator
+	 * @return
+	 */
+	public static String getCondType(QName type, Operator operator) {
+
+		return String.format(QUERY_COND_TYPE, operator != null ? operator : "", type);
 	}
 	
 
