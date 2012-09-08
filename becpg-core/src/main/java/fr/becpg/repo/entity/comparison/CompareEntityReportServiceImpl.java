@@ -16,6 +16,7 @@ import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -70,6 +71,8 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 	
 	/** The Constant ATTR_PROPERTY. */
 	private static final String ATTR_PROPERTY = "property";
+	
+	private static final String ATTR_PROPERTY_QNAME = "propertyQName";
 	
 	/** The Constant ATTR_VALUE_1. */
 	private static final String ATTR_VALUE_1 = "value1";
@@ -142,6 +145,8 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 	
 	/** The dictionary service. */
 	private DictionaryService dictionaryService;
+	
+	private NamespaceService namespaceService;
 		
 	/**
 	 * Sets the compare entity service.
@@ -187,6 +192,10 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 		this.dictionaryService = dictionaryService;
 	}
 	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.entity.comparison.CompareEntityReportService#getComparisonReport(org.alfresco.service.cmr.repository.NodeRef, java.util.List, java.io.OutputStream)
 	 */
@@ -296,6 +305,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 				cmpRowElt.addAttribute(ATTR_ENTITYLIST, entityListTitle);
 				cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, charactName);							
 				cmpRowElt.addAttribute(ATTR_PROPERTY, propertyTitle);
+				cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
 				
 				if(logger.isTraceEnabled()){
 					String value1 = c.getValues().get(0);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 2.6.2.r262_v20110209 Build &lt;2.6.2.v20110214-1523></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
     <simple-property-list name="includeResource">
         <value>src/main/resources/beCPG/birt/CompareEntities-messages_fr</value>
         <value>src/main/resources/beCPG/birt/CompareEntities-messages</value>
@@ -25,7 +25,7 @@
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="1347">
-            <property name="FILELIST">/home/querephi/Documents/beCPG/dev/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/CompareEntities.xml</property>
+            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/system/CompareEntities.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -34,49 +34,106 @@
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">entityList</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">entityList</text-property>
+                    <property name="analysisColumn">entityList</property>
                 </structure>
                 <structure>
                     <property name="columnName">characteristic</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">characteristic</text-property>
+                    <property name="analysisColumn">characteristic</property>
                 </structure>
                 <structure>
                     <property name="columnName">property</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">property</text-property>
+                    <property name="analysisColumn">property</property>
                 </structure>
                 <structure>
                     <property name="columnName">value1</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">value1</text-property>
+                    <property name="analysisColumn">value1</property>
                 </structure>
                 <structure>
                     <property name="columnName">value2</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">value2</text-property>
+                    <property name="analysisColumn">value2</property>
                 </structure>
                 <structure>
                     <property name="columnName">value3</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">value3</text-property>
+                    <property name="analysisColumn">value3</property>
                 </structure>
                 <structure>
                     <property name="columnName">value4</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">value4</text-property>
+                    <property name="analysisColumn">value4</property>
                 </structure>
                 <structure>
                     <property name="columnName">entity1</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">entity1</text-property>
+                    <property name="analysisColumn">entity1</property>
                 </structure>
                 <structure>
                     <property name="columnName">entity2</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">entity2</text-property>
+                    <property name="analysisColumn">entity2</property>
                 </structure>
                 <structure>
                     <property name="columnName">entity3</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">entity3</text-property>
+                    <property name="analysisColumn">entity3</property>
                 </structure>
                 <structure>
                     <property name="columnName">entity4</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">entity4</text-property>
+                    <property name="analysisColumn">entity4</property>
+                </structure>
+                <structure>
+                    <property name="columnName">propertyQName</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">propertyQName</text-property>
+                    <property name="analysisColumn">propertyQName</property>
                 </structure>
             </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["propertyQName"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"bcpg:isManualListItem"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["propertyQName"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"sys:locale"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -134,6 +191,11 @@
                         <property name="name">entity4</property>
                         <property name="dataType">string</property>
                     </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">propertyQName</property>
+                        <property name="dataType">string</property>
+                    </structure>
                 </list-property>
             </structure>
             <property name="dataSource">DataXml</property>
@@ -143,69 +205,87 @@
                     <property name="name">entityList</property>
                     <property name="nativeName">entityList</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
                     <property name="name">characteristic</property>
                     <property name="nativeName">characteristic</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">3</property>
                     <property name="name">property</property>
                     <property name="nativeName">property</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
                     <property name="name">value1</property>
                     <property name="nativeName">value1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
                     <property name="name">value2</property>
                     <property name="nativeName">value2</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">6</property>
                     <property name="name">value3</property>
                     <property name="nativeName">value3</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">7</property>
                     <property name="name">value4</property>
                     <property name="nativeName">value4</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
                     <property name="name">entity1</property>
                     <property name="nativeName">entity1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">9</property>
                     <property name="name">entity2</property>
                     <property name="nativeName">entity2</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">10</property>
                     <property name="name">entity3</property>
                     <property name="nativeName">entity3</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">11</property>
                     <property name="name">entity4</property>
                     <property name="nativeName">entity4</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">propertyQName</property>
+                    <property name="nativeName">propertyQName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{entityList;STRING;/@entityList},{characteristic;STRING;/@characteristic},{property;STRING;/@property},{value1;STRING;/@value1},{value2;STRING;/@value2},{value3;STRING;/@value3},{value4;STRING;/@value4},{entity1;STRING;../@entity1},{entity2;STRING;../@entity2},{entity3;STRING;../@entity3},{entity4;STRING;../@entity4}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{entityList;STRING;/@entityList},{characteristic;STRING;/@characteristic},{property;STRING;/@property},{value1;STRING;/@value1},{value2;STRING;/@value2},{value3;STRING;/@value3},{value4;STRING;/@value4},{entity1;STRING;../@entity1},{entity2;STRING;../@entity2},{entity3;STRING;../@entity3},{entity4;STRING;../@entity4},{propertyQName;STRING;/@propertyQName}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
