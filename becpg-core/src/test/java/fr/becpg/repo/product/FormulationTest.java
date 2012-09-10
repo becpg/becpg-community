@@ -3120,5 +3120,107 @@ public class FormulationTest extends RepoBaseTestCase {
 			}},false,true);
 		   
 	   }
+	
+	/**
+	 * Test formulate product, where qty are defined in percentage
+	 *
+	 * @throws Exception the exception
+	 */
+	public void testCalculateCompoPercent() throws Exception{
+		   
+		logger.info("testCalculateCompoPercent");
+		
+	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			public NodeRef execute() throws Throwable {					   							
+					
+				/*-- Create finished product --*/
+				logger.debug("/*-- Create finished product --*/");
+				 Collection<QName> dataLists = productDictionaryService.getDataLists();
+				FinishedProductData finishedProduct = new FinishedProductData();
+				finishedProduct.setName("Produit fini 1");
+				finishedProduct.setLegalName("Legal Produit fini 1");
+				finishedProduct.setUnit(ProductUnit.kg);
+				finishedProduct.setQty(2d);
+				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+				compoList.add(new CompoListDataItem(null, 1, null, 100d, 2d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, null, 50d, 100d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 80d, null, CompoListUnit.Perc, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 20d, null, CompoListUnit.Perc, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 50d, 200d, CompoListUnit.Perc, 20d, DeclarationType.Detail, localSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 85d, null, CompoListUnit.Perc, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 10d, null, CompoListUnit.Perc, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 3, null, 5d, null, CompoListUnit.Perc, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+				finishedProduct.setCompoList(compoList);
+				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
+				
+				/*-- Formulate product --*/
+				logger.debug("/*-- Formulate product --*/");
+				productService.formulate(finishedProductNodeRef);
+				
+				/*-- Verify formulation --*/
+				logger.debug("/*-- Verify formulation --*/");
+				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+				int checks=0;
+				
+				for(CompoListDataItem compoListDataItem : formulatedProduct.getCompoList()){
+					
+					if(compoListDataItem.getProduct().equals(localSF1NodeRef)){
+						assertEquals("check SF1 qty", 2d, compoListDataItem.getQty());
+						assertEquals("check SF1 qty sub formula", 100d, compoListDataItem.getQtySubFormula());
+						assertEquals("check SF1 after process", 2d, compoListDataItem.getQtyAfterProcess());
+						checks++;
+					}
+					else if(compoListDataItem.getProduct().equals(localSF2NodeRef)){
+						assertEquals("check SF2 qty", 1d, compoListDataItem.getQty());
+						assertEquals("check SF2 qty sub formula", 50d, compoListDataItem.getQtySubFormula());
+						assertEquals("check SF2 after process", 100d, compoListDataItem.getQtyAfterProcess());
+						checks++;
+					}
+					else if(compoListDataItem.getProduct().equals(rawMaterial1NodeRef)){
+						assertEquals("check MP1 qty", 80d, compoListDataItem.getQty());
+						assertEquals("check MP1 qty sub formula", 80d, compoListDataItem.getQtySubFormula());
+						assertEquals("check MP1 after process", null, compoListDataItem.getQtyAfterProcess());
+						checks++;
+					}
+					else if(compoListDataItem.getProduct().equals(rawMaterial2NodeRef)){
+						assertEquals("check MP2 qty", 20d, compoListDataItem.getQty());
+						assertEquals("check MP2 qty sub formula", 20d, compoListDataItem.getQtySubFormula());
+						assertEquals("check MP2 after process", null, compoListDataItem.getQtyAfterProcess());
+						checks++;
+					}
+					else if(compoListDataItem.getProduct().equals(localSF3NodeRef)){
+						assertEquals("check SF3 qty", 1d, compoListDataItem.getQty());
+						assertEquals("check SF3 qty sub formula", 50d, compoListDataItem.getQtySubFormula());
+						assertEquals("check SF3 after process", 200d, compoListDataItem.getQtyAfterProcess());
+						checks++;
+					}
+					else if(compoListDataItem.getProduct().equals(rawMaterial3NodeRef)){
+						assertEquals("check MP3 qty", 170d, compoListDataItem.getQty());
+						assertEquals("check MP3 qty sub formula", 85d, compoListDataItem.getQtySubFormula());
+						assertEquals("check MP3 after process", null, compoListDataItem.getQtyAfterProcess());
+						checks++;
+					}
+					else if(compoListDataItem.getProduct().equals(rawMaterial4NodeRef)){
+						assertEquals("check MP4 qty", 20d, compoListDataItem.getQty());
+						assertEquals("check MP4 qty sub formula", 10d, compoListDataItem.getQtySubFormula());
+						assertEquals("check MP4 after process", null, compoListDataItem.getQtyAfterProcess());
+						checks++;
+					}
+					else if(compoListDataItem.getProduct().equals(rawMaterial5NodeRef)){
+						assertEquals("check MP5 qty", 10d, compoListDataItem.getQty());
+						assertEquals("check MP5 qty sub formula", 5d, compoListDataItem.getQtySubFormula());
+						assertEquals("check MP5 after process", null, compoListDataItem.getQtyAfterProcess());
+						checks++;
+					}
+				}
+				
+				assertEquals(8, checks);
+				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
+							
+				return null;
+
+			}},false,true);
+		   
+	   }
 }
 
