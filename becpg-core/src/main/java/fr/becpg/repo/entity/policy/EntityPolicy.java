@@ -74,11 +74,10 @@ public class EntityPolicy extends AbstractBeCPGPolicy implements NodeServicePoli
 		if (after.containsKey(ContentModel.PROP_NAME)) {
 
 			String beforeName = (String) before.get(ContentModel.PROP_NAME);
-			String afterName = (String) after.get(ContentModel.PROP_NAME);
+			String afterName = (String) after.get(ContentModel.PROP_NAME);						
 
 			if (afterName != null && !afterName.isEmpty() && !afterName.equals(beforeName)) {
 				queueNode(entityNodeRef);
-
 			}
 		}
 	}
@@ -86,7 +85,8 @@ public class EntityPolicy extends AbstractBeCPGPolicy implements NodeServicePoli
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef entityNodeRef : pendingNodes) {
-			if (nodeService.exists(entityNodeRef)) {
+			// don't rename entity folder when doing checkout (working copy)
+			if (nodeService.exists(entityNodeRef) && !isWorkingCopyOrVersion(entityNodeRef)) {
 				NodeRef entityFolderNodeRef = entityService.getEntityFolder(entityNodeRef);
 				if (entityFolderNodeRef != null) {
 					String newName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
@@ -98,7 +98,7 @@ public class EntityPolicy extends AbstractBeCPGPolicy implements NodeServicePoli
 								&& !nodeRef.equals(entityFolderNodeRef)) {
 							newName = I18NUtil.getMessage(COPY_OF_LABEL, newName);
 						}
-						if (nodeRef==null || !nodeRef.equals(entityFolderNodeRef)) {
+						if (nodeRef==null || !nodeRef.equals(entityFolderNodeRef)) {														
 							nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, newName);
 						}
 					}
