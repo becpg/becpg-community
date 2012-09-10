@@ -97,9 +97,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 			if (datatype != null && dictionaryService.isSubClass(datatype, BeCPGModel.TYPE_PRODUCT)) {
 				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
-			}
-			nodes = filterWithPermissions(nodes, new ReadPermissionFilter(), maxResults);
+			}			
 		}
+		
+		nodes = filterWithPermissions(nodes, new ReadPermissionFilter(), maxResults);
+		
 		return nodes;
 	}
 
