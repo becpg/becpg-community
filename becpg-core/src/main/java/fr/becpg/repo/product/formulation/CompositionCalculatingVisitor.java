@@ -70,8 +70,17 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 				Double qtySubFormula = component.getData().getQtySubFormula();
 				if(qtySubFormula != null){
 					
-					Double qty = qtySubFormula * parentQty / qtyAfterProcess;
-					component.getData().setQty(qty);
+					Double qty = null;
+					// take in account percentage
+					if(component.getData().getCompoListUnit() != null && 
+							component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){
+						qty = qtySubFormula * qtyAfterProcess / 100;						
+					}
+					else{
+						qty = qtySubFormula * parentQty / qtyAfterProcess;
+					}					
+					
+					component.getData().setQty(qty);									
 				}
 			}	
 			
@@ -117,7 +126,8 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 		
 		if(compoListDataItem.getCompoListUnit() != null && 
 				(!compoListDataItem.getCompoListUnit().equals(CompoListUnit.kg) || 
-				!compoListDataItem.getCompoListUnit().equals(CompoListUnit.g))){
+				!compoListDataItem.getCompoListUnit().equals(CompoListUnit.g) ||
+				!compoListDataItem.getCompoListUnit().equals(CompoListUnit.Perc))){
 			
 			Double density = (Double)nodeService.getProperty(compoListDataItem.getProduct(), BeCPGModel.PROP_PRODUCT_DENSITY);
 			if(density != null){
