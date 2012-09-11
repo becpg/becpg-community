@@ -235,17 +235,14 @@ public class CreateProduct extends JBPMSpringActionHandler {
 						logger.debug(e,e); // newly created cannot be formulate
 					}
 
-					// Move file from pkgNodeRef
+					// Move documents from pkgNodeRef
 					List<FileInfo> files = fileFolderService.listFiles(pkgNodeRef);
 					NodeRef briefNodeRef = getBriefNodeRef(productNodeRef);
 					for (FileInfo file : files) {
 						String name = (String) nodeService.getProperty(file.getNodeRef(), ContentModel.PROP_NAME);
-						if (briefNodeRef != null) {
+						if (briefNodeRef != null && nodeService.getType(briefNodeRef).equals(ContentModel.TYPE_CONTENT)) {
 							fileFolderService.move(file.getNodeRef(), briefNodeRef, name);
 							nodeService.removeChild(pkgNodeRef, file.getNodeRef());
-						} else {
-							logger.error("No brief folder found");
-							break;
 						}
 					}
 
