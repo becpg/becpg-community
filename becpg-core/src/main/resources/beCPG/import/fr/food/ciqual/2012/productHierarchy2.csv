@@ -1,0 +1,76 @@
+MAPPING;Default;
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;CIQUAL;Abats
+VALUES;CIQUAL;Aliments lactés diététiques
+VALUES;CIQUAL;Autres matières grasses animales
+VALUES;CIQUAL;Beurres et matières grasses laitières
+VALUES;CIQUAL;Bières et similaires
+VALUES;CIQUAL;Biscottes et pains non levés
+VALUES;CIQUAL;Biscuits salés apéritifs
+VALUES;CIQUAL;Biscuits secs sucrés
+VALUES;CIQUAL;Boissons rafraîchissantes sans alcool
+VALUES;CIQUAL;Bouillons prêts à consommer
+VALUES;CIQUAL;Café, thé, infusions, boissons au cacao
+VALUES;CIQUAL;Céréales petit déjeuner et barres céréalières
+VALUES;CIQUAL;Charcuteries et salaisons
+VALUES;CIQUAL;Chocolats et produits à base de chocolat
+VALUES;CIQUAL;Cidres et similaires
+VALUES;CIQUAL;Cocktails
+VALUES;CIQUAL;Compléments alimentaires
+VALUES;CIQUAL;Confiseries non chocolatées
+VALUES;CIQUAL;Confitures
+VALUES;CIQUAL;Crèmes et spécialités à base de crème
+VALUES;CIQUAL;Crustacés et mollusques non transformés
+VALUES;CIQUAL;Denrées destinées à une alimentation particulière
+VALUES;CIQUAL;Desserts lactés frais ou UHT
+VALUES;CIQUAL;Eaux
+VALUES;CIQUAL;Entremets et glaces
+VALUES;CIQUAL;Farines et amidons
+VALUES;CIQUAL;Fromages
+VALUES;CIQUAL;Fromages affinés à pâte dure
+VALUES;CIQUAL;Fromages affinés à pâte ferme
+VALUES;CIQUAL;Fromages affinés à pâte molle
+VALUES;CIQUAL;Fromages affinés à pâte persillée
+VALUES;CIQUAL;Fromages blancs ultrafrais
+VALUES;CIQUAL;Fromages fondus
+VALUES;CIQUAL;Fromages non affinés et spécialités fromagères
+VALUES;CIQUAL;Fruits
+VALUES;CIQUAL;Gâteaux et pâtisseries
+VALUES;CIQUAL;Graines oléagineuses et châtaignes
+VALUES;CIQUAL;Herbes, épices et assaisonnements
+VALUES;CIQUAL;Huiles et graisses végétales
+VALUES;CIQUAL;Jus et nectars
+VALUES;CIQUAL;Laits
+VALUES;CIQUAL;Légumes
+VALUES;CIQUAL;Légumes secs
+VALUES;CIQUAL;Liqueurs et alcools
+VALUES;CIQUAL;Margarines et matières grasses composées
+VALUES;CIQUAL;Oeufs et dérivés
+VALUES;CIQUAL;Pains
+VALUES;CIQUAL;Pâtes et semoules
+VALUES;CIQUAL;Pizzas, crêpes et tartes salées
+VALUES;CIQUAL;Plats à base de céréales ou pâtes
+VALUES;CIQUAL;Plats à base de fromage
+VALUES;CIQUAL;Plats à base de légumes ou légumineuses
+VALUES;CIQUAL;Plats à base de poisson ou produits aquatiques
+VALUES;CIQUAL;Plats à base de viande ou volaille
+VALUES;CIQUAL;Plats composés
+VALUES;CIQUAL;Poissons et batraciens non transformés
+VALUES;CIQUAL;Pommes de terre et apparentés
+VALUES;CIQUAL;Préparations pour boissons sans alcool
+VALUES;CIQUAL;Préparations pour pâtisseries
+VALUES;CIQUAL;Produits à base de crustacés et mollusques
+VALUES;CIQUAL;Produits à base de poissons
+VALUES;CIQUAL;Riz et autres graines
+VALUES;CIQUAL;Salades composées et crudités
+VALUES;CIQUAL;Sandwichs
+VALUES;CIQUAL;Sauces salées et condiments
+VALUES;CIQUAL;Soupes prêtes à consommer
+VALUES;CIQUAL;Sucres, miels, sirops
+VALUES;CIQUAL;Viandes
+VALUES;CIQUAL;Viennoiseries et brioches
+VALUES;CIQUAL;Vins
+VALUES;CIQUAL;Volailles
+VALUES;CIQUAL;Yaourts et spécialités laitières type yaourts
