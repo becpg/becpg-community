@@ -132,7 +132,7 @@ public class CreateNC extends BaseJavaDelegate {
 					NodeRef briefNodeRef = getDocumentsFolder(ncNodeRef);
 					for (FileInfo file : files) {
 						String name = (String) nodeService.getProperty(file.getNodeRef(), ContentModel.PROP_NAME);
-						if (briefNodeRef != null && nodeService.getType(briefNodeRef).equals(ContentModel.TYPE_CONTENT)) {
+						if (briefNodeRef != null && nodeService.getType(file.getNodeRef()).equals(ContentModel.TYPE_CONTENT)) {
 							fileFolderService.move(file.getNodeRef(), briefNodeRef, name);
 							nodeService.removeChild(pkgNodeRef, file.getNodeRef());
 						}

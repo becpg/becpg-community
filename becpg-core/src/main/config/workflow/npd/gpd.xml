@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="npdwf:newProductDevelopmentWF" width="892" height="1238">
+<root-container name="npdwf:newProductDevelopmentWF" width="1322" height="1235">
   <node name="initiate-npd" x="480" y="-48" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -71,23 +71,19 @@
   </node>
   <node name="validate-analysis" x="443" y="813" width="211" height="36">
     <edge>
-      <label x="11" y="27"/>
-      <bendpoint w1="204" h1="-2" w2="-1" h2="-103"/>
+      <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="10" y="-44"/>
-      <bendpoint w1="-214" h1="-2" w2="-221" h2="-355"/>
-      <bendpoint w1="-214" h1="353" w2="-221" h2="0"/>
+      <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="12" y="-15"/>
-    </edge>
-    <edge>
-      <label x="11" y="27"/>
-      <bendpoint w1="204" h1="-2" w2="-1" h2="-103"/>
+      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="send-client-offer" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -98,6 +94,9 @@
     </edge>
   </node>
   <node name="validate-prototype" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>

@@ -12,7 +12,6 @@ package fr.becpg.repo.admin;
 public enum NPDGroup {
 
 	NPD,
-	MarketingBrief,
 	NeedDefinition,
 	ValidateNeedDefinition,
 	DoPrototype,

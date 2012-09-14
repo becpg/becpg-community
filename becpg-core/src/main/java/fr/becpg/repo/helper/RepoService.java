@@ -48,6 +48,14 @@ public interface RepoService {
 	 * @param destionationNodeRef
 	 * @param name
 	 */
-	void moveNode(NodeRef nodeRefToMove, NodeRef destionationNodeRef);
+	public void moveNode(NodeRef nodeRefToMove, NodeRef destionationNodeRef);
+	
+	/**
+	 * Calculate the name in order to get an available name ie: name (1)
+	 * @param nodeRefToMove
+	 * @param destionationNodeRef
+	 * @param name
+	 */
+	public String getAvailableName(NodeRef folderNodeRef, String name);
 	
 }

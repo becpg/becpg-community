@@ -178,7 +178,7 @@ public class ProductValidationWorkflowTest extends RepoBaseTestCase {
 
 				for (WorkflowDefinition def : workflowService.getAllDefinitions()) {
 					logger.debug(def.getId() + " " + def.getName());
-					if ("jbpm$bcpgwf:productValidationWF".equals(def.getName())) {
+					if ("jbpm$npdwf:newProductDevelopmentWF".equals(def.getName())) {
 						try {
 							for (WorkflowInstance instance : workflowService.getWorkflows(def.getId())) {
 								workflowService.deleteWorkflow(instance.getId());
