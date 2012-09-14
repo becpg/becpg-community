@@ -447,7 +447,7 @@ public class ECOTest extends RepoBaseTestCase {
 				assertEquals(8, checks);
 
 				// apply
-				// ecoService.apply(ecoNodeRef);
+				ecoService.apply(ecoNodeRef);
 
 				return null;
 
@@ -814,7 +814,7 @@ public class ECOTest extends RepoBaseTestCase {
 				assertEquals(12, checks);
 
 				// apply
-				// ecoService.apply(ecoNodeRef);
+				ecoService.apply(ecoNodeRef);
 
 				return null;
 
