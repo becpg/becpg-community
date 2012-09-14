@@ -81,7 +81,15 @@
 			<column id="AG monoinsaturés" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG monoinsaturés" type="Characteristic" />
 			<column id="AG polyinsaturés" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG polyinsaturés" type="Characteristic" />
 			<column id="Cholestérol" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Cholestérol" type="Characteristic" />
-
+			<column id="Iode" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Iode" type="Characteristic" />
+			<column id="Protéines brutes (N x 6.25)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Protéines brutes (N x 6.25)" type="Characteristic" />			
+			<column id="Energie kJ, étiquetage" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Energie kJ, étiquetage" type="Characteristic" />
+			<column id="Energie kcal, étiquetage" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Energie kcal, étiquetage" type="Characteristic" />
+			<column id="Amidon" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Amidon" type="Characteristic" />
+			<column id="Polyols totaux" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Polyols totaux" type="Characteristic" />
+			<column id="Alcool (éthanol)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Alcool (éthanol)" type="Characteristic" />
+			<column id="Acides organiques" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Acides organiques" type="Characteristic" />			
+			
 			<!-- files -->
 			<column id="img1Path" attribute="cm:content" path="Images/produit.jpg"
 				type="File" />
