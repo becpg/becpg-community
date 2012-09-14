@@ -29,7 +29,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
 @Service
 public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnAddAspectPolicy {
 
-	private static final String QUERY_NODE_BY_CODE = " +TYPE:\"%s\" +@bcpg\\:code:\"%s\" ";
+	private static final String QUERY_NODE_BY_CODE = " +TYPE:\"%s\" +@bcpg\\:code:\"%s\"  -@sys\\:node-uuid:\"%s\" ";
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CodePolicy.class);
@@ -127,7 +127,7 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 
 					if (code != null && !code.isEmpty()) {
 
-						List<NodeRef> ret = beCPGSearchService.luceneSearch(String.format(QUERY_NODE_BY_CODE, typeQName, code), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+						List<NodeRef> ret = beCPGSearchService.luceneSearch(String.format(QUERY_NODE_BY_CODE, typeQName, code, nodeRef.getId()), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
 						generateCode = ret != null && ret.size() > 0;
 
