@@ -33,6 +33,7 @@ import org.springframework.beans.factory.BeanFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductService;
@@ -57,9 +58,7 @@ public class CreateProduct extends JBPMSpringActionHandler {
 	/** The file folder service. */
 	private FileFolderService fileFolderService;
 
-	
 	private ProductDAO productDAO;
-	
 
 	/** The product DAO */
 	private EntityService entityService;
@@ -68,6 +67,8 @@ public class CreateProduct extends JBPMSpringActionHandler {
 	
 	private BehaviourFilter policyBehaviourFilter;
 
+	private RepoService repoService;
+	
 	private static final String CM_URL = NamespaceService.CONTENT_MODEL_1_0_URI;
 
 	/*
@@ -85,6 +86,7 @@ public class CreateProduct extends JBPMSpringActionHandler {
 		productService = (ProductService) factory.getBean("productService");
 		productDAO = (ProductDAO) factory.getBean("productDAO");
 		policyBehaviourFilter = (BehaviourFilter) factory.getBean("policyBehaviourFilter");
+		repoService = (RepoService) factory.getBean("repoService");
 	}
 
 	/*
@@ -143,7 +145,7 @@ public class CreateProduct extends JBPMSpringActionHandler {
 						policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);
 						
 						productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, parentNodeRef, entityType,
-								entityName);
+								repoService.getAvailableName(parentNodeRef, entityName));
 						
 						// change state: ToValidate
 						nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE, "ToValidate");
@@ -187,7 +189,6 @@ public class CreateProduct extends JBPMSpringActionHandler {
 					for( AssociationRef subsidiaryAssoc : nodeService.getTargetAssocs(productNodeRef, BeCPGModel.ASSOC_SUBSIDIARY)){
 						nodeService.removeAssociation( productNodeRef, subsidiaryAssoc.getTargetRef(), BeCPGModel.ASSOC_SUBSIDIARY);
 					}
-					
 					
 					//Copy subsidiary 
 					JBPMNode subsidiaryNode = (JBPMNode) executionContext.getContextInstance().getVariable(
@@ -240,7 +241,7 @@ public class CreateProduct extends JBPMSpringActionHandler {
 					NodeRef briefNodeRef = getBriefNodeRef(productNodeRef);
 					for (FileInfo file : files) {
 						String name = (String) nodeService.getProperty(file.getNodeRef(), ContentModel.PROP_NAME);
-						if (briefNodeRef != null && nodeService.getType(briefNodeRef).equals(ContentModel.TYPE_CONTENT)) {
+						if (briefNodeRef != null && nodeService.getType(file.getNodeRef()).equals(ContentModel.TYPE_CONTENT)) {
 							fileFolderService.move(file.getNodeRef(), briefNodeRef, name);
 							nodeService.removeChild(pkgNodeRef, file.getNodeRef());
 						}

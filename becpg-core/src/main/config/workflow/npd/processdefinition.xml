@@ -128,7 +128,7 @@
             <event type="task-create">
 				<action class="org.alfresco.repo.workflow.jbpm.AlfrescoJavaScript">
 					<script>
-						bpm_assignees = null;
+						npdwf_feasibilityAssignees = null;
 					</script>
 				</action>
 			</event>
@@ -152,7 +152,7 @@
 
 	<node name="feasibility-start-analysis">
 			 <action class="org.alfresco.repo.workflow.jbpm.ForEachFork">
-			      <foreach>#{bpm_assignees}</foreach>
+			      <foreach>#{npdwf_feasibilityAssignees}</foreach>
 			      <var>reviewer</var>
 		    </action>
 		   <transition  to="feasibility-analysis" />
@@ -203,11 +203,6 @@
 				</action>
 			</event>
 		</task>
-		<transition to="work-on-prototype" name="work-on-prototype" >
-			<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
-				<status>Prototypage</status>
-			</action>
-		</transition>
 		<transition to="send-client-offer" name="send-client-offer" >
 			<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
 				<status>Offre client</status>
@@ -247,6 +242,11 @@
 			</event>
 		</task>
 		<transition name="submit" to="work-on-prototype"></transition>
+		<transition to="end" name="end" >
+		  	<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
+				<status>Stop</status>
+			</action>
+		</transition>
 	</task-node>
 
 

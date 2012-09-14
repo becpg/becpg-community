@@ -70,10 +70,12 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 
 	protected static final String USER_TWO = "philippeWF";
 
-	protected static String[] groups = { NPDGroup.MarketingBrief.toString(), NPDGroup.NeedDefinition.toString(),
+	protected static String[] groups = { NPDGroup.NeedDefinition.toString(),
 			NPDGroup.ValidateNeedDefinition.toString(), NPDGroup.DoPrototype.toString(),
 			NPDGroup.StartProduction.toString(), NPDGroup.ValidateFaisability.toString(),
 			NPDGroup.FaisabilityAssignersGroup.toString(),SystemGroup.Quality.toString() };
+	
+	private static final QName ASSOC_FEASIBILITY_ASSIGNEES = QName.createQName(NPDModel.NPD_URI, "feasibilityAssignees");
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(NpdWorkflowTest.class);
@@ -233,9 +235,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		}
 
 		if (!authenticationDAO.userExists(USER_ONE)) {
-			createUser(USER_ONE);
-			authorityService
-					.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.MarketingBrief.toString(), USER_ONE);
+			createUser(USER_ONE);			
 			authorityService
 					.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.NeedDefinition.toString(), USER_ONE);
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.StartProduction.toString(),
@@ -847,6 +847,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
 
 		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
+		boolean taskFound = false;
 		
 		for (WorkflowTask task : workflowTasks) {
 			if ("npdwf:feasibility-analysis".equals(task.getName())) {
@@ -854,13 +855,12 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 //				assertTrue(contents.size()==1);
 //				assertEquals( "Test NPD Product", nodeService.getProperty(contents.get(0),ContentModel.PROP_NAME));
 				
-				logger.debug("End task"+task.getName());
-				
-				workflowService.endTask(task.getId(),null );
+				logger.debug("End task"+task.getName());			
+				workflowService.endTask(task.getId(), null);
+				taskFound = true;
 			}
-
 		}
-
+		assertTrue(taskFound);
 	}
 
 	private void doFeasibilityAssigment(String workflowInstanceId) {
@@ -875,14 +875,14 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 		List<NodeRef> assignees = new ArrayList<NodeRef>();
 		assignees.add(personService.getPerson(USER_TWO));
 		java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-		assocs.put(WorkflowModel.ASSOC_ASSIGNEES, assignees);
+		assocs.put(ASSOC_FEASIBILITY_ASSIGNEES, assignees);
 
 		for (WorkflowTask task : workflowTasks) {
 			if ("npdwf:feasibility-analysis-assignement".equals(task.getName())) {
 				logger.info("Assign feasibity " + task.getName());
 				workflowService.updateTask(task.getId(), props, assocs, new HashMap<QName, List<NodeRef>>());
 				logger.debug("End task"+task.getName());
-				workflowService.endTask(task.getId(),null );
+				workflowService.endTask(task.getId(), "assign-feasibility-analysis");
 			}
 
 		}

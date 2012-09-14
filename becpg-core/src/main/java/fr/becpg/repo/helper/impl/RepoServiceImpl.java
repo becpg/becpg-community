@@ -144,32 +144,7 @@ public class RepoServiceImpl implements RepoService {
 		}
 
 		// Check there is not a node with the same name, then rename node
-		String name = (String) nodeService.getProperty(nodeRefToMove, ContentModel.PROP_NAME);
-		List<FileInfo> fileInfos = fileFolderService.list(destionationNodeRef);
-		if (fileInfos.size() > 0) {
-			boolean fileAlreadyExists = false;
-			int count = 0;
-			for (FileInfo fileInfo : fileInfos) {
-				if (fileInfo.getName().toLowerCase().equals(name.toLowerCase())) {
-					fileAlreadyExists = true;
-				}
-			}
-
-			while (fileAlreadyExists) {
-				count++;
-				String nameWithCounter = String.format("%s (%d)", name, count);
-				fileAlreadyExists = false;
-				for (FileInfo fileInfo : fileInfos) {
-					if (fileInfo.getName().toLowerCase().equals(nameWithCounter.toLowerCase())) {
-						fileAlreadyExists = true;
-					}
-				}
-			}
-
-			if (count > 0) {
-				name = String.format("%s (%d)", name, count);
-			}
-		}
+		String name = getAvailableName(destionationNodeRef, (String) nodeService.getProperty(nodeRefToMove, ContentModel.PROP_NAME));		
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(String.format("Move node '%s' in folder '%s'", name, destionationNodeRef));
@@ -180,5 +155,27 @@ public class RepoServiceImpl implements RepoService {
 		} catch (Exception e) {
 			logger.error("classifyProduct : Failed to move product", e);
 		}
+	}
+
+	@Override
+	public String getAvailableName(NodeRef folderNodeRef, String name) {
+		
+		List<FileInfo> fileInfos = fileFolderService.list(folderNodeRef);
+		if (fileInfos.size() > 0) {
+			int count = 0;
+			NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, name);
+
+			while (nodeRef!=null) {
+				count++;				
+				String nameWithCounter = String.format("%s (%d)", name, count);
+				nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, nameWithCounter);
+			}
+			
+			if (count > 0) {
+				name = String.format("%s (%d)", name, count);
+			}
+		}
+		
+		return name;
 	}
 }

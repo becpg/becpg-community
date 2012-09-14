@@ -419,7 +419,7 @@
 					<show id="npdwf:volumeForecast" />
 					
 					<show id="packageItems" />				
-					<show id="bpm:assignees" />
+					<show id="npdwf:feasibilityAssignees" />
 					<show id="bpm:comment" />
 					<show id="transitions" />
 				</field-visibility>
@@ -465,7 +465,7 @@
 					<field id="packageItems" set="items" label-id="becpg.forms.set.product.label" />
 					
 					<set id="info" appearance="" />
-					<field id="bpm:assignees"  set="info"  label-id="becpg.forms.set.reasign.label" />
+					<field id="npdwf:feasibilityAssignees"  set="info"  label-id="becpg.forms.set.reasign.label" />
 					<field id="bpm:comment" set="info"  label-id="workflow.field.comment">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
