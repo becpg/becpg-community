@@ -1,0 +1,1080 @@
+STOP_ON_FIRST_ERROR;false;;;;;;
+PATH;/Temp/CIQUAL;;;;;;
+TYPE;bcpg:rawMaterial;;;;;;
+MAPPING;NutDatabaseFrench;;;;;;
+COLUMNS;bcpg:code;cm:name;bcpg:legalName;bcpg:legalName_en;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:suppliers
+VALUES;CIQUAL1000;Pastis, CIQUAL;Pastis;Anis spirit;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1001;Eau de vie, CIQUAL;Eau de vie;Brandy;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1002;Gin, CIQUAL;Gin;Gin;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1003;Liqueur, CIQUAL;Liqueur;Liqueur;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1004;Rhum, CIQUAL;Rhum;Rum;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1005;Whisky, CIQUAL;Whisky;Whisky;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1006;Vin doux, CIQUAL;Vin doux;Port or Sherry;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1007;Apéritif à  base de vin ou vermouth, CIQUAL;Apéritif à  base de vin ou vermouth;Wine-based aperitif;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1008;Vodka, CIQUAL;Vodka;Vodka;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1009;Apéritif à  la gentiane, CIQUAL;Apéritif à  la gentiane;Gentian bitters;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1010;Pastis, prêt à  boire (1+ 5), CIQUAL;Pastis, prêt à  boire (1+ 5);Anis spirit, diluted (1+5);CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1011;Apéritif anisé sans alcool, CIQUAL;Apéritif anisé sans alcool;Anis spirit, alcohol free;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1017;Sangria, CIQUAL;Sangria;Sangria;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1018;Kir (au vin blanc), CIQUAL;Kir (au vin blanc);Cocktail of white wine with black current liqueur;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1019;Kir royal (au champagne), CIQUAL;Kir royal (au champagne);Cocktail of champagne with black current liqueur;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL1021;Crème de cassis, CIQUAL;Crème de cassis;Black current liqueur;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL2000;Ananas, jus à  base de concentré, pasteurisé, CIQUAL;Ananas, jus à  base de concentré, pasteurisé;Pineapple juice, reconstituted, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2002;Jus multifruit, pur jus, multivitaminé, pasteurisé, CIQUAL;Jus multifruit, pur jus, multivitaminé, pasteurisé;Fruit juice, mixed, enriched, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2004;Jus de fruits (aliment moyen), CIQUAL;Jus de fruits (aliment moyen);Fruit juice (average);CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2006;Carotte, pur jus, pasteurisé, CIQUAL;Carotte, pur jus, pasteurisé;Carrot juice, canned;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2007;Citron, jus pressé maison, CIQUAL;Citron, jus pressé maison;Lemon juice, raw, unsweetened;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2008;Cocktail sans alcool (à  base de jus de fruits et de sirop), CIQUAL;Cocktail sans alcool (à  base de jus de fruits et de sirop);Cocktail, alcohol-free;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL2012;Orange, jus à  base de concentré, pasteurisé, CIQUAL;Orange, jus à  base de concentré, pasteurisé;Orange juice, reconstituted, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2013;Orange, jus pressé maison, CIQUAL;Orange, jus pressé maison;Orange juice, raw, unsweetened;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2014;Pomme, jus à  base de concentré, pasteurisé, CIQUAL;Pomme, jus à  base de concentré, pasteurisé;Apple juice, reconstituted, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2015;Pamplemousse (pomélo), jus à  base de concentré, pasteurisé, CIQUAL;Pamplemousse (pomélo), jus à  base de concentré, pasteurisé;Grapefruit juice, reconstituted, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2016;Raisin, pur jus, pasteurisé, CIQUAL;Raisin, pur jus, pasteurisé;Grape juice, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2021;Tomate, pur jus, pasteurisé, CIQUAL;Tomate, pur jus, pasteurisé;Tomato juice, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2023;Mangue, pur jus, frais, CIQUAL;Mangue, pur jus, frais;Mango juice, raw;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2025;Pamplemousse (pomélo), pur jus, frais, CIQUAL;Pamplemousse (pomélo), pur jus, frais;Grapefruit juice, raw, unsweetened;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2027;Pamplemousse (pomélo), pur jus, pasteurisé, CIQUAL;Pamplemousse (pomélo), pur jus, pasteurisé;Grapefruit juice, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2031;Citron vert, pur jus, pasteurisé, CIQUAL;Citron vert, pur jus, pasteurisé;Lime juice, pasteurized, unsweetened;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2034;Clémentine/mandarine, pur jus, pasteurisé, CIQUAL;Clémentine/mandarine, pur jus, pasteurisé;Mandarin orange juice, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2035;Jus multifruit, pur jus, pasteurisé, CIQUAL;Jus multifruit, pur jus, pasteurisé;Fruit juice, mixed, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2043;Abricot, nectar, pasteurisé, CIQUAL;Abricot, nectar, pasteurisé;Apricot nectar, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2054;Poire, nectar, pasteurisé, CIQUAL;Poire, nectar, pasteurisé;Pear nectar, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2060;Nectar multifruit multivitaminé, pasteurisé, CIQUAL;Nectar multifruit multivitaminé, pasteurisé;Fruit nectar, enriched, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2061;Nectar multifruit, pasteurisé, CIQUAL;Nectar multifruit, pasteurisé;Fruit nectar, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2069;Jus Multifruits, à  base de concentré, pasteurisé, CIQUAL;Jus Multifruits, à  base de concentré, pasteurisé;Fruit nectar, reconstituted, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2070;Orange, pur jus pressé, pasteurisé, CIQUAL;Orange, pur jus pressé, pasteurisé;Orange juice, pure, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2073;Ananas, pur jus, pasteurisé, CIQUAL;Ananas, pur jus, pasteurisé;Pineapple juice, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2074;Pomme, pur jus, pasteurisé, CIQUAL;Pomme, pur jus, pasteurisé;Apple juice, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2075;Légumes, jus (aliment moyen), CIQUAL;Légumes, jus (aliment moyen);Vegetable juice (average);CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2365;Fruit de la passion ou maracudja, nectar, pasteurisé, CIQUAL;Fruit de la passion ou maracudja, nectar, pasteurisé;Passion fruit nectar, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2370;Mangue, nectar, pasteurisé, CIQUAL;Mangue, nectar, pasteurisé;Mango nectar, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2371;Pêche, nectar, pasteurisé, CIQUAL;Pêche, nectar, pasteurisé;Peach nectar, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL2375;Orange, nectar, pasteurisé, CIQUAL;Orange, nectar, pasteurisé;Orange nectar, pasteurized;CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL4002;Pomme de terre, pulpe, cuite au four, CIQUAL;Pomme de terre, pulpe, cuite au four;Potato, baked;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4003;Pomme de terre, cuite à  l'eau, CIQUAL;Pomme de terre, cuite à  l'eau;Potato, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4004;Pomme de terre, chips salées, CIQUAL;Pomme de terre, chips salées;Potato crisp (US=chip), salted;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4005;Pomme de terre frite ou Frite, cuite, non salée, CIQUAL;Pomme de terre frite ou Frite, cuite, non salée;Potato chip (french fry), no salt;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4006;Pomme de terre avec peau, cuite à  la vapeur, CIQUAL;Pomme de terre avec peau, cuite à  la vapeur;Potato, with skin, steamed;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4009;Pomme de terre frite ou Frites, surgelées, crues, CIQUAL;Pomme de terre frite ou Frites, surgelées, crues;Potato chip (french fry), frozen, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4010;Pomme de terre frite ou Frite, surgelée, cuite, non salée, CIQUAL;Pomme de terre frite ou Frite, surgelée, cuite, non salée;Potato chip (french fry), frozen, cooked, not salted;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4013;Pomme de terre, noisette, précuite, surgelée, CIQUAL;Pomme de terre, noisette, précuite, surgelée;Potato ball, precooked, frozen;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4016;Pomme de terre, flocons déshydratés au lait, CIQUAL;Pomme de terre, flocons déshydratés au lait;Potato flakes with milk, dry;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4018;Pomme de terre, purée, avec lait et beurre, non salée, CIQUAL;Pomme de terre, purée, avec lait et beurre, non salée;Mashed potatoes, prepared with milk and butter, not salted;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4019;Pomme de terre, purée, à  base de flocons, reconstituée avec lait demi-écrémé et eau, non salée, CIQUAL;Pomme de terre, purée, à  base de flocons, reconstituée avec lait demi-écrémé et eau, non salée;Mashed potatoes, prepared from flakes, with milk and water, not salted;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4021;Pomme de terre dauphine, cuite, CIQUAL;Pomme de terre dauphine, cuite;Dauphine potatoes, cooked, with salt;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4027;Pomme de terre, rissolée, surgelée, CIQUAL;Pomme de terre, rissolée, surgelée;Potatoes, pan-fried, frozen, not salted;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL4102;Patate douce, cuite, CIQUAL;Patate douce, cuite;Sweet potato, cooked;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL5000;Bière brune, CIQUAL;Bière brune;Beer, dark;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5001;Bière ''coeur de marché'' (4-5° alcool), CIQUAL;Bière ''coeur de marché'' (4-5° alcool);Beer, regular (4-5° alcohol);CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5002;Bière forte (>8° acool), CIQUAL;Bière forte (>8° acool);Beer, strong  (>8° alcohol);CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5003;Cidre (aliment moyen), CIQUAL;Cidre (aliment moyen);Cider (average);CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5004;Panaché (bière + limonade), CIQUAL;Panaché (bière + limonade);Shandy (beer + lemonaide);CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5005;Panaché préemballé (<1° alc), CIQUAL;Panaché préemballé (<1° alc);Shandy, commercial, low alcohol;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5006;Cidre brut, CIQUAL;Cidre brut;Cider, dry;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5007;Cidre doux, CIQUAL;Cidre doux;Cider, sweet;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5008;Bière faiblement alcoolisée (3° alcool), CIQUAL;Bière faiblement alcoolisée (3° alcool);Beer, light (3° alcohol);CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5010;Bière ''spéciale'' (5-6° alcool), CIQUAL;Bière ''spéciale'' (5-6° alcool);Beer, special (5-6° alcohol);CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5011;Bière ''de spécialités'' ou d'abbaye, régionales ou d'une brasserie (degré d'alcool variable), CIQUAL;Bière ''de spécialités'' ou d'abbaye, régionales ou d'une brasserie (degré d'alcool variable);Beer, regional breweries;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5020;Cidre traditionnel, CIQUAL;Cidre traditionnel;Cider, traditionnal;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5030;Bière sans alcool (<1,2° alcool), CIQUAL;Bière sans alcool (<1,2° alcool);Beer, alcohol-free;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5100;Pétillant de fruits, CIQUAL;Pétillant de fruits;Sparkling fruit wine;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5200;Vin blanc 11°, CIQUAL;Vin blanc 11°;Wine, white 11°;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5201;Vin blanc mousseux, CIQUAL;Vin blanc mousseux;Wine, white sparkling;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5202;Vin rouge  9°, CIQUAL;Vin rouge  9°;Wine, red  9°;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5203;Vin rouge 10°, CIQUAL;Vin rouge 10°;Wine, red 10°;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5204;Vin rouge 11°, CIQUAL;Vin rouge 11°;Wine, red 11°;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5205;Vin rouge 12°, CIQUAL;Vin rouge 12°;Wine, red 12°;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5206;Vin rosé 11°, CIQUAL;Vin rosé 11°;Wine, rosé 11°;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5207;Champagne, CIQUAL;Champagne;Champagne;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5208;Vin rouge 13°, CIQUAL;Vin rouge 13°;Wine, red 13°;CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL5210;Vin (aliment moyen), CIQUAL;Vin (aliment moyen);Wine (average);CIQUAL;Boissons alcoolisées;Table Ciqual 2008
+VALUES;CIQUAL6100;Boeuf, entrecôte, grillée, CIQUAL;Boeuf, entrecôte, grillée;Beef, rib steak, broiled;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6101;Boeuf, braisé, CIQUAL;Boeuf, braisé;Beef, braised;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6110;Boeuf, faux-filet, grillé, CIQUAL;Boeuf, faux-filet, grillé;Beef, lean steak, grilled;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6121;Boeuf, flanchet, cuit, CIQUAL;Boeuf, flanchet, cuit;Beef flank, broiled;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6200;Boeuf, bifteck, grillé, CIQUAL;Boeuf, bifteck, grillé;Beef, rump steak, broiled;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6210;Boeuf, rosbif, rôti, CIQUAL;Boeuf, rosbif, rôti;Roast beef, cooked;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6220;Boeuf, à  bourguignon, cuit, CIQUAL;Boeuf, à  bourguignon, cuit;Beef, for bourguignon, braised;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6230;Boeuf, à  pot-au-feu, cuit, CIQUAL;Boeuf, à  pot-au-feu, cuit;Beef, stewing steak, cooked;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6250;Steak haché  5% MG, cru, CIQUAL;Steak haché  5% MG, cru;Beef, ground,  5% fat, raw;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6251;Steak haché  5% MG, cuit, CIQUAL;Steak haché  5% MG, cuit;Beef, ground,  5% fat, cooked;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6252;Steak haché 10% MG, cru, CIQUAL;Steak haché 10% MG, cru;Beef, ground, 10% fat, raw;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6253;Steak haché 10% MG, cuit, CIQUAL;Steak haché 10% MG, cuit;Beef, ground, 10% fat, cooked;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6254;Steak haché 15% MG, cru, CIQUAL;Steak haché 15% MG, cru;Beef, ground, 15% fat, raw;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6255;Steak haché 15% MG, cuit, CIQUAL;Steak haché 15% MG, cuit;Beef, ground, 15% fat, cooked;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6256;Steak haché 20% MG, cru, CIQUAL;Steak haché 20% MG, cru;Beef, ground, 20% fat, raw;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6257;Steak haché 20% MG, cuit, CIQUAL;Steak haché 20% MG, cuit;Beef, ground, 20% fat, cooked;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6511;Veau, côte, cuite, CIQUAL;Veau, côte, cuite;Veal chop, cooked;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6520;Veau, escalope, cuite, CIQUAL;Veau, escalope, cuite;Veal cutlet, cooked;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6531;Veau, filet, rôti, CIQUAL;Veau, filet, rôti;Veal fillet, roasted;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6540;Veau, poitrine, crue, CIQUAL;Veau, poitrine, crue;Veal breast, raw;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6550;Veau, rôti, CIQUAL;Veau, rôti;Veal round, roasted;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6560;Veau, épaule, crue, CIQUAL;Veau, épaule, crue;Veal chuck, raw;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6570;Veau, mijoté, CIQUAL;Veau, mijoté;Veal, braised or stewed;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6902;Cheval, viande, rôtie, CIQUAL;Cheval, viande, rôtie;Horse meat, roasted;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL6999;Viande cuite (aliment moyen), CIQUAL;Viande cuite (aliment moyen);Meat, cooked (average);CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL8001;Rillettes pur porc, CIQUAL;Rillettes pur porc;Rillettes, pork, traditional;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8055;Rillettes, CIQUAL;Rillettes;Rillettes;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8081;Rillettes de saumon, CIQUAL;Rillettes de saumon;Rillettes, salmon;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL8082;Rillettes de thon, CIQUAL;Rillettes de thon;Rillettes, tuna;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL8110;Confit de canard, CIQUAL;Confit de canard;Duck confit (conserved in rendered fat);CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8211;Pâté de campagne, CIQUAL;Pâté de campagne;Pâté, country style;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8232;Terrine de canard, CIQUAL;Terrine de canard;Pâté, duck;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8240;Pâté de lapin, CIQUAL;Pâté de lapin;Pâté, rabbit;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8291;Terrine de poisson, CIQUAL;Terrine de poisson;Pâté, fish;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL8292;Pâté à  base de poisson ou de crustacés, CIQUAL;Pâté à  base de poisson ou de crustacés;Pâté, fish or shellfish;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL8293;Tarama préemballé, CIQUAL;Tarama préemballé;Tarama, semi-preserve;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL8295;Mousse de poisson, CIQUAL;Mousse de poisson;Fish mousse;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL8305;Pâté de foie de porc, CIQUAL;Pâté de foie de porc;Pâté, pork liver;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8313;Mousse de foie, CIQUAL;Mousse de foie;Liver mousse;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8316;Pâté de foie de volaille, CIQUAL;Pâté de foie de volaille;Pâté, poultry liver;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8320;Foie gras, appertisé, CIQUAL;Foie gras, appertisé;Foie gras, canned;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8322;Foie gras de canard, entier, appertisé, CIQUAL;Foie gras de canard, entier, appertisé;Foie gras, duck, whole, canned;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8350;Galantine, CIQUAL;Galantine;Galantine;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8391;Pâté en croûte, CIQUAL;Pâté en croûte;Pâté in crust;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8395;Jambon en croûte, CIQUAL;Jambon en croûte;Ham in crust, cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8400;Fromage de tête, CIQUAL;Fromage de tête;Head-cheese (Brawn);CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8504;Andouille, CIQUAL;Andouille;Andouille chitterling sausage, cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8550;Andouillette, CIQUAL;Andouillette;Andouillette chitterling sausage, uncooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8551;Andouillette, poêlée, CIQUAL;Andouillette, poêlée;Andouillette chitterling sausage, cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8704;Boudin noir, poêlé, CIQUAL;Boudin noir, poêlé;Black pudding (blood sausage), cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8800;Boudin blanc, poêlé, CIQUAL;Boudin blanc, poêlé;White saussage (white pudding), cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8913;Quenelle de volaille, appertisée, CIQUAL;Quenelle de volaille, appertisée;Quenelle, poultry, canned;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8935;Quenelle au naturel, appertisée, CIQUAL;Quenelle au naturel, appertisée;Quenelle, in bouillon, canned;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL8936;Quenelle en sauce, appertisée, CIQUAL;Quenelle en sauce, appertisée;Quenelle, in sauce, canned;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL9080;Blé dur précuit, grains entiers, sec, CIQUAL;Blé dur précuit, grains entiers, sec;Wheat, whole grain, precooked, dry;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9081;Blé dur précuit, grains entiers, cuit, CIQUAL;Blé dur précuit, grains entiers, cuit;Wheat, whole grain, precooked, boiled;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9082;Blé dur précuit cuisiné, en sachet micro-ondable, CIQUAL;Blé dur précuit cuisiné, en sachet micro-ondable;Wheat, whole grain, ready to microwave;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9100;Riz blanc, sec, CIQUAL;Riz blanc, sec;Rice, polished, dry;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9101;Riz blanc étuvé, sec, CIQUAL;Riz blanc étuvé, sec;Rice, parboiled, dry;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9103;Riz complet, cuit, CIQUAL;Riz complet, cuit;Rice, brown, boiled;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9104;Riz blanc, cuit, CIQUAL;Riz blanc, cuit;Rice, white, boiled;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9105;Riz blanc étuvé, cuit, CIQUAL;Riz blanc étuvé, cuit;Rice, parboiled, boiled;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9615;Polenta ou semoule de maà¯s, cuite, CIQUAL;Polenta ou semoule de maà¯s, cuite;Polenta, cooked;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9660;Germe de blé, CIQUAL;Germe de blé;Wheat germ, raw;CIQUAL;Compléments alimentaires;Table Ciqual 2008
+VALUES;CIQUAL9681;Couscous, graine sèche, CIQUAL;Couscous, graine sèche;Couscous grains, dry;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9683;Couscous, graine cuite, CIQUAL;Couscous, graine cuite;Couscous grains, cooked;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9811;Pâtes alimentaires, cuites, CIQUAL;Pâtes alimentaires, cuites;Pasta, boiled;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9815;Pâtes alimentaires aux oeufs, fraîches, rayon frais, CIQUAL;Pâtes alimentaires aux oeufs, fraîches, rayon frais;Pasta, commercial, refrigerated;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9822;Pâtes alimentaires aux oeufs, cuites, CIQUAL;Pâtes alimentaires aux oeufs, cuites;Pasta, egg, boiled;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL9871;Pâtes alimentaires au blé complet, cuites, CIQUAL;Pâtes alimentaires au blé complet, cuites;Pasta, whole-wheat, cooked;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL10000;Bigorneau, cuit, CIQUAL;Bigorneau, cuit;Periwinkle, boiled;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10002;Calmar ou Calamar, frit, CIQUAL;Calmar ou Calamar, frit;Squid, fried;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10003;Coquille Saint-Jacques, noix et corail, crue, CIQUAL;Coquille Saint-Jacques, noix et corail, crue;Great Atlantic scallop, with coral, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10004;Coquille Saint-Jacques, noix et corail, cuite, CIQUAL;Coquille Saint-Jacques, noix et corail, cuite;Great Atlantic scallop, with coral, steamed;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10005;Crabe, appertisé, CIQUAL;Crabe, appertisé;Crab, canned;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10007;Crevette, cuite, CIQUAL;Crevette, cuite;Shrimp or prawn, boiled;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10008;Escargot, cru, CIQUAL;Escargot, cru;Snail, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10009;Homard, cuit à  l'eau, CIQUAL;Homard, cuit à  l'eau;Lobster, boiled;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10012;Langoustine, panée, frite, CIQUAL;Langoustine, panée, frite;Scampi, fried;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10013;Moule, cuite à  l'eau, CIQUAL;Moule, cuite à  l'eau;Mussel, boiled;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10016;Seiche, crue, CIQUAL;Seiche, crue;Cuttlefish, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10020;Bulot ou Buccin, cuit, CIQUAL;Bulot ou Buccin, cuit;Whelk, cooked, moist heat;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10022;Langouste, cuite à  l'eau, CIQUAL;Langouste, cuite à  l'eau;Spiny lobster, cooked, moist heat;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10025;Crabe ou Tourteau, cuit à  l'eau, CIQUAL;Crabe ou Tourteau, cuit à  l'eau;Crab, boiled;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10027;Clam, Praire ou Palourde, cuit à  l'eau, CIQUAL;Clam, Praire ou Palourde, cuit à  l'eau;Clam, cooked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10030;Écrevisse, crue, CIQUAL;Écrevisse, crue;Crayfish, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10035;Huître creuse, crue, CIQUAL;Huître creuse, crue;Pacific oyster, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL10043;Fruit de mer (aliment moyen), CIQUAL;Fruit de mer (aliment moyen);Crustacean or mollusk (average);CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL11000;Ail frais, CIQUAL;Ail frais;Garlic, raw;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11001;Bouillon de boeuf, déshydraté, CIQUAL;Bouillon de boeuf, déshydraté;Broth or bouillon, beef, dehydrated;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11002;Cerfeuil, frais, CIQUAL;Cerfeuil, frais;Chervil, raw;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11003;Ciboule ou Ciboulette, fraîche, CIQUAL;Ciboule ou Ciboulette, fraîche;Chive or Spring onion, raw;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11004;Cornichon, au vinaigre, CIQUAL;Cornichon, au vinaigre;Gherkin pickle;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11005;Curry, en poudre, CIQUAL;Curry, en poudre;Curry powder;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11006;Gingembre, moulu, CIQUAL;Gingembre, moulu;Ginger, ground;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11007;Gélatine, CIQUAL;Gélatine;Gelatin, dry;CIQUAL;Pâtisseries et biscuits;Table Ciqual 2008
+VALUES;CIQUAL11008;Ketchup, CIQUAL;Ketchup;Ketchup;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11009;Levure alimentaire, CIQUAL;Levure alimentaire;Nutritional yeast;CIQUAL;Compléments alimentaires;Table Ciqual 2008
+VALUES;CIQUAL11012;Mayonnaise allégée en matière grasse, CIQUAL;Mayonnaise allégée en matière grasse;Mayonnaise, low fat;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11013;Moutarde (sauce condimentaire), CIQUAL;Moutarde (sauce condimentaire);Mustard, prepared;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11014;Persil frais, CIQUAL;Persil frais;Parsley, raw;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11015;Poivre noir, moulu, CIQUAL;Poivre noir, moulu;Pepper, black, ground;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11016;Raifort, cru, CIQUAL;Raifort, cru;Horseradish, raw;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11017;Sel blanc alimentaire, non iodé, non fluoré (marin, ignigène ou gemme), CIQUAL;Sel blanc alimentaire, non iodé, non fluoré (marin, ignigène ou gemme);Salt, white, for human consumption, no enrichment (sea, igneous or rock);CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11018;Vinaigre, CIQUAL;Vinaigre;Vinegar;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11025;Cannelle, CIQUAL;Cannelle;Cinnamon;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11026;Coriandre, graine, CIQUAL;Coriandre, graine;Coriander seed;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11027;Menthe, fraîche, CIQUAL;Menthe, fraîche;Mint, fresh;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11031;Mayonnaise à  l'huile de tournesol, CIQUAL;Mayonnaise à  l'huile de tournesol;Mayonnaise, sunflowerseed oil;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11033;Basilic, frais, CIQUAL;Basilic, frais;Basil, fresh;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11038;Thym, sec, CIQUAL;Thym, sec;Thyme, dried;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11040;Câpres, CIQUAL;Câpres;Capers, pickled;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11042;Cumin, graine, CIQUAL;Cumin, graine;Cumin seed;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11043;Tapenade d'olives, CIQUAL;Tapenade d'olives;Olive paste;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11054;Mayonnaise, CIQUAL;Mayonnaise;Mayonnaise;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11058;Sel blanc alimentaire, iodé, non fluoré (marin, ignigène ou gemme), CIQUAL;Sel blanc alimentaire, iodé, non fluoré (marin, ignigène ou gemme);Salt, white, for human consumption, iodine added, no other enrichment (sea, igneous or rock);CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11080;Herbes aromatiques fraîches (aliment moyen), CIQUAL;Herbes aromatiques fraîches (aliment moyen);Herbs, fresh (average);CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11081;Epice (aliment moyen), CIQUAL;Epice (aliment moyen);Spice (average);CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11082;Fleur de sel, non iodée, non fluorée, CIQUAL;Fleur de sel, non iodée, non fluorée;Fleur de sel, no enrichment;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11083;Sel marin gris, non iodé, non fluoré, CIQUAL;Sel marin gris, non iodé, non fluoré;Salt, sea, grey, no enrichment;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11100;Sauce barbecue, CIQUAL;Sauce barbecue;Sauce, barbecue;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11102;Sauce béarnaise, CIQUAL;Sauce béarnaise;Sauce, bearnaise;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11103;Sauce béarnaise, allégée, CIQUAL;Sauce béarnaise, allégée;Sauce, bearnaise, low fat;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11104;Sauce de soja, CIQUAL;Sauce de soja;Soy sauce;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11105;Sauce hollandaise, CIQUAL;Sauce hollandaise;Sauce, hollandaise;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11106;Sauce Mornay, CIQUAL;Sauce Mornay;Sauce, mornay;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11107;Sauce tomate, sans viande, CIQUAL;Sauce tomate, sans viande;Tomato sauce, without meat;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11108;Sauce vinaigrette à  l'huile d'olive, CIQUAL;Sauce vinaigrette à  l'huile d'olive;Salad dressing, olive oil & vinegar;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11109;Sauce vinaigrette, allégée, CIQUAL;Sauce vinaigrette, allégée;Salad dressing, oil & vinegar, low fat;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11110;Sauce vinaigrette, CIQUAL;Sauce vinaigrette;Salad dressing, oil & vinegar;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11112;Harissa (sauce condimentaire), CIQUAL;Harissa (sauce condimentaire);Harissa, prepared;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11113;Sauce béchamel, en brique, CIQUAL;Sauce béchamel, en brique;Sauce, bechamel, commercial;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11114;Sauce tomate, à  la viande, CIQUAL;Sauce tomate, à  la viande;Tomato sauce, with meat;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11132;Sauce au curry, CIQUAL;Sauce au curry;Sauce, curry;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11157;Sauce moutarde, CIQUAL;Sauce moutarde;Sauce, mustard;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11158;Sauce au beurre, CIQUAL;Sauce au beurre;Sauce, butter;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11159;Sauce à  la crème, CIQUAL;Sauce à  la crème;Sauce, cream;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11160;Sauce aux champignons, CIQUAL;Sauce aux champignons;Sauce, mushroom;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11161;Sauce à  la crème aux épices, CIQUAL;Sauce à  la crème aux épices;Sauce, cream, with spices;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11162;Sauce à  la crème aux herbes, CIQUAL;Sauce à  la crème aux herbes;Sauce, cream, with herbs;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11163;Sauce aigre douce, CIQUAL;Sauce aigre douce;Sauce, sweet and sour;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11164;Sauce au vin rouge, CIQUAL;Sauce au vin rouge;Sauce, wine;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11165;Sauce au fromage, CIQUAL;Sauce au fromage;Sauce, cheese;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11166;Sauce au yaourt, CIQUAL;Sauce au yaourt;Sauce, yoghurt;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11179;Sauce pesto, CIQUAL;Sauce pesto;Sauce, pesto;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL11184;Sauce (aliment moyen), CIQUAL;Sauce (aliment moyen);Sauce (average);CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL12001;Camembert 45% MG/MS, CIQUAL;Camembert 45% MG/MS;Camembert 45% fidm;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12002;Camembert et apparentés 50% MG/MS, CIQUAL;Camembert et apparentés 50% MG/MS;Camembert and similar cheese 50% fidm;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12006;Camembert au lait cru, CIQUAL;Camembert au lait cru;Camembert from raw milk;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12008;Fromage à  pâte molle double crème, CIQUAL;Fromage à  pâte molle double crème;Camembert-type cheese, 60-75% fidm;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12009;Fromage type camembert 20-30% MG/MS, CIQUAL;Fromage type camembert 20-30% MG/MS;Camembert-type cheese 20-30% fidm;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12010;Coulommiers, CIQUAL;Coulommiers;Coulommiers cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12020;Brie, CIQUAL;Brie;Brie cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12025;Carré de l'Est, CIQUAL;Carré de l'Est;Carré de l'Est cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12028;Chaource, CIQUAL;Chaource;Chaource cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12031;Neufchâtel, CIQUAL;Neufchâtel;Neufchâtel cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12033;Fromage à  pâte molle triple crème, CIQUAL;Fromage à  pâte molle triple crème;Camembert-type cheese, 75% fidm;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12034;Fromage à  pâte molle et croûte lavée (aliment moyen), CIQUAL;Fromage à  pâte molle et croûte lavée (aliment moyen);Soft-ripened cheese, washed rind (average);CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12036;Maroilles, CIQUAL;Maroilles;Maroilles cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12037;Livarot, CIQUAL;Livarot;Livarot cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12039;Munster, CIQUAL;Munster;Munster cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12040;Langres, CIQUAL;Langres;Langres cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12042;Pont l'Évêque, CIQUAL;Pont l'Évêque;Pont l'Evêque cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12045;Reblochon, CIQUAL;Reblochon;Reblochon cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12048;Rouy, CIQUAL;Rouy;Rouy  cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12049;Saint-Marcellin, CIQUAL;Saint-Marcellin;Saint-Marcellin cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12051;Vacherin Mont d'Or, CIQUAL;Vacherin Mont d'Or;Vacherin cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12060;Fromage type Feta, au lait de vache, CIQUAL;Fromage type Feta, au lait de vache;Feta-type cheese from cow milk;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12061;Feta de brebis, CIQUAL;Feta de brebis;Feta from ewe milk;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12100;Fromage à  pâte pressée cuite (aliment moyen), CIQUAL;Fromage à  pâte pressée cuite (aliment moyen);Hard cheese (average);CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12105;Beaufort, CIQUAL;Beaufort;Beaufort cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12110;Comté, CIQUAL;Comté;Comté cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12114;Gruyère, CIQUAL;Gruyère;Gruyere cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12115;Emmental, CIQUAL;Emmental;Emmental cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12116;Emmental allégé, CIQUAL;Emmental allégé;Emmental cheese, low fat;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12120;Parmesan, CIQUAL;Parmesan;Parmesan cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12305;Fromage fondu en portions ou en cubes 25% MG/MS, CIQUAL;Fromage fondu en portions ou en cubes 25% MG/MS;Processed cheese 25% fidm;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12310;Fromage fondu en portions ou en cubes 45-50% MG/MS, CIQUAL;Fromage fondu en portions ou en cubes 45-50% MG/MS;Processed cheese 45% fidm;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12315;Spécialité fromagère non affinée 60-65% MG/MS, CIQUAL;Spécialité fromagère non affinée 60-65% MG/MS;Uncured cheese product 60-65% fidm;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12320;Spécialité fromagère non affinée double crème 70% MG/MS, CIQUAL;Spécialité fromagère non affinée double crème 70% MG/MS;Uncured cheese product 70% fidm;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12325;Cancoillotte (spécialité fromagère fondue), CIQUAL;Cancoillotte (spécialité fromagère fondue);Cancoillotte processed cheese spread;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12340;Spécialité fromagère non affinée, CIQUAL;Spécialité fromagère non affinée;Uncured cheese product;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12341;Spécialité fromagère non affinée allégée, CIQUAL;Spécialité fromagère non affinée allégée;Uncured cheese product, low-fat;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12355;Fromage fondu aux noix, CIQUAL;Fromage fondu aux noix;Processed cheese with walnuts;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12356;Snack pour enfants à  base de fromage fondu et de gressins, CIQUAL;Snack pour enfants à  base de fromage fondu et de gressins;Processed cheese snack with breadsticks, for children;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12500;Roquefort, CIQUAL;Roquefort;Roquefort ewe cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12520;Fromage bleu au lait de vache, CIQUAL;Fromage bleu au lait de vache;Blue cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12521;Fromage bleu d'Auvergne, CIQUAL;Fromage bleu d'Auvergne;Auvergne blue cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12522;Fourme d'Ambert, CIQUAL;Fourme d'Ambert;Fourme d'Ambert cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12524;Gorgonzola, CIQUAL;Gorgonzola;Gorgonzola cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12527;Fromage bleu de Bresse, CIQUAL;Fromage bleu de Bresse;Bresse blue cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12705;Fromage à  pâte ferme 20-30% MG/MS, CIQUAL;Fromage à  pâte ferme 20-30% MG/MS;Semi-hard cheese 20-30% fidm;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12708;Fromage à  pâte ferme 40-50% MG/MS, CIQUAL;Fromage à  pâte ferme 40-50% MG/MS;Semi-hard cheese 40-50% fidm;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12720;Fromage à  pâte ferme, enrobé de cire, CIQUAL;Fromage à  pâte ferme, enrobé de cire;Firm cheese in wax casing;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12723;Cantal, Salers ou Laguiole, CIQUAL;Cantal, Salers ou Laguiole;Cantal, Salers or Laguiole cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12726;Cheddar, CIQUAL;Cheddar;Cheddar cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12729;Edam, CIQUAL;Edam;Edam cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12736;Gouda, CIQUAL;Gouda;Gouda cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12740;Mimolette, CIQUAL;Mimolette;Mimolette cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12741;Fromage à  pâte ferme type Maasdam, CIQUAL;Fromage à  pâte ferme type Maasdam;Maasdam cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12743;Morbier, CIQUAL;Morbier;Morbier cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12746;Fromage des Pyrénées au lait de vache, CIQUAL;Fromage des Pyrénées au lait de vache;Pyrénées cheese from cow's milk;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12747;Fromage des Pyrénées au lait de brebis, CIQUAL;Fromage des Pyrénées au lait de brebis;Pyrenees cheese from ewe's milk;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12749;Raclette, CIQUAL;Raclette;Raclette cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12752;Saint-Nectaire, CIQUAL;Saint-Nectaire;Saint-Nectaire cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12754;Port-Salut, CIQUAL;Port-Salut;Port-Salut cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12755;Saint-Paulin, CIQUAL;Saint-Paulin;Saint-Paulin cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12758;Tomme, CIQUAL;Tomme;Tomme cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12759;Tomme de montagne ou Tomme de Savoie, CIQUAL;Tomme de montagne ou Tomme de Savoie;Tomme mountain cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12800;Fromage de chèvre frais, au lait pasteurisé (type bûchette fraîche), CIQUAL;Fromage de chèvre frais, au lait pasteurisé (type bûchette fraîche);Goat cheese, fresh, from pasteurised milk;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12801;Fromage de chèvre lactique affiné, au lait cru (type Crottin de Chavignol, Picodon, Rocamadour, Ste-Maure), CIQUAL;Fromage de chèvre lactique affiné, au lait cru (type Crottin de Chavignol, Picodon, Rocamadour, Ste-Maure);Goat cheese from raw milk;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12802;Fromage de chèvre lactique affiné, au lait pasteurisé (type bûchette ou crottin), CIQUAL;Fromage de chèvre lactique affiné, au lait pasteurisé (type bûchette ou crottin);Goat cheese from pasteurised milk;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12803;Fromage de chèvre lactique affiné, au lait pasteurisé ou cru (type Bûchette, Crottin, Picodon, Ste-Maure), CIQUAL;Fromage de chèvre lactique affiné, au lait pasteurisé ou cru (type Bûchette, Crottin, Picodon, Ste-Maure);Goat cheese from raw or pasteurised milk;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12804;Fromage de chèvre frais, au lait cru (type palet ou crottin frais), CIQUAL;Fromage de chèvre frais, au lait cru (type palet ou crottin frais);Goat cheese, fresh, from raw milk;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12805;Fromage de chèvre frais, au lait pasteurisé ou cru (type crotin frais ou bûchette fraîche), CIQUAL;Fromage de chèvre frais, au lait pasteurisé ou cru (type crotin frais ou bûchette fraîche);Goat cheese, fresh, from pasteurised or raw milk;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12812;Fromage de chèvre bûche, au lait pasteurisé ou cru, CIQUAL;Fromage de chèvre bûche, au lait pasteurisé ou cru;Goat cheese, log, from raw or pasteurised milk;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12819;Fromage de chèvre à  tartiner, nature, CIQUAL;Fromage de chèvre à  tartiner, nature;Goat cheese spread, plain;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12820;Fromage de chèvre type ''camembert'' (chèvre-boite ou brique), au lait pasteurisé ou cru, CIQUAL;Fromage de chèvre type ''camembert'' (chèvre-boite ou brique), au lait pasteurisé ou cru;Goat cheese, camembert-type, average;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12824;Fromage de brebis, pâte molle à  croûte fleurie, CIQUAL;Fromage de brebis, pâte molle à  croûte fleurie;Ewe cheese, camembert-type;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12827;Fromage de brebis à  pâte pressée, CIQUAL;Fromage de brebis à  pâte pressée;Ewe cheese, semi-hard;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12830;Chabichou, CIQUAL;Chabichou;Chabichou goat cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12833;Crottin de chèvre, CIQUAL;Crottin de chèvre;Crottin goat cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12842;Sainte-Maure, CIQUAL;Sainte-Maure;Sainte Maure goat cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12845;Selles-sur-Cher, CIQUAL;Selles-sur-Cher;Selles-sur-Cher goat cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12847;Rocamadour, CIQUAL;Rocamadour;Rocamadour goat cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL12999;Fromage (aliment moyen), CIQUAL;Fromage (aliment moyen);Cheese (average);CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL13000;Abricot, frais, CIQUAL;Abricot, frais;Apricot, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13001;Abricot, séché, dénoyauté, CIQUAL;Abricot, séché, dénoyauté;Apricot, dry;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13002;Ananas, frais, pulpe, CIQUAL;Ananas, frais, pulpe;Pineapple, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13003;Ananas au sirop, appertisé, égoutté, CIQUAL;Ananas au sirop, appertisé, égoutté;Pineapple, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13004;Avocat, frais, pulpe, CIQUAL;Avocat, frais, pulpe;Avocado, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13005;Banane, fraîche, pulpe, CIQUAL;Banane, fraîche, pulpe;Banana, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13006;Banane, mi-séchée, CIQUAL;Banane, mi-séchée;Banana, semi dry;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13007;Cassis, frais, CIQUAL;Cassis, frais;Black currant, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13008;Cerise, fraîche, CIQUAL;Cerise, fraîche;Cherry, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13009;Citron, frais, pulpe, CIQUAL;Citron, frais, pulpe;Lemon, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13010;Coing, frais, CIQUAL;Coing, frais;Quince, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13011;Datte, séchée, pulpe et peau, CIQUAL;Datte, séchée, pulpe et peau;Date, pulp and skin, dried;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13012;Figue, fraîche, CIQUAL;Figue, fraîche;Fig, fresh;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13013;Figue, séchée, CIQUAL;Figue, séchée;Fig, dried;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13014;Fraise, fraîche, CIQUAL;Fraise, fraîche;Strawberry, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13015;Framboise, fraîche, CIQUAL;Framboise, fraîche;Raspberry, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13016;Fruit de la passion, frais, pulpe et pépins, CIQUAL;Fruit de la passion, frais, pulpe et pépins;Passion fruit, pulp and pips, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13017;Goyave, appertisée, égoutté, CIQUAL;Goyave, appertisée, égoutté;Guava, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13018;Grenade, fraîche, pulpe et pépins, CIQUAL;Grenade, fraîche, pulpe et pépins;Pomegranate, pulp and pips, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13019;Groseille, fraîche, CIQUAL;Groseille, fraîche;Red currant, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13020;Groseille à  maquereau, fraîche, CIQUAL;Groseille à  maquereau, fraîche;Gooseberry, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13021;Kiwi, frais, pulpe et graines, CIQUAL;Kiwi, frais, pulpe et graines;Kiwi fruit, pulp and seeds, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13022;Litchi, dénoyauté, appertisé, égoutté, CIQUAL;Litchi, dénoyauté, appertisé, égoutté;Lychee, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13023;Litchi, frais, pulpe, CIQUAL;Litchi, frais, pulpe;Lychee, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13024;Clémentine ou Mandarine, fraîche, pulpe, CIQUAL;Clémentine ou Mandarine, fraîche, pulpe;Clementine or Mandarin orange, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13025;Mangue, fraîche, pulpe, CIQUAL;Mangue, fraîche, pulpe;Mango, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13026;Melon, frais, pulpe, CIQUAL;Melon, frais, pulpe;Melon, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13027;Mirabelle, fraîche, CIQUAL;Mirabelle, fraîche;Mirabelle plum, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13028;Myrtille, fraîche, CIQUAL;Myrtille, fraîche;Blueberry, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13029;Mûre (de ronce), fraîche, CIQUAL;Mûre (de ronce), fraîche;Blackberry, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13030;Nectarine, fraîche, pulpe et peau, CIQUAL;Nectarine, fraîche, pulpe et peau;Nectarine, flesh and skin, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13032;Olive noire, entière ou dénoyautée, en saumure, CIQUAL;Olive noire, entière ou dénoyautée, en saumure;Olive, ripe, in brine;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL13033;Olive verte, entière ou dénoyautée, en saumure, CIQUAL;Olive verte, entière ou dénoyautée, en saumure;Olive, green, in brine;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL13034;Orange, fraîche, pulpe, CIQUAL;Orange, fraîche, pulpe;Orange, sweet, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13035;Papaye, fraîche, pulpe, CIQUAL;Papaye, fraîche, pulpe;Papaya, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13036;Pastèque, fraîche, pulpe, CIQUAL;Pastèque, fraîche, pulpe;Watermelon, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13037;Poire, fraîche, pulpe et peau, CIQUAL;Poire, fraîche, pulpe et peau;Pear, flesh and skin, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13038;Compote de pomme, appertisée, CIQUAL;Compote de pomme, appertisée;Applesauce, canned, sweetened;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13039;Pomme, fraîche, pulpe et peau, CIQUAL;Pomme, fraîche, pulpe et peau;Apple, with skin, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13040;Pomélo (dit Pamplemousse), frais, pulpe, CIQUAL;Pomélo (dit Pamplemousse), frais, pulpe;Grapefruit, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13041;Prune Reine-Claude, fraîche, CIQUAL;Prune Reine-Claude, fraîche;Greengage plum, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13042;Pruneau, CIQUAL;Pruneau;Prune;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13043;Pêche, fraîche, pulpe et peau, CIQUAL;Pêche, fraîche, pulpe et peau;Peach, flesh and skin, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13044;Raisin blanc, frais, CIQUAL;Raisin blanc, frais;Grape, white, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13045;Raisin noir, frais, CIQUAL;Raisin noir, frais;Grape, red, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13046;Raisin sec, CIQUAL;Raisin sec;Raisin;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13048;Rhubarbe, cuite, sucrée, CIQUAL;Rhubarbe, cuite, sucrée;Rhubarb, stewed, sweetened;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13049;Macédoine de fruits au sirop, appertisée, égouttée, CIQUAL;Macédoine de fruits au sirop, appertisée, égouttée;Fruit cocktail, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13051;Mélange apéritif de fruits exotiques séchés, CIQUAL;Mélange apéritif de fruits exotiques séchés;Tropical fruit mix, dried, sweetened, for snack;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13054;Carambole, frais, pulpe, CIQUAL;Carambole, frais, pulpe;Carambola, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13063;Figue de Barbarie, pulpe et graines, CIQUAL;Figue de Barbarie, pulpe et graines;Prickly pear, pulp and seeds, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13066;Kaki, frais, pulpe, CIQUAL;Kaki, frais, pulpe;Japanese persimmon, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13067;Citron vert ou Lime, frais, pulpe, CIQUAL;Citron vert ou Lime, frais, pulpe;Lime, pulp;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13068;Cerise au sirop, appertisée, égouttée, CIQUAL;Cerise au sirop, appertisée, égouttée;Cherry, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13071;Mûre noire (du mûrier), fraîche, CIQUAL;Mûre noire (du mûrier), fraîche;Black mulberry, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13081;Datte Deglet-nour, séchée, pulpe et peau, CIQUAL;Datte Deglet-nour, séchée, pulpe et peau;Date Deglet-nour, pulp and skin;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13084;Pêche, fraîche, pulpe, CIQUAL;Pêche, fraîche, pulpe;Peach, peeled, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13095;Pomélo (dit Pamplemousse), au sirop, CIQUAL;Pomélo (dit Pamplemousse), au sirop;Grapefruit, canned, sweetened;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13096;Abricot au sirop léger, appertisé, égoutté, CIQUAL;Abricot au sirop léger, appertisé, égoutté;Apricot, canned in light syrup;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13097;Pêche, au sirop, appertisée, égouttée, CIQUAL;Pêche, au sirop, appertisée, égouttée;Peach, canned, sweetened;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13098;Poire au sirop, appertisée, égouttée, CIQUAL;Poire au sirop, appertisée, égouttée;Pear, canned, sweetened;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13108;Compote de fruits divers, appertisée, CIQUAL;Compote de fruits divers, appertisée;Stewed fruits, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13109;Compote de fruits divers, allégée, appertisée, CIQUAL;Compote de fruits divers, allégée, appertisée;Stewed fruits, low calorie, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13125;Citron, zeste, CIQUAL;Citron, zeste;Lemon peel, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13134;Salade de fruits frais, CIQUAL;Salade de fruits frais;Fresh fruit salad;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13564;Nèfle du Japon, fraîche, pulpe, CIQUAL;Nèfle du Japon, fraîche, pulpe;Loquat, pulp, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13997;Fruits rouges, frais (framboises, fraises, groseilles, cassis), CIQUAL;Fruits rouges, frais (framboises, fraises, groseilles, cassis);Berries, fresh (average);CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13998;Coulis de fruits rouges (framboises, fraises, groseilles, cassis), CIQUAL;Coulis de fruits rouges (framboises, fraises, groseilles, cassis);Fruit sauce;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL13999;Fruit (aliment moyen), CIQUAL;Fruit (aliment moyen);Fruit (average);CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL14000;Chevreuil, rôti, CIQUAL;Chevreuil, rôti;Venison, roasted;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL14001;Lièvre, en ragoût, CIQUAL;Lièvre, en ragoût;Hare, stewed;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL14003;Sanglier, rôti, CIQUAL;Sanglier, rôti;Wild boar, roasted;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL15000;Amande, CIQUAL;Amande;Almond;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15001;Cacahuète ou Arachide, CIQUAL;Cacahuète ou Arachide;Peanut, in shell;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15002;Cacahuète, grillée, salée, CIQUAL;Cacahuète, grillée, salée;Peanut, roasted, salted;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15004;Noisette, CIQUAL;Noisette;Hazelnut;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15005;Noix, séchée, cerneaux, CIQUAL;Noix, séchée, cerneaux;Walnut;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15006;Noix de coco, amande mûre, fraîche, CIQUAL;Noix de coco, amande mûre, fraîche;Coconut, mature kernel, fresh;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15007;Noix de coco, amande, sèche, CIQUAL;Noix de coco, amande, sèche;Coconut, kernel, dry;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15008;Noix du Brésil, CIQUAL;Noix du Brésil;Brazil nut;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15009;Pistache, grillée, salée, CIQUAL;Pistache, grillée, salée;Pistachio nut, roasted, salted;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15010;Sésame, graine, CIQUAL;Sésame, graine;Sesame seed;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15011;Tournesol, graine, CIQUAL;Tournesol, graine;Sunflower seed, kernel;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15015;Purée de marrons, appertisée, CIQUAL;Purée de marrons, appertisée;Chestnut puree, canned;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15016;Crème de marrons vanillée, appertisée, CIQUAL;Crème de marrons vanillée, appertisée;Chestnut cream, canned;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15018;Mélange apéritif de graines salées et raisins secs, CIQUAL;Mélange apéritif de graines salées et raisins secs;Nut and raisin mix, snack;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15019;Noix de cajou, salée, CIQUAL;Noix de cajou, salée;Cashew nut, roasted and salted;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15020;Châtaigne, cuite à  l'eau, CIQUAL;Châtaigne, cuite à  l'eau;Chestnut, boiled;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15021;Châtaigne, grillée, CIQUAL;Châtaigne, grillée;Chestnut, roasted;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15025;Pignon de pin, CIQUAL;Pignon de pin;Pine pignolias;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15026;Noix de pécan, CIQUAL;Noix de pécan;Pecan nut;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15027;Noix de macadamia, CIQUAL;Noix de macadamia;Macadamia nut;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15040;Fruits séchés et graines oléagineuses (aliment moyen), CIQUAL;Fruits séchés et graines oléagineuses (aliment moyen);Dried fruit or nuts (average);CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15201;Pâte d'amande, pré-emballée, CIQUAL;Pâte d'amande, pré-emballée;Marzipan;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL15202;Beurre de cacahuète ou Pâte d'arachide, CIQUAL;Beurre de cacahuète ou Pâte d'arachide;Peanut butter;CIQUAL;Graines oléagineuses et châtaignes;Table Ciqual 2008
+VALUES;CIQUAL16080;Corps gras végétal pour friture, en pain, CIQUAL;Corps gras végétal pour friture, en pain;Hydrogenated coconut oil for frying;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16400;Beurre doux, CIQUAL;Beurre doux;Butter, unsalted;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16402;Beurre demi-sel, CIQUAL;Beurre demi-sel;Butter, salted (0,5-3%);CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16412;Beurre allégé (aliment moyen), CIQUAL;Beurre allégé (aliment moyen);Butter spread, low-fat (average);CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16415;Beurre léger, 39-41% MG, CIQUAL;Beurre léger, 39-41% MG;Dairy spread, 39-41% fat;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16416;Beurre léger, 39-41% MG, demi-sel, CIQUAL;Beurre léger, 39-41% MG, demi-sel;Dairy spread, 39-41% fat, salted (0,5-3%);CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16520;Saindoux, CIQUAL;Saindoux;Lard;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16530;Lard gras, cru, CIQUAL;Lard gras, cru;Fat, pork, raw;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16550;Graisse de canard, CIQUAL;Graisse de canard;Fat, duck;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16560;Graisse d'oie, CIQUAL;Graisse d'oie;Fat, goose;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16615;Margarine à  80% MG, en pain, CIQUAL;Margarine à  80% MG, en pain;Margarine 80% fat, hard;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16616;Matière grasse à  70% MG, en pain, CIQUAL;Matière grasse à  70% MG, en pain;Fat spread 70% fat, hard;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16632;Matière grasse à  60%MG, allégée, CIQUAL;Matière grasse à  60%MG, allégée;Fat spread 60% fat;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16655;Margarine à  80% MG, au tournesol, en barquette, CIQUAL;Margarine à  80% MG, au tournesol, en barquette;Margarine 80% fat, soft, sunflowerseed;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16701;Matière grasse composée à  60% MG, allégée, CIQUAL;Matière grasse composée à  60% MG, allégée;Fat spread, blended, 60% fat;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16712;Matière grasse laitière à  25% MG, légère, à  tartiner, CIQUAL;Matière grasse laitière à  25% MG, légère, à  tartiner;Dairy spread 25% fat;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16727;Matière grasse à  55-60% MG, allégée, riche en oméga 3 et 6, CIQUAL;Matière grasse à  55-60% MG, allégée, riche en oméga 3 et 6;Fat spread 55-60% fat, rich in omega 3 & 6 fatty acids;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16728;Matière grasse à  35% MG, légère, enrichie en stérols/stanols, CIQUAL;Matière grasse à  35% MG, légère, enrichie en stérols/stanols;Fat spread 35% fat, fortified with sterols/stanols;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16729;Matière grasse à  38-41% MG, légère, à  tartiner, demi-sel, CIQUAL;Matière grasse à  38-41% MG, légère, à  tartiner, demi-sel;Fat spread 38-41% fat, soft, salted;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL16730;Matière grasse à  38-41% MG, légère, à  tartiner, CIQUAL;Matière grasse à  38-41% MG, légère, à  tartiner;Fat spread 38-41% fat, soft;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17001;Huile végétale (aliment moyen), CIQUAL;Huile végétale (aliment moyen);Oil, vegetable (average);CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17040;Huile d'arachide, CIQUAL;Huile d'arachide;Oil, peanut;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17130;Huile de colza, CIQUAL;Huile de colza;Oil, rapeseed;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17190;Huile de maà¯s, CIQUAL;Huile de maà¯s;Oil, maize (corn);CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17220;Huile de noix, CIQUAL;Huile de noix;Oil, walnut;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17270;Huile d'olive vierge, CIQUAL;Huile d'olive vierge;Oil, olive;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17350;Huile de pépins de raisin, CIQUAL;Huile de pépins de raisin;Oil, grapeseed;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17420;Huile de soja, CIQUAL;Huile de soja;Oil, soya;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17440;Huile de tournesol, CIQUAL;Huile de tournesol;Oil, sunflowerseed;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17610;Huile de poisson, CIQUAL;Huile de poisson;Oil, fish;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17630;Huile de foie de morue, CIQUAL;Huile de foie de morue;Oil, cod liver;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17700;Huile combinée (mélange d'huiles), CIQUAL;Huile combinée (mélange d'huiles);Oil, vegetable, blended, dietetic;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL17999;Huile de paraffine, CIQUAL;Huile de paraffine;Oil, mineral;CIQUAL;Matières grasses;Table Ciqual 2008
+VALUES;CIQUAL18001;Soda sans jus de fruit, ''light'', CIQUAL;Soda sans jus de fruit, ''light'';Carbonated beverage, diet soda;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18002;Boisson cacaotée sucrée, au lait, CIQUAL;Boisson cacaotée sucrée, au lait;Cocoa drink, with milk;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18004;Café noir, non sucré, CIQUAL;Café noir, non sucré;Coffee, black, unsweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18005;Café, poudre soluble, CIQUAL;Café, poudre soluble;Coffee powder, instant;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18008;Eau de source, embouteillée (aliment moyen), CIQUAL;Eau de source, embouteillée (aliment moyen);Water, bottled (average);CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18009;Eau minérale embouteillée, faiblement minéralisée (aliment moyen), CIQUAL;Eau minérale embouteillée, faiblement minéralisée (aliment moyen);Water, bottled, low mineral (average);CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18010;Limonade ou clear lime, sucrée, CIQUAL;Limonade ou clear lime, sucrée;Carbonated beverage, lemon or clear lime, sweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18011;Noix de coco, eau, CIQUAL;Noix de coco, eau;Coconut water (liquid from coconuts);CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL18017;Sirop type menthe ou fraise, CIQUAL;Sirop type menthe ou fraise;Fruit syrup;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18018;Soda au cola, sucré, CIQUAL;Soda au cola, sucré;Carbonated beverage, cola;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18019;Boisson gazeuse aux fruits (de 10 à  50% de jus), sucrée, CIQUAL;Boisson gazeuse aux fruits (de 10 à  50% de jus), sucrée;Carbonated beverage, fruit (10-50% fruit juice), sweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18020;Thé infusé, non sucré, CIQUAL;Thé infusé, non sucré;Tea, unsweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18022;Tisane infusée, non sucré, CIQUAL;Tisane infusée, non sucré;Infusion, unsweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18026;Soda sans jus de fruit, sucré, CIQUAL;Soda sans jus de fruit, sucré;Carbonated beverage, sweetened soda;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18027;Eau minérale (ou de source) aromatisée, arôme autre qu'agrumes, CIQUAL;Eau minérale (ou de source) aromatisée, arôme autre qu'agrumes;Water, bottled, flavoured, other than citrus;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18029;Boisson rafraîchissante sans alcool (aliment moyen), CIQUAL;Boisson rafraîchissante sans alcool (aliment moyen);Non-alcoholic beverage (average);CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18035;Limonade ou clear lime, ''light'', CIQUAL;Limonade ou clear lime, ''light'';Carbonated beverage, lemon or clear lime, artificial sweetener;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18037;Soda au cola, à  teneur réduite en sucre, CIQUAL;Soda au cola, à  teneur réduite en sucre;Carbonated beverage, cola, low sugar;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18041;Noix de coco, ''lait'', CIQUAL;Noix de coco, ''lait'';Coconut milk (liquid expressed from grated meat and water);CIQUAL;Jus et nectars;Table Ciqual 2008
+VALUES;CIQUAL18044;Eau minérale (aliment moyen), CIQUAL;Eau minérale (aliment moyen);Water, mineral, bottled (average);CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18045;Eau minérale plate (aliment moyen), CIQUAL;Eau minérale plate (aliment moyen);Water, mineral, non-carbonated, bottled (average);CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18046;Eau minérale gazeuse (aliment moyen), CIQUAL;Eau minérale gazeuse (aliment moyen);Water, mineral, carbonated, bottled (average);CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18047;Eau minérale (ou de source) aromatisée agrumes, CIQUAL;Eau minérale (ou de source) aromatisée agrumes;Water, bottled, flavoured, citrus;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18049;Boisson gazeuse aux fruits (à  moins de 10% de jus), sucrée, CIQUAL;Boisson gazeuse aux fruits (à  moins de 10% de jus), sucrée;Carbonated beverage, fruit (<10% fruit juice), sweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18050;Boisson gazeuse aux fruits (à  moins de 10% de jus), à  teneur réduite en sucre, CIQUAL;Boisson gazeuse aux fruits (à  moins de 10% de jus), à  teneur réduite en sucre;Carbonated beverage, fruit (<10% fruit juice), reduced sugar;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18058;Sirop, dilué, CIQUAL;Sirop, dilué;Syrup, diluted;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18060;Soda au cola, ''light'', CIQUAL;Soda au cola, ''light'';Carbonated beverage, cola, diet;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18065;Boisson au thé, aromatisée, ''light'', CIQUAL;Boisson au thé, aromatisée, ''light'';Tea flavoured beverage, light;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18066;Eau du robinet, CIQUAL;Eau du robinet;Water, municipal;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18070;Café décaféiné, non sucré, CIQUAL;Café décaféiné, non sucré;Coffee, decaffeinated, unsweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18071;Café expresso, non sucré, CIQUAL;Café expresso, non sucré;Coffee expresso, unsweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18072;Café décaféiné, soluble reconstitué, non sucré, CIQUAL;Café décaféiné, soluble reconstitué, non sucré;Coffee, decaffeinated, instant, unsweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18073;Café soluble reconstitué, non sucré, CIQUAL;Café soluble reconstitué, non sucré;Coffee, instant, reconstituted;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18075;Boisson au thé, aromatisée, sucrée, CIQUAL;Boisson au thé, aromatisée, sucrée;Tea flavoured beverage, sweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18100;Cacao, non sucré, poudre soluble, CIQUAL;Cacao, non sucré, poudre soluble;Cocoa powder, unsweetened;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL18101;Poudre cacaotée sucrée pour boisson (poudre ou granulés), CIQUAL;Poudre cacaotée sucrée pour boisson (poudre ou granulés);Beverage base, chocolat flavoured, sweetened (powder);CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18102;Poudre maltée, cacaotée et sucrée pour boisson, CIQUAL;Poudre maltée, cacaotée et sucrée pour boisson;Beverage base, malted, sweetened (powder);CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18104;Boisson cacaotée sucrée, soluble reconstituée, CIQUAL;Boisson cacaotée sucrée, soluble reconstituée;Chocolate flavoured beverage, sweetened, prepared;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18105;Poudre cacaotée sucrée pour boisson, enrichie, CIQUAL;Poudre cacaotée sucrée pour boisson, enrichie;Chocolate flavored beverage base, fortified;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL18106;Boisson cacaotée sucrée, enrichie en vitamines, soluble reconstituée, CIQUAL;Boisson cacaotée sucrée, enrichie en vitamines, soluble reconstituée;Chocolate flavoured beverage, sweetened, vit. fortif, prepared;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18150;Chicorée et café, poudre soluble, CIQUAL;Chicorée et café, poudre soluble;Coffee with chicory powder, instant;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18151;Café au lait, café crème ou cappuccino, non sucré, CIQUAL;Café au lait, café crème ou cappuccino, non sucré;Coffee with milk or cappuccino, unsweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18152;Chicorée, poudre soluble, CIQUAL;Chicorée, poudre soluble;Chicory powder, instant;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18153;Chicorée et café, soluble reconstitué avec lait demi-écrémé, CIQUAL;Chicorée et café, soluble reconstitué avec lait demi-écrémé;Coffee with chicory, reconstituted;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18220;Citron ou Lime, préparation à  diluer, sans sucre, CIQUAL;Citron ou Lime, préparation à  diluer, sans sucre;Lemon beverage base;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18301;Boisson gazeuse à  l'orange avec pulpe (environ 14% de fruits), sucrée, CIQUAL;Boisson gazeuse à  l'orange avec pulpe (environ 14% de fruits), sucrée;Carbonated beverage, orange with pulp (14% fruit), sweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18304;Boisson plate aux fruits (10 à  50% de jus), à  teneur réduite en sucre, CIQUAL;Boisson plate aux fruits (10 à  50% de jus), à  teneur réduite en sucre;Fruit still drink (10-50% fruit juice), reduced sugar;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18309;Boisson plate tout type de fruits (teneur en jus non spécifiée), sucrée, CIQUAL;Boisson plate tout type de fruits (teneur en jus non spécifiée), sucrée;Fruit juice drink, sweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18311;Boisson plate à  l'orange (teneur en jus non spécifiée), CIQUAL;Boisson plate à  l'orange (teneur en jus non spécifiée);Orange still drink;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18330;Boisson plate aux fruits exotiques (10 à  50% de jus), sucrée, CIQUAL;Boisson plate aux fruits exotiques (10 à  50% de jus), sucrée;Fruit still drink (10-50% juice), tropical fruit, sweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18340;Boisson gazeuse aux fruits (à  moins de 10% de jus), ''light'', CIQUAL;Boisson gazeuse aux fruits (à  moins de 10% de jus), ''light'';Carbonated beverage, fruit (<10% fruit juice), artificial sweetener;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18341;Boisson gazeuse à  la pomme (de 50 à  99% de fruits), sans sucre ajouté, CIQUAL;Boisson gazeuse à  la pomme (de 50 à  99% de fruits), sans sucre ajouté;Carbonated beverage, apple (50-99% juice), no sugar added;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18342;Boisson plate à  l'orange (10 à  50% de jus), sucrée, CIQUAL;Boisson plate à  l'orange (10 à  50% de jus), sucrée;Fruit still drink (10-50% juice), orange, sweetened;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18343;Boisson au jus de fruit et au lait, CIQUAL;Boisson au jus de fruit et au lait;Fruit juice and milk beverage;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18344;Tonic, CIQUAL;Tonic;Carbonated beverage, tonic water;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18350;Boisson diététique pour le sport, CIQUAL;Boisson diététique pour le sport;Sports drink;CIQUAL;Denrées destinées à  une alimentation particulière;Table Ciqual 2008
+VALUES;CIQUAL18351;Boisson énergisante, CIQUAL;Boisson énergisante;Energy drink;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL18900;Tonyu (boisson au soja), nature, CIQUAL;Tonyu (boisson au soja), nature;Soya drink, plain;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL19011;Lait de croissance infantile, CIQUAL;Lait de croissance infantile;Milk, junior, fluid;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19021;Lait en poudre, entier, CIQUAL;Lait en poudre, entier;Milk, whole, dried;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19023;Lait entier, UHT, CIQUAL;Lait entier, UHT;Milk, whole, UHT pasteurized;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19024;Lait entier, pasteurisé, CIQUAL;Lait entier, pasteurisé;Milk, whole, pasteurized;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19026;Lait entier concentré non sucré, CIQUAL;Lait entier concentré non sucré;Milk, whole, evaporated;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19027;Lait entier concentré sucré, CIQUAL;Lait entier concentré sucré;Milk, whole, condensed, sweetened;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19041;Lait demi-écrémé, UHT, CIQUAL;Lait demi-écrémé, UHT;Milk, semi-skimmed, UHT pasteurized;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19042;Lait demi-écrémé, pasteurisé, CIQUAL;Lait demi-écrémé, pasteurisé;Milk, semi-skimmed, pasteurized;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19044;Lait en poudre, demi-écrémé, CIQUAL;Lait en poudre, demi-écrémé;Milk, semi-skimmed, dried;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19045;Lait demi-écrémé à  teneur garantie en vitamines, UHT, CIQUAL;Lait demi-écrémé à  teneur garantie en vitamines, UHT;Milk, semi-skimmed, vitamin fortified, UHT pasteurized;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19046;Lait demi-écrémé à  teneur garantie en protéines et vitamines, enrichi en minéraux, UHT, CIQUAL;Lait demi-écrémé à  teneur garantie en protéines et vitamines, enrichi en minéraux, UHT;Milk, semi-skimmed, enriched proteins + vitamines + minerals, UHT;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19050;Lait écrémé, UHT, CIQUAL;Lait écrémé, UHT;Milk, skimmed, UHT pasteurized;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19051;Lait écrémé, pasteurisé, CIQUAL;Lait écrémé, pasteurisé;Milk, skimmed, pasteurized;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19054;Lait en poudre, écrémé, CIQUAL;Lait en poudre, écrémé;Milk, skimmed, dried;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19055;Lait écrémé à  teneur garantie en vitamines, UHT, CIQUAL;Lait écrémé à  teneur garantie en vitamines, UHT;Milk, skimmed, vitamin fortified, UHT pasteurized;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19110;Lait partiellement écrémé, aromatisé, UHT, CIQUAL;Lait partiellement écrémé, aromatisé, UHT;Milk, semi-skimmed, flavored;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19122;Lait partiellement écrémé, aromatisé au chocolat, UHT, CIQUAL;Lait partiellement écrémé, aromatisé au chocolat, UHT;Milk, semi-skimmed, chocolate flavored;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19127;Lait partiellement écrémé, aromatisé à  la fraise, UHT, CIQUAL;Lait partiellement écrémé, aromatisé à  la fraise, UHT;Milk, semi-skimmed, strawberry flavored;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19200;Lait de chèvre, entier, UHT, CIQUAL;Lait de chèvre, entier, UHT;Goat milk, whole, UHT pasteurized;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19202;Lait de chèvre, entier, cru, CIQUAL;Lait de chèvre, entier, cru;Goat milk, whole, raw;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19250;Lait de brebis, entier, CIQUAL;Lait de brebis, entier;Sheep milk, whole;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19401;Crème de lait >= 30% MG, fluide, rayon frais, CIQUAL;Crème de lait >= 30% MG, fluide, rayon frais;Cream, fluid, 30% fat, pasteurised;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19402;Crème de lait (aliment moyen), CIQUAL;Crème de lait (aliment moyen);Cream (average);CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19410;Crème fraîche >= 30% MG, épaisse, rayon frais, CIQUAL;Crème fraîche >= 30% MG, épaisse, rayon frais;Creme fraiche, 30% fat, pasteurised;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19415;Crème de lait >= 30% MG, fluide, UHT, CIQUAL;Crème de lait >= 30% MG, fluide, UHT;Cream, fluid, 30% fat, UHT pasteurized;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19420;Crème chantilly sous pression, UHT, CIQUAL;Crème chantilly sous pression, UHT;Whipped cream, sweetened, vanilla-flavoured, presure, UHT pasteurized;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19430;Crème de lait légère 15 à  20% MG, fluide, UHT, CIQUAL;Crème de lait légère 15 à  20% MG, fluide, UHT;Cream, fluid, 15-20% fat, UHT pasteurized;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19431;Crème fraîche légère 15-20% MG, épaisse, rayon frais, CIQUAL;Crème fraîche légère 15-20% MG, épaisse, rayon frais;Creme fraiche, 15-20% fat, pasteurised;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19433;Spécialité à  base de crème légère 8% MG, fluide ou épaisse, CIQUAL;Spécialité à  base de crème légère 8% MG, fluide ou épaisse;Cream, ''light'', 8% fat, thick or fluid;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19501;Fromage blanc nature ou aux fruits (aliment moyen), CIQUAL;Fromage blanc nature ou aux fruits (aliment moyen);Quark, plain or fruit (average);CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19502;Fromage blanc, ou spécialité laitière, aromatisé ou aux fruits (aliment moyen), CIQUAL;Fromage blanc, ou spécialité laitière, aromatisé ou aux fruits (aliment moyen);Quark, flavoured or fruit (average);CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19505;Fromage blanc battu 0% MG/MS nature, CIQUAL;Fromage blanc battu 0% MG/MS nature;Quark 0% fidm, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19506;Fromage blanc campagne 0% MG/MS nature, CIQUAL;Fromage blanc campagne 0% MG/MS nature;Cottage cheese 0% fidm;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19510;Fromage blanc battu 20% MG/MS nature, CIQUAL;Fromage blanc battu 20% MG/MS nature;Quark 20% fidm, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19515;Fromage blanc battu 30% MG/MS nature, CIQUAL;Fromage blanc battu 30% MG/MS nature;Quark 30% fidm, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19518;Fromage blanc battu 0% MG/MS aux fruits, allégé en sucre, édulcoré, CIQUAL;Fromage blanc battu 0% MG/MS aux fruits, allégé en sucre, édulcoré;Quark 0% fidm, fruits and aspartame;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19521;Fromage blanc campagne 40% MG/MS nature, CIQUAL;Fromage blanc campagne 40% MG/MS nature;Cottage cheese 40% fidm;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19522;Fromage blanc battu 40% MG/MS nature, CIQUAL;Fromage blanc battu 40% MG/MS nature;Quark 40% fidm, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19524;Spécialité fromagère non affinée à  tartiner 40-60% MG/MS, CIQUAL;Spécialité fromagère non affinée à  tartiner 40-60% MG/MS;Uncured cheese spread 40% fidm, salted;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL19525;Spécialité fromagère non affinée à  tartiner >60% MG/MS nature, CIQUAL;Spécialité fromagère non affinée à  tartiner >60% MG/MS nature;Uncured cheese spread 60% fidm, salted;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL19530;Spécialité fromagère non affinée à  tartiner >60% MG/MS aromatisée, CIQUAL;Spécialité fromagère non affinée à  tartiner >60% MG/MS aromatisée;Uncured cheese spread 70% fidm, with herbs;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL19562;Fromage blanc type petit suisse 20% MG/MS nature, CIQUAL;Fromage blanc type petit suisse 20% MG/MS nature;Petit-Suisse type cheese 20% fidm, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19565;Petit-suisse 40% MG/MS, nature, CIQUAL;Petit-suisse 40% MG/MS, nature;Petit-Suisse 40% fidm, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19566;Fromage blanc type petit suisse 30-40% MG/MS, aux fruits, sucré, CIQUAL;Fromage blanc type petit suisse 30-40% MG/MS, aux fruits, sucré;Petit-Suisse type cheese 30-40% fidm, fruit, children's;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19569;Fromage blanc type petit suisse 20% MG/MS, aux fruits, sucré, CIQUAL;Fromage blanc type petit suisse 20% MG/MS, aux fruits, sucré;Petit-Suisse type cheese 20% fidm, fruit, children's;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19570;Petit-suisse 60% MG/MS, nature, CIQUAL;Petit-suisse 60% MG/MS, nature;Petit-Suisse 60% fidm, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19572;Fromage blanc type petit suisse 20% MG/MS, aromatisé vanille ou chocolat, CIQUAL;Fromage blanc type petit suisse 20% MG/MS, aromatisé vanille ou chocolat;Petit-Suisse type cheese 20% fidm, vanilla or chocolate, children's;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19585;Ricotta, CIQUAL;Ricotta;Ricotta cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL19590;Mozzarella, CIQUAL;Mozzarella;Mozzarella cheese;CIQUAL;Fromages;Table Ciqual 2008
+VALUES;CIQUAL19600;Yaourt ou spécialité laitière, nature (aliment moyen), CIQUAL;Yaourt ou spécialité laitière, nature (aliment moyen);Yoghurt, plain (average);CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19601;Yaourt au lait entier, nature, CIQUAL;Yaourt au lait entier, nature;Yoghurt, wholemilk, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19602;Yaourt au lait entier, nature, brassé, CIQUAL;Yaourt au lait entier, nature, brassé;Yoghurt, wholemilk, Bulgarian-style, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19605;Yaourt au lait partiellement écrémé, nature, CIQUAL;Yaourt au lait partiellement écrémé, nature;Yoghurt, lowfat, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19606;Spécialité laitière type yaourt 0% nature, CIQUAL;Spécialité laitière type yaourt 0% nature;Yoghurt, nonfat, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19609;Yaourt au lait partiellement écrémé, nature, sucré, CIQUAL;Yaourt au lait partiellement écrémé, nature, sucré;Yoghurt, lowfat, sweetened;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19611;Yaourt au lait entier, aromatisé, sucré, CIQUAL;Yaourt au lait entier, aromatisé, sucré;Yoghurt, wholemilk, flavoured, sweetened;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19614;Spécialité laitière type yaourt au lait entier, enrichie en crème, aromatisée, sucrée, CIQUAL;Spécialité laitière type yaourt au lait entier, enrichie en crème, aromatisée, sucrée;Yoghurt, wholemilk, with cream, flavoured;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19615;Spécialité laitière type yaourt au lait entier au bifidus, aromatisé, sucrée, CIQUAL;Spécialité laitière type yaourt au lait entier au bifidus, aromatisé, sucrée;Yoghurt, wholemilk, Bifidus, flavoured, sweetened;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19617;Yaourt au lait entier, nature, sucré, CIQUAL;Yaourt au lait entier, nature, sucré;Yoghurt, wholemilk, sweetened;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19619;Lait fermenté à  boire au lait demi-écrémé et au L. Casei, nature, CIQUAL;Lait fermenté à  boire au lait demi-écrémé et au L. Casei, nature;Drinking yoghurt with L. Casei, lowfat, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19621;Yaourt au lait entier, aux céréales ou muesli, CIQUAL;Yaourt au lait entier, aux céréales ou muesli;Yoghurt, wholemilk, with cereals;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19624;Yaourt ou spécialité laitière, nature ou aux fruits (aliment moyen), CIQUAL;Yaourt ou spécialité laitière, nature ou aux fruits (aliment moyen);Yoghurt, plain or fruit (average);CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19628;Yaourt ou spécialité laitière, aux fruits (aliment moyen), CIQUAL;Yaourt ou spécialité laitière, aux fruits (aliment moyen);Yoghurt, fruit (average);CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19630;Spécialité laitière type yaourt au lait entier, enrichie en crème, aux pépites de chocolat, CIQUAL;Spécialité laitière type yaourt au lait entier, enrichie en crème, aux pépites de chocolat;Yoghurt, wholemilk, with cream and chocolate chips;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19640;Yaourt au lait partiellement écrémé, aromatisé, sucré, CIQUAL;Yaourt au lait partiellement écrémé, aromatisé, sucré;Yoghurt, lowfat, flavoured;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19670;Spécialité laitière type yaourt 0%, aromatisée, sucrée, CIQUAL;Spécialité laitière type yaourt 0%, aromatisée, sucrée;Yoghurt, nonfat, flavoured, sweetened;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19700;Yaourt au lait entier, aux fruits, sucré, CIQUAL;Yaourt au lait entier, aux fruits, sucré;Yoghurt, wholemilk, with fruit;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19730;Yaourt au lait partiellement écrémé, aux fruits, sucré, CIQUAL;Yaourt au lait partiellement écrémé, aux fruits, sucré;Yoghurt, lowfat, with fruit;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19740;Spécialité laitière type yaourt au lait entier au bifidus et aux fruits, sucrée, CIQUAL;Spécialité laitière type yaourt au lait entier au bifidus et aux fruits, sucrée;Yoghurt, wholemilk, Bifidus, with fruit;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19760;Spécialité laitière type yaourt 0% aux fruits, sucrée, CIQUAL;Spécialité laitière type yaourt 0% aux fruits, sucrée;Yoghurt, nonfat, with fruit, sweetened;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19765;Spécialité laitière type yaourt 0% aux fruits, édulcorée, CIQUAL;Spécialité laitière type yaourt 0% aux fruits, édulcorée;Yoghurt, nonfat, with fruit, aspartame;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19771;Yaourt à  boire, au lait demi-écrémé, aromatisé, sucré, CIQUAL;Yaourt à  boire, au lait demi-écrémé, aromatisé, sucré;Drinking yoghurt, lowfat, flavoured, sweetened;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19772;Yaourt à  boire, au lait demi-écrémé, aux édulcorants, CIQUAL;Yaourt à  boire, au lait demi-écrémé, aux édulcorants;Drinking yoghurt, lowfat, with aspartame;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19773;Yaourt à  boire, au lait demi-écrémé, aux fruits, sucré, CIQUAL;Yaourt à  boire, au lait demi-écrémé, aux fruits, sucré;Drinking yoghurt, lowfat, with fruit;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19780;Lait fermenté type yaourt à  boire, au bifidus, arôme fruits, CIQUAL;Lait fermenté type yaourt à  boire, au bifidus, arôme fruits;Drinking yoghurt, Bifidus, fruit flavoured;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19800;Spécialité laitière type yaourt au lait entier au bifidus, nature, CIQUAL;Spécialité laitière type yaourt au lait entier au bifidus, nature;Yoghurt, wholemilk, Bifidus, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19801;Lait fermenté à  boire, maigre, nature, CIQUAL;Lait fermenté à  boire, maigre, nature;Buttermilk, cultured, low fat, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19850;Spécialité laitière de fromage blanc enrichie en crème, nature, CIQUAL;Spécialité laitière de fromage blanc enrichie en crème, nature;Quark 50% fidm, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19851;Spécialité laitière de fromage blanc enrichie en crème, aux fruits, CIQUAL;Spécialité laitière de fromage blanc enrichie en crème, aux fruits;Quark 50% fidm, with  fruit;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19855;Spécialité laitière type yaourt 0% aux céréales ou muesli, CIQUAL;Spécialité laitière type yaourt 0% aux céréales ou muesli;Yoghurt, nonfat, with cereals;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL19880;Yaourt au lait de chèvre partiellement écrémé, nature, CIQUAL;Yaourt au lait de chèvre partiellement écrémé, nature;Yoghurt from goat's milk, lowfat, plain;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL20000;Artichaut, cuit, CIQUAL;Artichaut, cuit;Artichoke, globe, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20001;Asperge, cuite, CIQUAL;Asperge, cuite;Asparagus, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20002;Aubergine, cuite, CIQUAL;Aubergine, cuite;Eggplant, cooked, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20003;Betterave rouge, cuite, CIQUAL;Betterave rouge, cuite;Beetroot, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20005;Bette, cuite, CIQUAL;Bette, cuite;Swiss chard, cooked;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20006;Brocoli, cuit, CIQUAL;Brocoli, cuit;Broccoli, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20007;Carotte, appertisée, égouttée, CIQUAL;Carotte, appertisée, égouttée;Carrot, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20008;Carotte, cuite, CIQUAL;Carotte, cuite;Carrot, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20009;Carotte, crue, CIQUAL;Carotte, crue;Carrot, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20010;Champignon, tout type, cru, CIQUAL;Champignon, tout type, cru;Mushroom, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20011;Champignon, tout type, appertisé, égoutté, CIQUAL;Champignon, tout type, appertisé, égoutté;Mushroom, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20012;Chicorée frisée, crue, CIQUAL;Chicorée frisée, crue;Endive (US chicory), raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20013;Chou de Bruxelles, cuit, CIQUAL;Chou de Bruxelles, cuit;Brussels sprout, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20014;Chou rouge, cru, CIQUAL;Chou rouge, cru;Cabbage, red, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20015;Chou vert, cuit, CIQUAL;Chou vert, cuit;Cabbage, green, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20016;Chou-fleur, cru, CIQUAL;Chou-fleur, cru;Cauliflower, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20017;Chou-fleur, cuit, CIQUAL;Chou-fleur, cuit;Cauliflower, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20018;Coeur de palmier, appertisé, égoutté, CIQUAL;Coeur de palmier, appertisé, égoutté;Palm heart, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20020;Courgette, pulpe et peau, crue, CIQUAL;Courgette, pulpe et peau, crue;Courgette (zucchini), raw, with skin;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20021;Courgette, pulpe et peau, cuite, CIQUAL;Courgette, pulpe et peau, cuite;Courgette (zucchini), boiled, with skin;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20022;Cresson de fontaine, cru, CIQUAL;Cresson de fontaine, cru;Watercress, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20023;Céleri branche, cru, CIQUAL;Céleri branche, cru;Celery stalk, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20024;Céleri branche, cuit, CIQUAL;Céleri branche, cuit;Celery stalk, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20025;Céleri-rave, cuit, CIQUAL;Céleri-rave, cuit;Celeriac, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20026;Endive, crue, CIQUAL;Endive, crue;Witlof, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20027;Épinard, cuit, CIQUAL;Épinard, cuit;Spinach, steamed;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20028;Fenouil, cru, CIQUAL;Fenouil, cru;Fennel, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20029;Haricot mungo germé ou Pousse de ''soja'', appertisé, égoutté, CIQUAL;Haricot mungo germé ou Pousse de ''soja'', appertisé, égoutté;Beans, mung, sprouted, canned, drained;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20030;Haricot vert, cuit, CIQUAL;Haricot vert, cuit;Green bean, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20031;Laitue, crue, CIQUAL;Laitue, crue;Lettuce, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20032;Laitue, cuite, CIQUAL;Laitue, cuite;Lettuce, cooked;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20033;Navet, cuit, CIQUAL;Navet, cuit;Turnip, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20034;Oignon, cru, CIQUAL;Oignon, cru;Onion, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20035;Oignon, cuit, CIQUAL;Oignon, cuit;Onion, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20036;Petit pois, appertisé, égoutté, CIQUAL;Petit pois, appertisé, égoutté;Pea, green, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20037;Petit pois, cuit, CIQUAL;Petit pois, cuit;Pea, green, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20038;Pissenlit, cru, CIQUAL;Pissenlit, cru;Dandelion leaves, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20039;Poireau, cru, CIQUAL;Poireau, cru;Leek, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20040;Poireau, cuit, CIQUAL;Poireau, cuit;Leek, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20041;Poivron, vert, jaune ou rouge, cru, CIQUAL;Poivron, vert, jaune ou rouge, cru;Pepper, sweet, green or red, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20042;Poivron, vert, jaune ou rouge, cuit, CIQUAL;Poivron, vert, jaune ou rouge, cuit;Pepper, sweet, green or red, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20043;Potiron, appertisé, égoutté, CIQUAL;Potiron, appertisé, égoutté;Pumpkin, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20045;Radis rouge, cru, CIQUAL;Radis rouge, cru;Radish, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20046;Salsifis, cuit, CIQUAL;Salsifis, cuit;Salsify, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20047;Tomate, crue, CIQUAL;Tomate, crue;Tomato, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20048;Tomate, entière, pelée, appertisée, égouttée, CIQUAL;Tomate, entière, pelée, appertisée, égouttée;Tomato, peeled, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20049;Maà¯s doux, en épis, cuit, CIQUAL;Maà¯s doux, en épis, cuit;Sweet corn on cob, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20050;Topinambour, cuit, CIQUAL;Topinambour, cuit;Jerusalem artichoke, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20051;Macédoine de légumes, appertisée, égouttée, CIQUAL;Macédoine de légumes, appertisée, égouttée;Vegetable mix, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20052;Artichaut, cru, CIQUAL;Artichaut, cru;Artichoke, globe, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20054;Cardon, cru, CIQUAL;Cardon, cru;Cardoon, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20055;Céleri-rave, cru, CIQUAL;Céleri-rave, cru;Celeriac, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20059;Épinard, cru, CIQUAL;Épinard, cru;Spinach, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20062;Haricot vert, appertisé, égoutté, CIQUAL;Haricot vert, appertisé, égoutté;Green bean, canned, drained;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20063;Haricot beurre, appertisé, égoutté, CIQUAL;Haricot beurre, appertisé, égoutté;Wax bean, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20064;Navet, pelé, cru, CIQUAL;Navet, pelé, cru;Turnip, peeled, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20066;Maà¯s doux, appertisé, égoutté, CIQUAL;Maà¯s doux, appertisé, égoutté;Sweet corn, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20068;Tomate, concentré, CIQUAL;Tomate, concentré;Tomato paste;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20070;Haricot vert, surgelé, CIQUAL;Haricot vert, surgelé;Green bean, frozen;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20071;Haricot vert, surgelé, cuit, CIQUAL;Haricot vert, surgelé, cuit;Green bean, frozen, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20076;Asperge, appertisée, égouttée, CIQUAL;Asperge, appertisée, égouttée;Asparagus, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20077;Chou de Bruxelles, appertisé, égoutté, CIQUAL;Chou de Bruxelles, appertisé, égoutté;Brussels sprout, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20078;Céleri branche, appertisé, CIQUAL;Céleri branche, appertisé;Celery stalk, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20079;Champignon de Paris, appertisé, CIQUAL;Champignon de Paris, appertisé;Mushroom, Agaricus bisporus, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20081;Salsifis, appertisé, égoutté, CIQUAL;Salsifis, appertisé, égoutté;Salsify, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20082;Chou-fleur, surgelé, CIQUAL;Chou-fleur, surgelé;Cauliflower, frozen;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20083;Épinard, surgelé, CIQUAL;Épinard, surgelé;Spinach, frozen;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20084;Petit pois, surgelé, CIQUAL;Petit pois, surgelé;Pea, green, frozen;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20085;Poivron vert, cru, CIQUAL;Poivron vert, cru;Pepper, sweet, green, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20086;Poivron vert, cuit, CIQUAL;Poivron vert, cuit;Pepper, sweet, green, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20087;Poivron rouge, cru, CIQUAL;Poivron rouge, cru;Pepper, sweet, red, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20088;Poivron rouge, cuit, CIQUAL;Poivron rouge, cuit;Pepper, sweet, red, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20089;Radis noir, cru, CIQUAL;Radis noir, cru;Radish, black, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20090;Scarole, crue, CIQUAL;Scarole, crue;Broad-leaved endive, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20093;Petits pois et carottes, appertisés, égouttés, CIQUAL;Petits pois et carottes, appertisés, égouttés;Carrots and peas, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20095;Chou rouge, cuit à  l'eau, CIQUAL;Chou rouge, cuit à  l'eau;Cabbage, red, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20096;Potiron, cuit, CIQUAL;Potiron, cuit;Pumpkin, cooked;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20097;Échalote, crue, CIQUAL;Échalote, crue;Shallot, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20098;Endive, cuite, CIQUAL;Endive, cuite;Witlof, cooked;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20099;Mâche, crue, CIQUAL;Mâche, crue;Corn-salad, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20101;Légumes, mélange surgelé, CIQUAL;Légumes, mélange surgelé;Vegetables, mixed, frozen;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20111;Oseille, crue, CIQUAL;Oseille, crue;Sorrel, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20112;Oseille, cuite à  l'eau, CIQUAL;Oseille, cuite à  l'eau;Sorrel, cooked with moist heat;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20116;Chou blanc, cru, CIQUAL;Chou blanc, cru;White cabbage, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20118;Fenouil, cuit à  l'eau, CIQUAL;Fenouil, cuit à  l'eau;Fennel, cooked;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20125;Champignon de couche, sauté, CIQUAL;Champignon de couche, sauté;Mushroom, Agaricus bisporus, sauteed;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20127;Pourpier, cru, feuilles, CIQUAL;Pourpier, cru, feuilles;Purslane, leaf, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20169;Tomate, pulpe, appertisée, CIQUAL;Tomate, pulpe, appertisée;Tomato pulp, canned, commercial;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20170;Tomate, purée, CIQUAL;Tomate, purée;Tomato pulp;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20171;Laitue romaine, crue, CIQUAL;Laitue romaine, crue;Cos lettuce, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20172;Tomate cerise, crue, CIQUAL;Tomate cerise, crue;Tomato, cherry;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20183;Haricot mungo germé ou Pousse de ''soja'', frais, CIQUAL;Haricot mungo germé ou Pousse de ''soja'', frais;Beans, mung, sprouted, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20206;Chou de Bruxelles, surgelé, CIQUAL;Chou de Bruxelles, surgelé;Brussels sprout, frozen;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20208;Carotte, surgelée, CIQUAL;Carotte, surgelée;Carrot, frozen;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20210;Concombre, cru, pulpe, CIQUAL;Concombre, cru, pulpe;Cucumber, peeled, raw;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20495;Légume en purée, sans pomme de terre, sans sel (aliment moyen), CIQUAL;Légume en purée, sans pomme de terre, sans sel (aliment moyen);Vegetable (except potato), pureed, without salt (average);CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20499;Légume cuit (aliment moyen), CIQUAL;Légume cuit (aliment moyen);Vegetable, cooked (average);CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20500;Fève, cuite, CIQUAL;Fève, cuite;Broad bean, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20502;Haricot blanc, cuit, CIQUAL;Haricot blanc, cuit;Haricot bean, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20503;Haricot rouge, cuit, CIQUAL;Haricot rouge, cuit;Red kidney bean, boiled, without salt;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20505;Lentille, cuite, CIQUAL;Lentille, cuite;Lentil, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20506;Pois cassé, cuit, CIQUAL;Pois cassé, cuit;Split pea, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20507;Pois chiche, cuit, CIQUAL;Pois chiche, cuit;Chick pea, boiled;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20508;Haricot flageolet, appertisé, égouttés, CIQUAL;Haricot flageolet, appertisé, égouttés;Dwarf kidney bean, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20510;Lentille, cuisinée, appertisée, égouttées, CIQUAL;Lentille, cuisinée, appertisée, égouttées;Lentil, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20511;Haricot blanc, appertisé, égoutté, CIQUAL;Haricot blanc, appertisé, égoutté;Haricot bean, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20532;Pois chiche, appertisé, égoutté, CIQUAL;Pois chiche, appertisé, égoutté;Chick pea, canned;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20700;Légume sec, cuit (aliment moyen), CIQUAL;Légume sec, cuit (aliment moyen);Legume, cooked (average);CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20904;Tofu, CIQUAL;Tofu;Tofu, soy bean curd;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL20905;Crème dessert soja aux ferments, nature, rayon frais, CIQUAL;Crème dessert soja aux ferments, nature, rayon frais;Soy yoghurt, plain, refrigerated;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL20909;Crème dessert soja aux ferments, aux fruits, rayon frais, CIQUAL;Crème dessert soja aux ferments, aux fruits, rayon frais;Soy yoghurt with fruit, refrigerated;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL20911;Crème dessert soja, aromatisée, rayon frais, CIQUAL;Crème dessert soja, aromatisée, rayon frais;Soy dessert, flavoured, refrigerated;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL21501;Agneau, côtelette, grillée, CIQUAL;Agneau, côtelette, grillée;Lamb cutlet, grilled;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL21503;Agneau, gigot, rôti, CIQUAL;Agneau, gigot, rôti;Lamb leg, roasted;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL21506;Agneau, épaule, rôtie, CIQUAL;Agneau, épaule, rôtie;Lamb shoulder, roasted;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL21507;Agneau, épaule, maigre, rôtie, CIQUAL;Agneau, épaule, maigre, rôtie;Lamb shoulder roast, lean, cooked;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL22000;Oeuf, cru, CIQUAL;Oeuf, cru;Egg, whole, raw;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL22008;Blanc d'oeuf, cuit, CIQUAL;Blanc d'oeuf, cuit;Egg white, cooked;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL22009;Jaune d'oeuf, cuit, CIQUAL;Jaune d'oeuf, cuit;Egg yolk, cooked;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL22010;Oeuf dur, CIQUAL;Oeuf dur;Egg, hard-boiled;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL22011;Oeuf poché, CIQUAL;Oeuf poché;Egg, poached;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL22014;Oeuf à  la coque, CIQUAL;Oeuf à  la coque;Egg, soft-boiled;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL22500;Omelette nature, CIQUAL;Omelette nature;Omelette, plain;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL22501;Oeuf au plat, frit, salé, CIQUAL;Oeuf au plat, frit, salé;Egg, fried, salted;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL22502;Oeuf brouillé, CIQUAL;Oeuf brouillé;Egg, scrambled;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL22506;Omelette au fromage, CIQUAL;Omelette au fromage;Omelette with cheese;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL22507;Omelette aux lardons, CIQUAL;Omelette aux lardons;Omelette with bacon;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL22508;Omelette aux champignons, CIQUAL;Omelette aux champignons;Omelette with mushrooms;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL22509;Omelette aux fines herbes, CIQUAL;Omelette aux fines herbes;Omelette with herbs;CIQUAL;Oeufs et dérivés;Table Ciqual 2008
+VALUES;CIQUAL23412;Pâte brisée, cuite, CIQUAL;Pâte brisée, cuite;Pastry, short crust, baked;CIQUAL;Pâtisseries et biscuits;Table Ciqual 2008
+VALUES;CIQUAL23420;Pâte feuilletée, crue, CIQUAL;Pâte feuilletée, crue;Puff pastry, raw;CIQUAL;Pâtisseries et biscuits;Table Ciqual 2008
+VALUES;CIQUAL23422;Pâte feuilletée, cuite, CIQUAL;Pâte feuilletée, cuite;Pastry, flaky, cooked;CIQUAL;Pâtisseries et biscuits;Table Ciqual 2008
+VALUES;CIQUAL23426;Pâte feuilletée pur beurre, cuite, CIQUAL;Pâte feuilletée pur beurre, cuite;Pastry, flaky, pure butter, cooked;CIQUAL;Pâtisseries et biscuits;Table Ciqual 2008
+VALUES;CIQUAL23430;Feuille de brick, cuite, CIQUAL;Feuille de brick, cuite;Brik pastry sheet, baked;CIQUAL;Pâtisseries et biscuits;Table Ciqual 2008
+VALUES;CIQUAL23472;Profiterole avec glace vanille et sauce chocolat, CIQUAL;Profiterole avec glace vanille et sauce chocolat;Puff pastry with ice cream and chocolate sauce;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL23535;Gâteau de semoule, appertisé, CIQUAL;Gâteau de semoule, appertisé;Semolina pudding, canned;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL23536;Gâteau de riz nappé de caramel, rayon frais, CIQUAL;Gâteau de riz nappé de caramel, rayon frais;Rice pudding with caramel sauce, refrigerated;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL24999;Dessert (aliment moyen), CIQUAL;Dessert (aliment moyen);Desert (average);CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL25445;Tiramisu, CIQUAL;Tiramisu;Tiramisu;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL25510;Gnocchi aux pommes de terre, CIQUAL;Gnocchi aux pommes de terre;Gnocchi, potato;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL25600;Céleri rémoulade, CIQUAL;Céleri rémoulade;Celeriac in remoulade sauce;CIQUAL;Salades composées et crudités;Table Ciqual 2008
+VALUES;CIQUAL25601;Salade de thon et légumes, appertisée, égouttée, CIQUAL;Salade de thon et légumes, appertisée, égouttée;Salad, tuna-vegetable, canned;CIQUAL;Salades composées et crudités;Table Ciqual 2008
+VALUES;CIQUAL25602;Salade composée avec viande ou poisson, appertisée, égouttée, CIQUAL;Salade composée avec viande ou poisson, appertisée, égouttée;Salad, mixed, with meat or fish, canned;CIQUAL;Salades composées et crudités;Table Ciqual 2008
+VALUES;CIQUAL25604;Salade verte, sans assaisonnement, CIQUAL;Salade verte, sans assaisonnement;Green salad, without seasoning;CIQUAL;Fruits, Légumes;Table Ciqual 2008
+VALUES;CIQUAL25605;Champignon à  la grecque, CIQUAL;Champignon à  la grecque;Mushrooms, marinated;CIQUAL;Salades composées et crudités;Table Ciqual 2008
+VALUES;CIQUAL25606;Salade de pommes de terre, CIQUAL;Salade de pommes de terre;Salad, potato;CIQUAL;Salades composées et crudités;Table Ciqual 2008
+VALUES;CIQUAL25608;Taboulé oriental ou Salade de couscous, CIQUAL;Taboulé oriental ou Salade de couscous;Tabouleh, commercial;CIQUAL;Salades composées et crudités;Table Ciqual 2008
+VALUES;CIQUAL25614;Salade de riz, CIQUAL;Salade de riz;Salad, rice;CIQUAL;Salades composées et crudités;Table Ciqual 2008
+VALUES;CIQUAL25615;Salade de pâtes, végétarienne, CIQUAL;Salade de pâtes, végétarienne;Salad, pasta with vegetables;CIQUAL;Salades composées et crudités;Table Ciqual 2008
+VALUES;CIQUAL25616;Crudité, sans assaisonnement (aliment moyen), CIQUAL;Crudité, sans assaisonnement (aliment moyen);Salad, vegetable, without dressing (average);CIQUAL;Salades composées et crudités;Table Ciqual 2008
+VALUES;CIQUAL25617;Crudité vinaigrette (aliment moyen), CIQUAL;Crudité vinaigrette (aliment moyen);Salad, vegetable, oil & vinegar dressing (average);CIQUAL;Salades composées et crudités;Table Ciqual 2008
+VALUES;CIQUAL25619;Salade de pâtes au légumes, avec thon ou viande, CIQUAL;Salade de pâtes au légumes, avec thon ou viande;Salad, pasta, with vegetables, tuna or meat;CIQUAL;Salades composées et crudités;Table Ciqual 2008
+VALUES;CIQUAL25620;Guacamole, CIQUAL;Guacamole;Guacamole;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL25621;Houmous, CIQUAL;Houmous;Hummus;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL25900;Soupe aux lentilles, tout type, CIQUAL;Soupe aux lentilles, tout type;Soup, lentil;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25902;Soupe de légumes, tout type, CIQUAL;Soupe de légumes, tout type;Soup, vegetable (average);CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25903;Soupe de légumes, préemballée à  réchauffer, CIQUAL;Soupe de légumes, préemballée à  réchauffer;Soup, vegetable, canned;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25904;Soupe de poissons et/ou crustacés, préemballée à  réchauffer, CIQUAL;Soupe de poissons et/ou crustacés, préemballée à  réchauffer;Soup, fish, canned;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25905;Soupe de légumes, déshydratée reconstituée, CIQUAL;Soupe de légumes, déshydratée reconstituée;Soup, vegetable, reconstituted;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25906;Soupe aux poireaux et pommes de terre, CIQUAL;Soupe aux poireaux et pommes de terre;Soup, leek and potato;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25907;Soupe aux poireaux et pommes de terre, préemballée à  réchauffer, CIQUAL;Soupe aux poireaux et pommes de terre, préemballée à  réchauffer;Soup, leek and potato, canned;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25908;Soupe à  la volaille et aux vermicelles, préemballée à  réchauffer ou déshydratée reconstituée, CIQUAL;Soupe à  la volaille et aux vermicelles, préemballée à  réchauffer ou déshydratée reconstituée;Soup, chicken noodle;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25909;Bouillon de viande et légumes, CIQUAL;Bouillon de viande et légumes;Broth, meat and vegetable;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25910;Soupe à  l'oignon, tout type, CIQUAL;Soupe à  l'oignon, tout type;Soup, onion;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25912;Soupe cuisinée aux champignons, tout type, CIQUAL;Soupe cuisinée aux champignons, tout type;Soup, cream of mushroom;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25914;Soupe à  la tomate, préemballée à  réchauffer ou déshydratée reconstituée, CIQUAL;Soupe à  la tomate, préemballée à  réchauffer ou déshydratée reconstituée;Soup, cream of tomato;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25916;Soupe minestrone, préemballée à  réchauffer ou déshydratée reconstituée, CIQUAL;Soupe minestrone, préemballée à  réchauffer ou déshydratée reconstituée;Soup, minestrone;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25917;Soupe au pistou, préemballée à  réchauffer ou déshydratée reconstituée, CIQUAL;Soupe au pistou, préemballée à  réchauffer ou déshydratée reconstituée;Soup, pistou;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25922;Soupe exotique chinoise, CIQUAL;Soupe exotique chinoise;Soup, chinese;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25945;Soupe au potiron, tout type, CIQUAL;Soupe au potiron, tout type;Soup, pumpkin;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25946;Bouillon de viande, déshydraté reconstitué, CIQUAL;Bouillon de viande, déshydraté reconstitué;Broth, meat, reconstituted;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25947;Bouillon de volaille, déshydraté reconstitué, CIQUAL;Bouillon de volaille, déshydraté reconstitué;Broth, chicken, reconstituted;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL25948;Bouillon de légumes, déshydraté reconstitué, CIQUAL;Bouillon de légumes, déshydraté reconstitué;Broth, vegetable, reconstituted;CIQUAL;Soupes et bouillons;Table Ciqual 2008
+VALUES;CIQUAL26000;Anchois, filets à  l'huile, semi-conserve, égoutté, CIQUAL;Anchois, filets à  l'huile, semi-conserve, égoutté;Anchovy fillets, canned in oil;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26003;Carrelet ou Plie, cuit à  la vapeur, CIQUAL;Carrelet ou Plie, cuit à  la vapeur;Plaice, steamed;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26004;Oeufs de lompe, semi-conserve, CIQUAL;Oeufs de lompe, semi-conserve;Caviar substitute, Lumpfish eggs;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26005;Caviar, semi-conserve, CIQUAL;Caviar, semi-conserve;Caviar;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26007;Églefin, pané, frit, CIQUAL;Églefin, pané, frit;Haddock, breaded, fried;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26008;Églefin, à  la vapeur, CIQUAL;Églefin, à  la vapeur;Haddock, steamed;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26009;Flétan (de l'Atlantique), cru, CIQUAL;Flétan (de l'Atlantique), cru;Halibut, Atlantic, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26010;Hareng mariné ou rollmops, CIQUAL;Hareng mariné ou rollmops;Pickled herring or Rollmops;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26012;Hareng, frit, CIQUAL;Hareng, frit;Herring, fried;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26013;Hareng fumé, CIQUAL;Hareng fumé;Herring, smoked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26014;Hareng, grillé, CIQUAL;Hareng, grillé;Herring, grilled;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26015;Lieu noir, cuit, CIQUAL;Lieu noir, cuit;Atlantic pollock, cooked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26016;Limande-sole, panée, frite, CIQUAL;Limande-sole, panée, frite;Lemon sole, breaded, fried;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26017;Limande-sole, à  la vapeur, CIQUAL;Limande-sole, à  la vapeur;Lemon sole, steamed;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26019;Maquereau, cuit au four, CIQUAL;Maquereau, cuit au four;Mackerel, oven cooked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26020;Maquereau, frit, CIQUAL;Maquereau, frit;Mackerel, fried;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26021;Merlan, frit, CIQUAL;Merlan, frit;Whiting, fried;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26022;Merlan, à  la vapeur, CIQUAL;Merlan, à  la vapeur;Whiting, steamed;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26023;Cabillaud, cuit au four, CIQUAL;Cabillaud, cuit au four;Cod, baked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26024;Morue, salée, pochée, CIQUAL;Morue, salée, pochée;Cod, salted, poached;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26025;Cabillaud, cuit à  la vapeur, CIQUAL;Cabillaud, cuit à  la vapeur;Cod, steamed;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26026;Mulet, cuit au four, CIQUAL;Mulet, cuit au four;Mullet, oven cooked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26027;Pilchard, sauce tomate, appertisé, égoutté, CIQUAL;Pilchard, sauce tomate, appertisé, égoutté;Pilchard, in tomato sauce, canned;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26028;Poisson, croquette, frit, CIQUAL;Poisson, croquette, frit;Fish nuggets, fried;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26029;Poisson pané, congelé, cru, CIQUAL;Poisson pané, congelé, cru;Fish cakes, frozen, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26030;Poisson pané, frit, CIQUAL;Poisson pané, frit;Fish cakes, fried;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26031;Raie, cuite au four, CIQUAL;Raie, cuite au four;Skate, oven cooked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26033;Roussette, cuite, CIQUAL;Roussette, cuite;Dogfish, cooked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26034;Sardine, à  l'huile, appertisée, égouttée, CIQUAL;Sardine, à  l'huile, appertisée, égouttée;Sardine, in oil, canned, drained solids;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26035;Sardine, sauce tomate, appertisée, égouttée, CIQUAL;Sardine, sauce tomate, appertisée, égouttée;Sardine, in tomato sauce, canned;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26036;Saumon, cru, élevage, CIQUAL;Saumon, cru, élevage;Salmon, farmed, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26037;Saumon fumé, CIQUAL;Saumon fumé;Salmon, smoked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26038;Saumon, cuit à  la vapeur, CIQUAL;Saumon, cuit à  la vapeur;Salmon, steamed;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26039;Thon, au naturel, appertisé, égoutté, CIQUAL;Thon, au naturel, appertisé, égoutté;Tuna, canned in brine, drained;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26040;Sardine, à  l'huile d'olive, conserve, égouttée, CIQUAL;Sardine, à  l'huile d'olive, conserve, égouttée;Sardine, in olive oil, canned, drained solids;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26041;Thon, cuit au four, CIQUAL;Thon, cuit au four;Tuna, oven cooked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26043;Cabillaud, cru, CIQUAL;Cabillaud, cru;Atlantic cod, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26046;Surimi, bâtonnets, CIQUAL;Surimi, bâtonnets;Surimi;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26053;Thon, cru, CIQUAL;Thon, cru;Tuna, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26054;Poisson en sauce, surgelé, CIQUAL;Poisson en sauce, surgelé;Fish in sauce, frozen;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26059;Sole, cuite à  la vapeur, CIQUAL;Sole, cuite à  la vapeur;Sole, steamed;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26060;Sole, cuite au four, CIQUAL;Sole, cuite au four;Sole, cooked in oven;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26063;Rascasse, crue, CIQUAL;Rascasse, crue;Rockfish, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26071;Thon à  l'huile, appertisé, égoutté, CIQUAL;Thon à  l'huile, appertisé, égoutté;Tuna, canned in oil, drained solids;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26072;Bar commun ou Loup, cru, CIQUAL;Bar commun ou Loup, cru;Sea bass, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26073;Raie, cuite au court-bouillon, CIQUAL;Raie, cuite au court-bouillon;Skate, simmered;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26077;Thon germon ou thon blanc, cuit vapeur sous pression, CIQUAL;Thon germon ou thon blanc, cuit vapeur sous pression;Tuna, albacore, steamed under pressure;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26078;Thon germon ou thon blanc à  l'huile de soja, appertisé, égoutté, CIQUAL;Thon germon ou thon blanc à  l'huile de soja, appertisé, égoutté;Tuna, albacore, canned in soybean oil, drained;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26079;Anchois commun, cru, CIQUAL;Anchois commun, cru;Anchovy, European, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26081;Lotte ou Baudroie, grillée, CIQUAL;Lotte ou Baudroie, grillée;Anglerfish or Monkfish, grilled;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26083;Éperlan, cru, CIQUAL;Éperlan, cru;Smelt, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26086;Maquereau, filet sauce tomate, appertisé, égoutté, CIQUAL;Maquereau, filet sauce tomate, appertisé, égoutté;Mackerel, in tomato sauce, canned;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26087;Maquereau fumé, CIQUAL;Maquereau fumé;Mackerel, smoked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26090;Haddock (fumé) ou Églefin fumé, CIQUAL;Haddock (fumé) ou Églefin fumé;Haddock, smoked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26093;Espadon, cuit au four, CIQUAL;Espadon, cuit au four;Swordfish,  broiled;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26094;Turbot, cuit au four, CIQUAL;Turbot, cuit au four;Turbot,  broiled;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26096;Maquereau, filet sauce moutarde, appertisé, égoutté, CIQUAL;Maquereau, filet sauce moutarde, appertisé, égoutté;Mackerel, canned in mustard sauce;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26097;Maquereau, filet au vin blanc, appertisé, égoutté, CIQUAL;Maquereau, filet au vin blanc, appertisé, égoutté;Mackerel, in white wine sauce, canned;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26099;Daurade grise, Dorade grise ou Griset, crue, CIQUAL;Daurade grise, Dorade grise ou Griset, crue;Black (sea) bream, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26110;Rouget-barbet de roche, cuit à  l'étouffée, CIQUAL;Rouget-barbet de roche, cuit à  l'étouffée;Surmullet, cooked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26120;Merlu, cuit à  l'étouffée, CIQUAL;Merlu, cuit à  l'étouffée;Hake, stewed;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26130;Julienne ou Lingue, crue, CIQUAL;Julienne ou Lingue, crue;Ling, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26136;Sardine, grillée, CIQUAL;Sardine, grillée;Sardine, grilled;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26140;Poisson cuit (aliment moyen), CIQUAL;Poisson cuit (aliment moyen);Fish, cooked (average);CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26142;Foie de morue, appertisé, égoutté, CIQUAL;Foie de morue, appertisé, égoutté;Cod liver, canned;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26179;Thon germon ou thon blanc, à  l'huile d'olive, appertisé, égoutté, CIQUAL;Thon germon ou thon blanc, à  l'huile d'olive, appertisé, égoutté;Tuna, albacore, canned in olive oil, drained;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26187;Anchois commun, mariné, CIQUAL;Anchois commun, mariné;Anchovy, European, in brine;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26231;Sardine, filets sans arêtes à  l'huile d'olive, appertisés, égouttés, CIQUAL;Sardine, filets sans arêtes à  l'huile d'olive, appertisés, égouttés;Sardine, filets in olive oil, canned, drained solids;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL26232;Hareng fumé, à  l'huile, CIQUAL;Hareng fumé, à  l'huile;Herring, smoked, in oil;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL27000;Anguille, cuite au four, CIQUAL;Anguille, cuite au four;Eel, oven cooked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL27001;Anguille, pochée, CIQUAL;Anguille, pochée;Eel, poached;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL27002;Brochet, cuit au four, CIQUAL;Brochet, cuit au four;Pike, oven cooked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL27004;Carpe, cuite au four, CIQUAL;Carpe, cuite au four;Carp, oven cooked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL27005;Perche, cuite au four, CIQUAL;Perche, cuite au four;Perch, oven cooked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL27006;Truite, cuite au four, CIQUAL;Truite, cuite au four;Brook trout, cooked, dry heat;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL27007;Truite, cuite à  la vapeur, CIQUAL;Truite, cuite à  la vapeur;Trout, steamed;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL27014;Truite arc en ciel, élevage, cuite au four, CIQUAL;Truite arc en ciel, élevage, cuite au four;Rainbow trout, cooked, dry heat;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL27015;Truite arc en ciel, élevage, cuite à  la vapeur, CIQUAL;Truite arc en ciel, élevage, cuite à  la vapeur;Rainbow trout, steamed;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL27029;Truite fumée, CIQUAL;Truite fumée;Trout, smoked;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL28002;Porc, poitrine, crue, CIQUAL;Porc, poitrine, crue;Pork, belly, raw;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL28100;Porc, côte, crue, CIQUAL;Porc, côte, crue;Pork chop, lean & fat, raw;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL28101;Porc, côte, grillée, CIQUAL;Porc, côte, grillée;Pork chop, grilled;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL28201;Porc, filet, maigre, cru, CIQUAL;Porc, filet, maigre, cru;Pork tenderloin, lean, raw;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL28202;Porc, filet, maigre, en rôti, cuit, CIQUAL;Porc, filet, maigre, en rôti, cuit;Pork tenderloin roast, cooked;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL28300;Porc, rôti, cru, CIQUAL;Porc, rôti, cru;Pork roast, lean & fat, raw;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL28301;Porc, rôti, cuit, CIQUAL;Porc, rôti, cuit;Pork roast, lean & fat, cooked;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL28400;Porc, travers, cru, CIQUAL;Porc, travers, cru;Pork spare-ribs, raw;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL28401;Porc, travers, braisé, CIQUAL;Porc, travers, braisé;Pork spare-ribs, braised;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL28451;Porc, échine, rôtie, CIQUAL;Porc, échine, rôtie;Pork blade, roasted;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL28501;Lardon nature, cru, CIQUAL;Lardon nature, cru;Pork rashers, streaky, raw;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28504;Lardon nature, cuit, CIQUAL;Lardon nature, cuit;Pork rashers, streaky, cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28720;Lardon fumé, cru, CIQUAL;Lardon fumé, cru;Pork rashers, smoked, raw;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28725;Lardon fumé, cuit, CIQUAL;Lardon fumé, cuit;Pork rashers, smoked, cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28727;Filet de bacon, cuit, CIQUAL;Filet de bacon, cuit;Bacon, back, cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28800;Jambon cru, CIQUAL;Jambon cru;Ham, raw, cured;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28801;Jambon cru, fumé, CIQUAL;Jambon cru, fumé;Ham, raw, smoked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28802;Jambon sec, découenné, dégraissé, CIQUAL;Jambon sec, découenné, dégraissé;Ham, raw, fat & rind removed;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28803;Jambon cuit, fumé, CIQUAL;Jambon cuit, fumé;Ham, cooked, smoked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28850;Coppa, sec, CIQUAL;Coppa, sec;Coppa, raw, dry;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28858;Pancetta ou Poitrine roulée sèche, CIQUAL;Pancetta ou Poitrine roulée sèche;Pancetta, dry;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28900;Jambon cuit supérieur, CIQUAL;Jambon cuit supérieur;Ham, cooked, quality label;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28906;Jambon cuit supérieur, DD, CIQUAL;Jambon cuit supérieur, DD;Ham, cooked, fat & rind removed, quality label;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28916;Jambon cuit, CIQUAL;Jambon cuit;Ham, cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28925;Jambon cuit, de Paris, DD, CIQUAL;Jambon cuit, de Paris, DD;Ham, cooked, fat & rind removed;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL28960;Jambonneau, cuit, CIQUAL;Jambonneau, cuit;Ham knuckle, cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30005;Chipolata, cuite, CIQUAL;Chipolata, cuite;Chipolata sausage, cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30011;Saucisse de Toulouse, cuite, CIQUAL;Saucisse de Toulouse, cuite;Toulouse sausage, pure pork, cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30105;Saucisse de Montbéliard, CIQUAL;Saucisse de Montbéliard;Montbeliard sausage;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30108;Saucisse de Morteau, cuite à  l'eau, CIQUAL;Saucisse de Morteau, cuite à  l'eau;Morteaux sausage, cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30115;Chipolata, crue, CIQUAL;Chipolata, crue;Chipolata sausage, raw;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30125;Saucisse alsacienne fumée ou Gendarme, CIQUAL;Saucisse alsacienne fumée ou Gendarme;Smoked Alsatian sausage;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30134;Saucisse de Francfort, CIQUAL;Saucisse de Francfort;Frankfurter sausage;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30155;Merguez, boeuf et mouton, cuite, CIQUAL;Merguez, boeuf et mouton, cuite;Merguez sausage, beef & mutton, cooked;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30300;Saucisson sec, CIQUAL;Saucisson sec;Dry sausage;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30301;Saucisson sec pur porc, CIQUAL;Saucisson sec pur porc;Dry sausage, pork;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30304;Rosette ou Fuseau, CIQUAL;Rosette ou Fuseau;Rosette dry sausage;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30315;Chorizo sec, CIQUAL;Chorizo sec;Chorizo dry sausage;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30350;Salami, CIQUAL;Salami;Salami;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30700;Saucisson à  l'ail, CIQUAL;Saucisson à  l'ail;Garlic sausage;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30730;Cervelas, CIQUAL;Cervelas;French saveloy;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30742;Saucisse de Strasbourg, CIQUAL;Saucisse de Strasbourg;Strasbourg sausage;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30746;Saucisse cocktail, CIQUAL;Saucisse cocktail;Cocktail sausage;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30780;Saucisse (aliment moyen), CIQUAL;Saucisse (aliment moyen);Sausage (average);CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30789;Mortadelle, CIQUAL;Mortadelle;Mortadella;CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL30900;Charcuterie (aliment moyen), CIQUAL;Charcuterie (aliment moyen);Cured meat and sausages (average);CIQUAL;Charcuteries et salaisons;Table Ciqual 2008
+VALUES;CIQUAL31000;Barre chocolatée biscuitée, CIQUAL;Barre chocolatée biscuitée;Chocolate candy bar with biscuit-caramel filling;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31001;Barre chocolatée non biscuitée enrobée, CIQUAL;Barre chocolatée non biscuitée enrobée;Chocolate candy bar with nougat-caramel filling;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31002;Barre à  la noix de coco, enrobée de chocolat, CIQUAL;Barre à  la noix de coco, enrobée de chocolat;Chocolate candy bar with coconut filling;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31003;Bonbons, tout type, CIQUAL;Bonbons, tout type;Sweets (candy), average;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31004;Chocolat au lait, tablette, CIQUAL;Chocolat au lait, tablette;Chocolate, milk-;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31005;Chocolat noir, 40% de cacao minimum, à  pâtisser ou à  croquer, CIQUAL;Chocolat noir, 40% de cacao minimum, à  pâtisser ou à  croquer;Chocolate, dark-, 40% cocoa;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31006;Confiture ou marmelade, tout type (aliment moyen), CIQUAL;Confiture ou marmelade, tout type (aliment moyen);Jam or marmalade (average);CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31007;Chewing-gum, sucré, CIQUAL;Chewing-gum, sucré;Chewing gum;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31008;Miel, CIQUAL;Miel;Honey;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31009;Chocolat au lait aux céréales croustillantes, tablette, CIQUAL;Chocolat au lait aux céréales croustillantes, tablette;Chocolate, milk-, with rice;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31010;Chocolat blanc, tablette, CIQUAL;Chocolat blanc, tablette;Chocolate, white-;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31012;Barres ou confiserie chocolatées au lait, CIQUAL;Barres ou confiserie chocolatées au lait;Chocolate, milk-, dairy filling;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31014;Pâte de fruits, CIQUAL;Pâte de fruits;Fruit paste;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31016;Sucre blanc, CIQUAL;Sucre blanc;Sugar, white;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31017;Sucre roux, CIQUAL;Sucre roux;Sugar, brown;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31018;Chocolat au lait aux fruits secs (noisettes, amandes, raisins, praline), tablette, CIQUAL;Chocolat au lait aux fruits secs (noisettes, amandes, raisins, praline), tablette;Chocolate, milk-, with nuts and raisins;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31019;Édulcorant à  l'aspartame, CIQUAL;Édulcorant à  l'aspartame;Aspartame sweetener;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31024;Confiture de fraise, CIQUAL;Confiture de fraise;Jam, strawberry;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31025;Sorbet, CIQUAL;Sorbet;Sherbert;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL31030;Chocolat noir, extra, dégustation, 70% cacao, sans sucres ajoutés, édulcoré, tablette, CIQUAL;Chocolat noir, extra, dégustation, 70% cacao, sans sucres ajoutés, édulcoré, tablette;Chocolate, extra dark, 70% cocoa, sugar free, artificial sweeneners;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31032;Pâte à  tartiner chocolat et noisette, CIQUAL;Pâte à  tartiner chocolat et noisette;Chocolate paste with hazelnuts;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31033;Nougat ou touron, CIQUAL;Nougat ou touron;Nougat;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31035;Barre chocolatée glacée, CIQUAL;Barre chocolatée glacée;Frozen chocolate bar dessert;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL31037;Confiture d'abricot, CIQUAL;Confiture d'abricot;Jam, apricot;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31038;Confiture de cerise, CIQUAL;Confiture de cerise;Jam, cherry;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31039;Marmelade d'orange, CIQUAL;Marmelade d'orange;Marmalade, orange;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31041;Confiserie au chocolat dragéifiée, CIQUAL;Confiserie au chocolat dragéifiée;Chocolate candy pellets, sugar-coated;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31042;Cacahuètes enrobées de chocolat dragéifiées, CIQUAL;Cacahuètes enrobées de chocolat dragéifiées;Chocolate-covered peanuts;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31054;Chewing-gum, sans sucre, CIQUAL;Chewing-gum, sans sucre;Chewing gum, artificial sweeteners;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31060;Bonbon gélifié, CIQUAL;Bonbon gélifié;Sweets (candy), jelly beans;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31063;Bouchée chocolat fourrée, CIQUAL;Bouchée chocolat fourrée;Chocolate confectionery, filled;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31070;Chocolat noir aux fruits secs (noisettes, amandes, raisins, praline), tablette, CIQUAL;Chocolat noir aux fruits secs (noisettes, amandes, raisins, praline), tablette;Chocolate, dark-, with with nuts and raisins;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31071;Barre chocolatée aux fruits secs, CIQUAL;Barre chocolatée aux fruits secs;Chocolate candy bar with nut-caramel filling;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31073;Barre goûter frais au lait et cacao, CIQUAL;Barre goûter frais au lait et cacao;Chocolate snack bar, milk filling, childrens';CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31074;Chocolat noir, extra, dégustation, 70% cacao minimum, tablette, CIQUAL;Chocolat noir, extra, dégustation, 70% cacao minimum, tablette;Chocolate, extra dark, 70% cocoa;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31076;Sucre allégé à  l'aspartame, CIQUAL;Sucre allégé à  l'aspartame;Sugar, low calorie;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31077;Fructose, CIQUAL;Fructose;Fructose;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL31110;Confiture allégée en sucre, tout type, CIQUAL;Confiture allégée en sucre, tout type;Jam, reduced sugar;CIQUAL;Sucres et confiseries;Table Ciqual 2008
+VALUES;CIQUAL34000;Lapin, en ragoût, CIQUAL;Lapin, en ragoût;Rabbit, stewed;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL34001;Lapin, viande crue, CIQUAL;Lapin, viande crue;Rabbit, meat, raw;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL34002;Lapin, viande cuite, CIQUAL;Lapin, viande cuite;Rabbit, meat, cooked;CIQUAL;Viandes;Table Ciqual 2008
+VALUES;CIQUAL34500;Grenouille, cuisse, crue, CIQUAL;Grenouille, cuisse, crue;Frog legs, raw;CIQUAL;Produits de la mer;Table Ciqual 2008
+VALUES;CIQUAL36004;Poulet, cuisse, viande et peau, rôti, CIQUAL;Poulet, cuisse, viande et peau, rôti;Chicken, leg, meat & skin, roasted;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36005;Poulet, viande et peau, rôti, CIQUAL;Poulet, viande et peau, rôti;Chicken, meat & skin, roasted;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36010;Poule, viande et peau, bouillie, CIQUAL;Poule, viande et peau, bouillie;Hen, meat & skin, stewed;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36011;Poule, viande, bouillie, CIQUAL;Poule, viande, bouillie;Hen, meat only, stewed;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36017;Poulet, blanc, cru, CIQUAL;Poulet, blanc, cru;Chicken, breast, meat only, raw;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36018;Poulet, blanc, cuit, CIQUAL;Poulet, blanc, cuit;Chicken breast, meat only, cooked;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36102;Caille, viande et peau, cuite, CIQUAL;Caille, viande et peau, cuite;Quail, meat & skin, cooked;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36202;Canard, viande rôtie, CIQUAL;Canard, viande rôtie;Duck, meat only, roasted;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36205;Canard, magret, cuit à  la poêle, CIQUAL;Canard, magret, cuit à  la poêle;Duck, magret, cooked in pan;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36302;Dinde, viande, rôtie, CIQUAL;Dinde, viande, rôtie;Turkey, meat only, roasted;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36306;Dinde, escalope, sautée, CIQUAL;Dinde, escalope, sautée;Turkey, breast, meat only, sauteed;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36402;Faisan, viande, rôtie, CIQUAL;Faisan, viande, rôtie;Pheasant, meat only, roasted;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36502;Oie, viande, rôtie, CIQUAL;Oie, viande, rôtie;Goose, meat only, roasted;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36602;Pigeon, viande, rôtie, CIQUAL;Pigeon, viande, rôtie;Pigeon, meat only, roasted;CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL36900;Volaille, cuite (aliment moyen), CIQUAL;Volaille, cuite (aliment moyen);Poultry, cooked (average);CIQUAL;Volailles;Table Ciqual 2008
+VALUES;CIQUAL39000;Milk-shake, tout parfum, CIQUAL;Milk-shake, tout parfum;Milkshake, all flavours;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39132;Lait gélifié aromatisé chocolat, rayon frais, CIQUAL;Lait gélifié aromatisé chocolat, rayon frais;Gelified milk, chocolate flavoured, refrigerated;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39200;Crème dessert au chocolat, rayon frais, CIQUAL;Crème dessert au chocolat, rayon frais;Custard dessert, chocolate, refrigerated;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39206;Mousse au chocolat, rayon frais, CIQUAL;Mousse au chocolat, rayon frais;Chocolate mousse;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39208;Chocolat viennois ou liégeois, rayon frais, CIQUAL;Chocolat viennois ou liégeois, rayon frais;Chocolate custard, topped with whipped cream;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39209;Crème caramel, CIQUAL;Crème caramel;Custard with caramel sauce;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39211;Crème dessert aux oeufs, CIQUAL;Crème dessert aux oeufs;Custard dessert, caramel;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39212;Riz au lait, rayon frais, CIQUAL;Riz au lait, rayon frais;Rice pudding,  refrigerated;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39213;Crème brûlée, CIQUAL;Crème brûlée;Custard, crème brûlée;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39214;Crème dessert à  la vanille, appertisée, CIQUAL;Crème dessert à  la vanille, appertisée;Custard dessert, vanilla, canned;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39215;Ile flottante, CIQUAL;Ile flottante;Custard, floating island;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39216;Clafoutis aux fruits, CIQUAL;Clafoutis aux fruits;Fruit batter pudding;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39218;Semoule au lait, rayon frais, CIQUAL;Semoule au lait, rayon frais;Semolina pudding, refrigerated;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39221;Lait gélifié aromatisé nappé de caramel, rayon frais, CIQUAL;Lait gélifié aromatisé nappé de caramel, rayon frais;Gelified milk with caramel sauce, refrigerated;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39224;Crème dessert allégée en matière grasse, rayon frais, CIQUAL;Crème dessert allégée en matière grasse, rayon frais;Custard dessert, low fat, refrigerated;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39228;Mousse aux fruits, CIQUAL;Mousse aux fruits;Fruit mousse;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39229;Crème dessert à  la vanille, rayon frais, CIQUAL;Crème dessert à  la vanille, rayon frais;Custard dessert, vanilla, refrigerated;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39230;Crème dessert, rayon frais (aliment moyen), CIQUAL;Crème dessert, rayon frais (aliment moyen);Custard dessert, refrigerated (average);CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39236;Pain perdu, CIQUAL;Pain perdu;French toast;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39400;Lait de poule, sans alcool, CIQUAL;Lait de poule, sans alcool;Eggnog;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39401;Pêche melba, CIQUAL;Pêche melba;Peach melba;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39500;Glace à  l'eau ou sorbet ou crème glacée, tout parfum (aliment moyen), CIQUAL;Glace à  l'eau ou sorbet ou crème glacée, tout parfum (aliment moyen);Ice cream or sorbet or ice pop, flavoured (average);CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39503;Glace sur bâtonnet, enrobée de chocolat, CIQUAL;Glace sur bâtonnet, enrobée de chocolat;Ice cream on stick, chocolate covered;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39505;Crème dessert, appertisée (aliment moyen), CIQUAL;Crème dessert, appertisée (aliment moyen);Custard dessert, canned (average);CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39506;Crème dessert au chocolat, appertisée, CIQUAL;Crème dessert au chocolat, appertisée;Custard dessert, chocolate, canned;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39507;Crème glacée au chocolat, CIQUAL;Crème glacée au chocolat;Ice cream, chocolate;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39508;Glace en cornet, CIQUAL;Glace en cornet;Ice cream in cone;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39511;Crème dessert, rayon frais ou appertisée (aliment moyen), CIQUAL;Crème dessert, rayon frais ou appertisée (aliment moyen);Custard dessert, refrigerated or canned (average);CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39518;Omelette norvégienne, CIQUAL;Omelette norvégienne;Baked alaska;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39519;Poire belle Hélène, CIQUAL;Poire belle Hélène;Belle helene pear dessert;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39600;Crème glacée, CIQUAL;Crème glacée;Ice cream;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39700;Crème anglaise, CIQUAL;Crème anglaise;Custard, english cream;CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL39710;Crème pâtissière, CIQUAL;Crème pâtissière;Custard, confectionners';CIQUAL;Produits laitiers et entremets;Table Ciqual 2008
+VALUES;CIQUAL40003;Cervelle, agneau, cuite, CIQUAL;Cervelle, agneau, cuite;Brain, lamb, boiled;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40004;Cervelle, porc, braisée, CIQUAL;Cervelle, porc, braisée;Brain, pork, braised;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40007;Cervelle, veau, cuite, CIQUAL;Cervelle, veau, cuite;Brain, calf, boiled;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40053;Coeur, boeuf, cuit, CIQUAL;Coeur, boeuf, cuit;Heart, beef, cooked;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40103;Foie, agneau, cuit, CIQUAL;Foie, agneau, cuit;Liver, lamb, cooked;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40105;Foie, génisse, cuit, CIQUAL;Foie, génisse, cuit;Liver, beef, cooked;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40107;Foie, veau, cuit, CIQUAL;Foie, veau, cuit;Liver, calf, cooked;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40109;Foie, volaille, cuit, CIQUAL;Foie, volaille, cuit;Liver, poultry, cooked;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40116;Foie, poulet, cuit, CIQUAL;Foie, poulet, cuit;Liver, chicken, cooked;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40201;Langue, veau, cuite, CIQUAL;Langue, veau, cuite;Tongue, calf, boiled;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40203;Langue, boeuf, cuite, CIQUAL;Langue, boeuf, cuite;Tongue, beef, boiled;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40305;Ris, veau, braisé ou poêlé, CIQUAL;Ris, veau, braisé ou poêlé;Sweetbread (thymus), calf, braised;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40401;Rognon, cuit (aliment moyen), CIQUAL;Rognon, cuit (aliment moyen);Kidney, all types, cooked;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40403;Rognon, boeuf, cuit, CIQUAL;Rognon, boeuf, cuit;Kidney, beef stewed;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40405;Rognon, porc, cuit, CIQUAL;Rognon, porc, cuit;Kidney, pork stewed;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40406;Rognon d'agneau, braisé, CIQUAL;Rognon d'agneau, braisé;Kidney, lamb, braised;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40408;Rognon de veau, braisé ou poêlé, CIQUAL;Rognon de veau, braisé ou poêlé;Kidney, veal, braised;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL40701;Gésier, canard, confit, appertisé, CIQUAL;Gésier, canard, confit, appertisé;Gizzard, duck, confit;CIQUAL;Abats;Table Ciqual 2008
+VALUES;CIQUAL42000;Substitut de repas hypocalorique, crème dessert ultra frais, toute arôme, CIQUAL;Substitut de repas hypocalorique, crème dessert ultra frais, toute arôme;Meal replacement, dessert-type;CIQUAL;Denrées destinées à  une alimentation particulière;Table Ciqual 2008
+VALUES;CIQUAL42003;Substitut de repas hypocalorique, à  boire, tout arôme, CIQUAL;Substitut de repas hypocalorique, à  boire, tout arôme;Meal replacement, liquid;CIQUAL;Denrées destinées à  une alimentation particulière;Table Ciqual 2008
+VALUES;CIQUAL42004;Substitut de repas hypocalorique, poudre reconstituée avec lait écrémé, tout arôme, CIQUAL;Substitut de repas hypocalorique, poudre reconstituée avec lait écrémé, tout arôme;Meal replacement, reconstituted with skim milk;CIQUAL;Denrées destinées à  une alimentation particulière;Table Ciqual 2008
+VALUES;CIQUAL42005;Substitut de repas hypocalorique, poudre reconstituée avec lait écrémé, type milk-shake, tout arôme, CIQUAL;Substitut de repas hypocalorique, poudre reconstituée avec lait écrémé, type milk-shake, tout arôme;Meal replacement milkshake, reconstituted with skim milk;CIQUAL;Denrées destinées à  une alimentation particulière;Table Ciqual 2008
+VALUES;CIQUAL42200;Lécithine de soja, CIQUAL;Lécithine de soja;Soy lecithine, powdered;CIQUAL;Compléments alimentaires;Table Ciqual 2008
+VALUES;CIQUAL42500;Farine bouillie petit déjeuner bébé, CIQUAL;Farine bouillie petit déjeuner bébé;Babyfood, cereal, mixed, prepared with whole milk;CIQUAL;Denrées destinées à  une alimentation particulière;Table Ciqual 2008
+VALUES;CIQUAL42600;Petit pot pour bébé, type viande ou poisson + légumes, CIQUAL;Petit pot pour bébé, type viande ou poisson + légumes;Babyfood, vegetables and meat or fish, strained (average);CIQUAL;Denrées destinées à  une alimentation particulière;Table Ciqual 2008
+VALUES;CIQUAL51502;Meloukhia, sauce, artisanal, CIQUAL;Meloukhia, sauce, artisanal;Molokhia sauce;CIQUAL;Assaisonnements et sauces;Table Ciqual 2008
+VALUES;CIQUAL51510;Frik (blé dur immature concassé), sec, CIQUAL;Frik (blé dur immature concassé), sec;"Frik (crushed immature hard wheat), dry
+\nrd wheat";CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL51511;Frik (blé dur immature concassé), cuit, CIQUAL;Frik (blé dur immature concassé), cuit;Frik (crushed immature hard wheat), cooked;CIQUAL;Céréales et pâtes;Table Ciqual 2008
+VALUES;CIQUAL76000;Eau minérale Abatilles, embouteillée, non gazeuse, faiblement minéralisée (Arcachon, 33), CIQUAL;Eau minérale Abatilles, embouteillée, non gazeuse, faiblement minéralisée (Arcachon, 33);Water, mineral, non-carbonated, ABATILLES;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76001;Eau minérale Aix-les-Bains, embouteillée, non gazeuse, faiblement minéralisée  (Aix-les-Bains, 73), CIQUAL;Eau minérale Aix-les-Bains, embouteillée, non gazeuse, faiblement minéralisée  (Aix-les-Bains, 73);Water, mineral, non-carbonated, AIX-LES-BAINS;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76002;Eau minérale Aizac, embouteillée, gazeuse, faiblement minéralisée (Aizac, 07), CIQUAL;Eau minérale Aizac, embouteillée, gazeuse, faiblement minéralisée (Aizac, 07);Water, mineral, carbonated, AIZAC;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76003;Eau minérale Alet, embouteillée, non gazeuse, faiblement minéralisée (Alet, 11), CIQUAL;Eau minérale Alet, embouteillée, non gazeuse, faiblement minéralisée (Alet, 11);Water, mineral, non-carbonated, ALET;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76004;Eau minérale Amanda,  embouteillée, non gazeuse, fortement minéralisée (St-Amand, 59), CIQUAL;Eau minérale Amanda,  embouteillée, non gazeuse, fortement minéralisée (St-Amand, 59);Water, mineral, non-carbonated, AMANDA;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76005;Eau minérale Amélie-la-Reine, embouteillée, gazeuse, moyennement minéralisée (Cornillon, 38), CIQUAL;Eau minérale Amélie-la-Reine, embouteillée, gazeuse, moyennement minéralisée (Cornillon, 38);Water, mineral, carbonated, AMELIE-LA-REINE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76006;Eau minérale Arcens, embouteillée, gazeuse, fortement minéralisée (Arcens, 07), CIQUAL;Eau minérale Arcens, embouteillée, gazeuse, fortement minéralisée (Arcens, 07);Water, mineral, carbonated, ARCENS;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76007;Eau minérale Arvie, embouteillée, gazeuse, fortement minéralisée (Ardes, 63), CIQUAL;Eau minérale Arvie, embouteillée, gazeuse, fortement minéralisée (Ardes, 63);Water, mineral, carbonated, ARVIE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76008;Eau minérale Auvergne, embouteillée, gazeuse, fortement minéralisée (Cornillon, 38), CIQUAL;Eau minérale Auvergne, embouteillée, gazeuse, fortement minéralisée (Cornillon, 38);Water, mineral, carbonated, AUVERGNE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76009;Eau minérale Avène, embouteillée, non gazeuse, faiblement minéralisée (Avène, 34), CIQUAL;Eau minérale Avène, embouteillée, non gazeuse, faiblement minéralisée (Avène, 34);Water, mineral, non-carbonated, AVENE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76010;Eau minérale Celtic, embouteillée, non gazeuse, très faiblement minéralisée (Niederbronn, 67), CIQUAL;Eau minérale Celtic, embouteillée, non gazeuse, très faiblement minéralisée (Niederbronn, 67);Water, mineral, non-carbonated, CELTIC;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76011;Eau minérale Chambon, embouteillée, non gazeuse, faiblement minéralisée (Chambon, 45), CIQUAL;Eau minérale Chambon, embouteillée, non gazeuse, faiblement minéralisée (Chambon, 45);Water, mineral, non-carbonated, CHAMBON;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76012;Eau minérale Chantemerle, embouteillée, non gazeuse, faiblement minéralisée (Le Pestrin, 07), CIQUAL;Eau minérale Chantemerle, embouteillée, non gazeuse, faiblement minéralisée (Le Pestrin, 07);Water, mineral, non-carbonated, CHANTEMERLE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76013;Eau minérale Chateauneuf, embouteillée, gazeuse, fortement minéralisée (Chateauneuf, 63), CIQUAL;Eau minérale Chateauneuf, embouteillée, gazeuse, fortement minéralisée (Chateauneuf, 63);Water, mineral, carbonated, CHATEAUNEUF;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76014;Eau minérale Chateldon, embouteillée, gazeuse, fortement minéralisée (Chateldon, 63), CIQUAL;Eau minérale Chateldon, embouteillée, gazeuse, fortement minéralisée (Chateldon, 63);Water, mineral, carbonated, CHATELDON;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76015;Eau minérale Clos de l'Abbaye, embouteillée, non gazeuse, moyennement minéralisée (St-Amand, 59), CIQUAL;Eau minérale Clos de l'Abbaye, embouteillée, non gazeuse, moyennement minéralisée (St-Amand, 59);Water, mineral, non-carbonated, CLOS DE L'ABBAYE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76016;Eau minérale Contrex, embouteillée, non gazeuse, fortement minéralisée (Contrexéville, 88), CIQUAL;Eau minérale Contrex, embouteillée, non gazeuse, fortement minéralisée (Contrexéville, 88);Water, mineral, non-carbonated, CONTREX;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76017;Eau minérale Dax, embouteillée, non gazeuse, moyennement minéralisée (Dax, 40), CIQUAL;Eau minérale Dax, embouteillée, non gazeuse, moyennement minéralisée (Dax, 40);Water, mineral, non-carbonated, DAX;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76018;Eau minérale Didier, embouteillée, gazeuse, moyennement minéralisée (Martinique), CIQUAL;Eau minérale Didier, embouteillée, gazeuse, moyennement minéralisée (Martinique);Water, mineral, carbonated, DIDIER;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76019;Eau minérale Didier Plate, embouteillée non gazeuse, moyennement minéralisée (Martinique), CIQUAL;Eau minérale Didier Plate, embouteillée non gazeuse, moyennement minéralisée (Martinique);Water, mineral, non-carbonated, DIDIER PLATE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76020;Eau minérale Evian, embouteillée, non gazeuse, faiblement minéralisée (Evian, 74), CIQUAL;Eau minérale Evian, embouteillée, non gazeuse, faiblement minéralisée (Evian, 74);Water, mineral, non-carbonated, EVIAN;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76021;Eau minérale Fonfort, embouteillée, gazeuse, fortement minéralisée (St-Romain-le-Puy, 42), CIQUAL;Eau minérale Fonfort, embouteillée, gazeuse, fortement minéralisée (St-Romain-le-Puy, 42);Water, mineral, carbonated, FONFORT;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76022;Eau minérale Hépar, embouteillée, non gazeuse, fortement minéralisée (Vittel, 88), CIQUAL;Eau minérale Hépar, embouteillée, non gazeuse, fortement minéralisée (Vittel, 88);Water, mineral, non-carbonated, HEPAR;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76023;Eau minérale Hydroxydase, embouteillée, gazeuse, fortement minéralisée (Le Breuil sur Couze, 63), CIQUAL;Eau minérale Hydroxydase, embouteillée, gazeuse, fortement minéralisée (Le Breuil sur Couze, 63);Water, mineral, carbonated, HYDROXYDASE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76024;Eau minérale Vernière, embouteillée, gazeuse, moyennement minéralisée (Les Aires, 34), CIQUAL;Eau minérale Vernière, embouteillée, gazeuse, moyennement minéralisée (Les Aires, 34);Water, mineral, carbonated, VERNIERE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76025;Eau minérale Luchon (31), embouteillée, non gazeuse, faiblement minéralisée (Luchon, 31), CIQUAL;Eau minérale Luchon (31), embouteillée, non gazeuse, faiblement minéralisée (Luchon, 31);Water, mineral, non-carbonated, LUCHON;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76026;Eau minérale Miers-Alvignac, embouteillée, non gazeuse, fortement minéralisée (Alvignac, 46), CIQUAL;Eau minérale Miers-Alvignac, embouteillée, non gazeuse, fortement minéralisée (Alvignac, 46);Water, mineral, non-carbonated, MIERS-ALVIGNAC;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76027;Eau de source Mont-Roucous, embouteillée, très faiblement minéralisée (Lacaune, 81), CIQUAL;Eau de source Mont-Roucous, embouteillée, très faiblement minéralisée (Lacaune, 81);Water, botled, MONT-ROUCOUS;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76028;Eau de source Ogeu, embouteillée, faiblement minéralisée (Ogeu, 64), CIQUAL;Eau de source Ogeu, embouteillée, faiblement minéralisée (Ogeu, 64);Water, bottled, OGEU;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76029;Eau minérale Orée du bois, embouteillée, non gazeuse, moyennement minéralisée (St-Amand, 59), CIQUAL;Eau minérale Orée du bois, embouteillée, non gazeuse, moyennement minéralisée (St-Amand, 59);Water, mineral, non-carbonated, OREE DU BOIS;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76030;Eau minérale Orezza, embouteillée, gazeuse, moyennement minéralisée (Rapaggio, 20B), CIQUAL;Eau minérale Orezza, embouteillée, gazeuse, moyennement minéralisée (Rapaggio, 20B);Water, mineral, carbonated, OREZZA;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76031;Eau minérale Parot, embouteillée, gazeuse, fortement minéralisée (St-Romain-le-Puy, 42), CIQUAL;Eau minérale Parot, embouteillée, gazeuse, fortement minéralisée (St-Romain-le-Puy, 42);Water, mineral, non-carbonated, PAROT;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76032;Eau minérale Plancoet, embouteillée, non gazeuse, faiblement minéralisée (Plancoet, 22), CIQUAL;Eau minérale Plancoet, embouteillée, non gazeuse, faiblement minéralisée (Plancoet, 22);Water, mineral, carbonated, PLANCOET;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76033;Eau minérale Propiac, embouteillée, non gazeuse, fortement minéralisée (Propiac, 26), CIQUAL;Eau minérale Propiac, embouteillée, non gazeuse, fortement minéralisée (Propiac, 26);Water, mineral, non-carbonated, PROPIAC;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76034;Eau minérale Puits St-Georges, embouteillée, gazeuse, moyennement minéralisée (St-Romain-le-Puy, 42), CIQUAL;Eau minérale Puits St-Georges, embouteillée, gazeuse, moyennement minéralisée (St-Romain-le-Puy, 42);Water, mineral, carbonated, PUITS St-GEORGES;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76035;Eau minérale Quézac, embouteillée, gazeuse, fortement minéralisée (Quézac, 48), CIQUAL;Eau minérale Quézac, embouteillée, gazeuse, fortement minéralisée (Quézac, 48);Water, mineral, carbonated, QUEZAC;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76036;Eau minérale Reine des basaltes, embouteillée, gazeuse, moyennement minéralisée (Asperjoc, 07), CIQUAL;Eau minérale Reine des basaltes, embouteillée, gazeuse, moyennement minéralisée (Asperjoc, 07);Water, mineral, carbonated, REINE DES BASALTES;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76037;Eau minérale Rozana, embouteillée, gazeuse, fortement minéralisée (Beauregard, 63), CIQUAL;Eau minérale Rozana, embouteillée, gazeuse, fortement minéralisée (Beauregard, 63);Water, mineral, carbonated, ROZANA;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76038;Eau minérale Sail-les-Bains, embouteillée, non gazeuse, faiblement minéralisée (Sail-les-Bains, 42), CIQUAL;Eau minérale Sail-les-Bains, embouteillée, non gazeuse, faiblement minéralisée (Sail-les-Bains, 42);Water, mineral, non-carbonated, SAIL-LES-BAINS;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76039;Eau minérale Salvetat, embouteillée, gazeuse, moyennement minéralisée (La Salvetat, 34), CIQUAL;Eau minérale Salvetat, embouteillée, gazeuse, moyennement minéralisée (La Salvetat, 34);Water, mineral, carbonated, SALVETAT;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76040;Eau minérale Soultzmatt , embouteillée, gazeuse, moyennement minéralisée ( Soultzmatt, 68), CIQUAL;Eau minérale Soultzmatt , embouteillée, gazeuse, moyennement minéralisée ( Soultzmatt, 68);Water, mineral, carbonated, SOULTZMATT;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76041;Eau minérale St-Alban Antonin, embouteillée, gazeuse, fortement minéralisée (St-Alban, 42), CIQUAL;Eau minérale St-Alban Antonin, embouteillée, gazeuse, fortement minéralisée (St-Alban, 42);Water, mineral, carbonated, ST-ALBAN ANTONIN;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76042;Eau minérale St-Alban Cesar, embouteillée, gazeuse, fortement minéralisée (St-Alban, 42), CIQUAL;Eau minérale St-Alban Cesar, embouteillée, gazeuse, fortement minéralisée (St-Alban, 42);Water, mineral, carbonated, ST-ALBAN CESAR;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76043;Eau minérale St-Amand Vauban, embouteillée, non gazeuse, moyennement minéralisée (St-Amand, 59), CIQUAL;Eau minérale St-Amand Vauban, embouteillée, non gazeuse, moyennement minéralisée (St-Amand, 59);Water, mineral, non-carbonated, ST-AMAND VAUBAN;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76044;Eau minérale St-Antonin-Noble-Val, embouteillée, non gazeuse, fortement minéralisée (St-Antonin-Noble-Val, 82), CIQUAL;Eau minérale St-Antonin-Noble-Val, embouteillée, non gazeuse, fortement minéralisée (St-Antonin-Noble-Val, 82);Water, mineral, non-carbonated, ST-ANTONIN-NOBLE-VAL;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76045;Eau minérale St-Christophe, embouteillée, non gazeuse, moyennement minéralisée (Dax, 40), CIQUAL;Eau minérale St-Christophe, embouteillée, non gazeuse, moyennement minéralisée (Dax, 40);Water, mineral, non-carbonated, ST-CHRISTOPHE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76046;Eau minérale St-Diéry, embouteillée, gazeuse, fortement minéralisée (St-Diéry, 63), CIQUAL;Eau minérale St-Diéry, embouteillée, gazeuse, fortement minéralisée (St-Diéry, 63);Water, mineral, carbonated, ST-DIERY;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76047;Eau minérale Ste-Marguerite, embouteillée, gazeuse, fortement minéralisée (St-Maurice, 63), CIQUAL;Eau minérale Ste-Marguerite, embouteillée, gazeuse, fortement minéralisée (St-Maurice, 63);Water, mineral, carbonated, STE-MARGUERITE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76048;Eau minérale St-Martial, embouteillée, non gazeuse, faiblement minéralisée (St-Martin le Redon, 46), CIQUAL;Eau minérale St-Martial, embouteillée, non gazeuse, faiblement minéralisée (St-Martin le Redon, 46);Water, mineral, non-carbonated, ST-MARTIAL;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76049;Eau minérale St-Yorre, embouteillée, gazeuse, fortement minéralisée (Saint-Yorre, 03), CIQUAL;Eau minérale St-Yorre, embouteillée, gazeuse, fortement minéralisée (Saint-Yorre, 03);Water, mineral, carbonated, ST-YORRE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76050;Eau minérale Thonon, embouteillée, non gazeuse, faiblement minéralisée (Thonon, 74), CIQUAL;Eau minérale Thonon, embouteillée, non gazeuse, faiblement minéralisée (Thonon, 74);Water, mineral, non-carbonated, THONON;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76051;Eau minérale Vals St-Jean, embouteillée, gazeuse, faiblement minéralisée (Vals, 07), CIQUAL;Eau minérale Vals St-Jean, embouteillée, gazeuse, faiblement minéralisée (Vals, 07);Water, mineral, carbonated, VALS ST-JEAN;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76052;Eau minérale Vals-Vivaraise, embouteillée, gazeuse, moyennement minéralisée (Vals, 07), CIQUAL;Eau minérale Vals-Vivaraise, embouteillée, gazeuse, moyennement minéralisée (Vals, 07);Water, mineral, carbonated, VALS-VIVARAISE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76053;Eau minérale Ventadour, embouteillée, gazeuse, faiblement minéralisée (Le Pestrin, 07), CIQUAL;Eau minérale Ventadour, embouteillée, gazeuse, faiblement minéralisée (Le Pestrin, 07);Water, mineral, non-carbonated, VENTADOUR;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76054;Eau minérale Vernet, embouteillée, gazeuse, moyennement minéralisée (Prades, 07), CIQUAL;Eau minérale Vernet, embouteillée, gazeuse, moyennement minéralisée (Prades, 07);Water, mineral, carbonated, VERNET;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76055;Eau minérale Vichy Célestins, embouteillée, gazeuse, fortement minéralisée (Saint-Yorre, 03), CIQUAL;Eau minérale Vichy Célestins, embouteillée, gazeuse, fortement minéralisée (Saint-Yorre, 03);Water, mineral, carbonated, VICHY CELESTINS;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76056;Eau minérale Vittel, embouteillée, non gazeuse, moyennement minéralisée (Vittel, 88), CIQUAL;Eau minérale Vittel, embouteillée, non gazeuse, moyennement minéralisée (Vittel, 88);Water, mineral, non-carbonated, VITTEL;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76057;Eau minérale Volvic, embouteillée, non gazeuse, faiblement minéralisée (Volvic, 63), CIQUAL;Eau minérale Volvic, embouteillée, non gazeuse, faiblement minéralisée (Volvic, 63);Water, mineral, non-carbonated, VOLVIC;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76058;Eau minérale Volvic active, embouteillée, gazeuse, faiblement minéralisée (Volvic, 63), CIQUAL;Eau minérale Volvic active, embouteillée, gazeuse, faiblement minéralisée (Volvic, 63);Water, mineral, carbonated, VOLVIC ACTIVE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76059;Eau minérale Wattwiller, embouteillée, non gazeuse, moyennement minéralisée (Wattwiller , 68), CIQUAL;Eau minérale Wattwiller, embouteillée, non gazeuse, moyennement minéralisée (Wattwiller , 68);Water, mineral, non-carbonated, WATTWILLER;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76060;Eau minérale Perrier, embouteillée, gazeuse, faiblement minéralisée (Vergèse, 30), CIQUAL;Eau minérale Perrier, embouteillée, gazeuse, faiblement minéralisée (Vergèse, 30);Water, mineral, carbonated, PERRIER;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76061;Eau minérale Badoit, embouteillée, gazeuse, moyennement minéralisée (St-Galmier, 42), CIQUAL;Eau minérale Badoit, embouteillée, gazeuse, moyennement minéralisée (St-Galmier, 42);Water, mineral, carbonated, BADOIT;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76062;Eau minérale Avra, embouteillée, non gazeuse, faiblement minéralisée (Grèce), CIQUAL;Eau minérale Avra, embouteillée, non gazeuse, faiblement minéralisée (Grèce);Water, mineral, non-carbonated, AVRA;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76063;Eau minérale Beckerich, embouteillée, non gazeuse, faiblement minéralisée (Luxembourg), CIQUAL;Eau minérale Beckerich, embouteillée, non gazeuse, faiblement minéralisée (Luxembourg);Water, mineral, non-carbonated, BECKERICH;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76064;Eau minérale Caramulo, embouteillée, non gazeuse, très faiblement minéralisée (Portugal), CIQUAL;Eau minérale Caramulo, embouteillée, non gazeuse, très faiblement minéralisée (Portugal);Water, mineral, non-carbonated, CARAMULO;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76065;Eau minérale Chaudfontaine, embouteillée, non gazeuse, faiblement minéralisée (Belgique), CIQUAL;Eau minérale Chaudfontaine, embouteillée, non gazeuse, faiblement minéralisée (Belgique);Water, mineral, non-carbonated, CHAUDFONTAINE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76066;Eau minérale Christinen Brunnen, embouteillée, non gazeuse, moyennement minéralisée (Allemagne), CIQUAL;Eau minérale Christinen Brunnen, embouteillée, non gazeuse, moyennement minéralisée (Allemagne);Water, mineral, non-carbonated, CHRISTINEN BRUNEN;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76067;Eau minérale Courmayeur, embouteillée, non gazeuse, fortement minéralisée (Italie), CIQUAL;Eau minérale Courmayeur, embouteillée, non gazeuse, fortement minéralisée (Italie);Water, mineral, non-carbonated, COURMAYEUR;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76068;Eau minérale Highland spring, embouteillée, non gazeuse, faiblement minéralisée (Écosse), CIQUAL;Eau minérale Highland spring, embouteillée, non gazeuse, faiblement minéralisée (Écosse);Water, mineral, non-carbonated, HIGHLAND SPRING;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76069;Eau minérale Levissima, embouteillée, non gazeuse, faiblement minéralisée (Italie), CIQUAL;Eau minérale Levissima, embouteillée, non gazeuse, faiblement minéralisée (Italie);Water, mineral, non-carbonated, LEVISSIMA;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76070;Eau minérale Luso, embouteillée, non gazeuse, très faiblement minéralisée (Portugal), CIQUAL;Eau minérale Luso, embouteillée, non gazeuse, très faiblement minéralisée (Portugal);Water, mineral, non-carbonated, LUSO;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76071;Eau minérale Néro, embouteillée, non gazeuse, faiblement minéralisée (Grèce), CIQUAL;Eau minérale Néro, embouteillée, non gazeuse, faiblement minéralisée (Grèce);Water, mineral, non-carbonated, NERO;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76072;Eau minérale Penacova, embouteillée, non gazeuse, très faiblement minéralisée (Portugal), CIQUAL;Eau minérale Penacova, embouteillée, non gazeuse, très faiblement minéralisée (Portugal);Water, mineral, non-carbonated, PENACOVA;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76073;Eau minérale San Benedetto, embouteillée, faiblement minéralisée (Italie), CIQUAL;Eau minérale San Benedetto, embouteillée, faiblement minéralisée (Italie);Water, mineral, non-carbonated, SAN BENEDETTO;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76074;Eau minérale San Bernardo, embouteillée, très faiblement minéralisée (Italie), CIQUAL;Eau minérale San Bernardo, embouteillée, très faiblement minéralisée (Italie);Water, mineral, non-carbonated, SAN BERNARDO;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76075;Eau minérale San Pellegrino, embouteillée, gazeuse, moyennement minéralisée (Italie), CIQUAL;Eau minérale San Pellegrino, embouteillée, gazeuse, moyennement minéralisée (Italie);Water, mineral, carbonated, SAN PELLEGRINO;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76076;Eau minérale Spa-Reine, embouteillée, non gazeuse, moyennement minéralisée (Belgique), CIQUAL;Eau minérale Spa-Reine, embouteillée, non gazeuse, moyennement minéralisée (Belgique);Water, mineral, non-carbonated, SPA-REINE;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76077;Eau minérale Talians, embouteillée,  non gazeuse, fortement minéralisée (Italie), CIQUAL;Eau minérale Talians, embouteillée,  non gazeuse, fortement minéralisée (Italie);Water, mineral, non-carbonated, TALIANS;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76078;Eau minérale Valvert, embouteillée, non gazeuse, faiblement minéralisée (Belgique), CIQUAL;Eau minérale Valvert, embouteillée, non gazeuse, faiblement minéralisée (Belgique);Water, mineral, non-carbonated, VALVERT;CIQUAL;Boissons sans alcool;Table Ciqual 2008
+VALUES;CIQUAL76079;Eau minérale Appollinaris, embouteillée, non gazeuse, fortement minéralisée (Allemagne), CIQUAL;Eau minérale Appollinaris, embouteillée, non gazeuse, fortement minéralisée (Allemagne);Water, mineral, non-carbonated, APOLLINARIS;CIQUAL;Boissons sans alcool;Table Ciqual 2008
