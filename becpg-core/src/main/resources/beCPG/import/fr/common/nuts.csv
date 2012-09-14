@@ -1,8 +1,8 @@
 PATH;/System/Characts/bcpg:entityLists/Nuts;;;;;;
 TYPE;bcpg:nut;;;;;;
 COLUMNS;cm:name;bcpg:nutUnit;bcpg:nutType;bcpg:nutGroup;bcpg:legalName;bcpg:legalName_fr;bcpg:legalName_en
-VALUES;Energie kJ, étiquetage;kJ;Valeur énergétique;Groupe 1;Energie selon Directive étiquetage 2008-100-CE;Energie selon Directive étiquetage 2008-100-CE;Energy, Directive 2008-100-CE for labelling
-VALUES;Energie kcal, étiquetage;kcal;Valeur énergétique;Groupe 1;Energie selon Directive étiquetage 2008-100-CE;Energie selon Directive étiquetage 2008-100-CE;Energy, Directive 2008-100-CE for labelling
+VALUES;Energie kJ, étiquetage;kJ;Valeur énergétique;Groupe 1;Energie, Règlement UE 1169/2011;Energie, Règlement UE 1169/2011;Energie, Règlement UE 1169/2011
+VALUES;Energie kcal, étiquetage;kcal;Valeur énergétique;Groupe 1;Energie, Règlement UE 1169/2011;Energie, Règlement UE 1169/2011;Energie, Règlement UE 1169/2011
 VALUES;Energie kJ;kJ;Valeur énergétique;Groupe 1;Energie, N x facteur Jones, avec fibres;Energie, N x facteur Jones, avec fibres;Energy, N x Jones' factor, with fibres
 VALUES;Energie kcal;kcal;Valeur énergétique;Groupe 1;Energie, N x facteur Jones, avec fibres;Energie, N x facteur Jones, avec fibres;Energy, N x Jones' factor, with fibres
 VALUES;Eau;g;Nutriment;Autre;Eau;Eau;Water
