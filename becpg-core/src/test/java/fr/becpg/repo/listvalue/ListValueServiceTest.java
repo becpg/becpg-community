@@ -19,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -73,7 +72,7 @@ public class ListValueServiceTest extends RepoBaseTestCase {
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
 
 				String[] arrClassNames = { "bcpg:supplier" };
-				List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10, arrClassNames).getResults();
+				List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10, arrClassNames,null).getResults();
 
 				boolean containsSupplier = false;
 				for (ListValueEntry s : suggestions) {
@@ -88,7 +87,7 @@ public class ListValueServiceTest extends RepoBaseTestCase {
 
 				// filter by client : no results
 				String[] arrClassNames2 = { "bcpg:client" };
-				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10, arrClassNames2).getResults();
+				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10, arrClassNames2,null).getResults();
 
 				assertEquals("0 suggestion", 0, suggestions.size());
 				
