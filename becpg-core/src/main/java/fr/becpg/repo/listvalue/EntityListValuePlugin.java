@@ -15,6 +15,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -59,6 +60,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private static final String SUFFIX_SIMPLE_QUOTE = "'";
 
 	private static final String QUERY_TYPE = " TYPE:\"%s\"";
+	
+	private static final String PROP_FILTER_BY_ASSOC = "filterByAssoc";
 
 	/** The Constant SOURCE_TYPE_TARGET_ASSOC. */
 	private static final String SOURCE_TYPE_TARGET_ASSOC = "targetassoc";
@@ -146,20 +149,18 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
 		String classNames = (String) props.get(ListValueService.PROP_CLASS_NAMES);
 		String[] arrClassNames = classNames != null ? classNames.split(PARAM_VALUES_SEPARATOR) : null;
-		String parent = (String) props.get(ListValueService.PROP_PARENT);
 		String productType = (String) props.get(ListValueService.PROP_PRODUCT_TYPE);
 
 		if (sourceType.equals(SOURCE_TYPE_TARGET_ASSOC)) {
 			QName type = QName.createQName(className, namespaceService);
-			return suggestTargetAssoc(type, query, pageNum, pageSize, arrClassNames);
+			return suggestTargetAssoc(type, query, pageNum, pageSize, arrClassNames, props);
 		} else if (sourceType.equals(SOURCE_TYPE_PRODUCT)) {
-			return suggestTargetAssoc(BeCPGModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames);
+			return suggestTargetAssoc(BeCPGModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
 		} else if (sourceType.equals(SOURCE_TYPE_LINKED_VALUE)) {
-			return suggestLinkedValue(path, parent, query, pageNum, pageSize, props);
+			return suggestLinkedValue(path, query, pageNum, pageSize, props);
 		} else if (sourceType.equals(SOURCE_TYPE_LIST_VALUE)) {
 			return suggestListValue(path, query, pageNum, pageSize);
 		} else if (sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)) {
-
 			QName productTypeQName = QName.createQName(productType, namespaceService);
 			return suggestProductReportTemplates(productTypeQName, query, pageNum, pageSize);
 
@@ -178,10 +179,10 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 *            the type
 	 * @param query
 	 *            the query
+	 * @param props 
 	 * @return the map
 	 */
-
-	protected ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames) {
+	protected ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames, Map<String, Serializable> props) {
 
 		if (logger.isDebugEnabled()) {
 			if (arrClassNames != null) {
@@ -208,7 +209,41 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		// filter product state
 		queryPath += String.format(RepoConsts.QUERY_FILTER_PRODUCT_STATE, SystemState.Archived, SystemState.Refused);
 
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
+		List<NodeRef> ret = null;
+		
+		
+		@SuppressWarnings("unchecked")
+		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
+		if (extras != null) {
+			String filterByAssoc = (String) extras.get(PROP_FILTER_BY_ASSOC);
+			String strAssocNodeRef = (String) props.get(ListValueService.PROP_PARENT);
+			if(filterByAssoc!=null && filterByAssoc.length()>0 
+					&& strAssocNodeRef!=null && strAssocNodeRef.length()>0){
+				QName assocQName = QName.createQName(filterByAssoc, namespaceService);
+	
+				NodeRef nodeRef = new NodeRef(strAssocNodeRef);
+	
+					if (nodeService.exists(nodeRef)) {
+						
+						List<NodeRef> tmp = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_UNLIMITED);
+	
+						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
+	
+						List<NodeRef> nodesToKeep = new ArrayList<NodeRef>();
+						for (AssociationRef assocRef : assocRefs) {
+							nodesToKeep.add(assocRef.getSourceRef());
+						}
+						tmp.retainAll(nodesToKeep);
+						
+						ret = tmp.subList(0, Math.min( RepoConsts.MAX_SUGGESTIONS, tmp.size()));
+					}
+				}
+		}
+
+		if(ret == null){
+			ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS); 
+		}
+		
 
 		return new ListValuePage(ret, pageNum, pageSize, new TargetAssocValueExtractor(ContentModel.PROP_NAME, nodeService, namespaceService));
 
@@ -229,9 +264,10 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 *            the query
 	 * @return the map
 	 */
-	private ListValuePage suggestLinkedValue(String path, String parent, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+	private ListValuePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		NodeRef itemIdNodeRef = null;
+		
 
 		if (path == null) {
 			NodeRef entityNodeRef = null;
@@ -254,9 +290,12 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		logger.debug("suggestLinkedValue for path:" + path);
 
 		String queryPath = "";
+
+		String parent = (String) props.get(ListValueService.PROP_PARENT);
 		path = LuceneHelper.encodePath(path);
 		if (!isAllQuery(query)) {
 			query = prepareQuery(query);
+			
 			if (parent == null) {
 				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, path, query);
 			} else {

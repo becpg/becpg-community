@@ -16,8 +16,6 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -36,8 +34,6 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class CompoListValuePluginTest extends RepoBaseTestCase {
 
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(CompoListValuePluginTest.class);
 
 	private CompoListValuePlugin compoListValuePlugin;
 

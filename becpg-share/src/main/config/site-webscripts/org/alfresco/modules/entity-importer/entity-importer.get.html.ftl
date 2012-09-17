@@ -65,7 +65,7 @@
  		mode: "edit",
       multipleSelectMode: true, 
  		targetLinkTemplate: "${targetLinkTemplate}" ,
- 		dsStr:"becpg/remote/proxy/becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct",
+ 		dsStr:"becpg/remote/proxy/becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct&extra.filterByAssoc=bcpg:suppliers",
  		parentFieldHtmlId:"${el}-supplier"
   });
 

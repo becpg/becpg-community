@@ -53,7 +53,7 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 			return suggestVariable(type, query, pageNum, pageSize, new NodeRef((String) props.get(ListValueService.PROP_NODEREF)));
 		}
 
-		return suggestTargetAssoc(type, query, pageNum, pageSize, null);
+		return suggestTargetAssoc(type, query, pageNum, pageSize, null, props);
 
 	}
 
