@@ -191,9 +191,12 @@
 				         var actionUrl = Alfresco.constants.PROXY_URI + "becpg/remote/import";
 
 				         var doSetupFormsValidation = function FormulationView_onActionEntityImport_doSetupFormsValidation(
-				               p_form) {
-					         // TODO
+				               form) {
+				         
+//   TODO               form.addValidation(this.modules.entityImporter.id + "-entities-field", Alfresco.forms.validation.mandatory, null, "blur");
+//	   	               form.setShowSubmitStateDynamically(true, false);
 				         };
+				        
 
 				         // Always create a new instance
 				         this.modules.entityImporter = new Alfresco.module.SimpleDialog(this.id + "-entityImporter")
@@ -202,11 +205,22 @@
 				                  templateUrl : Alfresco.constants.URL_SERVICECONTEXT
 				                        + "modules/entity-importer/entity-importer",
 				                  actionUrl : actionUrl,
+				                  validateOnSubmit : false,
 				                  doSetupFormsValidation : {
 				                     fn : doSetupFormsValidation,
 				                     scope : this
 				                  },
 				                  firstFocus : this.id + "-entityImporter-supplier-field",
+				                  doBeforeFormSubmit : {
+				                  	fn : function FormulationView_onActionEntityImport_doBeforeFormSubmit(form){
+				                  		 
+				   				         Alfresco.util.PopupManager.displayMessage({
+				   							   text : this.msg("message.import.please-wait")
+				   						   });
+				   				         
+				                  	},
+				                  	scope: this
+				                  },
 				                  onSuccess : {
 				                     fn : function FormulationView_onActionEntityImport_success(response) {
 					                     Alfresco.util.PopupManager.displayMessage({
