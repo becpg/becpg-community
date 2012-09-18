@@ -19,7 +19,8 @@
 	      <module>alfresco-repository-patch</module> 
 	      <module>spring-webscripts-patch</module>
 	      <module>alfresco-core-patch</module>	
-	      <module>alfresco-share-patch</module>	
+	      <module>alfresco-share-patch</module>
+	      <module>alfresco-slingshot-patch</module>	
 	      <module>distribution</module>
 	</modules>
 
