@@ -370,6 +370,10 @@ fct_mvn_install "community" "org.alfresco.sdk" "xmlsec-1.4.1" "4.0.d"
 fct_mvn_install "community" "org.alfresco.sdk" "xpp3-1.1.3_8" "4.0.d"
 fct_mvn_install "community" "org.alfresco.sdk" "xstream-1.2.2" "4.0.d"
 
+cd $SERVER/webapps/share/WEB-INF/lib/
+echo -ne "Installing share ... "
+fct_mvn_install "community" "org.alfresco.sdkartifactId" "alfresco-share-4.0.d" "4.0.d"
+
 fct_echo  "Installing Additional libs"
 
 cd $BOOTSTRAP_HOME/alfresco-sdk/lib

@@ -1588,6 +1588,12 @@
 			<version>${alfresco.version}</version>
 			<classifier>community</classifier>
 		</dependency>
+		<dependency>
+			<groupId>org.alfresco.sdk</groupId>
+			<artifactId>alfresco-share-${alfresco.version}</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>community</classifier>
+		</dependency>
 
 	</dependencies>
 </project>
