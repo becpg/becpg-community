@@ -49,6 +49,9 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 	/** The Constant TAG_COMPOLIST. */
 	protected static final String TAG_COMPOLIST = "compoList";
+	
+	
+	protected static final String ATTR_ITEM_TYPE = "itemType";
 
 	/** The Constant TAG_COSTLIST. */
 	protected static final String TAG_COSTLIST = "costList";
@@ -201,9 +204,21 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			for (CompoListDataItem dataItem : productData.getCompoList()) {
 
 				String partName = (String) nodeService.getProperty(dataItem.getProduct(), ContentModel.PROP_NAME);
+				String legalName = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_LEGAL_NAME);
+				List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(dataItem.getProduct(),
+						BeCPGModel.ASSOC_SUPPLIERS);
+				String suppliers = "";
+				for(AssociationRef associationRef : supplierAssocRefs){
+					if(!suppliers.isEmpty()){
+						suppliers += RepoConsts.LABEL_SEPARATOR;
+					}
+					suppliers += (String)nodeService.getProperty(associationRef.getTargetRef(), ContentModel.PROP_NAME);
+				}
 
 				Element partElt = compoListElt.addElement(TAG_ENTITY);
 				partElt.addAttribute(BeCPGModel.ASSOC_COMPOLIST_PRODUCT.getLocalName(), partName);
+				partElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),legalName);
+				partElt.addAttribute(BeCPGModel.ASSOC_SUPPLIERS.getLocalName(),suppliers);				
 				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), Integer.toString(dataItem.getDepthLevel()));
 				partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_QTY.getLocalName(), dataItem.getQty() == null ? VALUE_NULL : Double.toString(dataItem.getQty()));
 				partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA.getLocalName(),
@@ -211,6 +226,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_LOSS_PERC.getLocalName(), dataItem.getLossPerc() == null ? VALUE_NULL : Double.toString(dataItem.getLossPerc()));
 				PropertyDefinition propertyDef = dictionaryService.getProperty(BeCPGModel.PROP_COMPOLIST_DECL_TYPE);
 				partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_DECL_TYPE.getLocalName(), attributeExtractorService.getStringValue(propertyDef, dataItem.getDeclType().toString(), new PropertyFormats(true)));
+				partElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(dataItem.getProduct()).toPrefixString(namespaceService));
 			}
 		}
 

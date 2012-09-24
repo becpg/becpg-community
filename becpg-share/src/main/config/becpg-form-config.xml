@@ -196,8 +196,8 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">2</control-param>
+						<control>
+							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -385,8 +385,8 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
-							<control-param name="rows">2</control-param>
+						<control>
+							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -2255,6 +2255,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:physicoChemUnit" />
+					<show id="bcpg:physicoChemFormulated" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" />

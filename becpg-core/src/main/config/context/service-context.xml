@@ -406,6 +406,7 @@
 		<property name="costsCalculatingVisitor" ref="costsCalculatingVisitor" />
 		<property name="ingsCalculatingVisitor" ref="ingsCalculatingVisitor" />
 		<property name="formulaVisitor" ref="formulaVisitor" />
+		<property name="physicoChemCalculatingVisitor" ref="physicoChemCalculatingVisitor" />		
 		<property name="repoService" ref="repoService" />
 		<property name="ownableService" ref="ownableService" />
 	</bean>
@@ -443,6 +444,11 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="productDAO" ref="productDAO" />
 		<property name="entityListDAO" ref="entityListDAO" />
+	</bean>
+	<bean id="physicoChemCalculatingVisitor"
+		class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingVisitor">
+		<property name="nodeService" ref="nodeService" />
+		<property name="productDAO" ref="productDAO" />
 	</bean>
 
 	<!-- Product Policies -->
