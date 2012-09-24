@@ -513,6 +513,11 @@
 						<constraint ref="bcpg:physicoChemUnit" />
 					</constraints>
 				</property>
+				<property name="bcpg:physicoChemFormulated">
+					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
+				</property>
 			</properties>
 		</type>
 

@@ -16,8 +16,7 @@
 	<dataLists>
 
 		<compoList>
-			<product compoListQtyPerc="30" compoListQty="3"
-				compoListProduct="Sushi saumon" />
+			<product depthLevel="1" compoListProduct="Sushi au saumon" legalName="legal name 1" compoListSubFormulaQty="30" compoListQty="3" />
 		</compoList>
 
 		<allergenList>

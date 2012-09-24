@@ -74,7 +74,7 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 					// take in account percentage
 					if(component.getData().getCompoListUnit() != null && 
 							component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){
-						qty = qtySubFormula * qtyAfterProcess / 100;						
+						qty = qtySubFormula * qtyAfterProcess / 100;
 					}
 					else{
 						qty = qtySubFormula * parentQty / qtyAfterProcess;
@@ -84,15 +84,34 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 				}
 			}	
 			
+			// calculate children
 			if(component instanceof Composite){
 				
-				// calculate children
 				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
-				Double afterProcess = c.getData().getQtyAfterProcess() != null ? c.getData().getQtyAfterProcess() : c.getData().getQtySubFormula();
-				visitChildren(c.getData().getQty(), afterProcess, c);
 				
-				// Yield				
-				c.getData().setYieldPerc(calculateYield(c));
+				// take in account percentage
+				if(component.getData().getCompoListUnit() != null && 
+						component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){	
+					
+					visitChildren(parentQty, qtyAfterProcess, c);
+					
+					// no yield but calculate % of composite
+					Double compositePerc = 0d;
+					for(AbstractComponent<CompoListDataItem> child : c.getChildren()){	
+						compositePerc += child.getData().getQtySubFormula();
+					}
+					c.getData().setQtySubFormula(compositePerc);
+					c.getData().setQty(compositePerc * parentQty / 100);
+					c.getData().setYieldPerc(null);
+				}
+				else{
+														
+					Double afterProcess = c.getData().getQtyAfterProcess() != null ? c.getData().getQtyAfterProcess() : c.getData().getQtySubFormula();
+					visitChildren(c.getData().getQty(), afterProcess, c);
+					
+					// Yield				
+					c.getData().setYieldPerc(calculateYield(c));
+				}				
 			}			
 		}
 	}

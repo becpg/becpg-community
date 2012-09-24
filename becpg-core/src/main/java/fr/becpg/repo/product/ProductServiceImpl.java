@@ -24,6 +24,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.FormulateException;
+import fr.becpg.repo.product.formulation.PhysicoChemCalculatingVisitor;
 import fr.becpg.repo.product.hierarchy.HierarchyHelper;
 
 // TODO: Auto-generated Javadoc
@@ -65,6 +66,8 @@ public class ProductServiceImpl implements ProductService {
 	
 	/**  The formula visitor */
 	private ProductVisitor formulaVisitor;
+	
+	private PhysicoChemCalculatingVisitor physicoChemCalculatingVisitor;
 	
 	/** The repo service. */
 	private RepoService repoService;
@@ -155,6 +158,10 @@ public class ProductServiceImpl implements ProductService {
 		this.formulaVisitor = formulaVisitor;
 	}
 	
+	public void setPhysicoChemCalculatingVisitor(PhysicoChemCalculatingVisitor physicoChemCalculatingVisitor) {
+		this.physicoChemCalculatingVisitor = physicoChemCalculatingVisitor;
+	}
+
 	/**
 	 * Sets the repo service.
 	 *
@@ -190,7 +197,8 @@ public class ProductServiceImpl implements ProductService {
     		dataLists.add(MPMModel.TYPE_PROCESSLIST);
     		dataLists.add(BeCPGModel.TYPE_NUTLIST); // TODO keep min/max
     		dataLists.add(BeCPGModel.TYPE_COSTLIST); // TODO keep max
-    		dataLists.add(BeCPGModel.TYPE_DYNAMICCHARACTLIST); 
+    		dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST); // TODO keep min/max
+    		dataLists.add(BeCPGModel.TYPE_DYNAMICCHARACTLIST);
         	ProductData productData = productDAO.find(productNodeRef, dataLists); 
         	        	
         	// do the formulation if the product has a composition, or packaging list defined
@@ -235,6 +243,9 @@ public class ProductServiceImpl implements ProductService {
 				if (productData.getReqCtrlList() != null) {
 					dataListsToSave.add(BeCPGModel.TYPE_REQCTRLLIST);
 				}
+				if (productData.getPhysicoChemList() != null) {
+					dataListsToSave.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				}
 				
     	    	productDAO.update(productNodeRef, productData, dataListsToSave);
         	}    	    	    
@@ -270,6 +281,7 @@ public class ProductServiceImpl implements ProductService {
     	    	productData = costsCalculatingVisitor.visit(productData);
     	    	productData = ingsCalculatingVisitor.visit(productData);  
     	    	productData = formulaVisitor.visit(productData);
+    	    	productData = physicoChemCalculatingVisitor.visit(productData);
     	    	
     	    	if(productData.getReqCtrlList().isEmpty()){
     	    		productData.setReqCtrlList(null);
