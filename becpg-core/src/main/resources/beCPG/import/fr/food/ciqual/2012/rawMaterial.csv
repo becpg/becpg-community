@@ -1,6 +1,7 @@
 STOP_ON_FIRST_ERROR;false;;;;;;
 PATH;/Temp/CIQUAL;;;;;;
 TYPE;bcpg:rawMaterial;;;;;;
+DISABLED_POLICIES;rep:reportEntityAspect;;;;;;
 MAPPING;NutDatabaseFrench;;;;;;
 COLUMNS;bcpg:code;cm:name;bcpg:legalName;bcpg:legalName_en;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:suppliers
 VALUES;CIQUAL40003;Cervelle, agneau, cuite, CIQUAL;Cervelle, agneau, cuite;Brains, lamb, cooked;CIQUAL;Abats;Table Ciqual 2012
