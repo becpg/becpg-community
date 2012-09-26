@@ -43,3 +43,39 @@ PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
 TYPE;bcpg:linkedValue;
 COLUMNS;bcpg:parentLevel;bcpg:lkvValue
 VALUES;Epicerie;Alcools, eau
+VALUES;Additifs;Adipate
+VALUES;Additifs;Alginate
+VALUES;Additifs;Antibiotique
+VALUES;Additifs;Antioxidant
+VALUES;Additifs;Autre additif
+VALUES;Additifs;bcpg:productHierarchy2
+VALUES;Additifs;Carbonate
+VALUES;Additifs;Chlorure
+VALUES;Additifs;Cire et hydrocarbure
+VALUES;Additifs;Citrate
+VALUES;Additifs;Colorant alimentaire
+VALUES;Additifs;Conservateur
+VALUES;Additifs;Dérivé cellulosique
+VALUES;Additifs;Dérivé d'acide gras alimentaire
+VALUES;Additifs;Diphosphate
+VALUES;Additifs;Edulcorant
+VALUES;Additifs;Exhausteur
+VALUES;Additifs;Ferrocyanure
+VALUES;Additifs;Gaz
+VALUES;Additifs;Glace
+VALUES;Additifs;Gluconate
+VALUES;Additifs;Gomme
+VALUES;Additifs;Gomme à mâcher
+VALUES;Additifs;Guanylate
+VALUES;Additifs;Hydroxyde
+VALUES;Additifs;Inosinate
+VALUES;Additifs;Lactate
+VALUES;Additifs;Lécithine
+VALUES;Additifs;Malate
+VALUES;Additifs;Orthophosphate
+VALUES;Additifs;Phosphate
+VALUES;Additifs;Silicate
+VALUES;Additifs;Stearate
+VALUES;Additifs;Sulfate
+VALUES;Additifs;Tartrate
+VALUES;Additifs;Thiosulfate
