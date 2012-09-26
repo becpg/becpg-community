@@ -1,0 +1,56 @@
+PATH;/System/Lists/bcpg:entityLists/IngTypes
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;--
+VALUES;Acid
+VALUES;Fatty acid
+VALUES;Active
+VALUES;Additive
+VALUES;Ph adjuster
+VALUES;Alcohol
+VALUES;Fatty alcohol
+VALUES;Fatty alcohol, sterol
+VALUES;Antioxidant
+VALUES;Load
+VALUES;Chelating
+VALUES;Chelating
+VALUES;Mineral wax
+VALUES;Vegetable wax
+VALUES;Dye
+VALUES;Complex
+VALUES;Quaternary complex
+VALUES;Conservative
+VALUES;Conservative, anti-static agent, surfactant
+VALUES;Conservative mp perfume
+VALUES;Conservative mp scented
+VALUES;Fat
+VALUES;Animal fats
+VALUES;Vegetable fat
+VALUES;Derived protein
+VALUES;Ester
+VALUES;Fatty ester
+VALUES;Ether
+VALUES;Natural extract
+VALUES;Plant extract
+VALUES;Uv filter
+VALUES;Propellant
+VALUES;Gelling
+VALUES;Essential oil
+VALUES;Mineral oil
+VALUES;Vegetable oil
+VALUES;Humectant
+VALUES;Humectant, solvent
+VALUES;Mixture
+VALUES;Mp scented
+VALUES;Perfume
+VALUES;Polymer
+VALUES;Ethoxylated products
+VALUES;Protein
+VALUES;Soap
+VALUES;Salt
+VALUES;Silicone
+VALUES;Solvent
+VALUES;Solvent, carrier
+VALUES;Sugar
+VALUES;Surfactant
+VALUES;Vector of asset
