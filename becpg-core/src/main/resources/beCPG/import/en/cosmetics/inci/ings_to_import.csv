@@ -1,0 +1,476 @@
+PATH;/System/Characts/bcpg:entityLists/Ings;;;;;;
+TYPE;bcpg:ing;;;;;;
+COLUMNS;cm:name;cm:description;bcpg:ingType;bcpg:ingCEECode;bcpg:legalName;bcpg:legalName_fr;bcpg:legalName_en
+VALUES;5-bromo-5-nitro-1,3 dioxane;prevent the proliferation of bacteria and yeast;Conservative;;5-bromo-5-nitro-1,3 dioxane;5-bromo-5-nitro-1,3 dioxane;5-bromo-5-nitro-1,3 dioxane
+VALUES;acetylated lanolin;emollient conditioner;Animal fats;;acetylated lanolin;acetylated lanolin;acetylated lanolin
+VALUES;acrylates copolymer;gelling the aqueous phases, thicken, increasing the viscosity, hair fixative;Gelling;;acrylates copolymer;acrylates copolymer;acrylates copolymer
+VALUES;acrylates/acrylamide copolymer;The hair fixative, forming;Polymer;;acrylates/acrylamide copolymer;acrylates/acrylamide copolymer;acrylates/acrylamide copolymer
+VALUES;acrylates/C10-30 alkyl acrylate crosspolymer;thickening, gelling;Gelling;;acrylates/C10-30 alkyl acrylate crosspolymer;acrylates/C10-30 alkyl acrylate crosspolymer;acrylates/C10-30 alkyl acrylate crosspolymer
+VALUES;alanine;conditioner;Active;;alanine;alanine;alanine
+VALUES;alcloxa;astringent;Active;;alcloxa;alcloxa;alcloxa
+VALUES;algae;conditioner;Plant extract;;algae;algae;algae
+VALUES;algin;thickening, gelling;Gelling;;algin;algin;algin
+VALUES;allantoin;conditioner, protective;Active;;allantoin;allantoin;allantoin
+VALUES;allantoin acetyl methionine;anti-irritant, anti-dandruff, hair repair and polish;Active;;allantoin acetyl methionine;allantoin acetyl methionine;allantoin acetyl methionine
+VALUES;allantoin ascorbate;anti-oxidant, the representations of burns ATTENU;Active;;allantoin ascorbate;allantoin ascorbate;allantoin ascorbate
+VALUES;aloe barbadensis (leaf) juice;humectant, protective;Plant extract;;aloe barbadensis (leaf) juice;aloe barbadensis (leaf) juice;aloe barbadensis (leaf) juice
+VALUES;alpha isomethyl ionone;violet floral note;Mp scented;;alpha isomethyl ionone;alpha isomethyl ionone;alpha isomethyl ionone
+VALUES;alpha-glucan oligosaccharide;conditioner;Complex;;alpha-glucan oligosaccharide;alpha-glucan oligosaccharide;alpha-glucan oligosaccharide
+VALUES;aluminium chloride;antiperspirant, astringent, deodorant;Active;;aluminium chloride;aluminium chloride;aluminium chloride
+VALUES;aluminium chlorohydrate;antiperspirant;Active;;aluminium chlorohydrate;aluminium chlorohydrate;aluminium chlorohydrate
+VALUES;aluminium formate (and) tartaric acid (and) trieth;mild astringent, deodorant;Active;;aluminium formate (and) tartaric acid (and) trieth;aluminium formate (and) tartaric acid (and) trieth;aluminium formate (and) tartaric acid (and) trieth
+VALUES;aluminium lactate;astringent, deodorant;Active;;aluminium lactate;aluminium lactate;aluminium lactate
+VALUES;aluminium starch octenylsuccinate;absorbent powder;Load;;aluminium starch octenylsuccinate;aluminium starch octenylsuccinate;aluminium starch octenylsuccinate
+VALUES;ammonium acryloyldimethyltaurate/VP copolymer;thickening;Polymer;;ammonium acryloyldimethyltaurate/VP copolymer;ammonium acryloyldimethyltaurate/VP copolymer;ammonium acryloyldimethyltaurate/VP copolymer
+VALUES;ammonium lactate;exfoliating, humectant, buffer (pH);Salt;;ammonium lactate;ammonium lactate;ammonium lactate
+VALUES;ammonium lauryl sulfate;gentle cleansing base;Surfactant;;ammonium lauryl sulfate;ammonium lauryl sulfate;ammonium lauryl sulfate
+VALUES;ammonium polyacryloyldimethyl taurate;stabilizer, viscosity;Polymer;;ammonium polyacryloyldimethyl taurate;ammonium polyacryloyldimethyl taurate;ammonium polyacryloyldimethyl taurate
+VALUES;apricot kerneloil polyglyceryl-10 esters;emollient, nourishing;Surfactant;;apricot kerneloil polyglyceryl-10 esters;apricot kerneloil polyglyceryl-10 esters;apricot kerneloil polyglyceryl-10 esters
+VALUES;aqua (and) alcohol (and) paeonia suffruticosa;Lightening;Active;;aqua (and) alcohol (and) paeonia suffruticosa;aqua (and) alcohol (and) paeonia suffruticosa;aqua (and) alcohol (and) paeonia suffruticosa
+VALUES;aqua (and) hydrolyzed jojoba esters;emollient;Active;;aqua (and) hydrolyzed jojoba esters;aqua (and) hydrolyzed jojoba esters;aqua (and) hydrolyzed jojoba esters
+VALUES;aqua (and) propylene glycol (and) hedera helix;draining;Active;;aqua (and) propylene glycol (and) hedera helix;aqua (and) propylene glycol (and) hedera helix;aqua (and) propylene glycol (and) hedera helix
+VALUES;aqua (and) propylene glycol (and) kigelia africana;tensor;Active;;aqua (and) propylene glycol (and) kigelia africana;aqua (and) propylene glycol (and) kigelia africana;aqua (and) propylene glycol (and) kigelia africana
+VALUES;aqua (and) propylene glycol (and) vitis vinifera;anti-rosacea, blood;Active;;aqua (and) propylene glycol (and) vitis vinifera;aqua (and) propylene glycol (and) vitis vinifera;aqua (and) propylene glycol (and) vitis vinifera
+VALUES;aqua (and) sucrose cocoate (and) alcohol;Gentle Foaming;Additive;;aqua (and) sucrose cocoate (and) alcohol;aqua (and) sucrose cocoate (and) alcohol;aqua (and) sucrose cocoate (and) alcohol
+VALUES;aqua (water);main component of the aqueous phases;Solvent, carrier;;aqua (water);aqua (water);aqua (water)
+VALUES;aqua (water) (and) butyrospermum parkii (shea butt;emulsion plant repair, anti-drying, anti-oxidant, protective;Active;;aqua (water) (and) butyrospermum parkii (shea butt;aqua (water) (and) butyrospermum parkii (shea butt;aqua (water) (and) butyrospermum parkii (shea butt
+VALUES;arachidyl propionate;emollient;Fatty ester;;arachidyl propionate;arachidyl propionate;arachidyl propionate
+VALUES;argania spinosa kernel oil;conditioner, emollient;Vegetable oil;;argania spinosa kernel oil;argania spinosa kernel oil;argania spinosa kernel oil
+VALUES;arginine;conditioner;Active;;arginine;arginine;arginine
+VALUES;ascorbyl palmitate;slow the oxidation of fats and protect sensitive active light and / or oxygen and / or heat, can be also used as active ingredient for the skin, the dosage will be greater;Antioxidant;;ascorbyl palmitate;ascorbyl palmitate;ascorbyl palmitate
+VALUES;avena sativa (oat) kernel extract;antioxidant, emollient, conditioner;Plant extract;;avena sativa (oat) kernel extract;avena sativa (oat) kernel extract;avena sativa (oat) kernel extract
+VALUES;avena sativa (oat) kernel flour;exfoliating towels, thickening;Plant extract;;avena sativa (oat) kernel flour;avena sativa (oat) kernel flour;avena sativa (oat) kernel flour
+VALUES;avena sativa (oil) kernel extract;nourishing, repairing, conditioning;Vegetable oil;;avena sativa (oil) kernel extract;avena sativa (oil) kernel extract;avena sativa (oil) kernel extract
+VALUES;bambusa arundinacea;exfoliating powder;Plant extract;;bambusa arundinacea;bambusa arundinacea;bambusa arundinacea
+VALUES;bambusa vulgaris;Scrub;Plant extract;;bambusa vulgaris;bambusa vulgaris;bambusa vulgaris
+VALUES;beheneth-10;emulsifying;Surfactant;;beheneth-10;beheneth-10;beheneth-10
+VALUES;behentrimonium methosulfate;conditioner, anti-static;Quaternary complex;;behentrimonium methosulfate;behentrimonium methosulfate;behentrimonium methosulfate
+VALUES;behenyl alcohol;stabilizer, viscosity;Fatty alcohol;;behenyl alcohol;behenyl alcohol;behenyl alcohol
+VALUES;bentonite;absorbent, thickening;Load;;bentonite;bentonite;bentonite
+VALUES;benzoic acid;--;--;;benzoic acid;benzoic acid;benzoic acid
+VALUES;benzophenone-4;protects the product from degradation by light;Uv filter;;benzophenone-4;benzophenone-4;benzophenone-4
+VALUES;benzyl acetate;flowery, fruity (banana);Mp scented;;benzyl acetate;benzyl acetate;benzyl acetate
+VALUES;benzyl alcohol;almondy notes;Mp scented;;benzyl alcohol;benzyl alcohol;benzyl alcohol
+VALUES;benzyl benzoate;almondy notes;Mp scented;;benzyl benzoate;benzyl benzoate;benzyl benzoate
+VALUES;benzyl salicylate;note 'solar';Mp scented;;benzyl salicylate;benzyl salicylate;benzyl salicylate
+VALUES;BHA;slow the oxidation of fats and protect sensitive active light and / or oxygen and / or heat;Antioxidant;;BHA;BHA;BHA
+VALUES;BHT;slow the oxidation of fats and protect sensitive active light and / or oxygen and / or heat;Antioxidant;;BHT;BHT;BHT
+VALUES;bisabolol;conditioner, soothing;Active;;bisabolol;bisabolol;bisabolol
+VALUES;borago officinalis seed oil;emollient, conditioner, anti-aging, omega-3 intake and omega-6;Vegetable oil;;borago officinalis seed oil;borago officinalis seed oil;borago officinalis seed oil
+VALUES;boswellia carterii oil;restorative;Essential oil;;boswellia carterii oil;boswellia carterii oil;boswellia carterii oil
+VALUES;butyl methoxydibenzoylmethane;protects the skin from harmful sun rays;Uv filter;;butyl methoxydibenzoylmethane;butyl methoxydibenzoylmethane;butyl methoxydibenzoylmethane
+VALUES;butyl paraben;prevent the proliferation of bacteria and yeast;Conservative;;butyl paraben;butyl paraben;butyl paraben
+VALUES;butylene glycol;contributes to the hydration of the skin, for solvent extracts or powder has a small Biocidal;Humectant, solvent;;butylene glycol;butylene glycol;butylene glycol
+VALUES;butylphenyl methylpropional;floral note aqueous;Mp scented;;butylphenyl methylpropional;butylphenyl methylpropional;butylphenyl methylpropional
+VALUES;butyrospermum parkii (shea butter);nourishing, repairing, replenishing, conditioner, thickening;Vegetable fat;;butyrospermum parkii (shea butter);butyrospermum parkii (shea butter);butyrospermum parkii (shea butter)
+VALUES;C12-15 alkyl lactate;conditioner, emollient;Fatty ester;;C12-15 alkyl lactate;C12-15 alkyl lactate;C12-15 alkyl lactate
+VALUES;C12/15 alkyl benzoate;conditioner, emollient;Fatty ester;;C12/15 alkyl benzoate;C12/15 alkyl benzoate;C12/15 alkyl benzoate
+VALUES;C13-14 isoparaffin;solvent, fats + D43;Mineral oil;;C13-14 isoparaffin;C13-14 isoparaffin;C13-14 isoparaffin
+VALUES;calcium carbonate;powder giving adhesion to the product;Load;;calcium carbonate;calcium carbonate;calcium carbonate
+VALUES;camelia sinensis;draining;Plant extract;;camelia sinensis;camelia sinensis;camelia sinensis
+VALUES;cannabis sativa seed oil;emollient, conditioner, anti-aging, firming, restorative;Vegetable oil;;cannabis sativa seed oil;cannabis sativa seed oil;cannabis sativa seed oil
+VALUES;capric acid;surfactant;Fatty acid;;capric acid;capric acid;capric acid
+VALUES;caprylic acid;surfactant;Fatty acid;;caprylic acid;caprylic acid;caprylic acid
+VALUES;caprylic/capric glycerides;emollient, conditioner, helps reshape the fat from the skin, leaving the skin soft and supple;Fat;;caprylic/capric glycerides;caprylic/capric glycerides;caprylic/capric glycerides
+VALUES;caprylic/capric succinic triglycerides;emollient;Fat;;caprylic/capric succinic triglycerides;caprylic/capric succinic triglycerides;caprylic/capric succinic triglycerides
+VALUES;caprylic/capric triglycerides;emollient, conditioner, helps reshape the fat from the skin, leaving the skin soft and supple;Fat;;caprylic/capric triglycerides;caprylic/capric triglycerides;caprylic/capric triglycerides
+VALUES;caramel;gives a pale yellow to brown depending on the dosage;Dye;;caramel;caramel;caramel
+VALUES;carbomer;aqueous phases gel, thicken, increase the viscosity;Gelling;;carbomer;carbomer;carbomer
+VALUES;cellulose;absorbent, thickening;Polymer;;cellulose;cellulose;cellulose
+VALUES;centaurea cyanus flower extract;soothing;Plant extract;;centaurea cyanus flower extract;centaurea cyanus flower extract;centaurea cyanus flower extract
+VALUES;centella asiatica extract;conditioner, soothing active, softening;Active;;centella asiatica extract;centella asiatica extract;centella asiatica extract
+VALUES;cera alba (beeswax);emulsion stabilizer, conditioner, thickener;Animal fats;;cera alba (beeswax);cera alba (beeswax);cera alba (beeswax)
+VALUES;cera candelilla (euphorbia cerifera wax);emulsion stabilizer, thickener, binder, film forming conditioner;Vegetable wax;;cera candelilla (euphorbia cerifera wax);cera candelilla (euphorbia cerifera wax);cera candelilla (euphorbia cerifera wax)
+VALUES;cera carnauba (copernicia cerifera wax);emulsion stabilizer, thickener durciceur, binder;Vegetable wax;;cera carnauba (copernicia cerifera wax);cera carnauba (copernicia cerifera wax);cera carnauba (copernicia cerifera wax)
+VALUES;cera microcristallina (and) paraffinum liquidum (a;emollient, protective;Mineral wax;;cera microcristallina (and) paraffinum liquidum (a;cera microcristallina (and) paraffinum liquidum (a;cera microcristallina (and) paraffinum liquidum (a
+VALUES;ceramide 3;conditioner;Complex;;ceramide 3;ceramide 3;ceramide 3
+VALUES;ceteareth-6;emulsifying;Surfactant;;ceteareth-6;ceteareth-6;ceteareth-6
+VALUES;ceteareth-60 myristyl glycol;emulsifying;Surfactant;;ceteareth-60 myristyl glycol;ceteareth-60 myristyl glycol;ceteareth-60 myristyl glycol
+VALUES;cetearyl alcohol;stabilizer, opacifier, thickening;Fatty alcohol;;cetearyl alcohol;cetearyl alcohol;cetearyl alcohol
+VALUES;cetearyl ethylhexanoate;conditioner, emollient;Fatty ester;;cetearyl ethylhexanoate;cetearyl ethylhexanoate;cetearyl ethylhexanoate
+VALUES;cetearyl glucoside;emulsifying;Surfactant;;cetearyl glucoside;cetearyl glucoside;cetearyl glucoside
+VALUES;cetearyl isononanoate;conditioner, emollient;Fatty ester;;cetearyl isononanoate;cetearyl isononanoate;cetearyl isononanoate
+VALUES;cetearyl stearate;conditioner;Ester;;cetearyl stearate;cetearyl stearate;cetearyl stearate
+VALUES;ceteth-10 phosphate;emulsifying;Surfactant;;ceteth-10 phosphate;ceteth-10 phosphate;ceteth-10 phosphate
+VALUES;ceteth-20;emulsifying;Surfactant;;ceteth-20;ceteth-20;ceteth-20
+VALUES;cetrimonium bromide;prevent the proliferation of bacteria and yeast;Conservative, anti-static agent, surfactant;;cetrimonium bromide;cetrimonium bromide;cetrimonium bromide
+VALUES;cetyl alcohol;stabilizer, co-emulsifier, thickener;Fatty alcohol;;cetyl alcohol;cetyl alcohol;cetyl alcohol
+VALUES;cetyl dimethicone;Anti-foaming occlusive protective;Silicone;;cetyl dimethicone;cetyl dimethicone;cetyl dimethicone
+VALUES;cetyl hydroxyethylcellulose;thickener, thickening;Gelling;;cetyl hydroxyethylcellulose;cetyl hydroxyethylcellulose;cetyl hydroxyethylcellulose
+VALUES;cetyl palmitate;conditioner occlusive;Fatty ester;;cetyl palmitate;cetyl palmitate;cetyl palmitate
+VALUES;cetyl ricinoleate;plosive;Fatty ester;;cetyl ricinoleate;cetyl ricinoleate;cetyl ricinoleate
+VALUES;chlorhexidine;prevent the proliferation of bacteria and yeast;Conservative;;chlorhexidine;chlorhexidine;chlorhexidine
+VALUES;chlorhexidine digluconate;biocide;Conservative;;chlorhexidine digluconate;chlorhexidine digluconate;chlorhexidine digluconate
+VALUES;chlorphenesin;prevent the proliferation of bacteria and yeast;Conservative;;chlorphenesin;chlorphenesin;chlorphenesin
+VALUES;cholesterol;stabilizer, conditioner;Fatty alcohol;;cholesterol;cholesterol;cholesterol
+VALUES;chondrus crispus (carrageenan);aqueous phases gel, thicken, increase the viscosity;Gelling;;chondrus crispus (carrageenan);chondrus crispus (carrageenan);chondrus crispus (carrageenan)
+VALUES;CI 14700;red;Dye;;CI 14700;CI 14700;CI 14700
+VALUES;CI 15985;yellow orange;Dye;;CI 15985;CI 15985;CI 15985
+VALUES;CI 42090;turquoise blue dye;Dye;;CI 42090;CI 42090;CI 42090
+VALUES;CI 77266;black;Dye;;CI 77266;CI 77266;CI 77266
+VALUES;CI 77491 (iron oxide);brown color;Dye;;CI 77491 (iron oxide);CI 77491 (iron oxide);CI 77491 (iron oxide)
+VALUES;CI 77492;yellow brown;Dye;;CI 77492;CI 77492;CI 77492
+VALUES;CI 77891;bleaching powder, mineral sunscreen;Load;;CI 77891;CI 77891;CI 77891
+VALUES;cinnamal;Note cinnamon;Mp scented;;cinnamal;cinnamal;cinnamal
+VALUES;cistus labdaniferus oil;tensor, restoring;Essential oil;;cistus labdaniferus oil;cistus labdaniferus oil;cistus labdaniferus oil
+VALUES;citric acid;allows to make the pH of a less basic or more acid;Ph adjuster;;citric acid;citric acid;citric acid
+VALUES;citronellol;rosy note;Mp scented;;citronellol;citronellol;citronellol
+VALUES;citronellyl methylcrotonate;odor;Active;;citronellyl methylcrotonate;citronellyl methylcrotonate;citronellyl methylcrotonate
+VALUES;citrus grandis;purifying, balancing;Essential oil;;citrus grandis;citrus grandis;citrus grandis
+VALUES;citrus limonum;conditioner, exfoliating;Essential oil;;citrus limonum;citrus limonum;citrus limonum
+VALUES;climbazole;prevent the proliferation of bacteria and yeast;Conservative;;climbazole;climbazole;climbazole
+VALUES;cocamide DEA;cleaner, thickener;Surfactant;;cocamide DEA;cocamide DEA;cocamide DEA
+VALUES;cocamide MEA;cleaner, foaming, viscosity;Surfactant;;cocamide MEA;cocamide MEA;cocamide MEA
+VALUES;cocamide MIPA;foaming, thickening;Surfactant;;cocamide MIPA;cocamide MIPA;cocamide MIPA
+VALUES;cocamidopropyl betaine;cleaning, foaming;Surfactant;;cocamidopropyl betaine;cocamidopropyl betaine;cocamidopropyl betaine
+VALUES;coco betaine;cleaner, foaming, conditioning, anti-static;Surfactant;;coco betaine;coco betaine;coco betaine
+VALUES;coco nucifera (coconut) oil;conditioner for copra = basis for developing other products;Vegetable oil;;coco nucifera (coconut) oil;coco nucifera (coconut) oil;coco nucifera (coconut) oil
+VALUES;cocoglucoside;cleanser;Surfactant;;cocoglucoside;cocoglucoside;cocoglucoside
+VALUES;coconut acid;cleanser;Surfactant;;coconut acid;coconut acid;coconut acid
+VALUES;coriandrum sativum (coriander) seed oil;properties: warming and stimulating;Essential oil;;coriandrum sativum (coriander) seed oil;coriandrum sativum (coriander) seed oil;coriandrum sativum (coriander) seed oil
+VALUES;coumarin;almondy notes;Mp scented;;coumarin;coumarin;coumarin
+VALUES;cucumis sativus (cucumber);emollient, conditioner, helps reshape the fat from the skin, leaving the skin soft and supple;Plant extract;;cucumis sativus (cucumber);cucumis sativus (cucumber);cucumis sativus (cucumber)
+VALUES;cyclohexasiloxane;conditioner, emollient;Silicone;;cyclohexasiloxane;cyclohexasiloxane;cyclohexasiloxane
+VALUES;cyclomethicone;conditioner, emollient, solvent;Silicone;;cyclomethicone;cyclomethicone;cyclomethicone
+VALUES;cyclomethicone (and) dimethicone/vinyl dimethicone;polymer thickener;Silicone;;cyclomethicone (and) dimethicone/vinyl dimethicone;cyclomethicone (and) dimethicone/vinyl dimethicone;cyclomethicone (and) dimethicone/vinyl dimethicone
+VALUES;cyclopentasiloxane;conditioner, emollient, solvent;Silicone;;cyclopentasiloxane;cyclopentasiloxane;cyclopentasiloxane
+VALUES;decyl glucoside;cleanser;Surfactant;;decyl glucoside;decyl glucoside;decyl glucoside
+VALUES;decyl oleate;conditioner, emollient;Fatty ester;;decyl oleate;decyl oleate;decyl oleate
+VALUES;dehydroacetic acid;biocide;Conservative;;dehydroacetic acid;dehydroacetic acid;dehydroacetic acid
+VALUES;diazolidinyl urea;prevent the proliferation of bacteria and yeast;Conservative;;diazolidinyl urea;diazolidinyl urea;diazolidinyl urea
+VALUES;dicaprylyl carbonate;emollient;Fatty ester;;dicaprylyl carbonate;dicaprylyl carbonate;dicaprylyl carbonate
+VALUES;dicaprylyl ether;emollient;Ether;;dicaprylyl ether;dicaprylyl ether;dicaprylyl ether
+VALUES;diethylhexyl sebacate;film, solvent, MP perfume;Fatty ester;;diethylhexyl sebacate;diethylhexyl sebacate;diethylhexyl sebacate
+VALUES;dimethicone;Anti-foaming occlusive protective;Silicone;;dimethicone;dimethicone;dimethicone
+VALUES;dimethicone copolyol;conditioner;Silicone;;dimethicone copolyol;dimethicone copolyol;dimethicone copolyol
+VALUES;dimethicone PEG-7 phosphate;emulsifying;Surfactant;;dimethicone PEG-7 phosphate;dimethicone PEG-7 phosphate;dimethicone PEG-7 phosphate
+VALUES;dimethiconol;antifoam, emollient;Silicone;;dimethiconol;dimethiconol;dimethiconol
+VALUES;dipentaerythrityl hexacaprylate/hexacaprate;occlusive viscosity;Fatty ester;;dipentaerythrityl hexacaprylate/hexacaprate;dipentaerythrityl hexacaprylate/hexacaprate;dipentaerythrityl hexacaprylate/hexacaprate
+VALUES;diphenyl dimethicone;Anti-foaming occlusive protective;Silicone;;diphenyl dimethicone;diphenyl dimethicone;diphenyl dimethicone
+VALUES;dipropylene glycol;component of the excipient, solvent for perfume;Solvent;;dipropylene glycol;dipropylene glycol;dipropylene glycol
+VALUES;disodium cocoamphodiacetate;cleaner, foaming conditioner;Surfactant;;disodium cocoamphodiacetate;disodium cocoamphodiacetate;disodium cocoamphodiacetate
+VALUES;disodium cocoyl glutamate;cleanser;Surfactant;;disodium cocoyl glutamate;disodium cocoyl glutamate;disodium cocoyl glutamate
+VALUES;disodium EDTA;neutralizing the ion complex of the water, in particular limestone;Chelating;;disodium EDTA;disodium EDTA;disodium EDTA
+VALUES;disodium laureth sulfosuccinate;cleaner, foaming, in association increases the viscosity and foaming;Surfactant;;disodium laureth sulfosuccinate;disodium laureth sulfosuccinate;disodium laureth sulfosuccinate
+VALUES;disodium lauryl sulfosuccinate;cleaner, foaming, mild;Surfactant;;disodium lauryl sulfosuccinate;disodium lauryl sulfosuccinate;disodium lauryl sulfosuccinate
+VALUES;disodium oleamido PEG-2 sulfosuccinate;cleaning, mousant, hydrotrope;Surfactant;;disodium oleamido PEG-2 sulfosuccinate;disodium oleamido PEG-2 sulfosuccinate;disodium oleamido PEG-2 sulfosuccinate
+VALUES;disodium phosphate;buffer, antioxidant;Ph adjuster;;disodium phosphate;disodium phosphate;disodium phosphate
+VALUES;DMDM hydantoin;prevent the proliferation of bacteria and yeast;Conservative;;DMDM hydantoin;DMDM hydantoin;DMDM hydantoin
+VALUES;docosahexaenoic acid;conditioner;Acid;;docosahexaenoic acid;docosahexaenoic acid;docosahexaenoic acid
+VALUES;EDTA;partially neutralized water limestone;Chelating;;EDTA;EDTA;EDTA
+VALUES;eicosapentaenoic acid;conditioner;Acid;;eicosapentaenoic acid;eicosapentaenoic acid;eicosapentaenoic acid
+VALUES;elaeis guineensis (palm) oil;emollient, occlusive;Vegetable oil;;elaeis guineensis (palm) oil;elaeis guineensis (palm) oil;elaeis guineensis (palm) oil
+VALUES;ethoxydiglycol;solvent, plasticizer;Ether;;ethoxydiglycol;ethoxydiglycol;ethoxydiglycol
+VALUES;ethyl avocadate;conditioner, emollient;Ester;;ethyl avocadate;ethyl avocadate;ethyl avocadate
+VALUES;ethyl glutamate;conditioner;Ester;;ethyl glutamate;ethyl glutamate;ethyl glutamate
+VALUES;ethyl methoxycinnamate;protects the skin from harmful sun rays;Uv filter;;ethyl methoxycinnamate;ethyl methoxycinnamate;ethyl methoxycinnamate
+VALUES;ethyl paraben;prevent the proliferation of bacteria and yeast;Conservative;;ethyl paraben;ethyl paraben;ethyl paraben
+VALUES;ethylhexyl methoxycinnamate;protects the skin from harmful sun rays;Uv filter;;ethylhexyl methoxycinnamate;ethylhexyl methoxycinnamate;ethylhexyl methoxycinnamate
+VALUES;ethylhexyl methoxycinnamate (and) butyl methoxydib;protection of the product against UV;Mixture;;ethylhexyl methoxycinnamate (and) butyl methoxydib;ethylhexyl methoxycinnamate (and) butyl methoxydib;ethylhexyl methoxycinnamate (and) butyl methoxydib
+VALUES;ethylhexyl palmitate;emollient;Fatty ester;;ethylhexyl palmitate;ethylhexyl palmitate;ethylhexyl palmitate
+VALUES;ethylhexyl salicylate;protection of the product against UV;Uv filter;;ethylhexyl salicylate;ethylhexyl salicylate;ethylhexyl salicylate
+VALUES;eucalyptus globulus oil;purifying;Essential oil;;eucalyptus globulus oil;eucalyptus globulus oil;eucalyptus globulus oil
+VALUES;Ext. D&C violet n°2;violet dye;Dye;;Ext. D&C violet n°2;Ext. D&C violet n°2;Ext. D&C violet n°2
+VALUES;fenchyl acetate;;Mp scented;;fenchyl acetate;fenchyl acetate;fenchyl acetate
+VALUES;formaldehyde;prevent the proliferation of bacteria and yeast;Conservative;;formaldehyde;formaldehyde;formaldehyde
+VALUES;geraniol;rosy note;Mp scented;;geraniol;geraniol;geraniol
+VALUES;geranium maculatum oil;stimulating;Essential oil;;geranium maculatum oil;geranium maculatum oil;geranium maculatum oil
+VALUES;ginkgo biloba;conditioner, anti-aging;Plant extract;;ginkgo biloba;ginkgo biloba;ginkgo biloba
+VALUES;glycereth-26;humectant, plasticizer;Ether;;glycereth-26;glycereth-26;glycereth-26
+VALUES;glycerin;contributes to the hydration of the skin;Humectant;;glycerin;glycerin;glycerin
+VALUES;glyceryl cocoate;emollient, emulsifier;Ester;;glyceryl cocoate;glyceryl cocoate;glyceryl cocoate
+VALUES;glyceryl isostearate;emollient, emulsifier;Ester;;glyceryl isostearate;glyceryl isostearate;glyceryl isostearate
+VALUES;glyceryl oleate;emollient, emulsifier;Ester;;glyceryl oleate;glyceryl oleate;glyceryl oleate
+VALUES;glyceryl polymethacrylate;film;Polymer;;glyceryl polymethacrylate;glyceryl polymethacrylate;glyceryl polymethacrylate
+VALUES;glyceryl stearate;emollient, emulsifier;Ester;;glyceryl stearate;glyceryl stearate;glyceryl stearate
+VALUES;glycine;conditioner, buffer substance;Active;;glycine;glycine;glycine
+VALUES;glycine soja;restructuring, toning;Plant extract;;glycine soja;glycine soja;glycine soja
+VALUES;glycol distearate;opacifier, pearlescent, viscosing;Ester;;glycol distearate;glycol distearate;glycol distearate
+VALUES;glycol distearate (and) laureth-4 (and) cocamidopr;cleaner, foaming, viscosity, gives a pearlescent;Surfactant;;glycol distearate (and) laureth-4 (and) cocamidopr;glycol distearate (and) laureth-4 (and) cocamidopr;glycol distearate (and) laureth-4 (and) cocamidopr
+VALUES;glycol stearate;emulsifier, opacifier, thickening, emollient;Ester;;glycol stearate;glycol stearate;glycol stearate
+VALUES;gossypium;soothing;Plant extract;;gossypium;gossypium;gossypium
+VALUES;guanidine carbonate;disciplining capillary tensor;Active;;guanidine carbonate;guanidine carbonate;guanidine carbonate
+VALUES;hedera helix (ivy) extract;draining;Active;;hedera helix (ivy) extract;hedera helix (ivy) extract;hedera helix (ivy) extract
+VALUES;helianthus annuus (sunflower) seed extract;protective, anti-aging;Plant extract;;helianthus annuus (sunflower) seed extract;helianthus annuus (sunflower) seed extract;helianthus annuus (sunflower) seed extract
+VALUES;helianthus annuus (sunflower) seed oil;protective conditioner;Vegetable oil;;helianthus annuus (sunflower) seed oil;helianthus annuus (sunflower) seed oil;helianthus annuus (sunflower) seed oil
+VALUES;hesperidin methyl chalcone;antioxidant;Antioxidant;;hesperidin methyl chalcone;hesperidin methyl chalcone;hesperidin methyl chalcone
+VALUES;hexyldecyl stearate;emollient, occlusive;Fatty ester;;hexyldecyl stearate;hexyldecyl stearate;hexyldecyl stearate
+VALUES;hexylene glycol;solvent, plasticizer;Alcohol;;hexylene glycol;hexylene glycol;hexylene glycol
+VALUES;hibiscus sabdariffa (hibiscus sabdariffa) extract;exfoliating lipolytic;Plant extract;;hibiscus sabdariffa (hibiscus sabdariffa) extract;hibiscus sabdariffa (hibiscus sabdariffa) extract;hibiscus sabdariffa (hibiscus sabdariffa) extract
+VALUES;hieracium pilosella;draining;Plant extract;;hieracium pilosella;hieracium pilosella;hieracium pilosella
+VALUES;hydnocarpus kurzii seed oil;;Vegetable oil;;hydnocarpus kurzii seed oil;hydnocarpus kurzii seed oil;hydnocarpus kurzii seed oil
+VALUES;hydrogenated castor oil;conditioner, thickener;Fat;;hydrogenated castor oil;hydrogenated castor oil;hydrogenated castor oil
+VALUES;hydrogenated lanoline;conditioner;Animal fats;;hydrogenated lanoline;hydrogenated lanoline;hydrogenated lanoline
+VALUES;hydrogenated polydecene;conditioner, emollient;Polymer;;hydrogenated polydecene;hydrogenated polydecene;hydrogenated polydecene
+VALUES;hydrogenated polyisobutene;emollient;Mineral oil;;hydrogenated polyisobutene;hydrogenated polyisobutene;hydrogenated polyisobutene
+VALUES;hydrogenated talloweth-60 myristyl glycol;emulsifying;Surfactant;;hydrogenated talloweth-60 myristyl glycol;hydrogenated talloweth-60 myristyl glycol;hydrogenated talloweth-60 myristyl glycol
+VALUES;hydrolyzed soy protein;conditioner, humectant;Active;;hydrolyzed soy protein;hydrolyzed soy protein;hydrolyzed soy protein
+VALUES;hydrolyzed wheat protein;film, conditioner;Active;;hydrolyzed wheat protein;hydrolyzed wheat protein;hydrolyzed wheat protein
+VALUES;hydroxyethylcellulose;thickening aqueous phases;Gelling;;hydroxyethylcellulose;hydroxyethylcellulose;hydroxyethylcellulose
+VALUES;hydroxyisohexyl 3-cyclohexene carboxaldehyde;almondy notes;Mp scented;;hydroxyisohexyl 3-cyclohexene carboxaldehyde;hydroxyisohexyl 3-cyclohexene carboxaldehyde;hydroxyisohexyl 3-cyclohexene carboxaldehyde
+VALUES;hydroxypropyl guar hydroxypropyltrimonium chloride;anti-static conditioner;Quaternary complex;;hydroxypropyl guar hydroxypropyltrimonium chloride;hydroxypropyl guar hydroxypropyltrimonium chloride;hydroxypropyl guar hydroxypropyltrimonium chloride
+VALUES;hypericum perforatum;conditioner, relaxing;Plant extract;;hypericum perforatum;hypericum perforatum;hypericum perforatum
+VALUES;imidazolidinyl urea;prevent the proliferation of bacteria and yeast;Conservative;;imidazolidinyl urea;imidazolidinyl urea;imidazolidinyl urea
+VALUES;imidazolidinyl urea;prevent the proliferation of bacteria and yeast;Conservative;;imidazolidinyl urea;imidazolidinyl urea;imidazolidinyl urea
+VALUES;iodopropynyl butylcarbamate;prevent the proliferation of bacteria and yeast;Conservative;;iodopropynyl butylcarbamate;iodopropynyl butylcarbamate;iodopropynyl butylcarbamate
+VALUES;isobutane;propellant;Propellant;;isobutane;isobutane;isobutane
+VALUES;isobutyl paraben;biocide;Conservative;;isobutyl paraben;isobutyl paraben;isobutyl paraben
+VALUES;isoceteth-20;emulsifier, solubilizer;Surfactant;;isoceteth-20;isoceteth-20;isoceteth-20
+VALUES;isocetyl isostearate;conditioner, emollient;Ester;;isocetyl isostearate;isocetyl isostearate;isocetyl isostearate
+VALUES;isocetyl stearate;emollient;Fatty ester;;isocetyl stearate;isocetyl stearate;isocetyl stearate
+VALUES;isododecane;solvent component of the fatty phase;Fat;;isododecane;isododecane;isododecane
+VALUES;isohexadecane;emollient;Fat;;isohexadecane;isohexadecane;isohexadecane
+VALUES;isopropyl myristate;binder, conditioner, emollient, solvent;Ester;;isopropyl myristate;isopropyl myristate;isopropyl myristate
+VALUES;isostearyl isostearate;binder, conditioner, emollient;Ester;;isostearyl isostearate;isostearyl isostearate;isostearyl isostearate
+VALUES;isostearyl neopentanoate;emollient;Fatty ester;;isostearyl neopentanoate;isostearyl neopentanoate;isostearyl neopentanoate
+VALUES;juglans regia (walnut);stimulant, astringent, toning, exfoliating if grain / powder;Plant extract;;juglans regia (walnut);juglans regia (walnut);juglans regia (walnut)
+VALUES;juniperus oxycedrus;anti-dandruff, sanitizing;Essential oil;;juniperus oxycedrus;juniperus oxycedrus;juniperus oxycedrus
+VALUES;kaolin;absorbent powder, exfoliating and protecting;Load;;kaolin;kaolin;kaolin
+VALUES;lactamide MEA;conditioner, bubble;Surfactant;;lactamide MEA;lactamide MEA;lactamide MEA
+VALUES;lactic acid;acidifying, exfoliating, humectant;Ph adjuster;;lactic acid;lactic acid;lactic acid
+VALUES;lactose;conditioner, humectant;Sugar;;lactose;lactose;lactose
+VALUES;laminaria digitata;cleaner, foaming, mild;Surfactant;;laminaria digitata;laminaria digitata;laminaria digitata
+VALUES;lanolin;emulsion stabilizer, conditioner, thickener, emollient, protective, replenishing;Animal fats;;lanolin;lanolin;lanolin
+VALUES;lanolin acid;surfactant cleaning agent;Fatty acid;;lanolin acid;lanolin acid;lanolin acid
+VALUES;lanolin alcohol;binder, emulsion stabilizer, conditioner, thickener;Fatty alcohol, sterol;;lanolin alcohol;lanolin alcohol;lanolin alcohol
+VALUES;lauramidopropyl betaine;anti-static, conditioner, cleaner;Complex;;lauramidopropyl betaine;lauramidopropyl betaine;lauramidopropyl betaine
+VALUES;laureth-10;emulsifying;Surfactant;;laureth-10;laureth-10;laureth-10
+VALUES;laureth-16;cleaning, emulsifying;Surfactant;;laureth-16;laureth-16;laureth-16
+VALUES;laureth-2;emulsifying;Surfactant;;laureth-2;laureth-2;laureth-2
+VALUES;laureth-25;cleaning, solubilizing;Surfactant;;laureth-25;laureth-25;laureth-25
+VALUES;laureth-4;emulsifying;Surfactant;;laureth-4;laureth-4;laureth-4
+VALUES;laureth-7;emulsifying;Surfactant;;laureth-7;laureth-7;laureth-7
+VALUES;lauric acid;surfactant;Fatty acid;;lauric acid;lauric acid;lauric acid
+VALUES;lauryl alcohol;stabilizer, emollient, coemulsifier;Fatty alcohol;;lauryl alcohol;lauryl alcohol;lauryl alcohol
+VALUES;lauryl betaine;anti-static conditioner nettoayant, foaming;Surfactant;;lauryl betaine;lauryl betaine;lauryl betaine
+VALUES;lauryl glucoside;cleanser;Surfactant;;lauryl glucoside;lauryl glucoside;lauryl glucoside
+VALUES;lavandin oil;soothing;Essential oil;;lavandin oil;lavandin oil;lavandin oil
+VALUES;lecithin;emulsifying;Surfactant;;lecithin;lecithin;lecithin
+VALUES;leucine;conditioner;Active;;leucine;leucine;leucine
+VALUES;limonene;Note orange;Mp scented;;limonene;limonene;limonene
+VALUES;linalool;slight floral note;Mp scented;;linalool;linalool;linalool
+VALUES;linalyl acetate;Note lavandée;Mp scented;;linalyl acetate;linalyl acetate;linalyl acetate
+VALUES;linoleic acid;conditioner, surfactant cleaner;Fatty acid;;linoleic acid;linoleic acid;linoleic acid
+VALUES;luffa cylindrica;exfoliating fiber or powder;Plant extract;;luffa cylindrica;luffa cylindrica;luffa cylindrica
+VALUES;lysine;conditioner;Active;;lysine;lysine;lysine
+VALUES;magnesium aluminium silicate;aqueous phases gel, thicken, increase the viscosity;Gelling;;magnesium aluminium silicate;magnesium aluminium silicate;magnesium aluminium silicate
+VALUES;magnesium carbonate;powder giving adhesion to the product, absorbing property;Load;;magnesium carbonate;magnesium carbonate;magnesium carbonate
+VALUES;magnesium stearate;helping powder pigment dispersion, brings adhesion to the skin;Load;;magnesium stearate;magnesium stearate;magnesium stearate
+VALUES;magnesium sulfate;active medium;Vector of asset;;magnesium sulfate;magnesium sulfate;magnesium sulfate
+VALUES;malic acid;pH adjustor;Acid;;malic acid;malic acid;malic acid
+VALUES;malpighia glabra (acerola) fruit extract;conditioner, anti-aging, anti-oxidant;Plant extract;;malpighia glabra (acerola) fruit extract;malpighia glabra (acerola) fruit extract;malpighia glabra (acerola) fruit extract
+VALUES;maltodextrin;thickener, absorbent, forming;Gelling;;maltodextrin;maltodextrin;maltodextrin
+VALUES;malva sylvestris extract;soothing;Plant extract;;malva sylvestris extract;malva sylvestris extract;malva sylvestris extract
+VALUES;marine collagen;conditioner, smoothing;Active;;marine collagen;marine collagen;marine collagen
+VALUES;menthoxypropanediol;refreshing agent;Alcohol;;menthoxypropanediol;menthoxypropanediol;menthoxypropanediol
+VALUES;methyl cellulose;aqueous phases gel, thicken, increase the viscosity;Gelling;;methyl cellulose;methyl cellulose;methyl cellulose
+VALUES;methyl paraben;prevent the proliferation of bacteria and yeast;Conservative;;methyl paraben;methyl paraben;methyl paraben
+VALUES;methylchloroisothiazolinone;prevent the proliferation of bacteria and yeast;Conservative;;methylchloroisothiazolinone;methylchloroisothiazolinone;methylchloroisothiazolinone
+VALUES;methyldibromo glutaronitrile;biocide;Conservative;;methyldibromo glutaronitrile;methyldibromo glutaronitrile;methyldibromo glutaronitrile
+VALUES;methylisothiazolinone;prevent the proliferation of bacteria and yeast;Conservative;;methylisothiazolinone;methylisothiazolinone;methylisothiazolinone
+VALUES;mica;gives a silky, shiny;Dye;;mica;mica;mica
+VALUES;mineral oil;conditioner, emollient;Mineral oil;;mineral oil;mineral oil;mineral oil
+VALUES;mourera fluviatilis;hydrating, restorative;Plant extract;;mourera fluviatilis;mourera fluviatilis;mourera fluviatilis
+VALUES;mustela (mink oil);conditioner, nourishing, restorative;Animal fats;;mustela (mink oil);mustela (mink oil);mustela (mink oil)
+VALUES;myristyl alcohol;stabilizer, emollient;Fatty alcohol;;myristyl alcohol;myristyl alcohol;myristyl alcohol
+VALUES;neopentylglycol dicaprylate/dicaprate;emollient, thickener;Fatty ester;;neopentylglycol dicaprylate/dicaprate;neopentylglycol dicaprylate/dicaprate;neopentylglycol dicaprylate/dicaprate
+VALUES;nitrocellulose;agent supsension pigments for nail polish;Gelling;;nitrocellulose;nitrocellulose;nitrocellulose
+VALUES;octoxynol-13;emulsifying;Surfactant;;octoxynol-13;octoxynol-13;octoxynol-13
+VALUES;octyl methoxycinnamate;protects the finished product, or the skin following the assay;Uv filter;;octyl methoxycinnamate;octyl methoxycinnamate;octyl methoxycinnamate
+VALUES;octyl palmitate;emollient conditioner;Fatty ester;;octyl palmitate;octyl palmitate;octyl palmitate
+VALUES;octyldodecanol;emollient;Fatty alcohol;;octyldodecanol;octyldodecanol;octyldodecanol
+VALUES;octyldodecyl myristate;conditioner occlusive;Fatty ester;;octyldodecyl myristate;octyldodecyl myristate;octyldodecyl myristate
+VALUES;oenothera biennis (evening primrose) oil;conditioner, anti-aging;Vegetable oil;;oenothera biennis (evening primrose) oil;oenothera biennis (evening primrose) oil;oenothera biennis (evening primrose) oil
+VALUES;olea europaea (olive) fruit oil;conditioning, softening, nourishing, regenerating, anti-aging;Vegetable oil;;olea europaea (olive) fruit oil;olea europaea (olive) fruit oil;olea europaea (olive) fruit oil
+VALUES;olea europaea leaf extract;regenerating, soothing;Plant extract;;olea europaea leaf extract;olea europaea leaf extract;olea europaea leaf extract
+VALUES;oleth-10;emulsifying;Surfactant;;oleth-10;oleth-10;oleth-10
+VALUES;oleth-20;cleaning, emulsifying, solubilizing;Surfactant;;oleth-20;oleth-20;oleth-20
+VALUES;oleth-5;emulsifying;Surfactant;;oleth-5;oleth-5;oleth-5
+VALUES;olivoyl hydrolyzed wheat protein;cleaner, foaming, mild;Surfactant;;olivoyl hydrolyzed wheat protein;olivoyl hydrolyzed wheat protein;olivoyl hydrolyzed wheat protein
+VALUES;oryza sativa (rice) extract;conditioner;Plant extract;;oryza sativa (rice) extract;oryza sativa (rice) extract;oryza sativa (rice) extract
+VALUES;oyster shell extract;;Active;;oyster shell extract;oyster shell extract;oyster shell extract
+VALUES;ozokerite;binder, thickener, stabilizer;Mineral wax;;ozokerite;ozokerite;ozokerite
+VALUES;palm acid;emulsifier, opacifying, cleanser;Surfactant;;palm acid;palm acid;palm acid
+VALUES;palmitic acid;emulsifier, opacifying;Fatty acid;;palmitic acid;palmitic acid;palmitic acid
+VALUES;panax ginseng root extract;conditioning, toning;Plant extract;;panax ginseng root extract;panax ginseng root extract;panax ginseng root extract
+VALUES;panthenol;conditioner, soothing;Active;;panthenol;panthenol;panthenol
+VALUES;paraffinum liquidum;emollient, protective;Mineral oil;;paraffinum liquidum;paraffinum liquidum;paraffinum liquidum
+VALUES;parfum (fragrance);additional sales argument and offers fun for the client;Perfume;;parfum (fragrance);parfum (fragrance);parfum (fragrance)
+VALUES;passiflora incarnata;astringent;Plant extract;;passiflora incarnata;passiflora incarnata;passiflora incarnata
+VALUES;PCA;humectant;Active;;PCA;PCA;PCA
+VALUES;pearl powder;bring sparkle, reflecting the light;Additive;;pearl powder;pearl powder;pearl powder
+VALUES;PEG-100 stearate;cleanser;Surfactant;;PEG-100 stearate;PEG-100 stearate;PEG-100 stearate
+VALUES;PEG-12;humectant, solvent;Complex;;PEG-12;PEG-12;PEG-12
+VALUES;PEG-120 methyl glucose;thickener for surfactant (cleansing bases);Complex;;PEG-120 methyl glucose;PEG-120 methyl glucose;PEG-120 methyl glucose
+VALUES;PEG-150 distearate;cleaning, solubilizing;Surfactant;;PEG-150 distearate;PEG-150 distearate;PEG-150 distearate
+VALUES;PEG-150 pentaerythrityl tetrastearate;viscosity;Ester;;PEG-150 pentaerythrityl tetrastearate;PEG-150 pentaerythrityl tetrastearate;PEG-150 pentaerythrityl tetrastearate
+VALUES;PEG-16 macadamia glycerides;emollient, emulsifier;Surfactant;;PEG-16 macadamia glycerides;PEG-16 macadamia glycerides;PEG-16 macadamia glycerides
+VALUES;PEG-18 glyceryl oleate/cocoate;emulsifier, emollient;Surfactant;;PEG-18 glyceryl oleate/cocoate;PEG-18 glyceryl oleate/cocoate;PEG-18 glyceryl oleate/cocoate
+VALUES;PEG-20 methyl glucose sesquistearate;emulsifier, emollient;Surfactant;;PEG-20 methyl glucose sesquistearate;PEG-20 methyl glucose sesquistearate;PEG-20 methyl glucose sesquistearate
+VALUES;PEG-4;humectant, solvent;Polymer;;PEG-4;PEG-4;PEG-4
+VALUES;PEG-4 dilaurate;emulsifying;Surfactant;;PEG-4 dilaurate;PEG-4 dilaurate;PEG-4 dilaurate
+VALUES;PEG-4 laurate;emulsifying;Surfactant;;PEG-4 laurate;PEG-4 laurate;PEG-4 laurate
+VALUES;PEG-4 rapeseedamide;thickener, emulsifier;Surfactant;;PEG-4 rapeseedamide;PEG-4 rapeseedamide;PEG-4 rapeseedamide
+VALUES;PEG-40 hydrogenated lanolin;conditioner emulsifying surfactant;Ethoxylated products;;PEG-40 hydrogenated lanolin;PEG-40 hydrogenated lanolin;PEG-40 hydrogenated lanolin
+VALUES;PEG-40 stearate;cleaning, solubilizing;Surfactant;;PEG-40 stearate;PEG-40 stearate;PEG-40 stearate
+VALUES;PEG-45 palm kernel glycerides;emollient, emulsifier;Fat;;PEG-45 palm kernel glycerides;PEG-45 palm kernel glycerides;PEG-45 palm kernel glycerides
+VALUES;PEG-7;humectant, solvent;Polymer;;PEG-7;PEG-7;PEG-7
+VALUES;PEG-7 glyceryl cocoate;emulsifier, emollient;Surfactant;;PEG-7 glyceryl cocoate;PEG-7 glyceryl cocoate;PEG-7 glyceryl cocoate
+VALUES;PEG-75 stearate;cleanser;Surfactant;;PEG-75 stearate;PEG-75 stearate;PEG-75 stearate
+VALUES;PEG-8;humectant, solvent;Complex;;PEG-8;PEG-8;PEG-8
+VALUES;PEG-80 glyceryl cocoate;cleaning, solubilizing;Surfactant;;PEG-80 glyceryl cocoate;PEG-80 glyceryl cocoate;PEG-80 glyceryl cocoate
+VALUES;pentaerythrityl tetraoctanoate;plosive;Fatty ester;;pentaerythrityl tetraoctanoate;pentaerythrityl tetraoctanoate;pentaerythrityl tetraoctanoate
+VALUES;pentasodium pentetate;neutralizing the ion complex of the water, in particular limestone;Chelating;;pentasodium pentetate;pentasodium pentetate;pentasodium pentetate
+VALUES;persea gratissima (avocado) oil;conditioner repairman;Vegetable oil;;persea gratissima (avocado) oil;persea gratissima (avocado) oil;persea gratissima (avocado) oil
+VALUES;petrolatum;conditioner, thickener, protective;Mineral wax;;petrolatum;petrolatum;petrolatum
+VALUES;phenoxyethanol;solvent for other preservatives;Conservative mp perfume;;phenoxyethanol;phenoxyethanol;phenoxyethanol
+VALUES;phenyl trimethicone;Anti-foaming occlusive protective;Silicone;;phenyl trimethicone;phenyl trimethicone;phenyl trimethicone
+VALUES;phenylethyl alcool;floral note dew honey;Mp scented;;phenylethyl alcool;phenylethyl alcool;phenylethyl alcool
+VALUES;phospholipids;conditioner;Fat;;phospholipids;phospholipids;phospholipids
+VALUES;pinus palustris (pine) oil;stimulating;Essential oil;;pinus palustris (pine) oil;pinus palustris (pine) oil;pinus palustris (pine) oil
+VALUES;piroctone olamine;antidandruff;Active;;piroctone olamine;piroctone olamine;piroctone olamine
+VALUES;pisum sativum;conditioner, protective;Plant extract;;pisum sativum;pisum sativum;pisum sativum
+VALUES;pogostemon cablin (patchouly) oil;stimulating, purifying;Essential oil;;pogostemon cablin (patchouly) oil;pogostemon cablin (patchouly) oil;pogostemon cablin (patchouly) oil
+VALUES;poloxamer 407;emulsifier, solubilizer;Surfactant;;poloxamer 407;poloxamer 407;poloxamer 407
+VALUES;polyacrylamide;film, fixer;Polymer;;polyacrylamide;polyacrylamide;polyacrylamide
+VALUES;polycaprolactone;agent supsension;Polymer;;polycaprolactone;polycaprolactone;polycaprolactone
+VALUES;polyethylene;Scrub;Polymer;;polyethylene;polyethylene;polyethylene
+VALUES;polyperfluoromethylisopropyl ether;conditioner occlusive;Ether;;polyperfluoromethylisopropyl ether;polyperfluoromethylisopropyl ether;polyperfluoromethylisopropyl ether
+VALUES;polyquaternium-10;conditioner;Quaternary complex;;polyquaternium-10;polyquaternium-10;polyquaternium-10
+VALUES;polyquaternium-7;conditioner;Quaternary complex;;polyquaternium-7;polyquaternium-7;polyquaternium-7
+VALUES;polysorbate 20;solubilizing coemulsifier;Surfactant;;polysorbate 20;polysorbate 20;polysorbate 20
+VALUES;polysorbate 40;cleaning, émulsionant, solubilizing;Surfactant;;polysorbate 40;polysorbate 40;polysorbate 40
+VALUES;polysorbate 60;cleaning, émulsionant, solubilizing;Surfactant;;polysorbate 60;polysorbate 60;polysorbate 60
+VALUES;polysorbate 80;emulsifier, solubilizer;Surfactant;;polysorbate 80;polysorbate 80;polysorbate 80
+VALUES;polysorbate 85;emulsifying, dispersing;Surfactant;;polysorbate 85;polysorbate 85;polysorbate 85
+VALUES;potassium cetyl phosphate;emulsifying;Surfactant;;potassium cetyl phosphate;potassium cetyl phosphate;potassium cetyl phosphate
+VALUES;potassium salicylate;prevent the proliferation of bacteria and yeast;Conservative;;potassium salicylate;potassium salicylate;potassium salicylate
+VALUES;potassium undecylenoyl hydrolyzed soy protein;stabilizer, conditioner;Derived protein;;potassium undecylenoyl hydrolyzed soy protein;potassium undecylenoyl hydrolyzed soy protein;potassium undecylenoyl hydrolyzed soy protein
+VALUES;PPG-15 stearyl ether;emollient;Ether;;PPG-15 stearyl ether;PPG-15 stearyl ether;PPG-15 stearyl ether
+VALUES;PPG-26 buteth-26;solubilizing;Surfactant;;PPG-26 buteth-26;PPG-26 buteth-26;PPG-26 buteth-26
+VALUES;PPG-5;emulsifying;Surfactant;;PPG-5;PPG-5;PPG-5
+VALUES;PPG-9;conditioner;Complex;;PPG-9;PPG-9;PPG-9
+VALUES;propyl gallate;slow the oxidation of fats and protect sensitive active light and / or oxygen and / or heat;Antioxidant;;propyl gallate;propyl gallate;propyl gallate
+VALUES;propyl paraben;prevent the proliferation of bacteria and yeast;Conservative;;propyl paraben;propyl paraben;propyl paraben
+VALUES;propylene glycol;contributes to the hydration of the skin, for solvent extracts or powders;Humectant, solvent;;propylene glycol;propylene glycol;propylene glycol
+VALUES;propylene glycol dicapylate/dicaprate;plosive;Fatty ester;;propylene glycol dicapylate/dicaprate;propylene glycol dicapylate/dicaprate;propylene glycol dicapylate/dicaprate
+VALUES;prunus amygdalus dulcis (sweet almond) oil;conditioner, replenishing, soothing;Vegetable oil;;prunus amygdalus dulcis (sweet almond) oil;prunus amygdalus dulcis (sweet almond) oil;prunus amygdalus dulcis (sweet almond) oil
+VALUES;prunus armeniaca;softening, toning;Plant extract;;prunus armeniaca;prunus armeniaca;prunus armeniaca
+VALUES;prunus armeniaca (apricot) seed powder;Scrub;Plant extract;;prunus armeniaca (apricot) seed powder;prunus armeniaca (apricot) seed powder;prunus armeniaca (apricot) seed powder
+VALUES;prunus persica;softening, toning;Plant extract;;prunus persica;prunus persica;prunus persica
+VALUES;PTFE-20;solvent, volumizing, viscosity modifier;Polymer;;PTFE-20;PTFE-20;PTFE-20
+VALUES;PVP/dimethylaminoethyl methacrylate copolymer;coffant, fixer;Polymer;;PVP/dimethylaminoethyl methacrylate copolymer;PVP/dimethylaminoethyl methacrylate copolymer;PVP/dimethylaminoethyl methacrylate copolymer
+VALUES;pyrus malus extract;adds shine, shine;Plant extract;;pyrus malus extract;pyrus malus extract;pyrus malus extract
+VALUES;quaternium-18 hectorite;agent supsension;Complex;;quaternium-18 hectorite;quaternium-18 hectorite;quaternium-18 hectorite
+VALUES;retinyl palmitate;conditioner, anti-oxidant;Active;;retinyl palmitate;retinyl palmitate;retinyl palmitate
+VALUES;ribes nigrum seed oil;anti-radical, emollient;Vegetable oil;;ribes nigrum seed oil;ribes nigrum seed oil;ribes nigrum seed oil
+VALUES;ricinus communis (castor oil);technical tool starting synthetic hair care afro guy;Vegetable oil;;ricinus communis (castor oil);ricinus communis (castor oil);ricinus communis (castor oil)
+VALUES;rosa canina (dog rose hips) fruit oil;conditioner repairman;Vegetable oil;;rosa canina (dog rose hips) fruit oil;rosa canina (dog rose hips) fruit oil;rosa canina (dog rose hips) fruit oil
+VALUES;rosa moschata seed oil;regenerative, restorative, softening;Vegetable oil;;rosa moschata seed oil;rosa moschata seed oil;rosa moschata seed oil
+VALUES;rosemary oil;invigorating, relaxing;Essential oil;;rosemary oil;rosemary oil;rosemary oil
+VALUES;saccharum officinarum;humectant, exfoliator if grain;Plant extract;;saccharum officinarum;saccharum officinarum;saccharum officinarum
+VALUES;salicylic acid;cleansing, exfoliating, anti-acne, anti-dandruff;Active;;salicylic acid;salicylic acid;salicylic acid
+VALUES;SD alcohol 39-C;denatured ethyl alcohol, solvent, thinner, Conservative;Alcohol;;SD alcohol 39-C;SD alcohol 39-C;SD alcohol 39-C
+VALUES;sea silt extract;rich in minerals and trace elements;Active;;sea silt extract;sea silt extract;sea silt extract
+VALUES;secale cereale (rye) seed extract;conditioner, restoring;Plant extract;;secale cereale (rye) seed extract;secale cereale (rye) seed extract;secale cereale (rye) seed extract
+VALUES;serenoa serrulata;slows down the secretion of sebum, AGE intake;Plant extract;;serenoa serrulata;serenoa serrulata;serenoa serrulata
+VALUES;serica (silk);conditioner promotes hydration;Active;;serica (silk);serica (silk);serica (silk)
+VALUES;serine;conditioner;Active;;serine;serine;serine
+VALUES;sesamum indicum (sesame) seed oil;occlusive, protective, emollient;Vegetable oil;;sesamum indicum (sesame) seed oil;sesamum indicum (sesame) seed oil;sesamum indicum (sesame) seed oil
+VALUES;shorea robusta;nourishing, softening;Plant extract;;shorea robusta;shorea robusta;shorea robusta
+VALUES;siberian spruce oil;bracing;Essential oil;;siberian spruce oil;siberian spruce oil;siberian spruce oil
+VALUES;silica;scrub, absorbent, opacifying;Load;;silica;silica;silica
+VALUES;simmondsia chinensis (jojoba) seed oil;regenerating, repairing, conditioning;Vegetable oil;;simmondsia chinensis (jojoba) seed oil;simmondsia chinensis (jojoba) seed oil;simmondsia chinensis (jojoba) seed oil
+VALUES;sodium acrylate/acryloyldimethyl taurate copolymer;stabilizer, opacifier, thickening;Polymer;;sodium acrylate/acryloyldimethyl taurate copolymer;sodium acrylate/acryloyldimethyl taurate copolymer;sodium acrylate/acryloyldimethyl taurate copolymer
+VALUES;sodium beeswax;emulsifying;Surfactant;;sodium beeswax;sodium beeswax;sodium beeswax
+VALUES;sodium benzoate;biocide;Conservative mp scented;;sodium benzoate;sodium benzoate;sodium benzoate
+VALUES;sodium cetearyl sulfate;cleanser;Surfactant;;sodium cetearyl sulfate;sodium cetearyl sulfate;sodium cetearyl sulfate
+VALUES;sodium chloride;thickener for washing bases;Salt;;sodium chloride;sodium chloride;sodium chloride
+VALUES;sodium cocoate;cleaning, emulsifying;Soap;;sodium cocoate;sodium cocoate;sodium cocoate
+VALUES;sodium cocoyl glutamate;cleanser;Surfactant;;sodium cocoyl glutamate;sodium cocoyl glutamate;sodium cocoyl glutamate
+VALUES;sodium cocoyl isethionate;cleanser;Surfactant;;sodium cocoyl isethionate;sodium cocoyl isethionate;sodium cocoyl isethionate
+VALUES;sodium hyaluronate;moisturizer;Active;;sodium hyaluronate;sodium hyaluronate;sodium hyaluronate
+VALUES;sodium hydroxide;allows to make the pH of a product less acidic or more basic;Ph adjuster;;sodium hydroxide;sodium hydroxide;sodium hydroxide
+VALUES;sodium isethionate;Co-cleaning, stabilizing, softening;Surfactant;;sodium isethionate;sodium isethionate;sodium isethionate
+VALUES;sodium laureth sulfate;cleaning agent, foaming;Surfactant;;sodium laureth sulfate;sodium laureth sulfate;sodium laureth sulfate
+VALUES;sodium laureth sulfate (and) cocamidopropyl betain;cleaning, foaming;Surfactant;;sodium laureth sulfate (and) cocamidopropyl betain;sodium laureth sulfate (and) cocamidopropyl betain;sodium laureth sulfate (and) cocamidopropyl betain
+VALUES;sodium laureth sulfate (and) sodium laureth sulfos;cleaner, foaming, viscosity;Surfactant;;sodium laureth sulfate (and) sodium laureth sulfos;sodium laureth sulfate (and) sodium laureth sulfos;sodium laureth sulfate (and) sodium laureth sulfos
+VALUES;sodium laureth-40 sulfate;cleanser;Surfactant;;sodium laureth-40 sulfate;sodium laureth-40 sulfate;sodium laureth-40 sulfate
+VALUES;sodium lauroyl oat amino acids;cleaning, foaming;Surfactant;;sodium lauroyl oat amino acids;sodium lauroyl oat amino acids;sodium lauroyl oat amino acids
+VALUES;sodium lauroyl sarcosinate;cleanser, conditioner;Surfactant;;sodium lauroyl sarcosinate;sodium lauroyl sarcosinate;sodium lauroyl sarcosinate
+VALUES;sodium lauryl sulfate;cleaning, foaming;Surfactant;;sodium lauryl sulfate;sodium lauryl sulfate;sodium lauryl sulfate
+VALUES;sodium methylparaben;prevent the proliferation of bacteria and yeast;Conservative;;sodium methylparaben;sodium methylparaben;sodium methylparaben
+VALUES;sodium palm kernelate;cleaning, emulsifying;Soap;;sodium palm kernelate;sodium palm kernelate;sodium palm kernelate
+VALUES;sodium PCA;humectant;Salt;;sodium PCA;sodium PCA;sodium PCA
+VALUES;sodium phosphate;buffer;Ph adjuster;;sodium phosphate;sodium phosphate;sodium phosphate
+VALUES;sodium propylparaben;prevent the proliferation of bacteria and yeast;Conservative;;sodium propylparaben;sodium propylparaben;sodium propylparaben
+VALUES;sodium stearate;cleaning, emulsifying;Soap;;sodium stearate;sodium stearate;sodium stearate
+VALUES;sodium styrene/acrylates copolymer;forming, thickening;Polymer;;sodium styrene/acrylates copolymer;sodium styrene/acrylates copolymer;sodium styrene/acrylates copolymer
+VALUES;sodium sulfate;antioxidant;Antioxidant;;sodium sulfate;sodium sulfate;sodium sulfate
+VALUES;sodium tallowate;cleaning, foaming;Soap;;sodium tallowate;sodium tallowate;sodium tallowate
+VALUES;sodium trideceth sulfate;cleaning, emulsifying;Surfactant;;sodium trideceth sulfate;sodium trideceth sulfate;sodium trideceth sulfate
+VALUES;sorbitan stearate;emulsifying;Surfactant;;sorbitan stearate;sorbitan stearate;sorbitan stearate
+VALUES;sorbitan tristearate;emulsifying;Surfactant;;sorbitan tristearate;sorbitan tristearate;sorbitan tristearate
+VALUES;sorbitol;contributes to the hydration of the skin, gives the product a pleasant taste;Humectant;;sorbitol;sorbitol;sorbitol
+VALUES;soybean (glycine soja) germ extract;conditioner, anti-aging;Plant extract;;soybean (glycine soja) germ extract;soybean (glycine soja) germ extract;soybean (glycine soja) germ extract
+VALUES;soybean (glycine soja) sterol;emollient;Plant extract;;soybean (glycine soja) sterol;soybean (glycine soja) sterol;soybean (glycine soja) sterol
+VALUES;spinach extract;dye;Plant extract;;spinach extract;spinach extract;spinach extract
+VALUES;spirea ulmaria (meadowsweet) extract;drainage, smoothing;Active;;spirea ulmaria (meadowsweet) extract;spirea ulmaria (meadowsweet) extract;spirea ulmaria (meadowsweet) extract
+VALUES;squalene;conditioner prevents dehydration, restores the suppleness of the skin, antioxidant;Animal fats;;squalene;squalene;squalene
+VALUES;stearamide AMP;foaming, thickening;Surfactant;;stearamide AMP;stearamide AMP;stearamide AMP
+VALUES;steareth-2;emulsifying;Surfactant;;steareth-2;steareth-2;steareth-2
+VALUES;steareth-20;emulsifying;Surfactant;;steareth-20;steareth-20;steareth-20
+VALUES;steareth-25;cleaning, solubilizing;Surfactant;;steareth-25;steareth-25;steareth-25
+VALUES;stearic acid;emulsifying surfactant;Fatty acid;;stearic acid;stearic acid;stearic acid
+VALUES;stearyl alcohol;stabilizer, emulsifier, thickener;Fatty alcohol;;stearyl alcohol;stearyl alcohol;stearyl alcohol
+VALUES;stryphnodendron barbatiman;astringent;Plant extract;;stryphnodendron barbatiman;stryphnodendron barbatiman;stryphnodendron barbatiman
+VALUES;styrene/acrylates copolymer;thickener, emulsifier;Gelling;;styrene/acrylates copolymer;styrene/acrylates copolymer;styrene/acrylates copolymer
+VALUES;styrene/VP copolymer;thicken the aqueous phase, forming, hats;Gelling;;styrene/VP copolymer;styrene/VP copolymer;styrene/VP copolymer
+VALUES;sucrose;humectant, flavor;Sugar;;sucrose;sucrose;sucrose
+VALUES;sucrose cocoate;emollient;Fatty ester;;sucrose cocoate;sucrose cocoate;sucrose cocoate
+VALUES;talc;absorbent powder, exfoliating and protective modifier touch brings the 'slippery';Load;;talc;talc;talc
+VALUES;TEA C12-13 alkyl phosphate;cleaning agent, foaming;Surfactant;;TEA C12-13 alkyl phosphate;TEA C12-13 alkyl phosphate;TEA C12-13 alkyl phosphate
+VALUES;TEA-cocoyl hydrolyzed collagen;conditioner cleaner;Surfactant;;TEA-cocoyl hydrolyzed collagen;TEA-cocoyl hydrolyzed collagen;TEA-cocoyl hydrolyzed collagen
+VALUES;TEA-lauryl sulfate;cleanser;Surfactant;;TEA-lauryl sulfate;TEA-lauryl sulfate;TEA-lauryl sulfate
+VALUES;tetrasodium EDTA;partially neutralized water limestone;Chelating;;tetrasodium EDTA;tetrasodium EDTA;tetrasodium EDTA
+VALUES;tetrasodium etidronate;neutralizing the ion complex of the water, in particular limestone;Chelating;;tetrasodium etidronate;tetrasodium etidronate;tetrasodium etidronate
+VALUES;theobroma cacao (cocoa) seed butter;conditioner, protective;Vegetable fat;;theobroma cacao (cocoa) seed butter;theobroma cacao (cocoa) seed butter;theobroma cacao (cocoa) seed butter
+VALUES;threonine;conditioner;Active;;threonine;threonine;threonine
+VALUES;TIPA-laureth sulfate;cleanser;Surfactant;;TIPA-laureth sulfate;TIPA-laureth sulfate;TIPA-laureth sulfate
+VALUES;titanium dioxide;bleaching powder, mineral sunscreen;Load;;titanium dioxide;titanium dioxide;titanium dioxide
+VALUES;tocopherol;slow the oxidation of fats and protect sensitive active light and / or oxygen and / or heat, can be also used as active ingredient for the skin, the dosage will be greater;Antioxidant;;tocopherol;tocopherol;tocopherol
+VALUES;tocopheryl acetate;antioxidant conditioner;Active;;tocopheryl acetate;tocopheryl acetate;tocopheryl acetate
+VALUES;tocopheryl linoleate;antioxidant conditioner;Active;;tocopheryl linoleate;tocopheryl linoleate;tocopheryl linoleate
+VALUES;triclosan;biocidal, deodorant;Active;;triclosan;triclosan;triclosan
+VALUES;tridecyl stearate;conditioner, emollient;Fatty ester;;tridecyl stearate;tridecyl stearate;tridecyl stearate
+VALUES;tridecyl trimellitate;conditioner occlusive;Fatty ester;;tridecyl trimellitate;tridecyl trimellitate;tridecyl trimellitate
+VALUES;triethanolamine;allows to make the pH of a product less acidic or more basic;Ph adjuster;;triethanolamine;triethanolamine;triethanolamine
+VALUES;trihydroxystearin;occlusive viscosity;Fat;;trihydroxystearin;trihydroxystearin;trihydroxystearin
+VALUES;triticum vulgare (wheat) germ extract;clarifying, conditioner;Plant extract;;triticum vulgare (wheat) germ extract;triticum vulgare (wheat) germ extract;triticum vulgare (wheat) germ extract
+VALUES;triticum vulgare (wheat) germ oil;conditioner, firming, anti-aging;Vegetable oil;;triticum vulgare (wheat) germ oil;triticum vulgare (wheat) germ oil;triticum vulgare (wheat) germ oil
+VALUES;tromethamine;+ makes basic or acid -;Ph adjuster;;tromethamine;tromethamine;tromethamine
+VALUES;turmeric extract;dye;Plant extract;;turmeric extract;turmeric extract;turmeric extract
+VALUES;tyrosine;conditioner;Active;;tyrosine;tyrosine;tyrosine
+VALUES;undecylenamidopropyl betaine;anti-static, conditioner, cleaner, foaming;Surfactant;;undecylenamidopropyl betaine;undecylenamidopropyl betaine;undecylenamidopropyl betaine
+VALUES;urea;humectant, buffer;Active;;urea;urea;urea
+VALUES;usnea barbata;anti-bacterial (?), anti-dandruff;Plant extract;;usnea barbata;usnea barbata;usnea barbata
+VALUES;valine;conditioner;Active;;valine;valine;valine
+VALUES;vanilla planifolia;moisturizing, toning;Plant extract;;vanilla planifolia;vanilla planifolia;vanilla planifolia
+VALUES;vitis vinifera (grape) seed oil;replenishing, antioxidant (tocopherol);Vegetable oil;;vitis vinifera (grape) seed oil;vitis vinifera (grape) seed oil;vitis vinifera (grape) seed oil
+VALUES;vitreoscilla ferment;conditioner;Natural extract;;vitreoscilla ferment;vitreoscilla ferment;vitreoscilla ferment
+VALUES;water (and) ceteareth-60 myristyl glycol (and)meth;biocide;Mixture;;water (and) ceteareth-60 myristyl glycol (and)meth;water (and) ceteareth-60 myristyl glycol (and)meth;water (and) ceteareth-60 myristyl glycol (and)meth
+VALUES;water (and) dipropylene glycol (and) halopteris sc;mineralizing;Mixture;;water (and) dipropylene glycol (and) halopteris sc;water (and) dipropylene glycol (and) halopteris sc;water (and) dipropylene glycol (and) halopteris sc
+VALUES;water (and) hydrolyzed algin (and) chlorella vulga;draining mineralizing;Mixture;;water (and) hydrolyzed algin (and) chlorella vulga;water (and) hydrolyzed algin (and) chlorella vulga;water (and) hydrolyzed algin (and) chlorella vulga
+VALUES;water (and) propylene glycol (and) cistus monspeli;;Mixture;;water (and) propylene glycol (and) cistus monspeli;water (and) propylene glycol (and) cistus monspeli;water (and) propylene glycol (and) cistus monspeli
+VALUES;water (and) propylene glycol (and) helichrysum it;restructuring;Mixture;;water (and) propylene glycol (and) helichrysum it;water (and) propylene glycol (and) helichrysum it;water (and) propylene glycol (and) helichrysum it
+VALUES;water (and) propylene glycol (and) lavandula stoec;soothing;Mixture;;water (and) propylene glycol (and) lavandula stoec;water (and) propylene glycol (and) lavandula stoec;water (and) propylene glycol (and) lavandula stoec
+VALUES;water (and)glycol distearate (and) glycerin (and);cleanser, moisturizer, pearlescent;Mixture;;water (and)glycol distearate (and) glycerin (and);water (and)glycol distearate (and) glycerin (and);water (and)glycol distearate (and) glycerin (and)
+VALUES;whey protein;conditioner;Protein;;whey protein;whey protein;whey protein
+VALUES;xanthan gum;aqueous phases gel, thicken, increase the viscosity;Gelling;;xanthan gum;xanthan gum;xanthan gum
+VALUES;zea mays (corn) oil;conditioner, replenishing, emulsifying property;Vegetable oil;;zea mays (corn) oil;zea mays (corn) oil;zea mays (corn) oil
+VALUES;zea mays (corn) starch;exfoliating absorbent;Additive;;zea mays (corn) starch;zea mays (corn) starch;zea mays (corn) starch
+VALUES;zinc oxide;bleaching powder, mineral sunscreen;Load;;zinc oxide;zinc oxide;zinc oxide
+VALUES;zinc pyrithione;antidandruff;Active;;zinc pyrithione;zinc pyrithione;zinc pyrithione
+VALUES;zinc salicylate;prevent the proliferation of bacteria and yeast;Conservative;;zinc salicylate;zinc salicylate;zinc salicylate
+VALUES;zinc stearate;anti-caking agent, coloring;Additive;;zinc stearate;zinc stearate;zinc stearate
+VALUES;zinc sulfate;astringent, biocide;Active;;zinc sulfate;zinc sulfate;zinc sulfate

@@ -1,0 +1,29 @@
+PATH;/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;bcpg:lkvValue
+VALUES;Beauty and care
+VALUES;Welfare
+VALUES;Food supplements
+VALUES;Hygiene
+VALUES;Line and slimming
+;
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;bcpg:lkvValue
+VALUES;Base ingredients
+VALUES;Essential oils
+VALUES;Oils / butters
+VALUES;Plant extracts
+VALUES;Cosmetic active
+VALUES;Goodies
+;
+PATH;/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;bcpg:lkvValue
+VALUES;Bases
+;
+PATH;/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
+TYPE;bcpg:linkedValue
+COLUMNS;bcpg:lkvValue
+VALUES;Bases
+VALUES;Soaps

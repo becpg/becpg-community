@@ -1,0 +1,81 @@
+#;http://www.pharmaboutique.net;
+PATH;/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Beauty and care;Anti-aging
+VALUES;Beauty and care;Hair care
+VALUES;Beauty and care;Body care
+VALUES;Beauty and care;Facials
+VALUES;Beauty and care;Care for men
+VALUES;Beauty and care;Solar
+VALUES;Welfare;Aromatherapy
+VALUES;Welfare;Homeopathy
+VALUES;Welfare;Nutripuncture
+VALUES;Welfare;Massage oils
+VALUES;Food supplements;Natural condiments
+VALUES;Food supplements;Energizing
+VALUES;Food supplements;Vitamins and minerals
+VALUES;Hygiene;Acne
+VALUES;Hygiene;Deodorants
+VALUES;Hygiene;Ear and nose
+VALUES;Line and slimming;Treatments and diets
+VALUES;Line and slimming;Weight
+VALUES;Line and slimming;Regulator of appetite
+;;
+#;http://www.aroma-zone.com/aroma/emulsifiants.asp;
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Base ingredients;Waxes and gums
+VALUES;Base ingredients;Emulsifiers
+VALUES;Base ingredients;Clays
+VALUES;Base ingredients;Salts
+VALUES;Base ingredients;Surfactants
+VALUES;Base ingredients;Glycerin soap bases
+VALUES;Base ingredients;Agents textures, emollients, ph correctors and supports
+VALUES;Base ingredients;Preservatives and anti-oxidants
+VALUES;Base ingredients;Dispersants
+VALUES;Base ingredients;Various
+VALUES;Essential oils;Flowering
+VALUES;Essential oils;On herbs
+VALUES;Essential oils;Fresh
+VALUES;Essential oils;Fruity
+VALUES;Essential oils;Wooded
+VALUES;Essential oils;Spicy
+VALUES;Essential oils;Rare and precious
+VALUES;Essential oils;The bio
+VALUES;Oils / butters;Vegetable oils
+VALUES;Oils / butters;Macerated oil
+VALUES;Oils / butters;Butters
+VALUES;Plant extracts;Dry plant extracts and alcoholic
+VALUES;Plant extracts;Plant extracts hydroglycerine
+VALUES;Plant extracts;Coloring and hair shampoos plant
+VALUES;Plant extracts;Fruit extracts
+VALUES;Cosmetic active;Complete list
+VALUES;Cosmetic active;Anti-aging, anti-wrinkle and antioxidant
+VALUES;Cosmetic active;Hydrating and relipidants
+VALUES;Cosmetic active;Purifying active and radiance
+VALUES;Cosmetic active;Active soothing and nutritious
+VALUES;Cosmetic active;Slimming assets, circulatory, deodorants
+VALUES;Cosmetic active;Hair assets
+VALUES;Cosmetic active;Assets and makeup soft touch
+VALUES;Goodies;Scrubs plant
+VALUES;Goodies;Fruity and delicious aromatic extracts
+VALUES;Goodies;Cosmetics fragrances
+VALUES;Goodies;Natural dyes
+;;
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Bases;Preparations
+;;
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Bases;Soaps
+VALUES;Bases;Grinding bases
+VALUES;Bases;Preparations
+VALUES;Soaps;Hard
+VALUES;Soaps;Fat

@@ -5,6 +5,7 @@ COLUMNS;cm:name;cm:description;img1Path;img1Title
 VALUES;Table USDA;USDA National Nutrient Database for Standard Reference Release 18;classpath:beCPG/import/images/suppliers/usdalogo.jpg;USDA
 VALUES;Table Ciqual 2008;Table de composition nutritionnelle des aliments Ciqual 2008;classpath:beCPG/import/images/suppliers/anses.jpg;ANSES
 VALUES;Table Ciqual 2012;Table de composition nutritionnelle des aliments Ciqual 2012;classpath:beCPG/import/images/suppliers/anses.jpg;ANSES
+VALUES;Table Additifs;Table listant les additifs;;
 ;;;;
 PATH;/Companies/Clients;;;
 TYPE;bcpg:client;;;
