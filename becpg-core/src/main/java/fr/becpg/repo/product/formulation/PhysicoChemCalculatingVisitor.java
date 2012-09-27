@@ -174,6 +174,11 @@ public class PhysicoChemCalculatingVisitor implements ProductVisitor {
 						value = 0d;
 					}
 					
+					if(logger.isDebugEnabled()){
+						logger.debug(String.format("valueToAdd = density * qty * value : valueToAdd = %.2f * %.2f * %.2f ", density, qty, value));
+						logger.debug("newValue : " + newValue);
+					}
+					
 					//mini
 					Double newMini = newPhysicoChemListDataItem.getMini() != null ? newPhysicoChemListDataItem.getMini() : origValue;
 					Double mini = physicoChemListDataItem.getMini() != null ? physicoChemListDataItem.getMini() : value;
