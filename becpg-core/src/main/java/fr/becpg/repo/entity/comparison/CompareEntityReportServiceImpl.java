@@ -390,6 +390,10 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 						}
 					}		
 					
+					if(logger.isDebugEnabled()){
+						logger.debug("renderStructComparisonAsXmlData: entity1: " + entity1 + " - entity2: " + entity2);
+					}
+					
 					Element cmpRowElt = structCmpRowsElt.addElement(TAG_STRUCT_COMPARISON_ROW);				
 					cmpRowElt.addAttribute(ATTR_COMPARISON, comparison);
 					cmpRowElt.addAttribute(ATTR_ENTITYLIST, entityListTitle);

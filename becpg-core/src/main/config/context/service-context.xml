@@ -214,7 +214,6 @@
 	<bean id="compareEntityService"
 		class="fr.becpg.repo.entity.comparison.CompareEntityServiceImpl">
 		<property name="nodeService" ref="nodeService" />
-		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
