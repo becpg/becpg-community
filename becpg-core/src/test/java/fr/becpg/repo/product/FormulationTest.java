@@ -683,7 +683,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateProduct() throws Exception{
+	public void testFormulateProduct() throws Exception{
 		   
 		logger.info("testFormulateProduct");
 		
@@ -948,7 +948,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestIngredientsCalculating() throws Exception{
+	public void testIngredientsCalculating() throws Exception{
 		
 		logger.info("testIngredientsCalculating");
 		
@@ -1189,7 +1189,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateCostAndNutOfProductInkgAndg() throws Exception{
+	public void testFormulateCostAndNutOfProductInkgAndg() throws Exception{
 		   
 		logger.info("testFormulateCostAndNutOfProductInkgAndg");
 		
@@ -1268,7 +1268,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateCostAndNutOfProductInkgAndgAndmLAndm() throws Exception{
+	public void testFormulateCostAndNutOfProductInkgAndgAndmLAndm() throws Exception{
 		   
 		logger.info("testFormulateCostAndNutOfProductInkgAndgAndmLAndm");
 		
@@ -1348,7 +1348,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateWithDensity() throws Exception{
+	public void testFormulateWithDensity() throws Exception{
 		   
 		logger.info("testFormulateWithDensity");
 		
@@ -1407,7 +1407,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	/**
 	 * Test sort nut list.
 	 */
-	public void xtestSortNutList(){
+	public void testSortNutList(){
 		
 		logger.info("testSortNutList");
 		
@@ -1534,7 +1534,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestAllergenListCalculating() throws Exception{
+	public void testAllergenListCalculating() throws Exception{
 		   
 		logger.info("testAllergenListCalculating");
 		
@@ -1745,7 +1745,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateRawMaterial() throws Exception{
+	public void testFormulateRawMaterial() throws Exception{
 		   
 		logger.info("testFormulateRawMaterial");
 		
@@ -1792,7 +1792,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestCalculateWithLoss() throws Exception{
+	public void testCalculateWithLoss() throws Exception{
 		   
 		logger.info("testCalculateWithLoss");
 		
@@ -1982,7 +1982,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestCalculateSubFormula() throws Exception{
+	public void testCalculateSubFormula() throws Exception{
 		   
 		logger.info("testCalculateSubFormula");
 		
@@ -2079,7 +2079,7 @@ public class FormulationTest extends RepoBaseTestCase {
 		   
 	   }
 	
-	public void xtestPackagingCosts() throws Exception{
+	public void testPackagingCosts() throws Exception{
 		   
 		logger.info("testPackagingCosts");
 		
@@ -2172,7 +2172,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulationWithIngRequirements() throws Exception{
+	public void testFormulationWithIngRequirements() throws Exception{
 		   
 		logger.info("testFormulationWithIngRequirements");
 		
@@ -2307,8 +2307,23 @@ public class FormulationTest extends RepoBaseTestCase {
 						checks++;
 					}										
 				}				
-					
+				
 				assertEquals(5, checks);
+				
+				/*
+				 *  #257: check reqCtrlList is clear if all req are respected (we remove specification to get everything OK)
+				 */				
+				nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef, BeCPGModel.ASSOC_PRODUCT_SPECIFICATION);
+					
+				/*-- Formulate product --*/
+				logger.debug("/*-- Formulate product --*/");
+				productService.formulate(finishedProductNodeRef);
+				
+				/*-- Verify formulation --*/
+				logger.debug("/*-- Verify formulation --*/");
+				formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+				
+				assertEquals(0, formulatedProduct.getReqCtrlList().size());				
 				
 				return null;
 
@@ -2321,7 +2336,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulationWithCostAndNutMiniMaxi() throws Exception{
+	public void testFormulationWithCostAndNutMiniMaxi() throws Exception{
 		   
 		logger.info("testFormulationWithCostAndNutMiniMaxi");
 		
@@ -2413,7 +2428,7 @@ public class FormulationTest extends RepoBaseTestCase {
 //	 *
 //	 * @throws Exception the exception
 //	 */
-//	public void xtestFormulationWithRequirements() throws Exception{
+//	public void testFormulationWithRequirements() throws Exception{
 //		   
 //	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 //			public NodeRef execute() throws Throwable {					   							
@@ -2544,7 +2559,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestCalculateCostDetails() throws Exception{
+	public void testCalculateCostDetails() throws Exception{
 		   
 		logger.info("testCalculateCostDetails");
 		
@@ -2767,7 +2782,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestCalculateYieldField() throws Exception{
+	public void testCalculateYieldField() throws Exception{
 		   
 		logger.info("testCalculateYieldField");
 		
@@ -2838,7 +2853,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestManualListItem() throws Exception{
+	public void testManualListItem() throws Exception{
 		   
 		logger.info("testManualListItem");
 		
@@ -2941,7 +2956,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestProcess() throws Exception{
+	public void testProcess() throws Exception{
 		 
 		logger.info("testProcess");
 		
@@ -3173,7 +3188,7 @@ public class FormulationTest extends RepoBaseTestCase {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestCalculateCompoPercent() throws Exception{
+	public void testCalculateCompoPercent() throws Exception{
 		   
 		logger.info("testCalculateCompoPercent");
 		
