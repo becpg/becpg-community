@@ -699,6 +699,7 @@
 								case "float":
 								case "int":
 								case "long":
+								case "double":
 									editor = new YAHOO.widget.TextboxCellEditor({
 										validator : YAHOO.widget.DataTable.validateNumber
 									});
