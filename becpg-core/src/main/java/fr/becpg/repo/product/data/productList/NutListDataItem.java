@@ -13,7 +13,7 @@ import fr.becpg.repo.product.data.BaseObject;
  *
  * @author querephi
  */
-public class NutListDataItem extends BaseObject implements IManualDataItem{
+public class NutListDataItem extends BaseObject  implements IManualDataItem, SimpleCharactDataItem{
 
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -132,6 +132,13 @@ public class NutListDataItem extends BaseObject implements IManualDataItem{
 	public NodeRef getNut() {
 		return nut;
 	}
+	
+
+	@Override
+	public NodeRef getCharactNodeRef() {
+		return getNut();
+	}
+	
 	
 	/**
 	 * Sets the nut.
@@ -270,6 +277,7 @@ public class NutListDataItem extends BaseObject implements IManualDataItem{
 		return "NutListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi + ", group=" + group + ", nut=" + nut
 				+ ", isManual=" + isManual + "]";
 	}
+
 	
 	
 }

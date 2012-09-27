@@ -30,7 +30,6 @@
 		</property>
 	</bean>
 
-
 	<!-- Admin -->
 	<bean id="initRepoVisitor" class="fr.becpg.repo.admin.InitRepoVisitorImpl">
 		<property name="fileFolderService" ref="fileFolderService" />
@@ -409,47 +408,10 @@
 		<property name="physicoChemCalculatingVisitor" ref="physicoChemCalculatingVisitor" />		
 		<property name="repoService" ref="repoService" />
 		<property name="ownableService" ref="ownableService" />
+		<property name="charactDetailsVisitorFactory" ref="charactDetailsVisitorFactory"/>
 	</bean>
 
-	<!-- Formulation visitors -->
-	<bean id="formulaVisitor" class="fr.becpg.repo.product.formulation.FormulaVisitor" />
-
-	<bean id="compositionCalculatingVisitor"
-		class="fr.becpg.repo.product.formulation.CompositionCalculatingVisitor">
-		<property name="nodeService" ref="nodeService" />
-	</bean>
-	<bean id="processCalculatingVisitor"
-		class="fr.becpg.repo.product.formulation.ProcessCalculatingVisitor">
-	</bean>
-	<bean id="allergensCalculatingVisitor"
-		class="fr.becpg.repo.product.formulation.AllergensCalculatingVisitor">
-		<property name="productDAO" ref="productDAO" />
-		<property name="entityListDAO" ref="entityListDAO" />
-	</bean>
-	<bean id="ingsCalculatingVisitor"
-		class="fr.becpg.repo.product.formulation.IngsCalculatingVisitor">
-		<property name="nodeService" ref="nodeService" />
-		<property name="productDAO" ref="productDAO" />
-		<property name="mlNodeService" ref="mlAwareNodeService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-	</bean>
-	<bean id="nutsCalculatingVisitor"
-		class="fr.becpg.repo.product.formulation.NutsCalculatingVisitor">
-		<property name="nodeService" ref="nodeService" />
-		<property name="productDAO" ref="productDAO" />
-		<property name="entityListDAO" ref="entityListDAO" />
-	</bean>
-	<bean id="costsCalculatingVisitor"
-		class="fr.becpg.repo.product.formulation.CostsCalculatingVisitor">
-		<property name="nodeService" ref="nodeService" />
-		<property name="productDAO" ref="productDAO" />
-		<property name="entityListDAO" ref="entityListDAO" />
-	</bean>
-	<bean id="physicoChemCalculatingVisitor"
-		class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingVisitor">
-		<property name="nodeService" ref="nodeService" />
-		<property name="productDAO" ref="productDAO" />
-	</bean>
+	
 
 	<!-- Product Policies -->
 	<bean id="productListUnits.ProductListPolicy"

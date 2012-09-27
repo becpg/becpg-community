@@ -6,6 +6,8 @@ package fr.becpg.repo.product.formulation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -19,7 +21,11 @@ import fr.becpg.repo.product.data.productList.PackagingListUnit;
  */
 public class FormulationHelper {	
 
-	private static final Double DEFAULT_QUANTITY = 0d;
+	public static final Double DEFAULT_QUANTITY = 0d;
+
+	public static final Double DEFAULT_DENSITY = 1d;
+
+	public static final Double QTY_FOR_PIECE = 1d;
 	
 	private static Log logger = LogFactory.getLog(FormulationHelper.class);
 	
@@ -58,10 +64,43 @@ public class FormulationHelper {
 		Double qty = packagingListDataItem.getQty()!=null ? packagingListDataItem.getQty() : DEFAULT_QUANTITY ;	
 		PackagingListUnit packagingListUnit = packagingListDataItem.getPackagingListUnit();
 		
-		if(packagingListUnit == PackagingListUnit.PP){
+		if(packagingListUnit == PackagingListUnit.PP && qty>0){
 			qty = 1 / qty;
 		}
 		
 		return qty;
+	}
+
+	/**
+	 * 
+	 * @param productData
+	 * @return
+	 */
+	public static Double getDensity(ProductData productData) {
+		return (productData.getDensity() != null) ? productData.getDensity():DEFAULT_DENSITY;
+	}
+
+	/**
+	 * 
+	 * @param productData
+	 * @return
+	 */
+	public static Double getQty(ProductData productData) {
+		Double qty =  (productData.getUnit() != ProductUnit.P) ? productData.getQty(): QTY_FOR_PIECE; //unit => qty == 1
+		if(qty==null){
+			qty = DEFAULT_QUANTITY;
+		}
+		return qty;
+	}
+
+	/**
+	 * 
+	 * @param productData
+	 * @return
+	 */
+	public static Double getNetWeight(ProductData productData) {
+		Double qty = getQty(productData); 
+		Double density = getDensity(productData); 
+		return  qty * density;
 	}
 }

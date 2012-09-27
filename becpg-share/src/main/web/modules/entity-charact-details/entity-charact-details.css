@@ -1,0 +1,36 @@
+div.detailsChart {
+     height: 30em; 
+     overflow: auto;
+     padding: 5px;
+     background: none repeat scroll 0 0 white;
+}
+
+
+div.detailsChart .bd {
+    overflow:auto;
+    background-color:fff;
+    padding:10px;
+}
+
+
+
+div.detailsDialog  .toolbar {
+    background-color: #F6F6F6;
+    border-bottom: 1px solid #D3D3D3;
+}
+
+div.detailsDialog  .toolbar {
+    min-height: 28px;
+    padding: 2px 9px 1px;
+}
+
+.detailsDialog .export-csv
+{
+   float: right;
+}
+
+.detailsDialog .export-csv span.first-child
+{
+   background: url(../../components/images/filetypes/xls-file-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}

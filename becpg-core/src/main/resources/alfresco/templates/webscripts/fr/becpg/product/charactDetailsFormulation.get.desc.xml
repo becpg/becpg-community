@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>Charact Details Formulation</shortname>
+	<description>Charact Details Formulation service - formulate charact details</description>	
+	<url>/becpg/charact/formulate?entityNodeRef={entityNodeRef}&amp;dataListName={dataListName}&amp;itemType={itemType}&amp;dataListItems={dataListItems}</url>
+	<format default="json">extension</format>
+	<authentication>user</authentication>
+	<transaction allow="readonly" buffersize="0">required</transaction>
+</webscript>

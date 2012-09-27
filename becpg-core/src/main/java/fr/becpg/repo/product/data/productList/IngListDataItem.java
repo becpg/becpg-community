@@ -16,7 +16,7 @@ import fr.becpg.repo.product.data.BaseObject;
  *
  * @author querephi
  */
-public class IngListDataItem  extends BaseObject implements Comparable<IngListDataItem>, IManualDataItem{
+public class IngListDataItem extends BaseObject  implements Comparable<IngListDataItem>, IManualDataItem, SimpleCharactDataItem{
 
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -308,6 +308,16 @@ public class IngListDataItem  extends BaseObject implements Comparable<IngListDa
 	public String toString() {
 		return "IngListDataItem [nodeRef=" + nodeRef + ", qtyPerc=" + qtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized="
 				+ isIonized + ", ing=" + ing + ", isManual=" + isManual + "]";
+	}
+
+	@Override
+	public NodeRef getCharactNodeRef() {
+		return ing;
+	}
+
+	@Override
+	public Double getValue() {
+		return qtyPerc;
 	}
 	
 	

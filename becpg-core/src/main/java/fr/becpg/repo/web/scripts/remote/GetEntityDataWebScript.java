@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.SocketException;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -26,6 +27,7 @@ public class GetEntityDataWebScript extends AbstractEntityWebScript {
 
 		logger.debug("Get entity data: " + entityNodeRef);
 
+		CountingOutputStream out = null;
 		try {
 				
 			remoteEntityService.getEntityData(entityNodeRef, resp.getOutputStream(), getFormat(req));
@@ -33,8 +35,8 @@ public class GetEntityDataWebScript extends AbstractEntityWebScript {
 			// set mimetype for the content and the character encoding + length
 			// for the stream
 			resp.setContentType(mimetypeService.guessMimetype(getFormat(req).toString()));
-			CountingOutputStream c = new CountingOutputStream(resp.getOutputStream());
-			resp.setHeader("Content-Length", Long.toString(c.getByteCount()));
+			out = new CountingOutputStream(resp.getOutputStream());
+			resp.setHeader("Content-Length", Long.toString(out.getByteCount()));
 
 		} catch (BeCPGException e) {
 			logger.error("Cannot export entity data", e);
@@ -46,7 +48,9 @@ public class GetEntityDataWebScript extends AbstractEntityWebScript {
 			if (logger.isInfoEnabled())
 				logger.info("Client aborted stream read:\n\tcontent", e1);
 
-		} 
+		} finally {
+			IOUtils.closeQuietly(out);
+		}
 
 	}
 
