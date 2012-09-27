@@ -64,6 +64,12 @@
 }
 
 
+.datagrid-bar  .onActionBulkEdit
+{
+   background: transparent url(../images/edit-inline-16.png) no-repeat 12px 4px;
+   padding-left: 22px; 
+}
+
 /* DataGrid bar */
 
 .datagrid .datagrid-bar-bottom

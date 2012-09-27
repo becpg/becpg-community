@@ -39,12 +39,6 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 	/** The Constant QTY_FOR_PIECE. */
 	public static final Double QTY_FOR_PIECE = 1d;
 	
-	/** The Constant DEFAULT_DENSITY. */
-	public static final Double DEFAULT_DENSITY = 1d;
-	
-	/** The Constant DEFAULT_QUANTITY. */
-	public static final Double DEFAULT_QUANTITY = 0d;
-	
 	/** The Constant UNIT_PER100G. */
 	public static final String UNIT_PER100G = "/100g";
 	
@@ -116,9 +110,9 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 		//Take in account net weight
 		Double qty = (formulatedProduct.getUnit() != ProductUnit.P) ? formulatedProduct.getQty():QTY_FOR_PIECE; //unit => qty == 1
 		if(qty==null){
-			qty = DEFAULT_QUANTITY;
+			qty = FormulationHelper.DEFAULT_QUANTITY;
 		}
-		Double density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
+		Double density = FormulationHelper.getDensity(formulatedProduct);
 		Double netWeight = qty * density;
 		
 		for(NutListDataItem n : nutMap.values()){
@@ -163,6 +157,9 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 			return;
 		}
 		
+		Double qty = FormulationHelper.getQty(compoListDataItem);
+		Double density = FormulationHelper.getDensity(productData); 
+		
 		for(NutListDataItem nutListDataItem : productData.getNutList()){			
 			
 			//Look for nut
@@ -181,9 +178,6 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 			}									
 			
 			//Calculate values
-			Double qty = FormulationHelper.getQty(compoListDataItem);
-			Double density = (productData.getDensity() != null) ? productData.getDensity():DEFAULT_DENSITY; //density is null => 1
-			
 			
 			if(qty != null){
 				

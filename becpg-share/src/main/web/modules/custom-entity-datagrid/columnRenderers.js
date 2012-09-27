@@ -110,6 +110,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 	
 	
+	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	   propertyName : "bcpg:dynamicCharactValue",
 	   renderer : function(oRecord, data, label, scope) {

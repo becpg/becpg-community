@@ -23,6 +23,7 @@
    <import resource="classpath:alfresco/module/${artifactId}/context/action-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/model-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/service-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/formulation-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/report-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/quality-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/olap-context.xml" />

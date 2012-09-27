@@ -4,7 +4,6 @@
 package fr.becpg.repo.entity;
 
 import org.alfresco.service.namespace.QName;
-import org.springframework.stereotype.Service;
 
 // TODO: Auto-generated Javadoc
 /**

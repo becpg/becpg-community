@@ -70,6 +70,14 @@
 		class="fr.becpg.repo.web.scripts.product.FormulateWebScript" parent="webscript">
 		<property name="productService" ref="productService" />
 	</bean>
+	
+	<bean id="webscript.fr.becpg.product.charactDetailsFormulation.get"
+		class="fr.becpg.repo.web.scripts.product.FormulateCharactDetailsWebScript" parent="webscript">
+		<property name="productService" ref="productService" />
+		<property name="nodeService" ref="nodeService"/>
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+	
 
 	<!-- Entity report -->
 	<bean id="webscript.fr.becpg.entity.entityReport.get" class="fr.becpg.repo.web.scripts.entity.ReportWebScript"
@@ -77,7 +85,6 @@
 		<property name="entityService" ref="entityService" />
 		<property name="entityReportService" ref="entityReportService" />
 	</bean>
-
 
 	<!-- Entity new version form -->
 	<bean id="webscript.fr.becpg.entity.form-checkin.post" class="fr.becpg.repo.web.scripts.entity.FormCheckInWebScript"

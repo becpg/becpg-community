@@ -12,7 +12,7 @@ import fr.becpg.repo.product.data.BaseObject;
  *
  * @author querephi
  */
-public class CostListDataItem extends BaseObject implements IManualDataItem{
+public class CostListDataItem extends BaseObject implements SimpleCharactDataItem,IManualDataItem{
 	
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -100,6 +100,12 @@ public class CostListDataItem extends BaseObject implements IManualDataItem{
 	public NodeRef getCost() {
 		return cost;
 	}
+	
+	@Override
+	public NodeRef getCharactNodeRef() {
+		return cost;
+	}
+	
 	
 	/**
 	 * Sets the cost.
@@ -220,6 +226,7 @@ public class CostListDataItem extends BaseObject implements IManualDataItem{
 			return false;
 		return true;
 	}
+
 	
 	
 }
