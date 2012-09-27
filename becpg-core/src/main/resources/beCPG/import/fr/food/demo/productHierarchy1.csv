@@ -36,3 +36,4 @@ PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 TYPE;bcpg:linkedValue
 COLUMNS;bcpg:lkvValue
 VALUES;Epicerie
+VALUES;Additifs

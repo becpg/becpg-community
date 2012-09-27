@@ -199,26 +199,22 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			if (listContainerNodeRef == null) {
 				listContainerNodeRef = entityListDAO.createListContainer(nodeRef);
 			}
-			if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
 	
-				// Add types that can be added
-
-		        Set<ClassDefinition> classDefinitions = new HashSet<ClassDefinition>();
-				Collection <QName> qname = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
-				
-		        for(QName qnameObj: qname)
-			    {	
-		        	if(!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(qnameObj) && !BeCPGModel.TYPE_PRODUCTLIST_ITEM.equals(qnameObj)){
-		        		classDefinitions.add(dictionaryService.getClass(qnameObj));
-		        	}
-			    }
-		    	
-		    	model.put(MODEL_PROP_KEY_LIST_TYPES, classDefinitions);
-		    	
-		    	
-				hasWritePermission = true;
-				skipFilter = true;
-			}
+			// Add types that can be added
+	        Set<ClassDefinition> classDefinitions = new HashSet<ClassDefinition>();
+			Collection <QName> qname = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
+			
+	        for(QName qnameObj: qname)
+		    {	
+	        	if(!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(qnameObj) && !BeCPGModel.TYPE_PRODUCTLIST_ITEM.equals(qnameObj)){
+	        		classDefinitions.add(dictionaryService.getClass(qnameObj));
+	        	}
+		    }
+	    	
+	    	model.put(MODEL_PROP_KEY_LIST_TYPES, classDefinitions);
+	    	
+			hasWritePermission = true;
+			skipFilter = true;
 		}
 		// We get datalist for entity
 		else {
