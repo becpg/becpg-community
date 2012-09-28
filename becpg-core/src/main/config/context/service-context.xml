@@ -213,7 +213,6 @@
 	<bean id="compareEntityService"
 		class="fr.becpg.repo.entity.comparison.CompareEntityServiceImpl">
 		<property name="nodeService" ref="nodeService" />
-		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
@@ -408,7 +407,7 @@
 		<property name="physicoChemCalculatingVisitor" ref="physicoChemCalculatingVisitor" />		
 		<property name="repoService" ref="repoService" />
 		<property name="ownableService" ref="ownableService" />
-		<property name="charactDetailsVisitorFactory" ref="charactDetailsVisitorFactory"/>
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 
 	

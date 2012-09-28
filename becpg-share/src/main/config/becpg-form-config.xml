@@ -196,8 +196,8 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control>
-							<control-param name="activateLinks">true</control-param>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -385,8 +385,8 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control>
-							<control-param name="activateLinks">true</control-param>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
@@ -508,7 +508,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
@@ -595,7 +595,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
@@ -688,7 +688,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
@@ -782,7 +782,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
@@ -879,7 +879,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
@@ -976,7 +976,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
@@ -1077,7 +1077,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
@@ -1183,7 +1183,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
@@ -1295,7 +1295,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
@@ -1413,7 +1413,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
@@ -1525,7 +1525,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
@@ -1622,7 +1622,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>

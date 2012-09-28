@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -47,9 +48,6 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	/** The node service. */
 	private NodeService nodeService;
 	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
 	/** The dictionary service. */
 	private DictionaryService dictionaryService;	
 	
@@ -67,15 +65,6 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
-	}
-	
-	/**
-	 * Sets the file folder service.
-	 *
-	 * @param fileFolderService the new file folder service
-	 */
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
 	}
 	
 	/**
@@ -136,26 +125,28 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	@Override
 	public List<StructCompareResultDataItem> compareStructDatalist(NodeRef entity1NodeRef, NodeRef entity2NodeRef, QName datalistType, QName pivotProperty) {
 		
-		List<StructCompareResultDataItem> structComparisonList = new ArrayList<StructCompareResultDataItem>();
+		List<StructCompareResultDataItem> structComparisonList = new LinkedList<StructCompareResultDataItem>();
 		
 		// load the 2 datalists		
-		List<FileInfo> dataListItems1 = null;
-		List<FileInfo> dataListItems2 = null;
+		List<NodeRef> dataListItems1 = null;
+		List<NodeRef> dataListItems2 = null;
 		
 		NodeRef listsContainer1NodeRef = entityListDAO.getListContainer(entity1NodeRef);
 		if(listsContainer1NodeRef != null){
 			NodeRef list1NodeRef = entityListDAO.getList(listsContainer1NodeRef, datalistType);
 			
-			if(list1NodeRef != null)
-				dataListItems1 = fileFolderService.listFiles(list1NodeRef);
+			if(list1NodeRef != null){
+				dataListItems1 = entityListDAO.getListItems(list1NodeRef, datalistType);
+			}
 		}
 		
 		NodeRef listsContainer2NodeRef = entityListDAO.getListContainer(entity2NodeRef);
 		if(listsContainer2NodeRef != null){
 			NodeRef list2NodeRef = entityListDAO.getList(listsContainer2NodeRef, datalistType);
 			
-			if(list2NodeRef != null)
-				dataListItems2 = fileFolderService.listFiles(list2NodeRef);
+			if(list2NodeRef != null){
+				dataListItems2 = entityListDAO.getListItems(list2NodeRef, datalistType);
+			}
 		}
 		
 		// load the 2 composite datalists
@@ -165,7 +156,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		CompositeComparableItem compositeItem2 = new CompositeComparableItem(0, null, null);
 		loadCompositeDataList(dataListItems2, pivotProperty, 1, 0, compositeItem2);
 		
-		structCompareCompositeDataLists(datalistType, pivotProperty, structComparisonList, compositeItem1, compositeItem2);
+		structCompareCompositeDataLists(datalistType, pivotProperty, structComparisonList, compositeItem1, compositeItem2);		
 		
 		return structComparisonList;
 	}
@@ -291,14 +282,14 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		logger.debug("pivotProperty: " + pivotProperty);					
 		
 		//load characteristics
-		List<FileInfo> dataListItems1 = new ArrayList<FileInfo>();
+		List<NodeRef> dataListItems1 = new ArrayList<NodeRef>();
 		if(dataList1NodeRef != null){
-			dataListItems1 = fileFolderService.listFiles(dataList1NodeRef);
+			dataListItems1 = entityListDAO.getListItems(dataList1NodeRef, entityList);
 		}
 		
-		List<FileInfo> dataListItems2 = new ArrayList<FileInfo>();		
+		List<NodeRef> dataListItems2 = new ArrayList<NodeRef>();		
 		if(dataList2NodeRef != null){
-			dataListItems2 = fileFolderService.listFiles(dataList2NodeRef);
+			dataListItems2 = entityListDAO.getListItems(dataList2NodeRef, entityList);
 		}
 		
 		
@@ -321,25 +312,25 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		// not a composite datalist
 		else{
 			
-			for(FileInfo dataListItem1 : dataListItems1){
+			for(NodeRef dataListItem1 : dataListItems1){
 				
 				NodeRef dataListItem2NodeRef = null;							
 				
-				List<AssociationRef> target1Refs = nodeService.getTargetAssocs(dataListItem1.getNodeRef(), pivotProperty);
+				List<AssociationRef> target1Refs = nodeService.getTargetAssocs(dataListItem1, pivotProperty);
 				NodeRef characteristicNodeRef = null;
 				
 				if(target1Refs.size() > 0){
 					characteristicNodeRef = (target1Refs.get(0)).getTargetRef();
 					comparedCharact.add(characteristicNodeRef);
 					
-					for(FileInfo d : dataListItems2){
+					for(NodeRef d : dataListItems2){
 						
-						List<AssociationRef> target2Refs = nodeService.getTargetAssocs(d.getNodeRef(), pivotProperty);
+						List<AssociationRef> target2Refs = nodeService.getTargetAssocs(d, pivotProperty);
 						if(target2Refs.size() > 0){
 							
 							NodeRef c = (target2Refs.get(0)).getTargetRef();
 							if(characteristicNodeRef.equals(c)){
-								dataListItem2NodeRef = d.getNodeRef();
+								dataListItem2NodeRef = d;
 								break;	
 							}							
 						}
@@ -349,14 +340,14 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					}
 				}
 				
-				CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, characteristicNodeRef, dataListItem1.getNodeRef(), dataListItem2NodeRef);
+				CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, characteristicNodeRef, dataListItem1, dataListItem2NodeRef);
 				characteristicsToCmp.add(characteristicToCmp);
 			}
 			
 			//compare charact that are in DL1
-			for(FileInfo d : dataListItems2){									
+			for(NodeRef d : dataListItems2){									
 				
-				List<AssociationRef> target2Refs = nodeService.getTargetAssocs(d.getNodeRef(), pivotProperty);
+				List<AssociationRef> target2Refs = nodeService.getTargetAssocs(d, pivotProperty);
 				NodeRef characteristicNodeRef = null;
 				
 				if(target2Refs.size() > 0){
@@ -364,7 +355,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					
 					if(!comparedCharact.contains(characteristicNodeRef)){					
 						comparedCharact.add(characteristicNodeRef);
-						CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, characteristicNodeRef, null, d.getNodeRef());
+						CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, characteristicNodeRef, null, d);
 						characteristicsToCmp.add(characteristicToCmp);
 					}
 				}			
@@ -387,7 +378,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	 * @param position the position
 	 * @param compositeItem the composite item
 	 */
-	private void loadCompositeDataList(List<FileInfo> dataListItems, QName pivotProperty, int depthLevel, int position, CompositeComparableItem compositeItem){
+	private void loadCompositeDataList(List<NodeRef> dataListItems, QName pivotProperty, int depthLevel, int position, CompositeComparableItem compositeItem){
 		
 		int cnt = position;
 		
@@ -395,33 +386,25 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			return; // nothing to do
 		}			
 		
-		//TODO crappy!
-		if(BeCPGModel.ASSOC_COMPOLIST_PRODUCT.equals(pivotProperty)){
-			Iterator<FileInfo> it = dataListItems.iterator();
-			while(it.hasNext()){
-				if(!BeCPGModel.TYPE_COMPOLIST.equals(it.next().getType())){
-					it.remove();
-				}
-			}
-		
-		}
-		
-		
 		while(cnt < dataListItems.size()){
 			
-			NodeRef nodeRef = dataListItems.get(cnt).getNodeRef();
+			NodeRef nodeRef = dataListItems.get(cnt);
 			Integer l = (Integer)nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);						
 			
 			if(l!=null && depthLevel == l){					
 				
 				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, pivotProperty);
-	    		String pivot = (assocRefs.get(0)).getTargetRef().toString();
+	    		String pivot = assocRefs.get(0).getTargetRef().toString();
+	    		
+	    		if(logger.isDebugEnabled()){
+	    			logger.debug("loadCompositeDataList: nodeRef: " + nodeRef + " - targetAssoc: " +  nodeService.getProperty(assocRefs.get(0).getTargetRef(), ContentModel.PROP_NAME));
+	    		}
 				
 				// has a child ?
 				boolean isComposite = false;
 				if(cnt+1 < dataListItems.size()){
 					
-					NodeRef nextNodeRef = dataListItems.get(cnt + 1).getNodeRef();
+					NodeRef nextNodeRef = dataListItems.get(cnt + 1);
 					Integer nextDepthLevel = (Integer)nodeService.getProperty(nextNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
 					
 					if(depthLevel < nextDepthLevel)						
@@ -535,6 +518,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				AbstractComparableItem c2 = compositeItem2 == null ? null : compositeItem2.get(key);
 				NodeRef nodeRef1 = c1.getNodeRef();
 				NodeRef nodeRef2 = c2 == null ? null : c2.getNodeRef();
+				
+				if(logger.isDebugEnabled()){
+					logger.debug("structCompareCompositeDataLists: nodeRef1: " + nodeRef1 + " - nodeRef2: " + nodeRef2);
+				}
 				
 				StructCompareOperator operator = StructCompareOperator.Equal;										
 				

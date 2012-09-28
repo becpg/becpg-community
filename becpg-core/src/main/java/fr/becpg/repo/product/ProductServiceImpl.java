@@ -20,6 +20,7 @@ import fr.becpg.model.MPMModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
@@ -74,14 +75,13 @@ public class ProductServiceImpl implements ProductService {
 	/** The repo service. */
 	private RepoService repoService;
 	
-	
 	/** The ownable service. */
 	private OwnableService ownableService;
+
+	private EntityListDAO entityListDAO;
 	
 	private CharactDetailsVisitorFactory charactDetailsVisitorFactory;
 	
-	
-
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}	
@@ -102,8 +102,6 @@ public class ProductServiceImpl implements ProductService {
 	public void setProcessCalculatingVisitor(ProductVisitor processCalculatingVisitor) {
 		this.processCalculatingVisitor = processCalculatingVisitor;
 	}
-	
-	
 
 	public void setCharactDetailsVisitorFactory(CharactDetailsVisitorFactory charactDetailsVisitorFactory) {
 		this.charactDetailsVisitorFactory = charactDetailsVisitorFactory;
@@ -166,7 +164,6 @@ public class ProductServiceImpl implements ProductService {
 		this.repoService = repoService;
 	}
 	
-
 	/**
 	 * Sets the ownable service.
 	 *
@@ -175,6 +172,10 @@ public class ProductServiceImpl implements ProductService {
 	public void setOwnableService(OwnableService ownableService) {
 		this.ownableService = ownableService;
 	}	
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
 	
 
 	/**
@@ -238,6 +239,13 @@ public class ProductServiceImpl implements ProductService {
 				if (productData.getReqCtrlList() != null) {
 					dataListsToSave.add(BeCPGModel.TYPE_REQCTRLLIST);
 				}
+				else{
+					// #257 : delete old ReqCtrlList if they are now respected
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
+					if(entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST) != null){
+						dataListsToSave.add(BeCPGModel.TYPE_REQCTRLLIST);
+					}
+				}
 				if (productData.getPhysicoChemList() != null) {
 					dataListsToSave.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 				}
@@ -280,8 +288,8 @@ public class ProductServiceImpl implements ProductService {
     	    	productData = nutsCalculatingVisitor.visit(productData);
     	    	productData = costsCalculatingVisitor.visit(productData);
     	    	productData = ingsCalculatingVisitor.visit(productData);  
-    	    	productData = formulaVisitor.visit(productData);
     	    	productData = physicoChemCalculatingVisitor.visit(productData);
+    	    	productData = formulaVisitor.visit(productData);
     	    	
     	    	if(productData.getReqCtrlList().isEmpty()){
     	    		productData.setReqCtrlList(null);
