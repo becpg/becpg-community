@@ -20,6 +20,7 @@ import fr.becpg.model.MPMModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
@@ -74,7 +75,6 @@ public class ProductServiceImpl implements ProductService {
 	/** The repo service. */
 	private RepoService repoService;
 	
-	
 	/** The ownable service. */
 	private OwnableService ownableService;
 
@@ -82,8 +82,6 @@ public class ProductServiceImpl implements ProductService {
 	
 	private CharactDetailsVisitorFactory charactDetailsVisitorFactory;
 	
-	
-
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}	
@@ -104,8 +102,6 @@ public class ProductServiceImpl implements ProductService {
 	public void setProcessCalculatingVisitor(ProductVisitor processCalculatingVisitor) {
 		this.processCalculatingVisitor = processCalculatingVisitor;
 	}
-	
-	
 
 	public void setCharactDetailsVisitorFactory(CharactDetailsVisitorFactory charactDetailsVisitorFactory) {
 		this.charactDetailsVisitorFactory = charactDetailsVisitorFactory;
