@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>entity-charact-details</shortname>
+  <description>Display charact details</description>
+  <url>/modules/entity-charact-details/entity-charact-details</url>
+</webscript>

@@ -58,10 +58,10 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	
 	// request parameter names
 	/** The Constant PARAM_STORE_TYPE. */
-	private static final String PARAM_STORE_TYPE = "store_type";
+	protected static final String PARAM_STORE_TYPE = "store_type";
 
 	/** The Constant PARAM_STORE_ID. */
-	private static final String PARAM_STORE_ID = "store_id";
+	protected static final String PARAM_STORE_ID = "store_id";
 
 	/** The Constant PARAM_ID. */
 	protected static final String PARAM_ID = "id";

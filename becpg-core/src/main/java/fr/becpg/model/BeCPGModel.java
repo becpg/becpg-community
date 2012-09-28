@@ -609,6 +609,9 @@ public interface BeCPGModel {
 	static final QName PROP_SORT = QName.createQName(BECPG_URI, "sort");
 	
 
+	// detaillableListItem aspect
+	static final QName ASPECT_DETAILLABLE_LIST_ITEM = QName.createQName(BECPG_URI,	"detaillableListItemAspect");
+
 	
 	// manual aspect
 	static final QName ASPECT_IS_MANUAL_LISTITEM = QName.createQName(BECPG_URI,	"isManualListItemAspect");
@@ -764,6 +767,7 @@ public interface BeCPGModel {
 	static final QName ASPECT_DELETED = QName.createQName(BECPG_URI, "isDeletedAspect");
 	static final QName PROP_IS_DELETED = QName.createQName(
 			BECPG_URI, "isDeleted");
+
 
 
 }

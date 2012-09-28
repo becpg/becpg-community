@@ -128,6 +128,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			userAccess.put("create", accessRight && (permissionService.hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
 			userAccess.put("edit", accessRight && (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED));
 			userAccess.put("sort", accessRight &&  nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SORTABLE_LIST));
+		    userAccess.put("details", accessRight &&  nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
 			
 			ret.put(PROP_PERMISSIONS, permissions);
 			

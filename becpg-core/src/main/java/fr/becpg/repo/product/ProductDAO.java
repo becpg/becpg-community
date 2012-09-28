@@ -10,6 +10,7 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.repo.product.data.BaseObject;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -17,6 +18,7 @@ import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.data.productList.SimpleCharactDataItem;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -76,4 +78,8 @@ public interface ProductDAO {
 	public IngLabelingListDataItem loadIngLabelingListItem(NodeRef listItemNodeRef);
 	public List<DynamicCharactListItem> loadDynamicCharactList(NodeRef listContainerNodeRef);
 	public DynamicCharactListItem loadDynamicCharactListItem(NodeRef listItemNodeRef);
+
+	public List<? extends SimpleCharactDataItem> loadList(NodeRef productNodeRef, QName dataList);
+
+	public BaseObject loadItemByType(NodeRef dataListItem, QName dataListType);
 }
