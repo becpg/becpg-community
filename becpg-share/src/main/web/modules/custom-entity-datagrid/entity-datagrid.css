@@ -275,4 +275,14 @@
 	padding-left: 20px;
 }
 
+.datagrid-bar .onActionShowDetails
+{
+   background-image: url(../../components/images/show-details-16.png);
+}
+
+
+.datagrid .onActionShowDetails a
+{
+   background-image: url(../../components/images/show-details-16.png);
+}
 

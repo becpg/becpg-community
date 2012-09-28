@@ -1681,6 +1681,9 @@
 			</properties>
 		</aspect>
 
+		<aspect name="bcpg:detaillableListItemAspect">
+		</aspect>
+
 		<aspect name="bcpg:isManualListItemAspect">
 			<properties>
 				<property name="bcpg:isManualListItem">

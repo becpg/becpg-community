@@ -33,6 +33,7 @@ import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.product.data.BaseObject;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.PackagingKitData;
@@ -60,6 +61,7 @@ import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
+import fr.becpg.repo.product.data.productList.SimpleCharactDataItem;
 
 /**
  * The Class ProductDAOImpl.
@@ -314,7 +316,40 @@ public class ProductDAOImpl implements ProductDAO {
 		return productData;
 
 	}
+	
+	//TODO More generic with annotation
 
+	@Override
+	public List<? extends SimpleCharactDataItem> loadList(NodeRef productNodeRef, QName dataList) {
+		NodeRef listsContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
+		
+		if (dataList.equals(BeCPGModel.TYPE_COSTLIST)) {
+			return loadCostList(listsContainerNodeRef);
+		} else if (dataList.equals(BeCPGModel.TYPE_INGLIST)) {
+			return loadIngList(listsContainerNodeRef);
+		} else if (dataList.equals(BeCPGModel.TYPE_NUTLIST)) {
+			return loadNutList(listsContainerNodeRef);
+		} else {
+			logger.debug(String.format("DataList '%s' is not loaded since it is not implemented.", dataList));
+		}
+		return null;
+	}
+
+	
+	@Override
+	public BaseObject loadItemByType(NodeRef dataListItem, QName dataListType) {
+		if (dataListType.equals(BeCPGModel.TYPE_COSTLIST)) {
+			return loadCostListItem(dataListItem);
+		} else if (dataListType.equals(BeCPGModel.TYPE_INGLIST)) {
+			return loadIngListItem(dataListItem);
+		} else if (dataListType.equals(BeCPGModel.TYPE_NUTLIST)) {
+			return loadNutListItem(dataListItem);
+		} else {
+			logger.debug(String.format("DataListItem '%s' is not loaded since it is not implemented.", dataListType));
+		}
+		return null;
+	}
+	
 	/**
 	 * Load allergen list.
 	 * 
@@ -1324,15 +1359,23 @@ public class ProductDAOImpl implements ProductDAO {
 
 		properties.put(BeCPGModel.PROP_SORT, sortIndex);
 
+		NodeRef itemNodeRef = null;
 		if (filesToUpdate != null && filesToUpdate.containsKey(costNodeRef)) {
 			// update
-			nodeService.addProperties(filesToUpdate.get(costNodeRef), properties);
+			itemNodeRef = filesToUpdate.get(costNodeRef);
+			nodeService.addProperties(itemNodeRef, properties);
 		} else {
 			// create
 			ChildAssociationRef childAssocRef = nodeService.createNode(costListNodeRef, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, costListDataItem.getCost().getId()), BeCPGModel.TYPE_COSTLIST, properties);
-			nodeService.createAssociation(childAssocRef.getChildRef(), costListDataItem.getCost(), BeCPGModel.ASSOC_COSTLIST_COST);
+			itemNodeRef = childAssocRef.getChildRef();
+			nodeService.createAssociation(itemNodeRef, costListDataItem.getCost(), BeCPGModel.ASSOC_COSTLIST_COST);
 		}
+		
+
+		//TODO 
+		nodeService.addAspect(itemNodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM, new HashMap<QName, Serializable>());
+		
 	}
 
 	/**
@@ -1564,6 +1607,10 @@ public class ProductDAOImpl implements ProductDAO {
 						nodeService.createAssociation(linkNodeRef, ingListDataItem.getIng(), BeCPGModel.ASSOC_INGLIST_ING);
 					}
 
+
+					//TODO 
+					nodeService.addAspect(linkNodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM, new HashMap<QName, Serializable>());
+					
 					// GeoOrigins
 					associationService.update(linkNodeRef, BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN, ingListDataItem.getGeoOrigin());
 
@@ -1639,15 +1686,23 @@ public class ProductDAOImpl implements ProductDAO {
 					properties.put(BeCPGModel.PROP_SORT, sortIndex);
 					sortIndex = sortIndex + RepoConsts.SORT_DEFAULT_STEP;
 
+					NodeRef itemNodeRef = null;
 					if (filesToUpdate.containsKey(nutNodeRef)) {
 						// update
-						nodeService.addProperties(filesToUpdate.get(nutNodeRef), properties);
+						itemNodeRef = filesToUpdate.get(nutNodeRef);
+						nodeService.addProperties(itemNodeRef, properties);
 					} else {
 						// create
 						ChildAssociationRef childAssocRef = nodeService.createNode(nutListNodeRef, ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, nutListDataItem.getNut().getId()), BeCPGModel.TYPE_NUTLIST, properties);
-						nodeService.createAssociation(childAssocRef.getChildRef(), nutListDataItem.getNut(), BeCPGModel.ASSOC_NUTLIST_NUT);
+						
+						itemNodeRef  = childAssocRef.getChildRef();
+						nodeService.createAssociation(itemNodeRef, nutListDataItem.getNut(), BeCPGModel.ASSOC_NUTLIST_NUT);
+						
 					}
+					
+					//TODO 
+					nodeService.addAspect(itemNodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM, new HashMap<QName, Serializable>());
 				}
 			}
 		}
@@ -2245,4 +2300,5 @@ public class ProductDAOImpl implements ProductDAO {
 
 		return String.format(KEY_COST_DETAILS, cost, source);
 	}
+
 }
