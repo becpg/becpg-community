@@ -1,0 +1,6 @@
+<webscript>
+   <shortname>Product Catalog</shortname>
+   <description>Dashlet to show product catalog</description>
+   <family>dashlet</family>
+   <url>/components/dashlets/product-catalog</url>
+</webscript>

@@ -1,0 +1,104 @@
+/* Simple/Details View */
+
+.product-catalog .simple-detailed span.first-child
+{
+   background-position: 50% 50%;
+   background-repeat: no-repeat;
+   min-height: 16px;
+   padding: 0 2px;
+}
+
+.product-catalog .simple-detailed .yui-button
+{
+   margin-left: 0;
+   margin-right: 0;
+}
+
+.product-catalog .simple-detailed .simple-view span.first-child
+{
+   background-image: url(../documentlibrary/images/simple-view-off-16.png);
+}
+
+.product-catalog .simple-detailed .simple-view.yui-button-checked span.first-child
+{
+   background-image: url(../documentlibrary/images/simple-view-on-16.png);
+}
+
+.product-catalog .simple-detailed .detailed-view span.first-child
+{
+   background-image: url(../documentlibrary/images/detailed-view-off-16.png);
+}
+
+.product-catalog .simple-detailed .detailed-view.yui-button-checked span.first-child
+{
+   background-image: url(../documentlibrary/images/detailed-view-on-16.png);
+}
+
+.product-catalog .document-characts
+{
+	background-image: url("../documentlibrary/actions/entity-view-datalist-16.png");
+	padding: 2px 0 2px 24px;
+}
+
+.product-catalog .document-download
+{
+	background-image: url("../documentlibrary/actions/document-download-16.png");
+	padding: 2px 0 2px 24px;
+}
+
+
+/* Search Box */
+
+.product-catalog  .search-box > span.yui-button
+{
+   background: none;
+   border-width: 0px;
+}
+
+
+.product-catalog  div.search-box
+{
+   border: 1px solid #a0a0a0;
+   height: 20px;
+   float: left;
+   position: relative;
+   -moz-border-radius: 16px;
+   -webkit-border-radius: 16px;
+   background-color: white;
+   padding: 0 2px;
+   margin-top: 3px;
+}
+
+.product-catalog  div.search-box span.yui-button
+{
+   height: 20px;
+   margin-right: -2px;
+}
+
+.product-catalog  div.search-box span.yui-button span.first-child
+{
+   background-position: 3px 2px;
+   background-repeat: no-repeat;
+}
+
+.product-catalog  div.search-box span.yui-button span.first-child button
+{
+   min-height: 20px;
+   padding: 0 30px 0 0;
+   width: 36px;
+}
+
+.product-catalog  div.search-box input[type="text"]
+{
+   border-color: white;
+   display: inline-block;
+   margin-right: 6px;
+   padding: 0;
+   position: relative;
+   top: -2px;
+}
+
+.product-catalog  div.search-box input.faded
+{
+   opacity: 0.5;
+}
