@@ -8,7 +8,8 @@ var Filters =
    {
       "documents": '+(TYPE:"content" OR TYPE:"app:filelink" OR TYPE:"folder")',
       "folders": '+(TYPE:"folder" OR TYPE:"app:folderlink")',
-      "images": '+@cm\\:content.mimetype:image/*'
+      "images": '+@cm\\:content.mimetype:image/*',
+      "product": '+(TYPE:"bcpg:product")'
    },
    
    /**
@@ -176,7 +177,12 @@ var Filters =
             filterQuery += " +@cm\\:lockType:\"WRITE_LOCK\"))";
             filterParams.query = filterQuery;
             break;
-
+         case "Valid":
+         case "ToValidate":
+         	filterQuery += this.constructPathQuery(parsedArgs);
+         	filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
+            filterParams.query = filterQuery + filterQueryDefaults;
+         	break;
          case "favourites":
             var foundOne = false;
 
@@ -242,10 +248,14 @@ var Filters =
             break;
       }
 
-      // Specialise by passed-in type
+      // Specialise by passed-in type and searchTerm
       if (filterParams.query !== "")
       {
          filterParams.query += " " + (Filters.TYPE_MAP[parsedArgs.type] || "");
+         if(args.searchTerm!=null &&  args.searchTerm != "" ){
+         	filterParams.query += " AND ("+args.searchTerm+")";
+         }
+         
       }
 
       return filterParams;
