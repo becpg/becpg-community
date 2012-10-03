@@ -46,7 +46,7 @@
 		<property name="mimetypeService" ref="mimetypeService"/>
 		<property name="dictionaryService" ref="dictionaryService"/>
 		<property name="entityTplService" ref="entityTplService"/>
-		<property name="beCPGMailService" ref="becpgMailService"/>		
+		<property name="beCPGMailService" ref="beCPGMailService"/>		
 	</bean>
 	<bean id="initSiteVisitor" class="fr.becpg.repo.admin.InitSiteVisitorImpl">
 		<property name="fileFolderService" ref="fileFolderService" />
@@ -171,19 +171,19 @@
 		<property name="personService" ref="personService"/>
 		<property name="siteService" ref="siteService"/>
 		<property name="authorityService" ref="authorityService"/>
-	    <property name="beCPGMailService" ref="becpgMailService"/>
+	    <property name="beCPGMailService" ref="beCPGMailService"/>
 	    <property name="namespacePrefixResolver" ref="namespaceService" />
 	</bean>
 	
 	<!-- Mail service -->
 	
-	<bean id="becpgMailService" class="fr.becpg.repo.mail.impl.BeCPGMailServiceImpl">
+	<bean id="beCPGMailService" class="fr.becpg.repo.mail.impl.BeCPGMailServiceImpl">
 		<property name="nodeService" ref="nodeService"/>
     	<property name="mailService" ref="mailService"/>   
     	<property name="templateService" ref="templateService"/>
     	<property name="serviceRegistry" ref="ServiceRegistry"/>
     	<property name="mailFrom" value="${mail.from.default}" />
-    	<property name="searchService" ref="searchService"/>
+    	<property name="beCPGSearchService" ref="beCPGSearchService"/>
 	</bean>
 	
 	<!-- EntityVersion -->
@@ -417,7 +417,7 @@
     	<property name="thumbnailRegistry" ref="thumbnailRegistry" />
     	<property name="entityService" ref="entityService"/>
     	<property name="dictionaryService" ref="dictionaryService"/>
-    	<property name="searchService" ref="searchService"/>
+    	<property name="beCPGSearchService" ref="beCPGSearchService"/>
     </bean>
     
     <!-- Cache -->

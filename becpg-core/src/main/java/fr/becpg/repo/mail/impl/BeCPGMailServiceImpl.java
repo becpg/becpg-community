@@ -2,6 +2,7 @@ package fr.becpg.repo.mail.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
@@ -12,8 +13,6 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.TemplateService;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.lang.StringUtils;
@@ -23,9 +22,9 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.mail.BeCPGMailService;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 
 /**
@@ -47,8 +46,7 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 	private TemplateService templateService;
 	private JavaMailSender mailService;
 	private ServiceRegistry serviceRegistry;
-	
-	private SearchService searchService;
+	private BeCPGSearchService beCPGSearchService;
 	
 	private NodeRef modelMailNodeRef;
 	
@@ -76,11 +74,8 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 		this.mailFrom = mailFrom;
 	}
 	
-	
-	
-
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	@Override
@@ -141,8 +136,8 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 	@Override
 	public NodeRef getModelMailNodeRef() {
 		if(modelMailNodeRef==null){
-			ResultSet  resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_LUCENE, EMAIL_MODEL_PATH_QUERY);
-		     modelMailNodeRef =  resultSet.getNodeRef(0);
+			List<NodeRef> nodeRefs = beCPGSearchService.luceneSearch(EMAIL_MODEL_PATH_QUERY, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		     modelMailNodeRef =  nodeRefs.size() > 0 ? nodeRefs.get(0) : null;
 		}
 		
 		return modelMailNodeRef;
@@ -152,10 +147,10 @@ public class BeCPGMailServiceImpl  implements BeCPGMailService {
 	public NodeRef getWorkflowModelMailNodeRef() {
 		
 		if(workflowModelMailNodeRef==null){
-			ResultSet  resultSet = searchService.query(RepoConsts.SPACES_STORE, SearchService.LANGUAGE_LUCENE, EMAIL_WORKFLOW_MODEL_PATH_QUERY);
+			List<NodeRef> nodeRefs = beCPGSearchService.luceneSearch(EMAIL_WORKFLOW_MODEL_PATH_QUERY, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 			
-			if(resultSet.length() > 0){
-				workflowModelMailNodeRef =  resultSet.getNodeRef(0);
+			if(nodeRefs.size() > 0){
+				workflowModelMailNodeRef = nodeRefs.get(0);
 			}
 			else{
 				// create folder

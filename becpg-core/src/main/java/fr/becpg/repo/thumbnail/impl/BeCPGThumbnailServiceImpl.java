@@ -1,6 +1,7 @@
 package fr.becpg.repo.thumbnail.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -9,17 +10,16 @@ import org.alfresco.repo.thumbnail.ThumbnailServiceImpl;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.thumbnail.ThumbnailService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.thumbnail.BeCPGThumbnailService;
 
 /**
@@ -42,7 +42,7 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 
 	private EntityService entityService;
 
-	private SearchService searchService;
+	private BeCPGSearchService beCPGSearchService;
 
 	private Map<String, NodeRef> cachedThumbs = new HashMap<String, NodeRef>();
 
@@ -59,8 +59,8 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 		this.entityService = entityService;
 	}
 
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	@Override
@@ -122,23 +122,20 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 		}
 
 		String query = String.format(RepoConsts.PATH_QUERY_THUMBNAIL, imgName);
-
-		ResultSet resultSet = searchService.query(RepoConsts.SPACES_STORE,
-				SearchService.LANGUAGE_LUCENE, query);
+		List<NodeRef> nodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Look for thumbnail : " + query);
-			logger.debug("Found  : " + resultSet.getNodeRefs().size()
+			logger.debug("Found  : " + nodeRefs.size()
 					+ " results");
 		}
 
-		if (resultSet.getNodeRefs().size() != 1) {
+		if (nodeRefs.size() != 1) {
 			logger.debug("image not found. imgName: " + imgName);
 			return null;
 		}
 
-		ret = resultSet.getNodeRef(0);
-
+		ret = nodeRefs.get(0);
 		cachedThumbs.put(imgName, ret);
 		return ret;
 
