@@ -157,8 +157,8 @@ public class VersionHistoryWebScript extends DeclarativeWebScript  {
 					NodeRef personNodeRef = personService.getPerson(version.getFrozenModifier());
 					Map<QName, Serializable> personProperties = nodeService.getProperties(personNodeRef);
 					
-					VersionData versionData = new VersionData(version.getVersionedNodeRef(), 
-																						(String)nodeService.getProperty(version.getVersionedNodeRef(), ContentModel.PROP_NAME),
+					VersionData versionData = new VersionData(version.getFrozenStateNodeRef(), 
+																						(String)nodeService.getProperty(version.getFrozenStateNodeRef(), ContentModel.PROP_NAME),
 																						version.getVersionLabel(),
 																						(String)version.getVersionProperties().get(Version2Model.PROP_QNAME_VERSION_DESCRIPTION),
 																						version.getFrozenModifiedDate(),
