@@ -29,6 +29,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
@@ -50,6 +51,9 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	/** The Constant TAG_COMPOLIST. */
 	protected static final String TAG_COMPOLIST = "compoList";
 	
+	protected static final String TAG_DYNAMICCHARACTLIST = "dynamicCharactList";
+	
+	protected static final String TAG_DYNAMICCHARACT = "dynamicCharact";
 	
 	protected static final String ATTR_ITEM_TYPE = "itemType";
 
@@ -223,11 +227,23 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_QTY.getLocalName(), dataItem.getQty() == null ? VALUE_NULL : Double.toString(dataItem.getQty()));
 				partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA.getLocalName(),
 						dataItem.getQtySubFormula() == null ? VALUE_NULL : Double.toString(dataItem.getQtySubFormula()));
+				partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS.getLocalName(),
+						dataItem.getQtyAfterProcess() == null ? VALUE_NULL : Double.toString(dataItem.getQtyAfterProcess()));
+				partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_UNIT.getLocalName(), dataItem.getCompoListUnit() == null ? VALUE_NULL : dataItem.getCompoListUnit().toString());
+				partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_YIELD_PERC.getLocalName(), dataItem.getYieldPerc() == null ? VALUE_NULL : Double.toString(dataItem.getYieldPerc()));
 				partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_LOSS_PERC.getLocalName(), dataItem.getLossPerc() == null ? VALUE_NULL : Double.toString(dataItem.getLossPerc()));
 				PropertyDefinition propertyDef = dictionaryService.getProperty(BeCPGModel.PROP_COMPOLIST_DECL_TYPE);
 				partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_DECL_TYPE.getLocalName(), attributeExtractorService.getStringValue(propertyDef, dataItem.getDeclType().toString(), new PropertyFormats(true)));
 				partElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(dataItem.getProduct()).toPrefixString(namespaceService));
 			}
+			
+			Element dynCharactListElt = dataListsElt.addElement(TAG_DYNAMICCHARACTLIST);
+			for (DynamicCharactListItem dc : productData.getDynamicCharactList()) {
+				Element dynamicCharact = dynCharactListElt.addElement(TAG_DYNAMICCHARACT);
+				dynamicCharact.addAttribute(BeCPGModel.PROP_DYNAMICCHARACT_TITLE.getLocalName(), dc.getName());
+				dynamicCharact.addAttribute(BeCPGModel.PROP_DYNAMICCHARACT_VALUE.getLocalName(), dc.getValue() == null ? VALUE_NULL : dc.getValue().toString());
+			}
+					
 		}
 
 		// CostList

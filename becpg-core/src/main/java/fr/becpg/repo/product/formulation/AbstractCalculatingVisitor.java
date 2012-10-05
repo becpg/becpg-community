@@ -117,12 +117,27 @@ public class AbstractCalculatingVisitor {
 				
 				//Calculate values				
 				if(qtyUsed != null){
+										
+					Double origValue = newSimpleListDataItem.getValue() != null ? newSimpleListDataItem.getValue() : 0d;
+					Double value = slDataItem.getValue();
+					if(value != null){
+						newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getValue(), qtyUsed, slDataItem.getValue(), netWeight));
+					}
+					else{
+						value = 0d;
+					}
 					
-					newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getValue(), qtyUsed, slDataItem.getValue(), netWeight));
-					Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : slDataItem.getValue();
-					newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netWeight));
-					Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : slDataItem.getValue();
-					newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netWeight));
+					Double origMini = newSimpleListDataItem.getMini() != null ? newSimpleListDataItem.getMini() : origValue;
+					Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : value;
+					if(miniValue < value || origMini < origValue){
+						newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netWeight));
+					}
+					
+					Double origMaxi = newSimpleListDataItem.getMaxi() != null ? newSimpleListDataItem.getMaxi() : origValue;
+					Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
+					if(maxiValue > value || origMaxi > origValue){
+						newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netWeight));
+					}					
 					
 					if(logger.isDebugEnabled()){
 						logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
@@ -131,8 +146,7 @@ public class AbstractCalculatingVisitor {
 						logger.debug("charact: " + nodeService.getProperty(slNodeRef, ContentModel.PROP_NAME) + " - newMaxi : " + newSimpleListDataItem.getMaxi());
 					}					
 				}	
-			}
-								
+			}							
 		}
 	}
 	

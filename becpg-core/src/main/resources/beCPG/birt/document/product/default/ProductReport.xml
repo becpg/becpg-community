@@ -16,8 +16,20 @@
 	<dataLists>
 
 		<compoList>
-			<product depthLevel="1" compoListProduct="Sushi au saumon" legalName="legal name 1" compoListSubFormulaQty="30" compoListQty="3" />
+			<entity itemType="bcpg:localSemiFinishedProduct" depthLevel="1" compoListProduct="Phase 1" legalName="legal name 1" compoListQtySubFormula="30" compoListQtyAfterProcess="12" compoListQty="3" compoListUnit="kg"/>
+			<entity itemType="bcpg:rawMaterial" depthLevel="2" compoListProduct="product1" legalName="legal name 1" compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg"  suppliers="supplier1, supplier2" />
+			<entity itemType="bcpg:rawMaterial" depthLevel="2" compoListProduct="product2" legalName="legal name 1" compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg" suppliers="supplier1, The HallStar Company"/>
+			<entity itemType="bcpg:rawMaterial" depthLevel="2" compoListProduct="product3" legalName="legal name 1" compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg"/>
+			<entity itemType="bcpg:localSemiFinished" depthLevel="1" compoListProduct="Phase 2" legalName="legal name 1" compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg"/>
+			<entity itemType="bcpg:rawMaterial" depthLevel="2" compoListProduct="product4" legalName="legal name 1" compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg"/>
+			<entity itemType="bcpg:rawMaterial" depthLevel="2" compoListProduct="product5" legalName="legal name 1" compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg" />
+			<entity itemType="bcpg:rawMaterial" depthLevel="2" compoListProduct="product6" legalName="legal name 1" compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg"/>
 		</compoList>
+		
+		<dynamicCharactList>
+			<dynamicCharact dynamicCharactTitle="title title title title title title title title title title title title title title title title title title title title title title title title " dynamicCharactValue="value"/>
+			<dynamicCharact dynamicCharactTitle="title" dynamicCharactValue="value"/>
+		</dynamicCharactList>
 
 		<allergenList>
 			<allergen allergenListAllergen="Arachide" allergenType="Allergène majeur"

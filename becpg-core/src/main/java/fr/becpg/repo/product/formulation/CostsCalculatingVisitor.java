@@ -49,10 +49,19 @@ public class CostsCalculatingVisitor extends AbstractCalculatingVisitor implemen
 		
 			List<CostListDataItem> dataList = new ArrayList<CostListDataItem>();
 			
-			for(SimpleListDataItem sc : simpleListMap.values()){
-				CostListDataItem c = new CostListDataItem(sc);
-				String unit = calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(c.getCost(), BeCPGModel.PROP_COSTCURRENCY));
-				c.setUnit(unit);
+			for(SimpleListDataItem sl : simpleListMap.values()){
+				CostListDataItem c = new CostListDataItem(sl);
+				if(sl.getIsManual() != null && sl.getIsManual()){
+					//manual so it's a CostListDataItem instance (we want to keep the unit defined manually, ie: €)
+					if(sl instanceof CostListDataItem){
+						c = new CostListDataItem((CostListDataItem)sl);
+					}
+				}
+				else{
+					String unit = calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(c.getCost(), BeCPGModel.PROP_COSTCURRENCY));
+					c.setUnit(unit);
+				}
+				
 				dataList.add(c);				
 			}
 			
@@ -152,6 +161,7 @@ public class CostsCalculatingVisitor extends AbstractCalculatingVisitor implemen
 	
 	private ProductData calculateProfitability(ProductData formulatedProduct){
 		
+		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct);
 		Double unitTotalVariableCost = 0d;
 		Double unitTotalFixedCost = 0d;
 		
@@ -164,7 +174,7 @@ public class CostsCalculatingVisitor extends AbstractCalculatingVisitor implemen
 					unitTotalFixedCost += c.getValue();					
 				}
 				else{
-					unitTotalVariableCost += c.getValue();
+					unitTotalVariableCost += c.getValue() * netWeight;
 				}
 			}			
 		}

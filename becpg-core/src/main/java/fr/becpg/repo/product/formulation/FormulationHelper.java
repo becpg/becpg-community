@@ -158,6 +158,10 @@ public class FormulationHelper {
 	
 	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight){
 		
+		if(totalValue == null && value == null){
+			return null;
+		}
+		
 		totalValue = totalValue != null ? totalValue : 0d;
 		value = value != null ? value : 0d;		
 		totalValue += qtyUsed * value / netWeight;		

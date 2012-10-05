@@ -20,6 +20,7 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
+import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
@@ -104,7 +105,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private TransactionService transactionService;
 	
 	private DictionaryService dictionaryService;
-
+	
+	private AuthorityService authorityService;
 	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -134,10 +136,12 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		this.transactionService = transactionService;
 	}
 
-	
-	
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
+	}
+
+	public void setAuthorityService(AuthorityService authorityService) {
+		this.authorityService = authorityService;
 	}
 
 	/**
@@ -169,7 +173,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 		NodeRef listContainerNodeRef = null;
 		QName nodeType = nodeService.getType(nodeRef);
-		boolean hasWritePermission = false;
+		boolean hasWritePermission = authorityService.isAdminAuthority(AuthenticationUtil.getRunAsUser());//admin can delete entity lists
 		boolean skipFilter = false;
 		String wUsedList = null;
 

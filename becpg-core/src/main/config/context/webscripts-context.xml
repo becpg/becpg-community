@@ -31,9 +31,6 @@
 		<property name="authorityService" ref="authorityService"/>
 	</bean>
 	
-
-
-
 	<!-- Entity lists -->
 	<bean id="webscript.fr.becpg.entity.entityLists.get" class="fr.becpg.repo.web.scripts.entity.EntityListsWebScript"
 		parent="webscript">
@@ -45,6 +42,7 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="transactionService" ref="transactionService" />
 		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="authorityService" ref="AuthorityService" />
 	</bean>
 	
 	<bean id="webscript.fr.becpg.entity.datalist.data.post" class="fr.becpg.repo.web.scripts.entity.datalist.EntityDataListWebScript"
@@ -62,8 +60,6 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="dataListSortService" ref="dataListSortService" />
 	</bean>
-	
-	
 
 	<!-- Product formulate -->
 	<bean id="webscript.fr.becpg.product.productFormulation.get"
@@ -137,8 +133,6 @@
 		<property name="entityReportService" ref="entityReportService" />
 	</bean>
 
-
-
 	<!-- Migration -->
 	<bean id="webscript.fr.becpg.migration.migrateRepository.get"
 		class="fr.becpg.repo.web.scripts.migration.MigrateRepositoryWebScript"
@@ -150,9 +144,8 @@
 		<property name="beCPGSystemFolderMigrator" ref="beCPGSystemFolderMigrator"/>
 	</bean>
 
-
 	<!-- NPD -->
-
+	
 	<!-- Retrieves all npd instances. -->
 	<bean id="webscript.fr.becpg.workflow.npd-instances.get" class="fr.becpg.repo.web.scripts.workflow.NpdInstancesGet"
 		parent="webscript">

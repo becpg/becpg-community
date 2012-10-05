@@ -51,9 +51,9 @@ public class NutsCalculatingVisitor extends AbstractCalculatingVisitor implement
 			
 			for(SimpleListDataItem sl : simpleListMap.values()){
 				
-				NutListDataItem nutListDataItem = new NutListDataItem(sl);				
+				NutListDataItem nutListDataItem = new NutListDataItem(sl);
 				nutListDataItem.setGroup((String)nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_NUTGROUP));								
-				nutListDataItem.setUnit(calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_NUTUNIT)));				
+				nutListDataItem.setUnit(calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_NUTUNIT)));
 				dataList.add(nutListDataItem);
 			}
 		

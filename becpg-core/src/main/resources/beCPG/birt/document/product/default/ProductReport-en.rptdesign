@@ -1748,6 +1748,7 @@
     </styles>
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="10">
+            <property name="type">a4</property>
             <property name="topMargin">1cm</property>
             <property name="leftMargin">2cm</property>
             <property name="bottomMargin">1cm</property>
@@ -3816,7 +3817,7 @@ else
             </row>
         </grid>
     </body>
-    <list-property name="images">        
+    <list-property name="images">
         <structure>
             <property name="name">logo_small.jpg</property>
             <property name="data">
