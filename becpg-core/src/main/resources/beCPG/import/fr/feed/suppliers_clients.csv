@@ -1,0 +1,5 @@
+PATH;/Companies/Suppliers;;;
+TYPE;bcpg:supplier;;;
+MAPPING;Default;;;
+COLUMNS;cm:name;cm:description;img1Path;img1Title
+VALUES;Table nutrition animale;Table listant les matières premières utilisées pour l'alimentation animale;;

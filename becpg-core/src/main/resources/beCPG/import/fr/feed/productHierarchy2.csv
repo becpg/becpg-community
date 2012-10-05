@@ -1,0 +1,6 @@
+MAPPING;Default;
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+VALUES;Animal;Fourrages
+VALUES;Animal;Fumiers
