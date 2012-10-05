@@ -81,7 +81,6 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 
 				NodeRef part = compoItem.getProduct();
 				if (!visitedProducts.contains(part)) {
-					logger.debug("visitPart: " + part);
 					visitPart(part, allergenMap);
 					visitedProducts.add(part);
 				}
@@ -94,7 +93,6 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 
 				NodeRef resource = processItem.getResource();
 				if (resource != null && !visitedProducts.contains(resource)) {
-					logger.debug("visitPart: " + resource);
 					// TODO : resource is not a product => il faudrait déplacer
 					// les méthodes loadAllergenList ailleurs que dans
 					// ProductDAOImpl

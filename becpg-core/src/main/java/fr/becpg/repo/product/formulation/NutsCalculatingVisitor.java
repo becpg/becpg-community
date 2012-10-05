@@ -4,40 +4,31 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutGroup;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.data.productList.SimpleListDataItem;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class NutsCalculatingVisitor.
  *
  * @author querephi
  */
-public class NutsCalculatingVisitor implements ProductVisitor {
-	
-	/** The Constant QTY_FOR_PIECE. */
-	public static final Double QTY_FOR_PIECE = 1d;
+public class NutsCalculatingVisitor extends AbstractCalculatingVisitor implements ProductVisitor {
 	
 	/** The Constant UNIT_PER100G. */
 	public static final String UNIT_PER100G = "/100g";
@@ -45,182 +36,36 @@ public class NutsCalculatingVisitor implements ProductVisitor {
 	/** The Constant UNIT_PER100ML. */
 	public static final String UNIT_PER100ML = "/100mL";
 	
-	protected static final String MSG_REQ_NOT_RESPECTED = "message.formulate.warning.requirement.nut";
-	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(NutsCalculatingVisitor.class);
 	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The product dao. */
-	private ProductDAO productDAO;
-	
-	private EntityListDAO entityListDAO;
-	
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-	
-	/**
-	 * Sets the product dao.
-	 *
-	 * @param productDAO the new product dao
-	 */
-	public void setProductDAO(ProductDAO productDAO){
-		this.productDAO = productDAO;
-	}
-	
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-	
-/* (non-Javadoc)
- * @see fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData)
- */
 	@Override
 	public ProductData visit(ProductData formulatedProduct) throws FormulateException{
 		logger.debug("Nuts calculating visitor");
 		
-		// no compo => no formulation
-		if(formulatedProduct.getCompoList() == null){			
-			logger.debug("no compo => no formulation");
-			return formulatedProduct;
-		}
-		
-		// init nutMap with dbValues
-		Map<NodeRef, NutListDataItem> nutMap = new HashMap<NodeRef, NutListDataItem>();
-		if(formulatedProduct.getNutList() != null){			
-			for(NutListDataItem nl : formulatedProduct.getNutList()){
-				// reset value
-				nl.setValue(0d);
-				nutMap.put(nl.getNut(), nl);
-			}
-		}
-		
-		for(CompoListDataItem compoItem : formulatedProduct.getCompoList()){			
-			visitPart(formulatedProduct, compoItem, nutMap);
-		}				
-		
-		//Take in account net weight
-		Double qty = (formulatedProduct.getUnit() != ProductUnit.P) ? formulatedProduct.getQty():QTY_FOR_PIECE; //unit => qty == 1
-		if(qty==null){
-			qty = FormulationHelper.DEFAULT_QUANTITY;
-		}
-		Double density = FormulationHelper.getDensity(formulatedProduct);
-		Double netWeight = qty * density;
-		
-		for(NutListDataItem n : nutMap.values()){
-			
-			if(netWeight != 0.0d){
-				if(n.getValue() != null)
-					n.setValue(n.getValue() / netWeight);
-				if(n.getMini() != null)
-					n.setMini(n.getMini() / netWeight);
-				if(n.getMaxi() != null)
-					n.setMaxi(n.getMaxi() / netWeight);
-			}
-					
-		}
-		
-		// manual listItem
-		List<NutListDataItem> nutList = getListToUpdate(formulatedProduct.getNodeRef(), nutMap);
-				
-		//sort		
-		List<NutListDataItem> nutListSorted = sort(nutList); 
+		Map<NodeRef, SimpleListDataItem> simpleListMap = getFormulatedList(formulatedProduct);
 
-		formulatedProduct.setNutList(nutListSorted);
+		if(simpleListMap != null){
+		
+			List<NutListDataItem> dataList = new ArrayList<NutListDataItem>();
+			
+			for(SimpleListDataItem sl : simpleListMap.values()){
 				
+				NutListDataItem nutListDataItem = new NutListDataItem(sl);				
+				nutListDataItem.setGroup((String)nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_NUTGROUP));								
+				nutListDataItem.setUnit(calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_NUTUNIT)));				
+				dataList.add(nutListDataItem);
+			}
+		
+			//sort		
+			List<NutListDataItem> nutListSorted = sort(dataList);
+			
+			formulatedProduct.setNutList(nutListSorted);
+		}						
+						
 		return formulatedProduct;
 	}
 
-	/**
-	 * Visit part.
-	 *
-	 * @param formulatedProduct the formulated product
-	 * @param compoListDataItem the compo list data item
-	 * @param nutMap the nut map
-	 * @throws FormulateException 
-	 */
-	private void visitPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem,  Map<NodeRef, NutListDataItem> nutMap) throws FormulateException{
-		
-		Collection<QName> dataLists = new ArrayList<QName>();		
-		dataLists.add(BeCPGModel.TYPE_NUTLIST);			
-		ProductData productData = productDAO.find(compoListDataItem.getProduct(), dataLists);
-		
-		if(productData.getNutList() == null){
-			return;
-		}
-		
-		Double qty = FormulationHelper.getQty(compoListDataItem);
-		Double density = FormulationHelper.getDensity(productData); 
-		
-		for(NutListDataItem nutListDataItem : productData.getNutList()){			
-			
-			//Look for nut
-			NodeRef nutNodeRef = nutListDataItem.getNut();
-			NutListDataItem newNutListDataItem = nutMap.get(nutNodeRef);
-			
-			if(newNutListDataItem == null){
-				newNutListDataItem =new NutListDataItem();
-				newNutListDataItem.setNut(nutNodeRef);				
-				newNutListDataItem.setGroup((String)nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_NUTGROUP));
-				
-				
-				String unit = calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_NUTUNIT));				
-				newNutListDataItem.setUnit(unit);
-				nutMap.put(nutNodeRef, newNutListDataItem);
-			}									
-			
-			//Calculate values
-			
-			if(qty != null){
-				
-				// value
-				Double origValue = newNutListDataItem.getValue() != null ? newNutListDataItem.getValue() : 0d;
-				Double newValue = origValue;
-				Double value = nutListDataItem.getValue();
-				
-				if(value != null){
-				
-					Double valueToAdd = density * qty * value;
-					newValue += valueToAdd;
-					newNutListDataItem.setValue(newValue);
-				}
-				else{
-					value = 0d;
-				}
-				
-				//mini
-				Double newMini = newNutListDataItem.getMini() != null ? newNutListDataItem.getMini() : origValue;
-				Double mini = nutListDataItem.getMini() != null ? nutListDataItem.getMini() : value;
-				
-				if(mini < value || newMini < origValue){
-				
-					Double valueToAdd = density * qty * mini;										
-					newMini += valueToAdd;
-					newNutListDataItem.setMini(newMini);
-				}
-				
-				//maxi
-				Double newMaxi = newNutListDataItem.getMaxi() != null ? newNutListDataItem.getMaxi() : origValue;
-				Double maxi = nutListDataItem.getMaxi() != null ? nutListDataItem.getMaxi() : value;
-				
-				if(maxi > value || newMaxi > origValue){
-				
-					Double valueToAdd = density * qty * maxi;					
-					newMaxi += valueToAdd;
-					newNutListDataItem.setMaxi(newMaxi);
-				}
-			}						
-		}
-	}
-			
 	/**
 	 * Calculate the nutListUnit
 	 * @param productUnit
@@ -292,42 +137,21 @@ public class NutsCalculatingVisitor implements ProductVisitor {
             		return BEFORE;
             	}	else {
             		return EQUAL;
-            	}
-            	
+            	}            	
             }
-
-
         });
         
         return nutList;
 	}
 	
-	/**
-	 * Calculate nuts to update
-	 * @param productNodeRef
-	 * @param costMap
-	 * @return
-	 */
-	private List<NutListDataItem> getListToUpdate(NodeRef productNodeRef, Map<NodeRef, NutListDataItem> nutMap){
-				
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
+	@Override
+	protected QName getDataListVisited(){
 		
-		if(listContainerNodeRef != null){
-			
-			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_NUTLIST);
-			
-			if(listNodeRef != null){
-				
-				List<NodeRef> manualLinks = entityListDAO.getManualListItems(listNodeRef, BeCPGModel.TYPE_NUTLIST);
-				
-				for(NodeRef manualLink : manualLinks){
-					
-					NutListDataItem nutListDataItem = productDAO.loadNutListItem(manualLink);		    		
-		    		nutMap.put(nutListDataItem.getNut(), nutListDataItem);
-				}
-			}
-		}
-		
-		return new ArrayList<NutListDataItem>(nutMap.values());
-	}	
+		return BeCPGModel.TYPE_NUTLIST;
+	}
+
+	@Override
+	protected boolean isCharactFormulated(NodeRef scNodeRef){
+		return true;
+	}
 }

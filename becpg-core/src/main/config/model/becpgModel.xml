@@ -845,6 +845,7 @@
 			</mandatory-aspects>
 		</type>
 
+		<!-- TODO : remove it -->
 		<type name="bcpg:costDetailsList">
 			<parent>bcpg:productListItem</parent>
 			<properties>

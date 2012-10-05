@@ -191,9 +191,9 @@ public class ProductServiceImpl implements ProductService {
     		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
     		dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
     		dataLists.add(MPMModel.TYPE_PROCESSLIST);
-    		dataLists.add(BeCPGModel.TYPE_NUTLIST); // TODO keep min/max
-    		dataLists.add(BeCPGModel.TYPE_COSTLIST); // TODO keep max
-    		dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST); // TODO keep min/max
+//    		dataLists.add(BeCPGModel.TYPE_NUTLIST); // TODO keep min/max
+//    		dataLists.add(BeCPGModel.TYPE_COSTLIST); // TODO keep max
+//    		dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST); // TODO keep min/max
     		dataLists.add(BeCPGModel.TYPE_DYNAMICCHARACTLIST);
         	ProductData productData = productDAO.find(productNodeRef, dataLists); 
         	        	
@@ -226,10 +226,7 @@ public class ProductServiceImpl implements ProductService {
 				}
 				if (productData.getAllergenList() != null) {
 					dataListsToSave.add(BeCPGModel.TYPE_ALLERGENLIST);
-				}
-				if (productData.getCostDetailsList() != null) {
-					dataListsToSave.add(BeCPGModel.TYPE_COSTDETAILSLIST);
-				}
+				}				
 				if (productData.getIngList() != null) {
 					dataListsToSave.add(BeCPGModel.TYPE_INGLIST);
 				}
@@ -390,23 +387,11 @@ public class ProductServiceImpl implements ProductService {
 
 		Collection<QName> dataLists = new ArrayList<QName>();				
 		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+		dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+		dataLists.add(MPMModel.TYPE_PROCESSLIST);
     	ProductData productData = productDAO.find(productNodeRef, dataLists); 
     	        	
-    	// do the formulation if the product has a composition, or packaging list defined
-    	if((productData.getCompoList() != null && productData.getCompoList().size() != 0) ){
-    	
-		
-    		CharactDetailsVisitor visitor  = charactDetailsVisitorFactory.getCharactDetailsVisitor(datatType, dataListName);
-		
-		
-			return visitor.visit(productData, elements);
-    	}
-    	
-    	return null;
-		
+    	CharactDetailsVisitor visitor  = charactDetailsVisitorFactory.getCharactDetailsVisitor(datatType, dataListName);		
+		return visitor.visit(productData, elements);		
 	}
-
-
-    
-
 }

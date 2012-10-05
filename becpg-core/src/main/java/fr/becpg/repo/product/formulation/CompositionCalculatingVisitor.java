@@ -124,38 +124,20 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 		Double qtyUsed = 0d;				
 		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){
 			
-			Double qty = getQtyInKg(component.getData());
+			Double qty = FormulationHelper.getQty(component.getData(), nodeService);
 			if(qty != null){
 				qtyUsed += qty;
 			}
 		}
 		
 		// qty after process
-		Double qtyAfterProcess = FormulationHelper.getQty(composite.getData());
+		Double qtyAfterProcess = FormulationHelper.getQty(composite.getData(), nodeService);
 		if(qtyAfterProcess != 0 && qtyUsed != 0){
 			yieldPerc = qtyAfterProcess / qtyUsed * 100;
 		}
 		
 		return yieldPerc;
 	}	
-	
-	private Double getQtyInKg(CompoListDataItem compoListDataItem) throws FormulateException{
-	
-		Double qty = FormulationHelper.getQty(compoListDataItem);
-		
-		if(compoListDataItem.getCompoListUnit() != null && 
-				(!compoListDataItem.getCompoListUnit().equals(CompoListUnit.kg) || 
-				!compoListDataItem.getCompoListUnit().equals(CompoListUnit.g) ||
-				!compoListDataItem.getCompoListUnit().equals(CompoListUnit.Perc))){
-			
-			Double density = (Double)nodeService.getProperty(compoListDataItem.getProduct(), BeCPGModel.PROP_PRODUCT_DENSITY);
-			if(density != null){
-				qty = qty * density;
-			}
-		}
-		
-		return qty;
-	}
 	
 	private Double calculateQtyUsedBeforeProcess(Composite<CompoListDataItem> composite) throws FormulateException{				
 		
@@ -169,7 +151,7 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
 				qty += calculateQtyUsedBeforeProcess(c);
 			}else{
-				qty += getQtyInKg(component.getData());
+				qty += FormulationHelper.getQty(component.getData(), nodeService);
 			}
 		}
 		

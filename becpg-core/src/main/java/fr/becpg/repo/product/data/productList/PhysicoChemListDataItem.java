@@ -5,15 +5,12 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class PhysicoChemListDataItem.
  *
  * @author querephi
  */
-public class PhysicoChemListDataItem extends BaseObject{
+public class PhysicoChemListDataItem implements SimpleListDataItem, SimpleCharactDataItem{
 
 	/** The node ref. */
 	private NodeRef nodeRef;			
@@ -32,6 +29,8 @@ public class PhysicoChemListDataItem extends BaseObject{
 	
 	/** The physico chem. */
 	private NodeRef physicoChem;
+	
+	private Boolean isManual;
 	
 	/**
 	 * Gets the node ref.
@@ -132,6 +131,17 @@ public class PhysicoChemListDataItem extends BaseObject{
 		return physicoChem;
 	}
 	
+	@Override
+	public NodeRef getCharactNodeRef() {
+	
+		return getPhysicoChem();
+	}
+	
+	@Override
+	public void setCharactNodeRef(NodeRef nodeRef) {
+		setPhysicoChem(nodeRef);		
+	}
+	
 	/**
 	 * Sets the physico chem.
 	 *
@@ -139,6 +149,16 @@ public class PhysicoChemListDataItem extends BaseObject{
 	 */
 	public void setPhysicoChem(NodeRef physicoChem) {
 		this.physicoChem = physicoChem;
+	}
+	
+	@Override
+	public Boolean getIsManual() {		
+		return isManual;
+	}
+
+	@Override
+	public void setIsManual(Boolean isManual) {		
+		this.isManual = isManual;		
 	}
 	
 	/**
@@ -178,6 +198,18 @@ public class PhysicoChemListDataItem extends BaseObject{
 		setMini(p.getMini());
 		setMaxi(p.getMaxi());
 		setPhysicoChem(p.getPhysicoChem());
+	}
+	
+	/**
+	 * Copy constructor
+	 * @param p
+	 */
+	public PhysicoChemListDataItem(SimpleListDataItem p){
+		setValue(p.getValue());
+		setMini(p.getMini());
+		setMaxi(p.getMaxi());
+		setIsManual(p.getIsManual());
+		setPhysicoChem(p.getCharactNodeRef());
 	}
 
 	@Override
@@ -239,6 +271,4 @@ public class PhysicoChemListDataItem extends BaseObject{
 	public String toString() {
 		return "PhysicoChemListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi + ", physicoChem=" + physicoChem + "]";
 	}
-	
-	
 }

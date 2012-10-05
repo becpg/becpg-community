@@ -710,7 +710,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(MPMModel.TYPE_PROCESSLIST);
 				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
-				dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
 				dataLists.add(BeCPGModel.TYPE_NUTLIST);
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
@@ -723,7 +722,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(MPMModel.TYPE_PROCESSLIST);
 				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
-				dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
 				dataLists.add(BeCPGModel.TYPE_NUTLIST);
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
@@ -733,7 +731,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
-				dataLists.add(BeCPGModel.TYPE_COSTDETAILSLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 
 			} else if (productType.equals(SecurityModel.TYPE_ACL_GROUP)) {

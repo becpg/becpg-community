@@ -19,6 +19,7 @@ import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.SimpleCharactDataItem;
+import fr.becpg.repo.product.data.productList.SimpleListDataItem;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -79,7 +80,8 @@ public interface ProductDAO {
 	public List<DynamicCharactListItem> loadDynamicCharactList(NodeRef listContainerNodeRef);
 	public DynamicCharactListItem loadDynamicCharactListItem(NodeRef listItemNodeRef);
 
-	public List<? extends SimpleCharactDataItem> loadList(NodeRef productNodeRef, QName dataList);
+	public List<? extends SimpleCharactDataItem> loadCharactList(NodeRef productNodeRef, QName dataList);
+	public List<? extends SimpleListDataItem> loadSimpleList(NodeRef productNodeRef, QName dataList);
 
 	public BaseObject loadItemByType(NodeRef dataListItem, QName dataListType);
 }

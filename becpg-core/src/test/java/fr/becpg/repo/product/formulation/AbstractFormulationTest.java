@@ -1,4 +1,4 @@
-package fr.becpg.repo.product;
+package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,6 +18,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.product.ProductDAO;
+import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -28,11 +30,11 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.test.RepoBaseTestCase;
 
-public class AbstractFormuationTest extends RepoBaseTestCase{
+public class AbstractFormulationTest extends RepoBaseTestCase{
 	
 
 	/** The logger. */
-	protected static Log logger = LogFactory.getLog(AbstractFormuationTest.class);
+	protected static Log logger = LogFactory.getLog(AbstractFormulationTest.class);
 
 	
 	/** The product service. */

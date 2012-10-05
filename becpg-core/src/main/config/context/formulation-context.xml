@@ -7,10 +7,12 @@
 	
 	<bean id="simpleCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.SimpleCharactDetailsVisitor">
 			<property name="productDAO" ref="productDAO" />
+			<property name="nodeService" ref="nodeService" />
 	</bean>
 	
 	<bean id="costCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.CostCharactDetailsVisitor">
 			<property name="productDAO" ref="productDAO" />
+			<property name="nodeService" ref="nodeService" />
 	</bean>
 	
 
@@ -52,22 +54,20 @@
 		<property name="mlNodeService" ref="mlAwareNodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
-	<bean id="nutsCalculatingVisitor"
-		class="fr.becpg.repo.product.formulation.NutsCalculatingVisitor">
-		<property name="nodeService" ref="nodeService" />
-		<property name="productDAO" ref="productDAO" />
-		<property name="entityListDAO" ref="entityListDAO" />
+	<bean id="nutsCalculatingVisitor" parent="abstractCalculatingVisitor"
+		class="fr.becpg.repo.product.formulation.NutsCalculatingVisitor">	
 	</bean>
-	<bean id="costsCalculatingVisitor"
+	<bean id="costsCalculatingVisitor"  parent="abstractCalculatingVisitor"
 		class="fr.becpg.repo.product.formulation.CostsCalculatingVisitor">
-		<property name="nodeService" ref="nodeService" />
+	</bean>
+	<bean id="physicoChemCalculatingVisitor" parent="abstractCalculatingVisitor"
+		class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingVisitor">		
+	</bean>	
+	<bean id="abstractCalculatingVisitor"
+		class="fr.becpg.repo.product.formulation.AbstractCalculatingVisitor">
 		<property name="productDAO" ref="productDAO" />
 		<property name="entityListDAO" ref="entityListDAO" />
-	</bean>
-	<bean id="physicoChemCalculatingVisitor"
-		class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingVisitor">
 		<property name="nodeService" ref="nodeService" />
-		<property name="productDAO" ref="productDAO" />
 	</bean>
 
 

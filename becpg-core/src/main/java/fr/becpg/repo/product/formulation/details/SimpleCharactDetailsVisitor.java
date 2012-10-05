@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,17 +19,22 @@ import fr.becpg.repo.product.data.productList.SimpleCharactDataItem;
 import fr.becpg.repo.product.formulation.FormulateException;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 
-public class SimpleCharactDetailsVisitor  implements CharactDetailsVisitor{
+public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 	private static Log logger = LogFactory.getLog(SimpleCharactDetailsVisitor.class);
-	
+
 	protected ProductDAO productDAO;
 	
-	protected QName dataListType;
+	private NodeService nodeService;
 	
+	protected QName dataListType;
 
 	public void setProductDAO(ProductDAO productDAO) {
 		this.productDAO = productDAO;
+	}
+	
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
 	}
 
 	@Override
@@ -38,69 +44,60 @@ public class SimpleCharactDetailsVisitor  implements CharactDetailsVisitor{
 
 	@Override
 	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems) throws FormulateException {
-		   
-		  CharactDetails ret = new CharactDetails(extractCharacts(dataListItems));
-		
-		  // no compo => no formulation
-		   if(productData.getCompoList() == null){			
-				logger.debug("no compo => no formulation");
-				return ret;
-		   }
-		   
-			Double netWeight = FormulationHelper.getNetWeight(productData);
-				
-		   for(CompoListDataItem compoItem : productData.getCompoList()){	
-			   //TODO un peu lourd de tous charger juste pour la densité ???
-				ProductData productItem = productDAO.find(compoItem.getProduct(), new ArrayList<QName>());
-				Double qty = FormulationHelper.getQty(compoItem);
-				Double density = FormulationHelper.getDensity(productItem); 
-				visitPart(compoItem.getProduct(), ret ,netWeight,  density * qty );
+
+		CharactDetails ret = new CharactDetails(extractCharacts(dataListItems));
+		Double netWeight = FormulationHelper.getNetWeight(productData);
+
+		if (productData.getCompoList() != null && productData.getCompoList().size() > 0) {
+			for (CompoListDataItem compoListDataItem : productData.getCompoList()) {
+				Double qty = FormulationHelper.getQty(compoListDataItem, nodeService);			
+				visitPart(compoListDataItem.getProduct(), ret, qty, netWeight);
 			}
-		
+		}		
+
 		return ret;
 	}
 
 	protected List<NodeRef> extractCharacts(List<NodeRef> dataListItems) {
-		
+
 		List<NodeRef> ret = new ArrayList<NodeRef>();
-		if(dataListItems!=null){
-			for(NodeRef dataListItem : dataListItems ){
-				
-				BaseObject o  = productDAO.loadItemByType(dataListItem, dataListType);
-				if(o!=null && o instanceof SimpleCharactDataItem){
-					ret.add(((SimpleCharactDataItem)o).getCharactNodeRef());
+		if (dataListItems != null) {
+			for (NodeRef dataListItem : dataListItems) {
+
+				BaseObject o = productDAO.loadItemByType(dataListItem, dataListType);
+				if (o != null && o instanceof SimpleCharactDataItem) {
+					ret.add(((SimpleCharactDataItem) o).getCharactNodeRef());
 				}
-				
 			}
 		}
-		
+
 		return ret;
 	}
 
-	protected void visitPart(NodeRef product, CharactDetails charactDetails, Double qty ,Double netWeight) throws FormulateException {
-		
-		List<? extends SimpleCharactDataItem> simpleCharactDataList =  productDAO.loadList(product, dataListType);
+	protected void visitPart(NodeRef entityNodeRef, CharactDetails charactDetails, Double qty, Double netWeight)
+			throws FormulateException {
 
-		if(simpleCharactDataList == null){
+		if(entityNodeRef == null){
 			return;
 		}
 		
-		for(SimpleCharactDataItem simpleCharact : simpleCharactDataList){	
-			if(simpleCharact!=null && charactDetails.hasElement(simpleCharact.getCharactNodeRef())){
-				
-				
-				Double value = (simpleCharact.getValue()!=null ? simpleCharact.getValue() :0d );
+		List<? extends SimpleCharactDataItem> simpleCharactDataList = productDAO.loadCharactList(entityNodeRef, dataListType);
+
+		if (simpleCharactDataList == null) {
+			logger.debug("no datalist for this product, exit. dataListType: " + dataListType + " entity: " + entityNodeRef);
+			return;
+		}
+
+		for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
+			if (simpleCharact != null && charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
+
+				Double value = (simpleCharact.getValue() != null ? simpleCharact.getValue() : 0d);
 				value = value * qty;
-				if(netWeight != 0.0d){
+				if (netWeight != 0.0d) {
 					value = value / netWeight;
 				}
-				charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), product,value );
-				
+				charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), entityNodeRef, value);
 			}
 		}
-		
 	}
-
-
-
 }
