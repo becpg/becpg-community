@@ -3,22 +3,41 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	   propertyName : ["bcpg:product","bcpg:supplier", "bcpg:client", "bcpg:entity",
 	                   "bcpg:resourceProduct","cm:content_bcpg:costDetailsListSource",
-	                   "bcpg:product_bcpg:packagingListProduct" ],
+	                   "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct" ],
 	   renderer : function(oRecord, data, label, scope) {
-		   var url = scope._buildCellUrl(data);
-		   return '<span class="' + data.metadata + '" ><a href="' + url + '">'
-		         + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
-	   }
-
-	});
-
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	   propertyName : "bcpg:product_bcpg:compoListProduct",
-	   renderer : function(oRecord, data, label, scope) {
-		   var url = scope._buildCellUrl(data);
-		   var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
-		   return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;"><a href="' + url + '">'
-		         + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+		   
+		   var url = null;			   
+		   if(label == "bcpg:compoListProduct" || label == "bcpg:packagingListProduct"){			   
+		       if (data.siteId) {
+		           url = Alfresco.constants.URL_PAGECONTEXT + "site/" + data.siteId + "/" + 'entity-data-lists?nodeRef=' + data.value;
+		       } else {
+		           url = Alfresco.constants.URL_PAGECONTEXT + 'entity-data-lists?nodeRef=' + data.value;
+		       }				       
+		       //datalist
+		       if(data.metadata.indexOf("finishedProduct") != -1 || data.metadata.indexOf("semiFinishedProduct") != -1){
+		    	   url += "&list=compoList";
+		       }
+		       else if(data.metadata.indexOf("packagingKit") != -1){
+		    	   url += "&list=packagingList";
+		       }
+		       else if(data.metadata.indexOf("localSemiFinishedProduct") != -1){
+		    	   url = scope._buildCellUrl(data);
+		       }
+		   }
+		   else{
+			   url = scope._buildCellUrl(data);
+		   }
+		   
+		   if(label == "bcpg:compoListProduct"){
+			   
+			   var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+			   return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;"><a href="' + url + '">'
+			         + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';			   
+		   }
+		   else{
+			   return '<span class="' + data.metadata + '" ><a href="' + url + '">'
+			         + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+		   }		   
 	   }
 
 	});
@@ -135,5 +154,4 @@ if (beCPG.module.EntityDataGridRenderers) {
 	   	return '<div style="background-color:#' +  color + ';width:15px;height:15px;border: 1px solid; border-radius: 5px;margin-left:15px;"></div></div>';
 	   }
 	});
-
 }
