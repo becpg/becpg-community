@@ -7,6 +7,7 @@ VALUES;Table Ciqual 2008;Table de composition nutritionnelle des aliments Ciqual
 VALUES;Table Ciqual 2012;Table de composition nutritionnelle des aliments Ciqual 2012;classpath:beCPG/import/images/suppliers/anses.jpg;ANSES
 VALUES;Table Additifs;Table listant les additifs;;
 ;;;;
+;;;;
 PATH;/Companies/Clients;;;
 TYPE;bcpg:client;;;
 MAPPING;Default;;;
