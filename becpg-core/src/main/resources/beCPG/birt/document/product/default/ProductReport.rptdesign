@@ -1634,6 +1634,323 @@
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="CompoList" id="1724">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">depthLevel</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">depthLevel</text-property>
+                    <property name="analysisColumn">depthLevel</property>
+                </structure>
+                <structure>
+                    <property name="columnName">compoListProduct</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">compoListProduct</text-property>
+                    <property name="analysisColumn">compoListProduct</property>
+                </structure>
+                <structure>
+                    <property name="columnName">compoListQtySubFormula</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">compoListQtySubFormula</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">compoListQty</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">compoListQty</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">compoListUnit</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">compoListUnit</text-property>
+                    <property name="analysisColumn">compoListUnit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">compoListQtyAfterProcess</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">compoListQtyAfterProcess</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">depthLevel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">compoListProduct</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">compoListQtySubFormula</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">compoListQty</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">compoListUnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">compoListQtyAfterProcess</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">depthLevel</property>
+                    <property name="nativeName">depthLevel</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">compoListProduct</property>
+                    <property name="nativeName">compoListProduct</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">compoListQtySubFormula</property>
+                    <property name="nativeName">compoListQtySubFormula</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">compoListQty</property>
+                    <property name="nativeName">compoListQty</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">compoListUnit</property>
+                    <property name="nativeName">compoListUnit</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">compoListQtyAfterProcess</property>
+                    <property name="nativeName">compoListQtyAfterProcess</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoList/entity]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>depthLevel</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>depthLevel</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>compoListProduct</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>compoListProduct</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>compoListQtySubFormula</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>compoListQtySubFormula</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>compoListQty</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>compoListQty</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>compoListUnit</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>compoListUnit</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="dynamicCharactList" id="1769">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">dynamicCharactTitle</property>
+                    <text-property name="heading">dynamicCharactTitle</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">dynamicCharactValue</property>
+                    <text-property name="heading">dynamicCharactValue</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">dynamicCharactTitle</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">dynamicCharactValue</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">dynamicCharactTitle</property>
+                    <property name="nativeName">dynamicCharactTitle</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">dynamicCharactValue</property>
+                    <property name="nativeName">dynamicCharactValue</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/dynamicCharactList/dynamicCharact]#:#{dynamicCharactTitle;STRING;/@dynamicCharactTitle},{dynamicCharactValue;STRING;/@dynamicCharactValue}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>dynamicCharactTitle</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>dynamicCharactTitle</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>dynamicCharactValue</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>dynamicCharactValue</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="2">
@@ -2174,6 +2491,172 @@
                 </cell>
             </row>
         </grid>
+        <label id="1768"/>
+        <label id="1725">
+            <property name="style">becpg-chapter-header</property>
+            <property name="pageBreakBefore">always</property>
+            <text-property name="text">COMPOSITION</text-property>
+        </label>
+        <label id="1766"/>
+        <table id="1726">
+            <property name="style">becpg-table</property>
+            <property name="width">6.885496183206107in</property>
+            <property name="dataSet">CompoList</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">depthLevel</property>
+                    <text-property name="displayName">depthLevel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["depthLevel"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListProduct</property>
+                    <text-property name="displayName">compoListProduct</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListProduct"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListQtySubFormula</property>
+                    <text-property name="displayName">compoListQtySubFormula</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListQtySubFormula"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListQty</property>
+                    <text-property name="displayName">compoListQty</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListQty"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListUnit</property>
+                    <text-property name="displayName">compoListUnit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListQtyAfterProcess</property>
+                    <text-property name="displayName">compoListQtyAfterProcess</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListQtyAfterProcess"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="1742">
+                <property name="width">8%</property>
+            </column>
+            <column id="1743">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="1744">
+                <property name="width">10%</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="1763">
+                <property name="width">10%</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="1745">
+                <property name="width">10%</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="1757">
+                <property name="width">10%</property>
+                <property name="style">becpg-col-border</property>
+                <property name="textAlign">center</property>
+            </column>
+            <header>
+                <row id="1727">
+                    <property name="style">becpg-col-header</property>
+                    <cell id="1728">
+                        <label id="1746">
+                            <text-property name="text">Niveau</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1729">
+                        <label id="1748">
+                            <text-property name="text">Produit</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1730">
+                        <label id="1750">
+                            <text-property name="text">Qté av. tranfo</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1760">
+                        <label id="1764">
+                            <text-property name="text">Qté ap. transfo</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1731">
+                        <label id="1752">
+                            <text-property name="text">Qté (kg ou L)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1754">
+                        <label id="1758">
+                            <text-property name="text">Unité</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="1732">
+                    <property name="style">becpg-row-border</property>
+                    <cell id="1733">
+                        <data id="1747">
+                            <property name="resultSetColumn">depthLevel</property>
+                        </data>
+                    </cell>
+                    <cell id="1734">
+                        <data id="1749">
+                            <property name="resultSetColumn">compoListProduct</property>
+                        </data>
+                    </cell>
+                    <cell id="1735">
+                        <data id="1751">
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">compoListQtySubFormula</property>
+                        </data>
+                    </cell>
+                    <cell id="1761">
+                        <data id="1765">
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">compoListQtyAfterProcess</property>
+                        </data>
+                    </cell>
+                    <cell id="1736">
+                        <data id="1753">
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">compoListQty</property>
+                        </data>
+                    </cell>
+                    <cell id="1755">
+                        <data id="1759">
+                            <property name="resultSetColumn">compoListUnit</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="1737">
+                    <cell id="1738"/>
+                    <cell id="1739"/>
+                    <cell id="1740"/>
+                    <cell id="1762"/>
+                    <cell id="1741"/>
+                    <cell id="1756"/>
+                </row>
+            </footer>
+        </table>
+        <label id="1770"/>
         <grid id="1349">
             <property name="dataSet">OrganoList</property>
             <list-property name="visibility">
@@ -3842,7 +4325,7 @@ else
             </row>
         </grid>
     </body>
-    <list-property name="images">       
+    <list-property name="images">
         <structure>
             <property name="name">logo_small.jpg</property>
             <property name="data">
