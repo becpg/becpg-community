@@ -3,17 +3,20 @@
  */
 package fr.becpg.repo.product.formulation;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FormulationHelper.
  *
@@ -36,7 +39,7 @@ public class FormulationHelper {
 	 * @return the qty
 	 * @throws FormulateException 
 	 */
-	public static Double getQty(CompoListDataItem compoListDataItem) throws FormulateException{
+	public static Double getQty(CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException{
 		if(compoListDataItem.getQty() == null){
 			logger.warn("Composition element doesn't have any quantity");
 		} 
@@ -47,7 +50,30 @@ public class FormulationHelper {
 		if(compoListUnit == CompoListUnit.g || compoListUnit == CompoListUnit.mL){
 			qty = qty / 1000;
 		}
-		return qty;
+		
+		Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
+		
+		return qty * density;
+	}
+	
+	/**
+	 * Gets the qty with lost.
+	 *
+	 * @param compoListDataItem the compo list data item
+	 * @return the qty
+	 * @throws FormulateException 
+	 */
+	public static Double getQtyWithLost(CompoListDataItem compoListDataItem, NodeService nodeService, Double parentLossRatio) throws FormulateException{
+		
+		Double qty = FormulationHelper.getQty(compoListDataItem, nodeService);
+		Double lossPerc = compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d;
+		
+		return qty * FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc);		
+	}
+	
+	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc) throws FormulateException{
+		
+		return (1 + lossPerc / 100) * parentLossRatio;		
 	}
 
 	/**
@@ -70,6 +96,27 @@ public class FormulationHelper {
 		
 		return qty;
 	}
+	
+	/**
+	 * Gets the qty of a process item
+	 * @param processListDataItem
+	 * @return
+	 */
+	public static Double getQty(ProcessListDataItem processListDataItem){
+		
+		Double qty = 0d;
+						
+		if(processListDataItem.getStep() != null && 
+				processListDataItem.getRateProcess() != null && processListDataItem.getRateProcess() != 0d){
+			Double stepDuration = processListDataItem.getQty() / processListDataItem.getRateProcess();
+			
+			if(stepDuration != null && processListDataItem.getResource() != null && processListDataItem.getQtyResource() != null){
+				qty = stepDuration * processListDataItem.getQtyResource();
+			}
+		}
+		
+		return qty;
+	}
 
 	/**
 	 * 
@@ -78,6 +125,11 @@ public class FormulationHelper {
 	 */
 	public static Double getDensity(ProductData productData) {
 		return (productData.getDensity() != null) ? productData.getDensity():DEFAULT_DENSITY;
+	}
+	
+	public static Double getDensity(NodeRef nodeRef, NodeService nodeService) {
+		Double density = (Double)nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_DENSITY);
+		return (density != null) ? density:DEFAULT_DENSITY;
 	}
 
 	/**
@@ -102,5 +154,13 @@ public class FormulationHelper {
 		Double qty = getQty(productData); 
 		Double density = getDensity(productData); 
 		return  qty * density;
+	}
+	
+	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight){
+		
+		totalValue = totalValue != null ? totalValue : 0d;
+		value = value != null ? value : 0d;		
+		totalValue += qtyUsed * value / netWeight;		
+		return totalValue;
 	}
 }

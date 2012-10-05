@@ -12,7 +12,7 @@ import fr.becpg.repo.product.data.BaseObject;
  *
  * @author querephi
  */
-public class CostListDataItem extends BaseObject implements SimpleCharactDataItem,IManualDataItem{
+public class CostListDataItem extends BaseObject implements SimpleListDataItem, SimpleCharactDataItem,IManualDataItem{
 	
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -84,6 +84,16 @@ public class CostListDataItem extends BaseObject implements SimpleCharactDataIte
 		this.unit = unit;
 	}
 	
+	public Double getMini() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setMini(Double value) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public Double getMaxi() {
 		return maxi;
 	}
@@ -103,9 +113,14 @@ public class CostListDataItem extends BaseObject implements SimpleCharactDataIte
 	
 	@Override
 	public NodeRef getCharactNodeRef() {
-		return cost;
+		return getCost();
 	}
 	
+	@Override
+	public void setCharactNodeRef(NodeRef nodeRef) {
+		setCost(nodeRef);
+		
+	}
 	
 	/**
 	 * Sets the cost.
@@ -166,6 +181,14 @@ public class CostListDataItem extends BaseObject implements SimpleCharactDataIte
 		setCost(c.getCost());
 		setIsManual(c.getIsManual());
 	}
+	
+	public CostListDataItem(SimpleListDataItem c){
+		
+		setValue(c.getValue());
+		setMaxi(c.getMaxi());
+		setIsManual(c.getIsManual());
+		setCost(c.getCharactNodeRef());
+	}
 
 	@Override
 	public String toString() {
@@ -225,9 +248,6 @@ public class CostListDataItem extends BaseObject implements SimpleCharactDataIte
 		} else if (!value.equals(other.value))
 			return false;
 		return true;
-	}
-
-	
-	
+	}	
 }
 

@@ -13,7 +13,7 @@ import fr.becpg.repo.product.data.BaseObject;
  *
  * @author querephi
  */
-public class NutListDataItem extends BaseObject  implements IManualDataItem, SimpleCharactDataItem{
+public class NutListDataItem extends BaseObject  implements SimpleListDataItem, IManualDataItem, SimpleCharactDataItem{
 
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -53,7 +53,7 @@ public class NutListDataItem extends BaseObject  implements IManualDataItem, Sim
 	public void setNodeRef(NodeRef nodeRef) {
 		this.nodeRef = nodeRef;
 	}
-	
+		
 	/**
 	 * Gets the value.
 	 *
@@ -133,12 +133,15 @@ public class NutListDataItem extends BaseObject  implements IManualDataItem, Sim
 		return nut;
 	}
 	
-
 	@Override
 	public NodeRef getCharactNodeRef() {
 		return getNut();
 	}
 	
+	@Override
+	public void setCharactNodeRef(NodeRef nodeRef) {
+		setNut(nodeRef);		
+	}
 	
 	/**
 	 * Sets the nut.
@@ -203,6 +206,19 @@ public class NutListDataItem extends BaseObject  implements IManualDataItem, Sim
 		setGroup(n.getGroup());
 		setNut(n.getNut());
 		setIsManual(n.getIsManual());
+    }
+	
+	/**
+	 * Copy constructor
+	 * @param n
+	 */
+	public NutListDataItem(SimpleListDataItem n){
+
+		setValue(n.getValue());
+		setMini(n.getMini());
+		setMaxi(n.getMaxi());
+		setIsManual(n.getIsManual());
+		setNut(n.getCharactNodeRef());
     }
 
 	@Override
@@ -276,8 +292,5 @@ public class NutListDataItem extends BaseObject  implements IManualDataItem, Sim
 	public String toString() {
 		return "NutListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi + ", group=" + group + ", nut=" + nut
 				+ ", isManual=" + isManual + "]";
-	}
-
-	
-	
+	}	
 }

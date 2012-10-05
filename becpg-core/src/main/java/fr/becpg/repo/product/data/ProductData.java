@@ -19,7 +19,6 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
@@ -98,9 +97,7 @@ public class ProductData extends BaseObject implements ProductElement {
 	private List<DynamicCharactListItem> dynamicCharactList;
 	
 	/** The cost list. */
-	private List<CostListDataItem> costList;
-	
-	private List<CostDetailsListDataItem> costDetailsList;
+	private List<CostListDataItem> costList;	
 	
 	private List<PriceListDataItem> priceList;
 	
@@ -435,14 +432,6 @@ public class ProductData extends BaseObject implements ProductElement {
 		this.costList = costList;
 	}
 	
-	public List<CostDetailsListDataItem> getCostDetailsList() {
-		return costDetailsList;
-	}
-
-	public void setCostDetailsList(List<CostDetailsListDataItem> costDetailsList) {
-		this.costDetailsList = costDetailsList;
-	}
-
 	public List<PriceListDataItem> getPriceList() {
 		return priceList;
 	}
@@ -681,7 +670,7 @@ public class ProductData extends BaseObject implements ProductElement {
     	this.setUnitPrice((Double)properties.get(BeCPGModel.PROP_UNIT_PRICE));
     	this.setProfitability((Double)properties.get(BeCPGModel.PROP_PROFITABILITY));
     	this.setBreakEven((Long)properties.get(BeCPGModel.PROP_BREAK_EVEN));	
-	}
+	}	
 	
 	/**
 	 * Copy data lists.
@@ -716,13 +705,6 @@ public class ProductData extends BaseObject implements ProductElement {
 			costList = new ArrayList<CostListDataItem>(productData.getCostList());
 			for(CostListDataItem c : productData.getCostList()){
 				costList.add(new CostListDataItem(c));
-			}
-		}
-		
-		if(productData.getCostDetailsList() != null){
-			costDetailsList = new ArrayList<CostDetailsListDataItem>(productData.getCostDetailsList());
-			for(CostDetailsListDataItem c : productData.getCostDetailsList()){
-				costDetailsList.add(new CostDetailsListDataItem(c));
 			}
 		}
 		
@@ -795,7 +777,6 @@ public class ProductData extends BaseObject implements ProductElement {
 		result = prime * result + ((allergenList == null) ? 0 : allergenList.hashCode());
 		result = prime * result + ((breakEven == null) ? 0 : breakEven.hashCode());
 		result = prime * result + ((compoList == null) ? 0 : compoList.hashCode());
-		result = prime * result + ((costDetailsList == null) ? 0 : costDetailsList.hashCode());
 		result = prime * result + ((costList == null) ? 0 : costList.hashCode());
 		result = prime * result + ((density == null) ? 0 : density.hashCode());
 		result = prime * result + ((dynamicCharactList == null) ? 0 : dynamicCharactList.hashCode());
@@ -851,12 +832,7 @@ public class ProductData extends BaseObject implements ProductElement {
 			if (other.compoList != null)
 				return false;
 		} else if (!compoList.equals(other.compoList))
-			return false;
-		if (costDetailsList == null) {
-			if (other.costDetailsList != null)
-				return false;
-		} else if (!costDetailsList.equals(other.costDetailsList))
-			return false;
+			return false;		
 		if (costList == null) {
 			if (other.costList != null)
 				return false;
@@ -1005,7 +981,7 @@ public class ProductData extends BaseObject implements ProductElement {
 				+ ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield
 				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", listsContainer="
 				+ listsContainer + ", allergenList=" + allergenList + ", compoList=" + compoList + ", dynamicCharactList=" + dynamicCharactList + ", costList=" + costList
-				+ ", costDetailsList=" + costDetailsList + ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList
+				+ ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList
 				+ ", ingLabelingList=" + ingLabelingList + ", microbioList=" + microbioList + ", physicoChemList=" + physicoChemList + ", packagingList=" + packagingList
 				+ ", forbiddenIngList=" + forbiddenIngList + ", reqCtrlList=" + reqCtrlList + ", processList=" + processList + "]";
 	}			

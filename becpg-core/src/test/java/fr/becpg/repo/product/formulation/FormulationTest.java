@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2010-2011 beCPG. All rights reserved.
  */
-package fr.becpg.repo.product;
+package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -20,6 +20,8 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
+import fr.becpg.repo.product.ProductDAO;
+import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
@@ -30,7 +32,6 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
-import fr.becpg.repo.product.data.productList.CostDetailsListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
@@ -50,7 +51,7 @@ import fr.becpg.repo.product.data.productList.RequirementType;
  *
  * @author querephi
  */
-public class FormulationTest extends AbstractFormuationTest {
+public class FormulationTest extends AbstractFormulationTest {
 	
     
     /* (non-Javadoc)
@@ -64,11 +65,8 @@ public class FormulationTest extends AbstractFormuationTest {
         productDAO = (ProductDAO)ctx.getBean("productDAO");
 
  		//create RM and lSF
- 		initParts();
- 		       
-        
+ 		initParts(); 		
     }
-    
     
 	/* (non-Javadoc)
 	 * @see fr.becpg.test.RepoBaseTestCase#tearDown()
@@ -77,17 +75,14 @@ public class FormulationTest extends AbstractFormuationTest {
     public void tearDown() throws Exception
     {
         super.tearDown();
-
     }
-	
-	
 	
 	/**
 	 * Test formulate product.
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateProduct() throws Exception{
+	public void testFormulateProduct() throws Exception{
 		   
 		logger.info("testFormulateProduct");
 		
@@ -352,7 +347,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestIngredientsCalculating() throws Exception{
+	public void testIngredientsCalculating() throws Exception{
 		
 		logger.info("testIngredientsCalculating");
 		
@@ -593,7 +588,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateCostAndNutOfProductInkgAndg() throws Exception{
+	public void testFormulateCostAndNutOfProductInkgAndg() throws Exception{
 		   
 		logger.info("testFormulateCostAndNutOfProductInkgAndg");
 		
@@ -672,7 +667,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateCostAndNutOfProductInkgAndgAndmLAndm() throws Exception{
+	public void testFormulateCostAndNutOfProductInkgAndgAndmLAndm() throws Exception{
 		   
 		logger.info("testFormulateCostAndNutOfProductInkgAndgAndmLAndm");
 		
@@ -713,30 +708,26 @@ public class FormulationTest extends AbstractFormuationTest {
 				//costs
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
-					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
-						assertEquals("cost1.getValue() == 0.402, actual values: " + trace, df.format(0.402d), df.format(costListDataItem.getValue()));
-						assertEquals("cost1.getUnit() == €/P, actual values: " + trace, "€/P", costListDataItem.getUnit());
+						assertEquals("check cost", df.format(1.77d), df.format(costListDataItem.getValue()));
+						assertEquals("check cost unit", "€/kg", costListDataItem.getUnit());
 					}
 					if(costListDataItem.getCost().equals(cost2)){
-						assertEquals("cost1.getValue() == 0.444, actual values: " + trace, df.format(0.444d), df.format(costListDataItem.getValue()));
-						assertEquals("cost1.getUnit() == €/P, actual values: " + trace, "€/P", costListDataItem.getUnit());
+						assertEquals("check cost", df.format(1.74d), df.format(costListDataItem.getValue()));
+						assertEquals("check cost unit", "€/kg", costListDataItem.getUnit());
 					}
 				}
 				//nuts
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
-					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
-						assertEquals("nut1.getValue() == 0.77, actual values: " + trace, df.format(0.77d), df.format(nutListDataItem.getValue()));
-						assertEquals("nut1.getUnit() == kJ/100g, actual values: " + trace, "kJ/100g", nutListDataItem.getUnit());
+						assertEquals("check nut", df.format(0.77d), df.format(nutListDataItem.getValue()));
+						assertEquals("check nut unit", "kJ/100g", nutListDataItem.getUnit());
 						assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
 					}
 					if(nutListDataItem.getNut().equals(nut2)){
-						assertEquals("nut2.getValue() == 1.59, actual values: " + trace, df.format(1.59d), df.format(nutListDataItem.getValue()));
-						assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g", nutListDataItem.getUnit());
+						assertEquals("check nut", df.format(1.59d), df.format(nutListDataItem.getValue()));
+						assertEquals("check nut unit", "kcal/100g", nutListDataItem.getUnit());
 						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
 					}
 				}				
@@ -752,7 +743,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateWithDensity() throws Exception{
+	public void testFormulateWithDensity() throws Exception{
 		   
 		logger.info("testFormulateWithDensity");
 		
@@ -811,7 +802,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	/**
 	 * Test sort nut list.
 	 */
-	public void xtestSortNutList(){
+	public void testSortNutList(){
 		
 		logger.info("testSortNutList");
 		
@@ -932,13 +923,12 @@ public class FormulationTest extends AbstractFormuationTest {
 				}},false,true);
 	}
 	
-
 	/**
 	 * Test allergen list calculating.
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestAllergenListCalculating() throws Exception{
+	public void testAllergenListCalculating() throws Exception{
 		   
 		logger.info("testAllergenListCalculating");
 		
@@ -1149,7 +1139,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulateRawMaterial() throws Exception{
+	public void testFormulateRawMaterial() throws Exception{
 		   
 		logger.info("testFormulateRawMaterial");
 		
@@ -1196,7 +1186,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestCalculateWithLoss() throws Exception{
+	public void testCalculateWithLoss() throws Exception{
 		   
 		logger.info("testCalculateWithLoss");
 		
@@ -1228,8 +1218,7 @@ public class FormulationTest extends AbstractFormuationTest {
 				/*-- Verify formulation --*/
 				logger.debug("/*-- Verify formulation --*/");
 				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
-				
-				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
+				DecimalFormat df = new DecimalFormat("0.####");
 				
 				//costs
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
@@ -1237,11 +1226,11 @@ public class FormulationTest extends AbstractFormuationTest {
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
-						assertEquals("cost1.getValue() == 4.7425003, actual values: " + trace, 4.7425d, costListDataItem.getValue());
+						assertEquals("cost1.getValue() == 4.7425003, actual values: " + trace, df.format(4.7425d), df.format(costListDataItem.getValue()));
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
 					}
 					if(costListDataItem.getCost().equals(cost2)){
-						assertEquals("cost1.getValue() == 7.175, actual values: " + trace, 7.175d, costListDataItem.getValue());
+						assertEquals("cost1.getValue() == 7.175, actual values: " + trace, df.format(7.175d), df.format(costListDataItem.getValue()));
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
 					}
 				}
@@ -1323,9 +1312,7 @@ public class FormulationTest extends AbstractFormuationTest {
 						bioOriginsText += nodeService.getProperty(bioOrigin, ContentModel.PROP_NAME) + ", ";
 					
 					String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.isGMO().booleanValue() + " is ionized: " + ingListDataItem.isIonized().booleanValue();
-					logger.debug(trace);
-					
-					DecimalFormat df = new DecimalFormat("0.000000");
+					logger.debug(trace);					
 					
 					//ing: ing1 - qty: 13.043478 - geo origins: geoOrigin1,  - bio origins: bioOrigin1,  is gmo: true
 					if(ingListDataItem.getIng().equals(ing1)){
@@ -1386,7 +1373,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestCalculateSubFormula() throws Exception{
+	public void testCalculateSubFormula() throws Exception{
 		   
 		logger.info("testCalculateSubFormula");
 		
@@ -1483,7 +1470,7 @@ public class FormulationTest extends AbstractFormuationTest {
 		   
 	   }
 	
-	public void xtestPackagingCosts() throws Exception{
+	public void testPackagingCosts() throws Exception{
 		   
 		logger.info("testPackagingCosts");
 		
@@ -1576,7 +1563,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulationWithIngRequirements() throws Exception{
+	public void testFormulationWithIngRequirements() throws Exception{
 		   
 		logger.info("testFormulationWithIngRequirements");
 		
@@ -1740,7 +1727,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestFormulationWithCostAndNutMiniMaxi() throws Exception{
+	public void testFormulationWithCostAndNutMiniMaxi() throws Exception{
 		   
 		logger.info("testFormulationWithCostAndNutMiniMaxi");
 		
@@ -1832,7 +1819,7 @@ public class FormulationTest extends AbstractFormuationTest {
 //	 *
 //	 * @throws Exception the exception
 //	 */
-//	public void xtestFormulationWithRequirements() throws Exception{
+//	public void testFormulationWithRequirements() throws Exception{
 //		   
 //	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 //			public NodeRef execute() throws Throwable {					   							
@@ -1959,234 +1946,11 @@ public class FormulationTest extends AbstractFormuationTest {
 //	   }
 	
 	/**
-	 * Test formulate product and check cost details
-	 *
-	 * @throws Exception the exception
-	 */
-	public void xtestCalculateCostDetails() throws Exception{
-		   
-		logger.info("testCalculateCostDetails");
-		
-	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			public NodeRef execute() throws Throwable {					   							
-					
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
-				
-				/*
-				 * Prepare packaging 
-				 */
-				
-				/*-- Packaging material 1 --*/					
-				PackagingMaterialData packagingMaterial1 = new PackagingMaterialData();
-				packagingMaterial1.setName("Packaging material 1");
-				packagingMaterial1.setLegalName("Legal Packaging material 1");
-				//costList
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-				costList.add(new CostListDataItem(null, 3d, "€/P", null, pkgCost1, false));
-				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
-				packagingMaterial1.setCostList(costList);					
-				packagingMaterial1NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial1, dataLists);
-				
-				/*-- Packaging material 2 --*/					
-				PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
-				packagingMaterial2.setName("Packaging material 2");
-				packagingMaterial2.setLegalName("Legal Packaging material 2");
-				//costList
-				costList.clear();
-				costList.add(new CostListDataItem(null, 1d, "€/m", null, pkgCost1, false));
-				costList.add(new CostListDataItem(null, 2d, "€/m", null, pkgCost2, false));
-				packagingMaterial2.setCostList(costList);					
-				packagingMaterial2NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial2, dataLists);
-				
-				/*-- Packaging material 1 --*/					
-				PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
-				packagingMaterial3.setName("Packaging material 3");
-				packagingMaterial3.setLegalName("Legal Packaging material 3");
-				//costList
-				costList.clear();
-				costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
-				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
-				packagingMaterial3.setCostList(costList);					
-				packagingMaterial3NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial3, dataLists);
-				
-				FinishedProductData finishedProduct = new FinishedProductData();
-				finishedProduct.setName("Produit fini 1");
-				finishedProduct.setLegalName("Legal Produit fini 1");
-				finishedProduct.setUnit(ProductUnit.kg);
-				finishedProduct.setQty(2d);
-				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
-				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PACKAGING_PRIMAIRE, packagingMaterial1NodeRef));
-				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PACKAGING_PRIMAIRE, packagingMaterial2NodeRef));
-				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PACKAGING_TERTIAIRE, packagingMaterial3NodeRef));
-				finishedProduct.setPackagingList(packagingList);		
-				
-				
-				/*
-				 * Composition
-				 */
-				
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
-				
-				/*-- Formulate product --*/
-				logger.debug("/*-- Formulate product --*/");
-				productService.formulate(finishedProductNodeRef);
-				
-				/*-- Verify formulation --*/
-				logger.debug("/*-- Verify formulation --*/");
-				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
-				
-				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
-				
-				//costs
-				int checks = 0;
-				DecimalFormat df = new DecimalFormat("0.####");
-				assertNotNull("CostDetailsList is null", formulatedProduct.getCostDetailsList());
-				for(CostDetailsListDataItem costDetailsListDataItem : formulatedProduct.getCostDetailsList()){
-					String trace = "cost: " + nodeService.getProperty(costDetailsListDataItem.getCost(), ContentModel.PROP_NAME) + "source: " + nodeService.getProperty(costDetailsListDataItem.getSource(), ContentModel.PROP_NAME) + " - value: " + costDetailsListDataItem.getValue() + " - unit: " + costDetailsListDataItem.getUnit();
-					logger.debug(trace);
-					
-					//cost1
-					if(costDetailsListDataItem.getCost().equals(cost1)){
-						
-						if(costDetailsListDataItem.getSource().equals(rawMaterial1NodeRef)){
-						
-							checks++;
-							assertEquals("cost.getValue() == 1.7325, actual values: " + trace, df.format(1.7325d), df.format(costDetailsListDataItem.getValue()));
-							assertEquals("cost.getPercentage() == 36.5314, actual values: " + trace, df.format(36.5314), df.format(costDetailsListDataItem.getPercentage()));
-							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
-						}
-						else if(costDetailsListDataItem.getSource().equals(rawMaterial2NodeRef)){
-							
-							checks++;
-							assertEquals("cost.getValue() == 1.21, actual values: " + trace, df.format(1.21d), df.format(costDetailsListDataItem.getValue()));
-							assertEquals("cost.getPercentage() == 25.5140, actual values: " + trace, df.format(25.5140), df.format(costDetailsListDataItem.getPercentage()));
-							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
-						}
-						else if(costDetailsListDataItem.getSource().equals(rawMaterial3NodeRef)){
-							
-							checks++;
-							assertEquals("cost.getValue() == 1.8, actual values: " + trace, df.format(1.8d), df.format(costDetailsListDataItem.getValue()));
-							assertEquals("cost.getPercentage() == 37.9547, actual values: " + trace, df.format(37.9547), df.format(costDetailsListDataItem.getPercentage()));
-							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
-						}	
-						else{
-							checks++;
-						}
-					}
-					
-					//cost2
-					else if(costDetailsListDataItem.getCost().equals(cost2)){
-						
-						if(costDetailsListDataItem.getSource().equals(rawMaterial1NodeRef)){
-						
-							checks++;
-							assertEquals("cost.getValue() == 1.155, actual values: " + trace, df.format(1.155d), df.format(costDetailsListDataItem.getValue()));
-							assertEquals("cost.getPercentage() == 16.0976, actual values: " + trace, df.format(16.0976), df.format(costDetailsListDataItem.getPercentage()));
-							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
-						}
-						else if(costDetailsListDataItem.getSource().equals(rawMaterial2NodeRef)){
-							
-							checks++;
-							assertEquals("cost.getValue() == 2.42, actual values: " + trace, df.format(2.42d), df.format(costDetailsListDataItem.getValue()));
-							assertEquals("cost.getPercentage() == 33.7282, actual values: " + trace, df.format(33.7282), df.format(costDetailsListDataItem.getPercentage()));
-							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
-						}
-						else if(costDetailsListDataItem.getSource().equals(rawMaterial3NodeRef)){
-							
-							checks++;
-							assertEquals("cost.getValue() == 3.6, actual values: " + trace, df.format(3.6d), df.format(costDetailsListDataItem.getValue()));
-							assertEquals("cost.getPercentage() == 50.1742, actual values: " + trace, df.format(50.1742), df.format(costDetailsListDataItem.getPercentage()));
-							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
-						}	
-						else{
-							checks++;
-						}
-					}
-					
-					//pkgCost1
-					else if(costDetailsListDataItem.getCost().equals(pkgCost1)){
-						
-						if(costDetailsListDataItem.getSource().equals(packagingMaterial1NodeRef)){
-							
-							checks++;
-							assertEquals("cost.getValue() == 1.5, actual values: " + trace, df.format(1.5d), df.format(costDetailsListDataItem.getValue()));
-							assertEquals("cost.getPercentage() == 48.9796, actual values: " + trace, df.format(48.9796), df.format(costDetailsListDataItem.getPercentage()));
-							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
-						}						
-						else if(costDetailsListDataItem.getSource().equals(packagingMaterial2NodeRef)){
-							
-							checks++;
-							assertEquals("cost.getValue() == 1.5, actual values: " + trace, df.format(1.5d), df.format(costDetailsListDataItem.getValue()));
-							assertEquals("cost.getPercentage() == 48.9796, actual values: " + trace, df.format(48.9796), df.format(costDetailsListDataItem.getPercentage()));
-							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
-						}						
-						else if(costDetailsListDataItem.getSource().equals(packagingMaterial3NodeRef)){
-							
-							checks++;
-							assertEquals("cost.getValue() == 0.0625, actual values: " + trace, df.format(0.0625d), df.format(costDetailsListDataItem.getValue()));
-							assertEquals("cost.getPercentage() == 2.0408, actual values: " + trace, df.format(2.0408), df.format(costDetailsListDataItem.getPercentage()));
-							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
-						}
-						else{
-							checks++;
-						}
-					}		
-					
-					//pkgCost2
-					else if(costDetailsListDataItem.getCost().equals(pkgCost2)){
-						
-						if(costDetailsListDataItem.getSource().equals(packagingMaterial1NodeRef)){
-							
-							checks++;
-							assertEquals("cost.getValue() == 1, actual values: " + trace, df.format(1d), df.format(costDetailsListDataItem.getValue()));
-							assertEquals("cost.getPercentage() == 24.2424, actual values: " + trace, df.format(24.2424), df.format(costDetailsListDataItem.getPercentage()));
-							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
-						}
-						else if(costDetailsListDataItem.getSource().equals(packagingMaterial2NodeRef)){
-							
-							checks++;
-							assertEquals("cost.getValue() == 3, actual values: " + trace, df.format(3d), df.format(costDetailsListDataItem.getValue()));
-							assertEquals("cost.getPercentage() == 72.7273, actual values: " + trace, df.format(72.7273), df.format(costDetailsListDataItem.getPercentage()));
-							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
-						}						
-						else if(costDetailsListDataItem.getSource().equals(packagingMaterial3NodeRef)){
-							
-							checks++;
-							assertEquals("cost.getValue() == 0.125, actual values: " + trace, df.format(0.125d), df.format(costDetailsListDataItem.getValue()));
-							assertEquals("cost.getPercentage() == 3.0303, actual values: " + trace, df.format(3.0303), df.format(costDetailsListDataItem.getPercentage()));
-							assertEquals("cost.getUnit() == €/kg, actual values: " + trace, "€/kg", costDetailsListDataItem.getUnit());
-						}
-						else{
-							checks++;
-						}
-					}
-					else{
-						checks++;
-					}
-				}
-				
-				assertEquals("Verify checks done", 12, checks);
-								
-				return null;
-
-			}},false,true);
-		   
-	   }
-	
-	/**
 	 * Test formulate product, that the yield field is calculated
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestCalculateYieldField() throws Exception{
+	public void testCalculateYieldField() throws Exception{
 		   
 		logger.info("testCalculateYieldField");
 		
@@ -2257,7 +2021,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestManualListItem() throws Exception{
+	public void testManualListItem() throws Exception{
 		   
 		logger.info("testManualListItem");
 		
@@ -2360,7 +2124,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestProcess() throws Exception{
+	public void testProcess() throws Exception{
 		 
 		logger.info("testProcess");
 		
@@ -2417,12 +2181,12 @@ public class FormulationTest extends AbstractFormuationTest {
 				boucherResourceData.setCostList(costList);
 				NodeRef boucherResourceNodeRef = productDAO.create(testFolderNodeRef, boucherResourceData, dataLists);
 				
-				ResourceProductData operateurResourceData = new ResourceProductData();
-				operateurResourceData.setName("Operateur");
-				costList = new ArrayList<CostListDataItem>();
-				costList.add(new CostListDataItem(null, 15d, "€/h", null, costMOTransfoNodeRef, false));
-				operateurResourceData.setCostList(costList);
-				NodeRef operateurResourceNodeRef = productDAO.create(testFolderNodeRef, operateurResourceData, dataLists);
+//				ResourceProductData operateurResourceData = new ResourceProductData();
+//				operateurResourceData.setName("Operateur");
+//				costList = new ArrayList<CostListDataItem>();
+//				costList.add(new CostListDataItem(null, 15d, "€/h", null, costMOTransfoNodeRef, false));
+//				operateurResourceData.setCostList(costList);
+//				NodeRef operateurResourceNodeRef = productDAO.create(testFolderNodeRef, operateurResourceData, dataLists);
 				
 				ResourceProductData hachoirResourceData = new ResourceProductData();
 				hachoirResourceData.setName("Hachoir");
@@ -2467,17 +2231,11 @@ public class FormulationTest extends AbstractFormuationTest {
 				//decoupe
 				processList.add(new ProcessListDataItem(null, 0.4d, 50d, 4d, null, null, null, decoupeNodeRef, null, boucherResourceNodeRef));
 				//hachage
-				processList.add(new ProcessListDataItem(null, 0.4d, null, null, null, null, null, hachageNodeRef, null, null));
-				processList.add(new ProcessListDataItem(null, null, 0.1d, null, null, null, null, null, null, operateurResourceNodeRef));
-				processList.add(new ProcessListDataItem(null, null, 1d, 200d, null, null, null, null, null, hachoirResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.4d, 1d, 200d, null, null, null, hachageNodeRef, null, hachoirResourceNodeRef));
 				//cuisson
-				processList.add(new ProcessListDataItem(null, 0.4d, null, null, null, null, null, cuissonNodeRef, null, null));
-				processList.add(new ProcessListDataItem(null, null, 0.1d, null, null, null, null, null, null, operateurResourceNodeRef));
-				processList.add(new ProcessListDataItem(null, null, 1d, 200d, null, null, null, null, null, cuiseurResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.4d, 1d, 200d, null, null, null, cuissonNodeRef, null, cuiseurResourceNodeRef));
 				//mélange
-				processList.add(new ProcessListDataItem(null, 0.24d, null, null, null, null, null, melangeNodeRef, null, null));
-				processList.add(new ProcessListDataItem(null, null, 0.1d, null, null, null, null, null, null, operateurResourceNodeRef));
-				processList.add(new ProcessListDataItem(null, null, 1d, 600d, null, null, null, null, null, malaxeurResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.24d, 1d, 600d, null, null, null, melangeNodeRef, null, malaxeurResourceNodeRef));
 				//ligne
 				processList.add(new ProcessListDataItem(null, 1d, 1d, 500d, null, null, null, ligneStepNodeRef, null, ligneResourceNodeRef));				
 				finishedProduct.setProcessList(processList);
@@ -2507,7 +2265,7 @@ public class FormulationTest extends AbstractFormuationTest {
 					}
 					//MOTransfo
 					if(costListDataItem.getCost().equals(costMOTransfoNodeRef)){
-						assertEquals(df.format(0.8366d), df.format(costListDataItem.getValue()));
+						assertEquals(df.format(0.83d), df.format(costListDataItem.getValue()));
 						assertEquals("€/kg", costListDataItem.getUnit());
 						checks++;
 					}
@@ -2540,8 +2298,8 @@ public class FormulationTest extends AbstractFormuationTest {
 						//hachage
 						if(p.getStep().equals(hachageNodeRef)){
 							assertEquals(0.4d, p.getQty());
-							assertEquals(null, p.getQtyResource());
-							assertEquals(null, p.getRateResource());						
+							assertEquals(1.0d, p.getQtyResource());
+							assertEquals(200.0d, p.getRateResource());						
 							assertEquals(200.0d, p.getRateProcess());
 							assertEquals(500.0d, p.getRateProduct());						
 							checks++;
@@ -2550,8 +2308,8 @@ public class FormulationTest extends AbstractFormuationTest {
 						//cuisson
 						if(p.getStep().equals(cuissonNodeRef)){
 							assertEquals(0.4d, p.getQty());
-							assertEquals(null, p.getQtyResource());
-							assertEquals(null, p.getRateResource());						
+							assertEquals(1.0d, p.getQtyResource());
+							assertEquals(200.0d, p.getRateResource());						
 							assertEquals(200.0d, p.getRateProcess());
 							assertEquals(500.0d, p.getRateProduct());						
 							checks++;
@@ -2560,8 +2318,8 @@ public class FormulationTest extends AbstractFormuationTest {
 						//mélange
 						if(p.getStep().equals(melangeNodeRef)){
 							assertEquals(0.24d, p.getQty());
-							assertEquals(null, p.getQtyResource());
-							assertEquals(null, p.getRateResource());						
+							assertEquals(1.0d, p.getQtyResource());
+							assertEquals(600.0d, p.getRateResource());						
 							assertEquals(600.0d, p.getRateProcess());
 							assertEquals(2500.0d, p.getRateProduct());						
 							checks++;
@@ -2592,7 +2350,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void testCalculateCompoPercent() throws Exception{
+	public void xxtestCalculateCompoPercent() throws Exception{
 		   
 		logger.info("testCalculateCompoPercent");
 		
@@ -2694,7 +2452,7 @@ public class FormulationTest extends AbstractFormuationTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xtestPhysicoChem() throws Exception{
+	public void testPhysicoChem() throws Exception{
 		   
 		logger.info("testPhysicoChem");
 		

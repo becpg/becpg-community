@@ -319,6 +319,4 @@ public class IngListDataItem extends BaseObject  implements Comparable<IngListDa
 	public Double getValue() {
 		return qtyPerc;
 	}
-	
-	
 }

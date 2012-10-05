@@ -25,6 +25,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.product.formulation.AbstractCalculatingVisitor;
 import fr.becpg.repo.product.formulation.CostsCalculatingVisitor;
 import fr.becpg.repo.product.formulation.NutsCalculatingVisitor;
 
@@ -156,7 +157,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 										String costCurrency = (String) nodeService.getProperty(costNodeRef, BeCPGModel.PROP_COSTCURRENCY);
 										String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT);
 
-										String suffix = CostsCalculatingVisitor.UNIT_SEPARATOR + costCurrency;
+										String suffix = AbstractCalculatingVisitor.UNIT_SEPARATOR + costCurrency;
 										if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.endsWith(suffix))) {
 											nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT,
 													CostsCalculatingVisitor.calculateUnit(productUnit, costCurrency));
@@ -221,7 +222,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 								}
 							} else {
 
-								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency + CostsCalculatingVisitor.UNIT_SEPARATOR))) {
+								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency + AbstractCalculatingVisitor.UNIT_SEPARATOR))) {
 
 									NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 
@@ -237,7 +238,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT);
 
 							// nutListUnit
-							if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.startsWith(nutUnit + CostsCalculatingVisitor.UNIT_SEPARATOR))) {
+							if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.startsWith(nutUnit + AbstractCalculatingVisitor.UNIT_SEPARATOR))) {
 
 								NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 

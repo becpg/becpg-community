@@ -34,7 +34,6 @@ import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class IngsCalculatingVisitor.
  *
@@ -93,39 +92,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		this.entityListDAO = entityListDAO;
 	}
 	
-//	@Override
-//	public FinishedProductData visit(FinishedProductData finishedProductData) {
-//		//nothing to do
-//		return finishedProductData;		
-//	}
-//
-//	@Override
-//	public RawMaterialData visit(RawMaterialData rawMaterialData) {
-//		return rawMaterialData;
-//	}
-//
-//	@Override
-//	public PackagingMaterialData visit(PackagingMaterialData packagingMaterialData) {
-//		//nothing to do
-//		return packagingMaterialData;
-//	}
-//
-//	@Override
-//	public SemiFinishedProductData visit(SemiFinishedProductData semiFinishedProductData) {
-//		// TODO Auto-generated method stub
-//		return semiFinishedProductData;
-//	}
-//
-//	@Override
-//	public LocalSemiFinishedProduct visit(LocalSemiFinishedProduct localSemiFinishedProductData) {
-//		// TODO Auto-generated method stub
-//		return localSemiFinishedProductData;
-//	}
-	
-/* (non-Javadoc)
- * @see fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData)
- */
-@Override
+	@Override
 	public ProductData visit(ProductData formulatedProduct) throws FormulateException{
 		logger.debug("Calculate ingredient list");
 		
@@ -278,13 +245,12 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			}															
 			
 			//Calculate qty
-			Double qty = FormulationHelper.getQty(compoListDataItem);
-			Double density = (productData.getDensity() != null) ? productData.getDensity():DEFAULT_DENSITY; //density is null => 1
+			Double qty = FormulationHelper.getQty(compoListDataItem, nodeService);
 			Double qtyIng = ingListDataItem.getQtyPerc();
 						
 			if(qty != null && qtyIng != null){
 				
-				Double valueToAdd = density * qty * qtyIng;
+				Double valueToAdd = qty * qtyIng;
 				totalQtyIng += valueToAdd;
 				totalQtyIngMap.put(ingNodeRef, totalQtyIng);				
 			}
@@ -568,15 +534,14 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 				}															
 				
 				//Calculate qty
-				Double qty = FormulationHelper.getQty(compoListDataItem);
-				Double density = (part.getDensity() != null) ? part.getDensity():DEFAULT_DENSITY; //density is null => 1
+				Double qty = FormulationHelper.getQty(compoListDataItem, nodeService);
 				Double qtyIng = ingListDataItem.getQtyPerc();
 							
 				if(qty != null && qtyIng != null){
 					
 					Double totalQtyIng = ingItem.getQty();
 					
-					Double valueToAdd = density * qty * qtyIng;
+					Double valueToAdd = qty * qtyIng;
 					totalQtyIng += valueToAdd;
 					ingItem.setQty(totalQtyIng);								
 				}
