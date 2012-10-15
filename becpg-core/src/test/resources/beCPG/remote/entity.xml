@@ -6,7 +6,6 @@
   <bcpg:startEffectivity type="d:datetime">2012-02-27T09:37:52.682+01:00</bcpg:startEffectivity>
   <cm:owner type="d:text"></cm:owner>
   <bcpg:productState type="d:text">Valid</bcpg:productState>
-
   <cm:creator type="d:text">admin</cm:creator>
   <cm:modifier type="d:text">admin</cm:modifier>
   <bcpg:code type="d:text">MP2043</bcpg:code>
