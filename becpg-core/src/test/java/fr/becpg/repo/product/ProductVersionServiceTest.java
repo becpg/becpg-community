@@ -4,8 +4,10 @@
 package fr.becpg.repo.product;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -24,9 +26,15 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.test.RepoBaseTestCase;
 
 /**
@@ -46,7 +54,13 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 	private ProductService productService;
 
 	private NamespaceService namespaceService;
+	
+	private EntityVersionService entityVersionService;
+	
+	private EntityListDAO entityListDAO;
 
+	private NodeRef rawMaterialNodeRef;
+	private NodeRef finishedProductNodeRef;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -62,82 +76,69 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 		versionService = (VersionService) ctx.getBean("versionService");
 		productService = (ProductService) ctx.getBean("productService");
 		namespaceService = (NamespaceService) ctx.getBean("namespaceService");
-
+		entityVersionService = (EntityVersionService) ctx.getBean("entityVersionService");
+		entityListDAO = (EntityListDAO) ctx.getBean("entityListDAO");
 	}
 
-	// /**
-	// * Test create version.
-	// */
-	// public void testCreateVersion(){
-	//
-	// transactionService.getRetryingTransactionHelper().doInTransaction(new
-	// RetryingTransactionCallback<NodeRef>(){
-	// @Override
-	// public NodeRef execute() throws Throwable {
-	//
-	// logger.info("testCreateVersion");
-	//
-	// NodeRef rawMaterialNodeRef =
-	// createRawMaterial(testFolderNodeRef,"MP test report");
-	//
-	// Version vRawMaterialNodeRefV0_1 =
-	// versionService.createVersion(rawMaterialNodeRef, null);
-	//
-	// logger.debug("version: " + vRawMaterialNodeRefV0_1.getVersionLabel());
-	// assertEquals("0.1", vRawMaterialNodeRefV0_1.getVersionLabel());
-	//
-	// NodeRef listContainerNodeRef =
-	// entityListDAO.getListContainer(rawMaterialNodeRef);
-	// assertNotNull("Has list container", listContainerNodeRef);
-	//
-	// Collection<QName> dataLists = productDictionaryService.getDataLists();
-	// ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
-	// NodeRef evRawMaterialNodeRefV0_1 =
-	// entityVersionService.getEntityVersion(vRawMaterialNodeRefV0_1);
-	// assertNotNull(evRawMaterialNodeRefV0_1);
-	// ProductData vRawMaterial = productDAO.find(evRawMaterialNodeRefV0_1,
-	// dataLists);
-	//
-	// assertEquals("Check costs size", rawMaterial.getCostList().size(),
-	// vRawMaterial.getCostList().size());
-	//
-	// for(int i=0 ; i < rawMaterial.getCostList().size() ; i++){
-	// CostListDataItem costListDataItem = rawMaterial.getCostList().get(i);
-	// CostListDataItem vCostListDataItem = vRawMaterial.getCostList().get(i);
-	//
-	// assertEquals("Check cost", costListDataItem.getCost(),
-	// vCostListDataItem.getCost());
-	// assertEquals("Check cost unit", costListDataItem.getUnit(),
-	// vCostListDataItem.getUnit());
-	// assertEquals("Check cost value", costListDataItem.getValue(),
-	// vCostListDataItem.getValue());
-	// assertNotSame("Check cost noderef", costListDataItem.getNodeRef(),
-	// vCostListDataItem.getNodeRef());
-	// }
-	//
-	// Version vRawMaterialNodeRefV0_2 =
-	// versionService.createVersion(rawMaterialNodeRef, null);
-	// logger.debug("version: " + vRawMaterialNodeRefV0_2.getVersionLabel());
-	// assertEquals("0.2", vRawMaterialNodeRefV0_2.getVersionLabel());
-	//
-	// Map<String, Serializable> properties = new HashMap<String,
-	// Serializable>();
-	// properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MINOR);
-	// Version vRawMaterialNodeRefV0_3 =
-	// versionService.createVersion(rawMaterialNodeRef, properties);
-	// assertEquals("0.3", vRawMaterialNodeRefV0_3.getVersionLabel());
-	//
-	// properties.clear();
-	// properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-	// Version vRawMaterialNodeRefV1_0 =
-	// versionService.createVersion(rawMaterialNodeRef, properties);
-	// assertEquals("1.0", vRawMaterialNodeRefV1_0.getVersionLabel());
-	//
-	// return null;
-	//
-	// }},false,true);
-	//
-	// }
+//	/**
+//	 * Test create version.
+//	 */
+//	public void testCreateVersion() {
+//
+//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+//			@Override
+//			public NodeRef execute() throws Throwable {
+//
+//				logger.info("testCreateVersion");
+//
+//				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
+//
+//				Version vRawMaterialNodeRefV0_1 = versionService.createVersion(rawMaterialNodeRef, null);
+//
+//				logger.debug("version: " + vRawMaterialNodeRefV0_1.getVersionLabel());
+//				assertEquals("0.1", vRawMaterialNodeRefV0_1.getVersionLabel());
+//
+//				NodeRef listContainerNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
+//				assertNotNull("Has list container", listContainerNodeRef);
+//
+//				Collection<QName> dataLists = productDictionaryService.getDataLists();
+//				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
+//				NodeRef evRawMaterialNodeRefV0_1 = entityVersionService.getEntityVersion(vRawMaterialNodeRefV0_1);
+//				assertNotNull(evRawMaterialNodeRefV0_1);
+//				ProductData vRawMaterial = productDAO.find(evRawMaterialNodeRefV0_1, dataLists);
+//
+//				assertEquals("Check costs size", rawMaterial.getCostList().size(), vRawMaterial.getCostList().size());
+//
+//				for (int i = 0; i < rawMaterial.getCostList().size(); i++) {
+//					CostListDataItem costListDataItem = rawMaterial.getCostList().get(i);
+//					CostListDataItem vCostListDataItem = vRawMaterial.getCostList().get(i);
+//
+//					assertEquals("Check cost", costListDataItem.getCost(), vCostListDataItem.getCost());
+//					assertEquals("Check cost unit", costListDataItem.getUnit(), vCostListDataItem.getUnit());
+//					assertEquals("Check cost value", costListDataItem.getValue(), vCostListDataItem.getValue());
+//					assertNotSame("Check cost noderef", costListDataItem.getNodeRef(), vCostListDataItem.getNodeRef());
+//				}
+//
+//				Version vRawMaterialNodeRefV0_2 = versionService.createVersion(rawMaterialNodeRef, null);
+//				logger.debug("version: " + vRawMaterialNodeRefV0_2.getVersionLabel());
+//				assertEquals("0.2", vRawMaterialNodeRefV0_2.getVersionLabel());
+//
+//				Map<String, Serializable> properties = new HashMap<String, Serializable>();
+//				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MINOR);
+//				Version vRawMaterialNodeRefV0_3 = versionService.createVersion(rawMaterialNodeRef, properties);
+//				assertEquals("0.3", vRawMaterialNodeRefV0_3.getVersionLabel());
+//
+//				properties.clear();
+//				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+//				Version vRawMaterialNodeRefV1_0 = versionService.createVersion(rawMaterialNodeRef, properties);
+//				assertEquals("1.0", vRawMaterialNodeRefV1_0.getVersionLabel());
+//
+//				return null;
+//
+//			}
+//		}, false, true);
+//
+//	}
 
 	/**
 	 * Test check out check in.
@@ -373,6 +374,72 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				expected = "/app:company_home/cm:Products/cm:ToValidate/cm:RawMaterial/cm:Frozen/cm:Fish/";
 				assertEquals("check path", expected, path.substring(0, expected.length()));
 
+				return null;
+
+			}
+		}, false, true);
+	}
+	
+	/**
+	 * Test some lists are version sensitive
+	 */
+	public void xxcommentedtestVersionSensitiveList() {
+		
+		logger.info("testVersionSensitiveList");
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
+
+				ProductData fpData = new FinishedProductData();
+				fpData.setName("FP");
+				fpData.setHierarchy1(HIERARCHY1_FROZEN_REF);
+				fpData.setHierarchy2(HIERARCHY2_PIZZA_REF);
+				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+				compoList.add(new CompoListDataItem(null, 1, 2d, null, null, CompoListUnit.kg, null, null, DeclarationType.Declare, rawMaterialNodeRef));
+				fpData.setCompoList(compoList);
+				finishedProductNodeRef = productDAO.create(testFolderNodeRef, fpData, productDictionaryService.getDataLists());
+
+				// add Checkout aspect
+				Map<QName, Serializable> props = new HashMap<QName, Serializable>(1);
+				props.put(ContentModel.PROP_VERSION_LABEL, "0.1");
+				nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, props);
+				
+				// Check out
+				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+
+				// Check in
+				NodeRef newRawMaterialNodeRef = null;
+
+				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);
+				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+
+				assertNotNull("Check new version exists", newRawMaterialNodeRef);
+				
+				return null;
+
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				
+				//check version sensitive
+				VersionHistory versionHistory = versionService.getVersionHistory(rawMaterialNodeRef);
+				logger.info("###versionHistory: " + versionHistory.getAllVersions());
+				Version version = versionHistory.getVersion("0.1");
+				assertNotNull(version);
+				
+				NodeRef entityVersionRef = entityVersionService.getEntityVersion(version);
+				ProductData fpData = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+
+				assertEquals(entityVersionRef, fpData.getCompoList().get(0).getProduct());
+				
 				return null;
 
 			}

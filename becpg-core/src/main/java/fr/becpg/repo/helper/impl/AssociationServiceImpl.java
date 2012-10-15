@@ -55,12 +55,12 @@ public class AssociationServiceImpl implements AssociationService {
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
 		
 		boolean createAssoc = true;
-		if(!assocRefs.isEmpty()){
-			if(assocRefs.get(0).equals(assocNodeRef)){
+		if(!assocRefs.isEmpty() && assocRefs.get(0).getTargetRef() != null){
+			if(assocRefs.get(0).getTargetRef().equals(assocNodeRef)){
 				createAssoc = false;
 			}
 			else{
-				nodeService.removeAssociation(nodeRef, assocNodeRef, qName);
+				nodeService.removeAssociation(nodeRef, assocRefs.get(0).getTargetRef(), qName);
 			}
 		}
 		

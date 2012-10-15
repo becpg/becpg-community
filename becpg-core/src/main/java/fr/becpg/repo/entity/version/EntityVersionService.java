@@ -22,7 +22,7 @@ public interface EntityVersionService {
 	 * Creates the entity version with datalists and checkin
 	 *
 	 */
-	public void createVersionAndCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
+	public NodeRef createVersionAndCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
 	
 	/**
 	 * Get the entity version with datalists

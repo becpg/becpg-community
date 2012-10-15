@@ -344,7 +344,6 @@
 		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 	
-	
 	<bean id="entityCheckOutCheckInServicePolicy"
 		class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy"
 		 parent="abstractBeCPGPolicy">
@@ -352,10 +351,10 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="permissionService" ref="permissionService" />
 		<property name="entityVersionService" ref="entityVersionService" />
+		<property name="wUsedListService" ref="wUsedListService" />
+		<property name="associationService" ref="associationService" />
 	</bean>
 
-	
-	
 	<!-- Entity Datalist Policies -->
 	<bean id="initEntityListPolicy"
 		class="fr.becpg.repo.entity.datalist.policy.InitEntityListPolicy"

@@ -24,11 +24,16 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.MPMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.datalist.WUsedListService;
+import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.entity.event.CheckInEntityEvent;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -51,8 +56,9 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
     private EntityListDAO entityListDAO;
     private PermissionService permissionService;
     private ApplicationContext applicationContext;
-
     private EntityVersionService entityVersionService;
+    private WUsedListService wUsedListService;
+    private AssociationService associationService;
     
 
 	public void setAuthenticationService(AuthenticationService authenticationService) {
@@ -76,6 +82,14 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 	
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
+	}
+
+	public void setwUsedListService(WUsedListService wUsedListService) {
+		this.wUsedListService = wUsedListService;
+	}
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	/**
@@ -135,6 +149,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
             String contentUrl,
             boolean keepCheckedOut) {
 		
+			NodeRef entityVersionRef = null;
 			NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
 			
 			QName type = nodeService.getType(origNodeRef);
@@ -147,7 +162,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);		
 			policyBehaviourFilter.disableBehaviour(type);
 			try {
-				entityVersionService.createVersionAndCheckin(origNodeRef, workingCopyNodeRef);
+				entityVersionRef = entityVersionService.createVersionAndCheckin(origNodeRef, workingCopyNodeRef);
 			} finally {
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_CODE);
 				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
@@ -157,6 +172,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 				policyBehaviourFilter.enableBehaviour(type);
 			}
 			
+			//frozeVersionSensitiveLists(origNodeRef, entityVersionRef);
 	}
 		
 	@Override
@@ -211,5 +227,26 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
         return original;
     }
 
-
+//    private void frozeVersionSensitiveLists(NodeRef origNodeRef, NodeRef entityVersionRef){
+//    	
+//    	logger.debug("frozeVersionSensitiveLists for origNodeRef: " + origNodeRef + " and entityVersionRef: " + entityVersionRef);
+//    	
+//    	//TODO : not generic
+//    	QName [] listQNames = {BeCPGModel.TYPE_COMPOLIST, BeCPGModel.TYPE_PACKAGINGLIST, MPMModel.TYPE_PROCESSLIST};
+//    	QName [] associationQNames = {BeCPGModel.ASSOC_COMPOLIST_PRODUCT, BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT, MPMModel.ASSOC_PL_PRODUCT};
+//    	int i=0;
+//    	for(QName listQName : listQNames){
+//    		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(origNodeRef, listQName, RepoConsts.MAX_DEPTH_LEVEL);
+//    		frozeVersionSensitiveNodes(wUsedData, entityVersionRef, associationQNames[i]);
+//    		i++;
+//    	}    	
+//    }
+//    
+//    private void frozeVersionSensitiveNodes(MultiLevelListData wUsedData, NodeRef entityVersionRef, QName associationQName){
+//    	
+//    	for(Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()){
+//    		logger.debug("frozeVersionSensitiveNodes, entityListItem: " + kv.getKey() + " - associationQName: " + associationQName + " - entityVersionRef: " + entityVersionRef);
+//    		associationService.update(kv.getKey(), associationQName, entityVersionRef);
+//    	}
+//    }
 }
