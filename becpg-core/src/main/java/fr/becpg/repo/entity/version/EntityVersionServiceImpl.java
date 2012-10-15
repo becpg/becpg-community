@@ -105,7 +105,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	@Override
-	public void createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
+	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 
 
 		logger.debug("createEntityVersion: " + origNodeRef);
@@ -131,14 +131,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		 }, AuthenticationUtil.getSystemUserName());
 
 		Map<QName, Serializable> versionProperties = nodeService.getProperties(versionNodeRef);
-		
-		String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + VERSION_NAME_DELIMITER
-					+ nodeService.getProperty(origNodeRef, ContentModel.PROP_VERSION_LABEL);
-			versionProperties.put(ContentModel.PROP_NAME, name);
-			nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionProperties);
 
-			updateVersionEffectivity(origNodeRef, versionNodeRef);
-		
+		String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + VERSION_NAME_DELIMITER
+				+ nodeService.getProperty(origNodeRef, ContentModel.PROP_VERSION_LABEL);
+		versionProperties.put(ContentModel.PROP_NAME, name);
+		nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionProperties);
+
+		updateVersionEffectivity(origNodeRef, versionNodeRef);
+		return versionNodeRef;
 	}
 
 	private void updateVersionEffectivity(NodeRef entityNodeRef, NodeRef versionNodeRef) {
@@ -281,9 +281,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		for (ChildAssociationRef versionAssoc : versionAssocs) {
 
 			NodeRef versionNodeRef = versionAssoc.getChildRef();
-
-			if (version.getVersionLabel().equals(
-					nodeService.getProperty(versionNodeRef, ContentModel.PROP_VERSION_LABEL))) {
+			String entityVersionLabel = (String)nodeService.getProperty(versionNodeRef, ContentModel.PROP_VERSION_LABEL);
+			logger.debug("versionLabel: " + version.getVersionLabel() + " - entityVersionLabel: " + entityVersionLabel);
+			
+			if (version.getVersionLabel().equals(entityVersionLabel)) {
 				return versionNodeRef;
 			}
 		}

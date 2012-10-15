@@ -554,6 +554,7 @@ public class ECOServiceImpl implements ECOService {
 						
 						if(replacementLinks.containsKey(c.getNodeRef())){
 
+							logger.debug("replace node " + c.getNodeRef() + " by node " + replacementLinks.get(c.getNodeRef()));
 							c.setProduct(replacementLinks.get(c.getNodeRef()));
 						}
 					}
