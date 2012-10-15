@@ -5,7 +5,7 @@
   <classpathentry kind="src" path="src/main/config" excluding="**README-*|**/*.properties|**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar" sourcepath="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5-sources.jar"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/abdera-client-0.4.0-incubating/4.0.d/abdera-client-0.4.0-incubating-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/abdera-core-0.4.0-incubating/4.0.d/abdera-core-0.4.0-incubating-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/abdera-extensions-json-0.4.0-incubating/4.0.d/abdera-extensions-json-0.4.0-incubating-4.0.d-community.jar"/>
@@ -269,6 +269,7 @@
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/xmlsec-1.4.1/4.0.d/xmlsec-1.4.1-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/xpp3-1.1.3_8/4.0.d/xpp3-1.1.3_8-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/xstream-1.2.2/4.0.d/xstream-1.2.2-4.0.d-community.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/alfresco-share-4.0.d/4.0.d/alfresco-share-4.0.d-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/security/spring-security-openid/3.1.0.RELEASE/spring-security-openid-3.1.0.RELEASE.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/google/inject/guice/2.0/guice-2.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/aopalliance/aopalliance/1.0/aopalliance-1.0.jar" sourcepath="M2_REPO/aopalliance/aopalliance/1.0/aopalliance-1.0-sources.jar"/>
