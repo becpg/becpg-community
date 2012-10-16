@@ -36,7 +36,7 @@ import fr.becpg.repo.web.scripts.product.CharactDetailsHelper;
  * 
  * @author querephi
  */
-public class CharactDetailsFormulationTest extends AbstractFormulationTest {
+public class CharactDetailsFormulationTest extends AbstractFormulation {
 
 	@Override
 	protected void setUp() throws Exception {

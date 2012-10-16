@@ -9,14 +9,14 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.product.data.AbstractEffectiveDataItem;
 
 /**
  * The Class PriceListDataItem.
  *
  * @author querephi
  */
-public class PriceListDataItem extends BaseObject{
+public class PriceListDataItem extends AbstractEffectiveDataItem{
 		
 	private NodeRef nodeRef;
 		
@@ -30,9 +30,6 @@ public class PriceListDataItem extends BaseObject{
 	
 	private Integer prefRank = null;
 	
-	private Date startEffectivity;
-	
-	private Date endEffectivity;
 	
 	private NodeRef cost;
 	
@@ -86,21 +83,7 @@ public class PriceListDataItem extends BaseObject{
 		this.prefRank = prefRank;
 	}
 
-	public Date getStartEffectivity() {
-		return startEffectivity;
-	}
 
-	public void setStartEffectivity(Date startEffectivity) {
-		this.startEffectivity = startEffectivity;
-	}
-
-	public Date getEndEffectivity() {
-		return endEffectivity;
-	}
-
-	public void setEndEffectivity(Date endEffectivity) {
-		this.endEffectivity = endEffectivity;
-	}
 
 	public NodeRef getCost() {
 		return cost;
@@ -175,12 +158,10 @@ public class PriceListDataItem extends BaseObject{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((cost == null) ? 0 : cost.hashCode());
-		result = prime * result + ((endEffectivity == null) ? 0 : endEffectivity.hashCode());
 		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
 		result = prime * result + ((prefRank == null) ? 0 : prefRank.hashCode());
 		result = prime * result + ((purchaseUnit == null) ? 0 : purchaseUnit.hashCode());
 		result = prime * result + ((purchaseValue == null) ? 0 : purchaseValue.hashCode());
-		result = prime * result + ((startEffectivity == null) ? 0 : startEffectivity.hashCode());
 		result = prime * result + ((suppliers == null) ? 0 : suppliers.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
@@ -201,11 +182,6 @@ public class PriceListDataItem extends BaseObject{
 				return false;
 		} else if (!cost.equals(other.cost))
 			return false;
-		if (endEffectivity == null) {
-			if (other.endEffectivity != null)
-				return false;
-		} else if (!endEffectivity.equals(other.endEffectivity))
-			return false;
 		if (nodeRef == null) {
 			if (other.nodeRef != null)
 				return false;
@@ -225,11 +201,6 @@ public class PriceListDataItem extends BaseObject{
 			if (other.purchaseValue != null)
 				return false;
 		} else if (!purchaseValue.equals(other.purchaseValue))
-			return false;
-		if (startEffectivity == null) {
-			if (other.startEffectivity != null)
-				return false;
-		} else if (!startEffectivity.equals(other.startEffectivity))
 			return false;
 		if (suppliers == null) {
 			if (other.suppliers != null)
@@ -252,7 +223,7 @@ public class PriceListDataItem extends BaseObject{
 	@Override
 	public String toString() {
 		return "PriceListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", purchaseValue=" + purchaseValue + ", purchaseUnit=" + purchaseUnit
-				+ ", prefRank=" + prefRank + ", startEffectivity=" + startEffectivity + ", endEffectivity=" + endEffectivity + ", cost=" + cost + ", suppliers=" + suppliers + "]";
+				+ ", prefRank=" + prefRank + ", cost=" + cost + ", suppliers=" + suppliers + "]";
 	}
 	
 	

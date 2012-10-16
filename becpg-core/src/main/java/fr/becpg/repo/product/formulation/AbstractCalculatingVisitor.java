@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.ProductDAO;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
@@ -71,9 +72,9 @@ public class AbstractCalculatingVisitor {
 		
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct);
 		
-		if(formulatedProduct.getCompoList() != null && formulatedProduct.getCompoList().size()>0){
+		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)){
 		
-			for(CompoListDataItem compoItem : formulatedProduct.getCompoList()){
+			for(CompoListDataItem compoItem : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE)){
 				Double qty = FormulationHelper.getQty(compoItem, nodeService);
 				
 				if(qty != null){

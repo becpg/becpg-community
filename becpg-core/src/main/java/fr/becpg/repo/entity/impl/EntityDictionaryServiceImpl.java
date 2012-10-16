@@ -4,6 +4,7 @@ import org.alfresco.service.namespace.QName;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.MPMModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
 @Service
@@ -30,5 +31,24 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 			
 		return wUsedList;
 	}
+	
+	
+
+
+	@Override
+	public QName getDefaultPivotAssoc(QName dataListItemType) {
+
+		
+		if(BeCPGModel.TYPE_COMPOLIST.equals(dataListItemType)){
+			return BeCPGModel.ASSOC_COMPOLIST_PRODUCT;
+		} else if(BeCPGModel.TYPE_PACKAGINGLIST.equals(dataListItemType)){
+			return BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT;
+		} else if(MPMModel.TYPE_PROCESSLIST.equals(dataListItemType)){
+			return MPMModel.ASSOC_PL_PRODUCT;
+		}
+		
+		return null;
+	}
+
 
 }

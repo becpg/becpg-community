@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,10 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
-import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -273,75 +270,4 @@ public class EntityServiceTest extends RepoBaseTestCase {
 		assertTrue(((String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME)).endsWith((String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME)));
 	}
 	
-	public void testEffectivity(){
-		
-	final Date start = new Date();
-	final Date end = new Date();	
-	final Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(BeCPGModel.TYPE_PRICELIST);
-		
-	sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-				
-				
-				/*-- Create raw material --*/		
-				logger.debug("/*-- Create raw material --*/");
-	
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				//Costs
-				properties.put(ContentModel.PROP_NAME, "cost1");			 					 				
-				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-				NodeRef cost = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
-			
-				
-				PriceListDataItem priceListDataItem = new PriceListDataItem();
-				priceListDataItem.setStartEffectivity(start);
-				priceListDataItem.setEndEffectivity(end);
-				priceListDataItem.setCost(cost);
-				
-				RawMaterialData rawMaterial1 = new RawMaterialData();
-				rawMaterial1.setName("Raw material 1");
-				
-				List<PriceListDataItem> priceList = new LinkedList<PriceListDataItem>();
-				priceList.add(priceListDataItem);
-				rawMaterial1.setPriceList(priceList);
-			
-				
-				NodeRef rawMaterialNodeRef =  productDAO.create(testFolderNodeRef, rawMaterial1, dataLists);
-				
-				// load SF and test it
-				rawMaterial1 = (RawMaterialData)productDAO.find(rawMaterialNodeRef, dataLists);				
-				assertNotNull("check priceList", rawMaterial1.getPriceList());
-				
-				for(PriceListDataItem p : rawMaterial1.getPriceList()){
-
-						assertEquals(start.getTime(), p.getStartEffectivity().getTime());
-						assertEquals(end.getTime(), p.getEndEffectivity().getTime());
-				}
-				
-				return rawMaterialNodeRef;
-				
-			}
-		}, false, true);
-		
-	 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-		public NodeRef execute() throws Throwable {
-
-			NodeRef rawMaterialNodeRef = copyService.copyAndRename(sfNodeRef, testFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-			
-
-			RawMaterialData rawMaterial1 =  (RawMaterialData)productDAO.find(rawMaterialNodeRef, dataLists);		
-			assertNotNull("check priceList", rawMaterial1.getPriceList());
-			
-			for(PriceListDataItem p : rawMaterial1.getPriceList()){
-				
-				assertEquals(start.getTime(), p.getStartEffectivity().getTime());
-				assertEquals(end.getTime(), p.getEndEffectivity().getTime());
-			}
-			
-			return rawMaterialNodeRef;
-		}
-	}, false, true);
-	}
-
 }

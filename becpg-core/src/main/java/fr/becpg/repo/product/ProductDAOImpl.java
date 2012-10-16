@@ -34,6 +34,7 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.product.data.EffectiveDataItem;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.PackagingKitData;
@@ -399,7 +400,11 @@ public class ProductDAOImpl implements ProductDAO {
 	@Override
 	public AllergenListDataItem loadAllergenListItem(NodeRef listItemNodeRef) {
 		List<AssociationRef> allergenAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_ALLERGEN);
-		NodeRef allergenNodeRef = (allergenAssocRefs.get(0)).getTargetRef();
+		
+		NodeRef allergenNodeRef = null;
+		if(allergenAssocRefs!=null && allergenAssocRefs.size()>0){
+			allergenNodeRef = (allergenAssocRefs.get(0)).getTargetRef();
+		}
 
 		List<AssociationRef> volSourcesAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES);
 		List<NodeRef> volSources = new ArrayList<NodeRef>(volSourcesAssocRefs.size());
@@ -473,12 +478,20 @@ public class ProductDAOImpl implements ProductDAO {
 							(Double) properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), compoListUnit, (Double) properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC),
 							(Double) properties.get(BeCPGModel.PROP_COMPOLIST_YIELD_PERC), CompoListDataItem.parseDeclarationType((String) properties
 									.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE)), part);
+					setEffectivity(compoListDataItem,properties);
+					
 					compoList.add(compoListDataItem);
 				}
 			}
 		}
 
 		return compoList;
+	}
+
+	private void setEffectivity(EffectiveDataItem effectiveDataItem, Map<QName, Serializable> properties) {
+		effectiveDataItem.setStartEffectivity((Date) properties.get(BeCPGModel.PROP_START_EFFECTIVITY));
+		effectiveDataItem.setEndEffectivity((Date) properties.get(BeCPGModel.PROP_END_EFFECTIVITY));
+		
 	}
 
 	/**
@@ -819,6 +832,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 					PackagingListDataItem packagingListDataItem = new PackagingListDataItem(listItemNodeRef, (Double) properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY),
 							packagingListUnit, (String) properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), productNodeRef);
+					setEffectivity(packagingListDataItem,properties);
 					packagingList.add(packagingListDataItem);
 				}
 			}
@@ -963,7 +977,8 @@ public class ProductDAOImpl implements ProductDAO {
 							(Double) properties.get(MPMModel.PROP_PL_QTY_RESOURCE), (Double) properties.get(MPMModel.PROP_PL_RATE_RESOURCE),
 							(Double) properties.get(MPMModel.PROP_PL_YIELD), (Double) properties.get(MPMModel.PROP_PL_RATE_PROCESS),
 							(Double) properties.get(MPMModel.PROP_PL_RATE_PRODUCT), stepNodeRef, productNodeRef, resourceNodeRef);
-
+					setEffectivity(processListDataItem,properties);
+					
 					processList.add(processListDataItem);
 				}
 			}
@@ -2190,11 +2205,6 @@ public class ProductDAOImpl implements ProductDAO {
 				}
 			}
 		}
-	}
-
-	private String getCostDetailsKey(NodeRef cost, NodeRef source) {
-
-		return String.format(KEY_COST_DETAILS, cost, source);
 	}
 
 }

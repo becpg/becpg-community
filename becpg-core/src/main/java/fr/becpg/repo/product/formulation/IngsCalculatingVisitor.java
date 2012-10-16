@@ -24,6 +24,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductVisitor;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ing.CompositeIng;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -97,7 +98,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		logger.debug("Calculate ingredient list");
 		
 		// no compo => no formulation
-		if(formulatedProduct.getCompoList() == null){			
+		if(!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)){			
 			logger.debug("no compo => no formulation");
 			return formulatedProduct;
 		}
@@ -150,7 +151,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 */
 	private void calculateIL(ProductData formulatedProduct, ProductData productSpecicationData) throws FormulateException{
 	
-		List<CompoListDataItem> compoList = formulatedProduct.getCompoList();
+		List<CompoListDataItem> compoList = formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE);
 		Map<NodeRef, IngListDataItem> ingMap = new HashMap<NodeRef, IngListDataItem>();
 		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<NodeRef, ReqCtrlListDataItem>();
 		Map<NodeRef, Double> totalQtyIngMap = new HashMap<NodeRef, Double>();
@@ -401,7 +402,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 */
 	private List<CompositeIng> calculateILL(ProductData productData) throws FormulateException{
 		
-		List<CompoListDataItem> compoList = productData.getCompoList();
+		List<CompoListDataItem> compoList = productData.getCompoList(EffectiveFilters.EFFECTIVE);
 		List<CompositeIng> compositeIngList = new ArrayList<CompositeIng>();
 				
 		CompositeIng defaultCompositeIng = new CompositeIng(null, null);		

@@ -33,7 +33,7 @@
    <import resource="classpath:alfresco/module/${artifactId}/context/script-services-context.xml" />  
    <import resource="classpath:alfresco/module/${artifactId}/context/ecm-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/gs1-context.xml" />
-  
+  	<import resource="classpath:alfresco/module/${artifactId}/context/publication-context.xml" />
   
 <!--   	
 	 <bean id="${artifactId}.becpgCoreModule" class="fr.becpg.BeCPGCoreModule" parent="module.baseComponent" >

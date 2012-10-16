@@ -19,6 +19,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.product.ProductVisitor;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -70,20 +71,20 @@ public class CostsCalculatingVisitor extends AbstractCalculatingVisitor implemen
 		
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct);
 		
-		if(formulatedProduct.getCompoList() != null && formulatedProduct.getCompoList().size()>0){									
-			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList());		
+		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)){									
+			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE));		
 			visitCompoListChildren(formulatedProduct, composite, simpleListDataMap, DEFAULT_LOSS_RATIO, netWeight);
 		}
 
-		if(formulatedProduct.getPackagingList() != null && formulatedProduct.getPackagingList().size()>0){
-			for(PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList()){
+		if(formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE)){
+			for(PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE)){
 				Double qty = FormulationHelper.getQty(packagingListDataItem);
 				visitPart(packagingListDataItem.getProduct(), simpleListDataMap, qty, netWeight);
 			}
 		}
 
-		if(formulatedProduct.getProcessList() != null && formulatedProduct.getProcessList().size()>0){			
-			for(ProcessListDataItem processListDataItem : formulatedProduct.getProcessList()){
+		if(formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)){			
+			for(ProcessListDataItem processListDataItem : formulatedProduct.getProcessList(EffectiveFilters.EFFECTIVE)){
 				
 				Double qty = FormulationHelper.getQty(processListDataItem);
 				if(processListDataItem.getResource() != null && qty != null){

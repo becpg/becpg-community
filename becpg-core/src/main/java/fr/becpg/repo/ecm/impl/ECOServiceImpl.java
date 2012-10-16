@@ -41,6 +41,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.ProductService;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -550,7 +551,7 @@ public class ECOServiceImpl implements ECOService {
 				//TODO not generic
 				if(dataListQName.equals(BeCPGModel.TYPE_COMPOLIST)){
 					
-					for(CompoListDataItem c : productToFormulateData.getCompoList()){
+					for(CompoListDataItem c : productToFormulateData.getCompoList(EffectiveFilters.FUTUR)){
 						
 						if(replacementLinks.containsKey(c.getNodeRef())){
 
@@ -560,7 +561,7 @@ public class ECOServiceImpl implements ECOService {
 				}
 				else if(dataListQName.equals(BeCPGModel.TYPE_PACKAGINGLIST)){
 					
-					for(PackagingListDataItem p : productToFormulateData.getPackagingList()){
+					for(PackagingListDataItem p : productToFormulateData.getPackagingList(EffectiveFilters.FUTUR)){
 						
 						if(replacementLinks.containsKey(p.getNodeRef())){
 							

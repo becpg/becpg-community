@@ -5,14 +5,14 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.product.data.AbstractEffectiveDataItem;
 
 /**
  * The Class ProcessListDataItem.
  *
  * @author querephi
  */
-public class ProcessListDataItem extends BaseObject{
+public class ProcessListDataItem extends AbstractEffectiveDataItem {
 	
 	private NodeRef nodeRef;		
 	private Double qty = 0d;	

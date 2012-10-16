@@ -66,4 +66,6 @@ public interface ProductDictionaryService {
 //	public void initializeRepoHierarchy(NodeRef containerNodeRef);
 	
 	public QName getWUsedList(NodeRef childNodeRef);
+	
+
 }
