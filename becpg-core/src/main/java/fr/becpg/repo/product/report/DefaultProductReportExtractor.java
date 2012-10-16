@@ -25,6 +25,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -198,10 +199,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		}
 
 		// compoList
-		if (productData.getCompoList() != null) {
+		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
 			Element compoListElt = dataListsElt.addElement(TAG_COMPOLIST);
 
-			for (CompoListDataItem dataItem : productData.getCompoList()) {
+			for (CompoListDataItem dataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
 
 				String partName = (String) nodeService.getProperty(dataItem.getProduct(), ContentModel.PROP_NAME);
 				String legalName = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_LEGAL_NAME);

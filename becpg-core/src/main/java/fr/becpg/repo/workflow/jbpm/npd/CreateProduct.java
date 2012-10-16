@@ -37,6 +37,7 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductService;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 
 /**
@@ -289,10 +290,10 @@ public class CreateProduct extends JBPMSpringActionHandler {
 		 ProductData productData  = productDAO.find(productNodeRef, dataLists);
 		 ProductData sourceData = productDAO.find(sourceNodeRef, dataLists);
 		 if (typeCompolist.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
- 			productData.setPackagingList(sourceData.getPackagingList());
+ 			productData.setPackagingList(sourceData.getPackagingList(EffectiveFilters.FUTUR));
  		}
 		 else if (typeCompolist.equals(BeCPGModel.TYPE_COMPOLIST)) {
- 			productData.setCompoList(sourceData.getCompoList());
+ 			productData.setCompoList(sourceData.getCompoList(EffectiveFilters.FUTUR));
  		}
 		 
 		 productDAO.update(productNodeRef, productData, dataLists);

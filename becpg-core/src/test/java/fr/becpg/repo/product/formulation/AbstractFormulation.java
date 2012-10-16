@@ -30,11 +30,11 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.test.RepoBaseTestCase;
 
-public class AbstractFormulationTest extends RepoBaseTestCase{
+public class AbstractFormulation extends RepoBaseTestCase{
 	
 
 	/** The logger. */
-	protected static Log logger = LogFactory.getLog(AbstractFormulationTest.class);
+	protected static Log logger = LogFactory.getLog(AbstractFormulation.class);
 
 	
 	/** The product service. */

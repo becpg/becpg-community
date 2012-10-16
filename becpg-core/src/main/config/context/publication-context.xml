@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+<beans>
+
+	<bean id="mailingListChannelType" class="fr.becpg.repo.publishing.MailingListChannelType"
+		parent="baseChannelType">
+		<property name="beCPGMailService" ref="beCPGMailService"/>
+	   <property name="serviceRegistry" ref="ServiceRegistry"/>
+	</bean>
+
+</beans>

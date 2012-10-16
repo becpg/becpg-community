@@ -13,6 +13,7 @@ import fr.becpg.repo.product.CharactDetailsVisitor;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.BaseObject;
 import fr.becpg.repo.product.data.CharactDetails;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.SimpleCharactDataItem;
@@ -48,8 +49,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		CharactDetails ret = new CharactDetails(extractCharacts(dataListItems));
 		Double netWeight = FormulationHelper.getNetWeight(productData);
 
-		if (productData.getCompoList() != null && productData.getCompoList().size() > 0) {
-			for (CompoListDataItem compoListDataItem : productData.getCompoList()) {
+		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+			for (CompoListDataItem compoListDataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
 				Double qty = FormulationHelper.getQty(compoListDataItem, nodeService);			
 				visitPart(compoListDataItem.getProduct(), ret, qty, netWeight);
 			}

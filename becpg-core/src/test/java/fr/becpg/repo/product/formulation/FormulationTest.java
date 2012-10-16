@@ -51,7 +51,7 @@ import fr.becpg.repo.product.data.productList.RequirementType;
  *
  * @author querephi
  */
-public class FormulationTest extends AbstractFormulationTest {
+public class FormulationTest extends AbstractFormulation {
 	
     
     /* (non-Javadoc)

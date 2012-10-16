@@ -188,7 +188,9 @@ public class EntityDataListWebScript extends AbstractWebScript {
 					JSONObject filterJSON = (JSONObject) json.get("filter");
 					if (filterJSON != null) {
 						filterId = (String) filterJSON.get("filterId");
-						filterData = (String) filterJSON.get("filterData");
+						if(filterJSON.has("filterData")){
+							filterData = (String) filterJSON.get("filterData");
+						}
 					}
 				} else {
 					filterId = DataListFilter.ALL_FILTER;

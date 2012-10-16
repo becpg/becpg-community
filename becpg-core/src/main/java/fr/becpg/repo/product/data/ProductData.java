@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.collections.CollectionUtils;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
@@ -40,7 +42,7 @@ import fr.becpg.repo.product.formulation.FormulateException;
  *
  * @author querephi
  */
-public class ProductData extends BaseObject implements ProductElement {
+public class ProductData extends AbstractEffectiveDataItem implements ProductElement {
 	
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -401,9 +403,62 @@ public class ProductData extends BaseObject implements ProductElement {
 	 *
 	 * @return the compo list
 	 */
+	
+
 	public List<CompoListDataItem> getCompoList() {
 		return compoList;
 	}
+
+	public List<PackagingListDataItem> getPackagingList() {
+		return packagingList;
+	}
+
+	public List<ProcessListDataItem> getProcessList() {
+		return processList;
+	}
+	
+	
+	public List<CompoListDataItem> getCompoList(DataListFilter<ProductData> filter) {
+		if(compoList!=null){
+			List<CompoListDataItem> ret = new ArrayList<CompoListDataItem>(compoList);
+			CollectionUtils.filter(ret, filter.createPredicate(this));
+			return ret;
+		}
+		return compoList;
+	}
+	
+
+	public List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData> filter) {
+		if(packagingList!=null){
+			List<PackagingListDataItem> ret = new ArrayList<PackagingListDataItem>(packagingList);
+			CollectionUtils.filter(ret, filter.createPredicate(this));
+			return ret;
+		}
+		return packagingList;
+	}
+	
+
+	public List<ProcessListDataItem> getProcessList(DataListFilter<ProductData> filter) {
+		if(processList!=null){
+			List<ProcessListDataItem> ret = new ArrayList<ProcessListDataItem>(processList);
+			CollectionUtils.filter(ret, filter.createPredicate(this));
+			return ret;
+		}
+		return processList;
+	}
+	
+	
+	public boolean hasCompoListEl(DataListFilter<ProductData> filter) {
+		return compoList!=null && getCompoList(filter).size()>0;
+	}
+
+	public boolean hasPackagingListEl(DataListFilter<ProductData> filter) {
+		return packagingList!=null && getPackagingList(filter).size()>0;
+	}
+
+	public boolean hasProcessListEl(DataListFilter<ProductData> filter) {
+		return processList!=null && getProcessList(filter).size()>0;
+	}			
 	
 	/**
 	 * Sets the compo list.
@@ -548,9 +603,6 @@ public class ProductData extends BaseObject implements ProductElement {
 		this.physicoChemList = physicoChemList;
 	}
 	
-	public List<PackagingListDataItem> getPackagingList() {
-		return packagingList;
-	}
 
 	public void setPackagingList(List<PackagingListDataItem> packagingList) {
 		this.packagingList = packagingList;
@@ -572,9 +624,6 @@ public class ProductData extends BaseObject implements ProductElement {
 		this.reqCtrlList = reqCtrlList;
 	}
 
-	public List<ProcessListDataItem> getProcessList() {
-		return processList;
-	}
 
 	public void setProcessList(List<ProcessListDataItem> processList) {
 		this.processList = processList;
@@ -642,6 +691,8 @@ public class ProductData extends BaseObject implements ProductElement {
 		properties.put(BeCPGModel.PROP_UNIT_PRICE, this.getUnitPrice());
 		properties.put(BeCPGModel.PROP_PROFITABILITY, this.getProfitability());
 		properties.put(BeCPGModel.PROP_BREAK_EVEN, this.getBreakEven());
+		properties.put(BeCPGModel.PROP_START_EFFECTIVITY, this.getStartEffectivity());
+		properties.put(BeCPGModel.PROP_END_EFFECTIVITY, this.getEndEffectivity());
 		
 		return properties;
 	}
@@ -670,6 +721,8 @@ public class ProductData extends BaseObject implements ProductElement {
     	this.setUnitPrice((Double)properties.get(BeCPGModel.PROP_UNIT_PRICE));
     	this.setProfitability((Double)properties.get(BeCPGModel.PROP_PROFITABILITY));
     	this.setBreakEven((Long)properties.get(BeCPGModel.PROP_BREAK_EVEN));	
+    	this.setStartEffectivity((Date)properties.get(BeCPGModel.PROP_START_EFFECTIVITY));
+    	this.setEndEffectivity((Date)properties.get(BeCPGModel.PROP_END_EFFECTIVITY));
 	}	
 	
 	/**
@@ -981,8 +1034,13 @@ public class ProductData extends BaseObject implements ProductElement {
 				+ ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield
 				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", listsContainer="
 				+ listsContainer + ", allergenList=" + allergenList + ", compoList=" + compoList + ", dynamicCharactList=" + dynamicCharactList + ", costList=" + costList
-				+ ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList
-				+ ", ingLabelingList=" + ingLabelingList + ", microbioList=" + microbioList + ", physicoChemList=" + physicoChemList + ", packagingList=" + packagingList
-				+ ", forbiddenIngList=" + forbiddenIngList + ", reqCtrlList=" + reqCtrlList + ", processList=" + processList + "]";
-	}			
+				+ ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList
+				+ ", microbioList=" + microbioList + ", physicoChemList=" + physicoChemList + ", packagingList=" + packagingList + ", forbiddenIngList=" + forbiddenIngList
+				+ ", reqCtrlList=" + reqCtrlList + ", processList=" + processList + ", getStartEffectivity()=" + getStartEffectivity() + ", getEndEffectivity()="
+				+ getEndEffectivity() + "]";
+	}
+
+
+
+
 }

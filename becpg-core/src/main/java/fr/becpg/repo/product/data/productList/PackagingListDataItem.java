@@ -5,14 +5,14 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.product.data.AbstractEffectiveDataItem;
 
 /**
  * The Class PackagingListDataItem.
  *
  * @author querephi
  */
-public class PackagingListDataItem extends BaseObject {
+public class PackagingListDataItem extends AbstractEffectiveDataItem {
 
 	/** The node ref. */
 	private NodeRef nodeRef;
