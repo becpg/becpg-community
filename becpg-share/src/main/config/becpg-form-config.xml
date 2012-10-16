@@ -3040,6 +3040,7 @@
 					<show id="bcpg:packagingListQty" />
 					<show id="bcpg:packagingListUnit" />
 					<show id="bcpg:packagingListPkgLevel" />
+					<show id="bcpg:packagingIsMaster" />
 				</field-visibility>
 
 				<appearance>

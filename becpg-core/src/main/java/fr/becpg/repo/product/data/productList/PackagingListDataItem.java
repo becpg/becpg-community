@@ -22,12 +22,12 @@ public class PackagingListDataItem extends BaseObject {
 	
 	private PackagingListUnit packagingListUnit = PackagingListUnit.Unknown;
 	
-	private String pkgLevel;			
+	private String pkgLevel;	
+	
+	private Boolean isMaster;
 	
 	/** The product. */
 	private NodeRef product;
-	
-	
 	
 	public NodeRef getNodeRef() {
 		return nodeRef;
@@ -59,6 +59,14 @@ public class PackagingListDataItem extends BaseObject {
 
 	public void setPkgLevel(String pkgLevel) {
 		this.pkgLevel = pkgLevel;
+	}
+
+	public Boolean getIsMaster() {
+		return isMaster;
+	}
+
+	public void setIsMaster(Boolean isMaster) {
+		this.isMaster = isMaster;
 	}
 
 	/**
@@ -94,12 +102,13 @@ public class PackagingListDataItem extends BaseObject {
 	 * @param pkgLevel
 	 * @param product
 	 */
-	public PackagingListDataItem(NodeRef nodeRef, Double qty, PackagingListUnit packagingListUnit, String pkgLevel, NodeRef product){
+	public PackagingListDataItem(NodeRef nodeRef, Double qty, PackagingListUnit packagingListUnit, String pkgLevel, Boolean isMaster, NodeRef product){
 		
 		setNodeRef(nodeRef);
 		setQty(qty);
 		setPackagingListUnit(packagingListUnit);
 		setPkgLevel(pkgLevel);
+		setIsMaster(isMaster);
 		setProduct(product);
 	}
 
@@ -107,6 +116,7 @@ public class PackagingListDataItem extends BaseObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((isMaster == null) ? 0 : isMaster.hashCode());
 		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
 		result = prime * result + ((packagingListUnit == null) ? 0 : packagingListUnit.hashCode());
 		result = prime * result + ((pkgLevel == null) ? 0 : pkgLevel.hashCode());
@@ -124,6 +134,11 @@ public class PackagingListDataItem extends BaseObject {
 		if (getClass() != obj.getClass())
 			return false;
 		PackagingListDataItem other = (PackagingListDataItem) obj;
+		if (isMaster == null) {
+			if (other.isMaster != null)
+				return false;
+		} else if (!isMaster.equals(other.isMaster))
+			return false;
 		if (nodeRef == null) {
 			if (other.nodeRef != null)
 				return false;

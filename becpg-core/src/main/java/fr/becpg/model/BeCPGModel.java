@@ -187,6 +187,9 @@ public interface BeCPGModel {
 	
 	static final QName PROP_PACKAGINGLIST_PKG_LEVEL = QName.createQName(
 			BECPG_URI, "packagingListPkgLevel");	
+	
+	static final QName PROP_PACKAGINGLIST_ISMASTER = QName.createQName(
+			BECPG_URI, "packagingListIsMaster");
 
 	// costList
 	/** The Constant TYPE_COSTLIST. */
