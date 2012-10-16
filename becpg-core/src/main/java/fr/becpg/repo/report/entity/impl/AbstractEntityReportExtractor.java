@@ -48,6 +48,9 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected static final String ATTR_SET = "set";
 	protected static final String ATTR_NAME = "name";
 	protected static final String ATTR_VALUE = "value";
+	protected static final String LINE_SEPARATOR = "line.separator";
+	private static final String TAG_SUFFIX_LINES = "-lines";
+	private static final String TAG_SUFFIX_LINE = "-line";
 
 	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
@@ -168,15 +171,18 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		dataListsElt = loadDataLists(entityNodeRef, dataListsElt);
 
 		ret.setXmlDataSource(entityElt);
-		ret.setDataObjects(extractImages(entityNodeRef));
+		ret.setDataObjects(extractImages(entityNodeRef, entityElt));
 
 		return ret;
 	}
 	
-	protected Map<String, byte[]> extractImages(NodeRef entityNodeRef) {
+	protected Map<String, byte[]> extractImages(NodeRef entityNodeRef, Element entityElt) {
 		return null;
 	}
 	
+	protected Element loadTargetAssocs(NodeRef entityNodeRef, Element entityElt) {
+		return null;
+	}
 	
 	protected Element loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
 		return null;
@@ -262,9 +268,18 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		return values;
 	}	
 
-	
-	
+	protected void extractMultiLines(Element entityElt, Map.Entry<ClassAttributeDefinition, String> kv, QName property){
+		
+		Element linesElt = entityElt.addElement(property.getLocalName() + TAG_SUFFIX_LINES);
+		if(kv.getValue() != null){
+			String[] textLines = kv.getValue().split(System.getProperty(LINE_SEPARATOR));
 
+			for (String textLine : textLines) {
+				Element lineElt = linesElt.addElement(property.getLocalName() + TAG_SUFFIX_LINE);
+				lineElt.addCDATA(textLine);
+			}
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	protected Map<String, List<String>> getFieldsBySets(NodeRef nodeRef, String reportFormConfigPath){

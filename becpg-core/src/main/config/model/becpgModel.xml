@@ -721,6 +721,10 @@
 						<constraint ref="bcpg:packagingLevel" />
 					</constraints>
 				</property>
+				<property name="bcpg:packagingListIsMaster">
+					<type>d:boolean</type>
+					<index enabled="false"/>					
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:packagingListProduct">

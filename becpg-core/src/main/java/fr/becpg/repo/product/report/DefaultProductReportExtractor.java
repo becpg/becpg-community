@@ -9,7 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -23,6 +26,7 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.ProductData;
@@ -35,6 +39,7 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.report.entity.impl.AbstractEntityReportExtractor;
 
@@ -49,7 +54,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	protected static final String TAG_ALLERGENLIST = "allergenList";
 
 	/** The Constant TAG_COMPOLIST. */
-	protected static final String TAG_COMPOLIST = "compoList";
+	protected static final String TAG_COMPOLIST = "compoList";	
 	
 	protected static final String TAG_DYNAMICCHARACTLIST = "dynamicCharactList";
 	
@@ -98,6 +103,12 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 	/** The Constant TAG_MICROBIO. */
 	protected static final String TAG_MICROBIO = "microbio";
+	
+	private static final String TAG_PLANTS = "plants";
+	private static final String TAG_PLANT = "plant";
+	private static final String TAG_IMAGES = "images";
+	private static final String TAG_IMAGE = "image";
+	private static final String PRODUCT_IMG_NAME = "Img%d";
 
 	/** The Constant TAG_PHYSICOCHEM. */
 	protected static final String TAG_PHYSICOCHEM = "physicoChem";
@@ -109,6 +120,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	protected ProductDictionaryService productDictionaryService;
 	
 	private NodeService mlNodeService;
+	
+	private FileFolderService fileFolderService;
 
 	/**
 	 * @param productDAO
@@ -130,24 +143,53 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		this.mlNodeService = mlNodeService;
 	}
 
+	public void setFileFolderService(FileFolderService fileFolderService) {
+		this.fileFolderService = fileFolderService;
+	}
+
 	@Override
-	protected Map<String, byte[]> extractImages(NodeRef entityNodeRef) {
+	protected Map<String, byte[]> extractImages(NodeRef entityNodeRef, Element entityElt) {
 		Map<String, byte[]> images = new HashMap<String, byte[]>();
 		/*
 		 * get the product image
 		 */
-		try {
-			NodeRef imgNodeRef = entityService.getEntityDefaultImage(entityNodeRef);
-
-			byte[] imageBytes = null;
-
-			if (imgNodeRef != null) {
-				imageBytes = entityService.getImage(imgNodeRef);
-				images.put(KEY_PRODUCT_IMAGE, imageBytes);
-			}
-		} catch (BeCPGException e) {
-			//DO Nothing here
-		}
+		
+//			NodeRef imgNodeRef = entityService.getEntityDefaultImage(entityNodeRef);
+//
+//			byte[] imageBytes = null;
+//
+//			if (imgNodeRef != null) {
+//				imageBytes = entityService.getImage(imgNodeRef);
+//				images.put(KEY_PRODUCT_IMAGE, imageBytes);
+//			}
+			
+			// create a dataset for images and load images
+			Element imgsElt = entityElt.addElement(TAG_IMAGES);
+			int cnt = 1;
+			NodeRef parentNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
+			NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));		
+			if(imagesFolderNodeRef != null){
+				for(FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)){
+								
+					String imgName = fileInfo.getName().toLowerCase();
+					if(imgName.endsWith(".jpg") || imgName.endsWith(".png") || imgName.endsWith(".gif")){
+					
+						NodeRef imgNodeRef = fileInfo.getNodeRef();
+						String imgName2 = String.format(PRODUCT_IMG_NAME, cnt);
+						byte[] imageBytes = entityService.getImage(imgNodeRef);
+						if(imageBytes != null){
+							Element imgElt = imgsElt.addElement(TAG_IMAGE);
+							imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), imgName2);
+							imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), (String)nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
+							
+							images.put(imgName2, imageBytes);
+						}
+						cnt++;					
+					}
+				}
+			}			
+			
+		
 		return images;
 	}
 
@@ -244,6 +286,36 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				dynamicCharact.addAttribute(BeCPGModel.PROP_DYNAMICCHARACT_VALUE.getLocalName(), dc.getValue() == null ? VALUE_NULL : dc.getValue().toString());
 			}
 					
+		}
+		
+		// packList
+		if (productData.getPackagingList() != null) {
+			Element compoListElt = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());
+
+			for (PackagingListDataItem dataItem : productData.getPackagingList()) {
+
+				String partName = (String) nodeService.getProperty(dataItem.getProduct(), ContentModel.PROP_NAME);
+				String legalName = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_LEGAL_NAME);
+				List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(dataItem.getProduct(),
+						BeCPGModel.ASSOC_SUPPLIERS);
+				String suppliers = "";
+				for(AssociationRef associationRef : supplierAssocRefs){
+					if(!suppliers.isEmpty()){
+						suppliers += RepoConsts.LABEL_SEPARATOR;
+					}
+					suppliers += (String)nodeService.getProperty(associationRef.getTargetRef(), ContentModel.PROP_NAME);
+				}
+
+				Element partElt = compoListElt.addElement(TAG_ENTITY);
+				partElt.addAttribute(BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT.getLocalName(), partName);
+				partElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),legalName);
+				partElt.addAttribute(BeCPGModel.ASSOC_SUPPLIERS.getLocalName(),suppliers);				
+				partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_QTY.getLocalName(), dataItem.getQty() == null ? VALUE_NULL : Double.toString(dataItem.getQty()));				
+				partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_UNIT.getLocalName(), dataItem.getPackagingListUnit() == null ? VALUE_NULL : dataItem.getPackagingListUnit().toString());
+				partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL.getLocalName(), dataItem.getPkgLevel());
+				partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_ISMASTER.getLocalName(), dataItem.getIsMaster() == null ? VALUE_NULL : dataItem.getIsMaster().toString());	
+				partElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(dataItem.getProduct()).toPrefixString(namespaceService));
+			}			
 		}
 
 		// CostList
@@ -405,9 +477,41 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				physicoChemElt.addAttribute(BeCPGModel.PROP_PHYSICOCHEMLIST_MINI.getLocalName(), dataItem.getMini() == null ? VALUE_NULL : Double.toString(dataItem.getMini()));
 				physicoChemElt.addAttribute(BeCPGModel.PROP_PHYSICOCHEMLIST_MAXI.getLocalName(), dataItem.getMaxi() == null ? VALUE_NULL : Double.toString(dataItem.getMaxi()));
 			}
-		}
+		}		
 
 		return dataListsElt;
+	}
+	
+	/**
+	 * load the datalists of the product data.
+	 * 
+	 * @param productData
+	 *            the product data
+	 * @param dataListsElt
+	 *            the data lists elt
+	 * @return the element
+	 */
+	@Override
+	protected Element loadTargetAssocs(NodeRef entityNodeRef, Element entityElt) {
+
+		// load plants
+		Element plantsElt = entityElt.addElement(TAG_PLANTS);
+		List<AssociationRef> plantAssocRefs = nodeService.getTargetAssocs(entityNodeRef,
+				BeCPGModel.ASSOC_PLANTS);
+		
+		for(AssociationRef assocRef : plantAssocRefs){
+			
+			Element plantElt = plantsElt.addElement(TAG_PLANT);
+			NodeRef plantNodeRef = assocRef.getTargetRef();				
+			Map<ClassAttributeDefinition, String> plantAttributes = loadNodeAttributes(plantNodeRef);
+			
+			for (Map.Entry<ClassAttributeDefinition, String> attrKV : plantAttributes.entrySet()){
+				
+				plantElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());																	
+			}
+		}
+		
+		return entityElt;
 	}
 
 }

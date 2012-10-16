@@ -818,7 +818,7 @@ public class ProductDAOImpl implements ProductDAO {
 					PackagingListUnit packagingListUnit = PackagingListUnit.valueOf((String) properties.get(BeCPGModel.PROP_PACKAGINGLIST_UNIT));
 
 					PackagingListDataItem packagingListDataItem = new PackagingListDataItem(listItemNodeRef, (Double) properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY),
-							packagingListUnit, (String) properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), productNodeRef);
+							packagingListUnit, (String) properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), (Boolean) properties.get(BeCPGModel.PROP_PACKAGINGLIST_ISMASTER), productNodeRef);
 					packagingList.add(packagingListDataItem);
 				}
 			}

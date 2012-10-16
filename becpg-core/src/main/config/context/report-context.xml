@@ -29,6 +29,7 @@
 		<property name="productDictionaryService" ref="productDictionaryService"/>
 		<property name="entityService" ref="entityService"/>
 		<property name="mlNodeService" ref="mlAwareNodeService" />
+		<property name="fileFolderService" ref="fileFolderService" />
 	</bean>
 
 

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="pack:packModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<!-- Optional meta-data about the model -->
+	<description>pack Model</description>
+	<author>QUERE</author>
+	<version>1.0</version>
+	<!-- Imports are required to allow references to definitions in other models -->
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.alfresco.org/model/datalist/1.0"
+			prefix="dl" />
+		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
+	</imports>
+	<!-- Introduction of new namespaces defined by this model -->
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/pack/1.0" prefix="pack" />
+	</namespaces>
+
+	<aspects>
+		<!-- pallet -->
+		<aspect name="pack:packInfo">
+			<title>Info packaging</title>
+			<parent>cm:content</parent>
+			<properties>
+				
+<!-- 				<property name="pack:piNbFirstLevel"> -->
+<!-- 					<title>Elt / conditionnement primaire</title> -->
+<!-- 					<type>d:int</type>					 -->
+<!-- 				</property> -->
+<!-- 				<property name="pack:piNbSecondLevel"> -->
+<!-- 					<title>Elt / conditionnement secondaire</title> -->
+<!-- 					<type>d:int</type>					 -->
+<!-- 				</property> -->
+<!-- 				<property name="pack:piNbThirdLevel"> -->
+<!-- 					<title>Elt / conditionnement tertiaire</title> -->
+<!-- 					<type>d:int</type>					 -->
+<!-- 				</property> -->
+									
+<!-- 				Weight -->
+<!-- 				<property name="pack:piTareFirstLevel"> -->
+<!-- 					<title>Tare UVC (g)</title> -->
+<!-- 					<type>d:double</type> -->
+<!-- 				</property> -->
+<!-- 				<property name="pack:piWeightFirstLevel"> -->
+<!-- 					<title>Poids UVC (kg)</title> -->
+<!-- 					<type>d:double</type> -->
+<!-- 				</property> -->
+<!-- 				<property name="pack:piWeightSecondLevel"> -->
+<!-- 					<title>Poids colis (kg)</title> -->
+<!-- 					<type>d:double</type> -->
+<!-- 				</property> -->
+<!-- 				<property name="pack:piWeightThirdLevel"> -->
+<!-- 					<title>Poids palette (kg)</title> -->
+<!-- 					<type>d:double</type> -->
+<!-- 				</property> -->
+			</properties>			
+		</aspect>
+		
+		<!-- pallet -->
+		<aspect name="pack:pallet">
+			<title>Palettisation</title>
+			<parent>cm:content</parent>
+			<properties>
+									
+				<property name="pack:palletLayers">
+					<title>Nombre de couches / palette</title>
+					<type>d:int</type>
+				</property>
+				<property name="pack:palletBoxesPerLayer">
+					<title>Nombre d'emb / couche</title>
+					<type>d:int</type>
+				</property>
+				<property name="pack:palletBoxesPerPallet">
+					<title>Nombre d'emb / palette</title>
+					<type>d:int</type>
+				</property>
+				<property name="pack:palletDimensions">
+					<title>Dimensions palette (mm)</title>
+					<type>d:text</type>
+				</property>
+			</properties>			
+		</aspect>
+	</aspects>
+</model>
