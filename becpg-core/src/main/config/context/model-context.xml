@@ -14,7 +14,8 @@
 				<value>alfresco/module/${artifactId}/model/npdModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/mpmModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/variantModel.xml</value>	
-				<value>alfresco/module/${artifactId}/model/gs1Model.xml</value>							
+				<value>alfresco/module/${artifactId}/model/gs1Model.xml</value>	
+				<value>alfresco/module/${artifactId}/model/publicationModel.xml</value>						
 			</list>
 		</property>
 
@@ -28,7 +29,8 @@
 				<value>alfresco/module/${artifactId}/model/npdModel</value>		
 				<value>alfresco/module/${artifactId}/model/mpmModel</value>
 				<value>alfresco/module/${artifactId}/model/variantModel</value>
-				<value>alfresco/module/${artifactId}/model/gs1Model</value>						
+				<value>alfresco/module/${artifactId}/model/gs1Model</value>
+				<value>alfresco/module/${artifactId}/model/publicationModel</value>							
 			</list>
 		</property>
 	</bean>

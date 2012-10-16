@@ -1,0 +1,122 @@
+package fr.becpg.repo.publishing;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.publishing.AbstractChannelType;
+import org.alfresco.repo.template.TemplateNode;
+import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.extensions.surf.util.I18NUtil;
+
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PublicationModel;
+import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.mail.BeCPGMailService;
+
+/**
+ * 
+ * @author matthieu
+ * 
+ */
+public class MailingListChannelType extends AbstractChannelType {
+
+	public final static String ID = "MailingList";
+	
+	private BeCPGMailService beCPGMailService;
+	
+	
+	private ServiceRegistry serviceRegistry;
+
+	
+	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
+		this.beCPGMailService = beCPGMailService;
+	}
+
+	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+		this.serviceRegistry = serviceRegistry;
+	}
+
+	private static Log logger = LogFactory.getLog(MailingListChannelType.class);
+
+	@Override
+	public String getTitle() {
+		return ID;
+	}
+
+	@Override
+	public boolean canPublish() {
+		return true;
+	}
+
+	@Override
+	public boolean canPublishStatusUpdates() {
+		return false;
+	}
+
+	@Override
+	public boolean canUnpublish() {
+		return false;
+	}
+
+	@Override
+	public QName getChannelNodeType() {
+		return PublicationModel.TYPE_DELIVERY_CHANNEL;
+	}
+
+	@Override
+	public String getId() {
+		return ID;
+	}
+
+	@Override
+	public Resource getIcon(String sizeSuffix) {
+		String className = "beCPG/publishing/" + this.getClass().getSimpleName();
+		StringBuilder iconPath = new StringBuilder(className);
+		iconPath.append(sizeSuffix).append('.').append(getIconFileExtension());
+		Resource resource = new ClassPathResource(iconPath.toString());
+		return resource.exists() ? resource : null;
+	}
+
+	public String getIconFileExtension() {
+		return "png";
+	}
+
+	@Override
+	public Set<QName> getSupportedContentTypes() {
+		Set<QName> types = new HashSet<QName>();
+		types.add(BeCPGModel.TYPE_FINISHEDPRODUCT);
+		return types;
+	}
+
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public void publish(NodeRef nodeToPublish, Map<QName, Serializable> channelProperties) {
+		if(logger.isDebugEnabled()){
+			logger.debug("Publish to mailingList:"+channelProperties.get(ContentModel.PROP_NAME));
+		}
+		Map<String, Object> templateModel = new HashMap<String, Object>(8, 1.0f);
+
+		templateModel.put("document", new TemplateNode(nodeToPublish, serviceRegistry, null));
+		
+
+		beCPGMailService.sendMail((List<String>)channelProperties.get(PublicationModel.PROP_MAILLING_MEMBERS), 
+				I18NUtil.getMessage("becpg.mail.distribution.title"), RepoConsts.EMAIL_DISTRIBUTION_TEMPLATE, templateModel);
+				
+	}
+
+	
+	
+
+}

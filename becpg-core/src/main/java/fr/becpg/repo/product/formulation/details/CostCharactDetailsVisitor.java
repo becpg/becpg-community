@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.product.data.CharactDetails;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -37,16 +38,16 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		/*
 		 * Calculate cost details
 		 */
-		if (productData.getCompoList() != null && productData.getCompoList().size() > 0) {		
-			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(productData.getCompoList());		
+		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {		
+			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(productData.getCompoList(EffectiveFilters.EFFECTIVE));		
 			visitCompoListChildren(productData, composite, ret, CostsCalculatingVisitor.DEFAULT_LOSS_RATIO, netWeight);
 		}		
 
 		/*
 		 * Calculate the costs of the packaging
 		 */
-		if (productData.getPackagingList() != null && productData.getPackagingList().size() > 0) {
-			for (PackagingListDataItem packagingListDataItem : productData.getPackagingList()) {
+		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
+			for (PackagingListDataItem packagingListDataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
 				Double qty = FormulationHelper.getQty(packagingListDataItem);
 				visitPart(packagingListDataItem.getProduct(), ret, qty, netWeight);
 
@@ -56,8 +57,8 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		/*
 		 * Calculate the costs of the processes
 		 */
-		if (productData.getProcessList() != null && productData.getProcessList().size() > 0) {
-			for (ProcessListDataItem processListDataItem : productData.getProcessList()) {
+		if (productData.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
+			for (ProcessListDataItem processListDataItem : productData.getProcessList(EffectiveFilters.EFFECTIVE)) {
 				Double qty = FormulationHelper.getQty(processListDataItem);
 				visitPart(processListDataItem.getResource(), ret, qty, netWeight);
 			}

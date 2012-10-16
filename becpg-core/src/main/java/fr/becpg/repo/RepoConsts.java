@@ -180,6 +180,7 @@ public class RepoConsts {
 	 * Email templates
 	 */
 	public static final String EMAIL_NEW_USER_TEMPLATE = "importuser-email.ftl";
+	public static final String EMAIL_DISTRIBUTION_TEMPLATE = "distribution-email.ftl";
 
 	/**
 	 * ISO charset

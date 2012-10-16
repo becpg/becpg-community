@@ -234,4 +234,5 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 		
 		return wusedList;
 	}
+	
 }

@@ -205,6 +205,17 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	 */
 	@Override
 	protected void tearDown() throws Exception {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				if(nodeService.exists(testFolderNodeRef)){
+					nodeService.deleteNode(testFolderNodeRef);
+				}
+				return null;
+
+			}
+		}, false, true);
+		
 		try {
 			wiser.stop();
 		} catch (Exception e) {

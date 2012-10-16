@@ -4,10 +4,10 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.product.ProductVisitor;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -32,7 +32,7 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 		logger.debug("Composition calculating visitor");
 		
 		// no compo => no formulation
-		if(formulatedProduct.getCompoList() == null){			
+		if(!formulatedProduct.hasCompoListEl(EffectiveFilters.ALL)){			
 			logger.debug("no compo => no formulation");
 			return formulatedProduct;
 		}
@@ -48,7 +48,7 @@ public class CompositionCalculatingVisitor implements ProductVisitor {
 			netWeight = qty * density;
 		}
 		
-		Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList());		
+		Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL));		
 		visitChildren(netWeight, netWeight, composite);
 		
 		// Yield

@@ -44,7 +44,7 @@
 		<property name="mimetypeService" ref="mimetypeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="entityTplService" ref="entityTplService" />
-		<property name="beCPGMailService" ref="becpgMailService" />
+		<property name="beCPGMailService" ref="beCPGMailService" />
 		<property name="designerInitService" ref="designerInitService" />
 		<property name="entitySystemService" ref="entitySystemService" />
 	</bean>
@@ -155,13 +155,13 @@
 		<property name="personService" ref="personService" />
 		<property name="siteService" ref="siteService" />
 		<property name="authorityService" ref="authorityService" />
-		<property name="beCPGMailService" ref="becpgMailService" />
+		<property name="beCPGMailService" ref="beCPGMailService" />
 		<property name="namespacePrefixResolver" ref="namespaceService" />
 	</bean>
 
 	<!-- Mail service -->
 
-	<bean id="becpgMailService" class="fr.becpg.repo.mail.impl.BeCPGMailServiceImpl">
+	<bean id="beCPGMailService" class="fr.becpg.repo.mail.impl.BeCPGMailServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="mailService" ref="mailService" />
 		<property name="templateService" ref="templateService" />
@@ -342,6 +342,7 @@
 	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy"
 		init-method="init" parent="abstractBeCPGPolicy">
 		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 	</bean>
 	
 	<bean id="entityCheckOutCheckInServicePolicy"

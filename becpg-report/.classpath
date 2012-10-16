@@ -4,7 +4,7 @@
   <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar" sourcepath="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5-sources.jar"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/com.ibm.icu_4.4.2.v20110823/3.7.2/com.ibm.icu_4.4.2.v20110823-3.7.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/com.lowagie.text_2.1.7.v201004222200/3.7.2/com.lowagie.text_2.1.7.v201004222200-3.7.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/commons-cli-1.0/3.7.2/commons-cli-1.0-3.7.2.jar"/>
