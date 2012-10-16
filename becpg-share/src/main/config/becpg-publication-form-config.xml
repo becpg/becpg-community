@@ -1,0 +1,36 @@
+<alfresco-config>
+
+	<config condition="bp:MailingListChannel" evaluator="node-type">
+		<forms>
+			<form >
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="false" id="bp:mailingMembers" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" mandatory="false" read-only="false" />
+					<field id="bp:mailingMembers" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="bp:MailingListChannel" evaluator="model-type">
+		<forms>
+			<form >
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="false" id="bp:mailingMembers" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" mandatory="false" read-only="false" />
+					<field id="bp:mailingMembers" mandatory="true" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">4</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+</alfresco-config>

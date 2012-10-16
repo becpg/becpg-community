@@ -11,5 +11,21 @@
 				</customization>
 			</customizations>
 		</module>
+		<module>
+			<id>dockbar-extension</id>
+			<auto-deploy>true</auto-deploy>
+			<components>
+				<component>
+					<scope>global</scope>
+					<region-id>header</region-id>
+					<source-id>global</source-id>
+					<sub-components>
+						<sub-component id="dockbar-extension" index="75">
+							<url>/components/dockbar/dockbar</url>
+						</sub-component>
+					</sub-components>
+				</component>
+			</components>
+		</module>
 	</modules>
 </extension>  

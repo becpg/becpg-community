@@ -116,7 +116,10 @@
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
 
-					<!-- Effectivity <show id="bcpg:startEffectivity" for-mode="view" /> -->
+					<!-- Effectivity -->
+					<show id="bcpg:startEffectivity"  /> 
+					<show id="bcpg:endEffectivity"  /> 
+					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
 					<show id="cm:created" for-mode="view" />
@@ -169,6 +172,8 @@
 						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl"
 						parent="mainTab" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
+					<set id="effectivity" appearance="bordered-panel" label-id="becpg.forms.set.effectivity.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
 
 
@@ -274,12 +279,16 @@
 							<control-param name="compactMode">true</control-param>
 						</control>
 					</field>
-					<!-- Effectivity <field id="bcpg:startEffectivity" set="audit" /> -->
+					
 					<!-- audit -->
 					<field id="cm:creator" set="audit" />
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
 					<field id="cm:modified" set="audit" />
+
+					<!-- Effectivity -->
+ 					<field id="bcpg:startEffectivity" set="effectivity" /> 
+ 					<field id="bcpg:endEffectivity" set="effectivity" /> 
 
 					<!-- GS1 -->
 
@@ -2941,6 +2950,9 @@
 				<field-visibility>
 					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:depthLevel" />
+					<!-- Effectivity -->
+					<show id="bcpg:startEffectivity"  /> 
+					<show id="bcpg:endEffectivity"  /> 
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:compoListProduct">
@@ -2970,6 +2982,9 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
+					<!-- Effectivity -->
+					<show id="bcpg:startEffectivity"  /> 
+					<show id="bcpg:endEffectivity"  /> 
 				</field-visibility>
 			</form>
 			<form id="datagridWUsed">
@@ -2999,6 +3014,9 @@
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:parentLevel" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
+					<!-- Effectivity -->
+					<show id="bcpg:startEffectivity"  /> 
+					<show id="bcpg:endEffectivity"  /> 
 				</field-visibility>
 
 				<appearance>					

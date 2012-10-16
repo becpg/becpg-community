@@ -9,14 +9,14 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.Leaf;
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.product.data.AbstractEffectiveDataItem;
 
 /**
  * The Class CompoListDataItem.
  *
  * @author querephi
  */
-public class CompoListDataItem extends BaseObject {
+public class CompoListDataItem extends AbstractEffectiveDataItem {
 
 	/** The node ref. */
 	private NodeRef nodeRef;
@@ -386,8 +386,9 @@ public class CompoListDataItem extends BaseObject {
 	public String toString() {
 		return "CompoListDataItem [nodeRef=" + nodeRef + ", depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", qtyAfterProcess="
 				+ qtyAfterProcess + ", compoListUnit=" + compoListUnit + ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", product=" + product
-				+ "]";
+				+ ", getStartEffectivity()=" + getStartEffectivity() + ", getEndEffectivity()=" + getEndEffectivity() + "]";
 	}
+
 	
 	
 }

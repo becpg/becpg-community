@@ -20,6 +20,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductVisitor;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -67,7 +68,7 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 		logger.debug("Start AllergensCalculatingVisitor");
 
 		// no compo => no formulation
-		if (formulatedProduct.getCompoList() == null) {
+		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
 			logger.debug("no compo => no formulation");
 			return formulatedProduct;
 		}
@@ -76,8 +77,7 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 		Map<NodeRef, AllergenListDataItem> allergenMap = new HashMap<NodeRef, AllergenListDataItem>();
 
 		// compoList
-		if (formulatedProduct.getCompoList() != null) {
-			for (CompoListDataItem compoItem : formulatedProduct.getCompoList()) {
+			for (CompoListDataItem compoItem : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE)) {
 
 				NodeRef part = compoItem.getProduct();
 				if (!visitedProducts.contains(part)) {
@@ -85,11 +85,10 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 					visitedProducts.add(part);
 				}
 			}
-		}
 
 		// process
-		if (formulatedProduct.getProcessList() != null) {
-			for (ProcessListDataItem processItem : formulatedProduct.getProcessList()) {
+		if (formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
+			for (ProcessListDataItem processItem : formulatedProduct.getProcessList(EffectiveFilters.EFFECTIVE)) {
 
 				NodeRef resource = processItem.getResource();
 				if (resource != null && !visitedProducts.contains(resource)) {

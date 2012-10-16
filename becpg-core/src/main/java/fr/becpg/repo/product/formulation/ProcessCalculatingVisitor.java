@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.product.ProductVisitor;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 
@@ -17,16 +18,16 @@ public class ProcessCalculatingVisitor implements ProductVisitor {
 		logger.debug("process calculating visitor");
 		
 		// no compo => no formulation
-		if(formulatedProduct.getProcessList() == null){			
+		if(!formulatedProduct.hasProcessListEl(EffectiveFilters.ALL)){			
 			logger.debug("no process => no formulation");
 			return formulatedProduct;
 		}
 		
 		// visit resources and steps from the end to the beginning
 		Double minRateProcess = null;
-		for(int z_idx=formulatedProduct.getProcessList().size()-1 ; z_idx>=0 ; z_idx--){
+		for(int z_idx=formulatedProduct.getProcessList(EffectiveFilters.ALL).size()-1 ; z_idx>=0 ; z_idx--){
 			
-			ProcessListDataItem p = formulatedProduct.getProcessList().get(z_idx);
+			ProcessListDataItem p = formulatedProduct.getProcessList(EffectiveFilters.ALL).get(z_idx);
 			
 			if(p.getResource() != null && p.getRateResource() != null && p.getQtyResource() != null){
 				
