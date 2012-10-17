@@ -32,7 +32,7 @@ public class DefaultNonConformityReportExtractor extends AbstractEntityReportExt
 	 * @return the element
 	 */
 	@Override
-	protected Element loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
+	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
 
 		PropertyFormats propertyFormats = new PropertyFormats(true);
 		NonConformityData ncData = nonConformityDAO.find(entityNodeRef);
@@ -52,7 +52,5 @@ public class DefaultNonConformityReportExtractor extends AbstractEntityReportExt
 								dataItem.getCreated(), propertyFormats));
 			}
 		}
-
-		return dataListsElt;
 	}
 }

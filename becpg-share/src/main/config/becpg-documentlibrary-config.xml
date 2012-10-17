@@ -29,7 +29,7 @@
 				<aspect name="dsg:modelAspect" />
 				<aspect name="dsg:configAspect" />
 				<aspect name="gs1:gs1Aspect" />
-				<aspect name="pack:pallet" />				
+				<aspect name="pack:palletAspect" />				
 				<aspect name="ext1:customAspect" />
 			</visible>
 
@@ -61,7 +61,7 @@
 				<aspect name="dsg:modelAspect" />
 				<aspect name="dsg:configAspect" />
 				<aspect name="gs1:gs1Aspect" />
-				<aspect name="pack:pallet" />
+				<aspect name="pack:palletAspect" />
 				<aspect name="ext1:customAspect" />
 			</addable>
 
@@ -93,7 +93,7 @@
 				<aspect name="dsg:modelAspect" />
 				<aspect name="dsg:configAspect" />
 				<aspect name="gs1:gs1Aspect" />
-				<aspect name="pack:pallet" />
+				<aspect name="pack:palletAspect" />
 				<aspect name="ext1:customAspect" />
 			</removeable>
 		</aspects>

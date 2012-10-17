@@ -17,6 +17,7 @@ import org.junit.Assert;
 import com.ibm.icu.text.DecimalFormat;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.product.AbstractFinishedProductTest;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.CharactDetails;
@@ -36,7 +37,7 @@ import fr.becpg.repo.web.scripts.product.CharactDetailsHelper;
  * 
  * @author querephi
  */
-public class CharactDetailsFormulationTest extends AbstractFormulation {
+public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
 	@Override
 	protected void setUp() throws Exception {
@@ -166,9 +167,9 @@ public class CharactDetailsFormulationTest extends AbstractFormulation {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
-				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PACKAGING_PRIMAIRE, packagingMaterial1NodeRef));
-				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PACKAGING_PRIMAIRE, packagingMaterial2NodeRef));
-				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PACKAGING_TERTIAIRE, packagingMaterial3NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PACKAGING_PRIMAIRE, true, packagingMaterial1NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PACKAGING_PRIMAIRE, true, packagingMaterial2NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PACKAGING_TERTIAIRE, true, packagingMaterial3NodeRef));
 				finishedProduct.setPackagingList(packagingList);		
 				
 				

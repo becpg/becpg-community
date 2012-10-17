@@ -72,8 +72,6 @@ import fr.becpg.repo.product.data.productList.SimpleListDataItem;
 @Repository
 public class ProductDAOImpl implements ProductDAO {
 
-	public static final String KEY_COST_DETAILS = "%s-%s";
-
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductDAOImpl.class);
 

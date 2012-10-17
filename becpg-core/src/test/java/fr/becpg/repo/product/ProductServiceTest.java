@@ -623,14 +623,14 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				FinishedProductData finishedProduct1 = new FinishedProductData();
 				finishedProduct1.setName("Finished Product 1");
 				List<PackagingListDataItem> packagingList1 = new ArrayList<PackagingListDataItem>();
-				packagingList1.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, "Primaire", packagingMaterialNodeRef));
+				packagingList1.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, "Primaire", true, packagingMaterialNodeRef));
 				finishedProduct1.setPackagingList(packagingList1);
 				NodeRef finishedProductNodeRef1 = productDAO.create(testFolderNodeRef, finishedProduct1, dataLists);
 
 				FinishedProductData finishedProduct2 = new FinishedProductData();
 				finishedProduct2.setName("Finished Product");
 				List<PackagingListDataItem> packagingList2 = new ArrayList<PackagingListDataItem>();
-				packagingList2.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, "Secondaire", packagingMaterialNodeRef));
+				packagingList2.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, "Secondaire", true, packagingMaterialNodeRef));
 				finishedProduct2.setPackagingList(packagingList2);
 				NodeRef finishedProductNodeRef2 = productDAO.create(testFolderNodeRef, finishedProduct2, dataLists);
 
@@ -673,7 +673,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 			PackagingListDataItem packagingListDataItem = new PackagingListDataItem(kv.getKey(), 									
 						(Double)properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY), 
 						packagingListUnit, 
-						(String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), 
+						(String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), true, 
 						kv.getValue().getEntityNodeRef());
 			
 			wUsedList.add(packagingListDataItem);

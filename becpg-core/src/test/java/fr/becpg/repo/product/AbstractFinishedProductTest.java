@@ -1,4 +1,4 @@
-package fr.becpg.repo.product.formulation;
+package fr.becpg.repo.product;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,11 +30,11 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.test.RepoBaseTestCase;
 
-public class AbstractFormulation extends RepoBaseTestCase{
+public class AbstractFinishedProductTest extends RepoBaseTestCase{
 	
 
 	/** The logger. */
-	protected static Log logger = LogFactory.getLog(AbstractFormulation.class);
+	protected static Log logger = LogFactory.getLog(AbstractFinishedProductTest.class);
 
 	
 	/** The product service. */
