@@ -77,6 +77,34 @@
 								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
 							</properties>
 						</evaluation>
+						<evaluation id="process">
+							<evaluators>
+								<evaluator type="evaluator.component.becpg.params.equal">
+									<params>
+										<list>processList</list>
+									</params>
+								</evaluator>
+							</evaluators>
+							<url>/components/entity-charact-views/formulation-view</url>
+							<properties>
+								<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
+								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
+							</properties>
+						</evaluation>
+						<evaluation id="packaging">
+							<evaluators>
+								<evaluator type="evaluator.component.becpg.params.equal">
+									<params>
+										<list>packagingList</list>
+									</params>
+								</evaluator>
+							</evaluators>
+							<url>/components/entity-charact-views/formulation-view</url>
+							<properties>
+								<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
+								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
+							</properties>
+						</evaluation>
 						<evaluation id="datagrid">
 							<url>/components/entity-charact-views/entity-datagrid-view</url>
 							<properties>
