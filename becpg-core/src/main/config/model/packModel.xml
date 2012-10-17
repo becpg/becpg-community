@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Definition of new Model -->
-<model name="pack:packModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+<model name="pack:packmodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
 	<!-- Optional meta-data about the model -->
 	<description>pack Model</description>
 	<author>QUERE</author>
@@ -12,9 +12,6 @@
 			prefix="d" />
 		<!-- Import Alfresco Content Domain Model Definitions -->
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
-		<import uri="http://www.alfresco.org/model/datalist/1.0"
-			prefix="dl" />
-		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
 	</imports>
 	<!-- Introduction of new namespaces defined by this model -->
 	<namespaces>
@@ -25,7 +22,6 @@
 		<!-- pallet -->
 		<aspect name="pack:packInfo">
 			<title>Info packaging</title>
-			<parent>cm:content</parent>
 			<properties>
 				
 <!-- 				<property name="pack:piNbFirstLevel"> -->
@@ -62,9 +58,8 @@
 		</aspect>
 		
 		<!-- pallet -->
-		<aspect name="pack:pallet">
+		<aspect name="pack:palletAspect">
 			<title>Palettisation</title>
-			<parent>cm:content</parent>
 			<properties>
 									
 				<property name="pack:palletLayers">

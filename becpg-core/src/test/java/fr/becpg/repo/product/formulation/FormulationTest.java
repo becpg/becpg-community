@@ -20,6 +20,7 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
+import fr.becpg.repo.product.AbstractFinishedProductTest;
 import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -51,7 +52,7 @@ import fr.becpg.repo.product.data.productList.RequirementType;
  *
  * @author querephi
  */
-public class FormulationTest extends AbstractFormulation {
+public class FormulationTest extends AbstractFinishedProductTest {
 	
     
     /* (non-Javadoc)
@@ -1520,9 +1521,9 @@ public class FormulationTest extends AbstractFormulation {
 					finishedProduct.setUnit(ProductUnit.kg);
 					finishedProduct.setQty(2d);
 					List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
-					packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PACKAGING_PRIMAIRE, packagingMaterial1NodeRef));
-					packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PACKAGING_PRIMAIRE, packagingMaterial2NodeRef));
-					packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PACKAGING_TERTIAIRE, packagingMaterial3NodeRef));
+					packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PACKAGING_PRIMAIRE, true, packagingMaterial1NodeRef));
+					packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PACKAGING_PRIMAIRE, true, packagingMaterial2NodeRef));
+					packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PACKAGING_TERTIAIRE, true, packagingMaterial3NodeRef));
 					finishedProduct.setPackagingList(packagingList);
 					NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
 					

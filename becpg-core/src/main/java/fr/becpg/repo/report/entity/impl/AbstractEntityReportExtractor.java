@@ -56,6 +56,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected static final String VALUE_NULL = "";
 	
 	private static final String VALUE_PERSON = "%s %s";
+	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 	
 	private static final String QUERY_XPATH_FORM_SETS = "/alfresco-config/config[@evaluator=\"node-type\" and @condition=\"%s\"]/forms/form/appearance/set";
 	private static final String QUERY_XPATH_FORM_FIELDS_BY_SET = "/alfresco-config/config[@evaluator=\"node-type\" and @condition=\"%s\"]/forms/form/appearance/field[@set=\"%s\"]";
@@ -134,6 +135,8 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		for (Map.Entry<ClassAttributeDefinition, String> attrKV : attributes.entrySet()) {
 
 			entityElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
+			
+			loadMultiLinesAttributes(attrKV, entityElt);
 		}
 
 		// add attributes at <product><attributes/></product> and group them by
@@ -165,10 +168,13 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 				}
 			}
 		}
-
+		
+		// render target assocs (plants...special cases)
+		loadTargetAssocs(entityNodeRef, entityElt);				
+		
 		// render data lists
 		Element dataListsElt = entityElt.addElement(TAG_DATALISTS);
-		dataListsElt = loadDataLists(entityNodeRef, dataListsElt);
+		loadDataLists(entityNodeRef, dataListsElt);
 
 		ret.setXmlDataSource(entityElt);
 		ret.setDataObjects(extractImages(entityNodeRef, entityElt));
@@ -180,12 +186,13 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		return null;
 	}
 	
-	protected Element loadTargetAssocs(NodeRef entityNodeRef, Element entityElt) {
-		return null;
+	protected void loadTargetAssocs(NodeRef entityNodeRef, Element entityElt) {
 	}
 	
-	protected Element loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
-		return null;
+	protected void loadMultiLinesAttributes(Map.Entry<ClassAttributeDefinition, String> attrKV, Element entityElt) {
+	}
+	
+	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
 	}
 	
 	/**
@@ -197,7 +204,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	 */
 	protected Map<ClassAttributeDefinition, String> loadNodeAttributes(NodeRef nodeRef) {
 
-		PropertyFormats propertyFormats = new PropertyFormats(false);
+		PropertyFormats propertyFormats = new PropertyFormats(true);
 		Map<ClassAttributeDefinition, String> values = new HashMap<ClassAttributeDefinition, String>();		
 		
 		// properties
@@ -332,5 +339,9 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		return fieldsBySets;
 	}
 
+	protected String generateKeyAttribute(String attributeName){
+		
+		return attributeName.replaceAll(REGEX_REMOVE_CHAR, "").toLowerCase();
+	}
 	
 }

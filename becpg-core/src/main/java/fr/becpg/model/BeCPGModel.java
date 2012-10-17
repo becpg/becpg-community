@@ -585,6 +585,8 @@ public interface BeCPGModel {
 			"productDensity");	
 	static final QName ASSOC_PRODUCT_SPECIFICATION = QName.createQName(BECPG_URI,
 			"productSpecification");
+	static final QName PROP_PRODUCT_COMMENTS = QName.createQName(BECPG_URI,
+			"productComments");
 	
 	// ean aspect
 	/** The Constant ASPECT_EAN. */

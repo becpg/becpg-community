@@ -22,9 +22,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductDAO;
@@ -115,6 +115,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	protected static final String TAG_PHYSICOCHEM = "physicoChem";
 
 	protected static final String ATTR_LANGUAGE = "language";
+	protected static final String ATTR_NB_FP_THIRD_LEVEL = "nbFinishedProductThirdLevel";
+	private static final String ATTR_ALLERGENS = "allergens";
 
 	protected ProductDAO productDAO;
 
@@ -151,46 +153,35 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	@Override
 	protected Map<String, byte[]> extractImages(NodeRef entityNodeRef, Element entityElt) {
 		Map<String, byte[]> images = new HashMap<String, byte[]>();
-		/*
-		 * get the product image
-		 */
-		
-//			NodeRef imgNodeRef = entityService.getEntityDefaultImage(entityNodeRef);
-//
-//			byte[] imageBytes = null;
-//
-//			if (imgNodeRef != null) {
-//				imageBytes = entityService.getImage(imgNodeRef);
-//				images.put(KEY_PRODUCT_IMAGE, imageBytes);
-//			}
-			
-			// create a dataset for images and load images
-			Element imgsElt = entityElt.addElement(TAG_IMAGES);
-			int cnt = 1;
-			NodeRef parentNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
-			NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));		
-			if(imagesFolderNodeRef != null){
-				for(FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)){
-								
-					String imgName = fileInfo.getName().toLowerCase();
-					if(imgName.endsWith(".jpg") || imgName.endsWith(".png") || imgName.endsWith(".gif")){
-					
-						NodeRef imgNodeRef = fileInfo.getNodeRef();
-						String imgName2 = String.format(PRODUCT_IMG_NAME, cnt);
-						byte[] imageBytes = entityService.getImage(imgNodeRef);
-						if(imageBytes != null){
-							Element imgElt = imgsElt.addElement(TAG_IMAGE);
-							imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), imgName2);
-							imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), (String)nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
-							
-							images.put(imgName2, imageBytes);
-						}
-						cnt++;					
+
+		// create a dataset for images and load images
+		Element imgsElt = entityElt.addElement(TAG_IMAGES);
+		int cnt = 1;
+		NodeRef parentNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		if (imagesFolderNodeRef != null) {
+			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
+
+				String imgName = fileInfo.getName().toLowerCase();
+				if (imgName.endsWith(".jpg") || imgName.endsWith(".png") || imgName.endsWith(".gif")) {
+
+					NodeRef imgNodeRef = fileInfo.getNodeRef();
+					String imgName2 = String.format(PRODUCT_IMG_NAME, cnt);
+					byte[] imageBytes = entityService.getImage(imgNodeRef);
+					if (imageBytes != null) {
+						Element imgElt = imgsElt.addElement(TAG_IMAGE);
+						imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), imgName2);
+						imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(),
+								(String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
+
+						images.put(imgName2, imageBytes);
 					}
+					cnt++;
 				}
-			}			
-			
-		
+			}
+		}
+
 		return images;
 	}
 
@@ -204,7 +195,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	 * @return the element
 	 */
 	@Override
-	protected Element loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
+	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
 
 		// TODO make it more generic!!!!
 		ProductData productData = productDAO.find(entityNodeRef, productDictionaryService.getDataLists());
@@ -212,6 +203,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		// allergen
 		if (productData.getAllergenList() != null) {
 			Element allergenListElt = dataListsElt.addElement(TAG_ALLERGENLIST);
+			String allergens = "";
 
 			for (AllergenListDataItem dataItem : productData.getAllergenList()) {
 
@@ -241,7 +233,19 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				AllergenElt.addAttribute(BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY.getLocalName(), Boolean.toString(dataItem.getInVoluntary()));
 				AllergenElt.addAttribute(BeCPGModel.ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES.getLocalName(), voluntarySources);
 				AllergenElt.addAttribute(BeCPGModel.ASSOC_ALLERGENLIST_INVOLUNTARY_SOURCES.getLocalName(), inVoluntarySources);
+				
+				// concat allergens
+				if(dataItem.getVoluntary() || dataItem.getInVoluntary()){
+					if(allergens.isEmpty()){
+						allergens = allergen;
+					}
+					else{
+						allergens += RepoConsts.LABEL_SEPARATOR + allergen;
+					}
+				}				
 			}
+			
+			allergenListElt.addAttribute(ATTR_ALLERGENS, allergens);
 		}
 
 		// compoList
@@ -291,31 +295,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		
 		// packList
 		if (productData.getPackagingList() != null) {
-			Element compoListElt = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());
+			Element packagingListElt = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());
 
 			for (PackagingListDataItem dataItem : productData.getPackagingList()) {
-
-				String partName = (String) nodeService.getProperty(dataItem.getProduct(), ContentModel.PROP_NAME);
-				String legalName = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_LEGAL_NAME);
-				List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(dataItem.getProduct(),
-						BeCPGModel.ASSOC_SUPPLIERS);
-				String suppliers = "";
-				for(AssociationRef associationRef : supplierAssocRefs){
-					if(!suppliers.isEmpty()){
-						suppliers += RepoConsts.LABEL_SEPARATOR;
-					}
-					suppliers += (String)nodeService.getProperty(associationRef.getTargetRef(), ContentModel.PROP_NAME);
-				}
-
-				Element partElt = compoListElt.addElement(TAG_ENTITY);
-				partElt.addAttribute(BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT.getLocalName(), partName);
-				partElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),legalName);
-				partElt.addAttribute(BeCPGModel.ASSOC_SUPPLIERS.getLocalName(),suppliers);				
-				partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_QTY.getLocalName(), dataItem.getQty() == null ? VALUE_NULL : Double.toString(dataItem.getQty()));				
-				partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_UNIT.getLocalName(), dataItem.getPackagingListUnit() == null ? VALUE_NULL : dataItem.getPackagingListUnit().toString());
-				partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL.getLocalName(), dataItem.getPkgLevel());
-				partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_ISMASTER.getLocalName(), dataItem.getIsMaster() == null ? VALUE_NULL : dataItem.getIsMaster().toString());	
-				partElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(dataItem.getProduct()).toPrefixString(namespaceService));
+				loadPackaging(dataItem, packagingListElt);
 			}			
 		}
 
@@ -408,12 +391,16 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			for (NutListDataItem dataItem : productData.getNutList()) {
 
 				String nut = nodeService.getProperty(dataItem.getNut(), ContentModel.PROP_NAME).toString();
+				String value = dataItem.getValue() == null ? VALUE_NULL : String.valueOf(dataItem.getValue());				
 
 				Element nutElt = nutListElt.addElement(TAG_NUT);
 				nutElt.addAttribute(BeCPGModel.ASSOC_NUTLIST_NUT.getLocalName(), nut);
-				nutElt.addAttribute(BeCPGModel.PROP_NUTLIST_VALUE.getLocalName(), dataItem.getValue() == null ? VALUE_NULL : String.valueOf(dataItem.getValue()));
+				nutElt.addAttribute(BeCPGModel.PROP_NUTLIST_VALUE.getLocalName(), value);
 				nutElt.addAttribute(BeCPGModel.PROP_NUTLIST_UNIT.getLocalName(), dataItem.getUnit());
 				nutElt.addAttribute(BeCPGModel.PROP_NUTLIST_GROUP.getLocalName(), dataItem.getGroup());
+				
+				//add nut as attributes
+				nutListElt.addAttribute(generateKeyAttribute(nut), value);
 			}
 		}
 
@@ -479,21 +466,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				physicoChemElt.addAttribute(BeCPGModel.PROP_PHYSICOCHEMLIST_MAXI.getLocalName(), dataItem.getMaxi() == null ? VALUE_NULL : Double.toString(dataItem.getMaxi()));
 			}
 		}		
-
-		return dataListsElt;
 	}
 	
-	/**
-	 * load the datalists of the product data.
-	 * 
-	 * @param productData
-	 *            the product data
-	 * @param dataListsElt
-	 *            the data lists elt
-	 * @return the element
-	 */
 	@Override
-	protected Element loadTargetAssocs(NodeRef entityNodeRef, Element entityElt) {
+	protected void loadTargetAssocs(NodeRef entityNodeRef, Element entityElt) {
 
 		// load plants
 		Element plantsElt = entityElt.addElement(TAG_PLANTS);
@@ -510,9 +486,93 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				
 				plantElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());																	
 			}
-		}
-		
-		return entityElt;
+		}		
+	}	
+
+	@Override
+	protected void loadMultiLinesAttributes(Map.Entry<ClassAttributeDefinition, String> attrKV, Element entityElt) {
+
+		if(attrKV.getKey().getName().equals(ContentModel.PROP_DESCRIPTION) ||
+				attrKV.getKey().getName().equals(BeCPGModel.PROP_PRODUCT_COMMENTS)){
+			extractMultiLines(entityElt, attrKV, attrKV.getKey().getName());
+		}				
 	}
 
+	private void loadPackaging(PackagingListDataItem dataItem, Element packagingListElt){
+			
+		if(nodeService.getType(dataItem.getProduct()).equals(BeCPGModel.TYPE_PACKAGINGKIT)){			
+			loadPackagingKit(dataItem, packagingListElt);
+		}
+		else{
+			loadPackagingMaterial(dataItem, packagingListElt);
+		}		
+	}
+	
+	private Element loadPackagingMaterial(PackagingListDataItem dataItem, Element packagingListElt){
+		String partName = (String) nodeService.getProperty(dataItem.getProduct(), ContentModel.PROP_NAME);
+		String legalName = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_LEGAL_NAME);
+		List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(dataItem.getProduct(),
+				BeCPGModel.ASSOC_SUPPLIERS);
+		String suppliers = "";
+		for(AssociationRef associationRef : supplierAssocRefs){
+			if(!suppliers.isEmpty()){
+				suppliers += RepoConsts.LABEL_SEPARATOR;
+			}
+			suppliers += (String)nodeService.getProperty(associationRef.getTargetRef(), ContentModel.PROP_NAME);
+		}
+
+		Element partElt = packagingListElt.addElement(TAG_ENTITY);
+		partElt.addAttribute(BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT.getLocalName(), partName);
+		partElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),legalName);
+		partElt.addAttribute(BeCPGModel.ASSOC_SUPPLIERS.getLocalName(),suppliers);				
+		partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_QTY.getLocalName(), dataItem.getQty() == null ? VALUE_NULL : Double.toString(dataItem.getQty()));				
+		partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_UNIT.getLocalName(), dataItem.getPackagingListUnit() == null ? VALUE_NULL : dataItem.getPackagingListUnit().toString());
+		partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL.getLocalName(), dataItem.getPkgLevel());
+		partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_ISMASTER.getLocalName(), dataItem.getIsMaster() == null ? VALUE_NULL : dataItem.getIsMaster().toString());	
+		partElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(dataItem.getProduct()).toPrefixString(namespaceService));
+		
+		return partElt;
+	}
+	
+	//manage 2 level depth
+	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt){
+		
+		Set<QName> datalistQNames = new HashSet<QName>();
+		datalistQNames.add(BeCPGModel.TYPE_PACKAGINGLIST);
+		ProductData packagingKitData = productDAO.find(dataItem.getProduct(), datalistQNames);
+		boolean isPallet = nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET);
+		Element palletElt = null;
+		
+		for(PackagingListDataItem p : packagingKitData.getPackagingList()){
+			Element packagingMaterial = loadPackagingMaterial(p, packagingListElt);	
+			
+			// use dataItem qty, instead of qty in pk
+			packagingMaterial.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_QTY.getLocalName(), dataItem.getQty() == null ? VALUE_NULL : Double.toString(dataItem.getQty()));
+			
+			// pallet has qty != 1 
+			if(isPallet && p.getQty() != 1d){
+				palletElt = packagingMaterial;
+				Map<ClassAttributeDefinition, String> palletAttributes = loadNodeAttributes(dataItem.getProduct());
+				
+				for (Map.Entry<ClassAttributeDefinition, String> kv : palletAttributes.entrySet()){
+									
+					QName propertyQName = kv.getKey().getName();
+					if(palletElt.selectSingleNode("@" + propertyQName.getLocalName()) == null){
+						palletElt.addAttribute(propertyQName.getLocalName(), kv.getValue());
+					}					
+				}
+				
+				// calculation (Nombre UVC/palette)
+				if(dataItem.getQty() != null && p.getQty() != null){
+					Double qty = dataItem.getQty() * p.getQty();					
+					palletElt.addAttribute(ATTR_NB_FP_THIRD_LEVEL, qty.toString());
+				}
+			}			
+		}
+		
+		//is pallet
+		if(isPallet && palletElt == null){
+			logger.error("PackagingKit with aspect Pallet doesn't have a third level packaging in is children");
+		}		
+	}
 }

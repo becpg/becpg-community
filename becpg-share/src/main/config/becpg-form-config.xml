@@ -287,8 +287,16 @@
 					<field id="cm:modified" set="audit" />
 
 					<!-- Effectivity -->
- 					<field id="bcpg:startEffectivity" set="effectivity" /> 
- 					<field id="bcpg:endEffectivity" set="effectivity" /> 
+ 					<field id="bcpg:startEffectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field> 
 
 					<!-- GS1 -->
 
@@ -668,7 +676,13 @@
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportTpls" />
-
+					
+					<!-- pallet -->
+					<show id="pack:palletLayers" />
+					<show id="pack:palletDimensions" />
+					<show id="pack:palletBoxesPerLayer" />
+					<show id="pack:palletBoxesPerPallet" />					
+					
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
@@ -683,6 +697,8 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+					<set id="pallet" appearance="bordered-panel" label-id="becpg.forms.set.pallet.label" 
+						template="/fr/becpg/components/form/2-column-set.ftl"/>
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
@@ -722,6 +738,12 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="rep:reportTpls" set="mainInfo" />
+					
+					<!-- pallet -->
+					<field id="pack:palletLayers" set="pallet" />
+					<field id="pack:palletDimensions" set="pallet" />
+					<field id="pack:palletBoxesPerLayer" set="pallet" />
+					<field id="pack:palletBoxesPerPallet" set="pallet" />					
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -2967,6 +2989,16 @@
 							<control-param name="options">1|1,2|2,3|3,4|4,All|data.level.all</control-param>
 						</control>
 					</field>
+					<field id="bcpg:startEffectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -2986,6 +3018,18 @@
 					<show id="bcpg:startEffectivity"  /> 
 					<show id="bcpg:endEffectivity"  /> 
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:startEffectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 			<form id="datagridWUsed">
 				<field-visibility>
@@ -2997,6 +3041,18 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:startEffectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -3042,6 +3098,16 @@
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
  					</field> 
+ 					<field id="bcpg:startEffectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -3079,6 +3145,7 @@
 					<show id="bcpg:packagingListQty" />
 					<show id="bcpg:packagingListUnit" />
 					<show id="bcpg:packagingListPkgLevel" />
+					<show id="bcpg:packagingIsMaster" />
 				</field-visibility>
 			</form>
 			<form id="datagridWUsed">
@@ -3087,6 +3154,7 @@
 					<show id="bcpg:packagingListQty" />
 					<show id="bcpg:packagingListUnit" />
 					<show id="bcpg:packagingListPkgLevel" />
+					<show id="bcpg:packagingIsMaster" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -3101,6 +3169,7 @@
 					<show id="bcpg:packagingListQty" />
 					<show id="bcpg:packagingListUnit" />
 					<show id="bcpg:packagingListPkgLevel" />
+					<show id="bcpg:packagingIsMaster" />
 				</field-visibility>
 
 				<appearance>
@@ -3359,10 +3428,14 @@
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:startEffectivity">
-						<control template="/org/alfresco/components/form/controls/date.ftl" />
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
 					</field>
 					<field id="bcpg:endEffectivity">
-						<control template="/org/alfresco/components/form/controls/date.ftl" />
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -3404,10 +3477,14 @@
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:startEffectivity">
-						<control template="/org/alfresco/components/form/controls/date.ftl" />
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
 					</field>
 					<field id="bcpg:endEffectivity">
-						<control template="/org/alfresco/components/form/controls/date.ftl" />
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
