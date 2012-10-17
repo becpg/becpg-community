@@ -583,6 +583,8 @@
 															+ Alfresco.util.siteURL('document-details?nodeRef='
 																	+ oRecord.getData("nodeRef")) + '">'
 															+ $html(data.displayValue) + '</a>';
+												} else if(datalistColumn.name == "bcpg:productState" && data.value!=null){
+													html += $links($html(scope.msg("state.product."+data.value.toLowerCase())));
 												}
 
 												else {

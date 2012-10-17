@@ -52,6 +52,9 @@
 				<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdStatus">
 					<status>Etude du besoin</status>
 				</action>
+				<action class="fr.becpg.repo.workflow.jbpm.common.AssignBusinessDueDate">
+					<addDuration>2 business days</addDuration>
+				</action>
 				<action class="fr.becpg.repo.workflow.jbpm.npd.AssignNpdNumber"/>
 				<action class="fr.becpg.repo.workflow.jbpm.npd.AssignDefaultGroup"/>
 			</event>
@@ -82,6 +85,11 @@
 
 	<task-node name="needDefinition-validation" >
 		<task name="npdwf:needDefinition-validation" >
+			<event type="task-create">
+				<action class="fr.becpg.repo.workflow.jbpm.common.AssignBusinessDueDate">
+					<addDuration>2 business days</addDuration>
+				</action>
+			</event>
 		    <assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
                <actor>#{reviewer}</actor>
             </assignment>            
@@ -122,6 +130,11 @@
 
 	<task-node name="feasibility-analysis-assignement" >
 		<task name="npdwf:feasibility-analysis-assignement" >
+			<event type="task-create">
+				<action class="fr.becpg.repo.workflow.jbpm.common.AssignBusinessDueDate">
+					<addDuration>2 business days</addDuration>
+				</action>
+			</event>
 		    <assignment class="org.alfresco.repo.workflow.jbpm.AlfrescoAssignment">
                <pooledactors>#{pooledassigners}</pooledactors>
             </assignment>

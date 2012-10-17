@@ -291,6 +291,7 @@
 	<bean id="wUsedExtractor" class="fr.becpg.repo.entity.datalist.impl.WUsedExtractor" parent="multiLevelExtractor">
 		<property name="wUsedListService" ref="wUsedListService" />
 		<property name="namespaceService" ref="namespaceService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 	</bean>
 
 	<bean id="dataListExtractorFactory"

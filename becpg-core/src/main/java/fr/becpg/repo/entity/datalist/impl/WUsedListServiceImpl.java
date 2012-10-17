@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
+import fr.becpg.model.MPMModel;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
@@ -94,7 +95,9 @@ public class WUsedListServiceImpl implements WUsedListService {
 		else if(nodeType.isMatch(BeCPGModel.TYPE_PACKAGINGMATERIAL) ||
 				nodeType.isMatch(BeCPGModel.TYPE_PACKAGINGKIT)){
 			wUsedAssociations.add(BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);
-		}
+		} else if(nodeType.isMatch(BeCPGModel.TYPE_RESOURCEPRODUCT)){
+			wUsedAssociations.add(MPMModel.ASSOC_PL_RESOURCE);
+		} 
 		
 		return wUsedAssociations;
 	}
@@ -109,6 +112,8 @@ public class WUsedListServiceImpl implements WUsedListService {
 		}
 		else if(associationName.equals(BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT)){
 			listQName = BeCPGModel.TYPE_PACKAGINGLIST;
+		} else if(associationName.equals(MPMModel.ASSOC_PL_RESOURCE)){
+			listQName = MPMModel.TYPE_PROCESSLIST;
 		}
 		
 		return listQName;
