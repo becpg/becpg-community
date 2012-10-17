@@ -36,6 +36,13 @@
       onReady: function WLT_onReady()
       {
          this.widgets.startWorkflowButton = Alfresco.util.createYUIButton(this, "startNpd-button", this.onStartWorkflowButtonClick, {});
+         
+         this.widgets.showGanttButton = Alfresco.util.createYUIButton(this, "show-gantt-button", this.onStartWorkflowButtonClick);
+         this.widgets.showPlanningButton =  Alfresco.util.createYUIButton(this, "show-planning-button", this.onStartWorkflowButtonClick);
+         
+         this.widgets.showGanttButton.set("disabled", true);
+         this.widgets.showPlanningButton.set("disabled", true);
+         
          Dom.removeClass(Selector.query(".hidden", this.id + "-body", true), "hidden");
       },
 

@@ -10,6 +10,7 @@ import org.alfresco.service.namespace.QName;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -24,7 +25,8 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 @Service
 public class WUsedExtractor extends MultiLevelExtractor {
 	
-	
+
+	private EntityDictionaryService entityDictionaryService;
 
 	private WUsedListService wUsedListService;
 
@@ -32,6 +34,12 @@ public class WUsedExtractor extends MultiLevelExtractor {
 	public void setwUsedListService(WUsedListService wUsedListService) {
 		this.wUsedListService = wUsedListService;
 	}
+
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+
+
 
 
 	NamespaceService namespaceService;
@@ -50,11 +58,12 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(pagination.getPageSize());
 		
-		QName associationName = BeCPGModel.ASSOC_COMPOLIST_PRODUCT;
+		QName associationName = entityDictionaryService.getDefaultPivotAssoc(dataListFilter.getDataType());
 		
-		 if (BeCPGModel.TYPE_PACKAGINGLIST.equals(dataListFilter.getDataType())){
-			 associationName =  BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT;
-		 }
+		if(associationName == null){
+			associationName = BeCPGModel.ASSOC_COMPOLIST_PRODUCT;
+		}
+		
 		 
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(PROP_ACCESSRIGHT, false);

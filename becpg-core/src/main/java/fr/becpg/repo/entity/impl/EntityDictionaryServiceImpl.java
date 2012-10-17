@@ -27,13 +27,12 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 		else if(entityType.getLocalName().equals(BeCPGModel.TYPE_PACKAGINGMATERIAL.getLocalName()) ||
 				entityType.getLocalName().equals(BeCPGModel.TYPE_PACKAGINGKIT.getLocalName())){
 			wUsedList = BeCPGModel.TYPE_PACKAGINGLIST;
+		} else if(entityType.getLocalName().equals(BeCPGModel.TYPE_RESOURCEPRODUCT.getLocalName())){
+			wUsedList = MPMModel.TYPE_PROCESSLIST;
 		}
-			
 		return wUsedList;
 	}
 	
-	
-
 
 	@Override
 	public QName getDefaultPivotAssoc(QName dataListItemType) {
@@ -44,8 +43,8 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 		} else if(BeCPGModel.TYPE_PACKAGINGLIST.equals(dataListItemType)){
 			return BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT;
 		} else if(MPMModel.TYPE_PROCESSLIST.equals(dataListItemType)){
-			return MPMModel.ASSOC_PL_PRODUCT;
-		}
+			return MPMModel.ASSOC_PL_RESOURCE;
+		} 
 		
 		return null;
 	}
