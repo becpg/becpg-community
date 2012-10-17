@@ -248,7 +248,8 @@ div.current-formula
 }
 
 
-.spel-editor span.product {
+.spel-editor span.product,
+.spel-editor span.compoList {
 	background: url(../../components/images/filetypes/generic-finishedProduct-16.png) no-repeat;
 	padding-left: 20px;
 }
@@ -260,7 +261,7 @@ div.current-formula
 }
 
 .spel-editor span.processList {
-	background: url(../../components/images/filetypes/generic-packagingKit-16.png) no-repeat;
+	background: url(../../components/images/filetypes/generic-resourceProduct-16.png) no-repeat;
 	padding-left: 20px;
 }
 

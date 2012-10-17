@@ -25,8 +25,49 @@
    float: right;
 }
 
-.npd-list-toolbar .start-workflow span.first-child
+.npd-list-toolbar .start-npd span.first-child
 {
-   background: url("../images/npd-16.png") no-repeat scroll 12px 4px transparent;
+   background: url("images/npd-16.png") no-repeat scroll 12px 4px transparent;
    padding-left: 22px;
+}
+
+.npd-list-toolbar .right .separator
+{
+   float: left;
+}
+
+.npd-list-toolbar .show-gantt,
+.npd-list-toolbar .show-planning
+{
+   float: left;
+}
+
+
+.npd-list-toolbar .show-gantt span.first-child,
+.npd-list-toolbar .show-planning span.first-child
+{
+   background-position: 50% 50%;
+   background-repeat: no-repeat;
+   min-height: 16px;
+   padding: 0 2px;
+}
+
+.npd-list-toolbar .show-gantt span.first-child
+{
+   background-image: url("images/gantt-16.png");
+}
+
+.npd-list-toolbar .show-gantt .yui-button-disabled span.first-child
+{
+   background-image: url("images/gantt-disabled-16.png");
+}
+
+.npd-list-toolbar .show-planning span.first-child
+{
+   background-image: url("images/planning-16.png");
+}
+
+.npd-list-toolbar .show-planning .yui-button-disabled span.first-child
+{
+   background-image: url("images/planning-disabled-16.png");
 }
