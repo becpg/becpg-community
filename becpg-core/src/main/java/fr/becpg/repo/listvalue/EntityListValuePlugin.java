@@ -78,7 +78,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	/** The Constant SOURCE_TYPE_PRODUCT_REPORT. */
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
 
-	private static final String PARAM_VALUES_SEPARATOR = ",";
+	protected static final String PARAM_VALUES_SEPARATOR = ",";
 
 	/** The node service. */
 	protected NodeService nodeService;

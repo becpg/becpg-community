@@ -7,6 +7,21 @@
          </div>
       </div>
       <div class="right">
+         <div class="show-planning">
+            <span id="${el}-show-planning-button" class="yui-button yui-checkbox-button">
+               <span class="first-child">
+                  <button name="showPlanning"></button>
+               </span>
+            </span>
+         </div>
+         <div class="separator">&nbsp;</div>
+         <div class="show-gantt">
+            <span id="${el}-show-gantt-button" class="yui-button yui-checkbox-button">
+               <span class="first-child">
+                  <button name="showGantt"></button>
+               </span>
+            </span>
+         </div>
       </div>
    </div>
 </div>

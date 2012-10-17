@@ -33,6 +33,11 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
+		
+		if(className!=null && className.length()>0 && className.contains(PARAM_VALUES_SEPARATOR)){
+			String[] arrClassNames = className != null ? className.split(PARAM_VALUES_SEPARATOR) : null;
+			return suggestTargetAssoc(BeCPGModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
+		}
 		// Class is a Java class
 		try {
 			Class<?> c = Class.forName(className);

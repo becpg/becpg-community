@@ -145,10 +145,11 @@
 //                  { key: "description",  label:this.msg("label.npdDescription"),sortable: false, formatter: this.bind(this.renderTitle) },
                   { key: "npdStatus",  label:this.msg("label.npdStatus"),sortable: false, formatter: this.bind(this.renderNpdStatus) },
                   { key: "activeSteps",  label:this.msg("label.activeSteps"),sortable: false, formatter: this.bind(this.renderActiveSteps) },
-                  { key: "assignedUsers",  label:this.msg("label.assignedUsers"),sortable: false, formatter: this.bind(this.renderAssignedUsers) },
+              //    { key: "assignedUsers",  label:this.msg("label.assignedUsers"),sortable: false, formatter: this.bind(this.renderAssignedUsers) },
+                  { key: "wfOwner",  label:this.msg("label.owner"),sortable: false, formatter: this.bind(this.renderOwner) },
                   { key: "startedDate", label:this.msg("label.started")  ,sortable: false, formatter: this.bind(this.renderStartedDate) },
                   { key: "dueDate", label:this.msg("label.due") , sortable: false, formatter: this.bind(this.renderDueDate) }, 
-                  { key: "npdComments", label:this.msg("label.npdComments") , sortable: false, formatter: this.bind(this.renderComments) }, 
+            //      { key: "npdComments", label:this.msg("label.npdComments") , sortable: false, formatter: this.bind(this.renderComments) }, 
                   { key: "actions", label:this.msg("label.actions"), sortable: false, formatter: this.bind(this.renderCellActions), width: 200 }
                ],
                config:
@@ -226,10 +227,9 @@
             priorityMap = { "1": "high", "2": "medium", "3": "low" },
             priorityKey = priorityMap[priority + ""],
             desc = '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/priority-' + priorityKey + '-16.png" title="' + this.msg("label.priority", this.msg("priority." + priorityKey)) + '"/>';
+         
          elCell.innerHTML = desc;
       },
-
-
       renderTitle: function NPDL_renderTitle(elCell, oRecord, oColumn, oData)
       {
          var workflow = oRecord.getData();
@@ -240,7 +240,11 @@
          }
          elCell.innerHTML = message;
       },
-      
+      renderOwner: function NPDL_renderTitle(elCell, oRecord, oColumn, oData)
+      {
+         var workflow = oRecord.getData();
+         elCell.innerHTML = workflow.initiator.firstName+" "+workflow.initiator.lastName;
+      },
       renderNpdNumber: function NPDL_renderNpdNumber(elCell, oRecord, oColumn, oData)
       {
     	 var workflow = oRecord.getData();
@@ -252,13 +256,13 @@
       {
     	 var workflow = oRecord.getData();
     	 var npdProductName = workflow.tasks[0].properties.npdwf_npdProductName;
-         elCell.innerHTML = '<a href="' + $siteURL('workflow-details?workflowId=' + workflow.id + '&referrer=workflows&myWorkflowsLinkBack=true') + '" class="theme-color-1" title="' + this.msg("link.viewWorkflow") + '">' + $html(npdProductName? npdProductName :this.msg("label.none")) + '</a>';
+         elCell.innerHTML = '<span class="'+this.getAdvancementClass(workflow)+'"><a href="' + $siteURL('workflow-details?workflowId=' + workflow.id + '&referrer=workflows&myWorkflowsLinkBack=true') + '" class="theme-color-1" title="' + this.msg("link.viewWorkflow") + '">' + $html(npdProductName? npdProductName :this.msg("label.none")) + '</a></span>';
       },
       renderNpdStatus: function NPDL_renderNpdStatus(elCell, oRecord, oColumn, oData)
       {
     	 var workflow = oRecord.getData();
     	 var npdStatus = workflow.tasks[0].properties.npdwf_npdStatus;
-         elCell.innerHTML = (npdStatus ? npdStatus  :this.msg("label.none"));
+         elCell.innerHTML = '<div class="'+this.getNpdStatusClass(workflow)+'"></div><span>'+(npdStatus ? npdStatus  :this.msg("label.none"))+'</span>';
       },
       renderActiveSteps: function NPDL_renderSteps(elCell, oRecord, oColumn, oData)
       {
@@ -269,8 +273,8 @@
     		 
     		 if(workflow.tasks[i].state == "IN_PROGRESS"){
     			 if(npdSteps != "")
-    				 npdSteps += ", ";
-    			 npdSteps += workflow.tasks[i].title;    			 
+    				 npdSteps += "<br/>";
+    			 npdSteps += '<span class="'+this.getAdvancementClass(workflow, workflow.tasks[i])+'">'+workflow.tasks[i].title+'</span>';    			 
     		 }
     	 }
     		     	     	 
@@ -329,16 +333,6 @@
          var startedDate = workflow.startDate ? Alfresco.util.fromISO8601(workflow.startDate) : null;
          elCell.innerHTML = (startedDate ? Alfresco.util.formatDate(startedDate, "shortDate") : this.msg("label.none"));
       },
-
-      /**
-       * Actions custom datacell formatter
-       *
-       * @method renderCellActions
-       * @param elCell {object}
-       * @param oRecord {object}
-       * @param oColumn {object}
-       * @param oData {object|string}
-       */
       renderCellActions: function NPDL_renderCellActions(elCell, oRecord, oColumn, oData)
       {
          // Create actions using WorkflowAction
@@ -348,6 +342,77 @@
             this.cancelWorkflow(oRecord.getData("id"), oRecord.getData("message"));
             Event.preventDefault(event);
          }, oRecord);
+      },
+      getAdvancementClass : function NPDL_getAdvancementClass(workflow, task){
+        var percent = 0;
+        
+	     if(task!=null){	
+		      percent = this.getTaskAdvancementPercent(task);
+	      } else {
+	      	 for(i in workflow.tasks){
+	 		      percent+=this.getTaskAdvancementPercent( workflow.tasks[i]);
+		    	 }
+	      
+		      percent = percent / workflow.tasks.length;
+		      	
+	      	 if(workflow.dueDate!=null){
+	      		 var completionDate =  this.resetDate(new Date());
+		      	 var dueDate =  this.resetDate(Alfresco.util.fromISO8601(workflow.dueDate));
+			    		if(completionDate.getTime()==dueDate.getTime()){
+			    			 percent= 75;
+			    		} else if(completionDate.getTime()>dueDate.getTime()){
+			    			 percent= 0;
+			    		} 
+		      }
+	      }
+	    
+	     if(percent > 80){
+	   	  return "advancement-less100";
+	     }
+	     if(percent > 60){
+	   	  return "advancement-less80";
+	     }
+	     if(percent > 40){
+	   	  return "advancement-less60";
+	     }
+	     if(percent > 20){
+	   	  return "advancement-less40";
+	     }
+      	
+        return "advancement-less20";
+      },
+      
+      getTaskAdvancementPercent : function NPDL_getAdvancementClass( task){
+
+      	if(task.bpm_dueDate!=null){
+      		var dueDate = Alfresco.util.fromISO8601(task.bpm_dueDate);
+      		var completionDate = new Date();
+	    		if(task.state == "COMPLETED"){
+	    			completionDate = Alfresco.util.fromISO8601(task.bpm_completionDate);
+	    		}
+	    		this.resetDate(completionDate);
+	    		this.resetDate(dueDate);
+	    		if(completionDate.getTime()==dueDate.getTime()){
+	    			return 50;
+	    		}
+	    		if(completionDate.getTime()>dueDate.getTime()){
+	    			return 0;
+	    		}
+	    		
+      	}
+      	return 100;
+      },
+      resetDate : function NPDL_resetDate(date){
+      	date.setHours(0);
+      	date.setMinutes(0);
+      	date.setSeconds(0);
+      	return date;
+      },
+      
+      getNpdStatusClass: function NPDL_getAdvancementClass(workflow){
+	    	 var npdStatus = workflow.tasks[0].properties.npdwf_npdStatus;
+      	
+      	return "npdStatus npdStatus-"+npdStatus.replace(new RegExp('\\s', 'g'),"-").toLowerCase();
       }
       
    }, true);

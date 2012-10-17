@@ -698,12 +698,25 @@
 		                  type : "bcpg:microbio",
 		                  subType : "fr.becpg.repo.product.data.productList.MicrobioListDataItem",
 		                  template : "microbioList.?[microBio.toString() == '{item1}' ][0].{item2}"
-		               }, {
+		               },
+		               {
+		                  name : "compoList",
+		                  type : "bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct",
+		                  subType : "fr.becpg.repo.product.data.productList.CompoListDataItem",
+		                  template : "compoList.?[product.toString() == '{item1}' ][0].{item2}"
+		               },
+		               {
 		                  name : "processList",
 		                  type : "bcpg:resourceProduct",
 		                  subType : "fr.becpg.repo.product.data.productList.ProcessListDataItem",
 		                  template : "processList.?[plResource.toString() == '{item1}' ][0].{item2}"
 		               }, {
+		                  name : "packagingList",
+		                  type : "bcpg:packagingMaterial,bcpg:packagingKit",
+		                  subType : "fr.becpg.repo.product.data.productList.PackagingListDataItem",
+		                  template : "packagingList.?[product.toString() == '{item1}' ][0].{item2}"
+		               }, 
+		               {
 		                  name : "variables",
 		                  type : "bcpg:dynamicCharactList",
 		                  template : "dynamicCharactList.?[name == '{name1}' ][0].value"

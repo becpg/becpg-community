@@ -38,7 +38,6 @@ public class EffectiveFilters {
 		public Predicate createPredicate(final ProductData data) {
 
 			final Date now = new Date();
-			//final Date startEffectivity = data.getStartEffectivity() != null ? data.getStartEffectivity() : now;
 			final Date startEffectivity = data.getStartEffectivity() != null && data.getStartEffectivity().getTime()>now.getTime() ? data.getStartEffectivity() : now;
 
 			return new Predicate() {
