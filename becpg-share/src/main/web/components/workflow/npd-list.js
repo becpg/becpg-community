@@ -344,11 +344,12 @@
          }, oRecord);
       },
       getAdvancementClass : function NPDL_getAdvancementClass(workflow, task){
-        var percent = 0;
+        var percent = 0, suffix="";
         
 	     if(task!=null){	
 		      percent = this.getTaskAdvancementPercent(task);
 	      } else {
+	      	 suffix="-32";
 	      	 for(i in workflow.tasks){
 	 		      percent+=this.getTaskAdvancementPercent( workflow.tasks[i]);
 		    	 }
@@ -367,19 +368,19 @@
 	      }
 	    
 	     if(percent > 80){
-	   	  return "advancement-less100";
+	   	  return "advancement-less100"+suffix;
 	     }
 	     if(percent > 60){
-	   	  return "advancement-less80";
+	   	  return "advancement-less80"+suffix;
 	     }
 	     if(percent > 40){
-	   	  return "advancement-less60";
+	   	  return "advancement-less60"+suffix;
 	     }
 	     if(percent > 20){
-	   	  return "advancement-less40";
+	   	  return "advancement-less40"+suffix;
 	     }
       	
-        return "advancement-less20";
+        return "advancement-less20"+suffix;
       },
       
       getTaskAdvancementPercent : function NPDL_getAdvancementClass( task){
