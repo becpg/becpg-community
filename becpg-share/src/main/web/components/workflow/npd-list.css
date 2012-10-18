@@ -90,7 +90,7 @@
 .npd-list .npds .yui-dt-data td {
 	border-bottom: 1px dashed #d9d9d9;
 	border-right: medium none;
-	vertical-align: top;
+   vertical-align: middle;
 }
 
 .npd-list .npds .yui-dt-data .yui-dt-last td {
@@ -182,7 +182,7 @@
 }
 
 .npd-list span.advancement-less100 {
-	background: url( ./images/health-80plus.png ) no-repeat;
+	background: url( ./images/health-80plus-16.png ) no-repeat;
 	padding-left: 24px;
 }
 
@@ -206,57 +206,91 @@
 	padding-left: 24px;
 }
 
+.npd-list span.advancement-less100-32 {
+	background: url( ./images/health-80plus.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.npd-list span.advancement-less80-32 {
+	background: url( ./images/health-60to79.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.npd-list span.advancement-less60-32 {
+	background: url( ./images/health-40to59.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.npd-list span.advancement-less40-32 {
+	background: url( ./images/health-20to39.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.npd-list span.advancement-less20-32 {
+	background: url( ./images/health-00to19.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
 .npd-list div.npdStatus {
 	width: 15px;
 	height: 15px;
 	border: 1px solid;
 	border-radius: 5px;
-	margin-right:5px;
+	margin-right: 5px;
 	display: inline-block;
 	vertical-align: middle;
 }
 
 .npd-list div.npdStatus-démarré {
-		background-color: #FF9999;
+	background-color: #FF9999;
 }
 
 .npd-list div.npdStatus-brief-marketing {
-		background-color: #FFCC99;
+	background-color: #FFCC99;
 }
 
 .npd-list div.npdStatus-etude-du-besoin {
-		background-color: #FFFF99;
+	background-color: #FFFF99;
 }
 
 .npd-list div.npdStatus-faisabilité-en-cours {
-		background-color: #CCFF99;
+	background-color: #CCFF99;
 }
 
 .npd-list div.npdStatus-commercialisé {
-		background-color: #FF99CC;
+	background-color: #FF99CC;
 }
 
 .npd-list div.npdStatus-réservé {
-		background-color: #FF5C5C;
+	background-color: #FF5C5C;
 }
 
 .npd-list div.npdStatus-offre {
-		background-color: #5CFFFF
+	background-color: #5CFFFF
 }
 
 .npd-list div.npdStatus-stop {
-		background-color: #99CCFF;
+	background-color: #99CCFF;
 }
 
 .npd-list div.npdStatus-standby {
-		background-color: #FFFFFF;
+	background-color: #FFFFFF;
 }
 
 .npd-list div.npdStatus-prototypage {
-		background-color: #E0E0E0;
+	background-color: #E0E0E0;
 }
 
 .npd-list div.npdStatus-mise-en-production {
-		background-color: #FF0080;
+	background-color: #FF0080;
 }
-
