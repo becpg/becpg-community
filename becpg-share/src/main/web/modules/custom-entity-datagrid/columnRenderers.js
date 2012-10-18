@@ -6,8 +6,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 	                   "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct" ],
 	   renderer : function(oRecord, data, label, scope) {
 		   
-		   var url = null;			   
-		   if(label == "bcpg:compoListProduct" || label == "bcpg:packagingListProduct"){			   
+		   var url = null,
+		   	 version = "";			   
+		   if(label == "mpm:plProduct" || label == "bcpg:compoListProduct" || label == "bcpg:packagingListProduct"
+		   	 || label == "mpm:plResource"){			   
 		       if (data.siteId) {
 		           url = Alfresco.constants.URL_PAGECONTEXT + "site/" + data.siteId + "/" + 'entity-data-lists?nodeRef=' + data.value;
 		       } else {
@@ -23,20 +25,25 @@ if (beCPG.module.EntityDataGridRenderers) {
 		       else if(data.metadata.indexOf("localSemiFinishedProduct") != -1){
 		    	   url = scope._buildCellUrl(data);
 		       }
+		       if (data.version && data.version !== "") {
+		         version = '<span class="document-version">' + data.version + '</span>';
+		       }
+		       
 		   }
 		   else{
 			   url = scope._buildCellUrl(data);
 		   }
 		   
+		   
 		   if(label == "bcpg:compoListProduct"){
 			   
 			   var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
 			   return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;"><a href="' + url + '">'
-			         + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';			   
+			         + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>'+version;			   
 		   }
 		   else{
 			   return '<span class="' + data.metadata + '" ><a href="' + url + '">'
-			         + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+			         + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>'+version;
 		   }		   
 	   }
 

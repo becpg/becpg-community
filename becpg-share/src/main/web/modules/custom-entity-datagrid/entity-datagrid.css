@@ -286,3 +286,15 @@
    background-image: url(../../components/images/show-details-16.png);
 }
 
+
+.datagrid span.document-version {
+    margin-left: 0.8em;
+    padding: 1px;
+    position: relative;
+    top: -2px;
+    visibility: hidden;
+}
+
+.datagrid  .yui-dt-highlighted span.document-version {
+    visibility: visible;
+}
