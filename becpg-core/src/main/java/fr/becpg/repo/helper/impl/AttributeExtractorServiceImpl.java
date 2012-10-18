@@ -324,6 +324,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			} else if (type != null) {
 				tmp.put("metadata", extractMetadata(type, nodeRef));
 			}
+			tmp.put("version", nodeService.getProperty(nodeRef,ContentModel.PROP_VERSION_LABEL));
 			tmp.put("label", attribute.getTitle());
 			tmp.put("displayValue", displayName);
 			tmp.put("value", value);
@@ -360,6 +361,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					if (type != null) {
 						tmp.put("metadata", extractMetadata(type, assocRef.getTargetRef()));
 					}
+					tmp.put("version", nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_VERSION_LABEL));
 					tmp.put("displayValue", (String) nodeService.getProperty(assocRef.getTargetRef(), getPropName(type)));
 					tmp.put("value", assocRef.getTargetRef().toString());
 					String siteId = extractSiteId(assocRef.getTargetRef());

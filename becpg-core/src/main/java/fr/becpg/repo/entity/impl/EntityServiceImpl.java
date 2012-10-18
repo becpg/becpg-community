@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -93,6 +94,8 @@ public class EntityServiceImpl implements EntityService {
 	private ContentService contentService;
 
 	private DictionaryService dictionaryService;
+
+	private BehaviourFilter policyBehaviourFilter;
 	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -137,6 +140,10 @@ public class EntityServiceImpl implements EntityService {
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
+	
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
 
 	@Override
 	public boolean hasDataListModified(NodeRef nodeRef) {
@@ -172,7 +179,7 @@ public class EntityServiceImpl implements EntityService {
 				String querySearch = String.format(QUERY_PRODUCTLIST_ITEMS_OUT_OF_DATE, queryParentsSearch, ISO8601DateFormat.format(modified));
 
 				logger.debug("queryPath: " + querySearch);
-				List<NodeRef> resultSet = beCPGSearchService.luceneSearch(querySearch, null , RepoConsts.MAX_RESULTS_SINGLE_VALUE );
+				List<NodeRef> resultSet = beCPGSearchService.luceneSearch(querySearch, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 				logger.debug("resultSet.length() : " + resultSet.size());
 
 				if (resultSet.size() > 0) {
@@ -248,7 +255,7 @@ public class EntityServiceImpl implements EntityService {
 					nodeService.moveNode(entityNodeRef, entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(entityNodeRef));
 					nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 					nodeService.setProperty(entityFolderNodeRef, BeCPGModel.PROP_ENTITY_FOLDER_CLASS_NAME, entityType);
-					
+
 					// initialize permissions according to template
 					for (FileInfo folder : fileFolderService.listFolders(folderTplNodeRef)) {
 
@@ -297,8 +304,6 @@ public class EntityServiceImpl implements EntityService {
 		}
 	}
 
-	
-	
 	/**
 	 * Load an image in the folder Images.
 	 * 
@@ -395,7 +400,6 @@ public class EntityServiceImpl implements EntityService {
 		return imageBytes;
 	}
 
-
 	@Override
 	public void deleteEntity(NodeRef entityNodeRef) {
 		logger.debug("delete entity");
@@ -403,7 +407,7 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	@Override
-	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, QName entityType, final String entityName) {
+	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, final QName entityType, final String entityName) {
 		NodeRef ret = null;
 		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
 		props.put(ContentModel.PROP_NAME, entityName);
@@ -414,9 +418,23 @@ public class EntityServiceImpl implements EntityService {
 			ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
 				@Override
 				public NodeRef doWork() throws Exception {
+
+					try {
+
+						policyBehaviourFilter.disableBehaviour(entityType);
+
 						NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 						nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
+
+						initializeEntityFolder(ret);
+
 						return ret;
+
+					} finally {
+
+						policyBehaviourFilter.enableBehaviour(entityType);
+
+					}
 
 				}
 			}, AuthenticationUtil.getSystemUserName());
@@ -471,28 +489,25 @@ public class EntityServiceImpl implements EntityService {
 
 	@Override
 	public NodeRef getEntityDefaultImage(NodeRef entityNodeRef) throws BeCPGException {
-			
-		String 	imgName = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-		
+
+		String imgName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+
 		// manage workingCopy
-		String wcLabel = CheckOutCheckInServiceImpl.getWorkingCopyLabel();		
-		if(imgName.endsWith(wcLabel)){
+		String wcLabel = CheckOutCheckInServiceImpl.getWorkingCopyLabel();
+		if (imgName.endsWith(wcLabel)) {
 			imgName = getNameFromWorkingCopyName(imgName, wcLabel);
 		}
-		
+
 		try {
 			return getImage(entityNodeRef, imgName);
 		} catch (BeCPGException e) {
 			logger.debug("No image found for cm:name");
 		}
-		
-		
-	 	imgName = TranslateHelper.getTranslatedPath(
-				RepoConsts.PATH_LOGO_IMAGE).toLowerCase();
+
+		imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE).toLowerCase();
 
 		if (dictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_PRODUCT)) {
-			imgName = TranslateHelper.getTranslatedPath(
-					RepoConsts.PATH_PRODUCT_IMAGE).toLowerCase();
+			imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_IMAGE).toLowerCase();
 
 		}
 
@@ -502,32 +517,26 @@ public class EntityServiceImpl implements EntityService {
 	@Override
 	public boolean hasAssociatedImages(QName type) {
 
-		
-		return BeCPGModel.TYPE_CLIENT.isMatch(type) || 
-		BeCPGModel.TYPE_SUPPLIER.isMatch(type) || 
-		dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT);
-	}	
-	
+		return BeCPGModel.TYPE_CLIENT.isMatch(type) || BeCPGModel.TYPE_SUPPLIER.isMatch(type) || dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT);
+	}
+
 	/**
-     * Get original name from the working copy name and the cm:workingCopyLabel
-     * that was used to create it.
-     * 
-     * @param workingCopyLabel
-     * @return  original name
-     */
-    private String getNameFromWorkingCopyName(String workingCopyName, String workingCopyLabel){
-        String workingCopyLabelRegEx = workingCopyLabel.replaceAll("\\(", "\\\\(");
-        workingCopyLabelRegEx = workingCopyLabelRegEx.replaceAll("\\)", "\\\\)");
-        if (workingCopyName.contains(" " + workingCopyLabel))
-        {
-            workingCopyName = workingCopyName.replaceFirst(" " + workingCopyLabelRegEx, "");
-        }
-        else if (workingCopyName.contains(workingCopyLabel))
-        {
-            workingCopyName = workingCopyName.replaceFirst(workingCopyLabelRegEx, "");
-        }
-        return workingCopyName;
-    }
+	 * Get original name from the working copy name and the cm:workingCopyLabel
+	 * that was used to create it.
+	 * 
+	 * @param workingCopyLabel
+	 * @return original name
+	 */
+	private String getNameFromWorkingCopyName(String workingCopyName, String workingCopyLabel) {
+		String workingCopyLabelRegEx = workingCopyLabel.replaceAll("\\(", "\\\\(");
+		workingCopyLabelRegEx = workingCopyLabelRegEx.replaceAll("\\)", "\\\\)");
+		if (workingCopyName.contains(" " + workingCopyLabel)) {
+			workingCopyName = workingCopyName.replaceFirst(" " + workingCopyLabelRegEx, "");
+		} else if (workingCopyName.contains(workingCopyLabel)) {
+			workingCopyName = workingCopyName.replaceFirst(workingCopyLabelRegEx, "");
+		}
+		return workingCopyName;
+	}
 
 	@Override
 	public NodeRef getEntityFolder(NodeRef entityNodeRef) {
