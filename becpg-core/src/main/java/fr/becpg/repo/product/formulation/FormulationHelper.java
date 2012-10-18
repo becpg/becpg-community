@@ -102,18 +102,22 @@ public class FormulationHelper {
 	 * @param processListDataItem
 	 * @return
 	 */
-	public static Double getQty(ProcessListDataItem processListDataItem){
+	public static Double getQty(ProductData formulatedProduct, ProcessListDataItem processListDataItem){
 		
 		Double qty = 0d;
+		Double productQtyToTransform = processListDataItem.getQty() != null ? processListDataItem.getQty() : formulatedProduct.getQty();
 						
-		if(processListDataItem.getStep() != null && 
-				processListDataItem.getRateProcess() != null && processListDataItem.getRateProcess() != 0d){
-			Double stepDuration = processListDataItem.getQty() / processListDataItem.getRateProcess();
+		if(productQtyToTransform != null){			
 			
-			if(stepDuration != null && processListDataItem.getResource() != null && processListDataItem.getQtyResource() != null){
-				qty = stepDuration * processListDataItem.getQtyResource();
+			// process cost depends of rateProcess (€/h)
+			if(processListDataItem.getRateProcess() != null && processListDataItem.getRateProcess() != 0d && processListDataItem.getQtyResource() != null){				
+				qty = productQtyToTransform * processListDataItem.getQtyResource() / processListDataItem.getRateProcess();
 			}
-		}
+			// process cost doesn't depend of rateProcess (€/kg)
+			else{
+				qty = productQtyToTransform;
+			}			
+		}			
 		
 		return qty;
 	}

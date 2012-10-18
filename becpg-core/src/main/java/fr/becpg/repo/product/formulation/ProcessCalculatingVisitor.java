@@ -29,7 +29,7 @@ public class ProcessCalculatingVisitor implements ProductVisitor {
 			
 			ProcessListDataItem p = formulatedProduct.getProcessList(EffectiveFilters.ALL).get(z_idx);
 			
-			if(p.getResource() != null && p.getRateResource() != null && p.getQtyResource() != null){
+			if(p.getRateResource() != null && p.getQtyResource() != null){
 				
 				// rateProcess
 				Double rateProcess = p.getQtyResource() * p.getRateResource(); 
@@ -46,13 +46,16 @@ public class ProcessCalculatingVisitor implements ProductVisitor {
 			
 			if(p.getStep() != null){
 				
-				p.setRateProcess(minRateProcess);				
+				p.setRateProcess(minRateProcess);					
+				Double productQtyToTransform = p.getQty() != null ? p.getQty() : formulatedProduct.getQty();
 				
 				// rateProduct
-				if(minRateProcess != null && minRateProcess != 0d && p.getQty() != null){
-					Double rateProduct = minRateProcess / p.getQty();
-					p.setRateProduct(rateProduct);
-				}				
+				if(minRateProcess != null && minRateProcess != 0d && productQtyToTransform != null){
+					p.setRateProduct(minRateProcess / productQtyToTransform);
+				}
+				else{
+					p.setRateProduct(null);
+				}
 				
 				// reset
 				minRateProcess = null;

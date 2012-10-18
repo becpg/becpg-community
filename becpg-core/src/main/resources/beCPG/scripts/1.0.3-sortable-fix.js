@@ -13,7 +13,8 @@ var data =[ {type:"bcpg:costList"},
             {type:"bcpg:priceList"},
             {type:"bcpg:organoList"},
             {type:"bcpg:forbiddenIngList"},
-            {type:"bcpg:reqCtrlList"}];
+            {type:"bcpg:reqCtrlList"},
+            {type:"mpm:processList"}];
 
 for(row in data){
 	var nodes = search.luceneSearch('+TYPE:"'+data[row].type+'"');	

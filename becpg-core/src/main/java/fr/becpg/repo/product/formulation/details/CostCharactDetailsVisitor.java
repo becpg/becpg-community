@@ -59,7 +59,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		 */
 		if (productData.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
 			for (ProcessListDataItem processListDataItem : productData.getProcessList(EffectiveFilters.EFFECTIVE)) {
-				Double qty = FormulationHelper.getQty(processListDataItem);
+				Double qty = FormulationHelper.getQty(productData, processListDataItem);
 				visitPart(processListDataItem.getResource(), ret, qty, netWeight);
 			}
 		}
