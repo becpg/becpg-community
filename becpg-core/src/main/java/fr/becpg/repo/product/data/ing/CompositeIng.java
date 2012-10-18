@@ -87,11 +87,11 @@ public class CompositeIng extends AbstractIng {
 	 * @param name the name
 	 * @param isDeclared the is declared
 	 */
-	public void remove(String name, boolean isDeclared){
+	public void remove(NodeRef ing, boolean isDeclared){
 		if(isDeclared)		
-			ingList.remove(name);
+			ingList.remove(ing);
 		else
-			ingListNotDeclared.remove(name);
+			ingListNotDeclared.remove(ing);
 	}
 	
 	/**

@@ -95,7 +95,7 @@ public class CostsCalculatingVisitor extends AbstractCalculatingVisitor implemen
 		if(formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)){			
 			for(ProcessListDataItem processListDataItem : formulatedProduct.getProcessList(EffectiveFilters.EFFECTIVE)){
 				
-				Double qty = FormulationHelper.getQty(processListDataItem);
+				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
 				if(processListDataItem.getResource() != null && qty != null){
 					visitPart(processListDataItem.getResource(), simpleListDataMap, qty, netWeight);
 				}																		

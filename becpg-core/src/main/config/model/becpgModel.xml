@@ -694,7 +694,6 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
-				<aspect>bcpg:effectivityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -742,7 +741,6 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>
-				<aspect>bcpg:effectivityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -754,7 +752,7 @@
 		</type>
 
 		<type name="bcpg:productListItem">
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:entityListItem</parent>bcpg:effectivityAspect
 		</type>
 
 		<type name="bcpg:allergenList">

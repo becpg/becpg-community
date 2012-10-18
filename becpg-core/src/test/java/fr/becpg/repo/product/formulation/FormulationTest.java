@@ -2351,7 +2351,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	public void xxtestCalculateCompoPercent() throws Exception{
+	public void testCalculateCompoPercent() throws Exception{
 		   
 		logger.info("testCalculateCompoPercent");
 		

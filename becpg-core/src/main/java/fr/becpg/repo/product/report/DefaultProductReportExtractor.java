@@ -109,7 +109,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	private static final String TAG_PLANT = "plant";
 	private static final String TAG_IMAGES = "images";
 	private static final String TAG_IMAGE = "image";
-	private static final String PRODUCT_IMG_NAME = "Img%d";
+	private static final String PRODUCT_IMG_ID = "Img%d";
 
 	/** The Constant TAG_PHYSICOCHEM. */
 	protected static final String TAG_PHYSICOCHEM = "physicoChem";
@@ -117,6 +117,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	protected static final String ATTR_LANGUAGE = "language";
 	protected static final String ATTR_NB_FP_THIRD_LEVEL = "nbFinishedProductThirdLevel";
 	private static final String ATTR_ALLERGENS = "allergens";
+	private static final String ATTR_IMAGE_ID = "id";
 
 	protected ProductDAO productDAO;
 
@@ -167,15 +168,16 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				if (imgName.endsWith(".jpg") || imgName.endsWith(".png") || imgName.endsWith(".gif")) {
 
 					NodeRef imgNodeRef = fileInfo.getNodeRef();
-					String imgName2 = String.format(PRODUCT_IMG_NAME, cnt);
+					String imgId = String.format(PRODUCT_IMG_ID, cnt);
 					byte[] imageBytes = entityService.getImage(imgNodeRef);
 					if (imageBytes != null) {
 						Element imgElt = imgsElt.addElement(TAG_IMAGE);
-						imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), imgName2);
+						imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
+						imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), imgName);
 						imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(),
 								(String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
 
-						images.put(imgName2, imageBytes);
+						images.put(imgId, imageBytes);
 					}
 					cnt++;
 				}

@@ -125,6 +125,7 @@
 
 			<itemType name="bcpg:rawMaterial" />
 			<itemType name="bcpg:packagingMaterial" />
+			<itemType name="bcpg:resourceProduct" />
 
 			<itemType name="bcpg:supplier" />
 			<itemType name="bcpg:client" />
