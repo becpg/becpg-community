@@ -3,12 +3,12 @@
  */
 package fr.becpg.repo.food;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import junit.framework.TestCase;
+
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
-import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -16,29 +16,13 @@ import fr.becpg.test.RepoBaseTestCase;
  *
  * @author querephi
  */
-public class SystemProductTypeTest extends RepoBaseTestCase{
 
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(SystemProductTypeTest.class);
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-    	
-    	logger.debug("ProductTypeTest::setUp");
-    	    	
-    }
-    
-	@Override
-    public void tearDown() throws Exception
-    {	
-        super.tearDown();
-        
-    }	
-	
+public class SystemProductTypeTest extends TestCase{
+
 	/**
 	 * Test determine product type.
 	 */
+	@Test
 	public void testDetermineProductType(){
 		
 		assertEquals(SystemProductType.FinishedProduct, SystemProductType.valueOf(BeCPGModel.TYPE_FINISHEDPRODUCT));

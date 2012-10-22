@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -16,6 +18,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
@@ -38,12 +41,10 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityReportServiceTest.class);
 
-	/** The product dao. */
-	private ProductDAO productDAO;
-
+	@Resource
 	private ReportTplService reportTplService;
 
-	/** The policy behaviour filter. */
+	@Resource
 	private BehaviourFilter policyBehaviourFilter;
 
 	/** The sf node ref. */
@@ -55,15 +56,8 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
 	 */
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
-
-		logger.debug("ProductServiceTest:setUp");
-
-		productDAO = (ProductDAO) ctx.getBean("productDAO");
-
-		reportTplService = (ReportTplService) ctx.getBean("reportTplService");
-		policyBehaviourFilter = (BehaviourFilter) ctx.getBean("policyBehaviourFilter");
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -76,16 +70,6 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 			}
 		}, false, true);
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#tearDown()
-	 */
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
 	}
 
 	/**
@@ -142,6 +126,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
+	@Test
 	public void testIsReportUpToDate() throws InterruptedException {
 
 		logger.debug("testIsReportUpToDate()");
@@ -274,6 +259,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
+	@Test
 	public void testGetProductSystemReportTemplates() throws InterruptedException {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {

@@ -60,7 +60,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private static final String SUFFIX_SIMPLE_QUOTE = "'";
 
 	private static final String QUERY_TYPE = " TYPE:\"%s\"";
-	
+
 	private static final String PROP_FILTER_BY_ASSOC = "filterByAssoc";
 
 	/** The Constant SOURCE_TYPE_TARGET_ASSOC. */
@@ -179,9 +179,10 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 *            the type
 	 * @param query
 	 *            the query
-	 * @param props 
+	 * @param props
 	 * @return the map
 	 */
+	@SuppressWarnings("unchecked")
 	protected ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames, Map<String, Serializable> props) {
 
 		if (logger.isDebugEnabled()) {
@@ -210,40 +211,38 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		queryPath += String.format(RepoConsts.QUERY_FILTER_PRODUCT_STATE, SystemState.Archived, SystemState.Refused);
 
 		List<NodeRef> ret = null;
-		
-		
-		@SuppressWarnings("unchecked")
-		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
-		if (extras != null) {
-			String filterByAssoc = (String) extras.get(PROP_FILTER_BY_ASSOC);
-			String strAssocNodeRef = (String) props.get(ListValueService.PROP_PARENT);
-			if(filterByAssoc!=null && filterByAssoc.length()>0 
-					&& strAssocNodeRef!=null && strAssocNodeRef.length()>0){
-				QName assocQName = QName.createQName(filterByAssoc, namespaceService);
-	
-				NodeRef nodeRef = new NodeRef(strAssocNodeRef);
-	
+
+		if (props != null) {
+			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
+			if (extras != null) {
+				String filterByAssoc = (String) extras.get(PROP_FILTER_BY_ASSOC);
+				String strAssocNodeRef = (String) props.get(ListValueService.PROP_PARENT);
+				if (filterByAssoc != null && filterByAssoc.length() > 0 && strAssocNodeRef != null && strAssocNodeRef.length() > 0) {
+					QName assocQName = QName.createQName(filterByAssoc, namespaceService);
+
+					NodeRef nodeRef = new NodeRef(strAssocNodeRef);
+
 					if (nodeService.exists(nodeRef)) {
-						
+
 						List<NodeRef> tmp = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_UNLIMITED);
-	
+
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
-	
+
 						List<NodeRef> nodesToKeep = new ArrayList<NodeRef>();
 						for (AssociationRef assocRef : assocRefs) {
 							nodesToKeep.add(assocRef.getSourceRef());
 						}
 						tmp.retainAll(nodesToKeep);
-						
-						ret = tmp.subList(0, Math.min( RepoConsts.MAX_SUGGESTIONS, tmp.size()));
+
+						ret = tmp.subList(0, Math.min(RepoConsts.MAX_SUGGESTIONS, tmp.size()));
 					}
 				}
+			}
 		}
 
-		if(ret == null){
-			ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS); 
+		if (ret == null) {
+			ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 		}
-		
 
 		return new ListValuePage(ret, pageNum, pageSize, new TargetAssocValueExtractor(ContentModel.PROP_NAME, nodeService, namespaceService));
 
@@ -267,7 +266,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private ListValuePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		NodeRef itemIdNodeRef = null;
-		
 
 		if (path == null) {
 			NodeRef entityNodeRef = null;
@@ -295,7 +293,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		path = LuceneHelper.encodePath(path);
 		if (!isAllQuery(query)) {
 			query = prepareQuery(query);
-			
+
 			if (parent == null) {
 				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, path, query);
 			} else {
@@ -357,7 +355,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			try {
 				codeNumber = Long.parseLong(query);
 			} catch (NumberFormatException e) {
-				logger.debug(e,e);
+				logger.debug(e, e);
 			}
 
 			if (codeNumber != null) {

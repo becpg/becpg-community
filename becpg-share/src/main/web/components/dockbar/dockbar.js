@@ -184,6 +184,7 @@
 			               Dom.setStyle("onglet_outils", "width", (210 + this.slide_x) + 'px');
 			               setTimeout(this.instanceName + ".slide_entree()", 1);
 		               } else {
+		               	Dom.setStyle("onglet_contenu", "display", "none");
 			               this.slide_ismoving = false;
 		               }
 	               },
@@ -196,6 +197,7 @@
 			               } else {
 				               this.slide_x += 10;
 			               }
+			               Dom.setStyle("onglet_contenu", "display", "block");
 			               Dom.setStyle("onglet_outils", "width", (210 + this.slide_x) + 'px');
 			               setTimeout(this.instanceName + ".slide_sortie()", 1);
 		               } else {

@@ -102,7 +102,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.6</version>
+			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -112,6 +112,12 @@
 			<version>1.0.0</version>
 			<classifier>tests</classifier>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-surf-core-configservice</artifactId>
+					<groupId>org.springframework.extensions.surf</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -144,7 +150,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>3.1.0.RELEASE</version>
+			<version>3.0.5.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -299,6 +305,10 @@
 								</excludes>
 							<excludes>
 							</excludes>
+                		<parallel>classes</parallel>
+            			<useUnlimitedThreads>true</useUnlimitedThreads>
+	                  <threadCount>80</threadCount>
+	                  <perCoreThreadCount>true</perCoreThreadCount>
 						</configuration>
 					</plugin>
 				</plugins>

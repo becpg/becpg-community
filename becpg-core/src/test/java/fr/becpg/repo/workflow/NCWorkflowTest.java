@@ -8,20 +8,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
-import org.alfresco.service.cmr.security.MutableAuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.workflow.WorkflowDefinition;
 import org.alfresco.service.cmr.workflow.WorkflowPath;
-import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
@@ -29,6 +26,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.BeCPGDao;
@@ -36,9 +34,8 @@ import fr.becpg.repo.admin.SystemGroup;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.quality.NonConformityService;
 import fr.becpg.repo.quality.data.NonConformityData;
-import fr.becpg.test.RepoBaseTestCase;
 
-public class NCWorkflowTest extends RepoBaseTestCase {
+public class NCWorkflowTest extends AbstractWorkflowTest {
 
 	private static final String USER_ONE = "matthieuWF";
 	private static final String USER_TWO = "philippeWF";
@@ -57,16 +54,6 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(NCWorkflowTest.class);
 
-	private AuthorityService authorityService;
-
-	private MutableAuthenticationDao authenticationDAO;
-
-	private MutableAuthenticationService authenticationService;
-
-	private PersonService personService;
-
-	private WorkflowService workflowService;
-
 	private NodeRef folderNodeRef;
 
 	private NodeRef rawMaterial1NodeRef;
@@ -74,25 +61,11 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 	private NodeRef rawMaterial2NodeRef;
 	
 	private String workflowInstanceId = null;
-
+	@Resource
 	private BeCPGDao<NonConformityData> nonConformityDAO;
-	
+	@Resource
 	private NonConformityService nonConformityService;
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		workflowService = serviceRegistry.getWorkflowService();
-
-		authenticationService = serviceRegistry.getAuthenticationService();
-		authenticationDAO = (MutableAuthenticationDao) ctx.getBean("authenticationDao");
-		authorityService = (AuthorityService) ctx.getBean("authorityService");
-		personService = (PersonService) ctx.getBean("PersonService");
-		nonConformityDAO = (BeCPGDao<NonConformityData>) ctx.getBean("nonConformityDAO");
-		nonConformityService = (NonConformityService) ctx.getBean("nonConformityService");
-	}
 
 	private void createUsers() {
 
@@ -152,18 +125,7 @@ public class NCWorkflowTest extends RepoBaseTestCase {
 		}
 	}
 
-	@Override
-	public void tearDown() throws Exception {
-		try {
-			authenticationComponent.clearCurrentSecurityContext();
-		} catch (Throwable e) {
-			e.printStackTrace();
-			// Don't let this mask any previous exceptions
-		}
-		super.tearDown();
-
-	}
-
+	@Test
 	public void testWorkFlow() {
 
 		authenticationComponent.setSystemUserAsCurrentUser();

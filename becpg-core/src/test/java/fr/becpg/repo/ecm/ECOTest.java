@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
@@ -46,10 +49,13 @@ public class ECOTest extends RepoBaseTestCase {
 	private static Log logger = LogFactory.getLog(ECOTest.class);
 
 	/** The product service. */
+	@Resource
 	private ProductService productService;
 
+	@Resource
 	private BeCPGDao<ChangeOrderData> changeOrderDAO;
 
+	@Resource
 	private ECOService ecoService;
 
 	public static final String Double_FORMAT = "0.0000";
@@ -87,22 +93,10 @@ public class ECOTest extends RepoBaseTestCase {
 	/** The nut2. */
 	private NodeRef nut2;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
-	 */
-	@SuppressWarnings("unchecked")
+
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
-
-		logger.debug("ProductMgrTest:setUp");
-
-		productService = (ProductService) ctx.getBean("productService");
-
-		changeOrderDAO = (BeCPGDao<ChangeOrderData>) ctx.getBean("changeOrderDAO");
-		ecoService = (ECOService) ctx.getBean("ecoService");
 
 		cost1 = costs.get(0);
 		cost2 = costs.get(1);
@@ -115,16 +109,6 @@ public class ECOTest extends RepoBaseTestCase {
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#tearDown()
-	 */
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
-
-	}
 
 	/**
 	 * Inits the parts.
@@ -325,6 +309,7 @@ public class ECOTest extends RepoBaseTestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
+	@Test
 	public void testECOService() throws Exception {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -462,6 +447,7 @@ public class ECOTest extends RepoBaseTestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
+	@Test
 	public void testECOPolicy() throws Exception {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -600,6 +586,7 @@ public class ECOTest extends RepoBaseTestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
+	@Test
 	public void testECOInMultiLeveCompo() throws Exception {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {

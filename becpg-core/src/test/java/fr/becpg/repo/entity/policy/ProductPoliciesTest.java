@@ -7,19 +7,15 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
+import javax.annotation.Resource;
+
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.AutoNumService;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.test.RepoBaseTestCase;
@@ -31,58 +27,20 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class ProductPoliciesTest extends RepoBaseTestCase {
 
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(ProductPoliciesTest.class);
-
-	/** The node service. */
-	private NodeService nodeService;
-
-	/** The authentication component. */
-	private AuthenticationComponent authenticationComponent;
-
-	/** The product dictionary service. */
+	@Resource
 	private ProductDictionaryService productDictionaryService;
 
-	/** The product dao. */
-	private ProductDAO productDAO;
-
-	/** The auto num service. */
+	@Resource
 	private AutoNumService autoNumService;
 
 	private String productCode1 = null;
 	private String productCode2 = null;
 
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		logger.debug("ProductServiceTest:setUp");
-
-		nodeService = (NodeService) ctx.getBean("nodeService");
-		fileFolderService = (FileFolderService) ctx.getBean("fileFolderService");
-		productDAO = (ProductDAO) ctx.getBean("productDAO");
-		productDictionaryService = (ProductDictionaryService) ctx.getBean("productDictionaryService");
-		authenticationComponent = (AuthenticationComponent) ctx.getBean("authenticationComponent");
-		repositoryHelper = (Repository) ctx.getBean("repositoryHelper");
-		autoNumService = (AutoNumService) ctx.getBean("autoNumService");
-	}
-
-	@Override
-	public void tearDown() throws Exception {
-		try {
-			authenticationComponent.clearCurrentSecurityContext();
-		} catch (Throwable e) {
-			e.printStackTrace();
-			// Don't let this mask any previous exceptions
-		}
-		super.tearDown();
-
-	}
-
 	/**
 	 * Test product code.
 	 */
+	@Test
 	public void testProductCode() {
 
 		final Collection<QName> dataLists = productDictionaryService.getDataLists();

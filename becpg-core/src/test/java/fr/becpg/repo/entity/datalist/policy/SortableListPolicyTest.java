@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -19,6 +21,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -36,34 +39,11 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(SortableListPolicyTest.class);
 
+	@Resource
 	private EntityListDAO entityListDAO;
 
 	/** The sf node ref. */
 	private NodeRef sfNodeRef;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		logger.debug("ProductServiceTest:setUp");
-
-		entityListDAO = (EntityListDAO) ctx.getBean("entityListDAO");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#tearDown()
-	 */
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
-	}
 
 	/**
 	 * Create a list item and check initialization
@@ -71,6 +51,7 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
+	@Test
 	public void testInitSort() throws InterruptedException {
 
 		logger.debug("testChangeSortListItem()");

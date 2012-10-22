@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.security.authority.AuthorityDAO;
@@ -27,7 +29,6 @@ import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.security.AuthorityService;
@@ -37,6 +38,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -74,76 +76,39 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductServiceTest.class);
 
-	/** The product service. */
+	@Resource
 	private ProductService productService;
 
-	/** The mimetype service. */
-	private MimetypeService mimetypeService;
-
-	/** The permission service. */
+	@Resource
 	private PermissionService permissionService;
 
-	/** The authority service. */
+	@Resource
 	private AuthorityService authorityService;
 
-	/** The authority dao. */
+	@Resource
 	private AuthorityDAO authorityDAO;
 
+	@Resource
 	private EntityReportService entityReportService;
 
+	@Resource
 	private ReportTplService reportTplService;
 
+	@Resource
 	private EntityTplService entityTplService;
 
+	@Resource
 	private DictionaryService dictionaryService;
 	
+	@Resource
 	private WUsedListService wUsedListService;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		logger.debug("ProductServiceTest:setUp");
-
-		productService = (ProductService) ctx.getBean("productService");
-		mimetypeService = (MimetypeService) ctx.getBean("mimetypeService");
-		permissionService = (PermissionService) ctx.getBean("permissionService");
-		authorityService = (AuthorityService) ctx.getBean("authorityService");
-		authorityDAO = (AuthorityDAO) ctx.getBean("authorityDAO");
-		entityReportService = (EntityReportService) ctx.getBean("entityReportService");
-		reportTplService = (ReportTplService) ctx.getBean("reportTplService");
-		entityTplService = (EntityTplService) ctx.getBean("entityTplService");
-		dictionaryService = (DictionaryService) ctx.getBean("dictionaryService");
-		wUsedListService = (WUsedListService) ctx.getBean("wUsedListService");
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#tearDown()
-	 */
-	@Override
-	public void tearDown() throws Exception {
-		try {
-			authenticationComponent.clearCurrentSecurityContext();
-		} catch (Throwable e) {
-			e.printStackTrace();
-			// Don't let this mask any previous exceptions
-		}
-		super.tearDown();
-
-	}
 
 	
 	/**
 	 * Test create product.
 	 */
+	@Test
 	public void testCreateProduct() {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -164,6 +129,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
+	@Test
 	public void testReportProduct() throws Exception {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -233,6 +199,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
+	@Test
 	public void testInitializeProductFolder() throws Exception {
 
 		logger.debug("testInitializeProductFolder");
@@ -388,6 +355,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
+	@Test
 	public void testClassifyProduct() throws Exception {
 
 		logger.debug("testClassifyProduct");
@@ -506,6 +474,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	/**
 	 * Test get WUsed of the compoList
 	 */
+	@Test
 	public void testGetWUsedCompoList() {
 
 		logger.debug("testGetWUsedProduct");
@@ -602,6 +571,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	/**
 	 * Test get WUsed of the packagingList
 	 */
+	@Test
 	public void testGetWUsedPackgingList() {
 
 		logger.debug("testGetWUsedProduct");

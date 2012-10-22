@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.CopyService;
@@ -20,13 +22,10 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CompoListUnit;
-import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -43,26 +42,14 @@ public class EffectivityPolicyTest extends RepoBaseTestCase {
 	/** The sf node ref. */
 	private NodeRef sfNodeRef;
 
+	@Resource
 	private CopyService copyService;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		logger.debug("EffectivityPolicyTest:setUp");
-
-		copyService = (CopyService) ctx.getBean("copyService");
-
-	}
-
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
-	}
 
 	/**
 	 * Test supplier code.
 	 */
+	@Test
 	public void testEffectivity() {
 		final Date start = new Date();
 		final Date end = new Date();
@@ -119,39 +106,42 @@ public class EffectivityPolicyTest extends RepoBaseTestCase {
 			}
 		}, false, true);
 
-		final NodeRef fp1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
+//		Only if aspect present on compoList	
+		
+//		final NodeRef fp1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+//			public NodeRef execute() throws Throwable {
+//
+//				FinishedProductData fp1 = new FinishedProductData();
+//				fp1.setName("FP 1");
+//
+//				List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
+//				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, sfNodeRef));
+//				
+//				fp1.setCompoList(compoList);
+//
+//				return productDAO.create(testFolderNodeRef, fp1, dataListSf);
+//
+//			}
+//		}, false, true);
 
-				FinishedProductData fp1 = new FinishedProductData();
-				fp1.setName("FP 1");
 
-				List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, sfNodeRef));
-
-				fp1.setCompoList(compoList);
-
-				return productDAO.create(testFolderNodeRef, fp1, dataListSf);
-
-			}
-		}, false, true);
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				FinishedProductData fp1 = (FinishedProductData) productDAO.find(fp1NodeRef, dataListSf);
-				assertNotNull("check compoList", fp1.getCompoList());
-
-				for (CompoListDataItem p : fp1.getCompoList()) {
-
-					System.out.println("PWet:" + p.getProduct());
-
-					assertEquals(nowplus1h.getTime(), p.getStartEffectivity().getTime());
-					assertEquals(nowplus2h.getTime(), p.getEndEffectivity().getTime());
-				}
-				return null;
-			}
-		}, false, true);
-
+//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+//			public NodeRef execute() throws Throwable {
+//
+//				FinishedProductData fp1 = (FinishedProductData) productDAO.find(fp1NodeRef, dataListSf);
+//				assertNotNull("check compoList", fp1.getCompoList());
+//
+//				for (CompoListDataItem p : fp1.getCompoList()) {
+//
+//					System.out.println("PWet:" + p.getProduct());
+//
+//					assertEquals(nowplus1h.getTime(), p.getStartEffectivity().getTime());
+//					assertEquals(nowplus2h.getTime(), p.getEndEffectivity().getTime());
+//				}
+//				return null;
+//			}
+//		}, false, true);
+//
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 

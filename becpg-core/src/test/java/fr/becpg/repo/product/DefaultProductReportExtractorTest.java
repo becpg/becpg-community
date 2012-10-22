@@ -7,11 +7,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -32,26 +35,19 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(DefaultProductReportExtractorTest.class);
 
+	@Resource
 	private DefaultProductReportExtractor defaultProductReportExtractor; 
 
 
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
 
-		logger.debug("ProductServiceTest:setUp");
-		productDAO = (ProductDAO) ctx.getBean("productDAO");
-		defaultProductReportExtractor = (DefaultProductReportExtractor) ctx.getBean("defaultProductReportExtractor");
-		
 		//create RM and lSF
  		initParts();
 	}
 
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
-	}
-	
+	@Test
 	public void testReport() throws InterruptedException {
 
 		logger.debug("testReport()");

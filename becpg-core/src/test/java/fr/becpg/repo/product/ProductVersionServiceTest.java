@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.version.VersionModel;
@@ -23,6 +25,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
@@ -47,38 +50,25 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductVersionServiceTest.class);
 
+	@Resource
 	private CheckOutCheckInService checkOutCheckInService;
 
+	@Resource
 	private VersionService versionService;
 
+	@Resource
 	private ProductService productService;
 
+	@Resource
 	private NamespaceService namespaceService;
 	
+	@Resource
 	private EntityVersionService entityVersionService;
 	
-	private EntityListDAO entityListDAO;
 
 	private NodeRef rawMaterialNodeRef;
 	private NodeRef finishedProductNodeRef;
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
 
-		logger.debug("ProductServiceTest:setUp");
-
-		checkOutCheckInService = (CheckOutCheckInService) ctx.getBean("checkOutCheckInService");
-		versionService = (VersionService) ctx.getBean("versionService");
-		productService = (ProductService) ctx.getBean("productService");
-		namespaceService = (NamespaceService) ctx.getBean("namespaceService");
-		entityVersionService = (EntityVersionService) ctx.getBean("entityVersionService");
-		entityListDAO = (EntityListDAO) ctx.getBean("entityListDAO");
-	}
 
 //	/**
 //	 * Test create version.
@@ -143,6 +133,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 	/**
 	 * Test check out check in.
 	 */
+	@Test
 	public void testCheckOutCheckIn() {
 		
 		final Collection<QName> dataLists = productDictionaryService.getDataLists();
@@ -269,6 +260,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 	/**
 	 * Test cancel check out.
 	 */
+	@Test
 	public void testCancelCheckOut() {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -309,6 +301,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 	/**
 	 * Test get version history.
 	 */
+	@Test
 	public void testGetVersionHistory() {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -341,6 +334,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 	/**
 	 * Test check out check in.
 	 */
+	@Test
 	public void testCheckOutCheckInValidProduct() {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {

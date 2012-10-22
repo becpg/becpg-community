@@ -10,16 +10,18 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
+import org.junit.Test;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -34,39 +36,14 @@ public class RemoteEntityServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(RemoteEntityServiceTest.class);
 
+	@Resource
 	private RemoteEntityService remoteEntityService;
 	
 
 	/** The sf node ref. */
 	private NodeRef sfNodeRef;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		logger.debug("RemoteEntityServiceTest:setUp");
-
-		productDAO = (ProductDAO) ctx.getBean("productDAO");
-		remoteEntityService = (RemoteEntityService) ctx.getBean("remoteEntityService");
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#tearDown()
-	 */
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
-	}
-
-
+	@Test
 	public void testRemoteEntity() throws FileNotFoundException {
 		
 		final RepoBaseTestCase repoBaseTestCase = this;

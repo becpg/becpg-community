@@ -17,12 +17,11 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.repo.product.AbstractFinishedProductTest;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
@@ -59,30 +58,18 @@ public class FormulationTest extends AbstractFinishedProductTest {
      * @see fr.becpg.test.RepoBaseTestCase#setUp()
      */
     @Override
-	protected void setUp() throws Exception {
+    public void setUp() throws Exception {
     	super.setUp();		
-
-    	productService = (ProductService)ctx.getBean("productService");       
-        productDAO = (ProductDAO)ctx.getBean("productDAO");
-
  		//create RM and lSF
  		initParts(); 		
     }
-    
-	/* (non-Javadoc)
-	 * @see fr.becpg.test.RepoBaseTestCase#tearDown()
-	 */
-	@Override
-    public void tearDown() throws Exception
-    {
-        super.tearDown();
-    }
-	
+
 	/**
 	 * Test formulate product.
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testFormulateProduct() throws Exception{
 		   
 		logger.info("testFormulateProduct");
@@ -348,6 +335,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testIngredientsCalculating() throws Exception{
 		
 		logger.info("testIngredientsCalculating");
@@ -589,6 +577,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testFormulateCostAndNutOfProductInkgAndg() throws Exception{
 		   
 		logger.info("testFormulateCostAndNutOfProductInkgAndg");
@@ -668,6 +657,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testFormulateCostAndNutOfProductInkgAndgAndmLAndm() throws Exception{
 		   
 		logger.info("testFormulateCostAndNutOfProductInkgAndgAndmLAndm");
@@ -744,6 +734,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testFormulateWithDensity() throws Exception{
 		   
 		logger.info("testFormulateWithDensity");
@@ -803,6 +794,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	/**
 	 * Test sort nut list.
 	 */
+	@Test
 	public void testSortNutList(){
 		
 		logger.info("testSortNutList");
@@ -929,6 +921,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testAllergenListCalculating() throws Exception{
 		   
 		logger.info("testAllergenListCalculating");
@@ -1140,6 +1133,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testFormulateRawMaterial() throws Exception{
 		   
 		logger.info("testFormulateRawMaterial");
@@ -1187,6 +1181,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testCalculateWithLoss() throws Exception{
 		   
 		logger.info("testCalculateWithLoss");
@@ -1374,6 +1369,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testCalculateSubFormula() throws Exception{
 		   
 		logger.info("testCalculateSubFormula");
@@ -1471,6 +1467,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 		   
 	   }
 	
+	@Test
 	public void testPackagingCosts() throws Exception{
 		   
 		logger.info("testPackagingCosts");
@@ -1564,6 +1561,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testFormulationWithIngRequirements() throws Exception{
 		   
 		logger.info("testFormulationWithIngRequirements");
@@ -1728,6 +1726,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testFormulationWithCostAndNutMiniMaxi() throws Exception{
 		   
 		logger.info("testFormulationWithCostAndNutMiniMaxi");
@@ -1951,6 +1950,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testCalculateYieldField() throws Exception{
 		   
 		logger.info("testCalculateYieldField");
@@ -2022,6 +2022,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testManualListItem() throws Exception{
 		   
 		logger.info("testManualListItem");
@@ -2125,6 +2126,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testProcess() throws Exception{
 		 
 		logger.info("testProcess");
@@ -2351,6 +2353,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testCalculateCompoPercent() throws Exception{
 		   
 		logger.info("testCalculateCompoPercent");
@@ -2453,6 +2456,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testPhysicoChem() throws Exception{
 		   
 		logger.info("testPhysicoChem");

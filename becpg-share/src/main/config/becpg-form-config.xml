@@ -118,7 +118,7 @@
 
 					<!-- Effectivity -->
 					<show id="bcpg:startEffectivity"  /> 
-					<show id="bcpg:endEffectivity"  /> 
+					<show id="bcpg:endEffectivity"  />  
 					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -174,7 +174,7 @@
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
 					<set id="effectivity" appearance="bordered-panel" label-id="becpg.forms.set.effectivity.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
+						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" /> 
 
 
 					<set id="publicationTab" label-id="becpg.forms.set.publication.label" />
@@ -2972,9 +2972,9 @@
 				<field-visibility>
 					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:depthLevel" />
-					<!-- Effectivity -->
+					<!-- Effectivity 
 					<show id="bcpg:startEffectivity"  /> 
-					<show id="bcpg:endEffectivity"  /> 
+					<show id="bcpg:endEffectivity"  /> -->
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:compoListProduct">
@@ -2989,7 +2989,7 @@
 							<control-param name="options">1|1,2|2,3|3,4|4,All|data.level.all</control-param>
 						</control>
 					</field>
-					<field id="bcpg:startEffectivity">
+				<!-- 	<field id="bcpg:startEffectivity">
 						<control template="/org/alfresco/components/form/controls/date.ftl" >
 							<control-param name="showTime">false</control-param>
 						</control>
@@ -2998,7 +2998,7 @@
 						<control template="/org/alfresco/components/form/controls/date.ftl" >
 							<control-param name="showTime">false</control-param>
 						</control>
-					</field>
+					</field> -->
 				</appearance>
 			</form>
 
@@ -3014,22 +3014,10 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
-					<!-- Effectivity -->
+					<!-- Effectivity 
 					<show id="bcpg:startEffectivity"  /> 
-					<show id="bcpg:endEffectivity"  /> 
+					<show id="bcpg:endEffectivity"  /> -->
 				</field-visibility>
-				<appearance>
-					<field id="bcpg:startEffectivity">
-						<control template="/org/alfresco/components/form/controls/date.ftl" >
-							<control-param name="showTime">false</control-param>
-						</control>
-					</field>
-					<field id="bcpg:endEffectivity">
-						<control template="/org/alfresco/components/form/controls/date.ftl" >
-							<control-param name="showTime">false</control-param>
-						</control>
-					</field>
-				</appearance>
 			</form>
 			<form id="datagridWUsed">
 				<field-visibility>
@@ -3041,18 +3029,6 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
 				</field-visibility>
-				<appearance>
-					<field id="bcpg:startEffectivity">
-						<control template="/org/alfresco/components/form/controls/date.ftl" >
-							<control-param name="showTime">false</control-param>
-						</control>
-					</field>
-					<field id="bcpg:endEffectivity">
-						<control template="/org/alfresco/components/form/controls/date.ftl" >
-							<control-param name="showTime">false</control-param>
-						</control>
-					</field>
-				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -3070,9 +3046,9 @@
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:parentLevel" />
 					<!-- <show id="bcpg:compoListPlants"/> -->
-					<!-- Effectivity -->
+					<!-- Effectivity 
 					<show id="bcpg:startEffectivity"  /> 
-					<show id="bcpg:endEffectivity"  /> 
+					<show id="bcpg:endEffectivity"  /> -->
 				</field-visibility>
 
 				<appearance>					
@@ -3098,16 +3074,6 @@
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
  					</field> 
- 					<field id="bcpg:startEffectivity">
-						<control template="/org/alfresco/components/form/controls/date.ftl" >
-							<control-param name="showTime">false</control-param>
-						</control>
-					</field>
-					<field id="bcpg:endEffectivity">
-						<control template="/org/alfresco/components/form/controls/date.ftl" >
-							<control-param name="showTime">false</control-param>
-						</control>
-					</field>
 				</appearance>
 			</form>
 		</forms>

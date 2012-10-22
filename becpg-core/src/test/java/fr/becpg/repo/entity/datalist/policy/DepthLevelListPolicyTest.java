@@ -8,12 +8,15 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.DataListSortService;
@@ -37,40 +40,14 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(DepthLevelListPolicyTest.class);
 
+	@Resource
 	private DataListSortService dataListSortService;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		dataListSortService = (DataListSortService) ctx.getBean("dataListSortService");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#tearDown()
-	 */
-	@Override
-	public void tearDown() throws Exception {
-		try {
-			authenticationComponent.clearCurrentSecurityContext();
-		} catch (Throwable e) {
-			e.printStackTrace();
-			// Don't let this mask any previous exceptions
-		}
-		super.tearDown();
-
-	}
-
+	
 	/**
 	 * Test get Multilevel of the compoList
 	 */
+	@Test
 	public void testChangeParentLevelCompoList() {
 
 		logger.debug("testChangeParentLevelCompoList");
@@ -220,6 +197,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	/**
 	 * Test swap
 	 */
+	@Test
 	public void testSwap() {
 
 		logger.debug("testSwap");
@@ -309,6 +287,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	/**
 	 * Test insert after
 	 */
+	@Test
 	public void testinsertAfter() {
 
 		logger.debug("testinsertAfter");
@@ -497,6 +476,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	/**
 	 * Test if cycles are detected
 	 */
+	@Test
 	public void testCycles() {
 
 		logger.debug("testCycles");
