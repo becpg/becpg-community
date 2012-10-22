@@ -7,111 +7,70 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ProductListPoliciesTest.
- *
+ * 
  * @author querephi
  */
-public class ProductListPoliciesTest extends RepoBaseTestCase  {
-	
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(ProductListPoliciesTest.class);
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The authentication component. */
-	private AuthenticationComponent authenticationComponent;	
-	
-	/** The product dao. */
-	private ProductDAO productDAO;
-	
+public class ProductListPoliciesTest extends RepoBaseTestCase {
+
+	@Resource
 	private EntityListDAO entityListDAO;
-	
-	@Override
-	protected void setUp() throws Exception {		
-		super.setUp();	
-		
-    	logger.debug("ProductServiceTest:setUp");
-    
-    	nodeService = (NodeService)ctx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)ctx.getBean("fileFolderService");  
-    	productDAO = (ProductDAO)ctx.getBean("productDAO");
-        authenticationComponent = (AuthenticationComponent)ctx.getBean("authenticationComponent");
-        repositoryHelper = (Repository)ctx.getBean("repositoryHelper");
-        entityListDAO = (EntityListDAO)ctx.getBean("entityListDAO");
-                        
-    }
 
-	@Override
-    public void tearDown() throws Exception
-    {
-		try
-        {
-            authenticationComponent.clearCurrentSecurityContext();
-        }
-        catch (Throwable e)
-        {
-            e.printStackTrace();
-            // Don't let this mask any previous exceptions
-        }
-        super.tearDown();
-
-    }	
-	
 	/**
-	 * simulate UI creation of datalist, we create a datalist with a GUID in the property name.
+	 * simulate UI creation of datalist, we create a datalist with a GUID in the
+	 * property name.
 	 */
-	   public void testGetList(){
-		   
-		   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-				@Override
-				public NodeRef execute() throws Throwable {
-												
-					RawMaterialData rawMaterialData = new RawMaterialData();
-					rawMaterialData.setName("RM");
-					NodeRef rawMaterialNodeRef = productDAO.create(testFolderNodeRef, rawMaterialData, null);											
-					
-		    		NodeRef containerListNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
-		    		
-		    		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		    		properties.put(ContentModel.PROP_NAME, GUID.generate());
-		    		properties.put(DataListModel.PROP_DATALISTITEMTYPE, BeCPGModel.BECPG_PREFIX + ":" + BeCPGModel.TYPE_COSTLIST.getLocalName());
-		    		NodeRef costListCreatedNodeRef = nodeService.createNode(containerListNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), DataListModel.TYPE_DATALIST, properties).getChildRef();
-		    		
-					NodeRef costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef), BeCPGModel.TYPE_COSTLIST);
-					assertNotNull("cost list should exist", costListNodeRef);
-					assertEquals("cost list should be the same", costListCreatedNodeRef, costListNodeRef);
-					
-					costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef), BeCPGModel.TYPE_COSTLIST);
-					assertNotNull("cost list should exist", costListNodeRef);
-					assertEquals("cost list should be the same", costListCreatedNodeRef, costListNodeRef);
-					
-					return null;
-					
-				}},false,true);
-		   
-	   }  
- 	
+	@Test
+	public void testGetList() {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				RawMaterialData rawMaterialData = new RawMaterialData();
+				rawMaterialData.setName("RM");
+				NodeRef rawMaterialNodeRef = productDAO.create(testFolderNodeRef, rawMaterialData, null);
+
+				NodeRef containerListNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
+
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(ContentModel.PROP_NAME, GUID.generate());
+				properties.put(DataListModel.PROP_DATALISTITEMTYPE, BeCPGModel.BECPG_PREFIX + ":" + BeCPGModel.TYPE_COSTLIST.getLocalName());
+				NodeRef costListCreatedNodeRef = nodeService.createNode(containerListNodeRef, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), DataListModel.TYPE_DATALIST, properties)
+						.getChildRef();
+
+				NodeRef costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef), BeCPGModel.TYPE_COSTLIST);
+				assertNotNull("cost list should exist", costListNodeRef);
+				assertEquals("cost list should be the same", costListCreatedNodeRef, costListNodeRef);
+
+				costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef), BeCPGModel.TYPE_COSTLIST);
+				assertNotNull("cost list should exist", costListNodeRef);
+				assertEquals("cost list should be the same", costListCreatedNodeRef, costListNodeRef);
+
+				return null;
+
+			}
+		}, false, true);
+
+	}
+
 }

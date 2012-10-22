@@ -3,6 +3,8 @@ package fr.becpg.repo.importer;
 import java.io.IOException;
 import java.util.Date;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -15,7 +17,11 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.subethamail.wiser.Wiser;
 
 import fr.becpg.repo.importer.user.UserImporterService;
 import fr.becpg.test.RepoBaseTestCase;
@@ -23,29 +29,49 @@ import fr.becpg.test.RepoBaseTestCase;
 
 public class UserImportServiceTest  extends RepoBaseTestCase {
 
-	UserImporterService userImporterService;
 	
 	public static final String COMPANY_HOME_PATH_QUERY = "PATH:\"/app:company_home/.\"";
 	
 
+	protected Wiser wiser = new Wiser(2500);
+
 
 	/** The node service. */
-	
+	@Resource
 	private SearchService searchService;
+	
+
+	@Resource
+	UserImporterService userImporterService;
 
 	private static Log logger = LogFactory.getLog(UserImportServiceTest.class);
 	
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		
-		
-	   searchService = (SearchService)ctx.getBean("searchService");
-         // Authenticate as the admin user
-        authenticationComponent.setCurrentUser("admin");
-		userImporterService = (UserImporterService) ctx.getBean("userImporterService");
+		// First start wiser
+		try {
+			wiser.start();
+		} catch (Exception e) {
+			logger.warn("cannot open wiser!");
+		}
+
 	}
 	
+	@Override
+	@After
+	public void tearDown() throws Exception {
+		
+		super.tearDown();
+		try {
+			wiser.stop();
+		} catch (Exception e) {
+			logger.warn("cannot stop wiser!");
+		}
+		
+	}
 	
 	private NodeRef createCSV() throws IOException {
 		
@@ -86,7 +112,7 @@ public class UserImportServiceTest  extends RepoBaseTestCase {
 		return nodeRef;
 	}
 	
-	
+	@Test
 	public void testImportUserCSV(){
 	 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			public NodeRef execute() throws Throwable {
@@ -98,13 +124,6 @@ public class UserImportServiceTest  extends RepoBaseTestCase {
  			}},false,true);
  			
 		
-	}
-	
-	@Override
-	protected void tearDown() throws Exception {
-		// TODO Auto-generated method stub
-		super.tearDown();
-	    wiser.stop();
 	}
 	
 }

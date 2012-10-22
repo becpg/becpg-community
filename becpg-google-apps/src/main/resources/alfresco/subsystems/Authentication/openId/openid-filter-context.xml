@@ -1,6 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
 <beans>
+
+	<bean id="sysAdminWrapper" class="fr.becpg.web.app.servlet.SysAdminWrapper">
+		<property name="sysAdminParams" ref="sysAdminParams"/>
+		<property name="oauthShareHost" value="${openid.authentication.shareHost}"/>
+	</bean>
+
 	<!-- NullFilter used for this bean, as we are using the more widely-scoped 
 		globalAuthenticationFilter -->
 	<bean id="authenticationFilter" class="org.alfresco.repo.web.filter.beans.NullFilter">
@@ -33,7 +39,7 @@
 				</bean>
 			</list>
 		</constructor-arg>
-		<property name="sysAdminParams" ref="sysAdminParams" />
+		<property name="sysAdminParams" ref="sysAdminWrapper" />
 		<property name="oauthScopes" value="${openid.authentication.oauthScopes}" />
 		<property name="consumerKey" value="${oauth.consumer.key}"/>
 		<property name="is2LeggedOauth" value="${oauth.is2Legged}"/>
@@ -70,7 +76,7 @@
 			<ref bean="webClientConfigService" />
 		</property>
 		<property name="sysAdminParams">
-			<ref bean="sysAdminParams" />
+			<ref bean="sysAdminWrapper" />
 		</property>
 		<property name="oauthCertFile" value="${oauth.cert.path}" />
 		<property name="oauthConsumerKey" value="${oauth.consumer.key}" />

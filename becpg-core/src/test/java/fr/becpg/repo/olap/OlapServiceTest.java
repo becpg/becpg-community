@@ -3,10 +3,13 @@ package fr.becpg.repo.olap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import junit.framework.Assert;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.repo.olap.data.OlapChart;
 import fr.becpg.repo.olap.data.OlapChartData;
@@ -18,15 +21,10 @@ public class OlapServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(OlapServiceTest.class);
 
-	/** The repository helper. */
+	@Resource
 	private OlapService olapService;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		olapService = (OlapService) ctx.getBean("olapService");
-	}
-
+	@Test
 	public void testOlapService() {
 		try {
 			List<OlapChart> charts = olapService.retrieveOlapCharts();

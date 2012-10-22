@@ -7,6 +7,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
@@ -20,6 +21,7 @@ public class ProductDataTest extends TestCase {
 	Date nowminus1h = new Date(now.getTime()-1000*60*60);
 	Date nowminus2h = new Date(now.getTime()-1000*60*60);
 	
+	@Test
 	public void testEffectiveFilter(){
 		
 		ProductData productData = new ProductData();
@@ -69,7 +71,7 @@ public class ProductDataTest extends TestCase {
 		
 		compoList.remove(0);
 		
-		Assert.assertEquals(1, productData.getCompoList(EffectiveFilters.EFFECTIVE).size());
+		Assert.assertEquals(3, productData.getCompoList(EffectiveFilters.EFFECTIVE).size());
 		
 		Assert.assertEquals(4, productData.getCompoList(EffectiveFilters.ALL).size());
 		
@@ -79,7 +81,7 @@ public class ProductDataTest extends TestCase {
 		productData.setEndEffectivity(nowminus1h);
 		
 		Assert.assertTrue(productData.hasCompoListEl(EffectiveFilters.ALL));
-		Assert.assertFalse(productData.hasCompoListEl(EffectiveFilters.EFFECTIVE));
+		Assert.assertTrue(productData.hasCompoListEl(EffectiveFilters.EFFECTIVE));
 		
 	}
 	

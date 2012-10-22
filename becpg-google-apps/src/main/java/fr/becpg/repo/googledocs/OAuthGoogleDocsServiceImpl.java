@@ -174,7 +174,6 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 			logger.debug("Not a google auth using basic Google integration");
 			return getDefaultMediaService(serviceName);
 			
-			//throw new GoogleDocsServiceInitException("No Google Docs oauthToken found. Please set the Google Docs authentication configuration.");
 		}
 
 		if (logger.isDebugEnabled() == true) {
@@ -448,6 +447,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 
 		// Set permissions
 		if(OAuthTokenUtils.getCurrentOAuthToken()==null){
+			logger.debug("Setting default google permissions");
 			setGoogleResourcePermissions(nodeRef, document, permissionContext);
 		}
 
@@ -815,7 +815,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 			}
 
 			// Parent folder url
-			String parentFolderUrl = url+"?xoauth_requestor_id="+AuthenticationUtil.getFullyAuthenticatedUser();
+			String parentFolderUrl = buildUrl();
 			if (parentFolder != null) {
 				parentFolderUrl = ((MediaContent) parentFolder.getContent()).getUri();
 				if (logger.isDebugEnabled() == true) {
@@ -939,7 +939,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 			}
 
 			// Parent folder url
-			String parentFolderUrl = url+"?xoauth_requestor_id="+AuthenticationUtil.getFullyAuthenticatedUser();
+			String parentFolderUrl = buildUrl();
 			if (parentFolder != null) {
 				parentFolderUrl = ((MediaContent) parentFolder.getContent()).getUri();
 			}
@@ -972,6 +972,18 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 		}
 
 		return folderEntry;
+	}
+
+	private String buildUrl() {
+		String ret = url;
+		if(OAuthTokenUtils.getCurrentOAuthToken()!=null){
+			if(logger.isDebugEnabled()){
+				logger.debug("OAUTH mod Append xoauth_requestor_id :"+OAuthTokenUtils.getCurrentOAuthToken().toString());
+			}
+			ret+="?xoauth_requestor_id="+AuthenticationUtil.getFullyAuthenticatedUser();
+		}
+		
+		return ret;
 	}
 
 	/**

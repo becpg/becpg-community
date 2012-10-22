@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.MLText;
@@ -30,7 +32,7 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.test.RepoBaseTestCase;
 
-public class AbstractFinishedProductTest extends RepoBaseTestCase{
+public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 	
 
 	/** The logger. */
@@ -38,9 +40,11 @@ public class AbstractFinishedProductTest extends RepoBaseTestCase{
 
 	
 	/** The product service. */
+	@Resource
 	protected ProductService productService;    
 	
 	/** The product dao. */
+	@Resource
 	protected ProductDAO productDAO;
     
     /** The GROU p1. */

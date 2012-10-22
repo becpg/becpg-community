@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -38,47 +40,17 @@ public class MultiLevelDataServiceTest extends RepoBaseTestCase {
 
 
 	/** The product dao. */
+	@Resource
 	private ProductDAO productDAO;
 	
+	@Resource
 	private MultiLevelDataListService multiLevelDataListService;
 
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		productDAO = (ProductDAO) ctx.getBean("productDAO");
-		mimetypeService = (MimetypeService) ctx.getBean("mimetypeService");
-		multiLevelDataListService = (MultiLevelDataListService) ctx.getBean("multiLevelDataListService");
-
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#tearDown()
-	 */
-	@Override
-	public void tearDown() throws Exception {
-		try {
-			authenticationComponent.clearCurrentSecurityContext();
-		} catch (Throwable e) {
-			e.printStackTrace();
-			// Don't let this mask any previous exceptions
-		}
-		super.tearDown();
-
-	}
 
 	/**
 	 * Test get Multilevel of the compoList
 	 */
+	@Test
 	public void testGetMultiLevelCompoList() {
 
 		logger.debug("testGetWUsedProduct");

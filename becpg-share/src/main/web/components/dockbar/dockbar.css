@@ -9,6 +9,7 @@
 	overflow: hidden;
 	font-family: verdana, arial;
 	font-size: 13px;
+	
 }
 
 #onglet_outils_int {
@@ -68,7 +69,7 @@
 
 /* -------------- */
 #onglet_contenu {
-	
+	display:none;
 }
 
 #ombre_angle {
@@ -105,6 +106,7 @@
 	top: 0px;
 	right: 3px;
 	width: 100%;
+	z-index: 1000;
 }
 
 #floatLayer .on a img {

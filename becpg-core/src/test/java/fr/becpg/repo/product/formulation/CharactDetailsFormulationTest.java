@@ -13,13 +13,12 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.junit.Assert;
+import org.junit.Test;
 
 import com.ibm.icu.text.DecimalFormat;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.AbstractFinishedProductTest;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -40,20 +39,12 @@ import fr.becpg.repo.web.scripts.product.CharactDetailsHelper;
 public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
-
-		productService = (ProductService) ctx.getBean("productService");
-		productDAO = (ProductDAO) ctx.getBean("productDAO");
-
 		// create RM and lSF
 		initParts();
 	}
 
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
-	}
 
 	/**
 	 * Test formulate product.
@@ -61,6 +52,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 	 * @throws Exception
 	 *             the exception
 	 */
+	@Test
 	public void testFormulateCharactDetails() throws Exception {
 
 		logger.info("testFormulateCharactDetails");
@@ -115,6 +107,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testCalculateCostDetails() throws Exception{
 		   
 		logger.info("testCalculateCostDetails");

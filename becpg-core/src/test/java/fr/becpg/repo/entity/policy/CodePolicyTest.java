@@ -9,17 +9,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.AutoNumService;
@@ -32,13 +30,10 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class CodePolicyTest extends RepoBaseTestCase  {
 
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(CodePolicyTest.class);
-	
-	/** The node service. */
+	@Resource
 	private NodeService nodeService;
 
-	/** The auto num service. */
+	@Resource
 	private AutoNumService autoNumService;
 	
 	private String code1 = null;
@@ -46,28 +41,11 @@ public class CodePolicyTest extends RepoBaseTestCase  {
 	private String code3 = null;
 	private String code4 = null;
 	
-	@Override
-	protected void setUp() throws Exception {		
-		super.setUp();	
-		
-    	logger.debug("ProductServiceTest:setUp");
-    
-    	nodeService = (NodeService)ctx.getBean("nodeService");
-    	fileFolderService = (FileFolderService)ctx.getBean("fileFolderService");  
-    	authenticationComponent = (AuthenticationComponent)ctx.getBean("authenticationComponent");
-        repositoryHelper = (Repository)ctx.getBean("repositoryHelper");
-        autoNumService = (AutoNumService)ctx.getBean("autoNumService");         
-    }
-    
-	@Override
-    public void tearDown() throws Exception
-    {
-        super.tearDown();
-    }	
 	
 	/**
 	 * Test supplier code.
 	 */
+	@Test
 	public void testSupplierCode() {
 
 		final NodeRef supplier1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(

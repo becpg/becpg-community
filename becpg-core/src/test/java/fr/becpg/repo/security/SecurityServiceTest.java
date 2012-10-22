@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import junit.framework.Assert;
 
 import org.alfresco.model.ContentModel;
@@ -17,6 +19,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
@@ -33,8 +36,6 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	protected static final String USER_TWO = "philippe_secu";
 
-	private static String PATH_TESTFOLDER = "SecTestFolder";
-	
 	
 	private String grp1;
 	private String grp2;
@@ -45,44 +46,21 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(SecurityServiceTest.class);
 
+	@Resource
 	private BeCPGDao<ACLGroupData> aclGroupDao;
+	@Resource
 	private SecurityService securityService;
-
+	@Resource
 	private AuthorityService authorityService;
-
+	@Resource
 	private MutableAuthenticationDao authenticationDAO;
-
+	@Resource
 	private MutableAuthenticationService authenticationService;
-
+	@Resource
 	private PersonService personService;
-
+	@Resource
 	private DynPropsConstraint dynPropsConstraint;
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		logger.debug("SecurityServiceTest:setUp");
-
-		
-		aclGroupDao = (BeCPGDao<ACLGroupData>) ctx.getBean("aclGroupDao");
-		securityService = (SecurityService) ctx.getBean("securityService");
-
-		authenticationService = (MutableAuthenticationService) ctx
-				.getBean("authenticationService");
-		authenticationDAO = (MutableAuthenticationDao) ctx
-				.getBean("authenticationDao");
-		authorityService = (AuthorityService) ctx
-				.getBean("authorityService");
-
-		personService = (PersonService) ctx.getBean("PersonService");
-
-		dynPropsConstraint = (DynPropsConstraint) ctx.getBean("dynPropsConstraint");
-		
-		authenticationComponent.setSystemUserAsCurrentUser();
-
-	}
 	
 	private void createUsers(){
 		
@@ -130,18 +108,6 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		}
 	}
 
-	@Override
-	public void tearDown() throws Exception {
-		try {
-			authenticationComponent.clearCurrentSecurityContext();
-		} catch (Throwable e) {
-			e.printStackTrace();
-			// Don't let this mask any previous exceptions
-		}
-		super.tearDown();
-
-	}
-
 	private void createACLGroup(NodeRef testFolderNodeRef) {
 
 		createUsers();
@@ -176,7 +142,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	}
 
-
+	@Test
 	public void testComputeAccessMode() {
 
 		
@@ -238,6 +204,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	}
 	
+	@Test
 	public void testConstainst(){
 		dynPropsConstraint.setConstraintType(DynPropsConstraint.TYPE_NODE);
 		List<String> types =  dynPropsConstraint.getAllowedValues();

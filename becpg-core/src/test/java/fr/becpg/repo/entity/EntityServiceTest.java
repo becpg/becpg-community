@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -22,6 +24,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -40,46 +43,22 @@ public class EntityServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityServiceTest.class);
 
-
-	/** The policy behaviour filter. */
+	@Resource
 	private BehaviourFilter policyBehaviourFilter;
 
+	@Resource
 	private EntityListDAO entityListDAO;
 
+	@Resource
 	private EntityService entityService;
 	
+	@Resource
 	private CopyService copyService;
 	
 
 	/** The sf node ref. */
 	private NodeRef sfNodeRef;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		logger.debug("ProductServiceTest:setUp");
-
-		policyBehaviourFilter = (BehaviourFilter) ctx.getBean("policyBehaviourFilter");
-		entityListDAO = (EntityListDAO) ctx.getBean("entityListDAO");
-		entityService = (EntityService) ctx.getBean("entityService");
-		copyService = (CopyService) ctx.getBean("copyService");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#tearDown()
-	 */
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
-	}
 
 	/**
 	 * Reset the property modified.
@@ -108,6 +87,7 @@ public class EntityServiceTest extends RepoBaseTestCase {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
+	@Test
 	public void testHasDataListsModified() throws InterruptedException {
 
 		logger.debug("testHasDataListsModified()");
@@ -223,7 +203,7 @@ public class EntityServiceTest extends RepoBaseTestCase {
 
 	}
 	
-	
+	@Test
 	public void testEntityFolder(){
 		 Date start = new Date();
 		

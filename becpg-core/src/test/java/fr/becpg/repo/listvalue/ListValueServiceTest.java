@@ -8,15 +8,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.test.RepoBaseTestCase;
@@ -31,34 +32,15 @@ public class ListValueServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ListValueServiceTest.class);
 
-	/** The list value service. */
+	@Resource
 	private EntityListValuePlugin entityListValuePlugin;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		entityListValuePlugin = (EntityListValuePlugin) ctx.getBean("entityListValuePlugin");
-		fileFolderService = (FileFolderService) ctx.getBean("FileFolderService");
-		repositoryHelper = (Repository) ctx.getBean("repositoryHelper");
-
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		try {
-			authenticationComponent.clearCurrentSecurityContext();
-		} catch (Throwable e) {
-			e.printStackTrace();
-			// Don't let this mask any previous exceptions
-		}
-		super.tearDown();
-
-	}
+	
 
 	/**
 	 * Test suggest supplier.
 	 */
+	@Test
 	public void testSuggestSupplier() {
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {

@@ -15,16 +15,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
-import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.SearchService;
@@ -32,16 +31,14 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.helper.LuceneHelper.Operator;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
@@ -75,49 +72,35 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	private static Log logger = LogFactory.getLog(ImportServiceTest.class);
 	
 	
-	/** The import service. */
+	@Resource
 	private ImportService importService;
 	
-	/** The ml node service impl. */
+	@Resource(name="mlAwareNodeService")
 	private NodeService mlNodeServiceImpl;
 	
-	/** The mimetype service. */
-	private MimetypeService mimetypeService;
 	
-	/** The product dao. */
-	private ProductDAO productDAO;
-	
-	/** The search service. */
+	@Resource
 	private SearchService searchService;
 	
-	/** The namespace service. */
+	@Resource
 	private NamespaceService namespaceService;
 	
+	@Resource
 	private BehaviourFilter policyBehaviourFilter;
 	
+	@Resource
 	private HierarchyService hierarchyService;
 	
+	@Resource
 	private BeCPGSearchService beCPGSearchService;
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
 	 */
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
     	super.setUp();		
-    	
-    	importService = (ImportService)ctx.getBean("importService");
-        authenticationComponent = (AuthenticationComponent)ctx.getBean("authenticationComponent");      
-        mlNodeServiceImpl = (NodeService) ctx.getBean("mlAwareNodeService");
-        mimetypeService = (MimetypeService)ctx.getBean("mimetypeService");
-        fileFolderService = (FileFolderService)ctx.getBean("FileFolderService");
-        productDAO = (ProductDAO)ctx.getBean("productDAO");
-        searchService = (SearchService)ctx.getBean("searchService");
-        namespaceService = (NamespaceService)ctx.getBean("namespaceService");      
-        policyBehaviourFilter = (BehaviourFilter)ctx.getBean("policyBehaviourFilter");
-        hierarchyService = (HierarchyService)ctx.getBean("hierarchyService");
-        beCPGSearchService = (BeCPGSearchService)ctx.getBean("beCPGSearchService");
-        
+    
         cleanTempFolder();
     }
     
@@ -142,6 +125,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws ImporterException the be cpg exception
 	 */
+	@Test
 	public void testImportText() throws IOException, ImporterException{
 	
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
@@ -292,6 +276,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 * @throws Exception 
 	 * @throws ParseException 
 	 */
+	@Test
 	public void testImportProducts() throws ParseException, Exception{
 		
 		/*
@@ -576,6 +561,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		
 	}
 	
+	@Test
 	public void testCatchIntegrityException() throws IOException, ImporterException{
 		
 		Exception exception = null;
@@ -638,6 +624,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws ImporterException the be cpg exception
 	 */
+	@Test
 	public void testImportProductLists() throws IOException, ImporterException{
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
@@ -766,6 +753,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws ImporterException the be cpg exception
 	 */
+	@Test
 	public void testImportHierarchies() throws IOException, ImporterException{
 	
 		importHierarchies();

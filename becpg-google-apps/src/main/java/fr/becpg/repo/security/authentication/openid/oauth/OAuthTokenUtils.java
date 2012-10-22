@@ -25,8 +25,10 @@ import com.google.gdata.util.common.util.Base64DecoderException;
  */
 public class OAuthTokenUtils {
 
-
+	
 	private static final  ThreadLocal<GoogleOAuthParameters> token = new ThreadLocal<GoogleOAuthParameters>();
+	
+	
 	private static String  oauthCertFile =null;
 	private static boolean is2LeggedOAuth = false;
 	

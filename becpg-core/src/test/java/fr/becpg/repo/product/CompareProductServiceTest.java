@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -19,6 +21,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -48,7 +51,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CompareProductServiceTest.class);
 
-	/** The compare product service. */
+	@Resource
 	private CompareEntityService compareEntityService;
 
 	/** The local s f1 node ref. */
@@ -68,9 +71,9 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 
 	/** The raw material4 node ref. */
 	private NodeRef rawMaterial4NodeRef;
-	
+
 	private NodeRef fp1NodeRef;
-	
+
 	private NodeRef fp2NodeRef;
 
 	/** The costs. */
@@ -80,29 +83,10 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 	private List<NodeRef> allergens = new ArrayList<NodeRef>();
 
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
 
-		logger.debug("ProductServiceTest:setUp");
-
-		
-		productDictionaryService = (ProductDictionaryService) ctx.getBean("productDictionaryService");
-		compareEntityService = (CompareEntityService) ctx.getBean("compareEntityService");
-	
-
 		initObjects();
-	}
-
-	@Override
-	public void tearDown() throws Exception {
-		try {
-			// authenticationComponent.clearCurrentSecurityContext();
-		} catch (Throwable e) {
-			e.printStackTrace();
-			// Don't let this mask any previous exceptions
-		}
-		super.tearDown();
-
 	}
 
 	/**
@@ -114,47 +98,34 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				// costs
-				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
-						ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-				NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
+				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+				NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
 				if (costFolder != null) {
 					fileFolderService.delete(costFolder);
 				}
-				costFolder = fileFolderService.create(systemFolder,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS), ContentModel.TYPE_FOLDER)
-						.getNodeRef();
+				costFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS), ContentModel.TYPE_FOLDER).getNodeRef();
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, "Cost " + i);
 					properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-					ChildAssociationRef childAssocRef = nodeService.createNode(
-							costFolder,
-							ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-									(String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties);
+					ChildAssociationRef childAssocRef = nodeService.createNode(costFolder, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties);
 					costs.add(childAssocRef.getChildRef());
 				}
 
 				// allergens
-				NodeRef allergensFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS));
+				NodeRef allergensFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS));
 				if (allergensFolder != null) {
 					fileFolderService.delete(allergensFolder);
 				}
-				allergensFolder = fileFolderService.create(systemFolder,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS), ContentModel.TYPE_FOLDER)
-						.getNodeRef();
+				allergensFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS), ContentModel.TYPE_FOLDER).getNodeRef();
 
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, "Allergen " + i);
-					ChildAssociationRef childAssocRef = nodeService.createNode(
-							allergensFolder,
-							ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-									(String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN,
-							properties);
+					ChildAssociationRef childAssocRef = nodeService.createNode(allergensFolder, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties);
 					allergens.add(childAssocRef.getChildRef());
 				}
 
@@ -225,18 +196,16 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 	 *            the values
 	 * @return true, if successful
 	 */
-	private boolean checkCompareRow(List<CompareResultDataItem> compareResult, String productList,
-			String characteristic, String property, String values) {
+	private boolean checkCompareRow(List<CompareResultDataItem> compareResult, String productList, String characteristic, String property, String values) {
 
 		for (CompareResultDataItem c : compareResult) {
 
 			String tempProductList = c.getEntityList() == null ? "" : c.getEntityList().toString();
-			String tempCharacteristic = c.getCharacteristic() == null ? "" : (String) nodeService.getProperty(
-					c.getCharacteristic(), ContentModel.PROP_NAME);
+			String tempCharacteristic = c.getCharacteristic() == null ? "" : (String) nodeService.getProperty(c.getCharacteristic(), ContentModel.PROP_NAME);
 			String tempProperty = c.getProperty() == null ? "" : c.getProperty().toString();
 
-			if (productList.equals(tempProductList) && characteristic.equals(tempCharacteristic)
-					&& property.equals(tempProperty) && c.getValues().toString().equals(values.toString())) {
+			if (productList.equals(tempProductList) && characteristic.equals(tempCharacteristic) && property.equals(tempProperty)
+					&& c.getValues().toString().equals(values.toString())) {
 
 				return true;
 			}
@@ -266,31 +235,27 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 	 *            the properties2
 	 * @return true, if successful
 	 */
-	private boolean checkStructCompareRow(List<StructCompareResultDataItem> structCompareResult, String productList,
-			int depthLevel, StructCompareOperator operator, String product1, String product2, String properties1,
-			String properties2) {
+	private boolean checkStructCompareRow(List<StructCompareResultDataItem> structCompareResult, String productList, int depthLevel, StructCompareOperator operator,
+			String product1, String product2, String properties1, String properties2) {
 
 		for (StructCompareResultDataItem c : structCompareResult) {
 
 			String tempProductList = c.getEntityList() == null ? "" : c.getEntityList().toString();
 			String tempProduct1 = "";
 			if (c.getCharacteristic1() != null) {
-				List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic1(),
-						BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+				List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic1(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
 				NodeRef productNodeRef = ((AssociationRef) compoAssocRefs.get(0)).getTargetRef();
 				tempProduct1 = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
 			}
 
 			String tempProduct2 = "";
 			if (c.getCharacteristic2() != null) {
-				List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic2(),
-						BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+				List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic2(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
 				NodeRef productNodeRef = ((AssociationRef) compoAssocRefs.get(0)).getTargetRef();
 				tempProduct2 = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
 			}
 
-			if (productList.equals(tempProductList) && depthLevel == c.getDepthLevel()
-					&& operator.equals(c.getOperator()) && product1.equals(tempProduct1)
+			if (productList.equals(tempProductList) && depthLevel == c.getDepthLevel() && operator.equals(c.getOperator()) && product1.equals(tempProduct1)
 					&& product2.equals(tempProduct2) && properties1.toString().equals(c.getProperties1().toString())
 					&& properties2.toString().equals(c.getProperties2().toString())) {
 
@@ -304,6 +269,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 	/**
 	 * Test comparison.
 	 */
+	@Test
 	public void testComparison() {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -336,23 +302,17 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 					List<NodeRef> volontarySources = new ArrayList<NodeRef>();
 					volontarySources.add(allergenRawMaterialNodeRef);
 
-					AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, true, false,
-							volontarySources, null, allergens.get(j), false);
+					AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, true, false, volontarySources, null, allergens.get(j), false);
 					allergenList.add(allergenListItemData);
 				}
 				fp1.setAllergenList(allergenList);
 
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
 				// compoList.add(new CompoListDataItem(null, 2, 3d, 0d,
 				// 0d, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
 				// rawMaterial4NodeRef));
@@ -382,11 +342,9 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 					AllergenListDataItem allergenListItemData = null;
 
 					if (j < 5) {
-						allergenListItemData = new AllergenListDataItem(null, true, false, allSources, null,
-								allergens.get(j), false);
+						allergenListItemData = new AllergenListDataItem(null, true, false, allSources, null, allergens.get(j), false);
 					} else {
-						allergenListItemData = new AllergenListDataItem(null, false, true, null, allSources,
-								allergens.get(j), false);
+						allergenListItemData = new AllergenListDataItem(null, false, true, null, allSources, allergens.get(j), false);
 					}
 
 					allergenList.add(allergenListItemData);
@@ -394,149 +352,130 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				fp2.setAllergenList(allergenList);
 
 				compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, null,
-						DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 
 				fp2NodeRef = productDAO.create(testFolderNodeRef, fp2, dataLists);
-				
+
 				return null;
 
 			}
 		}, false, true);
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-		
+
 				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
 				productsNodeRef.add(fp2NodeRef);
 
 				List<CompareResultDataItem> compareResult = compareEntityService.compare(fp1NodeRef, productsNodeRef);
 
-				
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 9", "{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources",
-						"[null, MP allergen]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 5", "{http://www.bcpg.fr/model/becpg/1.0}allergenListInVoluntary", "[Faux, Vrai]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 6", "{http://www.bcpg.fr/model/becpg/1.0}allergenListInVoluntary", "[Faux, Vrai]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 1",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListUnit", "[€/kg, €/L]"));
-				assertTrue(checkCompareRow(compareResult, "", "", "{http://www.alfresco.org/model/content/1.0}name",
-						"[FP 1, FP 2]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 1",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListValue", "[12,2, 12,4]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						"Raw material 4", "{http://www.bcpg.fr/model/becpg/1.0}compoListUnit", "[null, kg]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						"Raw material 3", "{http://www.bcpg.fr/model/becpg/1.0}compoListQty", "[3, 2]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 8", "{http://www.bcpg.fr/model/becpg/1.0}allergenListVoluntary", "[Vrai, Faux]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 3",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListUnit", "[€/kg, €/L]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 6", "{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources",
-						"[MP allergen, null]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 2",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListValue", "[12,2, 12,4]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 9", "{http://www.bcpg.fr/model/becpg/1.0}allergenListVoluntary", "[Vrai, Faux]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 7",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListValue", "[12,2, 12,4]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 7", "{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources",
-						"[null, MP allergen]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 8", "{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources",
-						"[MP allergen, null]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						"Raw material 4", "{http://www.bcpg.fr/model/becpg/1.0}compoListProduct",
-						"[null, Raw material 4]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 2",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListUnit", "[€/kg, €/L]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 0",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListUnit", "[€/kg, €/L]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 9",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources", "[null, MP allergen]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 5",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVoluntary", "[Faux, Vrai]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 6",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVoluntary", "[Faux, Vrai]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 1", "{http://www.bcpg.fr/model/becpg/1.0}costListUnit",
+						"[€/kg, €/L]"));
+				assertTrue(checkCompareRow(compareResult, "", "", "{http://www.alfresco.org/model/content/1.0}name", "[FP 1, FP 2]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 1", "{http://www.bcpg.fr/model/becpg/1.0}costListValue",
+						"[12,2, 12,4]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", "Raw material 4", "{http://www.bcpg.fr/model/becpg/1.0}compoListUnit",
+						"[null, kg]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", "Raw material 3", "{http://www.bcpg.fr/model/becpg/1.0}compoListQty",
+						"[3, 2]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 8",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListVoluntary", "[Vrai, Faux]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 3", "{http://www.bcpg.fr/model/becpg/1.0}costListUnit",
+						"[€/kg, €/L]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 6",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources", "[MP allergen, null]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 2", "{http://www.bcpg.fr/model/becpg/1.0}costListValue",
+						"[12,2, 12,4]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 9",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListVoluntary", "[Vrai, Faux]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 7", "{http://www.bcpg.fr/model/becpg/1.0}costListValue",
+						"[12,2, 12,4]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 7",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources", "[null, MP allergen]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 8",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources", "[MP allergen, null]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", "Raw material 4",
+						"{http://www.bcpg.fr/model/becpg/1.0}compoListProduct", "[null, Raw material 4]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 2", "{http://www.bcpg.fr/model/becpg/1.0}costListUnit",
+						"[€/kg, €/L]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 0", "{http://www.bcpg.fr/model/becpg/1.0}costListUnit",
+						"[€/kg, €/L]"));
 				// code change everytime we test
 				// assertTrue(checkCompareRow(compareResult, "", "",
 				// "{http://www.bcpg.fr/model/becpg/1.0}productCode",
 				// "[181, 182]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 7",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListUnit", "[€/kg, €/L]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						"Raw material 4", "{http://www.bcpg.fr/model/becpg/1.0}compoListQty", "[null, 3]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 5", "{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources",
-						"[MP allergen, null]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 3",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListValue", "[12,2, 12,4]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 6",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListUnit", "[€/kg, €/L]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 5",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListUnit", "[€/kg, €/L]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 4",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListValue", "[12,2, 12,4]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 6", "{http://www.bcpg.fr/model/becpg/1.0}allergenListVoluntary", "[Vrai, Faux]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 7", "{http://www.bcpg.fr/model/becpg/1.0}allergenListVoluntary", "[Vrai, Faux]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						"Raw material 4", "{http://www.bcpg.fr/model/becpg/1.0}compoListDeclType", "[null, Detail]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						"Raw material 4", "{http://www.bcpg.fr/model/becpg/1.0}depthLevel", "[null, 2]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 5", "{http://www.bcpg.fr/model/becpg/1.0}allergenListVoluntary", "[Vrai, Faux]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 5", "{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources",
-						"[null, MP allergen]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 8",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListUnit", "[€/kg, €/L]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 9",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListUnit", "[€/kg, €/L]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 8", "{http://www.bcpg.fr/model/becpg/1.0}allergenListInVoluntary", "[Faux, Vrai]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 8",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListValue", "[12,2, 12,4]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 8", "{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources",
-						"[null, MP allergen]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 9",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListValue", "[12,2, 12,4]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 4",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListUnit", "[€/kg, €/L]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 9", "{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources",
-						"[MP allergen, null]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 6",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListValue", "[12,2, 12,4]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 7", "{http://www.bcpg.fr/model/becpg/1.0}allergenListInVoluntary", "[Faux, Vrai]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 6", "{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources",
-						"[null, MP allergen]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 9", "{http://www.bcpg.fr/model/becpg/1.0}allergenListInVoluntary", "[Faux, Vrai]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						"Raw material 1", "{http://www.bcpg.fr/model/becpg/1.0}compoListQty", "[1, 2]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList",
-						"Allergen 7", "{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources",
-						"[MP allergen, null]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						"Raw material 3", "{http://www.bcpg.fr/model/becpg/1.0}compoListUnit", "[kg, P]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 5",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListValue", "[12,2, 12,4]"));
-				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 0",
-						"{http://www.bcpg.fr/model/becpg/1.0}costListValue", "[12,2, 12,4]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 7", "{http://www.bcpg.fr/model/becpg/1.0}costListUnit",
+						"[€/kg, €/L]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", "Raw material 4", "{http://www.bcpg.fr/model/becpg/1.0}compoListQty",
+						"[null, 3]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 5",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources", "[MP allergen, null]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 3", "{http://www.bcpg.fr/model/becpg/1.0}costListValue",
+						"[12,2, 12,4]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 6", "{http://www.bcpg.fr/model/becpg/1.0}costListUnit",
+						"[€/kg, €/L]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 5", "{http://www.bcpg.fr/model/becpg/1.0}costListUnit",
+						"[€/kg, €/L]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 4", "{http://www.bcpg.fr/model/becpg/1.0}costListValue",
+						"[12,2, 12,4]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 6",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListVoluntary", "[Vrai, Faux]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 7",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListVoluntary", "[Vrai, Faux]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", "Raw material 4",
+						"{http://www.bcpg.fr/model/becpg/1.0}compoListDeclType", "[null, Detail]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", "Raw material 4", "{http://www.bcpg.fr/model/becpg/1.0}depthLevel",
+						"[null, 2]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 5",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListVoluntary", "[Vrai, Faux]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 5",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources", "[null, MP allergen]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 8", "{http://www.bcpg.fr/model/becpg/1.0}costListUnit",
+						"[€/kg, €/L]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 9", "{http://www.bcpg.fr/model/becpg/1.0}costListUnit",
+						"[€/kg, €/L]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 8",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVoluntary", "[Faux, Vrai]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 8", "{http://www.bcpg.fr/model/becpg/1.0}costListValue",
+						"[12,2, 12,4]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 8",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources", "[null, MP allergen]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 9", "{http://www.bcpg.fr/model/becpg/1.0}costListValue",
+						"[12,2, 12,4]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 4", "{http://www.bcpg.fr/model/becpg/1.0}costListUnit",
+						"[€/kg, €/L]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 9",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources", "[MP allergen, null]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 6", "{http://www.bcpg.fr/model/becpg/1.0}costListValue",
+						"[12,2, 12,4]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 7",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVoluntary", "[Faux, Vrai]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 6",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources", "[null, MP allergen]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 9",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVoluntary", "[Faux, Vrai]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", "Raw material 1", "{http://www.bcpg.fr/model/becpg/1.0}compoListQty",
+						"[1, 2]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 7",
+						"{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources", "[MP allergen, null]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", "Raw material 3", "{http://www.bcpg.fr/model/becpg/1.0}compoListUnit",
+						"[kg, P]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 5", "{http://www.bcpg.fr/model/becpg/1.0}costListValue",
+						"[12,2, 12,4]"));
+				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Cost 0", "{http://www.bcpg.fr/model/becpg/1.0}costListValue",
+						"[12,2, 12,4]"));
 
 				return null;
 
@@ -547,6 +486,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 	/**
 	 * Test struct comparison.
 	 */
+	@Test
 	public void testStructComparison() {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -560,16 +500,11 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				fp1.setName("FP 1");
 
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
 				// compoList.add(new CompoListDataItem(null, 2, 3d, 0d,
 				// 0d, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
 				// rawMaterial4NodeRef));
@@ -583,90 +518,76 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				fp2.setName("FP 2");
 
 				compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, null,
-						DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null,
-						DeclarationType.Detail, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 
 				fp2NodeRef = productDAO.create(testFolderNodeRef, fp2, dataLists);
 				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
 				productsNodeRef.add(fp2NodeRef);
 
-				List<StructCompareResultDataItem> structCompareResult = compareEntityService.compareStructDatalist(
-						fp1NodeRef, fp2NodeRef, BeCPGModel.TYPE_COMPOLIST, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+				List<StructCompareResultDataItem> structCompareResult = compareEntityService.compareStructDatalist(fp1NodeRef, fp2NodeRef, BeCPGModel.TYPE_COMPOLIST,
+						BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
 
-//				 for(StructCompareResultDataItem c :
-//				 structCompareResult){
-//				
-//				 String product1Name = "";
-//				 if(c.getCharacteristic1() != null){
-//				 List<AssociationRef> compoAssocRefs =
-//				 nodeService.getTargetAssocs(c.getCharacteristic1(),
-//				 BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-//				 NodeRef productNodeRef = ((AssociationRef)
-//				 compoAssocRefs.get(0)).getTargetRef();
-//				 product1Name =
-//				 (String)nodeService.getProperty(productNodeRef,
-//				 ContentModel.PROP_NAME);
-//				 }
-//				
-//				 String product2Name = "";
-//				 if(c.getCharacteristic2() != null){
-//				 List<AssociationRef> compoAssocRefs =
-//				 nodeService.getTargetAssocs(c.getCharacteristic2(),
-//				 BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-//				 NodeRef productNodeRef = ((AssociationRef)
-//				 compoAssocRefs.get(0)).getTargetRef();
-//				 product2Name =
-//				 (String)nodeService.getProperty(productNodeRef,
-//				 ContentModel.PROP_NAME);
-//				 }
-//				
-//				 logger.debug(c.getEntityList()+ " - " +
-//				 c.getDepthLevel() + " - " + c.getOperator() + " - " +
-//				 product1Name + " - " + product2Name + " - " +
-//				 c.getProperties1() + " - " + c.getProperties2());
-//				
-//				 //Output for method checkCompareRow
-//				 //Uncomment debug line, copy/paste in spreadsheet =>
-//				 //you will get the test lines
-//				 String productList = c.getEntityList() == null ? ""
-//				 : c.getEntityList().toString();
-//				 logger.info("-assertTrue(checkStructCompareRow(structCompareResult, \""
-//				 + productList + "\", " + c.getDepthLevel() +
-//				 ", StructCompareOperator." + c.getOperator() + ", \""
-//				 + product1Name + "\", \"" + product2Name + "\", \"" +
-//				 c.getProperties1() + "\", \"" + c.getProperties2() +
-//				 "\"));");
-//				 }
+				// for(StructCompareResultDataItem c :
+				// structCompareResult){
+				//
+				// String product1Name = "";
+				// if(c.getCharacteristic1() != null){
+				// List<AssociationRef> compoAssocRefs =
+				// nodeService.getTargetAssocs(c.getCharacteristic1(),
+				// BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+				// NodeRef productNodeRef = ((AssociationRef)
+				// compoAssocRefs.get(0)).getTargetRef();
+				// product1Name =
+				// (String)nodeService.getProperty(productNodeRef,
+				// ContentModel.PROP_NAME);
+				// }
+				//
+				// String product2Name = "";
+				// if(c.getCharacteristic2() != null){
+				// List<AssociationRef> compoAssocRefs =
+				// nodeService.getTargetAssocs(c.getCharacteristic2(),
+				// BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+				// NodeRef productNodeRef = ((AssociationRef)
+				// compoAssocRefs.get(0)).getTargetRef();
+				// product2Name =
+				// (String)nodeService.getProperty(productNodeRef,
+				// ContentModel.PROP_NAME);
+				// }
+				//
+				// logger.debug(c.getEntityList()+ " - " +
+				// c.getDepthLevel() + " - " + c.getOperator() + " - " +
+				// product1Name + " - " + product2Name + " - " +
+				// c.getProperties1() + " - " + c.getProperties2());
+				//
+				// //Output for method checkCompareRow
+				// //Uncomment debug line, copy/paste in spreadsheet =>
+				// //you will get the test lines
+				// String productList = c.getEntityList() == null ? ""
+				// : c.getEntityList().toString();
+				// logger.info("-assertTrue(checkStructCompareRow(structCompareResult, \""
+				// + productList + "\", " + c.getDepthLevel() +
+				// ", StructCompareOperator." + c.getOperator() + ", \""
+				// + product1Name + "\", \"" + product2Name + "\", \"" +
+				// c.getProperties1() + "\", \"" + c.getProperties2() +
+				// "\"));");
+				// }
 
-				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						1, StructCompareOperator.Equal, "Local semi finished 1", "Local semi finished 1", "{}", "{}"));
-				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						2, StructCompareOperator.Equal, "Raw material 2", "Raw material 2", "{}", "{}"));
-				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						2, StructCompareOperator.Modified, "Raw material 1", "Raw material 1",
-						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=1}",
-						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2}"));
-				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						1, StructCompareOperator.Equal, "Local semi finished 2", "Local semi finished 2", "{}", "{}"));
-				assertTrue(checkStructCompareRow(
-						structCompareResult,
-						"{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						2,
-						StructCompareOperator.Modified,
-						"Raw material 3",
-						"Raw material 3",
-						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}",
+				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 1, StructCompareOperator.Equal, "Local semi finished 1",
+						"Local semi finished 1", "{}", "{}"));
+				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Equal, "Raw material 2",
+						"Raw material 2", "{}", "{}"));
+				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Modified, "Raw material 1",
+						"Raw material 1", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=1}", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2}"));
+				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 1, StructCompareOperator.Equal, "Local semi finished 2",
+						"Local semi finished 2", "{}", "{}"));
+				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Modified, "Raw material 3",
+						"Raw material 3", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}",
 						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=P}"));
 				assertTrue(checkStructCompareRow(
 						structCompareResult,

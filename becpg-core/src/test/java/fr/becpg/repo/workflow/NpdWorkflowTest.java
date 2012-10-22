@@ -12,12 +12,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
@@ -25,16 +24,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchService;
-import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
-import org.alfresco.service.cmr.security.MutableAuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.workflow.WorkflowDefinition;
 import org.alfresco.service.cmr.workflow.WorkflowInstance;
 import org.alfresco.service.cmr.workflow.WorkflowNode;
 import org.alfresco.service.cmr.workflow.WorkflowPath;
-import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
@@ -43,14 +38,13 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.NPDModel;
 import fr.becpg.repo.admin.NPDGroup;
 import fr.becpg.repo.admin.SystemGroup;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.ProductUnit;
@@ -62,9 +56,8 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.test.RepoBaseTestCase;
 
-public class NpdWorkflowTest extends RepoBaseTestCase {
+public class NpdWorkflowTest extends AbstractWorkflowTest {
 
 	protected static final String USER_ONE = "matthieuWF";
 
@@ -80,21 +73,10 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(NpdWorkflowTest.class);
 
-	private AuthorityService authorityService;
-
-	private MutableAuthenticationDao authenticationDAO;
-
-	private MutableAuthenticationService authenticationService;
-
-	private PersonService personService;
-
-	private WorkflowService workflowService;
-
+	@Resource
 	private  SearchService searchService;
-	
+	@Resource
 	private EntityService entityService;
-	
-	private ProductDAO productDAO;
 	
 	private NodeRef productNodeRef;
 
@@ -189,25 +171,6 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 	
 	private String workflowId = "";
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		fileFolderService = (FileFolderService) ctx.getBean("fileFolderService");
-		repositoryHelper = (Repository) ctx.getBean("repositoryHelper");
-		
-		entityService = (EntityService) ctx.getBean("entityService");
-		searchService = serviceRegistry.getSearchService();
-		workflowService = serviceRegistry.getWorkflowService();
-		 productDAO = (ProductDAO)ctx.getBean("productDAO");
-	        productDictionaryService = (ProductDictionaryService)ctx.getBean("productDictionaryService");
-
-		authenticationService =  serviceRegistry.getAuthenticationService();
-		authenticationDAO = (MutableAuthenticationDao) ctx.getBean("authenticationDao");
-		authorityService = (AuthorityService) ctx.getBean("authorityService");
-
-		personService = (PersonService) ctx.getBean("PersonService");
-	}
 
 	private void createUsers() {
 
@@ -649,6 +612,7 @@ public class NpdWorkflowTest extends RepoBaseTestCase {
 			
 	}
 
+	@Test
 	public void testNPDWorkFlow() {
 
 		authenticationComponent.setSystemUserAsCurrentUser();

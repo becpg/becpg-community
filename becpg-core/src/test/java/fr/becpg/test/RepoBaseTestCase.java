@@ -10,24 +10,39 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import junit.framework.Assert;
+import junit.framework.TestCase;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.security.authentication.AuthenticationComponent;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.BaseAlfrescoTestCase;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.subethamail.wiser.Wiser;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -54,7 +69,9 @@ import fr.becpg.repo.product.hierarchy.HierarchyService;
  * @author querephi
  */
 
-public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:alfresco/application-context.xml")
+public abstract class RepoBaseTestCase extends TestCase implements ApplicationContextAware {
 
 	/** The Constant HIERARCHY1_SEA_FOOD. */
 	protected static final String HIERARCHY1_SEA_FOOD = "Sea food";
@@ -86,36 +103,67 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 
 	protected NodeRef HIERARCHY2_QUICHE_REF;
 
-	protected NodeRef testFolderNodeRef; 
+	protected NodeRef testFolderNodeRef;
 	
+	protected boolean forceInit = false;
+
 	private static String VALUE_COST_CURRENCY = "€";
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
 
-	protected MimetypeService mimetypeService;
-
-	protected Repository repositoryHelper;
-
-	protected NodeService nodeService;
-
-	protected RepoService repoService;
-
-	protected FileFolderService fileFolderService;
-
-	protected ProductDAO productDAO;
-
-	protected DictionaryDAO dictionaryDAO;
-
-	protected ProductDictionaryService productDictionaryService;
-
-	protected EntitySystemService entitySystemService;
-
-	private InitVisitor initRepoVisitor;
-
-	private HierarchyService hierarchyService;
 
 	protected RepoBaseTestCase repoBaseTestCase;
+	
+	@Resource
+	protected MimetypeService mimetypeService;
+
+	@Resource
+	protected Repository repositoryHelper;
+
+	@Resource
+	protected NodeService nodeService;
+
+	@Resource
+	protected RepoService repoService;
+
+	@Resource
+	protected FileFolderService fileFolderService;
+
+	@Resource
+	protected ProductDAO productDAO;
+
+	@Resource
+	protected DictionaryDAO dictionaryDAO;
+
+	@Resource
+	protected ProductDictionaryService productDictionaryService;
+
+	@Resource
+	protected EntitySystemService entitySystemService;
+
+	@Resource
+	protected ServiceRegistry serviceRegistry;
+	
+	@Resource
+	private InitVisitor initRepoVisitor;
+
+	@Resource
+	private HierarchyService hierarchyService;
+
+
+
+	@Resource
+	protected AuthenticationComponent authenticationComponent;
+
+	@Resource
+	protected ContentService contentService;
+
+	@Resource
+	protected TransactionService transactionService;
+
+	@Resource
+	protected RetryingTransactionHelper retryingTransactionHelper;
 
 	/** The allergens. */
 	protected List<NodeRef> allergens = new ArrayList<NodeRef>();
@@ -132,97 +180,85 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 	/** The organos. */
 	protected List<NodeRef> organos = new ArrayList<NodeRef>();
 
-	protected Wiser wiser = new Wiser(2500);
+	protected ApplicationContext ctx;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
 	@Override
-	protected void setUp() throws Exception {
-		// First start wiser
-		try {
-			wiser.start();
-		} catch (Exception e) {
-			logger.warn("cannot open wiser!");
-		}
-		// Then context
-		super.setUp();
+	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+		this.ctx = ctx;
 		
+	}
+	
+
+	@Before
+	public void setUp() throws Exception {
+
+
 		repoBaseTestCase = this;
 
-		mimetypeService = (MimetypeService) ctx.getBean("mimetypeService");
-		repositoryHelper = (Repository) ctx.getBean("repositoryHelper");
-		repoService = (RepoService) ctx.getBean("repoService");
-		fileFolderService = (FileFolderService) ctx.getBean("fileFolderService");
-		productDAO = (ProductDAO) ctx.getBean("productDAO");
-		productDictionaryService = (ProductDictionaryService) ctx.getBean("productDictionaryService");
-		initRepoVisitor = (InitVisitor) ctx.getBean("initRepoVisitor");
-		entitySystemService = (EntitySystemService) ctx.getBean("entitySystemService");
-		dictionaryDAO = (DictionaryDAO) ctx.getBean("dictionaryDAO");
-		hierarchyService = (HierarchyService) ctx.getBean("hierarchyService");
-		nodeService = (NodeService) ctx.getBean("nodeService");
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		testFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
+				 // As system user
+                AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
+                //
+				return BeCPGTestHelper.createTestFolder(repoBaseTestCase);
+			}
+		}, false, true);
 
-				testFolderNodeRef = BeCPGTestHelper.createTestFolder(repoBaseTestCase);;
-				
-				// Delete initialyzed repo
-				deleteSystemFolder();
-				// Init repo for tes
-				initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
+		doInitRepo();
+		
+	}
+	
+	private void doInitRepo(){
 
-				Assert.assertEquals(3, entitySystemService.getSystemEntities().size());
+	 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+			public Boolean execute() throws Throwable {
 
-				initConstraints();
+				if(shouldInit()){
+					// Delete initialyzed repo
+					deleteSystemFolder();
+					// Init repo for test
+					initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
+	
+					Assert.assertEquals(3, entitySystemService.getSystemEntities().size());
+	
+					initConstraints();
+					return true;
+				}
 
-				return null;
+				return false;
 
 			}
 		}, false, true);
 
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				dictionaryDAO.reset();
-
-				initCharacteristics();
-				initHierarchyLists();
-				// reset dictionary to reload constraints on list_values
-				dictionaryDAO.reset();
-				return null;
-
-			}
+				public NodeRef execute() throws Throwable {
+	
+					dictionaryDAO.reset();
+	
+					initCharacteristics();
+					initHierarchyLists();
+					// reset dictionary to reload constraints on list_values
+					dictionaryDAO.reset();
+					return null;
+	
+				}
 		}, false, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				if(nodeService.exists(testFolderNodeRef)){
+				if (nodeService.exists(testFolderNodeRef)) {
 					nodeService.deleteNode(testFolderNodeRef);
 				}
 				return null;
 
 			}
 		}, false, true);
-		
-		try {
-			wiser.stop();
-		} catch (Exception e) {
-			logger.warn("cannot stop wiser!");
-		}
 
-		super.tearDown();
 
 	}
 
@@ -251,6 +287,11 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 
 	}
 
+	private boolean shouldInit(){
+		return forceInit || nodeService
+		.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM))==null;
+	}
+	
 	private void deleteSystemFolder() {
 		NodeRef systemFolder = nodeService
 				.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
@@ -484,18 +525,18 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		NodeRef systemNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 
-		assertNotNull("System folder not found", systemNodeRef);
+		Assert.assertNotNull("System folder not found", systemNodeRef);
 		NodeRef productHierarchyNodeRef = entitySystemService.getSystemEntity(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
 
-		assertNotNull("Product hierarchy system entity not found", productHierarchyNodeRef);
+		Assert.assertNotNull("Product hierarchy system entity not found", productHierarchyNodeRef);
 
 		NodeRef rawMaterialHierarchyNodeRef = entitySystemService.getSystemEntityDataList(productHierarchyNodeRef,
 				HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_RAWMATERIAL));
-		assertNotNull("raw material hierarchy dataList not found", rawMaterialHierarchyNodeRef);
+		Assert.assertNotNull("raw material hierarchy dataList not found", rawMaterialHierarchyNodeRef);
 
 		NodeRef finishedProductHierarchyNodeRef = entitySystemService.getSystemEntityDataList(productHierarchyNodeRef,
 				HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_FINISHEDPRODUCT));
-		assertNotNull("Finished product hierarchy dataList not found", finishedProductHierarchyNodeRef);
+		Assert.assertNotNull("Finished product hierarchy dataList not found", finishedProductHierarchyNodeRef);
 
 		/*-- create hierarchy --*/
 		// RawMaterial - Sea food
@@ -508,4 +549,7 @@ public abstract class RepoBaseTestCase extends BaseAlfrescoTestCase {
 		HIERARCHY2_PIZZA_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
 		HIERARCHY2_QUICHE_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);
 	}
+
+	
+
 }

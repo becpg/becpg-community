@@ -7,13 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.BeCPGDao;
@@ -27,14 +28,13 @@ import fr.becpg.test.RepoBaseTestCase;
 
 public class QualityControlTest extends RepoBaseTestCase {
 
-	private static String PATH_TESTFOLDER = "QualTestFolder";
 	private static final long HOUR = 3600 * 1000; // in milli-seconds.
 
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(QualityControlTest.class);
-
+	@Resource
 	private BeCPGDao<ControlPointData> controlPointDAO;
+	@Resource
 	private BeCPGDao<ControlPlanData> controlPlanDAO;
+	@Resource
 	private BeCPGDao<QualityControlData> qualityControlDAO;
 
 	private NodeRef controlStepNodeRef;
@@ -43,30 +43,6 @@ public class QualityControlTest extends RepoBaseTestCase {
 	private NodeRef qualityControlNodeRef;
 	private NodeRef controlPlanNodeRef;
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		logger.debug("ProductServiceTest:setUp");
-
-		controlPointDAO = (BeCPGDao<ControlPointData>) ctx.getBean("controlPointDAO");
-		controlPlanDAO = (BeCPGDao<ControlPlanData>) ctx.getBean("controlPlanDAO");
-		qualityControlDAO = (BeCPGDao<QualityControlData>) ctx.getBean("qualityControlDAO");
-
-	}
-
-	@Override
-	public void tearDown() throws Exception {
-		try {
-			authenticationComponent.clearCurrentSecurityContext();
-		} catch (Throwable e) {
-			e.printStackTrace();
-			// Don't let this mask any previous exceptions
-		}
-		super.tearDown();
-
-	}
 
 	private void createControlPlan(NodeRef testFolderNodeRef) {
 
@@ -135,6 +111,7 @@ public class QualityControlTest extends RepoBaseTestCase {
 
 	}
 
+	@Test
 	public void testCreateQualityControl() {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {

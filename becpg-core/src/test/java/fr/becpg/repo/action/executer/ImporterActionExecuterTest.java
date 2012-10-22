@@ -9,25 +9,23 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ApplicationContextHelper;
-import org.alfresco.util.BaseAlfrescoTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
+import org.junit.Test;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -35,63 +33,24 @@ import fr.becpg.repo.helper.TranslateHelper;
  *
  * @author querephi
  */
-public class ImporterActionExecuterTest  extends BaseAlfrescoTestCase {
+public class ImporterActionExecuterTest  extends RepoBaseTestCase {
 	
 	private static String FILENAME_IMPORT_CSV = "import.csv";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ImporterActionExecuterTest.class);
-	
-	/** The application context. */
-	private static ApplicationContext applicationContext = ApplicationContextHelper.getApplicationContext();	
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	
-	/** The repository. */
+
+	@Resource
 	private Repository repository;
 	
-	private MimetypeService mimetypeService;
 	
-	/* (non-Javadoc)
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception {
-    	super.setUp();		
-    	
-    	nodeService = (NodeService)applicationContext.getBean("NodeService");
-         authenticationComponent = (AuthenticationComponent)applicationContext.getBean("authenticationComponent");
-        repository = (Repository)applicationContext.getBean("repositoryHelper");
-        mimetypeService = (MimetypeService)applicationContext.getBean("mimetypeService");
-    }
-    
-    
-	/* (non-Javadoc)
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#tearDown()
-	 */
-	@Override
-	protected void tearDown() throws Exception
-    {
-		try
-        {
-            authenticationComponent.clearCurrentSecurityContext();
-        }
-        catch (Throwable e)
-        {
-            e.printStackTrace();
-            // Don't let this mask any previous exceptions
-        }
-        super.tearDown();
-
-    }		
 
 	/**
 	 * Test add content to import.
 	 *
 	 * @throws Exception the exception
 	 */
+	@Test
 	public void testAddContentToImport() throws Exception{
 			
     	transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
@@ -143,6 +102,7 @@ public class ImporterActionExecuterTest  extends BaseAlfrescoTestCase {
 	 * Check that import goes in the failed folder even if there is IntegrityException
 	 * @throws Exception
 	 */
+	@Test
 	public void testAddContentToImportThatFailed() throws Exception{
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){

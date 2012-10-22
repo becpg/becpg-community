@@ -99,7 +99,7 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
-
+	
 	public void setOauthCertFile(String oauthCertFile) {
 		this.oauthCertFile = oauthCertFile;
 	}

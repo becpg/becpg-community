@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.alfresco.repo.model.Repository;
+import javax.annotation.Resource;
+
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.junit.Test;
 
-import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.ProductData;
@@ -34,7 +34,7 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class CompoListValuePluginTest extends RepoBaseTestCase {
 
-
+	@Resource
 	private CompoListValuePlugin compoListValuePlugin;
 
 	private NodeRef rawMaterial1NodeRef;
@@ -45,13 +45,9 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 	private NodeRef finishedProductNodeRef;
 
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
 
-		fileFolderService = (FileFolderService) ctx.getBean("FileFolderService");
-		repoService = (RepoService) ctx.getBean("repoService");
-		repositoryHelper = (Repository) ctx.getBean("repositoryHelper");
-		compoListValuePlugin = (CompoListValuePlugin) ctx.getBean("compoListValuePlugin");
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -65,17 +61,6 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 		}, false, true);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		try {
-			authenticationComponent.clearCurrentSecurityContext();
-		} catch (Throwable e) {
-			e.printStackTrace();
-			// Don't let this mask any previous exceptions
-		}
-		super.tearDown();
-
-	}
 
 	public void initProducts() {
 
@@ -122,6 +107,7 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 	/**
 	 * Test suggest supplier.
 	 */
+	@Test
 	public void testCompoListValuePlugin() {
 
 		Map<String, Serializable> props = new HashMap<String, Serializable>();
@@ -157,7 +143,7 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 		assertEquals(1, listValuePage.getResults().size());
 	}
 	
-	
+	@Test
 	public void testIsQueryMatch(){
 		assertTrue(compoListValuePlugin.isQueryMath("*","Pâte de riz" ));
 		assertTrue(compoListValuePlugin.isQueryMath("Pâte*","Pâte de riz" ));
