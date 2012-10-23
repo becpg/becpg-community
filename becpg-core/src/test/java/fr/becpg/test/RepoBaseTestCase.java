@@ -199,7 +199,8 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			public NodeRef execute() throws Throwable {
 				 // As system user
                 AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
-                //
+                
+                // test folder
 				return BeCPGTestHelper.createTestFolder(repoBaseTestCase);
 			}
 		}, false, true);

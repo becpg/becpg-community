@@ -461,7 +461,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[4]);
 				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[5]);
 				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[6]);
-				assertEquals("8th Path should be 'Raw material (1)'", "Raw material (1)", arrDisplayPaths[7]);
+				assertEquals("8th Path should be 'Raw material (1)'", "Raw material (1)", nodeService.getProperty(rawMaterial2NodeRef, ContentModel.PROP_NAME));
 
 				return null;
 

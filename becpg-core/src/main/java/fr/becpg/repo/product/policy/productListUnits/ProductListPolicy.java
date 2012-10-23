@@ -17,6 +17,7 @@ import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -156,9 +157,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 										String costCurrency = (String) nodeService.getProperty(costNodeRef, BeCPGModel.PROP_COSTCURRENCY);
 										String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT);
-
-										String suffix = AbstractCalculatingVisitor.UNIT_SEPARATOR + costCurrency;
-										if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.endsWith(suffix))) {
+										
+										if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.endsWith(CostsCalculatingVisitor.calculateSuffixUnit(productUnit)))) {
 											nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT,
 													CostsCalculatingVisitor.calculateUnit(productUnit, costCurrency));
 										}
