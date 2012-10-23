@@ -112,6 +112,7 @@ import org.jbpm.taskmgmt.def.TaskMgmtDefinition;
 import org.jbpm.taskmgmt.exe.PooledActor;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springmodules.workflow.jbpm31.JbpmAccessor;
 import org.springmodules.workflow.jbpm31.JbpmCallback;
@@ -125,6 +126,7 @@ import org.springmodules.workflow.jbpm31.JbpmTemplate;
  * 
  * @author davidc
  */
+@Service
 public class JBPMEngine extends AlfrescoBpmEngine implements WorkflowEngine
 {
     private static Log logger = LogFactory.getLog(JBPMEngine.class);
