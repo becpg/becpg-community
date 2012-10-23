@@ -97,6 +97,10 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				if (netWeight != 0.0d) {
 					value = value / netWeight;
 				}
+				
+				if (logger.isDebugEnabled()) {
+					logger.debug("Add new charact detail. Charact: " + simpleCharact.getCharactNodeRef() + " - entityNodeRef: " + entityNodeRef + " - value: " + value);
+				}
 				charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), entityNodeRef, value);
 			}
 		}

@@ -140,15 +140,9 @@ public class CostsCalculatingVisitor extends AbstractCalculatingVisitor implemen
 	 * @param costUnit
 	 * @return
 	 */
-	public static String calculateUnit(ProductUnit productUnit, String costUnit){
+	public static String calculateUnit(ProductUnit productUnit, String costUnit){										
 		
-		ProductUnit unit = ProductUnit.kg;
-		
-		if(ProductUnit.L.equals(productUnit)){
-			unit = ProductUnit.L;
-		}						
-		
-		return costUnit + calculateSuffixUnit(unit);
+		return costUnit + calculateSuffixUnit(productUnit);
 	}
 	
 	/**
@@ -157,7 +151,7 @@ public class CostsCalculatingVisitor extends AbstractCalculatingVisitor implemen
 	 * @return
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit){
-		return productUnit != null ? UNIT_SEPARATOR + productUnit : UNIT_SEPARATOR + ProductUnit.kg;
+		return (productUnit != null && productUnit.equals(ProductUnit.L)) ? UNIT_SEPARATOR + ProductUnit.L : UNIT_SEPARATOR + ProductUnit.kg;
 	}
 	
 	private ProductData calculateProfitability(ProductData formulatedProduct){

@@ -29,7 +29,6 @@ import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -68,7 +67,6 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 
 	private NodeRef rawMaterialNodeRef;
 	private NodeRef finishedProductNodeRef;
-
 
 //	/**
 //	 * Test create version.
@@ -137,7 +135,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 	public void testCheckOutCheckIn() {
 		
 		final Collection<QName> dataLists = productDictionaryService.getDataLists();
-		final ProductUnit productUnit = ProductUnit.P;
+		final ProductUnit productUnit = ProductUnit.L;
 		final int valueAdded = 1;
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -145,8 +143,13 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Create raw material --*/
-				return createRawMaterial(testFolderNodeRef, "MP test report");
+				NodeRef r = createRawMaterial(testFolderNodeRef, "MP test report");
 				
+				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+				nodeService.addAspect(r, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+				
+				return r;
 			}
 		}, false, true);
 		
@@ -154,11 +157,8 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
-				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
-				nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-
 				// Check out
+				logger.debug("checkout nodeRef: " + rawMaterialNodeRef);
 				return checkOutCheckInService.checkout(rawMaterialNodeRef);
 				
 			}
@@ -200,9 +200,9 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			}
 		}, false, true);
 		
-		final ProductData newRawMaterial = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<ProductData>() {
+		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
-			public ProductData execute() throws Throwable {
+			public NodeRef execute() throws Throwable {
 
 				// Check in
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
@@ -238,22 +238,31 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				versionProperties = new HashMap<String, Serializable>();
 				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				versionProperties.put(Version.PROP_DESCRIPTION, "description");
-				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopy2NodeRef, versionProperties);
-
-				newRawMaterial = productDAO.find(newRawMaterialNodeRef, dataLists);
-				assertEquals("Check version", "1.0", newRawMaterial.getVersionLabel());
-
-				return newRawMaterial;
+				return checkOutCheckInService.checkin(workingCopy2NodeRef, versionProperties);				
 
 			}
 		}, false, true);
+				
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
 
-		// Check cost Unit has changed after transaction
-		for (int i = 0; i < newRawMaterial.getCostList().size(); i++) {
-			CostListDataItem vCostListDataItem = newRawMaterial.getCostList().get(i);
+				ProductData newRawMaterial = productDAO.find(newRawMaterialNodeRef, dataLists);
+				assertEquals("Check version", "1.0", newRawMaterial.getVersionLabel());
 
-			assertEquals("Check cost unit", "€/P", vCostListDataItem.getUnit());
-		}
+				// Check cost Unit has changed after transaction
+				for (int i = 0; i < newRawMaterial.getCostList().size(); i++) {
+					CostListDataItem vCostListDataItem = newRawMaterial.getCostList().get(i);
+					Boolean fixedCost = (Boolean)nodeService.getProperty(vCostListDataItem.getCost(), BeCPGModel.PROP_COSTFIXED);
+					if(fixedCost==null || fixedCost.equals(Boolean.FALSE)){
+						assertTrue("Check cost unit", vCostListDataItem.getUnit().endsWith("/L"));
+					}					
+				}
+				
+				return null;
+
+			}
+		}, false, true);
 
 	}
 

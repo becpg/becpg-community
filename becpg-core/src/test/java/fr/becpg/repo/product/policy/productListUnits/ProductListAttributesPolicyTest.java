@@ -267,7 +267,26 @@ public class ProductListAttributesPolicyTest extends RepoBaseTestCase {
 
 			}
 		}, false, true);
+		
+		// reset for other tests
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
 
+				
+				cost1 = costs.get(0);
+				nodeService.setProperty(cost1, BeCPGModel.PROP_COSTCURRENCY, "€");
+				cost2 = costs.get(1);
+				nodeService.setProperty(cost2, BeCPGModel.PROP_COSTCURRENCY, "€");
+				cost3 = costs.get(2);
+				nodeService.setProperty(cost3, BeCPGModel.PROP_COSTCURRENCY, "€");
+				nodeService.setProperty(cost3, BeCPGModel.PROP_COSTFIXED, false);
+				
+				return null;
+
+			}
+		}, false, true);
+		
 	}
 
 }
