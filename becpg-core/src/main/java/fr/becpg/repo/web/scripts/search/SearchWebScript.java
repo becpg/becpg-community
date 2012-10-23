@@ -5,7 +5,6 @@ package fr.becpg.repo.web.scripts.search;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.service.ServiceRegistry;
@@ -24,6 +23,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
+import fr.becpg.repo.web.scripts.WebscriptHelper;
 import fr.becpg.repo.web.scripts.search.data.BlogDataExtractor;
 import fr.becpg.repo.web.scripts.search.data.CalendarDataExtractor;
 import fr.becpg.repo.web.scripts.search.data.ContentDataExtractor;
@@ -88,15 +88,8 @@ public class SearchWebScript extends AbstractSearchWebScript {
 		Integer maxResults = getNumParameter(req, PARAM_MAX_RESULTS);
 		Integer page = getNumParameter(req, PARAM_PAGE);
 		Integer pageSize = getNumParameter(req, PARAM_PAGE_SIZE);
-		String fields = req.getParameter(PARAM_FIELDS);
-		List<String> metadataFields = new LinkedList<String>();
-
-		if (fields != null && fields.length() > 0) {
-			String[] splitted = fields.split(",");
-			for (String field : splitted) {
-				metadataFields.add(field.replace("_", ":"));
-			}
-		}
+		List<String> metadataFields =  WebscriptHelper.extractMetadataFields(req);
+		
 		try {
 			List<NodeRef> results = doSearch(req, maxResults);
 			
