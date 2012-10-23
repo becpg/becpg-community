@@ -14,8 +14,6 @@
 	 */
 	var $html = Alfresco.util.encodeHTML, $siteURL = Alfresco.util.siteURL, $isValueSet = Alfresco.util.isValueSet;
 
-	var CHARACT_EVENTCLASS = Alfresco.util.generateDomId(null, "charact");
-
 	/**
 	 * Dashboard DockBar constructor.
 	 * 
@@ -184,7 +182,7 @@
 			               Dom.setStyle("onglet_outils", "width", (210 + this.slide_x) + 'px');
 			               setTimeout(this.instanceName + ".slide_entree()", 1);
 		               } else {
-		               	Dom.setStyle("onglet_contenu", "display", "none");
+			               Dom.setStyle("onglet_contenu", "display", "none");
 			               this.slide_ismoving = false;
 		               }
 	               },
@@ -212,69 +210,65 @@
 						 */
 	               onReady : function DockBar_onReady() {
 
-		               // TODO ne pas utiliser ca car bubble on changeFilter
 		               /**
 							 * Create datatable
 							 */
 
-		               var me = this;
+		               var me = this, nodeRef = YAHOO.util.History.getQueryStringParameter('nodeRef'), url = Alfresco.constants.PROXY_URI
+		                     + "becpg/dockbar";
+		               if (nodeRef != null && nodeRef.length > 0) {
+			               url += "?entityNodeRef=" + nodeRef;
+		               }
 
-		               Alfresco.util.Ajax
-		                     .request({
-		                        url : Alfresco.constants.PROXY_URI
-		                              + "slingshot/doclib/doclist/product/node/alfresco/company/home?max=5&type=product&filter=favourites",
-		                        successCallback : {
-		                           fn : function(response) {
+		               Alfresco.util.Ajax.request({
+		                  url : url,
+		                  successCallback : {
+		                     fn : function(response) {
 
-			                           var data = response.json;
+			                     var data = response.json;
 
-			                           me.dataSource = new YAHOO.util.DataSource(data.items);
-			                           me.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+			                     me.dataSource = new YAHOO.util.DataSource(data.items);
+			                     me.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
 
-			                           me.widgets.dockBarDataTable = new YAHOO.widget.DataTable(me.id + "-products", [ {
-			                              key : "detail",
-			                              sortable : false,
-			                              formatter : me.bind(me.renderCellDetail)
-			                           } ], this.dataSource, {
-				                           className : "alfresco-datatable simple-doclist"
-			                           });
+			                     me.widgets.dockBarDataTable = new YAHOO.widget.DataTable(me.id + "-products", [ /*{
+					                  key : "image",
+					                  sortable : false,
+					                  formatter : me.bind(me.renderCellThumbnail),
+					                  width : 40
+					               },*/
+					               {
+			                        key : "detail",
+			                        sortable : false,
+			                        formatter : me.bind(me.renderCellDetail)
+			                     } ], this.dataSource, {
+				                     className : "alfresco-datatable simple-doclist"
+			                     });
 
-			                           var original_doBeforeLoadData = me.widgets.dockBarDataTable.doBeforeLoadData;
+			                     var original_doBeforeLoadData = me.widgets.dockBarDataTable.doBeforeLoadData;
 
-			                           me.widgets.dockBarDataTable.doBeforeLoadData = function SimpleDocList_doBeforeLoadData(
-			                                 sRequest, oResponse, oPayload) {
-				                           if (oResponse.results.length === 0) {
-					                           oResponse.results.unshift({
-					                              isInfo : true,
-					                              title : me.msg("empty.title"),
-					                              description : me.msg("empty.description")
-					                           });
-				                           }
+			                     me.widgets.dockBarDataTable.doBeforeLoadData = function SimpleDocList_doBeforeLoadData(
+			                           sRequest, oResponse, oPayload) {
+				                     if (oResponse.results.length === 0) {
+					                     oResponse.results.unshift({
+					                        isInfo : true,
+					                        title : me.msg("empty.title"),
+					                        description : me.msg("empty.description")
+					                     });
+				                     }
 
-				                           return original_doBeforeLoadData.apply(this, arguments);
-			                           };
+				                     return original_doBeforeLoadData.apply(this, arguments);
+			                     };
 
-			                           // Select the preferred filter in the ui
-
-			                           var fnOnShowCharactHandler = function DockBar__fnOnShowCharactHandler(layer, args) {
-				                           var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "div");
-				                           if (owner !== null) {
-					                           me.onActionShowCharact.call(me, args[1].target.offsetParent, owner);
-				                           }
-				                           return true;
-			                           };
-			                           YAHOO.Bubbling.addDefaultAction(CHARACT_EVENTCLASS, fnOnShowCharactHandler);
-
-		                           },
-		                           scope : this
-		                        },
-		                        failureCallback : {
-		                           fn : function() {
-			                           // DO nothing
-		                           },
-		                           scope : this
-		                        }
-		                     });
+		                     },
+		                     scope : this
+		                  },
+		                  failureCallback : {
+		                     fn : function() {
+			                     // DO nothing
+		                     },
+		                     scope : this
+		                  }
+		               });
 
 		               // Override DataTable function to set custom empty message
 
@@ -296,54 +290,86 @@
 						 *           {object|string}
 						 */
 	               renderCellDetail : function DockBar_renderCellDetail(elCell, oRecord, oColumn, oData) {
-		               var record = oRecord.getData(), desc = "";
+		               var record = oRecord.getData(), desc = "", url = this._getBrowseUrlForRecord(oRecord), charactUrl = this
+		                     ._getCharactUrlForRecord(oRecord);
+		               var contentUrl = Alfresco.constants.PROXY_URI_RELATIVE + "api/node/content/"
+                     + oRecord.getData("nodeRef").replace(":/", "") + "/" + oRecord.getData("name");
+		               /**
+							 * Simple View
+							 */
+		               desc += '<h3 class="filename"><a class="theme-color-1" href="' + url + '">'
+		                     + $html(record.displayName) + '</a></h3>';
 
-		               if (record.isInfo) {
-			               desc += '<div class="empty"><h3>' + record.title + '</h3>';
-			               desc += '<span>' + record.description + '</span></div>';
-		               } else {
-			               var locn = record.location, nodeRef = new Alfresco.util.NodeRef(record.nodeRef), docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT
-			                     + "site/" + locn.site + "/document-details?nodeRef=" + nodeRef.toString(), contentUrl = Alfresco.constants.PROXY_URI
-			                     + record.contentUrl;
-
-			               /**
-								 * Simple View
-								 */
-			               desc += '<h3 class="filename"><a class="theme-color-1" href="' + docDetailsUrl + '">'
-			                     + $html(record.displayName) + '</a></h3>';
-
-			               /* Favourite / Charact / Download */
-			               desc += '<div class="dockbar-detail">';
-			               desc += '<span class="item-separator"><a class="document-download" href="' + contentUrl
-			                     + '"  title="' + this.msg("actions.document.download") + '" tabindex="0">'
-			                     + this.msg("actions.document.download") + '</a></span>';
-			               desc += '<span class="item-separator"><a class="document-characts ' + CHARACT_EVENTCLASS
-			                     + '" title="' + this.msg("actions.document.viewEntityLists") + '" tabindex="0">'
-			                     + this.msg("actions.document.viewEntityLists") + '</a></span>';
-			               desc += '</div>';
-
-		               }
+		               /* Favourite / Charact / Download */
+		               desc += '<div class="dockbar-detail">';
+		               desc += '<span class="item-separator"><a class="document-download" href="' + contentUrl
+		                + '" title="' + this.msg("actions.document.download") +
+							 '" tabindex="0">'
+		                + this.msg("actions.document.download") + '</a></span>';
+		               desc += '<span class="item-separator"><a class="document-characts" href="' + charactUrl
+		                     + '" title="' + this.msg("actions.document.viewEntityLists") + '" tabindex="0">'
+		                     + this.msg("actions.document.viewEntityLists") + '</a></span>';
+		               desc += '</div>';
 
 		               elCell.innerHTML = desc;
 	               },
+	               
+	               renderCellThumbnail : function DockBar_renderCellThumbnail(elCell, oRecord, oColumn, oData) {
+		               var me = this;
+		               
+		               var record = oRecord.getData(),name = record.displayName;
+		               
+		               record.jsNode = {};
+		               record.jsNode.type = record.itemType;
+	               	
+	               	oColumn.width = 40;
+		               var url = me._getBrowseUrlForRecord(oRecord);
+		               var imageUrl = beCPG.util.getFileIcon(name,record,false,true);
 
-	               onActionShowCharact : function DockBar_onActionShowCharact(row) {
 
-		               var p_record = this.widgets.dockBarDataTable.getData(row), nodeRef = new Alfresco.util.NodeRef(
-		                     p_record.nodeRef);
+		               // Render the cell
+		               var name = oRecord.getData("displayName");
+		               var htmlName = $html(name);
+		               var html = '<span><a href="' + url + '"><img src="' + imageUrl + '" alt="' + htmlName
+		                     + '" title="' + htmlName + '" /></a></span>';
+			               
+		               elCell.innerHTML = html;
+	               },
 
-		               var recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site : null;
-		               var redirect = $siteURL("entity-data-lists?nodeRef=" + nodeRef, {
-			               site : recordSiteName
-		               });
+	               _getCharactUrlForRecord : function DockBar_getCharactUrlForRecord(record) {
 
-		               if (p_record.nodeType == "bcpg:finishedProduct" || p_record.nodeType == "bcpg:semiFinishedProduct") {
-			               redirect += "&list=compoList";
-		               } else if (p_record.nodeType == "bcpg:packagingKit") {
-			               redirect += "&list=packagingList";
+		               var nodeRef = new Alfresco.util.NodeRef(record.getData("nodeRef")), site = record.getData("site"), itemType = record
+		                     .getData("itemType"), recordSiteName = site!=null && $isValueSet(site.shortName) ? site.shortName : null, url = $siteURL(
+		                     "entity-data-lists?nodeRef=" + nodeRef, {
+			                     site : recordSiteName
+		                     });
+
+		               if (itemType == "bcpg:finishedProduct" || itemType == "bcpg:semiFinishedProduct") {
+			               url += "&list=compoList";
+		               } else if (itemType == "bcpg:packagingKit") {
+			               url += "&list=packagingList";
 		               }
 
-		               window.location.href = redirect;
+		               return (url !== null ? url : '#');
+	               },
+	               _getBrowseUrlForRecord : function DockBar__getBrowseUrlForRecord(record) {
+		               var url = null, site = record.getData("site");
+
+		               url = "document-details?nodeRef=" + record.getData("nodeRef");
+
+		               if (url !== null) {
+			               // browse urls always go to a page. We assume that the
+			               // url contains the page name and all
+			               // parameters. Add the absolute path and the optional
+			               // site param
+			               if (site) {
+				               url = Alfresco.constants.URL_PAGECONTEXT + "site/" + site.shortName + "/" + url;
+			               } else {
+				               url = Alfresco.constants.URL_PAGECONTEXT + url;
+			               }
+		               }
+
+		               return (url !== null ? url : '#');
 	               }
 
 	            });

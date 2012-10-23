@@ -1,0 +1,8 @@
+<webscript>
+   <shortname>beCPG dockbar</shortname>
+   <description>beCPG dockbar Data Webscript</description>
+   <url>/becpg/dockbar?entityNodeRef={entityNodeRef?}</url>
+   <format default="json">argument</format>
+   <authentication>user</authentication>
+   <transaction allow="readwrite">required</transaction>
+</webscript>
