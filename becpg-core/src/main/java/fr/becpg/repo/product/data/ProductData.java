@@ -376,8 +376,8 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 	 *
 	 * @param ListsContainer the new lists container
 	 */
-	public void setListsContainer(NodeRef ListsContainer) {
-		this.listsContainer = ListsContainer;
+	public void setListsContainer(NodeRef listsContainer) {
+		this.listsContainer = listsContainer;
 	}	
 	
 	/**
@@ -666,7 +666,7 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 	 */
 	public static SystemState getSystemState(String systemState) {
 		
-		return (systemState != null && systemState != "") ? SystemState.valueOf(systemState) : SystemState.ToValidate;		
+		return (systemState != null && systemState.length()>0) ? SystemState.valueOf(systemState) : SystemState.ToValidate;		
 	}
 		
 	/**

@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -84,7 +85,6 @@ import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.WorkflowNodeConverter;
 import org.alfresco.repo.workflow.WorkflowObjectFactory;
 import org.alfresco.repo.workflow.activiti.properties.ActivitiPropertyConverter;
-import org.alfresco.service.Auditable;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -112,6 +112,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xerces.parsers.DOMParser;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -123,6 +124,7 @@ import org.xml.sax.InputSource;
  * @author Frederik Heremans
  * @since 3.4.e
  */
+@Service
 public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
 {
     // Workflow Component Messages
@@ -667,9 +669,10 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     {
         // Use a linked hashmap to get the task defs in the right order
         Map<String, PvmActivity> userTasks = new LinkedHashMap<String, PvmActivity>();
+        Set<String> processedActivities = new HashSet<String>();
 
         // Start finding activities recursively
-        findUserTasks(startEvent, userTasks);
+        findUserTasks(startEvent, userTasks, processedActivities);
         
         return userTasks.values();
     }
@@ -686,11 +689,12 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
         return false;
     }
 
-    private void findUserTasks(PvmActivity currentActivity, Map<String, PvmActivity> userTasks)
+    private void findUserTasks(PvmActivity currentActivity, Map<String, PvmActivity> userTasks, Set<String> processedActivities)
     {
-        // Only process activity if not already present to prevent endless loops
-        if(!userTasks.containsKey(currentActivity.getId()))
+        // Only process activity if not already processed, to prevent endless loops
+        if(!processedActivities.contains(currentActivity.getId()))
         {
+            processedActivities.add(currentActivity.getId());
             if(isUserTask(currentActivity)) 
             {
                 userTasks.put(currentActivity.getId(), currentActivity);
@@ -703,7 +707,7 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
                 {
                     if(transition.getDestination() != null)
                     {
-                        findUserTasks(transition.getDestination(), userTasks);
+                        findUserTasks(transition.getDestination(), userTasks, processedActivities);
                     }
                 }
             }

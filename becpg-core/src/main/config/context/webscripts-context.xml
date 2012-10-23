@@ -124,6 +124,14 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="reportTplService" ref="reportTplService" />
 	</bean>
+	
+	<!-- dockbar -->
+	<bean id="webscript.fr.becpg.dockbar.dockbar.get" class="fr.becpg.repo.web.scripts.dockbar.DockBarWebScript"
+		parent="webscript">
+		<property name="preferenceService" ref="preferenceService" />
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
+	</bean>
 
 	<!-- Report -->
 

@@ -54,9 +54,7 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
 
-	/** Fields **/
 
-	protected static final String PARAM_FIELDS = "metadataFields";
 
 	/** Services **/
 
