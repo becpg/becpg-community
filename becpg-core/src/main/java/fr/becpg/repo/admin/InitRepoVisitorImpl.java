@@ -43,6 +43,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
 import fr.becpg.model.MPMModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
@@ -214,6 +215,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		// Hierarchy
 		visitSystemHierachiesEntity(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);		
 		
+		//Lists of characteristics for Project
+		visitSystemProjectListValuesEntity(systemNodeRef, RepoConsts.PATH_PROJECT_LISTS);
+		
 		// Exchange
 		NodeRef exchangeNodeRef = visitFolder(companyHome, RepoConsts.PATH_EXCHANGE);
 		NodeRef importNodeRef = visitFolder(exchangeNodeRef, RepoConsts.PATH_IMPORT);
@@ -275,6 +279,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(systemImportNodeRef, RepoConsts.PATH_MAPPING);
 
 		visitFolder(systemImportNodeRef, RepoConsts.PATH_IMPORT_SAMPLES);
+		
+		// Project Tpl
+		visitFolder(systemNodeRef, RepoConsts.PATH_PROJECT_TEMPLATES);
 		
 		//Designer		
 		designerInitService.addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-core/model/becpgModel.xml");
@@ -582,6 +589,23 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 		// visit quality
 		visitQuality(folderTplsNodeRef, entityTplsNodeRef);
+		
+		// visit project and project Tpl
+		subFolders = new HashSet<String>();		
+		subFolders.add(RepoConsts.PATH_DOCUMENTS);
+		entityTplService.createFolderTpl(folderTplsNodeRef, ProjectModel.TYPE_PROJECT, true, subFolders);
+		dataLists = new LinkedHashSet<QName>();
+		dataLists.add(ProjectModel.TYPE_TASK_LIST);
+		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
+		dataLists.add(ProjectModel.TYPE_TASK_HISTORY_LIST);
+		entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists);
+		
+		subFolders = new HashSet<String>();		
+		entityTplService.createFolderTpl(folderTplsNodeRef, ProjectModel.TYPE_PROJECT_TPL, true, subFolders);
+		dataLists = new LinkedHashSet<QName>();
+		dataLists.add(ProjectModel.TYPE_TASK_LIST);
+		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
+		entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT_TPL, true, dataLists);
 	}
 
 	
@@ -649,6 +673,23 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		entityLists.put(RepoConsts.PATH_NUT_GROUPS,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_NUT_TYPES,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_PACKAGING_LEVELS,BeCPGModel.TYPE_LIST_VALUE);
+		
+		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
+	}
+	
+	/**
+	 * Create NPD List values
+	 * @param parentNodeRef
+	 * @param path
+	 * @return
+	 */
+	private NodeRef visitSystemProjectListValuesEntity(NodeRef parentNodeRef, String path) {
+		
+		Map<String,QName> entityLists = new HashMap<String,QName>();
+		
+		entityLists.put(RepoConsts.PATH_PROJECT_STATUS,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_TASK_SETS,ProjectModel.TYPE_TASK_SET);
+		entityLists.put(RepoConsts.PATH_TASKS,ProjectModel.TYPE_TASK);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}

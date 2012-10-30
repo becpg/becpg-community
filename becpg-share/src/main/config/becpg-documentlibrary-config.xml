@@ -131,6 +131,9 @@
 				<subtype name="dsg:config" />
 				<subtype name="cm:dictionaryModel" />
 				<subtype name="bpm:workflowDefinition" />
+				
+				<subtype name="pjt:project" />
+				<subtype name="pjt:projectTpl" />
 			</type>
 
 			<type name="cm:folder">
@@ -216,6 +219,10 @@
 				formid="create" itemid="qa:qualityControl" icon="generic-qualityControl"  />
 			<content id="changeOrder" label="menu.create-content.eco"
 				formid="create" itemid="ecm:changeOrder" icon="generic-changeOrder"  />
+			<content id="project" label="menu.create-content.project"
+				formid="create" itemid="pjt:project" icon="generic-project"  />
+			<content id="projectTpl" label="menu.create-content.projectTpl"
+				formid="create" itemid="pjt:projectTpl" icon="generic-projectTpl"  />
 		</create-content>
 
 

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="pjt:pjtmodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<!-- Optional meta-data about the model -->
+	<description>Project Model</description>
+	<author>QUERE</author>
+	<version>1.0</version>
+	<!-- Imports are required to allow references to definitions in other models -->
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm" />
+	</imports>
+	
+	<!-- Introduction of new namespaces defined by this model -->
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/project/1.0" prefix="pjt" />
+	</namespaces>
+	
+	<constraints>		
+		<!-- <constraint name="pjt:status"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/NPDLists/bcpg:entityLists/NPDStatus</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>-->
+		
+		<constraint name="pjt:status" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Démarré</value>
+					<value>Brief marketing</value>
+					<value>Etude du besoin</value>
+					<value>Faisabilité en cours</value>
+					<value>Commercialisé</value>
+					<value>Réservé</value>
+					<value>Offre client</value>
+					<value>Stop</value>
+					<value>Standby</value>
+					<value>Prototypage</value>
+					<value>Mise en production</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="pjt:projectHierarchy1" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Eclair</value>
+					<value>Sandwich</value>
+					<value>Pain</value>
+					<value>Pâtisserie</value>
+					<value>Viennoiserie</value>					
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="pjt:TaskStates" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>InProgress</value>
+					<value>ToValidate</value>
+					<value>Valid</value>
+					<value>Refused</value>
+				</list>
+			</parameter>
+		</constraint>
+	</constraints>
+
+	<types>
+		
+		<type name="pjt:projectTpl">
+			<parent>bcpg:entity</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="pjt:project">
+			<parent>bcpg:entity</parent>
+			<properties>
+				<property name="pjt:projectHierarchy1">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pjt:projectHierarchy1" />
+					</constraints>
+				</property>
+				<property name="pjt:projectStart">
+					<type>d:datetime</type>
+				</property>
+				<property name="pjt:projectStatus">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pjt:status" />
+					</constraints>
+				</property>
+			</properties>	
+			<associations>
+				<association name="pjt:projectProjectTpl">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:projectTpl</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>		
+			</associations>		
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="pjt:taskSet">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="pjt:tsColor">
+					<type>d:text</type>
+					<default>000000</default>
+				</property>
+			</properties>
+		</type>
+		
+		<type name="pjt:task">
+			<parent>bcpg:charact</parent>
+		</type>
+		
+		<type name="pjt:taskList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="pjt:tlIsMilestone">
+					<type>d:boolean</type>
+				</property>
+				<property name="pjt:tlDuration">
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+				<property name="pjt:tlWorkflowName">
+					<type>d:text</type>
+				</property>
+			</properties>
+			<associations>			
+				<association name="pjt:tlTaskSet">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:taskSet</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="pjt:tlTask">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:task</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="pjt:tlPrevTasks">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:task</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>	
+				<association name="pjt:tlAssignees">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>										
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="pjt:taskHistoryList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="pjt:thlStart">
+					<type>d:datetime</type>
+					<index enabled="false"/>
+				</property>
+				<property name="pjt:thlEnd">
+					<type>d:datetime</type>
+					<index enabled="false"/>
+				</property>
+				<property name="pjt:thlDuration">
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+				<property name="pjt:thlComment">
+					<type>d:text</type>
+					<index enabled="false"/>
+				</property>
+				<property name="pjt:thlState">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pjt:TaskStates" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>			
+				<association name="pjt:thlTaskSet">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:taskSet</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="pjt:thlTask">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:task</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>										
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="pjt:deliverableList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="pjt:dlDescription">
+					<type>d:text</type>
+				</property>
+				<property name="pjt:dlState">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pjt:TaskStates" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>							
+				<association name="pjt:dlTask">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:task</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>							
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+	</types>
+	
+	<aspects>			
+	
+	</aspects>
+</model>

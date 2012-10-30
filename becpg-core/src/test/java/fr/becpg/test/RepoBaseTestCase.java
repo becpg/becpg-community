@@ -45,6 +45,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitor;
 import fr.becpg.repo.entity.EntitySystemService;
@@ -176,6 +177,10 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 
 	/** The nuts. */
 	protected List<NodeRef> nuts = new ArrayList<NodeRef>();
+	
+	protected List<NodeRef> taskSets = new ArrayList<NodeRef>();
+	
+	protected List<NodeRef> tasks = new ArrayList<NodeRef>();
 
 	/** The organos. */
 	protected List<NodeRef> organos = new ArrayList<NodeRef>();
@@ -220,9 +225,10 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 					// Init repo for test
 					initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
 	
-					Assert.assertEquals(3, entitySystemService.getSystemEntities().size());
+					Assert.assertEquals(4, entitySystemService.getSystemEntities().size());
 	
 					initConstraints();
+					initTasks();
 					return true;
 				}
 
@@ -344,7 +350,33 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 
 	}
+	
+	private void initTasks() {
 
+		NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+
+		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_PROJECT_LISTS);
+
+		// taskSets
+		NodeRef taskSetsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_TASK_SETS);
+		String[] taskSetNames = { "TaskSet1", "TaskSet2", "TaskSet3" };
+		for (String taskSetName : taskSetNames) {
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, taskSetName);
+			nodeService.createNode(taskSetsFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK_SET, properties).getChildRef();			
+		}
+		// taskSets
+		NodeRef tasksFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_TASKS);
+		String[] taskNames = { "Task1", "Task2", "Task3", "Task4", "Task5", "Task6" };
+		for (String taskName : taskNames) {
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, taskName);
+			nodeService.createNode(tasksFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK, properties).getChildRef();
+		}
+	}
+	
 	/**
 	 * Initialize the characteristics of the repository.
 	 */
@@ -443,6 +475,21 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			for (FileInfo fileInfo : organosFileInfo) {
 				organos.add(fileInfo.getNodeRef());
 			}
+		}
+		
+		// taskSets
+		NodeRef npdListsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_PROJECT_LISTS);
+		NodeRef taskSetFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, RepoConsts.PATH_TASK_SETS);
+		List<FileInfo> taskSetsFileInfo = fileFolderService.listFiles(taskSetFolder);		
+		for (FileInfo fileInfo : taskSetsFileInfo) {
+			taskSets.add(fileInfo.getNodeRef());
+		}
+		
+		// tasks
+		NodeRef taskFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, RepoConsts.PATH_TASKS);
+		List<FileInfo> tasksFileInfo = fileFolderService.listFiles(taskFolder);		
+		for (FileInfo fileInfo : tasksFileInfo) {
+			tasks.add(fileInfo.getNodeRef());
 		}
 	}
 

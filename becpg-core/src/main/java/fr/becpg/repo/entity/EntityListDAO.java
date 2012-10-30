@@ -1,6 +1,7 @@
 package fr.becpg.repo.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -109,7 +110,7 @@ public interface EntityListDAO {
 	public List<QName> getExistingListsQName(NodeRef listContainerNodeRef);
 
 	/**
-	 * Copy data lists.
+	 * Copy all data lists.
 	 * 
 	 * @param sourceNodeRef
 	 *            the source node ref
@@ -119,6 +120,15 @@ public interface EntityListDAO {
 	 *            the override
 	 */
 	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override);
+	
+	/**
+	 * Copy all data lists
+	 * @param sourceNodeRef
+	 * @param targetNodeRef
+	 * @param listQNames (if null, copy all)
+	 * @param override
+	 */
+	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, Collection<QName> listQNames, boolean override);
 
 	/**
 	 * Get the manual links
