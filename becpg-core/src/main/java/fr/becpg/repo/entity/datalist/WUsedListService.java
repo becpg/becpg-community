@@ -30,4 +30,6 @@ public interface WUsedListService {
      * @return
      */
     public QName evaluateListFromAssociation(QName associationName);
+    
+    public NodeRef getRoot(NodeRef listItemNodeRef);
 }

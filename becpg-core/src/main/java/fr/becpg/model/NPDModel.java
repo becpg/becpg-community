@@ -9,15 +9,15 @@ public interface NPDModel {
 	//
 
 	/** Security Model URI */
-	public static final String NPD_URI = "http://www.bcpg.fr/model/npd-workflow/1.0";
+	public static final String NPD_URI = "http://www.bcpg.fr/model/npd/1.0";
 
 	/** Security Model Prefix */
-	public static final String NPD_PREFIX = "npdModel";
+	public static final String NPD_PREFIX = "npd";
 
 	//
 	// NPD Model Definitions
 	//
-	public static final QName MODEL = QName.createQName(NPD_URI, "secmodel");
+	public static final QName MODEL = QName.createQName(NPD_URI, "npdmodel");
 
 	public static final QName ASPECT_NPD = QName.createQName(NPD_URI, "npdAspect");
 
@@ -32,8 +32,7 @@ public interface NPDModel {
 	public static final QName ASSOC_NPD_FOLDER = QName.createQName(NPD_URI, "npdFolder");
 
 	
-	//CFT
-	
+	//CFT	
 	public static final QName PROP_CFT_TRANSMITTER = QName.createQName(NPD_URI, "cftTransmitter");
 	public static final QName PROP_CFT_COMPANY = QName.createQName(NPD_URI, "cftCompany");
 	public static final QName PROP_CFT_OPENING_DATE = QName.createQName(NPD_URI, "cftOpeningDate");
@@ -53,6 +52,5 @@ public interface NPDModel {
 
 	public static final QName ASSOC_NEED_DEFINITION_PACKAGING = QName.createQName(NPD_URI, "needDefinitionPackagingKit");
 
-	public static final QName PROP_UNIT_PRICE = QName.createQName(NPD_URI, "unitPrice");
-
+	public static final QName PROP_UNIT_PRICE = QName.createQName(NPD_URI, "unitPrice");	
 }

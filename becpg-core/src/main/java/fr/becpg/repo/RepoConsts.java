@@ -93,6 +93,12 @@ public class RepoConsts {
 	public static final String PATH_CONTROL_METHODS = "ControlMethods";
 	public static final String PATH_QUALITY_CONTROLS = "QualityControls";	
 	public static final String PATH_NC = "NonConformities";
+	//Project
+	public static final String PATH_PROJECT_LISTS = "ProjectLists";
+	public static final String PATH_PROJECT_STATUS = "ProjectStatus";
+	public static final String PATH_TASK_SETS = "TaskSets";
+	public static final String PATH_TASKS = "Tasks";
+	public static final String PATH_PROJECT_TEMPLATES = "ProjectTemplates";
 	
 	//Security
 	public static final String PATH_SECURITY = "Security";

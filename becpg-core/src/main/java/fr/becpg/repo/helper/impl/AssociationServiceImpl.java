@@ -1,5 +1,6 @@
 package fr.becpg.repo.helper.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -67,6 +68,25 @@ public class AssociationServiceImpl implements AssociationService {
 		if(createAssoc && assocNodeRef != null){
 			nodeService.createAssociation(nodeRef, assocNodeRef, qName);
 		}
+	}
+
+	// TODO : refactor : utiliser cette méthode dans la création des datalists ! productdao, etc...
+	@Override
+	public NodeRef getTargetAssoc(NodeRef nodeRef, QName qName) {
+		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
+		return assocRefs.size()>0 ? assocRefs.get(0).getTargetRef() : null;
+	}
+
+	// TODO : refactor : utiliser cette méthode dans la création des datalists ! productdao, etc...
+	@Override
+	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName) {
+		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
+		List<NodeRef> listItems = new ArrayList<NodeRef>(assocRefs.size());
+		for (AssociationRef assocRef : assocRefs) {
+			listItems.add(assocRef.getTargetRef());
+		}
+		
+		return listItems;
 	}
 
 }

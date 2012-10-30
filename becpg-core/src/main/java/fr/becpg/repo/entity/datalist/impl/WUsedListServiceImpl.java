@@ -49,31 +49,22 @@ public class WUsedListServiceImpl implements WUsedListService {
 			
 			//we display nodes that are in workspace
 			if(nodeRef != null && nodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)){
-				NodeRef compoListNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
-
-				if(compoListNodeRef != null){
-					NodeRef dataListsNodeRef = nodeService.getPrimaryParent(compoListNodeRef).getParentRef();
+				NodeRef rootNodeRef = getRoot(nodeRef);				
+				
+				//we don't display history version and simulation entities
+				if(!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION) && !nodeService.hasAspect(rootNodeRef, ECMModel.ASPECT_SIMULATION_ENTITY)){
 					
-					if(dataListsNodeRef != null){
-						NodeRef rootNodeRef = nodeService.getPrimaryParent(dataListsNodeRef).getParentRef();
-						logger.debug("rootNodeRef: " + rootNodeRef);
-						
-						//we don't display history version and simulation entities
-						if(!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION) && !nodeService.hasAspect(rootNodeRef, ECMModel.ASPECT_SIMULATION_ENTITY)){
-							
-							MultiLevelListData multiLevelListData = null;						
-							// next level
-							if(maxDepthLevel < 0 || depthLevel+1 < maxDepthLevel ){
-								multiLevelListData = getWUsedEntity(rootNodeRef, associationName, depthLevel+1, maxDepthLevel);																
-							}	
-							else{
-								multiLevelListData = new MultiLevelListData(rootNodeRef, depthLevel+1);
-							}
-							ret.getTree().put(nodeRef, multiLevelListData);
-						}
+					MultiLevelListData multiLevelListData = null;						
+					// next level
+					if(maxDepthLevel < 0 || depthLevel+1 < maxDepthLevel ){
+						multiLevelListData = getWUsedEntity(rootNodeRef, associationName, depthLevel+1, maxDepthLevel);																
+					}	
+					else{
+						multiLevelListData = new MultiLevelListData(rootNodeRef, depthLevel+1);
 					}
+					ret.getTree().put(nodeRef, multiLevelListData);
 				}
-			}
+			}			
 		}
 		
 		return ret;
@@ -117,6 +108,23 @@ public class WUsedListServiceImpl implements WUsedListService {
 		}
 		
 		return listQName;
+	}
+
+	@Override
+	public NodeRef getRoot(NodeRef listItemNodeRef) {
+		NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
+
+		if(listNodeRef != null){
+			NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
+			
+			if(listContainerNodeRef != null){
+				NodeRef rootNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
+				logger.debug("rootNodeRef: " + rootNodeRef);
+				return rootNodeRef;
+			}
+		}
+		
+		return null;
 	}
 
 }

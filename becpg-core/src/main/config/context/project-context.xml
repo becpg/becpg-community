@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
+
+<beans>
+
+	<bean id="projectDAO" class="fr.becpg.repo.project.impl.ProjectDAOImpl">
+	 <property name="nodeService" ref="nodeService"/>
+	 <property name="entityListDAO" ref="entityListDAO"/>
+	 <property name="associationService" ref="associationService"/>	 
+	</bean>
+	
+	<bean id="projectService" class="fr.becpg.repo.project.impl.ProjectServiceImpl">
+	 <property name="projectDAO" ref="projectDAO"/>
+	 <property name="workflowService" ref="WorkflowService"/>
+	 <property name="wUsedListService" ref="wUsedListService"/>
+	 <property name="associationService" ref="associationService"/>
+	</bean>			
+	
+	<!-- Policy -->
+	<bean id="submitTaskPolicy" class="fr.becpg.repo.project.policy.SubmitTaskPolicy" parent="abstractBeCPGPolicy">
+		<property name="projectService" ref="projectService"/>
+	</bean>
+	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy" parent="abstractBeCPGPolicy">
+		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="projectService" ref="projectService"/>
+	</bean>		
+   
+</beans>

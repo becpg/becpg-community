@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alfresco-config>
+	<config condition="pjt:projectTpl" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility />
+				<appearance />
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:projectTpl" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="cm:name" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:project" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="pjt:projectHierarchy1" />
+					<show force="false" id="pjt:projectProjectTpl" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:projectHierarchy1" mandatory="false"
+						read-only="false" />
+					<field id="pjt:projectProjectTpl" mandatory="false"
+						read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:project" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="pjt:projectHierarchy1" />
+					<show force="false" id="pjt:projectProjectTpl" />
+					<show force="false" id="cm:name" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:projectHierarchy1" mandatory="false"
+						read-only="false" />
+					<field id="pjt:projectProjectTpl" mandatory="false"
+						read-only="false" />
+					<field id="cm:name" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:taskSet" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="pjt:tsColor" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:tsColor" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:taskSet" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="pjt:tsColor" />
+					<show force="false" id="cm:name" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:tsColor" mandatory="false" read-only="false" />
+					<field id="cm:name" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:task" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility />
+				<appearance />
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:task" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="cm:name" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:taskList" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="pjt:tlTaskSet" />
+					<show force="false" id="pjt:tlTask" />
+					<show force="false" id="pjt:tlPrevTasks" />					
+					<show force="false" id="pjt:tlIsMilestone" />
+					<show force="false" id="pjt:tlDuration" />
+					<show force="false" id="pjt:tlWorkflowName" />					
+					<show force="true" id="pjt:tlAssignees" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:tlTaskSet" mandatory="false" read-only="false" />
+					<field id="pjt:tlTask" mandatory="false" read-only="false" />
+					<field id="pjt:tlPrevTasks" mandatory="false" read-only="false" />					
+					<field id="pjt:tlIsMilestone" mandatory="false" read-only="false" />
+					<field id="pjt:tlDuration" mandatory="false" read-only="false" />
+					<field id="pjt:tlWorkflowName" mandatory="false" read-only="false" />					
+					<field id="pjt:tlAssignees" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:taskList" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="pjt:tlTaskSet" />
+					<show force="false" id="pjt:tlTask" />
+					<show force="false" id="pjt:tlPrevTasks" />					
+					<show force="false" id="pjt:tlIsMilestone" />
+					<show force="false" id="pjt:tlDuration" />
+					<show force="false" id="pjt:tlWorkflowName" />					
+					<show force="true" id="pjt:tlAssignees" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:tlTaskSet" mandatory="false" read-only="false" />
+					<field id="pjt:tlTask" mandatory="false" read-only="false" />
+					<field id="pjt:tlPrevTasks" mandatory="false" read-only="false" />					
+					<field id="pjt:tlIsMilestone" mandatory="false" read-only="false" />
+					<field id="pjt:tlDuration" mandatory="false" read-only="false" />
+					<field id="pjt:tlWorkflowName" mandatory="false" read-only="false" />					
+					<field id="pjt:tlAssignees" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:taskHistoryList" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="pjt:thlStart" />
+					<show force="false" id="pjt:thlEnd" />
+					<show force="false" id="pjt:thlDuration" />
+					<show force="false" id="pjt:thlComment" />
+					<show force="false" id="pjt:thlState" />
+					<show force="false" id="pjt:thlTaskSet" />
+					<show force="false" id="pjt:thlTask" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:thlStart" mandatory="false" read-only="false" />
+					<field id="pjt:thlEnd" mandatory="false" read-only="false" />
+					<field id="pjt:thlDuration" mandatory="false" read-only="false" />
+					<field id="pjt:thlComment" mandatory="false" read-only="false" />
+					<field id="pjt:thlState" mandatory="false" read-only="false" />
+					<field id="pjt:thlTaskSet" mandatory="false" read-only="false" />
+					<field id="pjt:thlTask" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:taskHistoryList" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="pjt:thlStart" />
+					<show force="false" id="pjt:thlEnd" />
+					<show force="false" id="pjt:thlDuration" />
+					<show force="false" id="pjt:thlComment" />
+					<show force="false" id="pjt:thlState" />
+					<show force="false" id="pjt:thlTaskSet" />
+					<show force="false" id="pjt:thlTask" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:thlStart" mandatory="false" read-only="false" />
+					<field id="pjt:thlEnd" mandatory="false" read-only="false" />
+					<field id="pjt:thlDuration" mandatory="false" read-only="false" />
+					<field id="pjt:thlComment" mandatory="false" read-only="false" />
+					<field id="pjt:thlState" mandatory="false" read-only="false" />
+					<field id="pjt:thlTaskSet" mandatory="false" read-only="false" />
+					<field id="pjt:thlTask" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:deliverableList" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="true" id="pjt:dlDescription" />
+					<show force="false" id="pjt:dlTask" />
+					<show force="false" id="pjt:dlState" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:dlDescription" mandatory="false" read-only="false" />
+					<field id="pjt:dlTask" mandatory="false" read-only="false" />
+					<field id="pjt:dlState" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:deliverableList" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="true" id="pjt:dlDescription" />
+					<show force="false" id="pjt:dlTask" />
+					<show force="false" id="pjt:dlState" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:dlDescription" mandatory="false" read-only="false" />
+					<field id="pjt:dlTask" mandatory="false" read-only="false" />
+					<field id="pjt:dlState" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+</alfresco-config>

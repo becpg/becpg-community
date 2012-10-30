@@ -2,6 +2,7 @@ package fr.becpg.repo.entity.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -233,6 +234,12 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override) {
 
+		copyDataLists(sourceNodeRef, targetNodeRef, null, override);
+	}
+	
+	@Override
+	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, Collection<QName> listQNames, boolean override) {
+		
 		// do not initialize entity version
 		if (nodeService.hasAspect(targetNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			return;
@@ -258,24 +265,28 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 					String dataListType = (String) nodeService.getProperty(sourceListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 					QName listQName = QName.createQName(dataListType, namespaceService);
-
-					NodeRef existingListNodeRef = getList(targetListContainerNodeRef, listQName);
-					boolean copy = true;
-					if (existingListNodeRef != null) {
-						if (override) {
-							nodeService.deleteNode(existingListNodeRef);
-						} else {
-							copy = false;
+					
+					if(listQNames == null || listQNames.contains(listQName)){
+					
+						NodeRef existingListNodeRef = getList(targetListContainerNodeRef, listQName);
+						boolean copy = true;
+						if (existingListNodeRef != null) {
+							if (override) {
+								nodeService.deleteNode(existingListNodeRef);
+							} else {
+								copy = false;
+							}
 						}
-					}
 
-					if (copy) {
-						NodeRef newDLNodeRef = copyService.copy(sourceListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST, true);
-						nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, listQName.getLocalName());
+						if (copy) {
+							NodeRef newDLNodeRef = copyService.copy(sourceListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST, true);
+							nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, listQName.getLocalName());
+						}
 					}
 				}
 			}
 		}
+		
 	}
 
 	/**
@@ -334,5 +345,4 @@ public class EntityListDAOImpl implements EntityListDAO {
 		}
 		
 	}
-
 }
