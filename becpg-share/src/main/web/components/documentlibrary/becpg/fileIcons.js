@@ -80,7 +80,9 @@ if (!beCPG.util.getFileIcon) {
 	   "{http://www.bcpg.fr/model/becpg/1.0}resourceProduct" : "resourceProduct",
 	   "bcpg:resourceProduct" : "resourceProduct",
 	   "{http://www.bcpg.fr/model/ecm/1.0}changeOrder" : "changeOrder",
-	   "ecm:changeOrder" : "changeOrder"
+	   "ecm:changeOrder" : "changeOrder",
+	   "{http://www.bcpg.fr/model/publication/1.0}productCatalog" : "productCatalog",
+	   "bp:productCatalog" : "productCatalog"  
 	};
 
 	beCPG.util.getFileIcon = function(p_fileName, p_record, p_isContainer, p_isSimpleView) {
