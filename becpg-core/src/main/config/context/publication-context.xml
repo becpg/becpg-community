@@ -4,8 +4,11 @@
 
 	<bean id="mailingListChannelType" class="fr.becpg.repo.publishing.MailingListChannelType"
 		parent="baseChannelType">
-		<property name="beCPGMailService" ref="beCPGMailService"/>
-	   <property name="serviceRegistry" ref="ServiceRegistry"/>
+		<property name="beCPGMailService" ref="beCPGMailService" />
+		<property name="serviceRegistry" ref="ServiceRegistry" />
 	</bean>
+
+	<bean id="productCatalogChannelType" class="fr.becpg.repo.publishing.ProductCatalogChannelType"
+		parent="baseChannelType" />
 
 </beans>

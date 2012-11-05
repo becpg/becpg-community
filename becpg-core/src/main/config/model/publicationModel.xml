@@ -1,41 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="bp:publicationModel">
-    <description>beCPG publication Model</description>
-    <author>Matthieu Laborie</author>
-    <published>2012-10-16</published>
-    <version>1.0</version>
-    <imports>
-        <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
-        <import uri="http://www.alfresco.org/model/system/1.0" prefix="sys"/>
-        <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
-        <import uri="http://www.alfresco.org/model/publishing/1.0" prefix="pub"/>
-    </imports>
-    <namespaces>
-        <namespace uri="http://www.bcpg.fr/model/publication/1.0" prefix="bp"/>
-    </namespaces>
-    <types>
-        <type name="bp:MailingListChannel">
-            <title>Mailing List Delivery Channel</title>
-            <description>Node type used to represent Mailing List delivery channels</description>
-            <parent>pub:DeliveryChannel</parent>
-            <mandatory-aspects>
-                <aspect>bp:MailingListChannelAspect</aspect>
-            </mandatory-aspects>
-        </type>
-    </types>
-    <aspects>
-        <aspect name="bp:MailingListChannelAspect">
-            <title>Mailing List Delivery Channel</title>
-            <description>Applied to a node that represents a Mailing List Delivery Channel</description>
-           <properties>
-                <property name="bp:mailingMembers">
-                    <title>Mailing List members</title>
-                    <type>d:text</type>
-                    <mandatory>true</mandatory>
-                    <multiple>true</multiple>
-                </property>
-            </properties>
-         	 
-        </aspect>
-     </aspects>
+	<description>beCPG publication Model</description>
+	<author>Matthieu Laborie</author>
+	<published>2012-10-16</published>
+	<version>1.0</version>
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<import uri="http://www.alfresco.org/model/system/1.0" prefix="sys" />
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.alfresco.org/model/publishing/1.0"
+			prefix="pub" />
+	</imports>
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/publication/1.0"
+			prefix="bp" />
+	</namespaces>
+	<types>
+		<type name="bp:MailingListChannel">
+			<title>Mailing List Delivery Channel</title>
+			<description>Node type used to represent Mailing List delivery
+				channel</description>
+			<parent>pub:DeliveryChannel</parent>
+			<mandatory-aspects>
+				<aspect>bp:MailingListChannelAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		<type name="bp:productCatalog">
+			<title>Product Catalog Channel</title>
+			<description>Node type used to represent a product catalog channel
+			</description>
+			<parent>pub:DeliveryChannel</parent>
+			<mandatory-aspects>
+				<aspect>bp:productCatalogChannelAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+	</types>
+	<aspects>
+		<aspect name="bp:MailingListChannelAspect">
+			<title>Mailing List Delivery Channel Aspect</title>
+			<description>Applied to a node that represents a Mailing List
+				Delivery Channel</description>
+			<properties>
+				<property name="bp:mailingMembers">
+					<title>Mailing List members</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<multiple>true</multiple>
+				</property>
+			</properties>
+
+		</aspect>
+		<aspect name="bp:productCatalogChannelAspect">
+			<title>Product Catalog Channel Aspect</title>
+			<description>Applied to a node that represents a Product Catalog
+				Channel</description>
+			<properties>
+				<property name="bp:productCatalogId">
+					<title>Product catalog identifier</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
+
+		</aspect>
+		<aspect name="bp:cataloguable">
+			<title>Cataloguable aspect</title>
+			<description>Applied to an entity to make it cataloguable
+			</description>
+			<associations>
+				<association name="bp:productCatalogs">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bp:productCatalog</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+
+		</aspect>
+
+	</aspects>
 </model>
