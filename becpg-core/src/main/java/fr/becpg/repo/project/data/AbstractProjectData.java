@@ -1,8 +1,8 @@
 package fr.becpg.repo.project.data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +25,8 @@ public abstract class AbstractProjectData extends BeCPGDataObject implements Dat
 
 	private NodeRef nodeRef;
 	private String name;
-	private List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
-	private List<DeliverableListDataItem> deliverableList = new ArrayList<DeliverableListDataItem>();	
+	private List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
+	private List<DeliverableListDataItem> deliverableList = new LinkedList<DeliverableListDataItem>();	
 
 	public NodeRef getNodeRef() {
 		return nodeRef;

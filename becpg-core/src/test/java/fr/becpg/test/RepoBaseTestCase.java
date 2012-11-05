@@ -181,8 +181,6 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 	protected List<NodeRef> nuts = new ArrayList<NodeRef>();
 	
 	protected List<NodeRef> taskLegends = new ArrayList<NodeRef>();
-	
-	protected List<NodeRef> tasks = new ArrayList<NodeRef>();
 
 	/** The organos. */
 	protected List<NodeRef> organos = new ArrayList<NodeRef>();
@@ -495,13 +493,6 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 		List<FileInfo> taskLegendsFileInfo = fileFolderService.listFiles(taskLegendFolder);		
 		for (FileInfo fileInfo : taskLegendsFileInfo) {
 			taskLegends.add(fileInfo.getNodeRef());
-		}
-		
-		// tasks
-		NodeRef taskFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, RepoConsts.PATH_TASKS);
-		List<FileInfo> tasksFileInfo = fileFolderService.listFiles(taskFolder);		
-		for (FileInfo fileInfo : tasksFileInfo) {
-			tasks.add(fileInfo.getNodeRef());
 		}
 	}
 
