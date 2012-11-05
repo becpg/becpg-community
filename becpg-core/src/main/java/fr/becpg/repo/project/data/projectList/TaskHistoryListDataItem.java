@@ -1,7 +1,6 @@
 package fr.becpg.repo.project.data.projectList;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +24,12 @@ public class TaskHistoryListDataItem extends BaseObject implements DataItem {
 	private NodeRef nodeRef;
 	private Date start = new Date();
 	private Date end;
-	private Integer duration;
 	private String comment;
-	private TaskState state = TaskState.InProgress;
-	private NodeRef taskSet;
+	private TaskState state = TaskState.NotYetStarted;
+	private Integer completionPercent = 0;
+	private String workflowInstance;
+	private NodeRef taskLegend;
 	private NodeRef task;
-	private List<NodeRef> assignees = new ArrayList<NodeRef>();
 
 	public NodeRef getNodeRef() {
 		return nodeRef;
@@ -56,14 +55,6 @@ public class TaskHistoryListDataItem extends BaseObject implements DataItem {
 		this.end = end;
 	}
 
-	public Integer getDuration() {
-		return duration;
-	}
-
-	public void setDuration(Integer duration) {
-		this.duration = duration;
-	}
-
 	public String getComment() {
 		return comment;
 	}
@@ -80,12 +71,28 @@ public class TaskHistoryListDataItem extends BaseObject implements DataItem {
 		this.state = state;
 	}
 
-	public NodeRef getTaskSet() {
-		return taskSet;
+	public Integer getCompletionPercent() {
+		return completionPercent;
 	}
 
-	public void setTaskSet(NodeRef taskSet) {
-		this.taskSet = taskSet;
+	public void setCompletionPercent(Integer completionPercent) {
+		this.completionPercent = completionPercent;
+	}
+
+	public String getWorkflowInstance() {
+		return workflowInstance;
+	}
+
+	public void setWorkflowInstance(String workflowInstance) {
+		this.workflowInstance = workflowInstance;
+	}
+
+	public NodeRef getTaskLegend() {
+		return taskLegend;
+	}
+
+	public void setTaskLegend(NodeRef taskLegend) {
+		this.taskLegend = taskLegend;
 	}
 
 	public NodeRef getTask() {
@@ -95,54 +102,46 @@ public class TaskHistoryListDataItem extends BaseObject implements DataItem {
 	public void setTask(NodeRef task) {
 		this.task = task;
 	}
-
-	public List<NodeRef> getAssignees() {
-		return assignees;
-	}
-
-	public void setAssignees(List<NodeRef> assignees) {
-		this.assignees = assignees;
-	}
-
-	public TaskHistoryListDataItem(NodeRef nodeRef, Date start, Date end, Integer duration, String comment,
-			TaskState state, NodeRef taskSet, NodeRef task, List<NodeRef> assignees) {
+	
+	public TaskHistoryListDataItem(NodeRef nodeRef, Date start, Date end, String comment,
+			TaskState state, Integer completionPercent, String workflowInstance, NodeRef taskLegend, NodeRef task, List<NodeRef> assignees) {
 		super();
 		this.nodeRef = nodeRef;
 		this.start = start;
 		this.end = end;
-		this.duration = duration;
 		this.comment = comment;
 		this.state = state;
-		this.taskSet = taskSet;
+		this.completionPercent = completionPercent;
+		this.workflowInstance = workflowInstance;
+		this.taskLegend = taskLegend;
 		this.task = task;
-		this.assignees = assignees;
 	}
 
 	public TaskHistoryListDataItem(TaskListDataItem taskListDataItem) {
-		this.taskSet = taskListDataItem.getTaskSet();
+		this.taskLegend = taskListDataItem.getTaskLegend();
 		this.task = taskListDataItem.getTask();
 	}
 
 	@Override
 	public String toString() {
-		return "TaskHistoryListDataItem [nodeRef=" + nodeRef + ", start=" + start + ", end=" + end + ", duration="
-				+ duration + ", comment=" + comment + ", state=" + state + ", taskSet=" + taskSet + ", task=" + task
-				+ ", assignees=" + assignees + "]";
+		return "TaskHistoryListDataItem [nodeRef=" + nodeRef + ", start=" + start + ", end=" + end + ", comment="
+				+ comment + ", state=" + state + ", completionPercent=" + completionPercent + ", workflowInstance="
+				+ workflowInstance + ", taskLegend=" + taskLegend + ", task=" + task + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((assignees == null) ? 0 : assignees.hashCode());
 		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
-		result = prime * result + ((duration == null) ? 0 : duration.hashCode());
+		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
 		result = prime * result + ((end == null) ? 0 : end.hashCode());
 		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
 		result = prime * result + ((start == null) ? 0 : start.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((task == null) ? 0 : task.hashCode());
-		result = prime * result + ((taskSet == null) ? 0 : taskSet.hashCode());
+		result = prime * result + ((taskLegend == null) ? 0 : taskLegend.hashCode());
+		result = prime * result + ((workflowInstance == null) ? 0 : workflowInstance.hashCode());
 		return result;
 	}
 
@@ -155,20 +154,15 @@ public class TaskHistoryListDataItem extends BaseObject implements DataItem {
 		if (getClass() != obj.getClass())
 			return false;
 		TaskHistoryListDataItem other = (TaskHistoryListDataItem) obj;
-		if (assignees == null) {
-			if (other.assignees != null)
-				return false;
-		} else if (!assignees.equals(other.assignees))
-			return false;
 		if (comment == null) {
 			if (other.comment != null)
 				return false;
 		} else if (!comment.equals(other.comment))
 			return false;
-		if (duration == null) {
-			if (other.duration != null)
+		if (completionPercent == null) {
+			if (other.completionPercent != null)
 				return false;
-		} else if (!duration.equals(other.duration))
+		} else if (!completionPercent.equals(other.completionPercent))
 			return false;
 		if (end == null) {
 			if (other.end != null)
@@ -192,10 +186,15 @@ public class TaskHistoryListDataItem extends BaseObject implements DataItem {
 				return false;
 		} else if (!task.equals(other.task))
 			return false;
-		if (taskSet == null) {
-			if (other.taskSet != null)
+		if (taskLegend == null) {
+			if (other.taskLegend != null)
 				return false;
-		} else if (!taskSet.equals(other.taskSet))
+		} else if (!taskLegend.equals(other.taskLegend))
+			return false;
+		if (workflowInstance == null) {
+			if (other.workflowInstance != null)
+				return false;
+		} else if (!workflowInstance.equals(other.workflowInstance))
 			return false;
 		return true;
 	}
@@ -206,9 +205,10 @@ public class TaskHistoryListDataItem extends BaseObject implements DataItem {
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ProjectModel.PROP_THL_START, start);
 		properties.put(ProjectModel.PROP_THL_END, end);
-		properties.put(ProjectModel.PROP_THL_DURATION, duration);
 		properties.put(ProjectModel.PROP_THL_COMMENT, comment);
 		properties.put(ProjectModel.PROP_THL_STATE, state);
+		properties.put(ProjectModel.PROP_COMPLETION_PERCENT, completionPercent);
+		properties.put(ProjectModel.PROP_THL_WORKFLOW_INSTANCE, workflowInstance);
 		return properties;
 	}
 
@@ -216,7 +216,7 @@ public class TaskHistoryListDataItem extends BaseObject implements DataItem {
 	public Map<QName, NodeRef> getSingleAssociations() {
 
 		Map<QName, NodeRef> associations = new HashMap<QName, NodeRef>();
-		associations.put(ProjectModel.ASSOC_THL_TASKSET, taskSet);
+		associations.put(ProjectModel.ASSOC_THL_TASKLEGEND, taskLegend);
 		associations.put(ProjectModel.ASSOC_THL_TASK, task);
 		return associations;
 	}

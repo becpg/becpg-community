@@ -18,18 +18,18 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectService;
-import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.data.projectList.DeliverableState;
 
 /**
- * The Class SubmitTaskPolicy.
+ * The Class SubmitDeliverablePolicy.
  * 
  * @author querephi
  */
 @Service
-public class SubmitTaskPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
+public class SubmitDeliverablePolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(SubmitTaskPolicy.class);
+	private static Log logger = LogFactory.getLog(SubmitDeliverablePolicy.class);
 
 	private ProjectService projectService;
 
@@ -41,9 +41,9 @@ public class SubmitTaskPolicy extends AbstractBeCPGPolicy implements NodeService
 	 * Inits the.
 	 */
 	public void doInit() {
-		logger.debug("Init SubmitTaskPolicy...");
+		logger.debug("Init SubmitDeliverablePolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
-				ProjectModel.TYPE_TASK_HISTORY_LIST, new JavaBehaviour(this, "onUpdateProperties"));
+				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onUpdateProperties"));
 
 	}
 
@@ -51,17 +51,17 @@ public class SubmitTaskPolicy extends AbstractBeCPGPolicy implements NodeService
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
 		for (NodeRef nodeRef : pendingNodes) {
-			projectService.startNextTasks(nodeRef);
+			projectService.submitDeliverable(nodeRef);
 		}
 	}
 
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		String afterState = (String) after.get(ProjectModel.PROP_THL_STATE);
-		logger.debug("SubmitTask: on update properties. afterState: " + afterState);
+		String afterState = (String) after.get(ProjectModel.PROP_DL_STATE);
+		logger.debug("SubmitDeliverable: on update properties. afterState: " + afterState);
 
-		if (afterState != null && afterState.equals(TaskState.Completed.toString())) {
+		if (afterState != null && afterState.equals(DeliverableState.Completed.toString())) {
 			queueNode(nodeRef);
 		}
 	}

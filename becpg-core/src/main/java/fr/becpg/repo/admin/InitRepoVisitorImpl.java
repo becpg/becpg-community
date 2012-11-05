@@ -688,8 +688,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		Map<String,QName> entityLists = new HashMap<String,QName>();
 		
 		entityLists.put(RepoConsts.PATH_PROJECT_STATUS,BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(RepoConsts.PATH_TASK_SETS,ProjectModel.TYPE_TASK_SET);
+		entityLists.put(RepoConsts.PATH_TASK_LEGENDS,ProjectModel.TYPE_TASK_LEGEND);
 		entityLists.put(RepoConsts.PATH_TASKS,ProjectModel.TYPE_TASK);
+		entityLists.put(RepoConsts.PATH_PROJECT_HIERARCHY1, BeCPGModel.TYPE_LIST_VALUE);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}

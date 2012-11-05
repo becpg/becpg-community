@@ -38,6 +38,7 @@
             <value>classpath:alfresco/becpg-nc-workflow-form-config.xml</value>
             <value>classpath:alfresco/becpg-publication-form-config.xml</value>
             <value>classpath:alfresco/becpg-project-form-config.xml</value>
+            <value>classpath:alfresco/becpg-project-workflow-form-config.xml</value>
          </list>
       </property>
    </bean>

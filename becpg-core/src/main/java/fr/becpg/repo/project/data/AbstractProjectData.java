@@ -1,13 +1,18 @@
 package fr.becpg.repo.project.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.BeCPGDataObject;
+import fr.becpg.repo.data.DataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
-import fr.becpg.repo.project.data.projectList.TaskHistoryListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 
 /**
@@ -16,14 +21,12 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
  * @author quere
  * 
  */
-public abstract class AbstractProjectData extends BeCPGDataObject {
+public abstract class AbstractProjectData extends BeCPGDataObject implements DataItem {
 
 	private NodeRef nodeRef;
 	private String name;
-	private NodeRef projectTpl;
 	private List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
-	private List<DeliverableListDataItem> deliverableList = new ArrayList<DeliverableListDataItem>();
-	private List<TaskHistoryListDataItem> taskHistoryList; // null on project Tpl
+	private List<DeliverableListDataItem> deliverableList = new ArrayList<DeliverableListDataItem>();	
 
 	public NodeRef getNodeRef() {
 		return nodeRef;
@@ -40,15 +43,7 @@ public abstract class AbstractProjectData extends BeCPGDataObject {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public NodeRef getProjectTpl() {
-		return projectTpl;
-	}
-
-	public void setProjectTpl(NodeRef projectTpl) {
-		this.projectTpl = projectTpl;
-	}
-
+	
 	public List<TaskListDataItem> getTaskList() {
 		return taskList;
 	}
@@ -64,19 +59,28 @@ public abstract class AbstractProjectData extends BeCPGDataObject {
 	public void setDeliverableList(List<DeliverableListDataItem> deliverableList) {
 		this.deliverableList = deliverableList;
 	}
-
-	public List<TaskHistoryListDataItem> getTaskHistoryList() {
-		return taskHistoryList;
-	}
-
-	public void setTaskHistoryList(List<TaskHistoryListDataItem> taskHistoryList) {
-		this.taskHistoryList = taskHistoryList;
-	}
-
+	
 	public AbstractProjectData(NodeRef nodeRef, String name) {
 		super();
 		this.nodeRef = nodeRef;
 		this.name = name;
+	}
+	
+	@Override
+	public Map<QName, Serializable> getProperties() {
+		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
+		properties.put(ContentModel.PROP_NAME, name);
+		return properties;
+	}
+
+	@Override
+	public Map<QName, NodeRef> getSingleAssociations() {
+		return new HashMap<QName, NodeRef>();
+	}
+
+	@Override
+	public Map<QName, List<NodeRef>> getMultipleAssociations() {
+		return new HashMap<QName, List<NodeRef>>();
 	}
 
 	@Override
@@ -86,8 +90,6 @@ public abstract class AbstractProjectData extends BeCPGDataObject {
 		result = prime * result + ((deliverableList == null) ? 0 : deliverableList.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
-		result = prime * result + ((projectTpl == null) ? 0 : projectTpl.hashCode());
-		result = prime * result + ((taskHistoryList == null) ? 0 : taskHistoryList.hashCode());
 		result = prime * result + ((taskList == null) ? 0 : taskList.hashCode());
 		return result;
 	}
@@ -115,17 +117,7 @@ public abstract class AbstractProjectData extends BeCPGDataObject {
 			if (other.nodeRef != null)
 				return false;
 		} else if (!nodeRef.equals(other.nodeRef))
-			return false;
-		if (projectTpl == null) {
-			if (other.projectTpl != null)
-				return false;
-		} else if (!projectTpl.equals(other.projectTpl))
-			return false;
-		if (taskHistoryList == null) {
-			if (other.taskHistoryList != null)
-				return false;
-		} else if (!taskHistoryList.equals(other.taskHistoryList))
-			return false;
+			return false;		
 		if (taskList == null) {
 			if (other.taskList != null)
 				return false;
@@ -136,8 +128,7 @@ public abstract class AbstractProjectData extends BeCPGDataObject {
 
 	@Override
 	public String toString() {
-		return "AbstractProjectData [nodeRef=" + nodeRef + ", name=" + name + ", projectTpl=" + projectTpl
-				+ ", taskList=" + taskList + ", deliverableList=" + deliverableList + ", taskHistoryList="
-				+ taskHistoryList + "]";
+		return "AbstractProjectData [nodeRef=" + nodeRef + ", name=" + name + ", taskList=" + taskList
+				+ ", deliverableList=" + deliverableList + "]";
 	}
 }

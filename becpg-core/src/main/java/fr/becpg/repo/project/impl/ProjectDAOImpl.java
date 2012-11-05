@@ -28,6 +28,7 @@ import fr.becpg.repo.project.data.AbstractProjectData;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectTplData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskHistoryListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
@@ -65,10 +66,12 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 
 		properties.put(ContentModel.PROP_NAME, projectData.getName());
 
-		QName projectType = ProjectModel.TYPE_PROJECT;
+		QName projectType = null;
 
 		if (projectData instanceof ProjectTplData) {
 			projectType = ProjectModel.TYPE_PROJECT_TPL;
+		} else {
+			projectType = ProjectModel.TYPE_PROJECT;
 		}
 
 		NodeRef projectNodeRef = nodeService.createNode(
@@ -77,7 +80,7 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
 						QName.createValidLocalName(projectData.getName())), projectType, properties).getChildRef();
 
-		associationService.update(projectNodeRef, ProjectModel.ASSOC_PROJECT_TPL, projectData.getProjectTpl());
+		setAttributes(projectNodeRef, projectData);
 		createDataLists(projectNodeRef, projectData, dataLists);
 
 		return projectNodeRef;
@@ -86,8 +89,7 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 	@Override
 	public void update(NodeRef projectNodeRef, AbstractProjectData projectData, Collection<QName> dataLists) {
 
-		nodeService.setProperty(projectNodeRef, ContentModel.PROP_NAME, projectData.getName());
-		associationService.update(projectNodeRef, ProjectModel.ASSOC_PROJECT_TPL, projectData.getProjectTpl());
+		setAttributes(projectNodeRef, projectData);
 		createDataLists(projectNodeRef, projectData, dataLists);
 	}
 
@@ -116,8 +118,8 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 					projectData.setTaskList(loadTaskList(listContainerNodeRef));
 				} else if (dataList.equals(ProjectModel.TYPE_DELIVERABLE_LIST)) {
 					projectData.setDeliverableList(loadDeliverableList(listContainerNodeRef));
-				} else if (dataList.equals(ProjectModel.TYPE_TASK_HISTORY_LIST)) {
-					projectData.setTaskHistoryList(loadTaskHistoryList(listContainerNodeRef));
+				} else if (dataList.equals(ProjectModel.TYPE_TASK_HISTORY_LIST) && projectData instanceof ProjectData) {
+					((ProjectData) projectData).setTaskHistoryList(loadTaskHistoryList(listContainerNodeRef));
 				} else {
 					logger.debug(String.format("DataList '%s' is not loaded since it is not implemented.", dataList));
 				}
@@ -131,6 +133,18 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 	public void delete(NodeRef projectNodeRef) {
 
 		nodeService.deleteNode(projectNodeRef);
+	}
+
+	private void setAttributes(NodeRef projectNodeRef, AbstractProjectData projectData) {
+
+		nodeService.addProperties(projectNodeRef, projectData.getProperties());
+
+		for (Map.Entry<QName, NodeRef> association : projectData.getSingleAssociations().entrySet()) {
+			associationService.update(projectNodeRef, association.getKey(), association.getValue());
+		}
+		for (Map.Entry<QName, List<NodeRef>> association : projectData.getMultipleAssociations().entrySet()) {
+			associationService.update(projectNodeRef, association.getKey(), association.getValue());
+		}
 	}
 
 	private void createDataLists(NodeRef projectNodeRef, AbstractProjectData projectData, Collection<QName> dataLists) {
@@ -148,8 +162,8 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 					createList(listContainerNodeRef, projectData.getTaskList(), dataList);
 				} else if (dataList.equals(ProjectModel.TYPE_DELIVERABLE_LIST)) {
 					createList(listContainerNodeRef, projectData.getDeliverableList(), dataList);
-				} else if (dataList.equals(ProjectModel.TYPE_TASK_HISTORY_LIST)) {
-					createList(listContainerNodeRef, projectData.getTaskHistoryList(), dataList);
+				} else if (dataList.equals(ProjectModel.TYPE_TASK_HISTORY_LIST) && projectData instanceof ProjectData) {
+					createList(listContainerNodeRef, ((ProjectData) projectData).getTaskHistoryList(), dataList);
 				} else {
 					logger.debug(String.format("DataList '%s' is not created since it is not implemented.", dataList));
 				}
@@ -174,7 +188,7 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 							listItemNodeRef, ProjectModel.PROP_TL_IS_MILESTONE), (Integer) nodeService.getProperty(
 							listItemNodeRef, ProjectModel.PROP_TL_DURATION), (String) nodeService.getProperty(
 							listItemNodeRef, ProjectModel.PROP_TL_WORKFLOW_NAME), associationService.getTargetAssoc(
-							listItemNodeRef, ProjectModel.ASSOC_TL_TASKSET), associationService.getTargetAssoc(
+							listItemNodeRef, ProjectModel.ASSOC_TL_TASKLEGEND), associationService.getTargetAssoc(
 							listItemNodeRef, ProjectModel.ASSOC_TL_TASK), associationService.getTargetAssocs(
 							listItemNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS), associationService.getTargetAssocs(
 							listItemNodeRef, ProjectModel.ASSOC_TL_ASSIGNEES)));
@@ -199,14 +213,15 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
 
 					String s = (String) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_THL_STATE);
-					TaskState taskState = s != null ? TaskState.valueOf(s) : TaskState.InProgress;
+					TaskState taskState = s != null ? TaskState.valueOf(s) : TaskState.NotYetStarted;
 
 					taskHistoryList.add(new TaskHistoryListDataItem(listItemNodeRef, (Date) nodeService.getProperty(
 							listItemNodeRef, ProjectModel.PROP_THL_START), (Date) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_THL_END), (Integer) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_THL_DURATION), (String) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_THL_COMMENT), taskState, associationService
-							.getTargetAssoc(listItemNodeRef, ProjectModel.ASSOC_THL_TASKSET), associationService
+							listItemNodeRef, ProjectModel.PROP_THL_END), (String) nodeService.getProperty(
+							listItemNodeRef, ProjectModel.PROP_THL_COMMENT), taskState, (Integer) nodeService
+							.getProperty(listItemNodeRef, ProjectModel.PROP_COMPLETION_PERCENT), (String) nodeService
+							.getProperty(listItemNodeRef, ProjectModel.PROP_THL_WORKFLOW_INSTANCE), associationService
+							.getTargetAssoc(listItemNodeRef, ProjectModel.ASSOC_THL_TASKLEGEND), associationService
 							.getTargetAssoc(listItemNodeRef, ProjectModel.ASSOC_THL_TASK), associationService
 							.getTargetAssocs(listItemNodeRef, WorkflowModel.ASSOC_ASSIGNEES)));
 				}
@@ -230,11 +245,14 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
 
 					String s = (String) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_DL_STATE);
-					TaskState taskState = s != null ? TaskState.valueOf(s) : TaskState.InProgress;
+					DeliverableState deliverableState = s != null ? DeliverableState.valueOf(s)
+							: DeliverableState.NotYetStarted;
 
 					deliverableList.add(new DeliverableListDataItem(listItemNodeRef, associationService.getTargetAssoc(
-							listItemNodeRef, ProjectModel.ASSOC_DL_TASK), taskState, (String) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_DL_DESCRIPTION)));
+							listItemNodeRef, ProjectModel.ASSOC_DL_TASK), deliverableState, (String) nodeService
+							.getProperty(listItemNodeRef, ProjectModel.PROP_DL_DESCRIPTION), (Integer) nodeService
+							.getProperty(listItemNodeRef, ProjectModel.PROP_COMPLETION_PERCENT), associationService
+							.getTargetAssoc(listItemNodeRef, ProjectModel.ASSOC_DL_CONTENT)));
 				}
 			}
 		}
@@ -332,14 +350,10 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 					}
 
 					for (Map.Entry<QName, NodeRef> association : singleAssociations.entrySet()) {
-						// logger.debug("update assoc: " + association.getKey()
-						// + " - " + association.getValue());
 						associationService.update(dataListItem.getNodeRef(), association.getKey(),
 								association.getValue());
 					}
 					for (Map.Entry<QName, List<NodeRef>> association : multipleAssociations.entrySet()) {
-						// logger.debug("update assoc: " + association.getKey()
-						// + " - " + association.getValue());
 						associationService.update(dataListItem.getNodeRef(), association.getKey(),
 								association.getValue());
 					}

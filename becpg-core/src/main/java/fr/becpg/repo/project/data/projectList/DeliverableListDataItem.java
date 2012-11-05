@@ -22,8 +22,10 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 
 	private NodeRef nodeRef;
 	private NodeRef task;
-	private TaskState taskState;
+	private DeliverableState state = DeliverableState.NotYetStarted;
 	private String description;
+	private Integer completionPercent = 0;
+	private NodeRef content;
 
 	public NodeRef getNodeRef() {
 		return nodeRef;
@@ -41,12 +43,12 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 		this.task = task;
 	}
 
-	public TaskState getTaskState() {
-		return taskState;
+	public DeliverableState getState() {
+		return state;
 	}
 
-	public void setTaskState(TaskState taskState) {
-		this.taskState = taskState;
+	public void setState(DeliverableState state) {
+		this.state = state;
 	}
 
 	public String getDescription() {
@@ -57,28 +59,49 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 		this.description = description;
 	}
 
-	public DeliverableListDataItem(NodeRef nodeRef, NodeRef task, TaskState taskState, String description) {
+	public Integer getCompletionPercent() {
+		return completionPercent;
+	}
+
+	public void setCompletionPercent(Integer completionPercent) {
+		this.completionPercent = completionPercent;
+	}
+
+	public NodeRef getContent() {
+		return content;
+	}
+
+	public void setContent(NodeRef content) {
+		this.content = content;
+	}
+
+	public DeliverableListDataItem(NodeRef nodeRef, NodeRef task, DeliverableState state, String description, Integer completionPercent, NodeRef content) {
 		super();
 		this.nodeRef = nodeRef;
 		this.task = task;
-		this.taskState = taskState;
+		this.state = state;
 		this.description = description;
+		this.completionPercent = completionPercent;
+		this.content = content;
 	}
 
 	public DeliverableListDataItem(DeliverableListDataItem d) {
 		super();
 		this.nodeRef = d.getNodeRef();
 		this.task = d.getTask();
-		this.taskState = d.getTaskState();
+		this.state = d.getState();
 		this.description = d.getDescription();
+		this.completionPercent = d.getCompletionPercent();
+		this.content = d.content;
 	}
 
 	@Override
 	public Map<QName, Serializable> getProperties() {
 
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ProjectModel.PROP_DL_STATE, taskState);
+		properties.put(ProjectModel.PROP_DL_STATE, state);
 		properties.put(ProjectModel.PROP_DL_DESCRIPTION, description);
+		properties.put(ProjectModel.PROP_COMPLETION_PERCENT, completionPercent);
 		return properties;
 	}
 
@@ -87,6 +110,7 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 
 		Map<QName, NodeRef> associations = new HashMap<QName, NodeRef>();
 		associations.put(ProjectModel.ASSOC_DL_TASK, task);
+		associations.put(ProjectModel.ASSOC_DL_CONTENT, content);
 		return associations;
 	}
 
@@ -101,10 +125,11 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((content == null) ? 0 : content.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
 		result = prime * result + ((task == null) ? 0 : task.hashCode());
-		result = prime * result + ((taskState == null) ? 0 : taskState.hashCode());
+		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		return result;
 	}
 
@@ -117,6 +142,11 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 		if (getClass() != obj.getClass())
 			return false;
 		DeliverableListDataItem other = (DeliverableListDataItem) obj;
+		if (content == null) {
+			if (other.content != null)
+				return false;
+		} else if (!content.equals(other.content))
+			return false;
 		if (description == null) {
 			if (other.description != null)
 				return false;
@@ -132,14 +162,14 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 				return false;
 		} else if (!task.equals(other.task))
 			return false;
-		if (taskState != other.taskState)
+		if (state != other.state)
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "DeliverableListDataItem [nodeRef=" + nodeRef + ", task=" + task + ", taskState=" + taskState
-				+ ", description=" + description + "]";
+		return "DeliverableListDataItem [nodeRef=" + nodeRef + ", task=" + task + ", state=" + state
+				+ ", description=" + description + ", content=" + content + "]";
 	}
 }

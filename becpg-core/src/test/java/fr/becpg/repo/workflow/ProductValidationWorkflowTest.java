@@ -141,27 +141,11 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 
 				rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, null);
 
-				for (WorkflowDefinition def : workflowService.getAllDefinitions()) {
-					logger.debug(def.getId() + " " + def.getName());
-					if ("jbpm$npdwf:newProductDevelopmentWF".equals(def.getName())) {
-						try {
-							for (WorkflowInstance instance : workflowService.getWorkflows(def.getId())) {
-								workflowService.deleteWorkflow(instance.getId());
-							}
-
-						} catch (Exception e) {
-							logger.error(e.getMessage());
-						}
-					}
-					if ("jbpm$bcpgwf:productValidationWF".equals(def.getName())) {
-						workflowId = def.getId();
-						break;
-					}
-
-				}
+				WorkflowDefinition wfDef = workflowService.getDefinitionByName("jbpm$bcpgwf:productValidationWF");
+				logger.debug("wfDefId found : " + wfDef.getId());
+				workflowId = wfDef.getId();
 
 				return null;
-
 			}
 		}, false, true);
 
