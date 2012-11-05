@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<model name="pjtwf:projectworkflowmodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm" />
+		<import uri="http://www.bcpg.fr/model/project/1.0" prefix="pjt" />
+	</imports>
+
+	<namespaces>
+		<namespace uri="http://www.alfresco.org/model/project-workflow/1.0"
+			prefix="pjtwf" />
+	</namespaces>
+
+	<types>
+	
+		<!--                               -->
+      <!--  Adhoc Tasks -->               
+      <!--                               -->
+      
+      <type name="pjtwf:submitAdhocTask">
+         <parent>bpm:startTask</parent>
+         <properties>           
+         </properties>
+         <associations>       	            	
+					<association name="pjtwf:project">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>pjt:project</class>
+							<mandatory>true</mandatory>
+							<many>false</many>
+						</target>
+					</association>
+				</associations>
+         <mandatory-aspects>
+            <aspect>bpm:assignee</aspect>
+         </mandatory-aspects>
+      </type>
+
+      <type name="pjtwf:adhocTask">
+         <parent>bpm:workflowTask</parent>
+         <overrides>
+            <property name="bpm:packageActionGroup">
+               <default>add_package_item_actions</default>
+            </property>
+            <property name="bpm:packageItemActionGroup">
+               <default>edit_package_item_actions</default>
+            </property>
+         </overrides>
+      </type>
+
+	</types>
+
+	<aspects>
+
+<!-- 		<aspect name="pjtwf:adhocTaskAspect"> -->
+<!-- 			<associations> -->
+<!-- 				<association name="pjtwf:taskHistoryList"> -->
+<!-- 					<source> -->
+<!-- 						<mandatory>true</mandatory> -->
+<!-- 						<many>true</many> -->
+<!-- 					</source> -->
+<!-- 					<target> -->
+<!-- 						<class>pjt:taskHistoryList</class> -->
+<!-- 						<mandatory>true</mandatory> -->
+<!-- 						<many>false</many> -->
+<!-- 					</target> -->
+<!-- 				</association> -->
+<!-- 			</associations> -->
+<!-- 		</aspect> -->
+
+	</aspects>
+
+</model>

@@ -14,6 +14,7 @@
 	 <property name="workflowService" ref="WorkflowService"/>
 	 <property name="wUsedListService" ref="wUsedListService"/>
 	 <property name="associationService" ref="associationService"/>
+	 <property name="nodeService" ref="nodeService"/>
 	</bean>			
 	
 	<!-- Policy -->
@@ -24,5 +25,8 @@
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="projectService" ref="projectService"/>
 	</bean>		
-   
+   <bean id="submitDeliverablePolicy" class="fr.becpg.repo.project.policy.SubmitDeliverablePolicy" parent="abstractBeCPGPolicy">
+		<property name="projectService" ref="projectService"/>
+	</bean>
+	
 </beans>

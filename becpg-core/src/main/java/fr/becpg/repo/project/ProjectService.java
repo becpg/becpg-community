@@ -14,6 +14,7 @@ public interface ProjectService {
 	 * @param projectNodeRef
 	 * @param taskNodeRef
 	 */
-	public void submitTask(NodeRef taskNodeRef);
+	public void startNextTasks(NodeRef taskNodeRef);
 	public void start(NodeRef projectNodeRef);
+	public void submitDeliverable(NodeRef deliverableNodeRef);
 }

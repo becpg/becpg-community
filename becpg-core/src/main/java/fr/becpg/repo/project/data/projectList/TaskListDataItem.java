@@ -24,7 +24,7 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 	private Boolean isMilestone;
 	private Integer duration;
 	private String workflowName;
-	private NodeRef taskSet;
+	private NodeRef taskLegend;
 	private NodeRef task;
 	private List<NodeRef> prevTasks;
 	private List<NodeRef> assignees;
@@ -61,12 +61,12 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.workflowName = workflowName;
 	}
 
-	public NodeRef getTaskSet() {
-		return taskSet;
+	public NodeRef getTaskLegend() {
+		return taskLegend;
 	}
 
-	public void setTaskSet(NodeRef taskSet) {
-		this.taskSet = taskSet;
+	public void setTaskLegend(NodeRef taskLegend) {
+		this.taskLegend = taskLegend;
 	}
 
 	public NodeRef getTask() {
@@ -94,13 +94,13 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 	}
 
 	public TaskListDataItem(NodeRef nodeRef, Boolean isMilestone, Integer duration, String workflowName,
-			NodeRef taskSet, NodeRef task, List<NodeRef> prevTasks, List<NodeRef> assignees) {
+			NodeRef taskLegend, NodeRef task, List<NodeRef> prevTasks, List<NodeRef> assignees) {
 		super();
 		this.nodeRef = nodeRef;
 		this.isMilestone = isMilestone;
 		this.duration = duration;
 		this.workflowName = workflowName;
-		this.taskSet = taskSet;
+		this.taskLegend = taskLegend;
 		this.task = task;
 		this.prevTasks = prevTasks;
 		this.assignees = assignees;
@@ -109,7 +109,7 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 	@Override
 	public String toString() {
 		return "TaskListDataItem [nodeRef=" + nodeRef + ", isMilestone=" + isMilestone + ", duration=" + duration
-				+ ", workflowName=" + workflowName + ", taskSet=" + taskSet + ", task=" + task + ", prevTasks="
+				+ ", workflowName=" + workflowName + ", taskLegend=" + taskLegend + ", task=" + task + ", prevTasks="
 				+ prevTasks + ", assignees=" + assignees + "]";
 	}
 
@@ -123,7 +123,7 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
 		result = prime * result + ((prevTasks == null) ? 0 : prevTasks.hashCode());
 		result = prime * result + ((task == null) ? 0 : task.hashCode());
-		result = prime * result + ((taskSet == null) ? 0 : taskSet.hashCode());
+		result = prime * result + ((taskLegend == null) ? 0 : taskLegend.hashCode());
 		result = prime * result + ((workflowName == null) ? 0 : workflowName.hashCode());
 		return result;
 	}
@@ -167,10 +167,10 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 				return false;
 		} else if (!task.equals(other.task))
 			return false;
-		if (taskSet == null) {
-			if (other.taskSet != null)
+		if (taskLegend == null) {
+			if (other.taskLegend != null)
 				return false;
-		} else if (!taskSet.equals(other.taskSet))
+		} else if (!taskLegend.equals(other.taskLegend))
 			return false;
 		if (workflowName == null) {
 			if (other.workflowName != null)
@@ -194,7 +194,7 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 	public Map<QName, NodeRef> getSingleAssociations() {
 
 		Map<QName, NodeRef> associations = new HashMap<QName, NodeRef>();
-		associations.put(ProjectModel.ASSOC_TL_TASKSET, taskSet);
+		associations.put(ProjectModel.ASSOC_TL_TASKLEGEND, taskLegend);
 		associations.put(ProjectModel.ASSOC_TL_TASK, task);
 		return associations;
 	}

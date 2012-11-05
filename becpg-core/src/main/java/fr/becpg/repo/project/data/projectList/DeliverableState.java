@@ -1,15 +1,13 @@
 package fr.becpg.repo.project.data.projectList;
 
 /**
- * Task state
+ * Deliverable task
  * @author quere
  *
  */
-public enum TaskState {
+public enum DeliverableState {
 
 	NotYetStarted,
 	InProgress,
-	OnHold,
-	Cancelled,
 	Completed
 }

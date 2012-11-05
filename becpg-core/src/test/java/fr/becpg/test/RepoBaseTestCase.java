@@ -91,6 +91,8 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 
 	/** The Constant HIERARCHY2_QUICHE. */
 	protected static final String HIERARCHY2_QUICHE = "Quiche";
+	
+	protected static final String PROJECT_HIERARCHY1_PAIN = "Pain";
 
 	protected NodeRef HIERARCHY1_SEA_FOOD_REF;
 
@@ -178,7 +180,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 	/** The nuts. */
 	protected List<NodeRef> nuts = new ArrayList<NodeRef>();
 	
-	protected List<NodeRef> taskSets = new ArrayList<NodeRef>();
+	protected List<NodeRef> taskLegends = new ArrayList<NodeRef>();
 	
 	protected List<NodeRef> tasks = new ArrayList<NodeRef>();
 
@@ -357,16 +359,16 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 
 		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_PROJECT_LISTS);
 
-		// taskSets
-		NodeRef taskSetsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_TASK_SETS);
-		String[] taskSetNames = { "TaskSet1", "TaskSet2", "TaskSet3" };
-		for (String taskSetName : taskSetNames) {
+		// taskLegends
+		NodeRef taskLegendsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_TASK_LEGENDS);
+		String[] taskLegendNames = { "TaskLegend1", "TaskLegend2", "TaskLegend3" };
+		for (String taskLegendName : taskLegendNames) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, taskSetName);
-			nodeService.createNode(taskSetsFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK_SET, properties).getChildRef();			
+			properties.put(ContentModel.PROP_NAME, taskLegendName);
+			nodeService.createNode(taskLegendsFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK_LEGEND, properties).getChildRef();			
 		}
-		// taskSets
+		// taskLegends
 		NodeRef tasksFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_TASKS);
 		String[] taskNames = { "Task1", "Task2", "Task3", "Task4", "Task5", "Task6" };
 		for (String taskName : taskNames) {
@@ -374,6 +376,16 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			properties.put(ContentModel.PROP_NAME, taskName);
 			nodeService.createNode(tasksFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK, properties).getChildRef();
+		}
+		
+		// projectHierarchy1
+		NodeRef projectHierarchy1Folder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_PROJECT_HIERARCHY1);
+		String[] projectHierarchy1Names = { "Eclair", "Sandwich", PROJECT_HIERARCHY1_PAIN, "Pâtisserie", "Viennoiserie" };
+		for (String projectHierarchy1Name : projectHierarchy1Names) {
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, projectHierarchy1Name);
+			nodeService.createNode(projectHierarchy1Folder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
 		}
 	}
 	
@@ -477,12 +489,12 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			}
 		}
 		
-		// taskSets
+		// taskLegends
 		NodeRef npdListsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_PROJECT_LISTS);
-		NodeRef taskSetFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, RepoConsts.PATH_TASK_SETS);
-		List<FileInfo> taskSetsFileInfo = fileFolderService.listFiles(taskSetFolder);		
-		for (FileInfo fileInfo : taskSetsFileInfo) {
-			taskSets.add(fileInfo.getNodeRef());
+		NodeRef taskLegendFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, RepoConsts.PATH_TASK_LEGENDS);
+		List<FileInfo> taskLegendsFileInfo = fileFolderService.listFiles(taskLegendFolder);		
+		for (FileInfo fileInfo : taskLegendsFileInfo) {
+			taskLegends.add(fileInfo.getNodeRef());
 		}
 		
 		// tasks

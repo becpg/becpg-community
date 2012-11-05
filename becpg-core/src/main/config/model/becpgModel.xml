@@ -1972,6 +1972,14 @@
 			</properties>
 		</aspect>
 
+		<aspect name="bcpg:colorAspect">
+			<properties>
+				<property name="bcpg:color">
+					<type>d:text</type>
+					<default>000000</default>
+				</property>
+			</properties>
+		</aspect>
 
 	</aspects>
 </model>
