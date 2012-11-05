@@ -177,3 +177,8 @@
 	background: url(../../components/images/list-16.png) no-repeat;
 	padding-left: 20px;
 }
+
+.yui-ac-container span.productCatalog {
+	background: url(../../components/images/publishing/product-catalog-16.png) no-repeat;
+	padding-left: 20px;
+}
