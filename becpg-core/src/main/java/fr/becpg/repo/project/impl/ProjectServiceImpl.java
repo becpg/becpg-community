@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -29,7 +30,6 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectTplData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
-import fr.becpg.repo.project.data.projectList.TaskHistoryListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 
@@ -72,11 +72,10 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public void startNextTasks(NodeRef taskHistoryNodeRef) {
+	public void startNextTasks(NodeRef taskListNodeRef) {
 
-		NodeRef projectNodeRef = wUsedListService.getRoot(taskHistoryNodeRef);
-		NodeRef taskNodeRef = associationService.getTargetAssoc(taskHistoryNodeRef, ProjectModel.ASSOC_THL_TASK);
-		startNextTasks(projectNodeRef, taskNodeRef);
+		NodeRef projectNodeRef = wUsedListService.getRoot(taskListNodeRef);
+		startNextTasks(projectNodeRef, taskListNodeRef);
 	}
 
 	@Override
@@ -84,101 +83,71 @@ public class ProjectServiceImpl implements ProjectService {
 		startNextTasks(projectNodeRef, null);
 	}
 
-	private void startNextTasks(NodeRef projectNodeRef, NodeRef taskNodeRef) {
+	private void startNextTasks(NodeRef projectNodeRef, NodeRef taskListNodeRef) {
 
-		logger.debug("submit Task");
+		logger.debug("submit Task taskListNodeRef: " + taskListNodeRef);
 		Collection<QName> dataLists = new ArrayList<QName>();
 		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
-		dataLists.add(ProjectModel.TYPE_TASK_HISTORY_LIST);
-		ProjectData projectData = (ProjectData)projectDAO.find(projectNodeRef, dataLists);
-		ProjectTplData projectTplData = (ProjectTplData)projectDAO.find(projectData.getProjectTpl(), dataLists);
-		
-		// add next tasks
-		List<TaskListDataItem> nextTasks = getNextTasks(projectData, taskNodeRef);
-		logger.debug("nextTasks size: " + nextTasks.size());
-		for (TaskListDataItem nextTask : nextTasks) {
-			if (areTasksDone(projectData, nextTask.getPrevTasks())) {
+		AbstractProjectData abstractProjectData = projectDAO.find(projectNodeRef, dataLists);
 
-				if (projectData.getTaskHistoryList() == null) {
-					projectData.setTaskHistoryList(new ArrayList<TaskHistoryListDataItem>());
-				}
-				TaskHistoryListDataItem t = new TaskHistoryListDataItem(nextTask);
-				t.setState(TaskState.InProgress);
-				projectData.getTaskHistoryList().add(t);
-				
-				// deliverable list				
-				List<DeliverableListDataItem> nextDeliverables = getDeliverables(projectTplData, nextTask.getTask());
-				logger.debug("deliverables size to add: " + nextDeliverables.size());
-				for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
+		if (abstractProjectData instanceof ProjectData) {
 
-					if (projectData.getDeliverableList() == null) {
-						projectData.setDeliverableList(new ArrayList<DeliverableListDataItem>());
-					}
-					DeliverableListDataItem d = new DeliverableListDataItem(nextDeliverable);
-					d.setState(DeliverableState.InProgress);
-					projectData.getDeliverableList().add(d);
-				}
-			}
-		}
-		
-		logger.debug("task history: " + projectData.getTaskHistoryList().size());
-		projectDAO.update(projectNodeRef, projectData, dataLists);
-		
-		// start workflow, we need to update project to create taskHistoryListDataItem first before starting workflow
-		projectData = (ProjectData)projectDAO.find(projectNodeRef, dataLists);
-		for(TaskHistoryListDataItem taskHistoryListDataItem : projectData.getTaskHistoryList()){
-			
-			if(TaskState.InProgress.equals(taskHistoryListDataItem.getState())){
-				
-				logger.debug("Start workflow");
-				
-				String workflowDescription = "";
-				for(DeliverableListDataItem deliverableListDataItem : projectData.getDeliverableList()){
-					if(taskHistoryListDataItem.getTask().equals(deliverableListDataItem.getTask())){						
+			ProjectData projectData = (ProjectData) abstractProjectData;
+
+			// add next tasks
+			List<TaskListDataItem> nextTasks = getNextTasks(projectData, taskListNodeRef);
+			logger.debug("nextTasks size: " + nextTasks.size());
+			for (TaskListDataItem nextTask : nextTasks) {
+				if (areTasksDone(projectData, nextTask.getPrevTasks())) {
+
+					nextTask.setState(TaskState.InProgress);
+
+					// deliverable list
+					String workflowDescription = "";
+					List<DeliverableListDataItem> nextDeliverables = getDeliverables(projectData, nextTask.getNodeRef());
+					logger.debug("next deliverables size: " + nextDeliverables.size());
+					for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
+
+						nextDeliverable.setState(DeliverableState.InProgress);
+
 						if (!workflowDescription.isEmpty()) {
 							workflowDescription += DESCRIPTION_SEPARATOR;
 						}
-						workflowDescription += deliverableListDataItem.getDescription();
+						workflowDescription += nextDeliverable.getDescription();
 					}
-				}
-				
-				for(TaskListDataItem taskListDataItem : projectData.getTaskList()){
-					if(taskHistoryListDataItem.getTask().equals(taskListDataItem.getTask())){
-						
-						logger.debug("assignees size: " + taskListDataItem.getAssignees());
-						if (taskListDataItem.getAssignees() != null) {
-							for (NodeRef assignee : taskListDataItem.getAssignees()) {
-								// start workflow
-								startWorkflow(taskListDataItem, workflowDescription, assignee, taskHistoryListDataItem);
-							}
+
+					logger.debug("assignees size: " + nextTask.getResources());
+					if (nextTask.getResources() != null) {
+						for (NodeRef resource : nextTask.getResources()) {
+							// start workflow
+							startWorkflow(projectData, nextTask, workflowDescription, resource);
 						}
-						break;
 					}
 				}
 			}
+
+			projectDAO.update(projectNodeRef, projectData, dataLists);
 		}
-		
-		projectDAO.update(projectNodeRef, projectData, dataLists);
 	}
 
-	private List<TaskListDataItem> getNextTasks(AbstractProjectData projectData, NodeRef taskNodeRef) {
+	private List<TaskListDataItem> getNextTasks(AbstractProjectData projectData, NodeRef taskListNodeRef) {
 
 		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
-		for (TaskListDataItem t : projectData.getTaskList()) {
+		for (TaskListDataItem p : projectData.getTaskList()) {
 			// taskNodeRef is null when we start project
-			if (t.getPrevTasks().contains(taskNodeRef) || (taskNodeRef == null && t.getPrevTasks().isEmpty())) {
-				taskList.add(t);
+			if (p.getPrevTasks().contains(taskListNodeRef) || (taskListNodeRef == null && p.getPrevTasks().isEmpty())) {
+				taskList.add(p);
 			}
 		}
 		return taskList;
 	}
 
-	private List<DeliverableListDataItem> getDeliverables(AbstractProjectData projectData, NodeRef taskNodeRef) {
+	private List<DeliverableListDataItem> getDeliverables(AbstractProjectData projectData, NodeRef taskListNodeRef) {
 
 		List<DeliverableListDataItem> deliverableList = new ArrayList<DeliverableListDataItem>();
 		for (DeliverableListDataItem d : projectData.getDeliverableList()) {
-			if (d.getTask() != null && d.getTask().equals(taskNodeRef)) {
+			if (d.getTask() != null && d.getTask().equals(taskListNodeRef)) {
 				deliverableList.add(d);
 			}
 		}
@@ -190,14 +159,12 @@ public class ProjectServiceImpl implements ProjectService {
 		List<NodeRef> inProgressTasks = new ArrayList<NodeRef>();
 		inProgressTasks.addAll(taskNodeRefs);
 
-		if (projectData.getTaskHistoryList() != null && projectData.getTaskHistoryList().size() > 0) {
-			for (int i = projectData.getTaskHistoryList().size() - 1; i >= 0; i--) {
-				TaskHistoryListDataItem t = projectData.getTaskHistoryList().get(i);
+		if (projectData.getTaskList() != null && projectData.getTaskList().size() > 0) {
+			for (int i = projectData.getTaskList().size() - 1; i >= 0; i--) {
+				TaskListDataItem t = projectData.getTaskList().get(i);
 
-				if (taskNodeRefs.contains(t.getTask())) {
-					if (!TaskState.InProgress.equals(t.getState())) {
-						inProgressTasks.remove(t.getTask());
-					}
+				if (taskNodeRefs.contains(t.getNodeRef()) && TaskState.Completed.equals(t.getState())) {
+					inProgressTasks.remove(t.getNodeRef());
 				}
 			}
 		}
@@ -206,18 +173,19 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	private String getWorkflowDefId(String workflowName) {
-		if (workflowName != null) {
+		if (workflowName != null && !workflowName.isEmpty()) {
 			WorkflowDefinition def = workflowService.getDefinitionByName(workflowName);
-			if(def != null){
+			if (def != null) {
 				return def.getId();
-			}			
+			}
 		}
 
 		logger.error("Unknown workflow name: " + workflowName);
 		return null;
 	}
 
-	private void startWorkflow(TaskListDataItem taskListDataItem, String workflowDescription, NodeRef assignee, TaskHistoryListDataItem taskHistoryListDataItem) {
+	private void startWorkflow(ProjectData projectData, TaskListDataItem taskListDataItem, String workflowDescription,
+			NodeRef assignee) {
 		Map<QName, Serializable> workflowProps = new HashMap<QName, Serializable>();
 		Calendar cal = Calendar.getInstance();
 
@@ -228,20 +196,27 @@ public class ProjectServiceImpl implements ProjectService {
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription);
 		workflowProps.put(WorkflowModel.ASSOC_ASSIGNEE, assignee);
-		workflowProps.put(ProjectModel.ASSOC_WORKFLOW_TASK, taskHistoryListDataItem.getNodeRef());
+		workflowProps.put(ProjectModel.ASSOC_WORKFLOW_TASK, taskListDataItem.getNodeRef());
 
 		NodeRef wfPackage = workflowService.createPackage(null);
+		nodeService.addChild(wfPackage, projectData.getNodeRef(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+				ContentModel.ASSOC_CHILDREN);
+		if (projectData.getEntity() != null) {
+			nodeService.addChild(wfPackage, projectData.getEntity(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+					ContentModel.ASSOC_CHILDREN);
+		}
 		workflowProps.put(WorkflowModel.ASSOC_PACKAGE, wfPackage);
 
 		String workflowDefId = getWorkflowDefId(taskListDataItem.getWorkflowName());
+		logger.debug("workflowDefId: " + workflowDefId);
 		if (workflowDefId != null) {
 
 			WorkflowPath wfPath = workflowService.startWorkflow(workflowDefId, workflowProps);
 			logger.debug("New worflow started. Id: " + wfPath.getId() + " - instance: " + wfPath.getInstance());
 			String workflowId = wfPath.getInstance().getId();
-			taskHistoryListDataItem.setWorkflowInstance(workflowId);
+			taskListDataItem.setWorkflowInstance(workflowId);
 
-			// get the workflow tasks			
+			// get the workflow tasks
 			WorkflowTask startTask = workflowService.getStartTask(workflowId);
 
 			// end task
@@ -257,42 +232,42 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public void submitDeliverable(NodeRef deliverableNodeRef) {
-				
-		Integer completionPercent = (Integer)nodeService.getProperty(deliverableNodeRef, ProjectModel.PROP_COMPLETION_PERCENT);		
+
+		Integer completionPercent = (Integer) nodeService.getProperty(deliverableNodeRef,
+				ProjectModel.PROP_COMPLETION_PERCENT);
 		logger.debug("submit Deliverable. completionPercent: " + completionPercent);
-		
-		if(completionPercent != null){
+
+		if (completionPercent != null) {
 			NodeRef taskNodeRef = associationService.getTargetAssoc(deliverableNodeRef, ProjectModel.ASSOC_DL_TASK);
-			
-			if(taskNodeRef != null){
+
+			if (taskNodeRef != null) {
 				NodeRef projectNodeRef = wUsedListService.getRoot(deliverableNodeRef);
-				
+
 				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_TASK_HISTORY_LIST);
+				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				ProjectData projectData = (ProjectData)projectDAO.find(projectNodeRef, dataLists);
-				
-				for(TaskHistoryListDataItem t : projectData.getTaskHistoryList()){
-					if(taskNodeRef.equals(t.getTask())){
+				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+
+				for (TaskListDataItem t : projectData.getTaskList()) {
+					if (taskNodeRef.equals(t.getNodeRef())) {
 						Integer taskCompletionPercent = t.getCompletionPercent();
-						if(taskCompletionPercent==null){
-							taskCompletionPercent = 0;						
+						if (taskCompletionPercent == null) {
+							taskCompletionPercent = 0;
 						}
-						taskCompletionPercent+=completionPercent;
+						taskCompletionPercent += completionPercent;
 						t.setCompletionPercent(taskCompletionPercent);
 						logger.debug("set completion percent to value " + taskCompletionPercent);
-						
-						if(taskCompletionPercent > 100){
+
+						if (taskCompletionPercent > 100) {
 							logger.debug("submit task");
 							t.setState(TaskState.Completed);
 						}
 					}
 				}
 				projectDAO.update(projectNodeRef, projectData, dataLists);
-			}
-			else{
+			} else {
 				logger.error("Task is not defined for the deliverable. nodeRef: " + deliverableNodeRef);
 			}
-		}		
+		}
 	}
 }

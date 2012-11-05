@@ -24,9 +24,19 @@
 	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy" parent="abstractBeCPGPolicy">
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="projectService" ref="projectService"/>
+		<property name="associationService" ref="associationService"/>
+		<property name="copyService" ref="copyService" />
 	</bean>		
    <bean id="submitDeliverablePolicy" class="fr.becpg.repo.project.policy.SubmitDeliverablePolicy" parent="abstractBeCPGPolicy">
 		<property name="projectService" ref="projectService"/>
+	</bean>
+	
+	<bean id="taskValuePlugin" parent="baseListValuePlugin"
+		init-method="init" class="fr.becpg.repo.project.listvalue.TaskValuePlugin">
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="dictionaryDAO" ref="dictionaryDAO" />
 	</bean>
 	
 </beans>

@@ -25,25 +25,20 @@ public interface ProjectModel {
 	public static final QName PROP_PROJECT_COMPLETION_DATE = QName.createQName(PROJECT_URI, "projectCompletionDate");
 	public static final QName PROP_PROJECT_PRIORITY = QName.createQName(PROJECT_URI, "projectPriority");	
 	public static final QName ASSOC_PROJECT_TPL = QName.createQName(PROJECT_URI, "projectProjectTpl");
+	public static final QName ASSOC_PROJECT_ENTITY = QName.createQName(PROJECT_URI, "projectEntity");
 	
 	public static final QName TYPE_TASK_LIST = QName.createQName(PROJECT_URI, "taskList");
+	public static final QName PROP_TL_TASK_NAME = QName.createQName(PROJECT_URI, "tlTaskName");
 	public static final QName PROP_TL_IS_MILESTONE = QName.createQName(PROJECT_URI, "tlIsMilestone");
 	public static final QName PROP_TL_DURATION = QName.createQName(PROJECT_URI, "tlDuration");
 	public static final QName PROP_TL_WORKFLOW_NAME = QName.createQName(PROJECT_URI, "tlWorkflowName");
-	public static final QName ASSOC_TL_TASKLEGEND = QName.createQName(PROJECT_URI, "tltaskLegend");
-	public static final QName ASSOC_TL_TASK = QName.createQName(PROJECT_URI, "tlTask");
+	public static final QName PROP_TL_START = QName.createQName(PROJECT_URI, "tlStart");
+	public static final QName PROP_TL_END = QName.createQName(PROJECT_URI, "tlEnd");
+	public static final QName PROP_TL_STATE = QName.createQName(PROJECT_URI, "tlState");	
 	public static final QName ASSOC_TL_PREV_TASKS = QName.createQName(PROJECT_URI, "tlPrevTasks");
-	public static final QName ASSOC_TL_ASSIGNEES = QName.createQName(PROJECT_URI, "tlAssignees");
-	
-	public static final QName TYPE_TASK_HISTORY_LIST = QName.createQName(PROJECT_URI, "taskHistoryList");	
-	public static final QName PROP_THL_START = QName.createQName(PROJECT_URI, "thlStart");
-	public static final QName PROP_THL_END = QName.createQName(PROJECT_URI, "thlEnd");
-	public static final QName PROP_THL_COMMENT = QName.createQName(PROJECT_URI, "thlComment");
-	public static final QName PROP_THL_STATE = QName.createQName(PROJECT_URI, "thlState");
-	public static final QName PROP_THL_WORKFLOW_INSTANCE = QName.createQName(PROJECT_URI, "thlWorkflowInstance");
-	public static final QName ASSOC_THL_TASKLEGEND = QName.createQName(PROJECT_URI, "thltaskLegend");
-	public static final QName ASSOC_THL_TASK = QName.createQName(PROJECT_URI, "thlTask");
-	public static final QName ASSOC_THL_TASK_LIST = QName.createQName(PROJECT_URI, "thlTaskList");
+	public static final QName ASSOC_TL_RESOURCES = QName.createQName(PROJECT_URI, "tlResources");
+	public static final QName ASSOC_TL_TASKLEGEND = QName.createQName(PROJECT_URI, "tlTaskLegend");
+	public static final QName PROP_TL_WORKFLOW_INSTANCE = QName.createQName(PROJECT_URI, "tlWorkflowInstance");
 	
 	public static final QName TYPE_DELIVERABLE_LIST = QName.createQName(PROJECT_URI, "deliverableList");
 	public static final QName PROP_DL_STATE = QName.createQName(PROJECT_URI, "dlState");

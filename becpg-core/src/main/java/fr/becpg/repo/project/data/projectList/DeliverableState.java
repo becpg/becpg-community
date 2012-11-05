@@ -7,7 +7,7 @@ package fr.becpg.repo.project.data.projectList;
  */
 public enum DeliverableState {
 
-	NotYetStarted,
+	Planned,
 	InProgress,
 	Completed
 }

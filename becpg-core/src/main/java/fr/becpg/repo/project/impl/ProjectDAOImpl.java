@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -29,7 +29,6 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectTplData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
-import fr.becpg.repo.project.data.projectList.TaskHistoryListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 
@@ -104,6 +103,7 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 			NodeRef projectTplNodeRef = associationService.getTargetAssoc(projectNodeRef,
 					ProjectModel.ASSOC_PROJECT_TPL);
 			projectData = new ProjectData(projectNodeRef, name, projectTplNodeRef);
+			((ProjectData)projectData).setEntity(associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY));
 		} else {
 			projectData = new ProjectTplData(projectNodeRef, name);
 		}
@@ -118,8 +118,6 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 					projectData.setTaskList(loadTaskList(listContainerNodeRef));
 				} else if (dataList.equals(ProjectModel.TYPE_DELIVERABLE_LIST)) {
 					projectData.setDeliverableList(loadDeliverableList(listContainerNodeRef));
-				} else if (dataList.equals(ProjectModel.TYPE_TASK_HISTORY_LIST) && projectData instanceof ProjectData) {
-					((ProjectData) projectData).setTaskHistoryList(loadTaskHistoryList(listContainerNodeRef));
 				} else {
 					logger.debug(String.format("DataList '%s' is not loaded since it is not implemented.", dataList));
 				}
@@ -162,8 +160,6 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 					createList(listContainerNodeRef, projectData.getTaskList(), dataList);
 				} else if (dataList.equals(ProjectModel.TYPE_DELIVERABLE_LIST)) {
 					createList(listContainerNodeRef, projectData.getDeliverableList(), dataList);
-				} else if (dataList.equals(ProjectModel.TYPE_TASK_HISTORY_LIST) && projectData instanceof ProjectData) {
-					createList(listContainerNodeRef, ((ProjectData) projectData).getTaskHistoryList(), dataList);
 				} else {
 					logger.debug(String.format("DataList '%s' is not created since it is not implemented.", dataList));
 				}
@@ -178,57 +174,32 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 			NodeRef taskListNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_TASK_LIST);
 
 			if (taskListNodeRef != null) {
-				taskList = new ArrayList<TaskListDataItem>();
+				taskList = new LinkedList<TaskListDataItem>();
 				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(taskListNodeRef,
 						ProjectModel.TYPE_TASK_LIST);
 
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
 
-					taskList.add(new TaskListDataItem(listItemNodeRef, (Boolean) nodeService.getProperty(
+					String s = (String) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_TL_STATE);
+					TaskState taskState = s != null ? TaskState.valueOf(s) : TaskState.Planned;
+
+					taskList.add(new TaskListDataItem(listItemNodeRef, (String) nodeService.getProperty(
+							listItemNodeRef, ProjectModel.PROP_TL_TASK_NAME), (Boolean) nodeService.getProperty(
 							listItemNodeRef, ProjectModel.PROP_TL_IS_MILESTONE), (Integer) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_TL_DURATION), (String) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_TL_WORKFLOW_NAME), associationService.getTargetAssoc(
-							listItemNodeRef, ProjectModel.ASSOC_TL_TASKLEGEND), associationService.getTargetAssoc(
-							listItemNodeRef, ProjectModel.ASSOC_TL_TASK), associationService.getTargetAssocs(
+							listItemNodeRef, ProjectModel.PROP_TL_DURATION), (Date) nodeService.getProperty(
+							listItemNodeRef, ProjectModel.PROP_TL_START), (Date) nodeService.getProperty(
+							listItemNodeRef, ProjectModel.PROP_TL_END), taskState, (Integer) nodeService.getProperty(
+							listItemNodeRef, ProjectModel.PROP_COMPLETION_PERCENT), associationService.getTargetAssocs(
 							listItemNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS), associationService.getTargetAssocs(
-							listItemNodeRef, ProjectModel.ASSOC_TL_ASSIGNEES)));
+							listItemNodeRef, ProjectModel.ASSOC_TL_RESOURCES), associationService.getTargetAssoc(
+							listItemNodeRef, ProjectModel.ASSOC_TL_TASKLEGEND), (String) nodeService.getProperty(
+							listItemNodeRef, ProjectModel.PROP_TL_WORKFLOW_NAME), (String) nodeService.getProperty(
+							listItemNodeRef, ProjectModel.PROP_TL_WORKFLOW_INSTANCE)));
 				}
 			}
 		}
 
 		return taskList;
-	}
-
-	private List<TaskHistoryListDataItem> loadTaskHistoryList(NodeRef listContainerNodeRef) {
-		List<TaskHistoryListDataItem> taskHistoryList = null;
-
-		if (listContainerNodeRef != null) {
-			NodeRef taskListNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_TASK_HISTORY_LIST);
-
-			if (taskListNodeRef != null) {
-				taskHistoryList = new ArrayList<TaskHistoryListDataItem>();
-				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(taskListNodeRef,
-						ProjectModel.TYPE_TASK_HISTORY_LIST);
-
-				for (NodeRef listItemNodeRef : listItemNodeRefs) {
-
-					String s = (String) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_THL_STATE);
-					TaskState taskState = s != null ? TaskState.valueOf(s) : TaskState.NotYetStarted;
-
-					taskHistoryList.add(new TaskHistoryListDataItem(listItemNodeRef, (Date) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_THL_START), (Date) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_THL_END), (String) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_THL_COMMENT), taskState, (Integer) nodeService
-							.getProperty(listItemNodeRef, ProjectModel.PROP_COMPLETION_PERCENT), (String) nodeService
-							.getProperty(listItemNodeRef, ProjectModel.PROP_THL_WORKFLOW_INSTANCE), associationService
-							.getTargetAssoc(listItemNodeRef, ProjectModel.ASSOC_THL_TASKLEGEND), associationService
-							.getTargetAssoc(listItemNodeRef, ProjectModel.ASSOC_THL_TASK), associationService
-							.getTargetAssocs(listItemNodeRef, WorkflowModel.ASSOC_ASSIGNEES)));
-				}
-			}
-		}
-
-		return taskHistoryList;
 	}
 
 	private List<DeliverableListDataItem> loadDeliverableList(NodeRef listContainerNodeRef) {
@@ -238,7 +209,7 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 			NodeRef taskListNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
 
 			if (taskListNodeRef != null) {
-				deliverableList = new ArrayList<DeliverableListDataItem>();
+				deliverableList = new LinkedList<DeliverableListDataItem>();
 				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(taskListNodeRef,
 						ProjectModel.TYPE_DELIVERABLE_LIST);
 
@@ -246,7 +217,7 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 
 					String s = (String) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_DL_STATE);
 					DeliverableState deliverableState = s != null ? DeliverableState.valueOf(s)
-							: DeliverableState.NotYetStarted;
+							: DeliverableState.Planned;
 
 					deliverableList.add(new DeliverableListDataItem(listItemNodeRef, associationService.getTargetAssoc(
 							listItemNodeRef, ProjectModel.ASSOC_DL_TASK), deliverableState, (String) nodeService

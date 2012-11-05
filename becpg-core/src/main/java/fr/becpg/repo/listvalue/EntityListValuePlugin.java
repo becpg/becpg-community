@@ -140,10 +140,12 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	}
 
 	public String[] getHandleSourceTypes() {
-		return new String[] { SOURCE_TYPE_TARGET_ASSOC, SOURCE_TYPE_PRODUCT, SOURCE_TYPE_LINKED_VALUE, SOURCE_TYPE_PRODUCT_REPORT, SOURCE_TYPE_LIST_VALUE };
+		return new String[] { SOURCE_TYPE_TARGET_ASSOC, SOURCE_TYPE_PRODUCT, SOURCE_TYPE_LINKED_VALUE,
+				SOURCE_TYPE_PRODUCT_REPORT, SOURCE_TYPE_LIST_VALUE };
 	}
 
-	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize,
+			Map<String, Serializable> props) {
 
 		String path = (String) props.get(ListValueService.PROP_PATH);
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
@@ -183,7 +185,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 * @return the map
 	 */
 	@SuppressWarnings("unchecked")
-	protected ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames, Map<String, Serializable> props) {
+	protected ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize,
+			String[] arrClassNames, Map<String, Serializable> props) {
 
 		if (logger.isDebugEnabled()) {
 			if (arrClassNames != null) {
@@ -217,14 +220,16 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			if (extras != null) {
 				String filterByAssoc = (String) extras.get(PROP_FILTER_BY_ASSOC);
 				String strAssocNodeRef = (String) props.get(ListValueService.PROP_PARENT);
-				if (filterByAssoc != null && filterByAssoc.length() > 0 && strAssocNodeRef != null && strAssocNodeRef.length() > 0) {
+				if (filterByAssoc != null && filterByAssoc.length() > 0 && strAssocNodeRef != null
+						&& strAssocNodeRef.length() > 0) {
 					QName assocQName = QName.createQName(filterByAssoc, namespaceService);
 
 					NodeRef nodeRef = new NodeRef(strAssocNodeRef);
 
 					if (nodeService.exists(nodeRef)) {
 
-						List<NodeRef> tmp = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_UNLIMITED);
+						List<NodeRef> tmp = beCPGSearchService
+								.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_UNLIMITED);
 
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
 
@@ -244,7 +249,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 		}
 
-		return new ListValuePage(ret, pageNum, pageSize, new TargetAssocValueExtractor(ContentModel.PROP_NAME, nodeService, namespaceService));
+		return new ListValuePage(ret, pageNum, pageSize, new TargetAssocValueExtractor(ContentModel.PROP_NAME,
+				nodeService, namespaceService));
 
 	}
 
@@ -263,7 +269,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 *            the query
 	 * @return the map
 	 */
-	private ListValuePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+	private ListValuePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize,
+			Map<String, Serializable> props) {
 
 		NodeRef itemIdNodeRef = null;
 
@@ -314,7 +321,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 
-		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE, nodeService));
+		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE,
+				nodeService));
 
 	}
 
@@ -345,7 +353,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 
-		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));
+		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME,
+				nodeService));
 
 	}
 
@@ -395,7 +404,9 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		if (arrClassNames != null) {
 			for (int i = 0; i < arrClassNames.length; i++) {
 				QName filteredType = QName.createQName(arrClassNames[i], namespaceService);
-				ret = ret || Pattern.matches(autoNumService.getAutoNumMatchPattern(filteredType, BeCPGModel.PROP_CODE), query);
+				ret = ret
+						|| Pattern.matches(autoNumService.getAutoNumMatchPattern(filteredType, BeCPGModel.PROP_CODE),
+								query);
 			}
 		} else {
 			ret = ret || Pattern.matches(autoNumService.getAutoNumMatchPattern(type, BeCPGModel.PROP_CODE), query);
@@ -430,7 +441,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		query = prepareQuery(query);
 		List<NodeRef> tplsNodeRef = reportTplService.suggestUserReportTemplates(ReportType.Document, nodeType, query);
 
-		return new ListValuePage(tplsNodeRef, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));
+		return new ListValuePage(tplsNodeRef, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME,
+				nodeService));
 	}
 
 	/**
@@ -444,7 +456,9 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	protected String prepareQuery(String query) {
 
 		logger.debug("Query before prepare:" + query);
-		if (query != null && !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE) || query.endsWith(SUFFIX_SIMPLE_QUOTE))) {
+		if (query != null
+				&& !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE) || query
+						.endsWith(SUFFIX_SIMPLE_QUOTE))) {
 			// Query with wildcard are not getting analyzed by stemmers
 			// so do it manually
 			Analyzer analyzer = getTextAnalyzer();
@@ -538,4 +552,99 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		return query != null && query.trim().equals(SUFFIX_ALL);
 	}
 
+	boolean isQueryMath(String query, String entityName) {
+
+		if (query != null) {
+
+			if (SUFFIX_ALL.equals(query)) {
+				return true;
+			}
+
+			Analyzer analyzer = getTextAnalyzer();
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Using analyzer : " + analyzer.getClass().getName());
+			}
+			TokenStream querySource = null;
+			Reader queryReader = null;
+			TokenStream productNameSource = null;
+			Reader productNameReader = null;
+			try {
+
+				queryReader = new StringReader(query);
+				productNameReader = new StringReader(entityName);
+				querySource = analyzer.tokenStream(null, queryReader);
+				productNameSource = analyzer.tokenStream(null, productNameReader);
+
+				Token reusableToken = new Token();
+				boolean match = true;
+				while ((reusableToken = querySource.next(reusableToken)) != null) {
+					Token tmpToken = new Token();
+					while ((tmpToken = productNameSource.next(tmpToken)) != null) {
+						match = false;
+						if (logger.isDebugEnabled()) {
+							logger.debug("Test StartWith : " + reusableToken.term() + " with " + tmpToken.term());
+						}
+
+						if (tmpToken.term().startsWith(reusableToken.term())) {
+							match = true;
+							break;
+						}
+					}
+					if (!match) {
+						break;
+					}
+				}
+				querySource.reset();
+				productNameSource.reset();
+				return match;
+			} catch (Exception e) {
+				logger.error(e, e);
+			} finally {
+
+				try {
+					if (querySource != null) {
+						querySource.close();
+					}
+					if (productNameSource != null) {
+						productNameSource.close();
+					}
+
+				} catch (IOException e) {
+					// Nothing todo here
+					logger.error(e, e);
+				}
+
+			}
+
+		}
+
+		return false;
+	}
+	
+	/**
+	 * Suggest a dalist item
+	 * @param entityNodeRef
+	 * @param datalistType
+	 * @param propertyQName
+	 * @param query
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	protected ListValuePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum, Integer pageSize) {
+		String queryPath = "";
+
+		query = prepareQuery(query);
+		
+		queryPath += LuceneHelper.getCondType(datalistType, null);
+		queryPath += LuceneHelper.getCondContainsValue(propertyQName, query, Operator.AND);
+		queryPath += LuceneHelper.getCond(String.format(" +PATH:\"%s/*/*/*\"", nodeService.getPath(entityNodeRef).toPrefixString(namespaceService)), Operator.AND);		
+		
+		logger.debug("suggestDatalistItem for query : " + queryPath);
+
+		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, LuceneHelper.getSort(propertyQName), RepoConsts.MAX_SUGGESTIONS);
+
+		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
+	}
 }
