@@ -1,0 +1,291 @@
+.project-list {
+	clear: both;
+}
+
+.datagrid {
+	margin: 0px;
+	padding: 0px;
+}
+
+.project-list .alfresco-datatable thead {
+	display: table-header-group;
+}
+
+.datagrid .datagrid-bar .item-select {
+	float: left;
+	width: auto;
+}
+
+/* project-list bar */
+.project-list .project-list-bar {
+	background-color: #f8f8f8;
+	border-bottom: 1px dashed #c0c0c0;
+	margin: 0 -10px;
+	padding: 4px 0.5em 2px;
+}
+
+.project-list .project-list-bar-bottom {
+	border-top: 1px dashed #d9d9d9;
+	margin-top: 2em;
+}
+
+
+.project-list span.separator {
+	border-right: 1px dotted #457A9C;
+	border-top: medium none;
+	margin: 0 4px;
+	padding: 2px 0;
+	position: relative;
+	top: -4px;
+	vertical-align: bottom;
+}
+
+/* project-list bar Buttons and Paginator */
+.project-list .project-list-bar .thin,.project-list .project-list-bar .paginator
+	{
+	padding: 4px 1em;
+	margin: 0;
+}
+
+.project-list .project-list-bar .yui-u {
+	text-align: right;
+}
+
+.project-list .project-list-bar .yui-u.first {
+	text-align: left;
+}
+
+.project-list .project-list-bar .yui-pg-current {
+	margin-right: 0;
+}
+
+/* Data Table */
+.project-list .projects table {
+	border: medium none;
+	width: 100%;
+}
+/* 
+.project-list .projects thead
+{
+   display: none;
+} 
+*/
+.project-list .projects tbody {
+	outline: none;
+}
+
+.project-list .projects .yui-dt table {
+	border: none;
+}
+
+.project-list tr.yui-dt-odd {
+	background-color: #ffffff;
+}
+
+.project-list .projects td.yui-dt-last .yui-dt-liner {
+	visibility: hidden;
+}
+
+.project-list .projects tr:hover td.yui-dt-last .yui-dt-liner {
+	border-left: 1px solid #c5e6e9;
+	visibility: visible;
+}
+
+/*
+.project-list .projects tr.yui-dt-highlighted td.yui-dt-last .yui-dt-liner
+{
+   border-left: 1px solid #c5e6e9;
+   visibility: visible;
+}
+*/
+.project-list .projects .yui-dt-data td {
+	border-bottom: 1px dashed #d9d9d9;
+	border-right: medium none;
+	vertical-align: middle;
+}
+
+.project-list .projects .yui-dt-data .yui-dt-last td {
+	border-bottom: medium none;
+}
+
+.project-list .projects tr.yui-dt-first td {
+	border-top: medium none;
+}
+
+.project-list .projects td.yui-dt-last {
+	border-left: 1px solid #fff;
+	vertical-align: middle;
+}
+
+.project-list .yui-dt-liner {
+	padding: 4px;
+}
+
+.project-list .projects tr.yui-dt-first td.yui-dt-empty,.project-list .projects tr.yui-dt-first td.yui-dt-loading
+	{
+	border-right: medium none;
+	padding: 0.5em 1em;
+}
+
+.project-list .yui-dt-error {
+	background: red;
+	color: white;
+	font-weight: bold;
+	margin: 1em auto;
+	padding: 1em;
+}
+
+/* This rule is vital to workaround a Firefox mouseout bug */
+.project-list .yui-dt-col-2 {
+	overflow: visible;
+}
+
+/* Cell Renderers */
+.project-list .projects {
+	color: #333333;
+	margin: 0 -10px 0 -8px;
+}
+
+.project-list .projects .yui-dt-col-id .yui-dt-liner {
+	padding: 0.5em 1em;
+	text-align: center;
+}
+
+.project-list .projects .yui-dt-col-title .yui-dt-liner div {
+	float: left;
+	margin-top: 0.5em;
+	min-width: 15em;
+}
+
+.project-list .projects .yui-dt-col-title .yui-dt-liner div.type {
+	clear: both;
+	margin-bottom: 0.5em;
+}
+
+.project-list .project-cancel-link,.project-list .project-view-link {
+	background: no-repeat scroll 4px 1px;
+	border: 1px solid transparent;
+	padding: 2px 0 2px 30px;
+	min-height: 16px;
+}
+
+.project-list .project-cancel-link {
+	background-image: url( ../images/remove-icon-16.png );
+}
+
+.project-list .project-view-link {
+	background-image: url( ../images/workflow-16.png );
+}
+
+.project-list .project-cancel-link a,.project-list .project-view-link a
+	{
+	min-height: 2em;
+	cursor: pointer;
+	color: #2B6EB5;
+	outline-color: invert;
+	outline-width: medium;
+	text-decoration: none;
+}
+
+.project-list .project-cancel-link-over,.project-list .project-view-link-over
+	{
+	background-color: #FFF;
+	border: 1px solid #2B6EB5;
+	cursor: pointer;
+}
+
+.project-list span.advancement-less100 {
+	background: url( ./images/health-80plus-16.png ) no-repeat;
+	padding-left: 24px;
+}
+
+.project-list span.advancement-less80 {
+	background: url( ./images/health-60to79-16.png ) no-repeat;
+	padding-left: 24px;
+}
+
+.project-list span.advancement-less60 {
+	background: url( ./images/health-40to59-16.png ) no-repeat;
+	padding-left: 24px;
+}
+
+.project-list span.advancement-less40 {
+	background: url( ./images/health-20to39-16.png ) no-repeat;
+	padding-left: 24px;
+}
+
+.project-list span.advancement-less20 {
+	background: url( ./images/health-00to19-16.png ) no-repeat;
+	padding-left: 24px;
+}
+
+.project-list span.advancement-less100-32 {
+	background: url( ./images/health-80plus.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.project-list span.advancement-less80-32 {
+	background: url( ./images/health-60to79.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.project-list span.advancement-less60-32 {
+	background: url( ./images/health-40to59.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.project-list span.advancement-less40-32 {
+	background: url( ./images/health-20to39.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.project-list span.advancement-less20-32 {
+	background: url( ./images/health-00to19.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.project-list div.projectStatus {
+	width: 15px;
+	height: 15px;
+	border: 1px solid;
+	border-radius: 5px;
+	margin-right: 5px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.project-list  table a.task-edit,.project-list  table a.task-details {
+	cursor: pointer;
+	padding: 1em;
+	text-decoration: none;
+	margin-left: 10px;
+}
+
+.project-list table a.task-edit {
+	background: url("../images/edit-16.png") no-repeat scroll left center
+		transparent;
+}
+
+.project-list table a.task-details {
+	background: url("../images/task-16.png") no-repeat scroll left center
+		transparent;
+}
+
+.project-list span.doc-file {
+	background-position: 2px 50%;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	margin-left: -4px;
+	min-height: 16px;
+	padding: 2px 0 1px 24px;
+}

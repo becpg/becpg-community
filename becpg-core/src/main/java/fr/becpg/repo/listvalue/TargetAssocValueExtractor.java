@@ -54,6 +54,9 @@ public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
     				cssClass+="-"+state;
     				props.put("state", state);
     			}
+    			if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COLOR)){
+    				props.put("color", (String)nodeService.getProperty(nodeRef, BeCPGModel.PROP_COLOR));
+    			}
     			
     			ListValueEntry entry = new ListValueEntry(nodeRef.toString(),name, cssClass, props);
    

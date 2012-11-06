@@ -1,0 +1,5 @@
+<webscript>
+   <shortname>Project List Toolbar</shortname>
+   <description>Toolbar for the project list</description>
+   <url>/components/project/project-list-toolbar</url>
+</webscript>

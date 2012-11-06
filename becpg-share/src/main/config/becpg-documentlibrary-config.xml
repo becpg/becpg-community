@@ -31,6 +31,7 @@
 				<aspect name="gs1:gs1Aspect" />
 				<aspect name="pack:palletAspect" />				
 				<aspect name="ext1:customAspect" />
+				<aspect name="bp:cataloguable" />
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -63,6 +64,7 @@
 				<aspect name="gs1:gs1Aspect" />
 				<aspect name="pack:palletAspect" />
 				<aspect name="ext1:customAspect" />
+				<aspect name="bp:cataloguable" />
 			</addable>
 
 			<!-- Aspects that a user can remove. Same as "visible" if left empty -->
@@ -95,6 +97,7 @@
 				<aspect name="gs1:gs1Aspect" />
 				<aspect name="pack:palletAspect" />
 				<aspect name="ext1:customAspect" />
+				<aspect name="bp:cataloguable" />
 			</removeable>
 		</aspects>
 

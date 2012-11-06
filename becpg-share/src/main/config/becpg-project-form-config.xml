@@ -52,6 +52,31 @@
 					<field id="cm:name" mandatory="false" read-only="false" />
 				</appearance>
 			</form>
+			
+			<form id="datagrid">
+				<field-visibility>
+				  <show id="pjt:projectPriority" />
+				  <show id="pjt:completionPercent"/>
+				  <show id="pjt:projectHierarchy1" />
+				  <show id="bcpg:code" />
+				  <show id="cm:name" />
+				  <show id="pjt:projectEntity" />
+				  <show id="pjt:projectStatus" />
+				  <show id="dataList_pjt:taskHistoryList" />
+				  <show id="dataList_pjt:deliverableList" />
+				  <show id="dataList_pjt:taskList" />
+		   	  <show id="cm:creator" />
+				  <show id="pjt:projectStartDate" />
+				  <show id="pjt:projectCompletionDate" />
+				  <show id="pjt:projectDueDate" />
+				 </field-visibility>
+			
+			</form>
+			
+	<!-- <form id="filter">
+			
+			</form> -->
+			
 		</forms>
 	</config>
 	<config condition="pjt:taskLegend" evaluator="node-type">

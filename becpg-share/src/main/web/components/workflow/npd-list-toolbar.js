@@ -19,8 +19,9 @@
     * @return {beCPG.component.NpdListToolbar} The new WorkflowListToolbar instance
     * @constructor
     */
-   beCPG.component.NpdListToolbar = function TDH_constructor(htmlId)
+   beCPG.component.NpdListToolbar = function TDH_constructor(htmlId, view)
    {
+   	this.view = view;
       beCPG.component.NpdListToolbar.superclass.constructor.call(this, "beCPG.component.NpdListToolbar", htmlId, ["button"]);
       return this;
    };
@@ -37,11 +38,14 @@
       {
          this.widgets.startWorkflowButton = Alfresco.util.createYUIButton(this, "startNpd-button", this.onStartWorkflowButtonClick, {});
          
-         this.widgets.showGanttButton = Alfresco.util.createYUIButton(this, "show-gantt-button", this.onStartWorkflowButtonClick);
-         this.widgets.showPlanningButton =  Alfresco.util.createYUIButton(this, "show-planning-button", this.onStartWorkflowButtonClick);
+         this.widgets.showGanttButton = Alfresco.util.createYUIButton(this, "show-gantt-button", this.onGanttButtonClick);
+         this.widgets.showPlanningButton =  Alfresco.util.createYUIButton(this, "show-planning-button", this.onPlanningButtonClick);
          
-         this.widgets.showGanttButton.set("disabled", true);
-         this.widgets.showPlanningButton.set("disabled", true);
+         if (this.view == "gantt") {
+	         this.widgets.showGanttButton.set("disabled", true);
+         } else {
+	         this.widgets.showPlanningButton.set("disabled", true);
+         }
          
          Dom.removeClass(Selector.query(".hidden", this.id + "-body", true), "hidden");
       },
@@ -56,7 +60,16 @@
       onStartWorkflowButtonClick: function WLT_onNewFolder(e, p_obj)
       {
          document.location.href = Alfresco.util.siteURL("start-workflow?referrer=workflows&myWorkflowsLinkBack=true");
+      },
+      onGanttButtonClick: function WLT_onGanttButtonClick(e, p_obj)
+      {
+         document.location.href = Alfresco.util.siteURL("npd-list?view=gantt");
+      },
+      onPlanningButtonClick: function WLT_onPlanningButtonClick(e, p_obj)
+      {
+         document.location.href = Alfresco.util.siteURL("npd-list");
       }
+      
 
    });
 

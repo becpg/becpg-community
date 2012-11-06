@@ -1,5 +1,6 @@
 package fr.becpg.repo.entity.datalist.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,9 +24,11 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
+import fr.becpg.repo.helper.AttributeExtractorService;
 
 @Service
 public class SimpleExtractor extends AbstractDataListExtractor {
@@ -33,6 +36,8 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	private FileFolderService fileFolderService;
 
 	private DictionaryService dictionaryService;
+	
+	private EntityListDAO entityListDAO;
 	
 	private static Log logger = LogFactory.getLog(SimpleExtractor.class);
 	
@@ -45,14 +50,32 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		this.dictionaryService = dictionaryService;
 	}
 
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination, boolean hasWriteAccess) {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(pagination.getPageSize());
+		
+		List<NodeRef> results = getListNodeRef(dataListFilter, pagination );
+		
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
 
-		List<NodeRef> results = null;
+		for (NodeRef nodeRef : results) {
+			ret.getItems().add(extract(nodeRef, metadataFields, props));
+		}
+
+		ret.setFullListSize(pagination.getFullListSize());
+
+		return ret;
+	}
+
+	private List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
+	
+		List<NodeRef> results = new ArrayList<NodeRef>();
 
 		if (dataListFilter.isAllFilter()) {
 
@@ -97,19 +120,30 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 			results = pagination.paginate(results);
 
 		}
-
-		for (NodeRef nodeRef : results) {
-			ret.getItems().add(extract(nodeRef, metadataFields, props));
-		}
-
-		ret.setFullListSize(pagination.getFullListSize());
-
-		return ret;
+		return results;
 	}
 
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<String, Object> props) {
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, metadataFields, false);
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, final Map<String, Object> props) {
+		return attributeExtractorService.extractNodeData(nodeRef, itemType, metadataFields, false, new AttributeExtractorService.DataListCallBack() {
+			
+			@Override
+			public List<Map<String, Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname, List<String> metadataFields) {
+				
+				List<Map<String, Object>> ret = new ArrayList<Map<String,Object>>();
+				
+				NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+				NodeRef listNodeRef =   entityListDAO.getList(listContainerNodeRef, dataListQname);
+				List<NodeRef> results = entityListDAO.getListItems(listNodeRef, dataListQname);
+			
+				for (NodeRef nodeRef : results) {
+					ret.add(extract(nodeRef, metadataFields, props));
+				}
+
+				
+				return ret;
+			}
+		});
 	}
 
 }

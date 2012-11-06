@@ -18,13 +18,21 @@ import fr.becpg.config.format.PropertyFormats;
  */
 public interface AttributeExtractorService {
 
+	public interface DataListCallBack {
+
+		List<Map<String,Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname, List<String> metadataFields);
+
+	}
+
 	public String getStringValue(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
 
 	public String getPersonDisplayName(String userId);
 
 	public Serializable getProperty(NodeRef nodeRef, QName propQname);
-
+	
 	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch);
+
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch, DataListCallBack callback);
 
 	public String getDisplayPath(NodeRef nodeRef);
 

@@ -89,7 +89,10 @@
 					<show id="bcpg:trademark" force="true" />
 					<show id="bcpg:clients" />
 					<show id="rep:reportTpls" />
-
+					
+					<!-- Product Catalog -->
+					<show id="bp:productCatalogs" force="true" />
+					
 					<!-- formulation -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
@@ -230,6 +233,9 @@
 					<field id="bcpg:trademark" set="mainInfo" />
 					<field id="bcpg:clients" set="mainInfo" />
 					<field id="rep:reportTpls" set="mainInfo" />
+					
+					<!-- Product Catalog -->
+					<field id="bp:productCatalogs" set="mainInfo" />
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />

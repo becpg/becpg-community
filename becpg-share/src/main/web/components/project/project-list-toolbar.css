@@ -1,0 +1,82 @@
+.project-list-toolbar
+{
+   margin: 0px -10px;   
+   visibility: visible;
+}
+
+.project-list-toolbar .header-bar
+{
+   clear: both;
+   min-height: 1.7em;
+   padding: 4px 0.5em 9px;
+}
+
+.project-list-toolbar .hidden
+{
+   visibility: hidden;
+}
+
+.project-list-toolbar .left
+{
+   float: left;
+}
+
+.project-list-toolbar .right
+{
+   float: right;
+}
+
+.project-list-toolbar .start-project span.first-child
+{
+   background: url("images/project-16.png") no-repeat scroll 12px 4px transparent;
+   padding-left: 22px;
+}
+
+.project-list-toolbar .right .separator
+{
+   float: left;
+}
+
+.project-list-toolbar .show-gantt,
+.project-list-toolbar .show-planning,
+.project-list-toolbar .export-csv
+{
+   float: left;
+}
+
+
+.project-list-toolbar .show-gantt span.first-child,
+.project-list-toolbar .show-planning span.first-child,
+.project-list-toolbar .export-csv span.first-child
+{
+   background-position: 50% 50%;
+   background-repeat: no-repeat;
+   min-height: 16px;
+   padding: 0 2px;
+}
+
+.project-list-toolbar .show-gantt span.first-child
+{
+   background-image: url("images/gantt-16.png");
+}
+
+.project-list-toolbar .show-gantt .yui-button-disabled span.first-child
+{
+   background-image: url("images/gantt-disabled-16.png");
+}
+
+.project-list-toolbar .show-planning span.first-child
+{
+   background-image: url("images/planning-16.png");
+}
+
+.project-list-toolbar .show-planning .yui-button-disabled span.first-child
+{
+   background-image: url("images/planning-disabled-16.png");
+}
+
+
+.project-list-toolbar .export-csv span.first-child
+{
+   background-image: url(../../components/images/filetypes/xls-file-16.png);
+}

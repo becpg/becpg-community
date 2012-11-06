@@ -282,6 +282,7 @@
 		<property name="advSearchService" ref="advSearchService" />
 		<property name="dictionaryService" ref="dictionaryService"/>
 		<property name="fileFolderService" ref="fileFolderService"/>
+		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 
 	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor" parent="simpleExtractor">
