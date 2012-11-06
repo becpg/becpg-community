@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -48,8 +49,14 @@ public class RepoServiceImpl implements RepoService {
 	/** The fileFolderService service. */
 	private FileFolderService fileFolderService;
 	
-	
-		
+
+	private Repository repository;
+
+
+	public void setRepository(Repository repository) {
+		this.repository = repository;
+	}
+
 	/**
 	 * 
 	 * @param fileFolderService
@@ -129,6 +136,12 @@ public class RepoServiceImpl implements RepoService {
 		
 		return null;
 	}
+	
+
+	@Override
+	public NodeRef getFolderByPath(String path) {
+		return getFolderByPath(repository.getCompanyHome(), path);
+	}
 
 	@Override
 	public void moveNode(NodeRef nodeRefToMove, NodeRef destionationNodeRef) {
@@ -178,4 +191,5 @@ public class RepoServiceImpl implements RepoService {
 		
 		return name;
 	}
+
 }

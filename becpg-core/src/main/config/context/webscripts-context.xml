@@ -250,5 +250,12 @@
 		<property name="mimetypeService" ref="mimetypeService" />
 	</bean>
 
+	<!-- Project -->
+	<bean id="webscript.fr.becpg.project.projectModuleInfo.get" class="fr.becpg.repo.project.web.scripts.ProjectModuleInfoWebScript"
+	  parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="projectService" ref="projectService"/>
+	</bean>
+
 
 </beans>
