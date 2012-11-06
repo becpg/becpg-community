@@ -165,7 +165,7 @@
 				<aspect>bcpg:colorAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
+
 		<type name="pjt:taskList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -183,7 +183,7 @@
 				<property name="pjt:tlWorkflowName">
 					<type>d:text</type>
 					<constraints>
-						<constraint ref="pjt:allowedWorkflows"/>
+						<constraint ref="pjt:allowedWorkflows" />
 					</constraints>
 				</property>
 				<property name="pjt:tlStart">

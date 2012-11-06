@@ -499,6 +499,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			specialiseType = QualityModel.TYPE_QUALITY_CONTROL;
 		} else if (folderName == RepoConsts.PATH_NC) {
 			specialiseType = QualityModel.TYPE_NC;
+		} else if (folderName == RepoConsts.PATH_PROJECT_TEMPLATES) {
+			specialiseType = ProjectModel.TYPE_PROJECT_TPL;
 		} else {
 			return;
 		}

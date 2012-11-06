@@ -41,6 +41,7 @@
 			<type name="association:bcpg:product" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
 					<control-param name="ds">becpg/autocomplete/product</control-param>
 			</type>
+			<type name="association:bcpg:entity" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 			<type name="association:bcpg:charact" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
 			<type name="association:bcpg:subsidiary" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 			<type name="association:bcpg:plant" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
