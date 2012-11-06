@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>Project List</shortname>
+  <description>Component for displaying projects</description>
+  <url>/components/project/project-list</url>
+</webscript>

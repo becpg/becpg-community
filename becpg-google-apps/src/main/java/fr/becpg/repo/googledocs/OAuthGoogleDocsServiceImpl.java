@@ -177,7 +177,8 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 		}
 
 		if (logger.isDebugEnabled() == true) {
-			logger.debug("Setting user credentials for GDoc service. (serviceName=" + serviceName + ", oauthToken=" + oauthtoken + ")");
+			logger.debug("Setting user credentials for GDoc service. (serviceName=" + serviceName + ", oauthToken=" + oauthtoken.getOAuthToken() + ")");
+			logger.debug("Using 2 LeggedOAUTH : "+OAuthTokenUtils.is2LeggedOAuth());
 		}
 
 		try {
@@ -188,6 +189,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 				service.setOAuthCredentials(oauthtoken, OAuthTokenUtils.getRSASigner());
 			}
 			// Valid access token
+		
 			
 
 		} catch (Exception e) {
@@ -698,7 +700,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 					}
 
 					MediaContent mc = new MediaContent();
-					mc.setUri(downloadUrl);
+					mc.setUri(addRequiredParams(downloadUrl));
 					MediaSource ms = service.getMedia(mc);
 
 					result = ms.getInputStream();
@@ -760,9 +762,13 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 	 */
 	private <E extends IEntry> E getEntry(String resourceId, Class<E> entryClass) {
 		E result = null;
+		
 		try {
-			URL docEntryURL = new URL(url + "/" + resourceId);
+
+			URL docEntryURL = new URL(addRequiredParams(url + "/" + resourceId));
 			result = getDocumentService().getEntry(docEntryURL, entryClass);
+			
+			
 		} catch (ServiceException e) {
 			if (logger.isDebugEnabled() == true) {
 				logger.debug("Unable to get document list entry for resource " + resourceId + " because " + e.getMessage());
@@ -776,6 +782,22 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 		}
 		return result;
 	}
+	
+	private String addRequiredParams(String url) {
+		if(OAuthTokenUtils.getCurrentOAuthToken()!=null && OAuthTokenUtils.is2LeggedOAuth()){
+			boolean first = url.contains("?");
+			
+			url+=first?"?":"&"+"xoauth_requestor_id="+AuthenticationUtil.getFullyAuthenticatedUser();
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("2Legged OAUTH mod Append xoauth_requestor_id :"+url);
+			}
+		}
+		
+		
+		return url;
+	}
+
 
 	/**
 	 * Create a google document
@@ -815,7 +837,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 			}
 
 			// Parent folder url
-			String parentFolderUrl = buildUrl();
+			String parentFolderUrl = url;
 			if (parentFolder != null) {
 				parentFolderUrl = ((MediaContent) parentFolder.getContent()).getUri();
 				if (logger.isDebugEnabled() == true) {
@@ -853,7 +875,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 			docEntry.setTitle(new PlainTextConstruct(name));
 
 			// Upload the document into the parent folder
-			document = getDocumentService().insert(new URL(parentFolderUrl), docEntry);
+			document = getDocumentService().insert(new URL(addRequiredParams(parentFolderUrl)), docEntry);
 
 			// Mark create entry
 			markResource(KEY_MARKED_CREATE, document.getResourceId());
@@ -939,7 +961,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 			}
 
 			// Parent folder url
-			String parentFolderUrl = buildUrl();
+			String parentFolderUrl = url;
 			if (parentFolder != null) {
 				parentFolderUrl = ((MediaContent) parentFolder.getContent()).getUri();
 			}
@@ -949,7 +971,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 			folder.setTitle(new PlainTextConstruct(folderName));
 
 			// Create the folder
-			folderEntry = getDocumentService().insert(new URL(parentFolderUrl), folder);
+			folderEntry = getDocumentService().insert(new URL(addRequiredParams(parentFolderUrl)), folder);
 
 			// Mark create entry
 			markResource(KEY_MARKED_CREATE, folderEntry.getResourceId());
@@ -973,18 +995,10 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 
 		return folderEntry;
 	}
-
-	private String buildUrl() {
-		String ret = url;
-		if(OAuthTokenUtils.getCurrentOAuthToken()!=null){
-			if(logger.isDebugEnabled()){
-				logger.debug("OAUTH mod Append xoauth_requestor_id :"+OAuthTokenUtils.getCurrentOAuthToken().toString());
-			}
-			ret+="?xoauth_requestor_id="+AuthenticationUtil.getFullyAuthenticatedUser();
-		}
-		
-		return ret;
-	}
+//
+//	private String buildUrl() {		
+//		return url+getExtraParams(true);
+//	}
 
 	/**
 	 * Set permissions on a googleDoc resource
@@ -1009,7 +1023,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 			AclScope scope = new AclScope(AclScope.Type.USER, email);
 
 			// Get the URL
-			URL aclFeedLinkURL = new URL(resource.getAclFeedLink().getHref());
+			URL aclFeedLinkURL = new URL(addRequiredParams(resource.getAclFeedLink().getHref()));
 
 			// See if we have already set this permission or not
 			AclEntry aclEntry = null;
@@ -1121,7 +1135,8 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 				try {
 					DocumentListEntry entry = getDocumentListEntry(resourceId);
 					if (entry != null) {
-						URL url = new URL(entry.getEditLink().getHref() + "?delete=true");
+
+						URL url = new URL(addRequiredParams(entry.getEditLink().getHref() +"?delete=true"));
 						if (logger.isDebugEnabled() == true) {
 							logger.debug("Delete resource " + resourceId + " during commit. with url : "+url.toString());
 						}
@@ -1162,7 +1177,7 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 				try {
 					DocumentListEntry entry = getDocumentListEntry(resourceId);
 					if (entry != null) {
-						getDocumentService().delete(new URL(entry.getEditLink().getHref() + "?delete=true"), entry.getEtag());
+						getDocumentService().delete(new URL(addRequiredParams(entry.getEditLink().getHref()+"?delete=true")), entry.getEtag());
 					} else {
 						if (logger.isDebugEnabled() == true) {
 							logger.debug("Unable to delete resource " + resourceId + " during rollback.");
@@ -1177,6 +1192,8 @@ public class OAuthGoogleDocsServiceImpl extends TransactionListenerAdapter imple
 			}
 		}
 	}
+
+
 
 	private TransactionListener validateCredentials = new TransactionListener() {
 

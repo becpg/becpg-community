@@ -49,6 +49,7 @@ import org.springframework.util.StringUtils;
 
 import com.google.gdata.client.authn.oauth.GoogleOAuthHelper;
 import com.google.gdata.client.authn.oauth.GoogleOAuthParameters;
+import com.google.gdata.client.authn.oauth.OAuthParameters.OAuthType;
 
 import fr.becpg.repo.security.authentication.openid.OpenID4JavaConsumer;
 import fr.becpg.repo.security.authentication.openid.OpenIdAuthenticator;
@@ -138,6 +139,9 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 	    if (authenticateRequest(context, (HttpServletRequest) request, (HttpServletResponse) response)) {
 			chain.doFilter(request, response);
 		}
+	    
+	    //Reset OAUTH token
+	    OAuthTokenUtils.setCurrentOAuthToken(null);
 
 	}
 
@@ -164,6 +168,10 @@ public class OpenIdAuthenticationFilter extends BaseAuthenticationFilter impleme
 				}
 				// Set access token
 				oauthParameters.setOAuthToken(accessToken);
+			} 
+			
+			if(OAuthTokenUtils.is2LeggedOAuth()){
+				oauthParameters.setOAuthType(OAuthType.TWO_LEGGED_OAUTH);
 			}
 			request.getSession().setAttribute(OAUHT_SESSION_TOKEN, oauthParameters);
 			OAuthTokenUtils.setCurrentOAuthToken(oauthParameters);

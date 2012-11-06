@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<page>
+   <title>Project List</title>
+   <title-id>header.project-list.label</title-id>
+   <description>Project list</description>
+   <description-id>header.project-list.description</description-id>
+   <template-instance>project-list</template-instance>
+   <authentication>user</authentication>
+</page>

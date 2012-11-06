@@ -1,4 +1,9 @@
 <#assign el=args.htmlid?js_string>
+<#if page.url.args.view??>
+		<#assign view=page.url.args.view?js_string>
+<#else>
+	<#assign view="dataTable">
+</#if>
 <div id="${el}-body" class="npd-list-toolbar toolbar">
    <div id="${el}-headerBar" class="header-bar flat-button theme-bg-2">
       <div class="left">
@@ -26,7 +31,7 @@
    </div>
 </div>
 <script type="text/javascript">//<![CDATA[
-   new beCPG.component.NpdListToolbar("${el}").setMessages(
+   new beCPG.component.NpdListToolbar("${el}","${view}").setMessages(
       ${messages}
    );
 //]]></script>

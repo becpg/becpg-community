@@ -32,5 +32,27 @@
 			</form>
 		</forms>
 	</config>
+	
+	
+	<config condition="bp:productCatalog" evaluator="node-type">
+		<forms>
+			<form >
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="false" id="bp:productCatalogId" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<config condition="bp:productCatalog" evaluator="model-type">
+		<forms>
+			<form >
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="false" id="bp:mailingMembers" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 </alfresco-config>

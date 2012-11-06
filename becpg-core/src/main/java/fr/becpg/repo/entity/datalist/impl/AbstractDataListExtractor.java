@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +19,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.web.scripts.search.data.AbstractNodeDataExtractor;
 
@@ -76,6 +78,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	public static final String PROP_PERMISSIONS = "permissions";
 	public static final String PROP_ACTIONLABELS = "actionLabels";
 	public static final String PROP_ACCESSRIGHT = "accessRight";
+	public static final String PROP_SITE = "siteId";
 	
 
 	private static Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
@@ -136,7 +139,16 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			ret.put(PROP_ACTIONLABELS, new HashMap<String, Object>());
 			
 			ret.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields, props));
-		
+			
+			String path = nodeService.getPath(nodeRef).toPrefixString(services.getNamespaceService());
+			String displayPath = attributeExtractorService.getDisplayPath(nodeRef);
+
+			String siteId = SiteHelper.extractSiteId(path, displayPath);
+			
+			if(siteId!=null){
+				ret.put(PROP_SITE, siteId);
+			}
+			
 
 			return ret;
 

@@ -2,11 +2,13 @@ package fr.becpg.repo.helper.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -64,7 +66,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	private TaggingService taggingService;
 
 	private PermissionService permissionService;
-
+	
 	private SecurityService securityService;
 
 	private PropertyFormats propertyFormats = new PropertyFormats(false);
@@ -235,7 +237,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	@Override
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch) {
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch ){
+		return extractNodeData(nodeRef, itemType, metadataFields, isSearch, null);
+	}
+	
+	
+	
+	@Override
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch, AttributeExtractorService.DataListCallBack callback ) {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -246,31 +255,59 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		TypeDefinition typeDef = dictionaryService.getType(itemType);
 		Integer order = 0;
 		for (String field : metadataFields) {
-			QName fieldQname = QName.createQName(field, namespaceService);
-
-			if (hasReadAccess(itemType, field)) {
-
-				ClassAttributeDefinition propDef = getAttributeDef(fieldQname, typeDef);
-
-				if (propDef == null) {
-					for (QName aspectName : nodeService.getAspects(nodeRef)) {
-						AspectDefinition aspectDefinition = dictionaryService.getAspect(aspectName);
-						propDef = getAttributeDef(fieldQname, aspectDefinition);
-						if (propDef != null) {
-							break;
-						}
+		
+			if(field.contains("|")){
+				StringTokenizer tokeniser = new StringTokenizer(field, "|");
+				String dlField = tokeniser.nextToken();
+				
+				if(logger.isDebugEnabled()){
+					logger.debug("found nested field for:"+ dlField+" ("+field+")");
+				}
+				
+				QName fieldQname = QName.createQName(dlField, namespaceService);
+				
+				List<String> dLFields = new ArrayList<String>();
+				while(tokeniser.hasMoreTokens()){
+					dLFields.add(tokeniser.nextToken());
+				}
+				
+				
+				if(dictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM) && callback!=null){
+					if(logger.isDebugEnabled()){
+						logger.debug("Field :"+ fieldQname+" is a dataList");
 					}
+					ret.put("dt_"+dlField.replaceFirst(":", "_"), callback.extractDataListField( nodeRef, fieldQname, dLFields));
+
 				}
 
-				Object tmp = extractNodeData(nodeRef, propDef, isSearch, order++);
-
-				if (tmp != null) {
-					logger.debug("Extract field : " + field);
-					String prefix = "prop_";
-					if (isAssoc(propDef)) {
-						prefix = "assoc_";
+			} else {
+			
+				QName fieldQname = QName.createQName(field, namespaceService);
+	
+				if (hasReadAccess(itemType, field)) {
+	
+					ClassAttributeDefinition propDef = getAttributeDef(fieldQname, typeDef);
+	
+					if (propDef == null) {
+						for (QName aspectName : nodeService.getAspects(nodeRef)) {
+							AspectDefinition aspectDefinition = dictionaryService.getAspect(aspectName);
+							propDef = getAttributeDef(fieldQname, aspectDefinition);
+							if (propDef != null) {
+								break;
+							}
+						}
 					}
-					ret.put(prefix + field.replaceFirst(":", "_"), tmp);
+	
+					Object tmp = extractNodeData(nodeRef, propDef, isSearch, order++);
+	
+					if (tmp != null) {
+						logger.debug("Extract field : " + field);
+						String prefix = "prop_";
+						if (isAssoc(propDef)) {
+							prefix = "assoc_";
+						}
+						ret.put(prefix + field.replaceFirst(":", "_"), tmp);
+					}
 				}
 			}
 		}
@@ -280,6 +317,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 		return ret;
 	}
+
+	
+
 
 	private boolean isAssoc(ClassAttributeDefinition propDef) {
 		return propDef instanceof AssociationDefinition;

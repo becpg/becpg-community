@@ -134,7 +134,7 @@ public class DataListFilter {
 	}
 
 	public String getSearchQuery(NodeRef dataListNodeRef) {
-		return filterQuery + " +PARENT:\"" + dataListNodeRef + "\" ";
+		return filterQuery + (dataListNodeRef!=null ? " +PARENT:\"" + dataListNodeRef + "\" ":"");
 	}
 	
 	public boolean isSimpleItem() {

@@ -100,7 +100,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/gdata-codesearch-meta-2.0/4.0.d/gdata-codesearch-meta-2.0-4.0.d-community.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/gdata-contacts-3.0/4.0.d/gdata-contacts-3.0-4.0.d-community.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/gdata-contacts-meta-3.0/4.0.d/gdata-contacts-meta-3.0-4.0.d-community.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/gdata-core-1.0/4.0.d/gdata-core-1.0-4.0.d-community.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/gdata-core-1.0/4.0.d/gdata-core-1.0-4.0.d-community.jar" sourcepath="/GDATA-SRC"/>
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/gdata-docs-3.0/4.0.d/gdata-docs-3.0-4.0.d-community.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/gdata-docs-meta-3.0/4.0.d/gdata-docs-meta-3.0-4.0.d-community.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/gdata-finance-2.0/4.0.d/gdata-finance-2.0-4.0.d-community.jar"/>

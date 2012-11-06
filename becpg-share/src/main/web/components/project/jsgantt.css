@@ -1,0 +1,141 @@
+
+.projects  .yui-g .yui-u{
+    width: 50%;
+}
+
+.gdatehead {
+	border-left: #efefef 1px solid;
+}
+
+tr.gheader {
+		height: 23px;
+}
+
+.project-list .projects .yui-dt .gheader th {
+	vertical-align: middle;
+}
+
+.project-list .projects .yui-dt-data td.ghead,
+.project-list .projects .yui-dt-data td.gheadwkend {
+	 border-color: #D9D9D9;
+    border-style: dashed solid none none;
+    border-width: 1px 1px 0 0;
+    border-collapse: separate;
+}
+
+.gheadwkend {
+	background-color: #cfcfcf
+}
+
+
+.gweekend {
+	background-color: #EEEEEE;
+	text-align: center;
+}
+
+
+
+.project-list .projects .yui-dt-data td.gfoot {
+	border : none;
+	height: 40px;
+	vertical-align: middle;
+}
+/* 
+.gname {
+	HEIGHT: 18px
+}
+
+
+
+
+.gfiller {
+	BORDER-LEFT: #efefef 1px solid;
+	HEIGHT: 18px
+}
+
+.gfillerwkend {
+	BORDER-LEFT: #efefef 1px solid;
+	HEIGHT: 18px;
+	BACKGROUND-COLOR: #cfcfcf
+}
+
+.gitem {
+	HEIGHT: 18px
+}
+
+.gitemwkend {
+	BORDER-LEFT: #cccccc 1px solid;
+	HEIGHT: 18px
+}
+
+.gmilestone {
+	OVERFLOW: hidden;
+	BORDER-LEFT: #efefef 1px solid;
+	HEIGHT: 18px
+}
+
+.gmilestonewkend {
+	BORDER-LEFT: #cccccc 1px solid;
+	HEIGHT: 18px
+}
+
+*/
+
+
+.ggtask {
+ 	 background: none repeat scroll 0 0 #FFBC00;
+    border: 1px solid red;
+    cursor: pointer;
+    height: 7px;
+    color:red;
+}
+
+.ggcomplete {
+	background-color: #FFF3A5;
+	height: 7px;
+	overflow: auto;
+	z-index: -4;
+	float:left;
+}
+
+
+.gtask {
+	 background: none repeat scroll 0 0 #E5ECF5;
+    border: 1px solid #3172D7;
+    border-radius: 5px;
+    cursor: move;
+    height: 13px;
+    opacity: 0.8;
+}
+
+.gday {
+	font-family: tahoma, arial, verdana;
+	text-align: center;
+}
+
+.gcomplete {
+	background-color: black;
+	height: 13px;
+	overflow: auto;
+	background-image: url("../../themes/default/images/title-button-bg.png");
+	z-index: -4;
+//	opacity: 0.9;
+	float:left;
+	border-radius: 5px;
+}
+
+tr.ggroup {
+	background-color: #f3f3f3;
+	height: 45px;
+}
+
+tr.grow {
+	background-color: white;
+	height: 23px;
+}
+
+div.scroll {
+	overflow: auto;
+	overflow-x: scroll;
+	overflow-y: hidden;
+}

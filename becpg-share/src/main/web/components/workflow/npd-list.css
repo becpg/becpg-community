@@ -90,7 +90,7 @@
 .npd-list .npds .yui-dt-data td {
 	border-bottom: 1px dashed #d9d9d9;
 	border-right: medium none;
-   vertical-align: middle;
+	vertical-align: middle;
 }
 
 .npd-list .npds .yui-dt-data .yui-dt-last td {
@@ -251,46 +251,28 @@
 	vertical-align: middle;
 }
 
-.npd-list div.npdStatus-démarré {
-	background-color: #FF9999;
+.npd-list  table a.task-edit,.npd-list  table a.task-details {
+	cursor: pointer;
+	padding: 1em;
+	text-decoration: none;
+	margin-left: 10px;
 }
 
-.npd-list div.npdStatus-brief-marketing {
-	background-color: #FFCC99;
+.npd-list table a.task-edit {
+	background: url("../images/edit-16.png") no-repeat scroll left center
+		transparent;
 }
 
-.npd-list div.npdStatus-etude-du-besoin {
-	background-color: #FFFF99;
+.npd-list table a.task-details {
+	background: url("../images/task-16.png") no-repeat scroll left center
+		transparent;
 }
 
-.npd-list div.npdStatus-faisabilité-en-cours {
-	background-color: #CCFF99;
-}
-
-.npd-list div.npdStatus-commercialisé {
-	background-color: #FF99CC;
-}
-
-.npd-list div.npdStatus-réservé {
-	background-color: #FF5C5C;
-}
-
-.npd-list div.npdStatus-offre {
-	background-color: #5CFFFF
-}
-
-.npd-list div.npdStatus-stop {
-	background-color: #99CCFF;
-}
-
-.npd-list div.npdStatus-standby {
-	background-color: #FFFFFF;
-}
-
-.npd-list div.npdStatus-prototypage {
-	background-color: #E0E0E0;
-}
-
-.npd-list div.npdStatus-mise-en-production {
-	background-color: #FF0080;
+.npd-list span.doc-file {
+	background-position: 2px 50%;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	margin-left: -4px;
+	min-height: 16px;
+	padding: 2px 0 1px 24px;
 }

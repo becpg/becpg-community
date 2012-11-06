@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<template-instance>
+   <template-type>org/alfresco/project-list</template-type>
+   <components>
+      <component>
+         <region-id>task-title</region-id>
+         <url>/components/title/simple-title</url>
+         <properties>
+            <title>header.project-list.description</title>
+         </properties>
+      </component>
+
+      <!-- All Filter -->
+      <component>
+         <region-id>all-filter</region-id>
+         <url>/components/workflow/filter/all</url>
+         <properties>
+            <mode>projects</mode>
+         </properties>
+      </component>
+
+      <!-- Due Filter -->
+      <component>
+         <region-id>due-filter</region-id>
+         <url>/components/workflow/filter/due</url>
+      </component>
+
+      <!-- Started Filter -->
+      <component>
+         <region-id>started-filter</region-id>
+         <url>/components/workflow/filter/started</url>
+      </component>
+
+      <!-- Priority Filter -->
+      <component>
+         <region-id>priority-filter</region-id>
+         <url>/components/workflow/filter/priority</url>
+      </component>
+
+      <component>
+         <region-id>toolbar</region-id>
+         <url>/components/project/project-list-toolbar</url>
+      </component>
+
+      <!-- Tags Filter -->
+      <component>
+         <region-id>tags</region-id>
+         <url>/components/tags</url>
+      </component>
+		
+
+      <!-- project List -->
+      <component>
+         <region-id>list</region-id>
+         <url>/components/project/project-list</url>
+      </component>
+   </components>
+</template-instance>

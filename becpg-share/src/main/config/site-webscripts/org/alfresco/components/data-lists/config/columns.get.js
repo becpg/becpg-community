@@ -157,10 +157,12 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig)
       for (var f = 0; f < visibleFields.length; f++)
       {
          fieldId = visibleFields[f];
-         postBodyFields.push(fieldId);
-         if (formConfig.isFieldForced(fieldId))
-         {
-            postBodyForcedFields.push(fieldId);
+         if(fieldId.indexOf("dataList_")<0){
+	         postBodyFields.push(fieldId);
+	         if (formConfig.isFieldForced(fieldId))
+	         {
+	            postBodyForcedFields.push(fieldId);
+	         }
          }
       }
       
@@ -187,10 +189,17 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig)
 function main()
 {
    var itemType = getArgument("itemType"),
-		list = getArgument("list"),//beCPG
-      columns = [];
+		list = getArgument("list");//beCPG
+      
    
-   if (itemType !== null && itemType.length > 0)
+   // pass form ui model to FTL
+   model.columns =  getColumns(itemType, list);
+}
+
+function getColumns(itemType, list){
+	var columns = [], ret= [];
+   
+   if (itemType != null && itemType.length > 0)
    {
       // get the config for the form
 		// beCPG : WUsed		
@@ -203,6 +212,7 @@ function main()
       
       // get the configured visible fields
       var visibleFields = getVisibleFields("view", formConfig);
+      
       
       // build the JSON object to send to the server
       var postBody = createPostBody("type", itemType, visibleFields, formConfig);
@@ -235,10 +245,39 @@ function main()
             model.error = formModel.message;
          }
       }
+      
+      for(var i in visibleFields){
+         
+      	var fieldId = visibleFields[i];
+      	
+   	   if(fieldId.indexOf("dataList_")==0){
+   	   		
+   	   	  var name = fieldId.replace("dataList_",""), 
+   	   	  		column = {type:"dataList", name: name, formsName : "dt_"+name.replace(":","_")
+     		  			, label : name, "dataType":"nested"};
+   	   	  column.columns = getColumns(name+"", "");
+   	   	  
+   	   	  ret.push(column);
+   	   	  
+   	   } else {
+        
+   	     for(var j in columns){
+   	   	  if(columns[j].name == fieldId){
+   	   		  ret.push(columns[j]);
+   	     		}
+   	     }
+   	   }
+
+      	
+      }
+      
    }
    
-   // pass form ui model to FTL
-   model.columns = columns;
+   
+   
+   
+   return ret;
 }
+
 
 main();

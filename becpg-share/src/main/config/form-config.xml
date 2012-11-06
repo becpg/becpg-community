@@ -63,6 +63,7 @@
 			<type name="association:pjt:project" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 			<type name="association:pjt:task" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 			<type name="association:pjt:taskLegend" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+			<type name="association:bp:productCatalog" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />		
 							
          
             <type name="transitions" template="/org/alfresco/components/form/controls/workflow/transitions.ftl" />
