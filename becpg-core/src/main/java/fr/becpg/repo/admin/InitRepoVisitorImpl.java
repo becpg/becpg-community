@@ -502,6 +502,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			specialiseType = QualityModel.TYPE_QUALITY_CONTROL;
 		} else if (folderName == RepoConsts.PATH_NC) {
 			specialiseType = QualityModel.TYPE_NC;
+		} else if (folderName == RepoConsts.PATH_PROJECT_TEMPLATES) {
+			specialiseType = ProjectModel.TYPE_PROJECT_TPL;
 		} else {
 			return;
 		}
@@ -691,7 +693,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		entityLists.put(RepoConsts.PATH_PROJECT_STATUS,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_TASK_LEGENDS,ProjectModel.TYPE_TASK_LEGEND);
-		entityLists.put(RepoConsts.PATH_TASKS,ProjectModel.TYPE_TASK);
 		entityLists.put(RepoConsts.PATH_PROJECT_HIERARCHY1, BeCPGModel.TYPE_LIST_VALUE);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);

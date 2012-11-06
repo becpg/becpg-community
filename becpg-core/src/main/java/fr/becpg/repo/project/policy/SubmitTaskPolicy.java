@@ -51,7 +51,7 @@ public class SubmitTaskPolicy extends AbstractBeCPGPolicy implements NodeService
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
 		for (NodeRef nodeRef : pendingNodes) {
-			projectService.startNextTasks(nodeRef);
+			projectService.submitTask(nodeRef);
 		}
 	}
 

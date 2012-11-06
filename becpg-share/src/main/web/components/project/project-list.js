@@ -75,23 +75,21 @@ var g; // gantt var
 		                  successCallback : {
 		                     fn : function(response) {
 
-			                     var data = response.json.result;
+			                     var data = response.json.legends;
 
+			                     
+			                    // this.datalistMeta.nodeRef = response.json.parentNodeRef;
+			                     
 			                     var html = "";
 
 			                     for ( var i in data) {
 
 				                     var taskLegend = {
-				                        id : data[i].value,
-				                        label : data[i].name
+				                        id : data[i].nodeRef,
+				                        label : data[i].label,
+				                        color : data[i].color
 				                     };
-				                     for ( var j in data[i].metadatas) {
-					                     if (data[i].metadatas[j].key == "color") {
-
-						                     taskLegend.color = data[i].metadatas[j].value;
-					                     }
-				                     }
-
+				                    
 				                     this.taskLegends.push(taskLegend);
 
 				                     html += '<div class="projectStatus" style="background-color:#' + taskLegend.color

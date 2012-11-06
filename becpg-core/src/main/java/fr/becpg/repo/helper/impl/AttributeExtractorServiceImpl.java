@@ -37,6 +37,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -426,7 +427,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			return ContentModel.PROP_AUTHORITY_DISPLAY_NAME;
 		} else if (type.equals(BeCPGModel.TYPE_LINKED_VALUE)){
 			return BeCPGModel.PROP_LKV_VALUE;
+		} else if (type.equals(ProjectModel.TYPE_TASK_LIST)){
+			return ProjectModel.PROP_TL_TASK_NAME;
 		}
+		
 		return ContentModel.PROP_NAME;
 	}
 

@@ -204,9 +204,10 @@ function getColumns(itemType, list){
       // get the config for the form
 		// beCPG : WUsed		
 		var formId = "datagrid";
-		if(list == "WUsed")
-		{
+		if(list == "WUsed") {
 			formId = "datagridWUsed";
+		} else if(list == "sub-datagrid" ){
+			formId = "sub-datagrid";
 		}
       var formConfig = getFormConfig(itemType, formId);
       
@@ -255,7 +256,7 @@ function getColumns(itemType, list){
    	   	  var name = fieldId.replace("dataList_",""), 
    	   	  		column = {type:"dataList", name: name, formsName : "dt_"+name.replace(":","_")
      		  			, label : name, "dataType":"nested"};
-   	   	  column.columns = getColumns(name+"", "");
+   	   	  column.columns = getColumns(name+"", "sub-datagrid");
    	   	  
    	   	  ret.push(column);
    	   	  
@@ -267,14 +268,10 @@ function getColumns(itemType, list){
    	     		}
    	     }
    	   }
-
-      	
+	
       }
       
    }
-   
-   
-   
    
    return ret;
 }
