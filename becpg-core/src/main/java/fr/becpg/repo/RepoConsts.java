@@ -94,6 +94,7 @@ public class RepoConsts {
 	public static final String PATH_QUALITY_CONTROLS = "QualityControls";	
 	public static final String PATH_NC = "NonConformities";
 	//Project
+	public static final String PATH_PROJECTS = "Projects";
 	public static final String PATH_PROJECT_LISTS = "ProjectLists";
 	public static final String PATH_PROJECT_STATUS = "ProjectStatus";
 	public static final String PATH_TASKS = "Tasks";
@@ -195,6 +196,7 @@ public class RepoConsts {
 	public static final String ISO_CHARSET = "ISO-8859-15";
 	
 	public static final Integer DATA_LISTS_PAGESIZE = 25;
+
 
 	
 	// Sort

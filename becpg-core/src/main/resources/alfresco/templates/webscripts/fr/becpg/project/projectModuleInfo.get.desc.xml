@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>Project Module info</shortname>
+	<description>Project Component - retrieve project module info</description>
+	<url>/becpg/project/info</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readOnly" buffersize="0">required</transaction>
+</webscript>

@@ -43,6 +43,16 @@ public interface RepoService {
 	public NodeRef getFolderByPath(NodeRef parentNodeRef, String path);
 	
 	/**
+	 * Get the folder by path
+	 * start from companyHome
+	 * @param parentNodeRef
+	 * @param path
+	 * @return
+	 */
+	public NodeRef getFolderByPath(String path);
+	
+	
+	/**
 	 * Move the node in the destination folder, rename the node with (1) if a node with same name already exists
 	 * @param nodeRefToMove
 	 * @param destionationNodeRef

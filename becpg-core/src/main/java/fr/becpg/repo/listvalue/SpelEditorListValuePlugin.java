@@ -13,9 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.LuceneHelper;
-import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 
 @Service
 public class SpelEditorListValuePlugin extends EntityListValuePlugin {
@@ -30,11 +27,12 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 		return new String[] { SOURCE_TYPE_SPELEDITOR };
 	}
 
-	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize,
+			Map<String, Serializable> props) {
 
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
-		
-		if(className!=null && className.length()>0 && className.contains(PARAM_VALUES_SEPARATOR)){
+
+		if (className != null && className.length() > 0 && className.contains(PARAM_VALUES_SEPARATOR)) {
 			String[] arrClassNames = className != null ? className.split(PARAM_VALUES_SEPARATOR) : null;
 			return suggestTargetAssoc(BeCPGModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
 		}
@@ -44,7 +42,8 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 			Field[] fields = c.getDeclaredFields();
 			List<ListValueEntry> ret = new ArrayList<ListValueEntry>();
 			for (int i = 0; i < fields.length; i++) {
-				ret.add(new ListValueEntry(fields[i].getName(), fields[i].getName(), fields[i].getType().getSimpleName()));
+				ret.add(new ListValueEntry(fields[i].getName(), fields[i].getName(), fields[i].getType()
+						.getSimpleName()));
 			}
 			return new ListValuePage(ret, pageNum, pageSize, null);
 
@@ -55,25 +54,11 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 		QName type = QName.createQName(className, namespaceService);
 
 		if (type.equals(BeCPGModel.TYPE_DYNAMICCHARACTLIST)) {
-			return suggestVariable(type, query, pageNum, pageSize, new NodeRef((String) props.get(ListValueService.PROP_NODEREF)));
+
+			return suggestDatalistItem(new NodeRef((String) props.get(ListValueService.PROP_NODEREF)), type,
+					BeCPGModel.PROP_DYNAMICCHARACT_TITLE, query, pageNum, pageSize);
 		}
 
 		return suggestTargetAssoc(type, query, pageNum, pageSize, null, props);
-
 	}
-
-	private ListValuePage suggestVariable(QName type, String query, Integer pageNum, Integer pageSize, NodeRef nodeRef) {
-		String queryPath = "";
-
-		query = prepareQuery(query);
-		queryPath = String
-				.format(" +TYPE:\"%s\"  +@bcpg\\:dynamicCharactTitle:(%s) +PATH:\"%s/*/*/*\"  ", type, query, nodeService.getPath(nodeRef).toPrefixString(namespaceService));
-
-		logger.debug("suggestVariable for query : " + queryPath);
-
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, LuceneHelper.getSort(BeCPGModel.PROP_DYNAMICCHARACT_TITLE), RepoConsts.MAX_SUGGESTIONS);
-
-		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_DYNAMICCHARACT_TITLE, nodeService));
-	}
-
 }

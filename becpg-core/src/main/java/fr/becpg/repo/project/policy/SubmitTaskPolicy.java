@@ -43,7 +43,7 @@ public class SubmitTaskPolicy extends AbstractBeCPGPolicy implements NodeService
 	public void doInit() {
 		logger.debug("Init SubmitTaskPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
-				ProjectModel.TYPE_TASK_HISTORY_LIST, new JavaBehaviour(this, "onUpdateProperties"));
+				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onUpdateProperties"));
 
 	}
 
@@ -58,8 +58,7 @@ public class SubmitTaskPolicy extends AbstractBeCPGPolicy implements NodeService
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		String afterState = (String) after.get(ProjectModel.PROP_THL_STATE);
-		logger.debug("SubmitTask: on update properties. afterState: " + afterState);
+		String afterState = (String) after.get(ProjectModel.PROP_TL_STATE);		
 
 		if (afterState != null && afterState.equals(TaskState.Completed.toString())) {
 			queueNode(nodeRef);

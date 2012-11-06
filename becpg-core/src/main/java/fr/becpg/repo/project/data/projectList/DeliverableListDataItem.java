@@ -22,7 +22,7 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 
 	private NodeRef nodeRef;
 	private NodeRef task;
-	private DeliverableState state = DeliverableState.NotYetStarted;
+	private DeliverableState state = DeliverableState.Planned;
 	private String description;
 	private Integer completionPercent = 0;
 	private NodeRef content;

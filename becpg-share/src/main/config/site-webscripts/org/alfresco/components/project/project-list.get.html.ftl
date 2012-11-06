@@ -56,8 +56,8 @@
 				  </div>
 	      </div>
 		</div>
-	   <div id="${el}-grid" class=" projects grid alfresco-datatable"></div>
-	   <div id="${el}-gantt" class="projects"></div>
+	   <div id="${el}-grid"  class="projects grid alfresco-datatable" <#if view=="gantt" >style="display:none;"</#if>> </div>
+	   <div id="${el}-gantt" class="projects" <#if view!="gantt" >style="display:none;"</#if>> </div>
 				
 	   <div id="${el}-selectListMessage" class="hidden select-list-message">${msg("message.select-list")}</div>
 	
@@ -102,7 +102,7 @@
 		   dataUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node",
 		   itemUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/item/",
 		   groupBy : "prop_pjt_projectHierarchy1",
-		   hiddenColumns : ["prop_bcpg_code","dt_pjt_taskList"]
+		   hiddenColumns : ["prop_bcpg_code","prop_pjt_completionPercent", "prop_pjt_projectCompletionDate","prop_pjt_projectDueDate"]
 	   }).setMessages(${messages});
 
 	var Dom = YAHOO.util.Dom;

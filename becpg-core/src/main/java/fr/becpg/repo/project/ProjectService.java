@@ -1,5 +1,7 @@
 package fr.becpg.repo.project;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
 /**
@@ -17,4 +19,6 @@ public interface ProjectService {
 	public void startNextTasks(NodeRef taskNodeRef);
 	public void start(NodeRef projectNodeRef);
 	public void submitDeliverable(NodeRef deliverableNodeRef);
+	public List<NodeRef> getTaskLegendList();
+	public NodeRef getProjectsContainer(String siteId);
 }

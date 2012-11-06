@@ -7,7 +7,7 @@ package fr.becpg.repo.project.data.projectList;
  */
 public enum TaskState {
 
-	NotYetStarted,
+	Planned,
 	InProgress,
 	OnHold,
 	Cancelled,

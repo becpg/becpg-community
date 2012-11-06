@@ -229,6 +229,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 		// Products
 		 visitFolder(companyHome, RepoConsts.PATH_PRODUCTS);
+		 
+		 //Projects
+		 visitFolder(companyHome, RepoConsts.PATH_PROJECTS);
 
 		// Quality
 		NodeRef qualityNodeRef = visitFolder(companyHome, RepoConsts.PATH_QUALITY);
@@ -597,7 +600,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		dataLists = new LinkedHashSet<QName>();
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
 		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-		dataLists.add(ProjectModel.TYPE_TASK_HISTORY_LIST);
 		entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists);
 		
 		subFolders = new HashSet<String>();		

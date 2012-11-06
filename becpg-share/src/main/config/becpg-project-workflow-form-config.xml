@@ -51,7 +51,7 @@
 		</forms>
 	</config>
 	
-	<config condition="activiti$pjtwf:adhocTask" evaluator="task-type">
+	<config condition="pjtwf:adhocTask" evaluator="task-type">
 		<forms>
 			<form>
 				<field-visibility>
@@ -94,10 +94,6 @@
 					
 					<set id="items" appearance="title" label-id="workflow.set.items" />
 					<field id="pjtwf:project" set="items" />
-					<field id="pjt:workflowTask" set="items" label="Tâche">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
 					<field id="packageItems" set="items" />
 					
 					<set id="response" appearance="title" label-id="workflow.set.response" />

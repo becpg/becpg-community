@@ -1006,9 +1006,9 @@ Complete-Displays task percent complete</p>
                vID = vTaskList[i].getID();
 
   		         if(vTaskList[i].getVisible() == 0) 
-                  vLeftTable += '<TR id=child_' + vID + ' class="g'+vRowType+'"  style="display:none"  onMouseover=g.mouseOver(this,' + vID + ',"left","' + vRowType + '") onMouseout=g.mouseOut(this,' + vID + ',"left","' + vRowType + '")>' ;
+                  vLeftTable += '<TR id="child_' + vID + '" class="g'+vRowType+'"  style="display:none"  onMouseover=g.mouseOver(this,"' + vID + '","left","' + vRowType + '") onMouseout=g.mouseOut(this,"' + vID + '","left","' + vRowType + '")>' ;
 			      else
-                 vLeftTable += '<TR id=child_' + vID + '  class="g'+vRowType+'"  onMouseover=g.mouseOver(this,' + vID + ',"left","' + vRowType + '") onMouseout=g.mouseOut(this,' + vID + ',"left","' + vRowType + '")>' ;
+                 vLeftTable += '<TR id="child_' + vID + '"  class="g'+vRowType+'"  onMouseover=g.mouseOver(this,"' + vID + '","left","' + vRowType + '") onMouseout=g.mouseOut(this,"' + vID + '","left","' + vRowType + '")>' ;
 
 			      vLeftTable += 
                   '  <TD class=gname  nowrap><NOBR><span style="color: #aaaaaa">';
@@ -1021,9 +1021,9 @@ Complete-Displays task percent complete</p>
 
                if( vTaskList[i].getGroup()) {
                   if( vTaskList[i].getOpen() == 1) 
-                     vLeftTable += '<SPAN id="group_' + vID + '" style="color:#000000; cursor:pointer; font-weight:bold; FONT-SIZE: 12px;" onclick="JSGantt.folder(' + vID + ','+vGanttVar+');'+vGanttVar+'.DrawDependencies();">&ndash;</span><span style="color:#000000">&nbsp</SPAN>' ;
+                     vLeftTable += '<SPAN id="group_' + vID + '" style="color:#000000; cursor:pointer; font-weight:bold; FONT-SIZE: 12px;" onclick="JSGantt.folder("' + vID + '",'+vGanttVar+');'+vGanttVar+'.DrawDependencies();">&ndash;</span><span style="color:#000000">&nbsp</SPAN>' ;
                   else
-                     vLeftTable += '<SPAN id="group_' + vID + '" style="color:#000000; cursor:pointer; font-weight:bold; FONT-SIZE: 12px;" onclick="JSGantt.folder(' + vID + ','+vGanttVar+');'+vGanttVar+'.DrawDependencies();">+</span><span style="color:#000000">&nbsp</SPAN>' ;
+                     vLeftTable += '<SPAN id="group_' + vID + '" style="color:#000000; cursor:pointer; font-weight:bold; FONT-SIZE: 12px;" onclick="JSGantt.folder("' + vID + '",'+vGanttVar+');'+vGanttVar+'.DrawDependencies();">+</span><span style="color:#000000">&nbsp</SPAN>' ;
 				 
                } else {
 
@@ -1346,14 +1346,14 @@ Complete-Displays task percent complete</p>
 	       }
 	       
 	         if(vTaskList[i].getVisible() == 0) 
-               vRightTable += '<DIV id=childgrid_' + vID + ' style="position:relative; display:none;">';
+               vRightTable += '<DIV id="childgrid_' + vID + '" style="position:relative; display:none;">';
             else
-		         vRightTable += '<DIV id=childgrid_' + vID + ' style="position:relative">';
+		         vRightTable += '<DIV id="childgrid_' + vID + '" style="position:relative">';
             
             if( vTaskList[i].getMile()) {
 
                vRightTable += '<DIV><TABLE style=" width: ' + vChartWidth + 'px;" cellSpacing="0" cellPadding="0" border="0">' +
-                  '<TBODY class="yui-dt-data"><TR id=childrow_' + vID + ' class="yesdisplay grow" style="" onMouseover=g.mouseOver(this,' + vID + ',"right","mile") onMouseout=g.mouseOut(this,' + vID + ',"right","mile")>' + vItemRowStr + '</TR></TBODY></TABLE></DIV>';
+                  '<TBODY class="yui-dt-data"><TR id="childrow_' + vID + '" class="yesdisplay grow" style="" onMouseover=g.mouseOver(this,"' + vID + '","right","mile") onMouseout=g.mouseOut(this,"' + vID + '","right","mile")>' + vItemRowStr + '</TR></TBODY></TABLE></DIV>';
 
                // Build date string for Title
                vDateRowStr = JSGantt.formatDateStr(vTaskStart,vDateDisplayFormat);
@@ -1362,8 +1362,8 @@ Complete-Displays task percent complete</p>
                vTaskRight = 1;
                
   	            vRightTable +=
-                  '<div id=bardiv_' + vID + ' style="position:absolute; top:0px; left:' + Math.ceil((vTaskLeft * (vDayWidth) + 1)) + 'px; height: 18px; width:160px; overflow:hidden;">' +
-                  '  <div id=taskbar_' + vID + ' title="'+ vDateRowStr + '" style="height: 16px; width:6px; overflow:hidden; cursor: pointer;" onclick=JSGantt.taskLink("' + vTaskList[i].getLink() + '",300,200);>';
+                  '<div id="bardiv_' + vID + '" style="position:absolute; top:0px; left:' + Math.ceil((vTaskLeft * (vDayWidth) + 1)) + 'px; height: 18px; width:160px; overflow:hidden;">' +
+                  '  <div id="taskbar_' + vID + '" title="'+ vDateRowStr + '" style="height: 16px; width:6px; overflow:hidden; cursor: pointer;" >';
 
                if(vTaskList[i].getCompVal() < 100)
  		            {vRightTable += '&loz;</div>' ;}
@@ -1416,11 +1416,11 @@ Complete-Displays task percent complete</p>
                // Draw Group Bar  which has outer div with inner group div and several small divs to left and right to create angled-end indicators
                if( vTaskList[i].getGroup()) {
                   vRightTable += '<DIV><TABLE style=" width: ' + vChartWidth + 'px;" cellSpacing="0" cellPadding="0" border="0"><TBODY class="yui-dt-data">' +
-                     '<TR id=childrow_' + vID + ' class="yesdisplay ggroup"   onMouseover=g.mouseOver(this,' + vID + ',"right","group") onMouseout=g.mouseOut(this,' + vID + ',"right","group")>' + vItemRowStr + '</TR></TBODY></TABLE></DIV>';
+                     '<TR id="childrow_' + vID + '" class="yesdisplay ggroup"   onMouseover=g.mouseOver(this,"' + vID + '","right","group") onMouseout=g.mouseOut(this,"' + vID + '","right","group")>' + vItemRowStr + '</TR></TBODY></TABLE></DIV>';
                   vRightTable +=
-                     '<div id=bardiv_' + vID + ' style="position:absolute; top:5px; left:' + Math.ceil(vTaskLeft * (vDayWidth) + 1) + 'px; height: 7px; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' +
-                       '<div id=taskbar_' + vID + ' title="' + vDateRowStr + '" class="ggtask" style="width:' + Math.ceil((vTaskRight) * (vDayWidth) -1) + 'px;">' +
-                         '<div class="ggcomplete" style="width:' + vTaskList[i].getCompStr() + '" onclick=JSGantt.taskLink("' + vTaskList[i].getLink() + '",300,200);>' +
+                     '<div id=bardiv_"' + vID + '" style="position:absolute; top:5px; left:' + Math.ceil(vTaskLeft * (vDayWidth) + 1) + 'px; height: 7px; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' +
+                       '<div id="taskbar_' + vID + '" title="' + vDateRowStr + '" class="ggtask" style="width:' + Math.ceil((vTaskRight) * (vDayWidth) -1) + 'px;">' +
+                         '<div class="ggcomplete" style="width:' + vTaskList[i].getCompStr() + '" >' +
                            '</div>' +
                         '</div>' +
                         '<div style="Z-INDEX: -4; float:left; background-color:red; height:4px; overflow: hidden; width:1px;"></div>' +
@@ -1449,14 +1449,13 @@ Complete-Displays task percent complete</p>
                } else {
 
                   vDivStr = '<DIV><TABLE style="position:relative; top:0px; width: ' + vChartWidth + 'px;" cellSpacing=0 cellPadding=0 border=0><TBODY class="yui-dt-data">' +
-                     '<TR id=childrow_' + vID + ' class="yesdisplay grow" onMouseover=g.mouseOver(this,' + vID + ',"right","row") onMouseout=g.mouseOut(this,' + vID + ',"right","row")>' + vItemRowStr + '</TR></TBODY></TABLE></DIV>';
+                     '<TR id="childrow_' + vID + '" class="yesdisplay grow" onMouseover=g.mouseOver(this,"' + vID + '","right","row") onMouseout=g.mouseOut(this,"' + vID + '","right","row")>' + vItemRowStr + '</TR></TBODY></TABLE></DIV>';
                   vRightTable += vDivStr;
                   
                   // Draw Task Bar  which has outer DIV with enclosed colored bar div, and opaque completion div
 	            vRightTable +=
-                     '<div id=bardiv_' + vID + ' style="position:absolute; top:4px; left:' + Math.ceil(vTaskLeft * (vDayWidth) + 1) + 'px; height:18px; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' +
-                        '<div id=taskbar_' + vID + ' title="' + vDateRowStr + '" class="gtask" style="background-color:#' + vTaskList[i].getColor() +'; height: 13px; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px; cursor: pointer;opacity:0.9;" ' +
-                           'onclick=JSGantt.taskLink("' + vTaskList[i].getLink() + '",300,200); >' +
+                     '<div id="bardiv_' + vID + '" style="position:absolute; top:4px; left:' + Math.ceil(vTaskLeft * (vDayWidth) + 1) + 'px; height:18px; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' +
+                        '<div id="taskbar_' + vID + '" title="' + vDateRowStr + '" class="gtask" style="background-color:#' + vTaskList[i].getColor() +'; height: 13px; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px; cursor: pointer;opacity:0.9;"  >' +
                            '<div class="gcomplete" style="width:' + vTaskList[i].getCompStr() + ';">' +
                            '</div>' +
                         '</div>';
@@ -1983,25 +1982,7 @@ JSGantt.show =  function (pID, pTop, ganttObj) {
       }
    }
 };
-/**
-* Handles click events on task name, currently opens a new window
-*
-* @method taskLink
-* @param pRef {String} - URL for window
-* @param pWidth {Number} - Width of window
-* @param pHeight {Number} - Height of window
-* @return {void}
-*/
-JSGantt.taskLink = function(pRef,pWidth,pHeight) 
 
-  {
-
-    if(pWidth)  {vWidth =pWidth;}  else {vWidth =400;}
-    if(pHeight) {vHeight=pHeight;} else {vHeight=400;}
-
-    window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth); 
-
-  };
 
 /**
 * Parse dates based on gantt date format setting as defined in JSGantt.GanttChart.setDateInputFormat()
@@ -2015,8 +1996,12 @@ JSGantt.parseDateStr = function(pDateStr,pFormatStr) {
 	if(pDateStr == null || pDateStr == ''){
 		return new Date();
 	}
+	if(pDateStr instanceof Date){
+		return pDateStr;
+	}
+
 	var ret = Alfresco.util.fromISO8601(pDateStr);
-	if(ret==null || !ret instanceof Date){
+	if(ret==null){
 		return new Date();
 	}
 	

@@ -2,7 +2,7 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20">
   <process id="projectAdhoc" name="Project Adhoc Process">
     <startEvent id="startevent1" name="Start" activiti:formKey="wf:submitAdhocTask"></startEvent>
-    <userTask id="adhocTask" name="Adhoc Task" activiti:assignee="${bpm_assignee.properties.userName}" activiti:formKey="wf:adhocTask">
+    <userTask id="adhocTask" name="Adhoc Task" activiti:assignee="${bpm_assignee.properties.userName}" activiti:formKey="pjtwf:adhocTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
@@ -13,19 +13,15 @@
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string>var projectTask = pjt_workflowTask;
-projectTask.properties['pjt:thlState'] = 'Completed';
+projectTask.properties['pjt:tlState'] = 'Completed';
 projectTask.save();</activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
     </userTask>
-    <scriptTask id="scripttask1" name="Script Task" scriptFormat="javascript">
-      <script></script>
-    </scriptTask>
     <endEvent id="endevent1" name="End"></endEvent>
     <sequenceFlow id="flow1" name="" sourceRef="startevent1" targetRef="adhocTask"></sequenceFlow>
-    <sequenceFlow id="flow2" name="" sourceRef="adhocTask" targetRef="scripttask1"></sequenceFlow>
-    <sequenceFlow id="flow3" name="" sourceRef="scripttask1" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow2" name="" sourceRef="adhocTask" targetRef="endevent1"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_projectAdhoc">
     <bpmndi:BPMNPlane bpmnElement="projectAdhoc" id="BPMNPlane_projectAdhoc">
@@ -35,11 +31,8 @@ projectTask.save();</activiti:string>
       <bpmndi:BPMNShape bpmnElement="adhocTask" id="BPMNShape_adhocTask">
         <omgdc:Bounds height="55" width="105" x="230" y="230"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="scripttask1" id="BPMNShape_scripttask1">
-        <omgdc:Bounds height="55" width="105" x="400" y="230"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
-        <omgdc:Bounds height="35" width="35" x="560" y="240"></omgdc:Bounds>
+        <omgdc:Bounds height="35" width="35" x="380" y="240"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
         <omgdi:waypoint x="185" y="257"></omgdi:waypoint>
@@ -47,11 +40,7 @@ projectTask.save();</activiti:string>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
         <omgdi:waypoint x="335" y="257"></omgdi:waypoint>
-        <omgdi:waypoint x="400" y="257"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
-        <omgdi:waypoint x="505" y="257"></omgdi:waypoint>
-        <omgdi:waypoint x="560" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="380" y="257"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

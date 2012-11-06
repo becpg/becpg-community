@@ -59,7 +59,6 @@ public class SubmitDeliverablePolicy extends AbstractBeCPGPolicy implements Node
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		String afterState = (String) after.get(ProjectModel.PROP_DL_STATE);
-		logger.debug("SubmitDeliverable: on update properties. afterState: " + afterState);
 
 		if (afterState != null && afterState.equals(DeliverableState.Completed.toString())) {
 			queueNode(nodeRef);

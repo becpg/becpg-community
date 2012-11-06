@@ -55,16 +55,15 @@
 			
 			<form id="datagrid">
 				<field-visibility>
-				  <show id="pjt:projectPriority" />
+				  <show id="pjt:projectPriority" label="" />
 				  <show id="pjt:completionPercent"/>
-				  <show id="pjt:projectHierarchy1" />
+				  <show id="pjt:projectHierarchy1" label="" />
 				  <show id="bcpg:code" />
 				  <show id="cm:name" />
 				  <show id="pjt:projectEntity" />
 				  <show id="pjt:projectStatus" />
-				  <show id="dataList_pjt:taskHistoryList" />
-				  <show id="dataList_pjt:deliverableList" />
 				  <show id="dataList_pjt:taskList" />
+				  <show id="dataList_pjt:deliverableList" />
 		   	  <show id="cm:creator" />
 				  <show id="pjt:projectStartDate" />
 				  <show id="pjt:projectCompletionDate" />
@@ -84,7 +83,7 @@
 			<form>
 				<field-visibility>
 					<show force="false" id="cm:name" />
-					<show force="false" id="bcpg:color" />					
+					<show force="false" id="bcpg:color" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" mandatory="false" read-only="false" />
@@ -101,7 +100,7 @@
 			<form>
 				<field-visibility>
 					<show force="false" id="cm:name" />
-					<show force="false" id="bcpg:color" />					
+					<show force="false" id="bcpg:color" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" mandatory="false" read-only="false" />
@@ -136,23 +135,44 @@
 	<config condition="pjt:taskList" evaluator="node-type">
 		<forms>
 			<form>
-				<field-visibility>					
-					<show force="false" id="pjt:tlTask" />
-					<show force="false" id="pjt:tlPrevTasks" />					
+				<field-visibility>
+					<show force="false" id="pjt:tlTaskName" />
 					<show force="false" id="pjt:tlIsMilestone" />
 					<show force="false" id="pjt:tlDuration" />
-					<show force="false" id="pjt:tlWorkflowName" />					
-					<show force="true" id="pjt:tlAssignees" />
+					<show force="false" id="pjt:tlWorkflowName" />
+					<show force="true" id="pjt:tlPrevTasks" />
+					<show force="true" id="pjt:tlResources" />
 					<show force="false" id="pjt:tlTaskLegend" />
+					<show force="false" id="pjt:tlState" />
+					<show force="false" id="pjt:tlStart" />
+					<show force="false" id="pjt:tlEnd" />
+					<show force="false" id="pjt:completionPercent" />
 				</field-visibility>
-				<appearance>					
-					<field id="pjt:tlTask" mandatory="false" read-only="false" />
-					<field id="pjt:tlPrevTasks" mandatory="false" read-only="false" />					
+				<appearance>
+					<field id="pjt:tlTaskName" mandatory="false" read-only="false" />
 					<field id="pjt:tlIsMilestone" mandatory="false" read-only="false" />
 					<field id="pjt:tlDuration" mandatory="false" read-only="false" />
-					<field id="pjt:tlWorkflowName" mandatory="false" read-only="false" />					
-					<field id="pjt:tlAssignees" mandatory="false" read-only="false" />
+					<field id="pjt:tlWorkflowName" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,activiti$projectAdhoc|Adhoc
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:tlPrevTasks" mandatory="false" read-only="false">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
+					<field id="pjt:tlResources" mandatory="false" read-only="false" />
 					<field id="pjt:tlTaskLegend" mandatory="false" read-only="false" />
+					<field id="pjt:tlState" mandatory="false" read-only="false" />
+					<field id="pjt:tlStart" mandatory="false" read-only="false" />
+					<field id="pjt:tlEnd" mandatory="false" read-only="false" />
+					<field id="pjt:completionPercent" mandatory="false"
+						read-only="false" />
 				</appearance>
 			</form>
 		</forms>
@@ -160,112 +180,59 @@
 	<config condition="pjt:taskList" evaluator="model-type">
 		<forms>
 			<form>
-				<field-visibility>					
-					<show force="false" id="pjt:tlTask" />
-					<show force="false" id="pjt:tlPrevTasks" />					
+				<field-visibility>
+					<show force="false" id="pjt:tlTaskName" />
 					<show force="false" id="pjt:tlIsMilestone" />
 					<show force="false" id="pjt:tlDuration" />
-					<show force="false" id="pjt:tlWorkflowName" />					
-					<show force="true" id="pjt:tlAssignees" />
+					<show force="false" id="pjt:tlWorkflowName" />
+					<show force="true" id="pjt:tlPrevTasks" />
+					<show force="true" id="pjt:tlResources" />
 					<show force="false" id="pjt:tlTaskLegend" />
-				</field-visibility>
-				<appearance>					
-					<field id="pjt:tlTask" mandatory="false" read-only="false" />
-					<field id="pjt:tlPrevTasks" mandatory="false" read-only="false" />					
-					<field id="pjt:tlIsMilestone" mandatory="false" read-only="false" />
-					<field id="pjt:tlDuration" mandatory="false" read-only="false" />
-					<field id="pjt:tlWorkflowName" mandatory="false" read-only="false" />					
-					<field id="pjt:tlAssignees" mandatory="false" read-only="false" />
-					<field id="pjt:tlTaskLegend" mandatory="false" read-only="false" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	<config condition="pjt:taskHistoryList" evaluator="node-type">
-		<forms>
-			<form>
-				<field-visibility>
-					<show force="false" id="pjt:thlStart" />
-					<show force="false" id="pjt:thlEnd" />
-					<show force="false" id="pjt:thlDuration" />
-					<show force="false" id="pjt:thlComment" />
-					<show force="false" id="pjt:thlState" />					
-					<show force="false" id="pjt:thlTask" />
-					<show force="false" id="pjt:thlTaskLegend" />
-				</field-visibility>
-				<appearance>
-					<field id="pjt:thlStart" mandatory="false" read-only="false" />
-					<field id="pjt:thlEnd" mandatory="false" read-only="false" />
-					<field id="pjt:thlDuration" mandatory="false" read-only="false" />
-					<field id="pjt:thlComment" mandatory="false" read-only="false" />
-					<field id="pjt:thlState" mandatory="false" read-only="false" />					
-					<field id="pjt:thlTask" mandatory="false" read-only="false" />
-					<field id="pjt:thlTaskLegend" mandatory="false" read-only="false" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	<config condition="pjt:taskHistoryList" evaluator="model-type">
-		<forms>
-			<form>
-				<field-visibility>
-					<show force="false" id="pjt:thlStart" />
-					<show force="false" id="pjt:thlEnd" />
-					<show force="false" id="pjt:thlDuration" />
-					<show force="false" id="pjt:thlComment" />
-					<show force="false" id="pjt:thlState" />
-					<show force="false" id="pjt:thlTaskLegend" />
-					<show force="false" id="pjt:thlTask" />
-				</field-visibility>
-				<appearance>
-					<field id="pjt:thlStart" mandatory="false" read-only="false" />
-					<field id="pjt:thlEnd" mandatory="false" read-only="false" />
-					<field id="pjt:thlDuration" mandatory="false" read-only="false" />
-					<field id="pjt:thlComment" mandatory="false" read-only="false" />
-					<field id="pjt:thlState" mandatory="false" read-only="false" />
-					<field id="pjt:thlTaskLegend" mandatory="false" read-only="false" />
-					<field id="pjt:thlTask" mandatory="false" read-only="false" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	<config condition="pjt:planningList" evaluator="model-type">
-		<forms>
-			<form>
-				<field-visibility>									
-					<show id="bcpg:parentLevel" />
-					<show force="true" id="cm:title"/>
-					<show force="false" id="pjt:plPrevTasks" />
-					<show force="false" id="pjt:plIsMilestone" />
-					<show force="false" id="pjt:plDuration" />
-					<show force="false" id="pjt:plWorkflowName" />
-					<show force="true" id="pjt:plResources" />
-					<show force="false" id="pjt:plStart" />
-					<show force="false" id="pjt:plEnd" />	
-					<show force="false" id="pjt:plState" />
+					<show force="false" id="pjt:tlState" />
+					<show force="false" id="pjt:tlStart" />
+					<show force="false" id="pjt:tlEnd" />
 					<show force="false" id="pjt:completionPercent" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:parentLevel">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete.ftl">
- 							<control-param name="ds">becpg/autocomplete/ParentLevel
- 							</control-param>	
-							<control-param name="showTooltip">false</control-param>
-							<control-param name="urlParamsToPass">list</control-param>
+					<field id="pjt:tlTaskName" mandatory="false" read-only="false" />
+					<field id="pjt:tlIsMilestone" mandatory="false" read-only="false" />
+					<field id="pjt:tlDuration" mandatory="false" read-only="false" />
+					<field id="pjt:tlWorkflowName">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,activiti$projectAdhoc|Adhoc
+							</control-param>
 						</control>
- 					</field> 
-					<field id="cm:title" mandatory="false" read-only="false" />
-					<field id="pjt:plPrevTasks" mandatory="false" read-only="false" />					
-					<field id="pjt:plIsMilestone" mandatory="false" read-only="false" />
-					<field id="pjt:plDuration" mandatory="false" read-only="false" />
-					<field id="pjt:plWorkflowName" mandatory="false" read-only="false" />					
-					<field id="pjt:plResources" mandatory="false" read-only="false" />					
-					<field id="pjt:plStart" mandatory="false" read-only="false" />
-					<field id="pjt:plEnd" mandatory="false" read-only="false" />
-					<field id="pjt:plState" mandatory="false" read-only="false" />
-					<field id="pjt:completionPercent" mandatory="false" read-only="false" />
+					</field>
+					<field id="pjt:tlPrevTasks" mandatory="false" read-only="false">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
+					<field id="pjt:tlResources" mandatory="false" read-only="false" />
+					<field id="pjt:tlTaskLegend" mandatory="false" read-only="false" />
+					<field id="pjt:tlState" mandatory="false" read-only="false" />
+					<field id="pjt:tlStart" mandatory="false" read-only="false" />
+					<field id="pjt:tlEnd" mandatory="false" read-only="false" />
+					<field id="pjt:completionPercent" mandatory="false"
+						read-only="false" />
 				</appearance>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show force="false" id="pjt:tlTaskName" />
+					<show force="false" id="pjt:tlIsMilestone" />
+					<show force="false" id="pjt:tlDuration" />
+					<show force="true" id="pjt:tlPrevTasks" />
+					<show force="true" id="pjt:tlResources" />
+					<show force="false" id="pjt:tlTaskLegend" />
+					<show force="false" id="pjt:tlState" />
+					<show force="false" id="pjt:tlStart" />
+					<show force="false" id="pjt:tlEnd" />
+					<show force="false" id="pjt:completionPercent" />
+				</field-visibility>
 			</form>
 		</forms>
 	</config>
@@ -279,7 +246,14 @@
 				</field-visibility>
 				<appearance>
 					<field id="pjt:dlDescription" mandatory="false" read-only="false" />
-					<field id="pjt:dlTask" mandatory="false" read-only="false" />
+					<field id="pjt:dlTask" mandatory="false" read-only="false">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
 					<field id="pjt:dlState" mandatory="false" read-only="false" />
 				</appearance>
 			</form>
@@ -295,7 +269,14 @@
 				</field-visibility>
 				<appearance>
 					<field id="pjt:dlDescription" mandatory="false" read-only="false" />
-					<field id="pjt:dlTask" mandatory="false" read-only="false" />
+					<field id="pjt:dlTask" mandatory="false" read-only="false">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
 					<field id="pjt:dlState" mandatory="false" read-only="false" />
 				</appearance>
 			</form>
