@@ -13,7 +13,7 @@ public interface ProjectModel {
 
 	/** Security Model Prefix */
 	public static final String PROJECT_PREFIX = "pjt";
-	
+		
 	public static final QName TYPE_TASK_LEGEND = QName.createQName(PROJECT_URI, "taskLegend");
 	public static final QName TYPE_PROJECT_TPL = QName.createQName(PROJECT_URI, "projectTpl");	
 	
