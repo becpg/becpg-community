@@ -366,8 +366,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			nodeService.createNode(taskLegendsFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK_LEGEND, properties).getChildRef();			
 		}
-		
-		
+
 		// projectHierarchy1
 		NodeRef projectHierarchy1Folder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_PROJECT_HIERARCHY1);
 		String[] projectHierarchy1Names = { "Eclair", "Sandwich", PROJECT_HIERARCHY1_PAIN, "Pâtisserie", "Viennoiserie" };
