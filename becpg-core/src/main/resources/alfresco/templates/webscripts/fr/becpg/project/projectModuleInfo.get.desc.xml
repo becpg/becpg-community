@@ -4,5 +4,5 @@
 	<url>/becpg/project/info</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
-	<transaction allow="readOnly" buffersize="0">required</transaction>
+	<transaction allow="readonly" buffersize="0">required</transaction>
 </webscript>

@@ -366,15 +366,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			nodeService.createNode(taskLegendsFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK_LEGEND, properties).getChildRef();			
 		}
-		// taskLegends
-		NodeRef tasksFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_TASKS);
-		String[] taskNames = { "Task1", "Task2", "Task3", "Task4", "Task5", "Task6" };
-		for (String taskName : taskNames) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, taskName);
-			nodeService.createNode(tasksFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK, properties).getChildRef();
-		}
+		
 		
 		// projectHierarchy1
 		NodeRef projectHierarchy1Folder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_PROJECT_HIERARCHY1);
