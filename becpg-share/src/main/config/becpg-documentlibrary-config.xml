@@ -133,7 +133,6 @@
 				<subtype name="bpm:workflowDefinition" />
 				
 				<subtype name="pjt:project" />
-				<subtype name="pjt:projectTpl" />
 			</type>
 
 			<type name="cm:folder">

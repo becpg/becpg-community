@@ -40,7 +40,10 @@
 				"title": "${row.item.properties["bcpg:lkvValue"]!""}",
 				<#elseif row.item.typeShort == "bcpg:compoList" >				
 				"name": "${row.item.assocs["bcpg:compoListProduct"][0].properties.name!""}",
-				"title": "${row.item.assocs["bcpg:compoListProduct"][0].properties.name!""}",				
+				"title": "${row.item.assocs["bcpg:compoListProduct"][0].properties.name!""}",	
+				<#elseif row.item.typeShort == "pjt:taskList" >
+				"name": "${row.item.properties["pjt:tlTaskName"]!""}",
+				"title": "${row.item.properties["pjt:tlTaskName"]!""}",			
 				<#else>
 				"name": "${row.item.properties.name!""}",
 				"title": "${row.item.properties.title!""}",
