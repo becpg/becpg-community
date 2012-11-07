@@ -2,7 +2,6 @@ package fr.becpg.repo.helper.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -29,6 +28,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.tagging.TaggingService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -368,7 +368,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			tmp.put("version", nodeService.getProperty(nodeRef,ContentModel.PROP_VERSION_LABEL));
 			tmp.put("label", attribute.getTitle());
 			tmp.put("displayValue", displayName);
-			tmp.put("value", value);
+			if(value instanceof Date){
+				tmp.put("value",ISO8601DateFormat.format((Date)value));
+			} else {
+				tmp.put("value", value);
+			}
 			return tmp;
 
 		} else if (attribute instanceof AssociationDefinition) {// associations

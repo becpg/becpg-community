@@ -46,9 +46,9 @@ public class DataListFilter {
 	
 	public DataListFilter() {
 		super();
-		//TODO doublon
 		sortMap.put("@bcpg:sort", true);
 		sortMap.put("@cm:created", true);
+		//TODO doublon
 		sortProps.add(new Pair<QName, Boolean>(BeCPGModel.PROP_SORT,true));
 		sortProps.add(new Pair<QName, Boolean>(ContentModel.PROP_CREATED,true));
 	}

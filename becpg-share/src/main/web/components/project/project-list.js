@@ -9,7 +9,7 @@ var g; // gantt var
 	/**
 	 * YUI Library aliases
 	 */
-	var Dom = YAHOO.util.Dom;
+	var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling;
 
 	/**
 	 * Alfresco Slingshot aliases
@@ -78,7 +78,7 @@ var g; // gantt var
 			                     var data = response.json.legends;
 
 			                     
-			                    // this.datalistMeta.nodeRef = response.json.parentNodeRef;
+			                    this.options.parentNodeRef = response.json.parentNodeRef;
 			                     
 			                     var html = "";
 
@@ -130,7 +130,8 @@ var g; // gantt var
 		               YAHOO.Bubbling.addDefaultAction(TASK_EVENTCLASS, fnOnShowTaskHandler);
 	               },
 
-	               onActionShowTask : function PL_onActionShowTask(className) {
+	               
+	               	onActionShowTask : function PL_onActionShowTask(className) {
 
 		               var me = this;
 
@@ -171,10 +172,18 @@ var g; // gantt var
 		                  onSuccess : {
 		                     fn : function PL_onActionShowTask_success(response) {
 
-			                     // Display success message
-			                     Alfresco.util.PopupManager.displayMessage({
-				                     text : me.msg("message.details.success")
-			                     });
+		                     	
+		                        Bubbling.fire(me.scopeId + "dataItemUpdated", {
+		      			            nodeRef : nodes[1],
+		      			            callback : function(item) {
+
+		      				            // Display success message
+		      				            Alfresco.util.PopupManager.displayMessage({
+		      					            text : me.msg("message.details.success")
+		      				            });
+		      			            }
+		      			         });
+		                     	
 
 		                     },
 		                     scope : this
@@ -233,7 +242,7 @@ var g; // gantt var
 						               }
 						               precTaskIds += precTaskId;
 
-						               if (cache[precTaskId] && cache[precTaskId].end.getTime() > start.getTime()) {
+						               if (cache[precTaskId]!=null && cache[precTaskId].end!=null  && cache[precTaskId].end.getTime() > start.getTime()) {
 							               start = cache[precTaskId].end;
 						               }
 
@@ -258,9 +267,10 @@ var g; // gantt var
 
 			               g.Draw();
 			               g.DrawDependencies();
+			               
 
 		               };
-		               this.afterDataGridUpdate.push(fnDrawGantt);
+		               this.extraAfterDataGridUpdate.push(fnDrawGantt);
 
 	               },
 
@@ -291,13 +301,15 @@ var g; // gantt var
 
 	               },
 
-	               getAdvancementClass : function PL_getAdvancementClass(oRecord, task) {
+	               getAdvancementClass : function PL_getAdvancementClass(oRecord, task, size) {
 		               var percent = 0, suffix = "";
 
 		               if (task != null) {
 			               percent = this.getTaskAdvancementPercent(task);
 		               } else {
-			               suffix = "-32";
+		               	if(size!=null){
+		               		suffix = "-"+size;
+		               	}
 
 			               var taskList = oRecord.getData("itemData")["dt_pjt_taskList"];
 			               for (i in taskList) {
@@ -340,6 +352,7 @@ var g; // gantt var
 			               startDate = oRecord["itemData"]["prop_pjt_tlStart"].value;
 			               endDate = oRecord["itemData"]["prop_pjt_tlEnd"].value;
 
+			               endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
 			               startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : this
 			                     .resetDate(start);
 
@@ -441,7 +454,7 @@ var g; // gantt var
 			               version = '<span class="document-version">' + oData.version + '</span>';
 		               }
 
-		               return '<span  ><a class="theme-color-1" href="' + url + '">' + code + "&nbsp;-&nbsp;"
+		               return '<span ><a class="folder-link" href="'+this._buildCellUrl(oData)+'" >&nbsp;</a><a class="theme-color-1" href="' + url + '">' + code + "&nbsp;-&nbsp;"
 		                     + $html(title) + '</a></span>' + version;
 	               }
 	            }, true);

@@ -15,6 +15,7 @@ import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -26,6 +27,7 @@ import fr.becpg.repo.project.ProjectService;
  * @author matthieu
  * 
  */
+@Service
 public class ProjectModuleInfoWebScript extends AbstractWebScript {
 
 	private static Log logger = LogFactory.getLog(ProjectModuleInfoWebScript.class);
@@ -84,7 +86,7 @@ public class ProjectModuleInfoWebScript extends AbstractWebScript {
 		} finally {
 			if (logger.isDebugEnabled()) {
 				watch.stop();
-				logger.debug("FormulateCharactDetailsWebScript execute in " + watch.getTotalTimeSeconds() + "s");
+				logger.debug("ProjectModuleInfoWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
 		}
 	}

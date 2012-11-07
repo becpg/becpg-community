@@ -31,18 +31,21 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="bcpg:code" />
+					<show id="bcpg:code" for-mode="view" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectProjectTpl" />
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
-					<show id="pjt:projectCompletionDate" />
+					<show id="pjt:projectCompletionDate" for-mode="view"/>
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:completionPercent" />
+					
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:code" read-only="true" />
 					<field id="pjt:projectHierarchy1">
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProjectLists/bcpg:entityLists/ProjectHierarchy1
@@ -50,10 +53,25 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>	
-					<field id="pjt:projectCompletionDate" read-only="true" />
 					<field id="pjt:projectPriority">
 						<control
 							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<!-- categories -->
+					<field id="cm:taggable" >
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" >
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -64,18 +82,18 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="bcpg:code" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectProjectTpl" />
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
-					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectEntity" />
-					<show id="pjt:completionPercent" />
+					
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:code" read-only="true" />
 					<field id="pjt:projectHierarchy1">
 						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProjectLists/bcpg:entityLists/ProjectHierarchy1
@@ -83,36 +101,63 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>					
-					<field id="pjt:projectCompletionDate" read-only="true" />
 					<field id="pjt:projectPriority">
 						<control
 							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+						<!-- categories -->
+					<field id="cm:taggable" >
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" >
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
 			
 			<form id="datagrid">
 				<field-visibility>
+				  <show id="pjt:projectHierarchy1" label="" />
 				  <show id="pjt:projectPriority" label="" />
 				  <show id="pjt:completionPercent"/>
-				  <show id="pjt:projectHierarchy1" label="" />
 				  <show id="bcpg:code" />
 				  <show id="cm:name" />
 				  <show id="pjt:projectEntity" />
-				  <show id="pjt:projectStatus" />
 				  <show id="dataList_pjt:taskList" />
-				  <show id="dataList_pjt:deliverableList" />
+				  <show id="dataList_pjt:deliverableList"  />
 		   	  <show id="cm:creator" />
 				  <show id="pjt:projectStartDate" />
 				  <show id="pjt:projectCompletionDate" />
 				  <show id="pjt:projectDueDate" />
 				 </field-visibility>
+				 <appearance>
+					<field id="dataList_pjt:deliverableList" label="Livrables"  />
+					<field id="dataList_pjt:taskList" label="Tâche en cours"  />
+					<field id="pjt:projectHierarchy1"  />
+					<field id="pjt:projectPriority" label=""  />
+				</appearance>
 			
 			</form>
 			
-	<!-- <form id="filter">
-			
-			</form> -->
+		  <form id="filter">
+				<field-visibility>
+				  <show id="cm:name" />
+				  <show id="pjt:projectHierarchy1" />
+				  <show id="pjt:projectPriority" />  
+				  <show id="pjt:projectStartDate" />
+				  <show id="pjt:projectCompletionDate" />
+				  <show id="pjt:projectDueDate" />
+				 </field-visibility>
+			</form> 
 			
 		</forms>
 	</config>

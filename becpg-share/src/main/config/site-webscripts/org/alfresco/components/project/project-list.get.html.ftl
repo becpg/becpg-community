@@ -21,7 +21,7 @@
          <h2 id="${el}-filterTitle" class="thin">
             &nbsp;
          </h2>
-			<div class="item-select">
+			<div class="item-select" <#if view=="gantt" >style="display:none;"</#if>>
             <button id="${el}-itemSelect-button" name="datagrid-itemSelect-button">${msg("menu.select")}</button>
             <div id="${el}-itemSelect-menu" class="yuimenu">
                <div class="bd">
@@ -56,7 +56,7 @@
 				  </div>
 	      </div>
 		</div>
-	   <div id="${el}-grid"  class="projects grid alfresco-datatable" <#if view=="gantt" >style="display:none;"</#if>> </div>
+	   <div id="${el}-grid"  class="projects grid" <#if view=="gantt" >style="display:none;"</#if>> </div>
 	   <div id="${el}-gantt" class="projects" <#if view!="gantt" >style="display:none;"</#if>> </div>
 				
 	   <div id="${el}-selectListMessage" class="hidden select-list-message">${msg("message.select-list")}</div>
@@ -90,6 +90,7 @@
 <script type="text/javascript">//<![CDATA[
 (function() {
 
+
 	new beCPG.component.ProjectList("${el}", "${view}").setOptions(
 	   {
 	      siteId: "${page.url.templateArgs.site!""}",
@@ -100,17 +101,13 @@
 		   sortable : false,
 			sortUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/sort/node",
 		   dataUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node",
-		   itemUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/item/",
+		   itemUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/item/node/",
 		   groupBy : "prop_pjt_projectHierarchy1",
 		   hiddenColumns : ["prop_bcpg_code","prop_pjt_completionPercent", "prop_pjt_projectCompletionDate","prop_pjt_projectDueDate"]
 	   }).setMessages(${messages});
 
-	var Dom = YAHOO.util.Dom;
-	//Toolbar contribs
-	var controls = Dom.getChildren("toolbar-contribs-${id}")
-   for(var el in controls){
-   	(new  YAHOO.util.Element("toolbar-contribs")).appendChild(controls[el]);
-   }
+	
+
    
     
     // Initialize the browser history management library
@@ -129,6 +126,11 @@
 					     obj.entityDataGridModule.onHistoryManagerReady();
 					  }
 			}
+			//Toolbar contribs
+			var controls = YAHOO.util.Dom.getChildren("toolbar-contribs-${id}")
+		   for(var el in controls){
+		   	(new  YAHOO.util.Element("toolbar-contribs")).appendChild(controls[el]);
+		   }
 		});
   
 })();

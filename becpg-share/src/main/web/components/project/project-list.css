@@ -264,20 +264,12 @@
 	vertical-align: middle;
 }
 
-.project-list  table a.task-edit,.project-list  table a.task-details {
+
+.project-list table a.folder-link {
 	cursor: pointer;
-	padding: 1em;
+	padding-left: 24px;
 	text-decoration: none;
-	margin-left: 10px;
-}
-
-.project-list table a.task-edit {
-	background: url("../images/edit-16.png") no-repeat scroll left center
-		transparent;
-}
-
-.project-list table a.task-details {
-	background: url("../images/task-16.png") no-repeat scroll left center
+	background: url("../images/folder-up-16.png") no-repeat scroll left center
 		transparent;
 }
 

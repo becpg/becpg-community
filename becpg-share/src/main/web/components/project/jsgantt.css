@@ -40,47 +40,6 @@ tr.gheader {
 	height: 40px;
 	vertical-align: middle;
 }
-/* 
-.gname {
-	HEIGHT: 18px
-}
-
-
-
-
-.gfiller {
-	BORDER-LEFT: #efefef 1px solid;
-	HEIGHT: 18px
-}
-
-.gfillerwkend {
-	BORDER-LEFT: #efefef 1px solid;
-	HEIGHT: 18px;
-	BACKGROUND-COLOR: #cfcfcf
-}
-
-.gitem {
-	HEIGHT: 18px
-}
-
-.gitemwkend {
-	BORDER-LEFT: #cccccc 1px solid;
-	HEIGHT: 18px
-}
-
-.gmilestone {
-	OVERFLOW: hidden;
-	BORDER-LEFT: #efefef 1px solid;
-	HEIGHT: 18px
-}
-
-.gmilestonewkend {
-	BORDER-LEFT: #cccccc 1px solid;
-	HEIGHT: 18px
-}
-
-*/
-
 
 .ggtask {
  	 background: none repeat scroll 0 0 #FFBC00;
@@ -119,18 +78,20 @@ tr.gheader {
 	overflow: auto;
 	background-image: url("../../themes/default/images/title-button-bg.png");
 	z-index: -4;
-//	opacity: 0.9;
 	float:left;
 	border-radius: 5px;
 }
 
 tr.ggroup {
 	background-color: #f3f3f3;
-	height: 45px;
+	height: 23px;
+}
+
+tr.ggroup.highlight, tr.grow.highlight {
+	background-color: #ffffaa;
 }
 
 tr.grow {
-	background-color: white;
 	height: 23px;
 }
 
@@ -138,4 +99,22 @@ div.scroll {
 	overflow: auto;
 	overflow-x: scroll;
 	overflow-y: hidden;
+	position: relative;
+}
+
+.projects .gicon {
+    cursor: pointer;
+    height: 15px;
+    position: absolute;
+    width: 18px;
+}
+
+.projects .ggroup-expanded  {
+    background-image: url("./images/dt-group-arrow-down.png");
+    background-repeat: no-repeat;
+}
+
+.projects .ggroup-collapsed {
+    background-image: url("./images/dt-group-arrow-up.png");
+    background-repeat: no-repeat;
 }

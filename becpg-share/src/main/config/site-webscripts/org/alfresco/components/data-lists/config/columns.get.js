@@ -243,7 +243,11 @@ function getColumns(itemType, list){
          }
          else
          {
-            model.error = formModel.message;
+         	if (logger.isLoggingEnabled())
+            {
+         		 logger.log("error = " + formModel.message);
+            }
+            columns = [];
          }
       }
       
@@ -255,7 +259,7 @@ function getColumns(itemType, list){
    	   		
    	   	  var name = fieldId.replace("dataList_",""), 
    	   	  		column = {type:"dataList", name: name, formsName : "dt_"+name.replace(":","_")
-     		  			, label : name, "dataType":"nested"};
+     		  			, label : formConfig.fields[fieldId].label, "dataType":"nested"};
    	   	  column.columns = getColumns(name+"", "sub-datagrid");
    	   	  
    	   	  ret.push(column);
@@ -264,6 +268,10 @@ function getColumns(itemType, list){
         
    	     for(var j in columns){
    	   	  if(columns[j].name == fieldId){
+   	   		  if(formConfig.fields[fieldId].label!=null){
+   	   			  columns[j].label = formConfig.fields[fieldId].label;
+   	   		  }
+   	   		  
    	   		  ret.push(columns[j]);
    	     		}
    	     }
