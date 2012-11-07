@@ -7,19 +7,7 @@
 <div id="${el}-body" class="project-list-toolbar datalist-toolbar toolbar">
    <div id="${el}-headerBar" class="header-bar flat-button theme-bg-2">
       <div class="left">
-         <div id="toolbar-contribs" ></div>
-         <div id="${el}-toolbar-buttons" >
-			    <div id="${el}-toolBar-template-button" class="hidden" >
-				     <span class="yui-button yui-push-button">
-				        <span class="first-child">
-				              <button type="button" ></button>
-				       </span>
-				     </span>
-				 </div>
-			</div>
-         <div class="hideable hidden">
-            <div class="start-project"><button id="${el}-startProject-button" name="startProject">${msg("button.startProject")}</button></div>
-         </div>
+         <div id="toolbar-contribs" class="hidden" ></div>
       </div>
       <div class="right">
          <div class="show-planning">

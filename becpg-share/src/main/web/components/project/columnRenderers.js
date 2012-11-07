@@ -31,7 +31,7 @@
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:projectHierarchy1",
 		   renderer : function(oRecord, data, label, scope) {
-			   return '<span class="' + scope.getAdvancementClass(oRecord) + '">&nbsp;</span>';
+			   return '<span class="' + scope.getAdvancementClass(oRecord,null,32) + '">&nbsp;</span>';
 		   }
 		});
 
@@ -99,7 +99,7 @@
 				   end = dates.end;
 			   }
 
-			   desc += '<br/><span class="' + (dates.end != null ? 'end' : 'due') + '">'
+			   desc += '<br/><span class="' + (dates.end != null ? "end" : "due") + '">'
 			         + (end != null ? Alfresco.util.formatDate(end, "shortDate") : scope.msg("label.none")) + "</span>";
 
 			   return desc;

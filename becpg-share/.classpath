@@ -26,7 +26,6 @@
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/spring-surf-core-1.0.0/4.0.d/spring-surf-core-1.0.0-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/spring-surf-core-configservice-1.0.0/4.0.d/spring-surf-core-configservice-1.0.0-4.0.d-community.jar"/>
   <classpathentry kind="src" path="/spring-webscripts"/>
-  <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/commons-httpclient-3.1/4.0.d/commons-httpclient-3.1-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/spring-webscripts-api-1.0.0/4.0.d/spring-webscripts-api-1.0.0-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/json-simple-1.1/4.0.d/json-simple-1.1-4.0.d-community.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/sdk/json/4.0.d/json-4.0.d-community.jar"/>

@@ -82,10 +82,20 @@ public class ProjectData extends AbstractProjectData {
 	public void setCompletionPercent(Integer completionPercent) {
 		this.completionPercent = completionPercent;
 	}
+	
+	
 
-	public ProjectData(NodeRef nodeRef, String name, NodeRef projectTpl) {
+	public ProjectData(NodeRef nodeRef, String name, String hierarchy1, Date startDate, Date dueDate, Date completionDate, Integer priority, NodeRef projectTpl,
+			Integer completionPercent, NodeRef entity) {
 		super(nodeRef, name);
-		setProjectTpl(projectTpl);
+		this.hierarchy1 = hierarchy1;
+		this.startDate = startDate;
+		this.dueDate = dueDate;
+		this.completionDate = completionDate;
+		this.priority = priority;
+		this.projectTpl = projectTpl;
+		this.completionPercent = completionPercent;
+		this.entity = entity;
 	}
 
 	public NodeRef getEntity() {

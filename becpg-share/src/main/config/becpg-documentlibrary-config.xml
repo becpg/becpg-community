@@ -223,8 +223,7 @@
 				formid="create" itemid="ecm:changeOrder" icon="generic-changeOrder"  />
 			<content id="project" label="menu.create-content.project"
 				formid="create" itemid="pjt:project" icon="generic-project"  />
-			<content id="projectTpl" label="menu.create-content.projectTpl"
-				formid="create" itemid="pjt:projectTpl" icon="generic-projectTpl"  />
+		
 		</create-content>
 
 

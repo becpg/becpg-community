@@ -73,11 +73,8 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 			projectType = ProjectModel.TYPE_PROJECT;
 		}
 
-		NodeRef projectNodeRef = nodeService.createNode(
-				parentNodeRef,
-				ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-						QName.createValidLocalName(projectData.getName())), projectType, properties).getChildRef();
+		NodeRef projectNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(projectData.getName())), projectType, properties).getChildRef();
 
 		setAttributes(projectNodeRef, projectData);
 		createDataLists(projectNodeRef, projectData, dataLists);
@@ -100,10 +97,14 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 		String name = (String) nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME);
 
 		if (projectType.isMatch(ProjectModel.TYPE_PROJECT)) {
-			NodeRef projectTplNodeRef = associationService.getTargetAssoc(projectNodeRef,
-					ProjectModel.ASSOC_PROJECT_TPL);
-			projectData = new ProjectData(projectNodeRef, name, projectTplNodeRef);
-			((ProjectData)projectData).setEntity(associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY));
+			NodeRef projectTplNodeRef = associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PROJECT_TPL);
+
+			projectData = new ProjectData(projectNodeRef, name, (String) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY1),
+					(Date) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_START_DATE), (Date) nodeService.getProperty(projectNodeRef,
+							ProjectModel.PROP_PROJECT_DUE_DATE), (Date) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_COMPLETION_DATE),
+					(Integer) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_PRIORITY), projectTplNodeRef, (Integer) nodeService.getProperty(projectNodeRef,
+							ProjectModel.PROP_COMPLETION_PERCENT), associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY));
+
 		} else {
 			projectData = new ProjectTplData(projectNodeRef, name);
 		}
@@ -175,26 +176,20 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 
 			if (taskListNodeRef != null) {
 				taskList = new LinkedList<TaskListDataItem>();
-				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(taskListNodeRef,
-						ProjectModel.TYPE_TASK_LIST);
+				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(taskListNodeRef, ProjectModel.TYPE_TASK_LIST);
 
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
 
 					String s = (String) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_TL_STATE);
 					TaskState taskState = s != null ? TaskState.valueOf(s) : TaskState.Planned;
 
-					taskList.add(new TaskListDataItem(listItemNodeRef, (String) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_TL_TASK_NAME), (Boolean) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_TL_IS_MILESTONE), (Integer) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_TL_DURATION), (Date) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_TL_START), (Date) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_TL_END), taskState, (Integer) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_COMPLETION_PERCENT), associationService.getTargetAssocs(
-							listItemNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS), associationService.getTargetAssocs(
-							listItemNodeRef, ProjectModel.ASSOC_TL_RESOURCES), associationService.getTargetAssoc(
-							listItemNodeRef, ProjectModel.ASSOC_TL_TASKLEGEND), (String) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_TL_WORKFLOW_NAME), (String) nodeService.getProperty(
-							listItemNodeRef, ProjectModel.PROP_TL_WORKFLOW_INSTANCE)));
+					taskList.add(new TaskListDataItem(listItemNodeRef, (String) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_TL_TASK_NAME), (Boolean) nodeService
+							.getProperty(listItemNodeRef, ProjectModel.PROP_TL_IS_MILESTONE), (Integer) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_TL_DURATION),
+							(Date) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_TL_START), (Date) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_TL_END),
+							taskState, (Integer) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_COMPLETION_PERCENT), associationService.getTargetAssocs(
+									listItemNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS), associationService.getTargetAssocs(listItemNodeRef, ProjectModel.ASSOC_TL_RESOURCES),
+							associationService.getTargetAssoc(listItemNodeRef, ProjectModel.ASSOC_TL_TASKLEGEND), (String) nodeService.getProperty(listItemNodeRef,
+									ProjectModel.PROP_TL_WORKFLOW_NAME), (String) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_TL_WORKFLOW_INSTANCE)));
 				}
 			}
 		}
@@ -210,20 +205,16 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 
 			if (taskListNodeRef != null) {
 				deliverableList = new LinkedList<DeliverableListDataItem>();
-				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(taskListNodeRef,
-						ProjectModel.TYPE_DELIVERABLE_LIST);
+				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(taskListNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
 
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
 
 					String s = (String) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_DL_STATE);
-					DeliverableState deliverableState = s != null ? DeliverableState.valueOf(s)
-							: DeliverableState.Planned;
+					DeliverableState deliverableState = s != null ? DeliverableState.valueOf(s) : DeliverableState.Planned;
 
-					deliverableList.add(new DeliverableListDataItem(listItemNodeRef, associationService.getTargetAssoc(
-							listItemNodeRef, ProjectModel.ASSOC_DL_TASK), deliverableState, (String) nodeService
-							.getProperty(listItemNodeRef, ProjectModel.PROP_DL_DESCRIPTION), (Integer) nodeService
-							.getProperty(listItemNodeRef, ProjectModel.PROP_COMPLETION_PERCENT), associationService
-							.getTargetAssoc(listItemNodeRef, ProjectModel.ASSOC_DL_CONTENT)));
+					deliverableList.add(new DeliverableListDataItem(listItemNodeRef, associationService.getTargetAssoc(listItemNodeRef, ProjectModel.ASSOC_DL_TASK),
+							deliverableState, (String) nodeService.getProperty(listItemNodeRef, ProjectModel.PROP_DL_DESCRIPTION), (Integer) nodeService.getProperty(
+									listItemNodeRef, ProjectModel.PROP_COMPLETION_PERCENT), associationService.getTargetAssoc(listItemNodeRef, ProjectModel.ASSOC_DL_CONTENT)));
 				}
 			}
 		}
@@ -313,20 +304,16 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 						nodeService.addProperties(dataListItem.getNodeRef(), properties);
 					} else {
 						// create
-						ChildAssociationRef childAssocRef = nodeService.createNode(dataListNodeRef,
-								ContentModel.ASSOC_CONTAINS,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()),
-								dataListType, properties);
+						ChildAssociationRef childAssocRef = nodeService.createNode(dataListNodeRef, ContentModel.ASSOC_CONTAINS,
+								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()), dataListType, properties);
 						dataListItem.setNodeRef(childAssocRef.getChildRef());
 					}
 
 					for (Map.Entry<QName, NodeRef> association : singleAssociations.entrySet()) {
-						associationService.update(dataListItem.getNodeRef(), association.getKey(),
-								association.getValue());
+						associationService.update(dataListItem.getNodeRef(), association.getKey(), association.getValue());
 					}
 					for (Map.Entry<QName, List<NodeRef>> association : multipleAssociations.entrySet()) {
-						associationService.update(dataListItem.getNodeRef(), association.getKey(),
-								association.getValue());
+						associationService.update(dataListItem.getNodeRef(), association.getKey(), association.getValue());
 					}
 				}
 			}
