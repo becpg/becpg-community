@@ -105,8 +105,8 @@ div.scroll {
 .projects .gicon {
     cursor: pointer;
     height: 15px;
-    position: absolute;
     width: 18px;
+    display: inline-block;
 }
 
 .projects .ggroup-expanded  {

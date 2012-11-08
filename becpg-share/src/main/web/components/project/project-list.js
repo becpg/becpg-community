@@ -59,6 +59,8 @@ var g; // gantt var
 						 */
 	               taskLegends : [],
 
+	               cache : [],
+
 	               /**
 						 * Fired by YUI when parent element is available for
 						 * scripting. Initial History Manager event registration
@@ -67,8 +69,7 @@ var g; // gantt var
 						 */
 	               onReady : function PL_onReady() {
 
-		               var url = Alfresco.constants.PROXY_URI
-		                     + "becpg/project/info?site="+this.options.site;
+		               var url = Alfresco.constants.PROXY_URI + "becpg/project/info?site=" + this.options.site;
 
 		               Alfresco.util.Ajax.request({
 		                  url : url,
@@ -77,9 +78,8 @@ var g; // gantt var
 
 			                     var data = response.json.legends;
 
-			                     
-			                    this.options.parentNodeRef = response.json.parentNodeRef;
-			                     
+			                     this.options.parentNodeRef = response.json.parentNodeRef;
+
 			                     var html = "";
 
 			                     for ( var i in data) {
@@ -89,7 +89,7 @@ var g; // gantt var
 				                        label : data[i].label,
 				                        color : data[i].color
 				                     };
-				                    
+
 				                     this.taskLegends.push(taskLegend);
 
 				                     html += '<div class="projectStatus" style="background-color:#' + taskLegend.color
@@ -130,8 +130,7 @@ var g; // gantt var
 		               YAHOO.Bubbling.addDefaultAction(TASK_EVENTCLASS, fnOnShowTaskHandler);
 	               },
 
-	               
-	               	onActionShowTask : function PL_onActionShowTask(className) {
+	               onActionShowTask : function PL_onActionShowTask(className) {
 
 		               var me = this;
 
@@ -142,7 +141,7 @@ var g; // gantt var
 		               };
 
 		               var nodes = className.replace("node-", "").split("|");
-		               
+
 		               var templateUrl = YAHOO.lang
 		                     .substitute(
 		                           Alfresco.constants.URL_SERVICECONTEXT
@@ -172,18 +171,16 @@ var g; // gantt var
 		                  onSuccess : {
 		                     fn : function PL_onActionShowTask_success(response) {
 
-		                     	
-		                        Bubbling.fire(me.scopeId + "dataItemUpdated", {
-		      			            nodeRef : nodes[1],
-		      			            callback : function(item) {
+			                     Bubbling.fire(me.scopeId + "dataItemUpdated", {
+			                        nodeRef : nodes[1],
+			                        callback : function(item) {
 
-		      				            // Display success message
-		      				            Alfresco.util.PopupManager.displayMessage({
-		      					            text : me.msg("message.details.success")
-		      				            });
-		      			            }
-		      			         });
-		                     	
+				                        // Display success message
+				                        Alfresco.util.PopupManager.displayMessage({
+					                        text : me.msg("message.details.success")
+				                        });
+			                        }
+			                     });
 
 		                     },
 		                     scope : this
@@ -213,6 +210,7 @@ var g; // gantt var
 
 				               var oRecord = recordSet.getRecord(i);
 				               var oData = oRecord.getData();
+				               var projectId = oData.nodeRef;
 
 				               var title = '<span class="' + this.getAdvancementClass(oRecord) + '">'
 				                     + this.getProjectTitle(oRecord) + '</span>';
@@ -222,14 +220,12 @@ var g; // gantt var
 
 				               var dates = this.extractDates(oRecord);
 
-				               g.AddTaskItem(new JSGantt.TaskItem(i, title, dates.start, dates.due, 'FFBC00', '', 0,
-				                     initiator, percent, 1, 1, 1));
+				               g.AddTaskItem(new JSGantt.TaskItem(projectId, title, dates.start, dates.due, 'FFBC00', '',
+				                     0, initiator, percent, 1, 1, 1));
 
 				               var start = dates.start;
 
 				               var taskList = oRecord.getData("itemData")["dt_pjt_taskList"];
-
-				               var cache = [];
 
 				               for (j in taskList) {
 					               var task = taskList[j];
@@ -242,24 +238,28 @@ var g; // gantt var
 						               }
 						               precTaskIds += precTaskId;
 
-						               if (cache[precTaskId]!=null && cache[precTaskId].end!=null  && cache[precTaskId].end.getTime() > start.getTime()) {
-							               start = cache[precTaskId].end;
+						               if (this.cache[precTaskId] != null && this.cache[precTaskId].end != null
+						                     && this.cache[precTaskId].end.getTime() > start.getTime()) {
+							               start = this.cache[precTaskId].end;
 						               }
 
 					               }
 
 					               var tlIsMilestone = task["itemData"]["prop_pjt_tlIsMilestone"].value;
 					               var tlPercent = task["itemData"]["prop_pjt_completionPercent"].value;
+
 					               var taskOwner = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? task["itemData"]["assoc_pjt_tlResources"][0].displayValue
 					                     : null;
 
-					               var tdates = this.extractDates(task, start);
+					               var tdates = this.cache[taskId];
+					               if (!tdates) {
+						               tdates = this.extractDates(task, start);
+						               this.cache[taskId] = tdates;
+					               }
 
-					               cache[taskId] = tdates;
-
-					               g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task, oData.nodeRef), tdates.start,
-					                     tdates.end, this.getTaskColor(task), null, tlIsMilestone ? 1 : 0, taskOwner,
-					                     tlPercent, 0, i, 1, precTaskIds));
+					               g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task, oData.nodeRef),
+					                     tdates.start, tdates.end, this.getTaskColor(task), null, tlIsMilestone ? 1 : 0,
+					                     taskOwner, tlPercent, 0, projectId, 1, precTaskIds));
 
 				               }
 
@@ -267,9 +267,9 @@ var g; // gantt var
 
 			               g.Draw();
 			               g.DrawDependencies();
-			               
 
 		               };
+		               this.cache = [];
 		               this.extraAfterDataGridUpdate.push(fnDrawGantt);
 
 	               },
@@ -307,13 +307,18 @@ var g; // gantt var
 		               if (task != null) {
 			               percent = this.getTaskAdvancementPercent(task);
 		               } else {
-		               	if(size!=null){
-		               		suffix = "-"+size;
-		               	}
+			               if (size != null) {
+				               suffix = "-" + size;
+			               }
 
 			               var taskList = oRecord.getData("itemData")["dt_pjt_taskList"];
 			               for (i in taskList) {
-				               percent += this.getTaskAdvancementPercent(taskList[i]);
+
+				               if (!taskList[i]["itemData"]["prop_pjt_tlState"].value == "Completed") {
+					               percent += this.getTaskAdvancementPercent(taskList[i]);
+				               } else {
+				               	percent +=100;
+				               }
 			               }
 
 			               percent = percent / taskList.length;
@@ -329,6 +334,10 @@ var g; // gantt var
 				               }
 			               }
 		               }
+		               if (percent < 0) {
+			               return "advancement-done" + suffix;
+		               }
+
 		               if (percent > 80) {
 			               return "advancement-less100" + suffix;
 		               }
@@ -361,8 +370,8 @@ var g; // gantt var
 				               if (duration == null) {
 					               duration = 0;
 				               }
-				               endDate = new Date();
-				               endDate.setDate(startDate.getDate() + duration);
+
+				               endDate = new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000);
 
 			               }
 
@@ -377,27 +386,59 @@ var g; // gantt var
 		               endDate = oRecord.getData("itemData")["prop_pjt_projectCompletionDate"].value;
 		               dueDate = oRecord.getData("itemData")["prop_pjt_projectDueDate"].value;
 
+		               startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : new Date();
+		               endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
+		               dueDate = dueDate != null ? this.resetDate(Alfresco.util.fromISO8601(dueDate)) : this
+		                     .computeDueDate(startDate, oRecord);
 		               return {
-		                  start : startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : new Date(),
-		                  end : endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null,
-		                  due : dueDate != null ? this.resetDate(Alfresco.util.fromISO8601(dueDate)) : null
+		                  start : startDate,
+		                  end : endDate,
+		                  due : dueDate
 		               };
 
+	               },
+	               computeDueDate : function(start, oRecord) {
+		               var taskList = oRecord.getData("itemData")["dt_pjt_taskList"];
+		               var ret = start;
+		               for (j in taskList) {
+			               var task = taskList[j];
+			               var taskId = task.nodeRef;
+
+			               var tdates = this.cache[taskId];
+			               if (!tdates) {
+				               for ( var z in task["itemData"]["assoc_pjt_tlPrevTasks"]) {
+					               var precTaskId = task["itemData"]["assoc_pjt_tlPrevTasks"][z].value;
+
+					               if (this.cache[precTaskId] != null && this.cache[precTaskId].end != null
+					                     && this.cache[precTaskId].end.getTime() > start.getTime()) {
+						               start = this.cache[precTaskId].end;
+					               }
+
+				               }
+
+				               tdates = this.extractDates(task, start);
+				               this.cache[taskId] = tdates;
+			               }
+
+			               ret = tdates.end;
+
+		               }
+		               return ret;
 	               },
 
 	               getTaskAdvancementPercent : function PL_getTaskAdvancementPercent(task) {
 
 		               var dates = this.extractDates(task), now = new Date();
 
-		               if (!task["itemData"]["prop_pjt_tlState"].value == "Completed") {
+		               if (task["itemData"]["prop_pjt_tlState"].value == "Completed") {
+			               return -1;
+		               }
 
-			               if (now.getTime() == dates.due.getTime()) {
-				               return 50;
-			               }
-			               if (now.getTime() > dates.due.getTime()) {
-				               return 0;
-			               }
-
+		               if (now.getTime() == dates.end.getTime()) {
+			               return 50;
+		               }
+		               if (now.getTime() > dates.end.getTime()) {
+			               return 0;
 		               }
 
 		               return 100;
@@ -415,8 +456,8 @@ var g; // gantt var
 
 	               getTaskTitle : function PL_getTaskTitle(task, entityNodeRef) {
 		               return '<span class="' + this.getAdvancementClass(null, task) + '">' + '<span class="node-'
-		                     + task.nodeRef+'|'+ entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="'
-		                     + this.msg("link.title.task-edit") + '" >'
+		                     + task.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS
+		                     + '" title="' + this.msg("link.title.task-edit") + '" >'
 		                     + task["itemData"]["prop_pjt_tlTaskName"].displayValue + '</a></span></span>';
 	               },
 	               getDeliverableTitle : function PL_getDeliverableTitle(deliverable, entityNodeRef) {
@@ -430,8 +471,9 @@ var g; // gantt var
 			                     + '/components/images/states/stop-16.png)">';
 		               }
 
-		               ret += '<span class="node-' + deliverable.nodeRef +'|'+ entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS
-		                     + '" title="' + this.msg("link.title.task-edit") + '" >'
+		               ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef
+		                     + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="'
+		                     + this.msg("link.title.task-edit") + '" >'
 		                     + deliverable["itemData"]["prop_pjt_dlDescription"].displayValue + '</a></span>';
 
 		               return ret;
@@ -454,7 +496,8 @@ var g; // gantt var
 			               version = '<span class="document-version">' + oData.version + '</span>';
 		               }
 
-		               return '<span ><a class="folder-link" href="'+this._buildCellUrl(oData)+'" >&nbsp;</a><a class="theme-color-1" href="' + url + '">' + code + "&nbsp;-&nbsp;"
+		               return '<span ><a class="folder-link" href="' + this._buildCellUrl(oData)
+		                     + '" >&nbsp;</a><a class="theme-color-1" href="' + url + '">' + code + "&nbsp;-&nbsp;"
 		                     + $html(title) + '</a></span>' + version;
 	               }
 	            }, true);
