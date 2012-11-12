@@ -117,7 +117,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);
 		properties.put(ContentModel.PROP_TITLE, RepoConsts.CONTAINER_DATALISTS);
-		return nodeService.createNode(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.TYPE_FOLDER, properties).getChildRef();
+		return nodeService.createNode(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.TYPE_ENTITYLIST_FOLDER, properties).getChildRef();
 	}
 
 	@Override

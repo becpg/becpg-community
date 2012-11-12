@@ -454,32 +454,51 @@ var g; // gantt var
 		               return date;
 	               },
 
-	               getTaskTitle : function PL_getTaskTitle(task, entityNodeRef) {
-		               return '<span class="' + this.getAdvancementClass(null, task) + '">' + '<span class="node-'
-		                     + task.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS
-		                     + '" title="' + this.msg("link.title.task-edit") + '" >'
-		                     + task["itemData"]["prop_pjt_tlTaskName"].displayValue + '</a></span></span>';
+	               getTaskTitle : function PL_getTaskTitle(task, entityNodeRef,full) {
+	               	var ret =  '<span class="' + this.getAdvancementClass(null, task) + '">';
+	               	
+	               	if(full){
+	               		ret+='<div class="projectStatus" style="background-color:#' + this.getTaskColor(task)+ '" ></div>';
+	               	}
+	               	
+	               	ret+= '<span class="node-'
+                     + task.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS
+                     + '" title="' + this.msg("link.title.task-edit") + '" >'
+                     + task["itemData"]["prop_pjt_tlTaskName"].displayValue + '</a></span>';
+	               	
+	               	if(task["itemData"]["prop_pjt_tlWorkflowInstance"].value){
+	               		ret += '<a class="task-link" href="'+Alfresco.constants.URL_PAGECONTEXT+'workflow-details?workflowId='+task["itemData"]["prop_pjt_tlWorkflowInstance"].value+'&referrer=project-list&myWorkflowsLinkBack=true'
+	                     + '" >&nbsp;</a>';
+	               	}
+	               	
+	               	ret+="</span>";
+	               	
+		               return ret;
 	               },
 	               getDeliverableTitle : function PL_getDeliverableTitle(deliverable, entityNodeRef) {
-
-		               var ret = '<span class="doc-file" ';
-		               if (deliverable["itemData"]["prop_pjt_dlState"].value == "Completed") {
-			               ret += 'style="background-image:url(' + Alfresco.constants.URL_RESCONTEXT
-			                     + '/components/images/states/valid-16.png)">';
-		               } else {
-			               ret += 'style="background-image:url(' + Alfresco.constants.URL_RESCONTEXT
-			                     + '/components/images/states/stop-16.png)">';
+	               	
+		               var ret = '<span class="delivrable-status delivrable-status-'+deliverable["itemData"]["prop_pjt_dlState"].value+'">';
+		          
+		               
+		               var contents = deliverable["itemData"]["assoc_pjt_dlContent"];
+		
+		               if(contents.length>0 ){
+		               	ret += '<span class="doc-file"><a href="'+this._buildCellUrl(contents[0])+
+		               	   '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'
+		      			      + Alfresco.util.getFileIcon(contents[0].displayValue, "cm:content", 16) +'" /></a></span>';
 		               }
-
+		               
 		               ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef
 		                     + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="'
 		                     + this.msg("link.title.task-edit") + '" >'
 		                     + deliverable["itemData"]["prop_pjt_dlDescription"].displayValue + '</a></span>';
+		               
+		             
 
 		               return ret;
 	               },
 	               getProjectTitle : function PL_getProjectTitle(oRecord) {
-		               var url = null, version = "";
+		               var url = null, urlFolder = null, version = "";
 
 		               var title = oRecord.getData("itemData")["prop_cm_name"].displayValue;
 		               var code = oRecord.getData("itemData")["prop_bcpg_code"].displayValue;
@@ -489,14 +508,19 @@ var g; // gantt var
 		               if (oData.siteId) {
 			               url = Alfresco.constants.URL_PAGECONTEXT + "site/" + oData.siteId + "/"
 			                     + 'entity-data-lists?nodeRef=' + oData.nodeRef;
+			               urlFolder = Alfresco.constants.URL_PAGECONTEXT + "site/" + oData.siteId + "/"
+	                     + 'documentlibrary#filter=nodeRef|' + oData.nodeRef;
 		               } else {
 			               url = Alfresco.constants.URL_PAGECONTEXT + 'entity-data-lists?nodeRef=' + oData.nodeRef;
+			               urlFolder = Alfresco.constants.URL_PAGECONTEXT + 'repository?nodeRef='+ oData.nodeRef;
 		               }
+		               
+		               
 		               if (oData.version && oData.version !== "") {
 			               version = '<span class="document-version">' + oData.version + '</span>';
 		               }
 
-		               return '<span ><a class="folder-link" href="' + this._buildCellUrl(oData)
+		               return '<span ><a class="folder-link" href="' + urlFolder
 		                     + '" >&nbsp;</a><a class="theme-color-1" href="' + url + '">' + code + "&nbsp;-&nbsp;"
 		                     + $html(title) + '</a></span>' + version;
 	               }

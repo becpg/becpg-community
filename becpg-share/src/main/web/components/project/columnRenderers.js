@@ -8,14 +8,8 @@
 		   propertyName : [ "pjt:projectEntity" ],
 		   renderer : function(oRecord, data, label, scope) {
 
-			   var url = null, version = "";
+			   var url = scope._buildCellUrl(data), version = "";
 
-			   if (data.siteId) {
-				   url = Alfresco.constants.URL_PAGECONTEXT + "site/" + data.siteId + "/" + 'entity-data-lists?nodeRef='
-				         + data.value;
-			   } else {
-				   url = Alfresco.constants.URL_PAGECONTEXT + 'entity-data-lists?nodeRef=' + data.value;
-			   }
 
 			   if (data.version && data.version !== "") {
 				   version = '<span class="document-version">' + data.version + '</span>';
@@ -52,7 +46,7 @@
 			   var oData = oRecord.getData();
             
 			   if (data["itemData"]["prop_pjt_tlState"].value == "InProgress") {
-				   projectSteps += scope.getTaskTitle(data, oData.nodeRef);
+				   projectSteps += scope.getTaskTitle(data, oData.nodeRef,true);
 			   }
 
 			   return projectSteps;
@@ -63,8 +57,10 @@
 		   propertyName : "pjt:deliverableList",
 		   renderer : function(oRecord, data, label, scope, idx, length) {
 		   	var oData = oRecord.getData();
-		   	
-			   return scope.getDeliverableTitle(data,oData.nodeRef);
+		   	if (data["itemData"]["prop_pjt_dlState"].value != "Planned") {
+		   		return scope.getDeliverableTitle(data,oData.nodeRef);
+		   	}
+		   	return null;
 
 		   }
 		});

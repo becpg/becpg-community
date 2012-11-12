@@ -141,9 +141,10 @@
 				 </field-visibility>
 				 <appearance>
 					<field id="dataList_pjt:deliverableList" label="Livrables"  />
-					<field id="dataList_pjt:taskList" label="Tâche en cours"  />
+					<field id="dataList_pjt:taskList" label="Tâches en cours"  />
 					<field id="pjt:projectHierarchy1"  />
 					<field id="pjt:projectPriority" label=""  />
+					<field id="pjt:projectStartDate" label="Dates" />
 				</appearance>
 			
 			</form>
@@ -303,6 +304,7 @@
 					<show id="pjt:completionPercent" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
+					<show id="pjt:tlWorkflowInstance" />
 				</field-visibility>
 			</form>
 		</forms>

@@ -618,10 +618,15 @@
       }
       else
       {
-         if (jsNode.isContainer)
+         if (jsNode.isContainer )
          {
-            // Create path-change filter markup
-            html = '#" class="filter-change" rel="' + Alfresco.DocumentList.generatePathMarkup(record.location);
+         	if(jsNode.aspects.indexOf("bcpg:entityListsAspect") > 0){
+         		 html = scope.getActionUrls(record).documentDetailsUrl.replace("document-details","entity-details");
+         	} else {
+         		  // Create path-change filter markup
+               html = '#" class="filter-change" rel="' + Alfresco.DocumentList.generatePathMarkup(record.location);
+         	}
+         
          }
          else
          {

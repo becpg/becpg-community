@@ -1456,6 +1456,18 @@
 				<aspect>bcpg:effectivityAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		<type name="bcpg:entityV2">
+			<parent>cm:folder</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:effectivityAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="bcpg:entityListsFolder">
+			<parent>cm:folder</parent>
+		</type>
+		
 
 		<type name="bcpg:systemEntity">
 			<parent>cm:content</parent>
@@ -1778,7 +1790,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:folder</class>
+						<class>bcpg:entityListsFolder</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
