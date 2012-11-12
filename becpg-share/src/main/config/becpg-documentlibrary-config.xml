@@ -351,6 +351,45 @@
             <action index="350" id="document-view-googlemaps" />
          </actionGroup>
 
+
+ 		  <actionGroup id="entityV2-browse">
+ 		  	   <action index="10" id="entity-view-datalist" />
+            <action index="100" id="folder-view-details" />
+            <action index="110" id="document-edit-properties" icon="folder-edit-properties" label="actions.folder.edit-metadata" />
+            <action index="120" id="document-approve" icon="folder-approve" />
+            <action index="130" id="document-reject" icon="folder-reject" />
+            <action index="140" id="document-locate" icon="document-locate" label="actions.folder.locate" />
+            <action index="150" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
+            <action index="160" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
+            <action index="170" id="folder-manage-rules" />
+            <action index="180" id="document-delete" icon="folder-delete" label="actions.folder.delete" />
+            <action index="190" id="document-manage-site-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+            <action index="200" id="document-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+            <action index="210" id="document-manage-aspects" label="actions.folder.manage-aspects" />
+            <action index="220" id="document-view-in-source-repository" label="actions.folder.view-source-repository" />
+         </actionGroup>
+
+         <actionGroup id="entityV2-details">
+            <action index="10" id="entity-view-datalist" />			
+				<action index="111" id="entity-checkin" />
+				<action index="112" id="entity-checkout" />
+				<action index="113" id="entity-cancel-editing" />
+            <action index="100" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" />
+            <action index="110" id="document-approve" icon="folder-approve" />
+            <action index="120" id="document-reject" icon="folder-reject" />
+            <action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
+            <action index="140" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
+            <action index="150" id="folder-manage-rules" />
+            <action index="240" id="entity-refresh-report" />
+            <action index="160" id="document-delete" icon="folder-delete" label="actions.folder.delete" />
+            <action index="170" id="document-manage-site-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+            <action index="180" id="document-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+            <action index="190" id="document-manage-aspects" label="actions.folder.manage-aspects" />
+            <action index="200" id="document-change-type" label="actions.folder.change-type" />
+            <action index="210" id="view-in-explorer" />
+            <action index="220" id="document-view-in-source-repository" label="actions.folder.view-source-repository" />
+         </actionGroup>
+
 		</actionGroups>
 
 

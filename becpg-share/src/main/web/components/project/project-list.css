@@ -268,13 +268,13 @@
 }
 
 .project-list div.projectStatus {
-	width: 15px;
-	height: 15px;
+	width: 14px;
+	height: 14px;
 	border: 1px solid;
 	border-radius: 5px;
 	margin-right: 5px;
 	display: inline-block;
-	vertical-align: middle;
+
 }
 
 
@@ -282,15 +282,42 @@
 	cursor: pointer;
 	padding-left: 24px;
 	text-decoration: none;
-	background: url("../images/folder-up-16.png") no-repeat scroll left center
-		transparent;
+	background: url("../images/folder-up-16.png") no-repeat;
 }
 
-.project-list span.doc-file {
-	background-position: 2px 50%;
-	background-repeat: no-repeat;
+.project-list table a.task-link {
 	cursor: pointer;
-	margin-left: -4px;
-	min-height: 16px;
 	padding: 2px 0 1px 24px;
+	text-decoration: none;
+	background: url( ../images/task-16.png ) no-repeat;
+	min-height: 20px;
+	padding: 2px 0 1px 24px;	
+	margin-left: 5px;
+}
+
+.project-list span.delivrable-status {
+	background-repeat: no-repeat;
+	min-height: 20px;
+	padding: 2px 0 1px 24px;
+}
+
+
+.project-list span.delivrable-status-Completed {
+	background-image: url( ../images/complete-16.png );
+}
+
+
+.project-list span.delivrable-status-Planned {
+	background-image: url( ../images/workflow-16.png );
+}
+
+.project-list span.delivrable-status-InProgress {
+	background-image: url( ../images/job-running-16.png );
+}
+  
+.project-list span.doc-file {
+	padding-right: 4px;
+	text-decoration: none;
+	cursor: pointer;
+	
 }

@@ -21,7 +21,8 @@ var Filters =
       "fm:forum",
       "fm:topic",
       "fm:post",
-      "bcpg:entityListItem" //beCPG
+      "bcpg:entityListItem", //beCPG
+      "bcpg:entityListsFolder"
    ],
    
    IGNORED_ASPECTS:

@@ -51,7 +51,11 @@ public class DefaultDoclistActionGroupResolver implements DoclistActionGroupReso
 		boolean isContainer = (Boolean) node.get("isContainer");
 
 		if (isContainer) {
-			actionGroupId = "folder-";
+			if (nodeAspects != null && nodeAspects.contains("bcpg:entityListsAspect")) {
+				actionGroupId = "entityV2-";
+			} else {
+				actionGroupId = "folder-";
+			}
 		} else if (nodeAspects != null && nodeAspects.contains("bcpg:entityListsAspect")) {
 			actionGroupId = "entity-";
 		} else {
@@ -67,6 +71,7 @@ public class DefaultDoclistActionGroupResolver implements DoclistActionGroupReso
 		} else {
 			actionGroupId += "browse";
 		}
+		
 		return actionGroupId;
 	}
 

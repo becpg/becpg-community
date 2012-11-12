@@ -85,6 +85,8 @@ public interface BeCPGModel {
 
 	/** The Constant ASSOC_ENTITYLISTS. */
 	QName ASSOC_ENTITYLISTS = QName.createQName(BECPG_URI, "entityLists");
+	
+	QName TYPE_ENTITYLIST_FOLDER = QName.createQName(BECPG_URI, "entityListsFolder");
 
 	QName TYPE_ENTITYLIST_ITEM = QName.createQName(BECPG_URI, "entityListItem");
 
