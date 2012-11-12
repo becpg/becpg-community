@@ -46,6 +46,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	private static final String DESCRIPTION_SEPARATOR = ", ";
 	
+	private static final int COMPLETED = 100;
 	private static final String QUERY_TASK_LEGEND = "+TYPE:\"pjt:taskLegend\"";
 	
 	private static Log logger = LogFactory.getLog(ProjectServiceImpl.class);
@@ -116,6 +117,13 @@ public class ProjectServiceImpl implements ProjectService {
 			TaskListDataItem currentTaskDataItem = getTask(projectData, taskListNodeRef);
 			if(currentTaskDataItem != null){
 				currentTaskDataItem.setEnd(new Date());
+				
+				//set deliverables as completed
+				List<DeliverableListDataItem> deliverables = getDeliverables(projectData, taskListNodeRef);
+				logger.debug("deliverables size: " + deliverables.size());
+				for (DeliverableListDataItem deliverable : deliverables) {
+					deliverable.setState(DeliverableState.Completed);
+				}
 			}
 
 			// add next tasks
@@ -152,11 +160,12 @@ public class ProjectServiceImpl implements ProjectService {
 						}
 					}
 				}
+				projectData.setCompletionPercent(geProjectCompletionPercent(projectData));
 			}
 			else{
 				projectData.setCompletionDate(new Date());
-			}
-			
+				projectData.setCompletionPercent(COMPLETED);
+			}			
 
 			projectDAO.update(projectNodeRef, projectData, dataLists);
 		}
@@ -272,6 +281,28 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 	}
+	
+	/**
+	 * completedPercent is calculated on duration property
+	 * @param projectData
+	 * @return
+	 */
+	private int geProjectCompletionPercent(AbstractProjectData projectData) {
+
+		int totalWork = 0;
+		int workDone = 0;
+		for (TaskListDataItem p : projectData.getTaskList()) {
+			if(p.getDuration() != null){
+				totalWork += p.getDuration();
+				if(TaskState.Completed.equals(p.getState()) || TaskState.Cancelled.equals(p.getState())){
+					workDone += p.getDuration();
+				}				
+			}
+		}
+		
+		logger.debug("workDone: " + workDone + " - totalWork: " + totalWork);
+		return totalWork != 0 ? 100 * workDone / totalWork : 0;
+	}
 
 	@Override
 	public void submitDeliverable(NodeRef deliverableNodeRef) {
@@ -288,7 +319,6 @@ public class ProjectServiceImpl implements ProjectService {
 
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(ProjectModel.TYPE_TASK_LIST);
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
 
 				for (TaskListDataItem t : projectData.getTaskList()) {
@@ -311,6 +341,58 @@ public class ProjectServiceImpl implements ProjectService {
 			} else {
 				logger.error("Task is not defined for the deliverable. nodeRef: " + deliverableNodeRef);
 			}
+		}
+	}
+	
+	@Override
+	public void openDeliverable(NodeRef deliverableNodeRef) {
+		
+		Integer completionPercent = (Integer) nodeService.getProperty(deliverableNodeRef,
+				ProjectModel.PROP_COMPLETION_PERCENT);
+		logger.debug("open Deliverable. completionPercent: " + completionPercent);
+		
+		NodeRef taskNodeRef = associationService.getTargetAssoc(deliverableNodeRef, ProjectModel.ASSOC_DL_TASK);
+
+		if (taskNodeRef != null) {
+			NodeRef projectNodeRef = wUsedListService.getRoot(deliverableNodeRef);
+
+			Collection<QName> dataLists = new ArrayList<QName>();
+			dataLists.add(ProjectModel.TYPE_TASK_LIST);
+			ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);			
+
+			// Create new task -> difficult. Right now, we reopen the task InProgress
+//			TaskListDataItem newTaskListDataItem = null;
+//			for (TaskListDataItem t : projectData.getTaskList()) {
+//				if (taskNodeRef.equals(t.getNodeRef())) {
+//					
+//					//TODO : use sort to place task
+//					int newDuration = t.getDuration()!=null && completionPercent != null ? t.getDuration() * completionPercent : 0; 
+//					newTaskListDataItem = new TaskListDataItem(null, t.getTaskName(), t.getIsMilestone(), newDuration, t.getPrevTasks(), t.getResources(), t.getTaskLegend(), t.getWorkflowName());
+//					newTaskListDataItem.setState(TaskState.InProgress);
+//					break;						
+//				}
+//			}
+//			if(newTaskListDataItem != null){
+//				projectData.getTaskList().add(newTaskListDataItem);
+//			}
+			
+			//reopen the task InProgress
+			for (TaskListDataItem t : projectData.getTaskList()) {
+				if (taskNodeRef.equals(t.getNodeRef())) {
+					
+					//TODO : use sort to place task
+					if(t.getDuration()!=null && completionPercent != null){
+						int newDuration = t.getDuration() * completionPercent;
+						t.setDuration(t.getDuration() + newDuration);
+					}
+					t.setState(TaskState.InProgress);					
+					break;						
+				}
+			}			
+			
+			projectDAO.update(projectNodeRef, projectData, dataLists);
+		} else {
+			logger.error("Task is not defined for the deliverable. nodeRef: " + deliverableNodeRef);
 		}
 	}
 

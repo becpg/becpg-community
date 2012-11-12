@@ -65,41 +65,52 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
 				ProjectModel.TYPE_PROJECT, ProjectModel.ASSOC_PROJECT_TPL, new JavaBehaviour(this,
 						"onCreateAssociation"));
+		
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
+				ProjectModel.TYPE_PROJECT, ProjectModel.ASSOC_PROJECT_ENTITY, new JavaBehaviour(this,
+						"onCreateAssociation"));
 
 	}
 
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-
-		// copy datalist from Tpl to project
-		logger.debug("copy datalists");
-		Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(ProjectModel.TYPE_TASK_LIST);
-		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-		entityListDAO.copyDataLists(assocRef.getTargetRef(), assocRef.getSourceRef(), dataLists, true);
 		
-		//refresh reference to prevTasks
-		//TODO : do it in a generic way		
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(assocRef.getSourceRef());
-		if(listContainerNodeRef != null){
-			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_TASK_LIST);
-			if(listNodeRef != null){
-				List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_TASK_LIST);
-				Map<NodeRef, NodeRef> originalMaps = new HashMap<NodeRef, NodeRef>(listItems.size());
-				for(NodeRef listItem : listItems){
-					originalMaps.put(copyService.getOriginal(listItem), listItem);
-				}				
-				
-				//updateOriginalNodes(originalMaps, listItems, ProjectModel.ASSOC_TL_PREV_TASKS);
-				
-				listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
-				listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
-				updateOriginalNodes(originalMaps, listItems, ProjectModel.ASSOC_DL_TASK);
-				
+		if(assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_TPL)){
+			// copy datalist from Tpl to project
+			logger.debug("copy datalists");
+			Collection<QName> dataLists = new ArrayList<QName>();
+			dataLists.add(ProjectModel.TYPE_TASK_LIST);
+			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
+			entityListDAO.copyDataLists(assocRef.getTargetRef(), assocRef.getSourceRef(), dataLists, true);
+			
+			//refresh reference to prevTasks
+			//TODO : do it in a generic way		
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(assocRef.getSourceRef());
+			if(listContainerNodeRef != null){
+				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_TASK_LIST);
+				if(listNodeRef != null){
+					List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_TASK_LIST);
+					Map<NodeRef, NodeRef> originalMaps = new HashMap<NodeRef, NodeRef>(listItems.size());
+					for(NodeRef listItem : listItems){
+						originalMaps.put(copyService.getOriginal(listItem), listItem);
+					}				
+					
+					//updateOriginalNodes(originalMaps, listItems, ProjectModel.ASSOC_TL_PREV_TASKS);
+					
+					listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+					listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+					updateOriginalNodes(originalMaps, listItems, ProjectModel.ASSOC_DL_TASK);
+					
+				}
 			}
-		}
 
-		projectService.start(assocRef.getSourceRef());
+			projectService.start(assocRef.getSourceRef());
+		}
+		else if(assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)){
+			//add project aspect on entity
+			nodeService.addAspect(assocRef.getTargetRef(), ProjectModel.ASPECT_PROJECT_ASPECT, null);
+			associationService.update(assocRef.getTargetRef(), ProjectModel.ASSOC_PROJECT, assocRef.getSourceRef());
+		}		
 	}
 	
 	private void updateOriginalNodes(Map<NodeRef, NodeRef> originalMaps, List<NodeRef> listItems, QName propertyQName){
@@ -120,5 +131,4 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			associationService.update(listItem, propertyQName, tasks);
 		}
 	}
-
 }

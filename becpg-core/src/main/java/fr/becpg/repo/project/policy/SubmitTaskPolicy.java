@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskState;
 
 /**
@@ -58,10 +59,14 @@ public class SubmitTaskPolicy extends AbstractBeCPGPolicy implements NodeService
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		String afterState = (String) after.get(ProjectModel.PROP_TL_STATE);		
-
-		if (afterState != null && afterState.equals(TaskState.Completed.toString())) {
-			queueNode(nodeRef);
+		String beforeState = (String)before.get(ProjectModel.PROP_TL_STATE);
+		String afterState = (String)after.get(ProjectModel.PROP_TL_STATE);
+		logger.debug("before: " + beforeState + " - after: " + afterState);
+		if(beforeState != null && afterState != null){
+			if(beforeState.equals(DeliverableState.InProgress.toString())&&afterState.equals(DeliverableState.Completed.toString())){
+				logger.debug("tl completed");
+				queueNode(nodeRef);
+			}						
 		}
 	}
 }
