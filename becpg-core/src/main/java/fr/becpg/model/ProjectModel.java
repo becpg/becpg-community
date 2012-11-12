@@ -50,4 +50,7 @@ public interface ProjectModel {
 	
 	public static final QName ASPECT_WORKFLOW_ASPECT = QName.createQName(PROJECT_URI, "workflowAspect");
 	public static final QName ASSOC_WORKFLOW_TASK = QName.createQName(PROJECT_URI, "workflowTask");
+	
+	public static final QName ASPECT_PROJECT_ASPECT = QName.createQName(PROJECT_URI, "projectAspect");
+	public static final QName ASSOC_PROJECT = QName.createQName(PROJECT_URI, "project");
 }

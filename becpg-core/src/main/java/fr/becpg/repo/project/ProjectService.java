@@ -19,6 +19,7 @@ public interface ProjectService {
 	public void submitTask(NodeRef taskNodeRef);
 	public void start(NodeRef projectNodeRef);
 	public void submitDeliverable(NodeRef deliverableNodeRef);
+	public void openDeliverable(NodeRef deliverableNodeRef);
 	public List<NodeRef> getTaskLegendList();
 	public NodeRef getProjectsContainer(String siteId);
 }

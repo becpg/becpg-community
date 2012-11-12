@@ -208,12 +208,10 @@
 					<show id="pjt:tlState" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
+					<show id="pjt:tlWorkflowInstance" />
 					<show id="pjt:completionPercent" />
 				</field-visibility>
 				<appearance>
-					<field id="pjt:tlTaskName" />
-					<field id="pjt:tlIsMilestone" />
-					<field id="pjt:tlDuration" />
 					<field id="pjt:tlWorkflowName">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,activiti$projectAdhoc|Adhoc
@@ -228,12 +226,6 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="pjt:tlResources" />
-					<field id="pjt:tlTaskLegend" />
-					<field id="pjt:tlState" />
-					<field id="pjt:tlStart" />
-					<field id="pjt:tlEnd" />
-					<field id="pjt:completionPercent" />
 				</appearance>
 			</form>
 		</forms>
@@ -252,12 +244,10 @@
 					<show id="pjt:tlState" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
+					<show id="pjt:tlWorkflowInstance" />
 					<show id="pjt:completionPercent" />
 				</field-visibility>
 				<appearance>
-					<field id="pjt:tlTaskName" />
-					<field id="pjt:tlIsMilestone" />
-					<field id="pjt:tlDuration" />
 					<field id="pjt:tlWorkflowName">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,activiti$projectAdhoc|Adhoc
@@ -272,12 +262,6 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="pjt:tlResources" />
-					<field id="pjt:tlTaskLegend" />
-					<field id="pjt:tlState" />
-					<field id="pjt:tlStart" />
-					<field id="pjt:tlEnd" />
-					<field id="pjt:completionPercent" />
 				</appearance>
 			</form>
 			<form id="datagrid">
@@ -357,6 +341,15 @@
 					<show id="pjt:dlTask" />
 					<show id="pjt:dlContent" />
 					<show id="pjt:dlState" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="aspect" condition="pjt:projectAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pjt:project" />					
 				</field-visibility>
 			</form>
 		</forms>

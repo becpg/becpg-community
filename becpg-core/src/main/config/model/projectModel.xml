@@ -186,6 +186,9 @@
 						<constraint ref="pjt:allowedWorkflows" />
 					</constraints>
 				</property>
+				<property name="pjt:tlWorkflowInstance">
+					<type>d:text</type>
+				</property>
 				<property name="pjt:tlStart">
 					<type>d:date</type>
 					<index enabled="false" />
@@ -310,6 +313,22 @@
 					</source>
 					<target>
 						<class>pjt:taskList</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		
+		<aspect name="pjt:projectAspect">
+			<associations>
+				<association name="pjt:project">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:project</class>
 						<mandatory>true</mandatory>
 						<many>false</many>
 					</target>
