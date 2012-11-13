@@ -33,6 +33,13 @@ tr.gheader {
 	text-align: center;
 }
 
+.projects  span.project-title {
+	white-space:nowrap;
+   text-overflow:ellipsis;
+   overflow:hidden;
+   width:200px;
+   display: inline-block;
+}
 
 
 .project-list .projects .yui-dt-data td.gfoot {

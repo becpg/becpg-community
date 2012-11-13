@@ -21,13 +21,13 @@ var Filters =
       "fm:forum",
       "fm:topic",
       "fm:post",
-      "bcpg:entityListItem", //beCPG
-      "bcpg:entityListsFolder"
+      "bcpg:entityListItem" //beCPG
    ],
    
    IGNORED_ASPECTS:
    [
-      "bcpg:compositeVersion" //beCPG
+      "bcpg:compositeVersion", //beCPG
+      "bcpg:hiddenFolder" 
    ],
 
 

@@ -15,6 +15,7 @@ import org.alfresco.util.Pair;
 import org.json.JSONException;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ProjectModel;
 
 public class DataListFilter {
 
@@ -46,9 +47,16 @@ public class DataListFilter {
 	
 	public DataListFilter() {
 		super();
+		
+		//TODO refactor
+		
+		//TODO Remove for demo only
+		sortMap.put("@pjt:projectHierarchy1", true);
 		sortMap.put("@bcpg:sort", true);
 		sortMap.put("@cm:created", true);
-		//TODO doublon
+		
+		//TODO Remove for demo only
+		sortProps.add(new Pair<QName, Boolean>(ProjectModel.PROP_PROJECT_HIERARCHY1,true));
 		sortProps.add(new Pair<QName, Boolean>(BeCPGModel.PROP_SORT,true));
 		sortProps.add(new Pair<QName, Boolean>(ContentModel.PROP_CREATED,true));
 	}
