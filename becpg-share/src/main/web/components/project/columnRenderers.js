@@ -10,7 +10,6 @@
 
 			   var url = scope._buildCellUrl(data), version = "";
 
-
 			   if (data.version && data.version !== "") {
 				   version = '<span class="document-version">' + data.version + '</span>';
 			   }
@@ -25,7 +24,7 @@
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:projectHierarchy1",
 		   renderer : function(oRecord, data, label, scope) {
-			   return '<span class="' + scope.getAdvancementClass(oRecord,null,32) + '">&nbsp;</span>';
+			   return '<span class="' + scope.getAdvancementClass(oRecord, null, 32) + '">&nbsp;</span>';
 		   }
 		});
 
@@ -41,26 +40,52 @@
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:taskList",
 		   renderer : function(oRecord, data, label, scope, idx, length) {
-			   var projectSteps = "";
-			   
+
 			   var oData = oRecord.getData();
-            
+
 			   if (data["itemData"]["prop_pjt_tlState"].value == "InProgress") {
-				   projectSteps += scope.getTaskTitle(data, oData.nodeRef,true);
+				  return scope.getTaskTitle(data, oData.nodeRef, true);
 			   }
 
-			   return projectSteps;
+			   return null;
 		   }
 		});
 
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:deliverableList",
 		   renderer : function(oRecord, data, label, scope, idx, length) {
-		   	var oData = oRecord.getData();
-		   	if (data["itemData"]["prop_pjt_dlState"].value != "Planned") {
-		   		return scope.getDeliverableTitle(data,oData.nodeRef);
-		   	}
-		   	return null;
+			   var oData = oRecord.getData();
+
+			   var deliverables = oRecord.getData("itemData")["dt_pjt_deliverableList"];
+
+			   var moreDeliverablesHtlm = "";
+			   var deliverableHtlm = "<ul>";
+
+			   if (idx == 0) {
+				   for (j in deliverables) {
+					   var deliverable = deliverables[j], state = deliverable["itemData"]["prop_pjt_dlState"].value;
+					   if (state != "Planned") {
+					   	if(state == "Closed"){
+					   		moreDeliverablesHtlm += "<li>" + scope.getDeliverableTitle(deliverable, oData.nodeRef) + "</li>";
+					   	} else {
+					   		deliverableHtlm += "<li>" + scope.getDeliverableTitle(deliverable, oData.nodeRef) + "</li>";
+					   	}
+					   }
+				   }
+				   deliverableHtlm += "</ul>";
+
+				   if (moreDeliverablesHtlm.length > 0) {
+					   deliverableHtlm += '<div class="more-deliverable"><div class="onActionShowMore">' + '<a href="#" class="' + scope.id
+					         + '-show-more show-more" title="' + scope.msg("deliverables.more") + '">' + '<span>'
+					         + scope.msg("deliverables.more") + '</span></a></div>' + ' <div class="more-actions hidden"><ul>'
+					         + moreDeliverablesHtlm + '</ul></div></div>';
+				   }
+
+				   return deliverableHtlm;
+
+			   }
+
+			   return null;
 
 		   }
 		});
