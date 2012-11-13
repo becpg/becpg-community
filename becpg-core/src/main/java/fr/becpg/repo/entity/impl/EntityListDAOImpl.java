@@ -113,11 +113,12 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	@Override
 	public NodeRef createListContainer(NodeRef nodeRef) {
-
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);
 		properties.put(ContentModel.PROP_TITLE, RepoConsts.CONTAINER_DATALISTS);
-		return nodeService.createNode(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.TYPE_ENTITYLIST_FOLDER, properties).getChildRef();
+		NodeRef ret =  nodeService.createNode(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.TYPE_FOLDER, properties).getChildRef();
+		nodeService.addAspect(ret, BeCPGModel.ASPECT_HIDDEN_FOLDER, new HashMap<QName, Serializable>());
+		return ret;
 	}
 
 	@Override

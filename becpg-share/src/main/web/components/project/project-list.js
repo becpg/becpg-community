@@ -296,8 +296,12 @@ var g; // gantt var
 						 */
 	               onFilterChanged : function PL_onFilterChanged(layer, args) {
 		               var filter = Alfresco.util.cleanBubblingObject(args[1]);
-		               Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId
-		                     + (filter.filterData ? "." + filter.filterData : ""), filter.filterData));
+		               if(filter.filterId != "filterform"){
+			               Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId
+			                     + (filter.filterData ? "." + filter.filterData : ""), filter.filterData));
+		               } else {
+		               	Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId));
+		               }
 
 	               },
 
@@ -466,7 +470,7 @@ var g; // gantt var
                      + '" title="' + this.msg("link.title.task-edit") + '" >'
                      + task["itemData"]["prop_pjt_tlTaskName"].displayValue + '</a></span>';
 	               	
-	               	if(task["itemData"]["prop_pjt_tlWorkflowInstance"].value){
+	               	if(task["itemData"]["prop_pjt_tlWorkflowInstance"] && task["itemData"]["prop_pjt_tlWorkflowInstance"].value){
 	               		ret += '<a class="task-link" href="'+Alfresco.constants.URL_PAGECONTEXT+'workflow-details?workflowId='+task["itemData"]["prop_pjt_tlWorkflowInstance"].value+'&referrer=project-list&myWorkflowsLinkBack=true'
 	                     + '" >&nbsp;</a>';
 	               	}
@@ -520,7 +524,7 @@ var g; // gantt var
 			               version = '<span class="document-version">' + oData.version + '</span>';
 		               }
 
-		               return '<span ><a class="folder-link" href="' + urlFolder
+		               return '<span class="project-title"><a class="folder-link" href="' + urlFolder
 		                     + '" >&nbsp;</a><a class="theme-color-1" href="' + url + '">' + code + "&nbsp;-&nbsp;"
 		                     + $html(title) + '</a></span>' + version;
 	               }
