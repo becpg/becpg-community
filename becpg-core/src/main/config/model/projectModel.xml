@@ -54,6 +54,7 @@
 					<value>Planned</value>
 					<value>InProgress</value>
 					<value>Completed</value>
+					<value>Closed</value>
 				</list>
 			</parameter>
 		</constraint>

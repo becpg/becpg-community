@@ -29,7 +29,6 @@
 	margin-top: 2em;
 }
 
-
 .project-list span.separator {
 	border-right: 1px dotted #457A9C;
 	border-top: medium none;
@@ -221,7 +220,7 @@
 
 .project-list span.advancement-done {
 	background: url( ../images/states/valid-16.png ) no-repeat;
-   padding-left: 24px;
+	padding-left: 24px;
 }
 
 .project-list span.advancement-less100-32 {
@@ -259,7 +258,6 @@
 	display: inline-block;
 }
 
-
 .project-list span.advancement-done-32 {
 	background: url( ../images/states/valid-16.png ) no-repeat;
 	padding-left: 40px;
@@ -277,7 +275,6 @@
 	vertical-align: middle;
 }
 
-
 .project-list table a.folder-link {
 	cursor: pointer;
 	padding-left: 24px;
@@ -291,7 +288,7 @@
 	text-decoration: none;
 	background: url( ../images/task-16.png ) no-repeat;
 	min-height: 20px;
-	padding: 2px 0 1px 24px;	
+	padding: 2px 0 1px 24px;
 	margin-left: 5px;
 }
 
@@ -301,11 +298,10 @@
 	padding: 2px 0 1px 24px;
 }
 
-
-.project-list span.delivrable-status-Completed {
+.project-list span.delivrable-status-Completed,.project-list span.delivrable-status-Closed
+	{
 	background-image: url( ../images/complete-16.png );
 }
-
 
 .project-list span.delivrable-status-Planned {
 	background-image: url( ../images/workflow-16.png );
@@ -314,10 +310,19 @@
 .project-list span.delivrable-status-InProgress {
 	background-image: url( ../images/job-running-16.png );
 }
-  
+
+.project-list .more-deliverable a.show-more {
+    background-repeat: no-repeat;
+    border: 1px solid transparent;
+    display: block;
+    min-height: 16px;
+    padding-left: 24px;
+    background-position: top left;
+}
+
+
 .project-list span.doc-file {
 	padding-right: 4px;
 	text-decoration: none;
 	cursor: pointer;
-	
 }

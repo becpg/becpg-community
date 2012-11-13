@@ -257,7 +257,7 @@ var g; // gantt var
 						               this.cache[taskId] = tdates;
 					               }
 
-					               g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task, oData.nodeRef),
+					               g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task, oData.nodeRef,null ,  tdates.start),
 					                     tdates.start, tdates.end, this.getTaskColor(task), null, tlIsMilestone ? 1 : 0,
 					                     taskOwner, tlPercent, 0, projectId, 1, precTaskIds));
 
@@ -305,11 +305,11 @@ var g; // gantt var
 
 	               },
 
-	               getAdvancementClass : function PL_getAdvancementClass(oRecord, task, size) {
+	               getAdvancementClass : function PL_getAdvancementClass(oRecord, task, size, start) {
 		               var percent = 0, suffix = "";
 
 		               if (task != null) {
-			               percent = this.getTaskAdvancementPercent(task);
+			               percent = this.getTaskAdvancementPercent(task,start);
 		               } else {
 			               if (size != null) {
 				               suffix = "-" + size;
@@ -372,7 +372,12 @@ var g; // gantt var
 			               if (endDate == null) {
 				               var duration = oRecord["itemData"]["prop_pjt_tlDuration"].value;
 				               if (duration == null) {
-					               duration = 0;
+				               	  var tlIsMilestone = oRecord["itemData"]["prop_pjt_tlIsMilestone"].value;
+				               	if(tlIsMilestone){
+				               		duration = 1;
+				               	} else {
+				               		duration = 0;
+				               	}
 				               }
 
 				               endDate = new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000);
@@ -430,9 +435,9 @@ var g; // gantt var
 		               return ret;
 	               },
 
-	               getTaskAdvancementPercent : function PL_getTaskAdvancementPercent(task) {
+	               getTaskAdvancementPercent : function PL_getTaskAdvancementPercent(task, start) {
 
-		               var dates = this.extractDates(task), now = new Date();
+		               var dates = this.extractDates(task,start), now = new Date();
 
 		               if (task["itemData"]["prop_pjt_tlState"].value == "Completed") {
 			               return -1;
@@ -458,8 +463,8 @@ var g; // gantt var
 		               return date;
 	               },
 
-	               getTaskTitle : function PL_getTaskTitle(task, entityNodeRef,full) {
-	               	var ret =  '<span class="' + this.getAdvancementClass(null, task) + '">';
+	               getTaskTitle : function PL_getTaskTitle(task, entityNodeRef,full, start) {
+	               	var ret =  '<span class="' + this.getAdvancementClass(null, task,null, start) + '">';
 	               	
 	               	if(full){
 	               		ret+='<div class="projectStatus" style="background-color:#' + this.getTaskColor(task)+ '" ></div>';

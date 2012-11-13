@@ -1560,8 +1560,8 @@ JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
 
 					if (vNxtDate <= vMaxDate) {
 						vDateRowStr += '<th class="ghead"  bgcolor=#' + vWeekdayColor + '  width:' + vColWidth
-						      + 'px><div style="width: ' + vColWidth + 'px">' + (vTmpDate.getMonth() + 1) + '/'
-						      + vTmpDate.getDate() + '</div></th>';
+						      + 'px><div style="width: ' + vColWidth + 'px">' + vTmpDate.getDate() + '/'
+						      + (vTmpDate.getMonth() + 1)  + '</div></th>';
 						if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate)
 							vItemRowStr += '<td class="ghead"  bgcolor=#' + vWeekdayColor
 							      + ' ><div style="width: ' + vColWidth + 'px">&nbsp&nbsp</div></td>';
@@ -1721,7 +1721,7 @@ JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
 					vTaskRight = 1;
 
 					vRightTable += '<div id="bardiv_' + vID + '" style="position:absolute; top:5px; left:'
-					      + (Math.ceil((vTaskLeft * (vDayWidth) + 1))+4) + 'px; height: 18px; width:6px; overflow:hidden;">'
+					      + (Math.ceil((vTaskLeft * (vDayWidth) + 1))+vDayWidth-4) + 'px; height: 18px; width:6px; overflow:hidden;">'
 					      + '  <div id="taskbar_' + vID + '" title="' + vDateRowStr
 					      + '" style="height: 16px; width:6px; overflow:hidden; cursor: pointer;" >';
 
