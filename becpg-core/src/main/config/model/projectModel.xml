@@ -94,7 +94,7 @@
 	<types>
 
 		<type name="pjt:projectTpl">
-			<parent>bcpg:entityV2</parent>
+			<parent>bcpg:entity</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
@@ -106,6 +106,7 @@
 			<properties>
 				<property name="pjt:projectHierarchy1">
 					<type>d:text</type>
+					<mandatory>true</mandatory>
 					<constraints>
 						<constraint ref="pjt:projectHierarchy1" />
 					</constraints>
