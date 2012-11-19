@@ -69,7 +69,8 @@ var g; // gantt var
 						 */
 	               onReady : function PL_onReady() {
 
-		               var url = Alfresco.constants.PROXY_URI + "becpg/project/info?site=" + this.options.site;
+		               var url = Alfresco.constants.PROXY_URI + "becpg/project/info"
+		                     + (this.options.siteId != null ? "?site=" + this.options.siteId : "");
 
 		               Alfresco.util.Ajax.request({
 		                  url : url,
@@ -257,9 +258,9 @@ var g; // gantt var
 						               this.cache[taskId] = tdates;
 					               }
 
-					               g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task, oData.nodeRef,null ,  tdates.start),
-					                     tdates.start, tdates.end, this.getTaskColor(task), null, tlIsMilestone ? 1 : 0,
-					                     taskOwner, tlPercent, 0, projectId, 1, precTaskIds));
+					               g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task, oData.nodeRef, null,
+					                     tdates.start), tdates.start, tdates.end, this.getTaskColor(task), null,
+					                     tlIsMilestone ? 1 : 0, taskOwner, tlPercent, 0, projectId, 1, precTaskIds));
 
 				               }
 
@@ -296,11 +297,11 @@ var g; // gantt var
 						 */
 	               onFilterChanged : function PL_onFilterChanged(layer, args) {
 		               var filter = Alfresco.util.cleanBubblingObject(args[1]);
-		               if(filter.filterId != "filterform"){
+		               if (filter.filterId != "filterform") {
 			               Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId
 			                     + (filter.filterData ? "." + filter.filterData : ""), filter.filterData));
 		               } else {
-		               	Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId));
+			               Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId));
 		               }
 
 	               },
@@ -309,7 +310,7 @@ var g; // gantt var
 		               var percent = 0, suffix = "";
 
 		               if (task != null) {
-			               percent = this.getTaskAdvancementPercent(task,start);
+			               percent = this.getTaskAdvancementPercent(task, start);
 		               } else {
 			               if (size != null) {
 				               suffix = "-" + size;
@@ -321,7 +322,7 @@ var g; // gantt var
 				               if (!taskList[i]["itemData"]["prop_pjt_tlState"].value == "Completed") {
 					               percent += this.getTaskAdvancementPercent(taskList[i]);
 				               } else {
-				               	percent +=100;
+					               percent += 100;
 				               }
 			               }
 
@@ -372,12 +373,12 @@ var g; // gantt var
 			               if (endDate == null) {
 				               var duration = oRecord["itemData"]["prop_pjt_tlDuration"].value;
 				               if (duration == null) {
-				               	  var tlIsMilestone = oRecord["itemData"]["prop_pjt_tlIsMilestone"].value;
-				               	if(tlIsMilestone){
-				               		duration = 1;
-				               	} else {
-				               		duration = 0;
-				               	}
+					               var tlIsMilestone = oRecord["itemData"]["prop_pjt_tlIsMilestone"].value;
+					               if (tlIsMilestone) {
+						               duration = 1;
+					               } else {
+						               duration = 0;
+					               }
 				               }
 
 				               endDate = new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000);
@@ -437,7 +438,7 @@ var g; // gantt var
 
 	               getTaskAdvancementPercent : function PL_getTaskAdvancementPercent(task, start) {
 
-		               var dates = this.extractDates(task,start), now = new Date();
+		               var dates = this.extractDates(task, start), now = new Date();
 
 		               if (task["itemData"]["prop_pjt_tlState"].value == "Completed") {
 			               return -1;
@@ -463,46 +464,47 @@ var g; // gantt var
 		               return date;
 	               },
 
-	               getTaskTitle : function PL_getTaskTitle(task, entityNodeRef,full, start) {
-	               	var ret =  '<span class="' + this.getAdvancementClass(null, task,null, start) + '">';
-	               	
-	               	if(full){
-	               		ret+='<div class="projectStatus" style="background-color:#' + this.getTaskColor(task)+ '" ></div>';
-	               	}
-	               	
-	               	ret+= '<span class="node-'
-                     + task.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS
-                     + '" title="' + this.msg("link.title.task-edit") + '" >'
-                     + task["itemData"]["prop_pjt_tlTaskName"].displayValue + '</a></span>';
-	               	
-	               	if(task["itemData"]["prop_pjt_tlWorkflowInstance"] && task["itemData"]["prop_pjt_tlWorkflowInstance"].value){
-	               		ret += '<a class="task-link" href="'+Alfresco.constants.URL_PAGECONTEXT+'workflow-details?workflowId='+task["itemData"]["prop_pjt_tlWorkflowInstance"].value+'&referrer=project-list&myWorkflowsLinkBack=true'
-	                     + '" >&nbsp;</a>';
-	               	}
-	               	
-	               	ret+="</span>";
-	               	
+	               getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, full, start) {
+		               var ret = '<span class="' + this.getAdvancementClass(null, task, null, start) + '">';
+
+		               if (full) {
+			               ret += '<div class="projectStatus" style="background-color:#' + this.getTaskColor(task)
+			                     + '" ></div>';
+		               }
+
+		               ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 '
+		                     + TASK_EVENTCLASS + '" title="' + this.msg("link.title.task-edit") + '" >'
+		                     + task["itemData"]["prop_pjt_tlTaskName"].displayValue + '</a></span>';
+
+		               if (task["itemData"]["prop_pjt_tlWorkflowInstance"]
+		                     && task["itemData"]["prop_pjt_tlWorkflowInstance"].value) {
+			               ret += '<a class="task-link" href="' + Alfresco.constants.URL_PAGECONTEXT
+			                     + 'workflow-details?workflowId=' + task["itemData"]["prop_pjt_tlWorkflowInstance"].value
+			                     + '&referrer=project-list&myWorkflowsLinkBack=true' + '" >&nbsp;</a>';
+		               }
+
+		               ret += "</span>";
+
 		               return ret;
 	               },
 	               getDeliverableTitle : function PL_getDeliverableTitle(deliverable, entityNodeRef) {
-	               	
-		               var ret = '<span class="delivrable-status delivrable-status-'+deliverable["itemData"]["prop_pjt_dlState"].value+'">';
-		          
-		               
+
+		               var ret = '<span class="delivrable-status delivrable-status-'
+		                     + deliverable["itemData"]["prop_pjt_dlState"].value + '">';
+
 		               var contents = deliverable["itemData"]["assoc_pjt_dlContent"];
-		
-		               if(contents.length>0 ){
-		               	ret += '<span class="doc-file"><a href="'+this._buildCellUrl(contents[0])+
-		               	   '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'
-		      			      + Alfresco.util.getFileIcon(contents[0].displayValue, "cm:content", 16) +'" /></a></span>';
+
+		               if (contents.length > 0) {
+			               ret += '<span class="doc-file"><a href="' + this._buildCellUrl(contents[0]) + '"><img src="'
+			                     + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'
+			                     + Alfresco.util.getFileIcon(contents[0].displayValue, "cm:content", 16)
+			                     + '" /></a></span>';
 		               }
-		               
+
 		               ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef
 		                     + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="'
 		                     + this.msg("link.title.task-edit") + '" >'
 		                     + deliverable["itemData"]["prop_pjt_dlDescription"].displayValue + '</a></span>';
-		               
-		             
 
 		               return ret;
 	               },
@@ -518,13 +520,12 @@ var g; // gantt var
 			               url = Alfresco.constants.URL_PAGECONTEXT + "site/" + oData.siteId + "/"
 			                     + 'entity-data-lists?nodeRef=' + oData.nodeRef;
 			               urlFolder = Alfresco.constants.URL_PAGECONTEXT + "site/" + oData.siteId + "/"
-	                     + 'documentlibrary#filter=nodeRef|' + oData.nodeRef;
+			                     + 'documentlibrary#filter=nodeRef|' + oData.nodeRef;
 		               } else {
 			               url = Alfresco.constants.URL_PAGECONTEXT + 'entity-data-lists?nodeRef=' + oData.nodeRef;
-			               urlFolder = Alfresco.constants.URL_PAGECONTEXT + 'repository?nodeRef='+ oData.nodeRef;
+			               urlFolder = Alfresco.constants.URL_PAGECONTEXT + 'repository?nodeRef=' + oData.nodeRef;
 		               }
-		               
-		               
+
 		               if (oData.version && oData.version !== "") {
 			               version = '<span class="document-version">' + oData.version + '</span>';
 		               }
@@ -534,96 +535,5 @@ var g; // gantt var
 		                     + $html(title) + '</a></span>' + version;
 	               }
 	            }, true);
-	// ,
-	// /**
-	// * Takes a filter and looks for its url parameter
-	// * representation
-	// *
-	// * @method createFilterURLParameters
-	// * @param filter
-	// * {object} The filter to create url parameters for
-	// * @param filterParameters
-	// * {Array} List of configured filter parameters that
-	// * shall create url parameters
-	// * @return URL parameters created from the instructions in
-	// * filterParameters based on data from the filter OR
-	// * null no instructions were found
-	// * @override
-	// */
-	// createFilterURLParameters : function
-	// DateFilter_createFilterURLParameters(filter, filterParameters) {
-	// if (YAHOO.lang.isString(filter.filterData)) {
-	// var filterParameter, result = null;
-	// for ( var fpi = 0, fpil = filterParameters.length; fpi < fpil; fpi++) {
-	// filterParameter = filterParameters[fpi];
-	// if ((filter.filterId == filterParameter.id || filterParameter.id == "*")
-	// && (filter.filterData == filterParameter.data || filterParameter.data ==
-	// "*")) {
-	// return this.substituteParameters(filterParameter.parameters, {
-	// id : filter.filterId,
-	// data : filter.filterData
-	// });
-	// }
-	// }
-	// }
-	// return null;
-	// },
-	//
-	// /**
-	// * Takes a template and performs substituion against "Obj" and
-	// * according to date instructions as described below.
-	// *
-	// * Assumes the template data may contain date instructions
-	// * where the instructions are placed inside curly brackets:
-	// * "param={attr}" - the name of an attribute in "obj"
-	// * "param={0dt}" - the current date time in iso8601 format
-	// * "param={1d}" - the current date (time set to end of day)
-	// * and rolled l days forward "param={-2d}" - the current date
-	// * (time set to end of day) and rolled 2 days backward
-	// *
-	// * @param template
-	// * The template containing attributes from obj and
-	// * dates to resolve
-	// * @param obj
-	// * Contains runtime values
-	// */
-	// substituteParameters : function(template, obj) {
-	// var unresolvedTokens = template.match(/{[^}]+}/g);
-	// if (unresolvedTokens) {
-	// var resolvedTokens = {}, name, value, date;
-	// for ( var i = 0, il = unresolvedTokens.length; i < il; i++) {
-	// name = unresolvedTokens[i].substring(1, unresolvedTokens[i].length - 1);
-	// value = name;
-	// date = new Date();
-	// if (/^[\-\+]?\d+(d|dt)$/.test(value)) {
-	// if (/^[\-\+]?\d+(d)$/.test(value)) {
-	// // Only date (and not datetime) that was
-	// // requested
-	// date.setHours(11);
-	// date.setMinutes(59);
-	// date.setSeconds(59);
-	// date.setMilliseconds(999);
-	// }
-	// date.setDate(date.getDate() + parseInt(value));
-	// value = date;
-	// } else {
-	// value = obj[name];
-	// }
-	// resolvedTokens[name] = Alfresco.util.isDate(value) ?
-	// Alfresco.util.toISO8601(value) : value;
-	// }
-	// return YAHOO.lang.substitute(template, resolvedTokens);
-	// }
-	// return template;
-	// }
-	//
-	// }, true);
-
-	// filterResolver: this.bind(function(filter)
-	// {
-	// // Reuse method from WorkflowActions
-	// return this.createFilterURLParameters(filter,
-	// this.options.filterParameters);
-	// }
 
 })();

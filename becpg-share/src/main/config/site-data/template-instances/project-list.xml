@@ -36,18 +36,23 @@
          <region-id>priority-filter</region-id>
          <url>/components/workflow/filter/priority</url>
       </component>
+      
+      
+      <!-- Tags Filter -->
+      <component>
+         <region-id>tags</region-id>
+         <url>/components/tag-filter</url>
+         <properties>
+         	<container>projects</container>
+         </properties>
+      </component>
+		
 
       <component>
          <region-id>toolbar</region-id>
          <url>/components/project/project-list-toolbar</url>
       </component>
 
-      <!-- Tags Filter -->
-      <component>
-         <region-id>tags</region-id>
-         <url>/components/tags</url>
-      </component>
-		
 
       <!-- project List -->
       <component>
