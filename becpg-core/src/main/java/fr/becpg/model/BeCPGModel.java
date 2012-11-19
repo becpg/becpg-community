@@ -406,6 +406,8 @@ public interface BeCPGModel {
 
 	/** entity */
 	QName TYPE_ENTITY = QName.createQName(BECPG_URI, "entity");
+	
+	QName TYPE_ENTITY_V2 = QName.createQName(BECPG_URI, "entityV2");
 
 	QName TYPE_SYSTEM_ENTITY = QName.createQName(BECPG_URI, "systemEntity");
 

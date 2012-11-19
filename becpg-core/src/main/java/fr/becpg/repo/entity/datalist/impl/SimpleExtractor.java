@@ -15,6 +15,7 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.search.SearchService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.FileFilterMode;
 import org.alfresco.util.FileFilterMode.Client;
@@ -39,6 +40,8 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	
 	private EntityListDAO entityListDAO;
 	
+	private NamespaceService namespaceService;
+	
 	private static Log logger = LogFactory.getLog(SimpleExtractor.class);
 	
 
@@ -52,6 +55,10 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
+	}
+
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
 	}
 
 	@Override
@@ -105,7 +112,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 			FileFilterMode.setClient(Client.script);
 			try {
 
-				pageOfNodeInfos = this.fileFolderService.list(dataListFilter.getDataListNodeRef(), true, false, null, ignoreTypeQNames, dataListFilter.getSortProps(), pageRequest);
+				pageOfNodeInfos = this.fileFolderService.list(dataListFilter.getDataListNodeRef(), true, false, null, ignoreTypeQNames, dataListFilter.getSortProps(namespaceService), pageRequest);
 			} finally {
 				FileFilterMode.clearClient();
 			}

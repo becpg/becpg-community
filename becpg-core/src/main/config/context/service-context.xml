@@ -284,6 +284,7 @@
 		<property name="dictionaryService" ref="dictionaryService"/>
 		<property name="fileFolderService" ref="fileFolderService"/>
 		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="namespaceService" ref="namespaceService"/>
 	</bean>
 
 	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor" parent="simpleExtractor">
