@@ -37,6 +37,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.security.SecurityService;
+import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 /**
  * Webscript that send the result of a datalist
@@ -77,6 +78,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	/** Pagination **/
 
+	protected static final String PARAM_SORT = "sort";
+	
 	protected static final String PARAM_PAGE = "page";
 
 	protected static final String PARAM_PAGE_SIZE = "pageSize";
@@ -98,6 +101,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	private DataListExtractorFactory dataListExtractorFactory;
 	
 	private DataListSortService dataListSortService;
+	
+	
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -155,6 +160,12 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		QName dataType = QName.createQName(itemType, namespaceService);
 		dataListFilter.setDataType(dataType);
 
+		String sort = req.getParameter(PARAM_SORT);
+		Map<String, Boolean> sortMap = WebscriptHelper.extractSortMap(sort,namespaceService);
+		
+		dataListFilter.setSortMap(sortMap);
+		
+		
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		if(templateArgs!=null){
 			String storeType = templateArgs.get(PARAM_STORE_TYPE);
