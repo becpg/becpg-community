@@ -275,6 +275,11 @@
 	padding-left: 20px;
 }
 
+.datagrid  span.taskList {
+	background: url(../../components/images/filetypes/generic-taskList-16.png) no-repeat;
+	padding-left: 20px;
+}
+
 .datagrid-bar .onActionShowDetails
 {
    background-image: url(../../components/images/show-details-16.png);

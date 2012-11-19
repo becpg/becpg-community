@@ -93,6 +93,9 @@
 					<!-- Product Catalog -->
 					<show id="bp:productCatalogs" force="true" />
 					
+					<!-- Project -->
+					<show id="pjt:project" />
+					
 					<!-- formulation -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
@@ -162,6 +165,9 @@
 					<set id="mainTab" label-id="becpg.forms.set.characteristics.label" />
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl"
+						parent="mainTab" />
+					<set id="project" appearance="bordered-panel"
+						label-id="becpg.forms.set.project.label" template="/fr/becpg/components/form/2-column-set.ftl"
 						parent="mainTab" />
 					<set id="formulation" appearance="bordered-panel"
 						label-id="becpg.forms.set.formulation-quality.label" template="/fr/becpg/components/form/3-column-set.ftl"
@@ -236,6 +242,8 @@
 					
 					<!-- Product Catalog -->
 					<field id="bp:productCatalogs" set="mainInfo" />
+										
+					<field id="pjt:project" set="project"/>
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />

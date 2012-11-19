@@ -3,6 +3,9 @@
  */
 package fr.becpg.repo.project;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -33,6 +36,7 @@ import fr.becpg.repo.BeCPGListDao;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.data.AbstractProjectData;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.ProjectTplData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
@@ -184,7 +188,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
-								null, null, 2, projectTplNodeRef, 0, rawMaterialNodeRef);
+								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
 
 						return projectDAO.create(testFolderNodeRef, projectData, dataLists);
 					}
@@ -192,6 +196,73 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 
 		assertTrue(nodeService.hasAspect(rawMaterialNodeRef, ProjectModel.ASPECT_PROJECT_ASPECT));
 		assertEquals(projectNodeRef, associationService.getTargetAssoc(rawMaterialNodeRef, ProjectModel.ASSOC_PROJECT));
+	}
+	
+	/**
+	 * Test a project create InProgress start automatically
+	 */
+	@Test
+	public void testCreateProjectInProgress() {
+
+		initTest();
+
+		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						Collection<QName> dataLists = new ArrayList<QName>();
+
+						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
+								null, null, 2, ProjectState.InProgress, projectTplNodeRef, 0, rawMaterialNodeRef);
+
+						NodeRef p = projectDAO.create(testFolderNodeRef, projectData, dataLists);
+						
+						return p;
+					}
+				}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				Collection<QName> dataLists = new ArrayList<QName>();
+				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
+				dataLists.add(ProjectModel.TYPE_TASK_LIST);
+
+				ProjectTplData projectTplData = (ProjectTplData) projectDAO.find(projectTplNodeRef, dataLists);
+
+				assertNotNull(projectTplData);
+				assertNotNull(projectTplData.getTaskList());
+				assertEquals(6, projectTplData.getTaskList().size());
+				assertNotNull(projectTplData.getDeliverableList());
+				assertEquals(4, projectTplData.getDeliverableList().size());
+
+				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				
+				logger.debug("projectData: " +projectData);
+
+				assertNotNull(projectData);
+				assertNotNull(projectData.getTaskList());
+				assertEquals(6, projectData.getTaskList().size());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(2).getState());
+				assertNotNull(projectData.getDeliverableList());
+				assertEquals(4, projectData.getDeliverableList().size());
+				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(0).getState());
+				assertEquals(DeliverableState.Planned, projectData.getDeliverableList().get(1).getState());
+				assertEquals(DeliverableState.Planned, projectData.getDeliverableList().get(2).getState());
+
+				// submit task 1st task
+				projectData.getDeliverableList().get(0).setState(DeliverableState.Completed);
+				projectData.getTaskList().get(0).setState(TaskState.Completed);
+				projectDAO.update(projectNodeRef, projectData, dataLists);
+
+				return null;
+			}
+		}, false, true);
 	}
 
 	@Test
@@ -208,9 +279,11 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
-								null, null, 2, projectTplNodeRef, 0, rawMaterialNodeRef);
+								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
 
-						return projectDAO.create(testFolderNodeRef, projectData, dataLists);
+						NodeRef p = projectDAO.create(testFolderNodeRef, projectData, dataLists);
+						projectService.start(p);
+						return p;
 					}
 				}, false, true);
 
@@ -392,7 +465,6 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(1).getState());
 				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(2).getState());
-				assertEquals(2 * 1, 3, projectData.getTaskList().get(1).getDuration());
 
 				// check task 3,4 is InProgress
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getState());
@@ -401,6 +473,102 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				return null;
 			}
 		}, false, true);
+	}
+	
+	@Test
+	public void testCalculateNextDate() throws ParseException{
+		
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");	
+		Date date = dateFormat.parse("15/11/2012");
+		
+		assertEquals(dateFormat.parse("15/11/2012"), projectService.calculateEndDate(date, 1));
+		assertEquals(dateFormat.parse("16/11/2012"), projectService.calculateEndDate(date, 2));
+		assertEquals(dateFormat.parse("19/11/2012"), projectService.calculateEndDate(date, 3));
+		assertEquals(dateFormat.parse("20/11/2012"), projectService.calculateEndDate(date, 4));
+		
+		assertEquals(dateFormat.parse("16/11/2012"), projectService.calculateNextStartDate(date));
+		assertEquals(dateFormat.parse("19/11/2012"), projectService.calculateNextStartDate(dateFormat.parse("16/11/2012")));
+	}
+	
+	@Test
+	public void testCalculateTaskDuration() throws ParseException{
+		
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");	
+		
+		assertEquals(1, projectService.calculateTaskDuration(dateFormat.parse("15/11/2012"), dateFormat.parse("15/11/2012")));
+		assertEquals(2, projectService.calculateTaskDuration(dateFormat.parse("15/11/2012"), dateFormat.parse("16/11/2012")));
+		assertEquals(3, projectService.calculateTaskDuration(dateFormat.parse("15/11/2012"), dateFormat.parse("19/11/2012")));
+	}
+	
+	@Test
+	public void testCalculateDates() {
+
+		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		initTest();
+
+		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						Collection<QName> dataLists = new ArrayList<QName>();
+						
+						Date startDate = dateFormat.parse("15/11/2012");
+						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, startDate,
+								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
+
+						return projectDAO.create(testFolderNodeRef, projectData, dataLists);
+					}
+				}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				Collection<QName> dataLists = new ArrayList<QName>();
+				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
+				dataLists.add(ProjectModel.TYPE_TASK_LIST);
+				
+				projectService.initializeProjectDates(projectNodeRef);
+				
+				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);								
+
+				// check initialization
+				assertNotNull(projectData);
+				assertNotNull(projectData.getTaskList());
+				assertEquals(6, projectData.getTaskList().size());
+				assertEquals(dateFormat.parse("15/11/2012"), projectData.getTaskList().get(0).getStart());
+				assertEquals(dateFormat.parse("16/11/2012"), projectData.getTaskList().get(0).getEnd());
+				assertEquals(dateFormat.parse("19/11/2012"), projectData.getTaskList().get(1).getStart());
+				assertEquals(dateFormat.parse("20/11/2012"), projectData.getTaskList().get(1).getEnd());
+				assertEquals(dateFormat.parse("21/11/2012"), projectData.getTaskList().get(2).getStart());
+				assertEquals(dateFormat.parse("22/11/2012"), projectData.getTaskList().get(2).getEnd());
+				assertEquals(dateFormat.parse("23/11/2012"), projectData.getTaskList().get(3).getStart());
+				assertEquals(dateFormat.parse("26/11/2012"), projectData.getTaskList().get(3).getEnd());
+				assertEquals(dateFormat.parse("23/11/2012"), projectData.getTaskList().get(4).getStart());
+				assertEquals(dateFormat.parse("26/11/2012"), projectData.getTaskList().get(4).getEnd());
+				assertEquals(dateFormat.parse("27/11/2012"), projectData.getTaskList().get(5).getStart());
+				assertEquals(dateFormat.parse("28/11/2012"), projectData.getTaskList().get(5).getEnd());
+
+				// modify some tasks				
+				projectData.getTaskList().get(0).setStart(dateFormat.parse("19/11/2012"));
+				projectData.getTaskList().get(1).setDuration(4);
+				projectDAO.update(projectNodeRef, projectData, dataLists);
+				projectService.calculateTaskDates(projectData.getTaskList().get(0).getNodeRef());														
+
+				// check 
+				projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				assertEquals(dateFormat.parse("19/11/2012"), projectData.getTaskList().get(0).getStart());
+				assertEquals(dateFormat.parse("20/11/2012"), projectData.getTaskList().get(0).getEnd());
+				assertEquals(dateFormat.parse("21/11/2012"), projectData.getTaskList().get(1).getStart());
+				assertEquals(dateFormat.parse("26/11/2012"), projectData.getTaskList().get(1).getEnd());
+				assertEquals(dateFormat.parse("27/11/2012"), projectData.getTaskList().get(2).getStart());
+				assertEquals(dateFormat.parse("28/11/2012"), projectData.getTaskList().get(2).getEnd());
+				
+				return null;
+			}
+		}, false, true);		
 	}
 
 	@Test

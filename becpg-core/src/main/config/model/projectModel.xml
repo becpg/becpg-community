@@ -42,7 +42,7 @@
 			</parameter>
 			<parameter name="constraintType">
 				<value>bcpg:listValue</value>
-			</parameter>
+			</parameter>Hierarchy1
 			<parameter name="constraintProp">
 				<value>cm:name</value>
 			</parameter>
@@ -60,6 +60,18 @@
 		</constraint>
 
 		<constraint name="pjt:taskStates" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Planned</value>
+					<value>InProgress</value>
+					<value>OnHold</value>
+					<value>Cancelled</value>
+					<value>Completed</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="pjt:projectStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value>Planned</value>
@@ -127,6 +139,13 @@
 					<default>2</default>
 					<constraints>
 						<constraint ref="pjt:allowedPriority" />
+					</constraints>
+				</property>
+				<property name="pjt:projectState">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="pjt:projectStates" />
 					</constraints>
 				</property>
 			</properties>

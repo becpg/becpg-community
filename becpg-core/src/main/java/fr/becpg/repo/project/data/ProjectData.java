@@ -23,6 +23,7 @@ public class ProjectData extends AbstractProjectData {
 	private Date dueDate;
 	private Date completionDate;
 	private Integer priority = 2;
+	private ProjectState projectState;
 	private NodeRef projectTpl;
 	private Integer completionPercent = 0;
 	private NodeRef entity;
@@ -67,6 +68,14 @@ public class ProjectData extends AbstractProjectData {
 		this.priority = priority;
 	}
 
+	public ProjectState getProjectState() {
+		return projectState;
+	}
+
+	public void setProjectState(ProjectState projectState) {
+		this.projectState = projectState;
+	}
+
 	public NodeRef getProjectTpl() {
 		return projectTpl;
 	}
@@ -85,7 +94,7 @@ public class ProjectData extends AbstractProjectData {
 	
 	
 
-	public ProjectData(NodeRef nodeRef, String name, String hierarchy1, Date startDate, Date dueDate, Date completionDate, Integer priority, NodeRef projectTpl,
+	public ProjectData(NodeRef nodeRef, String name, String hierarchy1, Date startDate, Date dueDate, Date completionDate, Integer priority, ProjectState projectState, NodeRef projectTpl,
 			Integer completionPercent, NodeRef entity) {
 		super(nodeRef, name);
 		this.hierarchy1 = hierarchy1;
@@ -93,6 +102,7 @@ public class ProjectData extends AbstractProjectData {
 		this.dueDate = dueDate;
 		this.completionDate = completionDate;
 		this.priority = priority;
+		this.projectState = projectState;
 		this.projectTpl = projectTpl;
 		this.completionPercent = completionPercent;
 		this.entity = entity;
@@ -114,6 +124,7 @@ public class ProjectData extends AbstractProjectData {
 		properties.put(ProjectModel.PROP_PROJECT_DUE_DATE, dueDate);
 		properties.put(ProjectModel.PROP_PROJECT_COMPLETION_DATE, completionDate);
 		properties.put(ProjectModel.PROP_PROJECT_PRIORITY, priority);
+		properties.put(ProjectModel.PROP_PROJECT_STATE, projectState.toString());
 		properties.put(ProjectModel.PROP_COMPLETION_PERCENT, completionPercent);
 		return properties;
 	}

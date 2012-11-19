@@ -9,5 +9,6 @@ public enum DeliverableState {
 
 	Planned,
 	InProgress,
-	Completed
+	Completed,
+	Closed
 }

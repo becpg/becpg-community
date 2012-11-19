@@ -26,6 +26,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.data.AbstractProjectData;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.ProjectTplData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
@@ -98,11 +99,13 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 
 		if (projectType.isMatch(ProjectModel.TYPE_PROJECT)) {
 			NodeRef projectTplNodeRef = associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PROJECT_TPL);
+			String s = (String) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_STATE);
+			ProjectState projectState = s != null ? ProjectState.valueOf(s) : ProjectState.Planned;
 
 			projectData = new ProjectData(projectNodeRef, name, (String) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY1),
 					(Date) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_START_DATE), (Date) nodeService.getProperty(projectNodeRef,
 							ProjectModel.PROP_PROJECT_DUE_DATE), (Date) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_COMPLETION_DATE),
-					(Integer) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_PRIORITY), projectTplNodeRef, (Integer) nodeService.getProperty(projectNodeRef,
+					(Integer) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_PRIORITY), projectState, projectTplNodeRef, (Integer) nodeService.getProperty(projectNodeRef,
 							ProjectModel.PROP_COMPLETION_PERCENT), associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY));
 
 		} else {
@@ -221,41 +224,6 @@ public class ProjectDAOImpl implements BeCPGListDao<AbstractProjectData> {
 
 		return deliverableList;
 	}
-
-	// private List<TaskListDataItem> loadList(NodeRef listContainerNodeRef,
-	// QName dataListType) {
-	// List<DataItem> dataList = null;
-	//
-	// if (listContainerNodeRef != null) {
-	// NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef,
-	// dataListType);
-	//
-	// if (listNodeRef != null) {
-	// dataList = new ArrayList<DataItem>();
-	// List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(listNodeRef,
-	// dataListType);
-	//
-	// for (NodeRef listItemNodeRef : listItemNodeRefs) {
-	//
-	// taskList.add(new TaskListDataItem(listItemNodeRef,
-	// (Boolean)nodeService.getProperty(listItemNodeRef,
-	// ProjectModel.PROP_TL_IS_MILESTONE),
-	// (Integer)nodeService.getProperty(listItemNodeRef,
-	// ProjectModel.PROP_TL_DURATION),
-	// (String)nodeService.getProperty(listItemNodeRef,
-	// ProjectModel.PROP_TL_WORKFLOW_NAME),
-	// associationService.getTargetAssoc(listItemNodeRef,
-	// ProjectModel.ASSOC_TL_TASKSET),
-	// associationService.getTargetAssoc(listItemNodeRef,
-	// ProjectModel.ASSOC_TL_TASK),
-	// associationService.getTargetAssocs(listItemNodeRef,
-	// ProjectModel.ASSOC_TL_PREV_TASKS)));
-	// }
-	// }
-	// }
-	//
-	// return taskList;
-	// }
 
 	private void createList(NodeRef listContainerNodeRef, List<? extends DataItem> dataList, QName dataListType) {
 

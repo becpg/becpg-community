@@ -4,6 +4,7 @@
 package fr.becpg.repo.project.policy;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,17 +20,18 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
+import fr.becpg.repo.project.data.projectList.TaskState;
 
 /**
- * The Class SubmitTaskPolicy.
+ * The Class TaskDatesPolicy.
  * 
  * @author querephi
  */
 @Service
-public class SubmitTaskPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
+public class TaskDatesPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(SubmitTaskPolicy.class);
+	private static Log logger = LogFactory.getLog(TaskDatesPolicy.class);
 
 	private ProjectService projectService;
 
@@ -41,7 +43,7 @@ public class SubmitTaskPolicy extends AbstractBeCPGPolicy implements NodeService
 	 * Inits the.
 	 */
 	public void doInit() {
-		logger.debug("Init SubmitTaskPolicy...");
+		logger.debug("Init TaskDatesPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
 				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onUpdateProperties"));
 
@@ -51,19 +53,29 @@ public class SubmitTaskPolicy extends AbstractBeCPGPolicy implements NodeService
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
 		for (NodeRef nodeRef : pendingNodes) {
-			projectService.submitTask(nodeRef);
+			try{
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+				projectService.calculateTaskDates(nodeRef);
+			}
+			finally{
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			}
 		}
 	}
 
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		String beforeState = (String)before.get(ProjectModel.PROP_TL_STATE);
-		String afterState = (String)after.get(ProjectModel.PROP_TL_STATE);
-		if(beforeState != null && afterState != null){
-			if(beforeState.equals(DeliverableState.InProgress.toString())&&afterState.equals(DeliverableState.Completed.toString())){
-				queueNode(nodeRef);
-			}						
+		isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_DURATION);
+		isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_START);
+		isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_END);		
+	}
+	
+	private void isPropChanged(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after, QName propertyQName){
+		Serializable beforeProp = before.get(propertyQName);
+		Serializable afterProp = after.get(propertyQName);
+		if(afterProp != null && !afterProp.equals(beforeProp)){
+			queueNode(nodeRef);					
 		}
 	}
 }

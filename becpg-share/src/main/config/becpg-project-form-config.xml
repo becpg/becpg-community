@@ -36,11 +36,12 @@
 					<show id="pjt:projectProjectTpl" />
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
-					<show id="pjt:projectCompletionDate" for-mode="view"/>
+					<show id="pjt:projectCompletionDate" for-mode="view" />
 					<show id="pjt:projectPriority" />
+					<show id="pjt:projectState" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:completionPercent" />
-					
+
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
@@ -52,13 +53,13 @@
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
-					</field>	
+					</field>
 					<field id="pjt:projectPriority">
 						<control
 							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
 					</field>
 					<!-- categories -->
-					<field id="cm:taggable" >
+					<field id="cm:taggable">
 						<control>
 							<control-param name="compactMode">true</control-param>
 							<control-param name="params">aspect=cm:taggable
@@ -68,7 +69,13 @@
 							<control-param name="createNewItemIcon">tag</control-param>
 						</control>
 					</field>
-					<field id="cm:categories" >
+					<field id="pjt:projectState">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+						</control>
+					</field>
+					<field id="cm:categories">
 						<control>
 							<control-param name="compactMode">true</control-param>
 						</control>
@@ -87,8 +94,9 @@
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectPriority" />
+					<show id="pjt:projectState" />
 					<show id="pjt:projectEntity" />
-					
+
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
@@ -100,13 +108,19 @@
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
-					</field>					
+					</field>
 					<field id="pjt:projectPriority">
 						<control
 							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
 					</field>
-						<!-- categories -->
-					<field id="cm:taggable" >
+					<field id="pjt:projectState">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+						</control>
+					</field>
+					<!-- categories -->
+					<field id="cm:taggable">
 						<control>
 							<control-param name="compactMode">true</control-param>
 							<control-param name="params">aspect=cm:taggable
@@ -116,50 +130,63 @@
 							<control-param name="createNewItemIcon">tag</control-param>
 						</control>
 					</field>
-					<field id="cm:categories" >
+					<field id="cm:categories">
 						<control>
 							<control-param name="compactMode">true</control-param>
 						</control>
 					</field>
 				</appearance>
 			</form>
-			
+
 			<form id="datagrid">
 				<field-visibility>
-				  <show id="pjt:projectHierarchy1" label="" />
-				  <show id="pjt:projectPriority" label="" />
-				  <show id="pjt:completionPercent"/>
-				  <show id="bcpg:code" />
-				  <show id="cm:name" />
-				  <show id="pjt:projectEntity" />
-				  <show id="dataList_pjt:taskList" />
-				  <show id="dataList_pjt:deliverableList"  />
-		   	  <show id="cm:creator" />
-				  <show id="pjt:projectStartDate" />
-				  <show id="pjt:projectCompletionDate" />
-				  <show id="pjt:projectDueDate" />
-				 </field-visibility>
-				 <appearance>
-					<field id="dataList_pjt:deliverableList" label="Livrables"  />
-					<field id="dataList_pjt:taskList" label="Tâches en cours"  />
-					<field id="pjt:projectHierarchy1"  />
-					<field id="pjt:projectPriority" label=""  />
+					<show id="pjt:projectHierarchy1" label="" />
+					<show id="pjt:projectPriority" label="" />
+					<show id="pjt:completionPercent" />
+					<show id="bcpg:code" />
+					<show id="cm:name" />
+					<show id="pjt:projectEntity" />
+					<show id="dataList_pjt:taskList" />
+					<show id="dataList_pjt:deliverableList" />
+					<show id="cm:creator" />
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectCompletionDate" />
+					<show id="pjt:projectDueDate" />
+				</field-visibility>
+				<appearance>
+					<field id="dataList_pjt:deliverableList" label="Livrables" />
+					<field id="dataList_pjt:taskList" label="Tâches en cours" />
+					<field id="pjt:projectHierarchy1" />
+					<field id="pjt:projectPriority" label="" />
 					<field id="pjt:projectStartDate" label="Dates" />
 				</appearance>
-			
+
 			</form>
-			
-		  <form id="filter">
+
+			<form id="filter">
 				<field-visibility>
-				  <show id="cm:name" />
-				  <show id="pjt:projectHierarchy1" />
-				  <show id="pjt:projectPriority" />  
-				  <show id="pjt:projectStartDate" />
-				  <show id="pjt:projectCompletionDate" />
-				  <show id="pjt:projectDueDate" />
-				 </field-visibility>
-			</form> 
-			
+					<show id="cm:name" />
+					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectPriority" />
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectCompletionDate" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectState" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:projectPriority">
+						<control
+							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<field id="pjt:projectState">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
 		</forms>
 	</config>
 	<config condition="pjt:taskLegend" evaluator="node-type">
@@ -226,6 +253,12 @@
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
+					<field id="pjt:tlState">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -260,6 +293,12 @@
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
+					<field id="pjt:tlState">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -301,6 +340,7 @@
 					<show id="pjt:dlTask" />
 					<show id="pjt:dlContent" />
 					<show id="pjt:dlState" />
+					<show id="pjt:completionPercent" />
 				</field-visibility>
 				<appearance>
 					<field id="pjt:dlTask">
@@ -309,6 +349,12 @@
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
+					<field id="pjt:dlState">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.deliverablestate.planned,InProgress|data.deliverablestate.inprogress,Completed|data.deliverablestate.completed,Closed|data.deliverablestate.closed
+							</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -323,6 +369,7 @@
 					<show id="pjt:dlTask" />
 					<show id="pjt:dlContent" />
 					<show id="pjt:dlState" />
+					<show id="pjt:completionPercent" />
 				</field-visibility>
 				<appearance>
 					<field id="pjt:dlTask">
@@ -331,6 +378,12 @@
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
+					<field id="pjt:dlState">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.deliverablestate.planned,InProgress|data.deliverablestate.inprogress,Completed|data.deliverablestate.completed,Closed|data.deliverablestate.closed
+							</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -349,8 +402,13 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="pjt:project" />					
+					<show id="pjt:project" />
 				</field-visibility>
+				<appearance>
+					<set id="project" appearance="bordered-panel" label-id="becpg.forms.set.project.label"
+						template="/fr/becpg/components/form/2-column-set.ftl" />
+					<field id="pjt:project" set="project" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
