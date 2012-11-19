@@ -56,11 +56,9 @@ public class SubmitDeliverablePolicy extends AbstractBeCPGPolicy implements Node
 			
 			if (dlState != null){
 				if(dlState.equals(DeliverableState.Completed.toString())) {
-					logger.debug("dl completed");
 					projectService.submitDeliverable(nodeRef);
 				}
 				else if(dlState.equals(DeliverableState.InProgress.toString())){
-					logger.debug("dl reopen");
 					projectService.openDeliverable(nodeRef);
 				}
 			}				
@@ -71,14 +69,11 @@ public class SubmitDeliverablePolicy extends AbstractBeCPGPolicy implements Node
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		String beforeState = (String)before.get(ProjectModel.PROP_DL_STATE);
 		String afterState = (String)after.get(ProjectModel.PROP_DL_STATE);
-		logger.debug("before: " + beforeState + " - after: " + afterState);
 		if(beforeState != null && afterState != null){
 			if(beforeState.equals(DeliverableState.InProgress.toString())&&afterState.equals(DeliverableState.Completed.toString())){
-				logger.debug("dl completed");
 				queueNode(nodeRef);
 			}
 			else if(beforeState.equals(DeliverableState.Completed.toString())&&afterState.equals(DeliverableState.InProgress.toString())){
-				logger.debug("dl reopen");
 				queueNode(nodeRef);
 			}
 		}

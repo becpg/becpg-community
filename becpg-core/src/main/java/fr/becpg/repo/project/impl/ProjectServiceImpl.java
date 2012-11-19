@@ -45,10 +45,13 @@ import fr.becpg.repo.search.BeCPGSearchService;
 public class ProjectServiceImpl implements ProjectService {
 
 	private static final String DESCRIPTION_SEPARATOR = ", ";
-	
+
 	private static final int COMPLETED = 100;
 	private static final String QUERY_TASK_LEGEND = "+TYPE:\"pjt:taskLegend\"";
-	
+	private static final int DURATION_NEXT_DAY = 2;
+	private static final int DURATION_DEFAULT = 1;
+	private static long DURATION_MILLIS_PER_DAY = 24 * 3600 * 1000;
+
 	private static Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
 	private BeCPGListDao<AbstractProjectData> projectDAO;
@@ -78,12 +81,10 @@ public class ProjectServiceImpl implements ProjectService {
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
+
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
 	}
-	
-	
 
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
@@ -112,13 +113,15 @@ public class ProjectServiceImpl implements ProjectService {
 		if (abstractProjectData instanceof ProjectData) {
 
 			ProjectData projectData = (ProjectData) abstractProjectData;
-			
+
 			// end task
 			TaskListDataItem currentTaskDataItem = getTask(projectData, taskListNodeRef);
-			if(currentTaskDataItem != null){
+			if (currentTaskDataItem != null) {
 				currentTaskDataItem.setEnd(new Date());
-				
-				//set deliverables as completed
+				currentTaskDataItem.setDuration(calculateTaskDuration(currentTaskDataItem.getStart(),
+						currentTaskDataItem.getEnd()));
+
+				// set deliverables as completed
 				List<DeliverableListDataItem> deliverables = getDeliverables(projectData, taskListNodeRef);
 				logger.debug("deliverables size: " + deliverables.size());
 				for (DeliverableListDataItem deliverable : deliverables) {
@@ -129,7 +132,7 @@ public class ProjectServiceImpl implements ProjectService {
 			// add next tasks
 			List<TaskListDataItem> nextTasks = getNextTasks(projectData, taskListNodeRef);
 			logger.debug("nextTasks size: " + nextTasks.size());
-			if(nextTasks.size()>0){
+			if (nextTasks.size() > 0) {
 				for (TaskListDataItem nextTask : nextTasks) {
 					if (areTasksDone(projectData, nextTask.getPrevTasks())) {
 
@@ -139,7 +142,8 @@ public class ProjectServiceImpl implements ProjectService {
 
 						// deliverable list
 						String workflowDescription = "";
-						List<DeliverableListDataItem> nextDeliverables = getDeliverables(projectData, nextTask.getNodeRef());
+						List<DeliverableListDataItem> nextDeliverables = getDeliverables(projectData,
+								nextTask.getNodeRef());
 						logger.debug("next deliverables size: " + nextDeliverables.size());
 						for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
 
@@ -161,35 +165,50 @@ public class ProjectServiceImpl implements ProjectService {
 					}
 				}
 				projectData.setCompletionPercent(geProjectCompletionPercent(projectData));
-			}
-			else{
+			} else {
 				projectData.setCompletionDate(new Date());
 				projectData.setCompletionPercent(COMPLETED);
-			}			
+			}
 
 			projectDAO.update(projectNodeRef, projectData, dataLists);
 		}
 	}
-	
+
 	private TaskListDataItem getTask(AbstractProjectData projectData, NodeRef taskListNodeRef) {
 
-		if(taskListNodeRef!=null && projectData.getTaskList() != null){
+		if (taskListNodeRef != null && projectData.getTaskList() != null) {
 			for (TaskListDataItem p : projectData.getTaskList()) {
 				if (taskListNodeRef.equals(p.getNodeRef())) {
 					return p;
 				}
 			}
-		}		
+		}
 		return null;
 	}
 
 	private List<TaskListDataItem> getNextTasks(AbstractProjectData projectData, NodeRef taskListNodeRef) {
 
 		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
-		for (TaskListDataItem p : projectData.getTaskList()) {
-			// taskNodeRef is null when we start project
-			if (p.getPrevTasks().contains(taskListNodeRef) || (taskListNodeRef == null && p.getPrevTasks().isEmpty())) {
-				taskList.add(p);
+		if (projectData.getTaskList() != null) {
+			for (TaskListDataItem p : projectData.getTaskList()) {
+				// taskNodeRef is null when we start project
+				if (p.getPrevTasks().contains(taskListNodeRef)
+						|| (taskListNodeRef == null && p.getPrevTasks().isEmpty())) {
+					taskList.add(p);
+				}
+			}
+		}
+		return taskList;
+	}
+
+	private List<TaskListDataItem> getPrevTasks(AbstractProjectData projectData, TaskListDataItem taskListDataItem) {
+
+		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
+		if (taskListDataItem.getPrevTasks() != null) {
+			for (TaskListDataItem p : projectData.getTaskList()) {
+				if (taskListDataItem.getPrevTasks().contains(p.getNodeRef())) {
+					taskList.add(p);
+				}
 			}
 		}
 		return taskList;
@@ -198,9 +217,11 @@ public class ProjectServiceImpl implements ProjectService {
 	private List<DeliverableListDataItem> getDeliverables(AbstractProjectData projectData, NodeRef taskListNodeRef) {
 
 		List<DeliverableListDataItem> deliverableList = new ArrayList<DeliverableListDataItem>();
-		for (DeliverableListDataItem d : projectData.getDeliverableList()) {
-			if (d.getTask() != null && d.getTask().equals(taskListNodeRef)) {
-				deliverableList.add(d);
+		if (projectData.getDeliverableList() != null) {
+			for (DeliverableListDataItem d : projectData.getDeliverableList()) {
+				if (d.getTask() != null && d.getTask().equals(taskListNodeRef)) {
+					deliverableList.add(d);
+				}
 			}
 		}
 		return deliverableList;
@@ -281,9 +302,10 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 	}
-	
+
 	/**
 	 * completedPercent is calculated on duration property
+	 * 
 	 * @param projectData
 	 * @return
 	 */
@@ -292,14 +314,14 @@ public class ProjectServiceImpl implements ProjectService {
 		int totalWork = 0;
 		int workDone = 0;
 		for (TaskListDataItem p : projectData.getTaskList()) {
-			if(p.getDuration() != null){
+			if (p.getDuration() != null) {
 				totalWork += p.getDuration();
-				if(TaskState.Completed.equals(p.getState()) || TaskState.Cancelled.equals(p.getState())){
+				if (TaskState.Completed.equals(p.getState()) || TaskState.Cancelled.equals(p.getState())) {
 					workDone += p.getDuration();
-				}				
+				}
 			}
 		}
-		
+
 		logger.debug("workDone: " + workDone + " - totalWork: " + totalWork);
 		return totalWork != 0 ? 100 * workDone / totalWork : 0;
 	}
@@ -343,14 +365,14 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 	}
-	
+
 	@Override
 	public void openDeliverable(NodeRef deliverableNodeRef) {
-		
+
 		Integer completionPercent = (Integer) nodeService.getProperty(deliverableNodeRef,
 				ProjectModel.PROP_COMPLETION_PERCENT);
 		logger.debug("open Deliverable. completionPercent: " + completionPercent);
-		
+
 		NodeRef taskNodeRef = associationService.getTargetAssoc(deliverableNodeRef, ProjectModel.ASSOC_DL_TASK);
 
 		if (taskNodeRef != null) {
@@ -358,38 +380,22 @@ public class ProjectServiceImpl implements ProjectService {
 
 			Collection<QName> dataLists = new ArrayList<QName>();
 			dataLists.add(ProjectModel.TYPE_TASK_LIST);
-			ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);			
+			ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
 
-			// Create new task -> difficult. Right now, we reopen the task InProgress
-//			TaskListDataItem newTaskListDataItem = null;
-//			for (TaskListDataItem t : projectData.getTaskList()) {
-//				if (taskNodeRef.equals(t.getNodeRef())) {
-//					
-//					//TODO : use sort to place task
-//					int newDuration = t.getDuration()!=null && completionPercent != null ? t.getDuration() * completionPercent : 0; 
-//					newTaskListDataItem = new TaskListDataItem(null, t.getTaskName(), t.getIsMilestone(), newDuration, t.getPrevTasks(), t.getResources(), t.getTaskLegend(), t.getWorkflowName());
-//					newTaskListDataItem.setState(TaskState.InProgress);
-//					break;						
-//				}
-//			}
-//			if(newTaskListDataItem != null){
-//				projectData.getTaskList().add(newTaskListDataItem);
-//			}
-			
-			//reopen the task InProgress
+			// reopen the task InProgress
 			for (TaskListDataItem t : projectData.getTaskList()) {
 				if (taskNodeRef.equals(t.getNodeRef())) {
-					
-					//TODO : use sort to place task
-					if(t.getDuration()!=null && completionPercent != null){
+
+					// TODO : use sort to place task
+					if (t.getDuration() != null && completionPercent != null) {
 						int newDuration = t.getDuration() * completionPercent;
 						t.setDuration(t.getDuration() + newDuration);
 					}
-					t.setState(TaskState.InProgress);					
-					break;						
+					t.setState(TaskState.InProgress);
+					break;
 				}
-			}			
-			
+			}
+
 			projectDAO.update(projectNodeRef, projectData, dataLists);
 		} else {
 			logger.error("Task is not defined for the deliverable. nodeRef: " + deliverableNodeRef);
@@ -404,5 +410,163 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public NodeRef getProjectsContainer(String siteId) {
 		return repoService.getFolderByPath(RepoConsts.PATH_PROJECTS);
+	}
+
+	@Override
+	public void calculateTaskDates(NodeRef taskListNodeRef) {
+
+		NodeRef projectNodeRef = wUsedListService.getRoot(taskListNodeRef);
+		calculateProjectDates(projectNodeRef, taskListNodeRef);
+	}
+
+	@Override
+	public void initializeProjectDates(NodeRef projectNodeRef) {
+
+		calculateProjectDates(projectNodeRef, null);
+	}
+
+	private void calculateProjectDates(NodeRef projectNodeRef, NodeRef taskListNodeRef) {
+
+		logger.debug("calculateProjectDates " + projectNodeRef);
+
+		if (projectNodeRef != null) {
+
+			Collection<QName> dataLists = new ArrayList<QName>();
+			dataLists.add(ProjectModel.TYPE_TASK_LIST);
+			AbstractProjectData abstractProjectData = (AbstractProjectData) projectDAO.find(projectNodeRef, dataLists);
+
+			if (abstractProjectData instanceof ProjectData) {
+
+				ProjectData projectData = (ProjectData) abstractProjectData;
+				Date completionDate = projectData.getStartDate();
+
+				for (TaskListDataItem t : projectData.getTaskList()) {
+
+					// 1st task : init
+					if (taskListNodeRef == null) {
+						if (t.getPrevTasks() == null || t.getPrevTasks().size() == 0) {
+							t.setStart(projectData.getStartDate());
+							calculateTaskDates(projectData, t);
+						}
+					} else if (taskListNodeRef.equals(t.getNodeRef())) {
+						calculateTaskDates(projectData, t);
+					}
+
+					if (completionDate.before(t.getEnd())) {
+						completionDate = t.getEnd();
+					}
+				}
+
+				projectData.setCompletionDate(completionDate);
+				projectDAO.update(projectNodeRef, projectData, dataLists);
+			}
+		} else {
+			logger.error("Task is not defined. taskListNodeRef: " + taskListNodeRef);
+		}
+	}
+
+	private void calculateTaskDates(AbstractProjectData projectData, TaskListDataItem t) {
+
+		logger.debug("calculateTaskDates " + t.getTaskName());
+
+		// current task
+		t.setEnd(calculateEndDate(t.getStart(), t.getDuration()));
+
+		// current next tasks
+		for (TaskListDataItem nextTask : getNextTasks(projectData, t.getNodeRef())) {
+
+			Date startDate = calculateNextStartDate(t.getEnd());
+			List<TaskListDataItem> prevTasks = getPrevTasks(projectData, nextTask);
+			for (TaskListDataItem prevTask : prevTasks) {
+				logger.debug("prevTask " + prevTask.getTaskName());
+				// prevTask != currentTask
+				if (!t.getNodeRef().equals(prevTask.getNodeRef())) {
+					logger.debug("1");
+					prevTask.setEnd(calculateEndDate(prevTask.getStart(), prevTask.getDuration()));
+					logger.debug("2");
+					if(prevTask.getEnd() != null){
+						Date d = calculateNextStartDate(prevTask.getEnd());
+						logger.debug("3");
+						if (d.after(startDate)) {
+							startDate = d;
+						}
+						logger.debug("4");
+					}
+					
+				}
+			}
+
+			logger.debug("5");
+			nextTask.setStart(startDate);
+			logger.debug("nextTask startdate " + nextTask.getTaskName() + " - " + nextTask.getStart());
+			calculateTaskDates(projectData, nextTask);
+		}
+	}
+
+	@Override
+	public Date calculateEndDate(Date startDate, Integer duration) {
+
+		return calculateNextDate(startDate, duration);
+	}
+
+	@Override
+	public Date calculateNextStartDate(Date endDate) {
+
+		return calculateNextDate(endDate, DURATION_NEXT_DAY);
+	}
+
+	private Date calculateNextDate(Date startDate, Integer duration) {
+
+		if (startDate == null) {
+			return null;
+		}
+
+		if (duration == null) {
+			duration = DURATION_DEFAULT;
+		}
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(startDate);
+		int i = 1;
+		while (i < duration) {
+			calendar.add(Calendar.DATE, 1);			
+			if (isWorkingDate(calendar)) {
+				i++;
+			}
+		}
+
+		return calendar.getTime();
+	}
+	
+	private boolean isWorkingDate(Calendar calendar){
+		// saturday == 7 || sunday == 1
+		return calendar.get(Calendar.DAY_OF_WEEK) != 7 && calendar.get(Calendar.DAY_OF_WEEK) != 1;
+	}
+
+	@Override
+	public int calculateTaskDuration(Date startDate, Date endDate) {
+		
+		if(startDate == null || endDate == null){
+			logger.error("startDate or endDate is null. startDate: " + startDate + " - endDate: " + endDate);
+			return -1;
+		}
+		
+		if(startDate.after(endDate)){
+			logger.error("startDate is after endDate");
+			return -1;
+		}
+		
+		int duration = 1;
+		Calendar startDateCal = Calendar.getInstance();		
+		startDateCal.setTime(startDate);
+		Calendar endDateCal = Calendar.getInstance();
+		endDateCal.setTime(endDate);
+		while (startDateCal.before(endDateCal)) {
+			startDateCal.add(Calendar.DAY_OF_MONTH, 1);
+			if(isWorkingDate(startDateCal)){
+				duration++;
+			}			
+		}
+		return duration;
 	}
 }

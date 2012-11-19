@@ -16,6 +16,7 @@
 				<value>alfresco/module/${artifactId}/model/variantModel.xml</value>	
 				<value>alfresco/module/${artifactId}/model/gs1Model.xml</value>	
 				<value>alfresco/module/${artifactId}/model/publicationModel.xml</value>
+				<value>alfresco/module/${artifactId}/model/packModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/projectModel.xml</value>
 			</list>
 		</property>

@@ -4,35 +4,42 @@
 <beans>
 
 	<bean id="projectDAO" class="fr.becpg.repo.project.impl.ProjectDAOImpl">
-	 <property name="nodeService" ref="nodeService"/>
-	 <property name="entityListDAO" ref="entityListDAO"/>
-	 <property name="associationService" ref="associationService"/>	 
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="associationService" ref="associationService" />
 	</bean>
-	
+
 	<bean id="projectService" class="fr.becpg.repo.project.impl.ProjectServiceImpl">
-	 <property name="projectDAO" ref="projectDAO"/>
-	 <property name="workflowService" ref="WorkflowService"/>
-	 <property name="wUsedListService" ref="wUsedListService"/>
-	 <property name="associationService" ref="associationService"/>
-	 <property name="nodeService" ref="nodeService"/>
-	 <property name="beCPGSearchService" ref="beCPGSearchService"/>
-	 <property name="repoService" ref="repoService"/>
-	</bean>			
-	
+		<property name="projectDAO" ref="projectDAO" />
+		<property name="workflowService" ref="WorkflowService" />
+		<property name="wUsedListService" ref="wUsedListService" />
+		<property name="associationService" ref="associationService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="repoService" ref="repoService" />
+	</bean>
+
 	<!-- Policy -->
-	<bean id="submitTaskPolicy" class="fr.becpg.repo.project.policy.SubmitTaskPolicy" parent="abstractBeCPGPolicy">
-		<property name="projectService" ref="projectService"/>
+	<bean id="submitTaskPolicy" class="fr.becpg.repo.project.policy.SubmitTaskPolicy"
+		parent="abstractBeCPGPolicy">
+		<property name="projectService" ref="projectService" />
 	</bean>
-	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy" parent="abstractBeCPGPolicy">
-		<property name="entityListDAO" ref="entityListDAO"/>
-		<property name="projectService" ref="projectService"/>
-		<property name="associationService" ref="associationService"/>
+	<bean id="taskDatesPolicy" class="fr.becpg.repo.project.policy.TaskDatesPolicy"
+		parent="abstractBeCPGPolicy">
+		<property name="projectService" ref="projectService" />
+	</bean>
+	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy"
+		parent="abstractBeCPGPolicy">
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="projectService" ref="projectService" />
+		<property name="associationService" ref="associationService" />
 		<property name="copyService" ref="copyService" />
-	</bean>		
-   <bean id="submitDeliverablePolicy" class="fr.becpg.repo.project.policy.SubmitDeliverablePolicy" parent="abstractBeCPGPolicy">
-		<property name="projectService" ref="projectService"/>
 	</bean>
-	
+	<bean id="submitDeliverablePolicy" class="fr.becpg.repo.project.policy.SubmitDeliverablePolicy"
+		parent="abstractBeCPGPolicy">
+		<property name="projectService" ref="projectService" />
+	</bean>
+
 	<bean id="taskValuePlugin" parent="baseListValuePlugin"
 		init-method="init" class="fr.becpg.repo.project.listvalue.TaskValuePlugin">
 		<property name="namespaceService" ref="namespaceService" />
@@ -40,5 +47,5 @@
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="dictionaryDAO" ref="dictionaryDAO" />
 	</bean>
-	
+
 </beans>

@@ -128,7 +128,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	   propertyName : [ "bcpg:cost", "bcpg:allergen", "bcpg:nut", 
 	                    "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin",
 	                    "bcpg:geo", "bcpg:microbio", "bcpg:physicoChem",
-	                    "bcpg:organo"],
+	                    "bcpg:organo", "pjt:taskList"],
 	   renderer : function(oRecord, data, label, scope) {
 		   return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 	   }

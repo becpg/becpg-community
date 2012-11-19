@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.project.policy;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +25,8 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.data.projectList.DeliverableState;
+import fr.becpg.repo.project.data.projectList.TaskState;
 
 /**
  * The Class ProjectPolicy.
@@ -31,7 +34,7 @@ import fr.becpg.repo.project.ProjectService;
  * @author querephi
  */
 @Service
-public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy {
+public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProjectPolicy.class);
@@ -70,6 +73,8 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 				ProjectModel.TYPE_PROJECT, ProjectModel.ASSOC_PROJECT_ENTITY, new JavaBehaviour(this,
 						"onCreateAssociation"));
 
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
+				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onUpdateProperties"));
 	}
 
 	@Override
@@ -95,8 +100,6 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 						originalMaps.put(copyService.getOriginal(listItem), listItem);
 					}				
 					
-					//updateOriginalNodes(originalMaps, listItems, ProjectModel.ASSOC_TL_PREV_TASKS);
-					
 					listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
 					listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
 					updateOriginalNodes(originalMaps, listItems, ProjectModel.ASSOC_DL_TASK);
@@ -104,7 +107,15 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 				}
 			}
 
-			projectService.start(assocRef.getSourceRef());
+			// initialize
+			logger.debug("initializeProjectDates");
+			projectService.initializeProjectDates(assocRef.getSourceRef());
+			
+			//We want to be able to plan project in advance and start it later so we start it when state is InProgress
+			if(TaskState.InProgress.toString().equals(nodeService.getProperty(assocRef.getSourceRef(), ProjectModel.PROP_PROJECT_STATE))){
+				logger.debug("onCreateAssociation: start project");
+				projectService.start(assocRef.getSourceRef());
+			}			
 		}
 		else if(assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)){
 			//add project aspect on entity
@@ -119,16 +130,24 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			List<NodeRef> originalTasks = associationService.getTargetAssocs(listItem, propertyQName);
 			List<NodeRef> tasks = new ArrayList<NodeRef>(originalTasks.size());
 			
-			logger.debug("originalPrevTasks: " + originalTasks);
-			
 			for(NodeRef originalTask : originalTasks){
-				logger.debug("###originalMaps.get(originalTask): " + originalMaps.get(originalTask));
 				if(originalMaps.containsKey(originalTask)){
 					tasks.add(originalMaps.get(originalTask));
 				}						
 			}
-			logger.debug("tasks: " + tasks);
 			associationService.update(listItem, propertyQName, tasks);
+		}
+	}
+
+	@Override
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		
+		String beforeState = (String)before.get(ProjectModel.PROP_PROJECT_STATE);
+		String afterState = (String)after.get(ProjectModel.PROP_PROJECT_STATE);
+		logger.debug("beforeState: " + beforeState + " - afterState: " + afterState);
+		if(afterState != null && afterState.equals(TaskState.InProgress.toString()) && !afterState.equals(beforeState)){
+			logger.debug("onUpdateProperties:start project");
+			projectService.start(nodeRef);		
 		}
 	}
 }

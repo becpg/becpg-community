@@ -22,7 +22,8 @@ public interface ProjectModel {
 	public static final QName PROP_PROJECT_START_DATE = QName.createQName(PROJECT_URI, "projectStartDate");
 	public static final QName PROP_PROJECT_DUE_DATE = QName.createQName(PROJECT_URI, "projectDueDate");
 	public static final QName PROP_PROJECT_COMPLETION_DATE = QName.createQName(PROJECT_URI, "projectCompletionDate");
-	public static final QName PROP_PROJECT_PRIORITY = QName.createQName(PROJECT_URI, "projectPriority");	
+	public static final QName PROP_PROJECT_PRIORITY = QName.createQName(PROJECT_URI, "projectPriority");
+	public static final QName PROP_PROJECT_STATE = QName.createQName(PROJECT_URI, "projectState");
 	public static final QName ASSOC_PROJECT_TPL = QName.createQName(PROJECT_URI, "projectProjectTpl");
 	public static final QName ASSOC_PROJECT_ENTITY = QName.createQName(PROJECT_URI, "projectEntity");
 	
