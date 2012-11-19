@@ -670,11 +670,15 @@ public class ProductDAOImpl implements ProductDAO {
 	public NutListDataItem loadNutListItem(NodeRef listItemNodeRef) {
 
 		List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
-		NodeRef nutNodeRef = (nutAssocRefs.get(0)).getTargetRef();
+		NodeRef nutNodeRef = null;
+		if(nutAssocRefs!=null && nutAssocRefs.size()>0){
+			nutNodeRef  = (nutAssocRefs.get(0)).getTargetRef();
+		}
 		return new NutListDataItem(listItemNodeRef, (Double) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_NUTLIST_VALUE), (String) nodeService.getProperty(
 				listItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT), (Double) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_NUTLIST_MINI), (Double) nodeService.getProperty(
 				listItemNodeRef, BeCPGModel.PROP_NUTLIST_MAXI), (String) nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_NUTGROUP), nutNodeRef,
 				(Boolean) nodeService.getProperty(listItemNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM));
+		
 
 	}
 

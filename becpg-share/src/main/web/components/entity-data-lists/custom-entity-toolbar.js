@@ -260,11 +260,16 @@
 						         text : this.msg("message.generate-report.success")
 					         });
 
+					         var pageLink = "document-details";
+					         if(this.options.list == "taskList" || this.options.list == "deliverableList"){
+					         	pageLink = "entity-details";
+					         }
+					         
 					         if (this.options.siteId != "") {
 						         window.location = Alfresco.constants.URL_PAGECONTEXT + "site/" + this.options.siteId
-						               + "/document-details?nodeRef=" + this.options.entityNodeRef;
+						               + "/"+pageLink+"?nodeRef=" + this.options.entityNodeRef;
 					         } else {
-						         window.location = Alfresco.constants.URL_PAGECONTEXT + "document-details?nodeRef="
+						         window.location = Alfresco.constants.URL_PAGECONTEXT + pageLink+"?nodeRef="
 						               + this.options.entityNodeRef;
 					         }
 
