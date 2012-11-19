@@ -6,16 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 import org.alfresco.util.Pair;
 import org.json.JSONException;
-
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ProjectModel;
 
 public class DataListFilter {
 
@@ -35,8 +32,6 @@ public class DataListFilter {
 	
 	private Map<String, String> criteriaMap = null;
 	
-	private List<Pair<QName, Boolean>> sortProps = new LinkedList<Pair<QName, Boolean>>();
-	
 	private Map<String, Boolean> sortMap = new LinkedHashMap<String, Boolean>();
 	
 	private QName dataType = null;
@@ -47,21 +42,20 @@ public class DataListFilter {
 	
 	public DataListFilter() {
 		super();
-		
-		//TODO refactor
-		
-		//TODO Remove for demo only
-		sortMap.put("@pjt:projectHierarchy1", true);
 		sortMap.put("@bcpg:sort", true);
 		sortMap.put("@cm:created", true);
-		
-		//TODO Remove for demo only
-		sortProps.add(new Pair<QName, Boolean>(ProjectModel.PROP_PROJECT_HIERARCHY1,true));
-		sortProps.add(new Pair<QName, Boolean>(BeCPGModel.PROP_SORT,true));
-		sortProps.add(new Pair<QName, Boolean>(ContentModel.PROP_CREATED,true));
 	}
 
-	public List<Pair<QName, Boolean>> getSortProps() {
+	public List<Pair<QName, Boolean>> getSortProps(NamespaceService namespaceService) {
+
+		List<Pair<QName, Boolean>> sortProps = new LinkedList<Pair<QName, Boolean>>();
+		
+		for(Map.Entry<String, Boolean> entry : sortMap.entrySet()){
+			
+			sortProps.add(new Pair<QName, Boolean>(QName.createQName(entry.getKey().replace("@",""), namespaceService),entry.getValue()));
+		}
+		
+		
 		return sortProps;
 	}
 	
@@ -121,7 +115,9 @@ public class DataListFilter {
 	}
 
 	public void setSortMap(Map<String, Boolean> sortMap) {
-		this.sortMap = sortMap;
+		if(sortMap!=null && sortMap.size()>0){
+			this.sortMap = sortMap;
+		}
 	}
 
 	public QName getDataType() {

@@ -11,6 +11,7 @@
 		<show id="bcpg:eanCode" />
 		<show id="bcpg:suppliers"  />
 		<show id="bcpg:clients" />
+		<show id="pjt:project" />
       </metadata>
       
    </config>
@@ -30,6 +31,7 @@
 				</form>
 				<form labelId="search.form.label.qa_nc" descriptionId="search.form.desc.qa_nc">qa:nc
 				</form>
+				<form labelId="search.form.label.pjt_project" descriptionId="search.form.desc.pjt_project">pjt:project</form>
 			</forms>
 		</advanced-search>
 	</config>
@@ -62,11 +64,13 @@
 					<show id="cm:modified" />
 					<show id="cm:modifier" />
 
-					<!-- NPD -->
+					<!-- NPD 
 					<show id="npd:npdNumber" force="true" />
 					<show id="npd:npdType" force="true" />
 					<show id="npd:npdStatus" force="true" />					
 					<show id="npd:npdInitiator" force="true" />
+					-->
+					
 					
 					<!-- ing information -->
 					<show id="bcpg:ingListIng" force="true" />
@@ -124,11 +128,12 @@
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 					
-					<!-- NPD -->
+					<!-- NPD
 					<field id="npd:npdNumber" set="npd" />
 					<field id="npd:npdType" set="npd" />
 					<field id="npd:npdStatus" set="npd" />					
 					<field id="npd:npdInitiator" set="npd" />		
+					-->
 
 					<!-- ing information -->
 					<field id="bcpg:ingListIng" set="ings-criteria">
@@ -146,7 +151,7 @@
 
 				</appearance>
 			</form>
-
+				
 		</forms>
 	</config>
 </alfresco-config>

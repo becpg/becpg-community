@@ -413,11 +413,11 @@
 			               var dataType = oRecord.getData("type");
 			               switch (dataType) {
 			               case "document":
+			               case "entity":
 				               imageUrl = Alfresco.constants.PROXY_URI_RELATIVE + "api/node/"
 				                     + oRecord.getData("nodeRef").replace(":/", "");
 				               imageUrl += "/content/thumbnails/doclib?c=queue&ph=true";
 				               break;
-
 			               case "folder":
 				               imageUrl = Alfresco.constants.URL_RESCONTEXT + 'components/search/images/folder.png';
 				               break;
@@ -517,6 +517,7 @@
 			               var type = oRecord.getData("type");
 			               switch (type) {
 			               case "document":
+			               case "entity":
 			               case "folder":
 			               case "blogpost":
 			               case "forumpost":
@@ -555,7 +556,7 @@
 			               desc += '</div>';
 
 			               // folder path (if any)
-			               if (type === "document" || type === "folder") {
+			               if (type === "entity" || type === "document" || type === "folder") {
 				               var path = oRecord.getData("path");
 				               if (site) {
 					               if (path === null || path === undefined) {
@@ -715,7 +716,10 @@
 			               url = "document-details?nodeRef=" + record.getData("nodeRef");
 			               break;
 		               }
-
+		               case "entity": {
+			               url = "entity-details?nodeRef=" + record.getData("nodeRef");
+			               break;
+		               }
 		               case "folder": {
 			               if (path !== null) {
 				               if (site) {
