@@ -144,7 +144,6 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		
 		String beforeState = (String)before.get(ProjectModel.PROP_PROJECT_STATE);
 		String afterState = (String)after.get(ProjectModel.PROP_PROJECT_STATE);
-		logger.debug("beforeState: " + beforeState + " - afterState: " + afterState);
 		if(afterState != null && afterState.equals(TaskState.InProgress.toString()) && !afterState.equals(beforeState)){
 			logger.debug("onUpdateProperties:start project");
 			projectService.start(nodeRef);		

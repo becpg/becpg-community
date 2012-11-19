@@ -4,7 +4,6 @@
 package fr.becpg.repo.project.policy;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,8 +18,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectService;
-import fr.becpg.repo.project.data.projectList.DeliverableState;
-import fr.becpg.repo.project.data.projectList.TaskState;
 
 /**
  * The Class TaskDatesPolicy.
