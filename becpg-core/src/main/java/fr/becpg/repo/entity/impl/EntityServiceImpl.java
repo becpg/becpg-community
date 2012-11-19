@@ -24,7 +24,6 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
-import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -45,6 +44,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
@@ -212,96 +212,93 @@ public class EntityServiceImpl implements EntityService {
 		// entity => exit
 		if (entityType.isMatch(BeCPGModel.TYPE_ENTITY)) {
 			return;
-		}
-
-		NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
-		QName parentEntityType = nodeService.getType(parentEntityNodeRef);
-
-		// Actual entity parent is not a entity folder
-		if (!parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)) {
-
-			// look for folderTpl
-			NodeRef folderTplNodeRef = entityTplService.getFolderTpl(entityType);
-
+		}		
+		
+		NodeRef entityFolderNodeRef = null;
+		NodeRef folderTplNodeRef = null;
+		
+		if(dictionaryService.isSubClass(entityType, BeCPGModel.TYPE_ENTITY)){
+			
+			NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
+			QName parentEntityType = nodeService.getType(parentEntityNodeRef);
+			// Actual entity parent is already a entity folder
+			if (parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)) {
+				return;
+			}
+						
+			folderTplNodeRef = entityTplService.getFolderTpl(entityType);
+			
 			if (folderTplNodeRef != null && nodeService.exists(folderTplNodeRef)) {
 
 				logger.debug("folderTplNodeRef found");
+			
+				entityFolderNodeRef = fileFolderService.create(parentEntityNodeRef, GUID.generate(), BeCPGModel.TYPE_ENTITY_FOLDER).getNodeRef();
 
-				FileInfo fileInfo = null;
-				try {
-					fileInfo = fileFolderService.copy(folderTplNodeRef, parentEntityNodeRef, GUID.generate());
-				} catch (FileNotFoundException e) {
-					logger.error("initializeEntityFolder : Failed to copy template folder", e);
-				}
+				// move entity in entityfolder and rename entityfolder
+				nodeService.moveNode(entityNodeRef, entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(entityNodeRef));
+				nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+				nodeService.setProperty(entityFolderNodeRef, BeCPGModel.PROP_ENTITY_FOLDER_CLASS_NAME, entityType);
+			}
+		}
+		else if(dictionaryService.isSubClass(entityType, BeCPGModel.TYPE_ENTITY_V2)){
+			entityFolderNodeRef = entityNodeRef;		
+			folderTplNodeRef = entityTplService.getFolderTpl(entityType);
+		}
+		else{
+			logger.debug("entityNodeRef doesn't inherit from entity nor entityV2");
+			return;
+		}
+		
+		// copy subfolders
+		if(entityFolderNodeRef != null && folderTplNodeRef != null){			
+			for (FileInfo folder : fileFolderService.listFolders(folderTplNodeRef)) {
+				
+				logger.debug("copy subFolder: " + folder.getName() + " entityFolderNodeRef: " + entityFolderNodeRef);				
+				//copyService.copy(folder.getNodeRef(), entityFolderNodeRef);
+				NodeRef subFolderNodeRef = copyService.copy(folder.getNodeRef(), entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, folder.getName());
+				
+				// initialize permissions according to template
+				NodeRef subFolderTplNodeRef = folder.getNodeRef();
 
-				if (fileInfo != null) {
-					NodeRef entityFolderNodeRef = fileInfo.getNodeRef();
+				if (subFolderNodeRef != null) {
 
-					// remove aspect entityTpl of folder
-					nodeService.removeAspect(entityFolderNodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
+					if (nodeService.hasAspect(subFolderTplNodeRef, BeCPGModel.ASPECT_PERMISSIONS_TPL)) {
 
-					// set inherit parents permissions
-					permissionService.deletePermissions(entityFolderNodeRef);
-					permissionService.setInheritParentPermissions(entityFolderNodeRef, true);
-					// for(FileInfo folder :
-					// fileFolderService.listFolders(entityFolderNodeRef)){
-					// NodeRef subFolderNodeRef = folder.getNodeRef();
-					// permissionService.deletePermissions(entityFolderNodeRef);
-					// permissionService.setInheritParentPermissions(subFolderNodeRef,
-					// true);
-					// }
+						QName[] permissionGroupAssociations = { BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS,
+								BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS };
+						String[] permissionNames = { RepoConsts.PERMISSION_CONSUMER, RepoConsts.PERMISSION_EDITOR, RepoConsts.PERMISSION_CONTRIBUTOR,
+								RepoConsts.PERMISSION_COLLABORATOR };
 
-					// move entity in entityfolder and rename entityfolder
-					nodeService.moveNode(entityNodeRef, entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(entityNodeRef));
-					nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-					nodeService.setProperty(entityFolderNodeRef, BeCPGModel.PROP_ENTITY_FOLDER_CLASS_NAME, entityType);
+						for (int cnt = 0; cnt < permissionGroupAssociations.length; cnt++) {
 
-					// initialize permissions according to template
-					for (FileInfo folder : fileFolderService.listFolders(folderTplNodeRef)) {
+							QName permissionGroupAssociation = permissionGroupAssociations[cnt];
+							String permissionName = permissionNames[cnt];
+							List<AssociationRef> groups = nodeService.getTargetAssocs(subFolderTplNodeRef, permissionGroupAssociation);
 
-						logger.debug("init permissions, folder: " + folder.getName());
-						NodeRef subFolderTplNodeRef = folder.getNodeRef();
-						NodeRef subFolderNodeRef = nodeService.getChildByName(entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName());
+							if (groups.size() > 0) {
+								for (AssociationRef assocRef : groups) {
+									NodeRef groupNodeRef = assocRef.getTargetRef();
+									String authorityName = (String) nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);
+									logger.debug("add permission, folder: " + folder.getName() + " authority: " + authorityName + " perm: " + permissionName);
+									permissionService.setPermission(subFolderNodeRef, authorityName, permissionName, true);
 
-						if (subFolderNodeRef != null) {
-
-							if (nodeService.hasAspect(subFolderTplNodeRef, BeCPGModel.ASPECT_PERMISSIONS_TPL)) {
-
-								QName[] permissionGroupAssociations = { BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS,
-										BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS };
-								String[] permissionNames = { RepoConsts.PERMISSION_CONSUMER, RepoConsts.PERMISSION_EDITOR, RepoConsts.PERMISSION_CONTRIBUTOR,
-										RepoConsts.PERMISSION_COLLABORATOR };
-
-								for (int cnt = 0; cnt < permissionGroupAssociations.length; cnt++) {
-
-									QName permissionGroupAssociation = permissionGroupAssociations[cnt];
-									String permissionName = permissionNames[cnt];
-									List<AssociationRef> groups = nodeService.getTargetAssocs(subFolderTplNodeRef, permissionGroupAssociation);
-
-									if (groups.size() > 0) {
-										for (AssociationRef assocRef : groups) {
-											NodeRef groupNodeRef = assocRef.getTargetRef();
-											String authorityName = (String) nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);
-											logger.debug("add permission, folder: " + folder.getName() + " authority: " + authorityName + " perm: " + permissionName);
-											permissionService.setPermission(subFolderNodeRef, authorityName, permissionName, true);
-
-											// remove association
-											nodeService.removeAssociation(subFolderNodeRef, groupNodeRef, permissionGroupAssociation);
-										}
-									}
+									// remove association
+									nodeService.removeAssociation(subFolderNodeRef, groupNodeRef, permissionGroupAssociation);
 								}
-
-								// TODO
-								// remove aspect when every association has been
-								// removed
-								// nodeService.removeAspect(subFolderNodeRef,
-								// BeCPGModel.ASPECT_PERMISSIONS_TPL);
 							}
 						}
+
+						// TODO
+						// remove aspect when every association has been
+						// removed
+						// nodeService.removeAspect(subFolderNodeRef,
+						// BeCPGModel.ASPECT_PERMISSIONS_TPL);
 					}
 				}
 			}
 		}
+		
 	}
 
 	/**

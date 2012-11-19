@@ -50,7 +50,6 @@ public class ProjectServiceImpl implements ProjectService {
 	private static final String QUERY_TASK_LEGEND = "+TYPE:\"pjt:taskLegend\"";
 	private static final int DURATION_NEXT_DAY = 2;
 	private static final int DURATION_DEFAULT = 1;
-	private static long DURATION_MILLIS_PER_DAY = 24 * 3600 * 1000;
 
 	private static Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
@@ -437,6 +436,9 @@ public class ProjectServiceImpl implements ProjectService {
 			if (abstractProjectData instanceof ProjectData) {
 
 				ProjectData projectData = (ProjectData) abstractProjectData;
+				if(projectData.getStartDate() == null){
+					projectData.setStartDate(new Date());
+				}
 				Date completionDate = projectData.getStartDate();
 
 				for (TaskListDataItem t : projectData.getTaskList()) {
@@ -470,21 +472,25 @@ public class ProjectServiceImpl implements ProjectService {
 
 		// current task
 		t.setEnd(calculateEndDate(t.getStart(), t.getDuration()));
+		logger.debug("t.getEnd(): " + t.getEnd());
 
 		// current next tasks
 		for (TaskListDataItem nextTask : getNextTasks(projectData, t.getNodeRef())) {
 
 			Date startDate = calculateNextStartDate(t.getEnd());
+			logger.debug("startDate: " + startDate);
 			List<TaskListDataItem> prevTasks = getPrevTasks(projectData, nextTask);
+			logger.debug("prevTasks.size(): " + prevTasks.size());
 			for (TaskListDataItem prevTask : prevTasks) {
 				// prevTask != currentTask
 				if (!t.getNodeRef().equals(prevTask.getNodeRef())) {
+					logger.debug("prevTask.getStart(): " + prevTask.getStart());
+					logger.debug("prevTask.getDuration(): " + prevTask.getDuration());
 					prevTask.setEnd(calculateEndDate(prevTask.getStart(), prevTask.getDuration()));
-					if(prevTask.getEnd() != null){
-						Date d = calculateNextStartDate(prevTask.getEnd());
-						if (d.after(startDate)) {
-							startDate = d;
-						}
+					logger.debug("prevTask.getEnd(): " + prevTask.getEnd());
+					Date d = calculateNextStartDate(prevTask.getEnd());
+					if (d != null && d.after(startDate)) {
+						startDate = d;
 					}
 					
 				}
