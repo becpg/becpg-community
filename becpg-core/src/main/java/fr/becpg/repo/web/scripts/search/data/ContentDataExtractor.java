@@ -15,6 +15,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
 public class ContentDataExtractor extends AbstractNodeDataExtractor  {
@@ -54,7 +55,11 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 		 
 		 DictionaryService dd = this.services.getDictionaryService();
 		  
-	      if ( Boolean.valueOf((dd.isSubClass(itemType, ContentModel.TYPE_FOLDER) == true &&
+		 if ( Boolean.valueOf(dd.isSubClass(itemType, BeCPGModel.TYPE_ENTITY_V2)) == true )
+	      {
+			 ret.put(PROP_TYPE, "entity");
+	         ret.put(PROP_SIZE, -1);
+	      } else if ( Boolean.valueOf((dd.isSubClass(itemType, ContentModel.TYPE_FOLDER) == true &&
                   dd.isSubClass(itemType, ContentModel.TYPE_SYSTEM_FOLDER) == false)))
 	      {
 	    	 ret.put(PROP_TYPE, "folder");

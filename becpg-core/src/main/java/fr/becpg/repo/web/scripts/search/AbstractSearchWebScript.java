@@ -17,6 +17,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.search.AdvSearchService;
+import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
@@ -79,33 +80,6 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 
 
-	protected Map<String, Boolean> extractSortMap(String sort) {
-
-		Map<String, Boolean> sortMap = new HashMap<String, Boolean>();
-		if (sort != null && sort.length() != 0) {
-			boolean asc = true;
-			int separator = sort.indexOf('|');
-			if (separator != -1) {
-				asc = ("true".equals(sort.substring(separator + 1)));
-				sort = sort.substring(0, separator);
-			}
-			String column;
-			if (sort.charAt(0) == '.') {
-				// handle pseudo cm:content fields
-				column = "@{http://www.alfresco.org/model/content/1.0}content" + sort;
-			} else if (sort.indexOf(':') != -1) {
-				// handle attribute field sort
-				column = "@" +  QName.createQName(sort, namespaceService).toString();
-			} else {
-				// other sort types e.g. TYPE
-				column = sort;
-			}
-			sortMap.put(column, asc);
-		}
-
-		return sortMap;
-
-	}
 	
 
 	@SuppressWarnings("unchecked")
@@ -130,7 +104,7 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 		String query = req.getParameter(PARAM_QUERY);
 		String sort = req.getParameter(PARAM_SORT);
-		Map<String, Boolean> sortMap = extractSortMap(sort);
+		Map<String, Boolean> sortMap = WebscriptHelper.extractSortMap(sort,namespaceService);
 		String term = req.getParameter(PARAM_TERM);
 		String tag = req.getParameter(PARAM_TAG);
 		String siteId = req.getParameter(PARAM_SITE);

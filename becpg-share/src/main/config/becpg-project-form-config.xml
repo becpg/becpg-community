@@ -186,6 +186,31 @@
 					</field>
 				</appearance>
 			</form>
+			
+			
+			<form id="search">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectPriority" />
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectCompletionDate" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectState" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:projectPriority">
+						<control
+							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<field id="pjt:projectState">
+						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
 
 		</forms>
 	</config>
