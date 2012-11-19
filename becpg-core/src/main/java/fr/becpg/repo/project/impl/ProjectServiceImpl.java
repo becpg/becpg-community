@@ -322,7 +322,6 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 
-		logger.debug("workDone: " + workDone + " - totalWork: " + totalWork);
 		return totalWork != 0 ? 100 * workDone / totalWork : 0;
 	}
 
@@ -478,27 +477,20 @@ public class ProjectServiceImpl implements ProjectService {
 			Date startDate = calculateNextStartDate(t.getEnd());
 			List<TaskListDataItem> prevTasks = getPrevTasks(projectData, nextTask);
 			for (TaskListDataItem prevTask : prevTasks) {
-				logger.debug("prevTask " + prevTask.getTaskName());
 				// prevTask != currentTask
 				if (!t.getNodeRef().equals(prevTask.getNodeRef())) {
-					logger.debug("1");
 					prevTask.setEnd(calculateEndDate(prevTask.getStart(), prevTask.getDuration()));
-					logger.debug("2");
 					if(prevTask.getEnd() != null){
 						Date d = calculateNextStartDate(prevTask.getEnd());
-						logger.debug("3");
 						if (d.after(startDate)) {
 							startDate = d;
 						}
-						logger.debug("4");
 					}
 					
 				}
 			}
 
-			logger.debug("5");
 			nextTask.setStart(startDate);
-			logger.debug("nextTask startdate " + nextTask.getTaskName() + " - " + nextTask.getStart());
 			calculateTaskDates(projectData, nextTask);
 		}
 	}
