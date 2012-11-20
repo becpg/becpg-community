@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20">
+  <process id="projectNewProduct" name="Project New Product Process">
+    <startEvent id="startevent1" name="Start" activiti:formKey="pjtwf:submitNewProductTask"></startEvent>
+    <userTask id="newProductTask" name="New Product Task" activiti:assignee="${bpm_assignee.properties.userName}" activiti:formKey="pjtwf:newProductTask">
+      <extensionElements>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate
+                      if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>execution.setVariable('pjtwf_npdProductName', task.getVariable('pjtwf_npdProductName'));
+execution.setVariable('pjtwf_needDefinitionProduct', task.getVariable('pjtwf_needDefinitionProduct'));
+execution.setVariable('pjtwf_needDefinitionRecipeProduct', task.getVariable('pjtwf_needDefinitionRecipeProduct'));
+execution.setVariable('pjtwf_needDefinitionPackagingKit', task.getVariable('pjtwf_needDefinitionPackagingKit'));</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <serviceTask id="servicetask1" name="Create Product Service Task" activiti:delegateExpression="${CreateProduct}"></serviceTask>
+    <sequenceFlow id="flow1" name="" sourceRef="startevent1" targetRef="newProductTask"></sequenceFlow>
+    <sequenceFlow id="flow2" name="" sourceRef="newProductTask" targetRef="servicetask1"></sequenceFlow>
+    <sequenceFlow id="flow3" name="" sourceRef="servicetask1" targetRef="endevent1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_projectNewProduct">
+    <bpmndi:BPMNPlane bpmnElement="projectNewProduct" id="BPMNPlane_projectNewProduct">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35" width="35" x="150" y="240"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="newProductTask" id="BPMNShape_newProductTask">
+        <omgdc:Bounds height="55" width="105" x="230" y="230"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35" width="35" x="516" y="240"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
+        <omgdc:Bounds height="55" width="105" x="380" y="230"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="185" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="230" y="257"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="335" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="380" y="257"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="485" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="516" y="257"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

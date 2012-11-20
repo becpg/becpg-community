@@ -156,7 +156,7 @@ function getDoclist()
    {
       // Get evaluated properties.
       item = Evaluator.run(node);
-      if (item !== null)
+      if (item !== null && !item.node.hasAspect("bcpg:hiddenFolder"))
       {
          item.isFavourite = (favourites[item.node.nodeRef] === true);
          item.likes = Common.getLikes(node);

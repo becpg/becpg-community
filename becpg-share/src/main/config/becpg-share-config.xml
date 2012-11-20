@@ -97,7 +97,9 @@
 			<workflow name="activiti$activitiParallelGroupReview" />
 			<workflow name="activiti$activitiParallelReview" />
 			<workflow name="activiti$activitiAdhoc" />
-			<workflow name="activiti$activitiReview" />			
+			<workflow name="activiti$activitiReview" />		
+			<workflow name="activiti$projectAdhoc"/>
+			<workflow name="activiti$projectNewProduct"/>
 			<workflow name="jbpm$wf:adhoc" /> 
 			<workflow name="jbpm$wf:reviewpooled"	/> 
 			<workflow name="jbpm$wf:parallelgroupreview" /> 
@@ -107,9 +109,6 @@
 	</config>
 
 
-
-
-	
 
 	<!-- Define elements that are bulk editable -->
 	<config evaluator="string-compare" condition="bulk-edit">

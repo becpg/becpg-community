@@ -33,7 +33,9 @@ tr.gheader {
 	text-align: center;
 }
 
-.projects  span.project-title {
+
+
+.projects  span.task-title {
 	white-space:nowrap;
    text-overflow:ellipsis;
    overflow:hidden;
@@ -41,6 +43,16 @@ tr.gheader {
    display: inline-block;
 }
 
+
+.projects  span.resource-title {
+	white-space:nowrap;
+   text-overflow:ellipsis;
+   overflow:hidden;
+   width:70px;
+   display: inline-block;
+   background: url("../images/filetypes/generic-user-16.png") no-repeat scroll 0 0 transparent;
+   padding-left: 20px;
+}
 
 .project-list .projects .yui-dt-data td.gfoot {
 	border : none;

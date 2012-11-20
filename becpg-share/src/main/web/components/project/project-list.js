@@ -216,7 +216,8 @@ var g; // gantt var
 				               var title = '<span class="' + this.getAdvancementClass(oRecord) + '">'
 				                     + this.getProjectTitle(oRecord) + '</span>';
 
-				               var initiator = oRecord.getData("itemData")["prop_cm_creator"].displayValue;
+				               var initiator = '<span class="resource-title">'
+				                     + oRecord.getData("itemData")["prop_cm_creator"].displayValue + '</span>';
 				               var percent = oRecord.getData("itemData")["prop_pjt_completionPercent"].value;
 
 				               var dates = this.extractDates(oRecord);
@@ -249,7 +250,8 @@ var g; // gantt var
 					               var tlIsMilestone = task["itemData"]["prop_pjt_tlIsMilestone"].value;
 					               var tlPercent = task["itemData"]["prop_pjt_completionPercent"].value;
 
-					               var taskOwner = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? task["itemData"]["assoc_pjt_tlResources"][0].displayValue
+					               var taskOwner = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? ('<span class="resource-title">'
+					                     + task["itemData"]["assoc_pjt_tlResources"][0].displayValue + '</span>')
 					                     : null;
 
 					               var tdates = this.cache[taskId];
@@ -397,7 +399,7 @@ var g; // gantt var
 		               dueDate = oRecord.getData("itemData")["prop_pjt_projectDueDate"].value;
 
 		               startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : new Date();
-		               endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
+		               endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
 		               dueDate = dueDate != null ? this.resetDate(Alfresco.util.fromISO8601(dueDate)) : this
 		                     .computeDueDate(startDate, oRecord);
 		               return {
@@ -520,10 +522,13 @@ var g; // gantt var
 			               url = Alfresco.constants.URL_PAGECONTEXT + "site/" + oData.siteId + "/"
 			                     + 'entity-data-lists?nodeRef=' + oData.nodeRef;
 			               urlFolder = Alfresco.constants.URL_PAGECONTEXT + "site/" + oData.siteId + "/"
-			                     + 'documentlibrary#filter=nodeRef|' + oData.nodeRef;
+			                     + 'documentlibrary#filter=path|' + encodeURIComponent('/' + oData.path + '/' + title);
 		               } else {
 			               url = Alfresco.constants.URL_PAGECONTEXT + 'entity-data-lists?nodeRef=' + oData.nodeRef;
-			               urlFolder = Alfresco.constants.URL_PAGECONTEXT + 'repository?nodeRef=' + oData.nodeRef;
+			               if (oData.path) {
+				               urlFolder = Alfresco.constants.URL_PAGECONTEXT + 'repository#filter=path|'
+				                     + encodeURIComponent('/' + oData.path.split('/').slice(2).join('/') + '/' + title);
+			               }
 		               }
 
 		               if (oData.version && oData.version !== "") {

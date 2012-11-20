@@ -8,7 +8,6 @@
 					<show id="bpm:workflowDueDate" />
 					<show id="bpm:workflowPriority" />
 					<show id="bpm:assignee" />
-					<show id="pjtwf:project" force="true" />
 					<show id="pjt:workflowTask" force="true" />
 					<show id="packageItems" />
 					<show id="bpm:workflowDescription" />
@@ -29,10 +28,6 @@
 					<field id="bpm:assignee" label-id="workflow.field.assign_to" set="assignee" />
 					
 					<set appearance="title" id="items" label-id="workflow.set.items" />
-					<field id="pjtwf:project" set="items" >
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
 					<field id="pjt:workflowTask" set="items" label="Tâche">
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
@@ -102,6 +97,153 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="transitions" set="response" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
+	<config condition="activiti$projectNewProduct" evaluator="string-compare"
+		replace="false">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bpm:workflowDueDate" />
+					<show id="bpm:workflowPriority" />
+					<show id="bpm:assignee" />
+					<show id="pjt:workflowTask" force="true" />
+					<show id="packageItems" />
+					<show id="bpm:workflowDescription" />
+				</field-visibility>
+				<appearance>
+					<set appearance="title" id="main" label-id="workflow.set.general" />
+
+					<set id="info" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bpm:workflowDueDate" label-id="workflow.field.due"
+						mandatory="false" read-only="false" set="info" />
+					<field id="bpm:workflowPriority" label-id="workflow.field.priority"
+						mandatory="false" read-only="false" set="info">
+						<control
+							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					
+					<set id="assignee" appearance="title" label-id="workflow.set.assignee" />
+					<field id="bpm:assignee" label-id="workflow.field.assign_to" set="assignee" />
+					
+					<set appearance="title" id="items" label-id="workflow.set.items" />
+					<field id="pjt:workflowTask" set="items" label="Tâche">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="packageItems" mandatory="false" read-only="false"
+						set="items" />
+
+					<field id="bpm:workflowDescription" label-id="workflow.field.message"
+						mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="style">width: 95%</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="task-type" condition="pjtwf:newProductTask">
+		<forms>
+			<form>
+				<field-visibility>
+					<hide id="bpm:packageItemActionGroup" />
+					<show id="bpm:status" />
+					<show id="taskOwner" />
+					<show id="bpm:priority" />
+					<show id="bpm:dueDate" />	
+					<show id="pjtwf:packagingDescription" />
+					<show id="pjtwf:recipeDescription" />
+					<show id="pjtwf:needDefinitionPackagingKit" />
+					<show id="pjtwf:needDefinitionRecipeProduct" />
+					<show id="pjtwf:npdProductName" />
+					<show id="pjtwf:productDescription" />
+					<show id="pjtwf:needDefinitionProduct" />
+				   <show id="pjtwf:project" />
+					<show id="packageItems" />		
+					<show id="bpm:comment" />
+					<show id="transitions" />		
+				</field-visibility>
+				<appearance>
+					<set id="main" appearance="title" label-id="workflow.set.general"
+						template="/fr/becpg/components/form/2-column-set.ftl" />	
+					
+					<field id="bpm:status" set="main" />
+					<field id="taskOwner" set="main" />
+					
+					<field id="bpm:priority" set="main" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<field id="bpm:dueDate" set="main" label-id="workflow.field.due">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>				
+					
+					<set id="product" appearance="title" label-id="becpg.forms.set.product.label" />
+					<set id="packagingKit" appearance="title" label-id="becpg.forms.set.packaging.label" />
+					<set id="recipe" appearance="title" label-id="becpg.forms.set.recipe.label" />
+					<set id="assignees" appearance="title" label-id="becpg.forms.set.assignees.label" />
+					<set id="progress" appearance="title" label-id="workflow.set.task.progress" />
+					<set id="items" appearance="title" label-id="workflow.set.items" />
+
+					<field id="pjtwf:npdProductName" set="product" label-id="becpg.forms.set.product.name" />
+
+					<field id="pjtwf:productDescription" set="product"
+						label-id="becpg.forms.set.product-description.label">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="style">width: 95%</control-param>
+						</control>
+					</field>
+					<field id="pjtwf:needDefinitionProduct" set="product"
+						label-id="becpg.forms.set.existing-product.label">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+
+					<field id="pjtwf:packagingDescription" set="packagingKit"
+						label-id="becpg.forms.set.packaging-description.label">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="style">width: 95%</control-param>
+						</control>
+					</field>
+					<field id="pjtwf:needDefinitionPackagingKit" set="packagingKit"
+						label-id="becpg.forms.set.existing-packaging.label">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+
+					<field id="pjtwf:recipeDescription" set="recipe"
+						label-id="becpg.forms.set.recipe-description.label">
+
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="style">width: 95%</control-param>
+						</control>
+					</field>
+					<field id="pjtwf:needDefinitionRecipeProduct" set="recipe"
+						label-id="becpg.forms.set.existing-recipe.label">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+
+					<field id="bpm:groupAssignees" set="assignees"
+						label-id="becpg.forms.set.npd-groupAssignees.label" />
+
+
+					<set id="items" appearance="title" label-id="workflow.set.items" />
+					<field id="packageItems" set="items" label-id="becpg.forms.set.brief-documents.label" />
+
+					<field id="bpm:comment" label-id="workflow.field.comment"
+						set="progress">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="transitions" set="items" />
+
 				</appearance>
 			</form>
 		</forms>
