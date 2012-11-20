@@ -258,16 +258,14 @@
 					<show force="true" id="pjt:tlResources" />
 					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlState" />
-					<show id="pjt:tlStart" />
-					<show id="pjt:tlEnd" />
-					<show id="pjt:tlWorkflowInstance" />
-					<show id="pjt:completionPercent" />
+					<show id="pjt:tlStart" read-only="true" />
+					<show id="pjt:tlEnd"   read-only="true" />
+					<show id="pjt:completionPercent" read-only="true" />
 				</field-visibility>
 				<appearance>
 					<field id="pjt:tlWorkflowName">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,activiti$projectAdhoc|Adhoc
-							</control-param>
+							<control-param name="options">,activiti$projectAdhoc|Adhoc,activiti$projectNewProduct|New product</control-param>
 						</control>
 					</field>
 					<field id="pjt:tlPrevTasks">
@@ -300,16 +298,14 @@
 					<show force="true" id="pjt:tlResources" />
 					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlState" />
-					<show id="pjt:tlStart" />
-					<show id="pjt:tlEnd" />
-					<show id="pjt:tlWorkflowInstance" />
-					<show id="pjt:completionPercent" />
+					<show id="pjt:tlStart" read-only="true" />
+					<show id="pjt:tlEnd"   read-only="true" />
+					<show id="pjt:completionPercent" read-only="true" />
 				</field-visibility>
 				<appearance>
 					<field id="pjt:tlWorkflowName">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,activiti$projectAdhoc|Adhoc
-							</control-param>
+							<control-param name="options">,activiti$projectAdhoc|Adhoc,activiti$projectNewProduct|New product</control-param>
 						</control>
 					</field>
 					<field id="pjt:tlPrevTasks">

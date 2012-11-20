@@ -48,4 +48,15 @@
 		<property name="dictionaryDAO" ref="dictionaryDAO" />
 	</bean>
 
+	<!-- Workflow -->
+	<bean id="CreateProduct" parent="baseJavaDelegate" class="fr.becpg.repo.workflow.activiti.project.CreateProduct">
+		<property name="nodeService" ref="nodeService"/>
+    	<property name="fileFolderService" ref="fileFolderService"/>
+    	<property name="productDAO" ref="productDAO"/>
+    	<property name="entityService" ref="entityService"/>
+    	<property name="productService" ref="productService"/>
+    	<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+    	<property name="repoService" ref="repoService"/>
+    </bean> 
+
 </beans>

@@ -29,6 +29,7 @@
 				<list>
 					<value></value>
 					<value>activiti$projectAdhoc</value>
+					<value>activiti$projectNewProduct</value>
 				</list>
 			</parameter>
 		</constraint>

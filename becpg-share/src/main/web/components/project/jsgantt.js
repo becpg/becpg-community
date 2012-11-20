@@ -1351,7 +1351,7 @@ JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
 					vLeftTable += '<span style="color: #000000; font-weight:bold; FONT-SIZE: 12px;">&nbsp&nbsp&nbsp&nbsp&nbsp</span>';
 				}
 
-				vLeftTable += '<span > ' + vTaskList[i].getName() + '</span></NOBR></TD>';
+				vLeftTable += '<span class="task-title" > ' + vTaskList[i].getName() + '</span></NOBR></TD>';
 
 				if (vShowRes == 1)
 					vLeftTable += '  <TD class=gname  ><NOBR>' + vTaskList[i].getResource() + '</NOBR></TD>';

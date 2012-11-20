@@ -63,6 +63,9 @@
 					<!-- modified -->
 					<show id="cm:modified" />
 					<show id="cm:modifier" />
+					
+					<!-- Product Catalog -->
+					<show id="bp:productCatalogs" force="true" />
 
 					<!-- NPD 
 					<show id="npd:npdNumber" force="true" />
@@ -80,8 +83,8 @@
 				</field-visibility>
 				<appearance>
 					<set id="product-criteria" appearance="bordered-panel" label-id="becpg.forms.set.product-criteria.label" />
-					<set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+				<!-- 	<set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label"
+						template="/fr/becpg/components/form/2-column-set.ftl" /> -->
 					<set id="ings-criteria" appearance="bordered-panel"
 						label-id="becpg.forms.set.ings-criteria.label" />					
 
@@ -117,6 +120,11 @@
 						<control
 							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
 					</field>
+
+
+					
+					<!-- Product Catalog -->
+					<field id="bp:productCatalogs" set="product-criteria" />
 
 					<!-- modified -->
 					<field id="cm:modifier" set="product-criteria">
