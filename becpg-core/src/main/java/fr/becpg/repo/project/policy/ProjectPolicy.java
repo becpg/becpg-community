@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
@@ -37,6 +38,8 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProjectPolicy.class);
+	
+	private static final String KEY_PROJECTS_TO_START = "projectToStart";
 
 	private EntityListDAO entityListDAO;
 	private ProjectService projectService;
@@ -111,9 +114,9 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			projectService.initializeProjectDates(assocRef.getSourceRef());
 			
 			//We want to be able to plan project in advance and start it later so we start it when state is InProgress
-			if(TaskState.InProgress.toString().equals(nodeService.getProperty(assocRef.getSourceRef(), ProjectModel.PROP_PROJECT_STATE))){
-				logger.debug("onCreateAssociation: start project");
-				projectService.start(assocRef.getSourceRef());
+			if(TaskState.InProgress.toString().equals(nodeService.getProperty(assocRef.getSourceRef(), ProjectModel.PROP_PROJECT_STATE))){				
+				// start workflow when product is associated to project
+				queueNode(KEY_PROJECTS_TO_START, assocRef.getSourceRef());				
 			}			
 		}
 		else if(assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)){
@@ -143,9 +146,27 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		
 		String beforeState = (String)before.get(ProjectModel.PROP_PROJECT_STATE);
 		String afterState = (String)after.get(ProjectModel.PROP_PROJECT_STATE);
-		if(afterState != null && afterState.equals(TaskState.InProgress.toString()) && !afterState.equals(beforeState)){
-			logger.debug("onUpdateProperties:start project");
-			projectService.start(nodeRef);		
+		if(afterState != null && !afterState.equals(beforeState)){
+			if(afterState.equals(TaskState.InProgress.toString())){
+				logger.debug("onUpdateProperties:start project");
+				projectService.start(nodeRef);
+			}
+			else if(afterState.equals(TaskState.Cancelled.toString())){
+				logger.debug("onUpdateProperties:cancel project");
+				projectService.cancel(nodeRef);
+			}
 		}
 	}
+	
+	@Override
+	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+		
+		if(KEY_PROJECTS_TO_START.equals(key)){
+			for(NodeRef nodeRef : pendingNodes){
+				logger.debug("onCreateAssociation: start project");
+				projectService.start(nodeRef);
+			}
+		}		
+	}
+	
 }

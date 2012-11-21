@@ -12,6 +12,17 @@
 		<attribute set="aSet2" name="integer" value="12" />
 		<attribute set="aSet2" name="decimal" value="12.36" />
 	</attributes>
+	
+	<images>
+		<image id="img1" name="img1" title="img1 title"/>
+		<image id="img2" name="img2" title="img2 title" />
+		<image id="img3" name="img3" title="img3 title" />
+		<image id="img4" name="img4" title="img4 title" />
+		<image id="img5" name="img_fab1" title="img_fab1 title"/>
+		<image id="img6" name="img_fab2" title="img_fab2 title" />
+		<image id="img7" name="img_fab3" title="img_fab3 title" />
+		<image id="img8" name="img_fab4" title="img_fab4 title" />		
+	</images>
 
 	<dataLists>
 

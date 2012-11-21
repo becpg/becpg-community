@@ -67,14 +67,6 @@
 					<!-- Product Catalog -->
 					<show id="bp:productCatalogs" force="true" />
 
-					<!-- NPD 
-					<show id="npd:npdNumber" force="true" />
-					<show id="npd:npdType" force="true" />
-					<show id="npd:npdStatus" force="true" />					
-					<show id="npd:npdInitiator" force="true" />
-					-->
-					
-					
 					<!-- ing information -->
 					<show id="bcpg:ingListIng" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
@@ -136,13 +128,6 @@
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 					
-					<!-- NPD
-					<field id="npd:npdNumber" set="npd" />
-					<field id="npd:npdType" set="npd" />
-					<field id="npd:npdStatus" set="npd" />					
-					<field id="npd:npdInitiator" set="npd" />		
-					-->
-
 					<!-- ing information -->
 					<field id="bcpg:ingListIng" set="ings-criteria">
 						<control
