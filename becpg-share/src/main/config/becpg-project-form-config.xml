@@ -379,6 +379,13 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="pjt:dlContent" mandatory="false" read-only="false">
+		            <control template="/org/alfresco/components/form/controls/association.ftl">
+		              <control-param name="startLocation">{ancestor}</control-param>
+		              <control-param name="startLocationParams">type=pjt:project</control-param>
+		            </control>
+		          </field>
+					
 				</appearance>
 			</form>
 		</forms>
@@ -408,6 +415,12 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="pjt:dlContent" mandatory="false" read-only="false">
+		            <control template="/org/alfresco/components/form/controls/association.ftl">
+		              <control-param name="startLocation">{ancestor}</control-param>
+		              <control-param name="startLocationParams">type=pjt:project</control-param>
+		            </control>
+		          </field>
 				</appearance>
 			</form>
 			<form id="sub-datagrid">
