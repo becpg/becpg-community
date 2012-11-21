@@ -50,7 +50,8 @@ public class ProjectServiceImpl implements ProjectService {
 	private static final String QUERY_TASK_LEGEND = "+TYPE:\"pjt:taskLegend\"";
 	private static final int DURATION_NEXT_DAY = 2;
 	private static final int DURATION_DEFAULT = 1;
-
+	private static final String WORKFLOW_DESCRIPTION = "%s : ";
+	
 	private static Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
 	private BeCPGListDao<AbstractProjectData> projectDAO;
@@ -116,9 +117,11 @@ public class ProjectServiceImpl implements ProjectService {
 			// end task
 			TaskListDataItem currentTaskDataItem = getTask(projectData, taskListNodeRef);
 			if (currentTaskDataItem != null) {
-				currentTaskDataItem.setEnd(new Date());
+				// we force
+				setTaskEndDate(currentTaskDataItem, new Date(), true);
 				currentTaskDataItem.setDuration(calculateTaskDuration(currentTaskDataItem.getStart(),
 						currentTaskDataItem.getEnd()));
+				currentTaskDataItem.setCompletionPercent(COMPLETED);
 
 				// set deliverables as completed
 				List<DeliverableListDataItem> deliverables = getDeliverables(projectData, taskListNodeRef);
@@ -136,22 +139,31 @@ public class ProjectServiceImpl implements ProjectService {
 					if (areTasksDone(projectData, nextTask.getPrevTasks())) {
 
 						// start task
+						setTaskStartDate(nextTask, new Date(), false);
 						nextTask.setState(TaskState.InProgress);
-						nextTask.setStart(new Date());
 
 						// deliverable list
-						String workflowDescription = "";
+						String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getName());
+						boolean isFirst = true;
 						List<DeliverableListDataItem> nextDeliverables = getDeliverables(projectData,
 								nextTask.getNodeRef());
 						logger.debug("next deliverables size: " + nextDeliverables.size());
 						for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
 
-							nextDeliverable.setState(DeliverableState.InProgress);
+							// set Planned dl InProgress
+							if(DeliverableState.Planned.equals(nextDeliverable.getState())){
+								nextDeliverable.setState(DeliverableState.InProgress);
+							}							
 
-							if (!workflowDescription.isEmpty()) {
-								workflowDescription += DESCRIPTION_SEPARATOR;
-							}
-							workflowDescription += nextDeliverable.getDescription();
+							if(DeliverableState.InProgress.equals(nextDeliverable.getState())){
+								if (isFirst) {
+									isFirst = false;
+								}
+								else{
+									workflowDescription += DESCRIPTION_SEPARATOR;
+								}
+								workflowDescription += nextDeliverable.getDescription();
+							}							
 						}
 
 						logger.debug("assignees size: " + nextTask.getResources());
@@ -347,12 +359,15 @@ public class ProjectServiceImpl implements ProjectService {
 						if (taskCompletionPercent == null) {
 							taskCompletionPercent = 0;
 						}
-						taskCompletionPercent += completionPercent;
-						t.setCompletionPercent(taskCompletionPercent);
-						logger.debug("set completion percent to value " + taskCompletionPercent);
 
-						if (taskCompletionPercent > 100) {
-							logger.debug("submit task");
+						taskCompletionPercent += completionPercent;
+
+						if (taskCompletionPercent < COMPLETED) {
+							logger.debug("set completion percent to value " + taskCompletionPercent);
+							t.setCompletionPercent(taskCompletionPercent);
+						} else {
+							logger.debug("set completion percent to 100%");
+							t.setCompletionPercent(COMPLETED);
 							t.setState(TaskState.Completed);
 						}
 					}
@@ -436,23 +451,29 @@ public class ProjectServiceImpl implements ProjectService {
 			if (abstractProjectData instanceof ProjectData) {
 
 				ProjectData projectData = (ProjectData) abstractProjectData;
-				if(projectData.getStartDate() == null){
+				if (projectData.getStartDate() == null) {
 					projectData.setStartDate(new Date());
 				}
 				Date completionDate = projectData.getStartDate();
 
 				for (TaskListDataItem t : projectData.getTaskList()) {
 
-					// 1st task : init
-					if (taskListNodeRef == null) {
+					if (taskListNodeRef == null || taskListNodeRef.equals(t.getNodeRef())) {
+						// 1st task
 						if (t.getPrevTasks() == null || t.getPrevTasks().size() == 0) {
-							t.setStart(projectData.getStartDate());
-							calculateTaskDates(projectData, t);
+							//init if startDate is null or startDate is before projectStart
+							if(t.getStart() == null || t.getStart().before(projectData.getStartDate())){
+								setTaskStartDate(t, projectData.getStartDate(), false);
+							}							
+						} else {
+							Date endDate = getLastEndDate(getPrevTasks(projectData, t));
+							setTaskStartDate(t, calculateNextStartDate(endDate), false);
 						}
-					} else if (taskListNodeRef.equals(t.getNodeRef())) {
-						calculateTaskDates(projectData, t);
+						calculateTaskDates(projectData, t);					
 					}
-
+					
+					logger.debug("completionDate: " + completionDate);
+					logger.debug("t.getEnd(): " + t.getEnd());
 					if (completionDate.before(t.getEnd())) {
 						completionDate = t.getEnd();
 					}
@@ -468,48 +489,72 @@ public class ProjectServiceImpl implements ProjectService {
 
 	private void calculateTaskDates(AbstractProjectData projectData, TaskListDataItem t) {
 
-		logger.debug("calculateTaskDates " + t.getTaskName());
+		logger.debug("###calculateTaskDates " + t.getTaskName());
 
 		// current task
-		t.setEnd(calculateEndDate(t.getStart(), t.getDuration()));
+		setTaskEndDate(t, calculateEndDate(t.getStart(), t.getDuration()), false);
 		logger.debug("t.getEnd(): " + t.getEnd());
 
 		// current next tasks
 		for (TaskListDataItem nextTask : getNextTasks(projectData, t.getNodeRef())) {
-
-			Date startDate = calculateNextStartDate(t.getEnd());
-			logger.debug("startDate: " + startDate);
-			List<TaskListDataItem> prevTasks = getPrevTasks(projectData, nextTask);
-			logger.debug("prevTasks.size(): " + prevTasks.size());
-			for (TaskListDataItem prevTask : prevTasks) {
-				// prevTask != currentTask
-				if (!t.getNodeRef().equals(prevTask.getNodeRef())) {
-					logger.debug("prevTask.getStart(): " + prevTask.getStart());
-					logger.debug("prevTask.getDuration(): " + prevTask.getDuration());
-					prevTask.setEnd(calculateEndDate(prevTask.getStart(), prevTask.getDuration()));
-					logger.debug("prevTask.getEnd(): " + prevTask.getEnd());
-					Date d = calculateNextStartDate(prevTask.getEnd());
-					if (d != null && d.after(startDate)) {
-						startDate = d;
-					}
-					
-				}
+			
+			// avoid cycle
+			if(t.getNodeRef() != null && nextTask.getNodeRef() != null && t.getNodeRef().equals(nextTask.getNodeRef())){
+				logger.error("cycle detected on task " + t.getTaskName());
+				return;
 			}
 
-			nextTask.setStart(startDate);
+			Date endDate = getLastEndDate(getPrevTasks(projectData, nextTask));
+			setTaskStartDate(nextTask, calculateNextStartDate(endDate), false);
 			calculateTaskDates(projectData, nextTask);
+		}
+	}
+
+	private Date getLastEndDate(List<TaskListDataItem> tasks) {
+		Date endDate = new Date(Long.MIN_VALUE);
+		for (TaskListDataItem task : tasks) {
+			if (task.getEnd() != null && task.getEnd().after(endDate)) {
+				endDate = task.getEnd();
+			}
+		}
+		return endDate;
+	}
+
+	private void setTaskStartDate(TaskListDataItem t, Date startDate, boolean force) {
+		logger.debug("task: " + t.getTaskName() + " state: " + t.getState() + " start: " + startDate);
+		if (TaskState.Planned.equals(t.getState()) || force) {
+			t.setStart(removeTime(startDate));
+		}
+	}
+
+	private void setTaskEndDate(TaskListDataItem t, Date endDate, boolean force) {
+		logger.debug("task: " + t.getTaskName() + " state: " + t.getState() + " end: " + endDate);
+		if (TaskState.Planned.equals(t.getState()) || TaskState.InProgress.equals(t.getState()) || force) {
+			t.setEnd(removeTime(endDate));
+		}
+	}
+
+	private Date removeTime(Date date) {
+		if (date == null) {
+			return null;
+		} else {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			return cal.getTime();
 		}
 	}
 
 	@Override
 	public Date calculateEndDate(Date startDate, Integer duration) {
-
 		return calculateNextDate(startDate, duration);
 	}
 
 	@Override
 	public Date calculateNextStartDate(Date endDate) {
-
 		return calculateNextDate(endDate, DURATION_NEXT_DAY);
 	}
 
@@ -527,7 +572,7 @@ public class ProjectServiceImpl implements ProjectService {
 		calendar.setTime(startDate);
 		int i = 1;
 		while (i < duration) {
-			calendar.add(Calendar.DATE, 1);			
+			calendar.add(Calendar.DATE, 1);
 			if (isWorkingDate(calendar)) {
 				i++;
 			}
@@ -535,36 +580,56 @@ public class ProjectServiceImpl implements ProjectService {
 
 		return calendar.getTime();
 	}
-	
-	private boolean isWorkingDate(Calendar calendar){
+
+	private boolean isWorkingDate(Calendar calendar) {
 		// saturday == 7 || sunday == 1
 		return calendar.get(Calendar.DAY_OF_WEEK) != 7 && calendar.get(Calendar.DAY_OF_WEEK) != 1;
 	}
 
 	@Override
 	public int calculateTaskDuration(Date startDate, Date endDate) {
-		
-		if(startDate == null || endDate == null){
+
+		if (startDate == null || endDate == null) {
 			logger.error("startDate or endDate is null. startDate: " + startDate + " - endDate: " + endDate);
 			return -1;
 		}
-		
-		if(startDate.after(endDate)){
+
+		if (startDate.after(endDate)) {
 			logger.error("startDate is after endDate");
 			return -1;
 		}
-		
+
 		int duration = 1;
-		Calendar startDateCal = Calendar.getInstance();		
+		Calendar startDateCal = Calendar.getInstance();
 		startDateCal.setTime(startDate);
 		Calendar endDateCal = Calendar.getInstance();
 		endDateCal.setTime(endDate);
 		while (startDateCal.before(endDateCal)) {
-			startDateCal.add(Calendar.DAY_OF_MONTH, 1);
-			if(isWorkingDate(startDateCal)){
+			if (isWorkingDate(startDateCal)) {
 				duration++;
-			}			
+			}
+			startDateCal.add(Calendar.DAY_OF_MONTH, 1);
 		}
+
+		logger.debug("calculateTaskDuration startDate: " + startDate + " - endDate: " + endDate + " - duration: "
+				+ duration);
 		return duration;
+	}
+
+	@Override
+	public void cancel(NodeRef projectNodeRef) {
+
+		logger.debug("cancel project: " + projectNodeRef);
+		Collection<QName> dataLists = new ArrayList<QName>();
+		dataLists.add(ProjectModel.TYPE_TASK_LIST);
+		AbstractProjectData abstractProjectData = projectDAO.find(projectNodeRef, dataLists);
+
+		for (TaskListDataItem taskListDataItem : abstractProjectData.getTaskList()) {
+			if (taskListDataItem.getWorkflowInstance() != null
+					&& workflowService.getWorkflowById(taskListDataItem.getWorkflowInstance()).isActive()) {
+				logger.debug("Cancel workflow instance: " + taskListDataItem.getWorkflowInstance());
+				workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
+			}
+		}
 	}
 }

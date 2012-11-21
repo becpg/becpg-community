@@ -62,6 +62,7 @@ public class SubmitTaskPolicy extends AbstractBeCPGPolicy implements NodeService
 		String afterState = (String)after.get(ProjectModel.PROP_TL_STATE);
 		if(beforeState != null && afterState != null){
 			if(beforeState.equals(DeliverableState.InProgress.toString())&&afterState.equals(DeliverableState.Completed.toString())){
+				logger.debug("beforeState: " + beforeState + " - afterState: " + afterState);
 				queueNode(nodeRef);
 			}						
 		}

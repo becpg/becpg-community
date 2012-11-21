@@ -25,7 +25,7 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 	private String taskName;
 	private Boolean isMilestone;
 	private Integer duration;
-	private Date start = new Date();
+	private Date start;
 	private Date end;
 	private TaskState state = TaskState.Planned;
 	private Integer completionPercent = 0;

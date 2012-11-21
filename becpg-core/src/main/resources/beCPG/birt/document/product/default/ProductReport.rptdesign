@@ -2588,7 +2588,7 @@
                     </cell>
                     <cell id="1731">
                         <label id="1752">
-                            <text-property name="text">Qté (kg ou L)</text-property>
+                            <text-property name="text">Qté Recette</text-property>
                         </label>
                     </cell>
                     <cell id="1754">

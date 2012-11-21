@@ -72,6 +72,7 @@ public class TaskDatesPolicy extends AbstractBeCPGPolicy implements NodeServiceP
 		Serializable beforeProp = before.get(propertyQName);
 		Serializable afterProp = after.get(propertyQName);
 		if(afterProp != null && !afterProp.equals(beforeProp)){
+			logger.debug("beforeProp: " + beforeProp + " - afterProp: " + afterProp);
 			queueNode(nodeRef);					
 		}
 	}

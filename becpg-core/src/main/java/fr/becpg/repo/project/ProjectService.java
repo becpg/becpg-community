@@ -85,4 +85,10 @@ public interface ProjectService {
 	 * @return
 	 */
 	public int calculateTaskDuration(Date startDate, Date endDate);
+	
+	/**
+	 * Cancel a project
+	 * @param projectNodeRef
+	 */
+	public void cancel(NodeRef projectNodeRef);
 }

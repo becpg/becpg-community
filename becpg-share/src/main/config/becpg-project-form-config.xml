@@ -197,6 +197,7 @@
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectState" />
+					<show id="pjt:projectEntity" />
 				</field-visibility>
 				<appearance>
 					<field id="pjt:projectPriority">

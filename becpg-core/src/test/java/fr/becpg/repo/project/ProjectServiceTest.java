@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -231,17 +232,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 
-				ProjectTplData projectTplData = (ProjectTplData) projectDAO.find(projectTplNodeRef, dataLists);
-
-				assertNotNull(projectTplData);
-				assertNotNull(projectTplData.getTaskList());
-				assertEquals(6, projectTplData.getTaskList().size());
-				assertNotNull(projectTplData.getDeliverableList());
-				assertEquals(4, projectTplData.getDeliverableList().size());
-
 				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
-				
-				logger.debug("projectData: " +projectData);
 
 				assertNotNull(projectData);
 				assertNotNull(projectData.getTaskList());
@@ -255,10 +246,52 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				assertEquals(DeliverableState.Planned, projectData.getDeliverableList().get(1).getState());
 				assertEquals(DeliverableState.Planned, projectData.getDeliverableList().get(2).getState());
 
-				// submit task 1st task
-				projectData.getDeliverableList().get(0).setState(DeliverableState.Completed);
-				projectData.getTaskList().get(0).setState(TaskState.Completed);
-				projectDAO.update(projectNodeRef, projectData, dataLists);
+				return null;
+			}
+		}, false, true);
+	}
+	
+	/**
+	 * Test a project can be cancelled (and workflow)
+	 */
+	@Test
+	public void testCancelProject() {
+
+		initTest();
+
+		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						Collection<QName> dataLists = new ArrayList<QName>();
+
+						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
+								null, null, 2, ProjectState.InProgress, projectTplNodeRef, 0, rawMaterialNodeRef);
+
+						NodeRef p = projectDAO.create(testFolderNodeRef, projectData, dataLists);
+						
+						return p;
+					}
+				}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				Collection<QName> dataLists = new ArrayList<QName>();
+				dataLists.add(ProjectModel.TYPE_TASK_LIST);
+
+				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+
+				// check workflow instance is active
+				assertEquals(true, workflowService.getWorkflowById(projectData.getTaskList().get(0).getWorkflowInstance()).isActive());
+				
+				// cancel project and check wf are not active
+				logger.debug("projectData.getTaskList().get(0).getWorkflowInstance(): " + projectData.getTaskList().get(0).getWorkflowInstance());
+				projectService.cancel(projectNodeRef);
+				assertEquals(null, workflowService.getWorkflowById(projectData.getTaskList().get(0).getWorkflowInstance()));
 
 				return null;
 			}
@@ -552,7 +585,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				assertEquals(dateFormat.parse("28/11/2012"), projectData.getTaskList().get(5).getEnd());
 
 				// modify some tasks				
-				projectData.getTaskList().get(0).setStart(dateFormat.parse("19/11/2012"));
+				projectData.setStartDate(dateFormat.parse("19/11/2012"));
 				projectData.getTaskList().get(1).setDuration(4);
 				projectDAO.update(projectNodeRef, projectData, dataLists);
 				projectService.calculateTaskDates(projectData.getTaskList().get(0).getNodeRef());														
@@ -566,9 +599,114 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				assertEquals(dateFormat.parse("27/11/2012"), projectData.getTaskList().get(2).getStart());
 				assertEquals(dateFormat.parse("28/11/2012"), projectData.getTaskList().get(2).getEnd());
 				
+				// start project				
+				projectService.start(projectNodeRef);
+				projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				assertEquals(removeTime(new Date()), projectData.getTaskList().get(0).getStart());
+				
+				//submit 1st task
+				logger.debug("submit 1st task");
+				projectData.getTaskList().get(0).setState(TaskState.Completed);
+				projectDAO.update(projectNodeRef, projectData, dataLists);
+				
 				return null;
 			}
-		}, false, true);		
+		}, false, true);	
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				Collection<QName> dataLists = new ArrayList<QName>();
+				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
+				dataLists.add(ProjectModel.TYPE_TASK_LIST);
+				
+				projectService.initializeProjectDates(projectNodeRef);
+				
+				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);								
+
+				// check
+				assertEquals(removeTime(new Date()), projectData.getTaskList().get(0).getEnd());
+				assertEquals(removeTime(new Date()), projectData.getTaskList().get(1).getStart());
+				
+				//submit 2nd task
+				logger.debug("submit 2nd task");
+				projectData.getTaskList().get(1).setState(TaskState.Completed);
+				projectDAO.update(projectNodeRef, projectData, dataLists);				
+				
+				return null;
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				Collection<QName> dataLists = new ArrayList<QName>();
+				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
+				dataLists.add(ProjectModel.TYPE_TASK_LIST);
+				
+				projectService.initializeProjectDates(projectNodeRef);
+				
+				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);	
+				
+				// check
+				assertEquals(removeTime(new Date()), projectData.getTaskList().get(1).getEnd());
+				assertEquals(removeTime(new Date()), projectData.getTaskList().get(2).getStart());
+				
+				//submit 3rd task
+				logger.debug("submit 3rd task");
+				projectData.getTaskList().get(2).setState(TaskState.Completed);
+				projectDAO.update(projectNodeRef, projectData, dataLists);
+				
+				return null;
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				Collection<QName> dataLists = new ArrayList<QName>();
+				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
+				dataLists.add(ProjectModel.TYPE_TASK_LIST);
+				
+				projectService.initializeProjectDates(projectNodeRef);
+				
+				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);	
+				
+				// check
+				assertEquals(removeTime(new Date()), projectData.getTaskList().get(2).getEnd());
+				assertEquals(removeTime(new Date()), projectData.getTaskList().get(3).getStart());
+				
+				//submit 4th task
+				logger.debug("submit 4th task");
+				projectData.getTaskList().get(3).setState(TaskState.Completed);
+				projectDAO.update(projectNodeRef, projectData, dataLists);
+				
+				return null;
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				Collection<QName> dataLists = new ArrayList<QName>();
+				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
+				dataLists.add(ProjectModel.TYPE_TASK_LIST);
+				
+				projectService.initializeProjectDates(projectNodeRef);
+				
+				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);	
+				
+				// check
+				assertEquals(removeTime(new Date()), projectData.getTaskList().get(3).getEnd());
+				assertEquals(removeTime(new Date()), projectData.getTaskList().get(4).getStart());
+				
+				return null;
+			}
+		}, false, true);
 	}
 
 	@Test
@@ -590,5 +728,19 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 		Assert.assertTrue(projectService.getTaskLegendList().size() > 0);
 		Assert.assertTrue(projectService.getTaskLegendList().contains(legendNodeRef));
 
+	}
+	
+	private Date removeTime(Date date) {
+		if (date == null) {
+			return null;
+		} else {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			return cal.getTime();
+		}
 	}
 }
