@@ -1,0 +1,149 @@
+/*
+ * 
+ */
+package fr.becpg.repo.project.policy;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+
+import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
+
+import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.entity.datalist.WUsedListService;
+import fr.becpg.repo.policy.AbstractBeCPGPolicy;
+import fr.becpg.repo.project.ProjectException;
+import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.data.projectList.DeliverableState;
+import fr.becpg.repo.project.impl.ProjectHelper;
+
+/**
+ * The Class SubmitTaskPolicy.
+ * 
+ * @author querephi
+ */
+@Service
+public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
+
+	/** The logger. */
+	private static Log logger = LogFactory.getLog(ProjectListPolicy.class);
+
+	private ProjectService projectService;
+
+	private WUsedListService wUsedListService;
+
+	public void setProjectService(ProjectService projectService) {
+		this.projectService = projectService;
+	}
+
+	public void setwUsedListService(WUsedListService wUsedListService) {
+		this.wUsedListService = wUsedListService;
+	}
+
+	/**
+	 * Inits the.
+	 */
+	public void doInit() {
+		logger.debug("Init SubmitTaskPolicy...");
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
+				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
+				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onUpdateProperties"));
+	}
+
+	@Override
+	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+
+		for (NodeRef projectNodeRef : pendingNodes) {
+			try {
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+				projectService.formulate(projectNodeRef);
+			} catch (ProjectException e) {
+				logger.debug(e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+			}
+		}
+	}
+
+	@Override
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+
+		if (nodeService.getType(nodeRef).equals(ProjectModel.TYPE_TASK_LIST)) {
+			onUpdatePropertiesTaskList(nodeRef, before, after);
+		} else if (nodeService.getType(nodeRef).equals(ProjectModel.TYPE_DELIVERABLE_LIST)) {
+			onUpdatePropertiesDeliverableList(nodeRef, before, after);
+		}
+	}
+
+	public void onUpdatePropertiesTaskList(NodeRef nodeRef, Map<QName, Serializable> before,
+			Map<QName, Serializable> after) {
+
+		String beforeState = (String) before.get(ProjectModel.PROP_TL_STATE);
+		String afterState = (String) after.get(ProjectModel.PROP_TL_STATE);
+
+		if (beforeState != null && afterState != null) {
+			if (beforeState.equals(DeliverableState.InProgress.toString())
+					&& afterState.equals(DeliverableState.Completed.toString())) {
+				logger.debug("### update task list: " + nodeRef + " - afterState: " + afterState);
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, ProjectHelper.removeTime(new Date()));
+				NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
+				queueNode(projectNodeRef);
+			}
+		}
+
+		if (isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_DURATION)
+				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_START)
+				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_END)) {
+
+			logger.debug("### update task list duration, start or end: " + nodeRef);
+			NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
+			queueNode(projectNodeRef);
+		}
+	}
+
+	private boolean isPropChanged(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after,
+			QName propertyQName) {
+		Serializable beforeProp = before.get(propertyQName);
+		Serializable afterProp = after.get(propertyQName);
+
+		if (afterProp != null && !afterProp.equals(beforeProp)) {
+			return true;
+		}
+		return false;
+	}
+
+	public void onUpdatePropertiesDeliverableList(NodeRef nodeRef, Map<QName, Serializable> before,
+			Map<QName, Serializable> after) {
+
+		String beforeState = (String) before.get(ProjectModel.PROP_DL_STATE);
+		String afterState = (String) after.get(ProjectModel.PROP_DL_STATE);
+
+		if (beforeState != null && afterState != null) {
+			if (beforeState.equals(DeliverableState.InProgress.toString())
+					&& afterState.equals(DeliverableState.Completed.toString())) {
+				logger.debug("### submit deliverable: " + nodeRef);
+				NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
+				queueNode(projectNodeRef);
+			} else if (beforeState.equals(DeliverableState.Completed.toString())
+					&& afterState.equals(DeliverableState.InProgress.toString())) {
+
+				// re-open deliverable
+				logger.debug("### re-open deliverable: " + nodeRef);
+				projectService.openDeliverable(nodeRef);
+
+				NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
+				queueNode(projectNodeRef);
+			}
+		}
+	}
+}

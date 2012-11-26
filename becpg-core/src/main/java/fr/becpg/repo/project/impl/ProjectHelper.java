@@ -1,0 +1,225 @@
+package fr.becpg.repo.project.impl;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import fr.becpg.repo.project.data.AbstractProjectData;
+import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskState;
+
+public class ProjectHelper {
+
+	private static final int DURATION_DEFAULT = 1;
+	private static final int DURATION_NEXT_DAY = 2;
+
+	private static Log logger = LogFactory.getLog(PlanningVisitor.class);
+
+	public static TaskListDataItem getTask(AbstractProjectData projectData, NodeRef taskListNodeRef) {
+
+		if (taskListNodeRef != null && projectData.getTaskList() != null) {
+			for (TaskListDataItem p : projectData.getTaskList()) {
+				if (taskListNodeRef.equals(p.getNodeRef())) {
+					return p;
+				}
+			}
+		}
+		return null;
+	}
+
+	public static List<TaskListDataItem> getNextTasks(AbstractProjectData projectData, NodeRef taskListNodeRef) {
+
+		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
+		if (projectData.getTaskList() != null) {
+			for (TaskListDataItem p : projectData.getTaskList()) {
+				// taskNodeRef is null when we start project
+				if (p.getPrevTasks().contains(taskListNodeRef)
+						|| (taskListNodeRef == null && p.getPrevTasks().isEmpty())) {
+					taskList.add(p);
+				}
+			}
+		}
+		return taskList;
+	}
+
+	public static List<TaskListDataItem> getPrevTasks(AbstractProjectData projectData, TaskListDataItem taskListDataItem) {
+
+		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
+		if (taskListDataItem.getPrevTasks() != null) {
+			for (TaskListDataItem p : projectData.getTaskList()) {
+				if (taskListDataItem.getPrevTasks().contains(p.getNodeRef())) {
+					taskList.add(p);
+				}
+			}
+		}
+		return taskList;
+	}
+
+	public static List<DeliverableListDataItem> getDeliverables(AbstractProjectData projectData, NodeRef taskListNodeRef) {
+
+		List<DeliverableListDataItem> deliverableList = new ArrayList<DeliverableListDataItem>();
+		if (projectData.getDeliverableList() != null) {
+			for (DeliverableListDataItem d : projectData.getDeliverableList()) {
+				if (d.getTask() != null && d.getTask().equals(taskListNodeRef)) {
+					deliverableList.add(d);
+				}
+			}
+		}
+		return deliverableList;
+	}
+
+	public static boolean areTasksDone(ProjectData projectData, List<NodeRef> taskNodeRefs) {
+
+		// no task : they are not done
+		if (taskNodeRefs.isEmpty()) {
+			return false;
+		}
+
+		List<NodeRef> inProgressTasks = new ArrayList<NodeRef>();
+		inProgressTasks.addAll(taskNodeRefs);
+
+		if (projectData.getTaskList() != null && projectData.getTaskList().size() > 0) {
+			for (int i = projectData.getTaskList().size() - 1; i >= 0; i--) {
+				TaskListDataItem t = projectData.getTaskList().get(i);
+
+				if (taskNodeRefs.contains(t.getNodeRef()) && TaskState.Completed.equals(t.getState())) {
+					inProgressTasks.remove(t.getNodeRef());
+				}
+			}
+		}
+
+		return inProgressTasks.isEmpty();
+	}
+
+	/**
+	 * completedPercent is calculated on duration property
+	 * 
+	 * @param projectData
+	 * @return
+	 */
+	public static int geProjectCompletionPercent(AbstractProjectData projectData) {
+
+		int totalWork = 0;
+		int workDone = 0;
+		for (TaskListDataItem p : projectData.getTaskList()) {
+			if (p.getDuration() != null) {
+				totalWork += p.getDuration();
+				if (TaskState.Completed.equals(p.getState()) || TaskState.Cancelled.equals(p.getState())) {
+					workDone += p.getDuration();
+				}
+			}
+		}
+
+		return totalWork != 0 ? 100 * workDone / totalWork : 0;
+	}
+
+	public static Date getLastEndDate(List<TaskListDataItem> tasks) {
+		Date endDate = null;
+		for (TaskListDataItem task : tasks) {
+			if (task.getEnd() != null && (endDate == null || task.getEnd().after(endDate))) {
+				endDate = task.getEnd();
+			}
+		}
+		return endDate;
+	}
+
+	public static void setTaskStartDate(TaskListDataItem t, Date startDate, boolean force) {
+		logger.debug("task: " + t.getTaskName() + " state: " + t.getState() + " start: " + startDate);
+		if (TaskState.Planned.equals(t.getState()) || force) {
+			t.setStart(removeTime(startDate));
+		}
+	}
+
+	public static void setTaskEndDate(TaskListDataItem t, Date endDate, boolean force) {
+		logger.debug("task: " + t.getTaskName() + " state: " + t.getState() + " end: " + endDate);
+		if (TaskState.Planned.equals(t.getState()) || TaskState.InProgress.equals(t.getState()) || force) {
+			t.setEnd(removeTime(endDate));
+		}
+	}
+
+	public static Date removeTime(Date date) {
+		if (date == null) {
+			return null;
+		} else {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			return cal.getTime();
+		}
+	}
+
+	public static Date calculateNextDate(Date startDate, Integer duration) {
+
+		if (startDate == null) {
+			return null;
+		}
+
+		if (duration == null) {
+			duration = DURATION_DEFAULT;
+		}
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(startDate);
+		int i = 1;
+		while (i < duration) {
+			calendar.add(Calendar.DATE, 1);
+			if (isWorkingDate(calendar)) {
+				i++;
+			}
+		}
+
+		return calendar.getTime();
+	}
+
+	public static boolean isWorkingDate(Calendar calendar) {
+		// saturday == 7 || sunday == 1
+		return calendar.get(Calendar.DAY_OF_WEEK) != 7 && calendar.get(Calendar.DAY_OF_WEEK) != 1;
+	}
+
+	public static int calculateTaskDuration(Date startDate, Date endDate) {
+
+		if (startDate == null || endDate == null) {
+			logger.error("startDate or endDate is null. startDate: " + startDate + " - endDate: " + endDate);
+			return -1;
+		}
+
+		if (startDate.after(endDate)) {
+			logger.error("startDate is after endDate");
+			return -1;
+		}
+
+		int duration = 1;
+		Calendar startDateCal = Calendar.getInstance();
+		startDateCal.setTime(startDate);
+		Calendar endDateCal = Calendar.getInstance();
+		endDateCal.setTime(endDate);
+		while (startDateCal.before(endDateCal)) {
+			if (isWorkingDate(startDateCal)) {
+				duration++;
+			}
+			startDateCal.add(Calendar.DAY_OF_MONTH, 1);
+		}
+
+		logger.debug("calculateTaskDuration startDate: " + startDate + " - endDate: " + endDate + " - duration: "
+				+ duration);
+		return duration;
+	}
+
+	public static Date calculateEndDate(Date startDate, Integer duration) {
+		return calculateNextDate(startDate, duration);
+	}
+
+	public static Date calculateNextStartDate(Date endDate) {
+		return calculateNextDate(endDate, DURATION_NEXT_DAY);
+	}
+}
