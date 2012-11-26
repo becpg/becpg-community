@@ -12,21 +12,27 @@
 	<bean id="projectService" class="fr.becpg.repo.project.impl.ProjectServiceImpl">
 		<property name="projectDAO" ref="projectDAO" />
 		<property name="workflowService" ref="WorkflowService" />
-		<property name="wUsedListService" ref="wUsedListService" />
 		<property name="associationService" ref="associationService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="repoService" ref="repoService" />
+		<property name="planningVisitor" ref="planningVisitor" />
+		<property name="taskStateVisitor" ref="taskStateVisitor" />
+	</bean>
+	
+	<bean id="planningVisitor" class="fr.becpg.repo.project.impl.PlanningVisitor">
+	</bean>
+	
+	<bean id="taskStateVisitor" class="fr.becpg.repo.project.impl.TaskStateVisitor">
+		<property name="workflowService" ref="WorkflowService" />
+		<property name="nodeService" ref="nodeService" />
 	</bean>
 
 	<!-- Policy -->
-	<bean id="submitTaskPolicy" class="fr.becpg.repo.project.policy.SubmitTaskPolicy"
+	<bean id="projectListPolicy" class="fr.becpg.repo.project.policy.ProjectListPolicy"
 		parent="abstractBeCPGPolicy">
 		<property name="projectService" ref="projectService" />
-	</bean>
-	<bean id="taskDatesPolicy" class="fr.becpg.repo.project.policy.TaskDatesPolicy"
-		parent="abstractBeCPGPolicy">
-		<property name="projectService" ref="projectService" />
+		<property name="wUsedListService" ref="wUsedListService" />
 	</bean>
 	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy"
 		parent="abstractBeCPGPolicy">
@@ -34,10 +40,6 @@
 		<property name="projectService" ref="projectService" />
 		<property name="associationService" ref="associationService" />
 		<property name="copyService" ref="copyService" />
-	</bean>
-	<bean id="submitDeliverablePolicy" class="fr.becpg.repo.project.policy.SubmitDeliverablePolicy"
-		parent="abstractBeCPGPolicy">
-		<property name="projectService" ref="projectService" />
 	</bean>
 
 	<bean id="taskValuePlugin" parent="baseListValuePlugin"

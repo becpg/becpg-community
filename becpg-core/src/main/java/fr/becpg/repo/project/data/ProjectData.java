@@ -7,8 +7,11 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.project.impl.PlanningVisitor;
 
 /**
  * ProjectData used to manipulate project
@@ -18,6 +21,8 @@ import fr.becpg.model.ProjectModel;
  */
 public class ProjectData extends AbstractProjectData {
 
+	private static Log logger = LogFactory.getLog(PlanningVisitor.class);
+	
 	private String hierarchy1;
 	private Date startDate;
 	private Date dueDate;
@@ -142,4 +147,83 @@ public class ProjectData extends AbstractProjectData {
 		Map<QName, List<NodeRef>> multipleAssociations = super.getMultipleAssociations();
 		return multipleAssociations;
 	}
+	
+	@Override
+	public String toString() {
+		return "ProjectData [hierarchy1=" + hierarchy1 + ", startDate=" + startDate + ", dueDate=" + dueDate
+				+ ", completionDate=" + completionDate + ", priority=" + priority + ", projectState=" + projectState
+				+ ", projectTpl=" + projectTpl + ", completionPercent=" + completionPercent + ", entity=" + entity
+				+ "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((completionDate == null) ? 0 : completionDate.hashCode());
+		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
+		result = prime * result + ((dueDate == null) ? 0 : dueDate.hashCode());
+		result = prime * result + ((entity == null) ? 0 : entity.hashCode());
+		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
+		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
+		result = prime * result + ((projectState == null) ? 0 : projectState.hashCode());
+		result = prime * result + ((projectTpl == null) ? 0 : projectTpl.hashCode());
+		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProjectData other = (ProjectData) obj;
+		if (completionDate == null) {
+			if (other.completionDate != null)
+				return false;
+		} else if (!completionDate.equals(other.completionDate))
+			return false;
+		if (completionPercent == null) {
+			if (other.completionPercent != null)
+				return false;
+		} else if (!completionPercent.equals(other.completionPercent))
+			return false;
+		if (dueDate == null) {
+			if (other.dueDate != null)
+				return false;
+		} else if (!dueDate.equals(other.dueDate))
+			return false;
+		if (entity == null) {
+			if (other.entity != null)
+				return false;
+		} else if (!entity.equals(other.entity))
+			return false;
+		if (hierarchy1 == null) {
+			if (other.hierarchy1 != null)
+				return false;
+		} else if (!hierarchy1.equals(other.hierarchy1))
+			return false;
+		if (priority == null) {
+			if (other.priority != null)
+				return false;
+		} else if (!priority.equals(other.priority))
+			return false;
+		if (projectState != other.projectState)
+			return false;
+		if (projectTpl == null) {
+			if (other.projectTpl != null)
+				return false;
+		} else if (!projectTpl.equals(other.projectTpl))
+			return false;
+		if (startDate == null) {
+			if (other.startDate != null)
+				return false;
+		} else if (!startDate.equals(other.startDate))
+			return false;
+		return true;
+	}
+	
 }
