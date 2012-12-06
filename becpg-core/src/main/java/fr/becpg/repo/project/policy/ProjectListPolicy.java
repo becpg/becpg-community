@@ -87,7 +87,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	public void onUpdatePropertiesTaskList(NodeRef nodeRef, Map<QName, Serializable> before,
 			Map<QName, Serializable> after) {
-
+		
+		boolean formulateProject = false;
 		String beforeState = (String) before.get(ProjectModel.PROP_TL_STATE);
 		String afterState = (String) after.get(ProjectModel.PROP_TL_STATE);
 
@@ -95,17 +96,37 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			if (beforeState.equals(DeliverableState.InProgress.toString())
 					&& afterState.equals(DeliverableState.Completed.toString())) {
 				logger.debug("### update task list: " + nodeRef + " - afterState: " + afterState);
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, ProjectHelper.removeTime(new Date()));
-				NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
-				queueNode(projectNodeRef);
+				Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
+				Date endDate = ProjectHelper.removeTime(new Date());
+				Integer duration = ProjectHelper.calculateTaskDuration(startDate, endDate);
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_DURATION, duration);
+				formulateProject = true;
 			}
 		}
 
+		// duration has priority on endDate
 		if (isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_DURATION)
-				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_START)
-				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_END)) {
+				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_START)){
+			
+			logger.debug("### update task list start or duration: " + nodeRef);
+			Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
+			Integer duration = (Integer)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_DURATION);			
+			Date endDate = ProjectHelper.calculateEndDate(startDate, duration);
+			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
+			formulateProject = true;
+			
+		}else if(isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_END)) {
 
-			logger.debug("### update task list duration, start or end: " + nodeRef);
+			logger.debug("### update task list end: " + nodeRef);
+			Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
+			Date endDate = ProjectHelper.removeTime(new Date());
+			Integer duration = ProjectHelper.calculateTaskDuration(startDate, endDate);
+			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_DURATION, duration);
+			formulateProject = true;
+		}
+				
+		if(formulateProject){
 			NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
 			queueNode(projectNodeRef);
 		}

@@ -43,11 +43,7 @@ public class PlanningVisitor implements ProjectVisitor {
 				return;
 			}
 
-			// init if startDate is null or startDate of task is before
-			// startDate
-			if (nextTask.getStart() == null || nextTask.getStart().before(startDate)) {
-				ProjectHelper.setTaskStartDate(nextTask, startDate, false);
-			}
+			ProjectHelper.setTaskStartDate(nextTask, startDate, false);
 
 			Date endDate = ProjectHelper.calculateEndDate(nextTask.getStart(), nextTask.getDuration());
 			ProjectHelper.setTaskEndDate(nextTask, endDate, false);
