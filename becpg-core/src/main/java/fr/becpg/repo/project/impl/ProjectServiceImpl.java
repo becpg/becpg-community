@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.workflow.WorkflowInstance;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -120,11 +121,19 @@ public class ProjectServiceImpl implements ProjectService {
 		AbstractProjectData abstractProjectData = projectDAO.find(projectNodeRef, dataLists);
 
 		for (TaskListDataItem taskListDataItem : abstractProjectData.getTaskList()) {
-			if (taskListDataItem.getWorkflowInstance() != null
-					&& workflowService.getWorkflowById(taskListDataItem.getWorkflowInstance()).isActive()) {
-				logger.debug("Cancel workflow instance: " + taskListDataItem.getWorkflowInstance());
-				workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
-			}
+			if (taskListDataItem.getWorkflowInstance() != null && !taskListDataItem.getWorkflowInstance().isEmpty()){
+				
+				WorkflowInstance workflowInstance = workflowService.getWorkflowById(taskListDataItem.getWorkflowInstance());
+				if(workflowInstance != null){
+					if(workflowInstance.isActive()){
+						logger.debug("Cancel workflow instance: " + taskListDataItem.getWorkflowInstance());
+						workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
+					}
+				}
+				else{
+					logger.warn("Workflow instance unknown. WorkflowId: " + taskListDataItem.getWorkflowInstance());
+				}
+			}					
 		}
 	}
 

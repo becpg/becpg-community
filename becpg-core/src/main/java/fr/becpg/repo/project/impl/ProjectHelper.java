@@ -160,6 +160,9 @@ public class ProjectHelper {
 
 	public static Date calculateNextDate(Date startDate, Integer duration) {
 
+		logger.debug("startDate: " + startDate);
+		logger.debug("duration: " + duration);
+		
 		if (startDate == null) {
 			return null;
 		}
@@ -178,6 +181,7 @@ public class ProjectHelper {
 			}
 		}
 
+		logger.debug("calendar.getTime(): " + calendar.getTime());
 		return calendar.getTime();
 	}
 
