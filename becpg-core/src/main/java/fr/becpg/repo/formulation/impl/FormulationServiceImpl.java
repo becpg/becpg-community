@@ -1,0 +1,69 @@
+package fr.becpg.repo.formulation.impl;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationChain;
+import fr.becpg.repo.formulation.FormulationService;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
+
+/**
+ * 
+ * @author matthieu
+ * @since 1.5
+ * @param <T>
+ */
+public class FormulationServiceImpl<T extends RepositoryEntity> implements FormulationService<T>{
+
+	AlfrescoRepository<T> alfrescoRepository;
+	
+	private Map<Class<T>,FormulationChain<T> > formulationChains = new HashMap<Class<T>,FormulationChain<T>>();
+
+	private static Log logger = LogFactory.getLog(FormulationServiceImpl.class);
+	
+	@Override
+	public void registerFormulationChain(Class<T> clazz, FormulationChain<T> chain){
+		formulationChains.put(clazz, chain);
+	}
+	
+	@Override
+	public void formulate(NodeRef entityNodeRef) throws FormulateException {
+		 T entity = alfrescoRepository.findOne(entityNodeRef);
+		
+		 entity =  formulate(entity);
+		 
+		 alfrescoRepository.save(entity);
+		 
+	}
+
+	@Override
+	public T formulate(T repositoryEntity) throws FormulateException {
+		
+		try {
+			
+			FormulationChain<T> chain = formulationChains.get(repositoryEntity.getClass());
+			if(chain!=null){
+				chain.executeChain(repositoryEntity);
+			} else {
+				logger.error("No formulation chain define for :"+repositoryEntity.getClass().getName());
+			}
+		} catch (Exception e) {
+			
+			if(e instanceof FormulateException){
+				throw (FormulateException)e;
+			} 
+			throw new FormulateException("message.formulate.failure",e);
+			
+		}
+		
+		
+		return repositoryEntity;
+	}
+
+}

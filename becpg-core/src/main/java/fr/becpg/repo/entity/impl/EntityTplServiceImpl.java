@@ -22,7 +22,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.data.charact.AllergenType;
+import fr.becpg.repo.product.data.productList.AllergenType;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 @Service
@@ -190,7 +190,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		
 		List<NodeRef> tplsNodeRef = beCPGSearchService.luceneSearch(query);
         
-        return tplsNodeRef.size() > 0 ? tplsNodeRef.get(0) : null;
+        return tplsNodeRef!=null && !tplsNodeRef.isEmpty() ? tplsNodeRef.get(0) : null;
 	}
 	
 	private void initializeList(NodeRef listNodeRef, QName listType){

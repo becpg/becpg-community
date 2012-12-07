@@ -3,10 +3,11 @@ package fr.becpg.repo.product.formulation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.ProductVisitor;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 public class ProcessCalculatingVisitor implements ProductVisitor {
 

@@ -8,7 +8,7 @@ package fr.becpg.repo.product.data;
  *
  * @author querephi
  */
-public enum ProductUnit {
+public enum ProductUnit  {
 
 	/** The kg. */
 	kg,
@@ -26,6 +26,8 @@ public enum ProductUnit {
 	m2,
 	
 	h;
+	
+
 		
 	public static ProductUnit getUnit(String productUnit){
 		return (productUnit != null && !productUnit.isEmpty()) ? ProductUnit.valueOf(productUnit) : ProductUnit.kg;

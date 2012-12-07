@@ -145,12 +145,12 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
 
-				rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, null);
+				rawMaterial1NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial1).getNodeRef();
 
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
 
-				rawMaterial2NodeRef = productDAO.create(folderNodeRef, rawMaterial2, null);
+				rawMaterial2NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial2).getNodeRef();
 				
 				// clean default storage folder
 				NodeRef folderNodeRef = nonConformityService.getStorageFolder(null);

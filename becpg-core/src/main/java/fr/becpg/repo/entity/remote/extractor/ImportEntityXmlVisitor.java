@@ -311,7 +311,7 @@ public class ImportEntityXmlVisitor {
 	private NodeRef findNodeByPath(String parentPath) {
 		String runnedQuery = "+PATH:\"" + parentPath + "\"";
 		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		if (ret.size() > 0) {
+		if (!ret.isEmpty()) {
 			logger.debug("Found node for query :" + runnedQuery);
 		} else {
 			ret = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_TO_DO, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
@@ -347,7 +347,7 @@ public class ImportEntityXmlVisitor {
 		}
 
 		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, null, RepoConsts.MAX_RESULTS_256);
-		if (ret.size() > 0) {
+		if (!ret.isEmpty()) {
 			for (NodeRef node : ret) {
 				if (name.equals(nodeService.getProperty(node, RemoteHelper.getPropName(type)))) {
 					logger.debug("Found node for query :" + runnedQuery);

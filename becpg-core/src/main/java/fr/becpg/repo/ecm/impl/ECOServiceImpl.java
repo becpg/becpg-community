@@ -33,15 +33,12 @@ import fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem;
 import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.ProductService;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -50,7 +47,8 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
-import fr.becpg.repo.product.formulation.FormulateException;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 /**
  * Engineering change order service implementation
@@ -67,10 +65,8 @@ public class ECOServiceImpl implements ECOService {
 	private NodeService nodeService;
 	private CheckOutCheckInService checkOutCheckInService;
 	private ProductService productService;
-	private ProductDAO productDAO;
-	private EntityListDAO entityListDAO;
+	private AlfrescoRepository<ProductData> alfrescoRepository;
 	private DictionaryService dictionaryService;
-	private ProductDictionaryService productDictionaryService;
 	private RepoService repoService;
 	private ECOReportService ecoReportService;
 	
@@ -94,21 +90,15 @@ public class ECOServiceImpl implements ECOService {
 		this.productService = productService;
 	}
 
-	public void setProductDAO(ProductDAO productDAO) {
-		this.productDAO = productDAO;
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
 
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
-	public void setProductDictionaryService(ProductDictionaryService productDictionaryService) {
-		this.productDictionaryService = productDictionaryService;
-	}
 
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
@@ -286,8 +276,12 @@ public class ECOServiceImpl implements ECOService {
 							productToFormulateNodeRef = changeUnitDataItem.getTargetItem();
 						}
 						
-						ProductData productData = productDAO.find(productToFormulateNodeRef, null);
-						NodeRef simulationNodeRef = productDAO.create(tempFolder, productData, null);
+						ProductData productData = alfrescoRepository.findOne(productToFormulateNodeRef);
+						
+						productData.setNodeRef(null);
+						productData.setParentNodeRef(tempFolder);
+						
+						NodeRef simulationNodeRef = alfrescoRepository.save( productData).getNodeRef();
 						
 						// add simulation aspect
 						nodeService.addAspect(simulationNodeRef, ECMModel.ASPECT_SIMULATION_ENTITY, null);
@@ -539,10 +533,8 @@ public class ECOServiceImpl implements ECOService {
 				}							
 			}
 									
-			NodeRef listContainerNodeRef = entityListDAO.getListContainer(productToFormulateNodeRef);
-			List<QName> existingLists = entityListDAO.getExistingListsQName(listContainerNodeRef);
-			
-			ProductData productToFormulateData = productDAO.find(productToFormulateNodeRef, existingLists);
+						
+			ProductData productToFormulateData = alfrescoRepository.findOne(productToFormulateNodeRef);
 						
 			logger.debug("do replacement for node: " + nodeService.getProperty(sourceItemNodeRef, ContentModel.PROP_NAME));
 			
@@ -583,7 +575,7 @@ public class ECOServiceImpl implements ECOService {
 			changeUnitDataItem.setTreated(Boolean.TRUE);			
 			
 			// update simulation List
-			ProductData sourceData = productDAO.find(sourceItemNodeRef, existingLists);
+			ProductData sourceData = alfrescoRepository.findOne(sourceItemNodeRef);
 			updateCalculatedCharactValues(ecoData, sourceData, productToFormulateData);
 			
 			// check req
@@ -592,12 +584,16 @@ public class ECOServiceImpl implements ECOService {
 			// save in DB
 			if(isSimulation){
 				//save in DB if we created a simulation node
-				if(simulationNodeRef != null){					
-					productDAO.update(simulationNodeRef, productToFormulateData, productDictionaryService.getDataLists());
+				if(simulationNodeRef != null){		
+					
+					productToFormulateData.setParentNodeRef(simulationNodeRef);
+					
+					alfrescoRepository.save( productToFormulateData);
 				}
 			}	
 			else{
-				productDAO.update(productToFormulateNodeRef, productToFormulateData, productDictionaryService.getDataLists());
+				productToFormulateData.setParentNodeRef(productToFormulateNodeRef);
+				alfrescoRepository.save( productToFormulateData);
 			}
 		}
 	}	

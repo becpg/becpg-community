@@ -11,7 +11,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.product.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulateException;
 
 // TODO: Auto-generated Javadoc
 /**

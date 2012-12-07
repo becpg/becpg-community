@@ -18,8 +18,9 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 @Service
 public class PriceListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy {
@@ -30,15 +31,17 @@ public class PriceListPolicy extends AbstractBeCPGPolicy implements NodeServiceP
 
 	private EntityListDAO entityListDAO;
 
-	private ProductDAO productDAO;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
-	public void setProductDAO(ProductDAO productDAO) {
-		this.productDAO = productDAO;
+
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
+
 
 	public void doInit() {
 		logger.debug("Init productListUnits.PriceListPolicy...");
@@ -108,7 +111,7 @@ public class PriceListPolicy extends AbstractBeCPGPolicy implements NodeServiceP
 
 		NodeRef costNodeRef = null;
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(priceListItemNodeRef, BeCPGModel.ASSOC_PRICELIST_COST);
-		if (assocRefs.size() > 0) {
+		if (!assocRefs.isEmpty()) {
 			costNodeRef = assocRefs.get(0).getTargetRef();
 		}
 
@@ -121,7 +124,10 @@ public class PriceListPolicy extends AbstractBeCPGPolicy implements NodeServiceP
 		} else {
 
 			costListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
-			productDAO.createCostListItem(costListNodeRef, new CostListDataItem(null, value, null, null, costNodeRef, false), null, null);
+			
+			CostListDataItem costListDataItem  = new CostListDataItem(null, value, null, null, costNodeRef, false);
+			costListDataItem.setParentNodeRef(costListNodeRef);
+			alfrescoRepository.save(costListDataItem);
 		}
 	}
 

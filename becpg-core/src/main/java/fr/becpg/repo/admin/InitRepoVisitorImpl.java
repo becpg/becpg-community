@@ -991,7 +991,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 						zonesToAdd.add(zone);
 					}
 
-				if (zonesToAdd.size() > 0) {
+				if (!zonesToAdd.isEmpty()) {
 					logger.debug("Add group to zone: " + groupName + " - " + zonesToAdd.toString());
 					authorityService.addAuthorityToZones(PermissionService.GROUP_PREFIX + group, zonesToAdd);
 				}

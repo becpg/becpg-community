@@ -1,6 +1,7 @@
 package fr.becpg.repo.entity.impl;
 
 import java.io.Serializable;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -126,12 +127,18 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		ClassDefinition classDef = dictionaryService.getClass(listQName);
 
+		if(classDef==null){
+			logger.error("No classDef found for :"+listQName);
+			throw new InvalidParameterException("No classDef found for :"+listQName);
+		}
+		
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, listQName.getLocalName());
 		properties.put(ContentModel.PROP_TITLE, classDef.getTitle());
 		properties.put(ContentModel.PROP_DESCRIPTION, classDef.getDescription());
 		properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
 
+		
 		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, listQName, DataListModel.TYPE_DATALIST, properties).getChildRef();
 		
 	}
@@ -223,7 +230,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 			for (FileInfo fileInfo : fileInfos) {
 
 				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(fileInfo.getNodeRef(), assocQName);
-				if (assocRefs.size() > 0 && nodeRef.equals(assocRefs.get(0).getTargetRef())) {
+				if (assocRefs!=null &&  !assocRefs.isEmpty() && nodeRef.equals(assocRefs.get(0).getTargetRef())) {
 					return fileInfo.getNodeRef();
 				}
 

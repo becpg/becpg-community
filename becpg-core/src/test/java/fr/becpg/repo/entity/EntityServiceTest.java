@@ -6,7 +6,6 @@ package fr.becpg.repo.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -107,16 +106,14 @@ public class EntityServiceTest extends RepoBaseTestCase {
 				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
 				sfData.setAllergenList(allergenList);
 
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
 
-				return productDAO.create(testFolderNodeRef, sfData, dataLists);
+				return alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();
 
 			}
 		}, false, true);
 
 		// load SF and test it
-		Collection<QName> dataLists = productDictionaryService.getDataLists();
-		final SemiFinishedProductData sfData = (SemiFinishedProductData) productDAO.find(sfNodeRef, dataLists);
+		final SemiFinishedProductData sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
 
 		// reset
 		resetModified();

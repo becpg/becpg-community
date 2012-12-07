@@ -74,7 +74,7 @@ public class AssociationServiceImpl implements AssociationService {
 	@Override
 	public NodeRef getTargetAssoc(NodeRef nodeRef, QName qName) {
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
-		return assocRefs.size()>0 ? assocRefs.get(0).getTargetRef() : null;
+		return assocRefs!=null && !assocRefs.isEmpty() ? assocRefs.get(0).getTargetRef() : null;
 	}
 
 	// TODO : refactor : utiliser cette méthode dans la création des datalists ! productdao, etc...

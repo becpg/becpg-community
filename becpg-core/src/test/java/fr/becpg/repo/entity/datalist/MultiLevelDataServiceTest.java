@@ -19,9 +19,8 @@ import org.junit.Test;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
@@ -38,10 +37,6 @@ public class MultiLevelDataServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(MultiLevelDataServiceTest.class);
 
-
-	/** The product dao. */
-	@Resource
-	private ProductDAO productDAO;
 	
 	@Resource
 	private MultiLevelDataListService multiLevelDataListService;
@@ -62,25 +57,25 @@ public class MultiLevelDataServiceTest extends RepoBaseTestCase {
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
-				NodeRef rawMaterial1NodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, null);
+				NodeRef rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
-				NodeRef rawMaterial2NodeRef = productDAO.create(testFolderNodeRef, rawMaterial2, null);
-				LocalSemiFinishedProduct lSF1 = new LocalSemiFinishedProduct();
+				NodeRef rawMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
+				LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
 				lSF1.setName("Local semi finished 1");
-				NodeRef lSF1NodeRef = productDAO.create(testFolderNodeRef, lSF1, null);
+				NodeRef lSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF1).getNodeRef();
 
-				LocalSemiFinishedProduct lSF2 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData lSF2 = new LocalSemiFinishedProductData();
 				lSF2.setName("Local semi finished 2");
-				NodeRef lSF2NodeRef = productDAO.create(testFolderNodeRef, lSF2, null);
+				NodeRef lSF2NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF2).getNodeRef();
 				
-				LocalSemiFinishedProduct lSF3 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData lSF3 = new LocalSemiFinishedProductData();
 				lSF3.setName("Local semi finished 3");
-				NodeRef lSF3NodeRef = productDAO.create(testFolderNodeRef, lSF3, null);
+				NodeRef lSF3NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF3).getNodeRef();
 				
-				LocalSemiFinishedProduct lSF4 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData lSF4 = new LocalSemiFinishedProductData();
 				lSF4.setName("Local semi finished 4");
-				NodeRef lSF4NodeRef = productDAO.create(testFolderNodeRef, lSF4, null);
+				NodeRef lSF4NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF4).getNodeRef();
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
@@ -96,7 +91,7 @@ public class MultiLevelDataServiceTest extends RepoBaseTestCase {
 				finishedProduct.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
 				DataListFilter dataListFilter = new DataListFilter();
 				dataListFilter.setDataType(BeCPGModel.TYPE_COMPOLIST);

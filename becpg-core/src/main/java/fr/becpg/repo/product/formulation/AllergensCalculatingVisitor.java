@@ -4,7 +4,6 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,19 +11,19 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductVisitor;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 /**
  * The Class AllergensCalculatingVisitor.
@@ -36,19 +35,13 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AllergensCalculatingVisitor.class);
 
-	/** The product dao. */
-	private ProductDAO productDAO;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	private EntityListDAO entityListDAO;
 
-	/**
-	 * Sets the product dao.
-	 * 
-	 * @param productDAO
-	 *            the new product dao
-	 */
-	public void setProductDAO(ProductDAO productDAO) {
-		this.productDAO = productDAO;
+
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
@@ -94,7 +87,6 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 				if (resource != null && !visitedProducts.contains(resource)) {
 					// TODO : resource is not a product => il faudrait déplacer
 					// les méthodes loadAllergenList ailleurs que dans
-					// ProductDAOImpl
 					visitPart(resource, allergenMap);
 					visitedProducts.add(resource);
 				}
@@ -117,9 +109,7 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 	 */
 	private void visitPart(NodeRef part, Map<NodeRef, AllergenListDataItem> allergenMap) {
 
-		Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-		ProductData productData = productDAO.find(part, dataLists);
+		ProductData productData = (ProductData) alfrescoRepository.findOne(part);
 
 		if (productData.getAllergenList() == null) {
 			return;
@@ -204,7 +194,7 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 
 				for (NodeRef manualLink : manualLinks) {
 
-					AllergenListDataItem allergenListDataItem = productDAO.loadAllergenListItem(manualLink);
+					AllergenListDataItem allergenListDataItem = (AllergenListDataItem)alfrescoRepository.findOne(manualLink);
 					allergenMap.put(allergenListDataItem.getAllergen(), allergenListDataItem);
 				}
 			}

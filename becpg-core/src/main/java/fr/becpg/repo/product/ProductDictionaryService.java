@@ -24,6 +24,7 @@ public interface ProductDictionaryService {
 	 *
 	 * @return the data lists
 	 */
+	@Deprecated
 	public Collection<QName> getDataLists();
 	
 	/**

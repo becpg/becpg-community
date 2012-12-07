@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -389,10 +388,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		}
 		assertNotNull("product 1 should exist", product1NodeRef);
 		
-		List<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(BeCPGModel.TYPE_COSTLIST);
-		dataLists.add(BeCPGModel.TYPE_NUTLIST);
-		ProductData productData = productDAO.find(product1NodeRef, dataLists);
+		ProductData productData = alfrescoRepository.findOne(product1NodeRef);
 		
 		logger.debug("Props: " + nodeService.getProperties(product1NodeRef));
 		
@@ -494,10 +490,8 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		
 		NodeRef productTplNodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, "productTpl");
 		assertNotNull("productTpl should exist", productTplNodeRef);
-		dataLists = new ArrayList<QName>();
-		dataLists.add(BeCPGModel.TYPE_COSTLIST);
-		dataLists.add(BeCPGModel.TYPE_NUTLIST);
-		ProductData productTplData = productDAO.find(product1NodeRef, dataLists);
+
+		ProductData productTplData = alfrescoRepository.findOne(product1NodeRef);
 		
 		/*-- check productLists of productTpl --*/
 		assertEquals("costs should exist", (int)2, productData.getCostList().size());
@@ -714,9 +708,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  					product1NodeRef = nodeService.getChildByName(product1NodeRef, ContentModel.ASSOC_CONTAINS, "Saumon surgelé 80x20x4");
  				}
  				assertNotNull("product 1 should exist", product1NodeRef);
- 				List<QName> dataLists = new ArrayList<QName>();
- 				dataLists.add(BeCPGModel.TYPE_COMPOLIST); 				
- 				ProductData productData = productDAO.find(product1NodeRef, dataLists); 				 			
+ 				ProductData productData = alfrescoRepository.findOne(product1NodeRef); 				 			
  				
  				/*-- check productLists --*/
  				assertEquals("compoList should exist", (int)3, productData.getCompoList().size()); 				

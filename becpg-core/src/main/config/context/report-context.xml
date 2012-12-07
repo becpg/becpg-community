@@ -25,7 +25,7 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="productDAO" ref="productDAO"/>
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="productDictionaryService" ref="productDictionaryService"/>
 		<property name="entityService" ref="entityService"/>
 		<property name="mlNodeService" ref="mlAwareNodeService" />

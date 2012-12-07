@@ -5,11 +5,16 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
-public class ReqCtrlListDataItem extends BaseObject {
+@AlfType
+@AlfQname(qname = "bcpg:reqCtrlList")
+public class ReqCtrlListDataItem extends BeCPGDataObject {
 
-	NodeRef nodeRef;
 	
 	RequirementType reqType;
 	
@@ -17,14 +22,8 @@ public class ReqCtrlListDataItem extends BaseObject {
 	
 	private List<NodeRef> sources = new ArrayList<NodeRef>();
 
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
-
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-
+	@AlfProp
+	@AlfQname(qname="bcpg:rclReqType")
 	public RequirementType getReqType() {
 		return reqType;
 	}
@@ -33,6 +32,8 @@ public class ReqCtrlListDataItem extends BaseObject {
 		this.reqType = reqType;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:rclReqMessage")
 	public String getReqMessage() {
 		return reqMessage;
 	}
@@ -41,6 +42,8 @@ public class ReqCtrlListDataItem extends BaseObject {
 		this.reqMessage = reqMessage;
 	}
 
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:rclSources")
 	public List<NodeRef> getSources() {
 		return sources;
 	}
@@ -49,6 +52,12 @@ public class ReqCtrlListDataItem extends BaseObject {
 		this.sources = sources;
 	}
 	
+	
+	
+	public ReqCtrlListDataItem() {
+		super();
+	}
+
 	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, List<NodeRef> sources){
 		setNodeRef(nodeRef);
 		setReqType(reqType);

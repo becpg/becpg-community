@@ -3,8 +3,6 @@
  */
 package fr.becpg.repo.workflow.activiti.project;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.activiti.engine.delegate.DelegateExecution;
@@ -27,10 +25,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductService;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 /**
  * Create the product based on data
@@ -49,7 +47,7 @@ public class CreateProduct extends BaseJavaDelegate {
 	/** The file folder service. */
 	private FileFolderService fileFolderService;
 
-	private ProductDAO productDAO;
+	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
 	/** The product DAO */
 	private EntityService entityService;
@@ -69,8 +67,8 @@ public class CreateProduct extends BaseJavaDelegate {
 		this.fileFolderService = fileFolderService;
 	}
 
-	public void setProductDAO(ProductDAO productDAO) {
-		this.productDAO = productDAO;
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	public void setEntityService(EntityService entityService) {
@@ -211,18 +209,15 @@ public class CreateProduct extends BaseJavaDelegate {
 
 	private void copyDataList(NodeRef productNodeRef, NodeRef sourceNodeRef, QName typeCompolist) {
 	
-	    Collection<QName> dataLists = new ArrayList<QName>();
-		 dataLists.add(typeCompolist);
-		 ProductData productData  = productDAO.find(productNodeRef, dataLists);
-		 ProductData sourceData = productDAO.find(sourceNodeRef, dataLists);
+		 ProductData productData  = alfrescoRepository.findOne(productNodeRef);
+		 ProductData sourceData = alfrescoRepository.findOne(sourceNodeRef);
 		 if (typeCompolist.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
  			productData.setPackagingList(sourceData.getPackagingList(EffectiveFilters.FUTUR));
  		 }
 		 else if (typeCompolist.equals(BeCPGModel.TYPE_COMPOLIST)) {
  			productData.setCompoList(sourceData.getCompoList(EffectiveFilters.FUTUR));
  		 }
-		 
-		 productDAO.update(productNodeRef, productData, dataLists);
+		 alfrescoRepository.save(productData);
 
 	}
 

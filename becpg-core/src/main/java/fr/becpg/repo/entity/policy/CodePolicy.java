@@ -129,7 +129,7 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 
 						List<NodeRef> ret = beCPGSearchService.luceneSearch(String.format(QUERY_NODE_BY_CODE, typeQName, code, nodeRef.getId()), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
-						generateCode = ret != null && ret.size() > 0;
+						generateCode = ret != null && !ret.isEmpty();
 
 					}
 

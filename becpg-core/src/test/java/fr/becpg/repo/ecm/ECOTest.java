@@ -28,7 +28,7 @@ import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -127,9 +127,8 @@ public class ECOTest extends RepoBaseTestCase {
                 	nodeService.deleteNode(productsFolder);
                 }
 				
-				/*-- Create raw materials --*/
-				logger.debug("/*-- Create raw materials --*/");
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
+				/*-- create raw materials --*/
+				logger.debug("/*-- create raw materials --*/");
 				/*-- Raw material 1 --*/
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
@@ -146,7 +145,8 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial1.setNutList(nutList);
-				rawMaterial1NodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, dataLists);
+				
+				rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
 
 				/*-- Raw material 2 --*/
 				RawMaterialData rawMaterial2 = new RawMaterialData();
@@ -164,7 +164,7 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial2.setNutList(nutList);
-				rawMaterial2NodeRef = productDAO.create(testFolderNodeRef, rawMaterial2, dataLists);
+				rawMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
 
 				/*-- Raw material 3 --*/
 				RawMaterialData rawMaterial3 = new RawMaterialData();
@@ -182,7 +182,7 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial3.setNutList(nutList);
-				rawMaterial3NodeRef = productDAO.create(testFolderNodeRef, rawMaterial3, dataLists);
+				rawMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial3).getNodeRef();
 
 				/*-- Raw material 4 --*/
 				RawMaterialData rawMaterial4 = new RawMaterialData();
@@ -190,7 +190,7 @@ public class ECOTest extends RepoBaseTestCase {
 				rawMaterial4.setLegalName("Legal Raw material 4");
 				rawMaterial4.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				rawMaterial4.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				rawMaterial4NodeRef = productDAO.create(testFolderNodeRef, rawMaterial4, dataLists);
+				rawMaterial4NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial4).getNodeRef();
 
 				/*-- Raw material 5 --*/
 				RawMaterialData rawMaterial5 = new RawMaterialData();
@@ -208,23 +208,23 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial5.setNutList(nutList);
-				rawMaterial5NodeRef = productDAO.create(testFolderNodeRef, rawMaterial5, dataLists);
+				rawMaterial5NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial5).getNodeRef();
 
 				/*-- Local semi finished product 1 --*/
-				LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
 				localSF1.setName("Local semi finished 1");
 				localSF1.setLegalName("Legal Local semi finished 1");
 				localSF1.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				localSF1.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				localSF1NodeRef = productDAO.create(testFolderNodeRef, localSF1, dataLists);
+				localSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF1).getNodeRef();
 
 				/*-- Local semi finished product 2 --*/
-				LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
 				localSF2.setName("Local semi finished 2");
 				localSF2.setLegalName("Legal Local semi finished 2");
 				localSF2.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				localSF2.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				localSF2NodeRef = productDAO.create(testFolderNodeRef, localSF2, dataLists);
+				localSF2NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF2).getNodeRef();
 
 				return null;
 
@@ -233,7 +233,7 @@ public class ECOTest extends RepoBaseTestCase {
 	}
 
 	/**
-	 * Create a finished product
+	 * create a finished product
 	 * 
 	 * @throws Exception
 	 *             the exception
@@ -243,9 +243,8 @@ public class ECOTest extends RepoBaseTestCase {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				/*-- Create finished product --*/
-				logger.debug("/*-- Create finished product --*/");
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
+				/*-- create finished product --*/
+				logger.debug("/*-- create finished product --*/");
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName(finishedProductName);
 				finishedProduct.setLegalName("Legal name");
@@ -261,7 +260,7 @@ public class ECOTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
 
@@ -272,7 +271,7 @@ public class ECOTest extends RepoBaseTestCase {
 				/*-- Verify formulation --*/
 				logger.debug("/*-- Verify formulation --*/");
 
-				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, dataLists);
+				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
 				logger.debug("Finish product: " + formulatedProduct.toString());
@@ -328,10 +327,10 @@ public class ECOTest extends RepoBaseTestCase {
 				NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
 
 				/*
-				 * Create a change order to replace RM4 by RM5
+				 * create a change order to replace RM4 by RM5
 				 */
 
-				logger.debug("Create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+				logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
 
 				List<NodeRef> calculatedCharacts = new ArrayList<NodeRef>();
 				calculatedCharacts.add(cost1);
@@ -466,10 +465,10 @@ public class ECOTest extends RepoBaseTestCase {
 				NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
 
 				/*
-				 * Create a change order to replace RM4 by RM5
+				 * create a change order to replace RM4 by RM5
 				 */
 
-				logger.debug("Create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+				logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
 
 				List<NodeRef> calculatedCharacts = new ArrayList<NodeRef>();
 				calculatedCharacts.add(cost1);
@@ -605,7 +604,7 @@ public class ECOTest extends RepoBaseTestCase {
 				NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
 
 				/*
-				 * Create multi level compo
+				 * create multi level compo
 				 */
 
 				FinishedProductData finishedProduct3 = new FinishedProductData();
@@ -621,7 +620,7 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct3.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				NodeRef finishedProduct3NodeRef = productDAO.create(testFolderNodeRef, finishedProduct3, dataLists);
+				NodeRef finishedProduct3NodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct3).getNodeRef();
 
 				/*-- Formulate product --*/
 				try {
@@ -633,7 +632,7 @@ public class ECOTest extends RepoBaseTestCase {
 
 				/*-- Verify formulation --*/
 				logger.debug("/*-- Verify formulation --*/");
-				ProductData formulatedProduct3 = productDAO.find(finishedProduct3NodeRef, productDictionaryService.getDataLists());
+				ProductData formulatedProduct3 = alfrescoRepository.findOne(finishedProduct3NodeRef);
 
 				logger.debug("unit of product formulated: " + formulatedProduct3.getUnit());
 
@@ -667,10 +666,10 @@ public class ECOTest extends RepoBaseTestCase {
 				}
 
 				/*
-				 * Create a change order to replace RM4 by RM5
+				 * create a change order to replace RM4 by RM5
 				 */
 
-				logger.debug("Create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+				logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
 
 				List<NodeRef> calculatedCharacts = new ArrayList<NodeRef>();
 				calculatedCharacts.add(cost1);

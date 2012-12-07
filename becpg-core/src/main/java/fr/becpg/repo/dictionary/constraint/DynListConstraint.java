@@ -29,7 +29,6 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.LuceneHelper;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -167,7 +166,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
  			}},false,true);
 													
-		if(allowedValues.size() == 0){
+		if(allowedValues.isEmpty()){
 			allowedValues.add(UNDIFINED_CONSTRAINT_VALUE);
 		}						
 		

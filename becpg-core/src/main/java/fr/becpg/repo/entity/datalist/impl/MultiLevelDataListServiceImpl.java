@@ -100,7 +100,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	// TODO more generic
 	private NodeRef getEntityNodeRef(NodeRef listItemNodeRef) {
 		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-		NodeRef part = compoAssocRefs.size() > 0 ? (compoAssocRefs.get(0)).getTargetRef() : null;
+		NodeRef part = compoAssocRefs!=null && !compoAssocRefs.isEmpty() ? (compoAssocRefs.get(0)).getTargetRef() : null;
 		return part;
 	}
 

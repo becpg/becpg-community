@@ -139,7 +139,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
 
-				rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, null);
+				rawMaterial1NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial1).getNodeRef();
 
 				WorkflowDefinition wfDef = workflowService.getDefinitionByName("jbpm$bcpgwf:productValidationWF");
 				logger.debug("wfDefId found : " + wfDef.getId());

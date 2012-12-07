@@ -6,92 +6,47 @@ package fr.becpg.repo.product.data.productList;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.annotation.AlfMlText;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.AbstractManualDataItem;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class IngLabelingListDataItem.
- *
- * @author querephi
- */
-public class IngLabelingListDataItem extends BaseObject implements IManualDataItem{
+@AlfType
+@AlfQname(qname = "bcpg:ingLabelingList")
+public class IngLabelingListDataItem extends AbstractManualDataItem {
 
-	/** The node ref. */
-	private NodeRef nodeRef;	
 	
-	/** The grp. */
 	private NodeRef grp;
 	
-	/** The value. */
 	private MLText value;
 	
-	private Boolean isManual;
-	
-	/**
-	 * Gets the node ref.
-	 *
-	 * @return the node ref
-	 */
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
 
-	/**
-	 * Sets the node ref.
-	 *
-	 * @param nodeRef the new node ref
-	 */
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-
-	/**
-	 * Gets the grp.
-	 *
-	 * @return the grp
-	 */
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:illGrp")
 	public NodeRef getGrp() {
 		return grp;
 	}
 
-	/**
-	 * Sets the grp.
-	 *
-	 * @param grp the new grp
-	 */
+
 	public void setGrp(NodeRef grp) {
 		this.grp = grp;
 	}
 
-	/**
-	 * Gets the value.
-	 *
-	 * @return the value
-	 */
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname="bcpg:illValue")
 	public MLText getValue() {
 		return value;
 	}
 
-	/**
-	 * Sets the value.
-	 *
-	 * @param value the new value
-	 */
+	
 	public void setValue(MLText value) {
 		this.value = value;
 	}
 	
-	@Override
-	public Boolean getIsManual() {
-
-		return isManual;
-	}
-
-	@Override
-	public void setIsManual(Boolean isManual) {
-		
-		this.isManual = isManual;		
-	}
+	
 	
 	/**
 	 * Instantiates a new ing labeling list data item.

@@ -4,7 +4,6 @@
 package fr.becpg.repo.product;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -168,8 +167,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
 				sfData.setAllergenList(allergenList);
 
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
-				sfNodeRef = productDAO.create(testFolderNodeRef, sfData, dataLists);
+				sfNodeRef = alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();
 
 				assertEquals("check system templates", 1, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT).size());
 
@@ -179,8 +177,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 		});
 
 		// load SF and test it
-		Collection<QName> dataLists = productDictionaryService.getDataLists();
-		final SemiFinishedProductData sfData = (SemiFinishedProductData) productDAO.find(sfNodeRef, dataLists);
+		final SemiFinishedProductData sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
 
 		// wait since it is done in a threadpool
 		Thread.sleep(6000);
@@ -282,8 +279,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
 				sfData.setAllergenList(allergenList);
 
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
-				sfNodeRef = productDAO.create(testFolderNodeRef, sfData, dataLists);
+				sfNodeRef = alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();
 
 				QName typeQName = nodeService.getType(sfNodeRef);
 				assertEquals("check system templates", 0, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());

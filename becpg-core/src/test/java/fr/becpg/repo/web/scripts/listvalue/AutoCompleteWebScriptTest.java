@@ -17,8 +17,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
-import fr.becpg.repo.product.ProductDAO;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -36,7 +37,9 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 	
 	private NodeService nodeService;
 	
-	private ProductDAO productDAO;
+
+    /** The product dao. */
+    private AlfrescoRepository<ProductData> alfrescoRepository;
 	
 	private FileFolderService fileFolderService;
 	
@@ -53,7 +56,7 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 	protected void setUp() throws Exception
 	{	
 		nodeService = (NodeService) getServer().getApplicationContext().getBean("nodeService");
-		productDAO = (ProductDAO)  getServer().getApplicationContext().getBean("productDAO");
+		alfrescoRepository = (AlfrescoRepository) getServer().getApplicationContext().getBean("alfrescoRepository");
 		fileFolderService = (FileFolderService)  getServer().getApplicationContext().getBean("fileFolderService");
 		repositoryHelper = (Repository)  getServer().getApplicationContext().getBean("repositoryHelper");
 		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
@@ -85,7 +88,7 @@ public class AutoCompleteWebScriptTest extends BaseWebScriptTest  {
 		RawMaterialData rawMaterial1 = new RawMaterialData();
 		rawMaterial1.setName("Raw material 1");
 		
-		productDAO.create(folderNodeRef, rawMaterial1, null);
+		alfrescoRepository.create(folderNodeRef, rawMaterial1).getNodeRef();
 	}
 	
 	/**

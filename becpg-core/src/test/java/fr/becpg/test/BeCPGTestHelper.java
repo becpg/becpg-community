@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
@@ -47,25 +47,25 @@ public class BeCPGTestHelper {
 		logger.debug("/*-- Create raw material --*/");
 		RawMaterialData rawMaterial1 = new RawMaterialData();
 		rawMaterial1.setName("Raw material 1");
-		NodeRef rawMaterial1NodeRef = repoBaseTestCase.productDAO.create(testFolder, rawMaterial1, null);
+		NodeRef rawMaterial1NodeRef = repoBaseTestCase.alfrescoRepository.create(testFolder, rawMaterial1).getNodeRef();
 		RawMaterialData rawMaterial2 = new RawMaterialData();
 		rawMaterial2.setName("Raw material 2");
-		NodeRef rawMaterial2NodeRef = repoBaseTestCase.productDAO.create(testFolder, rawMaterial2, null);
-		LocalSemiFinishedProduct lSF1 = new LocalSemiFinishedProduct();
+		NodeRef rawMaterial2NodeRef = repoBaseTestCase.alfrescoRepository.create(testFolder, rawMaterial2).getNodeRef();
+		LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
 		lSF1.setName("Local semi finished 1");
-		NodeRef lSF1NodeRef = repoBaseTestCase.productDAO.create(testFolder, lSF1, null);
+		NodeRef lSF1NodeRef = repoBaseTestCase.alfrescoRepository.create(testFolder, lSF1).getNodeRef();
 
-		LocalSemiFinishedProduct lSF2 = new LocalSemiFinishedProduct();
+		LocalSemiFinishedProductData lSF2 = new LocalSemiFinishedProductData();
 		lSF2.setName("Local semi finished 2");
-		NodeRef lSF2NodeRef = repoBaseTestCase.productDAO.create(testFolder, lSF2, null);
+		NodeRef lSF2NodeRef = repoBaseTestCase.alfrescoRepository.create(testFolder, lSF2).getNodeRef();
 		
-		LocalSemiFinishedProduct lSF3 = new LocalSemiFinishedProduct();
+		LocalSemiFinishedProductData lSF3 = new LocalSemiFinishedProductData();
 		lSF3.setName("Local semi finished 3");
-		NodeRef lSF3NodeRef = repoBaseTestCase.productDAO.create(testFolder, lSF3, null);
+		NodeRef lSF3NodeRef = repoBaseTestCase.alfrescoRepository.create(testFolder, lSF3).getNodeRef();
 		
-		LocalSemiFinishedProduct lSF4 = new LocalSemiFinishedProduct();
+		LocalSemiFinishedProductData lSF4 = new LocalSemiFinishedProductData();
 		lSF4.setName("Local semi finished 4");
-		NodeRef lSF4NodeRef = repoBaseTestCase.productDAO.create(testFolder, lSF4, null);
+		NodeRef lSF4NodeRef = repoBaseTestCase.alfrescoRepository.create(testFolder, lSF4).getNodeRef();
 
 		/*-- Create finished product --*/
 		logger.debug("/*-- Create finished product --*/");
@@ -84,7 +84,7 @@ public class BeCPGTestHelper {
 		finishedProduct.setCompoList(compoList);
 		Collection<QName> dataLists = new ArrayList<QName>();
 		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-		return repoBaseTestCase.productDAO.create(testFolder, finishedProduct, dataLists);
+		return repoBaseTestCase.alfrescoRepository.create(testFolder, finishedProduct).getNodeRef();
 		
 	}
 	

@@ -3,23 +3,12 @@
  */
 package fr.becpg.repo.product.data;
 
-import fr.becpg.repo.product.ProductVisitor;
-import fr.becpg.repo.product.formulation.FormulateException;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfType;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class RawMaterialData.
- *
- * @author querephi
- */
-public class RawMaterialData extends ProductData  implements ProductElement {
+@AlfType
+@AlfQname(qname = "bcpg:rawMaterial")
+public class RawMaterialData extends ProductData {
 
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.food.ProductData#accept(fr.becpg.repo.product.ProductVisitor)
-	 */
-	@Override
-	public void accept(ProductVisitor productVisitor) throws FormulateException {
-				
-		productVisitor.visit(this);		
-	}
+	
 }

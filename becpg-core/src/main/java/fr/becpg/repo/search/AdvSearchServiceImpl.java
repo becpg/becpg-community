@@ -324,7 +324,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			nodes =  beCPGSearchService.luceneSearch(searchQuery, -1);
 		}
 		String ret = "";
-		if (nodes != null && nodes.size() > 0) {
+		if (nodes != null && !nodes.isEmpty()) {
 			for (NodeRef node : nodes) {
 				ret += " \"" + node.toString() + "\"";
 			}

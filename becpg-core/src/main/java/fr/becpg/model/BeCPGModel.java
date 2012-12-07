@@ -47,6 +47,8 @@ public interface BeCPGModel {
 	// product
 	/** The Constant TYPE_PRODUCT. */
 	QName TYPE_PRODUCT = QName.createQName(BECPG_URI, "product");
+	
+	
 
 	/** The Constant PROP_PRODUCT_LEGALNAME. */
 	QName PROP_PRODUCT_LEGALNAME = QName.createQName(BECPG_URI, "legalName");

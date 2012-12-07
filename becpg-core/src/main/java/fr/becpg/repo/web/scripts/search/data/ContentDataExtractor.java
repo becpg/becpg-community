@@ -49,7 +49,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 		 ret.put(PROP_MODIFIED,  formatDate((Date)props.get( ContentModel.PROP_MODIFIED)));
 		 ret.put(PROP_CREATED,  formatDate((Date)props.get( ContentModel.PROP_CREATED)));
 		 ret.put(PROP_CREATOR,  props.get( ContentModel.PROP_CREATOR));
-		 if(metadataFields.size()>0){
+		 if(!metadataFields.isEmpty()){
 			 ret.put(PROP_NODEDATA,  attributeExtractorService.extractNodeData(nodeRef,itemType,metadataFields,true));
 		 }
 		 
