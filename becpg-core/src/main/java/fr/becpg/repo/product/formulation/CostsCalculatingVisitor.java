@@ -18,15 +18,16 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.ProductVisitor;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.data.productList.SimpleListDataItem;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
  * The Class CostCalculatingVisitor.

@@ -5,7 +5,6 @@ package fr.becpg.repo.entity.datalist.policy;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +55,6 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 
 		logger.debug("testChangeSortListItem()");
 
-		final Collection<QName> dataLists = productDictionaryService.getDataLists();
 
 		// create product
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -73,7 +71,7 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 				costList.add(new CostListDataItem(null, 2d, "€/kg", null, costs.get(3), false));
 				sfData.setCostList(costList);
 
-				sfNodeRef = productDAO.create(testFolderNodeRef, sfData, dataLists);
+				sfNodeRef = alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();
 
 				// simulate the UI
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);
@@ -101,7 +99,7 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				// load SF and test it
-				SemiFinishedProductData sfData = (SemiFinishedProductData) productDAO.find(sfNodeRef, dataLists);
+				SemiFinishedProductData sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
 
 				printSort(sfData.getCostList());
 

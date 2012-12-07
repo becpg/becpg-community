@@ -6,12 +6,12 @@
 	<!-- Formulation details visitors -->
 	
 	<bean id="simpleCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.SimpleCharactDetailsVisitor">
-			<property name="productDAO" ref="productDAO" />
+			<property name="alfrescoRepository" ref="alfrescoRepository"/>
 			<property name="nodeService" ref="nodeService" />
 	</bean>
 	
 	<bean id="costCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.CostCharactDetailsVisitor">
-			<property name="productDAO" ref="productDAO" />
+			<property name="alfrescoRepository" ref="alfrescoRepository"/>
 			<property name="nodeService" ref="nodeService" />
 	</bean>
 	
@@ -44,13 +44,13 @@
 	</bean>
 	<bean id="allergensCalculatingVisitor"
 		class="fr.becpg.repo.product.formulation.AllergensCalculatingVisitor">
-		<property name="productDAO" ref="productDAO" />
+		<property name="alfrescoRepository" ref="alfrescoRepository"/>
 		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 	<bean id="ingsCalculatingVisitor"
 		class="fr.becpg.repo.product.formulation.IngsCalculatingVisitor">
 		<property name="nodeService" ref="nodeService" />
-		<property name="productDAO" ref="productDAO" />
+		<property name="alfrescoRepository" ref="alfrescoRepository"/>
 		<property name="mlNodeService" ref="mlAwareNodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
@@ -65,7 +65,7 @@
 	</bean>	
 	<bean id="abstractCalculatingVisitor"
 		class="fr.becpg.repo.product.formulation.AbstractCalculatingVisitor">
-		<property name="productDAO" ref="productDAO" />
+		<property name="alfrescoRepository" ref="alfrescoRepository"/>
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="nodeService" ref="nodeService" />
 	</bean>

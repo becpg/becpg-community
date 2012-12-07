@@ -23,13 +23,14 @@ import org.springframework.extensions.webscripts.TestWebScriptServer.PostRequest
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -56,9 +57,9 @@ public class ProductWUsedWebScriptTest extends BaseWebScriptTest{
 
     /** The authentication component. */
     private AuthenticationComponent authenticationComponent;
-    
+
     /** The product dao. */
-    private ProductDAO productDAO;
+    private AlfrescoRepository<ProductData> alfrescoRepository;
     
     /** The transaction service. */
     private TransactionService transactionService;
@@ -83,7 +84,7 @@ public class ProductWUsedWebScriptTest extends BaseWebScriptTest{
 		nodeService = (NodeService) getServer().getApplicationContext().getBean("NodeService");
 		fileFolderService = (FileFolderService) getServer().getApplicationContext().getBean("FileFolderService");		
 		authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
-		productDAO = (ProductDAO) getServer().getApplicationContext().getBean("productDAO");
+		alfrescoRepository = (AlfrescoRepository) getServer().getApplicationContext().getBean("alfrescoRepository");
 		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
 		repositoryHelper = (Repository) getServer().getApplicationContext().getBean("repositoryHelper");
 		
@@ -124,10 +125,10 @@ public class ProductWUsedWebScriptTest extends BaseWebScriptTest{
 	 				logger.debug("/*-- Create raw material --*/");
 	 				RawMaterialData rawMaterial = new RawMaterialData();
 	 				rawMaterial.setName("Raw material");
-	 				rawMaterialNodeRef = productDAO.create(tempFolder, rawMaterial, null);
-	 				LocalSemiFinishedProduct lSF = new LocalSemiFinishedProduct();
+	 				rawMaterialNodeRef = alfrescoRepository.create(tempFolder, rawMaterial).getNodeRef();
+	 				LocalSemiFinishedProductData lSF = new LocalSemiFinishedProductData();
 	 				lSF.setName("Local semi finished");
-	 				NodeRef lSFNodeRef = productDAO.create(tempFolder, lSF, null);
+	 				NodeRef lSFNodeRef = alfrescoRepository.create(tempFolder, lSF).getNodeRef();
 	 				 				 			
 	 				/*-- Create finished product --*/
 	 				logger.debug("/*-- Create finished product --*/");
@@ -139,7 +140,7 @@ public class ProductWUsedWebScriptTest extends BaseWebScriptTest{
 					finishedProduct.setCompoList(compoList); 				
 					Collection<QName> dataLists = new ArrayList<QName>();		
 					dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-	 				finishedProductNodeRef = productDAO.create(tempFolder, finishedProduct, dataLists);
+	 				finishedProductNodeRef = alfrescoRepository.create(tempFolder, finishedProduct).getNodeRef();
 	 				
 	 				logger.debug("local semi finished: " + lSFNodeRef);
 	 				logger.debug("finishedProductNodeRef: " + finishedProductNodeRef);

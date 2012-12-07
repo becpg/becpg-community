@@ -357,8 +357,6 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="permissionService" ref="permissionService" />
 		<property name="entityVersionService" ref="entityVersionService" />
-		<property name="wUsedListService" ref="wUsedListService" />
-		<property name="associationService" ref="associationService" />
 	</bean>
 
 	<!-- Entity Datalist Policies -->
@@ -389,18 +387,11 @@
 		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 
-	<!-- Product DAO -->
-	<bean id="productDAO" class="fr.becpg.repo.product.ProductDAOImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="mlNodeService" ref="mlAwareNodeService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="associationService" ref="associationService" />
-	</bean>
 
 	<!-- Product -->
 	<bean id="productService" class="fr.becpg.repo.product.ProductServiceImpl">
 		<property name="nodeService" ref="nodeService" />
-		<property name="productDAO" ref="productDAO" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="productDictionaryService" ref="productDictionaryService" />
 		<property name="compositionCalculatingVisitor" ref="compositionCalculatingVisitor" />
 		<property name="processCalculatingVisitor" ref="processCalculatingVisitor" />
@@ -429,7 +420,7 @@
 		class="fr.becpg.repo.product.policy.productListUnits.PriceListPolicy"
 		parent="abstractBeCPGPolicy">
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="productDAO" ref="productDAO" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
 	</bean>
 	<bean id="classifyProductPolicy" class="fr.becpg.repo.product.policy.ClassifyProductPolicy"
 		parent="abstractBeCPGPolicy">
@@ -485,6 +476,20 @@
 			<value>classpath:alfresco/module/${pom.artifactId}/becpg-ehcache.xml</value>
 		</property>
 		<property name="tenantService" ref="tenantService" />
+	</bean>
+	
+	<!-- Repository -->
+	
+	<bean id="repositoryEntityDefReader" class="fr.becpg.repo.repository.impl.RepositoryEntityDefReaderImpl">
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+	
+	<bean id="alfrescoRepository" class="fr.becpg.repo.repository.impl.AlfrescoRepositoryImpl" init-method="init">
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="associationService" ref="associationService" />
+		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader"/>
+		<property name="mlNodeService" ref="mlAwareNodeService"/>
 	</bean>
 
 

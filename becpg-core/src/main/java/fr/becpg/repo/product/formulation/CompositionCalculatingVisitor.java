@@ -6,12 +6,13 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.ProductVisitor;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 public class CompositionCalculatingVisitor implements ProductVisitor {
 

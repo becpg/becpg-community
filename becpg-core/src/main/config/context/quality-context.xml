@@ -34,7 +34,7 @@
     	<property name="controlPointDAO" ref="controlPointDAO"/>
     	<property name="qualityControlDAO" ref="qualityControlDAO"/>
     	<property name="workItemAnalysisDAO" ref="workItemAnalysisDAO"/>
-    	<property name="productDAO" ref="productDAO"/>
+    	<property name="alfrescoRepository" ref="alfrescoRepository" />
     	<property name="repoService" ref="repoService"/>
     </bean>    
     <bean id="qualityControlPolicies" class="fr.becpg.repo.quality.policy.QualityControlPolicies" init-method="init">

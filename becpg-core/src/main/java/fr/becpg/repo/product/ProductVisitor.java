@@ -3,8 +3,8 @@
  */
 package fr.becpg.repo.product;
 
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.formulation.FormulateException;
 
 /**
  * The Interface ProductVisitor.

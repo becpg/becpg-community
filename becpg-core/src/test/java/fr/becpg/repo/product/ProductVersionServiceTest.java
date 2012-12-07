@@ -5,7 +5,6 @@ package fr.becpg.repo.product;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,7 +133,6 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 	@Test
 	public void testCheckOutCheckIn() {
 		
-		final Collection<QName> dataLists = productDictionaryService.getDataLists();
 		final ProductUnit productUnit = ProductUnit.L;
 		final int valueAdded = 1;
 
@@ -175,8 +173,8 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 						nodeService.getProperty(workingCopyNodeRef, BeCPGModel.PROP_CODE));
 
 				// Check costs on working copy				
-				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
-				ProductData workingCopyRawMaterial = productDAO.find(workingCopyNodeRef, dataLists);
+				ProductData rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
+				ProductData workingCopyRawMaterial = alfrescoRepository.findOne(workingCopyNodeRef);
 				assertEquals("Check costs size", rawMaterial.getCostList().size(), workingCopyRawMaterial.getCostList().size());
 
 				for (int i = 0; i < rawMaterial.getCostList().size(); i++) {
@@ -194,7 +192,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				for (CostListDataItem c : workingCopyRawMaterial.getCostList()) {
 					c.setValue(c.getValue() + valueAdded);
 				}
-				productDAO.update(workingCopyNodeRef, workingCopyRawMaterial, dataLists);				
+				alfrescoRepository.save( workingCopyRawMaterial);				
 			
 				return rawMaterial;
 			}
@@ -210,8 +208,8 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				NodeRef newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);				
 
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
-				ProductData newRawMaterial = productDAO.find(newRawMaterialNodeRef, dataLists);
-				assertEquals("Check version", "0.2", newRawMaterial.getVersionLabel());
+				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
+				assertEquals("Check version", "0.2", getVersionLabel(newRawMaterial));
 				assertEquals("Check unit", productUnit, newRawMaterial.getUnit());
 
 				// Check productCode
@@ -247,8 +245,8 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				ProductData newRawMaterial = productDAO.find(newRawMaterialNodeRef, dataLists);
-				assertEquals("Check version", "1.0", newRawMaterial.getVersionLabel());
+				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
+				assertEquals("Check version", "1.0",  getVersionLabel(newRawMaterial));
 
 				// Check cost Unit has changed after transaction
 				for (int i = 0; i < newRawMaterial.getCostList().size(); i++) {
@@ -262,10 +260,16 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				return null;
 
 			}
+
+			
 		}, false, true);
 
 	}
 
+	private String getVersionLabel(ProductData newRawMaterial) {
+		return (String)nodeService.getProperty(newRawMaterial.getNodeRef(),ContentModel.PROP_VERSION_LABEL);
+	}
+	
 	/**
 	 * Test cancel check out.
 	 */
@@ -285,13 +289,12 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 
 				// modify
 				ProductUnit productUnit2 = ProductUnit.m;
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
-				ProductData workingCopyRawMaterial = productDAO.find(workingCopyNodeRef, dataLists);
+				ProductData workingCopyRawMaterial = alfrescoRepository.findOne(workingCopyNodeRef);
 				workingCopyRawMaterial.setUnit(productUnit2);
-				productDAO.update(workingCopyNodeRef, workingCopyRawMaterial, dataLists);
-				workingCopyRawMaterial = productDAO.find(workingCopyNodeRef, dataLists);
+				alfrescoRepository.save( workingCopyRawMaterial);
+				workingCopyRawMaterial = alfrescoRepository.findOne(workingCopyNodeRef);
 
-				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
+				ProductData rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
 				assertEquals("Check unit", ProductUnit.kg, rawMaterial.getUnit());
 				assertEquals("Check unit", productUnit2, workingCopyRawMaterial.getUnit());
 
@@ -299,7 +302,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				checkOutCheckInService.cancelCheckout(workingCopyNodeRef);
 
 				// Check
-				rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
+				rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
 				assertEquals("Check unit", ProductUnit.kg, rawMaterial.getUnit());
 				return null;
 
@@ -403,7 +406,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, 1, 2d, null, null, CompoListUnit.kg, null, null, DeclarationType.Declare, rawMaterialNodeRef));
 				fpData.setCompoList(compoList);
-				finishedProductNodeRef = productDAO.create(testFolderNodeRef, fpData, productDictionaryService.getDataLists());
+				finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, fpData).getNodeRef();
 
 				// add Checkout aspect
 				Map<QName, Serializable> props = new HashMap<QName, Serializable>(1);
@@ -439,7 +442,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				assertNotNull(version);
 				
 				NodeRef entityVersionRef = entityVersionService.getEntityVersion(version);
-				ProductData fpData = productDAO.find(finishedProductNodeRef, productDictionaryService.getDataLists());
+				ProductData fpData = alfrescoRepository.findOne(finishedProductNodeRef);
 
 				assertEquals(entityVersionRef, fpData.getCompoList().get(0).getProduct());
 				

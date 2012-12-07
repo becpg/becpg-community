@@ -8,7 +8,7 @@ import java.util.Locale;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.model.BaseObject;
 
 /**
  * The Class AbstractIng.

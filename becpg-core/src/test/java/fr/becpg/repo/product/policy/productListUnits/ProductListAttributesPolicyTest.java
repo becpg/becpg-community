@@ -89,7 +89,7 @@ public class ProductListAttributesPolicyTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 12.5d, "", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterialData.setNutList(nutList);
 
-				return productDAO.create(testFolderNodeRef, rawMaterialData, dataLists);
+				return alfrescoRepository.create(testFolderNodeRef, rawMaterialData).getNodeRef();
 
 			}
 		}, false, true);
@@ -98,7 +98,7 @@ public class ProductListAttributesPolicyTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				RawMaterialData rawMaterialDBData = (RawMaterialData) productDAO.find(rawMaterialNodeRef, dataLists);
+				RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
 				for (CostListDataItem c : rawMaterialDBData.getCostList()) {
 
@@ -139,7 +139,7 @@ public class ProductListAttributesPolicyTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				RawMaterialData rawMaterialDBData = (RawMaterialData) productDAO.find(rawMaterialNodeRef, dataLists);
+				RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
 				for (CostListDataItem c : rawMaterialDBData.getCostList()) {
 
@@ -179,7 +179,7 @@ public class ProductListAttributesPolicyTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				RawMaterialData rawMaterialDBData = (RawMaterialData) productDAO.find(rawMaterialNodeRef, dataLists);
+				RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
 				/*
 				 * Change cost, nut
@@ -233,9 +233,9 @@ public class ProductListAttributesPolicyTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				RawMaterialData rawMaterialDBData = (RawMaterialData) productDAO.find(rawMaterialNodeRef, dataLists);
+				RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
-				rawMaterialDBData = (RawMaterialData) productDAO.find(rawMaterialNodeRef, dataLists);
+				rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
 				for (CostListDataItem c : rawMaterialDBData.getCostList()) {
 

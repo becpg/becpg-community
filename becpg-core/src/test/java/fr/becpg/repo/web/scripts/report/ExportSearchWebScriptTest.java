@@ -39,10 +39,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -51,6 +51,7 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.report.client.ReportFormat;
 
 // TODO: Auto-generated Javadoc
@@ -84,9 +85,9 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 
     /** The authentication component. */
     private AuthenticationComponent authenticationComponent;
-    
+
     /** The product dao. */
-    private ProductDAO productDAO;
+    private AlfrescoRepository<ProductData> alfrescoRepository;
     
     /** The product dictionary service. */
     private ProductDictionaryService productDictionaryService;
@@ -153,7 +154,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 		nodeService = (NodeService)appCtx.getBean("NodeService");
 		fileFolderService = (FileFolderService)appCtx.getBean("FileFolderService");		
 		authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-		productDAO = (ProductDAO)appCtx.getBean("productDAO");
+		alfrescoRepository = (AlfrescoRepository) getServer().getApplicationContext().getBean("alfrescoRepository");
 		productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
 		transactionService = (TransactionService)appCtx.getBean("transactionService");
 		repository = (Repository)appCtx.getBean("repositoryHelper");
@@ -264,43 +265,43 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
 				rawMaterial1.setLegalName("Legal Raw material 1");				
-				rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, dataLists);
+				rawMaterial1NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial1).getNodeRef();
 				
 				/*-- Raw material 2 --*/
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
 				rawMaterial2.setLegalName("Legal Raw material 2");					
-				rawMaterial2NodeRef = productDAO.create(folderNodeRef, rawMaterial2, dataLists);
+				rawMaterial2NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial2).getNodeRef();
 				
 				/*-- Raw material 3 --*/
 				RawMaterialData rawMaterial3 = new RawMaterialData();
 				rawMaterial3.setName("Raw material 3");
 				rawMaterial3.setLegalName("Legal Raw material 3");				
-				rawMaterial3NodeRef = productDAO.create(folderNodeRef, rawMaterial3, dataLists);
+				rawMaterial3NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial3).getNodeRef();
 				
 				/*-- Raw material 4 --*/
 				RawMaterialData rawMaterial4 = new RawMaterialData();
 				rawMaterial4.setName("Raw material 4");
 				rawMaterial4.setLegalName("Legal Raw material 4");					
-				rawMaterial4NodeRef = productDAO.create(folderNodeRef, rawMaterial4, dataLists);
+				rawMaterial4NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial4).getNodeRef();
 				
 				/*-- Raw material 5 --*/
 				RawMaterialData rawMaterial5 = new RawMaterialData();
 				rawMaterial5.setName("Raw material 5");
 				rawMaterial5.setLegalName("Legal Raw material 5");				
-				 productDAO.create(folderNodeRef, rawMaterial5, dataLists);
+				 alfrescoRepository.create(folderNodeRef, rawMaterial5).getNodeRef();
 				
 				/*-- Local semi finished product 1 --*/
-				LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
 				localSF1.setName("Local semi finished 1");
 				localSF1.setLegalName("Legal Local semi finished 1");
-				localSF1NodeRef = productDAO.create(folderNodeRef, localSF1, dataLists);
+				localSF1NodeRef = alfrescoRepository.create(folderNodeRef, localSF1).getNodeRef();
 				
 				/*-- Local semi finished product 1 --*/
-				LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
 				localSF2.setName("Local semi finished 2");
 				localSF2.setLegalName("Legal Local semi finished 2");							
-				localSF2NodeRef = productDAO.create(folderNodeRef, localSF2, dataLists);	
+				localSF2NodeRef = alfrescoRepository.create(folderNodeRef, localSF2).getNodeRef();	
 		
 		return null;
 		
@@ -411,7 +412,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				// create an MP for the allergens
 				RawMaterialData allergenRawMaterial = new RawMaterialData();
 				allergenRawMaterial.setName("MP allergen");
-				NodeRef allergenRawMaterialNodeRef = productDAO.create(folderNodeRef, allergenRawMaterial, dataLists);
+				NodeRef allergenRawMaterialNodeRef = alfrescoRepository.create(folderNodeRef, allergenRawMaterial).getNodeRef();
 				
 				//Allergens
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();		    		
@@ -433,7 +434,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
 				fp1.setCompoList(compoList);
 				
-				 productDAO.create(folderNodeRef, fp1, dataLists);
+				 alfrescoRepository.create(folderNodeRef, fp1).getNodeRef();
 				
 				logger.debug("create FP 2");
 				
@@ -477,7 +478,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 				
-				productDAO.create(folderNodeRef, fp2, dataLists);
+				alfrescoRepository.create(folderNodeRef, fp2).getNodeRef();
 				
 				/*-- Create images folder --*/					
 				NodeRef imagesNodeRef = fileFolderService.create(folderNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();					

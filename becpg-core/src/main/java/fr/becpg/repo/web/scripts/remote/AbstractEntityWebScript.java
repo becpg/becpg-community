@@ -108,7 +108,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 		
 		List<NodeRef> refs = beCPGSearchService.luceneSearch(runnedQuery,250);
-		if (refs.size() > 0) {
+		if (refs!=null && refs.isEmpty()) {
 			return refs;
 		}
 		throw new WebScriptException("No entities found for query " + query);

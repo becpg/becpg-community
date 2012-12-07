@@ -4,8 +4,6 @@
 package fr.becpg.repo.entity.policy;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -57,10 +55,6 @@ public class EffectivityPolicyTest extends RepoBaseTestCase {
 		final Date nowplus1h = new Date(start.getTime() + 1000 * 60 * 60);
 		final Date nowplus2h = new Date(start.getTime() + 2000 * 60 * 60);
 
-		final Collection<QName> dataLists = new ArrayList<QName>();
-		final Collection<QName> dataListSf = new ArrayList<QName>();
-		dataLists.add(BeCPGModel.TYPE_PRICELIST);
-		dataListSf.add(BeCPGModel.TYPE_COMPOLIST);
 
 		sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -89,10 +83,10 @@ public class EffectivityPolicyTest extends RepoBaseTestCase {
 				priceList.add(priceListDataItem);
 				rawMaterial1.setPriceList(priceList);
 
-				NodeRef rawMaterialNodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, dataLists);
+				NodeRef rawMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
 
 				// load SF and test it
-				rawMaterial1 = (RawMaterialData) productDAO.find(rawMaterialNodeRef, dataLists);
+				rawMaterial1 = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 				assertNotNull("check priceList", rawMaterial1.getPriceList());
 
 				for (PriceListDataItem p : rawMaterial1.getPriceList()) {
@@ -147,7 +141,7 @@ public class EffectivityPolicyTest extends RepoBaseTestCase {
 
 				NodeRef rawMaterialNodeRef = copyService.copyAndRename(sfNodeRef, testFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 
-				RawMaterialData rawMaterial1 = (RawMaterialData) productDAO.find(rawMaterialNodeRef, dataLists);
+				RawMaterialData rawMaterial1 = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 				assertNotNull("check priceList", rawMaterial1.getPriceList());
 
 				for (PriceListDataItem p : rawMaterial1.getPriceList()) {

@@ -553,7 +553,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 
 		List<NodeRef> nodes = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
-		if (nodes.size() > 0) {
+		if (nodes!=null && !nodes.isEmpty()) {
 			return nodes.get(0);
 		}
 

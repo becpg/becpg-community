@@ -1,6 +1,4 @@
-/*
- * 
- */
+
 package fr.becpg.repo.product.data.productList;
 
 import java.util.ArrayList;
@@ -8,176 +6,127 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
-// TODO: Auto-generated Javadoc
-/**
- * Store an ingredient in the ingredient list.
- *
- * @author querephi
- */
-public class IngListDataItem extends BaseObject  implements Comparable<IngListDataItem>, IManualDataItem, SimpleCharactDataItem{
+@AlfType
+@AlfQname(qname = "bcpg:ingList")
+public class IngListDataItem extends AbstractManualDataItem  implements Comparable<IngListDataItem>, SimpleCharactDataItem{
 
-	/** The node ref. */
-	private NodeRef nodeRef;
 	
-	/** The qty perc. */
 	private Double qtyPerc = 0d;
 	
-	/** The geo origin. */
 	private List<NodeRef> geoOrigin = new ArrayList<NodeRef>();
 	
-	/** The bio origin. */
 	private List<NodeRef> bioOrigin = new ArrayList<NodeRef>();
 	
-	/** The is gmo. */
 	private Boolean isGMO = false;
 	
-	/** The is ionized. */
 	private Boolean isIonized = false;	
 	
-	/** The ing. */
 	private NodeRef ing;
 	
 	private Boolean isManual;
 	
-	/**
-	 * Gets the node ref.
-	 *
-	 * @return the node ref
-	 */
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
 	
-	/**
-	 * Sets the node ref.
-	 *
-	 * @param nodeRef the new node ref
-	 */
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
 	
-	/**
-	 * Gets the qty perc.
-	 *
-	 * @return the qty perc
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:ingListQtyPerc")
 	public Double getQtyPerc() {
 		return qtyPerc;
 	}
 	
-	/**
-	 * Sets the qty perc.
-	 *
-	 * @param qtyPerc the new qty perc
-	 */
+	
 	public void setQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
 	}
 	
-	/**
-	 * Gets the geo origin.
-	 *
-	 * @return the geo origin
-	 */
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:ingListGeoOrigin")
 	public List<NodeRef> getGeoOrigin() {
 		return geoOrigin;
 	}
 	
-	/**
-	 * Sets the geo origin.
-	 *
-	 * @param geoOrigin the new geo origin
-	 */
+
 	public void setGeoOrigin(List<NodeRef> geoOrigin) {
 		this.geoOrigin = geoOrigin;
 	}
 	
-	/**
-	 * Gets the bio origin.
-	 *
-	 * @return the bio origin
-	 */
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:ingListBioOrigin")
 	public List<NodeRef> getBioOrigin() {
 		return bioOrigin;
 	}
 	
-	/**
-	 * Sets the bio origin.
-	 *
-	 * @param bioOrigin the new bio origin
-	 */
+
 	public void setBioOrigin(List<NodeRef> bioOrigin) {
 		this.bioOrigin = bioOrigin;
 	}
 	
-	/**
-	 * Checks if is gMO.
-	 *
-	 * @return true, if is gMO
-	 */
-	public Boolean isGMO() {
+	@AlfProp
+	@AlfQname(qname="bcpg:ingListIsGMO")
+	public Boolean getIsGMO() {
 		return isGMO;
 	}
 	
-	/**
-	 * Sets the checks if is gmo.
-	 *
-	 * @param isGMO the new checks if is gmo
-	 */
+
 	public void setIsGMO(Boolean isGMO) {
 		this.isGMO = isGMO;
 	}
 	
-	/**
-	 * Checks if is ionized.
-	 *
-	 * @return true, if is ionized
-	 */
-	public Boolean isIonized() {
+	@AlfProp
+	@AlfQname(qname="bcpg:ingListIsIonized")
+	public Boolean getIsIonized() {
 		return isIonized;
 	}
 	
-	/**
-	 * Sets the ionized.
-	 *
-	 * @param isIonized the new ionized
-	 */
-	public void setIonized(Boolean isIonized) {
+
+	public void setIsIonized(Boolean isIonized) {
 		this.isIonized = isIonized;
 	}
 	
-	/**
-	 * Gets the ing.
-	 *
-	 * @return the ing
-	 */
+	
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:ingListIng")
 	public NodeRef getIng() {
 		return ing;
 	}
 	
-	/**
-	 * Sets the ing.
-	 *
-	 * @param ing the new ing
-	 */
+
 	public void setIng(NodeRef ing) {
 		this.ing = ing;
 	}
 	
+	//////////////////////////////
+	
 	@Override
-	public Boolean getIsManual() {
-
-		return isManual;
+	public NodeRef getCharactNodeRef() {
+		return ing;
 	}
 
 	@Override
-	public void setIsManual(Boolean isManual) {
+	public Double getValue() {
+		return qtyPerc;
+	}
+
+	@Override
+	public void setCharactNodeRef(NodeRef nodeRef) {
+		setIng(nodeRef);
 		
-		this.isManual = isManual;		
 	}
+
+
+	@Override
+	public void setValue(Double value) {
+		setQtyPerc(value);
+		
+	}
+	
 	
 	/**
 	 * Instantiates a new ing list data item.
@@ -204,7 +153,7 @@ public class IngListDataItem extends BaseObject  implements Comparable<IngListDa
 		setGeoOrigin(geoOrigin);
 		setBioOrigin(bioOrigin);
 		setIsGMO(isGMO);
-		setIonized(isIonized);
+		setIsIonized(isIonized);
 		setIng(ing);
 		setIsManual(isManual);
 	}
@@ -219,8 +168,8 @@ public class IngListDataItem extends BaseObject  implements Comparable<IngListDa
 		setQtyPerc(i.getQtyPerc());
 		setGeoOrigin(i.getGeoOrigin());
 		setBioOrigin(i.getBioOrigin());
-		setIsGMO(i.isGMO());
-		setIonized(i.isIonized());
+		setIsGMO(i.getIsGMO());
+		setIsIonized(i.getIsIonized());
 		setIng(i.getIng());
 		setIsManual(i.getIsManual());
 	}
@@ -310,13 +259,5 @@ public class IngListDataItem extends BaseObject  implements Comparable<IngListDa
 				+ isIonized + ", ing=" + ing + ", isManual=" + isManual + "]";
 	}
 
-	@Override
-	public NodeRef getCharactNodeRef() {
-		return ing;
-	}
 
-	@Override
-	public Double getValue() {
-		return qtyPerc;
-	}
 }

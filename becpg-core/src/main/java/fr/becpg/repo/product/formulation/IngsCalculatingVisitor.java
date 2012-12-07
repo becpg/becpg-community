@@ -16,15 +16,13 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.product.ProductDAO;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.ProductVisitor;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ing.CompositeIng;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -34,6 +32,9 @@ import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 /**
  * The Class IngsCalculatingVisitor.
@@ -57,8 +58,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	/** The ml node service. */
 	private NodeService mlNodeService;
 	
-	/** The product dao. */
-	private ProductDAO productDAO;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
 	private EntityListDAO entityListDAO;
 	
@@ -71,15 +71,14 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		this.nodeService = nodeService;
 	}
 	
-	/**
-	 * Sets the product dao.
-	 *
-	 * @param productDAO the new product dao
-	 */
-	public void setProductDAO(ProductDAO productDAO){
-		this.productDAO = productDAO;
-	}
 	
+	
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
+
+
+
 	/**
 	 * Sets the ml node service.
 	 *
@@ -106,12 +105,10 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		// Load product specification
     	ProductData productSpecicationData = null;
     	List<AssociationRef> productSpecificationAssocRefs = nodeService.getTargetAssocs(formulatedProduct.getNodeRef(), BeCPGModel.ASSOC_PRODUCT_SPECIFICATION);
-    	if(productSpecificationAssocRefs != null && productSpecificationAssocRefs.size() > 0 && 
+    	if(productSpecificationAssocRefs != null && !productSpecificationAssocRefs.isEmpty() && 
     			productSpecificationAssocRefs.get(0).getTargetRef() != null){
     		
-    		Collection<QName> dataLists = new ArrayList<QName>();				
-    		dataLists.add(BeCPGModel.TYPE_FORBIDDENINGLIST);
-        	productSpecicationData = productDAO.find(productSpecificationAssocRefs.get(0).getTargetRef(), dataLists); 
+        	productSpecicationData = (ProductData) alfrescoRepository.findOne(productSpecificationAssocRefs.get(0).getTargetRef()); 
     	}
 		
 		//IngList
@@ -196,9 +193,8 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 */
 	private void visitILOfPart(ProductData productSpecicationData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Double> totalQtyIngMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException{				
 			
-		Collection<QName> dataLists = new ArrayList<QName>();		
-		dataLists.add(BeCPGModel.TYPE_INGLIST);
-		ProductData productData = productDAO.find(compoListDataItem.getProduct(), dataLists);		
+
+		ProductData productData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());		
 		
 		if(productData.getIngList() == null){
 			return;
@@ -271,13 +267,13 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 			}
 			
 			//GMO
-			if(ingListDataItem.isGMO() && !newIngListDataItem.isGMO()){
+			if(ingListDataItem.getIsGMO() && !newIngListDataItem.getIsGMO()){
 				newIngListDataItem.setIsGMO(true);
 			}
 			
 			//Ionized
-			if(ingListDataItem.isIonized() && !newIngListDataItem.isIonized()){
-				newIngListDataItem.setIonized(true);
+			if(ingListDataItem.getIsIonized() && !newIngListDataItem.getIsIonized()){
+				newIngListDataItem.setIsIonized(true);
 			}
 		}
 	}
@@ -298,17 +294,17 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 				for(ForbiddenIngListDataItem fil : productSpecicationData.getForbiddenIngList()){					
 					
 					// GMO
-					if(fil.isGMO() != null && !fil.isGMO().equals(ingListDataItem.isGMO())){
+					if(fil.getIsGMO() != null && !fil.getIsGMO().equals(ingListDataItem.getIsGMO())){
 						continue; // check next rule
 					}
 					
 					// Ionized
-					if(fil.isIonized() != null && !fil.isIonized().equals(ingListDataItem.isIonized())){
+					if(fil.getIsIonized() != null && !fil.getIsIonized().equals(ingListDataItem.getIsIonized())){
 						continue; // check next rule
 					}
 					
 					// Ings
-					if(fil.getIngs().size() > 0){
+					if(!fil.getIngs().isEmpty()){
 						if(!fil.getIngs().contains(ingListDataItem.getIng())){
 							continue; // check next rule																			
 						}
@@ -318,7 +314,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 					}
 					
 					// GeoOrigins
-					if(fil.getGeoOrigins().size() > 0){
+					if(!fil.getGeoOrigins().isEmpty()){
 						boolean hasGeoOrigin = false;
 						for(NodeRef n : ingListDataItem.getGeoOrigin()){						
 							if(fil.getGeoOrigins().contains(n)){
@@ -332,7 +328,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 					}
 					
 					// BioOrigins
-					if(fil.getBioOrigins().size() > 0){
+					if(!fil.getBioOrigins().isEmpty()){
 						boolean hasBioOrigin = false;
 						for(NodeRef n : ingListDataItem.getBioOrigin()){						
 							if(fil.getBioOrigins().contains(n)){
@@ -457,7 +453,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		}		
 		
 		//add no grp if there is one ingredient
-		if(defaultCompositeIng.getIngList().size() > 0)
+		if(!defaultCompositeIng.getIngList().isEmpty())
 			compositeIngList.add(defaultCompositeIng);
 		return compositeIngList;
 	}
@@ -499,10 +495,8 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	 * @throws FormulateException 
 	 */
 	private CompositeIng calculateILLOfCompositeIng(CompositeIng parentIng, CompoListDataItem compoListDataItem) throws FormulateException{
-						
-		Collection<QName> dataLists = new ArrayList<QName>();		
-		dataLists.add(BeCPGModel.TYPE_INGLIST);			
-		ProductData part = productDAO.find(compoListDataItem.getProduct(), dataLists);
+							
+		ProductData part = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 		DeclarationType declarationType = compoListDataItem.getDeclType();
 		boolean isDeclared = (declarationType == DeclarationType.DoNotDeclare) ? false:true;
 		CompositeIng compositeIng = parentIng;
@@ -573,7 +567,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 				
 				for(NodeRef manualLink : manualLinks){
 					
-					IngLabelingListDataItem illListDataItem = productDAO.loadIngLabelingListItem(manualLink);		    		
+					IngLabelingListDataItem illListDataItem =  (IngLabelingListDataItem) alfrescoRepository.findOne(manualLink) ;		    		
 					illList.add(illListDataItem);
 				}
 			}
@@ -606,7 +600,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 				
 				for(NodeRef manualLink : manualLinks){
 					
-					IngListDataItem ingListDataItem = productDAO.loadIngListItem(manualLink);		    		
+					IngListDataItem ingListDataItem = (IngListDataItem) alfrescoRepository.findOne(manualLink);		    		
 					ingMap.put(ingListDataItem.getIng(), ingListDataItem);
 				}
 			}

@@ -17,8 +17,8 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.CharactDetails;
-import fr.becpg.repo.product.formulation.FormulateException;
 
 /**
  * return List details

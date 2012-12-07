@@ -1,19 +1,15 @@
 package fr.becpg.repo.project.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.workflow.WorkflowInstance;
 import org.alfresco.service.cmr.workflow.WorkflowService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.BeCPGListDao;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
@@ -23,6 +19,7 @@ import fr.becpg.repo.project.data.AbstractProjectData;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -37,7 +34,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	private static Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
-	private BeCPGListDao<AbstractProjectData> projectDAO;
+	private AlfrescoRepository<AbstractProjectData> alfrescoRepository;
 	private WorkflowService workflowService;
 	private AssociationService associationService;
 	private NodeService nodeService;
@@ -46,8 +43,8 @@ public class ProjectServiceImpl implements ProjectService {
 	private PlanningVisitor planningVisitor;
 	private TaskStateVisitor taskStateVisitor;
 
-	public void setProjectDAO(BeCPGListDao<AbstractProjectData> projectDAO) {
-		this.projectDAO = projectDAO;
+	public void setAlfrescoRepository(AlfrescoRepository<AbstractProjectData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	public void setWorkflowService(WorkflowService workflowService) {
@@ -116,9 +113,7 @@ public class ProjectServiceImpl implements ProjectService {
 	public void cancel(NodeRef projectNodeRef) {
 
 		logger.debug("cancel project: " + projectNodeRef);
-		Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(ProjectModel.TYPE_TASK_LIST);
-		AbstractProjectData abstractProjectData = projectDAO.find(projectNodeRef, dataLists);
+		AbstractProjectData abstractProjectData = alfrescoRepository.findOne(projectNodeRef);
 
 		for (TaskListDataItem taskListDataItem : abstractProjectData.getTaskList()) {
 			if (taskListDataItem.getWorkflowInstance() != null && !taskListDataItem.getWorkflowInstance().isEmpty()){
@@ -142,10 +137,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
 			logger.debug("formulate projectNodeRef: " + projectNodeRef);
-			Collection<QName> dataLists = new ArrayList<QName>();
-			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-			dataLists.add(ProjectModel.TYPE_TASK_LIST);
-			ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 			try {
 				planningVisitor.visit(projectData);
@@ -157,7 +149,7 @@ public class ProjectServiceImpl implements ProjectService {
 				throw new ProjectException("message.formulate.failure", e);
 			}
 
-			projectDAO.update(projectNodeRef, projectData, dataLists);
+			alfrescoRepository.save(projectData);
 		}
 
 	}

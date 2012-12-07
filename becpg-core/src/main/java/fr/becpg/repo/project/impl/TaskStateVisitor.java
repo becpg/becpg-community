@@ -62,7 +62,7 @@ public class TaskStateVisitor implements ProjectVisitor {
 		// add next tasks
 		List<TaskListDataItem> nextTasks = ProjectHelper.getNextTasks(projectData, taskListNodeRef);
 		logger.debug("nextTasks size: " + nextTasks.size());
-		if (nextTasks.size() > 0) {
+		if (!nextTasks.isEmpty()) {
 			for (TaskListDataItem nextTask : nextTasks) {
 
 				// should we continue ?

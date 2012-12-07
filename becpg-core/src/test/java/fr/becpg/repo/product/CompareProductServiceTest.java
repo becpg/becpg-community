@@ -5,7 +5,6 @@ package fr.becpg.repo.product;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,7 @@ import fr.becpg.repo.entity.comparison.StructCompareOperator;
 import fr.becpg.repo.entity.comparison.StructCompareResultDataItem;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
@@ -131,48 +130,47 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 
 				/*-- Create raw materials --*/
 				logger.debug("/*-- Create raw materials --*/");
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
 				/*-- Raw material 1 --*/
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
 				rawMaterial1.setLegalName("Legal Raw material 1");
-				rawMaterial1NodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, dataLists);
+				rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
 
 				/*-- Raw material 2 --*/
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
 				rawMaterial2.setLegalName("Legal Raw material 2");
-				rawMaterial2NodeRef = productDAO.create(testFolderNodeRef, rawMaterial2, dataLists);
+				rawMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
 
 				/*-- Raw material 3 --*/
 				RawMaterialData rawMaterial3 = new RawMaterialData();
 				rawMaterial3.setName("Raw material 3");
 				rawMaterial3.setLegalName("Legal Raw material 3");
-				rawMaterial3NodeRef = productDAO.create(testFolderNodeRef, rawMaterial3, dataLists);
+				rawMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial3).getNodeRef();
 
 				/*-- Raw material 4 --*/
 				RawMaterialData rawMaterial4 = new RawMaterialData();
 				rawMaterial4.setName("Raw material 4");
 				rawMaterial4.setLegalName("Legal Raw material 4");
-				rawMaterial4NodeRef = productDAO.create(testFolderNodeRef, rawMaterial4, dataLists);
+				rawMaterial4NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial4).getNodeRef();
 
 				/*-- Raw material 5 --*/
 				RawMaterialData rawMaterial5 = new RawMaterialData();
 				rawMaterial5.setName("Raw material 5");
 				rawMaterial5.setLegalName("Legal Raw material 5");
-				productDAO.create(testFolderNodeRef, rawMaterial5, dataLists);
+				alfrescoRepository.create(testFolderNodeRef, rawMaterial5).getNodeRef();
 
 				/*-- Local semi finished product 1 --*/
-				LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
 				localSF1.setName("Local semi finished 1");
 				localSF1.setLegalName("Legal Local semi finished 1");
-				localSF1NodeRef = productDAO.create(testFolderNodeRef, localSF1, dataLists);
+				localSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF1).getNodeRef();
 
 				/*-- Local semi finished product 1 --*/
-				LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
 				localSF2.setName("Local semi finished 2");
 				localSF2.setLegalName("Legal Local semi finished 2");
-				localSF2NodeRef = productDAO.create(testFolderNodeRef, localSF2, dataLists);
+				localSF2NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF2).getNodeRef();
 
 				return null;
 
@@ -275,8 +273,6 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
-
 				logger.debug("createRawMaterial 1");
 
 				FinishedProductData fp1 = new FinishedProductData();
@@ -294,7 +290,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// create an MP for the allergens
 				RawMaterialData allergenRawMaterial = new RawMaterialData();
 				allergenRawMaterial.setName("MP allergen");
-				NodeRef allergenRawMaterialNodeRef = productDAO.create(testFolderNodeRef, allergenRawMaterial, dataLists);
+				NodeRef allergenRawMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, allergenRawMaterial).getNodeRef();
 
 				// Allergens
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
@@ -318,7 +314,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// rawMaterial4NodeRef));
 				fp1.setCompoList(compoList);
 
-				fp1NodeRef = productDAO.create(testFolderNodeRef, fp1, dataLists);
+				fp1NodeRef = alfrescoRepository.create(testFolderNodeRef, fp1).getNodeRef();
 
 				logger.debug("create FP 2");
 
@@ -360,7 +356,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 
-				fp2NodeRef = productDAO.create(testFolderNodeRef, fp2, dataLists);
+				fp2NodeRef = alfrescoRepository.create(testFolderNodeRef, fp2).getNodeRef();
 
 				return null;
 
@@ -492,8 +488,6 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
-
 				logger.debug("createRawMaterial 1");
 
 				FinishedProductData fp1 = new FinishedProductData();
@@ -510,7 +504,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// rawMaterial4NodeRef));
 				fp1.setCompoList(compoList);
 
-				fp1NodeRef = productDAO.create(testFolderNodeRef, fp1, dataLists);
+				fp1NodeRef = alfrescoRepository.create(testFolderNodeRef, fp1).getNodeRef();
 
 				logger.debug("createRawMaterial 1");
 
@@ -526,7 +520,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 
-				fp2NodeRef = productDAO.create(testFolderNodeRef, fp2, dataLists);
+				fp2NodeRef = alfrescoRepository.create(testFolderNodeRef, fp2).getNodeRef();
 				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
 				productsNodeRef.add(fp2NodeRef);
 

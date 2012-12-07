@@ -12,12 +12,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.data.EffectiveFilters;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
-import fr.becpg.repo.product.data.productList.SimpleListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 public class AbstractCalculatingVisitor {
 
@@ -25,16 +26,18 @@ public class AbstractCalculatingVisitor {
 	
 	private static Log logger = LogFactory.getLog(AbstractCalculatingVisitor.class);
 	
-	protected ProductDAO productDAO;
+
+	private AlfrescoRepository<SimpleListDataItem> alfrescoRepository;
 	
 	protected EntityListDAO entityListDAO;
 
 	protected NodeService nodeService;
-	
-	public void setProductDAO(ProductDAO productDAO) {
-		this.productDAO = productDAO;
+
+
+	public void setAlfrescoRepository(AlfrescoRepository<SimpleListDataItem> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
-	
+
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
@@ -49,7 +52,7 @@ public class AbstractCalculatingVisitor {
 		Map<NodeRef, SimpleListDataItem> simpleListDataMap = new HashMap<NodeRef, SimpleListDataItem>();
 		
 		// init with dbValues
-		List<? extends SimpleListDataItem> simpleListDataList = productDAO.loadSimpleList(formulatedProduct.getNodeRef(), getDataListVisited());//		
+		List<SimpleListDataItem> simpleListDataList = alfrescoRepository.loadDataList(formulatedProduct.getNodeRef(), getDataListVisited());//		
 		if(simpleListDataList != null){			
 			for(SimpleListDataItem sl : simpleListDataList){
 				// reset value if formulated
@@ -94,7 +97,7 @@ public class AbstractCalculatingVisitor {
 	 */
 	protected void visitPart(NodeRef componentNodeRef,  Map<NodeRef, SimpleListDataItem> simpleListDataMap, Double qtyUsed, Double netWeight) throws FormulateException{
 				
-		List<? extends SimpleListDataItem> simpleListDataList = productDAO.loadSimpleList(componentNodeRef, getDataListVisited());		
+		List<? extends SimpleListDataItem> simpleListDataList = alfrescoRepository.loadDataList(componentNodeRef, getDataListVisited());		
 		
 		if(simpleListDataList == null){
 			logger.debug("simpleListDataList is null");
@@ -181,7 +184,7 @@ public class AbstractCalculatingVisitor {
 				
 				for(NodeRef manualLink : manualLinks){
 										
-					SimpleListDataItem sl = (SimpleListDataItem)productDAO.loadItemByType(manualLink, getDataListVisited());		    		
+					SimpleListDataItem sl = (SimpleListDataItem)alfrescoRepository.findOne(manualLink);		    		
 					slMap.put(sl.getCharactNodeRef(), sl);
 				}
 			}

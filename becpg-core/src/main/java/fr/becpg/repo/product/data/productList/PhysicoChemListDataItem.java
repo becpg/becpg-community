@@ -5,128 +5,75 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-/**
- * The Class PhysicoChemListDataItem.
- *
- * @author querephi
- */
-public class PhysicoChemListDataItem implements SimpleListDataItem, SimpleCharactDataItem{
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
-	/** The node ref. */
-	private NodeRef nodeRef;			
+@AlfType
+@AlfQname(qname = "bcpg:physicoChemList")
+public class PhysicoChemListDataItem extends AbstractManualDataItem implements SimpleListDataItem{
+			
 	
-	/** The value. */
 	private Double value;
 	
-	/** The unit. */
 	private String unit;
 	
-	/** The mini. */
 	private Double mini;
 	
-	/** The maxi. */
 	private Double maxi;
 	
-	/** The physico chem. */
 	private NodeRef physicoChem;
 	
-	private Boolean isManual;
+
 	
-	/**
-	 * Gets the node ref.
-	 *
-	 * @return the node ref
-	 */
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
-	
-	/**
-	 * Sets the node ref.
-	 *
-	 * @param nodeRef the new node ref
-	 */
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-	
-	/**
-	 * Gets the value.
-	 *
-	 * @return the value
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:pclValue")
 	public Double getValue() {
 		return value;
 	}
 	
-	/**
-	 * Sets the value.
-	 *
-	 * @param value the new value
-	 */
+	
 	public void setValue(Double value) {
 		this.value = value;
 	}
 	
-	/**
-	 * Gets the unit.
-	 *
-	 * @return the unit
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:pclUnit")
 	public String getUnit() {
 		return unit;
 	}
 	
-	/**
-	 * Sets the unit.
-	 *
-	 * @param unit the new unit
-	 */
+	
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 	
-	/**
-	 * Gets the mini.
-	 *
-	 * @return the mini
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:pclMini")
 	public Double getMini() {
 		return mini;
 	}
 	
-	/**
-	 * Sets the mini.
-	 *
-	 * @param mini the new mini
-	 */
+	
 	public void setMini(Double mini) {
 		this.mini = mini;
 	}
 	
-	/**
-	 * Gets the maxi.
-	 *
-	 * @return the maxi
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:pclMaxi")
 	public Double getMaxi() {
 		return maxi;
 	}
 	
-	/**
-	 * Sets the maxi.
-	 *
-	 * @param maxi the new maxi
-	 */
 	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 	
-	/**
-	 * Gets the physico chem.
-	 *
-	 * @return the physico chem
-	 */
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:pclPhysicoChem")
 	public NodeRef getPhysicoChem() {
 		return physicoChem;
 	}
@@ -149,16 +96,6 @@ public class PhysicoChemListDataItem implements SimpleListDataItem, SimpleCharac
 	 */
 	public void setPhysicoChem(NodeRef physicoChem) {
 		this.physicoChem = physicoChem;
-	}
-	
-	@Override
-	public Boolean getIsManual() {		
-		return isManual;
-	}
-
-	@Override
-	public void setIsManual(Boolean isManual) {		
-		this.isManual = isManual;		
 	}
 	
 	/**

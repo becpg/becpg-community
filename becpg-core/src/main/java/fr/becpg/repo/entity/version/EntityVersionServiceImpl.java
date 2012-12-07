@@ -235,7 +235,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				try {
 					resultSet = beCPGSearchService.search(ENTITIES_HISTORY_XPATH, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE, SearchService.LANGUAGE_XPATH);
 					
-					if (resultSet.size() > 0) {
+					if (!resultSet.isEmpty()) {
 						entitiesHistoryNodeRef = resultSet.get(0);
 					}
 					else{

@@ -2,7 +2,6 @@ package fr.becpg.repo.product;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -20,9 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductService;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
@@ -42,10 +39,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 	/** The product service. */
 	@Resource
 	protected ProductService productService;    
-	
-	/** The product dao. */
-	@Resource
-	protected ProductDAO productDAO;
+
     
     /** The GROU p1. */
 	protected static String GROUP1 = "Groupe 1";      
@@ -282,7 +276,6 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			
 			/*-- Create raw materials --*/
 			logger.debug("/*-- Create raw materials --*/");
-			 Collection<QName> dataLists = productDictionaryService.getDataLists();
 			/*-- Raw material 1 --*/
 			RawMaterialData rawMaterial1 = new RawMaterialData();
 			rawMaterial1.setName("Raw material 1");
@@ -327,7 +320,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", 0.8d, 2.1d, physicoChem3));
 			physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", 1.5d, 2.2d, physicoChem4));
 			rawMaterial1.setPhysicoChemList(physicoChemList);
-			rawMaterial1NodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, dataLists);
+			rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
 			
 			/*-- Raw material 2 --*/
 			RawMaterialData rawMaterial2 = new RawMaterialData();
@@ -374,7 +367,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			rawMaterial2.setPhysicoChemList(physicoChemList);
 			rawMaterial2.setIngList(ingList);	
 			
-			rawMaterial2NodeRef = productDAO.create(testFolderNodeRef, rawMaterial2, dataLists);
+			rawMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
 			
 			/*-- Raw material 3 --*/
 			RawMaterialData rawMaterial3 = new RawMaterialData();
@@ -416,7 +409,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", null, null, physicoChem4));
 			rawMaterial3.setPhysicoChemList(physicoChemList);
 			rawMaterial3.setIngList(ingList);		
-			rawMaterial3NodeRef = productDAO.create(testFolderNodeRef, rawMaterial3, dataLists);
+			rawMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial3).getNodeRef();
 			
 			/*-- Raw material 4 --*/
 			RawMaterialData rawMaterial4 = new RawMaterialData();
@@ -434,7 +427,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			geoOrigins.add(geoOrigin2);			
 			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial4.setIngList(ingList);		
-			rawMaterial4NodeRef = productDAO.create(testFolderNodeRef, rawMaterial4, dataLists);
+			rawMaterial4NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial4).getNodeRef();
 			
 			/*-- Raw material 5 --*/
 			RawMaterialData rawMaterial5 = new RawMaterialData();
@@ -455,7 +448,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
 			rawMaterial5.setNutList(nutList);					
 			rawMaterial5.setIngList(ingList);		
-			rawMaterial5NodeRef = productDAO.create(testFolderNodeRef, rawMaterial5, dataLists);
+			rawMaterial5NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial5).getNodeRef();
 			
 			/*-- Raw material 6 --*/
 			RawMaterialData rawMaterial6 = new RawMaterialData();
@@ -496,32 +489,32 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 20d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial6.setIngList(ingList);			
-			rawMaterial6NodeRef = productDAO.create(testFolderNodeRef, rawMaterial6, dataLists);
+			rawMaterial6NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial6).getNodeRef();
 			
 			/*-- Local semi finished product 1 --*/
-			LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
+			LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
 			localSF1.setName("Local semi finished 1");
 			mlName = new MLText();
 			mlName.addValue(Locale.getDefault(), "Pâte default");
 			mlName.addValue(Locale.ENGLISH, "Pâte english");
 			mlName.addValue(Locale.FRENCH, "Pâte french");				
 			localSF1.setLegalName(mlName);
-			localSF1NodeRef = productDAO.create(testFolderNodeRef, localSF1, dataLists);
+			localSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF1).getNodeRef();
 			
 			/*-- Local semi finished product 1 --*/
-			LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
+			LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
 			localSF2.setName("Local semi finished 2");
 			mlName = new MLText();
 			mlName.addValue(Locale.getDefault(), "Garniture default");
 			mlName.addValue(Locale.ENGLISH, "Garniture english");
 			mlName.addValue(Locale.FRENCH, "Garniture french");
 			localSF2.setLegalName(mlName);							
-			localSF2NodeRef = productDAO.create(testFolderNodeRef, localSF2, dataLists);
+			localSF2NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF2).getNodeRef();
 			
-			LocalSemiFinishedProduct localSF3 = new LocalSemiFinishedProduct();
+			LocalSemiFinishedProductData localSF3 = new LocalSemiFinishedProductData();
 			localSF3.setName("Local semi finished 3");
 			localSF3.setLegalName("Legal Local semi finished 3");							
-			localSF3NodeRef = productDAO.create(testFolderNodeRef, localSF3, dataLists);			
+			localSF3NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF3).getNodeRef();			
 			
 			logger.debug("/*-- Create raw materials 11 => 14 with ingList only--*/");
 			/*-- Raw material 11 --*/
@@ -543,7 +536,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 2d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial11.setIngList(ingList);
-			rawMaterial11NodeRef = productDAO.create(testFolderNodeRef, rawMaterial11, dataLists);
+			rawMaterial11NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial11).getNodeRef();
 			
 			/*-- Raw material 12 --*/
 			RawMaterialData rawMaterial12 = new RawMaterialData();
@@ -565,7 +558,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 3d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial12.setIngList(ingList);			
-			rawMaterial12NodeRef = productDAO.create(testFolderNodeRef, rawMaterial12, dataLists);
+			rawMaterial12NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial12).getNodeRef();
 			
 			/*-- Raw material 13 --*/
 			RawMaterialData rawMaterial13 = new RawMaterialData();
@@ -583,7 +576,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			geoOrigins.add(geoOrigin2);			
 			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial13.setIngList(ingList);		
-			rawMaterial13NodeRef = productDAO.create(testFolderNodeRef, rawMaterial13, dataLists);
+			rawMaterial13NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial13).getNodeRef();
 			
 			/*-- Raw material 14 --*/
 			RawMaterialData rawMaterial14 = new RawMaterialData();
@@ -602,27 +595,27 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));
 			ingList.add(new IngListDataItem(null, 2d, geoOrigins, bioOrigins, true, true, ing4, false));
 			rawMaterial14.setIngList(ingList);		
-			rawMaterial14NodeRef = productDAO.create(testFolderNodeRef, rawMaterial14, dataLists);
+			rawMaterial14NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial14).getNodeRef();
 			
 			/*-- Local semi finished product 11 --*/
-			LocalSemiFinishedProduct localSF11 = new LocalSemiFinishedProduct();
+			LocalSemiFinishedProductData localSF11 = new LocalSemiFinishedProductData();
 			localSF11.setName("Local semi finished 11");
 			mlName = new MLText();
 			mlName.addValue(Locale.getDefault(), "Pâte default");
 			mlName.addValue(Locale.ENGLISH, "Pâte english");
 			mlName.addValue(Locale.FRENCH, "Pâte french");
 			localSF11.setLegalName(mlName);			
-			localSF11NodeRef = productDAO.create(testFolderNodeRef, localSF11, dataLists);
+			localSF11NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF11).getNodeRef();
 			
 			/*-- Local semi finished product 12 --*/
-			LocalSemiFinishedProduct localSF12 = new LocalSemiFinishedProduct();
+			LocalSemiFinishedProductData localSF12 = new LocalSemiFinishedProductData();
 			localSF12.setName("Local semi finished 12");
 			mlName = new MLText();
 			mlName.addValue(Locale.getDefault(), "Garniture default");
 			mlName.addValue(Locale.ENGLISH, "Garniture english");
 			mlName.addValue(Locale.FRENCH, "Garniture french");
 			localSF12.setLegalName(mlName);					
-			localSF12NodeRef = productDAO.create(testFolderNodeRef, localSF12, dataLists);
+			localSF12NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF12).getNodeRef();
 			
 			return null;
 

@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.BeCPGDataObject;
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 public class QualityControlData extends BeCPGDataObject {
 
@@ -114,5 +114,100 @@ public class QualityControlData extends BeCPGDataObject {
 
 	public void setSamplingList(List<SamplingListDataItem> samplingList) {
 		this.samplingList = samplingList;
+	}
+
+	@Override
+	public String toString() {
+		return "QualityControlData [controlPlans=" + controlPlans + ", samplesCounter=" + samplesCounter + ", state=" + state + ", batchId=" + batchId + ", orderId=" + orderId
+				+ ", batchStart=" + batchStart + ", batchDuration=" + batchDuration + ", product=" + product + ", client=" + client + ", supplier=" + supplier + ", samplingList="
+				+ samplingList + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((batchDuration == null) ? 0 : batchDuration.hashCode());
+		result = prime * result + ((batchId == null) ? 0 : batchId.hashCode());
+		result = prime * result + ((batchStart == null) ? 0 : batchStart.hashCode());
+		result = prime * result + ((client == null) ? 0 : client.hashCode());
+		result = prime * result + ((controlPlans == null) ? 0 : controlPlans.hashCode());
+		result = prime * result + ((orderId == null) ? 0 : orderId.hashCode());
+		result = prime * result + ((product == null) ? 0 : product.hashCode());
+		result = prime * result + ((samplesCounter == null) ? 0 : samplesCounter.hashCode());
+		result = prime * result + ((samplingList == null) ? 0 : samplingList.hashCode());
+		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + ((supplier == null) ? 0 : supplier.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		QualityControlData other = (QualityControlData) obj;
+		if (batchDuration == null) {
+			if (other.batchDuration != null)
+				return false;
+		} else if (!batchDuration.equals(other.batchDuration))
+			return false;
+		if (batchId == null) {
+			if (other.batchId != null)
+				return false;
+		} else if (!batchId.equals(other.batchId))
+			return false;
+		if (batchStart == null) {
+			if (other.batchStart != null)
+				return false;
+		} else if (!batchStart.equals(other.batchStart))
+			return false;
+		if (client == null) {
+			if (other.client != null)
+				return false;
+		} else if (!client.equals(other.client))
+			return false;
+		if (controlPlans == null) {
+			if (other.controlPlans != null)
+				return false;
+		} else if (!controlPlans.equals(other.controlPlans))
+			return false;
+		if (orderId == null) {
+			if (other.orderId != null)
+				return false;
+		} else if (!orderId.equals(other.orderId))
+			return false;
+		if (product == null) {
+			if (other.product != null)
+				return false;
+		} else if (!product.equals(other.product))
+			return false;
+		if (samplesCounter == null) {
+			if (other.samplesCounter != null)
+				return false;
+		} else if (!samplesCounter.equals(other.samplesCounter))
+			return false;
+		if (samplingList == null) {
+			if (other.samplingList != null)
+				return false;
+		} else if (!samplingList.equals(other.samplingList))
+			return false;
+		if (state == null) {
+			if (other.state != null)
+				return false;
+		} else if (!state.equals(other.state))
+			return false;
+		if (supplier == null) {
+			if (other.supplier != null)
+				return false;
+		} else if (!supplier.equals(other.supplier))
+			return false;
+		return true;
 	}		
+	
+	
+	
 }

@@ -1,17 +1,16 @@
 package fr.becpg.repo.project.data.projectList;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 
-import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.data.DataItem;
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Planning list (done or to do)
@@ -19,9 +18,11 @@ import fr.becpg.repo.product.data.BaseObject;
  * @author quere
  * 
  */
-public class TaskListDataItem extends BaseObject implements DataItem {
-
-	private NodeRef nodeRef;
+@AlfType
+@AlfQname(qname = "pjt:taskList")
+public class TaskListDataItem extends BeCPGDataObject {
+	
+	
 	private String taskName;
 	private Boolean isMilestone;
 	private Integer duration;
@@ -35,14 +36,8 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 	private String workflowName;
 	private String workflowInstance;
 
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
-
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-
+	@AlfProp
+	@AlfQname(qname = "pjt:tlTaskName")
 	public String getTaskName() {
 		return taskName;
 	}
@@ -51,6 +46,8 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.taskName = taskName;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:tlIsMilestone")
 	public Boolean getIsMilestone() {
 		return isMilestone;
 	}
@@ -59,6 +56,8 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.isMilestone = isMilestone;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:tlDuration")
 	public Integer getDuration() {
 		return duration;
 	}
@@ -67,6 +66,8 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.duration = duration;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:tlStart")
 	public Date getStart() {
 		return start;
 	}
@@ -75,6 +76,8 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.start = start;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:tlEnd")
 	public Date getEnd() {
 		return end;
 	}
@@ -83,14 +86,19 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.end = end;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:tlState")
 	public TaskState getState() {
 		return state;
 	}
-
+	
+	
 	public void setState(TaskState state) {
 		this.state = state;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:completionPercent")
 	public Integer getCompletionPercent() {
 		return completionPercent;
 	}
@@ -99,6 +107,8 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.completionPercent = completionPercent;
 	}
 
+	@AlfMultiAssoc
+	@AlfQname(qname = "pjt:tlPrevTasks")
 	public List<NodeRef> getPrevTasks() {
 		return prevTasks;
 	}
@@ -107,6 +117,8 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.prevTasks = prevTasks;
 	}
 
+	@AlfMultiAssoc
+	@AlfQname(qname = "pjt:tlResources")
 	public List<NodeRef> getResources() {
 		return resources;
 	}
@@ -115,6 +127,8 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.resources = resources;
 	}
 
+	@AlfSingleAssoc
+	@AlfQname(qname = "pjt:tlTaskLegend")
 	public NodeRef getTaskLegend() {
 		return taskLegend;
 	}
@@ -123,6 +137,8 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.taskLegend = taskLegend;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:tlWorkflowName")
 	public String getWorkflowName() {
 		return workflowName;
 	}
@@ -131,28 +147,27 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.workflowName = workflowName;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:tlWorkflowInstance")
 	public String getWorkflowInstance() {
 		return workflowInstance;
 	}
 
+	
 	public void setWorkflowInstance(String workflowInstance) {
 		this.workflowInstance = workflowInstance;
 	}
-	
-	/**
-	 * Constructor used for task definition
-	 * @param nodeRef
-	 * @param taskName
-	 * @param isMilestone
-	 * @param duration
-	 * @param prevTasks
-	 * @param resources
-	 * @param taskLegend
-	 * @param workflowName
-	 */
-	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, 
-			List<NodeRef> prevTasks, List<NodeRef> resources,
-			NodeRef taskLegend, String workflowName) {
+
+	public TaskListDataItem() {
+		super();
+	}
+
+	public TaskListDataItem(NodeRef nodeRef, String name) {
+		super(nodeRef, name);
+	}
+
+	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, List<NodeRef> prevTasks, List<NodeRef> resources, NodeRef taskLegend,
+			String workflowName) {
 		super();
 		this.nodeRef = nodeRef;
 		this.taskName = taskName;
@@ -164,9 +179,8 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.workflowName = workflowName;
 	}
 
-	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, Date start,
-			Date end, TaskState state, Integer completionPercent, List<NodeRef> prevTasks, List<NodeRef> resources,
-			NodeRef taskLegend, String workflowName, String workflowInstance) {
+	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, Date start, Date end, TaskState state, Integer completionPercent,
+			List<NodeRef> prevTasks, List<NodeRef> resources, NodeRef taskLegend, String workflowName, String workflowInstance) {
 		super();
 		this.nodeRef = nodeRef;
 		this.taskName = taskName;
@@ -174,7 +188,7 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 		this.duration = duration;
 		this.start = start;
 		this.end = end;
-		this.state = state;
+		this.state = state!=null ? state : TaskState.Planned;
 		this.completionPercent = completionPercent;
 		this.prevTasks = prevTasks;
 		this.resources = resources;
@@ -279,43 +293,9 @@ public class TaskListDataItem extends BaseObject implements DataItem {
 
 	@Override
 	public String toString() {
-		return "TaskListDataItem [nodeRef=" + nodeRef + ", taskName=" + taskName + ", isMilestone=" + isMilestone
-				+ ", duration=" + duration + ", start=" + start + ", end=" + end + ", state=" + state
-				+ ", completionPercent=" + completionPercent + ", prevTasks=" + prevTasks + ", resources=" + resources
-				+ ", taskLegend=" + taskLegend + ", workflowName=" + workflowName + ", workflowInstance="
-				+ workflowInstance + "]";
+		return "TaskListDataItem [nodeRef=" + nodeRef + ", taskName=" + taskName + ", isMilestone=" + isMilestone + ", duration=" + duration + ", start=" + start + ", end=" + end
+				+ ", state=" + state + ", completionPercent=" + completionPercent + ", prevTasks=" + prevTasks + ", resources=" + resources + ", taskLegend=" + taskLegend
+				+ ", workflowName=" + workflowName + ", workflowInstance=" + workflowInstance + "]";
 	}
 
-	@Override
-	public Map<QName, Serializable> getProperties() {
-
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ProjectModel.PROP_TL_TASK_NAME, taskName);
-		properties.put(ProjectModel.PROP_TL_IS_MILESTONE, isMilestone);
-		properties.put(ProjectModel.PROP_TL_DURATION, duration);
-		properties.put(ProjectModel.PROP_TL_START, start);
-		properties.put(ProjectModel.PROP_TL_END, end);
-		properties.put(ProjectModel.PROP_TL_STATE, state.toString());
-		properties.put(ProjectModel.PROP_COMPLETION_PERCENT, completionPercent);
-		properties.put(ProjectModel.PROP_TL_WORKFLOW_NAME, workflowName);
-		properties.put(ProjectModel.PROP_TL_WORKFLOW_INSTANCE, workflowInstance);
-		return properties;
-	}
-
-	@Override
-	public Map<QName, NodeRef> getSingleAssociations() {
-
-		Map<QName, NodeRef> associations = new HashMap<QName, NodeRef>();
-		associations.put(ProjectModel.ASSOC_TL_TASKLEGEND, taskLegend);
-		return associations;
-	}
-
-	@Override
-	public Map<QName, List<NodeRef>> getMultipleAssociations() {
-
-		Map<QName, List<NodeRef>> associations = new HashMap<QName, List<NodeRef>>();
-		associations.put(ProjectModel.ASSOC_TL_PREV_TASKS, prevTasks);
-		associations.put(ProjectModel.ASSOC_TL_RESOURCES, resources);
-		return associations;
-	}
 }

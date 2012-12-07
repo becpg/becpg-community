@@ -783,7 +783,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		boolean doQuery = false;					
 		
 		// nodeColumnKeys
-		if(classMapping != null && classMapping.getNodeColumnKeys().size() > 0){					
+		if(classMapping != null && !classMapping.getNodeColumnKeys().isEmpty()){					
 			
 			for(QName attribute : classMapping.getNodeColumnKeys()){
 				
@@ -941,7 +941,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		else{
 		
 			// nodeColumnKeys, take the first
-			if(classMapping != null && classMapping.getNodeColumnKeys() != null && classMapping.getNodeColumnKeys().size() > 0){
+			if(classMapping != null && classMapping.getNodeColumnKeys() != null && !classMapping.getNodeColumnKeys().isEmpty()){
 				
 				for(QName attribute : classMapping.getNodeColumnKeys()){				
 					
@@ -1065,7 +1065,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 
 		List<NodeRef> nodes = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
-		if (nodes.size() > 0) {
+		if (!nodes.isEmpty()) {
 			return nodes.get(0);
 		}
 

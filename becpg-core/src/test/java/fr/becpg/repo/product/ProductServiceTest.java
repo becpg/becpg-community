@@ -49,7 +49,7 @@ import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -232,14 +232,14 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 				/*-- Create raw material Tpl --*/
 				logger.debug("/*-- Create raw material Tpl --*/");
-				entityTplService.createEntityTpl(entityTplsFolder, BeCPGModel.TYPE_RAWMATERIAL, true, null);
+				entityTplService.createEntityTpl(entityTplsFolder, BeCPGModel.TYPE_RAWMATERIAL, true,null);
 
 				/*-- Create finished product Tpl with product folder and product image --*/
 				logger.debug("/*-- Create finished product Tpl --*/");
 
-				NodeRef folderTplFolder = entityTplService.createFolderTpl(folderTplsFolder, BeCPGModel.TYPE_FINISHEDPRODUCT, true, null);
+				NodeRef folderTplFolder = entityTplService.createFolderTpl(folderTplsFolder, BeCPGModel.TYPE_FINISHEDPRODUCT, true,null);
 
-				entityTplService.createEntityTpl(entityTplsFolder, BeCPGModel.TYPE_FINISHEDPRODUCT, true, null);
+				entityTplService.createEntityTpl(entityTplsFolder, BeCPGModel.TYPE_FINISHEDPRODUCT, true,null);
 
 				NodeRef imagesFolder = fileFolderService.create(folderTplFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
 				addProductImage(imagesFolder);
@@ -272,7 +272,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial = new RawMaterialData();
 				rawMaterial.setName("Raw material");
-				NodeRef rawMaterialNodeRef = productDAO.create(testFolderNodeRef, rawMaterial, null);
+				NodeRef rawMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial).getNodeRef();
 				// productService.initializeProductFolder(rawMaterialNodeRef);
 
 				return rawMaterialNodeRef;
@@ -293,7 +293,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				logger.debug("/*-- Create finished product --*/");
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Finished Product");
-				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, null);
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 				// productService.initializeProductFolder(finishedProductNodeRef);
 
 				return finishedProductNodeRef;
@@ -378,7 +378,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				rawMaterial.setHierarchy1(HIERARCHY1_FROZEN_REF);
 				rawMaterial.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				rawMaterial.setState(SystemState.Valid);
-				return productDAO.create(testFolderNodeRef, rawMaterial, null);
+				return alfrescoRepository.create(testFolderNodeRef, rawMaterial).getNodeRef();
 				
 			}
 		}, false, true);
@@ -434,7 +434,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				rawMaterial2.setHierarchy1(HIERARCHY1_FROZEN_REF);
 				rawMaterial2.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				rawMaterial2.setState(SystemState.Valid);
-				return productDAO.create(testFolderNodeRef, rawMaterial2, null);
+				return alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
 				
 			}
 		}, false, true);
@@ -486,14 +486,14 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial = new RawMaterialData();
 				rawMaterial.setName("Raw material");
-				NodeRef rawMaterialNodeRef = productDAO.create(testFolderNodeRef, rawMaterial, null);
-				LocalSemiFinishedProduct lSF1 = new LocalSemiFinishedProduct();
+				NodeRef rawMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial).getNodeRef();
+				LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
 				lSF1.setName("Local semi finished 1");
-				NodeRef lSF1NodeRef = productDAO.create(testFolderNodeRef, lSF1, null);
+				NodeRef lSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF1).getNodeRef();
 
-				LocalSemiFinishedProduct lSF2 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData lSF2 = new LocalSemiFinishedProductData();
 				lSF2.setName("Local semi finished 2");
-				NodeRef lSF2NodeRef = productDAO.create(testFolderNodeRef, lSF2, null);
+				NodeRef lSF2NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF2).getNodeRef();
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
@@ -506,7 +506,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				finishedProduct.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
 				logger.debug("local semi finished 1: " + lSF1NodeRef);
 				logger.debug("local semi finished 2: " + lSF2NodeRef);
@@ -583,7 +583,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				logger.debug("/*-- Create pkg material --*/");
 				PackagingMaterialData packagingMaterial = new PackagingMaterialData();
 				packagingMaterial.setName("Packaging material");
-				NodeRef packagingMaterialNodeRef = productDAO.create(testFolderNodeRef, packagingMaterial, null);
+				NodeRef packagingMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial).getNodeRef();
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
@@ -595,14 +595,14 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				List<PackagingListDataItem> packagingList1 = new ArrayList<PackagingListDataItem>();
 				packagingList1.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, "Primaire", true, packagingMaterialNodeRef));
 				finishedProduct1.setPackagingList(packagingList1);
-				NodeRef finishedProductNodeRef1 = productDAO.create(testFolderNodeRef, finishedProduct1, dataLists);
+				NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
 
 				FinishedProductData finishedProduct2 = new FinishedProductData();
 				finishedProduct2.setName("Finished Product");
 				List<PackagingListDataItem> packagingList2 = new ArrayList<PackagingListDataItem>();
 				packagingList2.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, "Secondaire", true, packagingMaterialNodeRef));
 				finishedProduct2.setPackagingList(packagingList2);
-				NodeRef finishedProductNodeRef2 = productDAO.create(testFolderNodeRef, finishedProduct2, dataLists);
+				NodeRef finishedProductNodeRef2 = alfrescoRepository.create(testFolderNodeRef, finishedProduct2).getNodeRef();
 
 				List<PackagingListDataItem> wUsedProducts = getWUsedPackagingList(packagingMaterialNodeRef);
 

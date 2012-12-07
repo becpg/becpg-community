@@ -32,7 +32,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.BeCPGListDao;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.data.AbstractProjectData;
 import fr.becpg.repo.project.data.ProjectData;
@@ -43,6 +42,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.test.RepoBaseTestCase;
 
 /**
@@ -58,7 +58,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 	private static Log logger = LogFactory.getLog(ProjectServiceTest.class);
 
 	@Resource
-	private BeCPGListDao<AbstractProjectData> projectDAO;
+	private AlfrescoRepository<AbstractProjectData> alfrescoRepository;
 	@Resource
 	protected MutableAuthenticationService authenticationService;
 	@Resource
@@ -83,7 +83,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-
+				
 				userOne = createUser(USER_ONE);
 				userTwo = createUser(USER_TWO);
 
@@ -92,13 +92,11 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				assigneesTwo = new ArrayList<NodeRef>();
 				assigneesTwo.add(userTwo);
 
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 
 				ProjectTplData projectTplData = new ProjectTplData(null, "Pjt Tpl");
 
 				List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
+		
 				taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0),
 						"activiti$projectAdhoc"));
 				taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0),
@@ -113,19 +111,17 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 						"activiti$projectAdhoc"));
 				projectTplData.setTaskList(taskList);
 
-				List<DeliverableListDataItem> deliverableList = new LinkedList<DeliverableListDataItem>();
-				deliverableList.add(new DeliverableListDataItem(null, null, null, "Deliveray descr 1", 100, null));
-				deliverableList.add(new DeliverableListDataItem(null, null, null, "Deliveray descr 2.1", 30, null));
-				deliverableList.add(new DeliverableListDataItem(null, null, null, "Deliveray descr 2.2", 70, null));
-				deliverableList.add(new DeliverableListDataItem(null, null, null, "Deliveray descr 3", 100, null));
-				projectTplData.setDeliverableList(deliverableList);
+				
+				projectTplData.setParentNodeRef(testFolderNodeRef);
+				projectTplData = (ProjectTplData) alfrescoRepository.save(projectTplData);
 
-				projectTplNodeRef = projectDAO.create(testFolderNodeRef, projectTplData, dataLists);
+				projectTplNodeRef = projectTplData.getNodeRef();
 
 				// update a second time to manage prevTask
 				// TODO : should avoid to save twice
-				projectTplData = (ProjectTplData) projectDAO.find(projectTplNodeRef, dataLists);
+				projectTplData = (ProjectTplData) alfrescoRepository.findOne(projectTplData.getNodeRef());
 				List<NodeRef> prevTasks = new ArrayList<NodeRef>();
+				
 				prevTasks.add(projectTplData.getTaskList().get(0).getNodeRef());
 				projectTplData.getTaskList().get(1).setPrevTasks(prevTasks);
 
@@ -146,12 +142,14 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				prevTasks.add(projectTplData.getTaskList().get(4).getNodeRef());
 				projectTplData.getTaskList().get(5).setPrevTasks(prevTasks);
 
-				projectTplData.getDeliverableList().get(0).setTask(projectTplData.getTaskList().get(0).getNodeRef());
-				projectTplData.getDeliverableList().get(1).setTask(projectTplData.getTaskList().get(1).getNodeRef());
-				projectTplData.getDeliverableList().get(2).setTask(projectTplData.getTaskList().get(1).getNodeRef());
-				projectTplData.getDeliverableList().get(3).setTask(projectTplData.getTaskList().get(2).getNodeRef());
+				List<DeliverableListDataItem> deliverableList = new LinkedList<DeliverableListDataItem>();
+				deliverableList.add(new DeliverableListDataItem(null, projectTplData.getTaskList().get(0).getNodeRef(), null, "Deliveray descr 1", 100, null));
+				deliverableList.add(new DeliverableListDataItem(null, projectTplData.getTaskList().get(1).getNodeRef(), null, "Deliveray descr 2.1", 30, null));
+				deliverableList.add(new DeliverableListDataItem(null, projectTplData.getTaskList().get(1).getNodeRef(), null, "Deliveray descr 2.2", 70, null));
+				deliverableList.add(new DeliverableListDataItem(null, projectTplData.getTaskList().get(2).getNodeRef(), null, "Deliveray descr 3", 100, null));
+				projectTplData.setDeliverableList(deliverableList);
 
-				projectDAO.update(projectTplNodeRef, projectTplData, dataLists);
+				alfrescoRepository.save( projectTplData);
 
 				return null;
 			}
@@ -185,20 +183,21 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 					@Override
 					public NodeRef execute() throws Throwable {
 
-						Collection<QName> dataLists = new ArrayList<QName>();
-
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
 								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
 
-						return projectDAO.create(testFolderNodeRef, projectData, dataLists);
+						projectData.setParentNodeRef(testFolderNodeRef);
+						
+						projectData = (ProjectData) alfrescoRepository.save(projectData);
+						return projectData.getNodeRef();
 					}
 				}, false, true);
 
 		assertTrue(nodeService.hasAspect(rawMaterialNodeRef, ProjectModel.ASPECT_PROJECT_ASPECT));
 		assertEquals(projectNodeRef, associationService.getTargetAssoc(rawMaterialNodeRef, ProjectModel.ASSOC_PROJECT));
 	}
-
+	
 	/**
 	 * Test a project create InProgress start automatically
 	 */
@@ -212,15 +211,14 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 					@Override
 					public NodeRef execute() throws Throwable {
 
-						Collection<QName> dataLists = new ArrayList<QName>();
-
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
 								null, null, 2, ProjectState.InProgress, projectTplNodeRef, 0, rawMaterialNodeRef);
 
-						NodeRef p = projectDAO.create(testFolderNodeRef, projectData, dataLists);
-
-						return p;
+						projectData.setParentNodeRef(testFolderNodeRef);
+						
+						projectData = (ProjectData) alfrescoRepository.save(projectData);
+						return projectData.getNodeRef();
 					}
 				}, false, true);
 
@@ -228,11 +226,9 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				
 
 				assertNotNull(projectData);
 				assertNotNull(projectData.getTaskList());
@@ -250,7 +246,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			}
 		}, false, true);
 	}
-
+	
 	/**
 	 * Test a project can be cancelled (and workflow)
 	 */
@@ -264,15 +260,14 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 					@Override
 					public NodeRef execute() throws Throwable {
 
-						Collection<QName> dataLists = new ArrayList<QName>();
-
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
 								null, null, 2, ProjectState.InProgress, projectTplNodeRef, 0, rawMaterialNodeRef);
 
-						NodeRef p = projectDAO.create(testFolderNodeRef, projectData, dataLists);
-
-						return p;
+						projectData.setParentNodeRef(testFolderNodeRef);
+						
+						projectData = (ProjectData) alfrescoRepository.save(projectData);
+						return projectData.getNodeRef();
 					}
 				}, false, true);
 
@@ -280,22 +275,16 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 				// check workflow instance is active
-				assertEquals(true,
-						workflowService.getWorkflowById(projectData.getTaskList().get(0).getWorkflowInstance())
-								.isActive());
-
+				assertEquals(true, workflowService.getWorkflowById(projectData.getTaskList().get(0).getWorkflowInstance()).isActive());
+				
 				// cancel project and check wf are not active
-				logger.debug("projectData.getTaskList().get(0).getWorkflowInstance(): "
-						+ projectData.getTaskList().get(0).getWorkflowInstance());
+				logger.debug("projectData.getTaskList().get(0).getWorkflowInstance(): " + projectData.getTaskList().get(0).getWorkflowInstance());
 				projectService.cancel(projectNodeRef);
-				assertEquals(null,
-						workflowService.getWorkflowById(projectData.getTaskList().get(0).getWorkflowInstance()));
+				assertEquals(null, workflowService.getWorkflowById(projectData.getTaskList().get(0).getWorkflowInstance()));
 
 				return null;
 			}
@@ -312,15 +301,16 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 					@Override
 					public NodeRef execute() throws Throwable {
 
-						Collection<QName> dataLists = new ArrayList<QName>();
-
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
-								null, null, 2, ProjectState.InProgress, projectTplNodeRef, 0, rawMaterialNodeRef);
+								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
 
-						NodeRef p = projectDAO.create(testFolderNodeRef, projectData, dataLists);
-						projectService.formulate(p);
-						return p;
+						projectData.setParentNodeRef(testFolderNodeRef);
+						
+						projectData = (ProjectData) alfrescoRepository.save(projectData);
+						
+						projectService.formulate(projectData.getNodeRef());
+						return projectData.getNodeRef();
 					}
 				}, false, true);
 
@@ -328,11 +318,8 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 
-				ProjectTplData projectTplData = (ProjectTplData) projectDAO.find(projectTplNodeRef, dataLists);
+				ProjectTplData projectTplData = (ProjectTplData) alfrescoRepository.findOne(projectTplNodeRef);
 
 				assertNotNull(projectTplData);
 				assertNotNull(projectTplData.getTaskList());
@@ -340,7 +327,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				assertNotNull(projectTplData.getDeliverableList());
 				assertEquals(4, projectTplData.getDeliverableList().size());
 
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 				assertNotNull(projectData);
 				assertNotNull(projectData.getTaskList());
@@ -357,7 +344,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				// submit task 1st task
 				projectData.getDeliverableList().get(0).setState(DeliverableState.Completed);
 				projectData.getTaskList().get(0).setState(TaskState.Completed);
-				projectDAO.update(projectNodeRef, projectData, dataLists);
+				alfrescoRepository.save( projectData);
 
 				return null;
 			}
@@ -368,11 +355,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				// check
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
-
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 				assertNotNull(projectData);
 				assertNotNull(projectData.getTaskList());
@@ -392,7 +375,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 
 				// submit deliverable 2
 				projectData.getDeliverableList().get(1).setState(DeliverableState.Completed);
-				projectDAO.update(projectNodeRef, projectData, dataLists);
+				alfrescoRepository.save( projectData);
 
 				return null;
 			}
@@ -402,11 +385,8 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 				// check completion percent of task 2 is 30%
 				assertEquals(30, projectData.getTaskList().get(1).getCompletionPercent().intValue());
@@ -440,11 +420,8 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 				// check task 2 is Completed
 				assertEquals(TaskState.Completed, projectData.getTaskList().get(1).getState());
@@ -456,8 +433,8 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(3).getState());
 
 				// reopen deliverables
-				nodeService.setProperty(projectData.getDeliverableList().get(1).getNodeRef(),
-						ProjectModel.PROP_DL_STATE, DeliverableState.InProgress);
+				projectData.getDeliverableList().get(1).setState(DeliverableState.InProgress);
+				alfrescoRepository.save( projectData);
 
 				return null;
 			}
@@ -467,11 +444,8 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 				// check task 2
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getState());
@@ -486,9 +460,9 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			}
 		}, false, true);
 	}
-
+	
 	@Test
-	public void testCalculateNextDate() throws ParseException {
+	public void testCalculateNextDate() throws  ParseException {
 
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		Date date = dateFormat.parse("15/11/2012");
@@ -526,29 +500,31 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				new RetryingTransactionCallback<NodeRef>() {
 					@Override
 					public NodeRef execute() throws Throwable {
-
-						Collection<QName> dataLists = new ArrayList<QName>();
-
 						Date startDate = dateFormat.parse("15/11/2012");
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, startDate,
 								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
-
-						return projectDAO.create(testFolderNodeRef, projectData, dataLists);
+						projectData.setParentNodeRef(testFolderNodeRef);
+						
+						projectData  = (ProjectData) alfrescoRepository.save(projectData);
+						logger.info("Create : "+projectData.toString());
+						
+						return projectData.getNodeRef();
 					}
 				}, false, true);
 
+		
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
-
+				
 				projectService.formulate(projectNodeRef);
-
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);	
+				
+				logger.info("Load : "+projectData.toString());
 
 				// check initialization
 				assertNotNull(projectData);
@@ -570,11 +546,11 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				// modify some tasks
 				projectData.setStartDate(dateFormat.parse("19/11/2012"));
 				projectData.getTaskList().get(1).setDuration(4);
-				projectDAO.update(projectNodeRef, projectData, dataLists);
-				projectService.formulate(projectNodeRef);
+				alfrescoRepository.save(projectData);
+				projectService.formulate(projectNodeRef);													
 
 				// check
-				projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 				assertEquals(dateFormat.parse("19/11/2012"), projectData.getTaskList().get(0).getStart());
 				assertEquals(dateFormat.parse("20/11/2012"), projectData.getTaskList().get(0).getEnd());
 				assertEquals(dateFormat.parse("21/11/2012"), projectData.getTaskList().get(1).getStart());
@@ -585,7 +561,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				// start project
 				logger.debug("###start project");
 				projectData.setProjectState(ProjectState.InProgress);
-				projectDAO.update(projectNodeRef, projectData, dataLists);
+				alfrescoRepository.save(projectData);
 
 				return null;
 			}
@@ -599,16 +575,15 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);	
 
-				projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
 				assertEquals(ProjectHelper.removeTime(new Date()), projectData.getTaskList().get(0).getStart());
 
 				// submit 1st task
 				logger.debug("###submit 1st task. current state: " + projectData.getTaskList().get(0).getState());
 				projectData.getTaskList().get(0).setState(TaskState.Completed);
-				projectDAO.update(projectNodeRef, projectData, dataLists);
-
+				alfrescoRepository.save(projectData);
+				
 				return null;
 			}
 		}, false, true);
@@ -617,11 +592,9 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
+				projectService.formulate(projectNodeRef);
 
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);								
 
 				// check
 				assertEquals(ProjectHelper.removeTime(new Date()), projectData.getTaskList().get(0).getEnd());
@@ -630,8 +603,8 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				// submit 2nd task
 				logger.debug("submit 2nd task");
 				projectData.getTaskList().get(1).setState(TaskState.Completed);
-				projectDAO.update(projectNodeRef, projectData, dataLists);
-
+				alfrescoRepository.save(projectData);				
+				
 				return null;
 			}
 		}, false, true);
@@ -640,14 +613,10 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
-
 				projectService.formulate(projectNodeRef);
-
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
-
+				
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);	
+				
 				// check
 				assertEquals(ProjectHelper.removeTime(new Date()), projectData.getTaskList().get(1).getEnd());
 				assertEquals(ProjectHelper.removeTime(new Date()), projectData.getTaskList().get(2).getStart());
@@ -655,24 +624,21 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				// submit 3rd task
 				logger.debug("submit 3rd task");
 				projectData.getTaskList().get(2).setState(TaskState.Completed);
-				projectDAO.update(projectNodeRef, projectData, dataLists);
-
+				alfrescoRepository.save( projectData);
+				
 				return null;
 			}
 		}, false, true);
-
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
-
+				
 				projectService.formulate(projectNodeRef);
-
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
-
+				
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);	
+				
 				// check
 				assertEquals(ProjectHelper.removeTime(new Date()), projectData.getTaskList().get(2).getEnd());
 				assertEquals(ProjectHelper.removeTime(new Date()), projectData.getTaskList().get(3).getStart());
@@ -680,8 +646,8 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				// submit 4th task
 				logger.debug("submit 4th task");
 				projectData.getTaskList().get(3).setState(TaskState.Completed);
-				projectDAO.update(projectNodeRef, projectData, dataLists);
-
+				alfrescoRepository.save(projectData);
+				
 				return null;
 			}
 		}, false, true);
@@ -696,7 +662,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 
 				projectService.formulate(projectNodeRef);
 
-				ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);	
 
 				// check
 				assertEquals(ProjectHelper.removeTime(new Date()), projectData.getTaskList().get(3).getEnd());

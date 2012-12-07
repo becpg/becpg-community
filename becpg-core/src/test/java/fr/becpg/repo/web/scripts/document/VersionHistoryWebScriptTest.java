@@ -18,8 +18,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
-import fr.becpg.repo.product.ProductDAO;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * The Class VersionHistoryWebScriptTest.
@@ -50,7 +51,7 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
     private AuthenticationComponent authenticationComponent;
     
     /** The product dao. */
-    private ProductDAO productDAO;
+    private AlfrescoRepository<ProductData> alfrescoRepository;
     
     /** The transaction service. */
     private TransactionService transactionService;    
@@ -72,7 +73,7 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
 		nodeService = (NodeService) getServer().getApplicationContext().getBean("nodeService");
 		fileFolderService = (FileFolderService) getServer().getApplicationContext().getBean("fileFolderService");		
 		authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
-		productDAO = (ProductDAO) getServer().getApplicationContext().getBean("productDAO");
+		alfrescoRepository = (AlfrescoRepository) getServer().getApplicationContext().getBean("alfrescoRepository");
 		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
 		repositoryHelper = (Repository) getServer().getApplicationContext().getBean("repositoryHelper");
 		checkOutCheckInService = (CheckOutCheckInService) getServer().getApplicationContext().getBean("checkOutCheckInService");
@@ -124,7 +125,7 @@ public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
 	 				logger.debug("/*-- Create raw material --*/");
 	 				RawMaterialData rawMaterial = new RawMaterialData();
 	 				rawMaterial.setName("Raw material");
-	 				rawMaterialNodeRef = productDAO.create(tempFolder, rawMaterial, null);	 					
+	 				rawMaterialNodeRef = alfrescoRepository.create(tempFolder, rawMaterial).getNodeRef();	 					
 	 				
 	 				NodeRef checkedOutNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
 	 				NodeRef checkedInNodeRef = checkOutCheckInService.checkin(checkedOutNodeRef, null);

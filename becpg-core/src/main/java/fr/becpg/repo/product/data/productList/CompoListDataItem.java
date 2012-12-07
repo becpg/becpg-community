@@ -9,95 +9,57 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.Leaf;
-import fr.becpg.repo.product.data.AbstractEffectiveDataItem;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 
-/**
- * The Class CompoListDataItem.
- *
- * @author querephi
- */
+@AlfType
+@AlfQname(qname = "bcpg:compoList")
 public class CompoListDataItem extends AbstractEffectiveDataItem {
 
-	/** The node ref. */
-	private NodeRef nodeRef;
 	
-	/** The depth level. */
 	private Integer depthLevel;
 	
-	/** The qty. */
 	private Double qty = 0d;
 		
 	private Double qtySubFormula = null;
 	
 	private Double qtyAfterProcess = null;
 	
-	/** The compo list unit. */
 	private CompoListUnit compoListUnit = CompoListUnit.Unknown;
 	
 	private Double lossPerc = 0d;
 	
 	private Double yieldPerc = null;
 	
-	/** The decl type. */
 	private DeclarationType declType = DeclarationType.Declare;			
 	
-	/** The product. */
 	private NodeRef product;
 	
-	/**
-	 * Gets the node ref.
-	 *
-	 * @return the node ref
-	 */
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
 	
-	/**
-	 * Sets the node ref.
-	 *
-	 * @param nodeRef the new node ref
-	 */
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-	
-	/**
-	 * Gets the depth level.
-	 *
-	 * @return the depth level
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:depthLevel")
 	public Integer getDepthLevel() {
 		return depthLevel;
 	}
 	
-	/**
-	 * Sets the depth level.
-	 *
-	 * @param depthLevel the new depth level
-	 */
 	public void setDepthLevel(Integer depthLevel) {
 		this.depthLevel = depthLevel;
 	}
 	
-	/**
-	 * Gets the qty.
-	 *
-	 * @return the qty
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:compoListQty")
 	public Double getQty() {
 		return qty;
 	}
 	
-	/**
-	 * Sets the qty.
-	 *
-	 * @param qty the new qty
-	 */
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
-		
+	@AlfProp
+	@AlfQname(qname="bcpg:compoListQtySubFormula")	
 	public Double getQtySubFormula() {
 		return qtySubFormula;
 	}
@@ -105,7 +67,8 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	public void setQtySubFormula(Double qtySubFormula) {
 		this.qtySubFormula = qtySubFormula;
 	}
-		
+	@AlfProp
+	@AlfQname(qname="bcpg:compoListQtyAfterProcess")	
 	public Double getQtyAfterProcess() {
 		return qtyAfterProcess;
 	}
@@ -114,24 +77,19 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 		this.qtyAfterProcess = qtyAfterProcess;
 	}
 
-	/**
-	 * Gets the compo list unit.
-	 *
-	 * @return the compo list unit
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:compoListUnit")
 	public CompoListUnit getCompoListUnit() {
 		return compoListUnit;
 	}
 	
-	/**
-	 * Sets the compo list unit.
-	 *
-	 * @param compoListUnit the new compo list unit
-	 */
+	
 	public void setCompoListUnit(CompoListUnit compoListUnit) {
 		this.compoListUnit = compoListUnit;
 	}
-		
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:compoListLossPerc")
 	public Double getLossPerc() {
 		return lossPerc;
 	}
@@ -140,6 +98,8 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 		this.lossPerc = lossPerc;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:compoListYieldPerc")
 	public Double getYieldPerc() {
 		return yieldPerc;
 	}
@@ -148,38 +108,23 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 		this.yieldPerc = yieldPerc;
 	}
 
-	/**
-	 * Gets the decl type.
-	 *
-	 * @return the decl type
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:compoListDeclType")
 	public DeclarationType getDeclType() {
 		return declType;
 	}
 	
-	/**
-	 * Sets the decl type.
-	 *
-	 * @param declType the new decl type
-	 */
+
 	public void setDeclType(DeclarationType declType) {
 		this.declType = declType;
 	}
 	
-	/**
-	 * Gets the product.
-	 *
-	 * @return the product
-	 */
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:compoListProduct")
 	public NodeRef getProduct() {
 		return product;
 	}
 	
-	/**
-	 * Sets the product.
-	 *
-	 * @param product the new product
-	 */
 	public void setProduct(NodeRef product) {
 		this.product = product;
 	}	

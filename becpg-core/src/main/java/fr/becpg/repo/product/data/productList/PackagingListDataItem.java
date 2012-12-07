@@ -5,19 +5,16 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.AbstractEffectiveDataItem;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 
-/**
- * The Class PackagingListDataItem.
- *
- * @author querephi
- */
+@AlfType
+@AlfQname(qname = "bcpg:packagingList")
 public class PackagingListDataItem extends AbstractEffectiveDataItem {
 
-	/** The node ref. */
-	private NodeRef nodeRef;
-	
-	/** The qty. */
 	private Double qty = 0d;
 	
 	private PackagingListUnit packagingListUnit = PackagingListUnit.Unknown;
@@ -26,17 +23,11 @@ public class PackagingListDataItem extends AbstractEffectiveDataItem {
 	
 	private Boolean isMaster;
 	
-	/** The product. */
 	private NodeRef product;
 	
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
 
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-
+	@AlfProp
+	@AlfQname(qname="bcpg:packagingListQty")
 	public Double getQty() {
 		return qty;
 	}
@@ -45,6 +36,8 @@ public class PackagingListDataItem extends AbstractEffectiveDataItem {
 		this.qty = qty;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:packagingListUnit")
 	public PackagingListUnit getPackagingListUnit() {
 		return packagingListUnit;
 	}
@@ -53,6 +46,8 @@ public class PackagingListDataItem extends AbstractEffectiveDataItem {
 		this.packagingListUnit = packagingListUnit;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:packagingListPkgLevel")
 	public String getPkgLevel() {
 		return pkgLevel;
 	}
@@ -61,6 +56,8 @@ public class PackagingListDataItem extends AbstractEffectiveDataItem {
 		this.pkgLevel = pkgLevel;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:packagingListIsMaster")
 	public Boolean getIsMaster() {
 		return isMaster;
 	}
@@ -69,20 +66,13 @@ public class PackagingListDataItem extends AbstractEffectiveDataItem {
 		this.isMaster = isMaster;
 	}
 
-	/**
-	 * Gets the product.
-	 *
-	 * @return the product
-	 */
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:packagingListProduct")
 	public NodeRef getProduct() {
 		return product;
 	}
 	
-	/**
-	 * Sets the product.
-	 *
-	 * @param product the new product
-	 */
+	
 	public void setProduct(NodeRef product) {
 		this.product = product;
 	}	

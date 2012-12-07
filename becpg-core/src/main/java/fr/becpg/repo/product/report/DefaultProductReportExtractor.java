@@ -2,11 +2,9 @@ package fr.becpg.repo.product.report;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
@@ -27,9 +25,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductDictionaryService;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -43,6 +39,8 @@ import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.report.entity.impl.AbstractEntityReportExtractor;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 public class DefaultProductReportExtractor extends AbstractEntityReportExtractor {
 
@@ -119,7 +117,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	private static final String ATTR_ALLERGENS = "allergens";
 	private static final String ATTR_IMAGE_ID = "id";
 
-	protected ProductDAO productDAO;
+	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
 	protected ProductDictionaryService productDictionaryService;
 	
@@ -127,12 +125,9 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	
 	private FileFolderService fileFolderService;
 
-	/**
-	 * @param productDAO
-	 *            the productDAO to set
-	 */
-	public void setProductDAO(ProductDAO productDAO) {
-		this.productDAO = productDAO;
+
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	/**
@@ -200,7 +195,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
 
 		// TODO make it more generic!!!!
-		ProductData productData = productDAO.find(entityNodeRef, productDictionaryService.getDataLists());
+		ProductData productData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
 
 		// allergen
 		if (productData.getAllergenList() != null) {
@@ -351,8 +346,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				ingElt.addAttribute(BeCPGModel.PROP_INGLIST_QTY_PERC.getLocalName(), dataItem.getQtyPerc() == null ? VALUE_NULL : Double.toString(dataItem.getQtyPerc()));
 				ingElt.addAttribute(BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN.getLocalName(), geoOrigins);
 				ingElt.addAttribute(BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN.getLocalName(), bioOrigins);
-				ingElt.addAttribute(BeCPGModel.PROP_INGLIST_IS_GMO.getLocalName(), Boolean.toString(dataItem.isGMO()));
-				ingElt.addAttribute(BeCPGModel.PROP_INGLIST_IS_IONIZED.getLocalName(), Boolean.toString(dataItem.isIonized()));
+				ingElt.addAttribute(BeCPGModel.PROP_INGLIST_IS_GMO.getLocalName(), Boolean.toString(dataItem.getIsGMO()));
+				ingElt.addAttribute(BeCPGModel.PROP_INGLIST_IS_IONIZED.getLocalName(), Boolean.toString(dataItem.getIsIonized()));
 				ingElt.addAttribute(BeCPGModel.PROP_ING_CEECODE.getLocalName(), ingCEECode);
 			}
 		}
@@ -425,13 +420,12 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 		// MicrobioList
 		List<AssociationRef> microbioAssocRefs = nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
-		if (microbioAssocRefs.size() > 0) {
+		if (!microbioAssocRefs.isEmpty()) {
 			NodeRef productMicrobioCriteriaNodeRef = microbioAssocRefs.get(0).getTargetRef();
 
 			if (productMicrobioCriteriaNodeRef != null) {
-				Set<QName> pmcdataLists = new HashSet<QName>();
-				pmcdataLists.add(BeCPGModel.TYPE_MICROBIOLIST);
-				ProductData pmcData = productDAO.find(productMicrobioCriteriaNodeRef, pmcdataLists);
+	
+				ProductData pmcData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);
 
 				if (pmcData.getMicrobioList() != null) {
 
@@ -537,9 +531,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	// manage 2 level depth
 	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt) {
 
-		Set<QName> datalistQNames = new HashSet<QName>();
-		datalistQNames.add(BeCPGModel.TYPE_PACKAGINGLIST);
-		ProductData packagingKitData = productDAO.find(dataItem.getProduct(), datalistQNames);
+		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 		boolean isPallet = nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET);
 		Element palletElt = null;
 

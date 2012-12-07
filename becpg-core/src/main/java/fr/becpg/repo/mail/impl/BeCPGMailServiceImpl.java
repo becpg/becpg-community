@@ -147,7 +147,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			public NodeRef getData() {
 
 				List<NodeRef> listItems = beCPGSearchService.luceneSearch(EMAIL_TEMPLATES_PATH_QUERY);
-				return listItems.size() > 0 ? listItems.get(0) : null;
+				return listItems!=null && !listItems.isEmpty() ? listItems.get(0) : null;
 			}
 		});
 	}
@@ -163,7 +163,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 				NodeRef folderNodeRef = null;
 				List<NodeRef> listItems = beCPGSearchService.luceneSearch(EMAIL_WORKFLOW_TEMPLATES_PATH_QUERY);
 
-				if (listItems.size() > 0) {
+				if (!listItems.isEmpty()) {
 					folderNodeRef = listItems.get(0);
 				} else {
 					// create folder

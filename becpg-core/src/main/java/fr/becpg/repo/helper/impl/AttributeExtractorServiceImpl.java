@@ -38,13 +38,13 @@ import org.springframework.util.StopWatch;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.security.SecurityService;
 
 @Service
@@ -177,10 +177,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			if (propertyDef.getName().equals(BeCPGModel.PROP_PRODUCT_STATE)) {
 
-				value = TranslateHelper.getTranslatedProductState(ProductData.getSystemState((String) v));
+				value = TranslateHelper.getTranslatedProductState(SystemState.getSystemState((String) v));
 			}
 			// translate constraints (not cm:name)
-			else if (!propertyDef.getName().isMatch(ContentModel.PROP_NAME) && propertyDef.getConstraints().size() > 0) {
+			else if (!propertyDef.getName().isMatch(ContentModel.PROP_NAME) && !propertyDef.getConstraints().isEmpty()) {
 
 				value = TranslateHelper.getConstraint(propertyDef.getName(), (String) v, propertyFormats.isUseDefaultLocale());
 			} else if (propertyDef.isMultiValued()) {

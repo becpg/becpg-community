@@ -21,8 +21,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.TestWebScriptServer.PostRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
-import fr.becpg.repo.product.ProductDAO;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -45,7 +46,7 @@ public class CheckOutCheckInWebScriptTest extends BaseWebScriptTest{
     private AuthenticationComponent authenticationComponent;
     
     /** The product dao. */
-    private ProductDAO productDAO;
+    private AlfrescoRepository<ProductData> alfrescoRepository;
     
     /** The transaction service. */
     private TransactionService transactionService;
@@ -74,7 +75,7 @@ public class CheckOutCheckInWebScriptTest extends BaseWebScriptTest{
 	
 		fileFolderService = (FileFolderService) getServer().getApplicationContext().getBean("fileFolderService");		
 		authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
-		productDAO = (ProductDAO) getServer().getApplicationContext().getBean("productDAO");
+		alfrescoRepository = (AlfrescoRepository) getServer().getApplicationContext().getBean("alfrescoRepository");
 		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
 		repositoryHelper = (Repository) getServer().getApplicationContext().getBean("repositoryHelper");
 		nodeService = (NodeService) getServer().getApplicationContext().getBean("nodeService");
@@ -119,7 +120,7 @@ public class CheckOutCheckInWebScriptTest extends BaseWebScriptTest{
 	 				logger.debug("/*-- Create raw material --*/");
 	 				RawMaterialData rawMaterial = new RawMaterialData();
 	 				rawMaterial.setName("Raw material");
-	 				rawMaterialNodeRef = productDAO.create(tempFolder, rawMaterial, null);	 					 				 		 				
+	 				rawMaterialNodeRef = alfrescoRepository.create(tempFolder, rawMaterial).getNodeRef();	 					 				 		 				
 	 				
 					return null;
 
@@ -181,7 +182,7 @@ public class CheckOutCheckInWebScriptTest extends BaseWebScriptTest{
 	 				logger.debug("/*-- Create raw material --*/");
 	 				RawMaterialData rawMaterial = new RawMaterialData();
 	 				rawMaterial.setName("Raw material");
-	 				rawMaterialNodeRef = productDAO.create(tempFolder, rawMaterial, null);	 					 				 	
+	 				rawMaterialNodeRef = alfrescoRepository.create(tempFolder, rawMaterial).getNodeRef();	 					 				 	
 	 				
 					return null;
 

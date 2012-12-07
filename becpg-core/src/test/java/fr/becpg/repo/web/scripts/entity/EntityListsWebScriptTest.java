@@ -5,7 +5,6 @@ package fr.becpg.repo.web.scripts.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +28,12 @@ import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * The Class EntityListsWebScriptTest.
@@ -63,11 +62,10 @@ public class EntityListsWebScriptTest extends BaseWebScriptTest{
     /** The authentication component. */
     private AuthenticationComponent authenticationComponent;
     
+
     /** The product dao. */
-    private ProductDAO productDAO;
+    private AlfrescoRepository<ProductData> alfrescoRepository;
     
-    /** The product dictionary service. */
-    private ProductDictionaryService productDictionaryService;
     
     /** The transaction service. */
     private TransactionService transactionService;
@@ -91,8 +89,7 @@ public class EntityListsWebScriptTest extends BaseWebScriptTest{
 		nodeService = (NodeService)getServer().getApplicationContext().getBean("NodeService");
 		fileFolderService = (FileFolderService)getServer().getApplicationContext().getBean("FileFolderService");		
 		authenticationComponent = (AuthenticationComponent)getServer().getApplicationContext().getBean("authenticationComponent");
-		productDAO = (ProductDAO)getServer().getApplicationContext().getBean("productDAO");
-		productDictionaryService = (ProductDictionaryService)getServer().getApplicationContext().getBean("productDictionaryService");
+		alfrescoRepository = (AlfrescoRepository) getServer().getApplicationContext().getBean("alfrescoRepository");
 		transactionService = (TransactionService)getServer().getApplicationContext().getBean("transactionService");
 		repositoryHelper = (Repository)getServer().getApplicationContext().getBean("repositoryHelper");
 		
@@ -157,7 +154,6 @@ public class EntityListsWebScriptTest extends BaseWebScriptTest{
 					NodeRef nut1 = nodeService.createNode(tempFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();		
 					
 					/*-- Create raw material Tpl --*/
-					Collection<QName> dataLists = productDictionaryService.getDataLists();
 					logger.debug("/*-- Create raw material Tpl --*/");
 					RawMaterialData rawMaterialTpl = new RawMaterialData();
 					rawMaterialTpl.setName("Raw material Tpl");
@@ -169,19 +165,19 @@ public class EntityListsWebScriptTest extends BaseWebScriptTest{
 					nutList.add(new NutListDataItem(null, 1d, "kJ/100g", 0d,  0d, "Groupe 1", nut1, false));
 					rawMaterialTpl.setNutList(nutList);		
 					
-					productDAO.create(productTemplateFolder, rawMaterialTpl, dataLists);
+					alfrescoRepository.create(productTemplateFolder, rawMaterialTpl).getNodeRef();
 					
 					/*-- Create raw material --*/
 					logger.debug("/*-- Create raw material --*/");
 					RawMaterialData rawMaterial = new RawMaterialData();
 					rawMaterial.setName("Raw material");
-					rawMaterialNodeRef = productDAO.create(tempFolder, rawMaterial, dataLists);
+					rawMaterialNodeRef = alfrescoRepository.create(tempFolder, rawMaterial).getNodeRef();
 					
 					/*-- Create finished product --*/
 					logger.debug("/*-- Create finished product --*/");
 					FinishedProductData finishedProduct = new FinishedProductData();
 					finishedProduct.setName("Finished Product");
-					finishedProductNodeRef = productDAO.create(tempFolder, finishedProduct, dataLists);
+					finishedProductNodeRef = alfrescoRepository.create(tempFolder, finishedProduct).getNodeRef();
 
 					return null;
 

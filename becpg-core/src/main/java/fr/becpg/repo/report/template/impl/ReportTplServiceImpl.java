@@ -114,7 +114,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 		}
 		
         List<NodeRef> tplsNodeRef = beCPGSearchService.luceneSearch(query, new HashMap<String, Boolean>(), RepoConsts.MAX_RESULTS_SINGLE_VALUE);       
-        return tplsNodeRef.size() > 0 ? tplsNodeRef.get(0) : null;        
+        return !tplsNodeRef.isEmpty() ? tplsNodeRef.get(0) : null;        
 	}
 	
 	/**
@@ -164,7 +164,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 		}
 		
 		List<NodeRef> tplsNodeRef = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		return tplsNodeRef.size() > 0 ? tplsNodeRef.get(0) : null;		
+		return !tplsNodeRef.isEmpty() ? tplsNodeRef.get(0) : null;		
 	}
 	
 	/**
@@ -319,7 +319,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 		}
 		
 		// no user default tpl, take the first system default
-		if(userDefaultTplNodeRef == null && defaultTplsNodeRef.size() > 0){
+		if(userDefaultTplNodeRef == null && !defaultTplsNodeRef.isEmpty()){
 			userDefaultTplNodeRef = defaultTplsNodeRef.get(0);
 			defaultTplsNodeRef.remove(0);
 		}

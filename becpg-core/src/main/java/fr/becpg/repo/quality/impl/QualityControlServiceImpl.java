@@ -3,23 +3,19 @@ package fr.becpg.repo.quality.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
@@ -32,6 +28,7 @@ import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 public class QualityControlServiceImpl implements QualityControlService {
 
@@ -45,7 +42,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 	private BeCPGDao<ControlPlanData> controlPlanDAO;
 	private BeCPGDao<ControlPointData> controlPointDAO;
 	private BeCPGDao<WorkItemAnalysisData> workItemAnalysisDAO;
-	private ProductDAO productDAO;
+	private AlfrescoRepository<ProductData> alfrescoRepository;
 	private RepoService repoService;
 		
 	public void setNodeService(NodeService nodeService) {
@@ -77,12 +74,13 @@ public class QualityControlServiceImpl implements QualityControlService {
 		this.workItemAnalysisDAO = workItemAnalysisDAO;
 	}
 
-
-
-	public void setProductDAO(ProductDAO productDAO) {
-		this.productDAO = productDAO;
-	}
 	
+
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
+
+
 
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
@@ -103,20 +101,16 @@ public class QualityControlServiceImpl implements QualityControlService {
 		if(qualityControlData.getProduct() != null){
 		
 			logger.debug("createSamplingList - load product");
-			
-			Set<QName> productLists = new HashSet<QName>();
-			productLists.add(BeCPGModel.TYPE_NUTLIST);
-			productData = productDAO.find(qualityControlData.getProduct(), productLists);
+
+			productData = alfrescoRepository.findOne(qualityControlData.getProduct());
 			
 			// load microbio
 			List<AssociationRef> controlPointAssocRefs = nodeService.getTargetAssocs(qualityControlData.getProduct(), BeCPGModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
 			
 			if(!controlPointAssocRefs.isEmpty()){
-				productLists.clear();
-				productLists.add(BeCPGModel.TYPE_MICROBIOLIST);
 				NodeRef productMicrobioCriteriaNodeRef = (controlPointAssocRefs.get(0)).getTargetRef();
 				
-				productMicrobioCriteriaData = productDAO.find(productMicrobioCriteriaNodeRef, productLists);				
+				productMicrobioCriteriaData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);				
 				productData.setMicrobioList(productMicrobioCriteriaData.getMicrobioList());
 			}			
 		}		

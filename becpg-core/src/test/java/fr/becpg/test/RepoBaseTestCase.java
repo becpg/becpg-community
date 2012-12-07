@@ -5,7 +5,6 @@ package fr.becpg.test;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,17 +50,17 @@ import fr.becpg.repo.admin.InitVisitor;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductDAO;
-import fr.becpg.repo.product.ProductDictionaryService;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.charact.AllergenType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
+import fr.becpg.repo.product.data.productList.AllergenType;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.hierarchy.HierarchyHelper;
 import fr.becpg.repo.product.hierarchy.HierarchyService;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -134,13 +133,10 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 	protected FileFolderService fileFolderService;
 
 	@Resource
-	protected ProductDAO productDAO;
+	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
 	@Resource
 	protected DictionaryDAO dictionaryDAO;
-
-	@Resource
-	protected ProductDictionaryService productDictionaryService;
 
 	@Resource
 	protected EntitySystemService entitySystemService;
@@ -546,13 +542,12 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 		}
 		rawMaterial.setOrganoList(organoList);
 
-		Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-		dataLists.add(BeCPGModel.TYPE_COSTLIST);
-		dataLists.add(BeCPGModel.TYPE_INGLIST);
-		dataLists.add(BeCPGModel.TYPE_NUTLIST);
-		dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
-		return productDAO.create(parentNodeRef, rawMaterial, dataLists);
+	
+		
+		rawMaterial.setParentNodeRef(parentNodeRef);
+		rawMaterial = (RawMaterialData) alfrescoRepository.save(rawMaterial);
+		
+		return rawMaterial.getNodeRef();
 
 	}
 

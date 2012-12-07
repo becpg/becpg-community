@@ -58,7 +58,7 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements Node
 						QName pivotCharactAssoc = entityDictionaryService.getDefaultPivotAssoc(dataListItemType);
 						if (pivotCharactAssoc != null) {
 							List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(nodeRef, pivotCharactAssoc);
-							NodeRef charactNodeRef = compoAssocRefs.size() > 0 ? (compoAssocRefs.get(0)).getTargetRef() : null;
+							NodeRef charactNodeRef = compoAssocRefs!=null && !compoAssocRefs.isEmpty() ? (compoAssocRefs.get(0)).getTargetRef() : null;
 							if (charactNodeRef != null && nodeService.hasAspect(charactNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
 								startEffectivity = (Date) nodeService.getProperty(charactNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
 								if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_END_EFFECTIVITY) == null) {

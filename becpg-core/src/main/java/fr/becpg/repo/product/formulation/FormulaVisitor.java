@@ -8,6 +8,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;

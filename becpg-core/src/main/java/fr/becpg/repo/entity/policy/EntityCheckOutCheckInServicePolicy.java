@@ -24,16 +24,11 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
-import fr.becpg.model.MPMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.entity.datalist.WUsedListService;
-import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.entity.event.CheckInEntityEvent;
 import fr.becpg.repo.entity.version.EntityVersionService;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -57,8 +52,6 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
     private PermissionService permissionService;
     private ApplicationContext applicationContext;
     private EntityVersionService entityVersionService;
-    private WUsedListService wUsedListService;
-    private AssociationService associationService;
     
 
 	public void setAuthenticationService(AuthenticationService authenticationService) {
@@ -77,19 +70,9 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;		
 	}
-
-	
 	
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
-	}
-
-	public void setwUsedListService(WUsedListService wUsedListService) {
-		this.wUsedListService = wUsedListService;
-	}
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
 	}
 
 	/**
@@ -149,7 +132,6 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
             String contentUrl,
             boolean keepCheckedOut) {
 		
-			NodeRef entityVersionRef = null;
 			NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
 			
 			QName type = nodeService.getType(origNodeRef);
@@ -162,7 +144,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);		
 			policyBehaviourFilter.disableBehaviour(type);
 			try {
-				entityVersionRef = entityVersionService.createVersionAndCheckin(origNodeRef, workingCopyNodeRef);
+					entityVersionService.createVersionAndCheckin(origNodeRef, workingCopyNodeRef);
 			} finally {
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_CODE);
 				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
@@ -214,12 +196,14 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
         {
             List<AssociationRef> assocs = nodeService.getSourceAssocs(nodeRef, ContentModel.ASSOC_WORKING_COPY_LINK);
             // It is a 1:1 relationship
-            if (assocs.size() > 0)
+            if (!assocs.isEmpty())
             {
-                if (assocs.size() > 1)
-                {
-                    logger.warn("Found multiple " + ContentModel.ASSOC_WORKING_COPY_LINK + " associations to node: " + nodeRef);
-                }
+            	if(logger.isWarnEnabled()){
+	                if (assocs.size() > 1)
+	                {
+	                    logger.warn("Found multiple " + ContentModel.ASSOC_WORKING_COPY_LINK + " associations to node: " + nodeRef);
+	                }
+            	}
                 original = assocs.get(0).getSourceRef();
             }
         }

@@ -5,105 +5,62 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class MicrobioListDataItem.
- *
- * @author querephi
- */
-public class MicrobioListDataItem extends BaseObject {
-
-	/** The node ref. */
-	private NodeRef nodeRef;		
+@AlfType
+@AlfQname(qname = "bcpg:microbioList")
+public class MicrobioListDataItem extends BeCPGDataObject {
 	
-	/** The value. */
 	private Double value;
 	
-	/** The unit. */
 	private String unit;
 	
-	/** The maxi. */
 	private Double maxi;
 	
 	private String textCriteria;
 	
-	/** The microbio. */
 	private NodeRef microbio;
 	
-	/**
-	 * Gets the node ref.
-	 *
-	 * @return the node ref
-	 */
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
 	
-	/**
-	 * Sets the node ref.
-	 *
-	 * @param nodeRef the new node ref
-	 */
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-	
-	/**
-	 * Gets the value.
-	 *
-	 * @return the value
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:mblValue")
 	public Double getValue() {
 		return value;
 	}
 	
-	/**
-	 * Sets the value.
-	 *
-	 * @param value the new value
-	 */
+	
 	public void setValue(Double value) {
 		this.value = value;
 	}
 	
-	/**
-	 * Gets the unit.
-	 *
-	 * @return the unit
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:mblUnit")
 	public String getUnit() {
 		return unit;
 	}
 	
-	/**
-	 * Sets the unit.
-	 *
-	 * @param unit the new unit
-	 */
+	
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 	
-	/**
-	 * Gets the maxi.
-	 *
-	 * @return the maxi
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:mblMaxi")
 	public Double getMaxi() {
 		return maxi;
 	}
 	
-	/**
-	 * Sets the maxi.
-	 *
-	 * @param maxi the new maxi
-	 */
+	
 	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 	
+	@AlfProp
+	@AlfQname(qname="bcpg:mblTextCriteria")
 	public String getTextCriteria() {
 		return textCriteria;
 	}
@@ -112,20 +69,13 @@ public class MicrobioListDataItem extends BaseObject {
 		this.textCriteria = textCriteria;
 	}
 
-	/**
-	 * Gets the microbio.
-	 *
-	 * @return the microbio
-	 */
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:mblMicrobio")
 	public NodeRef getMicrobio() {
 		return microbio;
 	}
 	
-	/**
-	 * Sets the microbio.
-	 *
-	 * @param microbio the new microbio
-	 */
+	
 	public void setMicrobio(NodeRef microbio) {
 		this.microbio = microbio;
 	}

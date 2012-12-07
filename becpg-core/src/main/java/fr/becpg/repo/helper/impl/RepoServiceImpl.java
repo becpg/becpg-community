@@ -174,7 +174,7 @@ public class RepoServiceImpl implements RepoService {
 	public String getAvailableName(NodeRef folderNodeRef, String name) {
 		
 		List<FileInfo> fileInfos = fileFolderService.list(folderNodeRef);
-		if (fileInfos.size() > 0) {
+		if (!fileInfos.isEmpty()) {
 			int count = 0;
 			NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, name);
 

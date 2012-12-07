@@ -5,36 +5,29 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
-public class ForbiddenIngListDataItem extends BaseObject{
+@AlfType
+@AlfQname(qname = "bcpg:forbiddenIngList")
+public class ForbiddenIngListDataItem extends BeCPGDataObject{
 
-	NodeRef nodeRef;
 	
 	RequirementType reqType;
-	
 	String reqMessage;
-	
 	Double qtyPercMaxi;
-	
-	Boolean isGMO;
-	
-	Boolean isIonized;
-	
+	String isGMO;
+	String isIonized;
 	private List<NodeRef> ings = new ArrayList<NodeRef>();
-		
 	private List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
-		
 	private List<NodeRef> bioOrigins = new ArrayList<NodeRef>();
 	
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
 
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-
+	@AlfProp
+	@AlfQname(qname="bcpg:filReqType")
 	public RequirementType getReqType() {
 		return reqType;
 	}
@@ -43,6 +36,8 @@ public class ForbiddenIngListDataItem extends BaseObject{
 		this.reqType = reqType;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:filReqMessage")
 	public String getReqMessage() {
 		return reqMessage;
 	}
@@ -51,6 +46,8 @@ public class ForbiddenIngListDataItem extends BaseObject{
 		this.reqMessage = reqMessage;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:filQtyPercMaxi")
 	public Double getQtyPercMaxi() {
 		return qtyPercMaxi;
 	}
@@ -59,22 +56,40 @@ public class ForbiddenIngListDataItem extends BaseObject{
 		this.qtyPercMaxi = qtyPercMaxi;
 	}
 
-	public Boolean isGMO() {
+
+	@AlfProp
+	@AlfQname(qname="bcpg:filIsGMO")
+	public String getIsGMO() {
 		return isGMO;
 	}
 
-	public void setIsGMO(Boolean isGMO) {
+	public void setIsGMO(String isGMO) {
 		this.isGMO = isGMO;
 	}
+	
 
-	public Boolean isIonized() {
+	public void setIsGMO(Boolean isGMO) {
+		this.isGMO = isGMO!=null ? isGMO.toString() : null;
+	}
+
+
+	@AlfProp
+	@AlfQname(qname="bcpg:filIsIonized")
+	public String getIsIonized() {
 		return isIonized;
 	}
 
 	public void setIsIonized(Boolean isIonized) {
-		this.isIonized = isIonized;
+		this.isIonized  = isIonized!=null ? isIonized.toString() : null;
 	}
+	
+	public void setIsIonized(String isIonized) {
+		this.isIonized  = isIonized;
+	}
+	
 
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:filIngs")
 	public List<NodeRef> getIngs() {
 		return ings;
 	}
@@ -82,7 +97,8 @@ public class ForbiddenIngListDataItem extends BaseObject{
 	public void setIngs(List<NodeRef> ings) {
 		this.ings = ings;
 	}
-
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:filGeoOrigins")
 	public List<NodeRef> getGeoOrigins() {
 		return geoOrigins;
 	}
@@ -90,7 +106,8 @@ public class ForbiddenIngListDataItem extends BaseObject{
 	public void setGeoOrigins(List<NodeRef> geoOrigins) {
 		this.geoOrigins = geoOrigins;
 	}
-
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:filBioOrigins")
 	public List<NodeRef> getBioOrigins() {
 		return bioOrigins;
 	}
@@ -99,6 +116,12 @@ public class ForbiddenIngListDataItem extends BaseObject{
 		this.bioOrigins = bioOrigins;
 	}
 	
+	
+	
+	public ForbiddenIngListDataItem() {
+		super();
+	}
+
 	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, Double qtyPercMaxi, Boolean isGMO, Boolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
 	{
 		setNodeRef(nodeRef);

@@ -44,7 +44,6 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
@@ -182,7 +181,7 @@ public class EntityServiceImpl implements EntityService {
 				List<NodeRef> resultSet = beCPGSearchService.luceneSearch(querySearch, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 				logger.debug("resultSet.length() : " + resultSet.size());
 
-				if (resultSet.size() > 0) {
+				if (resultSet!=null && !resultSet.isEmpty()) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("list children has been modified");
 						logger.debug("Date :" + ISO8601DateFormat.format((Date) nodeService.getProperty(resultSet.get(0), ContentModel.PROP_MODIFIED)));
@@ -276,7 +275,7 @@ public class EntityServiceImpl implements EntityService {
 							String permissionName = permissionNames[cnt];
 							List<AssociationRef> groups = nodeService.getTargetAssocs(subFolderTplNodeRef, permissionGroupAssociation);
 
-							if (groups.size() > 0) {
+							if (groups!=null && !groups.isEmpty()) {
 								for (AssociationRef assocRef : groups) {
 									NodeRef groupNodeRef = assocRef.getTargetRef();
 									String authorityName = (String) nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);

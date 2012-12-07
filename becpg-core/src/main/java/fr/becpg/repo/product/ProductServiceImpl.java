@@ -21,14 +21,15 @@ import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.CharactDetails;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.formulation.FormulateException;
 import fr.becpg.repo.product.formulation.PhysicoChemCalculatingVisitor;
 import fr.becpg.repo.product.hierarchy.HierarchyHelper;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -44,8 +45,7 @@ public class ProductServiceImpl implements ProductService {
 	/** The node service. */
 	private NodeService nodeService;	
 	
-	/** The product dao. */
-	private ProductDAO productDAO;
+	private AlfrescoRepository<ProductData> alfrescoRepository;
 	
 	/** The product dictionary service. */
 	private ProductDictionaryService productDictionaryService;
@@ -86,10 +86,14 @@ public class ProductServiceImpl implements ProductService {
 		this.nodeService = nodeService;
 	}	
 	
-	public void setProductDAO(ProductDAO productDAO){
-		this.productDAO = productDAO;
-	}
 	
+	
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
+
+
+
 	public void setProductDictionaryService(ProductDictionaryService productDictionaryService) {
 		this.productDictionaryService = productDictionaryService;
 	}
@@ -187,15 +191,9 @@ public class ProductServiceImpl implements ProductService {
     public void formulate(NodeRef productNodeRef) throws FormulateException {
     	try {
     		//Load product 
-        	Collection<QName> dataLists = new ArrayList<QName>();				
-    		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-    		dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
-    		dataLists.add(MPMModel.TYPE_PROCESSLIST);
-//    		dataLists.add(BeCPGModel.TYPE_NUTLIST); // TODO keep min/max
-//    		dataLists.add(BeCPGModel.TYPE_COSTLIST); // TODO keep max
-//    		dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST); // TODO keep min/max
-    		dataLists.add(BeCPGModel.TYPE_DYNAMICCHARACTLIST);
-        	ProductData productData = productDAO.find(productNodeRef, dataLists); 
+        
+    		
+        	ProductData productData = alfrescoRepository.findOne(productNodeRef); 
         	        	
         	// do the formulation if the product has a composition, or packaging list defined
         	if((productData.getCompoList() != null && productData.getCompoList().size() != 0) || 
@@ -204,50 +202,8 @@ public class ProductServiceImpl implements ProductService {
         	
         		productData = formulate(productData);
 
-        		// #202 : we don't want to create all datalists for packaging kit
-        		Collection<QName> dataListsToSave = new ArrayList<QName>();
-				if (productData.getCompoList() != null) {
-					dataListsToSave.add(BeCPGModel.TYPE_COMPOLIST);
-				}
-				if (productData.getPackagingList() != null) {
-					dataListsToSave.add(BeCPGModel.TYPE_PACKAGINGLIST);
-				}
-				if (productData.getProcessList() != null) {
-					dataListsToSave.add(MPMModel.TYPE_PROCESSLIST);
-				}
-				if (productData.getNutList() != null) {
-					dataListsToSave.add(BeCPGModel.TYPE_NUTLIST);
-				}
-				if (productData.getCostList() != null) {
-					dataListsToSave.add(BeCPGModel.TYPE_COSTLIST);
-				}
-				if (productData.getDynamicCharactList() != null) {
-					dataListsToSave.add(BeCPGModel.TYPE_DYNAMICCHARACTLIST);
-				}
-				if (productData.getAllergenList() != null) {
-					dataListsToSave.add(BeCPGModel.TYPE_ALLERGENLIST);
-				}				
-				if (productData.getIngList() != null) {
-					dataListsToSave.add(BeCPGModel.TYPE_INGLIST);
-				}
-				if (productData.getIngLabelingList() != null) {
-					dataListsToSave.add(BeCPGModel.TYPE_INGLABELINGLIST);
-				}
-				if (productData.getReqCtrlList() != null) {
-					dataListsToSave.add(BeCPGModel.TYPE_REQCTRLLIST);
-				}
-				else{
-					// #257 : delete old ReqCtrlList if they are now respected
-					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
-					if(entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COMPOLIST) != null){
-						dataListsToSave.add(BeCPGModel.TYPE_REQCTRLLIST);
-					}
-				}
-				if (productData.getPhysicoChemList() != null) {
-					dataListsToSave.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-				}
 				
-    	    	productDAO.update(productNodeRef, productData, dataListsToSave);
+				alfrescoRepository.save( productData);
         	}    	    	    
     	} catch (Exception e) {
 			if(e instanceof FormulateException){
@@ -272,11 +228,7 @@ public class ProductServiceImpl implements ProductService {
         			(productData.getProcessList() != null && productData.getProcessList().size() != 0)){
         		
         		productData.setReqCtrlList(new ArrayList<ReqCtrlListDataItem>());
-        		
-        		//TODO ChainOfResponsability
-        		// productData = productVisitorFactory.getProductChainVisitor(productData);
-        		// visit --> Abstract hasNext;
-        		
+        
         		
         		//Call visitors         		
         		productData = compositionCalculatingVisitor.visit(productData);
@@ -316,7 +268,7 @@ public class ProductServiceImpl implements ProductService {
     public void classifyProduct(NodeRef containerNodeRef, NodeRef productNodeRef){
     	
     	NodeRef destinationNodeRef = null;
-    	ProductData productData = productDAO.find(productNodeRef, null);
+    	ProductData productData = alfrescoRepository.findOne(productNodeRef);
     	
     	// products
 		NodeRef productsNodeRef = repoService.createFolderByPath(containerNodeRef, RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
@@ -378,7 +330,7 @@ public class ProductServiceImpl implements ProductService {
             ownableService.setOwner(productNodeRef, OwnableService.NO_OWNER);    			
 		}
 		else{
-			logger.error("Failed to classify product. productNodeRef: " + productNodeRef);
+			logger.debug("Failed to classify product. productNodeRef: " + productNodeRef);
 		}
     }
 
@@ -389,7 +341,7 @@ public class ProductServiceImpl implements ProductService {
 		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
 		dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
 		dataLists.add(MPMModel.TYPE_PROCESSLIST);
-    	ProductData productData = productDAO.find(productNodeRef, dataLists); 
+    	ProductData productData = alfrescoRepository.findOne(productNodeRef);
     	        	
     	CharactDetailsVisitor visitor  = charactDetailsVisitorFactory.getCharactDetailsVisitor(datatType, dataListName);		
 		return visitor.visit(productData, elements);		

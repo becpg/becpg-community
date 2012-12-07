@@ -2,38 +2,24 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
-public class DynamicCharactListItem extends BaseObject{
+@AlfType
+@AlfQname(qname = "bcpg:dynamicCharactList")
+public class DynamicCharactListItem extends BeCPGDataObject{
 	
-	/** The node ref. */
-	private NodeRef nodeRef;	
-	
-	private String name;
-	
+
 	private String formula;
    
 	private Object value;
 	
 	private String groupColor;
 
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
-
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	@AlfProp
+	@AlfQname(qname="bcpg:dynamicCharactFormula")
 	public String getFormula() {
 		return formula;
 	}
@@ -42,6 +28,8 @@ public class DynamicCharactListItem extends BaseObject{
 		this.formula = formula;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:dynamicCharactValue")
 	public Object getValue() {
 		return value;
 	}
@@ -50,6 +38,8 @@ public class DynamicCharactListItem extends BaseObject{
 		this.value = value;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:dynamicCharactGroupColor")
 	public String getGroupColor() {
 		return groupColor;
 	}

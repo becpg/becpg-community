@@ -17,10 +17,8 @@
     	<property name="nodeService" ref="nodeService"/>
     	<property name="checkOutCheckInService" ref="checkOutCheckInService"/>
     	<property name="productService" ref="productService"/>
-    	<property name="productDAO" ref="productDAO"/>
-    	<property name="entityListDAO" ref="entityListDAO"/>
+    	<property name="alfrescoRepository" ref="alfrescoRepository" />
     	<property name="dictionaryService" ref="dictionaryService"/>
-    	<property name="productDictionaryService" ref="productDictionaryService"/>
     	<property name="repoService" ref="repoService"/>
     	<property name="ecoReportService" ref="ecoReportService"/>		
 	</bean>

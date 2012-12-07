@@ -115,7 +115,7 @@ public class DataListFilter {
 	}
 
 	public void setSortMap(Map<String, Boolean> sortMap) {
-		if(sortMap!=null && sortMap.size()>0){
+		if(sortMap!=null && !sortMap.isEmpty()){
 			this.sortMap = sortMap;
 		}
 	}

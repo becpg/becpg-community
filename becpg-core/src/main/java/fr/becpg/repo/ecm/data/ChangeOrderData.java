@@ -7,12 +7,12 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.BeCPGDataObject;
 import fr.becpg.repo.ecm.ECOState;
 import fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem;
 import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 public class ChangeOrderData extends BeCPGDataObject {
 	
@@ -83,5 +83,72 @@ public class ChangeOrderData extends BeCPGDataObject {
 		setEcoType(ecoType);
 		setCalculatedCharacts(calculatedCharacts);
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((calculatedCharacts == null) ? 0 : calculatedCharacts.hashCode());
+		result = prime * result + ((changeUnitMap == null) ? 0 : changeUnitMap.hashCode());
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((ecoState == null) ? 0 : ecoState.hashCode());
+		result = prime * result + ((ecoType == null) ? 0 : ecoType.hashCode());
+		result = prime * result + ((replacementList == null) ? 0 : replacementList.hashCode());
+		result = prime * result + ((simulationList == null) ? 0 : simulationList.hashCode());
+		result = prime * result + ((wUsedList == null) ? 0 : wUsedList.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ChangeOrderData other = (ChangeOrderData) obj;
+		if (calculatedCharacts == null) {
+			if (other.calculatedCharacts != null)
+				return false;
+		} else if (!calculatedCharacts.equals(other.calculatedCharacts))
+			return false;
+		if (changeUnitMap == null) {
+			if (other.changeUnitMap != null)
+				return false;
+		} else if (!changeUnitMap.equals(other.changeUnitMap))
+			return false;
+		if (code == null) {
+			if (other.code != null)
+				return false;
+		} else if (!code.equals(other.code))
+			return false;
+		if (ecoState != other.ecoState)
+			return false;
+		if (ecoType != other.ecoType)
+			return false;
+		if (replacementList == null) {
+			if (other.replacementList != null)
+				return false;
+		} else if (!replacementList.equals(other.replacementList))
+			return false;
+		if (simulationList == null) {
+			if (other.simulationList != null)
+				return false;
+		} else if (!simulationList.equals(other.simulationList))
+			return false;
+		if (wUsedList == null) {
+			if (other.wUsedList != null)
+				return false;
+		} else if (!wUsedList.equals(other.wUsedList))
+			return false;
+		return true;
+	}
+	@Override
+	public String toString() {
+		return "ChangeOrderData [code=" + code + ", ecoState=" + ecoState + ", ecoType=" + ecoType + ", calculatedCharacts=" + calculatedCharacts + ", replacementList="
+				+ replacementList + ", wUsedList=" + wUsedList + ", changeUnitMap=" + changeUnitMap + ", simulationList=" + simulationList + "]";
+	}
+	
+	
+	
 	
 }

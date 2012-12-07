@@ -5,7 +5,6 @@ package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -15,11 +14,10 @@ import javax.annotation.Resource;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.junit.Test;
 
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -68,19 +66,18 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 		rawMaterial2NodeRef = createRawMaterial(testFolderNodeRef, "RM2");
 		rawMaterial3NodeRef = createRawMaterial(testFolderNodeRef, "RM3");
 
-		Collection<QName> dataLists = productDictionaryService.getDataLists();
 
 		/*-- Local semi finished product 1 --*/
-		LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
+		LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
 		localSF1.setName("Local semi finished 1");
 		localSF1.setLegalName("Legal Local semi finished 1");
-		localSF1NodeRef = productDAO.create(testFolderNodeRef, localSF1, dataLists);
+		localSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF1).getNodeRef();
 
 		/*-- Local semi finished product 1 --*/
-		LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
+		LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
 		localSF2.setName("Local semi finished 2");
 		localSF2.setLegalName("Legal Local semi finished 2");
-		localSF2NodeRef = productDAO.create(testFolderNodeRef, localSF2, dataLists);
+		localSF2NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF2).getNodeRef();
 
 		FinishedProductData finishedProduct = new FinishedProductData();
 		finishedProduct.setName("Produit fini 1");
@@ -101,7 +98,7 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 				DeclarationType.Declare, rawMaterial3NodeRef));
 		finishedProduct.setCompoList(compoList);
 
-		finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
+		finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 	}
 
 	/**
@@ -130,8 +127,7 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 		assertEquals(1, listValuePage.getResults().size());
 		
 		// Check cycle detection (exclude localSF1NodeRef)
-		Collection<QName> dataLists = productDictionaryService.getDataLists();
-		ProductData finishedProduct = productDAO.find(finishedProductNodeRef, dataLists);
+		ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 		
 		HashMap<String, String> extras = new HashMap<String, String>();
 		extras.put("itemId", finishedProduct.getCompoList().get(0).getNodeRef().toString());
