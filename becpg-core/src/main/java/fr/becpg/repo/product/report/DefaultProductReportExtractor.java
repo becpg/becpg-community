@@ -42,6 +42,8 @@ import fr.becpg.repo.report.entity.impl.AbstractEntityReportExtractor;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
+//TODO use annotation on product data instead
+@Deprecated
 public class DefaultProductReportExtractor extends AbstractEntityReportExtractor {
 
 	/** The Constant KEY_PRODUCT_IMAGE. */

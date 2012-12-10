@@ -4,24 +4,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
-public class ProcessCalculatingVisitor implements ProductVisitor {
+public class ProcessCalculatingVisitor extends AbstractProductFormulationHandler {
 
 	private static Log logger = LogFactory.getLog(ProcessCalculatingVisitor.class);	
 	
 	@Override
-	public ProductData visit(ProductData formulatedProduct) throws FormulateException {
+	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("process calculating visitor");
 		
 		// no compo => no formulation
 		if(!formulatedProduct.hasProcessListEl(EffectiveFilters.ALL)){			
 			logger.debug("no process => no formulation");
-			return formulatedProduct;
+			return true;
 		}
 		
 		// visit resources and steps from the end to the beginning
@@ -63,7 +62,7 @@ public class ProcessCalculatingVisitor implements ProductVisitor {
 			}
 		}
 		
-		return formulatedProduct;
+		return true;
 	}	
 	
 }

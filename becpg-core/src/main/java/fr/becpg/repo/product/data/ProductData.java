@@ -29,7 +29,6 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
-import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
@@ -422,7 +421,7 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	 * Instantiates a new product data.
 	 */
 	public ProductData(){
-		
+		super();
 	}
 
 	
@@ -630,112 +629,6 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	}
 	
 	
-//	public ProductData(ProductData productData){
-//		
-//		nodeRef = productData.getNodeRef();
-//		setProperties(productData.getProperties());
-//		
-//		copyDataLists(productData);		
-//	}
-//	
-//	
-
-		
-	
-//	
-//	
-//	/**
-//	 * Copy data lists.
-//	 *
-//	 * @param productData the product data
-//	 */
-//	public void copyDataLists(ProductData productData){
-//		
-//		if(productData.getAllergenList() != null){
-//			allergenList = new ArrayList<AllergenListDataItem>(productData.getAllergenList());
-//			for(AllergenListDataItem a : productData.getAllergenList()){
-//				allergenList.add(new AllergenListDataItem(a));
-//			}
-//		}
-//		
-//		if(productData.getCompoList() != null){
-//			compoList = new ArrayList<CompoListDataItem>(productData.getCompoList());
-//			for(CompoListDataItem c : productData.getCompoList()){
-//				compoList.add(new CompoListDataItem(c));
-//			}
-//		}
-//		
-//		if(productData.getDynamicCharactList() != null){
-//			dynamicCharactList = new ArrayList<DynamicCharactListItem>(productData.getDynamicCharactList());
-//			for(DynamicCharactListItem c : productData.getDynamicCharactList()){
-//				dynamicCharactList.add(new DynamicCharactListItem(c));
-//			}
-//		}
-//		
-//		
-//		if(productData.getCostList() != null){
-//			costList = new ArrayList<CostListDataItem>(productData.getCostList());
-//			for(CostListDataItem c : productData.getCostList()){
-//				costList.add(new CostListDataItem(c));
-//			}
-//		}
-//		
-//		if(productData.getIngList() != null){
-//			ingList = new ArrayList<IngListDataItem>(productData.getIngList());
-//			for(IngListDataItem i : productData.getIngList()){
-//				ingList.add(new IngListDataItem(i));
-//			}
-//		}
-//		
-//		if(productData.getNutList() != null){
-//			nutList = new ArrayList<NutListDataItem>(productData.getNutList());
-//			for(NutListDataItem n : productData.getNutList()){
-//				nutList.add(new NutListDataItem(n));
-//			}	
-//		}
-//			
-//		if(productData.getOrganoList() != null){
-//			organoList = new ArrayList<OrganoListDataItem>(productData.getOrganoList());
-//			for(OrganoListDataItem o : productData.getOrganoList()){
-//				organoList.add(new OrganoListDataItem(o));
-//			}
-//		}		
-//		
-//		if(productData.getIngLabelingList() != null){
-//			setIngLabelingList(productData.getIngLabelingList());
-//			ingLabelingList = new ArrayList<IngLabelingListDataItem>(productData.getIngLabelingList());
-//			for(IngLabelingListDataItem i  : productData.getIngLabelingList()){
-//				ingLabelingList.add(new IngLabelingListDataItem(i));
-//			}
-//		}
-//		
-//		if(productData.getMicrobioList() != null){
-//			setMicrobioList(productData.getMicrobioList());
-//			microbioList = new ArrayList<MicrobioListDataItem>(productData.getMicrobioList());
-//			for(MicrobioListDataItem m : productData.getMicrobioList()){
-//				microbioList.add(new MicrobioListDataItem(m));
-//			}
-//		}
-//		
-//		if(productData.getPhysicoChemList() != null){
-//			setPhysicoChemList(productData.getPhysicoChemList());
-//			physicoChemList = new ArrayList<PhysicoChemListDataItem>(productData.getPhysicoChemList());
-//			for(PhysicoChemListDataItem p : productData.getPhysicoChemList()){
-//				physicoChemList.add(new PhysicoChemListDataItem(p));
-//			}
-//		}
-//		
-//		if(productData.getProcessList() != null){
-//			setProcessList(productData.getProcessList());
-//			processList = new ArrayList<ProcessListDataItem>(productData.getProcessList());
-//			for(ProcessListDataItem p : productData.getProcessList()){
-//				processList.add(new ProcessListDataItem(p));
-//			}
-//		}
-//	}	
-
-
-
 
 
 

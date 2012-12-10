@@ -38,7 +38,19 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	
 	private NodeRef product;
 	
+	private CompoListDataItem parent;
 	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:parentLevel")
+	public CompoListDataItem getParent() {
+		return parent;
+	}
+
+	public void setParent(CompoListDataItem parent) {
+		this.parent = parent;
+	}
+
 	@AlfProp
 	@AlfQname(qname="bcpg:depthLevel")
 	public Integer getDepthLevel() {
@@ -133,7 +145,7 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	 * Instantiates a new compo list data item.
 	 */
 	public CompoListDataItem() {
-		
+		super();
 	}
 	
 	/**
@@ -149,18 +161,33 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	 * @param declType
 	 * @param product
 	 */
+	@Deprecated
 	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, Double yieldPerc, DeclarationType declType, NodeRef product){
-		
-		setNodeRef(nodeRef);
-		setDepthLevel(depthLevel);
-		setQty(qty);
-		setQtySubFormula(qtySubFormula);
-		setQtyAfterProcess(qtyAfterProcess);
-		setCompoListUnit(compoListUnit);
-		setLossPerc(lossPerc);
-		setYieldPerc(yieldPerc);
-		setDeclType(declType);
-		setProduct(product);
+		super();
+		this.nodeRef=nodeRef;
+		this.depthLevel=depthLevel;
+		this.qty=qty;
+		this.qtySubFormula=qtySubFormula;
+		this.qtyAfterProcess=qtyAfterProcess;
+		this.compoListUnit=compoListUnit;
+		this.lossPerc=lossPerc;
+		this.yieldPerc=yieldPerc;
+		this.declType=declType;
+		this.product=product;
+	}
+	
+	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, Double yieldPerc, DeclarationType declType, NodeRef product){
+		super();
+		this.nodeRef=nodeRef;
+		this.parent=parent;
+		this.qty=qty;
+		this.qtySubFormula=qtySubFormula;
+		this.qtyAfterProcess=qtyAfterProcess;
+		this.compoListUnit=compoListUnit;
+		this.lossPerc=lossPerc;
+		this.yieldPerc=yieldPerc;
+		this.declType=declType;
+		this.product=product;
 	}
 	
 	/**
@@ -174,17 +201,32 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	 * @param declType
 	 * @param product
 	 */
+	@Deprecated
 	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, DeclarationType declType, NodeRef product){
-		
-		setNodeRef(nodeRef);
-		setDepthLevel(depthLevel);
-		setQty(qty);
-		setQtySubFormula(qtySubFormula);
-		setQtyAfterProcess(qtyAfterProcess);
-		setCompoListUnit(compoListUnit);
-		setLossPerc(lossPerc);
-		setDeclType(declType);
-		setProduct(product);
+		super();
+		this.nodeRef=nodeRef;
+		this.depthLevel=depthLevel;
+		this.qty=qty;
+		this.qtySubFormula=qtySubFormula;
+		this.qtyAfterProcess=qtyAfterProcess;
+		this.compoListUnit=compoListUnit;
+		this.lossPerc=lossPerc;
+		this.declType=declType;
+		this.product=product;
+	}
+	
+	
+	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, DeclarationType declType, NodeRef product){
+		super();
+		this.nodeRef=nodeRef;
+		this.parent=parent;
+		this.qty=qty;
+		this.qtySubFormula=qtySubFormula;
+		this.qtyAfterProcess=qtyAfterProcess;
+		this.compoListUnit=compoListUnit;
+		this.lossPerc=lossPerc;
+		this.declType=declType;
+		this.product=product;
 	}
 	
 	/**
@@ -192,15 +234,17 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	 * @param c
 	 */
 	public CompoListDataItem(CompoListDataItem c){
-		setNodeRef(new NodeRef(c.getNodeRef().toString()));
-		setDepthLevel(c.getDepthLevel());
-		setQty(c.getQty());
-		setQtySubFormula(c.getQtySubFormula());
-		setQtyAfterProcess(c.getQtyAfterProcess());
-		setCompoListUnit(c.getCompoListUnit());
-		setLossPerc(c.getLossPerc());
-		setDeclType(c.getDeclType());
-		setProduct(new NodeRef(c.getProduct().toString()));
+		super();
+		this.nodeRef=c.nodeRef;
+		this.depthLevel=c.depthLevel;
+		this.qty=c.qty;
+		this.qtySubFormula=c.qtySubFormula;
+		this.qtyAfterProcess=c.qtyAfterProcess;
+		this.compoListUnit=c.compoListUnit;
+		this.lossPerc=c.lossPerc;
+		this.declType=c.declType;
+		this.product=c.product;
+		this.parent = c.parent;
 	}
 	
 	public static Composite<CompoListDataItem> getHierarchicalCompoList(List<CompoListDataItem> items){
@@ -211,6 +255,9 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	}
 	
 	private static int loadChildren(Composite<CompoListDataItem> composite, int level, int startPos, List<CompoListDataItem> items){
+		
+		
+		
 		
 		int z_idx = startPos; 
 		
@@ -257,12 +304,12 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((compoListUnit == null) ? 0 : compoListUnit.hashCode());
 		result = prime * result + ((declType == null) ? 0 : declType.hashCode());
 		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
 		result = prime * result + ((lossPerc == null) ? 0 : lossPerc.hashCode());
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
 		result = prime * result + ((product == null) ? 0 : product.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
 		result = prime * result + ((qtyAfterProcess == null) ? 0 : qtyAfterProcess.hashCode());
@@ -275,7 +322,7 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -294,10 +341,10 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 				return false;
 		} else if (!lossPerc.equals(other.lossPerc))
 			return false;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
+		if (parent == null) {
+			if (other.parent != null)
 				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
+		} else if (!parent.equals(other.parent))
 			return false;
 		if (product == null) {
 			if (other.product != null)
@@ -329,9 +376,7 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 
 	@Override
 	public String toString() {
-		return "CompoListDataItem [nodeRef=" + nodeRef + ", depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", qtyAfterProcess="
-				+ qtyAfterProcess + ", compoListUnit=" + compoListUnit + ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", product=" + product
-				+ ", getStartEffectivity()=" + getStartEffectivity() + ", getEndEffectivity()=" + getEndEffectivity() + "]";
+		return "CompoListDataItem [depthLevel=" + depthLevel + ", parent=" + parent + "]";
 	}
 
 	

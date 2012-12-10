@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
@@ -20,14 +21,14 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
-public class AbstractCalculatingVisitor {
+public abstract class AbstractProductFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	public static final String UNIT_SEPARATOR = "/";
 	
-	private static Log logger = LogFactory.getLog(AbstractCalculatingVisitor.class);
+	private static Log logger = LogFactory.getLog(AbstractProductFormulationHandler.class);
 	
 
-	private AlfrescoRepository<SimpleListDataItem> alfrescoRepository;
+	protected AlfrescoRepository<SimpleListDataItem> alfrescoRepository;
 	
 	protected EntityListDAO entityListDAO;
 
@@ -56,7 +57,7 @@ public class AbstractCalculatingVisitor {
 		if(simpleListDataList != null){			
 			for(SimpleListDataItem sl : simpleListDataList){
 				// reset value if formulated
-				if(isCharactFormulated(sl.getCharactNodeRef())){
+				if(isCharactFormulated(sl)){
 					sl.setValue(null);
 					sl.setMini(null);
 					sl.setMaxi(null);
@@ -68,7 +69,7 @@ public class AbstractCalculatingVisitor {
 		visitChildren(formulatedProduct, simpleListDataMap);			
 		
 		// manual listItem
-		return getListToUpdate(formulatedProduct.getNodeRef(), simpleListDataMap);
+		return  simpleListDataMap;
 	}
 	
 	protected void visitChildren(ProductData formulatedProduct, Map<NodeRef, SimpleListDataItem> simpleListDataMap) throws FormulateException{
@@ -109,7 +110,7 @@ public class AbstractCalculatingVisitor {
 			//Look for charact
 			NodeRef slNodeRef = slDataItem.getCharactNodeRef();
 			
-			if(isCharactFormulated(slNodeRef)){
+			if(isCharactFormulated(slDataItem)){
 				
 				SimpleListDataItem newSimpleListDataItem = simpleListDataMap.get(slNodeRef);
 				
@@ -160,36 +161,36 @@ public class AbstractCalculatingVisitor {
 		return null;
 	}
 
-	protected boolean isCharactFormulated(NodeRef slNodeRef){
-		return true;
+	protected boolean isCharactFormulated(SimpleListDataItem sl){
+		return sl.getIsManual()==null || !sl.getIsManual().booleanValue();
 	}
 
-	/**
-	 * Calculate listItem to update
-	 * @param productNodeRef
-	 * @param costMap
-	 * @return
-	 */
-	protected Map<NodeRef, SimpleListDataItem> getListToUpdate(NodeRef productNodeRef, Map<NodeRef, SimpleListDataItem> slMap){
-				
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
-		
-		if(listContainerNodeRef != null){
-			
-			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, getDataListVisited());
-			
-			if(listNodeRef != null){
-				
-				List<NodeRef> manualLinks = entityListDAO.getManualListItems(listNodeRef, getDataListVisited());
-				
-				for(NodeRef manualLink : manualLinks){
-										
-					SimpleListDataItem sl = (SimpleListDataItem)alfrescoRepository.findOne(manualLink);		    		
-					slMap.put(sl.getCharactNodeRef(), sl);
-				}
-			}
-		}
-		
-		return slMap;
-	}
+//	/**
+//	 * Calculate listItem to update
+//	 * @param productNodeRef
+//	 * @param costMap
+//	 * @return
+//	 */
+//	private Map<NodeRef, SimpleListDataItem> getListToUpdate(NodeRef productNodeRef, Map<NodeRef, SimpleListDataItem> slMap){
+//				
+//		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
+//		
+//		if(listContainerNodeRef != null){
+//			
+//			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, getDataListVisited());
+//			
+//			if(listNodeRef != null){
+//				
+//				List<NodeRef> manualLinks = entityListDAO.getManualListItems(listNodeRef, getDataListVisited());
+//				
+//				for(NodeRef manualLink : manualLinks){
+//										
+//					SimpleListDataItem sl = (SimpleListDataItem)alfrescoRepository.findOne(manualLink);		    		
+//					slMap.put(sl.getCharactNodeRef(), sl);
+//				}
+//			}
+//		}
+//		
+//		return slMap;
+//	}
 }

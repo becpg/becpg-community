@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
 
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"   >
 
 
 	<bean id="projectService" class="fr.becpg.repo.project.impl.ProjectServiceImpl">
@@ -11,16 +12,25 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="repoService" ref="repoService" />
-		<property name="planningVisitor" ref="planningVisitor" />
-		<property name="taskStateVisitor" ref="taskStateVisitor" />
+		<property name="formulationService" ref="formulationService" />
 	</bean>
-	
-	<bean id="planningVisitor" class="fr.becpg.repo.project.impl.PlanningVisitor">
-	</bean>
-	
-	<bean id="taskStateVisitor" class="fr.becpg.repo.project.impl.TaskStateVisitor">
-		<property name="workflowService" ref="WorkflowService" />
-		<property name="nodeService" ref="nodeService" />
+
+	<!-- Formulation -->
+
+
+	<bean id="projectFormulationChain" class="fr.becpg.repo.formulation.FormulationChain"
+		init-method="init">
+		<property name="handlers">
+			<list>
+				<bean class="fr.becpg.repo.project.formulation.PlanningFormulationHandler" />
+				<bean	class="fr.becpg.repo.project.formulation.TaskStateFormulationHandler">
+					<property name="workflowService" ref="WorkflowService" />
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+			</list>
+		</property>
+		<property name="formulationService" ref="formulationService" />
+		<property name="contextClass" value="fr.becpg.repo.project.data.ProjectData" />
 	</bean>
 
 	<!-- Policy -->
@@ -46,14 +56,15 @@
 	</bean>
 
 	<!-- Workflow -->
-	<bean id="CreateProduct" parent="baseJavaDelegate" class="fr.becpg.repo.workflow.activiti.project.CreateProduct">
-		<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="alfrescoRepository" ref="alfrescoRepository"/>
-    	<property name="entityService" ref="entityService"/>
-    	<property name="productService" ref="productService"/>
-    	<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
-    	<property name="repoService" ref="repoService"/>
-    </bean> 
+	<bean id="CreateProduct" parent="baseJavaDelegate"
+		class="fr.becpg.repo.workflow.activiti.project.CreateProduct">
+		<property name="nodeService" ref="nodeService" />
+		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="entityService" ref="entityService" />
+		<property name="productService" ref="productService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="repoService" ref="repoService" />
+	</bean>
 
 </beans>

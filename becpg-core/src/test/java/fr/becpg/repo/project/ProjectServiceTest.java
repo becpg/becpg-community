@@ -303,7 +303,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
-								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
+								null, null, 2, ProjectState.InProgress, projectTplNodeRef, 0, rawMaterialNodeRef);
 
 						projectData.setParentNodeRef(testFolderNodeRef);
 						
@@ -433,8 +433,8 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(3).getState());
 
 				// reopen deliverables
-				projectData.getDeliverableList().get(1).setState(DeliverableState.InProgress);
-				alfrescoRepository.save( projectData);
+                nodeService.setProperty(projectData.getDeliverableList().get(1).getNodeRef(), ProjectModel.PROP_DL_STATE, DeliverableState.InProgress);
+
 
 				return null;
 			}

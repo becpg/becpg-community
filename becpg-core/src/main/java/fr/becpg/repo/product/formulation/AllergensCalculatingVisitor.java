@@ -15,14 +15,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.product.ProductVisitor;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 /**
@@ -30,40 +27,22 @@ import fr.becpg.repo.repository.filters.EffectiveFilters;
  * 
  * @author querephi
  */
-public class AllergensCalculatingVisitor implements ProductVisitor {
+public class AllergensCalculatingVisitor extends AbstractProductFormulationHandler {
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AllergensCalculatingVisitor.class);
 
-	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-
-	private EntityListDAO entityListDAO;
 
 
-	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
-	}
-
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.becpg.repo.product.ProductVisitor#visit(fr.becpg.repo.food.ProductData
-	 * )
-	 */
 	@Override
-	public ProductData visit(ProductData formulatedProduct) {
+	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("Start AllergensCalculatingVisitor");
 
 		// no compo => no formulation
 		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
 			logger.debug("no compo => no formulation");
-			return formulatedProduct;
+			return true;
 		}
 
 		Set<NodeRef> visitedProducts = new HashSet<NodeRef>();
@@ -96,7 +75,7 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 		List<AllergenListDataItem> allergenList = getListToUpdate(formulatedProduct.getNodeRef(), allergenMap);
 		formulatedProduct.setAllergenList(allergenList);
 		logger.debug("product Visited, allergens size: " + allergenList.size());
-		return formulatedProduct;
+		return true;
 	}
 
 	/**
@@ -202,5 +181,7 @@ public class AllergensCalculatingVisitor implements ProductVisitor {
 
 		return new ArrayList<AllergenListDataItem>(allergenMap.values());
 	}
+
+	
 
 }

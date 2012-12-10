@@ -1,17 +1,13 @@
 package fr.becpg.test;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -74,16 +70,25 @@ public class BeCPGTestHelper {
 		finishedProduct.setHierarchy1(repoBaseTestCase.HIERARCHY1_FROZEN_REF);
 		finishedProduct.setHierarchy2(repoBaseTestCase.HIERARCHY2_PIZZA_REF);
 		List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
-		compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF1NodeRef));
-		compoList.add(new CompoListDataItem(null, 2, 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF2NodeRef));
-		compoList.add(new CompoListDataItem(null, 3, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial1NodeRef));
-		compoList.add(new CompoListDataItem(null, 1, 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF3NodeRef));
-		compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial2NodeRef));
-		compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, lSF4NodeRef));
-		compoList.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial1NodeRef));
+		CompoListDataItem parent1 = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF1NodeRef);
+		CompoListDataItem child1 =new CompoListDataItem(null,parent1, 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF2NodeRef);
+		CompoListDataItem child12 =new CompoListDataItem(null,child1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial1NodeRef);
+		CompoListDataItem parent2 =new CompoListDataItem(null,(CompoListDataItem) null, 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF3NodeRef);
+		CompoListDataItem child2 =new CompoListDataItem(null, parent2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial2NodeRef);
+		CompoListDataItem child21 =new CompoListDataItem(null, parent2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, lSF4NodeRef);
+		CompoListDataItem parent3 = new CompoListDataItem(null, (CompoListDataItem)null, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial1NodeRef);
+		
+		compoList.add(parent1);
+		compoList.add(child1);
+		compoList.add(child12);
+		compoList.add(parent2);
+		compoList.add(child2);
+		compoList.add(child21);
+		compoList.add(parent3);
+		
+		
+		
 		finishedProduct.setCompoList(compoList);
-		Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
 		return repoBaseTestCase.alfrescoRepository.create(testFolder, finishedProduct).getNodeRef();
 		
 	}

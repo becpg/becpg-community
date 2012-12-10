@@ -11,9 +11,10 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.project.ProjectException;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.AbstractProjectData;
 import fr.becpg.repo.project.data.ProjectData;
@@ -40,8 +41,7 @@ public class ProjectServiceImpl implements ProjectService {
 	private NodeService nodeService;
 	private BeCPGSearchService beCPGSearchService;
 	private RepoService repoService;
-	private PlanningVisitor planningVisitor;
-	private TaskStateVisitor taskStateVisitor;
+	private FormulationService<ProjectData> formulationService;
 
 	public void setAlfrescoRepository(AlfrescoRepository<AbstractProjectData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -67,12 +67,8 @@ public class ProjectServiceImpl implements ProjectService {
 		this.repoService = repoService;
 	}
 
-	public void setTaskStateVisitor(TaskStateVisitor taskStateVisitor) {
-		this.taskStateVisitor = taskStateVisitor;
-	}
-
-	public void setPlanningVisitor(PlanningVisitor planningVisitor) {
-		this.planningVisitor = planningVisitor;
+	public void setFormulationService(FormulationService<ProjectData> formulationService) {
+		this.formulationService = formulationService;
 	}
 
 	@Override
@@ -133,23 +129,12 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public void formulate(NodeRef projectNodeRef) throws ProjectException {
+	public void formulate(NodeRef projectNodeRef) throws  FormulateException {
 
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
-			logger.debug("formulate projectNodeRef: " + projectNodeRef);
-			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-
-			try {
-				planningVisitor.visit(projectData);
-				taskStateVisitor.visit(projectData);
-			} catch (ProjectException e) {
-				if (e instanceof ProjectException) {
-					throw (ProjectException) e;
-				}
-				throw new ProjectException("message.formulate.failure", e);
-			}
-
-			alfrescoRepository.save(projectData);
+			
+			formulationService.formulate(projectNodeRef);
+			
 		}
 
 	}

@@ -16,7 +16,6 @@ import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
-import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.ecm.data.ChangeOrderType;
@@ -37,6 +36,8 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.test.RepoBaseTestCase;
 
 /**
@@ -53,9 +54,9 @@ public class ECOTest extends RepoBaseTestCase {
 	/** The product service. */
 	@Resource
 	private ProductService productService;
-
+	
 	@Resource
-	private BeCPGDao<ChangeOrderData> changeOrderDAO;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Resource
 	private ECOService ecoService;
@@ -253,12 +254,18 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				
+				CompoListDataItem compo1 =  new CompoListDataItem(null,(CompoListDataItem) null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+				
+				compoList.add(compo1);
+				compoList.add(new CompoListDataItem(null, compo1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compo1, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				
+				CompoListDataItem compo2 =new CompoListDataItem(null,(CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
+				
+				compoList.add(compo2);
+				compoList.add( new CompoListDataItem(null, compo2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
@@ -271,13 +278,16 @@ public class ECOTest extends RepoBaseTestCase {
 				/*-- Verify formulation --*/
 				logger.debug("/*-- Verify formulation --*/");
 
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+				ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
 				logger.debug("Finish product: " + formulatedProduct.toString());
 				// costs
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
+					
+					logger.error(costListDataItem.toString());
+					
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue()
 							+ " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
@@ -343,14 +353,14 @@ public class ECOTest extends RepoBaseTestCase {
 				replacementList.add(new ReplacementListDataItem(null, RevisionType.Minor, rawMaterial4NodeRef, rawMaterial5NodeRef));
 				changeOrderData.setReplacementList(replacementList);
 
-				NodeRef ecoNodeRef = changeOrderDAO.create(testFolderNodeRef, changeOrderData);
+				NodeRef ecoNodeRef = alfrescoRepository.create(testFolderNodeRef, changeOrderData).getNodeRef();
 
 				// calculate WUsed
 				ecoService.calculateWUsedList(ecoNodeRef);
 
 				// verify WUsed
 				int checks = 0;
-				ChangeOrderData dbECOData = changeOrderDAO.find(ecoNodeRef);
+				ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
 				assertEquals("Check 2 WUsed are impacted", 3, dbECOData.getWUsedList().size());
@@ -382,7 +392,7 @@ public class ECOTest extends RepoBaseTestCase {
 
 				// verify Simulation
 				checks = 0;
-				dbECOData = changeOrderDAO.find(ecoNodeRef);
+				dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check Simulation list", dbECOData.getSimulationList());
 				assertEquals("Check SchangeUnitDataimulation list", 8, dbECOData.getSimulationList().size());
@@ -481,14 +491,14 @@ public class ECOTest extends RepoBaseTestCase {
 				replacementList.add(new ReplacementListDataItem(null, RevisionType.Minor, rawMaterial4NodeRef, rawMaterial5NodeRef));
 				changeOrderData.setReplacementList(replacementList);
 
-				NodeRef ecoNodeRef = changeOrderDAO.create(testFolderNodeRef, changeOrderData);
+				NodeRef ecoNodeRef = alfrescoRepository.create(testFolderNodeRef, changeOrderData).getNodeRef();
 
 				// calculate WUsed
 				nodeService.setProperty(ecoNodeRef, ECMModel.PROP_ECO_STATE, ECOState.ToCalculateWUsed);
 
 				// verify WUsed
 				int checks = 0;
-				ChangeOrderData dbECOData = changeOrderDAO.find(ecoNodeRef);
+				ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
 				assertEquals("Check impacted WUsed", 3, dbECOData.getWUsedList().size());
@@ -520,7 +530,7 @@ public class ECOTest extends RepoBaseTestCase {
 
 				// verify Simulation
 				checks = 0;
-				dbECOData = changeOrderDAO.find(ecoNodeRef);
+				dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check Simulation list", dbECOData.getSimulationList());
 				assertEquals("Check SchangeUnitDataimulation list", 8, dbECOData.getSimulationList().size());
@@ -615,8 +625,8 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct3.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				finishedProduct3.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 2d, 2d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct2NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 2d, 2d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct2NodeRef));
 				finishedProduct3.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
@@ -632,7 +642,7 @@ public class ECOTest extends RepoBaseTestCase {
 
 				/*-- Verify formulation --*/
 				logger.debug("/*-- Verify formulation --*/");
-				ProductData formulatedProduct3 = alfrescoRepository.findOne(finishedProduct3NodeRef);
+				ProductData formulatedProduct3 = (ProductData) alfrescoRepository.findOne(finishedProduct3NodeRef);
 
 				logger.debug("unit of product formulated: " + formulatedProduct3.getUnit());
 
@@ -682,14 +692,14 @@ public class ECOTest extends RepoBaseTestCase {
 				replacementList.add(new ReplacementListDataItem(null, RevisionType.Minor, rawMaterial4NodeRef, rawMaterial5NodeRef));
 				changeOrderData.setReplacementList(replacementList);
 
-				NodeRef ecoNodeRef = changeOrderDAO.create(testFolderNodeRef, changeOrderData);
+				NodeRef ecoNodeRef = alfrescoRepository.create(testFolderNodeRef, changeOrderData).getNodeRef();
 
 				// calculate WUsed
 				ecoService.calculateWUsedList(ecoNodeRef);
 
 				// verify WUsed
 				int checks = 0;
-				ChangeOrderData dbECOData = changeOrderDAO.find(ecoNodeRef);
+				ChangeOrderData dbECOData = (ChangeOrderData)alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
 				//assertEquals("Check WUsed impacted", 5, dbECOData.getWUsedList().size());
@@ -725,7 +735,7 @@ public class ECOTest extends RepoBaseTestCase {
 
 				// verify Simulation
 				checks = 0;
-				dbECOData = changeOrderDAO.find(ecoNodeRef);
+				dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check Simulation list", dbECOData.getSimulationList());
 				assertEquals("Check changeUnitDataSimulation list", 12, dbECOData.getSimulationList().size());

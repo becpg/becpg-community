@@ -414,13 +414,7 @@ public class ImportServiceImpl implements ImportService {
 						
 			String prefix = arrStr[COLUMN_PREFIX];
 			
-			if(prefix.isEmpty()){
-				// skip blank lines, nothing to do...
-			}
-			else if(prefix.equals(PFX_COMMENT)){
-				// skip comments starting with the # character, nothing to do...
-			}			
-			else if(prefix.equals(PFX_PATH)){
+			if(prefix.equals(PFX_PATH)){
 								
 				importContext.setParentNodeRef(null);
 				
@@ -633,7 +627,7 @@ public class ImportServiceImpl implements ImportService {
 					}
 				}
 			}			
-			else{
+			else if(!prefix.isEmpty() || !prefix.equals(PFX_COMMENT)){
 	   		 throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNSUPPORTED_PREFIX, importContext.getCSVLine(), prefix));
 	   	 	}
 			importContext.goToNextLine();						

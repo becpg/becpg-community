@@ -179,6 +179,18 @@ public class PriceListPolicyTest extends RepoBaseTestCase {
 				assertTrue(false);
 			}
 		}
+		
+		//Reset cost 
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+				nodeService.setProperty(cost2, BeCPGModel.PROP_COSTCURRENCY, "€");
+				return null;
+
+			}
+		}, false, true);
+
+		
 
 	}
 

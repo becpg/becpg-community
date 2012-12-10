@@ -16,10 +16,8 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class ReqCtrlListDataItem extends BeCPGDataObject {
 
 	
-	RequirementType reqType;
-	
-	String reqMessage;
-	
+	private RequirementType reqType;
+	private String reqMessage;
 	private List<NodeRef> sources = new ArrayList<NodeRef>();
 
 	@AlfProp
@@ -59,10 +57,11 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	}
 
 	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, List<NodeRef> sources){
-		setNodeRef(nodeRef);
-		setReqType(reqType);
-		setReqMessage(reqMessage);
-		setSources(sources);
+		super();
+		this.nodeRef = nodeRef;
+		this.reqType = reqType;
+		this.reqMessage = reqMessage;
+		this.sources = sources;
 	}
 
 	@Override

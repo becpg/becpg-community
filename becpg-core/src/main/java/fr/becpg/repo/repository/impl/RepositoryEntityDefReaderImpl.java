@@ -28,12 +28,17 @@ import fr.becpg.repo.repository.annotation.DataList;
 @Service
 public class RepositoryEntityDefReaderImpl<T extends RepositoryEntity> implements RepositoryEntityDefReader<T> {
 
-	private static Log logger = LogFactory.getLog(RepositoryEntityDefReader.class);
+	private static Log logger = LogFactory.getLog(RepositoryEntityDefReaderImpl.class);
 
 	private NamespaceService namespaceService;
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
+	}
+	
+	@Override
+	public Map<QName, T> getEntityProperties(T entity) {
+		return readValueMap(entity, AlfProp.class, RepositoryEntity.class);
 	}
 
 	@Override
@@ -44,6 +49,12 @@ public class RepositoryEntityDefReaderImpl<T extends RepositoryEntity> implement
 	@Override
 	public Map<QName, NodeRef> getSingleAssociations(T entity) {
 		return readValueMap(entity, AlfSingleAssoc.class, NodeRef.class);
+	}
+	
+
+	@Override
+	public Map<QName, T> getSingleEntityAssociations(T entity) {
+		return readValueMap(entity, AlfSingleAssoc.class, RepositoryEntity.class);
 	}
 
 	@Override
@@ -71,7 +82,7 @@ public class RepositoryEntityDefReaderImpl<T extends RepositoryEntity> implement
 							if(returnType.isAssignableFrom(o.getClass())){
 								ret.put(qname,(R)returnType.cast(o) );
 							} else {
-								throw new ClassCastException("Cannot cast from :"+o.getClass().getName()+" to "+returnType.getName()+ " for "+qname);
+								logger.debug("Cannot cast from :"+o.getClass().getName()+" to "+returnType.getName()+ " for "+qname);
 							}
 						} else {
 							ret.put(qname,null );
@@ -108,5 +119,6 @@ public class RepositoryEntityDefReaderImpl<T extends RepositoryEntity> implement
 		QName fieldQname = QName.createQName(qName, namespaceService);
 		return fieldQname;
 	}
+
 
 }

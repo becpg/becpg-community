@@ -27,8 +27,17 @@ public class FormulationServiceImpl<T extends RepositoryEntity> implements Formu
 
 	private static Log logger = LogFactory.getLog(FormulationServiceImpl.class);
 	
+
+	public void setAlfrescoRepository(AlfrescoRepository<T> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
+
 	@Override
 	public void registerFormulationChain(Class<T> clazz, FormulationChain<T> chain){
+		if(logger.isDebugEnabled()){
+			logger.debug("Register  chain for: "+clazz.getName());
+		}
+		
 		formulationChains.put(clazz, chain);
 	}
 	
@@ -48,6 +57,15 @@ public class FormulationServiceImpl<T extends RepositoryEntity> implements Formu
 		try {
 			
 			FormulationChain<T> chain = formulationChains.get(repositoryEntity.getClass());
+			
+			if(chain==null && repositoryEntity.getClass().getSuperclass()!=null){
+				//look from superclass
+				if(logger.isDebugEnabled()){
+					logger.debug("Look for superClass :"+repositoryEntity.getClass().getSuperclass().getName());
+				}
+				chain = formulationChains.get(repositoryEntity.getClass().getSuperclass());	
+			}
+			
 			if(chain!=null){
 				chain.executeChain(repositoryEntity);
 			} else {

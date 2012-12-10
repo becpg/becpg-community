@@ -14,11 +14,15 @@ import org.alfresco.service.namespace.QName;
  */
 public interface RepositoryEntityDefReader<T extends RepositoryEntity> {
 	
+	Map<QName, T> getEntityProperties(T entity);
 	Map<QName, Serializable> getProperties(T entity);
     Map<QName, NodeRef> getSingleAssociations(T entity);	
     Map<QName, List<NodeRef>> getMultipleAssociations(T entity);
     Map<QName, List<? extends RepositoryEntity>> getDataLists(T entity);
+    Map<QName, T> getSingleEntityAssociations(T entity);
+    
 	QName getType(Class<? extends RepositoryEntity> clazz);
 	QName readQName(Method method);
+	
 	
 }

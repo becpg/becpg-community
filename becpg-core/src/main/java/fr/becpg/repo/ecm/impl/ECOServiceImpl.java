@@ -22,7 +22,6 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
-import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.ecm.ECOReportService;
 import fr.becpg.repo.ecm.ECOService;
@@ -48,6 +47,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 /**
@@ -60,20 +60,15 @@ public class ECOServiceImpl implements ECOService {
 	private static final String VERSION_DESCRIPTION = "Applied by ECO %s";
 	private static Log logger = LogFactory.getLog(ECOServiceImpl.class);
 	
-	private BeCPGDao<ChangeOrderData>changeOrderDAO;
 	private WUsedListService wUsedListService;
 	private NodeService nodeService;
 	private CheckOutCheckInService checkOutCheckInService;
 	private ProductService productService;
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	private DictionaryService dictionaryService;
 	private RepoService repoService;
 	private ECOReportService ecoReportService;
 	
-	public void setChangeOrderDAO(BeCPGDao<ChangeOrderData> changeOrderDAO) {
-		this.changeOrderDAO = changeOrderDAO;
-	}
-
 	public void setwUsedListService(WUsedListService wUsedListService) {
 		this.wUsedListService = wUsedListService;
 	}
@@ -90,7 +85,7 @@ public class ECOServiceImpl implements ECOService {
 		this.productService = productService;
 	}
 
-	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
@@ -113,7 +108,7 @@ public class ECOServiceImpl implements ECOService {
 		
 		logger.debug("calculateWUsedList");
 		
-		ChangeOrderData ecoData = changeOrderDAO.find(ecoNodeRef);
+		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 		
 		//clear WUsedList
 		ecoData.getWUsedList().clear();
@@ -157,13 +152,13 @@ public class ECOServiceImpl implements ECOService {
 		// change state
 		ecoData.setEcoState(ECOState.Simulated);
 		
-		changeOrderDAO.update(ecoNodeRef, ecoData);
+		alfrescoRepository.save( ecoData);
 	}
 
 	@Override
 	public void apply(NodeRef ecoNodeRef) {
 		
-		ChangeOrderData ecoData = changeOrderDAO.find(ecoNodeRef);
+		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 		
 		// execute
 		resetTreatedWUseds(ecoData);
@@ -172,7 +167,7 @@ public class ECOServiceImpl implements ECOService {
 		// change state
 		ecoData.setEcoState(ECOState.Applied);
 		
-		changeOrderDAO.update(ecoNodeRef, ecoData);
+		alfrescoRepository.save( ecoData);
 		
 		// generate report
 		ecoReportService.generateReport(ecoData);
@@ -187,7 +182,7 @@ public class ECOServiceImpl implements ECOService {
 	@Override
 	public void doSimulation(NodeRef ecoNodeRef) {
 		
-		ChangeOrderData ecoData = changeOrderDAO.find(ecoNodeRef);				
+		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);				
 		
 		// execute
 		resetTreatedWUseds(ecoData);
@@ -196,7 +191,7 @@ public class ECOServiceImpl implements ECOService {
 		// change state
 		ecoData.setEcoState(ECOState.Simulated);
 		
-		changeOrderDAO.update(ecoNodeRef, ecoData);
+		alfrescoRepository.save(ecoData);
 		
 		// generate report
 		ecoReportService.generateReport(ecoData);		
@@ -276,7 +271,7 @@ public class ECOServiceImpl implements ECOService {
 							productToFormulateNodeRef = changeUnitDataItem.getTargetItem();
 						}
 						
-						ProductData productData = alfrescoRepository.findOne(productToFormulateNodeRef);
+						ProductData productData = (ProductData) alfrescoRepository.findOne(productToFormulateNodeRef);
 						
 						productData.setNodeRef(null);
 						productData.setParentNodeRef(tempFolder);
@@ -512,11 +507,7 @@ public class ECOServiceImpl implements ECOService {
 				/*
 				 *  manage revision
 				 */
-				if(changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)){
-					
-					//nothing to do...
-				}
-				else{
+				if(!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)){
 					
 					VersionType versionType = changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR;
 					
@@ -534,7 +525,7 @@ public class ECOServiceImpl implements ECOService {
 			}
 									
 						
-			ProductData productToFormulateData = alfrescoRepository.findOne(productToFormulateNodeRef);
+			ProductData productToFormulateData = (ProductData) alfrescoRepository.findOne(productToFormulateNodeRef);
 						
 			logger.debug("do replacement for node: " + nodeService.getProperty(sourceItemNodeRef, ContentModel.PROP_NAME));
 			
@@ -575,7 +566,7 @@ public class ECOServiceImpl implements ECOService {
 			changeUnitDataItem.setTreated(Boolean.TRUE);			
 			
 			// update simulation List
-			ProductData sourceData = alfrescoRepository.findOne(sourceItemNodeRef);
+			ProductData sourceData = (ProductData) alfrescoRepository.findOne(sourceItemNodeRef);
 			updateCalculatedCharactValues(ecoData, sourceData, productToFormulateData);
 			
 			// check req
@@ -628,11 +619,7 @@ public class ECOServiceImpl implements ECOService {
 				}
 				else{
 					
-					if(RequirementType.Info.equals(newReqType)){
-						
-						//nothing todo...
-					}
-					else if(RequirementType.Tolerated.equals(newReqType) && reqType.equals(RequirementType.Info)){
+					 if(RequirementType.Tolerated.equals(newReqType) && reqType.equals(RequirementType.Info)){
 						reqType = newReqType;
 					}
 					else if(RequirementType.Forbidden.equals(newReqType) && !reqType.equals(RequirementType.Forbidden)){

@@ -137,10 +137,11 @@ public interface EntityListDAO {
 	 * @param listQName
 	 * @return
 	 */
+	@Deprecated
 	public List<NodeRef> getManualListItems(NodeRef listNodeRef, QName listQName);
 	
 	/**
-	 * Get the manual links
+	 * Get list items
 	 * 
 	 * @param listContainerNodeRef
 	 * @param listQName

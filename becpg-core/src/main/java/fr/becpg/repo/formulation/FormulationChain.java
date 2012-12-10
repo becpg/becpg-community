@@ -3,6 +3,9 @@ package fr.becpg.repo.formulation;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
@@ -27,7 +30,8 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @param <T> Any type passed as context information.
  */
 public class FormulationChain<T extends RepositoryEntity> {
- 
+	private Log logger = LogFactory.getLog(FormulationChain.class);
+	
 	private Class<T> contextClass;
 	
 	private FormulationService<T> formulationService;
@@ -47,15 +51,19 @@ public class FormulationChain<T extends RepositoryEntity> {
 
 
 	public void init(){
-    	formulationService.registerFormulationChain(contextClass, this);
+		if (handlers!=null && !handlers.isEmpty()){
+			prepareHandlerChain();
+	    	formulationService.registerFormulationChain(contextClass, this);
+		}
     }
     
     
     
 
 	public void executeChain(T context) throws FormulateException {
-        if (handlers!=null && !handlers.isEmpty())
-            handlers.get(0).start(context);
+        if (handlers!=null && !handlers.isEmpty()){
+        	handlers.get(0).start(context);
+        }
     }
  
     /**
@@ -64,17 +72,28 @@ public class FormulationChain<T extends RepositoryEntity> {
      */
     public void setHandlers(List<FormulationHandler<T>> handlers) {
         this.handlers = handlers;
-        prepareHandlerChain();
     }
  
     private void prepareHandlerChain() {
-        if (handlers!=null && !handlers.isEmpty())
-            return;
+  
+        
  
         ListIterator<FormulationHandler<T>> handlersIt = handlers.listIterator();
         FormulationHandler<T> current = handlersIt.next();
+
+        if(logger.isDebugEnabled()){
+    		logger.debug("Prepare Handler Chain: ");
+    		logger.debug("  - First: "+current.getClass().getName());
+    	}
+     
         while (handlersIt.hasNext()) {
+        	
         	FormulationHandler<T> next = handlersIt.next();
+        	if(logger.isDebugEnabled()){
+        		logger.debug("  - Next: "+next.getClass().getName());
+        		
+        	}
+        	
             current.setNextHandler(next);
             current = next;
         }

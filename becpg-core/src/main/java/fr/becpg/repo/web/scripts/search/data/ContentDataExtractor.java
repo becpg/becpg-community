@@ -55,12 +55,12 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 		 
 		 DictionaryService dd = this.services.getDictionaryService();
 		  
-		 if ( Boolean.valueOf(dd.isSubClass(itemType, BeCPGModel.TYPE_ENTITY_V2)) == true )
+		 if ( dd.isSubClass(itemType, BeCPGModel.TYPE_ENTITY_V2) )
 	      {
 			 ret.put(PROP_TYPE, "entity");
 	         ret.put(PROP_SIZE, -1);
-	      } else if ( Boolean.valueOf((dd.isSubClass(itemType, ContentModel.TYPE_FOLDER) == true &&
-                  dd.isSubClass(itemType, ContentModel.TYPE_SYSTEM_FOLDER) == false)))
+	      } else if ( dd.isSubClass(itemType, ContentModel.TYPE_FOLDER) &&
+                  !dd.isSubClass(itemType, ContentModel.TYPE_SYSTEM_FOLDER))
 	      {
 	    	 ret.put(PROP_TYPE, "folder");
 	         ret.put(PROP_SIZE, -1);
@@ -80,7 +80,6 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 		if(date!=null){
 			return attributeExtractorService.formatDate(date);
 		}
-		// TODO Auto-generated method stub
 		return null;
 	}
 

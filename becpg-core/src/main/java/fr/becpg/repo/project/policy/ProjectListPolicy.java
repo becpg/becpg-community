@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.datalist.WUsedListService;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.project.ProjectException;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.impl.ProjectHelper;
@@ -66,8 +66,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
 				projectService.formulate(projectNodeRef);
-			} catch (ProjectException e) {
-				logger.debug(e);
+			} catch (FormulateException e) {
+				logger.error(e,e);
 			} finally {
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);

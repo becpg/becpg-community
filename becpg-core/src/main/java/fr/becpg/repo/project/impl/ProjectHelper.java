@@ -14,13 +14,14 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.formulation.PlanningFormulationHandler;
 
 public class ProjectHelper {
 
 	private static final int DURATION_DEFAULT = 1;
 	private static final int DURATION_NEXT_DAY = 2;
 
-	private static Log logger = LogFactory.getLog(PlanningVisitor.class);
+	private static Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
 
 	public static TaskListDataItem getTask(AbstractProjectData projectData, NodeRef taskListNodeRef) {
 
