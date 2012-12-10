@@ -20,9 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ing.CompositeIng;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -32,8 +30,6 @@ import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 /**
@@ -41,7 +37,7 @@ import fr.becpg.repo.repository.filters.EffectiveFilters;
  *
  * @author querephi
  */
-public class IngsCalculatingVisitor implements ProductVisitor{
+public class IngsCalculatingVisitor extends AbstractProductFormulationHandler{
 		
 	/** The Constant DEFAULT_DENSITY. */
 	public static final Double DEFAULT_DENSITY = 1d;
@@ -52,54 +48,23 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(IngsCalculatingVisitor.class);
 	
-	/** The node service. */
-	private NodeService nodeService;
 	
 	/** The ml node service. */
 	private NodeService mlNodeService;
 	
-	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
-	private EntityListDAO entityListDAO;
-	
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-	
-	
-	
-	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
-	}
-
-
-
-	/**
-	 * Sets the ml node service.
-	 *
-	 * @param mlNodeService the new ml node service
-	 */
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
 	
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-	
 	@Override
-	public ProductData visit(ProductData formulatedProduct) throws FormulateException{
+	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Calculate ingredient list");
 		
 		// no compo => no formulation
 		if(!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)){			
 			logger.debug("no compo => no formulation");
-			return formulatedProduct;
+			return true;
 		}
 		
 		// Load product specification
@@ -136,7 +101,7 @@ public class IngsCalculatingVisitor implements ProductVisitor{
 		
 		formulatedProduct.setIngLabelingList(ingLabelingList);
 		
-		return formulatedProduct;
+		return true;
 	}
 	
 	/**

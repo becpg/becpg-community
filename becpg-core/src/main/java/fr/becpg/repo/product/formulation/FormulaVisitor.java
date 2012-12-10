@@ -9,7 +9,6 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 
@@ -19,12 +18,12 @@ import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
  * @author matthieu
  * 
  */
-public class FormulaVisitor implements ProductVisitor {
+public class FormulaVisitor extends AbstractProductFormulationHandler {
 
 	private static Log logger = LogFactory.getLog(FormulaVisitor.class);
 
 	@Override
-	public ProductData visit(ProductData productData) throws FormulateException {
+	public boolean process(ProductData productData) throws FormulateException {
 
 		ExpressionParser parser = new SpelExpressionParser();
 		EvaluationContext context = new StandardEvaluationContext(productData);
@@ -43,7 +42,7 @@ public class FormulaVisitor implements ProductVisitor {
 				}
 			}
 		}
-		return productData;
+		return true;
 	}
 	
 }

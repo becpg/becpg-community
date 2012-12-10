@@ -285,8 +285,7 @@ public class ProductListAttributesPolicyTest extends RepoBaseTestCase {
 				return null;
 
 			}
-		}, false, true);
-		
+		}, false, true);		
 	}
 
 }

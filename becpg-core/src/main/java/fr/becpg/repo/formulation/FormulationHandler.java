@@ -9,9 +9,7 @@ public interface FormulationHandler<T> {
     /**
      * Implements processing element logic in a chain.
      * @param context Any type passed as context information.
-     * @return <code>true</code>, if the request was handled and the chain of
-     * execution should stop,<br>
-     * <code>false</code> if the request should be passed down the chain.
+     * @return <code>true</code>, if should call next handler
      */
     boolean process(T context) throws FormulateException;
  

@@ -100,7 +100,7 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 	 * Instantiates a new cost list data item.
 	 */
 	public CostListDataItem() {
-		
+		super();
 	}
 	
 	/**
@@ -112,35 +112,39 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 	 * @param cost the cost
 	 */
 	public CostListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef cost, Boolean isManual){
-		
-		setNodeRef(nodeRef);		
-		setValue(value);
-		setUnit(unit);
-		setMaxi(maxi);
-		setCost(cost);
-		setIsManual(isManual);
+		super();
+		this.nodeRef = nodeRef;		
+		this.value = value;
+		this.unit =  unit;
+		this.maxi = maxi;
+		this.cost = cost;
+		this.isManual = isManual;
 	}
+	
+	
 	
 	/**
 	 * Copy constructor
 	 * @param c
 	 */
 	public CostListDataItem(CostListDataItem c){
+		super();
+		this.nodeRef = c.nodeRef;		
+		this.value = c.value;
+		this.unit =  c.unit;
+		this.maxi = c.maxi;
+		this.cost = c.cost;
+		this.isManual = c.isManual;
 		
-		setNodeRef(c.getNodeRef());
-		setValue(c.getValue());
-		setUnit(c.getUnit());
-		setMaxi(c.getMaxi());
-		setCost(c.getCost());
-		setIsManual(c.getIsManual());
 	}
 	
 	public CostListDataItem(SimpleListDataItem c){
-		
-		setValue(c.getValue());
-		setMaxi(c.getMaxi());
-		setIsManual(c.getIsManual());
-		setCost(c.getCharactNodeRef());
+		super();
+		this.nodeRef = c.getNodeRef();		
+		this.value = c.getValue();
+		this.maxi = c.getMaxi();
+		this.cost = c.getCharactNodeRef();
+		this.isManual = c.getIsManual();
 	}
 
 

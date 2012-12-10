@@ -89,23 +89,25 @@ public class AllergenListDataItem extends AbstractManualDataItem {
 	
 	
 	public AllergenListDataItem(){
-		
+		super();
 	}
 	
 	
 	public AllergenListDataItem(NodeRef nodeRef, Boolean voluntary, Boolean inVoluntary, List<NodeRef> voluntarySources, List<NodeRef> inVoluntarySources, NodeRef allergen, Boolean isManual){
-		
-		setNodeRef(nodeRef);
-		setVoluntary(voluntary);
-		setInVoluntary(inVoluntary);
-		setVoluntarySources(voluntarySources);
-		setInVoluntarySources(inVoluntarySources);
-		setAllergen(allergen);
-		setIsManual(isManual);
+		super();
+		this.nodeRef = nodeRef;
+		this.voluntary  = voluntary;
+		this.inVoluntary = inVoluntary;
+		this.voluntarySources = voluntarySources;	
+		this.inVoluntarySources = inVoluntarySources;
+		this.allergen = allergen;
+		this.isManual = isManual;
 	}
 	
 	
 
+	
+	
 
 	@Override
 	public int hashCode() {
@@ -118,6 +120,8 @@ public class AllergenListDataItem extends AbstractManualDataItem {
 		result = prime * result + ((voluntarySources == null) ? 0 : voluntarySources.hashCode());
 		return result;
 	}
+
+
 
 
 

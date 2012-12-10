@@ -17,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.NutGroup;
@@ -29,7 +28,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  *
  * @author querephi
  */
-public class NutsCalculatingVisitor extends AbstractCalculatingVisitor implements ProductVisitor {
+public class NutsCalculatingVisitor extends AbstractProductFormulationHandler {
 	
 	/** The Constant UNIT_PER100G. */
 	public static final String UNIT_PER100G = "/100g";
@@ -41,7 +40,7 @@ public class NutsCalculatingVisitor extends AbstractCalculatingVisitor implement
 	private static Log logger = LogFactory.getLog(NutsCalculatingVisitor.class);
 	
 	@Override
-	public ProductData visit(ProductData formulatedProduct) throws FormulateException{
+	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Nuts calculating visitor");
 		
 		Map<NodeRef, SimpleListDataItem> simpleListMap = getFormulatedList(formulatedProduct);
@@ -64,7 +63,7 @@ public class NutsCalculatingVisitor extends AbstractCalculatingVisitor implement
 			formulatedProduct.setNutList(nutListSorted);
 		}						
 						
-		return formulatedProduct;
+		return true;
 	}
 
 	/**
@@ -151,8 +150,5 @@ public class NutsCalculatingVisitor extends AbstractCalculatingVisitor implement
 		return BeCPGModel.TYPE_NUTLIST;
 	}
 
-	@Override
-	protected boolean isCharactFormulated(NodeRef scNodeRef){
-		return true;
-	}
+
 }

@@ -19,7 +19,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -34,7 +33,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  *
  * @author querephi
  */
-public class CostsCalculatingVisitor extends AbstractCalculatingVisitor implements ProductVisitor {
+public class CostsCalculatingVisitor extends AbstractProductFormulationHandler {
 
 	public static final Double DEFAULT_LOSS_RATIO = 1d;
 	
@@ -42,7 +41,7 @@ public class CostsCalculatingVisitor extends AbstractCalculatingVisitor implemen
 	private static Log logger = LogFactory.getLog(CostsCalculatingVisitor.class);
 
 	@Override
-	public ProductData visit(ProductData formulatedProduct) throws FormulateException{		
+	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Cost calculating visitor");
 		
 		Map<NodeRef, SimpleListDataItem> simpleListMap = getFormulatedList(formulatedProduct);		
@@ -53,7 +52,7 @@ public class CostsCalculatingVisitor extends AbstractCalculatingVisitor implemen
 			
 			for(SimpleListDataItem sl : simpleListMap.values()){
 				CostListDataItem c = new CostListDataItem(sl);
-				if(sl.getIsManual() != null && sl.getIsManual()){
+				if(sl.getIsManual() != null && sl.getIsManual().booleanValue()){
 					//manual so it's a CostListDataItem instance (we want to keep the unit defined manually, ie: €)
 					if(sl instanceof CostListDataItem){
 						c = new CostListDataItem((CostListDataItem)sl);
@@ -73,7 +72,7 @@ public class CostsCalculatingVisitor extends AbstractCalculatingVisitor implemen
 		//profitability		
 		formulatedProduct = calculateProfitability(formulatedProduct);
 
-		return formulatedProduct;
+		return true;
 	}
 	
 	@Override

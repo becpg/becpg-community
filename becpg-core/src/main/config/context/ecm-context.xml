@@ -2,17 +2,10 @@
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
 
 <beans>
-   	 
-	<!-- changeOrderDAO -->
-	<bean id="changeOrderDAO" class="fr.becpg.repo.ecm.impl.ChangeOrderDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="entityListDAO" ref="entityListDAO"/>
-    	<property name="associationService" ref="associationService"/>	    	
-	</bean>
+
 	
 	<!-- ecoService -->	
 	<bean id="ecoService" class="fr.becpg.repo.ecm.impl.ECOServiceImpl">
-    	<property name="changeOrderDAO" ref="changeOrderDAO"/>
     	<property name="wUsedListService" ref="wUsedListService"/>
     	<property name="nodeService" ref="nodeService"/>
     	<property name="checkOutCheckInService" ref="checkOutCheckInService"/>

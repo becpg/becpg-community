@@ -1,4 +1,4 @@
-package fr.becpg.repo.project.impl;
+package fr.becpg.repo.project.formulation;
 
 import java.util.Date;
 
@@ -6,10 +6,11 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.repo.project.ProjectException;
-import fr.becpg.repo.project.ProjectVisitor;
+import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.project.impl.ProjectHelper;
 
 /**
  * Project visitor to calculate planningDates
@@ -17,12 +18,12 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
  * @author quere
  * 
  */
-public class PlanningVisitor implements ProjectVisitor {
+public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
-	private static Log logger = LogFactory.getLog(PlanningVisitor.class);
+	private static Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
 
 	@Override
-	public ProjectData visit(ProjectData projectData) throws ProjectException {
+	public boolean process(ProjectData projectData) throws FormulateException {
 
 		if (projectData.getStartDate() == null) {
 			projectData.setStartDate(new Date());
@@ -30,9 +31,9 @@ public class PlanningVisitor implements ProjectVisitor {
 		projectData.setCompletionDate(projectData.getStartDate());
 		calculateTaskDates(projectData, null, projectData.getStartDate());
 
-		return projectData;
+		return true;
 	}
-
+	
 	private void calculateTaskDates(ProjectData projectData, NodeRef taskNodeRef, Date startDate) {
 
 		for (TaskListDataItem nextTask : ProjectHelper.getNextTasks(projectData, taskNodeRef)) {
@@ -54,4 +55,6 @@ public class PlanningVisitor implements ProjectVisitor {
 			calculateTaskDates(projectData, nextTask.getNodeRef(), ProjectHelper.calculateNextStartDate(endDate));
 		}
 	}
+
+	
 }

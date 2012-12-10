@@ -25,7 +25,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.data.ProductUnit;
-import fr.becpg.repo.product.formulation.AbstractCalculatingVisitor;
+import fr.becpg.repo.product.formulation.AbstractProductFormulationHandler;
 import fr.becpg.repo.product.formulation.CostsCalculatingVisitor;
 import fr.becpg.repo.product.formulation.NutsCalculatingVisitor;
 
@@ -214,14 +214,14 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							String costCurrency = (String) nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_COSTCURRENCY);
 							String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT);
 
-							if (costFixed != null && costFixed == true) {
+							if (costFixed != null && costFixed.booleanValue()) {
 
 								if (!(costListUnit != null && costListUnit.equals(costCurrency))) {
 									nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT, costCurrency);
 								}
 							} else {
 
-								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency + AbstractCalculatingVisitor.UNIT_SEPARATOR))) {
+								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency + AbstractProductFormulationHandler.UNIT_SEPARATOR))) {
 
 									NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 
@@ -237,7 +237,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT);
 
 							// nutListUnit
-							if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.startsWith(nutUnit + AbstractCalculatingVisitor.UNIT_SEPARATOR))) {
+							if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.startsWith(nutUnit + AbstractProductFormulationHandler.UNIT_SEPARATOR))) {
 
 								NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 

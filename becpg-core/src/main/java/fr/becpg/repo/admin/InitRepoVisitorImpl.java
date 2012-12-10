@@ -480,13 +480,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			ruleService.saveRule(nodeRef, rule);
 		}
 
-		else if (folderName == RepoConsts.PATH_SUPPLIERS) {
-			// specialiseType = BeCPGModel.TYPE_SUPPLIER;
-			// applyToChildren = true;
-		} else if (folderName == RepoConsts.PATH_CLIENTS) {
-			// specialiseType = BeCPGModel.TYPE_CLIENT;
-			// applyToChildren = true;
-		}
 		// quality
 		else if (folderName == RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA) {
 			specialiseType = BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA;
@@ -504,7 +497,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			specialiseType = QualityModel.TYPE_NC;
 		} else if (folderName == RepoConsts.PATH_PROJECT_TEMPLATES) {
 			specialiseType = ProjectModel.TYPE_PROJECT_TPL;
-		} else {
+		} else if(folderName != RepoConsts.PATH_SUPPLIERS 
+				&& (folderName != RepoConsts.PATH_CLIENTS)){
 			return;
 		}
 

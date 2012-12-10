@@ -165,8 +165,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
 						checks++;
 					}
+					if(costListDataItem.getCost().equals(fixedCost)){
+						assertEquals("fixedCost.getValue() == 4000d, actual values: " + trace, 4000d, costListDataItem.getValue());
+						assertEquals("fixedCost.getUnit() == €/kg, actual values: " + trace, "€", costListDataItem.getUnit());
+						checks++;
+					}
 				}
-				assertEquals(2, checks);
+				assertEquals(3, checks);
 				
 				// profitability
 				DecimalFormat df = new DecimalFormat("0.00");

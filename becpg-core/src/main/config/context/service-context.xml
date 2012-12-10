@@ -393,17 +393,9 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="productDictionaryService" ref="productDictionaryService" />
-		<property name="compositionCalculatingVisitor" ref="compositionCalculatingVisitor" />
-		<property name="processCalculatingVisitor" ref="processCalculatingVisitor" />
-		<property name="allergensCalculatingVisitor" ref="allergensCalculatingVisitor" />
-		<property name="nutsCalculatingVisitor" ref="nutsCalculatingVisitor" />
-		<property name="costsCalculatingVisitor" ref="costsCalculatingVisitor" />
-		<property name="ingsCalculatingVisitor" ref="ingsCalculatingVisitor" />
-		<property name="formulaVisitor" ref="formulaVisitor" />
-		<property name="physicoChemCalculatingVisitor" ref="physicoChemCalculatingVisitor" />		
+		<property name="formulationService" ref="formulationService" />
 		<property name="repoService" ref="repoService" />
 		<property name="ownableService" ref="ownableService" />
-		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="charactDetailsVisitorFactory" ref="charactDetailsVisitorFactory" />		
 	</bean>
 

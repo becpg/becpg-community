@@ -500,7 +500,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	public String[] getTags(NodeRef nodeRef) {
 		String[] result = null;
 		List<String> tags = taggingService.getTags(nodeRef);
-		if (tags.isEmpty() == true) {
+		if (tags.isEmpty()) {
 			result = new String[0];
 		} else {
 			result = (String[]) tags.toArray(new String[tags.size()]);

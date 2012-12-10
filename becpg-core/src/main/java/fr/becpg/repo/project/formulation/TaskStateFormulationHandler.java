@@ -1,4 +1,4 @@
-package fr.becpg.repo.project.impl;
+package fr.becpg.repo.project.formulation;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -20,22 +20,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.project.ProjectException;
-import fr.becpg.repo.project.ProjectVisitor;
+import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.impl.ProjectHelper;
 
-public class TaskStateVisitor implements ProjectVisitor {
+public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private static final int COMPLETED = 100;
 	private static final String WORKFLOW_DESCRIPTION = "%s : ";
 	private static final String DESCRIPTION_SEPARATOR = ", ";
 
-	private static Log logger = LogFactory.getLog(TaskStateVisitor.class);
+	private static Log logger = LogFactory.getLog(TaskStateFormulationHandler.class);
 
 	private WorkflowService workflowService;
 	private NodeService nodeService;
@@ -49,11 +50,11 @@ public class TaskStateVisitor implements ProjectVisitor {
 	}
 
 	@Override
-	public ProjectData visit(ProjectData projectData) throws ProjectException {
-
+	public boolean process(ProjectData projectData) throws FormulateException {
 		visitTask(projectData, null);
-		return projectData;
+		return true;
 	}
+	
 
 	private void visitTask(ProjectData projectData, NodeRef taskListNodeRef) {
 
@@ -212,4 +213,6 @@ public class TaskStateVisitor implements ProjectVisitor {
 		logger.error("Unknown workflow name: " + workflowName);
 		return null;
 	}
+
+	
 }

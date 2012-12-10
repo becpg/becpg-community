@@ -4,15 +4,21 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.ecm.data.RevisionType;
 import fr.becpg.repo.product.data.productList.RequirementType;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Change Unit class
  * @author quere
  *
  */
-public class ChangeUnitDataItem {
+@AlfType
+@AlfQname(qname="ecm:changeUnitList")
+public class ChangeUnitDataItem extends BeCPGDataObject {
 
-	private NodeRef nodeRef;
 	private RevisionType revision;
 	private RequirementType reqType;
 	private String reqDetails;
@@ -21,54 +27,66 @@ public class ChangeUnitDataItem {
 	private NodeRef targetItem;
 	private NodeRef simulationItem;
 	
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
+	@AlfProp
+	@AlfQname(qname="ecm:culRevision")
 	public RevisionType getRevision() {
 		return revision;
 	}
 	public void setRevision(RevisionType revision) {
 		this.revision = revision;
 	}	
+	@AlfProp
+	@AlfQname(qname="ecm:culReqType")
 	public RequirementType getReqType() {
 		return reqType;
 	}
 	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
 	}
+	@AlfProp
+	@AlfQname(qname="ecm:culReqDetails")
 	public String getReqDetails() {
 		return reqDetails;
 	}
 	public void setReqDetails(String reqDetails) {
 		this.reqDetails = reqDetails;
 	}
+	@AlfProp
+	@AlfQname(qname="ecm:culTreated")
 	public Boolean getTreated() {
 		return treated;
 	}
 	public void setTreated(Boolean treated) {
 		this.treated = treated;
-	}	
+	}
+	@AlfSingleAssoc
+	@AlfQname(qname="ecm:culSourceItem")
 	public NodeRef getSourceItem() {
 		return sourceItem;
 	}
 	public void setSourceItem(NodeRef sourceItem) {
 		this.sourceItem = sourceItem;
 	}
+	@AlfSingleAssoc
+	@AlfQname(qname="ecm:culTargetItem")
 	public NodeRef getTargetItem() {
 		return targetItem;
 	}
 	public void setTargetItem(NodeRef targetItem) {
 		this.targetItem = targetItem;
 	}
-	
+	@AlfSingleAssoc
+	@AlfQname(qname="ecm:culSimulationItem")
 	public NodeRef getSimulationItem() {
 		return simulationItem;
 	}
 	public void setSimulationItem(NodeRef simulationItem) {
 		this.simulationItem = simulationItem;
+	}
+	
+	
+	public ChangeUnitDataItem() {
+		super();
 	}
 	public ChangeUnitDataItem(NodeRef nodeRef, RevisionType revision, RequirementType reqType, String reqDetails, Boolean treated, NodeRef sourceItem, NodeRef targetItem, NodeRef simulationItem){
 		
@@ -81,4 +99,64 @@ public class ChangeUnitDataItem {
 		setTargetItem(targetItem);
 		setSimulationItem(simulationItem);
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((reqDetails == null) ? 0 : reqDetails.hashCode());
+		result = prime * result + ((reqType == null) ? 0 : reqType.hashCode());
+		result = prime * result + ((revision == null) ? 0 : revision.hashCode());
+		result = prime * result + ((simulationItem == null) ? 0 : simulationItem.hashCode());
+		result = prime * result + ((sourceItem == null) ? 0 : sourceItem.hashCode());
+		result = prime * result + ((targetItem == null) ? 0 : targetItem.hashCode());
+		result = prime * result + ((treated == null) ? 0 : treated.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ChangeUnitDataItem other = (ChangeUnitDataItem) obj;
+		if (reqDetails == null) {
+			if (other.reqDetails != null)
+				return false;
+		} else if (!reqDetails.equals(other.reqDetails))
+			return false;
+		if (reqType != other.reqType)
+			return false;
+		if (revision != other.revision)
+			return false;
+		if (simulationItem == null) {
+			if (other.simulationItem != null)
+				return false;
+		} else if (!simulationItem.equals(other.simulationItem))
+			return false;
+		if (sourceItem == null) {
+			if (other.sourceItem != null)
+				return false;
+		} else if (!sourceItem.equals(other.sourceItem))
+			return false;
+		if (targetItem == null) {
+			if (other.targetItem != null)
+				return false;
+		} else if (!targetItem.equals(other.targetItem))
+			return false;
+		if (treated == null) {
+			if (other.treated != null)
+				return false;
+		} else if (!treated.equals(other.treated))
+			return false;
+		return true;
+	}
+	@Override
+	public String toString() {
+		return "ChangeUnitDataItem [revision=" + revision + ", reqType=" + reqType + ", reqDetails=" + reqDetails + ", treated=" + treated + ", sourceItem=" + sourceItem
+				+ ", targetItem=" + targetItem + ", simulationItem=" + simulationItem + "]";
+	}
+	
+	
 }

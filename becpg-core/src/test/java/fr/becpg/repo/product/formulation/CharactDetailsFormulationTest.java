@@ -67,17 +67,20 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnitPrice(12.4d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
-						localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
+				CompoListDataItem item = new CompoListDataItem(null,(CompoListDataItem) null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+						localSF1NodeRef);
+				
+				compoList.add(item);
+				compoList.add(new CompoListDataItem(null, item, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 						rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				compoList.add(new CompoListDataItem(null, item, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
-						localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
+				item = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+						localSF2NodeRef);
+				compoList.add(item);
+				compoList.add(new CompoListDataItem(null, item, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 						rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit,
+				compoList.add(new CompoListDataItem(null, item, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit,
 						rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 
@@ -165,12 +168,15 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				 * Composition
 				 */				
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				CompoListDataItem item = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
+				
+				compoList.add(item);
+				compoList.add(new CompoListDataItem(null, item, 1d, 0d, 0d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, item, 2d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+				 item = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef);
+				compoList.add(item);
+				compoList.add(new CompoListDataItem(null,item, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, item, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
 				

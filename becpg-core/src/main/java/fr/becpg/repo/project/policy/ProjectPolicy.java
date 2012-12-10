@@ -15,7 +15,6 @@ import java.util.Set;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -25,9 +24,9 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.project.ProjectException;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
@@ -174,9 +173,8 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			try {
 				logger.debug("Project policy formulate");
 				projectService.formulate(nodeRef);
-			} catch (ProjectException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (FormulateException e) {
+				logger.error(e,e);
 			}
 		}
 	}
