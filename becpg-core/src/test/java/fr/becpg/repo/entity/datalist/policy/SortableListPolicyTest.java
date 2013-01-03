@@ -105,15 +105,15 @@ public class SortableListPolicyTest extends RepoBaseTestCase {
 
 				assertEquals("Check cost order", 100,
 						nodeService.getProperty(sfData.getCostList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 200,
+				assertEquals("Check cost order", 101,
 						nodeService.getProperty(sfData.getCostList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 300,
+				assertEquals("Check cost order", 102,
 						nodeService.getProperty(sfData.getCostList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 400,
+				assertEquals("Check cost order", 103,
 						nodeService.getProperty(sfData.getCostList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 401,
+				assertEquals("Check cost order", 104,
 						nodeService.getProperty(sfData.getCostList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-				assertEquals("Check cost order", 402,
+				assertEquals("Check cost order", 105,
 						nodeService.getProperty(sfData.getCostList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
 
 				return null;

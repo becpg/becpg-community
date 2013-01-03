@@ -112,7 +112,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 		   
 		logger.info("testCalculateCostDetails");
 		
-	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
 					
 				/*
@@ -178,8 +178,13 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null,item, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, item, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
 				
+			}},false,true);
+	   
+	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
 				//formulate Details
 				List<NodeRef> costNodeRefs = new ArrayList<NodeRef>();			
 				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, BeCPGModel.TYPE_COSTLIST,
@@ -309,10 +314,11 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				}
 				
 				assertEquals("Verify checks done", 12, checks);
-								
+							
 				return null;
 
-			}},false,true);
+			}
+		}, false, true);
 		   
 	   }
 
