@@ -142,14 +142,17 @@
    	
    	<!-- Migration -->
    	<bean id="webscript.fr.becpg.migration.migrateRepository.get" class="fr.becpg.repo.web.scripts.migration.MigrateRepositoryWebScript" parent="webscript">
-      	<property name="nodeService" ref="nodeService" />      	
-			<property name="searchService" ref="searchService" />
-			<property name="fileFolderService" ref="fileFolderService" />
-			<property name="repositoryHelper" ref="repositoryHelper" />
-			<property name="repoService" ref="repoService" />
-			<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-			<property name="dictionaryService" ref="dictionaryService" />
-			<property name="mlNodeService" ref="mlAwareNodeService" />
+      	<property name="nodeService" ref="nodeService" />      				
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />			
+		<property name="mlNodeService" ref="mlAwareNodeService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="actionService" ref="actionService" />
+		<property name="ruleService" ref="ruleService" />
+		<property name="contentService" ref="contentService" />
+		<property name="entityReportService" ref="entityReportService" />
+	    <property name="imageMagickContentTransformer">
+	    	<ref bean="transformer.ImageMagick" />
+	    </property> 
    	</bean>
    	
   

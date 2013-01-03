@@ -57,6 +57,9 @@ public interface BeCPGModel {
 	static final QName PROP_PRODUCT_LEGALNAME = QName.createQName(BECPG_URI,
 			"legalName");
 	
+	static final QName PROP_PRODUCT_COMMENTS = QName.createQName(BECPG_URI,
+			"productComments");
+	
 	/** The Constant PROP_PRODUCT_HIERARCHY1. */
 	static final QName PROP_PRODUCT_HIERARCHY1 = QName.createQName(BECPG_URI,
 			"productHierarchy1");

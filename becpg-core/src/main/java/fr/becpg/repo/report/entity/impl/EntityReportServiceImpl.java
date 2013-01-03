@@ -158,8 +158,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 			// on this thread
 			// This won't prevent background processes from
 			// refiring, though
-            policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
-            policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);	
+            policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	            	
      
             /*
              *  generate reports
@@ -191,7 +190,6 @@ public class EntityReportServiceImpl implements EntityReportService{
         }
         finally{
         	policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);		
-        	policyBehaviourFilter.enableBehaviour(entityNodeRef,  ContentModel.ASPECT_AUDITABLE);		
         }			
 	}
 	
