@@ -1,6 +1,6 @@
 package fr.becpg.repo.ecm.data;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,6 +106,8 @@ public class ChangeOrderData extends BeCPGDataObject {
 	public void setChangeUnitList(List<ChangeUnitDataItem> changeUnitList) {
 		this.changeUnitList = changeUnitList;
 	}
+	
+	
 	public Map<NodeRef, ChangeUnitDataItem> getChangeUnitMap() {
 
 		 Map<NodeRef, ChangeUnitDataItem> changeUnitMap = new LinkedHashMap<NodeRef, ChangeUnitDataItem>();
@@ -115,16 +117,9 @@ public class ChangeOrderData extends BeCPGDataObject {
 		 }
 		 
 		
-		return changeUnitMap;
+		return Collections.unmodifiableMap(changeUnitMap);
 	}
-	
-	public void  setChangeUnitMap( Map<NodeRef, ChangeUnitDataItem> changeUnitMap) {
-		changeUnitList = new ArrayList<ChangeUnitDataItem>();
-		for(ChangeUnitDataItem changeUnitDataItem: changeUnitMap.values()){
-			changeUnitList.add(changeUnitDataItem);
-		}
-		
-	}
+
 	
 	public ChangeOrderData() {
 		super();

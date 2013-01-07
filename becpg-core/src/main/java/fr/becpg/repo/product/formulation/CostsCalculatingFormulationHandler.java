@@ -33,12 +33,12 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  *
  * @author querephi
  */
-public class CostsCalculatingVisitor extends AbstractProductFormulationHandler {
+public class CostsCalculatingFormulationHandler extends AbstractProductFormulationHandler {
 
 	public static final Double DEFAULT_LOSS_RATIO = 1d;
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(CostsCalculatingVisitor.class);
+	private static Log logger = LogFactory.getLog(CostsCalculatingFormulationHandler.class);
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
@@ -51,16 +51,15 @@ public class CostsCalculatingVisitor extends AbstractProductFormulationHandler {
 			List<CostListDataItem> dataList = new ArrayList<CostListDataItem>();
 			
 			for(SimpleListDataItem sl : simpleListMap.values()){
+			
 				CostListDataItem c = new CostListDataItem(sl);
-				if(sl.getIsManual() != null && sl.getIsManual().booleanValue()){
-					//manual so it's a CostListDataItem instance (we want to keep the unit defined manually, ie: €)
+				if(!isManual(c)){
+					String unit = calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(c.getCost(), BeCPGModel.PROP_COSTCURRENCY));
+					c.setUnit(unit);
+				} else {
 					if(sl instanceof CostListDataItem){
 						c = new CostListDataItem((CostListDataItem)sl);
 					}
-				}
-				else{
-					String unit = calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(c.getCost(), BeCPGModel.PROP_COSTCURRENCY));
-					c.setUnit(unit);
 				}
 				
 				dataList.add(c);				

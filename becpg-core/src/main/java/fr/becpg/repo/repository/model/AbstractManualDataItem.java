@@ -9,7 +9,7 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 	protected Boolean isManual;
 
 	@AlfProp
-	@AlfQname(qname="bcpg:isManual")
+	@AlfQname(qname="bcpg:isManualListItem")
 	public Boolean getIsManual() {
 		return isManual;
 	}

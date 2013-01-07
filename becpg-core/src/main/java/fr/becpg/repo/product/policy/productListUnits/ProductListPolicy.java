@@ -26,8 +26,8 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.formulation.AbstractProductFormulationHandler;
-import fr.becpg.repo.product.formulation.CostsCalculatingVisitor;
-import fr.becpg.repo.product.formulation.NutsCalculatingVisitor;
+import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
+import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 
 @Service
 public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
@@ -157,9 +157,9 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 										String costCurrency = (String) nodeService.getProperty(costNodeRef, BeCPGModel.PROP_COSTCURRENCY);
 										String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT);
 										
-										if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.endsWith(CostsCalculatingVisitor.calculateSuffixUnit(productUnit)))) {
+										if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.endsWith(CostsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
 											nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT,
-													CostsCalculatingVisitor.calculateUnit(productUnit, costCurrency));
+													CostsCalculatingFormulationHandler.calculateUnit(productUnit, costCurrency));
 										}
 									}
 								}
@@ -180,9 +180,9 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 									NodeRef nutNodeRef = (nutAssocRefs.get(0)).getTargetRef();
 									String nutUnit = (String) nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_NUTUNIT);
 
-									if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.endsWith(NutsCalculatingVisitor.calculateSuffixUnit(productUnit)))) {
+									if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.endsWith(NutsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
 
-										nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT, NutsCalculatingVisitor.calculateUnit(productUnit, nutUnit));
+										nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT, NutsCalculatingFormulationHandler.calculateUnit(productUnit, nutUnit));
 									}
 								}
 							}
@@ -228,7 +228,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 									if (listNodeRef != null) {
 
 										nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT,
-												CostsCalculatingVisitor.calculateUnit(getProductUnit(listNodeRef), costCurrency));
+												CostsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), costCurrency));
 									}
 								}
 							}
@@ -244,7 +244,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 								if (listNodeRef != null) {
 
 									nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT,
-											NutsCalculatingVisitor.calculateUnit(getProductUnit(listNodeRef), nutUnit));
+											NutsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), nutUnit));
 								}
 							}
 

@@ -8,9 +8,9 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
-public class ProcessCalculatingVisitor extends AbstractProductFormulationHandler {
+public class ProcessCalculatingFormulationHandler extends AbstractProductFormulationHandler {
 
-	private static Log logger = LogFactory.getLog(ProcessCalculatingVisitor.class);	
+	private static Log logger = LogFactory.getLog(ProcessCalculatingFormulationHandler.class);	
 	
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {

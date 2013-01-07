@@ -15,7 +15,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.formulation.CostsCalculatingVisitor;
+import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
@@ -40,7 +40,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		 */
 		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {		
 			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(productData.getCompoList(EffectiveFilters.EFFECTIVE));		
-			visitCompoListChildren(productData, composite, ret, CostsCalculatingVisitor.DEFAULT_LOSS_RATIO, netWeight);
+			visitCompoListChildren(productData, composite, ret, CostsCalculatingFormulationHandler.DEFAULT_LOSS_RATIO, netWeight);
 		}		
 
 		/*

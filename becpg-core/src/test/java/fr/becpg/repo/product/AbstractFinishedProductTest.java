@@ -237,6 +237,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			mlName.addValue(Locale.FRENCH, "ing3 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			ing3 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
+			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "ing4");
 			mlName = new MLText();
 			mlName.addValue(Locale.getDefault(), "ing4 default");
@@ -430,6 +431,9 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			rawMaterial4NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial4).getNodeRef();
 			
 			/*-- Raw material 5 --*/
+			ingList = new ArrayList<IngListDataItem>();
+			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));	
+			
 			RawMaterialData rawMaterial5 = new RawMaterialData();
 			rawMaterial5.setName("Raw material 5");
 			legalName = new MLText("Legal Raw material 5");

@@ -145,8 +145,15 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				save(prop.getValue());
 				assocNodeRef = prop.getValue().getNodeRef();
 			} 
+			
 			properties.put(prop.getKey(), assocNodeRef);
 		}
+		
+//		//Avoid to destroy properties
+//		for(Map.Entry<QName, Serializable> prop : properties.entrySet()){
+//			nodeService.setProperty(entity.getNodeRef(), prop.getKey(), prop.getValue());
+//		}
+		
 		nodeService.addProperties(entity.getNodeRef(), properties);
 
 	}

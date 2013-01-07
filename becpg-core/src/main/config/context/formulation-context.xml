@@ -58,29 +58,29 @@
 			<list>
 				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler"/>
 				<bean
-					class="fr.becpg.repo.product.formulation.CompositionCalculatingVisitor">
+					class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
 				</bean>
 				<bean parent="abstractProductFormulationHandler" 
-					class="fr.becpg.repo.product.formulation.ProcessCalculatingVisitor">
+					class="fr.becpg.repo.product.formulation.ProcessCalculatingFormulationHandler">
 				</bean>
 				<bean parent="abstractProductFormulationHandler"
-					class="fr.becpg.repo.product.formulation.AllergensCalculatingVisitor">
+					class="fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler">
 				</bean>
 				<bean parent="abstractProductFormulationHandler"
-					class="fr.becpg.repo.product.formulation.NutsCalculatingVisitor">
+					class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
 				</bean>
 				<bean parent="abstractProductFormulationHandler"
-					class="fr.becpg.repo.product.formulation.CostsCalculatingVisitor">
+					class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
 				</bean>
-				<bean parent="abstractProductFormulationHandler" class="fr.becpg.repo.product.formulation.IngsCalculatingVisitor" >
+				<bean parent="abstractProductFormulationHandler" class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler" >
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 				</bean>
 				<bean parent="abstractProductFormulationHandler"
-					class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingVisitor">
+					class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
 				</bean>
 				<bean parent="abstractProductFormulationHandler" 
-					class="fr.becpg.repo.product.formulation.FormulaVisitor" />
+					class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" />
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />

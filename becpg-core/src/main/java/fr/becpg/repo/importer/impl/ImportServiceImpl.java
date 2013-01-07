@@ -412,7 +412,7 @@ public class ImportServiceImpl implements ImportService {
 		
 		while(importContext.getImportIndex() <= lastIndex && (arrStr = importContext.readLine()) != null){
 						
-			String prefix = arrStr[COLUMN_PREFIX];
+			String prefix = ImportHelper.cleanValue(arrStr[COLUMN_PREFIX]);
 			
 			if(prefix.equals(PFX_PATH)){
 								
@@ -627,8 +627,8 @@ public class ImportServiceImpl implements ImportService {
 					}
 				}
 			}			
-			else if(!prefix.isEmpty() || !prefix.equals(PFX_COMMENT)){
-	   		 throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNSUPPORTED_PREFIX, importContext.getCSVLine(), prefix));
+			else if(!(prefix.isEmpty() || prefix.equals(PFX_COMMENT))){
+				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNSUPPORTED_PREFIX, importContext.getCSVLine(), prefix));
 	   	 	}
 			importContext.goToNextLine();						
 		}

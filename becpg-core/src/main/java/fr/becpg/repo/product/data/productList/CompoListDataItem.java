@@ -97,6 +97,9 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	
 	
 	public void setCompoListUnit(CompoListUnit compoListUnit) {
+		if(compoListUnit==null){
+			compoListUnit  = CompoListUnit.Unknown;
+		}
 		this.compoListUnit = compoListUnit;
 	}
 	
@@ -128,6 +131,10 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	
 
 	public void setDeclType(DeclarationType declType) {
+		if(declType==null){
+			declType=DeclarationType.Declare;
+		}
+		
 		this.declType = declType;
 	}
 	
@@ -250,14 +257,16 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	public static Composite<CompoListDataItem> getHierarchicalCompoList(List<CompoListDataItem> items){
 		
 		Composite<CompoListDataItem> composite = new Composite<CompoListDataItem>();
-		loadChildren(composite, 1, 0, items);
+		if(items.size()>0){
+			loadChildren(composite, 1, 0, items);
+		}
 		return composite;
 	}
 	
+	
+	//TODO Compute by parent instead
+	@Deprecated 
 	private static int loadChildren(Composite<CompoListDataItem> composite, int level, int startPos, List<CompoListDataItem> items){
-		
-		
-		
 		
 		int z_idx = startPos; 
 		
