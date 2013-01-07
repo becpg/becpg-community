@@ -133,8 +133,11 @@ public class ProjectServiceImpl implements ProjectService {
 				else{
 					logger.warn("Workflow instance unknown. WorkflowId: " + taskListDataItem.getWorkflowInstance());
 				}
+				taskListDataItem.setWorkflowInstance(null);
 			}					
-		}
+		}		
+		projectDAO.update(projectNodeRef, abstractProjectData, dataLists);
+		logger.debug("project cancelled.");
 	}
 
 	@Override

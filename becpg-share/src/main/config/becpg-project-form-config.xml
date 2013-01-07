@@ -154,8 +154,8 @@
 					<show id="pjt:projectDueDate" />
 				</field-visibility>
 				<appearance>
-					<field id="dataList_pjt:deliverableList" label="Livrables" />
-					<field id="dataList_pjt:taskList" label="Tâches en cours" />
+					<field id="dataList_pjt:deliverableList" label-id="dataList.pjt.deliverableList" />
+					<field id="dataList_pjt:taskList" label-id="dataList.pjt.taskList" />
 					<field id="pjt:projectHierarchy1" />
 					<field id="pjt:projectPriority" label="" />
 					<field id="pjt:projectStartDate" label="Dates" />
