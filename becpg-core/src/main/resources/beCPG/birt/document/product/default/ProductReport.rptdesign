@@ -1955,17 +1955,36 @@
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">id</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">id</text-property>
+                    <property name="analysisColumn">id</property>
                 </structure>
                 <structure>
                     <property name="columnName">name</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">name</text-property>
+                    <property name="analysisColumn">name</property>
                 </structure>
                 <structure>
                     <property name="columnName">title</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">title</text-property>
+                    <property name="analysisColumn">title</property>
                 </structure>
             </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">not-like</property>
+                    <expression name="expr" type="javascript">row["name"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"img_fab%"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>

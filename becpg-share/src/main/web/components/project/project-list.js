@@ -480,7 +480,7 @@ var g; // gantt var
 
 		               if (task["itemData"]["prop_pjt_tlWorkflowInstance"]
 		                     && task["itemData"]["prop_pjt_tlWorkflowInstance"].value) {
-			               ret += '<a class="task-link" href="' + Alfresco.constants.URL_PAGECONTEXT
+			               ret += '<a class="task-link" title="' + this.msg("link.title.open-workflow") + '" href="' + Alfresco.constants.URL_PAGECONTEXT
 			                     + 'workflow-details?workflowId=' + task["itemData"]["prop_pjt_tlWorkflowInstance"].value
 			                     + '&referrer=project-list&myWorkflowsLinkBack=true' + '" >&nbsp;</a>';
 		               }
@@ -497,7 +497,8 @@ var g; // gantt var
 		               var contents = deliverable["itemData"]["assoc_pjt_dlContent"];
 
 		               if (contents.length > 0) {
-			               ret += '<span class="doc-file"><a href="' + this._buildCellUrl(contents[0]) + '"><img src="'
+			               ret += '<span class="doc-file"><a title="' + this.msg("link.title.open-document") + '" href="' 
+			               		 + this._buildCellUrl(contents[0]) + '"><img src="'
 			                     + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'
 			                     + Alfresco.util.getFileIcon(contents[0].displayValue, "cm:content", 16)
 			                     + '" /></a></span>';
@@ -505,7 +506,7 @@ var g; // gantt var
 
 		               ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef
 		                     + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="'
-		                     + this.msg("link.title.task-edit") + '" >'
+		                     + this.msg("link.title.deliverable-edit") + '" >'
 		                     + deliverable["itemData"]["prop_pjt_dlDescription"].displayValue + '</a></span>';
 
 		               return ret;
@@ -536,7 +537,8 @@ var g; // gantt var
 		               }
 
 		               return '<span class="project-title"><a class="folder-link" href="' + urlFolder
-		                     + '" >&nbsp;</a><a class="theme-color-1" href="' + url + '">' + code + "&nbsp;-&nbsp;"
+		                     + '" title="' + this.msg("link.title.open-folder") + '">&nbsp;</a><a class="theme-color-1" href="' 
+		                     + url + '" title="' + this.msg("link.title.open-project") + '">' + code + "&nbsp;-&nbsp;"
 		                     + $html(title) + '</a></span>' + version;
 	               }
 	            }, true);
