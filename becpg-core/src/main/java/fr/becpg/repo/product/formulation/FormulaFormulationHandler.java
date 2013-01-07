@@ -18,9 +18,9 @@ import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
  * @author matthieu
  * 
  */
-public class FormulaVisitor extends AbstractProductFormulationHandler {
+public class FormulaFormulationHandler extends AbstractProductFormulationHandler {
 
-	private static Log logger = LogFactory.getLog(FormulaVisitor.class);
+	private static Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
 
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {

@@ -23,9 +23,9 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  *
  * @author querephi
  */
-public class PhysicoChemCalculatingVisitor extends AbstractProductFormulationHandler {
+public class PhysicoChemCalculatingFormulationHandler extends AbstractProductFormulationHandler {
 
-	private static Log logger = LogFactory.getLog(PhysicoChemCalculatingVisitor.class);
+	private static Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {	
@@ -38,7 +38,9 @@ public class PhysicoChemCalculatingVisitor extends AbstractProductFormulationHan
 			List<PhysicoChemListDataItem> dataList = new ArrayList<PhysicoChemListDataItem>();
 			
 			for(SimpleListDataItem sl : simpleListMap.values()){
-				dataList.add(new PhysicoChemListDataItem(sl));
+				if(sl instanceof PhysicoChemListDataItem){
+					dataList.add((PhysicoChemListDataItem)sl);
+				}
 			}
 			
 			formulatedProduct.setPhysicoChemList(dataList);
@@ -58,7 +60,7 @@ public class PhysicoChemCalculatingVisitor extends AbstractProductFormulationHan
 		if(!super.isCharactFormulated(sl)){
 			return false;
 		}
-		Boolean isFormulated = (Boolean)nodeService.getProperty(sl.getNodeRef(), BeCPGModel.PROP_PHYSICO_CHEM_FORMULATED); 
+		Boolean isFormulated = (Boolean)nodeService.getProperty(sl.getCharactNodeRef(), BeCPGModel.PROP_PHYSICO_CHEM_FORMULATED); 
 		return isFormulated != null ? isFormulated.booleanValue() : false;
 	}
 }

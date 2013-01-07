@@ -3,7 +3,7 @@ package fr.becpg.repo.ecm.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -127,11 +127,11 @@ public class ECOServiceImpl implements ECOService {
 												replacementListDataItem.getTargetItem(),
 												null);
 				
-				if(ecoData.getChangeUnitMap() == null){
-					ecoData.setChangeUnitMap(new LinkedHashMap<NodeRef, ChangeUnitDataItem>());
+				if(ecoData.getChangeUnitList()==null){
+					ecoData.setChangeUnitList(new LinkedList<ChangeUnitDataItem>());
 				}
 				
-				ecoData.getChangeUnitMap().put(replacementListDataItem.getSourceItem(), changeUnitDataItem);
+				ecoData.getChangeUnitList().add(changeUnitDataItem);
 				ecoData.getWUsedList().add(new WUsedListDataItem(null, 1, null, true, null, replacementListDataItem.getSourceItem()));
 				
 				List<QName> associationQNames = wUsedListService.evaluateWUsedAssociations(replacementListDataItem.getSourceItem());				
@@ -208,7 +208,7 @@ public class ECOServiceImpl implements ECOService {
 			if(changeUnitDataItem == null){
 				
 				changeUnitDataItem = new ChangeUnitDataItem(null, revision, null, null, Boolean.FALSE, sourceItem, null, null);
-				ecoData.getChangeUnitMap().put(sourceItem, changeUnitDataItem);
+				ecoData.getChangeUnitList().add(changeUnitDataItem);
 			}
 			else{
 				// test revision
@@ -297,7 +297,7 @@ public class ECOServiceImpl implements ECOService {
 	 */
 	private void resetTreatedWUseds(ChangeOrderData ecoData){
 				
-		for(ChangeUnitDataItem cul : ecoData.getChangeUnitMap().values()){					
+		for(ChangeUnitDataItem cul : ecoData.getChangeUnitList()){					
 			
 			if(cul.getTreated()){
 				cul.setTreated(Boolean.FALSE);
@@ -324,7 +324,7 @@ public class ECOServiceImpl implements ECOService {
 		}
 		
 		// clear changeUnitList
-		for(ChangeUnitDataItem cul : ecoData.getChangeUnitMap().values()){
+		for(ChangeUnitDataItem cul : ecoData.getChangeUnitList()){
 			cul.setTreated(Boolean.FALSE);
 			cul.setReqType(null);
 			cul.setReqDetails(null);

@@ -12,6 +12,12 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if ((productData.getCompoList() != null && !productData.getCompoList().isEmpty()) ||
 		(productData.getPackagingList() != null && !productData.getPackagingList().isEmpty()) ||
 		(productData.getProcessList() != null && !productData.getProcessList().isEmpty())) {
+			//First Reset 
+			
+			if(productData.getReqCtrlList()!=null){
+				productData.getReqCtrlList().clear();
+			}
+			
 			// Continue
 			return true;
 		}

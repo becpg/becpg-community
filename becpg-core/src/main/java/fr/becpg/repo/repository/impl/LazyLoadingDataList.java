@@ -150,6 +150,7 @@ public class LazyLoadingDataList<E> implements List<E>  {
 
 	@Override
 	public void clear() {
+		deletedNodes.addAll(getList());
 		getList().clear();
 	}
 

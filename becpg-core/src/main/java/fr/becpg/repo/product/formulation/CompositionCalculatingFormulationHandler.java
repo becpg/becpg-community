@@ -12,12 +12,12 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
-public class CompositionCalculatingVisitor extends AbstractProductFormulationHandler {
+public class CompositionCalculatingFormulationHandler extends AbstractProductFormulationHandler {
 
 	public static final Double DEFAULT_DENSITY = 1d;
 	public static final Double DEFAULT_QUANTITY = 0d;
 	
-	private static Log logger = LogFactory.getLog(CompositionCalculatingVisitor.class);
+	private static Log logger = LogFactory.getLog(CompositionCalculatingFormulationHandler.class);
 	
 	
 	@Override

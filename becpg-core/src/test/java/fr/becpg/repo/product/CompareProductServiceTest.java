@@ -209,6 +209,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 			}
 		}
 
+		
 		return false;
 	}
 
@@ -264,6 +265,8 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 		return false;
 	}
 
+
+	
 	/**
 	 * Test comparison.
 	 */
@@ -304,11 +307,16 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				fp1.setAllergenList(allergenList);
 
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
+				
+				CompoListDataItem parent1 = new CompoListDataItem(null,(CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF1NodeRef);
+				
+				compoList.add(parent1);
+				compoList.add(new CompoListDataItem(null, parent1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, parent1, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
+				
+				CompoListDataItem parent2 =new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF2NodeRef);
+				compoList.add(parent2);
+				compoList.add(new CompoListDataItem(null, parent2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
 				// compoList.add(new CompoListDataItem(null, 2, 3d, 0d,
 				// 0d, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
 				// rawMaterial4NodeRef));
@@ -348,12 +356,14 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				fp2.setAllergenList(allergenList);
 
 				compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial4NodeRef));
+				CompoListDataItem parent11 = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF1NodeRef);
+				compoList.add(parent11);
+				compoList.add(new CompoListDataItem(null, parent11, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, parent11, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
+				CompoListDataItem parent22 = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF2NodeRef);
+				compoList.add(parent22);
+				compoList.add(new CompoListDataItem(null, parent22, 2d, 0d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, parent22, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.setCompoList(compoList);
 
 				fp2NodeRef = alfrescoRepository.create(testFolderNodeRef, fp2).getNodeRef();

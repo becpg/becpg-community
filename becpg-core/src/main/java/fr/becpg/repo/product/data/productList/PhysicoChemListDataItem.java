@@ -123,50 +123,26 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		this.maxi = maxi;
 		this.physicoChem = physicoChem;
 	}
-	
-	/**
-	 * Copy constructor
-	 * @param p
-	 */
-	public PhysicoChemListDataItem(PhysicoChemListDataItem p){
-		setNodeRef(p.getNodeRef());
-		setValue(p.getValue());
-		setUnit(p.getUnit());
-		setMini(p.getMini());
-		setMaxi(p.getMaxi());
-		setPhysicoChem(p.getPhysicoChem());
-	}
-	
-	/**
-	 * Copy constructor
-	 * @param p
-	 */
-	public PhysicoChemListDataItem(SimpleListDataItem p){
-		setValue(p.getValue());
-		setMini(p.getMini());
-		setMaxi(p.getMaxi());
-		setIsManual(p.getIsManual());
-		setPhysicoChem(p.getCharactNodeRef());
-	}
+
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
 		result = prime * result + ((mini == null) ? 0 : mini.hashCode());
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
 		result = prime * result + ((physicoChem == null) ? 0 : physicoChem.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
 
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -180,11 +156,6 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 			if (other.mini != null)
 				return false;
 		} else if (!mini.equals(other.mini))
-			return false;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
-				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
 			return false;
 		if (physicoChem == null) {
 			if (other.physicoChem != null)
@@ -204,8 +175,14 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		return true;
 	}
 
+
 	@Override
 	public String toString() {
-		return "PhysicoChemListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi + ", physicoChem=" + physicoChem + "]";
+		return "PhysicoChemListDataItem [value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi + ", physicoChem=" + physicoChem + ", isManual=" + isManual
+				+ ", nodeRef=" + nodeRef + ", name=" + name + "]";
 	}
+	
+
+
+	
 }

@@ -37,7 +37,7 @@ import fr.becpg.repo.repository.filters.EffectiveFilters;
  *
  * @author querephi
  */
-public class IngsCalculatingVisitor extends AbstractProductFormulationHandler{
+public class IngsCalculatingFormulationHandler extends AbstractProductFormulationHandler{
 		
 	/** The Constant DEFAULT_DENSITY. */
 	public static final Double DEFAULT_DENSITY = 1d;
@@ -46,7 +46,7 @@ public class IngsCalculatingVisitor extends AbstractProductFormulationHandler{
 	public static final String  NO_GRP = "-";
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(IngsCalculatingVisitor.class);
+	private static Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
 	
 	
 	/** The ml node service. */
@@ -114,6 +114,8 @@ public class IngsCalculatingVisitor extends AbstractProductFormulationHandler{
 	private void calculateIL(ProductData formulatedProduct, ProductData productSpecicationData) throws FormulateException{
 	
 		List<CompoListDataItem> compoList = formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE);
+		
+		
 		Map<NodeRef, IngListDataItem> ingMap = new HashMap<NodeRef, IngListDataItem>();
 		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<NodeRef, ReqCtrlListDataItem>();
 		Map<NodeRef, Double> totalQtyIngMap = new HashMap<NodeRef, Double>();
@@ -161,7 +163,13 @@ public class IngsCalculatingVisitor extends AbstractProductFormulationHandler{
 
 		ProductData productData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());		
 		
+		
+		
 		if(productData.getIngList() == null){
+			if(logger.isDebugEnabled()){
+				logger.debug("CompoItem: " + productData.getName() + " - doesn't have ing ");
+			}
+			
 			return;
 		}
 		
@@ -184,6 +192,10 @@ public class IngsCalculatingVisitor extends AbstractProductFormulationHandler{
 		
 		//OMIT is not taken in account
 		if(compoListDataItem.getDeclType() == DeclarationType.Omit){
+			if(logger.isDebugEnabled()){
+				logger.debug("Omitting: " + productData.getName());
+			}
+			
 			return;
 		}
 		
@@ -193,8 +205,9 @@ public class IngsCalculatingVisitor extends AbstractProductFormulationHandler{
 			NodeRef ingNodeRef = ingListDataItem.getIng();
 			IngListDataItem newIngListDataItem = ingMap.get(ingNodeRef);
 			Double totalQtyIng = totalQtyIngMap.get(ingNodeRef);
-			
-			logger.trace("productData: " + productData.getName() + " - ing: " + nodeService.getProperty(ingNodeRef, ContentModel.PROP_NAME));
+			if(logger.isDebugEnabled()){
+				logger.debug("productData: " + productData.getName() + " - ing: " + nodeService.getProperty(ingNodeRef, ContentModel.PROP_NAME));
+			}
 			
 			if(newIngListDataItem == null){
 				
@@ -252,19 +265,27 @@ public class IngsCalculatingVisitor extends AbstractProductFormulationHandler{
 	 */
 	private void checkILOfPart(ProductData productData, ProductData productSpecicationData, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){
 		
-		if(productSpecicationData != null && productSpecicationData.getForbiddenIngList() != null){
 		
-			for(IngListDataItem ingListDataItem : productData.getIngList()){										
-				
+		if(productSpecicationData != null && productSpecicationData.getForbiddenIngList() != null){
+			
+
+			if(logger.isDebugEnabled()){
+				logger.debug("checkILOfPart: " + productData.getName()+" "+productData.getIngList().size() );
+			}
+			
+			for(IngListDataItem ingListDataItem : productData.getIngList()){	
+				if(logger.isDebugEnabled()){
+					logger.debug("For "+productData.getName()+" testing ing :"+ nodeService.getProperty(ingListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME));
+				}
 				for(ForbiddenIngListDataItem fil : productSpecicationData.getForbiddenIngList()){					
 					
 					// GMO
-					if(fil.getIsGMO() != null && !fil.getIsGMO().equals(ingListDataItem.getIsGMO())){
+					if(fil.getIsGMO() != null && !fil.getIsGMO().equals(ingListDataItem.getIsGMO().toString())){
 						continue; // check next rule
 					}
 					
 					// Ionized
-					if(fil.getIsIonized() != null && !fil.getIsIonized().equals(ingListDataItem.getIsIonized())){
+					if(fil.getIsIonized() != null && !fil.getIsIonized().equals(ingListDataItem.getIsIonized().toString())){
 						continue; // check next rule
 					}
 					
@@ -306,6 +327,7 @@ public class IngsCalculatingVisitor extends AbstractProductFormulationHandler{
 						}
 					}
 					
+					logger.debug("Adding not respected for :"+ fil.getReqMessage());
 					// req not respected
 					ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 					if(reqCtrl == null){
@@ -520,6 +542,7 @@ public class IngsCalculatingVisitor extends AbstractProductFormulationHandler{
 	 */
 	private List<IngLabelingListDataItem> getILLToUpdate(NodeRef productNodeRef, List<IngLabelingListDataItem> illList){
 				
+		
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
 		
 		if(listContainerNodeRef != null){

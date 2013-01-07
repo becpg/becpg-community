@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.formulation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,9 @@ public abstract class AbstractProductFormulationHandler extends FormulationBaseH
 		
 		// init with dbValues
 		List<SimpleListDataItem> simpleListDataList = alfrescoRepository.loadDataList(formulatedProduct.getNodeRef(), getDataListVisited());//		
+		
+		List<SimpleListDataItem> manualDataItems = new ArrayList<SimpleListDataItem>();
+		
 		if(simpleListDataList != null){			
 			for(SimpleListDataItem sl : simpleListDataList){
 				// reset value if formulated
@@ -61,14 +65,24 @@ public abstract class AbstractProductFormulationHandler extends FormulationBaseH
 					sl.setValue(null);
 					sl.setMini(null);
 					sl.setMaxi(null);
-				}				
+				}
+				if(isManual(sl)){
+					manualDataItems.add(sl);
+				}
+				
 				simpleListDataMap.put(sl.getCharactNodeRef(), sl);
 			}
 		}
 		
 		visitChildren(formulatedProduct, simpleListDataMap);			
 		
-		// manual listItem
+		
+		//Override Manual item
+		for(SimpleListDataItem sl : manualDataItems){
+			simpleListDataMap.put(sl.getCharactNodeRef(), alfrescoRepository.findOne(sl.getNodeRef()));
+		}
+		
+		
 		return  simpleListDataMap;
 	}
 	
@@ -146,9 +160,11 @@ public abstract class AbstractProductFormulationHandler extends FormulationBaseH
 					
 					if(logger.isDebugEnabled()){
 						logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
-						logger.debug("charact: " + nodeService.getProperty(slNodeRef, ContentModel.PROP_NAME) + " - newValue : " + newSimpleListDataItem.getValue());
-						logger.debug("charact: " + nodeService.getProperty(slNodeRef, ContentModel.PROP_NAME) + " - newMini : " + newSimpleListDataItem.getMini());
-						logger.debug("charact: " + nodeService.getProperty(slNodeRef, ContentModel.PROP_NAME) + " - newMaxi : " + newSimpleListDataItem.getMaxi());
+						if(slNodeRef!=null){
+							logger.debug("charact: " + nodeService.getProperty(slNodeRef, ContentModel.PROP_NAME) + " - newValue : " + newSimpleListDataItem.getValue());
+							logger.debug("charact: " + nodeService.getProperty(slNodeRef, ContentModel.PROP_NAME) + " - newMini : " + newSimpleListDataItem.getMini());
+							logger.debug("charact: " + nodeService.getProperty(slNodeRef, ContentModel.PROP_NAME) + " - newMaxi : " + newSimpleListDataItem.getMaxi());
+						}
 					}					
 				}	
 			}							
@@ -162,9 +178,13 @@ public abstract class AbstractProductFormulationHandler extends FormulationBaseH
 	}
 
 	protected boolean isCharactFormulated(SimpleListDataItem sl){
-		return sl.getIsManual()==null || !sl.getIsManual().booleanValue();
+		return true;
 	}
 
+	protected boolean isManual(SimpleListDataItem sl){
+		return sl.getIsManual()!=null && sl.getIsManual().booleanValue();
+	}
+	
 //	/**
 //	 * Calculate listItem to update
 //	 * @param productNodeRef

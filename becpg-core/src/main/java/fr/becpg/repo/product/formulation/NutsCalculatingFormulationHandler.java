@@ -28,7 +28,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  *
  * @author querephi
  */
-public class NutsCalculatingVisitor extends AbstractProductFormulationHandler {
+public class NutsCalculatingFormulationHandler extends AbstractProductFormulationHandler {
 	
 	/** The Constant UNIT_PER100G. */
 	public static final String UNIT_PER100G = "/100g";
@@ -37,7 +37,7 @@ public class NutsCalculatingVisitor extends AbstractProductFormulationHandler {
 	public static final String UNIT_PER100ML = "/100mL";
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(NutsCalculatingVisitor.class);
+	private static Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 	
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {

@@ -54,7 +54,7 @@ public class ECOTest extends RepoBaseTestCase {
 	/** The product service. */
 	@Resource
 	private ProductService productService;
-	
+
 	@Resource
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
@@ -96,7 +96,6 @@ public class ECOTest extends RepoBaseTestCase {
 	/** The nut2. */
 	private NodeRef nut2;
 
-
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -106,12 +105,11 @@ public class ECOTest extends RepoBaseTestCase {
 
 		nut1 = nuts.get(0);
 		nut2 = nuts.get(1);
-	
+
 		// create RM and lSF
 		initParts();
-		
-	}
 
+	}
 
 	/**
 	 * Inits the parts.
@@ -120,14 +118,15 @@ public class ECOTest extends RepoBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				
-				// remove products folder since products created in test folder are classified by policy
-                NodeRef productsFolder = nodeService
-        				.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
-                if(productsFolder != null){
-                	nodeService.deleteNode(productsFolder);
-                }
-				
+
+				// remove products folder since products created in test folder
+				// are classified by policy
+				NodeRef productsFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
+				if (productsFolder != null) {
+					nodeService.deleteNode(productsFolder);
+				}
+
 				/*-- create raw materials --*/
 				logger.debug("/*-- create raw materials --*/");
 				/*-- Raw material 1 --*/
@@ -146,7 +145,7 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial1.setNutList(nutList);
-				
+
 				rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
 
 				/*-- Raw material 2 --*/
@@ -241,7 +240,7 @@ public class ECOTest extends RepoBaseTestCase {
 	 */
 	public NodeRef createFinishedProduct(final String finishedProductName) throws Exception {
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
 				/*-- create finished product --*/
@@ -254,20 +253,28 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				
-				CompoListDataItem compo1 =  new CompoListDataItem(null,(CompoListDataItem) null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
-				
+
+				CompoListDataItem compo1 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+
 				compoList.add(compo1);
 				compoList.add(new CompoListDataItem(null, compo1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compo1, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				
-				CompoListDataItem compo2 =new CompoListDataItem(null,(CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
-				
+
+				CompoListDataItem compo2 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
+
 				compoList.add(compo2);
-				compoList.add( new CompoListDataItem(null, compo2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+
+			}
+		}, false, true);
+
+		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
 
@@ -285,9 +292,9 @@ public class ECOTest extends RepoBaseTestCase {
 				// costs
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
-					
+
 					logger.error(costListDataItem.toString());
-					
+
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue()
 							+ " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
@@ -369,6 +376,9 @@ public class ECOTest extends RepoBaseTestCase {
 
 					assertNotNull(wul.getSourceItem());
 					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItem());
+					logger.info("Source item "+wul.getSourceItem());
+					logger.info("ChangeUnit map : "+dbECOData.getChangeUnitMap().toString());
+					
 					assertNotNull(changeUnitData);
 
 					if (changeUnitData.getSourceItem().equals(rawMaterial4NodeRef)) {
@@ -504,7 +514,7 @@ public class ECOTest extends RepoBaseTestCase {
 				assertEquals("Check impacted WUsed", 3, dbECOData.getWUsedList().size());
 
 				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
-					
+
 					assertNotNull(wul.getSourceItem());
 					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItem());
 					assertNotNull(changeUnitData);
@@ -607,12 +617,13 @@ public class ECOTest extends RepoBaseTestCase {
 	@Test
 	public void testECOInMultiLeveCompo() throws Exception {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+
+		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
+		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
+		
+		final NodeRef finishedProduct3NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-
-				NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
-				NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
-
+				
 				/*
 				 * create multi level compo
 				 */
@@ -625,20 +636,23 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct3.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				finishedProduct3.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 2d, 2d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct2NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 1d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 2d, 2d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct2NodeRef));
 				finishedProduct3.setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				NodeRef finishedProduct3NodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct3).getNodeRef();
+				return alfrescoRepository.create(testFolderNodeRef, finishedProduct3).getNodeRef();
+
+			}
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
 				/*-- Formulate product --*/
-				try {
-					logger.debug("/*-- Formulate product PF3 --*/");
-					productService.formulate(finishedProduct3NodeRef);
-				} catch (Exception e) {
-					logger.error("!error when formulating.", e);
-				}
+
+				logger.debug("/*-- Formulate product PF3 --*/");
+				productService.formulate(finishedProduct3NodeRef);
 
 				/*-- Verify formulation --*/
 				logger.debug("/*-- Verify formulation --*/");
@@ -699,13 +713,14 @@ public class ECOTest extends RepoBaseTestCase {
 
 				// verify WUsed
 				int checks = 0;
-				ChangeOrderData dbECOData = (ChangeOrderData)alfrescoRepository.findOne(ecoNodeRef);
+				ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-				//assertEquals("Check WUsed impacted", 5, dbECOData.getWUsedList().size());
+				// assertEquals("Check WUsed impacted", 5,
+				// dbECOData.getWUsedList().size());
 
 				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
-					
+
 					assertNotNull(wul.getSourceItem());
 					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItem());
 					assertNotNull(changeUnitData);

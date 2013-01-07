@@ -138,6 +138,7 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 		
 	}
 	
+	@Deprecated
 	public CostListDataItem(SimpleListDataItem c){
 		super();
 		this.nodeRef = c.getNodeRef();		

@@ -27,10 +27,10 @@ import fr.becpg.repo.repository.filters.EffectiveFilters;
  * 
  * @author querephi
  */
-public class AllergensCalculatingVisitor extends AbstractProductFormulationHandler {
+public class AllergensCalculatingFormulationHandler extends AbstractProductFormulationHandler {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(AllergensCalculatingVisitor.class);
+	private static Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);
 
 
 

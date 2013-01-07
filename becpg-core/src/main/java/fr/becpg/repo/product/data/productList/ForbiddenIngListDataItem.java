@@ -124,15 +124,15 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 
 	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, Double qtyPercMaxi, Boolean isGMO, Boolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
 	{
-		setNodeRef(nodeRef);
-		setReqType(reqType);
-		setReqMessage(reqMessage);
-		setQtyPercMaxi(qtyPercMaxi);
-		setGeoOrigins(geoOrigins);
-		setBioOrigins(bioOrigins);
+		this.nodeRef = nodeRef;
+		this.reqType = reqType;
+		this.reqMessage = reqMessage;
+		this.qtyPercMaxi = qtyPercMaxi;
+		this.geoOrigins = geoOrigins;
+		this.bioOrigins = bioOrigins;
 		setIsGMO(isGMO);
 		setIsIonized(isIonized);		
-		setIngs(ings);
+		this.ings = ings;
 	}
 
 	@Override
