@@ -7,6 +7,7 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 
 	
 	protected Boolean isManual;
+	protected Integer sort;
 
 	@AlfProp
 	@AlfQname(qname="bcpg:isManualListItem")
@@ -16,6 +17,16 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 
 	public void setIsManual(Boolean isManual) {
 		this.isManual = isManual;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:sort")
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
 	}
 
 	@Override

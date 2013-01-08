@@ -1,25 +1,33 @@
 package fr.becpg.repo.product.formulation;
 
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
-public class CompositionCalculatingFormulationHandler extends AbstractProductFormulationHandler {
+public class CompositionCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	public static final Double DEFAULT_DENSITY = 1d;
 	public static final Double DEFAULT_QUANTITY = 0d;
 	
 	private static Log logger = LogFactory.getLog(CompositionCalculatingFormulationHandler.class);
 	
+	private NodeService nodeService;
 	
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 

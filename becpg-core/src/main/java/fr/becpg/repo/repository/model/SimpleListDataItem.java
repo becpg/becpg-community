@@ -11,5 +11,9 @@ public interface SimpleListDataItem extends IManualDataItem, SimpleCharactDataIt
 
 	public Double getMaxi();
 
-	public void setMaxi(Double value);	
+	public void setMaxi(Double value);
+	
+	public Integer getSort();
+	
+	public void setSort(Integer sort);
 }

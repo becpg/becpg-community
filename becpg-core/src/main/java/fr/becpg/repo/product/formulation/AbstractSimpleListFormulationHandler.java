@@ -1,9 +1,9 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -17,26 +17,25 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
-public abstract class AbstractProductFormulationHandler extends FormulationBaseHandler<ProductData> {
+public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListDataItem> extends FormulationBaseHandler<ProductData> {
 
 	public static final String UNIT_SEPARATOR = "/";
 	
-	private static Log logger = LogFactory.getLog(AbstractProductFormulationHandler.class);
+	private static Log logger = LogFactory.getLog(AbstractSimpleListFormulationHandler.class);
 	
 
-	protected AlfrescoRepository<SimpleListDataItem> alfrescoRepository;
+	protected AlfrescoRepository<T> alfrescoRepository;
 	
 	protected EntityListDAO entityListDAO;
 
 	protected NodeService nodeService;
 
 
-	public void setAlfrescoRepository(AlfrescoRepository<SimpleListDataItem> alfrescoRepository) {
+	public void setAlfrescoRepository(AlfrescoRepository<T> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
@@ -47,17 +46,19 @@ public abstract class AbstractProductFormulationHandler extends FormulationBaseH
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
+	
+	public T createNewInstance() throws InstantiationException, IllegalAccessException{
+		return getInstanceClass().newInstance();
+	}
+	
+	protected abstract Class<T> getInstanceClass();
+	
+	protected abstract QName getDataListVisited();
+	
 
-	protected Map<NodeRef, SimpleListDataItem> getFormulatedList(ProductData formulatedProduct) throws FormulateException{
-		logger.debug("getFormulatedList");
-			
-		Map<NodeRef, SimpleListDataItem> simpleListDataMap = new HashMap<NodeRef, SimpleListDataItem>();
-		
-		// init with dbValues
-		List<SimpleListDataItem> simpleListDataList = alfrescoRepository.loadDataList(formulatedProduct.getNodeRef(), getDataListVisited());//		
-		
-		List<SimpleListDataItem> manualDataItems = new ArrayList<SimpleListDataItem>();
-		
+	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
+		logger.debug("formulateSimpleList");			
+
 		if(simpleListDataList != null){			
 			for(SimpleListDataItem sl : simpleListDataList){
 				// reset value if formulated
@@ -66,27 +67,28 @@ public abstract class AbstractProductFormulationHandler extends FormulationBaseH
 					sl.setMini(null);
 					sl.setMaxi(null);
 				}
-				if(isManual(sl)){
-					manualDataItems.add(sl);
-				}
-				
-				simpleListDataMap.put(sl.getCharactNodeRef(), sl);
 			}
 		}
 		
-		visitChildren(formulatedProduct, simpleListDataMap);			
+		List<T> retainNodes = new ArrayList<T>();
 		
-		
-		//Override Manual item
-		for(SimpleListDataItem sl : manualDataItems){
-			simpleListDataMap.put(sl.getCharactNodeRef(), alfrescoRepository.findOne(sl.getNodeRef()));
+		//manuel
+		for(T sl : simpleListDataList){
+			if(sl.getIsManual()!= null && sl.getIsManual()){
+				retainNodes.add(sl);
+			}
 		}
 		
+		visitChildren(formulatedProduct, simpleListDataList, retainNodes);
 		
-		return  simpleListDataMap;
+		logger.debug("###simpleListDataList size: " + simpleListDataList.size() + " retainNodes: " + retainNodes.size());
+		simpleListDataList.retainAll(retainNodes);	
+		
+		//sort
+		sort(simpleListDataList);
 	}
 	
-	protected void visitChildren(ProductData formulatedProduct, Map<NodeRef, SimpleListDataItem> simpleListDataMap) throws FormulateException{
+	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList, List<T> retainNodes) throws FormulateException{
 		
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct);
 		
@@ -96,7 +98,7 @@ public abstract class AbstractProductFormulationHandler extends FormulationBaseH
 				Double qty = FormulationHelper.getQty(compoItem, nodeService);
 				
 				if(qty != null){
-					visitPart(compoItem.getProduct(), simpleListDataMap, qty, netWeight);
+					visitPart(compoItem.getProduct(), simpleListDataList, retainNodes, qty, netWeight);
 				}			
 			}
 		}		
@@ -105,34 +107,42 @@ public abstract class AbstractProductFormulationHandler extends FormulationBaseH
 	/**
 	 * Visit part.
 	 *
-	 * @param formulatedProduct the formulated product
-	 * @param compoListDataItem the compo list data item
-	 * @param physicoChemMap the nut map
-	 * @throws FormulateException 
 	 */
-	protected void visitPart(NodeRef componentNodeRef,  Map<NodeRef, SimpleListDataItem> simpleListDataMap, Double qtyUsed, Double netWeight) throws FormulateException{
+	protected void visitPart(NodeRef componentNodeRef,  List<T> simpleListDataList, List<T> retainNodes, Double qtyUsed, Double netWeight) throws FormulateException{
 				
-		List<? extends SimpleListDataItem> simpleListDataList = alfrescoRepository.loadDataList(componentNodeRef, getDataListVisited());		
+		List<? extends SimpleListDataItem> componentSimpleListDataList = alfrescoRepository.loadDataList(componentNodeRef, getDataListVisited());					
 		
-		if(simpleListDataList == null){
+		if(componentSimpleListDataList == null){
 			logger.debug("simpleListDataList is null");
 			return;
 		}	
 		
-		for(SimpleListDataItem slDataItem : simpleListDataList){			
+		logger.debug("###componentSimpleListDataList nodeRef: " + componentNodeRef + " name: " + (String)nodeService.getProperty(componentNodeRef, ContentModel.PROP_NAME) + "  size :" + componentSimpleListDataList.size());
+		
+		for(SimpleListDataItem slDataItem : componentSimpleListDataList){			
 			
 			//Look for charact
 			NodeRef slNodeRef = slDataItem.getCharactNodeRef();
 			
-			if(isCharactFormulated(slDataItem)){
-				
-				SimpleListDataItem newSimpleListDataItem = simpleListDataMap.get(slNodeRef);
-				
-				if(newSimpleListDataItem == null){
-					newSimpleListDataItem =new PhysicoChemListDataItem();
-					newSimpleListDataItem.setCharactNodeRef(slNodeRef);													
-					simpleListDataMap.put(slNodeRef, newSimpleListDataItem);
+			T newSimpleListDataItem = findSimpleListDataItem(simpleListDataList, slNodeRef);
+			
+			if(newSimpleListDataItem == null){
+				try {
+					newSimpleListDataItem = createNewInstance();
+				} catch (InstantiationException e) {
+					throw new FormulateException(e);
+				} catch (IllegalAccessException e) {
+					throw new FormulateException(e);
 				}
+				newSimpleListDataItem.setCharactNodeRef(slNodeRef);													
+				simpleListDataList.add(newSimpleListDataItem);					
+			}
+			
+			if(!retainNodes.contains(newSimpleListDataItem)){
+				retainNodes.add(newSimpleListDataItem);
+			}			
+			
+			if(isCharactFormulated(newSimpleListDataItem)){
 				
 				//Calculate values				
 				if(qtyUsed != null){
@@ -171,46 +181,46 @@ public abstract class AbstractProductFormulationHandler extends FormulationBaseH
 		}
 	}
 	
-	protected QName getDataListVisited(){
-		
-		logger.error("Unimplemented getDataListVisited");
-		return null;
-	}
-
 	protected boolean isCharactFormulated(SimpleListDataItem sl){
-		return true;
-	}
-
-	protected boolean isManual(SimpleListDataItem sl){
-		return sl.getIsManual()!=null && sl.getIsManual().booleanValue();
+		return sl.getIsManual()==null || !sl.getIsManual().booleanValue();
 	}
 	
-//	/**
-//	 * Calculate listItem to update
-//	 * @param productNodeRef
-//	 * @param costMap
-//	 * @return
-//	 */
-//	private Map<NodeRef, SimpleListDataItem> getListToUpdate(NodeRef productNodeRef, Map<NodeRef, SimpleListDataItem> slMap){
-//				
-//		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
-//		
-//		if(listContainerNodeRef != null){
-//			
-//			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, getDataListVisited());
-//			
-//			if(listNodeRef != null){
-//				
-//				List<NodeRef> manualLinks = entityListDAO.getManualListItems(listNodeRef, getDataListVisited());
-//				
-//				for(NodeRef manualLink : manualLinks){
-//										
-//					SimpleListDataItem sl = (SimpleListDataItem)alfrescoRepository.findOne(manualLink);		    		
-//					slMap.put(sl.getCharactNodeRef(), sl);
-//				}
-//			}
-//		}
-//		
-//		return slMap;
-//	}
+	protected T findSimpleListDataItem(List<T> simpleList, NodeRef charactNodeRef){
+		if(charactNodeRef != null){
+			for(T s : simpleList){
+				if(charactNodeRef.equals(s.getCharactNodeRef())){
+					return s;
+				}
+			}
+		}
+		return null;		
+	}
+	
+	/**
+	 * Sort costs by name.
+	 *
+	 * @param costList the cost list
+	 * @return the list
+	 */
+	protected void sort(List<T> simpleList){
+			
+		Collections.sort(simpleList, new Comparator<T>(){
+        	
+            @Override
+			public int compare(T c1, T c2){
+            	
+            	String costName1 = (String)nodeService.getProperty(c1.getCharactNodeRef(), ContentModel.PROP_NAME);
+            	String costName2 = (String)nodeService.getProperty(c2.getCharactNodeRef(), ContentModel.PROP_NAME);
+            	
+            	// increase
+                return costName1.compareTo(costName2);                
+            }
+
+        });  
+		
+		int i=1;
+		for(T sl : simpleList){
+			sl.setSort(i);
+		}
+	}
 }
