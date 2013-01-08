@@ -4,11 +4,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
-public class ProcessCalculatingFormulationHandler extends AbstractProductFormulationHandler {
+public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static Log logger = LogFactory.getLog(ProcessCalculatingFormulationHandler.class);	
 	

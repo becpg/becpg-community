@@ -52,11 +52,13 @@ public enum NutGroup  {
 		
 		NutGroup group = NutGroup.Other;
 		
-		if(nutGroup.equals(GROUP1_FR) || nutGroup.equals(GROUP1_EN)){
-			group = NutGroup.Group1;
-		}
-		else if(nutGroup.equals(GROUP2_FR) || nutGroup.equals(GROUP2_EN)){
-			group = NutGroup.Group2;
+		if(nutGroup!=null){
+			if(nutGroup.equals(GROUP1_FR) || nutGroup.equals(GROUP1_EN)){
+				group = NutGroup.Group1;
+			}
+			else if(nutGroup.equals(GROUP2_FR) || nutGroup.equals(GROUP2_EN)){
+				group = NutGroup.Group2;
+			}
 		}
 		
 		return group;

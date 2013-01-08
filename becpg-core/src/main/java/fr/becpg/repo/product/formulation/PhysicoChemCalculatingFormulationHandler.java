@@ -3,11 +3,6 @@
  */
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,28 +18,21 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  *
  * @author querephi
  */
-public class PhysicoChemCalculatingFormulationHandler extends AbstractProductFormulationHandler {
+public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<PhysicoChemListDataItem> {
 
 	private static Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);
 
 	@Override
+	protected Class<PhysicoChemListDataItem> getInstanceClass() {
+		
+		return PhysicoChemListDataItem.class;
+	}
+	
+	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {	
 		logger.debug("Physico chemical calculating visitor");
 		
-		Map<NodeRef, SimpleListDataItem> simpleListMap = getFormulatedList(formulatedProduct);
-
-		if(simpleListMap != null){
-			
-			List<PhysicoChemListDataItem> dataList = new ArrayList<PhysicoChemListDataItem>();
-			
-			for(SimpleListDataItem sl : simpleListMap.values()){
-				if(sl instanceof PhysicoChemListDataItem){
-					dataList.add((PhysicoChemListDataItem)sl);
-				}
-			}
-			
-			formulatedProduct.setPhysicoChemList(dataList);
-		}						
+		formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList());
 
 		return true;
 	}

@@ -25,7 +25,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.data.ProductUnit;
-import fr.becpg.repo.product.formulation.AbstractProductFormulationHandler;
+import fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 
@@ -221,7 +221,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 								}
 							} else {
 
-								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency + AbstractProductFormulationHandler.UNIT_SEPARATOR))) {
+								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
 
 									NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 
@@ -237,7 +237,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT);
 
 							// nutListUnit
-							if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.startsWith(nutUnit + AbstractProductFormulationHandler.UNIT_SEPARATOR))) {
+							if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.startsWith(nutUnit + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
 
 								NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 
