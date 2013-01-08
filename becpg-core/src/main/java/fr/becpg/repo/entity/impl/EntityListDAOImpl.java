@@ -297,21 +297,6 @@ public class EntityListDAOImpl implements EntityListDAO {
 		
 	}
 
-	/**
-	 * Get the manual ListItems
-	 * 
-	 * @param listNodeRef
-	 * @return
-	 */
-	@Override
-	public List<NodeRef> getManualListItems(NodeRef listNodeRef, QName listQName) {
-
-		String query = String.format(QUERY_LIST_ITEM, listNodeRef, listQName);
-		query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_IS_MANUAL_LISTITEM, Boolean.TRUE.toString(), Operator.AND);
-			
-		return beCPGSearchService.luceneSearch(query);
-	}
-
 	@Override
 	public NodeRef createListItem(NodeRef listNodeRef, QName listType, Map<QName, Serializable> properties,
 			Map<QName, List<NodeRef>> associations) {

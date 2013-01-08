@@ -92,7 +92,6 @@ public class AllergenListDataItem extends AbstractManualDataItem {
 		super();
 	}
 	
-	
 	public AllergenListDataItem(NodeRef nodeRef, Boolean voluntary, Boolean inVoluntary, List<NodeRef> voluntarySources, List<NodeRef> inVoluntarySources, NodeRef allergen, Boolean isManual){
 		super();
 		this.nodeRef = nodeRef;
@@ -104,11 +103,6 @@ public class AllergenListDataItem extends AbstractManualDataItem {
 		this.isManual = isManual;
 	}
 	
-	
-
-	
-	
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -120,10 +114,6 @@ public class AllergenListDataItem extends AbstractManualDataItem {
 		result = prime * result + ((voluntarySources == null) ? 0 : voluntarySources.hashCode());
 		return result;
 	}
-
-
-
-
 
 	@Override
 	public boolean equals(Object obj) {

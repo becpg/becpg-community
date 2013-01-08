@@ -6,6 +6,7 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -21,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ing.CompositeIng;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -30,6 +32,7 @@ import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 /**
@@ -37,7 +40,7 @@ import fr.becpg.repo.repository.filters.EffectiveFilters;
  *
  * @author querephi
  */
-public class IngsCalculatingFormulationHandler extends AbstractProductFormulationHandler{
+public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<ProductData>{
 		
 	/** The Constant DEFAULT_DENSITY. */
 	public static final Double DEFAULT_DENSITY = 1d;
@@ -48,11 +51,20 @@ public class IngsCalculatingFormulationHandler extends AbstractProductFormulatio
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
 	
+	private NodeService nodeService;
 	
-	/** The ml node service. */
+	protected AlfrescoRepository<ProductData> alfrescoRepository;
+	
 	private NodeService mlNodeService;
 	
-	
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
+
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
@@ -83,7 +95,6 @@ public class IngsCalculatingFormulationHandler extends AbstractProductFormulatio
 		logger.debug("Calculate Ingredient Labeling");
 		List<CompositeIng> compositeIngs = calculateILL(formulatedProduct);
 		Collections.sort(compositeIngs);
-		List<IngLabelingListDataItem> ingLabelingList = new ArrayList<IngLabelingListDataItem>(compositeIngs.size());
 		
 		for(CompositeIng compositeIng : compositeIngs){
 						
@@ -93,13 +104,14 @@ public class IngsCalculatingFormulationHandler extends AbstractProductFormulatio
 			for(Locale locale : compositeIng.getLocales()){
 				mlTextILL.addValue(locale, compositeIng.getIngLabeling(locale));
 			}
-			ingLabelingList.add(new IngLabelingListDataItem(null, compositeIng.getIng(), mlTextILL, Boolean.FALSE));
+			IngLabelingListDataItem ill = findIngLabelingListDataItem(formulatedProduct.getIngLabelingList(), compositeIng.getIng());
+			if(ill == null){
+				formulatedProduct.getIngLabelingList().add(new IngLabelingListDataItem(null, compositeIng.getIng(), mlTextILL, Boolean.FALSE));
+			}
+			else if(ill.getIsManual()==null || !ill.getIsManual()){
+				ill.setValue(mlTextILL);
+			}			
 		}
-		
-		// manual listItem
-		ingLabelingList = getILLToUpdate(formulatedProduct.getNodeRef(), ingLabelingList);
-		
-		formulatedProduct.setIngLabelingList(ingLabelingList);
 		
 		return true;
 	}
@@ -115,38 +127,44 @@ public class IngsCalculatingFormulationHandler extends AbstractProductFormulatio
 	
 		List<CompoListDataItem> compoList = formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE);
 		
-		
-		Map<NodeRef, IngListDataItem> ingMap = new HashMap<NodeRef, IngListDataItem>();
 		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<NodeRef, ReqCtrlListDataItem>();
 		Map<NodeRef, Double> totalQtyIngMap = new HashMap<NodeRef, Double>();
+		List<IngListDataItem> retainNodes = new ArrayList<IngListDataItem>();
+		
+		//manuel
+		for(IngListDataItem i : formulatedProduct.getIngList()){
+			if(i.getIsManual()!= null && i.getIsManual()){
+				retainNodes.add(i);
+			}
+		}
 		
 		if(compoList != null){
 			for(CompoListDataItem compoItem : compoList){
-				visitILOfPart(productSpecicationData, compoItem, ingMap, totalQtyIngMap, reqCtrlMap);
+				visitILOfPart(productSpecicationData, compoItem, formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, reqCtrlMap);
 			}
 		}		
+		
+		logger.debug("###ingList size: " + formulatedProduct.getIngList().size() + " retainNodes: " + retainNodes.size());
+		formulatedProduct.getIngList().retainAll(retainNodes);
 				
 		Double totalQty = 0d;
 		for(Double totalQtyIng : totalQtyIngMap.values())
 			totalQty += totalQtyIng;
 				
 		if(totalQty != 0){
-			for(IngListDataItem ingListDataItem : ingMap.values()){
+			for(IngListDataItem ingListDataItem : formulatedProduct.getIngList()){
 				Double totalQtyIng = totalQtyIngMap.get(ingListDataItem.getIng());
 				ingListDataItem.setQtyPerc(100 * totalQtyIng / totalQty);				
 			}
 		}
 		
 		//check formulated product
-		checkILOfFormulatedProduct(ingMap.values(), productSpecicationData, reqCtrlMap);
-		
-		// manual listItem
-		List<IngListDataItem> ingList = getILToUpdate(formulatedProduct.getNodeRef(), ingMap);
+		checkILOfFormulatedProduct(formulatedProduct.getIngList(), productSpecicationData, reqCtrlMap);
 		
 		//sort collection					
-		Collections.sort(ingList);		
-		formulatedProduct.setIngList(ingList);
-				
+		sortIL(formulatedProduct.getIngList());		
+		
+		formulatedProduct.getReqCtrlList().clear();
 		formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
 	}
 	
@@ -158,12 +176,10 @@ public class IngsCalculatingFormulationHandler extends AbstractProductFormulatio
 	 * @param totalQtyIngMap the total qty ing map
 	 * @throws FormulateException 
 	 */
-	private void visitILOfPart(ProductData productSpecicationData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Double> totalQtyIngMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException{				
+	private void visitILOfPart(ProductData productSpecicationData, CompoListDataItem compoListDataItem, List<IngListDataItem> ingList, List<IngListDataItem> retainNodes, Map<NodeRef, Double> totalQtyIngMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException{				
 			
 
-		ProductData productData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());		
-		
-		
+		ProductData productData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());				
 		
 		if(productData.getIngList() == null){
 			if(logger.isDebugEnabled()){
@@ -174,7 +190,7 @@ public class IngsCalculatingFormulationHandler extends AbstractProductFormulatio
 		}
 		
 		// calculate ingList of formulated product
-		calculateILOfPart(productData, compoListDataItem, ingMap, totalQtyIngMap);
+		calculateILOfPart(productData, compoListDataItem, ingList, retainNodes, totalQtyIngMap);
 		
 		// check product respect specification
 		checkILOfPart(productData, productSpecicationData, reqCtrlMap);
@@ -188,7 +204,7 @@ public class IngsCalculatingFormulationHandler extends AbstractProductFormulatio
 	 * @param totalQtyIngMap the total qty ing map
 	 * @throws FormulateException 
 	 */
-	private void calculateILOfPart(ProductData productData, CompoListDataItem compoListDataItem, Map<NodeRef, IngListDataItem> ingMap, Map<NodeRef, Double> totalQtyIngMap) throws FormulateException{
+	private void calculateILOfPart(ProductData productData, CompoListDataItem compoListDataItem, List<IngListDataItem> ingList, List<IngListDataItem> retainNodes, Map<NodeRef, Double> totalQtyIngMap) throws FormulateException{
 		
 		//OMIT is not taken in account
 		if(compoListDataItem.getDeclType() == DeclarationType.Omit){
@@ -203,8 +219,7 @@ public class IngsCalculatingFormulationHandler extends AbstractProductFormulatio
 					
 			//Look for ing
 			NodeRef ingNodeRef = ingListDataItem.getIng();
-			IngListDataItem newIngListDataItem = ingMap.get(ingNodeRef);
-			Double totalQtyIng = totalQtyIngMap.get(ingNodeRef);
+			IngListDataItem newIngListDataItem = findIngListDataItem(ingList, ingNodeRef);			
 			if(logger.isDebugEnabled()){
 				logger.debug("productData: " + productData.getName() + " - ing: " + nodeService.getProperty(ingNodeRef, ContentModel.PROP_NAME));
 			}
@@ -213,11 +228,18 @@ public class IngsCalculatingFormulationHandler extends AbstractProductFormulatio
 				
 				newIngListDataItem =new IngListDataItem();
 				newIngListDataItem.setIng(ingNodeRef);				
-				ingMap.put(ingNodeRef, newIngListDataItem);
-				
-				totalQtyIng = 0d;			
+				ingList.add(newIngListDataItem);				
+			}	
+			
+			if(!retainNodes.contains(newIngListDataItem)){
+				retainNodes.add(newIngListDataItem);
+			}			
+			
+			Double totalQtyIng = totalQtyIngMap.get(ingNodeRef);
+			if(totalQtyIng == null){
+				totalQtyIng = 0d;
 				totalQtyIngMap.put(ingNodeRef, totalQtyIng);
-			}															
+			}
 			
 			//Calculate qty
 			Double qty = FormulationHelper.getQty(compoListDataItem, nodeService);
@@ -532,68 +554,53 @@ public class IngsCalculatingFormulationHandler extends AbstractProductFormulatio
 		
 		logger.trace("return parentIng: " + parentIng.getIngLabeling(Locale.FRENCH));
 		return parentIng;
-	}
+	}	
 	
-	/**
-	 * Calculate ill to update
-	 * @param productNodeRef
-	 * @param costMap
-	 * @return
-	 */
-	private List<IngLabelingListDataItem> getILLToUpdate(NodeRef productNodeRef, List<IngLabelingListDataItem> illList){
-				
-		
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
-		
-		if(listContainerNodeRef != null){
-			
-			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
-			
-			if(listNodeRef != null){
-				
-				List<NodeRef> manualLinks = entityListDAO.getManualListItems(listNodeRef, BeCPGModel.TYPE_INGLABELINGLIST);
-				
-				for(NodeRef manualLink : manualLinks){
-					
-					IngLabelingListDataItem illListDataItem =  (IngLabelingListDataItem) alfrescoRepository.findOne(manualLink) ;		    		
-					illList.add(illListDataItem);
+	private IngListDataItem findIngListDataItem(List<IngListDataItem> ingList, NodeRef ingNodeRef){
+		if(ingNodeRef != null){
+			for(IngListDataItem i : ingList){
+				if(ingNodeRef.equals(i.getIng())){
+					return i;
 				}
 			}
 		}
-		
-		return illList;
+		return null;		
 	}
 	
-	/**
-	 * Calculate ingList to update
-	 * @param productNodeRef
-	 * @param costMap
-	 * @return
-	 */
-	private List<IngListDataItem> getILToUpdate(NodeRef productNodeRef, Map<NodeRef, IngListDataItem> ingMap){
-		
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
-		
-		if(listContainerNodeRef != null){
-			
-			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_INGLIST);
-			
-			if(listNodeRef != null){
-				
-				List<NodeRef> manualLinks = entityListDAO.getManualListItems(listNodeRef, BeCPGModel.TYPE_INGLIST);
-				
-				if(!manualLinks.isEmpty()){
-					ingMap.clear();
-				}
-				
-				for(NodeRef manualLink : manualLinks){
-					
-					IngListDataItem ingListDataItem = (IngListDataItem) alfrescoRepository.findOne(manualLink);		    		
-					ingMap.put(ingListDataItem.getIng(), ingListDataItem);
+	private IngLabelingListDataItem findIngLabelingListDataItem(List<IngLabelingListDataItem> ill, NodeRef ingNodeRef){
+		if(ingNodeRef != null){
+			for(IngLabelingListDataItem i : ill){
+				if(ingNodeRef.equals(i.getGrp())){
+					return i;
 				}
 			}
 		}
+		return null;		
+	}
+	
+	/**
+	 * Sort ingList by qty perc in descending order.
+	 *
+	 * @param costList the cost list
+	 * @return the list
+	 */
+	private void sortIL(List<IngListDataItem> ingList){
+			
+		Collections.sort(ingList, new Comparator<IngListDataItem>(){
+        	
+            @Override
+			public int compare(IngListDataItem i1, IngListDataItem i2){
+            	
+            	// increase
+            	return i2.getQtyPerc().compareTo(i1.getQtyPerc());            	             
+            }
+
+        });  
 		
-		return new ArrayList<IngListDataItem>(ingMap.values());
+		int i=1;
+		for(IngListDataItem il : ingList){
+			il.setSort(i);
+			i++;
+		}
 	}
 }
