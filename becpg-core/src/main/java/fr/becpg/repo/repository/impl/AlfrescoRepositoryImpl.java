@@ -104,9 +104,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		
 
 		if (entity.getNodeRef() == null) {
-//			if (logger.isDebugEnabled()) {
-//				logger.debug("Create instanceOf :" + entity.getClass().getName());
-//			}
+			if (logger.isTraceEnabled()) {
+				logger.trace("Create instanceOf :" + entity.getClass().getName());
+			}
 			
 			String name = entity.getName();
 			if (entity.getName() == null) {
@@ -148,11 +148,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			
 			properties.put(prop.getKey(), assocNodeRef);
 		}
-		
-//		//Avoid to destroy properties
-//		for(Map.Entry<QName, Serializable> prop : properties.entrySet()){
-//			nodeService.setProperty(entity.getNodeRef(), prop.getKey(), prop.getValue());
-//		}
 		
 		nodeService.addProperties(entity.getNodeRef(), properties);
 
@@ -200,15 +195,21 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		if (dataList != null && listContainerNodeRef != null) {
 			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, dataListType);
 
-			if (dataListNodeRef == null) {
+			boolean isLazyList = dataList instanceof LazyLoadingDataList;
+			
+			if (dataListNodeRef == null
+					&& (!isLazyList || ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded())) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Create dataList of type : " + dataListType);
+				}
+				if(logger.isInfoEnabled() && dataList.isEmpty()){
+					logger.info("Creating empty datalist :"+ dataListType);
 				}
 
 				dataListNodeRef = entityListDAO.createList(listContainerNodeRef, dataListType);
 			}
 
-			if (dataList instanceof LazyLoadingDataList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded()) {
+			if (isLazyList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded()) {
 
 				for (RepositoryEntity dataListItem : dataList) {
 					dataListItem.setParentNodeRef(dataListNodeRef);
