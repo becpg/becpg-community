@@ -9,6 +9,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 
@@ -18,7 +19,7 @@ import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
  * @author matthieu
  * 
  */
-public class FormulaFormulationHandler extends AbstractProductFormulationHandler {
+public class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
 

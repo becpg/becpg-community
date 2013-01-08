@@ -3,14 +3,8 @@
  */
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
-import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,68 +20,62 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
-import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
  * The Class CostCalculatingVisitor.
  *
  * @author querephi
  */
-public class CostsCalculatingFormulationHandler extends AbstractProductFormulationHandler {
+public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<CostListDataItem> {
 
 	public static final Double DEFAULT_LOSS_RATIO = 1d;
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CostsCalculatingFormulationHandler.class);
+	
+	@Override
+	protected Class<CostListDataItem> getInstanceClass() {
+		
+		return CostListDataItem.class;
+	}
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Cost calculating visitor");
 		
-		Map<NodeRef, SimpleListDataItem> simpleListMap = getFormulatedList(formulatedProduct);		
+		formulateSimpleList(formulatedProduct, formulatedProduct.getCostList());
 		
-		if(simpleListMap != null){
+		if(formulatedProduct.getCostList() != null){
 		
-			List<CostListDataItem> dataList = new ArrayList<CostListDataItem>();
+			for(CostListDataItem c : formulatedProduct.getCostList()){
 			
-			for(SimpleListDataItem sl : simpleListMap.values()){
-			
-				CostListDataItem c = new CostListDataItem(sl);
-				if(!isManual(c)){
+				if(isCharactFormulated(c)){
 					String unit = calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(c.getCost(), BeCPGModel.PROP_COSTCURRENCY));
 					c.setUnit(unit);
-				} else {
-					if(sl instanceof CostListDataItem){
-						c = new CostListDataItem((CostListDataItem)sl);
-					}
-				}
-				
-				dataList.add(c);				
-			}
-			
-			formulatedProduct.setCostList(sortCost(dataList));
+				}							
+			}			
 		}						
 		
 		//profitability		
 		formulatedProduct = calculateProfitability(formulatedProduct);
-
+		
 		return true;
 	}
 	
 	@Override
-	protected void visitChildren(ProductData formulatedProduct, Map<NodeRef, SimpleListDataItem> simpleListDataMap) throws FormulateException{				
+	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList, List<CostListDataItem> retainNodes) throws FormulateException{				
 		
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct);
 		
 		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)){									
-			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE));		
-			visitCompoListChildren(formulatedProduct, composite, simpleListDataMap, DEFAULT_LOSS_RATIO, netWeight);
+			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE));
+			visitCompoListChildren(formulatedProduct, composite, costList, retainNodes, DEFAULT_LOSS_RATIO, netWeight);
 		}
 
 		if(formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE)){
 			for(PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE)){
 				Double qty = FormulationHelper.getQty(packagingListDataItem);
-				visitPart(packagingListDataItem.getProduct(), simpleListDataMap, qty, netWeight);
+				visitPart(packagingListDataItem.getProduct(), costList, retainNodes, qty, netWeight);
 			}
 		}
 
@@ -96,13 +84,13 @@ public class CostsCalculatingFormulationHandler extends AbstractProductFormulati
 				
 				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
 				if(processListDataItem.getResource() != null && qty != null){
-					visitPart(processListDataItem.getResource(), simpleListDataMap, qty, netWeight);
+					visitPart(processListDataItem.getResource(), costList, retainNodes, qty, netWeight);
 				}																		
 			}
 		}
 	}
 		
-	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, Map<NodeRef, SimpleListDataItem> compositeList, Double parentLossRatio, Double netWeight) throws FormulateException{
+	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, List<CostListDataItem> costList, List<CostListDataItem> retainNodes, Double parentLossRatio, Double netWeight) throws FormulateException{
 		
 		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){					
 			
@@ -117,12 +105,12 @@ public class CostsCalculatingFormulationHandler extends AbstractProductFormulati
 				
 				// calculate children				
 				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
-				visitCompoListChildren(formulatedProduct, c, compositeList, newLossPerc, netWeight);							
+				visitCompoListChildren(formulatedProduct, c, costList, retainNodes, newLossPerc, netWeight);							
 			}
 			else{
 				CompoListDataItem compoListDataItem = component.getData();
 				Double qty = FormulationHelper.getQtyWithLost(compoListDataItem, nodeService, parentLossRatio);				
-				visitPart(compoListDataItem.getProduct(), compositeList, qty, netWeight);
+				visitPart(compoListDataItem.getProduct(), costList, retainNodes, qty, netWeight);
 			}			
 		}
 	}
@@ -199,30 +187,5 @@ public class CostsCalculatingFormulationHandler extends AbstractProductFormulati
 		}
 		
 		return formulatedProduct;
-	}
-	
-	/**
-	 * Sort costs by name.
-	 *
-	 * @param costList the cost list
-	 * @return the list
-	 */
-	private List<CostListDataItem> sortCost(List<CostListDataItem> costList){
-			
-		Collections.sort(costList, new Comparator<CostListDataItem>(){
-        	
-            @Override
-			public int compare(CostListDataItem c1, CostListDataItem c2){
-            	
-            	String costName1 = (String)nodeService.getProperty(c1.getCost(), ContentModel.PROP_NAME);
-            	String costName2 = (String)nodeService.getProperty(c2.getCost(), ContentModel.PROP_NAME);
-            	
-            	// increase
-                return costName1.compareTo(costName2);                
-            }
-
-        });
-        
-        return costList;
-	}
+	}	
 }

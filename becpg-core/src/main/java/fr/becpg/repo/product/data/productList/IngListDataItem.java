@@ -16,7 +16,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:ingList")
-public class IngListDataItem extends AbstractManualDataItem  implements Comparable<IngListDataItem>, SimpleCharactDataItem{
+public class IngListDataItem extends AbstractManualDataItem  implements SimpleCharactDataItem{
 
 	
 	private Double qtyPerc = 0d;
@@ -173,30 +173,17 @@ public class IngListDataItem extends AbstractManualDataItem  implements Comparab
 		setIng(i.getIng());
 		setIsManual(i.getIsManual());
 	}
-	
-	/**
-	 * Sort by qty perc in descending order.
-	 *
-	 * @param o the o
-	 * @return the int
-	 * @author querephi
-	 */
-	@Override
-	public int compareTo(IngListDataItem o) {
-		return o.getQtyPerc().compareTo(this.getQtyPerc());
-	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((bioOrigin == null) ? 0 : bioOrigin.hashCode());
 		result = prime * result + ((geoOrigin == null) ? 0 : geoOrigin.hashCode());
 		result = prime * result + ((ing == null) ? 0 : ing.hashCode());
 		result = prime * result + ((isGMO == null) ? 0 : isGMO.hashCode());
 		result = prime * result + ((isIonized == null) ? 0 : isIonized.hashCode());
 		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
 		result = prime * result + ((qtyPerc == null) ? 0 : qtyPerc.hashCode());
 		return result;
 	}
@@ -205,7 +192,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements Comparab
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -239,11 +226,6 @@ public class IngListDataItem extends AbstractManualDataItem  implements Comparab
 			if (other.isManual != null)
 				return false;
 		} else if (!isManual.equals(other.isManual))
-			return false;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
-				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
 			return false;
 		if (qtyPerc == null) {
 			if (other.qtyPerc != null)

@@ -3,14 +3,11 @@
  */
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,14 +18,13 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.NutGroup;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
  * The Class NutsCalculatingVisitor.
  *
  * @author querephi
  */
-public class NutsCalculatingFormulationHandler extends AbstractProductFormulationHandler {
+public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<NutListDataItem> {
 	
 	/** The Constant UNIT_PER100G. */
 	public static final String UNIT_PER100G = "/100g";
@@ -40,29 +36,27 @@ public class NutsCalculatingFormulationHandler extends AbstractProductFormulatio
 	private static Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 	
 	@Override
+	protected Class<NutListDataItem> getInstanceClass() {
+		return NutListDataItem.class;
+	}
+	
+	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Nuts calculating visitor");
 		
-		Map<NodeRef, SimpleListDataItem> simpleListMap = getFormulatedList(formulatedProduct);
+		formulateSimpleList(formulatedProduct, formulatedProduct.getNutList());
 
-		if(simpleListMap != null){
+		if(formulatedProduct.getNutList() != null){
 		
-			List<NutListDataItem> dataList = new ArrayList<NutListDataItem>();
-			
-			for(SimpleListDataItem sl : simpleListMap.values()){
+			for(NutListDataItem n : formulatedProduct.getNutList()){
 				
-				NutListDataItem nutListDataItem = new NutListDataItem(sl);
-				nutListDataItem.setGroup((String)nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_NUTGROUP));								
-				nutListDataItem.setUnit(calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_NUTUNIT)));
-				dataList.add(nutListDataItem);
-			}
+				n.setGroup((String)nodeService.getProperty(n.getNut(), BeCPGModel.PROP_NUTGROUP));				
+				n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(n.getNut(), BeCPGModel.PROP_NUTUNIT)));
+			}		
+		}
 		
-			//sort		
-			List<NutListDataItem> nutListSorted = sort(dataList);
-			
-			formulatedProduct.setNutList(nutListSorted);
-		}						
-						
+		//sort
+		sort(formulatedProduct.getNutList());
 		return true;
 	}
 
@@ -98,7 +92,8 @@ public class NutsCalculatingFormulationHandler extends AbstractProductFormulatio
 	 * @param nutList the nut list
 	 * @return the list
 	 */
-	private List<NutListDataItem> sort(List<NutListDataItem> nutList){
+	@Override
+	protected void sort(List<NutListDataItem> nutList){
 			
 		Collections.sort(nutList, new Comparator<NutListDataItem>(){
         	
@@ -139,9 +134,7 @@ public class NutsCalculatingFormulationHandler extends AbstractProductFormulatio
             		return EQUAL;
             	}            	
             }
-        });
-        
-        return nutList;
+        });       
 	}
 	
 	@Override
@@ -149,6 +142,5 @@ public class NutsCalculatingFormulationHandler extends AbstractProductFormulatio
 		
 		return BeCPGModel.TYPE_NUTLIST;
 	}
-
 
 }
