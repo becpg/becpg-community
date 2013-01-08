@@ -13,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 /**
  * 
  * @author matthieu
- * TODO Moche et pas top
  * @param <E>
  */
 public class LazyLoadingDataList<E> implements List<E>  {
@@ -144,7 +143,17 @@ public class LazyLoadingDataList<E> implements List<E>  {
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		return getList().retainAll(c);
+		boolean modified = false;
+		Iterator<E> e = iterator();
+		while (e.hasNext()) {
+		    if (!c.contains(e.next())) {
+		    deletedNodes.remove(e);
+			e.remove();
+			modified = true;
+		    }
+		}
+		return modified;
+		
 	}
 
 
