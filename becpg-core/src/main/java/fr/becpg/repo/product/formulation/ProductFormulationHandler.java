@@ -3,19 +3,20 @@ package fr.becpg.repo.product.formulation;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 public class ProductFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
-		if ((productData.getCompoList() != null && !productData.getCompoList().isEmpty()) ||
-		(productData.getPackagingList() != null && !productData.getPackagingList().isEmpty()) ||
-		(productData.getProcessList() != null && !productData.getProcessList().isEmpty())) {
+		if ((productData.hasCompoListEl(EffectiveFilters.ALL)) ||
+		(productData.hasPackagingListEl(EffectiveFilters.ALL)) ||
+		(productData.hasProcessListEl(EffectiveFilters.ALL))) {
 			//First Reset 
 			
-			if(productData.getReqCtrlList()!=null){
-				productData.getReqCtrlList().clear();
+			if(productData.getCompoListView()!=null && productData.getCompoListView().getReqCtrlList()!=null){
+				productData.getCompoListView().getReqCtrlList().clear();
 			}
 			
 			// Continue

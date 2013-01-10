@@ -405,7 +405,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				fpData.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, 1, 2d, null, null, CompoListUnit.kg, null, null, DeclarationType.Declare, rawMaterialNodeRef));
-				fpData.setCompoList(compoList);
+				fpData.getCompoListView().setCompoList(compoList);
 				finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, fpData).getNodeRef();
 
 				// add Checkout aspect
@@ -444,7 +444,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				NodeRef entityVersionRef = entityVersionService.getEntityVersion(version);
 				ProductData fpData = alfrescoRepository.findOne(finishedProductNodeRef);
 
-				assertEquals(entityVersionRef, fpData.getCompoList().get(0).getProduct());
+				assertEquals(entityVersionRef, fpData.getCompoListView().getCompoList().get(0).getProduct());
 				
 				return null;
 

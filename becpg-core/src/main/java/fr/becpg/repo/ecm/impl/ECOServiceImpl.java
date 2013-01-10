@@ -609,8 +609,8 @@ public class ECOServiceImpl implements ECOService {
 		RequirementType reqType = null;
 		String reqDetails = null;
 		
-		if(targetData.getReqCtrlList() != null){
-			for(ReqCtrlListDataItem rcl : targetData.getReqCtrlList()){
+		if(targetData.getCompoListView()!=null && targetData.getCompoListView().getReqCtrlList() != null){
+			for(ReqCtrlListDataItem rcl : targetData.getCompoListView().getReqCtrlList()){
 				
 				RequirementType newReqType = rcl.getReqType();
 				

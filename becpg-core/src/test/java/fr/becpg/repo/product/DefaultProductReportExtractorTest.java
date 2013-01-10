@@ -97,7 +97,7 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PACKAGING_PRIMAIRE, true, packagingMaterial1NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PACKAGING_PRIMAIRE, true, packagingMaterial2NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PACKAGING_TERTIAIRE, true, packagingMaterial3NodeRef));
-				finishedProduct.setPackagingList(packagingList);
+				finishedProduct.getPackagingListView().setPackagingList(packagingList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
 				
 				EntityReportData entityReportData = defaultProductReportExtractor.extract(finishedProductNodeRef);

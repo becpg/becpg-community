@@ -88,7 +88,7 @@ public class BeCPGTestHelper {
 		
 		
 		
-		finishedProduct.setCompoList(compoList);
+		finishedProduct.getCompoListView().setCompoList(compoList);
 		return repoBaseTestCase.alfrescoRepository.create(testFolder, finishedProduct).getNodeRef();
 		
 	}

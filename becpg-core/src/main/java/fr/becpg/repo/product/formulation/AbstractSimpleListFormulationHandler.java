@@ -110,7 +110,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 */
 	protected void visitPart(NodeRef componentNodeRef,  List<T> simpleListDataList, List<T> retainNodes, Double qtyUsed, Double netWeight) throws FormulateException{
 				
-		List<? extends SimpleListDataItem> componentSimpleListDataList = alfrescoRepository.loadDataList(componentNodeRef, getDataListVisited());					
+		List<? extends SimpleListDataItem> componentSimpleListDataList = alfrescoRepository.loadDataList(componentNodeRef, getDataListVisited() ,getDataListVisited());					
 		
 		if(componentSimpleListDataList == null){
 			logger.debug("simpleListDataList is null");

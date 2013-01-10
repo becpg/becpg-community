@@ -432,7 +432,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
-				fp1.setCompoList(compoList);
+				fp1.getCompoListView().setCompoList(compoList);
 				
 				 alfrescoRepository.create(folderNodeRef, fp1).getNodeRef();
 				
@@ -476,7 +476,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial4NodeRef));
-				fp2.setCompoList(compoList);
+				fp2.getCompoListView().setCompoList(compoList);
 				
 				alfrescoRepository.create(folderNodeRef, fp2).getNodeRef();
 				

@@ -30,20 +30,38 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		EvaluationContext context = new StandardEvaluationContext(productData);
 
 
-		if (productData.getDynamicCharactList() != null) {
-			for (DynamicCharactListItem dynamicCharactListItem : productData.getDynamicCharactList()) {
-				try {
-					logger.debug("Parse formula : " + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")");
-					Expression exp = parser.parseExpression(dynamicCharactListItem.getFormula());
-					dynamicCharactListItem.setValue(exp.getValue(context));		
-					logger.debug("Value :" + dynamicCharactListItem.getValue());
-				} catch (Exception e) {
-					dynamicCharactListItem.setValue("#Error");
-					logger.warn("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")", e);
-				}
+		if (productData.getCompoListView()!=null &&  productData.getCompoListView().getDynamicCharactList() != null) {
+			for (DynamicCharactListItem dynamicCharactListItem : productData.getCompoListView().getDynamicCharactList()) {
+				computeFormula(context, parser, dynamicCharactListItem);
 			}
 		}
+		
+		if (productData.getPackagingListView()!=null &&  productData.getPackagingListView().getDynamicCharactList() != null) {
+			for (DynamicCharactListItem dynamicCharactListItem : productData.getPackagingListView().getDynamicCharactList()) {
+				computeFormula(context, parser, dynamicCharactListItem);
+			}
+		}
+		
+		if (productData.getProcessListView()!=null &&  productData.getProcessListView().getDynamicCharactList() != null) {
+			for (DynamicCharactListItem dynamicCharactListItem : productData.getProcessListView().getDynamicCharactList()) {
+				computeFormula(context, parser, dynamicCharactListItem);
+			}
+		}
+		
 		return true;
 	}
-	
+
+	private void computeFormula(EvaluationContext context, ExpressionParser parser, DynamicCharactListItem dynamicCharactListItem) {
+		try {
+			logger.debug("Parse formula : " + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")");
+			Expression exp = parser.parseExpression(dynamicCharactListItem.getFormula());
+			dynamicCharactListItem.setValue(exp.getValue(context));		
+			logger.debug("Value :" + dynamicCharactListItem.getValue());
+		} catch (Exception e) {
+			dynamicCharactListItem.setValue("#Error");
+			logger.warn("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")", e);
+		}
+		
+	}
+
 }

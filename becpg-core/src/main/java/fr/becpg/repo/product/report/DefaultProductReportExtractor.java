@@ -286,7 +286,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			}
 
 			Element dynCharactListElt = dataListsElt.addElement(TAG_DYNAMICCHARACTLIST);
-			for (DynamicCharactListItem dc : productData.getDynamicCharactList()) {
+			for (DynamicCharactListItem dc : productData.getCompoListView().getDynamicCharactList()) {
 				Element dynamicCharact = dynCharactListElt.addElement(TAG_DYNAMICCHARACT);
 				dynamicCharact.addAttribute(BeCPGModel.PROP_DYNAMICCHARACT_TITLE.getLocalName(), dc.getName());
 				dynamicCharact.addAttribute(BeCPGModel.PROP_DYNAMICCHARACT_VALUE.getLocalName(), dc.getValue() == null ? VALUE_NULL : dc.getValue().toString());
@@ -295,10 +295,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		}
 
 		// packList
-		if (productData.getPackagingList() != null) {
+		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
 			Element packagingListElt = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());
 
-			for (PackagingListDataItem dataItem : productData.getPackagingList()) {
+			for (PackagingListDataItem dataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
 				loadPackaging(dataItem, packagingListElt);
 			}
 		}
@@ -537,7 +537,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		boolean isPallet = nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET);
 		Element palletElt = null;
 
-		for (PackagingListDataItem p : packagingKitData.getPackagingList()) {
+		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
 			Element packagingMaterial = loadPackagingMaterial(p, packagingListElt);
 
 			// use dataItem qty, instead of qty in pk

@@ -1,6 +1,5 @@
 package fr.becpg.repo.project.data;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -20,8 +19,8 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public abstract class AbstractProjectData extends BeCPGDataObject{
 
 
-	protected List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
-	protected List<DeliverableListDataItem> deliverableList = new LinkedList<DeliverableListDataItem>();	
+	protected List<TaskListDataItem> taskList;
+	protected List<DeliverableListDataItem> deliverableList;	
 
 	
 	public AbstractProjectData() {

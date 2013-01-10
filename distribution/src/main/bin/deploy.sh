@@ -11,12 +11,12 @@ export DEPLOY_ROOT=$SERVER/../../deploy
 
 install_core_amp(){
 	echo "deploy $1"
-	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/alfresco.war -force
+	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/alfresco.war -force -nobackup
 }
 
 install_share_amp(){
 	echo "deploy $1"
-	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/share.war -force
+	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/share.war -force -nobackup
 }
 
 read -p "Deploy OpenID? (y/n)" ansopenid 

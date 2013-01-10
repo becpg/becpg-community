@@ -101,7 +101,7 @@ public class MultiLevelDataServiceTest extends RepoBaseTestCase {
 				compoList.add(parent2);
 				compoList.add(child2);
 				compoList.add(child21);
-				finishedProduct.setCompoList(compoList);
+				finishedProduct.getCompoListView().setCompoList(compoList);
 				
 				finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
