@@ -81,7 +81,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 			return;
 		}
 		
-		List<SimpleCharactDataItem> simpleCharactDataList = alfrescoRepository.loadDataList(entityNodeRef, dataListType);
+		List<SimpleCharactDataItem> simpleCharactDataList = alfrescoRepository.loadDataList(entityNodeRef,dataListType,  dataListType);
 
 		if (simpleCharactDataList == null) {
 			logger.debug("no datalist for this product, exit. dataListType: " + dataListType + " entity: " + entityNodeRef);

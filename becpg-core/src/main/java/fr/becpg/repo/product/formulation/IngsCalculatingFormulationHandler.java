@@ -164,8 +164,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		//sort collection					
 		sortIL(formulatedProduct.getIngList());		
 		
-		formulatedProduct.getReqCtrlList().clear();
-		formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
+		formulatedProduct.getCompoListView().getReqCtrlList().clear();
+		formulatedProduct.getCompoListView().getReqCtrlList().addAll(reqCtrlMap.values());
 	}
 	
 	/**

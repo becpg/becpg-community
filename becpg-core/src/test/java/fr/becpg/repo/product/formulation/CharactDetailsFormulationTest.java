@@ -82,7 +82,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, item, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit,
 						rawMaterial4NodeRef));
-				finishedProduct.setCompoList(compoList);
+				finishedProduct.getCompoListView().setCompoList(compoList);
 
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
@@ -161,7 +161,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PACKAGING_PRIMAIRE, true, packagingMaterial1NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PACKAGING_PRIMAIRE, true, packagingMaterial2NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PACKAGING_TERTIAIRE, true, packagingMaterial3NodeRef));
-				finishedProduct.setPackagingList(packagingList);		
+				finishedProduct.getPackagingListView().setPackagingList(packagingList);		
 				
 				
 				/*
@@ -177,7 +177,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				compoList.add(item);
 				compoList.add(new CompoListDataItem(null,item, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, item, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-				finishedProduct.setCompoList(compoList);
+				finishedProduct.getCompoListView().setCompoList(compoList);
 				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
 				
 			}},false,true);

@@ -14,7 +14,6 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -25,11 +24,11 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.DataList;
+import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 
@@ -60,9 +59,10 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	private Double profitability;	
 	private Long breakEven;
 	
+	/*
+	 * DataList
+	 */
 	private List<AllergenListDataItem> allergenList;
-	private List<CompoListDataItem> compoList;
-	private List<DynamicCharactListItem> dynamicCharactList;
 	private List<CostListDataItem> costList;	
 	private List<PriceListDataItem> priceList;
 	private List<IngListDataItem> ingList;
@@ -71,11 +71,16 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	private List<IngLabelingListDataItem> ingLabelingList;
 	private List<MicrobioListDataItem> microbioList;
 	private List<PhysicoChemListDataItem> physicoChemList;
-	private List<PackagingListDataItem> packagingList;
 	private List<ForbiddenIngListDataItem> forbiddenIngList;
-	private List<ReqCtrlListDataItem> reqCtrlList;
-	private List<ProcessListDataItem> processList;
 
+	
+	/*
+	 * View
+	 */
+	private CompoListView compoListView = new CompoListView();
+	private ProcessListView processListView = new ProcessListView();
+	private PackagingListView packagingListView = new PackagingListView();
+	
 	
 	
 	@AlfProp
@@ -226,72 +231,7 @@ public class ProductData extends AbstractEffectiveDataItem  {
 		this.allergenList = allergenList;
 	}
 	
-	@DataList
-	@AlfQname(qname="bcpg:compoList")
-	public List<CompoListDataItem> getCompoList() {
-		return compoList;
-	}
 
-	@DataList
-	@AlfQname(qname="bcpg:packagingList")
-	public List<PackagingListDataItem> getPackagingList() {
-		return packagingList;
-	}
-	
-	@DataList
-	@AlfQname(qname="mpm:processList")
-	public List<ProcessListDataItem> getProcessList() {
-		return processList;
-	}
-	
-	
-	public List<CompoListDataItem> getCompoList(DataListFilter<ProductData> filter) {
-		if(compoList!=null){
-			List<CompoListDataItem> ret = new ArrayList<CompoListDataItem>(compoList);
-			CollectionUtils.filter(ret, filter.createPredicate(this));
-			return ret;
-		}
-		return compoList;
-	}
-	
-
-	public List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData> filter) {
-		if(packagingList!=null){
-			List<PackagingListDataItem> ret = new ArrayList<PackagingListDataItem>(packagingList);
-			CollectionUtils.filter(ret, filter.createPredicate(this));
-			return ret;
-		}
-		return packagingList;
-	}
-	
-
-	public List<ProcessListDataItem> getProcessList(DataListFilter<ProductData> filter) {
-		if(processList!=null){
-			List<ProcessListDataItem> ret = new ArrayList<ProcessListDataItem>(processList);
-			CollectionUtils.filter(ret, filter.createPredicate(this));
-			return ret;
-		}
-		return processList;
-	}
-	
-	
-	public boolean hasCompoListEl(DataListFilter<ProductData> filter) {
-		return compoList!=null && !getCompoList(filter).isEmpty();
-	}
-
-	public boolean hasPackagingListEl(DataListFilter<ProductData> filter) {
-		return packagingList!=null && !getPackagingList(filter).isEmpty();
-	}
-
-	public boolean hasProcessListEl(DataListFilter<ProductData> filter) {
-		return processList!=null && !getProcessList(filter).isEmpty();
-	}			
-	
-	
-	public void setCompoList(List<CompoListDataItem> compoList) {
-		this.compoList = compoList;
-	}
-	
 	@DataList
 	@AlfQname(qname="bcpg:costList")
 	public List<CostListDataItem> getCostList() {
@@ -377,10 +317,6 @@ public class ProductData extends AbstractEffectiveDataItem  {
 		this.physicoChemList = physicoChemList;
 	}
 	
-
-	public void setPackagingList(List<PackagingListDataItem> packagingList) {
-		this.packagingList = packagingList;
-	}
 	
 	@DataList
 	@AlfQname(qname="bcpg:forbiddenIngList")
@@ -392,29 +328,82 @@ public class ProductData extends AbstractEffectiveDataItem  {
 		this.forbiddenIngList = forbiddenIngList;
 	}
 
-	@DataList
-	@AlfQname(qname="bcpg:reqCtrlList")
-	public List<ReqCtrlListDataItem> getReqCtrlList() {
-		return reqCtrlList;
+	
+	@DataListView
+	@AlfQname(qname="bcpg:compoList")
+	public CompoListView getCompoListView() {
+		return compoListView;
+	}
+	
+	
+	public List<CompoListDataItem> getCompoList(DataListFilter<ProductData> filter) {
+		if(compoListView!=null &&  compoListView.getCompoList()!=null){
+			List<CompoListDataItem> ret = new ArrayList<CompoListDataItem>(compoListView.getCompoList());
+			CollectionUtils.filter(ret, filter.createPredicate(this));
+			return ret;
+		}
+		return null;
+	}
+	
+
+	public boolean hasCompoListEl(DataListFilter<ProductData> filter) {
+		return compoListView!=null &&  compoListView.getCompoList()!=null && !getCompoList(filter).isEmpty();
 	}
 
-	public void setReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
-		this.reqCtrlList = reqCtrlList;
+	public void setCompoListView(CompoListView compoListView) {
+		this.compoListView = compoListView;
+	}
+	
+	@DataListView
+	@AlfQname(qname="mpm:processList")
+	public ProcessListView getProcessListView() {
+		return processListView;
+	}
+
+	public List<ProcessListDataItem> getProcessList(DataListFilter<ProductData> filter) {
+		if(processListView!=null && processListView.getProcessList()!=null){
+			List<ProcessListDataItem> ret = new ArrayList<ProcessListDataItem>(processListView.getProcessList());
+			CollectionUtils.filter(ret, filter.createPredicate(this));
+			return ret;
+		}
+		return null;
+	}
+	
+
+	public boolean hasProcessListEl(DataListFilter<ProductData> filter) {
+		return processListView!=null && processListView.getProcessList()!=null && !getProcessList(filter).isEmpty();
+	}
+
+	
+	public void setProcessListView(ProcessListView processListView) {
+		this.processListView = processListView;
+	}
+	
+	
+
+	@DataListView
+	@AlfQname(qname="bcpg:packagingList")
+	public PackagingListView getPackagingListView() {
+		return packagingListView;
+	}
+	
+	public List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData> filter) {
+		if(packagingListView!=null && packagingListView.getPackagingList()!=null){
+			List<PackagingListDataItem> ret = new ArrayList<PackagingListDataItem>(packagingListView.getPackagingList());
+			CollectionUtils.filter(ret, filter.createPredicate(this));
+			return ret;
+		}
+		return null;
+	}
+	
+	
+	public boolean hasPackagingListEl(DataListFilter<ProductData> filter) {
+		return packagingListView!=null && packagingListView.getPackagingList()!=null && !getPackagingList(filter).isEmpty();
 	}
 
 
-	public void setProcessList(List<ProcessListDataItem> processList) {
-		this.processList = processList;
-	}
-
-	@DataList
-	@AlfQname(qname="bcpg:dynamicCharactList")
-	public List<DynamicCharactListItem> getDynamicCharactList() {
-		return dynamicCharactList;
-	}
-
-	public void setDynamicCharactList(List<DynamicCharactListItem> dynamicCharactList) {
-		this.dynamicCharactList = dynamicCharactList;
+	public void setPackagingListView(PackagingListView packagingListView) {
+		this.packagingListView = packagingListView;
 	}
 
 	/**
@@ -429,10 +418,10 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	public String toString() {
 		return "ProductData [versionLabel=" + versionLabel + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title
 				+ ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", unitTotalCost=" + unitTotalCost + ", unitPrice="
-				+ unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", compoList=" + compoList
-				+ ", dynamicCharactList=" + dynamicCharactList + ", costList=" + costList + ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList
-				+ ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList + ", microbioList=" + microbioList + ", physicoChemList=" + physicoChemList
-				+ ", packagingList=" + packagingList + ", forbiddenIngList=" + forbiddenIngList + ", reqCtrlList=" + reqCtrlList + ", processList=" + processList + "]";
+				+ unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", costList=" + costList + ", priceList="
+				+ priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList + ", microbioList="
+				+ microbioList + ", physicoChemList=" + physicoChemList + ", forbiddenIngList=" + forbiddenIngList + ", compoListView=" + compoListView + ", processListView="
+				+ processListView + ", packagingListView=" + packagingListView + "]";
 	}
 
 	@Override
@@ -441,10 +430,9 @@ public class ProductData extends AbstractEffectiveDataItem  {
 		int result = super.hashCode();
 		result = prime * result + ((allergenList == null) ? 0 : allergenList.hashCode());
 		result = prime * result + ((breakEven == null) ? 0 : breakEven.hashCode());
-		result = prime * result + ((compoList == null) ? 0 : compoList.hashCode());
+		result = prime * result + ((compoListView == null) ? 0 : compoListView.hashCode());
 		result = prime * result + ((costList == null) ? 0 : costList.hashCode());
 		result = prime * result + ((density == null) ? 0 : density.hashCode());
-		result = prime * result + ((dynamicCharactList == null) ? 0 : dynamicCharactList.hashCode());
 		result = prime * result + ((forbiddenIngList == null) ? 0 : forbiddenIngList.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
 		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
@@ -454,13 +442,12 @@ public class ProductData extends AbstractEffectiveDataItem  {
 		result = prime * result + ((microbioList == null) ? 0 : microbioList.hashCode());
 		result = prime * result + ((nutList == null) ? 0 : nutList.hashCode());
 		result = prime * result + ((organoList == null) ? 0 : organoList.hashCode());
-		result = prime * result + ((packagingList == null) ? 0 : packagingList.hashCode());
+		result = prime * result + ((packagingListView == null) ? 0 : packagingListView.hashCode());
 		result = prime * result + ((physicoChemList == null) ? 0 : physicoChemList.hashCode());
 		result = prime * result + ((priceList == null) ? 0 : priceList.hashCode());
-		result = prime * result + ((processList == null) ? 0 : processList.hashCode());
+		result = prime * result + ((processListView == null) ? 0 : processListView.hashCode());
 		result = prime * result + ((profitability == null) ? 0 : profitability.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
-		result = prime * result + ((reqCtrlList == null) ? 0 : reqCtrlList.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
@@ -490,10 +477,10 @@ public class ProductData extends AbstractEffectiveDataItem  {
 				return false;
 		} else if (!breakEven.equals(other.breakEven))
 			return false;
-		if (compoList == null) {
-			if (other.compoList != null)
+		if (compoListView == null) {
+			if (other.compoListView != null)
 				return false;
-		} else if (!compoList.equals(other.compoList))
+		} else if (!compoListView.equals(other.compoListView))
 			return false;
 		if (costList == null) {
 			if (other.costList != null)
@@ -504,11 +491,6 @@ public class ProductData extends AbstractEffectiveDataItem  {
 			if (other.density != null)
 				return false;
 		} else if (!density.equals(other.density))
-			return false;
-		if (dynamicCharactList == null) {
-			if (other.dynamicCharactList != null)
-				return false;
-		} else if (!dynamicCharactList.equals(other.dynamicCharactList))
 			return false;
 		if (forbiddenIngList == null) {
 			if (other.forbiddenIngList != null)
@@ -555,10 +537,10 @@ public class ProductData extends AbstractEffectiveDataItem  {
 				return false;
 		} else if (!organoList.equals(other.organoList))
 			return false;
-		if (packagingList == null) {
-			if (other.packagingList != null)
+		if (packagingListView == null) {
+			if (other.packagingListView != null)
 				return false;
-		} else if (!packagingList.equals(other.packagingList))
+		} else if (!packagingListView.equals(other.packagingListView))
 			return false;
 		if (physicoChemList == null) {
 			if (other.physicoChemList != null)
@@ -570,10 +552,10 @@ public class ProductData extends AbstractEffectiveDataItem  {
 				return false;
 		} else if (!priceList.equals(other.priceList))
 			return false;
-		if (processList == null) {
-			if (other.processList != null)
+		if (processListView == null) {
+			if (other.processListView != null)
 				return false;
-		} else if (!processList.equals(other.processList))
+		} else if (!processListView.equals(other.processListView))
 			return false;
 		if (profitability == null) {
 			if (other.profitability != null)
@@ -585,25 +567,14 @@ public class ProductData extends AbstractEffectiveDataItem  {
 				return false;
 		} else if (!qty.equals(other.qty))
 			return false;
-		if (reqCtrlList == null) {
-			if (other.reqCtrlList != null)
-				return false;
-		} else if (!reqCtrlList.equals(other.reqCtrlList))
-			return false;
-		if (state == null) {
-			if (other.state != null)
-				return false;
-		} else if (!state.equals(other.state))
+		if (state != other.state)
 			return false;
 		if (title == null) {
 			if (other.title != null)
 				return false;
 		} else if (!title.equals(other.title))
 			return false;
-		if (unit == null) {
-			if (other.unit != null)
-				return false;
-		} else if (!unit.equals(other.unit))
+		if (unit != other.unit)
 			return false;
 		if (unitPrice == null) {
 			if (other.unitPrice != null)

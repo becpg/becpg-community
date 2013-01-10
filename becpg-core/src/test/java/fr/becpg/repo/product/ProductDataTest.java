@@ -54,11 +54,11 @@ public class ProductDataTest extends TestCase {
 		item.setEndEffectivity(nowplus2h);
 		compoList.add(item);
 		
-		productData.setCompoList(compoList);
+		productData.getCompoListView().setCompoList(compoList);
 		
 		Assert.assertTrue(productData.hasCompoListEl(EffectiveFilters.ALL));
 		
-		Assert.assertEquals(5, productData.getCompoList().size());
+		Assert.assertEquals(5, productData.getCompoListView().getCompoList().size());
 		
 		Assert.assertEquals(5, productData.getCompoList(EffectiveFilters.ALL).size());
 		

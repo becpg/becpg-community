@@ -354,7 +354,7 @@ private void initObjects(){
 					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
 					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
 					compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-					fp1.setCompoList(compoList);
+					fp1.getCompoListView().setCompoList(compoList);
 					
 					fpNodeRef = alfrescoRepository.create(folderNodeRef, fp1).getNodeRef();		
 					
@@ -411,7 +411,7 @@ private void initObjects(){
 					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
 					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 					compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
-					workingCopy.setCompoList(compoList);
+					workingCopy.getCompoListView().setCompoList(compoList);
 					
 					alfrescoRepository.save(workingCopy);
 					

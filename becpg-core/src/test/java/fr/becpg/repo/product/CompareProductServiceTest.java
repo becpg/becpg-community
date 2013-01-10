@@ -320,7 +320,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// compoList.add(new CompoListDataItem(null, 2, 3d, 0d,
 				// 0d, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
 				// rawMaterial4NodeRef));
-				fp1.setCompoList(compoList);
+				fp1.getCompoListView().setCompoList(compoList);
 
 				fp1NodeRef = alfrescoRepository.create(testFolderNodeRef, fp1).getNodeRef();
 
@@ -364,7 +364,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				compoList.add(parent22);
 				compoList.add(new CompoListDataItem(null, parent22, 2d, 0d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, parent22, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial4NodeRef));
-				fp2.setCompoList(compoList);
+				fp2.getCompoListView().setCompoList(compoList);
 
 				fp2NodeRef = alfrescoRepository.create(testFolderNodeRef, fp2).getNodeRef();
 
@@ -512,7 +512,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// compoList.add(new CompoListDataItem(null, 2, 3d, 0d,
 				// 0d, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
 				// rawMaterial4NodeRef));
-				fp1.setCompoList(compoList);
+				fp1.getCompoListView().setCompoList(compoList);
 
 				fp1NodeRef = alfrescoRepository.create(testFolderNodeRef, fp1).getNodeRef();
 
@@ -528,7 +528,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial4NodeRef));
-				fp2.setCompoList(compoList);
+				fp2.getCompoListView().setCompoList(compoList);
 
 				fp2NodeRef = alfrescoRepository.create(testFolderNodeRef, fp2).getNodeRef();
 				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();

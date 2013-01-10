@@ -24,9 +24,11 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.DataList;
+import fr.becpg.repo.repository.annotation.DataListView;
+import fr.becpg.repo.repository.model.BaseObject;
 
 @Service
-public class RepositoryEntityDefReaderImpl<T extends RepositoryEntity> implements RepositoryEntityDefReader<T> {
+public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefReader<T> {
 
 	private static Log logger = LogFactory.getLog(RepositoryEntityDefReaderImpl.class);
 
@@ -63,13 +65,19 @@ public class RepositoryEntityDefReaderImpl<T extends RepositoryEntity> implement
 	}
 
 	@Override
-	public Map<QName, List<? extends RepositoryEntity>> getDataLists(T entity) {
+	public <R> Map<QName, List<? extends RepositoryEntity>> getDataLists(R entity) {
 		return readValueMap(entity, DataList.class,  List.class);
 
 	}
+	
+	@Override
+	public Map<QName, T> getDataListViews(T entity) {
+		return readValueMap(entity, DataListView.class, BaseObject.class);
+	}
+	
 
 	@SuppressWarnings("unchecked")
-	private <R> Map<QName, R> readValueMap(T entity, Class<? extends Annotation> annotationClass, Class<?> returnType) {
+	private <R,Z> Map<QName, R> readValueMap(Z entity, Class<? extends Annotation> annotationClass, Class<?> returnType) {
 		Map<QName, R> ret = new HashMap<QName, R>();
 		try {
 			for (PropertyDescriptor pd : Introspector.getBeanInfo(entity.getClass()).getPropertyDescriptors()) {

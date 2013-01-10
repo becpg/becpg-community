@@ -711,7 +711,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  				ProductData productData = alfrescoRepository.findOne(product1NodeRef); 				 			
  				
  				/*-- check productLists --*/
- 				assertEquals("compoList should exist", (int)3, productData.getCompoList().size()); 				
+ 				assertEquals("compoList should exist", (int)3, productData.getCompoListView().getCompoList().size()); 				
  				String [] rmNames = {"MP1","MP2", "MP3"};
  				double [] qtyValues = {1.0d, 2.0d, 3.2d};
  				String [] unitValues = {"g","kg", "g"};
@@ -719,7 +719,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  				// check MP
  				int rmChecked=0;
 				int z_idx=0;
- 				for(CompoListDataItem c : productData.getCompoList()){
+ 				for(CompoListDataItem c : productData.getCompoListView().getCompoList()){
  					String rmName = (String)nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME);
  					 					
  					for(String s : rmNames){

@@ -503,7 +503,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterialNodeRef));
-				finishedProduct.setCompoList(compoList);
+				finishedProduct.getCompoListView().setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
@@ -594,14 +594,14 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				finishedProduct1.setName("Finished Product 1");
 				List<PackagingListDataItem> packagingList1 = new ArrayList<PackagingListDataItem>();
 				packagingList1.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, "Primaire", true, packagingMaterialNodeRef));
-				finishedProduct1.setPackagingList(packagingList1);
+				finishedProduct1.getPackagingListView().setPackagingList(packagingList1);
 				NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
 
 				FinishedProductData finishedProduct2 = new FinishedProductData();
 				finishedProduct2.setName("Finished Product");
 				List<PackagingListDataItem> packagingList2 = new ArrayList<PackagingListDataItem>();
 				packagingList2.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, "Secondaire", true, packagingMaterialNodeRef));
-				finishedProduct2.setPackagingList(packagingList2);
+				finishedProduct2.getPackagingListView().setPackagingList(packagingList2);
 				NodeRef finishedProductNodeRef2 = alfrescoRepository.create(testFolderNodeRef, finishedProduct2).getNodeRef();
 
 				List<PackagingListDataItem> wUsedProducts = getWUsedPackagingList(packagingMaterialNodeRef);

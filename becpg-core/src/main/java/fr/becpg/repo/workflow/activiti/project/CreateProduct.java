@@ -212,10 +212,10 @@ public class CreateProduct extends BaseJavaDelegate {
 		 ProductData productData  = alfrescoRepository.findOne(productNodeRef);
 		 ProductData sourceData = alfrescoRepository.findOne(sourceNodeRef);
 		 if (typeCompolist.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
- 			productData.setPackagingList(sourceData.getPackagingList(EffectiveFilters.FUTUR));
+ 			productData.getPackagingListView().setPackagingList(sourceData.getPackagingList(EffectiveFilters.FUTUR));
  		 }
 		 else if (typeCompolist.equals(BeCPGModel.TYPE_COMPOLIST)) {
- 			productData.setCompoList(sourceData.getCompoList(EffectiveFilters.FUTUR));
+ 			productData.getCompoListView().setCompoList(sourceData.getCompoList(EffectiveFilters.FUTUR));
  		 }
 		 alfrescoRepository.save(productData);
 

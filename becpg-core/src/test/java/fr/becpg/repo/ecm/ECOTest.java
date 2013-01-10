@@ -265,7 +265,7 @@ public class ECOTest extends RepoBaseTestCase {
 				compoList.add(compo2);
 				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-				finishedProduct.setCompoList(compoList);
+				finishedProduct.getCompoListView().setCompoList(compoList);
 				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
 			}
@@ -638,7 +638,7 @@ public class ECOTest extends RepoBaseTestCase {
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 1d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct1NodeRef));
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 2d, 2d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct2NodeRef));
-				finishedProduct3.setCompoList(compoList);
+				finishedProduct3.getCompoListView().setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
 				return alfrescoRepository.create(testFolderNodeRef, finishedProduct3).getNodeRef();

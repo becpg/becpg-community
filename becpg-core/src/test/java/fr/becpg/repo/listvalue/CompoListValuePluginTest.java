@@ -100,7 +100,7 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 		compoList.add(item);
 		compoList.add(new CompoListDataItem(null,item, 3d, 0d, 0d, CompoListUnit.kg, 0d, null,
 				DeclarationType.Declare, rawMaterial3NodeRef));
-		finishedProduct.setCompoList(compoList);
+		finishedProduct.getCompoListView().setCompoList(compoList);
 
 		finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 	}
@@ -134,7 +134,7 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 		ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 		
 		HashMap<String, String> extras = new HashMap<String, String>();
-		extras.put("itemId", finishedProduct.getCompoList().get(0).getNodeRef().toString());
+		extras.put("itemId", finishedProduct.getCompoListView().getCompoList().get(0).getNodeRef().toString());
 		props.put(ListValueService.EXTRA_PARAM, extras);
 		
 		listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, new Integer(

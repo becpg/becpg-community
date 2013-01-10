@@ -137,7 +137,7 @@ public class ProductWUsedWebScriptTest extends BaseWebScriptTest{
 	 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>(); 				
 	 				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, lSFNodeRef));
 	 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterialNodeRef));
-					finishedProduct.setCompoList(compoList); 				
+					finishedProduct.getCompoListView().setCompoList(compoList); 				
 					Collection<QName> dataLists = new ArrayList<QName>();		
 					dataLists.add(BeCPGModel.TYPE_COMPOLIST);
 	 				finishedProductNodeRef = alfrescoRepository.create(tempFolder, finishedProduct).getNodeRef();
