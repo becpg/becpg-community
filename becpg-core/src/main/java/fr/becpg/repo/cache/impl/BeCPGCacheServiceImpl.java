@@ -1,19 +1,14 @@
 package fr.becpg.repo.cache.impl;
 
-import java.io.IOException;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
+import org.alfresco.repo.cache.DefaultSimpleCache;
+import org.alfresco.repo.cache.SimpleCache;
 import org.alfresco.repo.tenant.TenantService;
-import org.alfresco.util.PropertyCheck;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
@@ -22,49 +17,47 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 /**
  * 
  * @author matthieu
+ * TODO refactor with new simplecache or simply delete
  */
 @Service
-public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, BeCPGCacheService {
+public class BeCPGCacheServiceImpl implements  BeCPGCacheService {
 
 	private static Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);
-
-	private CacheManager cacheManager;
-	private Resource configLocation;
+	
+	private int maxCacheItems = 500;
+	
+	
 	private TenantService tenantService;
 
+	
+	private Map<String,SimpleCache<Serializable, ?>> caches = new ConcurrentHashMap<String,SimpleCache<Serializable, ?>>();
 
+
+
+	public void setMaxCacheItems(int maxCacheItems) {
+		this.maxCacheItems = maxCacheItems;
+	}
+
+	
 	
 	public void setTenantService(TenantService tenantService) {
 		this.tenantService = tenantService;
 	}
 
-	public void setConfigLocation(Resource configLocation) {
-		this.configLocation = configLocation;
-	}
-
-	@Override
-	public void afterPropertiesSet() throws IOException, CacheException {
-		PropertyCheck.mandatory(this, "configLocation", configLocation);
-
-		logger.debug("Init beCPG Cache");
-		cacheManager = new CacheManager(this.configLocation.getURL());
-	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getFromCache(String cacheName, String cacheKey,
 			BeCPGCacheDataProviderCallBack<T> sigedCacheDataProviderCallBack) {
 		
+		
 		cacheKey = computeCacheKey(cacheKey);
-		Cache cache = getCache(cacheName);
+		SimpleCache<Serializable, T> cache = (SimpleCache<Serializable, T>) getCache(cacheName);
 		T ret = null;
 		try {
+			logger.debug("Getting values from " + cacheKey);
+			ret = cache.get(cacheKey);
 			
-			Element el = cache.get(cacheKey);
-			if (el != null) {
-				logger.debug("Getting values from " + cacheKey);
-				ret = (T) el.getObjectValue();
-			}
 		} catch (Exception e) {
 			logger.error("Cannot get " + cacheKey + " from cache " + cacheName, e);
 		}
@@ -73,7 +66,7 @@ public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, 
 			ret = sigedCacheDataProviderCallBack.getData();
 			if(ret!=null){
 				logger.debug("Store values to " + cacheKey);
-				cache.put(new Element(cacheKey, ret));
+				cache.put(cacheKey, ret);
 			}
 		}
 
@@ -83,21 +76,19 @@ public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, 
 	@Override
 	public void removeFromCache(String cacheName, String cacheKey) {
 		cacheKey = computeCacheKey(cacheKey);
-		Cache cache = getCache(cacheName);
+		SimpleCache<Serializable, ?> cache = getCache(cacheName);
 		cache.remove(cacheKey);
 		
 	}
 	
-	@Override
-	public void destroy() {
-		logger.info("Close beCPG cache");
-		cacheManager.shutdown();
-	}
 
 	@Override
 	public void clearAllCaches() {
 		logger.info("Clear all cache");
-		cacheManager.clearAll();
+		for(SimpleCache< Serializable, ?> cache : caches.values()){
+			cache.clear();
+		}
+		
 	}
 
 	
@@ -106,11 +97,12 @@ public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, 
 		return cacheKey+"@"+tenantService.getCurrentUserDomain();
 	}
 
-	private Cache getCache(String cacheName) {
-		if(!cacheManager.cacheExists(cacheName)){
-			cacheManager.addCache(cacheName);
+	@SuppressWarnings("unchecked")
+	private SimpleCache<Serializable, ?> getCache(String cacheName) {
+		if(!caches.containsKey(cacheName)){
+			caches.put(cacheName, new DefaultSimpleCache(maxCacheItems, cacheName));
 		}
-		return cacheManager.getCache(cacheName);
+		return caches.get(cacheName);
 	}
 
 	

@@ -4,12 +4,10 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>1.4.0</version>
+		<version>1.5.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<version>1.4.0</version>
-	<groupId>fr.becpg</groupId>
 	<artifactId>distribution</artifactId>
 	<packaging>pom</packaging>
 	<name>beCPG distribution</name>
@@ -17,7 +15,7 @@
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 	</properties>
 	<dependencies>
-		<dependency>
+		<!-- <dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>alfresco-core-patch</artifactId>
 			<type>amp</type>
@@ -28,60 +26,60 @@
 			<artifactId>alfresco-share-patch</artifactId>
 			<type>amp</type>
 			<version>1.4.0</version>
-		</dependency>
+		</dependency> -->
 	   <dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-controls-core</artifactId>
 			<type>amp</type>
-			<version>1.4.0</version>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-controls-core</artifactId>
 			<type>amp</type>
-			<version>1.4.0</version>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-controls-share</artifactId>
 			<type>amp</type>
-			<version>1.4.0</version>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-designer-core</artifactId>
 			<type>amp</type>
-			<version>1.4.0</version>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-designer-share</artifactId>
 			<type>amp</type>
-			<version>1.4.0</version>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-core</artifactId>
 			<type>amp</type>
-			<version>1.4.0</version>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-share</artifactId>
 			<type>amp</type>
-			<version>1.4.0</version>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-google-apps</artifactId>
 			<type>amp</type>
-			<version>1.4.0</version>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-report</artifactId>
 			<type>war</type>
-			<version>1.4.0</version>
+			<version>1.5.0</version>
 		</dependency>
 	</dependencies>
 	<build>

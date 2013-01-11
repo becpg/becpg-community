@@ -106,6 +106,21 @@
    background-image: url(images/select-none-16.png);
 }
 
+.toolbar .onActionCloudSync
+{
+   background-image: url(images/document-cloud-sync-16.png);
+}
+
+.toolbar .onActionCloudSyncRequest
+{
+   background-image: url(images/document-request-sync-16.png);
+}
+
+.toolbar .onActionDownload
+{
+   background-image: url(actions/document-download-16.png);
+}
+
 .toolbar .onActionViewDataLists
 {
    background-image: url(images/view-datalists-16.png);
@@ -215,7 +230,9 @@
 
 .toolbar .create-content span.first-child,
 .toolbar .new-folder span.first-child,
-.toolbar .file-upload span.first-child
+.toolbar .file-upload span.first-child,
+.toolbar .sync-to-cloud span.first-child,
+.toolbar .unsync-from-cloud span.first-child
 {
    background-color: transparent;
    background-position: 6px 4px;
@@ -278,6 +295,36 @@
    background-image: url(images/upload-disabled-16.png);
 }
 
+.toolbar .sync-to-cloud ul
+{
+   min-width: 12em;
+}
+
+.toolbar .unsync-from-cloud ul
+{
+   min-width: 12em;
+}
+
+.toolbar .sync-to-cloud span.first-child
+{
+   background-image: url(images/document-cloud-sync-16.png);
+}
+
+.toolbar .unsync-from-cloud span.first-child
+{
+   background-image: url(images/document-cloud-unsync-16.png);
+}
+
+.toolbar .hide-navbar .yui-button-checked span.first-child
+{
+   background-image: url(images/navbar-show-16.png);
+}
+
+.toolbar .hide-navbar span.first-child
+{
+   background-image: url(images/navbar-hide-16.png);
+}
+
 /** beCPG **/
 
 
@@ -285,16 +332,6 @@
 {
    background: transparent url(../images/edit-inline-16.png) no-repeat 12px 4px;
    padding-left: 22px; 
-}
-
-.toolbar .hide-navbar span.first-child
-{
-   background-image: url(images/navbar-show-16.png);
-}
-
-.toolbar .hide-navbar .yui-button-checked span.first-child
-{
-   background-image: url(images/navbar-hide-16.png);
 }
 
 

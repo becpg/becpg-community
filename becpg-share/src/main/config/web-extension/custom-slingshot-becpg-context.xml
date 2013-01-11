@@ -20,25 +20,24 @@
       <property name="configService" ref="web.config" />
       <property name="configs">
          <list>
-            <value>classpath:alfresco/becpg-form-config.xml</value>
-            <value>classpath:alfresco/becpg-share-config.xml</value>
-            <value>classpath:alfresco/becpg-search-config.xml</value>
-            <value>classpath:alfresco/becpg-documentlibrary-config.xml</value>
-            <value>classpath:alfresco/becpg-workflow-form-config.xml</value>
-            <value>classpath:alfresco/becpg-npd-workflow-form-config.xml</value>
-            <value>classpath:alfresco/becpg-quality-form-config.xml</value>
-            <value>classpath:alfresco/becpg-security-form-config.xml</value>
-            <value>classpath:alfresco/becpg-ecm-form-config.xml</value>
-            <value>classpath:alfresco/becpg-bulkedit-form-config.xml</value>
-            <value>classpath:alfresco/becpg-m2Model-form-config.xml</value>
-            <value>classpath:alfresco/becpg-designer-form-config.xml</value>
-            <value>classpath:alfresco/becpg-mpm-form-config.xml</value>
-            <value>classpath:alfresco/becpg-var-form-config.xml</value>
-            <value>classpath:alfresco/becpg-gs1-form-config.xml</value>
-            <value>classpath:alfresco/becpg-nc-workflow-form-config.xml</value>
-            <value>classpath:alfresco/becpg-publication-form-config.xml</value>
-            <value>classpath:alfresco/becpg-project-form-config.xml</value>
-            <value>classpath:alfresco/becpg-project-workflow-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-share-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-search-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-documentlibrary-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-workflow-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-quality-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-security-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-ecm-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-bulkedit-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-m2Model-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-designer-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-mpm-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-var-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-gs1-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-nc-workflow-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-publication-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-project-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-project-workflow-form-config.xml</value>
          </list>
       </property>
    </bean>

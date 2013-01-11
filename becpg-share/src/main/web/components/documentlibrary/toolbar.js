@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005-2010 Alfresco Software Limited.
+ * Copyright (C) 2005-2012 Alfresco Software Limited.
  *
  * This file is part of Alfresco
  *
@@ -228,7 +228,10 @@
        */
       onReady: function DLTB_onReady()
       {
-         // New Content menu button
+         // Create Content menu button
+         if (Dom.get(this.id + "-createContent-button"))
+         {
+            // Create menu button that
          this.widgets.createContent = Alfresco.util.createYUIButton(this, "createContent-button", this.onCreateContent,
          {
             type: "menu", 
@@ -238,6 +241,92 @@
             value: "CreateChildren"
          });
          // Make sure we load sub menu lazily with data on each click
+            var createContentMenu = this.widgets.createContent.getMenu(),
+                groupIndex = 0;
+
+            // Create content actions
+            if (this.options.createContentActions.length !== 0)
+            {
+               var menuItems = [], menuItem, content, url, config, html, li;
+               for (var i = 0; i < this.options.createContentActions.length; i++)
+               {
+                  // Create menu item from config
+                  content = this.options.createContentActions[i];
+                  config = { parent: createContentMenu };
+                  url = null;
+
+                  // Check config type
+                  if (content.type == "javascript")
+                  {
+                     config.onclick =
+                     {
+                        fn: function(eventName, eventArgs, obj)
+                        {
+                           // Copy node so we can safely pass it to an action
+                           var node = Alfresco.util.deepCopy(this.doclistMetadata.parent);
+
+                           // Make it more similar to a usual doclib action callback object
+                           var currentFolderItem = {
+                              nodeRef: node.nodeRef,
+                              node: node,
+                              jsNode: new Alfresco.util.Node(node)
+                           };
+                           this[obj.params["function"]].call(this, currentFolderItem);
+                        },
+                        obj: content,
+                        scope: this
+                     };
+
+                     url = '#';
+                  }
+                  else if (content.type == "pagelink")
+                  {
+                     url = $siteURL(content.params.page);
+                  }
+                  else if (content.type == "link")
+                  {
+                     url = content.params.href;
+                  }
+
+                  // Create menu item
+                  html = '<a href="' + url + '" rel="' + content.permission + '"><span style="background-image:url(' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + content.icon + '-file-16.png)" class="' + content.icon + '-file">' + this.msg(content.label) + '</span></a>';
+                  li = document.createElement("li");
+                  li.innerHTML = html;
+                  menuItem = new YAHOO.widget.MenuItem(li, config);
+
+                  menuItems.push(menuItem);
+               }
+               createContentMenu.addItems(menuItems, groupIndex);
+               groupIndex++;
+            }
+
+            // Create content by template menu item
+            if (this.options.createContentByTemplateEnabled)
+            {
+               // Create menu item elements
+               var li = document.createElement("li");
+               li.innerHTML = '<a href="#"><span>' + this.msg("menu.create-content.by-template-node") + '</span></a>';
+
+               // Make sure to stop clicks on the sub menu link to close the entire menu
+               YAHOO.util.Event.addListener(Selector.query("a", li, true), "click", function(e)
+               {
+                  Event.preventDefault(e);
+                  Event.stopEvent(e);
+               });
+
+               // Create placeholder menu
+               var div = document.createElement("div");
+               div.innerHTML = '<div class="bd"><ul></ul></div>';
+
+               // Add menu item
+               var createContentByTemplate = new YAHOO.widget.MenuItem(li, {
+                  parent: createContentMenu,
+                  submenu: div
+               });
+               createContentMenu.addItems([ createContentByTemplate ], groupIndex);
+               groupIndex++;
+
+               // Make sure that the available template are lazily loaded
          var templateNodesMenus = this.widgets.createContent.getMenu().getSubmenus(),
             templateNodesMenu = templateNodesMenus.length > 0 ? templateNodesMenus[0] : null;
          if (templateNodesMenu)
@@ -245,7 +334,12 @@
             templateNodesMenu.subscribe("beforeShow", this.onCreateByTemplateNodeBeforeShow, this, true);
             templateNodesMenu.subscribe("click", this.onCreateByTemplateNodeClick, this, true);
          }
+            }
+
+            // Render menu with all new menu items
+            createContentMenu.render();
          this.dynamicControls.push(this.widgets.createContent);
+         }
 
          // New Folder button: user needs "create" access
          this.widgets.newFolder = Alfresco.util.createYUIButton(this, "newFolder-button", this.onNewFolder,
@@ -262,6 +356,23 @@
             value: "CreateChildren"
          });
          this.dynamicControls.push(this.widgets.fileUpload);
+         
+          // Sync to Cloud button
+         this.widgets.syncToCloud = Alfresco.util.createYUIButton(this, "syncToCloud-button", this.onSyncToCloud,
+         {
+            disabled: true,
+            value: "CreateChildren"
+         });
+         this.dynamicControls.push(this.widgets.syncToCloud);
+         
+         // Unsync from Cloud button
+         this.widgets.unsyncFromCloud = Alfresco.util.createYUIButton(this, "unsyncFromCloud-button", this.onUnsyncFromCloud,
+         {
+            disabled: true,
+            value: "CreateChildren"
+         });
+         this.dynamicControls.push(this.widgets.unsyncFromCloud);
+         
          
          // Bulk edit
          this.widgets.bulkEdit = Alfresco.util.createYUIButton(this, "bulkEdit-button", this.onBulkEdit,
@@ -284,7 +395,7 @@
          this.widgets.hideNavBar = Alfresco.util.createYUIButton(this, "hideNavBar-button", this.onHideNavBar,
          {
             type: "checkbox",
-            checked: this.options.hideNavBar
+            checked: !this.options.hideNavBar
          });
          if (this.widgets.hideNavBar !== null)
          {
@@ -520,7 +631,18 @@
             {
                fn: function DLTB_onNewFolder_success(response)
                {
+                  var activityData;
                   var folderName = response.config.dataObj["prop_cm_name"];
+                  var folderNodeRef = response.json.persistedObject;
+                  
+                  activityData =
+                  {
+                     fileName: folderName,
+                     nodeRef: folderNodeRef,
+                     path: this.currentPath + (this.currentPath !== "/" ? "/" : "") + folderName
+                  };
+                  this.modules.actions.postActivity(this.options.siteId, "folder-added", "documentlibrary", activityData);
+                  
                   YAHOO.Bubbling.fire("folderCreated",
                   {
                      name: folderName,
@@ -558,6 +680,60 @@
          }).show();
       },
 
+      /**
+       * Sync to Cloud button click handler
+       *
+       * @method onSyncToCloud
+       * @param e {object} DomEvent
+       * @param p_obj {object|array} Object passed back from addListener method or args from Bubbling event
+       */
+      onSyncToCloud: function DLTB_onSyncToCloud(e, p_obj)
+      {
+         var record = new Object();
+         var parent = this.doclistMetadata.parent;
+
+         // Display name
+         record["displayName"] = parent.properties["cm:name"];
+
+         // NodeRef
+         record["nodeRef"] = parent.nodeRef;
+
+         // jsNode
+         var jsNode = new Object();
+         jsNode["isContainer"] = parent.isContainer;
+         record["jsNode"] = jsNode;
+
+         this.onActionCloudSync(record);
+      },
+
+      /**
+       * Unsync from Cloud button click handler
+       *
+       * @method onUnsyncFromCloud
+       * @param e {object} DomEvent
+       * @param p_obj {object|array} Object passed back from addListener method or args from Bubbling event
+       */
+      onUnsyncFromCloud: function DLTB_onUnsyncFromCloud(e, p_obj)
+      {
+         var record = new Object();
+         var parent = this.doclistMetadata.parent;
+
+         // jsNode
+         var jsNode = new Object();
+         jsNode["isContainer"] = parent.isContainer;
+         record["jsNode"] = jsNode;
+
+         // NodeRef
+         var nodeRef = new Object();
+         nodeRef["uri"] = parent.nodeRef.replace(":/", "");
+         jsNode["nodeRef"] = nodeRef;
+
+         // Display name
+         record["displayName"] = parent.properties["cm:name"];
+
+         this.onActionCloudUnsync(record);
+      },
+      
       /**
        * File Upload button click handler
        *
@@ -749,7 +925,8 @@
          var fnSuccess = function DLTB__oADC_success(data, records)
          {
             var result;
-            var successCount = 0;
+            var successFileCount = 0;
+            var successFolderCount = 0;
 
             // Did the operation succeed?
             if (!data.json.overallSuccess)
@@ -769,7 +946,14 @@
                
                if (result.success)
                {
-                  successCount++;
+                  if (result.type == "folder")
+                  {
+                     successFolderCount++;
+                  }
+                  else
+                  {
+                     successFileCount++;
+                  }
                   
                   YAHOO.Bubbling.fire(result.type == "folder" ? "folderDeleted" : "fileDeleted",
                   {
@@ -783,6 +967,8 @@
             if (Alfresco.util.isValueSet(this.options.siteId))
             {
                var activityData;
+               var successCount = successFolderCount + successFileCount;
+               
                if (successCount > 0)
                {
                   if (successCount < this.options.groupActivitiesAt)
@@ -794,22 +980,45 @@
                         {
                            fileName: data.json.results[i].id,
                            nodeRef: data.json.results[i].nodeRef,
-                           path: this.currentPath
+                           path: this.currentPath,
+                           parentNodeRef : this.doclistMetadata.parent.nodeRef
                         };
-                        this.modules.actions.postActivity(this.options.siteId, "file-deleted", "documentlibrary", activityData);
+                        
+                        if (data.json.results[i].type == "folder")
+                        {
+                           this.modules.actions.postActivity(this.options.siteId, "folder-deleted", "documentlibrary", activityData);
+                        }
+                        else
+                        {
+                           this.modules.actions.postActivity(this.options.siteId, "file-deleted", "documentlibrary", activityData);
+                        }
                      }
                   }
                   else
                   {
+                     if (successFileCount > 0)
+                     {
                      // grouped into one message
                      activityData =
                      {
-                        fileCount: successCount,
+                           fileCount: successFileCount,
                         path: this.currentPath,
                         parentNodeRef : this.doclistMetadata.parent.nodeRef
                      };
                      this.modules.actions.postActivity(this.options.siteId, "files-deleted", "documentlibrary", activityData);
                   }
+                     if (successFolderCount > 0)
+                     {
+                        // grouped into one message
+                        activityData =
+                        {
+                           fileCount: successFolderCount,
+                           path: this.currentPath,
+                           parentNodeRef : this.doclistMetadata.parent.nodeRef
+                        };
+                        this.modules.actions.postActivity(this.options.siteId, "folders-deleted", "documentlibrary", activityData);
+               }
+            }
                }
             }
 
@@ -877,7 +1086,7 @@
        */
       onHideNavBar: function DLTB_onHideNavBar(e, p_obj)
       {
-         this.options.hideNavBar = this.widgets.hideNavBar.get("checked");
+         this.options.hideNavBar = !this.widgets.hideNavBar.get("checked");
          this.widgets.hideNavBar.set("title", this.msg(this.options.hideNavBar ? "button.navbar.show" : "button.navbar.hide"));
          Dom.setStyle(this.id + "-navBar", "display", this.options.hideNavBar ? "none" : "block");
          this.services.preferences.set(PREF_HIDE_NAVBAR, this.options.hideNavBar);
@@ -920,6 +1129,8 @@
        */
       onFilterChanged: function DLTB_onFilterChanged(layer, args)
       {
+         this._handleSyncButtons();
+         
          var obj = args[1];
          if (obj && (typeof obj.filterId !== "undefined"))
          {
@@ -965,7 +1176,10 @@
                {
                   paths = ["/"];
                }
+               if (this.widgets.folderUp)
+               {
                this.widgets.folderUp.set("disabled", paths.length < 2);
+            }
             }
             else
             {
@@ -975,6 +1189,42 @@
          }
       },
 
+      /**
+       * Helper method for handling the visibility of sync buttons
+       */
+      _handleSyncButtons: function DLTB__onHandleSyncButtons()
+      {
+         var syncToCloudButtonDiv = Dom.get(this.id + "-syncToCloud-button");
+         var unsyncFromCloudButtonDiv = Dom.get(this.id + "-unsyncFromCloud-button");
+
+         var parent = this.doclistMetadata.parent;
+
+         if (parent)
+         {
+            var aspects = parent.aspects;
+            if (aspects)
+            {
+               if (Alfresco.util.arrayContains(aspects, "sync:syncSetMemberNode"))
+               {
+                  Dom.removeClass(unsyncFromCloudButtonDiv, "hidden");
+                  Dom.addClass(syncToCloudButtonDiv, "hidden");
+               }
+               else
+               {
+                  Dom.removeClass(syncToCloudButtonDiv, "hidden");
+                  Dom.addClass(unsyncFromCloudButtonDiv, "hidden");
+               }
+            }
+
+            var properties = parent.properties;
+            if (properties && (properties["cm:name"] === "documentLibrary" || properties["sync:directSync"] === "false") || this.options.syncMode !== "ON_PREMISE")
+            {
+               Dom.addClass(unsyncFromCloudButtonDiv, "hidden");
+               Dom.addClass(syncToCloudButtonDiv, "hidden");
+            }
+         }
+      },
+      
       /**
        * Deactivate All Controls event handler
        *
@@ -1025,7 +1275,7 @@
       {
          var fnSetWidgetAccess = function DLTB_onUserAccess_fnSetWidgetAccess(p_widget, p_userAccess)
          {
-            var perms, widgetPermissions, orPermissions, orMatch, isMenuItem = false, fnEnable, fnDisable;
+            var perms, widgetPermissions, orPermissions, permissionTokens, permission, orMatch, isMenuItem = false, fnEnable, fnDisable, shallMatch;
             if (p_widget instanceof YAHOO.widget.MenuItem && p_widget.element.firstChild)
             {
                isMenuItem = true;
@@ -1056,7 +1306,10 @@
                      orPermissions = widgetPermissions[i].split("|");
                      for (var j = 0, jj = orPermissions.length; j < jj; j++)
                      {
-                        if (p_userAccess[orPermissions[j]])
+                        permissionTokens = orPermissions[j].split(":");
+                        permission = permissionTokens[0];
+                        shallMatch = permissionTokens.length == 2 ? permissionTokens[1] == "true" : true;
+                        if ((p_userAccess[permission] && shallMatch) || (!p_userAccess[permission] && !shallMatch))
                         {
                            orMatch = true;
                            if (!isMenuItem)
@@ -1072,24 +1325,25 @@
                         break;
                      }
                   }
-                  else if (!p_userAccess[widgetPermissions[i]])
+                  else
+                  {
+                     permissionTokens = widgetPermissions[i].split(":");
+                     permission = permissionTokens[0];
+                     shallMatch = permissionTokens.length == 2 ? permissionTokens[1] == "true" : true;
+                     if ((p_userAccess[permission] && !shallMatch) || (!p_userAccess[permission] && shallMatch))
                   {
                      fnDisable();
                      break;
                   }
                }
             }
+            }
          };
          
          var obj = args[1];
          if (obj && obj.userAccess)
          {
-            // Fake permission if Google Docs is enabled via config
-            if (this.options.googleDocsEnabled)
-            {
-               obj.userAccess["create-google-doc"] = true;
-            }
-            
+
             var widget, index, menuItems;
             for (index in this.widgets)
             {
@@ -1097,7 +1351,7 @@
                {
                   widget = this.widgets[index];
                   // Skip if this action specifies "no-access-check"
-                  if (widget.get("srcelement").className != "no-access-check")
+                  if (widget && widget.get("srcelement").className != "no-access-check")
                   {
                      fnSetWidgetAccess(widget, obj.userAccess);
                      if (widget.getMenu() !== null)
@@ -1130,11 +1384,12 @@
                fileType, userAccess = {}, fileAccess, index,
                menuItems = this.widgets.selectedItems.getMenu().getItems(), menuItem,
                actionPermissions, typeGroups, typesSupported, disabled,
+               commonAspects = [], allAspects = [],
                i, ii, j, jj;
             
             var fnFileType = function fnFileType(file)
             {
-               return (file.isContainer ? "folder" : "document");
+               return (file.node.isContainer ? "folder" : "document");
             };
 
             // Check each file for user permissions
@@ -1159,6 +1414,36 @@
                   fileTypes[fileType] = true;
                   fileTypes.push(fileType);
                }
+
+               // Build a list of common aspects
+
+
+               if (i === 0)
+               {
+                  // first time around fill with aspects from first node -
+                  // NOTE copy so we don't remove aspects from file node.
+                  commonAspects = Alfresco.util.deepCopy(file.node.aspects);
+               } else
+               {
+                  // every time after that remove aspect if it isn't present on the current node.
+                  for (j = 0, jj = commonAspects.length; j < jj; j++)
+                  {
+                     if (!Alfresco.util.arrayContains(file.node.aspects, commonAspects[j]))
+                     {
+                        Alfresco.util.arrayRemove(commonAspects, commonAspects[j])
+                     }
+                  }
+               }
+
+               // Build a list of all aspects
+               for (j = 0, jj = file.node.aspects.length; j < jj; j++)
+               {
+                  if (!Alfresco.util.arrayContains(allAspects, file.node.aspects[j]))
+                  {
+                     allAspects.push(file.node.aspects[j])
+                  }
+               }
+
             }
 
             // Now go through the menu items, setting the disabled flag appropriately
@@ -1181,6 +1466,38 @@
                         {
                            // Disable if the user doesn't have ALL the permissions
                            if (!userAccess[actionPermissions[i]])
+                           {
+                              disabled = true;
+                              break;
+                           }
+                        }
+                     }
+
+                     // Check required aspects.
+                     // Disable if any node DOES NOT have ALL required aspects
+                     var hasAspects = Dom.getAttribute(menuItem.element.firstChild, "data-has-aspects");
+                     if (hasAspects && hasAspects !== "")
+                     {
+                        hasAspects = hasAspects.split(",");
+                        for (i = 0, ii = hasAspects.length; i < ii; i++)
+                        {
+                           if (!Alfresco.util.arrayContains(commonAspects, hasAspects[i]))
+                           {
+                              disabled = true;
+                              break;
+                           }
+                        }
+                     }
+
+                     // Check forbidden aspects.
+                     // Disable if any node DOES have ANY forbidden aspect
+                     var notAspects = Dom.getAttribute(menuItem.element.firstChild, "data-not-aspects");
+                     if (notAspects && notAspects !=="")
+                     {
+                        notAspects = notAspects.split(",");
+                        for (i = 0, ii = notAspects.length; i < ii; i++)
+                        {
+                           if(Alfresco.util.arrayContains(allAspects, notAspects[i]))
                            {
                               disabled = true;
                               break;

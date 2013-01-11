@@ -4,19 +4,21 @@
 		<aspects>
 			<visible>
 				<aspect name="cm:generalclassifiable" />
-				<aspect name="cm:complianceable" />
-				<aspect name="cm:dublincore" />
-				<aspect name="cm:effectivity" />
-				<aspect name="cm:summarizable" />
-				<aspect name="cm:versionable" />
-				<aspect name="cm:templatable" />
-				<aspect name="cm:emailed" />
-				<aspect name="emailserver:aliasable" />
-				<aspect name="cm:taggable" />
-				<aspect name="app:inlineeditable" />
-				<aspect name="gd:googleEditable" />
-				<aspect name="cm:geographic" />
-				<aspect name="exif:exif" />
+            <aspect name="cm:complianceable" />
+            <aspect name="cm:dublincore" />
+            <aspect name="cm:effectivity" />
+            <aspect name="cm:summarizable" />
+            <aspect name="cm:versionable" />
+            <aspect name="cm:templatable" />
+            <aspect name="cm:emailed" />
+            <aspect name="emailserver:aliasable" />
+            <aspect name="cm:taggable" />
+            <aspect name="app:inlineeditable" />
+            <aspect name="gd:googleEditable" />
+            <aspect name="cm:geographic" />
+            <aspect name="exif:exif" />
+            <aspect name="audio:audio" />
+            <aspect name="cm:indexControl" />
 
 				<!-- beCPG -->
 				<aspect name="bcpg:permissionsTpl" />
@@ -36,68 +38,10 @@
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
 			<addable>
-				<aspect name="cm:generalclassifiable" />
-				<aspect name="cm:complianceable" />
-				<aspect name="cm:dublincore" />
-				<aspect name="cm:effectivity" />
-				<aspect name="cm:summarizable" />
-				<aspect name="cm:versionable" />
-				<aspect name="cm:templatable" />
-				<aspect name="cm:emailed" />
-				<aspect name="emailserver:aliasable" />
-				<aspect name="cm:taggable" />
-				<aspect name="app:inlineeditable" />
-				<aspect name="gd:googleEditable" />
-				<aspect name="cm:geographic" />
-				<aspect name="exif:exif" />
-
-				<!-- beCPG -->
-				<aspect name="bcpg:permissionsTpl" />
-				<aspect name="bcpg:clientsAspect" />
-				<aspect name="bcpg:suppliersAspect" />
-				<aspect name="rep:reportTplsAspect" />
-				<aspect name="bcpg:profitabilityAspect" />
-				<aspect name="qa:batchAspect" />
-				<aspect name="qa:acAspect" />
-				<aspect name="dsg:modelAspect" />
-				<aspect name="dsg:configAspect" />
-				<aspect name="gs1:gs1Aspect" />
-				<aspect name="pack:palletAspect" />
-				<aspect name="ext1:customAspect" />
-				<aspect name="bp:cataloguable" />
 			</addable>
 
 			<!-- Aspects that a user can remove. Same as "visible" if left empty -->
 			<removeable>
-				<aspect name="cm:generalclassifiable" />
-				<aspect name="cm:complianceable" />
-				<aspect name="cm:dublincore" />
-				<aspect name="cm:effectivity" />
-				<aspect name="cm:summarizable" />
-				<aspect name="cm:versionable" />
-				<aspect name="cm:templatable" />
-				<aspect name="cm:emailed" />
-				<aspect name="emailserver:aliasable" />
-				<aspect name="cm:taggable" />
-				<aspect name="app:inlineeditable" />
-				<aspect name="gd:googleEditable" />
-				<aspect name="cm:geographic" />
-				<aspect name="exif:exif" />
-
-				<!-- beCPG -->
-				<aspect name="bcpg:permissionsTpl" />
-				<aspect name="bcpg:clientsAspect" />
-				<aspect name="bcpg:suppliersAspect" />
-				<aspect name="rep:reportTplsAspect" />
-				<aspect name="bcpg:profitabilityAspect" />
-				<aspect name="qa:batchAspect" />
-				<aspect name="qa:acAspect" />
-				<aspect name="dsg:modelAspect" />
-				<aspect name="dsg:configAspect" />
-				<aspect name="gs1:gs1Aspect" />
-				<aspect name="pack:palletAspect" />
-				<aspect name="ext1:customAspect" />
-				<aspect name="bp:cataloguable" />
 			</removeable>
 		</aspects>
 
@@ -155,6 +99,11 @@
 				<subtype name="bcpg:organoList" />
 				<subtype name="bcpg:physicoChemList" />
 			</type>
+			
+			
+			 <type name="trx:transferTarget">
+               <subtype name="trx:fileTransferTarget" />
+         </type>
 		</types>
 
 
@@ -194,8 +143,19 @@
 	<config evaluator="string-compare" condition="DocumentLibrary"
 		replace="true">
 		<create-content>
-			<content id="plain-text" mimetype="text/plain" label="create-content.text"
-				itemid="cm:content" icon="text" />
+			 <content id="plain-text" label="create-content.text" type="pagelink" index="10" icon="text">
+            <param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/plain</param>
+         </content>
+         <content id="html" label="create-content.html" type="pagelink" index="20">
+            <param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/html</param>
+         </content>
+         <content id="xml" label="create-content.xml" type="pagelink" index="30">
+            <param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/xml</param>
+         </content>
+         
+         
+         
+         <!-- 
 			<content id="rawMaterial" label="menu.create-content.rawMaterial"
 				formid="create" itemid="bcpg:rawMaterial" icon="generic-rawMaterial" />
 			<content id="localSemiFinishedProduct" label="menu.create-content.localSemiFinishedProduct"
@@ -224,7 +184,7 @@
 				formid="create" itemid="ecm:changeOrder" icon="generic-changeOrder"  />
 			<content id="project" label="menu.create-content.project"
 				formid="create" itemid="pjt:project" icon="generic-project"  />
-		
+		 -->
 		</create-content>
 
 

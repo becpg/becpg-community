@@ -23,6 +23,8 @@
    <import resource="classpath:alfresco/module/${artifactId}/context/action-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/model-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/service-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/policy-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/product-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/formulation-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/report-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/quality-context.xml" />
@@ -35,6 +37,7 @@
    <import resource="classpath:alfresco/module/${artifactId}/context/gs1-context.xml" />
   	<import resource="classpath:alfresco/module/${artifactId}/context/publication-context.xml" />
   	<import resource="classpath:alfresco/module/${artifactId}/context/project-context.xml" />
+ 
   
 <!--   	
 	 <bean id="${artifactId}.becpgCoreModule" class="fr.becpg.BeCPGCoreModule" parent="module.baseComponent" >
